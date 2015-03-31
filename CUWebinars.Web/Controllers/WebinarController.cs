@@ -368,54 +368,62 @@ namespace CUWebinars.Web.Controllers
             {
                 _webinarControllerOrchestrator.FireSendConnectionInfoNotificationEvent(webinarId);
 
-                return Json(new { Result = WebUiConstants.Success });
+                return Json(new {Result = WebUiConstants.Success});
             }
             catch (Exception exception)
             {
                 _logger.Error(string.Format("SendConnectionInfo Action: {0}", exception.Message), exception);
             }
-            return Json(new { Result = WebUiConstants.Fail });
+            return Json(new {Result = WebUiConstants.Fail});
         }
+
+
 
         public PartialViewResult SendRecordingPosted()
         {
-            var model = _webinarControllerOrchestrator.BuildAdhocNotificationViewModel(WebinarType.Recorded);
 
-        //    return PartialView(@"Partials/_SendRecordingPosted", model);
-        //}
+            //is this depricated?
+            throw new NotImplementedException();
+            //var model = _webinarControllerOrchestrator.BuildAdhocNotificationViewModel(WebinarType.Recorded);
 
-        //[System.Web.Mvc.HttpPost]
-        //public JsonResult SendRecordingPosted(int webinarId)
-        //{
-        //    try
-        //    {
-        //        String setEventToRecorded = _webinarControllerOrchestrator.SetEventToRecorded(webinarId);
-        //    }
-        //    catch (Exception)
-        //    {
+            //return PartialView(@"Partials/_SendRecordingPosted", model);
+        }
 
-        //        throw;
-        //    }
-        //    try
-        //    {
 
-        //        var orders = _orderManagementService.GetOrdersForRecordedNotifications(webinarId);
+        [System.Web.Mvc.HttpPost]
+        public JsonResult SendRecordingPosted(int webinarId)
+        {
+            //is this depricated?
+            throw new NotImplementedException();
+            //try
+            //{
+            //    String setEventToRecorded = _webinarControllerOrchestrator.SetEventToRecorded(webinarId);
+            //}
+            //catch (Exception)
+            //{
 
-        //        if (orders.Any())
-        //        {
-        //            _orderManagementService.FireSendRecordingIsPostedEvent(orders);
+            //    throw;
+            //}
+            //try
+            //{
 
-        //            return Json(new { Result = WebUiConstants.Success });
-        //        }
+            //    var orders = _orderManagementService.GetOrdersForRecordedNotifications(webinarId);
 
-        //        return Json(new { Result = WebUiConstants.NoOrdersForWebinar });
-        //    }
-        //    catch (Exception exception)
-        //    {
-        //        _logger.Error(string.Format("SendRecordingPosted Action: {0}", exception.Message), exception);
-        //    }
-        //    return Json(new { Result = WebUiConstants.Fail });
-        //}
+            //    if (orders.Any())
+            //    {
+            //        _orderManagementService.FireSendRecordingIsPostedEvent(orders);
+
+            //        return Json(new { Result = WebUiConstants.Success });
+            //    }
+
+            //    return Json(new { Result = WebUiConstants.NoOrdersForWebinar });
+            //}
+            //catch (Exception exception)
+            //{
+            //    _logger.Error(string.Format("SendRecordingPosted Action: {0}", exception.Message), exception);
+            //}
+            //return Json(new { Result = WebUiConstants.Fail });
+        }
 
 
         public ActionResult SearchByTopic(
@@ -446,6 +454,12 @@ namespace CUWebinars.Web.Controllers
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult OnDemand(int id)
         {
+            ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+
+            if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == ClaimTypes.Admin))
+            {
+                return RedirectToAction("Index", "Admin");
+            }
 
                 bool accessPermitted = false;
 

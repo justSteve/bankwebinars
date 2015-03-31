@@ -459,6 +459,53 @@ namespace CUWebinars.Web.Core.Orchestrators
             return model;
         }
 
+
+
+        public MyWebinarsDTO BuildOnDemandDTO(DiscountModel discountModel, ClaimsIdentity claimsIdentityOfAuthenticatedUser)
+        {
+            var currentUser = GetWebUserFromIPrincipal();
+
+            var model = new MyWebinarsDTO
+            {
+
+                WebUser = currentUser,
+                OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel()
+                {
+
+                }
+            };
+
+            if (claimsIdentityOfAuthenticatedUser.HasClaim(ClaimTypes.DisplayPostEventMaterials))
+            {
+                model.MyClaims =
+                    claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type == ClaimTypes.DisplayPostEventMaterials)
+                        .Select(c => c.Value);
+            }
+
+            if (discountModel.TypeOfDiscount == DiscountType.ComplianceSeries)
+            {
+                model.Subscription = discountModel;
+            }
+
+            if (discountModel.TypeOfDiscount == DiscountType.Package)
+            {
+                model.Package = discountModel;
+            }
+
+            model.Scheduled = _orderManagementService.SelectOrdersWithScheduledWebinars(currentUser.idUser);
+            model.Recorded = _orderManagementService.SelectOrdersWithRecordedWebinars(currentUser.idUser);
+            model.Archived = _orderManagementService.SelectOrdersWithArchivedWebinars(currentUser.idUser);
+
+            foreach (var orderRow in model.Scheduled.Select(order => order.OrderRows
+                .Single(or => or.RowStatus == OrderRowStatus.Active))
+                .Where(row => row.Webinar.Status == WebinarStatus.Active))
+            {
+                _orderManagementService.GetJoinUrl(orderRow);
+            }
+
+            return model;
+        }
+
         public void EditContactInfo(EditContactInfoModel model)
         {
             var updateFields = model.RegisterFields;

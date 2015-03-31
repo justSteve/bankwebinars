@@ -113,7 +113,7 @@
                                     @{ Html.RenderPartial("DisplayTemplates/OrderSumUser", row.Order); }
 
                                     <h5>Share Event Notifications!</h5>
-                                    @{Html.RenderPartial("Partials/_ShareNotifications");}
+                                    @{Html.RenderPartial("Partials/_ShareNotifications", row.Order);}
                                 </div>
                                 <div class="span7">
                                     <h4 id="upcoming-@row.idWebinar">@row.Webinar.Title</h4>

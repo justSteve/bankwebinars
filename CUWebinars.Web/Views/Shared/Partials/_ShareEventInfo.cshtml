@@ -1,26 +1,30 @@
-﻿@using System.Configuration
+﻿
+
+@using (Html.BeginForm("ShareEventInfo", "Account", "Post"))
+{
+    @Html.AntiForgeryToken()
+
+    <div id="BillingAddressContainer" class="well-large">
+        <h3>Billing Address</h3>
+        <section>
+            <p style="font-size: small;">
+                Forwards this page to the submitted email.<br />
+                <span class="input-append">
+                    <input type="email" id="getEmail" placeholder="Email Address" class="span6" name="email" />
+                    <input type="submit" class="btn btn-primary" />Send
+                </span>
+            </p>
+        </section>
+    </div>
+    <div class="form-inline">
+        <div class="btn-group" style="width:160px">&nbsp;</div>
+        <div class="btn-group">
+            <input type="submit" value="Update Billing Address" class="btn btn-default" />
+        </div>
+    </div>
+}
 
 
 
-<script language="javascript" type="text/javascript">
-    function openJWindow() {
-        window.open('@url' + $("#getEmail").val(), 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');
-    }
-</script>
-
-<section>
-    <p style="font-size: small;">
-        Forwards this page to the submitted email.<br />
-        @*<form action="/account/shareInfo" method="post">*@
-        <span class="input-append">
-            <input type="email" id="getEmail" placeholder="Email Address" class="span6" name="email" />
-            <button onclick="javascript: openJWindow();" class="btn btn-primary">Send</button>
-
-        </span>
-        @*</form>*@
-
-
-    </p>
-</section>
 
 

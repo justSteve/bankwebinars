@@ -462,9 +462,31 @@ namespace CUWebinars.Web.Controllers
         }
 
         [System.Web.Mvc.HttpPost]
-        public ActionResult ShareNotifications(int? id, string returnUrl = null)
+        public ActionResult ShareNotifications(FormCollection shareNotis)
         {
+            int idOrder = Convert.ToInt32(shareNotis["idOrder"]);
+            string addresses = shareNotis["email"];
 
+            var order = _orderManagementService.GetOrderById(idOrder);
+            try
+            {
+                order.UserComments = "cc:" + addresses.ToString() + order.UserComments;
+                _orderManagementService.SaveChanges();
+
+            }
+            catch (Exception)
+            {
+
+                return Json(new { Result = WebUiConstants.Fail });
+
+            }
+
+            return Json(new { Result = WebUiConstants.Success });
+        }
+
+        [System.Web.Mvc.HttpPost]
+        public ActionResult EditDiscount(int? id, string returnUrl = null)
+        {
             return null;
         }
 
@@ -1026,8 +1048,8 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.AllowAnonymous]
         public ActionResult AddPasswordForCartCreatedUser(string email)
         {
-            
-            if (string.IsNullOrWhiteSpace(email)) 
+
+            if (string.IsNullOrWhiteSpace(email))
                 return View();
 
             var createUserConfirmedViewModel =

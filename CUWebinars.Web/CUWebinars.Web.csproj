@@ -441,6 +441,7 @@
     <Compile Include="Models\ConnectionInfoEditModel.cs" />
     <Compile Include="Models\DiscountModel.cs" />
     <Compile Include="Models\EditContactInfoModel.cs" />
+    <Compile Include="Models\EditDiscountModel.cs" />
     <Compile Include="Models\EditUserInfoModel.cs" />
     <Compile Include="Models\EditUserModel.cs" />
     <Compile Include="Models\ImportOrderModel.cs" />
@@ -1132,6 +1133,7 @@
     <Content Include="Views\Admin\Partials\_ShowOrders.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Discount.cshtml" />
     <Content Include="Views\Shared\Partials\_ShareNotifications.cshtml" />
+    <Content Include="Views\Shared\Partials\_EditDiscount.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
