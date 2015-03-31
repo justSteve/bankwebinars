@@ -88,6 +88,8 @@ namespace CUWebinars.Business.Notification.Handlers
                         _notificationDelivery.Notify(notificationMessage);
                     }
                 }
+                //sendConnectionInfoEvent.EventObject.UserComments
+                // CC:email@address.com
 
                 notificationMessage.To = sendConnectionInfoEvent.EventObject.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);

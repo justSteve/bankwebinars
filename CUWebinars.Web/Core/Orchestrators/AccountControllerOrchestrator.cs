@@ -361,7 +361,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 //idDiscount = 
             };
 
-            //_membershipService.UpdateDiscountDetails(discount);
+            _membershipService.UpdateDiscountDetails(discount);
         }
 
         public void EditUser(EditUserViewModel model)
@@ -648,6 +648,9 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             if (discountModel.TypeOfDiscount == DiscountType.ComplianceSeries)
             {
+                discountModel.DateValidFrom = userDiscount.DateValidFrom;
+                discountModel.DateValidTo = userDiscount.DateValidTo;
+
                 // ???
             }
 

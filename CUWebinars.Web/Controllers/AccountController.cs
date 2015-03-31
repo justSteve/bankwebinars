@@ -463,6 +463,13 @@ namespace CUWebinars.Web.Controllers
             return PartialView("Partials/_EditNameTitle", model);
         }
 
+        [System.Web.Mvc.HttpPost]
+        public ActionResult ShareNotifications(int? id, string returnUrl = null)
+        {
+
+            return null;
+        }
+
         [System.Web.Mvc.HttpGet]
         public ActionResult EditUser(int? id, string returnUrl = null)
         {

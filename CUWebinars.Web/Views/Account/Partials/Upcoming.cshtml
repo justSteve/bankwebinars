@@ -102,15 +102,8 @@
                     TimeSpan calcDays = row.Webinar.Date - DateTime.Now;
                     var numDays = Convert.ToInt32(calcDays.TotalDays);
                     string remainingDays;
-                    if (numDays != 1)
-                    {
 
-                        remainingDays = " in " + Convert.ToInt32(calcDays.TotalDays).ToString() + " days on <i>" + @Html.DisplayDate(row.Webinar.Date) + "</i>";
-                    }
-                    else
-                    {
-                        remainingDays = "tomorrow";
-                    }
+                    remainingDays = " in " + Convert.ToInt32(calcDays.TotalDays).ToString() + " days on <i>" + @Html.DisplayDate(row.Webinar.Date) + "</i>";
 
 
                     <div class=" container-fluid">
@@ -118,24 +111,27 @@
                             <div style="border-top-color: black;border-top: 10px;">
                                 <div class="pull-right span4" id="orderSum-@row.idWebinar">
                                     @{ Html.RenderPartial("DisplayTemplates/OrderSumUser", row.Order); }
+
+                                    <h5>Share Event Notifications!</h5>
+                                    @{Html.RenderPartial("Partials/_ShareNotifications");}
                                 </div>
                                 <div class="span7">
                                     <h4 id="upcoming-@row.idWebinar">@row.Webinar.Title</h4>
 
                                     <b>@row.RegistrationType.OptionLabel</b> - will be presented by @row.Webinar.Presenter.WebUser.FullName @Html.Raw(remainingDays) starting at @Html.DisplayTime(row.Webinar.Date, timeZ, true).
                                     @{
-                                     var additionalLocationsPricing = GetAdditionalLocationsPricing(row.AdditionalLocation, row.idWebinar);
-                                     if (additionalLocationsPricing == null)
-                                     {
-                                         throw new ArgumentNullException("additionalLocationsPricing");
-                                     }
+                                    var additionalLocationsPricing = GetAdditionalLocationsPricing(row.AdditionalLocation, row.idWebinar);
+                                    if (additionalLocationsPricing == null)
+                                    {
+                                        throw new ArgumentNullException("additionalLocationsPricing");
+                                    }
 
-                                     var orderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
-                                     {
-                                         AdditionalLocations = row.AdditionalLocation,
-                                         Addresses = additionalLocationsPricing.Item1,
-                                         OptionsCost = additionalLocationsPricing.Item2
-                                     };
+                                    var orderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
+                                    {
+                                        AdditionalLocations = row.AdditionalLocation,
+                                        Addresses = additionalLocationsPricing.Item1,
+                                        OptionsCost = additionalLocationsPricing.Item2
+                                    };
                                     }
 
                                     @{ Html.RenderPartial("Partials/OrderHasAdditionalLocations", orderHasAdditionalLocationsViewModel); }
@@ -144,6 +140,7 @@
                                     {
                                         if (row.RegistrationType.ShowLiveNotifications == "Yes")
                                         {
+
                                             <div><b>Connection Summary</b></div>
 
                                             <table width="400px">
@@ -173,12 +170,14 @@
 
                                             <br />
                                             <div class="well well-small">
-                                                <b>Event Materials</b>
 
+                                                <b>Event Materials</b>
                                                 @{
                                             Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);
                                                 }
                                             </div>
+
+
                                         }
                                         if (row.RegistrationType.ShowLiveNotifications != "Yes")
                                         {

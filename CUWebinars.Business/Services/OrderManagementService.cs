@@ -360,6 +360,7 @@ namespace CUWebinars.Business.Services
                 int affiliateIdForOrder, mostRecentAffiliateId;
                 affiliateIdForOrder = mostRecentAffiliateId = affiliateIds.First();
 
+                var sb = new StringBuilder();
                 // The history is of more than 1 affiliate
                 if (affiliateIds.Distinct().Count() > 1)
                 {
@@ -372,9 +373,9 @@ namespace CUWebinars.Business.Services
                     int mostUses = 0;
                     int numberOfUsesOfMostRecentAffiliate = 0;
                     int current = 0;
-
                     foreach (var group in groups)
                     {
+                        sb.Append(group.Key + ", ");
                         current = group.Count();
 
                         if (current > mostUses)
@@ -391,8 +392,6 @@ namespace CUWebinars.Business.Services
 
                     if (mostUses >= 2 * numberOfUsesOfMostRecentAffiliate)
                         affiliateIdForOrder = mostUsedAffiliateId;
-
-                    _logger.Error("Total affiliates considered: {\" +[convert groups to comma delim list + } for idUser = " + idUser);
                 }
 
                 cachKey = "affiliateId-" + affiliateIdForOrder;
@@ -404,6 +403,8 @@ namespace CUWebinars.Business.Services
                     // keeps Affiliate object in cache for 1 hour.
                     _cachingService.Add(cachKey, affiliate, DateTime.Now.AddHours(1));
                 }
+
+                _logger.Error("Total affiliates considered: {0} for idUser {1}. Credited to {2}.", sb.ToString(), idUser, affiliate.idUserAff);
 
                 return affiliate;
             }
@@ -817,7 +818,7 @@ namespace CUWebinars.Business.Services
             sb.Append("    </td>");
             sb.Append("</tr>");
 
-            
+
             return sb.ToString();
 
         }

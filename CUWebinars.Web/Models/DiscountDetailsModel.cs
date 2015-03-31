@@ -5,7 +5,7 @@ namespace CUWebinars.Web.Models
     public class DiscountDetailsModel
     {
         public int UserId { get; set; }
-        [UIHint("DiscountDetails")]
+        [UIHint("Discount")]
         public DiscountModel Discount { get; set; }
     }
 }

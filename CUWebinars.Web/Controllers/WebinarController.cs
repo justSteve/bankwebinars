@@ -395,15 +395,15 @@ namespace CUWebinars.Web.Controllers
             return Json(new { Result = WebUiConstants.Fail });
         }
 
-        public PartialViewResult SendRecordingPosted()
-        {
-            var model = new AdhocNotificationViewModel
-            {
-                Webinars = EventInvokerHelpers.GetRecordedWebinarsAsSelectListItems(_webinarManagementService)
-            };
+        //public PartialViewResult SendRecordingPosted()
+        //{
+        //    var model = new AdhocNotificationViewModel
+        //    {
+        //        Webinars = EventInvokerHelpers.GetRecordedWebinarsAsSelectListItems(_webinarManagementService)
+        //    };
 
-            return PartialView(@"Partials/_SendRecordingPosted", model);
-        }
+        //    return PartialView(@"Partials/_SendRecordingPosted", model);
+        //}
 
         //[System.Web.Mvc.HttpPost]
         //public JsonResult SendRecordingPosted(int webinarId)
@@ -484,7 +484,7 @@ namespace CUWebinars.Web.Controllers
                 else
                 {
                     var webUser = _membershipService.GetWebUserById(order.idUser);
-
+                    
                     if (webUser.email != null)
                     {
                         var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, webUser.email);

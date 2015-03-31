@@ -42,7 +42,7 @@
             <h3>
                 Subscription Details
             </h3>
-            @using (Html.BeginForm("UpdateSubscriptionDetails", "Account", null, FormMethod.Post, new { id = "userDetailsForm", @class = "form-horizontal" }))
+            @using (Html.BeginForm("UpdateSubscriptionDetails", "Account", null, FormMethod.Post, new { id = "updateSubscriptionForm", @class = "form-horizontal" }))
             {
                 @Html.AntiForgeryToken()
                 @Html.ValidationSummary("Please address the following problems:", new { id = "userDetailsValSummary" })
@@ -51,7 +51,7 @@
                 //Editor does not render any controls.
                 @Html.EditorFor(m => m.Discount)
 
-                <button id="saveChangesButton" type="button" class="btn btn-primary offset2">Save changes</button>
+                <button id="saveChangesButton" type="button" class="btn btn-primary offset2">Submit</button>
                 <div id="updateSubscriptionMsgLabelWrap" style="display:inline-block"></div>
             }
         </div>

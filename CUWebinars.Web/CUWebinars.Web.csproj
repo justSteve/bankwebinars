@@ -997,7 +997,9 @@
     <Content Include="Views\Cart\Partials\_LogsModal.cshtml" />
     <Content Include="Views\Cart\Partials\_UserDetailsModal.cshtml" />
     <Content Include="Views\Home\robots.txt" />
-    <Content Include="Views\Shared\EditorTemplates\DiscountDetails.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DiscountDetails.cshtml">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="Views\Webinar\Details.cshtml" />
     <Content Include="Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" />
     <Compile Include="ViewModel\AdditionalLocationAddViewModel.cs" />
@@ -1086,12 +1088,9 @@
     <Content Include="Views\Account\AddPasswordForCartCreatedUser.cshtml" />
     <Content Include="Views\Admin\ManageOrder.cshtml" />
     <Content Include="Views\Admin\Home\_OrderEditDetails.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\DiscountSubscription.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\DiscountGeneral.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutConfirmForAffiliate.cshtml" />
     <Content Include="Views\Shared\_LayoutAffiliate.cshtml" />
     <Content Include="Views\Shared\_MessagesPartial.cshtml" />
-    <Content Include="Views\Shared\_DiscountPartial.cshtml" />
     <Content Include="Views\Webinar\DetailsAffiliate.cshtml" />
     <Content Include="Views\Webinar\Search.cshtml" />
     <Content Include="Views\Webinar\Partials\DisplayOptionsAffiliate.cshtml" />
@@ -1100,7 +1099,6 @@
     <Content Include="Views\Cart\Partials\_DisplayRowPriceForAffiliate.cshtml" />
     <Content Include="Views\Cart\Partials\_ConfirmModalForAffiliate.cshtml" />
     <Content Include="Views\Cart\Partials\_DisplayAppliedDiscount.cshtml" />
-    <Content Include="Views\Shared\EditorTemplates\DiscountDetails.cshtml" />
     <Content Include="Views\Shared\Admin\_Last5Error.cshtml" />
     <Content Include="Views\StaticContent\PageNotFound.cshtml" />
     <Content Include="Views\StaticContent\ServerError.cshtml" />
@@ -1130,6 +1128,8 @@
     <Content Include="Views\Admin\ManageOrderFromDetails.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\AdjustUserDetails.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowOrders.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Discount.cshtml" />
+    <Content Include="Views\Shared\Partials\_ShareNotifications.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1562,7 +1562,6 @@
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\Manage.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\Shared\EditorTemplates\Genre.cshtml" />
     <Content Include="Views\Webinar\AllActive.cshtml" />
     <Content Include="Views\Webinar\Create.cshtml" />
     <Content Include="Views\Webinar\Delete.cshtml" />

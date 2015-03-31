@@ -24,75 +24,57 @@
 }
 
 @*<link href="/Content/css/home_index.css" rel="stylesheet" type="text/css" />*@
-@*<script type="text/javascript">
-        function resendConfirmation(form) {
-            form.parent.submit();
-        }
-    </script>*@
+
 
 <div class="container">
     <h2 class="short_headline">My Webinars</h2>
-    @{
-    //var thisDiscount = PageData["thisUser"].SubscriptionDiscount;
-
-    }
-    @*<a href="/account/manage/@currentUser.idUser?returnUrl=/Account/MyWebinars/@currentUser.idUser">
-            <span style="color: black;" class="pull-right btn btn-success">
-                Edit My Account Profile
-            </span>
-        </a>*@
-    @{var pModel = new ResetPasswordModel
-      {
-          Email = currentUser.email,
-          EmailSent = false
-      };}
-    @*<span style="margin-left: 25px;"><input type="button" class="btn-small btn btn-link" onclick="javascript: stateManager.passResetView(); return false;" value="Forgot Password?" /></span>
-        Html.Partial("~/Views/Admin/_ResetPasswordPartial.cshtml", pModel)*@
+    <div class="pull-right">
+        <a class="btn btn-info btn-small" href="~/Account/EditUser?returnUrl=/Account/MyWebinars/@currentUser.idUser">Edit Account Profile</a>
+    </div>
     <ul class="nav nav-tabs">
-        <li><a href="#upcoming1" data-toggle="tab">Upcoming Events</a></li>
+        <li class="active"><a href="#upcoming1" data-toggle="tab">Upcoming Events</a></li>
         <li><a href="#recorded1" data-toggle="tab">Recorded Events</a></li>
         <li><a href="#subscriptions" data-toggle="tab">Subscriptions & Discounts</a></li>
+        @*<li><a href="#account" data-toggle="tab">Edit Account Profile</a></li>*@
 
     </ul>
+
+
     <div class="tab-content" id="mywebinars">
-        <div class="tab-pane" id="subscriptions">
-            @if (userSubscription != null)
-            {
-
-                Html.RenderPartial("Partials/Subscription", userSubscription);
-
-            }
-        </div>
-        <div class="tab-pane" id="upcoming1">
+        <div class="tab-pane active" id="upcoming1">
             @if (Model.Scheduled.Count > 0)
             {
                 Html.RenderPartial("Partials/upcoming");
-                }
+            }
+            else
+            {
+                <div>No orders for an upcoming event were found.</div>
+            }
         </div>
         <div class="tab-pane" id="recorded1">
             @if (Model.Recorded.Count > 0)
             {
-                 Html.RenderPartial("Partials/Recorded"); 
+                Html.RenderPartial("Partials/Recorded");
             }
         </div>
-        @*<div class="tab-pane" >
-                <div class="accordion-heading">
-                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#mywebinars" href="#editBilling">
-                        Manage My Account
-                    </a>
-                    <div id="editBilling" class="accordion-body collapse out">
-                        <div class="accordion-inner">
-                            @{Html.RenderPartial("Partials/_EditBillingAddress");}
-                        </div>
-                    </div>
-                </div>
+        <div class="tab-pane" id="subscriptions">
+            @if (userSubscription != null)
+            {
+
+               Html.RenderPartial("Partials/Subscription", userSubscription);
+
+            }
+        </div>
+        @*<div class="tab-pane" id="account">
+
             </div>*@
+
         @*<div class="row-fluid">
                 @{Html.RenderPartial("Partials/Messages");}
             </div>*@
         <br />
     </div>
-    <div class="clear" />
+
     @*@{Html.RenderPartial("Partials/Archived");}*@
     @*<div class="modalOverlay" id="modalOverlay2">
             <p align="center">
