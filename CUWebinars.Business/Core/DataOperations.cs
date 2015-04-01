@@ -24,8 +24,6 @@ namespace CUWebinars.Business.Core
 
         public string FindRegTypeForACS(string regTypeLable)
         {
-            IEnumerable<Webinar> legacyWebinars;
-
             var returnLable = "";
 
             using (var sqlConnection = new SqlConnection(_connectionString))
@@ -234,7 +232,6 @@ namespace CUWebinars.Business.Core
 
                 }
             }
-            return "false";
         }
 
         public
@@ -342,12 +339,10 @@ namespace CUWebinars.Business.Core
                 ParameterName = "@provisionalInstitution",
                 Value = newOrder.Institution
             };
-            var SteadfastIsOpen = "";
 
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 int idUser = 0;
-                int idDiscount = 0;
                 sqlConnection.Open();
                 using (var getUserID = new SqlCommand("InsertACSUser", sqlConnection))
                 {
@@ -519,7 +514,6 @@ namespace CUWebinars.Business.Core
                     using (var reader = getPricingsCommand.ExecuteReader())
                     {
                         var i = 0;
-                        Double basePrice = 0;
                         while (reader.Read())
                         {
                             if (i == 0)
