@@ -155,8 +155,7 @@ namespace CUWebinars.Web.Controllers
 
 
 
-            string adminEmail = "steve@ttstrain.com";
-
+            
             //string myHTML = NotificationFacade.Instance.SendVRPerDay(TemplateTypes.VR_PER_DAY, VRObject, adminEmail, "VR Code for " + Request["from"].ToString());
 
 
@@ -541,7 +540,6 @@ namespace CUWebinars.Web.Controllers
                 ViewData["Expired"] = "This recording has expired. ";
                 return View();
 
-            return null;
         }
 
         //[AcceptVerbs(HttpVerbs.Post)]

@@ -24,7 +24,6 @@ namespace CUWebinars.Business.Core
 
         public void CopyLegacyWebinars()
         {
-            IEnumerable<Webinar> legacyWebinars;
 
             int idWebinar;
             string description;
