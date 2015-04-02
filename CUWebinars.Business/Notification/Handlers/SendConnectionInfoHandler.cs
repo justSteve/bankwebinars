@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Notification.Formatters;
 using CUWebinars.NotificationSystem.Event;
+using DDay.iCal;
 using Ninject.Extensions.Logging;
 using Ninject.Extensions.Logging.Log4net.Infrastructure;
 
@@ -88,10 +91,14 @@ namespace CUWebinars.Business.Notification.Handlers
                         _notificationDelivery.Notify(notificationMessage);
                     }
                 }
-                //sendConnectionInfoEvent.EventObject.UserComments
-                // CC:email@address.com
+
+                var userCommentsField = sendConnectionInfoEvent.EventObject.UserComments;
+                var addresses = userCommentsField.Substring(userCommentsField.IndexOf(":") + 1);
+
+                var ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(addresses);
 
                 notificationMessage.To = sendConnectionInfoEvent.EventObject.BillingEmail;
+                notificationMessage.Addresses = ccEmailAddresses;
                 _notificationDelivery.Notify(notificationMessage);
             }
             catch (NullReferenceException nullReferenceException)
@@ -116,7 +123,6 @@ namespace CUWebinars.Business.Notification.Handlers
                             exception.Message), exception);
             }
         }
-
 
         public void Handle(SendConnectionInfoEvent<T> @event)
         {
