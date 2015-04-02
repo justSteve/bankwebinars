@@ -133,7 +133,9 @@
     <Compile Include="Core\Cache\OrderCachingService.cs" />
     <Compile Include="Core\DataOperations.cs" />
     <Compile Include="Core\Exceptions\UserCreatedMembershipException.cs" />
+    <Compile Include="Core\Extensions\CollectionExtensions.cs" />
     <Compile Include="Core\Helpers\DateTimeHelper.cs" />
+    <Compile Include="Core\Helpers\EventHandlerHelpers.cs" />
     <Compile Include="Core\Helpers\GenericHelpers.cs" />
     <Compile Include="Core\Helpers\ValidationHelper.cs" />
     <Compile Include="Core\MigrationOperations.cs" />
@@ -337,14 +339,14 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <EmbeddedResource Include="Notification\Templates\OrderSubmitted.cshtml" />
-    <EmbeddedResource Include="Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" />
-    <EmbeddedResource Include="Notification\Templates\SendConnectionInfo.cshtml" />
-    <EmbeddedResource Include="Notification\Templates\SendPerDayPromo.cshtml" />
-    <EmbeddedResource Include="Notification\Templates\SendPerWeekPromo.cshtml" />
-    <EmbeddedResource Include="Notification\Templates\SendRecordingPosted.cshtml" />
-    <EmbeddedResource Include="Notification\Templates\SendReminder.cshtml" />
-    <EmbeddedResource Include="Notification\Templates\SendShippedOrder.cshtml" />
+    <Content Include="Notification\Templates\OrderSubmitted.cshtml" />
+    <Content Include="Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" />
+    <Content Include="Notification\Templates\SendConnectionInfo.cshtml" />
+    <Content Include="Notification\Templates\SendPerDayPromo.cshtml" />
+    <Content Include="Notification\Templates\SendPerWeekPromo.cshtml" />
+    <Content Include="Notification\Templates\SendRecordingPosted.cshtml" />
+    <Content Include="Notification\Templates\SendReminder.cshtml" />
+    <Content Include="Notification\Templates\SendShippedOrder.cshtml" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
