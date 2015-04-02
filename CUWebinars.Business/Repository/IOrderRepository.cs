@@ -32,7 +32,6 @@ namespace CUWebinars.Business.Repository
         IList<Order> SelectOrdersWithRecordedWebinars(int idUser);
         IList<Order> SelectOrdersWithScheduledWebinars(int idUser);
         int AccessToPostEventMaterials(int i, int i1);
-        //IList<AdditionalLocation> GetAdditionalLocations(int idOrder);
         Discount FindDiscountById(int id);
         Discount FindDiscountByCode(string discountCode);
         Discount FindDiscountByUser(WebUser currentUser);
@@ -41,6 +40,6 @@ namespace CUWebinars.Business.Repository
         void SendOrderToLegacy(Order newOrder);
         IList<int> FindUserIdsByPartialId(int value);
         object SearchOrders(int affiliateId, IList<int> excludeUserIDs, int skip, int take, string search);
-        void SendOrderToLegacyServer(Order newOrder);
+        
     }
 }

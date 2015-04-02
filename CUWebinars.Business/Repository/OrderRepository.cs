@@ -506,23 +506,9 @@ namespace CUWebinars.Business.Repository
             var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
 
             dataOperations.SendOrderToLegacy(newOrder);
-
-
         }
 
-        public void SendOrderToLegacyServer(Order newOrder)
-        {
-            throw new NotImplementedException();
-        }
-
-        //public IList<AdditionalLocation> GetAdditionalLocations(int idOrder)
-        //{
-        //    var additionalLocations = items
-        //        .Include(o => o.OrderRows.Select(a => a.AdditionalLocation )
-        //        .Where(o => o.idOrder == idOrder));
-        //    return null;
-        //}
-
+        
         public virtual IList<Order> SelectOrdersWithRecordedWebinars(int idUser)
         {
             var orders = items

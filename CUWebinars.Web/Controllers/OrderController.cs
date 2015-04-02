@@ -359,10 +359,11 @@ namespace CUWebinars.Web.Controllers
                     }
 
                     _logger.Info("ACS Importer heard: " + newOrder.BillingEmail);
-                    //_orderManagementService.SendOrderToLegacy(newOrder);
-                    //_orderManagementService.SendOrderToLegacyServer(newOrder);
-                    DataOperations dataop = new DataOperations();
-                    dataop.BuildACSImporter(newOrder);
+                    _orderManagementService.SendOrderToLegacy(newOrder);
+                    
+                    //DataOperations dataop = new DataOperations();
+                    //dataop.BuildACSImporter(newOrder);
+
                     newOrder.OrderDate = importedOrder.OrderDate;
                     _orderManagementService.SaveChanges();
                 }
