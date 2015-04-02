@@ -41,5 +41,6 @@ namespace CUWebinars.Business.Repository
         void SendOrderToLegacy(Order newOrder);
         IList<int> FindUserIdsByPartialId(int value);
         object SearchOrders(int affiliateId, IList<int> excludeUserIDs, int skip, int take, string search);
+        void SendOrderToLegacyServer(Order newOrder);
     }
 }

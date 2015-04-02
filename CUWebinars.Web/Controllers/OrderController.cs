@@ -2,6 +2,7 @@
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Membership;
 using CUWebinars.Web.Models;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
@@ -358,8 +359,10 @@ namespace CUWebinars.Web.Controllers
                     }
 
                     _logger.Info("ACS Importer heard: " + newOrder.BillingEmail);
-                    _orderManagementService.SendOrderToLegacy(newOrder);
-
+                    //_orderManagementService.SendOrderToLegacy(newOrder);
+                    //_orderManagementService.SendOrderToLegacyServer(newOrder);
+                    DataOperations dataop = new DataOperations();
+                    dataop.BuildACSImporter(newOrder);
                     newOrder.OrderDate = importedOrder.OrderDate;
                     _orderManagementService.SaveChanges();
                 }

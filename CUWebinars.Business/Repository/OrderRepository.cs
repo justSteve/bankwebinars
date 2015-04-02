@@ -510,6 +510,11 @@ namespace CUWebinars.Business.Repository
 
         }
 
+        public void SendOrderToLegacyServer(Order newOrder)
+        {
+            throw new NotImplementedException();
+        }
+
         //public IList<AdditionalLocation> GetAdditionalLocations(int idOrder)
         //{
         //    var additionalLocations = items

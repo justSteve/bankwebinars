@@ -94,5 +94,6 @@ namespace CUWebinars.Business.Services
         object SearchRegistrations(int affiliateID, IList<int> excludeUserIDs, int skip, int take, string search);
         //void AddClaimForPostEventMaterials(IEnumerable<Order> ordersForWebinar);
         string SetPostEventClaims(int webinarId);
+        void SendOrderToLegacyServer(Order newOrder);
     }
 }

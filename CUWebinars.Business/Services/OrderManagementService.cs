@@ -1371,6 +1371,15 @@ namespace CUWebinars.Business.Services
         {
             _orderRepository.SendOrderToLegacy(newOrder);
         }
+
+        public void SendOrderToLegacyServer(Order newOrder)
+        {
+            _orderRepository.SendOrderToLegacyServer(newOrder);
+        }
+
+
+
+
         public WebUser GetWebUserWithAddressAndInstitution(int idUser)
         {
             return _webUserRepository.GetWebUserByIdLoadedWithAddressesAndInstitution(idUser);
