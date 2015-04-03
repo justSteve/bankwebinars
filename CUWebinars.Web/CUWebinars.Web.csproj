@@ -444,6 +444,7 @@
     <Compile Include="Models\EditDiscountModel.cs" />
     <Compile Include="Models\EditUserInfoModel.cs" />
     <Compile Include="Models\EditUserModel.cs" />
+    <Compile Include="Models\IdentifyModel.cs" />
     <Compile Include="Models\ImportOrderModel.cs" />
     <Compile Include="Models\ManageOrderEditModel.cs" />
     <Compile Include="Models\MigrateOrderModel.cs" />
@@ -509,6 +510,7 @@
     <Content Include="App_Data\Orders\SubsFromCSV.dtsx" />
     <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\ImportProductionDb.ps1" />
     <Content Include="App_Data\Orders\OrdersImporter.xlsm" />
+    <Content Include="Content\common.css" />
     <Content Include="Content\DataTables-1.10.4\css\dataTables.autoFill.css" />
     <Content Include="Content\DataTables-1.10.4\css\dataTables.autoFill.min.css" />
     <Content Include="Content\DataTables-1.10.4\css\dataTables.bootstrap.css" />
@@ -1134,6 +1136,7 @@
     <Content Include="Views\Shared\EditorTemplates\Discount.cshtml" />
     <Content Include="Views\Shared\Partials\_ShareNotifications.cshtml" />
     <Content Include="Views\Shared\Partials\_EditDiscount.cshtml" />
+    <Content Include="Views\Webinar\Identify.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

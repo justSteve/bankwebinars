@@ -460,8 +460,8 @@ module Registration {
         startView(): void {
 
             $('#loginMsgLabel').hide();
-            $('#register').hide();
-			$('#reset').hide();
+            //$('#register').hide();
+			//$('#reset').hide();
 			$('#nonUSAddressInput').hide();
 			$('#nonUSAddressBtn').hide();
 		}

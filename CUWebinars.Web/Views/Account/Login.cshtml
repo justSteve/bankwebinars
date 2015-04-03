@@ -5,10 +5,10 @@
         <div style="margin-left: 200px;" id="login">
             @Html.Partial("_SignInPartial", Model.SignIn)
         </div>
-        <div id="register">
+        <div id="register" class="initialHide">
             @Html.Partial("_CreateUserForm", Model.Register)
         </div>
-        <div style="margin-left: 200px;" id="reset">
+        <div style="margin-left: 200px;" id="reset" class="initialHide">
             @Html.Partial("_ResetPasswordPartial", Model.ResetPassword)
         </div>
 </div>
