@@ -461,8 +461,9 @@ var Registration;
 
         StateManager.prototype.startView = function () {
             $('#loginMsgLabel').hide();
-            $('#register').hide();
-            $('#reset').hide();
+
+            //$('#register').hide();
+            //$('#reset').hide();
             $('#nonUSAddressInput').hide();
             $('#nonUSAddressBtn').hide();
         };

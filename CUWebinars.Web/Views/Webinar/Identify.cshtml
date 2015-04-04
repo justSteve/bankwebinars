@@ -1,0 +1,98 @@
+﻿@model IdentifyModel
+
+@{
+    ViewBag.Title = "Identify";
+}
+
+<div class="container">
+    <div class="legendImitator"> A Few Small Details Required </div>
+
+    <div style="margin-bottom: 20px;">If you are an existing user, please log in to proceed with accessing the On Demand Webinar:</div>
+
+    @using (Html.BeginForm("SignIn", "Account", FormMethod.Post, new { name = "frmSignIn", id = "frmSignIn", @class = "form-horizontal" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary("Please address the following login errors: ", new { id = "LoginValSummary" })
+
+        <div class="row">
+            <div class="control-group span4">
+                <div class="control-label">
+
+                    @Html.LabelFor(m => m.SignInModel.Email)
+                </div>
+                <div class="controls">
+
+                    @Html.TextBoxFor(m => m.SignInModel.Email)
+                    @Html.ValidationMessageFor(m => m.SignInModel.Email)
+                </div>
+            </div>
+            </div>
+        <div class="row">
+            <div class="control-group span4">
+                <div class="control-label">
+                    @Html.LabelFor(m => m.SignInModel.Password)
+                </div>
+                <div class="controls">
+
+                    @Html.PasswordFor(m => m.SignInModel.Password, new { @class = "enterSubmit" })
+                    @Html.ValidationMessageFor(m => m.SignInModel.Password)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+                <div class="control-group span4">
+                    <div class="control-label">
+                        @Html.HiddenFor(m => m.SignInModel.ReturnUrl)
+                    </div>
+                    <div class="controls">
+                        <label class="checkbox inline">
+                            <input id="RememberMe" class="check-box" type="checkbox" checked="checked" value="true" name="RememberMe" />Remember Me
+                        </label>
+                        <br/>
+                        <input id="SignInButton" name="SignInButton" class='btn' type="submit" value="Log in" />
+
+                        <div id="loginMsgLabelWrap" style="display: inline-block"></div>
+                    </div>
+                </div>
+            </div>
+            }
+
+            <div style="margin-bottom: 20px;">Otherwise, we just need your name and email address:</div>
+
+            @using (Html.BeginForm("Identify", "Webinar", FormMethod.Post, new {id = "IdentifyDetailsForm", @class = "form-horizontal"}))
+            {
+                @Html.ValidationSummary("Please address the following issues in the form below:", new {id = "valSummaryIdentifyDetailsForm"})
+                @Html.AntiForgeryToken()
+
+                <div class="row">
+                    <div class="control-group span4">
+                        <div class="control-label">
+                            @Html.LabelFor(m => m.FullName)
+                        </div>
+                        <div class="controls">
+                            @Html.EditorFor(m => m.FullName)
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="control-group span4">
+                        <div class="control-label">
+                            @Html.LabelFor(m => m.Email)
+                        </div>
+                        <div class="controls">
+                            @Html.EditorFor(m => m.Email)
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="control-group span4">
+                        <div class="control-label">
+                            @Html.HiddenFor(m => m.idOrder)
+                        </div>
+                        <div class="controls">
+                            <button id="submitDetails" class="btn btn-default">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            }
+</div>

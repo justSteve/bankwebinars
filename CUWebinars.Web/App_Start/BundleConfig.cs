@@ -197,6 +197,9 @@ namespace CUWebinars.Web.App_Start
                 "~/Content/validation.css"
                 ));
 
+            bundles.Add(new StyleBundle("~/Content/common-styles").Include(
+                "~/Content/common.css")
+                );
 
             bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(
                         "~/Content/themes/base/jquery.ui.core.css",
