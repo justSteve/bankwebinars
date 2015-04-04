@@ -543,5 +543,10 @@ namespace CUWebinars.Business.Core
             throw new NotImplementedException();
         }
 
+        public void AddChangedOrder(Dictionary<string, string> buildChangedOrderRow)
+        {
+            // creates Record in 'Changed Orders that require change to Royalties paid' table
+            throw new NotImplementedException();
+        }
     }
 }

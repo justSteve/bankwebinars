@@ -154,7 +154,7 @@ $(function () {
         ns.totalPriceInput = $('#TotalOrderPriceText');
         ns.basePrice = parseFloat($('#UnitPriceText').val());
 
-        ns.orderIdHiddenInputInDropdownPartial = $('#regTypeSelectWapper input[type="hidden"]');
+        ns.orderIdHiddenInputInDropdownPartial = $('#regTypeSelectWrapper input[type="hidden"]');
         ns.orderIdHiddenInputInDropdownPartial.attr('name', 'DisplayOptionsInDropDownViewModel.OrderRowId');
 
         ns.gatherPricingData();

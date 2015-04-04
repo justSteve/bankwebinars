@@ -1,90 +1,111 @@
 ﻿@using System.Activities.Statements
 @model ManageOrderEditModel
 
+
 @using (Html.BeginForm("ManageOrder", "Admin", FormMethod.Post, new { id = "manageOrderForm" }))
 {
     @Html.ValidationSummary("There have been some errors:", new { id = "manageOrderFormValSummary" })
 
     @Html.AntiForgeryToken()
-
-    <div id="StatusWrapper" class="span12">
-        <div>
-            <span>Order Status: </span><strong>@Model.DisplayRowPriceViewModel.OrderStatus.ToString()</strong>
+    <div class="row navbar">
+        <div class="span7 navbar-inner">
+            <ul class="nav" aria-labelledby="dLabel">
+                <li><a tabindex="-1" href="#deleteOrder" role="button" data-toggle="modal">DeleteOrderLabel</a></li>
+                <li><a tabindex="-1" href="#" onclick="payByCC(); return true;" role="button" data-toggle="modal">Submit Payment</a></li>
+                <li><a tabindex="-1" href="#changeAssignedUser" role="button" data-toggle="modal">Assign to Different User</a></li>
+                <li><a tabindex="-1" href="#changeAssignedAffiliate" role="button" data-toggle="modal">Change Credited Affiliate</a></li>
+            </ul>
+        </div>
+        <div class="span3">
+            Origin:
+            <br />
+            Affiliate:
         </div>
     </div>
-
-    <div id="regTypeSelectWapper" class="span12">
-        <div>
-            <label for="RegType">Select a Registration Type:</label>
-            @Html.Partial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel)
-        </div>
-    </div>
-    <div class="addLocsPanel span5">
-        <div class="control-group">
-            <div class="controls">
-                There are <span id="nrAddLocs">@Model.NumberOfAdditionalLocations</span> Additional Locations for this order.
-                @{
-                    if (Model.AdditionalLocationsAvailableOnLoad)
-                    {
-                        <button id="addLocationsButton" class="btn btn-default btn-small">add more?</button>
-                    }
-                    else
-                    {
-                        <button id="addLocationsButton" class="btn btn-default btn-small" disabled="disabled">add more?</button>
-                    }
-                }
-            </div>
-            @Html.Raw(Model.AdditionalLocationsRenderer.ToString())
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions">Total Additional Locations Price:</label>
-            <div class="controls">
-                @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions, new { id = "TotalCostOfOptionsText", disabled = "disabled" }) @*read-only*@
-                @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions) @* Required for POST. TextBoxFor won't ModelBind *@
+    <div class="row">
+        <div id="UserSummaryPanel" class="well span3">
+            <div class="control-group">
+                <div class="controls">
+                    @Html.ActionLink("Edit?", "edituser", "account", new { id = @Model.UserId, returnUrl = "/Admin/ManageOrder/" + Model.Id }, new { @class = "btn  btn-mini pull-right" })
+                    @Html.TextBoxFor(m => m.WebUser.email, new { id = "UserEmail", disabled = "disabled" }) @*read-only*@
+                    @Html.TextBoxFor(m => m.WebUser.FullName, new { id = "FullName", disabled = "disabled" }) @*read-only*@
+                    @Html.TextBoxFor(m => m.PhoneNumber, new { id = "Phone", disabled = "disabled" }) @*read-only*@
+                </div>
             </div>
         </div>
-    </div>
-    <div id="pricingSummaryPanel" class="span5">
-        <div class="control-group">
-            <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice">Base Price:</label>
-            <div class="controls">
-                @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.UnitPrice, new { id = "UnitPriceText", disabled = "disabled" }) @*read-only*@
-                @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.UnitPrice) @* Required for POST. TextBoxFor won't ModelBind *@
+        <div id="pricingSummaryPanel" class="span3">
+            <div class="control-group">
+                <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice">Base Price:</label>
+                <div class="controls">
+                    @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.UnitPrice, new { id = "UnitPriceText", disabled = "disabled" }) @*read-only*@
+                    @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.UnitPrice) @* Required for POST. TextBoxFor won't ModelBind *@
+                </div>
             </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount">Total Discount:</label>
-            <div class="controls">
-                @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalDiscount, new { id = "TotalDiscountText", disabled = "disabled" }) @*read-only*@
+            <div class="control-group">
                 @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.Discount.DiscountCode, new { placeholder = "Enter discount code ", @class = "input input-small" })
-                @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalDiscount) @* Required for POST. TextBoxFor won't ModelBind *@
                 <button id="applyDiscountButton" class="btn btn-default">Apply code</button>
+
+                <div class="controls">
+                    @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalDiscount, new { id = "TotalDiscountText", disabled = "disabled" }) @*read-only*@
+                    @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalDiscount) @* Required for POST. TextBoxFor won't ModelBind *@
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice">Total Order Price:</label>
+                <div class="controls">
+                    @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice, new { id = "TotalOrderPriceText", disabled = "disabled" }) @*read-only*@
+                    @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice) @* Required for POST. TextBoxFor won't ModelBind *@
+                </div>
             </div>
         </div>
+        <div class="span3">
+            <div id="StatusWrapper">
+                <div>
+                    <span>Order Status: </span><strong>@Model.DisplayRowPriceViewModel.OrderStatus.ToString()</strong>
+                </div>
+            </div>
 
-        <div class="control-group">
-            <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice">Total Order Price:</label>
-            <div class="controls">
-                @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice, new { id = "TotalOrderPriceText", disabled = "disabled" }) @*read-only*@
-                @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice) @* Required for POST. TextBoxFor won't ModelBind *@
+            <div id="regTypeSelectWrapper">
+                <div>
+                    <label for="RegType">Change Registration Type:</label>
+                    @Html.Partial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel)
+                </div>
+            </div>
+            <div id="postEventClaim">
+                <label for="PostEvent">Extend Access to Post Event Materials to:</label>
+                @*@Html.Partial("~/Views/Cart/Partials/_HasPostEventAccess.cshtml", Model.DisplayOptionsInDropDownViewModel)*@
             </div>
         </div>
     </div>
-    <div id="UserSummaryPanel" class="span5">
-        <div class="control-group">
-            <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice">UserDetails:</label>
-            <div class="controls">
-                @Html.TextBoxFor(m => m.WebUser.email, new { id = "UserEmail", disabled = "disabled" }) @*read-only*@
+    <div class="row">
+
+        <div class="addLocsPanel span5">
+            <div class="control-group">
+                <div class="controls">
+                    There are <span id="nrAddLocs">@Model.NumberOfAdditionalLocations</span> Additional Locations for this order.
+                    @{
+    if (Model.AdditionalLocationsAvailableOnLoad)
+    {
+        <button id="addLocationsButton" class="btn btn-default btn-small">add more?</button>
+    }
+    else
+    {
+        <button id="addLocationsButton" class="btn btn-default btn-small" disabled="disabled">add more?</button>
+    }
+                    }
+                </div>
+                @Html.Raw(Model.AdditionalLocationsRenderer.ToString())
             </div>
-            <div class="controls">
-                @Html.TextBoxFor(m => m.WebUser.FullName, new { id = "UserEmail", disabled = "disabled" }) @*read-only*@
-            </div>
-            <div class="controls">
-                @Html.TextBoxFor(m => m.PhoneNumber, new { id = "UserEmail", disabled = "disabled" }) @*read-only*@
-                @Html.ActionLink("Edited User Details", "edituser", "account", new { id = @Model.UserId, returnUrl = "/Admin/ManageOrder/" + Model.Id }, null)
+            <div class="control-group">
+                <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions">Total Additional Locations Price:</label>
+                <div class="controls">
+                    @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions, new { id = "TotalCostOfOptionsText", disabled = "disabled" }) @*read-only*@
+                    @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions) @* Required for POST. TextBoxFor won't ModelBind *@
+                </div>
             </div>
         </div>
-    </div>    
+    </div>
     <div id="SubmitPanel" class="span2">
         <div class="control-group">
             <div class="controls">
