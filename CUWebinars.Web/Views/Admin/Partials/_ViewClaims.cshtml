@@ -1,0 +1,21 @@
+﻿@model ClaimsViewModel
+           
+<table id="claimsTable" class="table table-striped">
+    
+    <tr>
+        <th>Claim</th>
+        <th>Value</th>
+        <th>Delete Claim</th>
+    </tr>
+
+    @{
+        foreach (var userClaim in Model.UserClaims)
+        {
+            <tr>
+                <td>@userClaim.Type</td>
+                <td>@userClaim.Value</td>
+                <td><i class="icon icon-trash trashIcon"></i></td>
+            </tr>
+        }
+    }
+</table>
