@@ -4,61 +4,86 @@
     ViewBag.Title = "ClaimsManagement";
 }
 @Styles.Render("~/Content/create-order-details")
+@Styles.Render("~/Content/claims-management")
 
-<div id="mainContentWrap" class="container">
+<div id="mainContentWrap" class="container bufferBottom30">
 
     <div class="legendImitator">Claims Management</div>
-
-    @using (Html.BeginForm("ClaimsManagement", "Admin", FormMethod.Post, new { id = "addClaimForm" }))
+    
+    @using (Html.BeginForm("GetClaimsForUser", "admin", FormMethod.Post, new { id = "popClaimsForm" }))
     {
         @Html.AntiForgeryToken()
-        @Html.ValidationSummary("There have been some errors:", new { id = "addClaimSummary" })
+        
+        <label for="UserEmail">User Email</label><input id="emailInput" class="input input-xlarge" placeholder="Enter email address" type="email" /><br/>
+        <button id="popClaims" class="btn btn-default">Populate Claims</button>
+    }
 
-        @Html.HiddenFor(m => m.NewClaimType)
+    <ul class="nav nav-tabs" id="mgementTabs">
+        <li id="viewClaimsTab" class="active" ><a href="#viewClaims" data-toggle="tab">View Claims</a></li>
+        <li id="addClaimsTab"><a href="#addClaims" data-toggle="tab">Add Claim</a></li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" id="viewClaims">
+            <div id="viewClaimsPanel">
+                <span class="text text-info">Claims will be displayed here</span>
+            </div>
+        </div>
+        <div class="tab-pane" id="addClaims">
+            <div id="addClaimFormWrapper" class="initialHide">
+                @using (Html.BeginForm("ClaimsManagement", "Admin", FormMethod.Post, new { id = "addClaimForm" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary("There have been some errors:", new { id = "addClaimSummary" })
 
+                    @Html.HiddenFor(m => m.NewClaimType)
+
+                    <div class="row">
+                        <div class="span4">
+                            @Html.LabelFor(m => m.UserEmail)
+                            @Html.EditorFor(m => m.UserEmail)
+                            @Html.ValidationMessageFor(m => m.UserEmail)
+                        </div>
+                    </div>
+    <div class="well well-large claimsBox">
         <div class="row">
             <div class="span4">
-                @Html.LabelFor(m => m.UserEmail)
-                @Html.EditorFor(m => m.UserEmail)
-                @Html.ValidationMessageFor(m => m.UserEmail)
-            </div>
-        </div>
-        <div class="well well-large" style="border: 1px solid #d4d4d4;padding:10px;">
-            <div class="row">
-                <div class="span4">
-                    <div id="stockClaimsWrapper">
-                        @Html.LabelFor(m => m.TtsClaimTypes)
-                        @Html.DropDownListFor(m => m.SelectedClaimType, new SelectList(Model.TtsClaimTypes, "Value", "Text"), "Choose a Claim", new { @class = "darkText", id = "ttsClaimType" })
-                        <input type="checkbox" id="useCustomFromListCheck" checked /> &nbsp;use this
-                    </div>
-                </div>
-                <div class="span4">
-                    <div id="stockClaimsWrapper">
-                        @Html.LabelFor(m => m.ClaimTypes)
-                        @Html.DropDownListFor(m => m.SelectedClaimType, new SelectList(Model.ClaimTypes, "Value", "Text"), "Choose a Claim", new { @class = "darkText", id = "dotNetClaimType", disabled = "disabled" })
-                        <input type="checkbox" id="useFrameworkCheck" /> &nbsp;use this
-                    </div>
+                <div id="stockClaimsWrapper">
+                    @Html.LabelFor(m => m.TtsClaimTypes)
+                    @Html.DropDownListFor(m => m.SelectedClaimType, new SelectList(Model.TtsClaimTypes, "Value", "Text"), "Choose a Claim", new { @class = "darkText", id = "ttsClaimType" })
+                    <input type="checkbox" id="useCustomFromListCheck" checked /> &nbsp;use this
                 </div>
             </div>
-
-            <div class="row">
-                <div id="customClaimWrapper" class="span4">
-                    @Html.LabelFor(m => m.CustomClaimType)
-                    @Html.TextBoxFor(m => m.CustomClaimType, new { disabled = "disabled" })
-                    <input type="checkbox" id="useCustomFromTextCheck" /> &nbsp;use this
+            <div class="span4">
+                <div id="stockClaimsWrapper">
+                    @Html.LabelFor(m => m.ClaimTypes)
+                    @Html.DropDownListFor(m => m.SelectedClaimType, new SelectList(Model.ClaimTypes, "Value", "Text"), "Choose a Claim", new { @class = "darkText", id = "dotNetClaimType", disabled = "disabled" })
+                    <input type="checkbox" id="useFrameworkCheck" /> &nbsp;use this
                 </div>
             </div>
         </div>
 
+        <div class="row">
+            <div id="customClaimWrapper" class="span4">
+                @Html.LabelFor(m => m.CustomClaimType)
+                @Html.TextBoxFor(m => m.CustomClaimType, new { disabled = "disabled" })
+                <input type="checkbox" id="useCustomFromTextCheck" /> &nbsp;use this
+            </div>
+        </div>
+    </div>
 
-        @Html.LabelFor(m => m.NewClaimValue)
-        @Html.EditorFor(m => m.NewClaimValue)
-        @Html.ValidationMessageFor(m => m.NewClaimValue)
 
-        <button id="createClaimButton" class="btn btn-default">Create Claim</button><div id="addClaimMsgLabelWrap" class="initialHide"></div>
-        
-        <div id="validationErors"></div>
-    }
+                    @Html.LabelFor(m => m.NewClaimValue)
+                    @Html.EditorFor(m => m.NewClaimValue)
+                    @Html.ValidationMessageFor(m => m.NewClaimValue)
+
+                    <button id="createClaimButton" class="btn btn-default">Create Claim</button>
+                    <div id="addClaimMsgLabelWrap" class="initialHide"></div>
+
+                    <div id="validationErors"></div>
+                }
+            </div>
+        </div>
+    </div>
 </div>
 
 @section scripts {

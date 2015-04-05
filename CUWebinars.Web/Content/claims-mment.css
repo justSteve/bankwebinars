@@ -1,0 +1,14 @@
+﻿div.bufferBottom30 {
+    padding-bottom: 30px;
+}
+
+div.claimsBox {
+    border: 1px solid #d4d4d4;
+    padding:10px;
+}
+
+i.trashIcon {
+    text-align: center;
+    cursor: pointer;
+    background-position: 14px 14px;
+}

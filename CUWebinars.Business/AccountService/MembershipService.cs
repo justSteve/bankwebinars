@@ -300,6 +300,12 @@ namespace CUWebinars.Business.AccountService
             return newInstitution;
         }
 
+        public void RemoveClaim(string tenant, string email, string claim)
+        {
+            var userAccount = GetUserAccountByEmail(tenant, email);
+            _userAccountService.RemoveClaim(userAccount.ID, claim);
+        }
+
         public void ResetPassword(string tenant, string email)
         {
             try

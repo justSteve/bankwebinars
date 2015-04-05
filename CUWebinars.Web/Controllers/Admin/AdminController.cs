@@ -358,6 +358,9 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
         [System.Web.Mvc.HttpPost]
+        [ValidateJsonAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
+
         public ActionResult ClaimsManagement(AddClaimInputModel model)
         {
             if (ModelState.IsValid)
@@ -387,6 +390,31 @@ namespace CUWebinars.Web.Controllers.Admin
             }
 
             return this.ModelStateJson(ModelState);
+        }
+
+        [HttpPost]
+        [ValidateJsonAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
+        public PartialViewResult GetClaimsForUser(string email)
+        {
+            try
+            {
+                var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, email);
+
+                if(ReferenceEquals(userAccount, null))
+                    return PartialView("~/Views/Admin/Partials/_ServerError.cshtml", 
+                        string.Format("There's no User in the system with the email {0}", email)
+                        );
+
+                var claimsViewModel = new ClaimsViewModel{ UserClaims = userAccount.Claims };
+
+                return PartialView("~/Views/Admin/Partials/_ViewClaims.cshtml", claimsViewModel);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException(string.Format("GetClaimsForUser. Session | {0}", _appHelper.GetUserAuditInfo()), exception);
+                return PartialView("~/Views/Admin/Partials/_ServerError.cshtml");
+            }
         }
 
         public PartialViewResult GetAdditionalLocationByOrderId(int? id = null)
@@ -1225,6 +1253,14 @@ namespace CUWebinars.Web.Controllers.Admin
             };
 
             return PartialView("~/Views/Admin/Home/_PasswordResetConfirm.cshtml", changePasswordFromResetKeyInputModel);
+        }
+
+        [HttpPost]
+        public ActionResult DeleteClaim(string email, string claim)
+        {
+            _membershipService.RemoveClaim(_globalConfig.Tenant, email, claim);
+
+            return Json(new { Result = WebUiConstants.Success});
         }
 
         [System.Web.Mvc.HttpPost]
