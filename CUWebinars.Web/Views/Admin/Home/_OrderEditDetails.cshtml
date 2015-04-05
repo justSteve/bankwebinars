@@ -1,6 +1,10 @@
 ﻿@using System.Activities.Statements
+@using Ninject
 @model ManageOrderEditModel
+@{
 
+    var myRow = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+}
 
 @using (Html.BeginForm("ManageOrder", "Admin", FormMethod.Post, new { id = "manageOrderForm" }))
 {
@@ -8,18 +12,17 @@
 
     @Html.AntiForgeryToken()
     <div class="row navbar">
-        <div class="span7 navbar-inner">
+        <div class="span6 navbar-inner">
             <ul class="nav" aria-labelledby="dLabel">
-                <li><a tabindex="-1" href="#deleteOrder" role="button" data-toggle="modal">DeleteOrderLabel</a></li>
                 <li><a tabindex="-1" href="#" onclick="payByCC(); return true;" role="button" data-toggle="modal">Submit Payment</a></li>
                 <li><a tabindex="-1" href="#changeAssignedUser" role="button" data-toggle="modal">Assign to Different User</a></li>
-                <li><a tabindex="-1" href="#changeAssignedAffiliate" role="button" data-toggle="modal">Change Credited Affiliate</a></li>
+                <li><a tabindex="-1" href="#changeAssignedAffiliate" role="button" data-toggle="modal">Credited to @Model.AffiliateName Change?</a></li>
             </ul>
         </div>
-        <div class="span3">
-            Origin:
+        <div class="span2">
+            Origin: @Model.Order.Origin
             <br />
-            Affiliate:
+            Affiliate: @Model.Order.idAffiliate
         </div>
     </div>
     <div class="row">
@@ -73,14 +76,24 @@
                 </div>
             </div>
             <div id="postEventClaim">
-                <label for="PostEvent">Extend Access to Post Event Materials to:</label>
-                @*@Html.Partial("~/Views/Cart/Partials/_HasPostEventAccess.cshtml", Model.DisplayOptionsInDropDownViewModel)*@
+                @if (Model.PostEventAccessExpires < DateTime.Now)
+                {
+                    <label for="PostEventAccess">Access to PostEvent Materials:</label>
+                    <input type="text" placeholder="Extend Access" /><a tabindex="-1" href="#ExtendPostEventAccessModal" class="btn btn-mini" role="button" data-toggle="modal">Extend Access</a>
+                }
+                else
+                {
+                    <label for="PostEvent">Post Event Expires:</label>
+                    @Model.PostEventAccessExpires.ToShortDateString()
+                    <a tabindex="-1" href="#ExtendPostEventAccessModal" class="btn btn-mini" role="button" data-toggle="modal">Extend Access</a>
+
+                }
             </div>
         </div>
     </div>
     <div class="row">
 
-        <div class="addLocsPanel span5">
+        <div class="addLocsPanel span4">
             <div class="control-group">
                 <div class="controls">
                     There are <span id="nrAddLocs">@Model.NumberOfAdditionalLocations</span> Additional Locations for this order.
@@ -105,15 +118,15 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div id="SubmitPanel" class="span2">
-        <div class="control-group">
-            <div class="controls">
-                <button id="editOrderSubmitButton" class="btn btn-primary">Submit Edited Details</button>
+
+        <div id="SubmitPanel" class="span2">
+            <div class="control-group">
+                <div class="controls">
+                    <button id="editOrderSubmitButton" class="btn btn-primary">Submit Edited Details</button>
+                </div>
             </div>
         </div>
     </div>
-
     @Html.HiddenFor(m => m.CostPerAdditionalLocation)
     @Html.HiddenFor(m => m.Id)
     @Html.HiddenFor(m => m.UserId)
@@ -124,5 +137,71 @@
     @Html.HiddenFor(m => m.DisplayRowPriceViewModel.Price)
     @Html.HiddenFor(m => m.DisplayRowPriceViewModel.RowPrice)
     @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.FlatOff)
-
 }
+
+<div id="changeAssignedAffiliate" class="modal hide fade">
+    @using (Html.BeginForm("SetAffiliateAssignedToOrder", "Registrations", FormMethod.Post, new { id = "frmChangeAffiliate" }))
+    {
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Change Affiliate Credited To Order:</h3>
+    </div>
+    <div class="modal-body">
+        @{
+
+            @*<p>
+                    <b>Choose Affiliate:</b>
+                    @Html.DropDownList("assignedAffiliate", AppHelper.GetListOfAffiliates(Model.OrderRow.Order.Affiliate.ID),
+                                           new { onchange = "document.changeAffiliateForm.submit();" })
+                    <input type="hidden" name="ID" value="@Model.OrderRow.ID" />
+                </p>*@
+        }
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <input type="submit" class="btn btn-primary" value="Save Changes" />
+    </div>
+    }
+</div>
+
+<div id="changeAssignedUser" class="modal hide fade">
+    @using (Html.BeginForm("SetUserAssignedToOrder", "Admin", FormMethod.Post, new { id = "frmSetUserAssignedToOrder" }))
+    {
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Change User Assigned To Order:</h3>
+    </div>
+    <div class="modal-body">
+
+        <input type="hidden" name="orderID" value="@Model.Order.idOrder" />
+        <input type="hidden" name="migrateOrder" value="one" />
+        <input type="text" id="targetUserID" name="targetUserID" value="Targeted User ID" />
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <input type="button" name="moveOne" class="btn btn-primary" disabled="disabled" value="Just This Order" />
+        <input type="button" name="moveAll" disabled="disabled" class="btn btn-primary" value="Change All" />
+    </div>
+    }
+</div>
+
+
+<div id="ExtendPostEventAccessModal" class="modal hide fade">
+    @using (Html.BeginForm("ExtendPostEventAccess", "Account", FormMethod.Post, new { id = "frmExtendPostEventAccess" }))
+    {
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3>Enter Expiration Date:</h3>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" name="orderID" value="@Model.Order.idOrder" />
+            <input type="text" id="newExpiryDate" name="newExpiryDate" placeholder="Expires On" />
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            <input type="submit" class="btn btn-primary" value="Submit" />
+        </div>
+    }
+</div>

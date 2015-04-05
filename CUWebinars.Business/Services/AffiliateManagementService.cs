@@ -57,12 +57,12 @@ namespace CUWebinars.Business.Services
 
         public IQueryable<Affiliate> GetAffiliates()
         {
-            throw new NotImplementedException();
+            return _affiliateRepository.GetAffiliates();
         }
 
         public Affiliate GetCurrentAffiliate()
         {
-            throw new NotImplementedException();
+            return _affiliateRepository.GetCurrentAffiliate();
         }
 
         public Affiliate FindById(int id)
