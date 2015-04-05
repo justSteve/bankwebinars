@@ -11,33 +11,24 @@
 </style>
 
 @{
-    ViewBag.Title = "ManageOrder";
+    ViewBag.Title = "Edit Order";
 }
 
 <div class="container">
-    <div class="legendImitator">Manage Order</div>
-
-    <div style="display: inline-block;vertical-align: top;">
-        <div class="control-group">
-            <label class="control-label" for="orderIdInput">Enter the order id:</label>
-            <div class="controls">
-                <input type="text" id="orderIdInput" value="@Model.Id" />
-            </div>
-            <div class="control-group">
-                <div class="controls">
-                    <button id="getOrderButton" class="btn">Get Order</button>
-                </div>
+    <div class="row">
+        <div class="legendImitator">
+            Edit Order<div class="pull-right">
+                <input type="text" style="width: 75px; margin-top: 8px;" id="orderIdInput" value="@Model.Id" />
+                <button id="getOrderButton" class="btn">Lookup Order</button>
             </div>
         </div>
-    </div>
-
-    <div id="manageOrderWrapper">
-        <div id="orderRelatedFields">
-            @Html.Partial("~/Views/Admin/Home/_OrderEditDetails.cshtml", Model)
+        <div id="manageOrderWrapper span8">
+            <div style="padding: 0;" id="orderRelatedFields">
+                @Html.Partial("~/Views/Admin/Home/_OrderEditDetails.cshtml", Model)
+            </div>
         </div>
     </div>
 </div>
-
 @section scripts {
     @Scripts.Render("~/bundles/manage-order-from-details")
 }

@@ -39,9 +39,9 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.WhoAttend)
                             .IsRequired();
 
-            Property(t => t.RecordingUrl)
-                            .IsRequired()
-                            .HasMaxLength(300);
+            //Property(t => t.RecordingUrl)
+            //                .IsRequired()
+            //                .HasMaxLength(300);
 
             Property(t => t.ceu)
                             .HasMaxLength(1000);

@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Constants;
+﻿using System.Collections.Generic;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.CQS;
 using CUWebinars.Business.CQS.Commands;
@@ -7,6 +8,7 @@ using CUWebinars.Business.Models;
 using CUWebinars.Web.Membership;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
+using Microsoft.VisualBasic.FileIO;
 using Ninject.Extensions.Logging;
 using System;
 using System.Diagnostics;
@@ -22,7 +24,8 @@ namespace CUWebinars.Web.Core.Orchestrators
         private readonly ILogger _logger;
         private bool _disposed;
 
-        public OrderControllerOrchestrator(IQueryProcessor queryProcessor, ICommandProcessor commandProcessor, IStateService stateService, ILogger logger)
+        public OrderControllerOrchestrator(IQueryProcessor queryProcessor, ICommandProcessor commandProcessor,
+            IStateService stateService, ILogger logger)
         {
             _queryProcessor = queryProcessor;
             _commandProcessor = commandProcessor;
@@ -31,10 +34,10 @@ namespace CUWebinars.Web.Core.Orchestrators
         }
 
         public int MigrateOrder(MigrateOrderModel migrateOrderModel,
-                    string email,
-                    MigratorQueryResult migratorQueryResult,
-                    string verificationKey,
-                    string confirmChangeEmailUrl)
+            string email,
+            MigratorQueryResult migratorQueryResult,
+            string verificationKey,
+            string confirmChangeEmailUrl)
         {
             var migrateOrderRowCommand = new MigrateOrderRowCommand
             {
@@ -43,7 +46,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 Name = "c/o " + migrateOrderModel.FirstName + " " + migrateOrderModel.LastName,
                 RegistrationType = migrateOrderModel.idRegType,
                 Discount = migrateOrderModel.DiscountCode,
-                OrderDate =  migrateOrderModel.OrderDate,
+                OrderDate = migrateOrderModel.OrderDate,
                 Webinar = migratorQueryResult.Webinar
             };
 
@@ -114,13 +117,15 @@ namespace CUWebinars.Web.Core.Orchestrators
                 WebUser = importQueryResult.WebUser,
                 AdditionalLocationsString = ImportOrderModel.AdditionalLocationsString
             };
-            
+
             _commandProcessor.Execute(ImportOrderCommand);
 
             return ImportOrderCommand.OrderId;
         }
 
-        public int CreateNewOrder(IncomingOrderModel incomingOrderModel, string email, OrderManagementQueryResult orderManagementQueryResult, string verificationKey, string confirmChangeEmailUrl, bool userAlreadyExists)
+        public int CreateNewOrder(IncomingOrderModel incomingOrderModel, string email,
+            OrderManagementQueryResult orderManagementQueryResult, string verificationKey, string confirmChangeEmailUrl,
+            bool userAlreadyExists)
         {
             var addOrderRowCommand = new AddOrderRowCommand
             {
@@ -141,7 +146,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 FirstName = incomingOrderModel.FirstName.Trim(),
                 LastName = incomingOrderModel.LastName.Trim(),
                 OrderRow = addOrderRowCommand.OrderRow, // out parameter of addOrderRowCommand command
-                OrderGenesis = userAlreadyExists ? OrderGenesis.CreatedViaCartByExistingUser : OrderGenesis.CreatedViaCartByNewUser,
+                OrderGenesis =
+                    userAlreadyExists ? OrderGenesis.CreatedViaCartByExistingUser : OrderGenesis.CreatedViaCartByNewUser,
                 ShippingAddress = incomingOrderModel.ShippingAddress,
                 VerificationKey = verificationKey,
                 Webinar = orderManagementQueryResult.Webinar,
@@ -301,7 +307,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             _commandProcessor.Execute(registerNewAccountCommand);
 
-            Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey), "There's no reason session should not have a value for the VerificationKey at this point ");
+            Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey),
+                "There's no reason session should not have a value for the VerificationKey at this point ");
 
             return registerNewAccountCommand.WebUser; //  assign out parameter for later use
         }
@@ -338,7 +345,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             _commandProcessor.Execute(registerNewAccountCommand);
 
             Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey),
-    "There's no reason session should not have a value for the VerificationKey at this point ");
+                "There's no reason session should not have a value for the VerificationKey at this point ");
 
             return registerNewAccountCommand.WebUser; //  assign out parameter for later use
         }
@@ -377,7 +384,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             _commandProcessor.Execute(registerNewAccountCommand);
 
             Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey),
-    "There's no reason session should not have a value for the VerificationKey at this point ");
+                "There's no reason session should not have a value for the VerificationKey at this point ");
 
             return registerNewAccountCommand.WebUser; //  assign out parameter for later use
         }
@@ -400,6 +407,101 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 _disposed = true;
             }
+        }
+
+        public Order ChangeRegistrationType(int ID, int newRegType)
+        {
+            //OrderRow row = OrderFacade.Instance.LoadOrderRow(ID);
+
+            //var oldRegType = row.RegistrationType;
+            //var oldCost = row.Order.Total;
+
+            //row.RegistrationType = (RegistrationType) newRegType;
+
+            //string buildMessage = "Edited RegType from: " + oldRegType + " to: " + row.RegistrationType.ToString() +
+            //                      " by: " + UserFacade.Instance.GetCurrentUser().FullName + " on: " +
+            //                      DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + "<br>";
+
+
+            //row.Order.GeneralComments = row.Order.GeneralComments + buildMessage;
+            //Logger.Instance.LogMessage(buildMessage);
+
+            //TempData["EditResult"] = "Order Successfully Updated!";
+            //TempData["alertType"] = "alert-success";
+
+
+            //if (row.RegistrationType == RegistrationType.SubscriptionTrial
+            //    || row.RegistrationType == RegistrationType.Twelve_Month_Subscription
+            //    || row.RegistrationType == RegistrationType.Six_Month_Subscription
+            //    )
+            //{
+            //    if (row.Discount == null)
+            //    {
+            //        Logger.Instance.LogMessage("ERROR: Invalid Subscription data on ID: " + ID);
+            //        TempData["EditResult"] = "ERROR: Invalid Subscription data on ID: " + ID;
+            //        TempData["alertType"] = "alert-error";
+            //        return RedirectToAction("Edit", new {ID = ID});
+            //    }
+            //    var today = row.Discount.DateValidTo;
+
+            //    switch (row.RegistrationType)
+            //    {
+            //        case RegistrationType.SubscriptionTrial:
+            //            row.Discount.DateValidTo = new DateTime(today.Year, today.Month + 1, 1).AddDays(-1);
+
+            //            break;
+            //        case RegistrationType.Six_Month_Subscription:
+            //            row.Discount.DateValidTo = new DateTime(today.Year, today.Month + 6, 1).AddDays(-1);
+
+            //            break;
+            //        case RegistrationType.Twelve_Month_Subscription:
+            //            row.Discount.DateValidTo = new DateTime(today.Year, today.Month + 12, 1).AddDays(-1);
+
+            //            break;
+            //        default:
+            //            Logger.Instance.LogMessage("ERROR: Invalid Subscription data on ID: " + ID);
+            //            TempData["EditResult"] = "ERROR: Invalid Subscription data on ID: " + ID;
+            //            TempData["alertType"] = "alert-error";
+            //            return RedirectToAction("Edit", new {ID = ID});
+            //            break;
+
+            //    }
+
+            //}
+            //OrderFacade.Instance.Save(row.Order);
+            //var showDifference = oldCost - row.Order.Total;
+            //if (oldCost != row.Order.Total)
+            //{
+            //    try
+            //    {
+            //        var BuildChangedOrderRow = new Dictionary<string, string>
+            //        {
+            //            {"Date", DateTime.Now.ToShortDateString()},
+            //            {"Order", row.Order.ID.ToString()},
+            //            {"Individual", row.Order.FullName},
+            //            {
+            //                "Change",
+            //                oldRegType.ToString().Replace("_", " ") + " to " + row.RegistrationType.ToString()
+            //            },
+            //            {"OriginalCost", oldCost.ToString()},
+            //            {"UpdatedCost", row.Order.Total.ToString()},
+            //            {"Affiliate", row.Order.Affiliate.FullName},
+            //            {"Billed", "N"},
+            //            {"Difference", showDifference.ToString("C")},
+            //            {"ChangedBy", UserFacade.Instance.GetCurrentUser().FullName}
+            //        };
+            //       var dataOp = new CUWebinars.Business.Core.DataOperations(null);
+
+            //        dataOp.AddChangedOrder(BuildChangedOrderRow);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        _logger.Fatal("ERROR: ChangeRegistrationType ID: " + ID + " " + ex);
+            //        //TempData["EditResult"] = "Error updating registration type: " + ex.Message;
+            //        //TempData["alertType"] = "alert-error";
+            //    }
+            //}
+            return null;// RedirectToAction("Edit", new {ID = ID});
         }
     }
 }

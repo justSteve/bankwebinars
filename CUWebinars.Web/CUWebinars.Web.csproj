@@ -1576,7 +1576,6 @@
     <Content Include="Views\Webinar\AllActive.cshtml" />
     <Content Include="Views\Webinar\Create.cshtml" />
     <Content Include="Views\Webinar\Delete.cshtml" />
-    <Content Include="Views\Webinar\Edit.cshtml" />
     <Content Include="Views\Webinar\Error.cshtml" />
     <Content Include="Views\Webinar\Index.cshtml" />
     <Content Include="Views\Webinar\ListByTopic.cshtml" />
