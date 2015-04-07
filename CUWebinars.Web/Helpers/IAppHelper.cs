@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Web.Mvc;
+using CUWebinars.Business.Models;
 
 namespace CUWebinars.Web.Helpers
 {
@@ -10,8 +12,10 @@ namespace CUWebinars.Web.Helpers
         /// <returns>City | State based on input zipcode</returns>
         string GetCityStateFromZip(int zipCode);
 
+        SelectList  GetListOfAffiliates(int selectedValue);
         SessionStartInfo GetSessionStartInfo();
         string GetUserAuditInfo();
         List<string> InstitutionAutoComplete(string name, string zip);
+        string GetAffiliateName(int idAffiliate);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections;
+using System.Reflection;
 using System.ServiceModel.Syndication;
 using System.Xml;
 using BrockAllen.MembershipReboot;
@@ -102,12 +103,39 @@ namespace CUWebinars.Web.Controllers.Admin
                     return RedirectToAction("ManageOrder");
 
                 var model = BuildManageOrderEditModel(id.Value);
-
+                var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, _orderManagementService.GetOrderById(id.Value).WebUser.email);
+                
+                model.PostEventAccessExpires = PostEventAccessExpires(userAccount, model.Order);
                 return View(model);
             }
 
             //  should never reach here as RouteConfig will not route here with anything but an integer > 0.
             throw new NullReferenceException("Query string parameter has to be an positive integer for the ManageOrderFromDetails action.");
+        }
+
+        private DateTime PostEventAccessExpires(UserAccount userAccount, Order order)
+        {
+            DateTime expiryDate;
+
+            if (userAccount != null && userAccount.HasClaim(Business.Constants.ClaimTypes.DisplayPostEventMaterials))
+            {
+                var claimsForOrder =
+                    userAccount.Claims.FirstOrDefault(
+                        c => c.Value.ToLower().Contains(order.idOrder.ToString()));
+
+                // extract the date
+                if (claimsForOrder != null)
+                {
+                    var expiryAsString =
+                        claimsForOrder.Value.Substring(claimsForOrder.Value.IndexOf(":") + 1);
+
+                    if (DateTime.TryParse(expiryAsString, out expiryDate))
+                    {
+                        return expiryDate;
+                    }
+                }
+            }
+            return DateTime.MinValue;
         }
 
         private Order ApplyModelChangesToOrder(ManageOrderEditModel model)
@@ -171,6 +199,144 @@ namespace CUWebinars.Web.Controllers.Admin
                 _orderManagementService.AddAdditionalLocation(addedAdditionalLocation);
             }
         }
+
+        [System.Web.Mvc.HttpPost]
+        public ActionResult Delete(int idOrder)
+        {
+
+            return null;
+        }
+
+
+        [System.Web.Mvc.HttpPost]
+        public ActionResult UnDelete(int idOrder)
+        {
+
+            return null;
+        }
+
+        [System.Web.Mvc.HttpPost]
+        public ActionResult SetUserAssignedToOrder()
+        {
+            //IList<ErrorInfo> errors = new List<ErrorInfo>();
+
+            int orderID = 0;
+            int newUserID;
+
+            orderID = Convert.ToInt32(Request["orderID"]);
+            newUserID = Convert.ToInt32(Request["targetUserID"]);
+            if (newUserID < 2)
+            {
+                TempData["EditResult"] = "Invalid UserID";
+                TempData["alertType"] = "alert-error";
+                return RedirectToAction("Edit", new { ID = orderID });
+            }
+
+            if (Request["migrateOrder"] == "moveAll")
+            {
+                IList<Order> ordersToMove =
+                    _orderManagementService.GetOrdersByUserId(_orderManagementService.GetOrderById(orderID).idUser);
+                var i = 0;
+                string numOrdersMigrated = "";
+                string emailOfTargetUser = "";
+                foreach (var order in ordersToMove)
+                {
+
+                    i++;
+                    TempData["migratingOrder"] += TempData["migratingOrder"] + "Migrating " + order.idOrder;
+                    //intent of next line not clear
+                    //if (!UserAssignedToOrder(order.idOrder, newUserID)) return RedirectToAction("Edit", new { ID = orderID });
+                    emailOfTargetUser = order.BillingEmail;
+                    TempData["migratingOrder"] += TempData["migratingOrder"] + " was successful. ";
+                }
+                if (i == 1)
+                {
+                    numOrdersMigrated = "One order was ";
+                }
+                else
+                {
+                    numOrdersMigrated = i + " orders were ";
+                }
+            }
+            //else
+            //{
+            //    //ActionResult redirectToAction;
+            //   // if (!UserAssignedToOrder(orderID, newUserID)) return RedirectToAction("Edit", new { ID = orderID });
+            //}
+
+            return RedirectToAction("Edit", new { ID = orderID });
+        }
+
+        public virtual void ChangeAffiliateOnOrder(Order order, Affiliate newAffiliate, WebUser currentUser)
+        {
+
+            var originalAffiliate = new CUWebinars.Business.Repository.AffiliateRepository().FindByIdWithIncluding(order.idAffiliate);
+            var orderUser = _membershipService.GetUserByEmail(order.BillingEmail);
+
+
+            string buildMessage = "<br>Affiliate changed for order " + order.idOrder + " from " + originalAffiliate.ttsDomain + " to " +
+                                  newAffiliate.ttsDomain + " by " + currentUser.FullName +
+                                  " on " + DateTime.Now.ToShortDateString() +
+                                  "<br>";
+
+            try
+            {
+                _orderManagementService.AssignAffiliateToOrder(newAffiliate, order);
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("ChangeAffiliate: ", ex);
+                order.AdminComments = "<br><h1>Error via ChangeAffiliateOnOrder </h1><p>idOrder=" + order.idOrder + "</p>" + order.AdminComments;
+            }
+
+            order.AdminComments = order.AdminComments + buildMessage;
+            var numRows = _orderManagementService.SaveChanges();
+
+            _logger.Info(buildMessage);
+
+        }
+
+
+        //[AcceptVerbs(HttpVerbs.Post)]
+        //public ActionResult SetAffiliateAssignedToOrder(int idOrder, int assignedAffiliate)
+        //{
+        //    IList<ErrorInfo> errors = new List<ErrorInfo>();
+
+        //    var order = _orderManagementService.GetOrderById(idOrder);
+
+
+        //    var updatedAffiliate = new CUWebinars.Business.Repository.AffiliateRepository().FindByIdWithIncluding(assignedAffiliate));
+
+        //    OrderFacade.Instance.ChangeAffiliateOnOrder(order, updatedAffiliate,
+        //                                                UserFacade.Instance.GetCurrentUser());
+        //    if (errors.Count > 0)
+        //    {
+        //        var e = new RulesException(errors);
+        //        AppHelper.AddErrorsToModel(ModelState, e, "OrderRow");
+        //        Logger.Instance.LogException(e);
+        //    }
+        //    else
+        //    {
+        //        try
+        //        {
+        //            OrderFacade.Instance.Save(order);
+        //            TempData["EditResult"] = "Order Successfully Updated!";
+        //            TempData["alertType"] = "alert-success";
+
+        //            TempData["Message"] = "Update Successful";
+        //        }
+        //        catch (RulesException e)
+        //        {
+        //            AppHelper.AddErrorsToModel(ModelState, e, "OrderRow");
+        //            Logger.Instance.LogMessage("Error SetAffiliate" + e);
+        //        }
+        //    }
+
+        //    //OrderFacade.Instance.UpdateRoyalties( order, originalAffiliate, updatedAffiliate );
+        //    //return View("~/Views/Admin/Registrations/Edit.cshtml", row);
+        //    return RedirectToAction("Edit", new { ID = idOrder });
+        //}
+
 
         public ActionResult ClaimsManagement()
         {
@@ -329,6 +495,8 @@ namespace CUWebinars.Web.Controllers.Admin
                     RowPrice = orderRow.RowPrice
                 },
                 Id = order.idOrder,
+                AffiliateName = _appHelper.GetAffiliateName(order.idAffiliate),
+                Order = order,
                 NumberOfAdditionalLocations = additionalLocationsCount,
                 PhoneNumber = order.BillingPhone,
                 UserId = order.idUser,
@@ -359,7 +527,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 //var userIds = _orderManagementService.GetUserIdsByPartialId(id.Value);
 
 
-                return Json(new {results}, JsonRequestBehavior.AllowGet);
+                return Json(new { results }, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { Error = WebUiConstants.NullValueParameter });
@@ -379,10 +547,10 @@ namespace CUWebinars.Web.Controllers.Admin
                         institution = o.Institution
                     }).Distinct();
 
-                return Json(new {results}, JsonRequestBehavior.AllowGet);
+                return Json(new { results }, JsonRequestBehavior.AllowGet);
             }
 
-            return Json(new {Error = WebUiConstants.NullValueParameter});
+            return Json(new { Error = WebUiConstants.NullValueParameter });
         }
 
         public ActionResult GetOrdersByLastName(string lastName)
@@ -399,10 +567,10 @@ namespace CUWebinars.Web.Controllers.Admin
                         institution = o.Institution
                     }).Distinct();
 
-                return Json(new {results}, JsonRequestBehavior.AllowGet);
+                return Json(new { results }, JsonRequestBehavior.AllowGet);
             }
 
-            return Json(new {Error = WebUiConstants.NullValueParameter});
+            return Json(new { Error = WebUiConstants.NullValueParameter });
         }
 
         private TagBuilder GetRenderer(IList<string> emailAddresses)
@@ -512,7 +680,7 @@ namespace CUWebinars.Web.Controllers.Admin
             }
 
             //TODO: orders that have been migrated are going to have the OrderGenisis over-written by FireOrderSubmittedEvent
-            _orderManagementService.FireOrderSubmittedEvent(order, resending:true);
+            _orderManagementService.FireOrderSubmittedEvent(order, resending: true);
             return Json(new { Result = WebUiConstants.Success });
         }
 
@@ -539,8 +707,8 @@ namespace CUWebinars.Web.Controllers.Admin
             AdditionalLocation nuller = new AdditionalLocation();
 
             if (string.IsNullOrEmpty(order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).JoinURL))
-               _orderManagementService.GenerateRegistrantKey(order, nuller);
-            
+                _orderManagementService.GenerateRegistrantKey(order, nuller);
+
             if (order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count > 0)
             {
                 foreach (var additionalLocation in order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
@@ -678,33 +846,18 @@ namespace CUWebinars.Web.Controllers.Admin
 
         private IEnumerable<Order> GetOrdersWhichAreEligibleForMaterials(IEnumerable<Order> orders)
         {
+            IList<Order> eligableOrders = new Order[0];
             foreach (var order in orders)
             {
                 var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.WebUser.email);
-
-                if (userAccount != null && userAccount.HasClaim(Business.Constants.ClaimTypes.DisplayPostEventMaterials))
+                
+                DateTime expiryDate = PostEventAccessExpires(userAccount, order);
+                if (expiryDate > DateTime.Now)
                 {
-                    var claimsForOrder =
-                        userAccount.Claims.FirstOrDefault(c => c.Value.ToLower().Contains(order.idOrder.ToString()));
-
-                    // extract the date
-                    if (claimsForOrder != null)
-                    {
-                        var expiryAsString =
-                            claimsForOrder.Value.Substring(claimsForOrder.Value.IndexOf(":") + 1);
-
-                        DateTime expiryDate;
-
-                        if (DateTime.TryParse(expiryAsString, out expiryDate))
-                        {
-                            if (DateTime.Today <= expiryDate)
-                            {
-                                yield return order;
-                            }
-                        }
-                    }
+                    eligableOrders.Add(order);
                 }
             }
+            return eligableOrders;
         }
 
 
@@ -770,7 +923,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             if (ReferenceEquals(null, firstRetrievedOrderForWebinar))
                 return File("<html>fail</html>".GenerateStreamFromString(), HtmlMimeType);
-            
+
             var formatter = new PreviewFormatter(new EnvironmentInformation { BaseUrl = HttpRuntime.AppDomainAppPath });
 
             return File(formatter.FormatToString(firstRetrievedOrderForWebinar, "PreviewConnectionInfo").GenerateStreamFromString(), HtmlMimeType);
@@ -813,7 +966,7 @@ namespace CUWebinars.Web.Controllers.Admin
             foreach (var aff in includedAffiliates)
             {
                 if (aff.Value != "on") break;
-                
+
                 model.TimeZone = USTimeZone.Central; // UserFacade.Instance.Load(aff.Key).TimeZone;
                 model.Affiliate = new CUWebinars.Business.Repository.AffiliateRepository().FindByIdWithIncluding(Convert.ToInt32(aff.Key));
                 model.Webinar = _webinarManagementService.GetWebinar(i);
@@ -864,7 +1017,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     model.UpcomingListing = "<h3>Upcoming Webinars</h3>" + upcoming.ToString();
 
                     model.EventBody = model.Webinar.DescriptionLong + "<h2>" + model.Webinar.LearnCaption + "</h2>" + model.Webinar.LearnBody + "<h2>Who Should Attend</h2>" + model.Webinar.WhoAttend + "<h2>" + "About " + model.Webinar.Presenter.WebUser.FullName + "</h2>" + model.Webinar.Presenter.BiographyLong;
-                    
+
                     _orderManagementService.FireSendPerDayPromoEvent(model);
                     var genMsg = new AffPromoMsgViewModel(model.Affiliate.idUserAff, "string here");
                     //if (model.GeneratedMessages != null) model.GeneratedMessages.Add(genMsg);
@@ -929,7 +1082,7 @@ namespace CUWebinars.Web.Controllers.Admin
             model.Webinar = _webinarManagementService.GetWebinar(id);
             model.TimeZone = USTimeZone.Eastern;
             model.Affiliates = new CUWebinars.Business.Repository.AffiliateRepository().GetAffiliatesByPromoType("Daily").ToList();
-            
+
             return View(model);
 
         }
@@ -1040,7 +1193,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
                 catch (NullReferenceException nullReferenceException)
                 {
-                    if(nullReferenceException.Message.Equals(DomainConstants.UserNotFound))
+                    if (nullReferenceException.Message.Equals(DomainConstants.UserNotFound))
                         return Json(new { Result = WebUiConstants.InvalidEmail });
                     ModelState.AddModelError(string.Empty, "Reset Failed");
                     _logger.Error("ManualPasswordReset: {0}", _appHelper.GetUserAuditInfo());
@@ -1115,7 +1268,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     var order = _orderManagementService.GetOrderById(id.Value);
 
-                    if(emails.Contains(","))
+                    if (emails.Contains(","))
                         _orderManagementService.FireAdminEmailSendShippedOrderEvent(order, emails.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
                     else if (emails.Contains(";"))
                         _orderManagementService.FireAdminEmailSendShippedOrderEvent(order, emails.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
@@ -1159,7 +1312,7 @@ namespace CUWebinars.Web.Controllers.Admin
                             o => o.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType.ShowLiveNotifications.ToLower() == "yes"
                         );
 
-                    if(emails.Contains(","))
+                    if (emails.Contains(","))
                         _orderManagementService.FireAdminEmailConnectionInfoHandler(firstRetrievedOrderForWebinar, emails.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
                     else if (emails.Contains(";"))
                         _orderManagementService.FireAdminEmailConnectionInfoHandler(firstRetrievedOrderForWebinar, emails.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
@@ -1352,7 +1505,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return new List<Address> { billingAddress, shippingAddress };
         }
-        
+
         private static IEnumerable<SelectListItem> GetClaimTypesFromClass(Type type, ConstantType typeOfConstant)
         {
             IEnumerable<FieldInfo> claimTypes = null;
@@ -1360,24 +1513,24 @@ namespace CUWebinars.Web.Controllers.Admin
             switch (typeOfConstant)
             {
                 case ConstantType.Constant:
-                {
-                    claimTypes = type.GetFields().Where(f => f.IsLiteral).ToList();
-                    break;
-                }
+                    {
+                        claimTypes = type.GetFields().Where(f => f.IsLiteral).ToList();
+                        break;
+                    }
                 case ConstantType.Readonly:
-                {
-                    claimTypes = type.GetFields(BindingFlags.Public | BindingFlags.Static)
-                        .Where(f => f.FieldType == typeof(string) && f.IsInitOnly)
-                        .ToList();
-                    break;
-                }
+                    {
+                        claimTypes = type.GetFields(BindingFlags.Public | BindingFlags.Static)
+                            .Where(f => f.FieldType == typeof(string) && f.IsInitOnly)
+                            .ToList();
+                        break;
+                    }
                 default:
-                {
-                    throw new NotSupportedException(string.Format("An unsupported option for {0} was passed in.", typeOfConstant));
-                }
+                    {
+                        throw new NotSupportedException(string.Format("An unsupported option for {0} was passed in.", typeOfConstant));
+                    }
             }
 
-            
+
             var typesAsSelectList = new List<SelectListItem>();
             string rawConstant;
 

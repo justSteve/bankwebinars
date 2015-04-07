@@ -7,17 +7,21 @@ using System.Linq;
 using System.Security;
 using System.Text;
 using System.Web;
+using System.Web.Mvc;
 using CUWebinars.Business.Models;
+using CUWebinars.Business.Services;
 
 namespace CUWebinars.Web.Helpers
 {
     public class AppHelper : IAppHelper
     {
         private readonly HttpRequestBase _request;
+        private readonly IAffiliateManagementService _affiliateManagementService;
 
         public AppHelper(HttpRequestBase request)
         {
             _request = request;
+            //_affiliateManagementService = affiliateManagementService;
         }
         public static IEnumerable<int> StringToIntList(string str)
         {
@@ -70,6 +74,12 @@ namespace CUWebinars.Web.Helpers
                 }
             }
         }
+
+        SelectList IAppHelper.GetListOfAffiliates(int selectedValue)
+        {
+            return GetListOfAffiliates(selectedValue);
+        }
+
 
         public static USTimeZone ComputeTimeZone(string offset)
         {
@@ -160,6 +170,19 @@ namespace CUWebinars.Web.Helpers
             return info;
         }
 
+        public static SelectList GetListOfAffiliates(int selectedValue)
+        {
+            IList<Affiliate> affiliates = null;//_aff
+            IDictionary<int, string> affiliatesDictionary = new Dictionary<int, string> { };
+
+            foreach (var affiliate in affiliates)
+            {
+                affiliatesDictionary.Add(affiliate.idUserAff, affiliate.ttsDomain);
+            }
+
+            return new SelectList(affiliatesDictionary, "Key", "Value", (int)selectedValue);
+        }
+
 
         private const string AUDIT_XML_TEMPLATE =
             "<AuditInfo>" +
@@ -207,6 +230,29 @@ namespace CUWebinars.Web.Helpers
                 if (msgReader.HasRows)
                 {
                     value.Add(msgReader[0].ToString());
+                }
+            }
+            return value;
+        }
+
+        public string GetAffiliateName(int idAffiliate)
+        {
+            var _connSproc = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+            _connSproc.Open();
+            SqlCommand cmdGetBody = new SqlCommand(
+                "SELECT ttsDomain FROM dbo.Affiliate WHERE idUserAff = " + idAffiliate, _connSproc);
+
+            cmdGetBody.CommandType = CommandType.Text;
+            // execute the command
+            SqlDataReader msgReader = cmdGetBody.ExecuteReader();
+
+            var value = "";
+
+            while (msgReader.Read())
+            {
+                if (msgReader.HasRows)
+                {
+                    value = msgReader[0].ToString();
                 }
             }
             return value;

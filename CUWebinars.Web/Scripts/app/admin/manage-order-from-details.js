@@ -177,7 +177,8 @@ $(function () {
         ns.logInvalidOperation = ns.toastLogger.getLogFn('ManageOrderFormSubmit', 'error');
     };
 
-    ns.submitForm = function(e) {
+    ns.submitForm = function (e) {
+        
         e.preventDefault();
 
         var emailInputs = ns.wrapperDiv.find('input[type="email"]');
@@ -197,7 +198,8 @@ $(function () {
             return; // if even 1 email input has no email address, stop processing. Remove it or enter an email address.
         }
 
-        // next 4 lines not really required, as those parts of the ViewModel aren't necessary for the POST. But may as well set them, as easy enough to do.
+        // next 4 lines not really required, as those parts of the ViewModel aren't necessary for the POST. 
+        //But may as well set them, as easy enough to do.
         if (ns.numberOfAdditionalLocations > -1) {
             $('#NumberOfAdditionalLocations').val(ns.numberOfAdditionalLocations);
             $('#DisplayRowPriceViewModel_NumberOfAdditionalLocations').val(ns.numberOfAdditionalLocations);
@@ -230,7 +232,7 @@ $(function () {
     };
 
     ns.changeRegType = function(e) {
-
+       
         e.preventDefault();
 
         var self = this;
@@ -291,7 +293,7 @@ $(function () {
     };
 
     ns.adjustTotalPrice = function() {
-
+        alert("hit");
         var newTotalPrice = ns.totalPriceSansDiscount - (ns.totalDiscount || 0);
 
         ns.totalPrice = newTotalPrice;
