@@ -154,6 +154,7 @@ $(function () {
         ns.addAdditionalLocationsButton = $('#addLocationsButton');
         ns.updateAddLocsButton = $('#UpdateAddLocsButton');
         ns.totalOptionsInput = $('DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions');
+        ns.orderRowIdHidden = $('input[name="DisplayOptionsInDropDownViewModel.OrderRowId"]');
 
         ns.regTypesList = $('#RegType');
         ns.orderRowId = $('#manageOrderForm input[name="ID"]').val();
@@ -258,17 +259,81 @@ $(function () {
             if (data.shouldShow === 'Yes') {
                 ns.addAdditionalLocationsButton.removeAttr('disabled');
                 $('#collectAdditionalLocations').empty().html('<span id="naText" class="text text-info">No additionalLocations yet</span>');
+//                var typeChosenCurrent = $.trim($('#RegType option:selected').text());
+                ns.updatePriceOnNewSelection(ns.regTypesList.val(), ns.totalPrice, ns.regTypesList);
+
+
             } else if (data.shouldShow === 'No') {
                 //console.log('hide  CheckIfAddLocShouldHide');
                 $('#collectAdditionalLocations').empty().html('<span id="naText" class="text text-info">Not applicable for this RegType</span>');
                 ns.numberOfAdditionalLocations = 0;
                 ns.numberAddLocsLabel.text(0);
                 ns.addAdditionalLocationsButton.attr('disabled', 'disabled');
+
+                var url = '/Cart/RemoveAdditionalLocationsFromOrder';
+                var payLoad = {
+                    idOrderRow: $('input[name="DisplayOptionsInDropDownViewModel.OrderRowId"]').val()
+                };
+
+                $.ajax({
+                    type: 'POST',
+                    contentType: constants.JsonContentType,
+                    cache: false,
+                    url: url,
+                    dataType: constants.JsonDataType,
+                    data: JSON.stringify(payLoad),
+                }).done(function (data) {
+
+                    if (data.Result === 'Success') {
+
+                        var totalPrice = ns.totalPrice - ns.allAddLocsPrice;
+
+                        ns.updatePriceOnNewSelection(ns.regTypesList.val(), totalPrice, ns.regTypesList);
+                    }
+                });
+
             } else if (!data.isSuccessful) {
                 formProcessor.lightUpValidationSummary('manageOrderFormValSummary', data);
             }
         }).fail(function(data) {
             $('#orderRelatedFields').html('<div class="text-error">There has been a transport-level error, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+        });
+    };
+
+    ns.updatePriceOnNewSelection = function(registrationTypeId, totalPrice, dropDown) {
+
+        ns.gatherPricingData();
+
+        var url = '/Cart/UpdateOrderDetails';
+
+        var payLoad = {
+            idOrderRow: $('input[name="DisplayOptionsInDropDownViewModel.OrderRowId"]').val(),
+            idRegType: registrationTypeId
+        };
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: url,
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payLoad),
+        }).done(function(data) {
+
+            if (data) {
+
+                $('#UnitPriceText').val(data.BasePrice);
+                $('#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPriceUnitPriceText').val(data.BasePrice);
+                $('#TotalDiscountText').val(data.Discount);
+                $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount').val(data.Discount);
+                $('#TotalCostOfOptionsText').val(data.OptionsPrice);
+                $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions').val(data.OptionsPrice);
+                $('#TotalOrderPriceText').val(data.Total);
+                $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice').val(data.Total);
+            }
+
+            dropDown.removeAttr('disabled');
+            //$('#discountSpinner').remove();
         });
     };
 
