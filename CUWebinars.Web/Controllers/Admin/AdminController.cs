@@ -136,14 +136,11 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             else
             {
-                foreach (var addLocs in model.AdditionalLocations)
+                foreach (var additionalLocation in 
+                    model.AdditionalLocations.Where(
+                        al => !orderRow.AdditionalLocation.Select(eal => eal.Email).Contains(al.Email)))
                 {
-                    foreach (var additionalLocation in orderRow.AdditionalLocation)
-                    {
-                        if (addLocs.Email.Trim().Equals(additionalLocation.Email.Trim(), StringComparison.OrdinalIgnoreCase))
-                            break;
-                        deletedAdditionalLocations.Add(additionalLocation);
-                    }
+                    addedAdditionalLocations.Add(additionalLocation);
                 }
             }
 
@@ -153,14 +150,12 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             else
             {
-                foreach (var additionalLocation in orderRow.AdditionalLocation)
+                foreach (var additionalLocation 
+                    in
+                    orderRow.AdditionalLocation.Where(
+                        al => !model.AdditionalLocations.Select(mal => mal.Email).Contains(al.Email)))
                 {
-                    foreach (var addLocs in model.AdditionalLocations)
-                    {
-                        if (addLocs.Email.Trim().Equals(additionalLocation.Email.Trim(), StringComparison.OrdinalIgnoreCase))
-                            break;
-                        addedAdditionalLocations.Add(additionalLocation);
-                    }
+                    deletedAdditionalLocations.Add(additionalLocation);
                 }
             }
 
@@ -1297,6 +1292,22 @@ namespace CUWebinars.Web.Controllers.Admin
             var returnPayload = JsonConvert.SerializeObject(incomingOrderModels);
 
             return Json(returnPayload, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult UpdateAdditionalLocations(int orderRowId, IEnumerable<AdditionalLocation> additionalLocations)
+        {
+            var orderRow = _orderManagementService.GetOrderRowById(orderRowId);
+
+            var manageOrderEditModel = new ManageOrderEditModel
+            {
+                AdditionalLocations = additionalLocations
+            };
+
+            SyncAdditionalLocations(manageOrderEditModel, orderRow);
+
+            _orderManagementService.SaveChanges();
+
+            return Json(new { Result = WebUiConstants.Success });
         }
 
         private List<Address> ProcessAddresses(RegisterViewModel registerViewModel)

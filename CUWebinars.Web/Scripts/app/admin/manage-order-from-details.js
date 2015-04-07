@@ -41,11 +41,41 @@ $(function () {
     MANAGE.addLocsTotalPrice = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions').val();
 
     MANAGE.wireUpTrashIcons();
+
+    ns.getOrderButton.on('click', function (e) {
+
+        e.preventDefault();
+
+        ns.idOrder = ns.orderIdInput.val();
+
+        // loading spinner
+        ns.orderIdInput.after('<span id="spinWrapper">&nbsp;<span class="label label-info"><i id="spinner" class="icon-spinner icon-spin"></i>&nbsp;loading...</span></span>');
+        if ($('#errorDiv').length > 0)
+            $('#errorDiv').remove();
+
+        $('#orderRelatedFields').load('/Admin/GetOrderDetails/' + ns.idOrder, function (response, status, xhr) {
+
+            if (status === 'error') {
+                $(this).html('<div id="errorDiv" class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance. <br />' + (xhr.statusText === 'Internal Server Error' ? '' : xhr.statusText) + '</div>');
+            } else {
+                ns.primeDomVariables();
+                ns.wireUpHandlers();
+
+                ns.addLocsUnitPrice = $('#CostPerAdditionalLocation').val();
+                ns.addLocsTotalPrice = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions').val();
+
+                ns.wireUpTrashIcons();
+            }
+
+            // remove loading spinner
+            $('#spinWrapper').remove();
+        });
+    });
 });
 
 
 // self-invoking function adds methods to MANAGE namespace
-// replace MANAGE with parameter 'ns' as MANAGE is passed in at bottom.
+// replace MANAGE with parameter 'ns' as MANAGE is passed in at bottom in the self-invoking parentheses.
 (function (ns) {
 
     ns.addAdditionalLocation = function(e) {
@@ -118,9 +148,11 @@ $(function () {
 
     ns.primeDomVariables = function() {
 
+        ns.getOrderButton = $('#getOrderButton');
         ns.wrapperDiv = $('#collectAdditionalLocations');
         ns.numberAddLocsLabel = $('#nrAddLocs');
         ns.addAdditionalLocationsButton = $('#addLocationsButton');
+        ns.updateAddLocsButton = $('#UpdateAddLocsButton');
         ns.totalOptionsInput = $('DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions');
 
         ns.regTypesList = $('#RegType');
@@ -240,11 +272,11 @@ $(function () {
 
     ns.wireUpHandlers = function() {
 
-        $('#addLocationsButton').on('click', ns.addAdditionalLocation);
+        ns.addAdditionalLocationsButton.on('click', ns.addAdditionalLocation);
         $('#editOrderSubmitButton').on('click', ns.submitForm);
         $('#applyDiscountButton').on('click', ns.hookUpApplyDiscountLogic);
-        $('#RegType').on('change', ns.changeRegType);
-
+        ns.regTypesList.on('change', ns.changeRegType);
+        ns.updateAddLocsButton.on('click', ns.updateAdditionalLocations);
     };
 
     ns.adjustAdditionalLocationsTotal = function(number) {
@@ -369,6 +401,42 @@ $(function () {
         }).always(function(e) {
             $('#discountSpinner').remove();
             $(self).removeAttr('disabled');
+        });
+    };
+
+    ns.updateAdditionalLocations = function (e) {
+
+        e.preventDefault();
+
+        var emailInputs = ns.wrapperDiv.find('input[type="email"]');
+        var addLocs = [];
+
+        _.each(emailInputs, function(element, index) {
+            addLocs.push({
+                Email: $(element).val()
+            });
+        });
+
+        var payload = {
+            orderRowId: $('input[name="DisplayOptionsInDropDownViewModel.OrderRowId"]').val(),
+            additionalLocations: addLocs
+        };
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: '/admin/UpdateAdditionalLocations',
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payload),
+            //headers: headers,
+            beforeSend: function() {
+                ns.updateAddLocsButton.append('<span id="addLocUpSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+            }
+        }).done(function(data) {
+            if (data.Result === 'Success') {
+                $('#addLocUpSpinner').remove();
+            }
         });
     };
 

@@ -79,8 +79,8 @@ namespace CUWebinars.Web
         {
             const string infrastructureLogconfigs = @"Infrastructure/LogConfigs";
 
-            //switch (GlobalConfig.GlobalConfigSingleton.Tenant)
-            switch ("Dave")
+            switch (GlobalConfig.GlobalConfigSingleton.Tenant)
+            //switch ("Dave")
             {
                 case "BankWebinars":
                     log4net.Config.XmlConfigurator.Configure(new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs, "BWLog4net.xml")));
@@ -135,6 +135,7 @@ namespace CUWebinars.Web
 
         private static void LogStartupDetails()
         {
+            const string keyValuePattern = "Key - {0}, Value - {1}{2}";
             var LoggerInfoString = "";
             var TenantName = "";
 
@@ -151,16 +152,22 @@ namespace CUWebinars.Web
                 }
             }
 
-
             logger.Info(string.Format("{0} Spinning up application: ", TenantName));
             logger.Info(string.Format("Config Properties - {0}", GlobalConfig.GlobalConfigSingleton.PropertiesAsString));
             logger.Info(string.Format("AppInfo: {0}", GetAppVersionInfo()));
 
+            var smtpDetails = GetSmtpDetails();
+
+            LoggerInfoString += string.Format(keyValuePattern, "UserName", smtpDetails.UserName, Environment.NewLine);
+            LoggerInfoString += string.Format(keyValuePattern, "Password", smtpDetails.Password, Environment.NewLine);
+            LoggerInfoString += string.Format(keyValuePattern, "Host", smtpDetails.Host, Environment.NewLine);
+            LoggerInfoString += string.Format(keyValuePattern, "DefaultCredentials", smtpDetails.DefaultCredentials,
+                Environment.NewLine);
+            LoggerInfoString += string.Format(keyValuePattern, "ClientDomain", smtpDetails.ClientDomain, Environment.NewLine);
+            LoggerInfoString += string.Format(keyValuePattern, "Ssl", smtpDetails.EnableSsl, Environment.NewLine);
+            LoggerInfoString += string.Format(keyValuePattern, "Port", smtpDetails.Port, Environment.NewLine);
+
             logger.Info(string.Format("AppSettings for {0} are: {1}", TenantName, LoggerInfoString));
-
-
-
-
         }
 
         private static string GetAppVersionInfo()
@@ -169,17 +176,16 @@ namespace CUWebinars.Web
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(asm.Location);
             return fileVersionInfo.FileVersion;
         }
-        static void GetSmtpDetails()
+        private static SmtpNetworkElement GetSmtpDetails()
         {
             var smtpSection = ConfigurationManager.GetSection("system.net/mailSettings/smtp") as SmtpSection;
 
-            var mailSettings = smtpSection.Network;
-            mailSettings.Host = ConfigurationManager.AppSettings["smtp.host"];
-            mailSettings.Port = int.Parse(ConfigurationManager.AppSettings["smtp.Port"]);
-            mailSettings.UserName = ConfigurationManager.AppSettings["smtp.userName"];
-            mailSettings.Password = ConfigurationManager.AppSettings["smtp.password"];
-            mailSettings.EnableSsl = bool.Parse(ConfigurationManager.AppSettings["smtp.enableSsl"]);
+            if (smtpSection == null)
+                throw new NullReferenceException("There is no SMTP section in this App.config file.");
 
+            var mailSettings = smtpSection.Network;
+
+            return mailSettings;
         } 
 
         //https://www.simple-talk.com/dotnet/asp.net/handling-errors-effectively-in-asp.net-mvc/
