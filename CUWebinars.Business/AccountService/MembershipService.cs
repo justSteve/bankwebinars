@@ -120,6 +120,41 @@ namespace CUWebinars.Business.AccountService
             return false;
         }
 
+        public bool CheckDisplayPostEventMaterials(string tenant, string email, out string messageIfFalse)
+        {
+            messageIfFalse = string.Empty;
+            var userAccount = GetUserAccountByEmail(tenant, email);
+
+            if (userAccount != null)
+            {
+                if (userAccount.HasClaim(ClaimTypes.DisplayPostEventMaterials))
+                {
+                    foreach (var expiryAsString in 
+                        userAccount.Claims
+                            .Where(c => c.Type == ClaimTypes.DisplayPostEventMaterials)
+                            .Select(c => c.Value.Substring(c.Value.IndexOf(":") + 1)))
+                    {
+                        DateTime expiryDate;
+
+                        if (DateTime.TryParse(expiryAsString, out expiryDate))
+                        {
+                            return DateTime.Today <= expiryDate;
+                        }
+                    }
+                }
+                else
+                {
+                    messageIfFalse = string.Format("User with email {0} is not authorised to access materials", email);
+                }
+            }
+            else
+            {
+                messageIfFalse = string.Format("No UserAccount exists with the email {0}", email);
+            }
+
+            return false;
+        }
+
         public void CleanUser(string tenant, string email, string newPassword)
         {
             var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
