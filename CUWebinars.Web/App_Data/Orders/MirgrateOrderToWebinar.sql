@@ -1,7 +1,15 @@
-USE TTSWebinars2
+USE TTSWebinars2;
 GO
 
---SELECT (SELECT optionGroupDesc FROM dbo.OptionsGroups WHERE idOptionGroup = o.idoptiongroup),  * FROM dbo.OptionsGroupsXref o WHERE idWebinar IN (SELECT idWebinar FROM dbo.Webinar WHERE status =2) 
+--SELECT  ( SELECT    optionGroupDesc
+--          FROM      dbo.OptionsGroups
+--          WHERE     idOptionGroup = o.idOptionGroup
+--        ) ,
+--        *
+--FROM    dbo.OptionsGroupsXref o
+--WHERE   idWebinar IN (1790); 
+--SELECT * FROM dbo.Options WHERE idOption IN (SELECT idOption FROM dbo.OptionsXref WHERE idOptionGroup = 27)
+--SELECT * FROM dbo.Options WHERE idOption IN (SELECT idOption FROM dbo.OptionsXref WHERE idOptionGroup = 34)
 --SELECT TOP 500 * FROM dbo.Orders o INNER JOIN	dbo.OrdersRows r ON r.idOrder = o.idOrder
 --WHERE o.idAffiliate = 62
 ------AND r.status > 1 AND r.status < 5
@@ -9,8 +17,8 @@ GO
 --ORDER BY o.orderDate desc
 
 
-SELECT --(SELECT idSubscriptionDiscount FROM USERs WHERE idUser = o.idUser ), 
-( SELECT    o.idAffiliate
+SELECT  
+        ( SELECT    o.idAffiliate
           FROM      dbo.OrdersRows
           WHERE     o.idOrder = idOrder
         ) AS AffiliateID ,
@@ -60,6 +68,23 @@ SELECT --(SELECT idSubscriptionDiscount FROM USERs WHERE idUser = o.idUser ),
                                WHEN 81 THEN 224
                                WHEN 83 THEN 225
                              END )
+            WHEN 1786 THEN ( CASE r.registrationType
+                               WHEN 85 THEN 1
+                               WHEN 86 THEN 16
+                               WHEN 87 THEN 17
+                               WHEN 88 THEN 3
+                               WHEN 89 THEN 18
+							   ELSE r.registrationType
+                             END )
+            WHEN 1767 THEN ( CASE r.registrationType
+                               WHEN 85 THEN 1
+                               WHEN 86 THEN 16
+                               WHEN 87 THEN 17
+                               WHEN 88 THEN 3
+                               WHEN 89 THEN 18
+							   ELSE r.registrationType
+                             END )
+							 
             --WHEN 1790 THEN ( CASE r.registrationType
             --                   WHEN 79 THEN 221
             --                   WHEN 80 THEN 222
@@ -110,6 +135,6 @@ FROM    TTSWebinars2.dbo.Orders o
         INNER JOIN dbo.OrdersRows r ON r.idOrder = o.idOrder
 WHERE   r.status < 6
         AND r.status > 1
-        AND r.idWebinar IN (1792)--( SELECT r.idWebinar FROM dbo.Webinar WHERE status = 2 OR status = 3) -- 1745 = understanding...
-ORDER BY orderDate DESC
+        AND r.idWebinar IN ( 1767 )--( SELECT r.idWebinar FROM dbo.Webinar WHERE status = 2 OR status = 3) -- 1745 = understanding...
+ORDER BY orderDate DESC;
 GO
