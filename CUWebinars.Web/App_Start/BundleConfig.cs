@@ -162,6 +162,10 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/membership-notifications.js",
                 "~/Scripts/app/web-user-details-register.js"
             ));
+            
+            bundles.Add(new ScriptBundle("~/bundles/identify").Include(
+                "~/Scripts/app/webinar/identify.js"
+            ));
 
             bundles.Add(new StyleBundle("~/Content/create-order-details").Include(
                 "~/Content/css/details.css"

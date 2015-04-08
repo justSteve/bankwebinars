@@ -872,6 +872,7 @@
     <None Include="Properties\PublishProfiles\BankWebinars31 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars31.pubxml" />
     <Content Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
+    <Content Include="Scripts\app\webinar\identify.js" />
     <Content Include="Scripts\bootstrap3\css\bootstrap-theme.css.map" />
     <Content Include="Scripts\bootstrap3\css\bootstrap.css.map" />
     <Content Include="Scripts\bootstrap3\fonts\glyphicons-halflings-regular.eot" />
