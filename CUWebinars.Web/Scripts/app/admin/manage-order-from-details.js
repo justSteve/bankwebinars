@@ -42,7 +42,7 @@ $(function () {
 
     MANAGE.wireUpTrashIcons();
 
-    ns.getOrderButton.on('click', MANAGE.getOrder);
+    MANAGE.getOrderButton.on('click', MANAGE.getOrder);
 });
 
 
@@ -126,6 +126,7 @@ $(function () {
         ns.addAdditionalLocationsButton = $('#addLocationsButton');
         ns.updateAddLocsButton = $('#UpdateAddLocsButton');
         ns.totalOptionsInput = $('DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions');
+        ns.updateAdditionalLocationsForm = $('#updateAdditionalLocationsForm');
 
         ns.regTypesList = $('#RegType');
         ns.orderRowId = $('#manageOrderForm input[name="ID"]').val();
@@ -319,6 +320,7 @@ $(function () {
         $('#applyDiscountButton').on('click', ns.hookUpApplyDiscountLogic);
         ns.regTypesList.on('change', ns.changeRegType);
         ns.updateAddLocsButton.on('click', ns.updateAdditionalLocations);
+        ns.updateAdditionalLocationsForm.on('submit', ns.submitUpdateAddLocsForm);
     };
 
     ns.adjustAdditionalLocationsTotal = function(number) {
@@ -450,10 +452,17 @@ $(function () {
 
         e.preventDefault();
 
+        ns.updateAdditionalLocationsForm.submit();
+    };
+
+    ns.submitUpdateAddLocsForm = function(e) {
+
+        e.preventDefault();
+
         var emailInputs = ns.wrapperDiv.find('input[type="email"]');
         var addLocs = [];
 
-        _.each(emailInputs, function(element, index) {
+        _.each(emailInputs, function (element, index) {
             addLocs.push({
                 Email: $(element).val()
             });
@@ -464,14 +473,22 @@ $(function () {
             additionalLocations: addLocs
         };
 
+        var form = $(this);
+
+        var url = form.attr('action');
+        var token = form.find('input[name=__RequestVerificationToken]').val();
+        var headers = {};
+        headers['__RequestVerificationToken'] = token;
+
+
         $.ajax({
             type: 'POST',
             contentType: constants.JsonContentType,
             cache: false,
-            url: '/admin/UpdateAdditionalLocations',
+            url: url,
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
-            //headers: headers,
+            headers: headers,
             beforeSend: function() {
                 ns.updateAddLocsButton.append('<span id="addLocUpSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
             }

@@ -467,8 +467,9 @@ namespace CUWebinars.Web.Controllers
                     Presenter = webinar.Presenter,
                     Webinar = webinar
                 };
-
+                
                 ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity) User.Identity;
+
                 if (claimsIdentityOfAuthenticatedUser.IsAuthenticated)
                 {
                     if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == ClaimTypes.Admin))
@@ -476,77 +477,7 @@ namespace CUWebinars.Web.Controllers
                         return RedirectToAction("Index", "Admin");
                     }
 
-                    if (order.idUser == 19)
-                    {
-                        playModel.AuthorizedToAccessMaterials = true;
-                    }
-                    else
-                    {
-                        var webUser = _membershipService.GetWebUserById(order.idUser);
-
-                        if (webUser.email != null)
-                        {
-                            var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant,
-                                webUser.email);
-
-                            if (userAccount != null && userAccount.HasClaim(ClaimTypes.DisplayPostEventMaterials))
-                            {
-                                foreach (var userClaim in userAccount.Claims)
-                                {
-                                    if (userClaim.Type == ClaimTypes.DisplayPostEventMaterials)
-                                        // extract the date
-                                    {
-                                        var expiryAsString =
-                                            userClaim.Value.Substring(userClaim.Value.IndexOf(":") + 1);
-
-                                        DateTime expiryDate;
-
-                                        if (DateTime.TryParse(expiryAsString, out expiryDate))
-                                        {
-                                            if (DateTime.Today <= expiryDate)
-                                            {
-                                                playModel.AuthorizedToAccessMaterials = true;
-                                                _logger.Info("Access to PostEvent Materials is granted to: {0}",
-                                                    order.idOrder);
-                                            }
-                                            else
-                                            {
-                                                _logger.Warn("Access to PostEvent Materials is denied to: {0}",
-                                                    order.idOrder);
-                                            }
-                                        }
-
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if (userAccount == null)
-                                {
-                                    _logger.Error("No UserAccount exists with the email {0}", webUser.email);
-                                    ModelState.AddModelError(string.Empty,
-                                        string.Format("No UserAccount exists with the email {0}", webUser.email));
-                                }
-                                else
-                                {
-                                    _logger.Error("User with email {0} is not authorised to access materials",
-                                        webUser.email);
-                                    ModelState.AddModelError(string.Empty,
-                                        string.Format("User with email {0} is not authorised to access materials",
-                                            webUser.email));
-                                }
-
-                                return View(playModel);
-                            }
-                        }
-                        else
-                        {
-                            _logger.Error("No WebUser exists with the Id {0}", order.idUser);
-                            ModelState.AddModelError(string.Empty,
-                                string.Format("No WebUser exists with the Id {0}", order.idUser));
-                            return View(playModel);
-                        }
-                    }
+                    ProcessAccessPermissionsForMaterials(order, playModel);
 
                     //if (accessPermitted)
                     //{
@@ -558,24 +489,55 @@ namespace CUWebinars.Web.Controllers
                     //    return View(playModel);
                     //}
 
-                    ViewData["Expired"] = "This recording has expired. ";
-                    return View();
+                    ViewData["Expired"] = "This recording has expired. "; 
+                    return View(playModel);
                 }
-                else
+                
+                if (_stateService.HasValue(WebUiConstants.AnonUserIdentified) && _stateService.GetValue<bool>(WebUiConstants.AnonUserIdentified))
                 {
-                    if (_stateService.HasValue(WebUiConstants.AnonUserIdentified) && _stateService.GetValue<bool>(WebUiConstants.AnonUserIdentified))
-                    {
-                        playModel.AuthorizedToAccessMaterials = true;
-                        return View(playModel);
-                    }
+                    ProcessAccessPermissionsForMaterials(order, playModel);
 
-                    return RedirectToAction("Identify", new { orderId = id.Value });
+                    return View(playModel);
                 }
 
+                return RedirectToAction("Identify", new { orderId = id.Value });
             }
 
             //TODO: implement response for error condition. Here, no id passed in.
             return null;
+        }
+
+        private void ProcessAccessPermissionsForMaterials(Order order, OnDemandPlaybackModel playModel)
+        {
+            var webUser = _membershipService.GetWebUserById(order.idUser);
+
+            if (order.idUser == 19)
+            {
+                playModel.AuthorizedToAccessMaterials = true;
+            }
+            else if (webUser != null)
+            {
+                string messageIfFalse;
+
+                if (_membershipService.CheckDisplayPostEventMaterials(
+                    _globalConfig.Tenant,
+                    webUser.email,
+                    out messageIfFalse))
+                {
+                    playModel.AuthorizedToAccessMaterials = true;
+                }
+                else
+                {
+                    playModel.AuthorizedToAccessMaterials = false;
+                    _logger.Error(messageIfFalse);
+                }
+            }
+            else
+            {
+                _logger.Error("No WebUser exists with the Id {0}", order.idUser);
+                ModelState.AddModelError(string.Empty,
+                    string.Format("No WebUser exists with the Id {0}", order.idUser));
+            }
         }
 
         public ActionResult Identify(int orderId)
@@ -653,42 +615,43 @@ namespace CUWebinars.Web.Controllers
 
                 ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
 
-                if (
-                    claimsIdentityOfAuthenticatedUser.HasClaim(
+                if (claimsIdentityOfAuthenticatedUser.HasClaim(
                         (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
                 {
                     return PartialView("DetailsAdmin", model);
                 }
 
-                if (
-                    claimsIdentityOfAuthenticatedUser.HasClaim(
+                if (claimsIdentityOfAuthenticatedUser.HasClaim(
                         (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
                 {
 
                     // Get the claims values
-                    var ttsDomain = claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type == ClaimTypes.Affiliate)
-                                       .Select(c => c.Value).SingleOrDefault();
+                    var ttsDomain = claimsIdentityOfAuthenticatedUser.Claims
+                        .Where(c => c.Type == ClaimTypes.Affiliate)
+                        .Select(c => c.Value)
+                        .SingleOrDefault();
 
                     var aff = _affiliateManagementService.LoadByTTSDomain(ttsDomain);
-                    var orders =
-                        _orderManagementService.GetOrdersForWebinar(model.Webinar.idWebinar)
-                            .Where(o => o.Affiliate == aff).ToList();
-
+                    
+                    var orders = _orderManagementService.GetOrdersForWebinar(model.Webinar.idWebinar)
+                        .Where(o => o.Affiliate == aff)
+                        .ToList();
 
                     model.ShowOrdersViewModel = new ShowOrdersViewModel
                     {
-
                         Affiliate = aff,
                         Orders = orders,
                         Webinar = model.Webinar
                     };
                     return PartialView("DetailsAffiliate", model);
                 }
+
                 var usersOrders = _orderManagementService.GetOrdersByUserId(model.WebUser.idUser)
                     .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id.Value) != null);
 
-                var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray();
                 // perf tweak: ensures no multiple enumerations of usersOrders
+                var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray();
+                
                 if (checkOrders.Any())
                 // Webinar.Status > scheduled - WebinarFiles presenter files etc. Files only exist until init or activated Webinar
                 {
@@ -703,6 +666,7 @@ namespace CUWebinars.Web.Controllers
                         if (row.idWebinar == id)
                         {
                             var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, checkOrder.WebUser.email);
+
                             if (CheckDisplayPostEventMaterials(userAccount, checkOrder) != null)
                             {
                                 model.RegistrationSummaryViewModel.DisplayPostEventMaterials = checkOrder.idOrder;
@@ -850,8 +814,7 @@ namespace CUWebinars.Web.Controllers
                 // extract the date
                 if (claimsForOrder != null)
                 {
-                    var expiryAsString =
-                        claimsForOrder.Value.Substring(claimsForOrder.Value.IndexOf(":") + 1);
+                    var expiryAsString = claimsForOrder.Value.Substring(claimsForOrder.Value.IndexOf(":") + 1);
 
                     DateTime expiryDate;
 
@@ -1439,11 +1402,11 @@ namespace CUWebinars.Web.Controllers
             return this.ModelStateJson(ModelState);
         }
 
-        public ActionResult GetWebinarRecording(int? idWebinar)
+        public ActionResult GetWebinarRecording(int? id)
         {
-            if (idWebinar.HasValue)
+            if (id.HasValue)
             {
-                var webinar = _webinarManagementService.GetWebinar(idWebinar.Value);
+                var webinar = _webinarManagementService.GetWebinar(id.Value);
 
                 return Redirect(_globalConfig.WMVRepository + webinar.RecordingUrl);
             }
@@ -1451,11 +1414,11 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        public ActionResult GetWebinarFile(int? idWebinarFile)
+        public ActionResult GetWebinarFile(int? id)
         {
-            if (idWebinarFile.HasValue)
+            if (id.HasValue)
             {
-                var webinarFile = _webinarManagementService.GetWebinarFile(idWebinarFile.Value);
+                var webinarFile = _webinarManagementService.GetWebinarFile(id.Value);
 
                 return Redirect(_globalConfig.WMVRepository + webinarFile.fileLocation);
             }

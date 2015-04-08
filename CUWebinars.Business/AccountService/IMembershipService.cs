@@ -10,6 +10,7 @@ namespace CUWebinars.Business.AccountService
         void AddClaim(UserAccount userAccount, string claimType, string claimValue);
         void AddAccountTypeNotVerifiedClaim(UserAccount userAccount, string accountType);
         bool ChangePasswordFromResetKey(string key, string newPassword);
+        bool CheckDisplayPostEventMaterials(string tenant, string email, out string messageIfFalse);
         void CleanUser(string tenant, string email, string newPassword);
         UserAccount CreateUser(
             string tenant,
