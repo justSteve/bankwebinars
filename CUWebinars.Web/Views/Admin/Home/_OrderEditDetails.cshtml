@@ -98,14 +98,14 @@
                 <div class="controls">
                     There are <span id="nrAddLocs">@Model.NumberOfAdditionalLocations</span> Additional Locations for this order.
                     @{
-    if (Model.AdditionalLocationsAvailableOnLoad)
-    {
-        <button id="addLocationsButton" class="btn btn-default btn-small">add more?</button>
-    }
-    else
-    {
-        <button id="addLocationsButton" class="btn btn-default btn-small" disabled="disabled">add more?</button>
-    }
+                        if (Model.AdditionalLocationsAvailableOnLoad)
+                        {
+                            <button id="addLocationsButton" class="btn btn-default btn-small">add more?</button>
+                        }
+                        else
+                        {
+                            <button id="addLocationsButton" class="btn btn-default btn-small" disabled="disabled">add more?</button>
+                        }
                     }
                 </div>
                 @Html.Raw(Model.AdditionalLocationsRenderer.ToString())

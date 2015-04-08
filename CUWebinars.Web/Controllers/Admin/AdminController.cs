@@ -504,12 +504,11 @@ namespace CUWebinars.Web.Controllers.Admin
                 WebUser = order.WebUser
             };
 
-            // Need to decide whether the 1st option in the DropDownList can add additional locations
-            var firstOption = manageOrderEditModel.DisplayOptionsInDropDownViewModel.Options.FirstOrDefault();
-
-            if (!ReferenceEquals(null, firstOption))
+            // Need to decide whether the selected option in the DropDownList can add additional locations
+            var regType = manageOrderEditModel.DisplayOptionsInDropDownViewModel.OrderRowRegistrationType;
+            
             {
-                var option = CheckIfAddLocAvailable(firstOption.Key.idRegType);
+                var option = CheckIfAddLocAvailable(regType.idRegType);
                 if (option.HasValue)
                 {
                     manageOrderEditModel.AdditionalLocationsAvailableOnLoad = option.Value;

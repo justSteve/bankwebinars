@@ -42,35 +42,7 @@ $(function () {
 
     MANAGE.wireUpTrashIcons();
 
-    ns.getOrderButton.on('click', function (e) {
-
-        e.preventDefault();
-
-        ns.idOrder = ns.orderIdInput.val();
-
-        // loading spinner
-        ns.orderIdInput.after('<span id="spinWrapper">&nbsp;<span class="label label-info"><i id="spinner" class="icon-spinner icon-spin"></i>&nbsp;loading...</span></span>');
-        if ($('#errorDiv').length > 0)
-            $('#errorDiv').remove();
-
-        $('#orderRelatedFields').load('/Admin/GetOrderDetails/' + ns.idOrder, function (response, status, xhr) {
-
-            if (status === 'error') {
-                $(this).html('<div id="errorDiv" class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance. <br />' + (xhr.statusText === 'Internal Server Error' ? '' : xhr.statusText) + '</div>');
-            } else {
-                ns.primeDomVariables();
-                ns.wireUpHandlers();
-
-                ns.addLocsUnitPrice = $('#CostPerAdditionalLocation').val();
-                ns.addLocsTotalPrice = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions').val();
-
-                ns.wireUpTrashIcons();
-            }
-
-            // remove loading spinner
-            $('#spinWrapper').remove();
-        });
-    });
+    ns.getOrderButton.on('click', MANAGE.getOrder);
 });
 
 
@@ -154,7 +126,6 @@ $(function () {
         ns.addAdditionalLocationsButton = $('#addLocationsButton');
         ns.updateAddLocsButton = $('#UpdateAddLocsButton');
         ns.totalOptionsInput = $('DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions');
-        ns.orderRowIdHidden = $('input[name="DisplayOptionsInDropDownViewModel.OrderRowId"]');
 
         ns.regTypesList = $('#RegType');
         ns.orderRowId = $('#manageOrderForm input[name="ID"]').val();
@@ -171,6 +142,7 @@ $(function () {
 
         ns.orderIdHiddenInputInDropdownPartial = $('#regTypeSelectWrapper input[type="hidden"]');
         ns.orderIdHiddenInputInDropdownPartial.attr('name', 'DisplayOptionsInDropDownViewModel.OrderRowId');
+        ns.orderRowIdHidden = $('input[name="DisplayOptionsInDropDownViewModel.OrderRowId"]');
 
         ns.gatherPricingData();
 
@@ -253,15 +225,16 @@ $(function () {
                 var errorsList = valSummary.find('ul');
                 errorsList.empty();
                 errorsList.append('<li style="display:none"></li>');
+
+                ns.regTypesList.after('<span id="regTypeSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>')
             }
         }).done(function(data) {
             //console.log('done CheckIfAddLocShouldHide');
             if (data.shouldShow === 'Yes') {
                 ns.addAdditionalLocationsButton.removeAttr('disabled');
                 $('#collectAdditionalLocations').empty().html('<span id="naText" class="text text-info">No additionalLocations yet</span>');
-//                var typeChosenCurrent = $.trim($('#RegType option:selected').text());
+                //var typeChosenCurrent = $.trim($('#RegType option:selected').text());
                 ns.updatePriceOnNewSelection(ns.regTypesList.val(), ns.totalPrice, ns.regTypesList);
-
 
             } else if (data.shouldShow === 'No') {
                 //console.log('hide  CheckIfAddLocShouldHide');
@@ -272,7 +245,7 @@ $(function () {
 
                 var url = '/Cart/RemoveAdditionalLocationsFromOrder';
                 var payLoad = {
-                    idOrderRow: $('input[name="DisplayOptionsInDropDownViewModel.OrderRowId"]').val()
+                    idOrderRow: ns.orderRowIdHidden.val()
                 };
 
                 $.ajax({
@@ -307,7 +280,7 @@ $(function () {
         var url = '/Cart/UpdateOrderDetails';
 
         var payLoad = {
-            idOrderRow: $('input[name="DisplayOptionsInDropDownViewModel.OrderRowId"]').val(),
+            idOrderRow: ns.orderRowIdHidden.val(),
             idRegType: registrationTypeId
         };
 
@@ -330,6 +303,8 @@ $(function () {
                 $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions').val(data.OptionsPrice);
                 $('#TotalOrderPriceText').val(data.Total);
                 $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice').val(data.Total);
+
+                $('#regTypeSpinner').remove();
             }
 
             dropDown.removeAttr('disabled');
@@ -485,7 +460,7 @@ $(function () {
         });
 
         var payload = {
-            orderRowId: $('input[name="DisplayOptionsInDropDownViewModel.OrderRowId"]').val(),
+            orderRowId: ns.orderRowIdHidden.val(),
             additionalLocations: addLocs
         };
 
@@ -504,6 +479,36 @@ $(function () {
             if (data.Result === 'Success') {
                 $('#addLocUpSpinner').remove();
             }
+        });
+    };
+
+    ns.getOrder = function(e) {
+
+        e.preventDefault();
+
+        ns.idOrder = ns.orderIdInput.val();
+
+        // loading spinner
+        ns.orderIdInput.after('<span id="spinWrapper">&nbsp;<span class="label label-info"><i id="spinner" class="icon-spinner icon-spin"></i>&nbsp;loading...</span></span>');
+        if ($('#errorDiv').length > 0)
+            $('#errorDiv').remove();
+
+        $('#orderRelatedFields').load('/Admin/GetOrderDetails/' + ns.idOrder, function(response, status, xhr) {
+
+            if (status === 'error') {
+                $(this).html('<div id="errorDiv" class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance. <br />' + (xhr.statusText === 'Internal Server Error' ? '' : xhr.statusText) + '</div>');
+            } else {
+                ns.primeDomVariables();
+                ns.wireUpHandlers();
+
+                ns.addLocsUnitPrice = $('#CostPerAdditionalLocation').val();
+                ns.addLocsTotalPrice = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions').val();
+
+                ns.wireUpTrashIcons();
+            }
+
+            // remove loading spinner
+            $('#spinWrapper').remove();
         });
     };
 
