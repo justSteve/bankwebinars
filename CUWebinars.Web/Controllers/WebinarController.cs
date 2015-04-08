@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
@@ -20,6 +21,7 @@ using CUWebinars.Web.ViewModel;
 using FluentValidation;
 using Microsoft.Ajax.Utilities;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -563,6 +565,30 @@ namespace CUWebinars.Web.Controllers
             if (ModelState.IsValid)
             {
                 // do something with name and email address
+                var order = _orderManagementService.GetOrderById(identifyModel.idOrder);
+
+                JObject existingJObject = null;
+
+                var comments = order.AdminComments.Trim();
+                var newJson = new JProperty(string.Concat("AnonUser-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                    new JObject(
+                        new JProperty("Name", identifyModel.FullName),
+                        new JProperty("Email", identifyModel.Email)
+                        ));
+
+                if (string.IsNullOrWhiteSpace(comments))
+                {
+                    existingJObject = new JObject(newJson);
+                }
+                else
+                {
+                    existingJObject = JObject.Parse(comments);
+                    existingJObject.Add(newJson);
+                }
+
+                order.AdminComments = existingJObject.ToString(Formatting.None);
+
+                _orderManagementService.SaveChanges();
 
                 _stateService.SetValue(WebUiConstants.AnonUserIdentified, true);
 
