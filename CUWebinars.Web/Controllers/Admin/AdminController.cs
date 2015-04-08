@@ -1446,6 +1446,9 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(returnPayload, JsonRequestBehavior.AllowGet);
         }
 
+        [ValidateJsonAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
+        [HttpPost]
         public ActionResult UpdateAdditionalLocations(int orderRowId, IEnumerable<AdditionalLocation> additionalLocations)
         {
             var orderRow = _orderManagementService.GetOrderRowById(orderRowId);

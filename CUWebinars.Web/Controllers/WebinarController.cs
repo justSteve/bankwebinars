@@ -653,42 +653,43 @@ namespace CUWebinars.Web.Controllers
 
                 ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
 
-                if (
-                    claimsIdentityOfAuthenticatedUser.HasClaim(
+                if (claimsIdentityOfAuthenticatedUser.HasClaim(
                         (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
                 {
                     return PartialView("DetailsAdmin", model);
                 }
 
-                if (
-                    claimsIdentityOfAuthenticatedUser.HasClaim(
+                if (claimsIdentityOfAuthenticatedUser.HasClaim(
                         (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
                 {
 
                     // Get the claims values
-                    var ttsDomain = claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type == ClaimTypes.Affiliate)
-                                       .Select(c => c.Value).SingleOrDefault();
+                    var ttsDomain = claimsIdentityOfAuthenticatedUser.Claims
+                        .Where(c => c.Type == ClaimTypes.Affiliate)
+                        .Select(c => c.Value)
+                        .SingleOrDefault();
 
                     var aff = _affiliateManagementService.LoadByTTSDomain(ttsDomain);
-                    var orders =
-                        _orderManagementService.GetOrdersForWebinar(model.Webinar.idWebinar)
-                            .Where(o => o.Affiliate == aff).ToList();
-
+                    
+                    var orders = _orderManagementService.GetOrdersForWebinar(model.Webinar.idWebinar)
+                        .Where(o => o.Affiliate == aff)
+                        .ToList();
 
                     model.ShowOrdersViewModel = new ShowOrdersViewModel
                     {
-
                         Affiliate = aff,
                         Orders = orders,
                         Webinar = model.Webinar
                     };
                     return PartialView("DetailsAffiliate", model);
                 }
+
                 var usersOrders = _orderManagementService.GetOrdersByUserId(model.WebUser.idUser)
                     .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id.Value) != null);
 
-                var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray();
                 // perf tweak: ensures no multiple enumerations of usersOrders
+                var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray();
+                
                 if (checkOrders.Any())
                 // Webinar.Status > scheduled - WebinarFiles presenter files etc. Files only exist until init or activated Webinar
                 {
@@ -703,6 +704,7 @@ namespace CUWebinars.Web.Controllers
                         if (row.idWebinar == id)
                         {
                             var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, checkOrder.WebUser.email);
+
                             if (CheckDisplayPostEventMaterials(userAccount, checkOrder) != null)
                             {
                                 model.RegistrationSummaryViewModel.DisplayPostEventMaterials = checkOrder.idOrder;
@@ -850,8 +852,7 @@ namespace CUWebinars.Web.Controllers
                 // extract the date
                 if (claimsForOrder != null)
                 {
-                    var expiryAsString =
-                        claimsForOrder.Value.Substring(claimsForOrder.Value.IndexOf(":") + 1);
+                    var expiryAsString = claimsForOrder.Value.Substring(claimsForOrder.Value.IndexOf(":") + 1);
 
                     DateTime expiryDate;
 
