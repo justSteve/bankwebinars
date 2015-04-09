@@ -127,19 +127,17 @@ namespace CUWebinars.Business.AccountService
 
             if (userAccount != null)
             {
-                if (userAccount.HasClaim(ClaimTypes.DisplayPostEventMaterials))
-                {
-                    foreach (var expiryAsString in 
-                        userAccount.Claims
-                            .Where(c => c.Type == ClaimTypes.DisplayPostEventMaterials)
-                            .Select(c => c.Value.Substring(c.Value.IndexOf(":") + 1)))
-                    {
-                        DateTime expiryDate;
+                var claimValue = GetDisplayPostEventMaterialsClaim(userAccount);
 
-                        if (DateTime.TryParse(expiryAsString, out expiryDate))
-                        {
-                            return DateTime.Today <= expiryDate;
-                        }
+                if (!string.IsNullOrWhiteSpace(claimValue))
+                {
+                    var expiryAsString = claimValue.Substring(claimValue.IndexOf(":", StringComparison.Ordinal) + 1);
+
+                    DateTime expiryDate;
+
+                    if (DateTime.TryParse(expiryAsString, out expiryDate))
+                    {
+                        return DateTime.Today <= expiryDate;
                     }
                 }
                 else
@@ -600,6 +598,20 @@ namespace CUWebinars.Business.AccountService
         public void UpdateUserDetails(WebUser webUser)
         {
             _webUserRepository.Update(webUser);
+        }
+
+        public string GetDisplayPostEventMaterialsClaim(string tenant, string email)
+        {
+            return GetDisplayPostEventMaterialsClaim(GetUserAccountByEmail(tenant, email));
+        }
+
+        public string GetDisplayPostEventMaterialsClaim(UserAccount userAccount)
+        {
+            if (userAccount == null) throw new ArgumentNullException("userAccount");
+
+            var claim = userAccount.Claims.SingleOrDefault(c => c.Type == ClaimTypes.DisplayPostEventMaterials);
+
+            return !ReferenceEquals(null, claim) ? claim.Value : null;
         }
 
         public UserAccount VerifyEmailFromKey(string key, string password)

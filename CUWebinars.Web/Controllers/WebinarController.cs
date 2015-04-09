@@ -457,10 +457,10 @@ namespace CUWebinars.Web.Controllers
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult OnDemand(int? id)
         {
-            throw new Exception();
             if (id.HasValue)
             {
                 var order = _orderManagementService.GetOrderById(id.Value);
+                
                 var webinar =
                     _webinarManagementService.GetWebinar(
                         order.OrderRows.SingleOrDefault(s => s.RowStatus == OrderRowStatus.Active).idWebinar);
@@ -568,32 +568,43 @@ namespace CUWebinars.Web.Controllers
                 // do something with name and email address
                 var order = _orderManagementService.GetOrderById(identifyModel.idOrder);
 
-                JObject existingJObject = null;
-
-                var comments = order.AdminComments.Trim();
-                var newJson = new JProperty(string.Concat("AnonUser-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
-                    new JObject(
-                        new JProperty("Name", identifyModel.FullName),
-                        new JProperty("Email", identifyModel.Email)
-                        ));
-
-                if (string.IsNullOrWhiteSpace(comments))
+                if (!ReferenceEquals(null, order))
                 {
-                    existingJObject = new JObject(newJson);
+
+                    JObject existingJObject = null;
+
+                    string comments = string.Empty;
+
+
+                    if (!ReferenceEquals(null, order.AdminComments))
+                    {
+                        comments = order.AdminComments.Trim();
+                    }
+
+                    var newJson = new JProperty(string.Concat("AnonUser-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                        new JObject(
+                            new JProperty("Name", identifyModel.FullName),
+                            new JProperty("Email", identifyModel.Email)
+                            ));
+
+                    if (string.IsNullOrWhiteSpace(comments))
+                    {
+                        existingJObject = new JObject(newJson);
+                    }
+                    else
+                    {
+                        existingJObject = JObject.Parse(comments);
+                        existingJObject.Add(newJson);
+                    }
+
+                    order.AdminComments = existingJObject.ToString(Formatting.None);
+
+                    _orderManagementService.SaveChanges();
+
+                    _stateService.SetValue(WebUiConstants.AnonUserIdentified, true);
+
+                    return RedirectToAction("OnDemand", new {id = identifyModel.idOrder});
                 }
-                else
-                {
-                    existingJObject = JObject.Parse(comments);
-                    existingJObject.Add(newJson);
-                }
-
-                order.AdminComments = existingJObject.ToString(Formatting.None);
-
-                _orderManagementService.SaveChanges();
-
-                _stateService.SetValue(WebUiConstants.AnonUserIdentified, true);
-
-                return RedirectToAction("OnDemand", new {id = identifyModel.idOrder});
             }
 
             return View(identifyModel);

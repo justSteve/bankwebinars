@@ -81,6 +81,8 @@ namespace CUWebinars.Business.AccountService
             string title
             );
         void UpdateUserDetails(WebUser webUser);
+        string GetDisplayPostEventMaterialsClaim(string tenant, string email);
+        string GetDisplayPostEventMaterialsClaim(UserAccount userAccount);
         UserAccount VerifyEmailFromKey(string key, string password);
         bool VerifyUserByEmail(string tenant, string email);
         void UpdateShippingAddressDetails(Address shippingAddress);
