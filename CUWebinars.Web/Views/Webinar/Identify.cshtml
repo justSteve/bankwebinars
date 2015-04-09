@@ -22,7 +22,7 @@
                 </div>
                 <div class="controls">
 
-                    @Html.TextBoxFor(m => m.SignInModel.Email)
+                    <input type="email" name="Email" data-val="true" data-val-required="The Email field is required." />
                     @Html.ValidationMessageFor(m => m.SignInModel.Email)
                 </div>
             </div>
@@ -34,7 +34,7 @@
                 </div>
                 <div class="controls">
 
-                    @Html.PasswordFor(m => m.SignInModel.Password, new { @class = "enterSubmit" })
+                    <input type="password" name="Password" data-val="true" data-val-required="The Password field is required." /> 
                     @Html.ValidationMessageFor(m => m.SignInModel.Password)
                 </div>
             </div>
@@ -42,7 +42,7 @@
         <div class="row">
                 <div class="control-group span4">
                     <div class="control-label">
-                        @Html.HiddenFor(m => m.SignInModel.ReturnUrl)
+                        <input name="ReturnUrl" type="hidden" value="@Model.SignInModel.ReturnUrl" />
                     </div>
                     <div class="controls">
                         <label class="checkbox inline">
@@ -96,3 +96,5 @@
                 </div>
             }
 </div>
+
+@Scripts.Render("~/bundles/identify")

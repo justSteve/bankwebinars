@@ -1,9 +1,11 @@
 ﻿using System.Web.Http;
 using System.Web.Mvc;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
+using CUWebinars.Web.Core;
 using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Services;
 using Ninject.Extensions.Logging.Log4net.Infrastructure;
@@ -27,8 +29,13 @@ namespace CUWebinars.Web.App_Start
                 );
             var monitorAffiliateFilter = new MonitorAffiliateFilter(_orderManagementService, (IStateService)GlobalConfiguration.Configuration.DependencyResolver.GetService(typeof(IStateService)));
 
-            filters.Add(monitorAffiliateFilter);
-            filters.Add(new HandleErrorAttribute());
+            switch (GlobalConfig.GlobalConfigSingleton.Tenant)
+            {
+                case DomainConstants.BankWebinars: filters.Add(monitorAffiliateFilter); break;
+                case DomainConstants.CUWebinars: break;
+                default:break;
+            }
+            //filters.Add(new HandleErrorAttribute());
         }
     }
 }

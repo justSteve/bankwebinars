@@ -91,12 +91,17 @@
         <section class="span3">
             <aside class="widget">
                 <div style="padding: 10px; margin-left: 20px; width: 200px; " class="well pull-right well-large">
-                    <div>
-                        <a target="_blank" href="/webinar/GetWebinarRecording/@Model.Webinar.idWebinar"><span style="margin-left: 15px;"><i class="icon-facetime-video"></i></span> Playback</a>
-                    </div>
-                    <div>
-                        @{Html.RenderPartial("DisplayTemplates/HandoutsListing", Model.Webinar);}
-                    </div>
+                    @{
+                        if (Model.AuthorizedToAccessMaterials)
+                        {
+                            <div>
+                                <a target="_blank" href="/webinar/GetWebinarRecording/@Model.Webinar.idWebinar"><span style="margin-left: 15px;"><i class="icon-facetime-video"></i></span> Playback</a>
+                            </div>
+                            <div>
+                                @{ Html.RenderPartial("DisplayTemplates/HandoutsListing", Model.Webinar); }
+                            </div>
+                        }
+                    }
 
                     @{
                         var expiresDate = Model.Webinar.Date.AddMonths(6);

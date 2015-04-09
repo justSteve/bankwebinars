@@ -457,6 +457,7 @@ namespace CUWebinars.Web.Controllers
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult OnDemand(int? id)
         {
+            throw new Exception();
             if (id.HasValue)
             {
                 var order = _orderManagementService.GetOrderById(id.Value);

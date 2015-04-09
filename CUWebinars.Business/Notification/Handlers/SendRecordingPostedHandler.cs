@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
@@ -42,12 +44,20 @@ namespace CUWebinars.Business.Notification.Handlers
                                         : "RecordingPosted_" + sendRecordingPostedEvent.EventObject.Order.idOrder;
 
                 var notificationMessage = _generalFormatter.Format(sendRecordingPostedEvent.EventObject, "SendRecordingPosted");
+
                 notificationMessage.PersistedName = string.Format("{0}_{1}{2}"
                     , persistedNamePrefix
                     , DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)
                     , ".htm");
 
+                var userCommentsField = sendRecordingPostedEvent.EventObject.Order.UserComments;
+                var addresses = userCommentsField.Substring(userCommentsField.IndexOf(":") + 1);
+
+                var ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(addresses);
+                
                 notificationMessage.To = sendRecordingPostedEvent.EventObject.Order.BillingEmail;
+                notificationMessage.Addresses = ccEmailAddresses;
+
                 _notificationDelivery.Notify(notificationMessage);
             }
             catch (NullReferenceException nullReferenceException)
