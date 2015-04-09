@@ -58,10 +58,10 @@
             }
         </div>
         <div class="tab-pane" id="subscriptions">
-            @if (userSubscription != null)
+            @if (userSubscription.Discount != null)
             {
 
-               Html.RenderPartial("Partials/Subscription", userSubscription);
+                Html.RenderPartial("Partials/Subscription", userSubscription);
 
             }
         </div>

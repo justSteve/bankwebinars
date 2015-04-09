@@ -667,8 +667,6 @@
     <Content Include="Notification\PreviewTemplates\PreviewConnectionInfo.cshtml" />
     <Content Include="Notification\PreviewTemplates\PreviewShippedOrder.cshtml" />
     <Content Include="Notification\PreviewTemplates\PreviewRecordingPosted.cshtml" />
-    <Content Include="ApplicationInsights.config" />
-    <None Include="Properties\PublishProfiles\BankWebinars31 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars31.pubxml" />
     <Content Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
     <Content Include="Scripts\app\webinar\identify.js" />
