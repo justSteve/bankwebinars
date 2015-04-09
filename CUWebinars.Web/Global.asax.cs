@@ -7,6 +7,7 @@ using System.Net.Mail;
 using System.Reflection;
 using System.Web.Http.Dependencies;
 using AutoMapper;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
@@ -19,7 +20,6 @@ using CUWebinars.Web.Services;
 using log4net;
 using System;
 using System.Collections.Specialized;
-using System.IdentityModel.Claims;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -28,6 +28,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using ClaimTypes = System.IdentityModel.Claims.ClaimTypes;
 
 namespace CUWebinars.Web
 {
@@ -82,10 +83,10 @@ namespace CUWebinars.Web
             switch (GlobalConfig.GlobalConfigSingleton.Tenant)
             //switch ("Dave")
             {
-                case "BankWebinars":
+                case DomainConstants.BankWebinars:
                     log4net.Config.XmlConfigurator.Configure(new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs, "BWLog4net.xml")));
                     break;
-                case "CUWebinars":
+                case DomainConstants.CUWebinars:
                     log4net.Config.XmlConfigurator.Configure(new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs, "CUWLog4net.xml")));
                     break;
                 case "Dave":
@@ -111,10 +112,10 @@ namespace CUWebinars.Web
 
                         switch (GlobalConfig.GlobalConfigSingleton.Tenant)
                         {
-                            case "BankWebinars":
+                            case DomainConstants.BankWebinars:
                                 response = request.DownloadString("https://api.ghostinspector.com/v1/suites/549561048a4917076f61463e/execute/?apiKey=a3165149c7049d91d18eeba48d2c4808eca6b2ae");
                                 break;
-                            case "CUWebinars":
+                            case DomainConstants.CUWebinars:
                                 response = request.DownloadString("https://api.ghostinspector.com/v1/suites/54faf632c1ae38b460ef41de/execute/?apiKey=a3165149c7049d91d18eeba48d2c4808eca6b2ae");
                                 break;
                             default:

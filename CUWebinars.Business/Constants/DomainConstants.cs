@@ -32,5 +32,8 @@ namespace CUWebinars.Business.Constants
         public const string UsLocale = "en-US";
         public const string VerificationKey = "VerificationKey";
         public const string VerifyEmailLink = "VerifyEmailLink";
+        public const string BankWebinars = "BankWebinars";
+        // ReSharper disable once InconsistentNaming
+        public const string CUWebinars = "CUWebinars";
     }
 }
