@@ -21,13 +21,13 @@
             <ul class="nav" aria-labelledby="dLabel">
                 <li><a tabindex="-1" href="#" onclick="payByCC(); return true;" role="button" data-toggle="modal">Submit Payment</a></li>
                 <li><a tabindex="-1" href="#changeAssignedUser" role="button" data-toggle="modal">Assign to Different User</a></li>
-                <li><a tabindex="-1" href="#changeAssignedAffiliate" role="button" data-toggle="modal">Credited to @Model.AffiliateName Change?</a></li>
+                <li><a tabindex="-1" id="showChangeAssignedAffiliate" role="button">Credited to <span id="affiliateNameText">@Model.AffiliateName</span> Change?</a></li>
             </ul>
         </div>
         <div class="span2">
             Origin: @Model.Order.Origin
             <br />
-            Affiliate: @Model.Order.idAffiliate
+            Affiliate: <span id="idAffiliate">@Model.Order.idAffiliate</span>
         </div>
     </div>
     <div class="row">
@@ -150,26 +150,18 @@
 }
 
 <div id="changeAssignedAffiliate" class="modal hide fade">
-    @using (Html.BeginForm("SetAffiliateAssignedToOrder", "Registrations", FormMethod.Post, new { id = "frmChangeAffiliate" }))
+    @using (Html.BeginForm("UpdateOrderAffiliate", "Admin", FormMethod.Post, new { id = "frmChangeAffiliate" }))
     {
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h3>Change Affiliate Credited To Order:</h3>
         </div>
         <div class="modal-body">
-            @{
-
-                @*<p>
-                        <b>Choose Affiliate:</b>
-                        @Html.DropDownList("assignedAffiliate", AppHelper.GetListOfAffiliates(Model.OrderRow.Order.Affiliate.ID),
-                                               new { onchange = "document.changeAffiliateForm.submit();" })
-                        <input type="hidden" name="ID" value="@Model.OrderRow.ID" />
-                    </p>*@
-            }
+            @*modal content will be loaded here*@
         </div>
         <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-            <input type="submit" class="btn btn-primary" value="Save Changes" />
+            <button id="cancelChangeAffiliate " class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            <button id="submitChangeAffilate" class="btn btn-primary">Save Changes</button>
         </div>
     }
 </div>

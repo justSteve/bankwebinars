@@ -1,0 +1,1668 @@
+2015-04-09 15:30:11,313 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – BankWebinars Spinning up application: 
+2015-04-09 15:30:12,218 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Config Properties - CcPaymentProcessingUrlKey:/home/PayCC;CreateUserQueueName:tts-mr-createuseraccount-queue;EmailSendingMode:notlive;HandoutRepository:http://ttsmedia.ttstrain.com/;DefaultConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=BankWebinars;Integrated Security=True;MultipleActiveResultSets=True;GhostRequestRetryLimit:5;GhostRequestTimeout:600;MembershipConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=MembershipReboot;Integrated Security=True;MultipleActiveResultSets=True;NotificationsTesting:False;RelativeLoginUrl:Account/Login;RelativeConfirmChangeUrl:Account/Confirmed/;RelativeCancelVerificationUrl:Account/RegisterCancel/;RelativeConfirmPasswordResetUrl:Account/PasswordResetConfirm/;RetryCount:60;StorageAccessKey:0jaSy5r24CBUwalYkbhpx3ZGku2n+I2GuJRXAwnRjoGHiRnXNpzdgSdTPoSXPrA0PzMlPomSznukaVqfeSzThw==;StorageAccountName:storeforcu;Tenant:BankWebinars;TenantEmail:registrations@BankWebinars.com;TenantDomain:BankWebinars.com;TenantURL:www.BankWebinars.com;TenantLogo:http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png;TenantPrefix:BW-;TestEmailAddress:bw.steve@ttstrain.com;TestEmailAddress2:cuwtestuser1@gmail.com;TraceLevel:Error;UseAzureWebjobs:False;WMVRepository:http://ttsmedia.ttstrain.com/
+2015-04-09 15:30:13,155 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppInfo: 1.0.5577.29597
+2015-04-09 15:30:14,043 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppSettings for BankWebinars are: HostApp EmailSendingMode : notlive
+HostApp site.EmailSendingMode : testing
+HostApp NotificationsTesting : false
+HostApp site.NotificationsTesting : true
+HostApp RetryCount : 60
+HostApp Tenant : BankWebinars
+HostApp TenantDomain : BankWebinars.com
+HostApp TenantEmail : registrations@BankWebinars.com
+HostApp TenantPrefix : BW-
+HostApp TenantURL : www.BankWebinars.com
+HostApp TestEmailAddress : bw.steve@ttstrain.com
+HostApp TestEmailAddress2 : cuwtestuser1@gmail.com
+HostApp UseAzureWebjobs : false
+HostApp TenantAppsRollbar : viaParse
+HostApp TenantLogo : http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png
+HostApp ClientValidationEnabled : true
+HostApp CreateUserQueueName : tts-mr-createuseraccount-queue
+HostApp CcPaymentProcessingUrlKey : /home/PayCC
+HostApp elmah.mvc.allowedRoles : *
+HostApp elmah.mvc.allowedUsers : *
+HostApp elmah.mvc.disableHandleErrorFilter : false
+HostApp elmah.mvc.disableHandler : false
+HostApp elmah.mvc.IgnoreDefaultRoute : false
+HostApp elmah.mvc.requiresAuthentication : false
+HostApp elmah.mvc.route : elmah
+HostApp GhostRequestRetryLimit : 5
+HostApp GhostRequestTimeout : 600
+HostApp Glimpse:DisableAsyncSupport : true
+HostApp HandoutRepository : http://ttsmedia.ttstrain.com/
+HostApp log4net.Internal.Debug : false
+HostApp PreserveLoginUrl : true
+HostApp RelativeCancelVerificationUrl : Account/RegisterCancel/
+HostApp RelativeConfirmChangeUrl : Account/Confirmed/
+HostApp RelativeConfirmPasswordResetUrl : Account/PasswordResetConfirm/
+HostApp RelativeLoginUrl : Account/Login
+HostApp StorageAccessKey : 0jaSy5r24CBUwalYkbhpx3ZGku2n+I2GuJRXAwnRjoGHiRnXNpzdgSdTPoSXPrA0PzMlPomSznukaVqfeSzThw==
+HostApp StorageAccountName : storeforcu
+HostApp UnobtrusiveJavaScriptEnabled : true
+HostApp webpages:Version : 3.0.0.0
+HostApp webpages:Enabled : false
+HostApp smtp.userName : registrations@BankWebinars.com
+HostApp smtp.port : 587
+HostApp smtp.password : azza123A
+HostApp smtp.host : smtp.gmail.com
+HostApp smtp.defaultCredentials : true
+HostApp smtp.enableSsl : true
+HostApp WMVRepository : http://ttsmedia.ttstrain.com/
+Key - UserName, Value - 
+Key - Password, Value - 
+Key - Host, Value - localhost
+Key - DefaultCredentials, Value - False
+Key - ClientDomain, Value - 
+Key - Ssl, Value - False
+Key - Port, Value - 25
+
+2015-04-09 15:30:17,571 [6] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 15:31:58,232 [20] ERROR CUWebinars.Web.Controllers.WebinarController {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – 
+2015-04-09 15:38:38,690 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – BankWebinars Spinning up application: 
+2015-04-09 15:38:39,753 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Config Properties - CcPaymentProcessingUrlKey:/home/PayCC;CreateUserQueueName:tts-mr-createuseraccount-queue;EmailSendingMode:notlive;HandoutRepository:http://ttsmedia.ttstrain.com/;DefaultConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=BankWebinars;Integrated Security=True;MultipleActiveResultSets=True;GhostRequestRetryLimit:5;GhostRequestTimeout:600;MembershipConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=MembershipReboot;Integrated Security=True;MultipleActiveResultSets=True;NotificationsTesting:False;RelativeLoginUrl:Account/Login;RelativeConfirmChangeUrl:Account/Confirmed/;RelativeCancelVerificationUrl:Account/RegisterCancel/;RelativeConfirmPasswordResetUrl:Account/PasswordResetConfirm/;RetryCount:60;StorageAccessKey:0jaSy5r24CBUwalYkbhpx3ZGku2n+I2GuJRXAwnRjoGHiRnXNpzdgSdTPoSXPrA0PzMlPomSznukaVqfeSzThw==;StorageAccountName:storeforcu;Tenant:BankWebinars;TenantEmail:registrations@BankWebinars.com;TenantDomain:BankWebinars.com;TenantURL:www.BankWebinars.com;TenantLogo:http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png;TenantPrefix:BW-;TestEmailAddress:bw.steve@ttstrain.com;TestEmailAddress2:cuwtestuser1@gmail.com;TraceLevel:Error;UseAzureWebjobs:False;WMVRepository:http://ttsmedia.ttstrain.com/
+2015-04-09 15:38:40,780 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppInfo: 1.0.5577.29839
+2015-04-09 15:38:41,794 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppSettings for BankWebinars are: HostApp EmailSendingMode : notlive
+HostApp site.EmailSendingMode : testing
+HostApp NotificationsTesting : false
+HostApp site.NotificationsTesting : true
+HostApp RetryCount : 60
+HostApp Tenant : BankWebinars
+HostApp TenantDomain : BankWebinars.com
+HostApp TenantEmail : registrations@BankWebinars.com
+HostApp TenantPrefix : BW-
+HostApp TenantURL : www.BankWebinars.com
+HostApp TestEmailAddress : bw.steve@ttstrain.com
+HostApp TestEmailAddress2 : cuwtestuser1@gmail.com
+HostApp UseAzureWebjobs : false
+HostApp TenantAppsRollbar : viaParse
+HostApp TenantLogo : http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png
+HostApp ClientValidationEnabled : true
+HostApp CreateUserQueueName : tts-mr-createuseraccount-queue
+HostApp CcPaymentProcessingUrlKey : /home/PayCC
+HostApp elmah.mvc.allowedRoles : *
+HostApp elmah.mvc.allowedUsers : *
+HostApp elmah.mvc.disableHandleErrorFilter : false
+HostApp elmah.mvc.disableHandler : false
+HostApp elmah.mvc.IgnoreDefaultRoute : false
+HostApp elmah.mvc.requiresAuthentication : false
+HostApp elmah.mvc.route : elmah
+HostApp GhostRequestRetryLimit : 5
+HostApp GhostRequestTimeout : 600
+HostApp Glimpse:DisableAsyncSupport : true
+HostApp HandoutRepository : http://ttsmedia.ttstrain.com/
+HostApp log4net.Internal.Debug : false
+HostApp PreserveLoginUrl : true
+HostApp RelativeCancelVerificationUrl : Account/RegisterCancel/
+HostApp RelativeConfirmChangeUrl : Account/Confirmed/
+HostApp RelativeConfirmPasswordResetUrl : Account/PasswordResetConfirm/
+HostApp RelativeLoginUrl : Account/Login
+HostApp StorageAccessKey : 0jaSy5r24CBUwalYkbhpx3ZGku2n+I2GuJRXAwnRjoGHiRnXNpzdgSdTPoSXPrA0PzMlPomSznukaVqfeSzThw==
+HostApp StorageAccountName : storeforcu
+HostApp UnobtrusiveJavaScriptEnabled : true
+HostApp webpages:Version : 3.0.0.0
+HostApp webpages:Enabled : false
+HostApp smtp.userName : registrations@BankWebinars.com
+HostApp smtp.port : 587
+HostApp smtp.password : azza123A
+HostApp smtp.host : smtp.gmail.com
+HostApp smtp.defaultCredentials : true
+HostApp smtp.enableSsl : true
+HostApp WMVRepository : http://ttsmedia.ttstrain.com/
+Key - UserName, Value - 
+Key - Password, Value - 
+Key - Host, Value - localhost
+Key - DefaultCredentials, Value - False
+Key - ClientDomain, Value - 
+Key - Ssl, Value - False
+Key - Port, Value - 25
+
+2015-04-09 15:38:44,845 [13] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 15:39:19,743 [13] ERROR CUWebinars.Web.Infrastructure.ErrorResponseCommand {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Controller of Original Request: Webinar
+2015-04-09 15:39:20,821 [13] ERROR CUWebinars.Web.Infrastructure.ErrorResponseCommand {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Action of Original Request: OnDemand
+2015-04-09 15:39:33,552 [15] INFO  CUWebinars.Web.Core.Orchestrators.AccountControllerOrchestrator {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Login|returnURL was: /Webinar/OnDemand/18721 Session=<AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1</Cookie></AuditInfo>
+2015-04-09 15:40:29,961 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – BankWebinars Spinning up application: 
+2015-04-09 15:40:30,991 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Config Properties - CcPaymentProcessingUrlKey:/home/PayCC;CreateUserQueueName:tts-mr-createuseraccount-queue;EmailSendingMode:notlive;HandoutRepository:http://ttsmedia.ttstrain.com/;DefaultConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=BankWebinars;Integrated Security=True;MultipleActiveResultSets=True;GhostRequestRetryLimit:5;GhostRequestTimeout:600;MembershipConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=MembershipReboot;Integrated Security=True;MultipleActiveResultSets=True;NotificationsTesting:False;RelativeLoginUrl:Account/Login;RelativeConfirmChangeUrl:Account/Confirmed/;RelativeCancelVerificationUrl:Account/RegisterCancel/;RelativeConfirmPasswordResetUrl:Account/PasswordResetConfirm/;RetryCount:60;StorageAccessKey:0jaSy5r24CBUwalYkbhpx3ZGku2n+I2GuJRXAwnRjoGHiRnXNpzdgSdTPoSXPrA0PzMlPomSznukaVqfeSzThw==;StorageAccountName:storeforcu;Tenant:BankWebinars;TenantEmail:registrations@BankWebinars.com;TenantDomain:BankWebinars.com;TenantURL:www.BankWebinars.com;TenantLogo:http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png;TenantPrefix:BW-;TestEmailAddress:bw.steve@ttstrain.com;TestEmailAddress2:cuwtestuser1@gmail.com;TraceLevel:Error;UseAzureWebjobs:False;WMVRepository:http://ttsmedia.ttstrain.com/
+2015-04-09 15:40:31,946 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppInfo: 1.0.5577.30007
+2015-04-09 15:40:32,888 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppSettings for BankWebinars are: HostApp EmailSendingMode : notlive
+HostApp site.EmailSendingMode : testing
+HostApp NotificationsTesting : false
+HostApp site.NotificationsTesting : true
+HostApp RetryCount : 60
+HostApp Tenant : BankWebinars
+HostApp TenantDomain : BankWebinars.com
+HostApp TenantEmail : registrations@BankWebinars.com
+HostApp TenantPrefix : BW-
+HostApp TenantURL : www.BankWebinars.com
+HostApp TestEmailAddress : bw.steve@ttstrain.com
+HostApp TestEmailAddress2 : cuwtestuser1@gmail.com
+HostApp UseAzureWebjobs : false
+HostApp TenantAppsRollbar : viaParse
+HostApp TenantLogo : http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png
+HostApp ClientValidationEnabled : true
+HostApp CreateUserQueueName : tts-mr-createuseraccount-queue
+HostApp CcPaymentProcessingUrlKey : /home/PayCC
+HostApp elmah.mvc.allowedRoles : *
+HostApp elmah.mvc.allowedUsers : *
+HostApp elmah.mvc.disableHandleErrorFilter : false
+HostApp elmah.mvc.disableHandler : false
+HostApp elmah.mvc.IgnoreDefaultRoute : false
+HostApp elmah.mvc.requiresAuthentication : false
+HostApp elmah.mvc.route : elmah
+HostApp GhostRequestRetryLimit : 5
+HostApp GhostRequestTimeout : 600
+HostApp Glimpse:DisableAsyncSupport : true
+HostApp HandoutRepository : http://ttsmedia.ttstrain.com/
+HostApp log4net.Internal.Debug : false
+HostApp PreserveLoginUrl : true
+HostApp RelativeCancelVerificationUrl : Account/RegisterCancel/
+HostApp RelativeConfirmChangeUrl : Account/Confirmed/
+HostApp RelativeConfirmPasswordResetUrl : Account/PasswordResetConfirm/
+HostApp RelativeLoginUrl : Account/Login
+HostApp StorageAccessKey : 0jaSy5r24CBUwalYkbhpx3ZGku2n+I2GuJRXAwnRjoGHiRnXNpzdgSdTPoSXPrA0PzMlPomSznukaVqfeSzThw==
+HostApp StorageAccountName : storeforcu
+HostApp UnobtrusiveJavaScriptEnabled : true
+HostApp webpages:Version : 3.0.0.0
+HostApp webpages:Enabled : false
+HostApp smtp.userName : registrations@BankWebinars.com
+HostApp smtp.port : 587
+HostApp smtp.password : azza123A
+HostApp smtp.host : smtp.gmail.com
+HostApp smtp.defaultCredentials : true
+HostApp smtp.enableSsl : true
+HostApp WMVRepository : http://ttsmedia.ttstrain.com/
+Key - UserName, Value - 
+Key - Password, Value - 
+Key - Host, Value - localhost
+Key - DefaultCredentials, Value - False
+Key - ClientDomain, Value - 
+Key - Ssl, Value - False
+Key - Port, Value - 25
+
+2015-04-09 15:40:35,865 [8] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 19:47:00,864 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – BankWebinars Spinning up application: 
+2015-04-09 19:47:01,827 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Config Properties - CcPaymentProcessingUrlKey:/home/PayCC;CreateUserQueueName:tts-mr-createuseraccount-queue;EmailSendingMode:notlive;HandoutRepository:http://ttsmedia.ttstrain.com/;DefaultConnectionString:Data Source=tcp:kmow9uloz6.database.windows.net,1433;Initial Catalog=BankWebinars;User Id=TTSOp@kmow9uloz6;Password=EntRisR..E121114;;GhostRequestRetryLimit:5;GhostRequestTimeout:600;MembershipConnectionString:Data Source=tcp:kmow9uloz6.database.windows.net,1433;Initial Catalog=MembershipReboot;User Id=TTSOp@kmow9uloz6;Password=EntRisR..E121114;;NotificationsTesting:False;RelativeLoginUrl:Account/Login;RelativeConfirmChangeUrl:Account/Confirmed/;RelativeCancelVerificationUrl:Account/RegisterCancel/;RelativeConfirmPasswordResetUrl:Account/PasswordResetConfirm/;RetryCount:60;StorageAccessKey:0jaSy5r24CBUwalYkbhpx3ZGku2n+I2GuJRXAwnRjoGHiRnXNpzdgSdTPoSXPrA0PzMlPomSznukaVqfeSzThw==;StorageAccountName:storeforcu;Tenant:BankWebinars;TenantEmail:registrations@BankWebinars.com;TenantDomain:BankWebinars.com;TenantURL:www.BankWebinars.com;TenantLogo:http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png;TenantPrefix:BW-;TestEmailAddress:bw.steve@ttstrain.com;TestEmailAddress2:cuwtestuser1@gmail.com;TraceLevel:Error;UseAzureWebjobs:True;WMVRepository:http://ttsmedia.ttstrain.com/
+2015-04-09 19:47:02,720 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppInfo: 1.0.5577.37401
+2015-04-09 19:47:03,662 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppSettings for BankWebinars are: HostApp EmailSendingMode : notlive
+HostApp site.EmailSendingMode : testing
+HostApp NotificationsTesting : false
+HostApp site.NotificationsTesting : true
+HostApp RetryCount : 60
+HostApp Tenant : BankWebinars
+HostApp TenantDomain : BankWebinars.com
+HostApp TenantEmail : registrations@BankWebinars.com
+HostApp TenantPrefix : BW-
+HostApp TenantURL : www.BankWebinars.com
+HostApp TestEmailAddress : bw.steve@ttstrain.com
+HostApp TestEmailAddress2 : cuwtestuser1@gmail.com
+HostApp UseAzureWebjobs : true
+HostApp TenantAppsRollbar : viaParse
+HostApp TenantLogo : http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png
+HostApp ClientValidationEnabled : true
+HostApp CreateUserQueueName : tts-mr-createuseraccount-queue
+HostApp CcPaymentProcessingUrlKey : /home/PayCC
+HostApp elmah.mvc.allowedRoles : *
+HostApp elmah.mvc.allowedUsers : *
+HostApp elmah.mvc.disableHandleErrorFilter : false
+HostApp elmah.mvc.disableHandler : false
+HostApp elmah.mvc.IgnoreDefaultRoute : false
+HostApp elmah.mvc.requiresAuthentication : false
+HostApp elmah.mvc.route : elmah
+HostApp GhostRequestRetryLimit : 5
+HostApp GhostRequestTimeout : 600
+HostApp Glimpse:DisableAsyncSupport : true
+HostApp HandoutRepository : http://ttsmedia.ttstrain.com/
+HostApp log4net.Internal.Debug : false
+HostApp PreserveLoginUrl : true
+HostApp RelativeCancelVerificationUrl : Account/RegisterCancel/
+HostApp RelativeConfirmChangeUrl : Account/Confirmed/
+HostApp RelativeConfirmPasswordResetUrl : Account/PasswordResetConfirm/
+HostApp RelativeLoginUrl : Account/Login
+HostApp StorageAccessKey : 0jaSy5r24CBUwalYkbhpx3ZGku2n+I2GuJRXAwnRjoGHiRnXNpzdgSdTPoSXPrA0PzMlPomSznukaVqfeSzThw==
+HostApp StorageAccountName : storeforcu
+HostApp UnobtrusiveJavaScriptEnabled : true
+HostApp webpages:Version : 3.0.0.0
+HostApp webpages:Enabled : false
+HostApp smtp.userName : registrations@BankWebinars.com
+HostApp smtp.port : 587
+HostApp smtp.password : azza123A
+HostApp smtp.host : smtp.gmail.com
+HostApp smtp.defaultCredentials : true
+HostApp smtp.enableSsl : true
+HostApp WMVRepository : http://ttsmedia.ttstrain.com/
+Key - UserName, Value - registrations@BankWebinars.com
+Key - Password, Value - azza123A
+Key - Host, Value - smtp.gmail.com
+Key - DefaultCredentials, Value - False
+Key - ClientDomain, Value - 
+Key - Ssl, Value - True
+Key - Port, Value - 587
+
+2015-04-09 19:47:09,578 [7] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 19:48:15,686 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – BankWebinars Spinning up application: 
+2015-04-09 19:48:16,565 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Config Properties - CcPaymentProcessingUrlKey:/home/PayCC;CreateUserQueueName:tts-mr-createuseraccount-queue;EmailSendingMode:notlive;HandoutRepository:http://ttsmedia.ttstrain.com/;DefaultConnectionString:Data Source=tcp:kmow9uloz6.database.windows.net,1433;Initial Catalog=BankWebinars;User Id=TTSOp@kmow9uloz6;Password=EntRisR..E121114;;GhostRequestRetryLimit:5;GhostRequestTimeout:600;MembershipConnectionString:Data Source=tcp:kmow9uloz6.database.windows.net,1433;Initial Catalog=MembershipReboot;User Id=TTSOp@kmow9uloz6;Password=EntRisR..E121114;;NotificationsTesting:False;RelativeLoginUrl:Account/Login;RelativeConfirmChangeUrl:Account/Confirmed/;RelativeCancelVerificationUrl:Account/RegisterCancel/;RelativeConfirmPasswordResetUrl:Account/PasswordResetConfirm/;RetryCount:60;StorageAccessKey:0jaSy5r24CBUwalYkbhpx3ZGku2n+I2GuJRXAwnRjoGHiRnXNpzdgSdTPoSXPrA0PzMlPomSznukaVqfeSzThw==;StorageAccountName:storeforcu;Tenant:BankWebinars;TenantEmail:registrations@BankWebinars.com;TenantDomain:BankWebinars.com;TenantURL:www.BankWebinars.com;TenantLogo:http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png;TenantPrefix:BW-;TestEmailAddress:bw.steve@ttstrain.com;TestEmailAddress2:cuwtestuser1@gmail.com;TraceLevel:Error;UseAzureWebjobs:True;WMVRepository:http://ttsmedia.ttstrain.com/
+2015-04-09 19:48:17,434 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppInfo: 1.0.5577.37439
+2015-04-09 19:48:18,275 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppSettings for BankWebinars are: HostApp EmailSendingMode : notlive
+HostApp site.EmailSendingMode : testing
+HostApp NotificationsTesting : false
+HostApp site.NotificationsTesting : true
+HostApp RetryCount : 60
+HostApp Tenant : BankWebinars
+HostApp TenantDomain : BankWebinars.com
+HostApp TenantEmail : registrations@BankWebinars.com
+HostApp TenantPrefix : BW-
+HostApp TenantURL : www.BankWebinars.com
+HostApp TestEmailAddress : bw.steve@ttstrain.com
+HostApp TestEmailAddress2 : cuwtestuser1@gmail.com
+HostApp UseAzureWebjobs : true
+HostApp TenantAppsRollbar : viaParse
+HostApp TenantLogo : http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png
+HostApp ClientValidationEnabled : true
+HostApp CreateUserQueueName : tts-mr-createuseraccount-queue
+HostApp CcPaymentProcessingUrlKey : /home/PayCC
+HostApp elmah.mvc.allowedRoles : *
+HostApp elmah.mvc.allowedUsers : *
+HostApp elmah.mvc.disableHandleErrorFilter : false
+HostApp elmah.mvc.disableHandler : false
+HostApp elmah.mvc.IgnoreDefaultRoute : false
+HostApp elmah.mvc.requiresAuthentication : false
+HostApp elmah.mvc.route : elmah
+HostApp GhostRequestRetryLimit : 5
+HostApp GhostRequestTimeout : 600
+HostApp Glimpse:DisableAsyncSupport : true
+HostApp HandoutRepository : http://ttsmedia.ttstrain.com/
+HostApp log4net.Internal.Debug : false
+HostApp PreserveLoginUrl : true
+HostApp RelativeCancelVerificationUrl : Account/RegisterCancel/
+HostApp RelativeConfirmChangeUrl : Account/Confirmed/
+HostApp RelativeConfirmPasswordResetUrl : Account/PasswordResetConfirm/
+HostApp RelativeLoginUrl : Account/Login
+HostApp StorageAccessKey : 0jaSy5r24CBUwalYkbhpx3ZGku2n+I2GuJRXAwnRjoGHiRnXNpzdgSdTPoSXPrA0PzMlPomSznukaVqfeSzThw==
+HostApp StorageAccountName : storeforcu
+HostApp UnobtrusiveJavaScriptEnabled : true
+HostApp webpages:Version : 3.0.0.0
+HostApp webpages:Enabled : false
+HostApp smtp.userName : registrations@BankWebinars.com
+HostApp smtp.port : 587
+HostApp smtp.password : azza123A
+HostApp smtp.host : smtp.gmail.com
+HostApp smtp.defaultCredentials : true
+HostApp smtp.enableSsl : true
+HostApp WMVRepository : http://ttsmedia.ttstrain.com/
+Key - UserName, Value - registrations@BankWebinars.com
+Key - Password, Value - azza123A
+Key - Host, Value - smtp.gmail.com
+Key - DefaultCredentials, Value - False
+Key - ClientDomain, Value - 
+Key - Ssl, Value - True
+Key - Port, Value - 587
+
+2015-04-09 19:48:24,441 [5] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 19:48:25,213 [11] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 19:48:56,647 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – BankWebinars Spinning up application: 
+2015-04-09 19:48:57,539 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Config Properties - CcPaymentProcessingUrlKey:/home/PayCC;CreateUserQueueName:tts-mr-createuseraccount-queue;EmailSendingMode:notlive;HandoutRepository:http://ttsmedia.ttstrain.com/;DefaultConnectionString:Data Source=tcp:kmow9uloz6.database.windows.net,1433;Initial Catalog=BankWebinars;User Id=TTSOp@kmow9uloz6;Password=EntRisR..E121114;;GhostRequestRetryLimit:5;GhostRequestTimeout:600;MembershipConnectionString:Data Source=tcp:kmow9uloz6.database.windows.net,1433;Initial Catalog=MembershipReboot;User Id=TTSOp@kmow9uloz6;Password=EntRisR..E121114;;NotificationsTesting:False;RelativeLoginUrl:Account/Login;RelativeConfirmChangeUrl:Account/Confirmed/;RelativeCancelVerificationUrl:Account/RegisterCancel/;RelativeConfirmPasswordResetUrl:Account/PasswordResetConfirm/;RetryCount:60;StorageAccessKey:0jaSy5r24CBUwalYkbhpx3ZGku2n+I2GuJRXAwnRjoGHiRnXNpzdgSdTPoSXPrA0PzMlPomSznukaVqfeSzThw==;StorageAccountName:storeforcu;Tenant:BankWebinars;TenantEmail:registrations@BankWebinars.com;TenantDomain:BankWebinars.com;TenantURL:www.BankWebinars.com;TenantLogo:http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png;TenantPrefix:BW-;TestEmailAddress:bw.steve@ttstrain.com;TestEmailAddress2:cuwtestuser1@gmail.com;TraceLevel:Error;UseAzureWebjobs:True;WMVRepository:http://ttsmedia.ttstrain.com/
+2015-04-09 19:48:58,427 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppInfo: 1.0.5577.37439
+2015-04-09 19:48:59,284 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppSettings for BankWebinars are: HostApp EmailSendingMode : notlive
+HostApp site.EmailSendingMode : testing
+HostApp NotificationsTesting : false
+HostApp site.NotificationsTesting : true
+HostApp RetryCount : 60
+HostApp Tenant : BankWebinars
+HostApp TenantDomain : BankWebinars.com
+HostApp TenantEmail : registrations@BankWebinars.com
+HostApp TenantPrefix : BW-
+HostApp TenantURL : www.BankWebinars.com
+HostApp TestEmailAddress : bw.steve@ttstrain.com
+HostApp TestEmailAddress2 : cuwtestuser1@gmail.com
+HostApp UseAzureWebjobs : true
+HostApp TenantAppsRollbar : viaParse
+HostApp TenantLogo : http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png
+HostApp ClientValidationEnabled : true
+HostApp CreateUserQueueName : tts-mr-createuseraccount-queue
+HostApp CcPaymentProcessingUrlKey : /home/PayCC
+HostApp elmah.mvc.allowedRoles : *
+HostApp elmah.mvc.allowedUsers : *
+HostApp elmah.mvc.disableHandleErrorFilter : false
+HostApp elmah.mvc.disableHandler : false
+HostApp elmah.mvc.IgnoreDefaultRoute : false
+HostApp elmah.mvc.requiresAuthentication : false
+HostApp elmah.mvc.route : elmah
+HostApp GhostRequestRetryLimit : 5
+HostApp GhostRequestTimeout : 600
+HostApp Glimpse:DisableAsyncSupport : true
+HostApp HandoutRepository : http://ttsmedia.ttstrain.com/
+HostApp log4net.Internal.Debug : false
+HostApp PreserveLoginUrl : true
+HostApp RelativeCancelVerificationUrl : Account/RegisterCancel/
+HostApp RelativeConfirmChangeUrl : Account/Confirmed/
+HostApp RelativeConfirmPasswordResetUrl : Account/PasswordResetConfirm/
+HostApp RelativeLoginUrl : Account/Login
+HostApp StorageAccessKey : 0jaSy5r24CBUwalYkbhpx3ZGku2n+I2GuJRXAwnRjoGHiRnXNpzdgSdTPoSXPrA0PzMlPomSznukaVqfeSzThw==
+HostApp StorageAccountName : storeforcu
+HostApp UnobtrusiveJavaScriptEnabled : true
+HostApp webpages:Version : 3.0.0.0
+HostApp webpages:Enabled : false
+HostApp smtp.userName : registrations@BankWebinars.com
+HostApp smtp.port : 587
+HostApp smtp.password : azza123A
+HostApp smtp.host : smtp.gmail.com
+HostApp smtp.defaultCredentials : true
+HostApp smtp.enableSsl : true
+HostApp WMVRepository : http://ttsmedia.ttstrain.com/
+Key - UserName, Value - registrations@BankWebinars.com
+Key - Password, Value - azza123A
+Key - Host, Value - smtp.gmail.com
+Key - DefaultCredentials, Value - False
+Key - ClientDomain, Value - 
+Key - Ssl, Value - True
+Key - Port, Value - 587
+
+2015-04-09 19:49:05,666 [17] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 19:51:54,256 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – BankWebinars Spinning up application: 
+2015-04-09 19:51:55,137 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Config Properties - CcPaymentProcessingUrlKey:/home/PayCC;CreateUserQueueName:tts-mr-createuseraccount-queue;EmailSendingMode:notlive;HandoutRepository:http://ttsmedia.ttstrain.com/;DefaultConnectionString:Data Source=tcp:kmow9uloz6.database.windows.net,1433;Initial Catalog=BankWebinars;User Id=TTSOp@kmow9uloz6;Password=EntRisR..E121114;;GhostRequestRetryLimit:5;GhostRequestTimeout:600;MembershipConnectionString:Data Source=tcp:kmow9uloz6.database.windows.net,1433;Initial Catalog=MembershipReboot;User Id=TTSOp@kmow9uloz6;Password=EntRisR..E121114;;NotificationsTesting:False;RelativeLoginUrl:Account/Login;RelativeConfirmChangeUrl:Account/Confirmed/;RelativeCancelVerificationUrl:Account/RegisterCancel/;RelativeConfirmPasswordResetUrl:Account/PasswordResetConfirm/;RetryCount:60;StorageAccessKey:0jaSy5r24CBUwalYkbhpx3ZGku2n+I2GuJRXAwnRjoGHiRnXNpzdgSdTPoSXPrA0PzMlPomSznukaVqfeSzThw==;StorageAccountName:storeforcu;Tenant:BankWebinars;TenantEmail:registrations@BankWebinars.com;TenantDomain:BankWebinars.com;TenantURL:www.BankWebinars.com;TenantLogo:http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png;TenantPrefix:BW-;TestEmailAddress:bw.steve@ttstrain.com;TestEmailAddress2:cuwtestuser1@gmail.com;TraceLevel:Error;UseAzureWebjobs:True;WMVRepository:http://ttsmedia.ttstrain.com/
+2015-04-09 19:51:55,997 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppInfo: 1.0.5577.37439
+2015-04-09 19:51:56,841 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppSettings for BankWebinars are: HostApp EmailSendingMode : notlive
+HostApp site.EmailSendingMode : testing
+HostApp NotificationsTesting : false
+HostApp site.NotificationsTesting : true
+HostApp RetryCount : 60
+HostApp Tenant : BankWebinars
+HostApp TenantDomain : BankWebinars.com
+HostApp TenantEmail : registrations@BankWebinars.com
+HostApp TenantPrefix : BW-
+HostApp TenantURL : www.BankWebinars.com
+HostApp TestEmailAddress : bw.steve@ttstrain.com
+HostApp TestEmailAddress2 : cuwtestuser1@gmail.com
+HostApp UseAzureWebjobs : true
+HostApp TenantAppsRollbar : viaParse
+HostApp TenantLogo : http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png
+HostApp ClientValidationEnabled : true
+HostApp CreateUserQueueName : tts-mr-createuseraccount-queue
+HostApp CcPaymentProcessingUrlKey : /home/PayCC
+HostApp elmah.mvc.allowedRoles : *
+HostApp elmah.mvc.allowedUsers : *
+HostApp elmah.mvc.disableHandleErrorFilter : false
+HostApp elmah.mvc.disableHandler : false
+HostApp elmah.mvc.IgnoreDefaultRoute : false
+HostApp elmah.mvc.requiresAuthentication : false
+HostApp elmah.mvc.route : elmah
+HostApp GhostRequestRetryLimit : 5
+HostApp GhostRequestTimeout : 600
+HostApp Glimpse:DisableAsyncSupport : true
+HostApp HandoutRepository : http://ttsmedia.ttstrain.com/
+HostApp log4net.Internal.Debug : false
+HostApp PreserveLoginUrl : true
+HostApp RelativeCancelVerificationUrl : Account/RegisterCancel/
+HostApp RelativeConfirmChangeUrl : Account/Confirmed/
+HostApp RelativeConfirmPasswordResetUrl : Account/PasswordResetConfirm/
+HostApp RelativeLoginUrl : Account/Login
+HostApp StorageAccessKey : 0jaSy5r24CBUwalYkbhpx3ZGku2n+I2GuJRXAwnRjoGHiRnXNpzdgSdTPoSXPrA0PzMlPomSznukaVqfeSzThw==
+HostApp StorageAccountName : storeforcu
+HostApp UnobtrusiveJavaScriptEnabled : true
+HostApp webpages:Version : 3.0.0.0
+HostApp webpages:Enabled : false
+HostApp smtp.userName : registrations@BankWebinars.com
+HostApp smtp.port : 587
+HostApp smtp.password : azza123A
+HostApp smtp.host : smtp.gmail.com
+HostApp smtp.defaultCredentials : true
+HostApp smtp.enableSsl : true
+HostApp WMVRepository : http://ttsmedia.ttstrain.com/
+Key - UserName, Value - registrations@BankWebinars.com
+Key - Password, Value - azza123A
+Key - Host, Value - smtp.gmail.com
+Key - DefaultCredentials, Value - False
+Key - ClientDomain, Value - 
+Key - Ssl, Value - True
+Key - Port, Value - 587
+
+2015-04-09 19:52:03,425 [10] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 19:55:25,028 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – BankWebinars Spinning up application: 
+2015-04-09 19:55:25,969 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Config Properties - CcPaymentProcessingUrlKey:/home/PayCC;CreateUserQueueName:tts-mr-createuseraccount-queue;EmailSendingMode:notlive;HandoutRepository:http://ttsmedia.ttstrain.com/;DefaultConnectionString:Data Source=tcp:kmow9uloz6.database.windows.net,1433;Initial Catalog=BankWebinars;User Id=TTSOp@kmow9uloz6;Password=EntRisR..E121114;;GhostRequestRetryLimit:5;GhostRequestTimeout:600;MembershipConnectionString:Data Source=tcp:kmow9uloz6.database.windows.net,1433;Initial Catalog=MembershipReboot;User Id=TTSOp@kmow9uloz6;Password=EntRisR..E121114;;NotificationsTesting:False;RelativeLoginUrl:Account/Login;RelativeConfirmChangeUrl:Account/Confirmed/;RelativeCancelVerificationUrl:Account/RegisterCancel/;RelativeConfirmPasswordResetUrl:Account/PasswordResetConfirm/;RetryCount:60;StorageAccessKey:0jaSy5r24CBUwalYkbhpx3ZGku2n+I2GuJRXAwnRjoGHiRnXNpzdgSdTPoSXPrA0PzMlPomSznukaVqfeSzThw==;StorageAccountName:storeforcu;Tenant:BankWebinars;TenantEmail:registrations@BankWebinars.com;TenantDomain:BankWebinars.com;TenantURL:www.BankWebinars.com;TenantLogo:http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png;TenantPrefix:BW-;TestEmailAddress:bw.steve@ttstrain.com;TestEmailAddress2:cuwtestuser1@gmail.com;TraceLevel:Error;UseAzureWebjobs:True;WMVRepository:http://ttsmedia.ttstrain.com/
+2015-04-09 19:55:26,905 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppInfo: 1.0.5577.37653
+2015-04-09 19:55:27,818 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppSettings for BankWebinars are: HostApp EmailSendingMode : notlive
+HostApp site.EmailSendingMode : testing
+HostApp NotificationsTesting : false
+HostApp site.NotificationsTesting : true
+HostApp RetryCount : 60
+HostApp Tenant : BankWebinars
+HostApp TenantDomain : BankWebinars.com
+HostApp TenantEmail : registrations@BankWebinars.com
+HostApp TenantPrefix : BW-
+HostApp TenantURL : www.BankWebinars.com
+HostApp TestEmailAddress : bw.steve@ttstrain.com
+HostApp TestEmailAddress2 : cuwtestuser1@gmail.com
+HostApp UseAzureWebjobs : true
+HostApp TenantAppsRollbar : viaParse
+HostApp TenantLogo : http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png
+HostApp ClientValidationEnabled : true
+HostApp CreateUserQueueName : tts-mr-createuseraccount-queue
+HostApp CcPaymentProcessingUrlKey : /home/PayCC
+HostApp elmah.mvc.allowedRoles : *
+HostApp elmah.mvc.allowedUsers : *
+HostApp elmah.mvc.disableHandleErrorFilter : false
+HostApp elmah.mvc.disableHandler : false
+HostApp elmah.mvc.IgnoreDefaultRoute : false
+HostApp elmah.mvc.requiresAuthentication : false
+HostApp elmah.mvc.route : elmah
+HostApp GhostRequestRetryLimit : 5
+HostApp GhostRequestTimeout : 600
+HostApp Glimpse:DisableAsyncSupport : true
+HostApp HandoutRepository : http://ttsmedia.ttstrain.com/
+HostApp log4net.Internal.Debug : false
+HostApp PreserveLoginUrl : true
+HostApp RelativeCancelVerificationUrl : Account/RegisterCancel/
+HostApp RelativeConfirmChangeUrl : Account/Confirmed/
+HostApp RelativeConfirmPasswordResetUrl : Account/PasswordResetConfirm/
+HostApp RelativeLoginUrl : Account/Login
+HostApp StorageAccessKey : 0jaSy5r24CBUwalYkbhpx3ZGku2n+I2GuJRXAwnRjoGHiRnXNpzdgSdTPoSXPrA0PzMlPomSznukaVqfeSzThw==
+HostApp StorageAccountName : storeforcu
+HostApp UnobtrusiveJavaScriptEnabled : true
+HostApp webpages:Version : 3.0.0.0
+HostApp webpages:Enabled : false
+HostApp smtp.userName : registrations@BankWebinars.com
+HostApp smtp.port : 587
+HostApp smtp.password : azza123A
+HostApp smtp.host : smtp.gmail.com
+HostApp smtp.defaultCredentials : true
+HostApp smtp.enableSsl : true
+HostApp WMVRepository : http://ttsmedia.ttstrain.com/
+Key - UserName, Value - registrations@BankWebinars.com
+Key - Password, Value - azza123A
+Key - Host, Value - smtp.gmail.com
+Key - DefaultCredentials, Value - False
+Key - ClientDomain, Value - 
+Key - Ssl, Value - True
+Key - Port, Value - 587
+
+2015-04-09 19:55:33,810 [6] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 20:00:04,068 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – BankWebinars Spinning up application: 
+2015-04-09 20:00:04,960 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Config Properties - CcPaymentProcessingUrlKey:/home/PayCC;CreateUserQueueName:tts-mr-createuseraccount-queue;EmailSendingMode:notlive;HandoutRepository:http://ttsmedia.ttstrain.com/;DefaultConnectionString:Data Source=tcp:kmow9uloz6.database.windows.net,1433;Initial Catalog=BankWebinars;User Id=TTSOp@kmow9uloz6;Password=EntRisR..E121114;;GhostRequestRetryLimit:5;GhostRequestTimeout:600;MembershipConnectionString:Data Source=tcp:kmow9uloz6.database.windows.net,1433;Initial Catalog=MembershipReboot;User Id=TTSOp@kmow9uloz6;Password=EntRisR..E121114;;NotificationsTesting:False;RelativeLoginUrl:Account/Login;RelativeConfirmChangeUrl:Account/Confirmed/;RelativeCancelVerificationUrl:Account/RegisterCancel/;RelativeConfirmPasswordResetUrl:Account/PasswordResetConfirm/;RetryCount:60;StorageAccessKey:0jaSy5r24CBUwalYkbhpx3ZGku2n+I2GuJRXAwnRjoGHiRnXNpzdgSdTPoSXPrA0PzMlPomSznukaVqfeSzThw==;StorageAccountName:storeforcu;Tenant:BankWebinars;TenantEmail:registrations@BankWebinars.com;TenantDomain:BankWebinars.com;TenantURL:www.BankWebinars.com;TenantLogo:http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png;TenantPrefix:BW-;TestEmailAddress:bw.steve@ttstrain.com;TestEmailAddress2:cuwtestuser1@gmail.com;TraceLevel:Error;UseAzureWebjobs:True;WMVRepository:http://ttsmedia.ttstrain.com/
+2015-04-09 20:00:05,845 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppInfo: 1.0.5577.37793
+2015-04-09 20:00:06,875 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppSettings for BankWebinars are: HostApp EmailSendingMode : notlive
+HostApp site.EmailSendingMode : testing
+HostApp NotificationsTesting : false
+HostApp site.NotificationsTesting : true
+HostApp RetryCount : 60
+HostApp Tenant : BankWebinars
+HostApp TenantDomain : BankWebinars.com
+HostApp TenantEmail : registrations@BankWebinars.com
+HostApp TenantPrefix : BW-
+HostApp TenantURL : www.BankWebinars.com
+HostApp TestEmailAddress : bw.steve@ttstrain.com
+HostApp TestEmailAddress2 : cuwtestuser1@gmail.com
+HostApp UseAzureWebjobs : true
+HostApp TenantAppsRollbar : viaParse
+HostApp TenantLogo : http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png
+HostApp ClientValidationEnabled : true
+HostApp CreateUserQueueName : tts-mr-createuseraccount-queue
+HostApp CcPaymentProcessingUrlKey : /home/PayCC
+HostApp elmah.mvc.allowedRoles : *
+HostApp elmah.mvc.allowedUsers : *
+HostApp elmah.mvc.disableHandleErrorFilter : false
+HostApp elmah.mvc.disableHandler : false
+HostApp elmah.mvc.IgnoreDefaultRoute : false
+HostApp elmah.mvc.requiresAuthentication : false
+HostApp elmah.mvc.route : elmah
+HostApp GhostRequestRetryLimit : 5
+HostApp GhostRequestTimeout : 600
+HostApp Glimpse:DisableAsyncSupport : true
+HostApp HandoutRepository : http://ttsmedia.ttstrain.com/
+HostApp log4net.Internal.Debug : false
+HostApp PreserveLoginUrl : true
+HostApp RelativeCancelVerificationUrl : Account/RegisterCancel/
+HostApp RelativeConfirmChangeUrl : Account/Confirmed/
+HostApp RelativeConfirmPasswordResetUrl : Account/PasswordResetConfirm/
+HostApp RelativeLoginUrl : Account/Login
+HostApp StorageAccessKey : 0jaSy5r24CBUwalYkbhpx3ZGku2n+I2GuJRXAwnRjoGHiRnXNpzdgSdTPoSXPrA0PzMlPomSznukaVqfeSzThw==
+HostApp StorageAccountName : storeforcu
+HostApp UnobtrusiveJavaScriptEnabled : true
+HostApp webpages:Version : 3.0.0.0
+HostApp webpages:Enabled : false
+HostApp smtp.userName : registrations@BankWebinars.com
+HostApp smtp.port : 587
+HostApp smtp.password : azza123A
+HostApp smtp.host : smtp.gmail.com
+HostApp smtp.defaultCredentials : true
+HostApp smtp.enableSsl : true
+HostApp WMVRepository : http://ttsmedia.ttstrain.com/
+Key - UserName, Value - registrations@BankWebinars.com
+Key - Password, Value - azza123A
+Key - Host, Value - smtp.gmail.com
+Key - DefaultCredentials, Value - False
+Key - ClientDomain, Value - 
+Key - Ssl, Value - True
+Key - Port, Value - 587
+
+2015-04-09 20:00:13,090 [8] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 20:00:51,022 [12] ERROR CUWebinars.Web.Infrastructure.ErrorResponseCommand {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Controller of Original Request: Webinar
+2015-04-09 20:00:51,937 [12] ERROR CUWebinars.Web.Infrastructure.ErrorResponseCommand {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Action of Original Request: OnDemand
+2015-04-09 20:01:04,108 [9] ERROR CUWebinars.Web.Infrastructure.ErrorResponseCommand {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Controller of Original Request: Webinar
+2015-04-09 20:01:04,976 [9] ERROR CUWebinars.Web.Infrastructure.ErrorResponseCommand {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Action of Original Request: OnDemand
+2015-04-09 20:02:24,856 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – BankWebinars Spinning up application: 
+2015-04-09 20:02:25,767 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Config Properties - CcPaymentProcessingUrlKey:/home/PayCC;CreateUserQueueName:tts-mr-createuseraccount-queue;EmailSendingMode:notlive;HandoutRepository:http://ttsmedia.ttstrain.com/;DefaultConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=BankWebinars;Integrated Security=True;MultipleActiveResultSets=True;GhostRequestRetryLimit:5;GhostRequestTimeout:600;MembershipConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=MembershipReboot;Integrated Security=True;MultipleActiveResultSets=True;NotificationsTesting:False;RelativeLoginUrl:Account/Login;RelativeConfirmChangeUrl:Account/Confirmed/;RelativeCancelVerificationUrl:Account/RegisterCancel/;RelativeConfirmPasswordResetUrl:Account/PasswordResetConfirm/;RetryCount:60;StorageAccessKey:0jaSy5r24CBUwalYkbhpx3ZGku2n+I2GuJRXAwnRjoGHiRnXNpzdgSdTPoSXPrA0PzMlPomSznukaVqfeSzThw==;StorageAccountName:storeforcu;Tenant:BankWebinars;TenantEmail:registrations@BankWebinars.com;TenantDomain:BankWebinars.com;TenantURL:www.BankWebinars.com;TenantLogo:http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png;TenantPrefix:BW-;TestEmailAddress:bw.steve@ttstrain.com;TestEmailAddress2:cuwtestuser1@gmail.com;TraceLevel:Error;UseAzureWebjobs:True;WMVRepository:http://ttsmedia.ttstrain.com/
+2015-04-09 20:02:26,672 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppInfo: 1.0.5577.37863
+2015-04-09 20:02:27,565 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppSettings for BankWebinars are: HostApp EmailSendingMode : notlive
+HostApp site.EmailSendingMode : testing
+HostApp NotificationsTesting : false
+HostApp site.NotificationsTesting : true
+HostApp RetryCount : 60
+HostApp Tenant : BankWebinars
+HostApp TenantDomain : BankWebinars.com
+HostApp TenantEmail : registrations@BankWebinars.com
+HostApp TenantPrefix : BW-
+HostApp TenantURL : www.BankWebinars.com
+HostApp TestEmailAddress : bw.steve@ttstrain.com
+HostApp TestEmailAddress2 : cuwtestuser1@gmail.com
+HostApp UseAzureWebjobs : true
+HostApp TenantAppsRollbar : viaParse
+HostApp TenantLogo : http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png
+HostApp ClientValidationEnabled : true
+HostApp CreateUserQueueName : tts-mr-createuseraccount-queue
+HostApp CcPaymentProcessingUrlKey : /home/PayCC
+HostApp elmah.mvc.allowedRoles : *
+HostApp elmah.mvc.allowedUsers : *
+HostApp elmah.mvc.disableHandleErrorFilter : false
+HostApp elmah.mvc.disableHandler : false
+HostApp elmah.mvc.IgnoreDefaultRoute : false
+HostApp elmah.mvc.requiresAuthentication : false
+HostApp elmah.mvc.route : elmah
+HostApp GhostRequestRetryLimit : 5
+HostApp GhostRequestTimeout : 600
+HostApp Glimpse:DisableAsyncSupport : true
+HostApp HandoutRepository : http://ttsmedia.ttstrain.com/
+HostApp log4net.Internal.Debug : false
+HostApp PreserveLoginUrl : true
+HostApp RelativeCancelVerificationUrl : Account/RegisterCancel/
+HostApp RelativeConfirmChangeUrl : Account/Confirmed/
+HostApp RelativeConfirmPasswordResetUrl : Account/PasswordResetConfirm/
+HostApp RelativeLoginUrl : Account/Login
+HostApp StorageAccessKey : 0jaSy5r24CBUwalYkbhpx3ZGku2n+I2GuJRXAwnRjoGHiRnXNpzdgSdTPoSXPrA0PzMlPomSznukaVqfeSzThw==
+HostApp StorageAccountName : storeforcu
+HostApp UnobtrusiveJavaScriptEnabled : true
+HostApp webpages:Version : 3.0.0.0
+HostApp webpages:Enabled : false
+HostApp smtp.userName : registrations@BankWebinars.com
+HostApp smtp.port : 587
+HostApp smtp.password : azza123A
+HostApp smtp.host : smtp.gmail.com
+HostApp smtp.defaultCredentials : true
+HostApp smtp.enableSsl : true
+HostApp WMVRepository : http://ttsmedia.ttstrain.com/
+Key - UserName, Value - registrations@BankWebinars.com
+Key - Password, Value - azza123A
+Key - Host, Value - smtp.gmail.com
+Key - DefaultCredentials, Value - False
+Key - ClientDomain, Value - 
+Key - Ssl, Value - True
+Key - Port, Value - 587
+
+2015-04-09 20:02:30,719 [10] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 20:07:48,677 [33] ERROR CUWebinars.Web.Controllers.WebinarController {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – 
+2015-04-09 20:58:35,324 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – CUWebinars Spinning up application: 
+2015-04-09 20:58:36,231 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Config Properties - CcPaymentProcessingUrlKey:/home/PayCC;CreateUserQueueName:tts-mr-createuseraccount-queue;EmailSendingMode:notlive;HandoutRepository:http://ttsmedia.ttstrain.com/;DefaultConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=BankWebinars;Integrated Security=True;MultipleActiveResultSets=True;GhostRequestRetryLimit:5;GhostRequestTimeout:600;MembershipConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=MembershipReboot;Integrated Security=True;MultipleActiveResultSets=True;NotificationsTesting:False;RelativeLoginUrl:Account/Login;RelativeConfirmChangeUrl:Account/Confirmed/;RelativeCancelVerificationUrl:Account/RegisterCancel/;RelativeConfirmPasswordResetUrl:Account/PasswordResetConfirm/;RetryCount:60;StorageAccessKey:bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==;StorageAccountName:storeforbw;Tenant:CUWebinars;TenantEmail:webinars@cuwebinars.com;TenantDomain:CUWebinars.com;TenantURL:www.CUWebinars.com;TenantLogo:http://ttsmedia.ttstrain.com/images/logoCU.png;TenantPrefix:CU-;TestEmailAddress:cu.steve@ttstrain.com;TestEmailAddress2:cuwtestuser1@gmail.com;TraceLevel:INFO;UseAzureWebjobs:True;WMVRepository:http://ttsmedia.ttstrain.com/
+2015-04-09 20:58:37,107 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppInfo: 1.0.5577.39549
+2015-04-09 20:58:37,960 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppSettings for CUWebinars are: HostApp EmailSendingMode : notlive
+HostApp site.EmailSendingMode : testing
+HostApp NotificationsTesting : false
+HostApp site.NotificationsTesting : true
+HostApp RetryCount : 60
+HostApp Tenant : CUWebinars
+HostApp TenantDomain : CUWebinars.com
+HostApp TenantEmail : webinars@cuwebinars.com
+HostApp TenantPrefix : CU-
+HostApp TenantURL : www.CUWebinars.com
+HostApp TestEmailAddress : cu.steve@ttstrain.com
+HostApp TestEmailAddress2 : cuwtestuser1@gmail.com
+HostApp UseAzureWebjobs : true
+HostApp TenantAppsRollbar : viaParse
+HostApp TenantLogo : http://ttsmedia.ttstrain.com/images/logoCU.png
+HostApp ClientValidationEnabled : true
+HostApp CreateUserQueueName : tts-mr-createuseraccount-queue
+HostApp CcPaymentProcessingUrlKey : /home/PayCC
+HostApp elmah.mvc.allowedRoles : *
+HostApp elmah.mvc.allowedUsers : *
+HostApp elmah.mvc.disableHandleErrorFilter : false
+HostApp elmah.mvc.disableHandler : false
+HostApp elmah.mvc.IgnoreDefaultRoute : false
+HostApp elmah.mvc.requiresAuthentication : false
+HostApp elmah.mvc.route : elmah
+HostApp GhostRequestRetryLimit : 5
+HostApp GhostRequestTimeout : 600
+HostApp Glimpse:DisableAsyncSupport : true
+HostApp HandoutRepository : http://ttsmedia.ttstrain.com/
+HostApp log4net.Internal.Debug : false
+HostApp PreserveLoginUrl : true
+HostApp RelativeCancelVerificationUrl : Account/RegisterCancel/
+HostApp RelativeConfirmChangeUrl : Account/Confirmed/
+HostApp RelativeConfirmPasswordResetUrl : Account/PasswordResetConfirm/
+HostApp RelativeLoginUrl : Account/Login
+HostApp StorageAccessKey : bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==
+HostApp StorageAccountName : storeforbw
+HostApp UnobtrusiveJavaScriptEnabled : true
+HostApp webpages:Version : 3.0.0.0
+HostApp webpages:Enabled : false
+HostApp smtp.userName : registrations@BankWebinars.com
+HostApp smtp.port : 587
+HostApp smtp.password : azza123A
+HostApp smtp.host : smtp.gmail.com
+HostApp smtp.defaultCredentials : true
+HostApp smtp.enableSsl : true
+HostApp WMVRepository : http://ttsmedia.ttstrain.com/
+Key - UserName, Value - registrations@BankWebinars.com
+Key - Password, Value - azza123A
+Key - Host, Value - smtp.gmail.com
+Key - DefaultCredentials, Value - False
+Key - ClientDomain, Value - 
+Key - Ssl, Value - True
+Key - Port, Value - 587
+
+2015-04-09 20:58:40,869 [6] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 21:01:50,707 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – CUWebinars Spinning up application: 
+2015-04-09 21:01:51,676 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Config Properties - CcPaymentProcessingUrlKey:/home/PayCC;CreateUserQueueName:tts-mr-createuseraccount-queue;EmailSendingMode:notlive;HandoutRepository:http://ttsmedia.ttstrain.com/;DefaultConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=BankWebinars;Integrated Security=True;MultipleActiveResultSets=True;GhostRequestRetryLimit:5;GhostRequestTimeout:600;MembershipConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=MembershipReboot;Integrated Security=True;MultipleActiveResultSets=True;NotificationsTesting:False;RelativeLoginUrl:Account/Login;RelativeConfirmChangeUrl:Account/Confirmed/;RelativeCancelVerificationUrl:Account/RegisterCancel/;RelativeConfirmPasswordResetUrl:Account/PasswordResetConfirm/;RetryCount:60;StorageAccessKey:bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==;StorageAccountName:storeforbw;Tenant:CUWebinars;TenantEmail:webinars@cuwebinars.com;TenantDomain:CUWebinars.com;TenantURL:www.CUWebinars.com;TenantLogo:http://ttsmedia.ttstrain.com/images/logoCU.png;TenantPrefix:CU-;TestEmailAddress:cu.steve@ttstrain.com;TestEmailAddress2:cuwtestuser1@gmail.com;TraceLevel:INFO;UseAzureWebjobs:True;WMVRepository:http://ttsmedia.ttstrain.com/
+2015-04-09 21:01:52,642 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppInfo: 1.0.5577.39549
+2015-04-09 21:01:53,566 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppSettings for CUWebinars are: HostApp EmailSendingMode : notlive
+HostApp site.EmailSendingMode : testing
+HostApp NotificationsTesting : false
+HostApp site.NotificationsTesting : true
+HostApp RetryCount : 60
+HostApp Tenant : CUWebinars
+HostApp TenantDomain : CUWebinars.com
+HostApp TenantEmail : webinars@cuwebinars.com
+HostApp TenantPrefix : CU-
+HostApp TenantURL : www.CUWebinars.com
+HostApp TestEmailAddress : cu.steve@ttstrain.com
+HostApp TestEmailAddress2 : cuwtestuser1@gmail.com
+HostApp UseAzureWebjobs : true
+HostApp TenantAppsRollbar : viaParse
+HostApp TenantLogo : http://ttsmedia.ttstrain.com/images/logoCU.png
+HostApp ClientValidationEnabled : true
+HostApp CreateUserQueueName : tts-mr-createuseraccount-queue
+HostApp CcPaymentProcessingUrlKey : /home/PayCC
+HostApp elmah.mvc.allowedRoles : *
+HostApp elmah.mvc.allowedUsers : *
+HostApp elmah.mvc.disableHandleErrorFilter : false
+HostApp elmah.mvc.disableHandler : false
+HostApp elmah.mvc.IgnoreDefaultRoute : false
+HostApp elmah.mvc.requiresAuthentication : false
+HostApp elmah.mvc.route : elmah
+HostApp GhostRequestRetryLimit : 5
+HostApp GhostRequestTimeout : 600
+HostApp Glimpse:DisableAsyncSupport : true
+HostApp HandoutRepository : http://ttsmedia.ttstrain.com/
+HostApp log4net.Internal.Debug : false
+HostApp PreserveLoginUrl : true
+HostApp RelativeCancelVerificationUrl : Account/RegisterCancel/
+HostApp RelativeConfirmChangeUrl : Account/Confirmed/
+HostApp RelativeConfirmPasswordResetUrl : Account/PasswordResetConfirm/
+HostApp RelativeLoginUrl : Account/Login
+HostApp StorageAccessKey : bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==
+HostApp StorageAccountName : storeforbw
+HostApp UnobtrusiveJavaScriptEnabled : true
+HostApp webpages:Version : 3.0.0.0
+HostApp webpages:Enabled : false
+HostApp smtp.userName : registrations@BankWebinars.com
+HostApp smtp.port : 587
+HostApp smtp.password : azza123A
+HostApp smtp.host : smtp.gmail.com
+HostApp smtp.defaultCredentials : true
+HostApp smtp.enableSsl : true
+HostApp WMVRepository : http://ttsmedia.ttstrain.com/
+Key - UserName, Value - registrations@BankWebinars.com
+Key - Password, Value - azza123A
+Key - Host, Value - smtp.gmail.com
+Key - DefaultCredentials, Value - False
+Key - ClientDomain, Value - 
+Key - Ssl, Value - True
+Key - Port, Value - 587
+
+2015-04-09 21:01:56,529 [6] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 21:02:28,023 [9] INFO  CUWebinars.Web.Core.Orchestrators.AccountControllerOrchestrator {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Login|returnURL was: /Account/Login?ReturnUrl=/Admin/ManageOrder Session=<AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _ga=GA1.1.49519181.1428574644</Cookie></AuditInfo>
+2015-04-09 21:02:36,018 [9] ERROR CUWebinars.Web.Controllers.AccountController {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Account.SignIn Failed. drogersbox-test1@yahoo.com.au | m0nsterd Session= <AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _ga=GA1.1.49519181.1428574644</Cookie></AuditInfo>
+System.ArgumentException: Requested value 'INFO' was not found.
+   at System.Enum.EnumResult.SetFailure(ParseFailureKind failure, String failureMessageID, Object failureMessageFormatArgument)
+   at System.Enum.TryParseEnum(Type enumType, String value, Boolean ignoreCase, EnumResult& parseResult)
+   at System.Enum.Parse(Type enumType, String value, Boolean ignoreCase)
+   at System.Diagnostics.TraceSource.Initialize()
+   at System.Diagnostics.TraceSource.TraceEvent(TraceEventType eventType, Int32 id, String message)
+   at BrockAllen.MembershipReboot.Tracing.TraceEvent(TraceEventType type, String message, Boolean suppressTraceService) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 92
+   at BrockAllen.MembershipReboot.Tracing.Information(String message) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 49
+   at BrockAllen.MembershipReboot.Tracing.Information(String message, Object[] args) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 54
+   at BrockAllen.MembershipReboot.UserAccountService`1.AuthenticateWithEmail(String tenant, String email, String password, TAccount& account) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\AccountService\UserAccountService.cs:line 819
+   at CUWebinars.Business.AccountService.MembershipService.LogInUser(String tenant, String emailAddress, String password, Boolean persistent, String& userMustVerify) in e:\TTS\BankWebinars\CUWebinars.Business\AccountService\MembershipService.cs:line 262
+   at CUWebinars.Web.Core.Orchestrators.AccountControllerOrchestrator.SignUserIn(SignInModel model, String& userMustVerify) in e:\TTS\BankWebinars\CUWebinars.Web\Core\Orchestrators\AccountControllerOrchestrator.cs:line 213
+   at CUWebinars.Web.Controllers.AccountController.SignIn(SignInModel model) in e:\TTS\BankWebinars\CUWebinars.Web\Controllers\AccountController.cs:line 705
+2015-04-09 21:02:46,763 [17] ERROR CUWebinars.Web.Controllers.AccountController {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Account.SignIn Failed. drogersbox-test70@yahoo.com.au | m0nsterd Session= <AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _ga=GA1.1.49519181.1428574644</Cookie></AuditInfo>
+System.ArgumentException: Requested value 'INFO' was not found.
+   at System.Enum.EnumResult.SetFailure(ParseFailureKind failure, String failureMessageID, Object failureMessageFormatArgument)
+   at System.Enum.TryParseEnum(Type enumType, String value, Boolean ignoreCase, EnumResult& parseResult)
+   at System.Enum.Parse(Type enumType, String value, Boolean ignoreCase)
+   at System.Diagnostics.TraceSource.Initialize()
+   at System.Diagnostics.TraceSource.TraceEvent(TraceEventType eventType, Int32 id, String message)
+   at BrockAllen.MembershipReboot.Tracing.TraceEvent(TraceEventType type, String message, Boolean suppressTraceService) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 92
+   at BrockAllen.MembershipReboot.Tracing.Information(String message) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 49
+   at BrockAllen.MembershipReboot.Tracing.Information(String message, Object[] args) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 54
+   at BrockAllen.MembershipReboot.UserAccountService`1.AuthenticateWithEmail(String tenant, String email, String password, TAccount& account) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\AccountService\UserAccountService.cs:line 819
+   at CUWebinars.Business.AccountService.MembershipService.LogInUser(String tenant, String emailAddress, String password, Boolean persistent, String& userMustVerify) in e:\TTS\BankWebinars\CUWebinars.Business\AccountService\MembershipService.cs:line 262
+   at CUWebinars.Web.Core.Orchestrators.AccountControllerOrchestrator.SignUserIn(SignInModel model, String& userMustVerify) in e:\TTS\BankWebinars\CUWebinars.Web\Core\Orchestrators\AccountControllerOrchestrator.cs:line 213
+   at CUWebinars.Web.Controllers.AccountController.SignIn(SignInModel model) in e:\TTS\BankWebinars\CUWebinars.Web\Controllers\AccountController.cs:line 705
+2015-04-09 21:03:52,397 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – CUWebinars Spinning up application: 
+2015-04-09 21:03:53,303 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Config Properties - CcPaymentProcessingUrlKey:/home/PayCC;CreateUserQueueName:tts-mr-createuseraccount-queue;EmailSendingMode:notlive;HandoutRepository:http://ttsmedia.ttstrain.com/;DefaultConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=BankWebinars;Integrated Security=True;MultipleActiveResultSets=True;GhostRequestRetryLimit:5;GhostRequestTimeout:600;MembershipConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=MembershipReboot;Integrated Security=True;MultipleActiveResultSets=True;NotificationsTesting:False;RelativeLoginUrl:Account/Login;RelativeConfirmChangeUrl:Account/Confirmed/;RelativeCancelVerificationUrl:Account/RegisterCancel/;RelativeConfirmPasswordResetUrl:Account/PasswordResetConfirm/;RetryCount:60;StorageAccessKey:bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==;StorageAccountName:storeforbw;Tenant:CUWebinars;TenantEmail:webinars@cuwebinars.com;TenantDomain:CUWebinars.com;TenantURL:www.CUWebinars.com;TenantLogo:http://ttsmedia.ttstrain.com/images/logoCU.png;TenantPrefix:CU-;TestEmailAddress:cu.steve@ttstrain.com;TestEmailAddress2:cuwtestuser1@gmail.com;TraceLevel:INFO;UseAzureWebjobs:False;WMVRepository:http://ttsmedia.ttstrain.com/
+2015-04-09 21:03:54,176 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppInfo: 1.0.5577.39549
+2015-04-09 21:03:55,041 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppSettings for CUWebinars are: HostApp EmailSendingMode : notlive
+HostApp site.EmailSendingMode : testing
+HostApp NotificationsTesting : false
+HostApp site.NotificationsTesting : true
+HostApp RetryCount : 60
+HostApp Tenant : CUWebinars
+HostApp TenantDomain : CUWebinars.com
+HostApp TenantEmail : webinars@cuwebinars.com
+HostApp TenantPrefix : CU-
+HostApp TenantURL : www.CUWebinars.com
+HostApp TestEmailAddress : cu.steve@ttstrain.com
+HostApp TestEmailAddress2 : cuwtestuser1@gmail.com
+HostApp UseAzureWebjobs : false
+HostApp TenantAppsRollbar : viaParse
+HostApp TenantLogo : http://ttsmedia.ttstrain.com/images/logoCU.png
+HostApp ClientValidationEnabled : true
+HostApp CreateUserQueueName : tts-mr-createuseraccount-queue
+HostApp CcPaymentProcessingUrlKey : /home/PayCC
+HostApp elmah.mvc.allowedRoles : *
+HostApp elmah.mvc.allowedUsers : *
+HostApp elmah.mvc.disableHandleErrorFilter : false
+HostApp elmah.mvc.disableHandler : false
+HostApp elmah.mvc.IgnoreDefaultRoute : false
+HostApp elmah.mvc.requiresAuthentication : false
+HostApp elmah.mvc.route : elmah
+HostApp GhostRequestRetryLimit : 5
+HostApp GhostRequestTimeout : 600
+HostApp Glimpse:DisableAsyncSupport : true
+HostApp HandoutRepository : http://ttsmedia.ttstrain.com/
+HostApp log4net.Internal.Debug : false
+HostApp PreserveLoginUrl : true
+HostApp RelativeCancelVerificationUrl : Account/RegisterCancel/
+HostApp RelativeConfirmChangeUrl : Account/Confirmed/
+HostApp RelativeConfirmPasswordResetUrl : Account/PasswordResetConfirm/
+HostApp RelativeLoginUrl : Account/Login
+HostApp StorageAccessKey : bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==
+HostApp StorageAccountName : storeforbw
+HostApp UnobtrusiveJavaScriptEnabled : true
+HostApp webpages:Version : 3.0.0.0
+HostApp webpages:Enabled : false
+HostApp smtp.userName : registrations@BankWebinars.com
+HostApp smtp.port : 587
+HostApp smtp.password : azza123A
+HostApp smtp.host : smtp.gmail.com
+HostApp smtp.defaultCredentials : true
+HostApp smtp.enableSsl : true
+HostApp WMVRepository : http://ttsmedia.ttstrain.com/
+Key - UserName, Value - 
+Key - Password, Value - 
+Key - Host, Value - localhost
+Key - DefaultCredentials, Value - False
+Key - ClientDomain, Value - 
+Key - Ssl, Value - False
+Key - Port, Value - 25
+
+2015-04-09 21:03:57,941 [7] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 21:04:17,788 [5] INFO  CUWebinars.Web.Core.Orchestrators.AccountControllerOrchestrator {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Login|returnURL was: / Session=<AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _ga=GA1.1.49519181.1428574644</Cookie></AuditInfo>
+2015-04-09 21:04:27,403 [15] INFO  CUWebinars.Web.Controllers.AccountController {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Account.ResetPassword GET. Email = drogersbox-test70@yahoo.com.au Session=<AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _ga=GA1.1.49519181.1428574644</Cookie></AuditInfo>
+2015-04-09 21:04:28,477 [15] ERROR CUWebinars.Business.AccountService.MembershipService {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – ResetPassword
+System.ArgumentException: Requested value 'INFO' was not found.
+   at System.Enum.EnumResult.SetFailure(ParseFailureKind failure, String failureMessageID, Object failureMessageFormatArgument)
+   at System.Enum.TryParseEnum(Type enumType, String value, Boolean ignoreCase, EnumResult& parseResult)
+   at System.Enum.Parse(Type enumType, String value, Boolean ignoreCase)
+   at System.Diagnostics.TraceSource.Initialize()
+   at System.Diagnostics.TraceSource.TraceEvent(TraceEventType eventType, Int32 id, String message)
+   at BrockAllen.MembershipReboot.Tracing.TraceEvent(TraceEventType type, String message, Boolean suppressTraceService) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 92
+   at BrockAllen.MembershipReboot.Tracing.Information(String message) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 49
+   at BrockAllen.MembershipReboot.Tracing.Information(String message, Object[] args) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 54
+   at BrockAllen.MembershipReboot.UserAccountService`1.ResetPassword(String tenant, String email) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\AccountService\UserAccountService.cs:line 1322
+   at CUWebinars.Business.AccountService.MembershipService.ResetPassword(String tenant, String email) in e:\TTS\BankWebinars\CUWebinars.Business\AccountService\MembershipService.cs:line 346
+2015-04-09 21:04:29,435 [15] FATAL CUWebinars.Web.Controllers.AccountController {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Account.ResetPassword GET Failed. Requested value 'INFO' was not found., Session = <AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _ga=GA1.1.49519181.1428574644</Cookie></AuditInfo> on email: drogersbox-test70@yahoo.com.au
+System.ArgumentException: Requested value 'INFO' was not found.
+   at System.Enum.EnumResult.SetFailure(ParseFailureKind failure, String failureMessageID, Object failureMessageFormatArgument)
+   at System.Enum.TryParseEnum(Type enumType, String value, Boolean ignoreCase, EnumResult& parseResult)
+   at System.Enum.Parse(Type enumType, String value, Boolean ignoreCase)
+   at System.Diagnostics.TraceSource.Initialize()
+   at System.Diagnostics.TraceSource.TraceEvent(TraceEventType eventType, Int32 id, String message)
+   at BrockAllen.MembershipReboot.Tracing.TraceEvent(TraceEventType type, String message, Boolean suppressTraceService) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 92
+   at BrockAllen.MembershipReboot.Tracing.Information(String message) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 49
+   at BrockAllen.MembershipReboot.Tracing.Information(String message, Object[] args) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 54
+   at BrockAllen.MembershipReboot.UserAccountService`1.ResetPassword(String tenant, String email) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\AccountService\UserAccountService.cs:line 1322
+   at CUWebinars.Business.AccountService.MembershipService.ResetPassword(String tenant, String email) in e:\TTS\BankWebinars\CUWebinars.Business\AccountService\MembershipService.cs:line 351
+   at CUWebinars.Web.Core.Orchestrators.AccountControllerOrchestrator.ResetPassword(String tenant, String email) in e:\TTS\BankWebinars\CUWebinars.Web\Core\Orchestrators\AccountControllerOrchestrator.cs:line 208
+   at CUWebinars.Web.Controllers.AccountController.ResetPassword(String email) in e:\TTS\BankWebinars\CUWebinars.Web\Controllers\AccountController.cs:line 813
+2015-04-09 21:05:49,360 [13] INFO  CUWebinars.Web.Controllers.AccountController {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Account.ResetPassword GET. Email = drogersbox-test70@yahoo.com.au Session=<AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _ga=GA1.1.49519181.1428574644</Cookie></AuditInfo>
+2015-04-09 21:05:54,452 [13] ERROR CUWebinars.Business.AccountService.MembershipService {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – ResetPassword
+System.ArgumentException: Requested value 'INFO' was not found.
+   at System.Enum.EnumResult.SetFailure(ParseFailureKind failure, String failureMessageID, Object failureMessageFormatArgument)
+   at System.Enum.TryParseEnum(Type enumType, String value, Boolean ignoreCase, EnumResult& parseResult)
+   at System.Enum.Parse(Type enumType, String value, Boolean ignoreCase)
+   at System.Diagnostics.TraceSource.Initialize()
+   at System.Diagnostics.TraceSource.TraceEvent(TraceEventType eventType, Int32 id, String message)
+   at BrockAllen.MembershipReboot.Tracing.TraceEvent(TraceEventType type, String message, Boolean suppressTraceService) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 92
+   at BrockAllen.MembershipReboot.Tracing.Information(String message) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 49
+   at BrockAllen.MembershipReboot.Tracing.Information(String message, Object[] args) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 54
+   at BrockAllen.MembershipReboot.UserAccountService`1.ResetPassword(String tenant, String email) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\AccountService\UserAccountService.cs:line 1322
+   at CUWebinars.Business.AccountService.MembershipService.ResetPassword(String tenant, String email) in e:\TTS\BankWebinars\CUWebinars.Business\AccountService\MembershipService.cs:line 346
+2015-04-09 21:06:13,209 [13] FATAL CUWebinars.Web.Controllers.AccountController {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Account.ResetPassword GET Failed. Requested value 'INFO' was not found., Session = <AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _ga=GA1.1.49519181.1428574644</Cookie></AuditInfo> on email: drogersbox-test70@yahoo.com.au
+System.ArgumentException: Requested value 'INFO' was not found.
+   at System.Enum.EnumResult.SetFailure(ParseFailureKind failure, String failureMessageID, Object failureMessageFormatArgument)
+   at System.Enum.TryParseEnum(Type enumType, String value, Boolean ignoreCase, EnumResult& parseResult)
+   at System.Enum.Parse(Type enumType, String value, Boolean ignoreCase)
+   at System.Diagnostics.TraceSource.Initialize()
+   at System.Diagnostics.TraceSource.TraceEvent(TraceEventType eventType, Int32 id, String message)
+   at BrockAllen.MembershipReboot.Tracing.TraceEvent(TraceEventType type, String message, Boolean suppressTraceService) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 92
+   at BrockAllen.MembershipReboot.Tracing.Information(String message) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 49
+   at BrockAllen.MembershipReboot.Tracing.Information(String message, Object[] args) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 54
+   at BrockAllen.MembershipReboot.UserAccountService`1.ResetPassword(String tenant, String email) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\AccountService\UserAccountService.cs:line 1322
+   at CUWebinars.Business.AccountService.MembershipService.ResetPassword(String tenant, String email) in e:\TTS\BankWebinars\CUWebinars.Business\AccountService\MembershipService.cs:line 351
+   at CUWebinars.Web.Core.Orchestrators.AccountControllerOrchestrator.ResetPassword(String tenant, String email) in e:\TTS\BankWebinars\CUWebinars.Web\Core\Orchestrators\AccountControllerOrchestrator.cs:line 208
+   at CUWebinars.Web.Controllers.AccountController.ResetPassword(String email) in e:\TTS\BankWebinars\CUWebinars.Web\Controllers\AccountController.cs:line 813
+2015-04-09 21:06:17,606 [25] INFO  CUWebinars.Web.Controllers.AccountController {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Account.ResetPassword GET. Email = drogersbox-test70@yahoo.com.au Session=<AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _ga=GA1.1.49519181.1428574644</Cookie></AuditInfo>
+2015-04-09 21:06:46,366 [25] ERROR CUWebinars.Business.AccountService.MembershipService {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – ResetPassword
+System.ArgumentException: Requested value 'INFO' was not found.
+   at System.Enum.EnumResult.SetFailure(ParseFailureKind failure, String failureMessageID, Object failureMessageFormatArgument)
+   at System.Enum.TryParseEnum(Type enumType, String value, Boolean ignoreCase, EnumResult& parseResult)
+   at System.Enum.Parse(Type enumType, String value, Boolean ignoreCase)
+   at System.Diagnostics.TraceSource.Initialize()
+   at System.Diagnostics.TraceSource.TraceEvent(TraceEventType eventType, Int32 id, String message)
+   at BrockAllen.MembershipReboot.Tracing.TraceEvent(TraceEventType type, String message, Boolean suppressTraceService) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 92
+   at BrockAllen.MembershipReboot.Tracing.Information(String message) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 49
+   at BrockAllen.MembershipReboot.Tracing.Information(String message, Object[] args) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 54
+   at BrockAllen.MembershipReboot.UserAccountService`1.ResetPassword(String tenant, String email) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\AccountService\UserAccountService.cs:line 1322
+   at CUWebinars.Business.AccountService.MembershipService.ResetPassword(String tenant, String email) in e:\TTS\BankWebinars\CUWebinars.Business\AccountService\MembershipService.cs:line 346
+2015-04-09 21:06:49,112 [25] FATAL CUWebinars.Web.Controllers.AccountController {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Account.ResetPassword GET Failed. Requested value 'INFO' was not found., Session = <AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _ga=GA1.1.49519181.1428574644</Cookie></AuditInfo> on email: drogersbox-test70@yahoo.com.au
+System.ArgumentException: Requested value 'INFO' was not found.
+   at System.Enum.EnumResult.SetFailure(ParseFailureKind failure, String failureMessageID, Object failureMessageFormatArgument)
+   at System.Enum.TryParseEnum(Type enumType, String value, Boolean ignoreCase, EnumResult& parseResult)
+   at System.Enum.Parse(Type enumType, String value, Boolean ignoreCase)
+   at System.Diagnostics.TraceSource.Initialize()
+   at System.Diagnostics.TraceSource.TraceEvent(TraceEventType eventType, Int32 id, String message)
+   at BrockAllen.MembershipReboot.Tracing.TraceEvent(TraceEventType type, String message, Boolean suppressTraceService) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 92
+   at BrockAllen.MembershipReboot.Tracing.Information(String message) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 49
+   at BrockAllen.MembershipReboot.Tracing.Information(String message, Object[] args) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 54
+   at BrockAllen.MembershipReboot.UserAccountService`1.ResetPassword(String tenant, String email) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\AccountService\UserAccountService.cs:line 1322
+   at CUWebinars.Business.AccountService.MembershipService.ResetPassword(String tenant, String email) in e:\TTS\BankWebinars\CUWebinars.Business\AccountService\MembershipService.cs:line 351
+   at CUWebinars.Web.Core.Orchestrators.AccountControllerOrchestrator.ResetPassword(String tenant, String email) in e:\TTS\BankWebinars\CUWebinars.Web\Core\Orchestrators\AccountControllerOrchestrator.cs:line 208
+   at CUWebinars.Web.Controllers.AccountController.ResetPassword(String email) in e:\TTS\BankWebinars\CUWebinars.Web\Controllers\AccountController.cs:line 813
+2015-04-09 21:08:00,643 [13] INFO  CUWebinars.Web.Controllers.AccountController {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Account.ResetPassword GET. Email = drogersbox-test70@yahoo.com.au Session=<AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _ga=GA1.1.49519181.1428574644</Cookie></AuditInfo>
+2015-04-09 21:08:04,048 [13] ERROR CUWebinars.Business.AccountService.MembershipService {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – ResetPassword
+System.ArgumentException: Requested value 'INFO' was not found.
+   at System.Enum.EnumResult.SetFailure(ParseFailureKind failure, String failureMessageID, Object failureMessageFormatArgument)
+   at System.Enum.TryParseEnum(Type enumType, String value, Boolean ignoreCase, EnumResult& parseResult)
+   at System.Enum.Parse(Type enumType, String value, Boolean ignoreCase)
+   at System.Diagnostics.TraceSource.Initialize()
+   at System.Diagnostics.TraceSource.TraceEvent(TraceEventType eventType, Int32 id, String message)
+   at BrockAllen.MembershipReboot.Tracing.TraceEvent(TraceEventType type, String message, Boolean suppressTraceService) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 92
+   at BrockAllen.MembershipReboot.Tracing.Information(String message) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 49
+   at BrockAllen.MembershipReboot.Tracing.Information(String message, Object[] args) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 54
+   at BrockAllen.MembershipReboot.UserAccountService`1.ResetPassword(String tenant, String email) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\AccountService\UserAccountService.cs:line 1322
+   at CUWebinars.Business.AccountService.MembershipService.ResetPassword(String tenant, String email) in e:\TTS\BankWebinars\CUWebinars.Business\AccountService\MembershipService.cs:line 346
+2015-04-09 21:08:13,453 [13] FATAL CUWebinars.Web.Controllers.AccountController {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Account.ResetPassword GET Failed. Requested value 'INFO' was not found., Session = <AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _ga=GA1.1.49519181.1428574644</Cookie></AuditInfo> on email: drogersbox-test70@yahoo.com.au
+System.ArgumentException: Requested value 'INFO' was not found.
+   at System.Enum.EnumResult.SetFailure(ParseFailureKind failure, String failureMessageID, Object failureMessageFormatArgument)
+   at System.Enum.TryParseEnum(Type enumType, String value, Boolean ignoreCase, EnumResult& parseResult)
+   at System.Enum.Parse(Type enumType, String value, Boolean ignoreCase)
+   at System.Diagnostics.TraceSource.Initialize()
+   at System.Diagnostics.TraceSource.TraceEvent(TraceEventType eventType, Int32 id, String message)
+   at BrockAllen.MembershipReboot.Tracing.TraceEvent(TraceEventType type, String message, Boolean suppressTraceService) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 92
+   at BrockAllen.MembershipReboot.Tracing.Information(String message) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 49
+   at BrockAllen.MembershipReboot.Tracing.Information(String message, Object[] args) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 54
+   at BrockAllen.MembershipReboot.UserAccountService`1.ResetPassword(String tenant, String email) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\AccountService\UserAccountService.cs:line 1322
+   at CUWebinars.Business.AccountService.MembershipService.ResetPassword(String tenant, String email) in e:\TTS\BankWebinars\CUWebinars.Business\AccountService\MembershipService.cs:line 351
+   at CUWebinars.Web.Core.Orchestrators.AccountControllerOrchestrator.ResetPassword(String tenant, String email) in e:\TTS\BankWebinars\CUWebinars.Web\Core\Orchestrators\AccountControllerOrchestrator.cs:line 208
+   at CUWebinars.Web.Controllers.AccountController.ResetPassword(String email) in e:\TTS\BankWebinars\CUWebinars.Web\Controllers\AccountController.cs:line 813
+2015-04-09 21:09:13,157 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – CUWebinars Spinning up application: 
+2015-04-09 21:09:14,062 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Config Properties - CcPaymentProcessingUrlKey:/home/PayCC;CreateUserQueueName:tts-mr-createuseraccount-queue;EmailSendingMode:notlive;HandoutRepository:http://ttsmedia.ttstrain.com/;DefaultConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=BankWebinars;Integrated Security=True;MultipleActiveResultSets=True;GhostRequestRetryLimit:5;GhostRequestTimeout:600;MembershipConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=MembershipReboot;Integrated Security=True;MultipleActiveResultSets=True;NotificationsTesting:False;RelativeLoginUrl:Account/Login;RelativeConfirmChangeUrl:Account/Confirmed/;RelativeCancelVerificationUrl:Account/RegisterCancel/;RelativeConfirmPasswordResetUrl:Account/PasswordResetConfirm/;RetryCount:60;StorageAccessKey:bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==;StorageAccountName:storeforbw;Tenant:CUWebinars;TenantEmail:webinars@cuwebinars.com;TenantDomain:CUWebinars.com;TenantURL:www.CUWebinars.com;TenantLogo:http://ttsmedia.ttstrain.com/images/logoCU.png;TenantPrefix:CU-;TestEmailAddress:cu.steve@ttstrain.com;TestEmailAddress2:cuwtestuser1@gmail.com;TraceLevel:Info;UseAzureWebjobs:False;WMVRepository:http://ttsmedia.ttstrain.com/
+2015-04-09 21:09:14,952 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppInfo: 1.0.5577.39549
+2015-04-09 21:09:15,817 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppSettings for CUWebinars are: HostApp EmailSendingMode : notlive
+HostApp site.EmailSendingMode : testing
+HostApp NotificationsTesting : false
+HostApp site.NotificationsTesting : true
+HostApp RetryCount : 60
+HostApp Tenant : CUWebinars
+HostApp TenantDomain : CUWebinars.com
+HostApp TenantEmail : webinars@cuwebinars.com
+HostApp TenantPrefix : CU-
+HostApp TenantURL : www.CUWebinars.com
+HostApp TestEmailAddress : cu.steve@ttstrain.com
+HostApp TestEmailAddress2 : cuwtestuser1@gmail.com
+HostApp UseAzureWebjobs : false
+HostApp TenantAppsRollbar : viaParse
+HostApp TenantLogo : http://ttsmedia.ttstrain.com/images/logoCU.png
+HostApp ClientValidationEnabled : true
+HostApp CreateUserQueueName : tts-mr-createuseraccount-queue
+HostApp CcPaymentProcessingUrlKey : /home/PayCC
+HostApp elmah.mvc.allowedRoles : *
+HostApp elmah.mvc.allowedUsers : *
+HostApp elmah.mvc.disableHandleErrorFilter : false
+HostApp elmah.mvc.disableHandler : false
+HostApp elmah.mvc.IgnoreDefaultRoute : false
+HostApp elmah.mvc.requiresAuthentication : false
+HostApp elmah.mvc.route : elmah
+HostApp GhostRequestRetryLimit : 5
+HostApp GhostRequestTimeout : 600
+HostApp Glimpse:DisableAsyncSupport : true
+HostApp HandoutRepository : http://ttsmedia.ttstrain.com/
+HostApp log4net.Internal.Debug : false
+HostApp PreserveLoginUrl : true
+HostApp RelativeCancelVerificationUrl : Account/RegisterCancel/
+HostApp RelativeConfirmChangeUrl : Account/Confirmed/
+HostApp RelativeConfirmPasswordResetUrl : Account/PasswordResetConfirm/
+HostApp RelativeLoginUrl : Account/Login
+HostApp StorageAccessKey : bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==
+HostApp StorageAccountName : storeforbw
+HostApp UnobtrusiveJavaScriptEnabled : true
+HostApp webpages:Version : 3.0.0.0
+HostApp webpages:Enabled : false
+HostApp smtp.userName : registrations@BankWebinars.com
+HostApp smtp.port : 587
+HostApp smtp.password : azza123A
+HostApp smtp.host : smtp.gmail.com
+HostApp smtp.defaultCredentials : true
+HostApp smtp.enableSsl : true
+HostApp WMVRepository : http://ttsmedia.ttstrain.com/
+Key - UserName, Value - 
+Key - Password, Value - 
+Key - Host, Value - localhost
+Key - DefaultCredentials, Value - False
+Key - ClientDomain, Value - 
+Key - Ssl, Value - False
+Key - Port, Value - 25
+
+2015-04-09 21:09:18,716 [6] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 21:09:30,079 [13] INFO  CUWebinars.Web.Core.Orchestrators.AccountControllerOrchestrator {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Login|returnURL was: / Session=<AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _ga=GA1.1.49519181.1428574644</Cookie></AuditInfo>
+2015-04-09 21:09:44,673 [20] INFO  CUWebinars.Web.Controllers.AccountController {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Account.ResetPassword GET. Email = drogersbox-test70@yahoo.com.au Session=<AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _ga=GA1.1.49519181.1428574644</Cookie></AuditInfo>
+2015-04-09 21:09:48,303 [20] ERROR CUWebinars.Business.AccountService.MembershipService {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – ResetPassword
+System.ArgumentException: Requested value 'Info' was not found.
+   at System.Enum.EnumResult.SetFailure(ParseFailureKind failure, String failureMessageID, Object failureMessageFormatArgument)
+   at System.Enum.TryParseEnum(Type enumType, String value, Boolean ignoreCase, EnumResult& parseResult)
+   at System.Enum.Parse(Type enumType, String value, Boolean ignoreCase)
+   at System.Diagnostics.TraceSource.Initialize()
+   at System.Diagnostics.TraceSource.TraceEvent(TraceEventType eventType, Int32 id, String message)
+   at BrockAllen.MembershipReboot.Tracing.TraceEvent(TraceEventType type, String message, Boolean suppressTraceService) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 92
+   at BrockAllen.MembershipReboot.Tracing.Information(String message) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 49
+   at BrockAllen.MembershipReboot.Tracing.Information(String message, Object[] args) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 54
+   at BrockAllen.MembershipReboot.UserAccountService`1.ResetPassword(String tenant, String email) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\AccountService\UserAccountService.cs:line 1322
+   at CUWebinars.Business.AccountService.MembershipService.ResetPassword(String tenant, String email) in e:\TTS\BankWebinars\CUWebinars.Business\AccountService\MembershipService.cs:line 346
+2015-04-09 21:09:57,352 [20] FATAL CUWebinars.Web.Controllers.AccountController {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Account.ResetPassword GET Failed. Requested value 'Info' was not found., Session = <AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _ga=GA1.1.49519181.1428574644</Cookie></AuditInfo> on email: drogersbox-test70@yahoo.com.au
+System.ArgumentException: Requested value 'Info' was not found.
+   at System.Enum.EnumResult.SetFailure(ParseFailureKind failure, String failureMessageID, Object failureMessageFormatArgument)
+   at System.Enum.TryParseEnum(Type enumType, String value, Boolean ignoreCase, EnumResult& parseResult)
+   at System.Enum.Parse(Type enumType, String value, Boolean ignoreCase)
+   at System.Diagnostics.TraceSource.Initialize()
+   at System.Diagnostics.TraceSource.TraceEvent(TraceEventType eventType, Int32 id, String message)
+   at BrockAllen.MembershipReboot.Tracing.TraceEvent(TraceEventType type, String message, Boolean suppressTraceService) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 92
+   at BrockAllen.MembershipReboot.Tracing.Information(String message) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 49
+   at BrockAllen.MembershipReboot.Tracing.Information(String message, Object[] args) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\Tracing\Tracing.cs:line 54
+   at BrockAllen.MembershipReboot.UserAccountService`1.ResetPassword(String tenant, String email) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\AccountService\UserAccountService.cs:line 1322
+   at CUWebinars.Business.AccountService.MembershipService.ResetPassword(String tenant, String email) in e:\TTS\BankWebinars\CUWebinars.Business\AccountService\MembershipService.cs:line 351
+   at CUWebinars.Web.Core.Orchestrators.AccountControllerOrchestrator.ResetPassword(String tenant, String email) in e:\TTS\BankWebinars\CUWebinars.Web\Core\Orchestrators\AccountControllerOrchestrator.cs:line 208
+   at CUWebinars.Web.Controllers.AccountController.ResetPassword(String email) in e:\TTS\BankWebinars\CUWebinars.Web\Controllers\AccountController.cs:line 813
+2015-04-09 21:10:59,611 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – CUWebinars Spinning up application: 
+2015-04-09 21:11:00,590 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Config Properties - CcPaymentProcessingUrlKey:/home/PayCC;CreateUserQueueName:tts-mr-createuseraccount-queue;EmailSendingMode:notlive;HandoutRepository:http://ttsmedia.ttstrain.com/;DefaultConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=BankWebinars;Integrated Security=True;MultipleActiveResultSets=True;GhostRequestRetryLimit:5;GhostRequestTimeout:600;MembershipConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=MembershipReboot;Integrated Security=True;MultipleActiveResultSets=True;NotificationsTesting:False;RelativeLoginUrl:Account/Login;RelativeConfirmChangeUrl:Account/Confirmed/;RelativeCancelVerificationUrl:Account/RegisterCancel/;RelativeConfirmPasswordResetUrl:Account/PasswordResetConfirm/;RetryCount:60;StorageAccessKey:bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==;StorageAccountName:storeforbw;Tenant:CUWebinars;TenantEmail:webinars@cuwebinars.com;TenantDomain:CUWebinars.com;TenantURL:www.CUWebinars.com;TenantLogo:http://ttsmedia.ttstrain.com/images/logoCU.png;TenantPrefix:CU-;TestEmailAddress:cu.steve@ttstrain.com;TestEmailAddress2:cuwtestuser1@gmail.com;TraceLevel:Verbose;UseAzureWebjobs:False;WMVRepository:http://ttsmedia.ttstrain.com/
+2015-04-09 21:11:01,543 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppInfo: 1.0.5577.39549
+2015-04-09 21:11:02,474 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppSettings for CUWebinars are: HostApp EmailSendingMode : notlive
+HostApp site.EmailSendingMode : testing
+HostApp NotificationsTesting : false
+HostApp site.NotificationsTesting : true
+HostApp RetryCount : 60
+HostApp Tenant : CUWebinars
+HostApp TenantDomain : CUWebinars.com
+HostApp TenantEmail : webinars@cuwebinars.com
+HostApp TenantPrefix : CU-
+HostApp TenantURL : www.CUWebinars.com
+HostApp TestEmailAddress : cu.steve@ttstrain.com
+HostApp TestEmailAddress2 : cuwtestuser1@gmail.com
+HostApp UseAzureWebjobs : false
+HostApp TenantAppsRollbar : viaParse
+HostApp TenantLogo : http://ttsmedia.ttstrain.com/images/logoCU.png
+HostApp ClientValidationEnabled : true
+HostApp CreateUserQueueName : tts-mr-createuseraccount-queue
+HostApp CcPaymentProcessingUrlKey : /home/PayCC
+HostApp elmah.mvc.allowedRoles : *
+HostApp elmah.mvc.allowedUsers : *
+HostApp elmah.mvc.disableHandleErrorFilter : false
+HostApp elmah.mvc.disableHandler : false
+HostApp elmah.mvc.IgnoreDefaultRoute : false
+HostApp elmah.mvc.requiresAuthentication : false
+HostApp elmah.mvc.route : elmah
+HostApp GhostRequestRetryLimit : 5
+HostApp GhostRequestTimeout : 600
+HostApp Glimpse:DisableAsyncSupport : true
+HostApp HandoutRepository : http://ttsmedia.ttstrain.com/
+HostApp log4net.Internal.Debug : false
+HostApp PreserveLoginUrl : true
+HostApp RelativeCancelVerificationUrl : Account/RegisterCancel/
+HostApp RelativeConfirmChangeUrl : Account/Confirmed/
+HostApp RelativeConfirmPasswordResetUrl : Account/PasswordResetConfirm/
+HostApp RelativeLoginUrl : Account/Login
+HostApp StorageAccessKey : bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==
+HostApp StorageAccountName : storeforbw
+HostApp UnobtrusiveJavaScriptEnabled : true
+HostApp webpages:Version : 3.0.0.0
+HostApp webpages:Enabled : false
+HostApp smtp.userName : registrations@BankWebinars.com
+HostApp smtp.port : 587
+HostApp smtp.password : azza123A
+HostApp smtp.host : smtp.gmail.com
+HostApp smtp.defaultCredentials : true
+HostApp smtp.enableSsl : true
+HostApp WMVRepository : http://ttsmedia.ttstrain.com/
+Key - UserName, Value - 
+Key - Password, Value - 
+Key - Host, Value - localhost
+Key - DefaultCredentials, Value - False
+Key - ClientDomain, Value - 
+Key - Ssl, Value - False
+Key - Port, Value - 25
+
+2015-04-09 21:11:05,462 [11] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 21:11:37,369 [6] INFO  CUWebinars.Web.Core.Orchestrators.AccountControllerOrchestrator {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Login|returnURL was: / Session=<AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _ga=GA1.1.49519181.1428574644</Cookie></AuditInfo>
+2015-04-09 21:11:49,384 [9] INFO  CUWebinars.Web.Controllers.AccountController {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Account.ResetPassword GET. Email = drogersbox-test70@yahoo.com.au Session=<AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _ga=GA1.1.49519181.1428574644</Cookie></AuditInfo>
+2015-04-09 21:11:52,243 [9] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 21:11:53,232 [9] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.ResetPassword] called: CUWebinars, drogersbox-test70@yahoo.com.au
+2015-04-09 21:11:54,206 [9] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 21:11:56,930 [9] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: CUWebinars, email: drogersbox-test70@yahoo.com.au
+2015-04-09 21:11:57,989 [9] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Warning: 0 : 
+2015-04-09 21:11:58,924 [9] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] failed to locate account: CUWebinars, drogersbox-test70@yahoo.com.au
+2015-04-09 21:11:59,905 [9] ERROR CUWebinars.Business.AccountService.MembershipService {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – ResetPassword
+System.ComponentModel.DataAnnotations.ValidationException: Invalid email.
+   at BrockAllen.MembershipReboot.UserAccountService`1.ResetPassword(String tenant, String email) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\AccountService\UserAccountService.cs:line 1336
+   at CUWebinars.Business.AccountService.MembershipService.ResetPassword(String tenant, String email) in e:\TTS\BankWebinars\CUWebinars.Business\AccountService\MembershipService.cs:line 346
+2015-04-09 21:12:19,527 [9] FATAL CUWebinars.Web.Controllers.AccountController {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Account.ResetPassword GET Failed. Invalid email., Session = <AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _ga=GA1.1.49519181.1428574644</Cookie></AuditInfo> on email: drogersbox-test70@yahoo.com.au
+System.ComponentModel.DataAnnotations.ValidationException: Invalid email.
+   at BrockAllen.MembershipReboot.UserAccountService`1.ResetPassword(String tenant, String email) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\AccountService\UserAccountService.cs:line 1336
+   at CUWebinars.Business.AccountService.MembershipService.ResetPassword(String tenant, String email) in e:\TTS\BankWebinars\CUWebinars.Business\AccountService\MembershipService.cs:line 351
+   at CUWebinars.Web.Core.Orchestrators.AccountControllerOrchestrator.ResetPassword(String tenant, String email) in e:\TTS\BankWebinars\CUWebinars.Web\Core\Orchestrators\AccountControllerOrchestrator.cs:line 208
+   at CUWebinars.Web.Controllers.AccountController.ResetPassword(String email) in e:\TTS\BankWebinars\CUWebinars.Web\Controllers\AccountController.cs:line 813
+2015-04-09 21:12:32,015 [17] INFO  CUWebinars.Web.Controllers.AccountController {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Account.ResetPassword GET. Email = drogersbox-test71@yahoo.com.au Session=<AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _ga=GA1.1.49519181.1428574644</Cookie></AuditInfo>
+2015-04-09 21:12:34,626 [17] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 21:12:35,571 [17] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.ResetPassword] called: CUWebinars, drogersbox-test71@yahoo.com.au
+2015-04-09 21:12:36,515 [17] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 21:12:37,460 [17] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: CUWebinars, email: drogersbox-test71@yahoo.com.au
+2015-04-09 21:12:38,432 [17] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Warning: 0 : 
+2015-04-09 21:12:39,382 [17] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] failed to locate account: CUWebinars, drogersbox-test71@yahoo.com.au
+2015-04-09 21:12:40,372 [17] ERROR CUWebinars.Business.AccountService.MembershipService {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – ResetPassword
+System.ComponentModel.DataAnnotations.ValidationException: Invalid email.
+   at BrockAllen.MembershipReboot.UserAccountService`1.ResetPassword(String tenant, String email) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\AccountService\UserAccountService.cs:line 1336
+   at CUWebinars.Business.AccountService.MembershipService.ResetPassword(String tenant, String email) in e:\TTS\BankWebinars\CUWebinars.Business\AccountService\MembershipService.cs:line 346
+2015-04-09 21:12:47,117 [17] FATAL CUWebinars.Web.Controllers.AccountController {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Account.ResetPassword GET Failed. Invalid email., Session = <AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _ga=GA1.1.49519181.1428574644</Cookie></AuditInfo> on email: drogersbox-test71@yahoo.com.au
+System.ComponentModel.DataAnnotations.ValidationException: Invalid email.
+   at BrockAllen.MembershipReboot.UserAccountService`1.ResetPassword(String tenant, String email) in c:\ballen\github\brockallen\BrockAllen.MembershipReboot\src\BrockAllen.MembershipReboot\AccountService\UserAccountService.cs:line 1336
+   at CUWebinars.Business.AccountService.MembershipService.ResetPassword(String tenant, String email) in e:\TTS\BankWebinars\CUWebinars.Business\AccountService\MembershipService.cs:line 351
+   at CUWebinars.Web.Core.Orchestrators.AccountControllerOrchestrator.ResetPassword(String tenant, String email) in e:\TTS\BankWebinars\CUWebinars.Web\Core\Orchestrators\AccountControllerOrchestrator.cs:line 208
+   at CUWebinars.Web.Controllers.AccountController.ResetPassword(String email) in e:\TTS\BankWebinars\CUWebinars.Web\Controllers\AccountController.cs:line 813
+2015-04-09 21:15:33,241 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – BankWebinars Spinning up application: 
+2015-04-09 21:15:34,133 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Config Properties - CcPaymentProcessingUrlKey:/home/PayCC;CreateUserQueueName:tts-mr-createuseraccount-queue;EmailSendingMode:notlive;HandoutRepository:http://ttsmedia.ttstrain.com/;DefaultConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=BankWebinars;Integrated Security=True;MultipleActiveResultSets=True;GhostRequestRetryLimit:5;GhostRequestTimeout:600;MembershipConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=MembershipReboot;Integrated Security=True;MultipleActiveResultSets=True;NotificationsTesting:False;RelativeLoginUrl:Account/Login;RelativeConfirmChangeUrl:Account/Confirmed/;RelativeCancelVerificationUrl:Account/RegisterCancel/;RelativeConfirmPasswordResetUrl:Account/PasswordResetConfirm/;RetryCount:60;StorageAccessKey:bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==;StorageAccountName:storeforbw;Tenant:BankWebinars;TenantEmail:registrations@BankWebinars.com;TenantDomain:BankWebinars.com;TenantURL:www.BankWebinars.com;TenantLogo:http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png;TenantPrefix:BW-;TestEmailAddress:bw.steve@ttstrain.com;TestEmailAddress2:cuwtestuser1@gmail.com;TraceLevel:Verbose;UseAzureWebjobs:True;WMVRepository:http://ttsmedia.ttstrain.com/
+2015-04-09 21:15:35,001 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppInfo: 1.0.5577.39549
+2015-04-09 21:15:35,847 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppSettings for BankWebinars are: HostApp EmailSendingMode : notlive
+HostApp site.EmailSendingMode : testing
+HostApp NotificationsTesting : false
+HostApp site.NotificationsTesting : true
+HostApp RetryCount : 60
+HostApp Tenant : BankWebinars
+HostApp TenantDomain : BankWebinars.com
+HostApp TenantEmail : registrations@BankWebinars.com
+HostApp TenantPrefix : BW-
+HostApp TenantURL : www.BankWebinars.com
+HostApp TestEmailAddress : bw.steve@ttstrain.com
+HostApp TestEmailAddress2 : cuwtestuser1@gmail.com
+HostApp UseAzureWebjobs : true
+HostApp TenantAppsRollbar : viaParse
+HostApp TenantLogo : http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png
+HostApp ClientValidationEnabled : true
+HostApp CreateUserQueueName : tts-mr-createuseraccount-queue
+HostApp CcPaymentProcessingUrlKey : /home/PayCC
+HostApp elmah.mvc.allowedRoles : *
+HostApp elmah.mvc.allowedUsers : *
+HostApp elmah.mvc.disableHandleErrorFilter : false
+HostApp elmah.mvc.disableHandler : false
+HostApp elmah.mvc.IgnoreDefaultRoute : false
+HostApp elmah.mvc.requiresAuthentication : false
+HostApp elmah.mvc.route : elmah
+HostApp GhostRequestRetryLimit : 5
+HostApp GhostRequestTimeout : 600
+HostApp Glimpse:DisableAsyncSupport : true
+HostApp HandoutRepository : http://ttsmedia.ttstrain.com/
+HostApp log4net.Internal.Debug : false
+HostApp PreserveLoginUrl : true
+HostApp RelativeCancelVerificationUrl : Account/RegisterCancel/
+HostApp RelativeConfirmChangeUrl : Account/Confirmed/
+HostApp RelativeConfirmPasswordResetUrl : Account/PasswordResetConfirm/
+HostApp RelativeLoginUrl : Account/Login
+HostApp StorageAccessKey : bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==
+HostApp StorageAccountName : storeforbw
+HostApp UnobtrusiveJavaScriptEnabled : true
+HostApp webpages:Version : 3.0.0.0
+HostApp webpages:Enabled : false
+HostApp smtp.userName : registrations@BankWebinars.com
+HostApp smtp.port : 587
+HostApp smtp.password : azza123A
+HostApp smtp.host : smtp.gmail.com
+HostApp smtp.defaultCredentials : true
+HostApp smtp.enableSsl : true
+HostApp WMVRepository : http://ttsmedia.ttstrain.com/
+Key - UserName, Value - 
+Key - Password, Value - 
+Key - Host, Value - localhost
+Key - DefaultCredentials, Value - False
+Key - ClientDomain, Value - 
+Key - Ssl, Value - False
+Key - Port, Value - 25
+
+2015-04-09 21:15:38,925 [10] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 21:16:24,177 [10] INFO  CUWebinars.Web.Core.Orchestrators.AccountControllerOrchestrator {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Login|returnURL was: / Session=<AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _ga=GA1.1.49519181.1428574644; _gat=1</Cookie></AuditInfo>
+2015-04-09 21:16:38,127 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 21:16:38,999 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.AuthenticateWithEmail] called: BankWebinars, drogersbox-test70@yahoo.com.au
+2015-04-09 21:16:39,865 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 21:16:40,723 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: BankWebinars, email: drogersbox-test70@yahoo.com.au
+2015-04-09 21:16:41,706 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Verbose: 0 : 
+2015-04-09 21:16:42,560 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.Authenticate] for account: 6a1e9611-c4ac-49bc-bf6a-c90f7a7d37f2
+2015-04-09 21:16:43,425 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 21:16:44,438 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.VerifyPassword] called for accountID: 6a1e9611-c4ac-49bc-bf6a-c90f7a7d37f2
+2015-04-09 21:16:45,321 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Verbose: 0 : 
+2015-04-09 21:16:46,184 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.VerifyPassword] success
+2015-04-09 21:16:47,053 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 21:16:47,916 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.UpdateInternal] called for account: 6a1e9611-c4ac-49bc-bf6a-c90f7a7d37f2
+2015-04-09 21:16:48,943 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Verbose: 0 : 
+2015-04-09 21:16:49,976 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.Authenticate] authentication success
+2015-04-09 21:16:50,845 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 21:16:51,708 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.UpdateInternal] called for account: 6a1e9611-c4ac-49bc-bf6a-c90f7a7d37f2
+2015-04-09 21:16:52,644 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Verbose: 0 : 
+2015-04-09 21:16:53,531 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.Authenticate] authentication outcome: Successful Login
+2015-04-09 21:16:54,580 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 21:16:55,438 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [AuthenticationService.SignIn] sign in called: 6a1e9611-c4ac-49bc-bf6a-c90f7a7d37f2
+2015-04-09 21:16:56,309 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 21:16:57,161 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.IsPasswordExpired] called: 6a1e9611-c4ac-49bc-bf6a-c90f7a7d37f2
+2015-04-09 21:16:58,024 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Verbose: 0 : 
+2015-04-09 21:16:58,895 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.PasswordResetFrequency ] PasswordResetFrequency not set, returning false
+2015-04-09 21:16:59,819 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Verbose: 0 : 
+2015-04-09 21:17:00,699 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [AuthenticationService.SignIn] token issued: 6a1e9611-c4ac-49bc-bf6a-c90f7a7d37f2
+2015-04-09 21:17:01,565 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Verbose: 0 : 
+2015-04-09 21:17:02,419 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [SamAuthenticationService.IssueToken] cookie issued: 6a1e9611-c4ac-49bc-bf6a-c90f7a7d37f2
+2015-04-09 21:17:03,284 [16] INFO  CUWebinars.Web.Core.Orchestrators.AccountControllerOrchestrator {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Account.SignIn Post Success. Redirecting to: /,  Session=<AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36</UserAgent><Cookie>glimpsePolicy=; glimpseOptions=%7B%22glimpsePolicy%22%3Anull%7D; ASP.NET_SessionId=mjipav3wrjcankuywrxqxi34; glimpseId=Chrome 41.0; __RequestVerificationToken=zUXmftRTA0QmIYe7GyZUYeWDLEnfFeTMlkAUSU2rad0S72LxQltOnHO5RDdZfD9vO2D3CYyz68hLh-y1q6eQeFSU8TtmGI7gJAG7wz5WFDo1; _gat=1; _ga=GA1.1.49519181.1428574644</Cookie></AuditInfo> 
+2015-04-09 21:17:04,702 [13] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 21:17:05,564 [13] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 21:17:06,418 [13] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByID] called for id: 6a1e9611-c4ac-49bc-bf6a-c90f7a7d37f2
+2015-04-09 21:17:07,395 [13] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 21:17:08,254 [13] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByID] called for id: 6a1e9611-c4ac-49bc-bf6a-c90f7a7d37f2
+2015-04-09 21:17:13,649 [13] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 21:17:14,549 [13] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 21:18:37,329 [7] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 21:18:39,860 [7] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 21:18:40,782 [7] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 21:19:17,648 [11] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 21:19:18,974 [11] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 21:19:19,853 [11] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: BankWebinars, email: a@e.com
+2015-04-09 21:19:25,616 [11] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 21:19:26,517 [11] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:41:35,960 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – BankWebinars Spinning up application: 
+2015-04-09 22:41:36,834 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Config Properties - CcPaymentProcessingUrlKey:/home/PayCC;CreateUserQueueName:tts-mr-createuseraccount-queue;EmailSendingMode:notlive;HandoutRepository:http://ttsmedia.ttstrain.com/;DefaultConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=BankWebinars;Integrated Security=True;MultipleActiveResultSets=True;GhostRequestRetryLimit:5;GhostRequestTimeout:600;MembershipConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=MembershipReboot;Integrated Security=True;MultipleActiveResultSets=True;NotificationsTesting:False;RelativeLoginUrl:Account/Login;RelativeConfirmChangeUrl:Account/Confirmed/;RelativeCancelVerificationUrl:Account/RegisterCancel/;RelativeConfirmPasswordResetUrl:Account/PasswordResetConfirm/;RetryCount:60;StorageAccessKey:bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==;StorageAccountName:storeforbw;Tenant:BankWebinars;TenantEmail:registrations@BankWebinars.com;TenantDomain:BankWebinars.com;TenantURL:www.BankWebinars.com;TenantLogo:http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png;TenantPrefix:BW-;TestEmailAddress:bw.steve@ttstrain.com;TestEmailAddress2:cuwtestuser1@gmail.com;TraceLevel:Verbose;UseAzureWebjobs:True;WMVRepository:http://ttsmedia.ttstrain.com/
+2015-04-09 22:41:37,685 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppInfo: 1.0.5577.42640
+2015-04-09 22:41:38,516 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppSettings for BankWebinars are: HostApp EmailSendingMode : notlive
+HostApp site.EmailSendingMode : testing
+HostApp NotificationsTesting : false
+HostApp site.NotificationsTesting : true
+HostApp RetryCount : 60
+HostApp Tenant : BankWebinars
+HostApp TenantDomain : BankWebinars.com
+HostApp TenantEmail : registrations@BankWebinars.com
+HostApp TenantPrefix : BW-
+HostApp TenantURL : www.BankWebinars.com
+HostApp TestEmailAddress : bw.steve@ttstrain.com
+HostApp TestEmailAddress2 : cuwtestuser1@gmail.com
+HostApp UseAzureWebjobs : true
+HostApp TenantAppsRollbar : viaParse
+HostApp TenantLogo : http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png
+HostApp ClientValidationEnabled : true
+HostApp CreateUserQueueName : tts-mr-createuseraccount-queue
+HostApp CcPaymentProcessingUrlKey : /home/PayCC
+HostApp elmah.mvc.allowedRoles : *
+HostApp elmah.mvc.allowedUsers : *
+HostApp elmah.mvc.disableHandleErrorFilter : false
+HostApp elmah.mvc.disableHandler : false
+HostApp elmah.mvc.IgnoreDefaultRoute : false
+HostApp elmah.mvc.requiresAuthentication : false
+HostApp elmah.mvc.route : elmah
+HostApp GhostRequestRetryLimit : 5
+HostApp GhostRequestTimeout : 600
+HostApp Glimpse:DisableAsyncSupport : true
+HostApp HandoutRepository : http://ttsmedia.ttstrain.com/
+HostApp log4net.Internal.Debug : false
+HostApp PreserveLoginUrl : true
+HostApp RelativeCancelVerificationUrl : Account/RegisterCancel/
+HostApp RelativeConfirmChangeUrl : Account/Confirmed/
+HostApp RelativeConfirmPasswordResetUrl : Account/PasswordResetConfirm/
+HostApp RelativeLoginUrl : Account/Login
+HostApp StorageAccessKey : bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==
+HostApp StorageAccountName : storeforbw
+HostApp UnobtrusiveJavaScriptEnabled : true
+HostApp webpages:Version : 3.0.0.0
+HostApp webpages:Enabled : false
+HostApp smtp.userName : registrations@BankWebinars.com
+HostApp smtp.port : 587
+HostApp smtp.password : azza123A
+HostApp smtp.host : smtp.gmail.com
+HostApp smtp.defaultCredentials : true
+HostApp smtp.enableSsl : true
+HostApp WMVRepository : http://ttsmedia.ttstrain.com/
+Key - UserName, Value - 
+Key - Password, Value - 
+Key - Host, Value - localhost
+Key - DefaultCredentials, Value - False
+Key - ClientDomain, Value - 
+Key - Ssl, Value - False
+Key - Port, Value - 25
+
+2015-04-09 22:41:41,431 [9] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 22:41:42,865 [9] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:41:49,578 [9] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:41:50,491 [9] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:41:59,889 [16] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:42:02,344 [16] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:42:03,242 [16] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:42:09,554 [16] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:42:10,801 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 22:42:11,651 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: BankWebinars, email: drogersbox-test1999@yahoo.com.au
+2015-04-09 22:42:49,793 [16] ERROR CUWebinars.Web.Infrastructure.ErrorResponseCommand {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Controller of Original Request: Admin
+2015-04-09 22:42:50,632 [16] ERROR CUWebinars.Web.Infrastructure.ErrorResponseCommand {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Action of Original Request: ManageOrderFromDetails
+2015-04-09 22:42:51,553 [16] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:42:53,897 [16] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:42:54,847 [16] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:42:55,994 [19] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:42:56,942 [19] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 22:42:57,785 [19] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: BankWebinars, email: drogersbox-test1999@yahoo.com.au
+2015-04-09 22:44:25,476 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – BankWebinars Spinning up application: 
+2015-04-09 22:44:26,363 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Config Properties - CcPaymentProcessingUrlKey:/home/PayCC;CreateUserQueueName:tts-mr-createuseraccount-queue;EmailSendingMode:notlive;HandoutRepository:http://ttsmedia.ttstrain.com/;DefaultConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=BankWebinars;Integrated Security=True;MultipleActiveResultSets=True;GhostRequestRetryLimit:5;GhostRequestTimeout:600;MembershipConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=MembershipReboot;Integrated Security=True;MultipleActiveResultSets=True;NotificationsTesting:False;RelativeLoginUrl:Account/Login;RelativeConfirmChangeUrl:Account/Confirmed/;RelativeCancelVerificationUrl:Account/RegisterCancel/;RelativeConfirmPasswordResetUrl:Account/PasswordResetConfirm/;RetryCount:60;StorageAccessKey:bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==;StorageAccountName:storeforbw;Tenant:BankWebinars;TenantEmail:registrations@BankWebinars.com;TenantDomain:BankWebinars.com;TenantURL:www.BankWebinars.com;TenantLogo:http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png;TenantPrefix:BW-;TestEmailAddress:bw.steve@ttstrain.com;TestEmailAddress2:cuwtestuser1@gmail.com;TraceLevel:Verbose;UseAzureWebjobs:True;WMVRepository:http://ttsmedia.ttstrain.com/
+2015-04-09 22:44:27,227 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppInfo: 1.0.5577.42640
+2015-04-09 22:44:28,073 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppSettings for BankWebinars are: HostApp EmailSendingMode : notlive
+HostApp site.EmailSendingMode : testing
+HostApp NotificationsTesting : false
+HostApp site.NotificationsTesting : true
+HostApp RetryCount : 60
+HostApp Tenant : BankWebinars
+HostApp TenantDomain : BankWebinars.com
+HostApp TenantEmail : registrations@BankWebinars.com
+HostApp TenantPrefix : BW-
+HostApp TenantURL : www.BankWebinars.com
+HostApp TestEmailAddress : bw.steve@ttstrain.com
+HostApp TestEmailAddress2 : cuwtestuser1@gmail.com
+HostApp UseAzureWebjobs : true
+HostApp TenantAppsRollbar : viaParse
+HostApp TenantLogo : http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png
+HostApp ClientValidationEnabled : true
+HostApp CreateUserQueueName : tts-mr-createuseraccount-queue
+HostApp CcPaymentProcessingUrlKey : /home/PayCC
+HostApp elmah.mvc.allowedRoles : *
+HostApp elmah.mvc.allowedUsers : *
+HostApp elmah.mvc.disableHandleErrorFilter : false
+HostApp elmah.mvc.disableHandler : false
+HostApp elmah.mvc.IgnoreDefaultRoute : false
+HostApp elmah.mvc.requiresAuthentication : false
+HostApp elmah.mvc.route : elmah
+HostApp GhostRequestRetryLimit : 5
+HostApp GhostRequestTimeout : 600
+HostApp Glimpse:DisableAsyncSupport : true
+HostApp HandoutRepository : http://ttsmedia.ttstrain.com/
+HostApp log4net.Internal.Debug : false
+HostApp PreserveLoginUrl : true
+HostApp RelativeCancelVerificationUrl : Account/RegisterCancel/
+HostApp RelativeConfirmChangeUrl : Account/Confirmed/
+HostApp RelativeConfirmPasswordResetUrl : Account/PasswordResetConfirm/
+HostApp RelativeLoginUrl : Account/Login
+HostApp StorageAccessKey : bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==
+HostApp StorageAccountName : storeforbw
+HostApp UnobtrusiveJavaScriptEnabled : true
+HostApp webpages:Version : 3.0.0.0
+HostApp webpages:Enabled : false
+HostApp smtp.userName : registrations@BankWebinars.com
+HostApp smtp.port : 587
+HostApp smtp.password : azza123A
+HostApp smtp.host : smtp.gmail.com
+HostApp smtp.defaultCredentials : true
+HostApp smtp.enableSsl : true
+HostApp WMVRepository : http://ttsmedia.ttstrain.com/
+Key - UserName, Value - 
+Key - Password, Value - 
+Key - Host, Value - localhost
+Key - DefaultCredentials, Value - False
+Key - ClientDomain, Value - 
+Key - Ssl, Value - False
+Key - Port, Value - 25
+
+2015-04-09 22:44:31,923 [8] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 22:44:33,558 [8] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:44:35,818 [8] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:44:36,970 [8] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:45:17,391 [7] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:45:18,642 [7] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 22:45:19,544 [7] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: BankWebinars, email: drogersbox-test1999@yahoo.com.au
+2015-04-09 22:45:24,248 [7] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:45:25,319 [7] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:45:58,710 [9] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:45:59,875 [9] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 22:46:00,871 [9] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: BankWebinars, email: drogersbox-test1999@yahoo.com.au
+2015-04-09 22:46:01,836 [9] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:46:02,740 [9] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:46:26,909 [20] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:46:28,683 [20] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 22:46:29,607 [20] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: BankWebinars, email: drogersbox-test1999@yahoo.com.au
+2015-04-09 22:46:30,729 [20] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:46:31,795 [20] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:47:46,827 [20] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:47:47,994 [20] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 22:47:49,034 [20] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: BankWebinars, email: drogersbox-test1999@yahoo.com.au
+2015-04-09 22:47:50,811 [20] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:47:51,873 [20] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:49:59,326 [32] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:50:00,245 [32] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 22:50:02,008 [32] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: BankWebinars, email: drogersbox-test1999@yahoo.com.au
+2015-04-09 22:50:03,168 [32] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:50:04,270 [32] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:50:18,628 [32] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:53:48,728 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – BankWebinars Spinning up application: 
+2015-04-09 22:53:49,619 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Config Properties - CcPaymentProcessingUrlKey:/home/PayCC;CreateUserQueueName:tts-mr-createuseraccount-queue;EmailSendingMode:notlive;HandoutRepository:http://ttsmedia.ttstrain.com/;DefaultConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=BankWebinars;Integrated Security=True;MultipleActiveResultSets=True;GhostRequestRetryLimit:5;GhostRequestTimeout:600;MembershipConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=MembershipReboot;Integrated Security=True;MultipleActiveResultSets=True;NotificationsTesting:False;RelativeLoginUrl:Account/Login;RelativeConfirmChangeUrl:Account/Confirmed/;RelativeCancelVerificationUrl:Account/RegisterCancel/;RelativeConfirmPasswordResetUrl:Account/PasswordResetConfirm/;RetryCount:60;StorageAccessKey:bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==;StorageAccountName:storeforbw;Tenant:BankWebinars;TenantEmail:registrations@BankWebinars.com;TenantDomain:BankWebinars.com;TenantURL:www.BankWebinars.com;TenantLogo:http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png;TenantPrefix:BW-;TestEmailAddress:bw.steve@ttstrain.com;TestEmailAddress2:cuwtestuser1@gmail.com;TraceLevel:Verbose;UseAzureWebjobs:True;WMVRepository:http://ttsmedia.ttstrain.com/
+2015-04-09 22:53:50,521 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppInfo: 1.0.5577.43005
+2015-04-09 22:53:51,372 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppSettings for BankWebinars are: HostApp EmailSendingMode : notlive
+HostApp site.EmailSendingMode : testing
+HostApp NotificationsTesting : false
+HostApp site.NotificationsTesting : true
+HostApp RetryCount : 60
+HostApp Tenant : BankWebinars
+HostApp TenantDomain : BankWebinars.com
+HostApp TenantEmail : registrations@BankWebinars.com
+HostApp TenantPrefix : BW-
+HostApp TenantURL : www.BankWebinars.com
+HostApp TestEmailAddress : bw.steve@ttstrain.com
+HostApp TestEmailAddress2 : cuwtestuser1@gmail.com
+HostApp UseAzureWebjobs : true
+HostApp TenantAppsRollbar : viaParse
+HostApp TenantLogo : http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png
+HostApp ClientValidationEnabled : true
+HostApp CreateUserQueueName : tts-mr-createuseraccount-queue
+HostApp CcPaymentProcessingUrlKey : /home/PayCC
+HostApp elmah.mvc.allowedRoles : *
+HostApp elmah.mvc.allowedUsers : *
+HostApp elmah.mvc.disableHandleErrorFilter : false
+HostApp elmah.mvc.disableHandler : false
+HostApp elmah.mvc.IgnoreDefaultRoute : false
+HostApp elmah.mvc.requiresAuthentication : false
+HostApp elmah.mvc.route : elmah
+HostApp GhostRequestRetryLimit : 5
+HostApp GhostRequestTimeout : 600
+HostApp Glimpse:DisableAsyncSupport : true
+HostApp HandoutRepository : http://ttsmedia.ttstrain.com/
+HostApp log4net.Internal.Debug : false
+HostApp PreserveLoginUrl : true
+HostApp RelativeCancelVerificationUrl : Account/RegisterCancel/
+HostApp RelativeConfirmChangeUrl : Account/Confirmed/
+HostApp RelativeConfirmPasswordResetUrl : Account/PasswordResetConfirm/
+HostApp RelativeLoginUrl : Account/Login
+HostApp StorageAccessKey : bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==
+HostApp StorageAccountName : storeforbw
+HostApp UnobtrusiveJavaScriptEnabled : true
+HostApp webpages:Version : 3.0.0.0
+HostApp webpages:Enabled : false
+HostApp smtp.userName : registrations@BankWebinars.com
+HostApp smtp.port : 587
+HostApp smtp.password : azza123A
+HostApp smtp.host : smtp.gmail.com
+HostApp smtp.defaultCredentials : true
+HostApp smtp.enableSsl : true
+HostApp WMVRepository : http://ttsmedia.ttstrain.com/
+Key - UserName, Value - 
+Key - Password, Value - 
+Key - Host, Value - localhost
+Key - DefaultCredentials, Value - False
+Key - ClientDomain, Value - 
+Key - Ssl, Value - False
+Key - Port, Value - 25
+
+2015-04-09 22:53:54,294 [6] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 22:53:55,752 [6] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:54:02,786 [6] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:54:03,739 [6] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:55:43,556 [11] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:55:45,111 [11] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 22:55:45,983 [11] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: BankWebinars, email: drogersbox-test1999@yahoo.com.au
+2015-04-09 22:55:47,023 [11] ERROR CUWebinars.Web.Controllers.WebinarController {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – 
+2015-04-09 22:55:51,733 [11] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:55:52,633 [11] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:56:45,536 [19] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:56:46,570 [19] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 22:56:47,432 [19] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: BankWebinars, email: sdwyer@dutchpoint.org
+2015-04-09 22:56:53,277 [19] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:56:54,215 [19] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:57:00,590 [33] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:57:27,133 [19] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 22:57:44,439 [15] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:00:03,145 [39] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:06:19,683 [69] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:18:46,453 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – BankWebinars Spinning up application: 
+2015-04-09 23:18:47,356 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Config Properties - CcPaymentProcessingUrlKey:/home/PayCC;CreateUserQueueName:tts-mr-createuseraccount-queue;EmailSendingMode:notlive;HandoutRepository:http://ttsmedia.ttstrain.com/;DefaultConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=BankWebinars;Integrated Security=True;MultipleActiveResultSets=True;GhostRequestRetryLimit:5;GhostRequestTimeout:600;MembershipConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=MembershipReboot;Integrated Security=True;MultipleActiveResultSets=True;NotificationsTesting:False;RelativeLoginUrl:Account/Login;RelativeConfirmChangeUrl:Account/Confirmed/;RelativeCancelVerificationUrl:Account/RegisterCancel/;RelativeConfirmPasswordResetUrl:Account/PasswordResetConfirm/;RetryCount:60;StorageAccessKey:bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==;StorageAccountName:storeforbw;Tenant:BankWebinars;TenantEmail:registrations@BankWebinars.com;TenantDomain:BankWebinars.com;TenantURL:www.BankWebinars.com;TenantLogo:http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png;TenantPrefix:BW-;TestEmailAddress:bw.steve@ttstrain.com;TestEmailAddress2:cuwtestuser1@gmail.com;TraceLevel:Verbose;UseAzureWebjobs:True;WMVRepository:http://ttsmedia.ttstrain.com/
+2015-04-09 23:18:48,239 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppInfo: 1.0.5578.555
+2015-04-09 23:18:49,087 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppSettings for BankWebinars are: HostApp EmailSendingMode : notlive
+HostApp site.EmailSendingMode : testing
+HostApp NotificationsTesting : false
+HostApp site.NotificationsTesting : true
+HostApp RetryCount : 60
+HostApp Tenant : BankWebinars
+HostApp TenantDomain : BankWebinars.com
+HostApp TenantEmail : registrations@BankWebinars.com
+HostApp TenantPrefix : BW-
+HostApp TenantURL : www.BankWebinars.com
+HostApp TestEmailAddress : bw.steve@ttstrain.com
+HostApp TestEmailAddress2 : cuwtestuser1@gmail.com
+HostApp UseAzureWebjobs : true
+HostApp TenantAppsRollbar : viaParse
+HostApp TenantLogo : http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png
+HostApp ClientValidationEnabled : true
+HostApp CreateUserQueueName : tts-mr-createuseraccount-queue
+HostApp CcPaymentProcessingUrlKey : /home/PayCC
+HostApp elmah.mvc.allowedRoles : *
+HostApp elmah.mvc.allowedUsers : *
+HostApp elmah.mvc.disableHandleErrorFilter : false
+HostApp elmah.mvc.disableHandler : false
+HostApp elmah.mvc.IgnoreDefaultRoute : false
+HostApp elmah.mvc.requiresAuthentication : false
+HostApp elmah.mvc.route : elmah
+HostApp GhostRequestRetryLimit : 5
+HostApp GhostRequestTimeout : 600
+HostApp Glimpse:DisableAsyncSupport : true
+HostApp HandoutRepository : http://ttsmedia.ttstrain.com/
+HostApp log4net.Internal.Debug : false
+HostApp PreserveLoginUrl : true
+HostApp RelativeCancelVerificationUrl : Account/RegisterCancel/
+HostApp RelativeConfirmChangeUrl : Account/Confirmed/
+HostApp RelativeConfirmPasswordResetUrl : Account/PasswordResetConfirm/
+HostApp RelativeLoginUrl : Account/Login
+HostApp StorageAccessKey : bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==
+HostApp StorageAccountName : storeforbw
+HostApp UnobtrusiveJavaScriptEnabled : true
+HostApp webpages:Version : 3.0.0.0
+HostApp webpages:Enabled : false
+HostApp smtp.userName : registrations@BankWebinars.com
+HostApp smtp.port : 587
+HostApp smtp.password : azza123A
+HostApp smtp.host : smtp.gmail.com
+HostApp smtp.defaultCredentials : true
+HostApp smtp.enableSsl : true
+HostApp WMVRepository : http://ttsmedia.ttstrain.com/
+Key - UserName, Value - 
+Key - Password, Value - 
+Key - Host, Value - localhost
+Key - DefaultCredentials, Value - False
+Key - ClientDomain, Value - 
+Key - Ssl, Value - False
+Key - Port, Value - 25
+
+2015-04-09 23:18:52,055 [12] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 23:18:53,498 [12] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:19:00,081 [12] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:19:01,031 [12] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:19:07,785 [11] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:19:09,126 [11] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 23:19:10,022 [11] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: BankWebinars, email: drogersbox-test1999@yahoo.com.au
+2015-04-09 23:19:15,872 [11] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:19:16,778 [11] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:20:27,703 [11] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:20:28,668 [11] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 23:20:29,556 [11] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: BankWebinars, email: drogersbox-test1999@yahoo.com.au
+2015-04-09 23:20:33,815 [11] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:20:34,697 [11] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:20:39,432 [19] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:20:46,665 [23] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:21:29,930 [19] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:21:39,686 [17] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:21:43,294 [23] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:22:50,676 [10] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:22:51,652 [10] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 23:22:52,533 [10] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: BankWebinars, email: drogersbox-test1999@yahoo.com.au
+2015-04-09 23:22:53,528 [10] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:22:54,440 [10] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:22:57,642 [37] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:23:04,060 [42] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:23:19,429 [30] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:23:56,648 [42] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:23:57,615 [42] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 23:23:58,497 [42] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: BankWebinars, email: drogersbox-test1999@yahoo.com.au
+2015-04-09 23:23:59,485 [42] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:24:00,435 [42] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:24:04,262 [31] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:24:08,128 [37] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:25:29,489 [37] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:25:30,452 [37] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 23:25:31,320 [37] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: BankWebinars, email: drogersbox-test1999@yahoo.com.au
+2015-04-09 23:25:32,274 [37] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:25:33,185 [37] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:25:36,787 [27] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:25:41,565 [23] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:26:32,471 [48] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:26:33,422 [48] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 23:26:34,302 [48] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: BankWebinars, email: drogersbox-test1999@yahoo.com.au
+2015-04-09 23:26:38,513 [48] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:26:39,436 [48] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:26:43,770 [37] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:26:49,969 [56] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:26:52,246 [58] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:28:19,387 [47] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:32:45,107 [75] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:32:46,074 [75] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 23:32:47,003 [75] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: BankWebinars, email: drogersbox-test1999@yahoo.com.au
+2015-04-09 23:32:48,202 [75] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:32:49,155 [75] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:32:53,659 [84] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:33:00,576 [62] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:33:12,562 [86] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:48:39,711 [16] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:48:46,817 [18] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:48:47,827 [70] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:48:48,839 [58] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:48:56,038 [52] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:49:24,200 [43] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:49:25,176 [43] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 23:49:26,049 [43] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: BankWebinars, email: drogersbox-test1999@yahoo.com.au
+2015-04-09 23:49:30,372 [43] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:49:31,295 [43] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:49:32,503 [16] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:49:40,937 [70] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:49:42,412 [31] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:49:47,390 [31] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:49:50,313 [18] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:49:58,824 [33] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:49:59,851 [26] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:50:05,401 [36] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:50:11,896 [32] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:50:12,909 [36] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:50:13,923 [70] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:50:19,070 [70] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:50:20,965 [26] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:50:21,994 [18] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:50:23,020 [33] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:50:24,032 [16] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:50:55,643 [35] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:51:03,400 [22] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:51:04,404 [52] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:51:05,432 [26] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:51:06,432 [58] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:51:07,449 [16] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:52:37,090 [16] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:52:38,038 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 23:52:38,911 [16] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: BankWebinars, email: drogersbox-test1999@yahoo.com.au
+2015-04-09 23:52:39,869 [16] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:52:40,762 [16] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:52:45,460 [14] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:52:52,795 [89] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:52:56,306 [43] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:53:00,767 [89] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:57:48,062 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – BankWebinars Spinning up application: 
+2015-04-09 23:57:48,928 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Config Properties - CcPaymentProcessingUrlKey:/home/PayCC;CreateUserQueueName:tts-mr-createuseraccount-queue;EmailSendingMode:notlive;HandoutRepository:http://ttsmedia.ttstrain.com/;DefaultConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=BankWebinars;Integrated Security=True;MultipleActiveResultSets=True;GhostRequestRetryLimit:5;GhostRequestTimeout:600;MembershipConnectionString:Data Source=PLAGUIS\SQLSERVER2012;Initial Catalog=MembershipReboot;Integrated Security=True;MultipleActiveResultSets=True;NotificationsTesting:False;RelativeLoginUrl:Account/Login;RelativeConfirmChangeUrl:Account/Confirmed/;RelativeCancelVerificationUrl:Account/RegisterCancel/;RelativeConfirmPasswordResetUrl:Account/PasswordResetConfirm/;RetryCount:60;StorageAccessKey:bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==;StorageAccountName:storeforbw;Tenant:BankWebinars;TenantEmail:registrations@BankWebinars.com;TenantDomain:BankWebinars.com;TenantURL:www.BankWebinars.com;TenantLogo:http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png;TenantPrefix:BW-;TestEmailAddress:bw.steve@ttstrain.com;TestEmailAddress2:cuwtestuser1@gmail.com;TraceLevel:Verbose;UseAzureWebjobs:True;WMVRepository:http://ttsmedia.ttstrain.com/
+2015-04-09 23:57:49,784 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppInfo: 1.0.5578.1726
+2015-04-09 23:57:50,612 [1] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – AppSettings for BankWebinars are: HostApp EmailSendingMode : notlive
+HostApp site.EmailSendingMode : testing
+HostApp NotificationsTesting : false
+HostApp site.NotificationsTesting : true
+HostApp RetryCount : 60
+HostApp Tenant : BankWebinars
+HostApp TenantDomain : BankWebinars.com
+HostApp TenantEmail : registrations@BankWebinars.com
+HostApp TenantPrefix : BW-
+HostApp TenantURL : www.BankWebinars.com
+HostApp TestEmailAddress : bw.steve@ttstrain.com
+HostApp TestEmailAddress2 : cuwtestuser1@gmail.com
+HostApp UseAzureWebjobs : true
+HostApp TenantAppsRollbar : viaParse
+HostApp TenantLogo : http://ttsmedia.ttstrain.com/images/logo_bankwebinars.png
+HostApp ClientValidationEnabled : true
+HostApp CreateUserQueueName : tts-mr-createuseraccount-queue
+HostApp CcPaymentProcessingUrlKey : /home/PayCC
+HostApp elmah.mvc.allowedRoles : *
+HostApp elmah.mvc.allowedUsers : *
+HostApp elmah.mvc.disableHandleErrorFilter : false
+HostApp elmah.mvc.disableHandler : false
+HostApp elmah.mvc.IgnoreDefaultRoute : false
+HostApp elmah.mvc.requiresAuthentication : false
+HostApp elmah.mvc.route : elmah
+HostApp GhostRequestRetryLimit : 5
+HostApp GhostRequestTimeout : 600
+HostApp Glimpse:DisableAsyncSupport : true
+HostApp HandoutRepository : http://ttsmedia.ttstrain.com/
+HostApp log4net.Internal.Debug : false
+HostApp PreserveLoginUrl : true
+HostApp RelativeCancelVerificationUrl : Account/RegisterCancel/
+HostApp RelativeConfirmChangeUrl : Account/Confirmed/
+HostApp RelativeConfirmPasswordResetUrl : Account/PasswordResetConfirm/
+HostApp RelativeLoginUrl : Account/Login
+HostApp StorageAccessKey : bSn80OjjlrHjgWnRECaZvJyZfnOZ0qZJf61YkscmqOkntG4H6yKq7Czv/zUjOSBZwsaoukiQJbD/8zB1POav3A==
+HostApp StorageAccountName : storeforbw
+HostApp UnobtrusiveJavaScriptEnabled : true
+HostApp webpages:Version : 3.0.0.0
+HostApp webpages:Enabled : false
+HostApp smtp.userName : registrations@BankWebinars.com
+HostApp smtp.port : 587
+HostApp smtp.password : azza123A
+HostApp smtp.host : smtp.gmail.com
+HostApp smtp.defaultCredentials : true
+HostApp smtp.enableSsl : true
+HostApp WMVRepository : http://ttsmedia.ttstrain.com/
+Key - UserName, Value - 
+Key - Password, Value - 
+Key - Host, Value - localhost
+Key - DefaultCredentials, Value - False
+Key - ClientDomain, Value - 
+Key - Ssl, Value - False
+Key - Port, Value - 25
+
+2015-04-09 23:57:53,597 [12] INFO  CUWebinars.Web.MvcApplication {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Start Session: mjipav3wrjcankuywrxqxi34
+2015-04-09 23:57:55,022 [12] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:58:01,914 [12] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:58:02,845 [12] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:58:11,129 [8] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:58:34,629 [8] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – MembershipReboot Information: 0 : 
+2015-04-09 23:58:35,464 [8] WARN  CUWebinars.Business.Core.Tracing.Log4NetTracer {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – [UserAccountService.GetByEmail] called for tenant: BankWebinars, email: drogersbox-test1999@yahoo.com.au
+2015-04-09 23:58:41,361 [8] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:58:42,222 [8] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:58:47,385 [20] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.
+2015-04-09 23:58:59,179 [17] ERROR CUWebinars.Business.Services.OrderManagementService {log4net:Identity=drogersbox-test70@yahoo.com.au, log4net:UserName=PLAGUIS\Dave, log4net:HostName=PLAGUIS} – Total affiliates considered:  for idUser 43814. Credited to 19.

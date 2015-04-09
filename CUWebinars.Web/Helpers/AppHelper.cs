@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Mvc;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
+using CUWebinars.Web.Core;
 
 namespace CUWebinars.Web.Helpers
 {
@@ -237,25 +238,31 @@ namespace CUWebinars.Web.Helpers
 
         public string GetAffiliateName(int idAffiliate)
         {
-            var _connSproc = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-            _connSproc.Open();
-            SqlCommand cmdGetBody = new SqlCommand(
-                "SELECT ttsDomain FROM dbo.Affiliate WHERE idUserAff = " + idAffiliate, _connSproc);
-
-            cmdGetBody.CommandType = CommandType.Text;
-            // execute the command
-            SqlDataReader msgReader = cmdGetBody.ExecuteReader();
-
-            var value = "";
-
-            while (msgReader.Read())
+            using (var _connSproc = new SqlConnection(GlobalConfig.GlobalConfigSingleton.DefaultConnectionString))
             {
-                if (msgReader.HasRows)
+                _connSproc.Open();
+
+                using (SqlCommand cmdGetBody =
+                    new SqlCommand("SELECT ttsDomain FROM dbo.Affiliate WHERE idUserAff = " + idAffiliate,
+                        _connSproc))
                 {
-                    value = msgReader[0].ToString();
+                    cmdGetBody.CommandType = CommandType.Text;
+                    // execute the command
+                    using (SqlDataReader msgReader = cmdGetBody.ExecuteReader())
+                    {
+                        var affiliateName = string.Empty;
+
+                        while (msgReader.Read())
+                        {
+                            if (msgReader.HasRows)
+                            {
+                                affiliateName = msgReader.GetString(0);
+                            }
+                        }
+                        return affiliateName;
+                    }
                 }
             }
-            return value;
         }
 
         public static string[] AddNonvalidToArray(string[] zipCentricFields)

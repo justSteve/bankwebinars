@@ -33,3 +33,7 @@ div#SubmitPanel {
 div#UserSummaryPanel, div#SubmitPanel, div.addLocsPanel {
     padding: 5px;
 }
+
+ul li a {
+    cursor: pointer;
+}

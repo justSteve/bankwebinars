@@ -486,6 +486,11 @@ namespace CUWebinars.Business.Repository
             return myDiscount;
         }
 
+        public Order GetOrderById(int idOrder)
+        {
+            return items.SingleOrDefault(o => o.idOrder == idOrder);
+        }
+
         public int GetNumberOfOrdersPerWebinar(int id)
         {
 

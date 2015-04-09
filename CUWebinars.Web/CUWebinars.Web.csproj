@@ -458,6 +458,7 @@
     <Compile Include="Models\TTSAttendance.cs" />
     <Compile Include="Models\TTSQuiz.cs" />
     <Compile Include="ViewModel\AdjustUserDetailsEditModel.cs" />
+    <Compile Include="ViewModel\AffiliatesChooserModel.cs" />
     <Compile Include="ViewModel\AffPromoMsgViewModel.cs" />
     <Compile Include="ViewModel\ClaimsViewModel.cs" />
     <Compile Include="ViewModel\EditUserViewModel.cs" />
@@ -848,6 +849,7 @@
     <Content Include="Views\Webinar\Identify.cshtml" />
     <Content Include="Views\Admin\Partials\_ViewClaims.cshtml" />
     <Content Include="Views\Admin\Partials\_ServerError.cshtml" />
+    <Content Include="Views\Admin\Partials\_AffiliatesChooser.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

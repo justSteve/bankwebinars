@@ -142,6 +142,12 @@ namespace CUWebinars.Business.Services
             return _additionalLocationsRepository.GetAdditionalLocationsForOrderRow(idOrderRow);
         }
 
+        public IDictionary<int, string> GetAffiliatesForDisplayList()
+        {
+            return _affiliateRepository.GetAll()
+                .ToDictionary(a => a.idUserAff, a => a.ttsDomain);
+        }
+
         public Tuple<string, decimal> GetCostOfAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations, int idWebinar)
         {
             //so renamed to reflect that we are building the cost of a user's list of added seats. Not
@@ -283,6 +289,11 @@ namespace CUWebinars.Business.Services
         {
             var order = _orderRepository.FindOrderByIdWithOrderRows(id);
             return order;
+        }
+
+        public Order GetOrderByIdThin(int id)
+        {
+            return _orderRepository.GetOrderById(id);
         }
 
         public IEnumerable<int> GetOrderIdsByPartialId(int id)

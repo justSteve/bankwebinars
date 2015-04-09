@@ -39,6 +39,7 @@ namespace CUWebinars.Business.Services
         void FireSendPerWeekPromoEvent(IList<Affiliate> affiliates, Webinar webinar);
         void FireSendReminderNotificationEvent(IList<Order> orders);
         IEnumerable<AdditionalLocation> GetAdditionalLocationsForOrderRow(int idOrderRow);
+        IDictionary<int, string> GetAffiliatesForDisplayList();
         Tuple<string, decimal> GetCostOfAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations,
             int idWebinar);
 
@@ -49,6 +50,7 @@ namespace CUWebinars.Business.Services
         IEnumerable<Order> GetOrdersByEmail(string email);
         IEnumerable<Order> GetOrdersByLastName(string lastName);
         Order GetOrderById(int id);
+        Order GetOrderByIdThin(int id);
         IEnumerable<int> GetOrderIdsByPartialId(int id);
         IList<Order> GetOrdersByUserId(int id);
         IList<Order> GetOrdersForLiveNotifications(int idWebinar);

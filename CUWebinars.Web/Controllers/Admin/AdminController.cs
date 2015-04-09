@@ -76,6 +76,30 @@ namespace CUWebinars.Web.Controllers.Admin
             _appHelper = appHelper;
         }
 
+        public PartialViewResult GetAffiliates()
+        {
+            var affiliates = _orderManagementService.GetAffiliatesForDisplayList();
+
+            var affiliatesChooserModel = new AffiliatesChooserModel
+            {
+                AffiliatesList = affiliates.Select(a => new SelectListItem
+                {
+                    Text = a.Value,
+                    Value = a.Key.ToString()
+                })
+            };
+
+            return PartialView("~/Views/Admin/Partials/_AffiliatesChooser.cshtml", affiliatesChooserModel);
+        }
+
+        public ActionResult UpdateOrderAffiliate(int? idAffiliate, int? idOrder)
+        {
+            var order = _orderManagementService.GetOrderByIdThin(idOrder.Value);
+            order.idAffiliate = idAffiliate.Value;
+            _orderManagementService.SaveChanges();
+            return Json(new { Result = WebUiConstants.Success});
+        }
+
         public ActionResult ManageOrder()
         {
             return View();
