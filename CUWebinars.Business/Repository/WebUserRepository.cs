@@ -180,6 +180,11 @@ namespace CUWebinars.Business.Repository
             db.SaveChanges();
         }
 
+        public bool WebUserExists(int idUser)
+        {
+            return items.Any(w => w.idUser == idUser);
+        }
+
         public DbContext DbContext
         {
             get { return db; }

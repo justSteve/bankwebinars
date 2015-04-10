@@ -96,6 +96,7 @@ namespace CUWebinars.Business.Services
         object SearchRegistrations(int affiliateID, IList<int> excludeUserIDs, int skip, int take, string search);
         
         string SetPostEventClaims(int webinarId);
-        
+
+        bool VerifyWebUserExists(int idUser);
     }
 }

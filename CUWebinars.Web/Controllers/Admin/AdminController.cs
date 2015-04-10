@@ -240,32 +240,24 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
         [System.Web.Mvc.HttpPost]
-        public ActionResult SetUserAssignedToOrder()
+        public ActionResult SetUserAssignedToOrder(int orderID, string migrateOrder, int targetUserID)
         {
-            //IList<ErrorInfo> errors = new List<ErrorInfo>();
-
-            int orderID = 0;
-            int newUserID;
-
-            orderID = Convert.ToInt32(Request["orderID"]);
-            newUserID = Convert.ToInt32(Request["targetUserID"]);
-            if (newUserID < 2)
+            if (targetUserID < 2)
             {
                 TempData["EditResult"] = "Invalid UserID";
                 TempData["alertType"] = "alert-error";
                 return RedirectToAction("Edit", new { ID = orderID });
             }
 
-            if (Request["migrateOrder"] == "moveAll")
+            if (migrateOrder.Equals("moveAll", StringComparison.OrdinalIgnoreCase))
             {
                 IList<Order> ordersToMove =
                     _orderManagementService.GetOrdersByUserId(_orderManagementService.GetOrderById(orderID).idUser);
                 var i = 0;
-                string numOrdersMigrated = "";
-                string emailOfTargetUser = "";
+                string numOrdersMigrated = string.Empty;
+                string emailOfTargetUser = string.Empty;
                 foreach (var order in ordersToMove)
                 {
-
                     i++;
                     TempData["migratingOrder"] += TempData["migratingOrder"] + "Migrating " + order.idOrder;
                     //intent of next line not clear
@@ -273,6 +265,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     emailOfTargetUser = order.BillingEmail;
                     TempData["migratingOrder"] += TempData["migratingOrder"] + " was successful. ";
                 }
+
                 if (i == 1)
                 {
                     numOrdersMigrated = "One order was ";
@@ -282,11 +275,25 @@ namespace CUWebinars.Web.Controllers.Admin
                     numOrdersMigrated = i + " orders were ";
                 }
             }
-            //else
-            //{
-            //    //ActionResult redirectToAction;
-            //   // if (!UserAssignedToOrder(orderID, newUserID)) return RedirectToAction("Edit", new { ID = orderID });
-            //}
+            else
+            {
+                WebUser webUser = _membershipService.GetWebUserById(targetUserID);
+
+                if (webUser != null)
+                {
+                    var order = _orderManagementService.GetOrderByIdThin(orderID);
+                    order.idUser = targetUserID;
+                    _orderManagementService.SaveChanges();
+
+                    var linkToNewUser = "/account/edituser/" + targetUserID + "?returnUrl=/Admin/ManageOrder/" + orderID;
+                    var email = webUser.email;
+                    var fullName = string.Concat(webUser.FirstName, " ", webUser.LastName);
+                    var phone = webUser.Addresses.Single(a => a.AddressType == WebUiConstants.BillingAddress).Phone;
+
+                    return Json(new { Result = WebUiConstants.Success, NewHref = linkToNewUser, Email = email, FullName = fullName, Phone = phone });
+                }
+                return Json(new { Result = WebUiConstants.Fail, Reason = "No user with that Id exists in our system." });
+            }
 
             return RedirectToAction("Edit", new { ID = orderID });
         }

@@ -20,6 +20,7 @@ namespace CUWebinars.Business.Repository
         IEnumerable<WebUser> GetAll();
         void UpdateAddresses(Address address);
         void Update(WebUser webUser);
+        bool WebUserExists(int idUser);
 
         DbContext DbContext { get; }
         WebUser GetWebUserByIdLoadedWithAddressesAndInstitution(int idUser);

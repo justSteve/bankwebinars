@@ -316,6 +316,11 @@ namespace CUWebinars.Business.Services
             throw new NotImplementedException();
         }
 
+        public bool VerifyWebUserExists(int idUser)
+        {
+            return _webUserRepository.WebUserExists(idUser);
+        }
+
 
         public IList<Order> GetOrdersByUserId(int id)
         {

@@ -128,6 +128,9 @@ $(function () {
         ns.totalOptionsInput = $('DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions');
         ns.updateAdditionalLocationsForm = $('#updateAdditionalLocationsForm');
         ns.showChangeAssignedAffiliate = $('#showChangeAssignedAffiliate');
+        ns.showChangeUser = $('#showChangeUser');
+        ns.changeAssignedUser = $('#changeAssignedUser');
+        ns.changeUserOrderButton = $('#changeUserOrderButton');
 
         ns.regTypesList = $('#RegType');
         ns.orderRowId = $('#manageOrderForm input[name="ID"]').val();
@@ -323,71 +326,65 @@ $(function () {
         ns.updateAddLocsButton.on('click', ns.updateAdditionalLocations);
         ns.updateAdditionalLocationsForm.on('submit', ns.submitUpdateAddLocsForm);
 
-        $('#frmChangeAffiliate > div.modal-footer > button');
-
-        var modalFormOptions = {
-            keyboard: true,
-            backdrop: 'static',
-            show: true
-        };
-
-        ns.showChangeAssignedAffiliate.on('click', function (e) {
+        ns.showChangeUser.on('click', function(e) {
 
             e.preventDefault();
 
-            $(this).after('<span id="loadAffModal">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+            ns.changeAssignedUser.on('shown', function () {
 
-            $('#frmChangeAffiliate > div.modal-body').load('/Admin/GetAffiliates', function () {
-
-                $('#SelectedAffiliate').val($('#idAffiliate').text());
-
-                $('#changeAssignedAffiliate').modal(modalFormOptions);
-
-                $('#submitChangeAffilate').on('click', function(e) {
-
-                    e.preventDefault();
-
-                    var self = this;
-
-                    var payload = {
-                        idAffiliate: $('#SelectedAffiliate').val(),
-                        idOrder: $('#Id').val()
-                    };
-
-                    var url = $('#frmChangeAffiliate').attr('action');
-
-                    $.ajax({
-                        type: 'POST',
-                        contentType: constants.JsonContentType,
-                        cache: false,
-                        url: url,
-                        dataType: constants.JsonDataType,
-                        data: JSON.stringify(payload),
-                        beforeSend: function () {
-                            $(self).append('<span id="changeAffSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
-                            $(self).attr('disabled', 'disabled');
-                        }
-                    }).done(function (data) {
-
-                        var oi = data.Result;
-
-                        $(self).removeAttr('disabled');
-                        $('#changeAffSpinner').remove();
-                        $('#idAffiliate').text(payload['idAffiliate']);
-                        $('#affiliateNameText').text($('#SelectedAffiliate :selected').text());
-                    });
-                });
+                
             });
 
-            $('#changeAssignedAffiliate').on('hidden', function(e) {
-                $('#submitChangeAffilate').off('click');
-            });
+            var modalFormOptions = {
+                keyboard: true,
+                backdrop: 'static',
+                show: true
+            };
 
-            $('#changeAssignedAffiliate').on('shown', function (e) {
-                $('#loadAffModal').remove();
-            });
+            ns.changeAssignedUser.modal(modalFormOptions);
 
+            ns.changeAssignedUser.on('hidden', function() {
+                modalFormOptions = null;
+            });
         });
+
+        ns.changeUserOrderButton.on('click', function (e) {
+            e.preventDefault();
+
+            var self = this;
+
+            var url = $('#frmSetUserAssignedToOrder').attr('action');
+
+            var tabInputs = formProcessor.getApplicableInputs('frmSetUserAssignedToOrder');
+            var payload = formProcessor.processInputs(tabInputs);
+
+            $.ajax({
+                type: 'POST',
+                contentType: constants.JsonContentType,
+                cache: false,
+                url: url,
+                dataType: constants.JsonDataType,
+                data: JSON.stringify(payload),
+                beforeSend: function () {
+                    $(self).append('<span id="changeUserSpinner"><i class="icon-spinner icon-spin"></i>&nbsp;</span>');
+                    $(self).attr('disabled', 'disabled');
+                }
+            }).done(function (data) {
+
+                if (data.Result === 'Success') {
+                    $('#editUserLink').attr('href', data.NewHref);
+                    $('#UserEmail').val(data.Email);
+                    $('#FullName').val(data.FullName);
+                    $('#Phone ').val(data.Phone);
+                }
+                $('#changeUserSpinner').remove();
+                $(self).removeAttr('disabled');
+
+            });
+        });
+        
+
+        ns.showChangeAssignedAffiliate.on('click', ns.displayChangeAffiliateModal);
     };
 
     ns.adjustAdditionalLocationsTotal = function(number) {
@@ -402,7 +399,6 @@ $(function () {
     };
 
     ns.adjustTotalPrice = function() {
-        alert("hit");
         var newTotalPrice = ns.totalPriceSansDiscount - (ns.totalDiscount || 0);
 
         ns.totalPrice = newTotalPrice;
@@ -594,6 +590,71 @@ $(function () {
             // remove loading spinner
             $('#spinWrapper').remove();
         });
+    };
+
+    ns.displayChangeAffiliateModal = function(e) {
+
+        e.preventDefault();
+
+        var modalFormOptions = {
+            keyboard: true,
+            backdrop: 'static',
+            show: true
+        };
+
+        $(this).after('<span id="loadAffModal">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+
+        $('#frmChangeAffiliate > div.modal-body').load('/Admin/GetAffiliates', function() {
+            
+            $('#SelectedAffiliate').val($('#idAffiliate').text());
+
+            $('#changeAssignedAffiliate').modal(modalFormOptions);
+
+            $('#submitChangeAffilate').on('click', function(e) {
+
+                e.preventDefault();
+
+                var self = this;
+
+                var payload = {
+                    idAffiliate: $('#SelectedAffiliate').val(),
+                    idOrder: $('#Id').val()
+                };
+
+                var url = $('#frmChangeAffiliate').attr('action');
+
+                $.ajax({
+                    type: 'POST',
+                    contentType: constants.JsonContentType,
+                    cache: false,
+                    url: url,
+                    dataType: constants.JsonDataType,
+                    data: JSON.stringify(payload),
+                    beforeSend: function() {
+                        $(self).append('<span id="changeAffSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+                        $(self).attr('disabled', 'disabled');
+                    }
+                }).done(function(data) {
+
+                    var oi = data.Result;
+
+                    $(self).removeAttr('disabled');
+                    $('#changeAffSpinner').remove();
+                    $('#idAffiliate').text(payload['idAffiliate']);
+                    $('#affiliateNameText').text($('#SelectedAffiliate :selected').text());
+                });
+            });
+        });
+
+        $('#changeAssignedAffiliate').on('hidden', function(e) {
+            $('#submitChangeAffilate').off('click');
+            modalFormOptions = null;
+        });
+
+        $('#changeAssignedAffiliate').on('shown', function(e) {
+            $('#loadAffModal').remove();
+        });
+
     };
 
     ns.gatherPricingData = function() {

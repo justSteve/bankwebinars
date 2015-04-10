@@ -20,8 +20,8 @@
         <div class="span6 navbar-inner">
             <ul class="nav" aria-labelledby="dLabel">
                 <li><a tabindex="-1" href="#" onclick="payByCC(); return true;" role="button" data-toggle="modal">Submit Payment</a></li>
-                <li><a tabindex="-1" href="#changeAssignedUser" role="button" data-toggle="modal">Assign to Different User</a></li>
-                <li><a tabindex="-1" id="showChangeAssignedAffiliate" role="button">Credited to <span id="affiliateNameText">@Model.AffiliateName</span> Change?</a></li>
+                <li><a tabindex="-1" id="showChangeUser">Assign to Different User</a></li>
+                <li><a tabindex="-1" id="showChangeAssignedAffiliate">Credited to <span id="affiliateNameText">@Model.AffiliateName</span> Change?</a></li>
             </ul>
         </div>
         <div class="span2">
@@ -34,7 +34,7 @@
         <div id="UserSummaryPanel" class="well span3">
             <div class="control-group">
                 <div class="controls">
-                    @Html.ActionLink("Edit?", "edituser", "account", new { id = @Model.UserId, returnUrl = "/Admin/ManageOrder/" + Model.Id }, new { @class = "btn  btn-mini pull-right" })
+                    @Html.ActionLink("Edit?", "edituser", "account", new { id = @Model.UserId, returnUrl = "/Admin/ManageOrder/" + Model.Id }, new { id="editUserLink", @class = "btn  btn-mini pull-right" })
                     @Html.TextBoxFor(m => m.WebUser.email, new { id = "UserEmail", disabled = "disabled" }) @*read-only*@
                     @Html.TextBoxFor(m => m.WebUser.FullName, new { id = "FullName", disabled = "disabled" }) @*read-only*@
                     @Html.TextBoxFor(m => m.PhoneNumber, new { id = "Phone", disabled = "disabled" }) @*read-only*@
@@ -119,11 +119,11 @@
                 <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions">Total Additional Locations Price:</label>
                 <div class="controls">
 
-                @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions, new { id = "TotalCostOfOptionsText", disabled = "disabled" }) @*read-only*@
-                @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions) @* Required for POST. TextBoxFor won't ModelBind *@
+                    @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions, new { id = "TotalCostOfOptionsText", disabled = "disabled" }) @*read-only*@
+                    @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions) @* Required for POST. TextBoxFor won't ModelBind *@
 
-                &nbsp;
-                <button id="UpdateAddLocsButton" class="btn btn-primary btn-mini">Update Additional Locations</button>
+                    &nbsp;
+                    <button id="UpdateAddLocsButton" class="btn btn-primary btn-mini">Update Additional Locations</button>
 
                 </div>
             </div>
@@ -169,6 +169,8 @@
 <div id="changeAssignedUser" class="modal hide fade">
     @using (Html.BeginForm("SetUserAssignedToOrder", "Admin", FormMethod.Post, new { id = "frmSetUserAssignedToOrder" }))
     {
+        @Html.AntiForgeryToken()
+        
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h3>Change User Assigned To Order:</h3>
@@ -182,8 +184,8 @@
         </div>
         <div class="modal-footer">
             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-            <input type="button" name="moveOne" class="btn btn-primary" disabled="disabled" value="Just This Order" />
-            <input type="button" name="moveAll" disabled="disabled" class="btn btn-primary" value="Change All" />
+            <button id="changeUserOrderButton" name="moveOne" class="btn btn-primary">Just This Order</button>
+            <button id="changeUsersOrderButton" name="moveAll" class="btn btn-primary">Change All</button>
         </div>
     }
 </div>
