@@ -60,7 +60,7 @@
     </layout>
   </appender>
   <root>
-    <level value="ALL" />
+    <level value="INFO" />
     <appender-ref ref="AdoNetAppender" />
     <appender-ref ref="FileAppender" />
     <!--<appender-ref ref="ConsoleAppender" />-->

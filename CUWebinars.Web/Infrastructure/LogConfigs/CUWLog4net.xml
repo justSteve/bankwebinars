@@ -73,8 +73,8 @@
     <level value="INFO" />
     <appender-ref ref="AdoNetAppender" />
     <appender-ref ref="FileAppender" />
-    <appender-ref ref="ConsoleAppender" />
-    <appender-ref ref="TraceAppender" />
+    <!--<appender-ref ref="ConsoleAppender" />
+    <appender-ref ref="TraceAppender" />-->
   </root>
 
 </log4net>
