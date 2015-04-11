@@ -334,6 +334,7 @@ namespace CUWebinars.Business.Services
                 throw;
             }
         }
+
         public WebUser GetWebUser(int id)
         {
             return _webUserRepository.FindByIdLoaded(id);
@@ -433,6 +434,11 @@ namespace CUWebinars.Business.Services
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(orderSubmittedEvent);
             }
+        }
+
+        public IEnumerable<Order> FindOrdersByUserId(int userId)
+        {
+            return _orderRepository.GetOrdersByUserId(userId);
         }
 
         public OrderRow LoadOrderRow(int id)

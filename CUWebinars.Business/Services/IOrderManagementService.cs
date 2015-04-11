@@ -29,6 +29,7 @@ namespace CUWebinars.Business.Services
         void DeleteOrder(int orderId);
         Affiliate DetermineAffiliateByAlternativeMeans(int idUser);
         void DispatchDummyOrder();
+        IEnumerable<Order> FindOrdersByUserId(int userId);
         void FireAdminEmailConnectionInfoHandler(Order order, IEnumerable<string> recipients);
         void FireAdminEmailSendShippedOrderEvent(Order order, IEnumerable<string> recipients, bool resending = false);
         void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, bool resending = false, Uri url = null);

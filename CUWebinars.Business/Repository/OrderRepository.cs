@@ -254,6 +254,11 @@ namespace CUWebinars.Business.Repository
 
         }
 
+        public IEnumerable<Order> GetOrdersByUserId(int userId)
+        {
+            return items.Where(o => o.idUser == userId);
+        }
+
         public IList<Order> GetOrdersForLiveEventNotifications(int idWebinar)
         {
             var orders = ((TTSWebinarsContext)db).OrderRows

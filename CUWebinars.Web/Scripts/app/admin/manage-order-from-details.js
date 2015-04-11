@@ -131,6 +131,7 @@ $(function () {
         ns.showChangeUser = $('#showChangeUser');
         ns.changeAssignedUser = $('#changeAssignedUser');
         ns.changeUserOrderButton = $('#changeUserOrderButton');
+        ns.changeUserOrdersButton = $('#changeUserOrdersButton');
 
         ns.regTypesList = $('#RegType');
         ns.orderRowId = $('#manageOrderForm input[name="ID"]').val();
@@ -330,11 +331,6 @@ $(function () {
 
             e.preventDefault();
 
-            ns.changeAssignedUser.on('shown', function () {
-
-                
-            });
-
             var modalFormOptions = {
                 keyboard: true,
                 backdrop: 'static',
@@ -348,41 +344,9 @@ $(function () {
             });
         });
 
-        ns.changeUserOrderButton.on('click', function (e) {
-            e.preventDefault();
-
-            var self = this;
-
-            var url = $('#frmSetUserAssignedToOrder').attr('action');
-
-            var tabInputs = formProcessor.getApplicableInputs('frmSetUserAssignedToOrder');
-            var payload = formProcessor.processInputs(tabInputs);
-
-            $.ajax({
-                type: 'POST',
-                contentType: constants.JsonContentType,
-                cache: false,
-                url: url,
-                dataType: constants.JsonDataType,
-                data: JSON.stringify(payload),
-                beforeSend: function () {
-                    $(self).append('<span id="changeUserSpinner"><i class="icon-spinner icon-spin"></i>&nbsp;</span>');
-                    $(self).attr('disabled', 'disabled');
-                }
-            }).done(function (data) {
-
-                if (data.Result === 'Success') {
-                    $('#editUserLink').attr('href', data.NewHref);
-                    $('#UserEmail').val(data.Email);
-                    $('#FullName').val(data.FullName);
-                    $('#Phone ').val(data.Phone);
-                }
-                $('#changeUserSpinner').remove();
-                $(self).removeAttr('disabled');
-
-            });
-        });
+        ns.changeUserOrderButton.on('click', ns.changeUserOrder);
         
+        ns.changeUserOrdersButton.on('click', ns.changeUserOrders);
 
         ns.showChangeAssignedAffiliate.on('click', ns.displayChangeAffiliateModal);
     };
@@ -656,6 +620,77 @@ $(function () {
         });
 
     };
+
+    ns.changeUserOrder = function(e) {
+        e.preventDefault();
+
+        var self = this;
+
+        var url = $('#frmSetUserAssignedToOrder').attr('action');
+
+        var tabInputs = formProcessor.getApplicableInputs('frmSetUserAssignedToOrder');
+        var payload = formProcessor.processInputs(tabInputs);
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: url,
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payload),
+            beforeSend: function() {
+                $(self).append('<span id="changeUserSpinner"><i class="icon-spinner icon-spin"></i>&nbsp;</span>');
+                $(self).attr('disabled', 'disabled');
+            }
+        }).done(function(data) {
+
+            if (data.Result === 'Success') {
+                $('#editUserLink').attr('href', data.NewHref);
+                $('#UserEmail').val(data.Email);
+                $('#FullName').val(data.FullName);
+                $('#Phone ').val(data.Phone);
+            }
+            $('#changeUserSpinner').remove();
+            $(self).removeAttr('disabled');
+
+        });
+    };
+
+    ns.changeUserOrders = function (e) {
+        e.preventDefault();
+
+        var self = this;
+
+        var url = $('#frmSetUserAssignedToOrder').attr('action');
+
+        var tabInputs = formProcessor.getApplicableInputs('frmSetUserAssignedToOrder');
+        var payload = formProcessor.processInputs(tabInputs);
+        payload['migrateOrder'] = 'moveAll';
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: url,
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payload),
+            beforeSend: function () {
+                $(self).append('<span id="changeUserSpinner"><i class="icon-spinner icon-spin"></i>&nbsp;</span>');
+                $(self).attr('disabled', 'disabled');
+            }
+        }).done(function (data) {
+
+            if (data.Result === 'Success') {
+                $('#editUserLink').attr('href', data.NewHref);
+                $('#UserEmail').val(data.Email);
+                $('#FullName').val(data.FullName);
+                $('#Phone ').val(data.Phone);
+            }
+            $('#changeUserSpinner').remove();
+            $(self).removeAttr('disabled');
+
+        });
+    }
 
     ns.gatherPricingData = function() {
         ns.allAddLocsPrice = parseInt(ns.additionalLocationsTotal.val());
