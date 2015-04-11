@@ -169,6 +169,8 @@ namespace CUWebinars.Web.Controllers.Admin
             var orderRow = order.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
 
             order.Total = model.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice;
+            order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus;
+
             orderRow.RowPrice = order.Total;
             orderRow.UnitPrice = model.DisplayRowPriceViewModel.PricesAndDiscounts.UnitPrice;
 

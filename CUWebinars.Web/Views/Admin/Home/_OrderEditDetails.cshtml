@@ -1,4 +1,7 @@
 ﻿@using System.Activities.Statements
+@using System.Web.Mvc.Html
+@using CUWebinars.Web.Helpers
+@using CUWebinars.Web.Helpers.Web
 @using Ninject
 @model ManageOrderEditModel
 @{
@@ -70,7 +73,7 @@
         <div class="span3">
             <div id="StatusWrapper">
                 <div>
-                    <span>Order Status: </span><strong>@Model.DisplayRowPriceViewModel.OrderStatus.ToString()</strong>
+                    <span>Order Status: </span> @CUWebinars.Web.Helpers.Web.HtmlHelperExtensions.EnumDropDownListFor(Html, m => m.DisplayRowPriceViewModel.OrderStatus)
                 </div>
             </div>
 
@@ -143,7 +146,7 @@
     @Html.HiddenFor(m => m.WebinarId)
     @Html.HiddenFor(m => m.NumberOfAdditionalLocations)
     @Html.HiddenFor(m => m.DisplayRowPriceViewModel.NumberOfAdditionalLocations)
-    @Html.HiddenFor(m => m.DisplayRowPriceViewModel.OrderStatus)
+    @*@Html.HiddenFor(m => m.DisplayRowPriceViewModel.OrderStatus)*@
     @Html.HiddenFor(m => m.DisplayRowPriceViewModel.Price)
     @Html.HiddenFor(m => m.DisplayRowPriceViewModel.RowPrice)
     @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.FlatOff)
@@ -179,7 +182,7 @@
 
             <input type="hidden" name="orderID" value="@Model.Order.idOrder" />
             <input type="hidden" name="migrateOrder" value="one" />
-            <input type="text" id="targetUserID" name="targetUserID" value="Targeted User ID" />
+            <input type="text" id="targetUserID" name="targetUserID" placeholder="Targeted User ID" />
 
         </div>
         <div class="modal-footer">
