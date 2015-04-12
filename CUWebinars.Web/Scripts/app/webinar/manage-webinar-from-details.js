@@ -21,6 +21,8 @@ $(function () {
     MW.wireUpHandlers(MW.edit);
 
     MW.ceuTextArea.cleditor(MW.optionsForEditors);
+    MW.learnBodyTextArea.cleditor(MW.optionsForEditors);
+    MW.whoAttendTextArea.cleditor(MW.optionsForEditors);
     MW.webinarDescriptionTextArea.cleditor(MW.optionsForEditors);
     MW.webinarLongDescriptionTextArea.cleditor(MW.optionsForEditors);
 
@@ -30,6 +32,11 @@ $(function () {
     webinarDescriptionEditor.disable(false);
     var webinarLongDescriptionEditor = MW.webinarLongDescriptionTextArea.cleditor()[0];
     webinarLongDescriptionEditor.disable(false);
+
+    var learnBodyEditor = MW.learnBodyTextArea.cleditor()[0];
+    learnBodyEditor.disable(false);
+    var whoAttendEditor = MW.whoAttendTextArea.cleditor()[0];
+    whoAttendEditor.disable(false);
 
 
     MW.webinarSearchInput.focus(); 
@@ -43,6 +50,8 @@ $(function () {
         if (operation === ns.edit || operation === ns.create || operation === ns.clone) {
             ns.statusSelectList = $('#Status');
             ns.ceuTextArea = $('#ceu');
+            ns.learnBodyTextArea = $('#LearnBody');
+            ns.whoAttendTextArea = $('#WhoAttend');
             ns.webinarDescriptionTextArea = $('#Description');
             ns.webinarLongDescriptionTextArea = $('#DescriptionLong');
             ns.addAdditionalLocationsPriceButton = $('#AddAdditionalLocationsPriceButton');
@@ -107,11 +116,17 @@ $(function () {
                     ns.wireUpHandlers(ns.edit);
 
                     ns.ceuTextArea.cleditor(ns.optionsForEditors);
+                    ns.learnBodyTextArea.cleditor(ns.optionsForEditors);
+                    ns.whoAttendTextArea.cleditor(ns.optionsForEditors);
                     ns.webinarDescriptionTextArea.cleditor(ns.optionsForEditors);
                     ns.webinarLongDescriptionTextArea.cleditor(ns.optionsForEditors);
 
                     var ceuEditor = ns.ceuTextArea.cleditor()[0];
                     ceuEditor.disable(false);
+                    var learnBodyEditor = ns.learnBodyTextArea.cleditor()[0];
+                    learnBodyEditor.disable(false);
+                    var whoAttendEditor = ns.whoAttendTextArea.cleditor()[0];
+                    whoAttendEditor.disable(false);
                     var webinarDescriptionEditor = ns.webinarDescriptionTextArea.cleditor()[0];
                     webinarDescriptionEditor.disable(false);
                     var webinarLongDescriptionEditor = ns.webinarLongDescriptionTextArea.cleditor()[0];
@@ -153,11 +168,17 @@ $(function () {
                     ns.wireUpHandlers(ns.clone);
 
                     ns.ceuTextArea.cleditor(ns.optionsForEditors);
+                    ns.learnBodyTextArea.cleditor(ns.optionsForEditors);
+                    ns.whoAttendTextArea.cleditor(ns.optionsForEditors);
                     ns.webinarDescriptionTextArea.cleditor(ns.optionsForEditors);
                     ns.webinarLongDescriptionTextArea.cleditor(ns.optionsForEditors);
 
                     var ceuEditor = ns.ceuTextArea.cleditor()[0];
                     ceuEditor.disable(false);
+                    var learnBodyEditor = ns.learnBodyTextArea.cleditor()[0];
+                    learnBodyEditor.disable(false);
+                    var whoAttendEditor = ns.whoAttendTextArea.cleditor()[0];
+                    whoAttendEditor.disable(false);
                     var webinarDescriptionEditor = ns.webinarDescriptionTextArea.cleditor()[0];
                     webinarDescriptionEditor.disable(false);
                     var webinarLongDescriptionEditor = ns.webinarLongDescriptionTextArea.cleditor()[0];
@@ -197,11 +218,17 @@ $(function () {
                     ns.wireUpHandlers(ns.create);
                     
                     ns.ceuTextArea.cleditor(ns.optionsForEditors);
+                    ns.learnBodyTextArea.cleditor(ns.optionsForEditors);
+                    ns.whoAttendTextArea.cleditor(ns.optionsForEditors);
                     ns.webinarDescriptionTextArea.cleditor(ns.optionsForEditors);
                     ns.webinarLongDescriptionTextArea.cleditor(ns.optionsForEditors);
 
                     var ceuEditor = ns.ceuTextArea.cleditor()[0];
                     ceuEditor.disable(false);
+                    var learnBodyEditor = ns.learnBodyTextArea.cleditor()[0];
+                    learnBodyEditor.disable(false);
+                    var whoAttendEditor = ns.whoAttendTextArea.cleditor()[0];
+                    whoAttendEditor.disable(false);
                     var webinarDescriptionEditor = ns.webinarDescriptionTextArea.cleditor()[0];
                     webinarDescriptionEditor.disable(false);
                     var webinarLongDescriptionEditor = ns.webinarLongDescriptionTextArea.cleditor()[0];
