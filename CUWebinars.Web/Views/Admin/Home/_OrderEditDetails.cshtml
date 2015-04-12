@@ -37,7 +37,7 @@
         <div id="UserSummaryPanel" class="well span3">
             <div class="control-group">
                 <div class="controls">
-                    @Html.ActionLink("Edit?", "edituser", "account", new { id = @Model.UserId, returnUrl = "/Admin/ManageOrder/" + Model.Id }, new { id="editUserLink", @class = "btn  btn-mini pull-right" })
+                    @Html.ActionLink("Edit?", "edituser", "account", new { id = @Model.UserId, returnUrl = "/Admin/ManageOrder/" + Model.Id }, new { id = "editUserLink", @class = "btn  btn-mini pull-right" })
                     @Html.TextBoxFor(m => m.WebUser.email, new { id = "UserEmail", disabled = "disabled" }) @*read-only*@
                     @Html.TextBoxFor(m => m.WebUser.FullName, new { id = "FullName", disabled = "disabled" }) @*read-only*@
                     @Html.TextBoxFor(m => m.PhoneNumber, new { id = "Phone", disabled = "disabled" }) @*read-only*@
@@ -84,18 +84,24 @@
                 </div>
             </div>
             <div id="postEventClaim">
-                @if (Model.PostEventAccessExpires < DateTime.Now)
+                @if (Model.PostEventAccessExpires.HasValue)
                 {
-                    <label for="PostEventAccess">Access to PostEvent Materials:</label>
-                    <input type="text" placeholder="Extend Access" /><a tabindex="-1" href="#ExtendPostEventAccessModal" class="btn btn-mini" role="button" data-toggle="modal">Extend Access</a>
+                    if (Model.PostEventAccessExpires < DateTime.Now)
+                    {
+                        <label for="PostEventAccess">Access to PostEvent Materials:</label>
+                    }
+                    else
+                    {
+                        <label for="PostEvent">Post Event Expires:</label>
+                    }
+                    <span id="postEventAccessExpirey" class="text text-info">@Model.PostEventAccessExpires.Value.ToString("yyyy-MM-dd")</span>
                 }
                 else
                 {
                     <label for="PostEvent">Post Event Expires:</label>
-                    @Model.PostEventAccessExpires.ToShortDateString()
-                    <a tabindex="-1" href="#ExtendPostEventAccessModal" class="btn btn-mini" role="button" data-toggle="modal">Extend Access</a>
-
+                    <span id="postEventAccessExpirey" class="text text-warning">No information available.</span>
                 }
+                <a tabindex="-1" href="#ExtendPostEventAccessModal" class="btn btn-mini" role="button" data-toggle="modal">Extend Access</a>
             </div>
         </div>
     </div>
@@ -146,7 +152,6 @@
     @Html.HiddenFor(m => m.WebinarId)
     @Html.HiddenFor(m => m.NumberOfAdditionalLocations)
     @Html.HiddenFor(m => m.DisplayRowPriceViewModel.NumberOfAdditionalLocations)
-    @*@Html.HiddenFor(m => m.DisplayRowPriceViewModel.OrderStatus)*@
     @Html.HiddenFor(m => m.DisplayRowPriceViewModel.Price)
     @Html.HiddenFor(m => m.DisplayRowPriceViewModel.RowPrice)
     @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.FlatOff)
@@ -173,7 +178,7 @@
     @using (Html.BeginForm("SetUserAssignedToOrder", "Admin", FormMethod.Post, new { id = "frmSetUserAssignedToOrder" }))
     {
         @Html.AntiForgeryToken()
-        
+
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h3>Change User Assigned To Order:</h3>
@@ -195,20 +200,23 @@
 
 
 <div id="ExtendPostEventAccessModal" class="modal hide fade">
-    @using (Html.BeginForm("ExtendPostEventAccess", "Account", FormMethod.Post, new { id = "frmExtendPostEventAccess" }))
+    @using (Html.BeginForm("ExtendPostEventAccess", "Admin", FormMethod.Post, new { id = "frmExtendPostEventAccess" }))
     {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary("Please address the following error/s:", new { id = "extendPostEventAccessValSummary" })
+
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h3>Enter Expiration Date:</h3>
         </div>
         <div class="modal-body">
             <input type="hidden" name="orderID" value="@Model.Order.idOrder" />
-            <input type="text" id="newExpiryDate" name="newExpiryDate" placeholder="Expires On" />
+            <input type="text" id="newExpiryDate" name="newExpiryDate" placeholder="Expires On" /> <span class="text text-info">yyyy-mm-dd (e.g. 2015-04-12)</span>
 
         </div>
         <div class="modal-footer">
             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-            <input type="submit" class="btn btn-primary" value="Submit" />
+            <button id="extendEventAccessButton" class="btn btn-primary">Submit</button>
         </div>
     }
 </div>

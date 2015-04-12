@@ -132,6 +132,8 @@ $(function () {
         ns.changeAssignedUser = $('#changeAssignedUser');
         ns.changeUserOrderButton = $('#changeUserOrderButton');
         ns.changeUserOrdersButton = $('#changeUserOrdersButton');
+        ns.extendPostEventAccessModal = $('#ExtendPostEventAccessModal');
+        ns.extendEventAccessButton = $('#extendEventAccessButton');
 
         ns.regTypesList = $('#RegType');
         ns.orderRowId = $('#manageOrderForm input[name="ID"]').val();
@@ -326,6 +328,75 @@ $(function () {
         ns.regTypesList.on('change', ns.changeRegType);
         ns.updateAddLocsButton.on('click', ns.updateAdditionalLocations);
         ns.updateAdditionalLocationsForm.on('submit', ns.submitUpdateAddLocsForm);
+
+        ns.extendEventAccessButton.on('click', function(e) {
+
+            e.preventDefault();
+
+            var self = this;
+
+            var form = $('#frmExtendPostEventAccess');
+
+            var url = form.attr('action');
+
+            var token = form.find('input[name=__RequestVerificationToken]').val();
+            var headers = {};
+            headers['__RequestVerificationToken'] = token;
+
+            var tabInputs = formProcessor.getApplicableInputs('frmExtendPostEventAccess');
+            var payload = formProcessor.processInputs(tabInputs);
+            payload['email'] = $('#UserEmail').val();
+
+            // delete the following properties from the payload which are from inputs that are not
+            // part of the form. Not sure why they are being picked up by the formProcessor.
+            delete (payload['DisplayRowPriceViewModel.OrderStatus']);
+            delete (payload['RegType']);
+
+            $.ajax({
+                type: 'POST',
+                contentType: constants.JsonContentType,
+                cache: false,
+                url: url,
+                headers: headers,
+                dataType: constants.JsonDataType,
+                data: JSON.stringify(payload),
+                beforeSend: function () {
+                    $(self).append('<span id="extendTimeSpinner"><i class="icon-spinner icon-spin"></i>&nbsp;</span>');
+                }
+            }).done(function (data, textStatus, jqXHR) {
+                if (data.Result === 'Success') {
+                    $(self).after('<span id="resultLabel">&nbsp;<span class="label label-success">Access Extended!</span></span>');
+                    $('#postEventAccessExpirey').text($('#newExpiryDate').val());
+                } else if (!data.isSuccessful) {
+                    formProcessor.lightUpValidationSummary('extendPostEventAccessValSummary', data);
+                }
+
+                $('#extendTimeSpinner').remove();
+            });
+        
+        });
+
+        ns.extendPostEventAccessModal.on('shown', function() {
+            $('#resultLabel').remove();
+
+            var valSummary = $('#extendPostEventAccessValSummary');
+            valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
+
+            var errorsList = valSummary.find('ul');
+            errorsList.empty();
+            errorsList.append('<li style="display:none"></li>');
+        });
+
+        ns.extendPostEventAccessModal.on('hidden', function () {
+            $('#resultLabel').remove();
+
+            var valSummary = $('#extendPostEventAccessValSummary');
+            valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
+
+            var errorsList = valSummary.find('ul');
+            errorsList.empty();
+            errorsList.append('<li style="display:none"></li>');
+        });
 
         ns.showChangeUser.on('click', function(e) {
 

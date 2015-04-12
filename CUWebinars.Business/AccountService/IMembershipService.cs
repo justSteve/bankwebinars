@@ -40,6 +40,7 @@ namespace CUWebinars.Business.AccountService
         WebUser GetDetailsOfUser(string email);
         Institution GetInstitutionByDomain(string domain);
         IEnumerable<Institution> GetInstitutionsByName(string name);
+        DateTime? GetPostEventAccessExpireyDate(UserAccount userAccount, int idOrder);
         USTimeZone GetTimeZoneByZip();
         UserAccount GetUserAccountByEmail(string tenant, string email);
         UserAccount GetUserAccountByUserId(Guid userId);
@@ -81,10 +82,12 @@ namespace CUWebinars.Business.AccountService
             string title
             );
         void UpdateUserDetails(WebUser webUser);
-        string GetDisplayPostEventMaterialsClaim(string tenant, string email);
-        string GetDisplayPostEventMaterialsClaim(UserAccount userAccount);
+        string GetDisplayPostEventMaterialsClaimValue(string tenant, string email);
+        string GetDisplayPostEventMaterialsClaimValue(UserAccount userAccount);
         UserAccount VerifyEmailFromKey(string key, string password);
         bool VerifyUserByEmail(string tenant, string email);
+        void UpdateDisplayPostEventMaterialsClaim(string tenant, string email, string newClaimValue);
+        void UpdateDisplayPostEventMaterialsClaim(UserAccount userAccount, string claimValue);
         void UpdateShippingAddressDetails(Address shippingAddress);
         void UpdateDiscountDetails(Discount discount);
     }

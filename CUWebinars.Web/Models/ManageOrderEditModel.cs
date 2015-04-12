@@ -13,7 +13,7 @@ namespace CUWebinars.Web.Models
         public decimal CostPerAdditionalLocation { get; set; }
         public DisplayRowPriceViewModel DisplayRowPriceViewModel { get; set; }
 
-        public DateTime PostEventAccessExpires { get; set; }
+        public DateTime? PostEventAccessExpires { get; set; }
         public TagBuilder AdditionalLocationsRenderer { get; set; }
         public int NumberOfAdditionalLocations { get; set; }
         public int Id { get; set; }

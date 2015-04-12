@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Reflection;
 using System.ServiceModel.Syndication;
@@ -129,8 +130,9 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 var model = BuildManageOrderEditModel(id.Value);
                 var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, _orderManagementService.GetOrderById(id.Value).WebUser.email);
-                
-                model.PostEventAccessExpires = PostEventAccessExpires(userAccount, model.Order);
+                if (userAccount == null) throw new NullReferenceException(string.Format("UserAccount does not exist in system for OrderId {0}", id.Value));
+
+                model.PostEventAccessExpires = _membershipService.GetPostEventAccessExpireyDate(userAccount, id.Value); 
                 return View(model);
             }
 
@@ -243,6 +245,9 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
         [System.Web.Mvc.HttpPost]
+        [ValidateJsonAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
+
         public ActionResult SetUserAssignedToOrder(int orderID, string migrateOrder, int targetUserID)
         {
             try
@@ -1458,6 +1463,33 @@ namespace CUWebinars.Web.Controllers.Admin
                 Result = WebUiConstants.Fail,
                 Msg = "You need to select an Order from the DropDownList"
             });
+        }
+
+        [HttpPost]
+        [ValidateJsonAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
+        public ActionResult ExtendPostEventAccess(int? orderID, string newExpiryDate, string email)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(newExpiryDate)) throw new ValidationException("You need to enter a value.");
+
+                var newClaimValue = string.Concat(orderID.Value, ":", newExpiryDate);
+                
+                _membershipService.UpdateDisplayPostEventMaterialsClaim(
+                    _globalConfig.Tenant, email,
+                    newClaimValue);
+
+                return Json(new { Result = WebUiConstants.Success });
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException(string.Format("ExtendPostEventAccess | Session {0}", _appHelper.GetUserAuditInfo()), exception);
+
+                ModelState.AddModelError(string.Empty, exception.Message);
+            }
+
+            return this.ModelStateJson(ModelState);
         }
 
         [System.Web.Mvc.HttpPost]

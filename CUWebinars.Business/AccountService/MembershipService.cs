@@ -90,6 +90,24 @@ namespace CUWebinars.Business.AccountService
             return _institutionRepository.GetInstitutionsByName(name);
         }
 
+        public DateTime? GetPostEventAccessExpireyDate(UserAccount userAccount, int idOrder)
+        {
+            if (userAccount == null || !userAccount.HasClaim(ClaimTypes.DisplayPostEventMaterials)) return null;
+
+            var claimValue = userAccount.GetClaimValue(ClaimTypes.DisplayPostEventMaterials);
+
+            // extract the date
+            var expiryAsString = claimValue.Substring(claimValue.IndexOf(":", StringComparison.Ordinal) + 1);
+
+            DateTime expiryDate;
+            if (DateTime.TryParse(expiryAsString, out expiryDate))
+            {
+                return expiryDate;
+            }
+
+            return null;
+        }
+
         public UserAccount GetUserAccountByEmail(string tenant, string email)
         {
             if (tenant == null) throw new ArgumentNullException("tenant");
@@ -127,7 +145,7 @@ namespace CUWebinars.Business.AccountService
 
             if (userAccount != null)
             {
-                var claimValue = GetDisplayPostEventMaterialsClaim(userAccount);
+                var claimValue = GetDisplayPostEventMaterialsClaimValue(userAccount);
 
                 if (!string.IsNullOrWhiteSpace(claimValue))
                 {
@@ -600,15 +618,15 @@ namespace CUWebinars.Business.AccountService
             _webUserRepository.Update(webUser);
         }
 
-        public string GetDisplayPostEventMaterialsClaim(string tenant, string email)
+        public string GetDisplayPostEventMaterialsClaimValue(string tenant, string email)
         {
-            return GetDisplayPostEventMaterialsClaim(GetUserAccountByEmail(tenant, email));
+            return GetDisplayPostEventMaterialsClaimValue(GetUserAccountByEmail(tenant, email));
         }
 
-        public string GetDisplayPostEventMaterialsClaim(UserAccount userAccount)
+        public string GetDisplayPostEventMaterialsClaimValue(UserAccount userAccount)
         {
             if (userAccount == null) throw new ArgumentNullException("userAccount");
-
+            
             var claim = userAccount.Claims.SingleOrDefault(c => c.Type == ClaimTypes.DisplayPostEventMaterials);
 
             return !ReferenceEquals(null, claim) ? claim.Value : null;
@@ -634,6 +652,18 @@ namespace CUWebinars.Business.AccountService
         {
             //todo: [sjh] REMOVING THIS BRAKES Handle(RegisterNewAccountCommand command)  - can we refactor? [dar] I think this method is redundant. Refer to GetCityStateFromZip inAppHelper
             return USTimeZone.Central;
+        }
+
+        public void UpdateDisplayPostEventMaterialsClaim(string tenant, string email, string newClaimValue)
+        {
+            var userAccount = _userAccountService.GetByEmail(tenant, email);
+            UpdateDisplayPostEventMaterialsClaim(userAccount, newClaimValue);
+        }
+
+        public void UpdateDisplayPostEventMaterialsClaim(UserAccount userAccount, string claimValue)
+        {
+            _userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials);
+            _userAccountService.AddClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials, claimValue);
         }
 
         public void UpdateShippingAddressDetails(Address shippingAddress)
