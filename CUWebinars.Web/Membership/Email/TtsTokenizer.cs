@@ -102,6 +102,9 @@ namespace CUWebinars.Web.Membership.Email
                         property.SetValue(notification, keyValuePair.Value);
                 }
             }
+            
+            if (_stateService.HasValue(DomainConstants.UserCreatedDuringCartCheckout))
+                return string.Empty;
 
             var razorParsedResult = templateService.Parse(msg, notification, null, null);
 
