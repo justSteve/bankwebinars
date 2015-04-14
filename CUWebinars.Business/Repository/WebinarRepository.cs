@@ -199,6 +199,20 @@ namespace CUWebinars.Business.Repository
 
         }
 
+        public Webinar GetWebinarByJoinCode(string joinCode)
+        {
+            var orderRow = ((TTSWebinarsContext) db).OrderRows.SingleOrDefault(or => or.JoinURL == joinCode);
+
+            if (!ReferenceEquals(null, orderRow))
+            {
+                return items.Include(w => w.Presenter.WebUser)
+                    .Include(w => w.WebinarFiles)
+                    .SingleOrDefault(w => w.idWebinar == orderRow.idWebinar);
+            }
+
+            return null;
+        }
+
         public IQueryable<Webinar> GetAllActive()
         {
             return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))

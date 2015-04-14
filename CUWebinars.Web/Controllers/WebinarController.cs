@@ -1529,6 +1529,19 @@ namespace CUWebinars.Web.Controllers
 
             }
         }
+
+        public ActionResult ClickToJoin(string joinCode)
+        {
+            var webinar = _orderManagementService.GetWebinarByJoinCode(joinCode);
+
+            var clickToJoinViewModel = new ClickToJoinViewModel
+            {
+                Webinar = webinar
+            };
+
+            return View(clickToJoinViewModel);
+        }
+
         public ActionResult UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel)
         {
             Webinar webinar = _webinarManagementService.GetWebinar(webinarDetailsViewModel.Webinar.idWebinar);

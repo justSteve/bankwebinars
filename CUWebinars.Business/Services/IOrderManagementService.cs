@@ -99,5 +99,6 @@ namespace CUWebinars.Business.Services
         string SetPostEventClaims(int webinarId);
 
         bool VerifyWebUserExists(int idUser);
+        Webinar GetWebinarByJoinCode(string joinCode);
     }
 }

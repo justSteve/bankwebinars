@@ -1,0 +1,41 @@
+﻿@model ClickToJoinViewModel
+
+@{
+    ViewBag.Title = "ClickToJoin";
+}
+
+<div id="LogInContainer" class="container">
+    <div style="margin-left: 200px;height:310px" id="reset">
+
+        <div class="legendImitator">Webinar Details</div>
+
+        <h3>Event Summary</h3>
+        <div class="row">
+            <div class="span2">Title:</div>
+            <div class="span4">@Model.Webinar.Title</div>
+        </div>
+        <div class="row">
+            <div class="span2">Presenter:</div>
+            <div class="span4">@Model.Webinar.Presenter.WebUser.FullName</div>
+        </div>
+        <div class="row">
+            <div class="span2">Date:</div>
+            <div class="span4">@Model.Webinar.Date</div>
+        </div>
+
+        @*<h3>Connection Information</h3>
+        <div class="row">
+            <div class="span2">Webinar ID:</div>
+            <div class="span4">@Model.Webinar.idWebinar</div>
+        </div>
+        <div class="row">
+            <div class="span2">Password:</div>
+            <div class="span4">Not Required</div>
+        </div>
+        <div class="row">
+            <div class="span2">Teleconference:</div>
+            <div class="span4"></div>
+        </div>*@
+    </div>
+</div>
+

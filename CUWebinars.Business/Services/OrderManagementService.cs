@@ -321,6 +321,11 @@ namespace CUWebinars.Business.Services
             return _webUserRepository.WebUserExists(idUser);
         }
 
+        public Webinar GetWebinarByJoinCode(string joinCode)
+        {
+            return _webinarRepository.GetWebinarByJoinCode(joinCode);
+        }
+
 
         public IList<Order> GetOrdersByUserId(int id)
         {

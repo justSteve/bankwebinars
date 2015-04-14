@@ -18,6 +18,12 @@ namespace CUWebinars.Web.App_Start
             );
 
             routes.MapRoute(
+                "ClickToJoin",
+                url: "join/{joinCode}",
+                defaults: new { controller = "Webinar", action = "ClickToJoin", joinCode = string.Empty }
+            );
+
+            routes.MapRoute(
                 "EditOrder",
                 url: "Admin/ManageOrder/{id}",
                 defaults: new { controller = "Admin", action = "ManageOrderFromDetails", id = 0 },

@@ -331,7 +331,10 @@ $(function () {
 
         ns.extendEventAccessButton.on('click', ns.extendEventAccess);
 
-        ns.extendPostEventAccessModal.on('shown', function() {
+        ns.extendPostEventAccessModal.on('shown', function () {
+
+            $('#newExpiryDate').focus();
+
             $('#resultLabel').remove();
 
             var valSummary = $('#extendPostEventAccessValSummary');

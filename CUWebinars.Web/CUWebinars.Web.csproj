@@ -461,6 +461,7 @@
     <Compile Include="ViewModel\AffiliatesChooserModel.cs" />
     <Compile Include="ViewModel\AffPromoMsgViewModel.cs" />
     <Compile Include="ViewModel\ClaimsViewModel.cs" />
+    <Compile Include="ViewModel\ClickToJoinViewModel.cs" />
     <Compile Include="ViewModel\EditUserViewModel.cs" />
     <Compile Include="ViewModel\DiscountPromotionViewModel.cs" />
     <Compile Include="ViewModel\Discount_SubscriptionViewModel.cs" />
@@ -850,6 +851,7 @@
     <Content Include="Views\Admin\Partials\_ViewClaims.cshtml" />
     <Content Include="Views\Admin\Partials\_ServerError.cshtml" />
     <Content Include="Views\Admin\Partials\_AffiliatesChooser.cshtml" />
+    <Content Include="Views\Webinar\ClickToJoin.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
