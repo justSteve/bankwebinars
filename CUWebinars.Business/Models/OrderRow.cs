@@ -22,6 +22,7 @@ namespace CUWebinars.Business.Models
         public DateTime? ShipmentDate { get; set; }
         public DateTime? AccessExpires { get; set; }
         public OrderRowStatus RowStatus { get; set; }
+        public string TtsJoinUrl { get; set; }
         public Discount Discount { get; set; }
         public RegType RegistrationType { get; set; }
         public virtual Order Order { get; set; }

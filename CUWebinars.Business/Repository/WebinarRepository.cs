@@ -201,12 +201,12 @@ namespace CUWebinars.Business.Repository
 
         public Webinar GetWebinarByJoinCode(string joinCode)
         {
-            var orderRow = ((TTSWebinarsContext) db).OrderRows.SingleOrDefault(or => or.JoinURL == joinCode);
+            var orderRow = ((TTSWebinarsContext) db).OrderRows.SingleOrDefault(or => or.TtsJoinUrl == joinCode);
 
             if (!ReferenceEquals(null, orderRow))
             {
                 return items.Include(w => w.Presenter.WebUser)
-                    .Include(w => w.WebinarFiles)
+                    .Include(w => w.OrderRows)
                     .SingleOrDefault(w => w.idWebinar == orderRow.idWebinar);
             }
 

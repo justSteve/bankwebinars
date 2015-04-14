@@ -1536,10 +1536,29 @@ namespace CUWebinars.Web.Controllers
 
             var clickToJoinViewModel = new ClickToJoinViewModel
             {
+                JoinCode = joinCode,
+                RedirectLinkText = @"http://" + _globalConfig.Tenant + ".com/" + joinCode,
                 Webinar = webinar
             };
 
+            if (_stateService.HasValue("WebinarFromCode"))
+                _stateService.ClearValue("WebinarFromCode");
+            _stateService.SetValue("WebinarFromCode", webinar);
+
             return View(clickToJoinViewModel);
+        }
+
+        public ActionResult OpenMeeting(string joinCode)
+        {
+            Webinar webinar = null;
+
+            if (_stateService.HasValue("WebinarFromCode"))
+            {
+              webinar   = _stateService.GetValue<Webinar>("WebinarFromCode");
+              _stateService.ClearValue("WebinarFromCode");
+            }
+
+            return new RedirectResult(webinar.OrderRows.SingleOrDefault(or => or.TtsJoinUrl == joinCode).JoinURL);
         }
 
         public ActionResult UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel)

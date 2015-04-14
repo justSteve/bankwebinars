@@ -159,7 +159,7 @@ $(function () {
 
     /* Click event for the big green SignUp button */
     $('#AddToCart').on('click', function () {
-        $(this).prepend('<i id="signUpSpinner" class="icon-spinner icon-spin"></i>').attr('disabled', 'disabled');
+        $('#SignUpFormContainer').prepend('<i id="signUpSpinner" class="icon-spinner icon-spin"></i>').attr('disabled', 'disabled');
         signUpForm.submit();
     });
 
