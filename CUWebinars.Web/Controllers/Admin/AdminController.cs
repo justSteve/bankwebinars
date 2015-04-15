@@ -21,6 +21,7 @@ using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using DotNetOpenAuth.Messaging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,7 @@ using System.Web.Mvc;
 using ClaimsExtensions = CUWebinars.Web.Helpers.ClaimsExtensions;
 using ClaimTypes = System.Security.Claims.ClaimTypes;
 using DataOperations = CUWebinars.Web.Membership.DataOperations;
+using Formatting = Newtonsoft.Json.Formatting;
 
 namespace CUWebinars.Web.Controllers.Admin
 {
@@ -373,8 +375,40 @@ namespace CUWebinars.Web.Controllers.Admin
                 order.AdminComments = "<br><h1>Error via ChangeAffiliateOnOrder </h1><p>idOrder=" + order.idOrder + "</p>" + order.AdminComments;
             }
 
-            order.AdminComments = order.AdminComments + buildMessage;
-            var numRows = _orderManagementService.SaveChanges();
+            if (!ReferenceEquals(null, order))
+            {
+                //following copies pattern found at WebinarController | Identify
+                JObject existingJObject = null;
+
+                string comments = string.Empty;
+
+
+                if (!ReferenceEquals(null, order.AdminComments))
+                {
+                    comments = order.AdminComments.Trim();
+                }
+
+                var newJson = new JProperty(string.Concat("ChangeAffiliate-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                    new JObject(
+                        new JProperty("ChangeAffiliate", newAffiliate.ttsDomain),
+                        new JProperty("Details", buildMessage)
+                        ));
+
+                if (string.IsNullOrWhiteSpace(comments))
+                {
+                    existingJObject = new JObject(newJson);
+                }
+                else
+                {
+                    existingJObject = JObject.Parse(comments);
+                    existingJObject.Add(newJson);
+                }
+
+                order.AdminComments = existingJObject.ToString(Formatting.None);
+
+                _orderManagementService.SaveChanges();
+
+            }
 
             _logger.Info(buildMessage);
 
