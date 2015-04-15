@@ -100,7 +100,65 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             var order = _orderManagementService.GetOrderByIdThin(idOrder.Value);
             order.idAffiliate = idAffiliate.Value;
-            _orderManagementService.SaveChanges();
+            //_orderManagementService.SaveChanges();
+
+            var originalAffiliate = new CUWebinars.Business.Repository.AffiliateRepository().FindByIdWithIncluding(order.idAffiliate);
+            var newAffiliate = new CUWebinars.Business.Repository.AffiliateRepository().FindByIdWithIncluding(idAffiliate.Value);
+//            var orderUser = _membershipService.GetUserByEmail(order.BillingEmail);
+
+            string buildMessage = "<br>Affiliate changed for order " + order.idOrder + " from " + originalAffiliate.ttsDomain + " to " +
+                                  newAffiliate.ttsDomain + " by TODO: Get currentUser" +// currentUser.FullName +
+                                  " on " + DateTime.Now.ToShortDateString() +
+                                  "<br>";
+
+            //try
+            //{
+            //    _orderManagementService.AssignAffiliateToOrder(order.Affiliate, order);
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.FatalException("ChangeAffiliate: ", ex);
+            //    //order.AdminComments = "<br><h1>Error via ChangeAffiliateOnOrder </h1><p>idOrder=" + order.idOrder + "</p>" + order.AdminComments;
+            //}
+
+            if (!ReferenceEquals(null, order))
+            {
+                //following copies pattern found at WebinarController | Identify
+                JObject existingJObject = null;
+
+                string comments = string.Empty;
+
+
+                if (!ReferenceEquals(null, order.AdminComments))
+                {
+                    comments = order.AdminComments.Trim();
+                }
+
+                var newJson = new JProperty(string.Concat("ChangeAffiliate-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                    new JObject(
+                        new JProperty("ChangeAffiliateTo", newAffiliate.ttsDomain),
+                        new JProperty("Details", buildMessage)
+                        ));
+
+                if (string.IsNullOrWhiteSpace(comments))
+                {
+                    existingJObject = new JObject(newJson);
+                }
+                else
+                {
+                    existingJObject = JObject.Parse(comments);
+                    existingJObject.Add(newJson);
+                }
+
+                order.AdminComments = existingJObject.ToString(Formatting.None);
+
+                _orderManagementService.SaveChanges();
+
+            }
+
+            _logger.Info(buildMessage);
+
+
             return Json(new { Result = WebUiConstants.Success});
         }
 
@@ -372,7 +430,7 @@ namespace CUWebinars.Web.Controllers.Admin
             catch (Exception ex)
             {
                 _logger.FatalException("ChangeAffiliate: ", ex);
-                order.AdminComments = "<br><h1>Error via ChangeAffiliateOnOrder </h1><p>idOrder=" + order.idOrder + "</p>" + order.AdminComments;
+                //order.AdminComments = "<br><h1>Error via ChangeAffiliateOnOrder </h1><p>idOrder=" + order.idOrder + "</p>" + order.AdminComments;
             }
 
             if (!ReferenceEquals(null, order))
