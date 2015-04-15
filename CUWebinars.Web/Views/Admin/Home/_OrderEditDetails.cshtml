@@ -1,8 +1,4 @@
-﻿@using System.Activities.Statements
-@using System.Web.Mvc.Html
-@using CUWebinars.Web.Helpers
-@using CUWebinars.Web.Helpers.Web
-@using Ninject
+﻿@using System.Web.Mvc.Html
 @model ManageOrderEditModel
 @{
 
@@ -28,9 +24,9 @@
             </ul>
         </div>
         <div class="span2">
-            Origin: @Model.Order.Origin
-            <br />
-            Affiliate: <span id="idAffiliate">@Model.Order.idAffiliate</span>
+            <p>Origin: @Model.Order.Origin</p>
+            <p>Affiliate: <span id="idAffiliate">@Model.Order.idAffiliate</span></p>
+            <p>JoinUrl: <span id="joinCode">@Model.JoinCode</span></p>
         </div>
     </div>
     <div class="row">
@@ -112,14 +108,14 @@
                 <div class="controls">
                     There are <span id="nrAddLocs">@Model.NumberOfAdditionalLocations</span> Additional Locations for this order.
                     @{
-    if (Model.AdditionalLocationsAvailableOnLoad)
-    {
-        <button id="addLocationsButton" class="btn btn-default btn-small">add more?</button>
-    }
-    else
-    {
-        <button id="addLocationsButton" class="btn btn-default btn-small" disabled="disabled">add more?</button>
-    }
+                        if (Model.AdditionalLocationsAvailableOnLoad)
+                        {
+                            <button id="addLocationsButton" class="btn btn-default btn-small">add more?</button>
+                        }
+                        else
+                        {
+                            <button id="addLocationsButton" class="btn btn-default btn-small" disabled="disabled">add more?</button>
+                        }
                     }
                 </div>
                 @Html.Raw(Model.AdditionalLocationsRenderer.ToString())

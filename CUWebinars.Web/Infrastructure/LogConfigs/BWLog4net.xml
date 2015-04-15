@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <log4net>
   <appender name="FileAppender" type="log4net.Appender.RollingFileAppender">
+    <threshold value="ERROR" />
     <file type="log4net.Util.PatternString" value="App_Data/Logs/log4net_%date{yyyyMMdd}.log" />
     <appendToFile value="true" />
     <rollingStyle value="Date" />
@@ -11,6 +12,7 @@
   </appender>
 
   <appender name="AdoNetAppender" type="log4net.Appender.AdoNetAppender">
+    <threshold value="INFO" />
     <bufferSize value="1" />
     <connectionType value="System.Data.SqlClient.SqlConnection, System.Data,  Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
     <connectionString value="Data Source=tcp:kmow9uloz6.database.windows.net,1433;Initial Catalog=TTSDatabase;User Id=TTSOp@kmow9uloz6;Password=EntRisR..E121114;MultipleActiveResultSets=True;" />
@@ -52,15 +54,14 @@
       </layout>
     </parameter>
   </appender>
-  <appender name="ConsoleAppender" type="log4net.Appender.ConsoleAppender">
+  <!--<appender name="ConsoleAppender" type="log4net.Appender.ConsoleAppender">
     <layout type="log4net.Layout.PatternLayout">
       <param name="Header" value="[Header]\r\n" />
       <param name="Footer" value="[Footer]\r\n" />
       <param name="ConversionPattern" value="%d [%t] %-5p %c %m%n" />
     </layout>
-  </appender>
+  </appender>-->
   <root>
-    <level value="INFO" />
     <appender-ref ref="AdoNetAppender" />
     <appender-ref ref="FileAppender" />
     <!--<appender-ref ref="ConsoleAppender" />-->

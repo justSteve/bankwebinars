@@ -44,6 +44,7 @@ namespace CUWebinars.Web.Controllers
         private const string FromFluentPrefix = "fromfluent-";
         private const string EnterValidIdMsg = "Enter a valid id";
         private const string ServerErrorLoggedMsg = "Server Error Logged";
+        public const string WebinarFromCode = "WebinarFromCode";
         private IStateService _stateService;
         private readonly IWebinarControllerOrchestrator _webinarControllerOrchestrator;
         private readonly IAppHelper _appHelper;
@@ -1541,24 +1542,42 @@ namespace CUWebinars.Web.Controllers
                 Webinar = webinar
             };
 
-            if (_stateService.HasValue("WebinarFromCode"))
-                _stateService.ClearValue("WebinarFromCode");
-            _stateService.SetValue("WebinarFromCode", webinar);
+            if (_stateService.HasValue(WebinarFromCode))
+                _stateService.ClearValue(WebinarFromCode);
+            _stateService.SetValue(WebinarFromCode, webinar);
 
             return View(clickToJoinViewModel);
         }
 
         public ActionResult OpenMeeting(string joinCode)
         {
+            string webinarUrl = string.Empty;
             Webinar webinar = null;
 
-            if (_stateService.HasValue("WebinarFromCode"))
+            if (_stateService.HasValue(WebinarFromCode))
             {
-              webinar   = _stateService.GetValue<Webinar>("WebinarFromCode");
-              _stateService.ClearValue("WebinarFromCode");
-            }
+                webinar = _stateService.GetValue<Webinar>(WebinarFromCode);
+                _stateService.ClearValue(WebinarFromCode);
 
-            return new RedirectResult(webinar.OrderRows.SingleOrDefault(or => or.TtsJoinUrl == joinCode).JoinURL);
+                var orderRow = webinar.OrderRows.SingleOrDefault(or => or.TtsJoinUrl == joinCode);
+
+
+                if (!ReferenceEquals(null, orderRow))
+                {
+
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        webinarUrl = orderRow.JoinURL; // fully qualified authorative webinar-access link from Citrix.
+                    }
+                    else
+                    {
+                        // non-individualized version of webinar-access link from Citrix.
+                        webinarUrl = webinar.CitrixRegisterUrl;
+                    }
+                }
+
+            }
+            return new RedirectResult(webinarUrl);
         }
 
         public ActionResult UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel)

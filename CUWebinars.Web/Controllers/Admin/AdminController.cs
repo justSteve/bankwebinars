@@ -561,9 +561,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 CostPerAdditionalLocation = additionalLocationsPricing.Item2,
                 DisplayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
                 {
-                    Options = _orderManagementService.GetOptionsByWebinarId(
-                        order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar,
-                        false),
+                    Options = _orderManagementService.GetOptionsByWebinarId(orderRow.idWebinar, false),
                     OrderRowId = orderRow.idOrderRow,
                     OrderRowRegistrationType = orderRow.RegistrationType
                 },
@@ -580,6 +578,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 },
                 Id = order.idOrder,
                 AffiliateName = _appHelper.GetAffiliateName(order.idAffiliate),
+                JoinCode = orderRow.TtsJoinUrl,
                 Order = order,
                 NumberOfAdditionalLocations = additionalLocationsCount,
                 PhoneNumber = order.BillingPhone,

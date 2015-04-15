@@ -20,6 +20,7 @@ namespace CUWebinars.Web.Models
         public Order Order { get; set; }
         public int RegType { get; set; }
         public bool AdditionalLocationsAvailableOnLoad { get; set; }
+        public string JoinCode { get; set; }
         public string PhoneNumber { get; set; }
         public string AffiliateName { get; set; }
         public int UserId { get; set; }

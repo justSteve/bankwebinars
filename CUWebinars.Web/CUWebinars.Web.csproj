@@ -855,9 +855,6 @@
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <None Include="Web.CUWebinars31.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
     <None Include="Web.CUWebinars33 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
