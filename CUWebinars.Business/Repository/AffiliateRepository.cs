@@ -43,11 +43,14 @@ namespace CUWebinars.Business.Repository
 
         }
 
-        public Affiliate GetCurrentAffiliate()
-        {
-            return items.Single(a => a.WebUser.email == "Mark_Bennett@ttstrain.com"); 
-            //hardwired for CUWebinars
-        }
+        //public Affiliate GetCurrentAffiliate()
+        //{
+
+        //    return items.Single(a => a.WebUser.email == "Mark_Bennett@ttstrain.com"); 
+        //    //hardwired for CUWebinars
+
+
+        //}
 
         public Affiliate LoadByTTSDomain(string ttsDomain)
         {

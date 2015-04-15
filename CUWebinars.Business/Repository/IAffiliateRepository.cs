@@ -14,7 +14,7 @@ namespace CUWebinars.Business.Repository
         Affiliate FindByIdWithIncluding(int id, params Expression<Func<Affiliate, object>>[] includeProperties);
         IQueryable<Affiliate> GetAffiliates();
         IEnumerable<Affiliate> GetAll();
-        Affiliate GetCurrentAffiliate();
+        //Affiliate GetCurrentAffiliate();
         Affiliate FindById(int id);
         Affiliate LoadByTTSDomain(string ttsDomain);
         IQueryable<Order> GetOrdersByUser(int affiliateId, int userId);
