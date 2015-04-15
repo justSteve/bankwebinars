@@ -13,7 +13,7 @@ namespace CUWebinars.Business.Services
         //Affiliate FindByIdAndDetachItem(int id);
         //Affiliate FindByIdWithIncluding(int id, params Expression<Func<Affiliate, object>>[] includeProperties);
         IQueryable<Affiliate> GetAffiliates();
-        Affiliate GetCurrentAffiliate();
+        //Affiliate GetCurrentAffiliate();
         Affiliate FindById(int id);
         Affiliate LoadByTTSDomain(string ttsDomain);
         IQueryable<Order> GetOrdersByUser(int affiliateId, int userId);

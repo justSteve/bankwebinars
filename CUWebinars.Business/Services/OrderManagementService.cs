@@ -411,9 +411,12 @@ namespace CUWebinars.Business.Services
                             numberOfUsesOfMostRecentAffiliate = current;
                         }
                     }
-
+                    
                     if (mostUses >= 2 * numberOfUsesOfMostRecentAffiliate)
                         affiliateIdForOrder = mostUsedAffiliateId;
+
+                    _logger.Error("{4} affiliates considered: {0} for idUser {1}. Credited to {2}.", sb.ToString(), idUser, affiliateIdForOrder, current);
+
                 }
 
                 cachKey = "affiliateId-" + affiliateIdForOrder;
@@ -425,8 +428,6 @@ namespace CUWebinars.Business.Services
                     // keeps Affiliate object in cache for 1 hour.
                     _cachingService.Add(cachKey, affiliate, DateTime.Now.AddHours(1));
                 }
-
-                _logger.Error("Total affiliates considered: {0} for idUser {1}. Credited to {2}.", sb.ToString(), idUser, affiliate.idUserAff);
 
                 return affiliate;
             }

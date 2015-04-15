@@ -60,10 +60,10 @@ namespace CUWebinars.Business.Services
             return _affiliateRepository.GetAffiliates();
         }
 
-        public Affiliate GetCurrentAffiliate()
-        {
-            return _affiliateRepository.GetCurrentAffiliate();
-        }
+        //public Affiliate GetCurrentAffiliate()
+        //{
+        //    return _affiliateRepository.GetCurrentAffiliate();
+        //}
 
         public Affiliate FindById(int id)
         {

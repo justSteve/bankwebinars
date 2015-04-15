@@ -1453,11 +1453,11 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        public ActionResult GetWebinarFile(int? id)
+        public ActionResult GetWebinarFile(int? idWebinarFile)
         {
-            if (id.HasValue)
+            if (idWebinarFile.HasValue)
             {
-                var webinarFile = _webinarManagementService.GetWebinarFile(id.Value);
+                var webinarFile = _webinarManagementService.GetWebinarFile(idWebinarFile.Value);
 
                 return Redirect(_globalConfig.WMVRepository + webinarFile.fileLocation);
             }
@@ -1607,7 +1607,7 @@ namespace CUWebinars.Web.Controllers
 
                 _orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
 
-                return Json(new { result = WebUiConstants.Success });
+                     return Json(new { result = WebUiConstants.Success });
             }
             catch (Exception exception)
             {
