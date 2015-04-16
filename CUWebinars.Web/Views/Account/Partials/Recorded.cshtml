@@ -17,20 +17,14 @@
             @foreach (var recorded in Model.Recorded)
             {
                 var row = recorded.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-                var upOnDemandCost = 100;
-                var upPremium = 140;
 
-                if (row.Webinar.Duration == 1)
-                {
-                    upOnDemandCost = 70;
-                    upPremium = 100;
-                }
+
                 var hasClaim = false;
                 if (Model.MyClaims != null)
                 {
                     foreach (var claim in Model.MyClaims)
                     {
-                        if (claim.ToString().Split(':')[0] == row.idWebinar.ToString())
+                        if (claim.ToString().Split(':')[0] == row.idOrder.ToString())
                         {
                             hasClaim = true;
                         }
@@ -51,7 +45,6 @@
                     <div class="row-fluid">
                         <div class="pull-right span3" id="orderSum-@row.idWebinar">
                             @{Html.RenderPartial("DisplayTemplates/OrderSumUser", row.Order);}
-
                         </div>
                         <div class="span7" style="font-size: small;  line-height: 1.2; margin-bottom: 10px;">
                             <h4 id="recorded-@row.idWebinar">@row.Webinar.Title</h4>
@@ -65,7 +58,7 @@
                                 @if (row.RegistrationType.ShowRecordingNotifications == "No")
                                 {
                                     <p style="font-size: small;">
-                                        <span class="btn btn-success btn-mini" id="upgradeRegistration_@row.idOrder">Upgrade</span> this registration with an <i>OnDemand Recording package</i> for @upOnDemandCost.ToString("C", nfi) or our <i>Premium package</i> for @upPremium.ToString("C", nfi)!<br />
+                                        @{Html.RenderPartial("DisplayTemplates/ShowUpgradeCost", row.Order);}
                                     </p>
                                 }
                             </div>
@@ -133,15 +126,15 @@
                                     </div>
                                     <div class="span7">
                                         <p>
-                                            Complementary access to the OnDemand recording is provided for five business days following the event.
-                                            Need to share this event with a co-worker? Provide them this URL:<br /> <tt><b>@globalConfig.TenantURL/Webinar/OnDemand?w=@row.Webinar.idWebinar&u=@row.Order.WebUser.idUser</b></tt>
+                                            Complementary access to the OnDemand recording is provided for five business days following the event - @row.Webinar.Date.AddDays(8).
+                                            Need to share this event with a co-worker? Provide them this URL:<br /> <tt><b>@globalConfig.TenantURL/Webinar/OnDemand/@row.Order.idOrder</b></tt>
                                         </p>
                                     </div>
                                 }
                                 else
                                 {
                                     <div>
-                                        <span style="font-size: small;">Upgrade your order to access this OnDemand recording.</span>
+                                        @{Html.RenderPartial("DisplayTemplates/ShowUpgradeCost", row.Order);}
                                     </div>
                                 }
                             </div>

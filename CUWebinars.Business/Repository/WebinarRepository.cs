@@ -193,6 +193,12 @@ namespace CUWebinars.Business.Repository
 
         public Double[] GetCostOfUpgrades(int idWebinar)
         {
+            //var webinar = ((TTSWebinarsContext) db).Webinars.Where(w => w.idWebinar == idWebinar);
+            var desc = ((TTSWebinarsContext) db).RegTypesGroupsXrefs.Where(
+                    r => r.idWebinar == idWebinar
+                    ).Select(r => r.RegTypesGroup.RegTypeGroupDesc);
+
+
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
             return dataOperations.GetCostOfUpgrades(idWebinar);

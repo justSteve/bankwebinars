@@ -97,14 +97,11 @@
                     var showDuration = Convert.ToInt32(row.Webinar.Duration);
                     var upgradeCaption = "<a href=\"javascript:upgrade(" + row.Order.idOrder + "); \" id=\"upgrade\" class=\"btn btn-mini btn-success\">Upgrade?</a>";
 
-                    //var upOnDemandCost = 100;
-                    //var upPremium = 250;
-                    TimeSpan calcDays = row.Webinar.Date - DateTime.Now;
+                    TimeSpan calcDays = row.Webinar.Date - DateTime.UtcNow;
                     var numDays = Convert.ToInt32(calcDays.TotalDays);
                     string remainingDays;
 
                     remainingDays = " in " + Convert.ToInt32(calcDays.TotalDays).ToString() + " days on <i>" + @Html.DisplayDate(row.Webinar.Date) + "</i>";
-
 
                     <div class=" container-fluid">
                         <div class="row-fluid well well-large">

@@ -491,7 +491,10 @@ namespace CUWebinars.Business.Core
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 sqlConnection.Open();
+                using (var getPricingsCommand = new SqlCommand())
+                {
 
+                }
                 using (var getPricingsCommand = new SqlCommand())
                 {
                     var webinarIdParameter = new SqlParameter

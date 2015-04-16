@@ -853,6 +853,7 @@
     <Content Include="Views\Admin\Partials\_ServerError.cshtml" />
     <Content Include="Views\Admin\Partials\_AffiliatesChooser.cshtml" />
     <Content Include="Views\Webinar\ClickToJoin.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\ShowUpgradeCost.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
