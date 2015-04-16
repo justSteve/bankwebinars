@@ -67,6 +67,9 @@ namespace CUWebinars.Business.Repository
             throw new System.NotImplementedException();
         }
 
-
+        public void SetAffiliateStatusToUnChanged(Affiliate affiliate)
+        {
+            db.Entry(affiliate).State = EntityState.Unchanged;
+        }
     }
 }

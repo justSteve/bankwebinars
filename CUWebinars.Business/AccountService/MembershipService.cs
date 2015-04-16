@@ -703,6 +703,26 @@ namespace CUWebinars.Business.AccountService
             throw new NotImplementedException();
         }
 
+        public WebUser CreateBareUserFromEmail(string email)
+        {
+            var webUser = new WebUser
+            {
+                idUser = _refDataRepository.GetMaxWebUserId() + 1,
+                AcctStatus = DomainConstants.New,
+                UserType = UserType.Customer,
+                DateCreated = DateTime.Now,
+                FirstName = "Impromptu",
+                LastName = "User",
+                idUserInstitution = 8,
+                email = email,
+                timeZone = USTimeZone.Central
+            };
+
+            _webUserRepository.Add(webUser);
+
+            return webUser;
+        }
+
 
         public IEnumerable<Address> GetAddressesForUser(int id)
         {

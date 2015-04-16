@@ -1565,8 +1565,9 @@ namespace CUWebinars.Web.Controllers
                 if (!ReferenceEquals(null, orderRow))
                 {
 
-                    if (User.Identity.IsAuthenticated)
+                    if (User.Identity.IsAuthenticated && !ReferenceEquals(null, orderRow.JoinURL)) // JoinURL will be null for impromtu user
                     {
+
                         webinarUrl = orderRow.JoinURL; // fully qualified authorative webinar-access link from Citrix.
                     }
                     else

@@ -1,0 +1,49 @@
+﻿@model GenerateClickToJoinViewModel
+
+@{
+    ViewBag.Title = "Generate Click to Join Address for Ad Hoc Caller";
+}
+
+<div id="mainContentWrap" class="container bufferBottom30">
+
+
+    <div class="legendImitator">Generate Click to Join</div>
+
+    @using (Html.BeginForm("GenerateClickToJoinForAdHocCaller", "Admin", FormMethod.Post, new { id = "clickToJoinForm", @class = "form-horizontal" }))
+    {
+        @Html.AntiForgeryToken()
+
+
+        <div class="row">
+            <div class="control-group">
+                @Html.LabelFor(m => m.Email, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.EditorFor(m => m.Email)
+                    @Html.ValidationMessageFor(m => m.Email)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="control-group">
+                @Html.LabelFor(m => m.WebinarId, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.EditorFor(m => m.WebinarId)
+                    @Html.ValidationMessageFor(m => m.WebinarId)
+                </div>
+            </div>
+        </div>
+        <div class =" row">
+            <div class="control-group">
+                <div class="controls">&nbsp;</div>
+                <div class="control-group">
+                    <div class="controls">
+                        <button id="genClickToJoinCodeButton" class="btn">Generate Code</button> <span id="accessCode" class="text text-info"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+</div>
+
+@Scripts.Render("~/bundles/click-to-join")
