@@ -57,9 +57,3 @@ $(function() {
 
 
 });
-
-$(function () {
-
-
-
-})(CM);

@@ -576,54 +576,65 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpPost]
         public ActionResult GenerateClickToJoinForAdHocCaller(GenerateClickToJoinViewModel generateClickToJoinViewModel)
         {
-            try
+            if (ModelState.IsValid)
             {
-                var user = _membershipService.GetUserByEmail(generateClickToJoinViewModel.Email);
-
-
-                if (ReferenceEquals(null, user))
+                try
                 {
-                    user = _membershipService.CreateBareUserFromEmail(generateClickToJoinViewModel.Email);
-                    _orderManagementService.SaveChanges();
-                }
-                var newOrderRow = _orderManagementService.CreateOrderRow(null, null, 1);
-
-                newOrderRow.idWebinar = 1500;
-                newOrderRow.idRegType = 1;
-                _orderManagementService.LoadWebinarIntoOrderRow(newOrderRow);
-
-
-                var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
-                _orderManagementService.SetUserStatusToUnChanged(user);
-                //_orderManagementService.SetAffiliateStatusToUnChanged(affiliate);
-
-
-                _orderManagementService.CreateNewOrder(
-                    affiliate.idUserAff,
-                    user,
-                    newOrderRow.Webinar,
-                    newOrderRow
-                    );
-
-                _orderManagementService.SaveChanges();
-
-                return Json(new {Result = WebUiConstants.Success, Code = newOrderRow.TtsJoinUrl } );
-            }
-            catch (DbEntityValidationException dbEntityValidationException)
-            {
-                var stringBuilder = new StringBuilder();
-
-                foreach (var validationErrors in dbEntityValidationException.EntityValidationErrors)
-                {
-                    foreach (var validationError in validationErrors.ValidationErrors)
+                    if (generateClickToJoinViewModel.OrderId.HasValue)
                     {
-                        Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
-                            validationError.ErrorMessage);
-                        stringBuilder.AppendFormat("Property: {0} Error: {1} ", validationError.PropertyName,
-                            validationError.ErrorMessage);
+                        var orderRow = 
+                            _orderManagementService.GetOrderById(generateClickToJoinViewModel.OrderId.Value).OrderRows
+                            .Single(or => or.RowStatus == OrderRowStatus.Active);
+                        
+                        return Json(new {Result = WebUiConstants.Success, Code = orderRow.TtsJoinUrl});
                     }
+
+                    var user = _membershipService.GetUserByEmail(generateClickToJoinViewModel.Email);
+
+                    if (ReferenceEquals(null, user))
+                    {
+                        user = _membershipService.CreateBareUserFromEmail(generateClickToJoinViewModel.Email);
+                        _orderManagementService.SaveChanges();
+                    }
+                    var newOrderRow = _orderManagementService.CreateOrderRow(null, null, 1);
+
+                    newOrderRow.idWebinar = generateClickToJoinViewModel.WebinarId.Value;
+                    newOrderRow.idRegType = 1;
+                    _orderManagementService.LoadWebinarIntoOrderRow(newOrderRow);
+
+
+                    var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+                    _orderManagementService.SetUserStatusToUnChanged(user);
+                    //_orderManagementService.SetAffiliateStatusToUnChanged(affiliate);
+
+
+                    _orderManagementService.CreateNewOrder(
+                        affiliate.idUserAff,
+                        user,
+                        newOrderRow.Webinar,
+                        newOrderRow
+                        );
+
+                    _orderManagementService.SaveChanges();
+
+                    return Json(new {Result = WebUiConstants.Success, Code = newOrderRow.TtsJoinUrl});
                 }
-                Trace.TraceInformation(stringBuilder.ToString());
+                catch (DbEntityValidationException dbEntityValidationException)
+                {
+                    var stringBuilder = new StringBuilder();
+
+                    foreach (var validationErrors in dbEntityValidationException.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
+                                validationError.ErrorMessage);
+                            stringBuilder.AppendFormat("Property: {0} Error: {1} ", validationError.PropertyName,
+                                validationError.ErrorMessage);
+                        }
+                    }
+                    Trace.TraceInformation(stringBuilder.ToString());
+                }
             }
 
             return Json(new { Result = WebUiConstants.Fail});
