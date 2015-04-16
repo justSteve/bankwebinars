@@ -417,13 +417,13 @@ namespace CUWebinars.Web.Core.Orchestrators
                         WebUser = webUser
                     };
 
-                    if (Request["referred"] != null &&
-                        WebUtility.HtmlDecode(Request["referred"]) != "How did you hear about this webinar?")
-                    {
-                        //
-                        order.AdminComments += "Referred by: " + Request["referred"] + Environment.NewLine;
-                        //ViewData["referred"] = Request["referred"];
-                    }
+                    //if (Request["referred"] != null &&
+                    //    WebUtility.HtmlDecode(Request["referred"]) != "How did you hear about this webinar?")
+                    //{
+                    //    //
+                    //    order.AdminComments += "Referred by: " + Request["referred"] + Environment.NewLine;
+                    //    //ViewData["referred"] = Request["referred"];
+                    //}
                     return webinarDetailsViewModel;
                 }
                 catch (Exception exception)
