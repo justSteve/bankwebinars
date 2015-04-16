@@ -4,6 +4,7 @@ using System.Threading;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
@@ -35,6 +36,7 @@ using System.Web.Hosting;
 using System.Web.Mvc;
 using WebGrease.Css.Extensions;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
+using DateTimeHelper = CUWebinars.Web.Helpers.DateTimeHelper;
 
 
 namespace CUWebinars.Web.Controllers
@@ -1634,10 +1636,20 @@ namespace CUWebinars.Web.Controllers
 
                 try
                 {
+                    var onDemandCode = RandomHelpers.GetUniqueCode(8);
+
+                    var orderIdProperty = new JProperty("OrderId", order.idOrder);
+                    var expiryDateProperty = new JProperty("ExpiryDate", expiryDate.ToString("yyyy-MM-dd"));
+                    var obfuscationStringProperty = new JProperty("ObfuscationString", onDemandCode);
+
+                    var claimValue = new JObject(
+                        orderIdProperty,
+                        expiryDateProperty,
+                        obfuscationStringProperty
+                        );
+
                     _membershipService.AddClaim(
-                        userAccountOfOrderer,
-                        Business.Constants.ClaimTypes.DisplayPostEventMaterials,
-                        string.Concat(order.idOrder, ":", expiryDate.ToString("yyyy-MM-dd"))
+                        userAccountOfOrderer, ClaimTypes.DisplayPostEventMaterials, claimValue.ToString(Formatting.None)
                         );
 
                     _logger.Info("Claim added for " + order.idOrder);
