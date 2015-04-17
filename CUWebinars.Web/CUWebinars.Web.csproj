@@ -673,10 +673,7 @@
     <None Include="Properties\PublishProfiles\BankWebinars31.pubxml" />
     <Content Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
     <Content Include="Scripts\app\webinar\identify.js" />
-    <None Include="Properties\PublishProfiles\CUWebinars33 - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\CUWebinars33 - Web Deploy.pubxml">
-      <TransformOnBuild>true</TransformOnBuild>
-    </None>
+    <None Include="Properties\PublishProfiles\CUWebinars33.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\app\webinar\manage-webinar-from-details.js" />
     <Content Include="Scripts\app\webinar\manage-webinar.js" />
