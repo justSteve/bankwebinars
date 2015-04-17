@@ -95,10 +95,12 @@ namespace CUWebinars.Business.AccountService
         {
             if (userAccount == null || !userAccount.HasClaim(ClaimTypes.DisplayPostEventMaterials)) return null;
 
-            var claimValue = userAccount.GetClaimValue(ClaimTypes.DisplayPostEventMaterials);
+            var claimsForOrder = userAccount.Claims.FirstOrDefault(c => c.Value.ToLower().Contains(idOrder.ToString()));
 
             // extract the date
-            var expiryAsString = JObject.Parse(claimValue).GetValue(JsonPropertyKeys.ExpiryDate).ToString();
+            if (claimsForOrder == null) return null;
+
+            var expiryAsString = JObject.Parse(claimsForOrder.Value).GetValue(JsonPropertyKeys.ExpiryDate).ToString();
 
             DateTime expiryDate;
             if (DateTime.TryParse(expiryAsString, out expiryDate))

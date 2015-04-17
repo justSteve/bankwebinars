@@ -203,31 +203,6 @@ namespace CUWebinars.Web.Controllers.Admin
             throw new NullReferenceException("Query string parameter has to be an positive integer for the ManageOrderFromDetails action.");
         }
 
-        private DateTime PostEventAccessExpires(UserAccount userAccount, Order order)
-        {
-            DateTime expiryDate;
-
-            if (userAccount != null && userAccount.HasClaim(Business.Constants.ClaimTypes.DisplayPostEventMaterials))
-            {
-                var claimsForOrder =
-                    userAccount.Claims.FirstOrDefault(
-                        c => c.Value.ToLower().Contains(order.idOrder.ToString()));
-
-                // extract the date
-                if (claimsForOrder != null)
-                {
-                    var expiryAsString =
-                        claimsForOrder.Value.Substring(claimsForOrder.Value.IndexOf(":") + 1);
-
-                    if (DateTime.TryParse(expiryAsString, out expiryDate))
-                    {
-                        return expiryDate;
-                    }
-                }
-            }
-            return DateTime.MinValue;
-        }
-
         private Order ApplyModelChangesToOrder(ManageOrderEditModel model)
         {
             var order = _orderManagementService.GetOrderById(model.Id);
@@ -1101,9 +1076,10 @@ namespace CUWebinars.Web.Controllers.Admin
             foreach (var order in orders)
             {
                 var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.WebUser.email);
-                
-                DateTime expiryDate = PostEventAccessExpires(userAccount, order);
-                if (expiryDate > DateTime.Now)
+
+                DateTime? expiryDate = _membershipService.GetPostEventAccessExpireyDate(userAccount, order.idOrder);
+
+                if (expiryDate.HasValue && expiryDate > DateTime.Now)
                 {
                     eligableOrders.Add(order);
                 }
