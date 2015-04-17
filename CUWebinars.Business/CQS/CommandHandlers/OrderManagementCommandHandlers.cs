@@ -285,72 +285,15 @@ namespace CUWebinars.Business.CQS.CommandHandlers
         public void Handle(AddOrderCommand command)
         {
             if (command == null) throw new ArgumentNullException("command");
-            var importedOrder = _orderManagementService.CreateNewOrder(command.Affiliate, command.WebUser, command.Webinar, command.OrderRow);
-
-            importedOrder.AdminComments = command.AdminComments;
-            importedOrder.AffiliateComments = command.AffiliateComments;
-            importedOrder.UserComments = command.UserComments;
-            importedOrder.Origin = "incomingOrderModel.Origin";
-            importedOrder.FirstName = command.FirstName;
-            importedOrder.LastName = command.LastName;
-            importedOrder.Institution = command.WebUser.Institution.InstitutionName;
-            importedOrder.BillingEmail = command.Email;
-
-            importedOrder.BillingAddress = command.BillingAddress.StreetAddress;
-            importedOrder.BillingAddress2 = command.BillingAddress.StreetAddress2;
-            importedOrder.BillingPhone = command.BillingAddress.Phone;
-            importedOrder.BillingCity = command.BillingAddress.City;
-            importedOrder.BillingState = command.BillingAddress.State;
-            importedOrder.BillingZip = command.BillingAddress.Zip;
-
-            importedOrder.ShippingAddress = command.ShippingAddress.StreetAddress;
-            importedOrder.ShippingAddress2 = command.ShippingAddress.StreetAddress2;
-            importedOrder.ShippingPhone = command.ShippingAddress.Phone;
-            importedOrder.ShippingCity = command.ShippingAddress.City;
-            importedOrder.ShippingState = command.ShippingAddress.State;
-            importedOrder.ShippingZip = command.ShippingAddress.Zip;
-            importedOrder.ShippingFirstName = command.FirstName;
-            importedOrder.ShippingLastName = command.LastName;
-
-
-            _orderManagementService.GetJoinUrl(command.OrderRow);
-
-
-            _orderManagementService.SaveOrderChanges(importedOrder, command.VerificationKey, command.ConfirmChangeEmailUrl, command.OrderGenesis);
-
-            _postCommitRegistrator.Committed += () =>
-            {
-                command.OrderId = importedOrder.idOrder;
-            };
-
-            _postCommitRegistrator.ExecuteActions();
-            _postCommitRegistrator.Reset();
-        }
-        public void Handle(ImportOrderCommand command)
-        {
-            if (command == null) throw new ArgumentNullException("command");
-            //prevents re-importation
-            var userAlreadyHasOrder = _orderManagementService.GetOrdersByUserId(command.WebUser.idUser)
-                .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == command.Webinar.idWebinar) != null).SingleOrDefault();
-            ;
-            if (ReferenceEquals(null, userAlreadyHasOrder))
-            {
-
-            }
-
             var importedOrder = _orderManagementService.CreateNewOrder(command.Affiliate, command.WebUser,
-                command.Webinar, command.OrderRow, DomainConstants.OriginImported);
-
-            string buildMessage = "ImportedOn" + DateTime.UtcNow;
+                command.Webinar, command.OrderRow);
 
             if (!ReferenceEquals(null, importedOrder))
             {
-                //following copies pattern found at WebinarController | Identify
+
                 JObject existingJObject = null;
-                JObject userJObject = null;
 
                 string comments = string.Empty;
-                string uComments = string.Empty;
 
 
                 if (!ReferenceEquals(null, importedOrder.AdminComments))
@@ -358,12 +301,13 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                     comments = importedOrder.AdminComments.Trim();
                 }
 
-                var newJson = new JProperty(string.Concat("Imported-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
-                    new JObject(
-                        new JProperty("ImportedOrder", command.Affiliate.ttsDomain),
-                        new JProperty("Details", buildMessage)
-                        ));
-                userJObject = new JObject(newJson);
+                var newJson =
+                    new JProperty(
+                        string.Concat("LegacyCommentsAddOrder-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                        new JObject(
+
+                            new JProperty("LegacyComments", importedOrder.AdminComments)
+                            ));
 
                 if (string.IsNullOrWhiteSpace(comments))
                 {
@@ -376,9 +320,102 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                 }
 
                 importedOrder.AdminComments = existingJObject.ToString(Formatting.None);
-                importedOrder.UserComments = userJObject.ToString(Formatting.None);
-                importedOrder.AffiliateComments = userJObject.ToString(Formatting.None);
 
+
+                importedOrder.AdminComments = command.AdminComments;
+                importedOrder.AffiliateComments = command.AffiliateComments;
+                importedOrder.UserComments = command.UserComments;
+                importedOrder.Origin = "incomingOrderModel.Origin";
+                importedOrder.FirstName = command.FirstName;
+                importedOrder.LastName = command.LastName;
+                importedOrder.Institution = command.WebUser.Institution.InstitutionName;
+                importedOrder.BillingEmail = command.Email;
+
+                importedOrder.BillingAddress = command.BillingAddress.StreetAddress;
+                importedOrder.BillingAddress2 = command.BillingAddress.StreetAddress2;
+                importedOrder.BillingPhone = command.BillingAddress.Phone;
+                importedOrder.BillingCity = command.BillingAddress.City;
+                importedOrder.BillingState = command.BillingAddress.State;
+                importedOrder.BillingZip = command.BillingAddress.Zip;
+
+                importedOrder.ShippingAddress = command.ShippingAddress.StreetAddress;
+                importedOrder.ShippingAddress2 = command.ShippingAddress.StreetAddress2;
+                importedOrder.ShippingPhone = command.ShippingAddress.Phone;
+                importedOrder.ShippingCity = command.ShippingAddress.City;
+                importedOrder.ShippingState = command.ShippingAddress.State;
+                importedOrder.ShippingZip = command.ShippingAddress.Zip;
+                importedOrder.ShippingFirstName = command.FirstName;
+                importedOrder.ShippingLastName = command.LastName;
+
+
+                _orderManagementService.GetJoinUrl(command.OrderRow);
+
+
+                _orderManagementService.SaveOrderChanges(importedOrder, command.VerificationKey,
+                    command.ConfirmChangeEmailUrl, command.OrderGenesis);
+
+                _postCommitRegistrator.Committed += () =>
+                {
+                    command.OrderId = importedOrder.idOrder;
+                };
+
+                _postCommitRegistrator.ExecuteActions();
+                _postCommitRegistrator.Reset();
+            }
+        }
+
+        public void Handle(ImportOrderCommand command)
+        {
+            if (command == null) throw new ArgumentNullException("command");
+            //prevents re-importation
+            var userAlreadyHasOrder = _orderManagementService.GetOrdersByUserId(command.WebUser.idUser)
+                .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == command.Webinar.idWebinar) != null).SingleOrDefault();
+            var importedOrder = _orderManagementService.CreateNewOrder(command.Affiliate, command.WebUser,
+                command.Webinar, command.OrderRow, DomainConstants.OriginImported);
+            ;
+            if (ReferenceEquals(null, userAlreadyHasOrder))
+            {
+                
+            string buildMessage = "ImportedOn" + DateTime.UtcNow;
+
+                if (!ReferenceEquals(null, importedOrder))
+                {
+                    //following copies pattern found at WebinarController | Identify
+                    JObject existingJObject = null;
+                    JObject userJObject = null;
+
+                    string comments = string.Empty;
+                    string uComments = string.Empty;
+
+
+                    if (!ReferenceEquals(null, importedOrder.AdminComments))
+                    {
+                        comments = importedOrder.AdminComments.Trim();
+                    }
+
+                    var newJson =
+                        new JProperty(
+                            string.Concat("Imported-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                            new JObject(
+                                new JProperty("ImportedOrder", command.Affiliate.ttsDomain),
+                                new JProperty("Details", buildMessage)
+                                ));
+                    userJObject = new JObject(newJson);
+
+                    if (string.IsNullOrWhiteSpace(comments))
+                    {
+                        existingJObject = new JObject(newJson);
+                    }
+                    else
+                    {
+                        existingJObject = JObject.Parse(comments);
+                        existingJObject.Add(newJson);
+                    }
+
+                    importedOrder.AdminComments = existingJObject.ToString(Formatting.None);
+                    importedOrder.UserComments = userJObject.ToString(Formatting.None);
+                    importedOrder.AffiliateComments = userJObject.ToString(Formatting.None);
+                }
                 importedOrder.OrderDate = command.OrderDate;
                 importedOrder.OrderStatus = OrderStatus.Submitted;
                 importedOrder.FirstName = command.FirstName;

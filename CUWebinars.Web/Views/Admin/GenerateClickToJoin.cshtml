@@ -1,0 +1,65 @@
+﻿@model GenerateClickToJoinViewModel
+
+@{
+    ViewBag.Title = "Generate Click to Join Address for Ad Hoc Caller";
+}
+
+<div id="mainContentWrap" class="container bufferBottom30">
+
+
+    <div class="legendImitator">Generate Click to Join</div>
+
+    @using (Html.BeginForm("GenerateClickToJoinForAdHocCaller", "Admin", FormMethod.Post, new { id = "clickToJoinForm", @class = "form-horizontal" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="row">
+            <div class="text text-info" style="margin-left: 30px;">Please enter either an Order Id <strong>OR </strong>the email address of the caller plus the Webinarid</div><br/>
+            <div class="control-group">
+                @Html.LabelFor(m => m.OrderId, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.EditorFor(m => m.OrderId)
+                </div>
+            </div>
+        </div>
+        <div class=" row">
+            <div class="control-group">
+                <div class="controls">&nbsp;</div>
+                <div class="control-group">
+                    <div class="controls">
+                        OR
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="control-group">
+                @Html.LabelFor(m => m.Email, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.EditorFor(m => m.Email)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="control-group">
+                @Html.LabelFor(m => m.WebinarId, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.EditorFor(m => m.WebinarId)
+                </div>
+            </div>
+        </div>
+        <div class =" row">
+            <div class="control-group">
+                <div class="controls">&nbsp;</div>
+                <div class="control-group">
+                    <div class="controls">
+                        <button id="genClickToJoinCodeButton" class="btn">Generate Code</button> <span id="accessCode" class="text text-info"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+</div>
+
+@Scripts.Render("~/bundles/click-to-join")

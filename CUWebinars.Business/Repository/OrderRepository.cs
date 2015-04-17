@@ -1,4 +1,6 @@
 ﻿using System.Configuration;
+using System.Data.Entity.Core.Objects;
+using System.Data.Entity.Infrastructure;
 using System.Security.Cryptography;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
@@ -68,6 +70,38 @@ namespace CUWebinars.Business.Repository
             var errors = ValidationHelper.GetMessagesAsXmlElement(validationResult.Errors);
             throw new Exception(errors.ToString());
         }
+        public Order CreateOrder(int affiliateId, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null)
+        {
+
+            var newOrder = items.Create();
+            newOrder.OrderDate = DateTime.Now;
+            newOrder.OrderStatus = OrderStatus.InProcess;
+            newOrder.idAffiliate = affiliateId;
+            newOrder.BillingEmail = webUser.email;
+            newOrder.idUser = webUser.idUser;
+            newOrder.Origin = origin;
+
+            newOrder = AssignWebUserToOrder(webUser, newOrder);
+
+            // reconcile orderRow with order relationship
+            ((TTSWebinarsContext) db).OrderRows.Add(orderRow);
+            orderRow.Order = newOrder;
+            newOrder.OrderRows = new List<OrderRow> {orderRow};
+
+            //if (webUser.idSubscriptionDiscount != null && webUser.idSubscriptionDiscount > 0)
+            //{
+            //    orderRow.Discount = GetUserDiscount(webUser.idUser);
+            //}
+            
+
+            Add(newOrder);
+
+            return newOrder;
+
+
+            //var errors = ValidationHelper.GetMessagesAsXmlElement(validationResult.Errors);
+            //throw new Exception(errors.ToString());
+        }
 
         public OrderRow CreateOrderRow(Webinar webinar,
             IList<AdditionalLocation> additionalLocations,
@@ -85,7 +119,7 @@ namespace CUWebinars.Business.Repository
                 newOrderRow.Webinar = webinar;
                 newOrderRow.RegistrationType = registrationType;
                 newOrderRow.RowStatus = OrderRowStatus.Active;
-                newOrderRow.TtsJoinUrl = RandomHelpers.GenerateRandomCode(10);
+                newOrderRow.TtsJoinUrl = RandomHelpers.GetUniqueCode(10);
 
                 // The RowPrice is just the starting point. The full price for an 
                 // order is calculated in CalculateOrderCost of the OrderManagementService
@@ -233,6 +267,17 @@ namespace CUWebinars.Business.Repository
                 TotalCount = totalRecordsCount,
                 Orders = orders
             };
+        }
+
+        public void LoadWebinarIntoOrderRow(OrderRow newOrderRow)
+        {
+            TTSWebinarsContext context = ((TTSWebinarsContext)db);
+            var dbEntityEntry = context.Entry(newOrderRow);
+
+            if (dbEntityEntry.State == EntityState.Detached)
+                context.OrderRows.Attach(newOrderRow);
+
+            context.Entry(newOrderRow).Reference(or => or.Webinar).Load();
         }
 
 
@@ -440,7 +485,7 @@ namespace CUWebinars.Business.Repository
             {
                 foreach (var err in error)
                 {
-                    order.AdminComments += err.Entry.ToString();
+                    order.AuditInfo += err.Entry.ToString();
                 }
 
             }

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.Reflection;
 using System.ServiceModel.Syndication;
@@ -7,6 +8,7 @@ using System.Xml;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification;
 using CUWebinars.Business.Notification.Formatters;
@@ -35,6 +37,7 @@ using System.Web.Mvc;
 using ClaimsExtensions = CUWebinars.Web.Helpers.ClaimsExtensions;
 using ClaimTypes = System.Security.Claims.ClaimTypes;
 using DataOperations = CUWebinars.Web.Membership.DataOperations;
+using DateTimeHelper = CUWebinars.Web.Helpers.DateTimeHelper;
 using Formatting = Newtonsoft.Json.Formatting;
 
 namespace CUWebinars.Web.Controllers.Admin
@@ -188,31 +191,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
             //  should never reach here as RouteConfig will not route here with anything but an integer > 0.
             throw new NullReferenceException("Query string parameter has to be an positive integer for the ManageOrderFromDetails action.");
-        }
-
-        private DateTime PostEventAccessExpires(UserAccount userAccount, Order order)
-        {
-            DateTime expiryDate;
-
-            if (userAccount != null && userAccount.HasClaim(Business.Constants.ClaimTypes.DisplayPostEventMaterials))
-            {
-                var claimsForOrder =
-                    userAccount.Claims.FirstOrDefault(
-                        c => c.Value.ToLower().Contains(order.idOrder.ToString()));
-
-                // extract the date
-                if (claimsForOrder != null)
-                {
-                    var expiryAsString =
-                        claimsForOrder.Value.Substring(claimsForOrder.Value.IndexOf(":") + 1);
-
-                    if (DateTime.TryParse(expiryAsString, out expiryDate))
-                    {
-                        return expiryDate;
-                    }
-                }
-            }
-            return DateTime.MinValue;
         }
 
         private Order ApplyModelChangesToOrder(ManageOrderEditModel model)
@@ -551,6 +529,80 @@ namespace CUWebinars.Web.Controllers.Admin
             }
 
             return this.ModelStateJson(ModelState);
+        }
+
+        public ActionResult GenerateClickToJoinForAdHocCaller()
+        {
+            var generateClickToJoinViewModel = new GenerateClickToJoinViewModel();
+
+            return View("GenerateClickToJoin", generateClickToJoinViewModel);
+        }
+
+        [HttpPost]
+        public ActionResult GenerateClickToJoinForAdHocCaller(GenerateClickToJoinViewModel generateClickToJoinViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (generateClickToJoinViewModel.OrderId.HasValue)
+                    {
+                        var orderRow = 
+                            _orderManagementService.GetOrderById(generateClickToJoinViewModel.OrderId.Value).OrderRows
+                            .Single(or => or.RowStatus == OrderRowStatus.Active);
+                        
+                        return Json(new {Result = WebUiConstants.Success, Code = orderRow.TtsJoinUrl});
+                    }
+
+                    var user = _membershipService.GetUserByEmail(generateClickToJoinViewModel.Email);
+
+                    if (ReferenceEquals(null, user))
+                    {
+                        user = _membershipService.CreateBareUserFromEmail(generateClickToJoinViewModel.Email);
+                        _orderManagementService.SaveChanges();
+                    }
+                    var newOrderRow = _orderManagementService.CreateOrderRow(null, null, 1);
+
+                    newOrderRow.idWebinar = generateClickToJoinViewModel.WebinarId.Value;
+                    newOrderRow.idRegType = 1;
+                    _orderManagementService.LoadWebinarIntoOrderRow(newOrderRow);
+
+
+                    var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+                    _orderManagementService.SetUserStatusToUnChanged(user);
+                    //_orderManagementService.SetAffiliateStatusToUnChanged(affiliate);
+
+
+                    _orderManagementService.CreateNewOrder(
+                        affiliate.idUserAff,
+                        user,
+                        newOrderRow.Webinar,
+                        newOrderRow
+                        );
+
+                    _orderManagementService.SaveChanges();
+
+                    return Json(new {Result = WebUiConstants.Success, Code = newOrderRow.TtsJoinUrl});
+                }
+                catch (DbEntityValidationException dbEntityValidationException)
+                {
+                    var stringBuilder = new StringBuilder();
+
+                    foreach (var validationErrors in dbEntityValidationException.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
+                                validationError.ErrorMessage);
+                            stringBuilder.AppendFormat("Property: {0} Error: {1} ", validationError.PropertyName,
+                                validationError.ErrorMessage);
+                        }
+                    }
+                    Trace.TraceInformation(stringBuilder.ToString());
+                }
+            }
+
+            return Json(new { Result = WebUiConstants.Fail});
         }
 
         [HttpPost]
@@ -1014,9 +1066,10 @@ namespace CUWebinars.Web.Controllers.Admin
             foreach (var order in orders)
             {
                 var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.WebUser.email);
-                
-                DateTime expiryDate = PostEventAccessExpires(userAccount, order);
-                if (expiryDate > DateTime.Now)
+
+                DateTime? expiryDate = _membershipService.GetPostEventAccessExpireyDate(userAccount, order.idOrder);
+
+                if (expiryDate.HasValue && expiryDate > DateTime.Now)
                 {
                     eligableOrders.Add(order);
                 }
@@ -1554,12 +1607,24 @@ namespace CUWebinars.Web.Controllers.Admin
             try
             {
                 if (string.IsNullOrWhiteSpace(newExpiryDate)) throw new ValidationException("You need to enter a value.");
+                
+                var onDemandCode = RandomHelpers.GetUniqueCode(8);
 
-                var newClaimValue = string.Concat(orderID.Value, ":", newExpiryDate);
+                var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, orderID.Value);
+                var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, newExpiryDate);
+                var obfuscationStringProperty = new JProperty(JsonPropertyKeys.ObfuscationString, onDemandCode);
+
+                var claimValue = new JObject(
+                    orderIdProperty,
+                    expiryDateProperty,
+                    obfuscationStringProperty
+                    );
                 
                 _membershipService.UpdateDisplayPostEventMaterialsClaim(
-                    _globalConfig.Tenant, email,
-                    newClaimValue);
+                    _globalConfig.Tenant, 
+                    email,
+                    claimValue.ToString(Formatting.None)
+                    );
 
                 return Json(new { Result = WebUiConstants.Success });
             }

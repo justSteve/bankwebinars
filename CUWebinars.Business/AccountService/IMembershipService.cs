@@ -90,5 +90,6 @@ namespace CUWebinars.Business.AccountService
         void UpdateDisplayPostEventMaterialsClaim(UserAccount userAccount, string claimValue);
         void UpdateShippingAddressDetails(Address shippingAddress);
         void UpdateDiscountDetails(Discount discount);
+        WebUser CreateBareUserFromEmail(string email);
     }
 }

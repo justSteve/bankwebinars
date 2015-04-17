@@ -63,6 +63,10 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/admin/claims-management.js"
                 ));
 
+            bundles.Add(new ScriptBundle("~/bundles/click-to-join").Include(
+                "~/Scripts/app/admin/click-to-join.js"
+                ));
+
             bundles.Add(new ScriptBundle("~/bundles/manage-webinar").Include(
                 "~/Scripts/cleditor/jquery.cleditor.min.js",
                 "~/Scripts/cleditor/jquery.cleditor.xhtml.min.js",

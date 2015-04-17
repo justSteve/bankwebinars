@@ -18,8 +18,8 @@ namespace CUWebinars.Business.Services
         int CheckUserForRecordingAccess(int i, int i1);
         AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullname);
 
-        Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow,
-            string origin = null);
+        Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null);
+        Order CreateNewOrder(int affiliateId, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null);
 
         OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, int registrationType);
 
@@ -100,5 +100,8 @@ namespace CUWebinars.Business.Services
 
         bool VerifyWebUserExists(int idUser);
         Webinar GetWebinarByJoinCode(string joinCode);
+        void LoadWebinarIntoOrderRow(OrderRow newOrderRow);
+        void SetUserStatusToUnChanged(WebUser user);
+        void SetAffiliateStatusToUnChanged(Affiliate affiliate);
     }
 }

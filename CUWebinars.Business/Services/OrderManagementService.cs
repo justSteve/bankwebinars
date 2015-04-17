@@ -90,6 +90,16 @@ namespace CUWebinars.Business.Services
             return _affiliateRepository.Exists(item) ? item : _affiliateRepository.AttachItem(item);
         }
 
+        public Order CreateNewOrder(int affiliateId, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null)
+        {
+            var order = _orderRepository.CreateOrder(affiliateId, webUser, webinar, orderRow, origin);
+            var email = webUser == null ? "notauthenticated@cuwebinars.com" : webUser.email;
+
+            //_logger.Info("CreateNewOrder: " + email + " | " + orderRow.Webinar.Title + " | " + orderRow.RegistrationType.OptionLabel);
+            return order;
+
+        }
+
         public OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, int registrationType)
         {
             try
@@ -324,6 +334,21 @@ namespace CUWebinars.Business.Services
         public Webinar GetWebinarByJoinCode(string joinCode)
         {
             return _webinarRepository.GetWebinarByJoinCode(joinCode);
+        }
+
+        public void LoadWebinarIntoOrderRow(OrderRow newOrderRow)
+        {
+            _orderRepository.LoadWebinarIntoOrderRow(newOrderRow);
+        }
+
+        public void SetUserStatusToUnChanged(WebUser user)
+        {
+            _webUserRepository.SetUserStatusToUnChanged(user);     
+        }
+
+        public void SetAffiliateStatusToUnChanged(Affiliate affiliate)
+        {
+            _affiliateRepository.SetAffiliateStatusToUnChanged(affiliate);
         }
 
 

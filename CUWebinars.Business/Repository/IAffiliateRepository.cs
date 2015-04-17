@@ -20,5 +20,6 @@ namespace CUWebinars.Business.Repository
         IQueryable<Order> GetOrdersByUser(int affiliateId, int userId);
         IQueryable<Order> GetOrders(int affiliateId);
 
+        void SetAffiliateStatusToUnChanged(Affiliate affiliate);
     }
 }

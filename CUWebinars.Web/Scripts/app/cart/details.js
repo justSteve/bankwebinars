@@ -159,7 +159,7 @@ $(function () {
 
     /* Click event for the big green SignUp button */
     $('#AddToCart').on('click', function () {
-        $('#SignUpFormContainer').prepend('<i id="signUpSpinner" class="icon-spinner icon-spin"></i>').attr('disabled', 'disabled');
+        $(this).prepend('<i id="signUpSpinner" class="icon-spinner icon-spin"></i>').attr('disabled', 'disabled');
         signUpForm.submit();
     });
 
@@ -222,6 +222,7 @@ $(function () {
 
         var spinner = $('#signUpSpinner');
         $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
+        var loadingSpinner = $('#loadingSpinner');
 
         // If the user IS NOT LOGGED IN - control moves to the register-during-checkout.js script
         if (!cartStateManager.getIsUserLoggedIn()) {
@@ -248,18 +249,19 @@ $(function () {
                             } else {
                                 $('#labelEmail').html('<span class="label label-important">&nbsp;Server error. Try again or call 800-831-0678 ext 706 for immediate assistance!</span>');
                             }
+                            loadingSpinner.remove();
                         });
 
                         $('#contactInfoTab a').tab('show');
                     } else if (!xhr.responseJSON['isSuccessful']) {
                         $('#labelEmail').html('<span class="label label-important">&nbsp;There were some problems with the form. Please refer to the items in red.</span>');
                         formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
+                        loadingSpinner.remove();
                     }
                 } else {
                     $('#labelEmail').html('<span class="label label-important">&nbsp;Server error. Try again or call 800-831-0678 ext 706 for immediate assistance!</span>');
+                    loadingSpinner.remove();
                 }
-
-                $('#loadingSpinner').remove();
             }, constants.JsonDataType);
         } else {
             // If the user IS LOGGED IN

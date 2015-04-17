@@ -13,6 +13,7 @@ namespace CUWebinars.Business.Repository
         Order AssignWebUserToOrder(WebUser webUser, Order order);
         AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullName);
         Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null);
+        Order CreateOrder(int affiliateId, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null);
         OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, RegType registrationType);
         void DeleteOrder(int orderId);
         Order FindOrderByIdWithOrderRows(int id);
@@ -42,5 +43,6 @@ namespace CUWebinars.Business.Repository
         void SendOrderToLegacy(Order newOrder);
         IList<int> FindUserIdsByPartialId(int value);
         object SearchOrders(int affiliateId, IList<int> excludeUserIDs, int skip, int take, string search);
+        void LoadWebinarIntoOrderRow(OrderRow newOrderRow);
     }
 }

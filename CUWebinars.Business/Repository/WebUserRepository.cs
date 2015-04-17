@@ -196,5 +196,10 @@ namespace CUWebinars.Business.Repository
                 .Include(w => w.Institution)
                 .SingleOrDefault(w => w.idUser == idUser);
         }
+
+        public void SetUserStatusToUnChanged(WebUser user)
+        {
+            db.Entry(user).State = EntityState.Unchanged;
+        }
     }
 }

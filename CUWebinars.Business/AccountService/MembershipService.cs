@@ -5,6 +5,7 @@ using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
+using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -94,10 +95,12 @@ namespace CUWebinars.Business.AccountService
         {
             if (userAccount == null || !userAccount.HasClaim(ClaimTypes.DisplayPostEventMaterials)) return null;
 
-            var claimValue = userAccount.GetClaimValue(ClaimTypes.DisplayPostEventMaterials);
+            var claimsForOrder = userAccount.Claims.FirstOrDefault(c => c.Value.ToLower().Contains(idOrder.ToString()));
 
             // extract the date
-            var expiryAsString = claimValue.Substring(claimValue.IndexOf(":", StringComparison.Ordinal) + 1);
+            if (claimsForOrder == null) return null;
+
+            var expiryAsString = JObject.Parse(claimsForOrder.Value).GetValue(JsonPropertyKeys.ExpiryDate).ToString();
 
             DateTime expiryDate;
             if (DateTime.TryParse(expiryAsString, out expiryDate))
@@ -701,6 +704,26 @@ namespace CUWebinars.Business.AccountService
         public void UpdateDiscountDetails(Discount discount)
         {
             throw new NotImplementedException();
+        }
+
+        public WebUser CreateBareUserFromEmail(string email)
+        {
+            var webUser = new WebUser
+            {
+                idUser = _refDataRepository.GetMaxWebUserId() + 1,
+                AcctStatus = DomainConstants.New,
+                UserType = UserType.Customer,
+                DateCreated = DateTime.Now,
+                FirstName = "Impromptu",
+                LastName = "User",
+                idUserInstitution = 8,
+                email = email,
+                timeZone = USTimeZone.Central
+            };
+
+            _webUserRepository.Add(webUser);
+
+            return webUser;
         }
 
 
