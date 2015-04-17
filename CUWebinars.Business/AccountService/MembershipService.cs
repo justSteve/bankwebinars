@@ -5,6 +5,7 @@ using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
+using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -97,7 +98,7 @@ namespace CUWebinars.Business.AccountService
             var claimValue = userAccount.GetClaimValue(ClaimTypes.DisplayPostEventMaterials);
 
             // extract the date
-            var expiryAsString = claimValue.Substring(claimValue.IndexOf(":", StringComparison.Ordinal) + 1);
+            var expiryAsString = JObject.Parse(claimValue).GetValue(JsonPropertyKeys.ExpiryDate).ToString();
 
             DateTime expiryDate;
             if (DateTime.TryParse(expiryAsString, out expiryDate))

@@ -1638,9 +1638,9 @@ namespace CUWebinars.Web.Controllers
                 {
                     var onDemandCode = RandomHelpers.GetUniqueCode(8);
 
-                    var orderIdProperty = new JProperty("OrderId", order.idOrder);
-                    var expiryDateProperty = new JProperty("ExpiryDate", expiryDate.ToString("yyyy-MM-dd"));
-                    var obfuscationStringProperty = new JProperty("ObfuscationString", onDemandCode);
+                    var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
+                    var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, expiryDate.ToString("yyyy-MM-dd"));
+                    var obfuscationStringProperty = new JProperty(JsonPropertyKeys.ObfuscationString, onDemandCode);
 
                     var claimValue = new JObject(
                         orderIdProperty,
