@@ -5,6 +5,8 @@ using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Notification.Formatters;
 using CUWebinars.NotificationSystem.Event;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using Ninject.Extensions.Logging.Log4net.Infrastructure;
 
@@ -44,14 +46,25 @@ namespace CUWebinars.Business.Notification.Handlers
                     , ".htm");
 
                 //  adds the name of the message to the Json object stored in NotificationStorage.
-                string details = sendReminderEvent.Details;
-                if (details != null)
+                JObject notificationStorage;
+
+                if (string.IsNullOrWhiteSpace(sendReminderEvent.Details))
                 {
-                    sendReminderEvent.EventObject.NotificationStorage =
-                        details.Insert(details.Length - 1,
-                            string.Concat(",", @"""SendReminderEventMsg-", DateTime.Now.Ticks, '"', @":", '"',
-                                notificationMessage.PersistedName, '"'));
+                    notificationStorage = new JObject();
                 }
+                else
+                {
+                    notificationStorage = JObject.Parse(sendReminderEvent.Details);
+                }
+
+                JProperty sendConnectionInfoMsg = new JProperty(
+                    string.Concat("SendReminderEventMsg-", DateTime.Now.Ticks),
+                    notificationMessage.PersistedName
+                    );
+                notificationStorage.Add(sendConnectionInfoMsg);
+
+                sendReminderEvent.EventObject.NotificationStorage =
+                    notificationStorage.ToString(Formatting.None);
 
                 notificationMessage.To = sendReminderEvent.EventObject.BillingEmail;
 
