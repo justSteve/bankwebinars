@@ -35,6 +35,13 @@
     var notiRecordingPosted = rowRegType.ShowRecordingNotifications;
     var notiShipped = rowRegType.ShowShippedNotifications;
     var displayOrderNumber = Model.Order.idOrder;
+    string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, Model.Order.WebUser.timeZone, true, webinar.Duration);
+    string Tenant = TtsTemplateHelperObject.Tenant();
+    string TenantEmail = TtsTemplateHelperObject.TenantEmail();
+    string TenantDomain = TtsTemplateHelperObject.TenantDomain();
+    string TenantURL = TtsTemplateHelperObject.TenantURL();
+    string TenantLogo = TtsTemplateHelperObject.TenantLogo();
+    string TenantPrefix = TtsTemplateHelperObject.TenantPrefix();
 
     if (Model.Order.idOrderLegacy != 0)
     {
@@ -58,7 +65,7 @@
             thankYouPhrase.Append(". ");
             break;
         case OrderGenesis.CreatedViaCartByNewUser:
-            thankYouPhrase.Append(". When your order was submitted, we created an account and requested that you enter a new password. In case you missed that prompt or don't recall entering a password, please visit <b><a href=" + Model.AddPasswordUrl + ">Set My Password</a></b> or paste this URL into your browser:<i>" + Model.AddPasswordUrl + "</i>.");
+            thankYouPhrase.Append(". When your order was submitted our system created an account at "+TenantDomain +". It is necessary to confirm your email and choose a password that is unique to our site and hard to guess. Please visit <b><a href=" + Model.AddPasswordUrl + ">Set My Password</a></b> or paste this URL into your browser:<i>" + Model.AddPasswordUrl + "</i>.");
             break;
         case OrderGenesis.ImportedForExistingUser:
             thankYouPhrase.Append(" - placed for you by " + Model.Order.Affiliate.DisplayTitle + ". ");
@@ -181,13 +188,6 @@
         code = webinar.AccessCodeAttendee;
     }
 
-    string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, Model.Order.WebUser.timeZone, true, webinar.Duration);
-    string Tenant = TtsTemplateHelperObject.Tenant();
-    string TenantEmail = TtsTemplateHelperObject.TenantEmail();
-    string TenantDomain = TtsTemplateHelperObject.TenantDomain();
-    string TenantURL = TtsTemplateHelperObject.TenantURL();
-    string TenantLogo = TtsTemplateHelperObject.TenantLogo();
-    string TenantPrefix = TtsTemplateHelperObject.TenantPrefix();
 
     if (webinar.AccessPhone != null)
     {

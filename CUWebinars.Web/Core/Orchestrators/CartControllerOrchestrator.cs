@@ -4,6 +4,7 @@ using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
+using CUWebinars.Business.Models.Mapping;
 using CUWebinars.Business.Notification;
 using CUWebinars.Business.Notification.Formatters;
 using CUWebinars.Business.Notification.ViewModel;
@@ -13,6 +14,7 @@ using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -137,13 +139,44 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     _logger.Info("Building ");
                     var orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
+                    var order = orderRow.Order;
                     var webUser = orderRow.Order.WebUser;
                     var userFullName = string.Concat(webUser.FirstName, " ", webUser.LastName);
 
                     var addresses = webUser.Addresses.ToArray();
                     var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
                     var shippingAddress = addresses.FirstOrDefault(a => a.AddressType == WebUiConstants.ShippingAddress);
+                    if (!ReferenceEquals(null, order))
+                    {
 
+                        JObject existingJObject = null;
+
+                        string comments = string.Empty;
+
+
+                        if (!ReferenceEquals(null, order.AdminComments))
+                        {
+                            comments = order.AdminComments.Trim();
+                        }
+
+                        var newJson =
+                            new JProperty(
+                                string.Concat("LegacyCommentsFromCheckout-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                                    new JObject(new JProperty("LegacyComments", order.AdminComments))
+                                );
+
+                        if (string.IsNullOrWhiteSpace(comments))
+                        {
+                            existingJObject = new JObject(newJson);
+                        }
+                        else
+                        {
+                            existingJObject = JObject.Parse(comments);
+                            existingJObject.Add(newJson);
+                        }
+
+                        order.AdminComments = existingJObject.ToString(Formatting.None);
+                    }
                     // This ViewModel is built here because it is re-used.
                     var orderHasAdditionalLocationsViewModel =
                         BuildOrderHasAdditionalLocationsViewModel(orderRow, idOrderRow);
@@ -159,8 +192,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                             LastName = webUser.LastName,
                             Institution = orderRow.Order.Institution
                         },
-                        AdminComments = orderRow.Order.AdminComments,
-                        AffiliateComments = orderRow.Order.AffiliateComments,
+                        AdminComments = order.AdminComments,
+                        //AffiliateComments = orderRow.Order.AffiliateComments,
                         //CCUserDetails =
                         //    "None <a href=\"#AddCCModal\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Add?</a> ", // CC user removed at request
                         DisplayOptionsInDropDownViewModel = BuildDisplayOptionsInDropDownViewModel(orderRow, idOrderRow),
@@ -314,7 +347,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             if (!ReferenceEquals(null, order))
             {
-                 orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+                orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
                 additionalLocations = orderRow.AdditionalLocation;
             }
 
@@ -328,7 +361,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 priceOfAdditionalLocation = addPrice.Price; // Item2 of the Tuple is the price
             }
 
-            
+
             var addAdditionalLocationViewModel = new AdditionalLocationOfferViewModel
             {
                 AdditionalLocations = additionalLocations.ToList(),
@@ -336,7 +369,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 OrderExists = !ReferenceEquals(order, null),
                 Emails = order == null ? new List<string>() : additionalLocations.Select(al => al.Email).ToList(),
                 Price = priceOfAdditionalLocation,
-                WebUser = order == null ? null : order.WebUser 
+                WebUser = order == null ? null : order.WebUser
             };
             return addAdditionalLocationViewModel;
         }
@@ -350,7 +383,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     if (ReferenceEquals(orderRow, null))
                         orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
-                    
+
                     if (orderRow.RowStatus != OrderRowStatus.Active)
                         return null;
 
@@ -417,13 +450,13 @@ namespace CUWebinars.Web.Core.Orchestrators
                         WebUser = webUser
                     };
 
-                    if (Request["referred"] != null &&
-                        WebUtility.HtmlDecode(Request["referred"]) != "How did you hear about this webinar?")
-                    {
-                        //
-                        order.AdminComments += "Referred by: " + Request["referred"] + Environment.NewLine;
-                        //ViewData["referred"] = Request["referred"];
-                    }
+                    //if (Request["referred"] != null &&
+                    //    WebUtility.HtmlDecode(Request["referred"]) != "How did you hear about this webinar?")
+                    //{
+                    //    //
+                    //    order.AdminComments += "Referred by: " + Request["referred"] + Environment.NewLine;
+                    //    //ViewData["referred"] = Request["referred"];
+                    //}
                     return webinarDetailsViewModel;
                 }
                 catch (Exception exception)
@@ -556,7 +589,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             newOrder = _orderManagementService.SaveOrderChanges(newOrder, string.Empty, string.Empty);
 
-            sw2.Stop(); 
+            sw2.Stop();
             Trace.TraceInformation(string.Format("{0} took {1}s to run", "CreateOrderNewOrder", sw2.Elapsed.Seconds));
             return newOrder;
         }
@@ -612,7 +645,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         public string GetDiscountAmountAsPercentageOrDollarAmount(Discount myDiscount)
         {
             var amountToDiscount = myDiscount.FlatOff.ToString();
-            
+
             if (myDiscount.PercentOff > 0)
             {
                 amountToDiscount = myDiscount.PercentOff + "%";
@@ -633,7 +666,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _orderManagementService.AddAdditionalLocation(newSubmittedAdditionalLocation);
             }
 
-            foreach (var additionalLocationToDelete in 
+            foreach (var additionalLocationToDelete in
                 existingAdditionalLocationsForOrderRow.Where(existingEmail => !additionalLocations.Select(al => al.Email).Contains(existingEmail.Email)))
             {
                 _orderManagementService.RemoveAndDeleteAdditionalLocation(additionalLocationToDelete);

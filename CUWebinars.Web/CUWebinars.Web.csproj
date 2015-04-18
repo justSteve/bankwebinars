@@ -671,14 +671,10 @@
     <Content Include="Notification\PreviewTemplates\PreviewConnectionInfo.cshtml" />
     <Content Include="Notification\PreviewTemplates\PreviewShippedOrder.cshtml" />
     <Content Include="Notification\PreviewTemplates\PreviewRecordingPosted.cshtml" />
-    <None Include="Properties\PublishProfiles\BankWebinars31 %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars31.pubxml" />
     <Content Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
     <Content Include="Scripts\app\webinar\identify.js" />
-    <None Include="Properties\PublishProfiles\CUWebinars33 - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\CUWebinars33 - Web Deploy.pubxml">
-      <TransformOnBuild>true</TransformOnBuild>
-    </None>
+    <None Include="Properties\PublishProfiles\CUWebinars33.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\app\webinar\manage-webinar-from-details.js" />
     <Content Include="Scripts\app\webinar\manage-webinar.js" />
@@ -855,6 +851,7 @@
     <Content Include="Views\Admin\Partials\_ServerError.cshtml" />
     <Content Include="Views\Admin\Partials\_AffiliatesChooser.cshtml" />
     <Content Include="Views\Webinar\ClickToJoin.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\ShowUpgradeCost.cshtml" />
     <Content Include="Views\Admin\GenerateClickToJoin.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>

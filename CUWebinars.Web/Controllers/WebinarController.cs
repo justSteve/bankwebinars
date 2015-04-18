@@ -162,7 +162,7 @@ namespace CUWebinars.Web.Controllers
 
 
 
-            
+
             //string myHTML = NotificationFacade.Instance.SendVRPerDay(TemplateTypes.VR_PER_DAY, VRObject, adminEmail, "VR Code for " + Request["from"].ToString());
 
 
@@ -374,13 +374,13 @@ namespace CUWebinars.Web.Controllers
             {
                 _webinarControllerOrchestrator.FireSendConnectionInfoNotificationEvent(webinarId);
 
-                return Json(new {Result = WebUiConstants.Success});
+                return Json(new { Result = WebUiConstants.Success });
             }
             catch (Exception exception)
             {
                 _logger.Error(string.Format("SendConnectionInfo Action: {0}", exception.Message), exception);
             }
-            return Json(new {Result = WebUiConstants.Fail});
+            return Json(new { Result = WebUiConstants.Fail });
         }
 
 
@@ -463,7 +463,7 @@ namespace CUWebinars.Web.Controllers
             if (id.HasValue)
             {
                 var order = _orderManagementService.GetOrderById(id.Value);
-                
+
                 var webinar =
                     _webinarManagementService.GetWebinar(
                         order.OrderRows.SingleOrDefault(s => s.RowStatus == OrderRowStatus.Active).idWebinar);
@@ -473,8 +473,8 @@ namespace CUWebinars.Web.Controllers
                     Presenter = webinar.Presenter,
                     Webinar = webinar
                 };
-                
-                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity) User.Identity;
+
+                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
 
                 if (claimsIdentityOfAuthenticatedUser.IsAuthenticated)
                 {
@@ -495,10 +495,10 @@ namespace CUWebinars.Web.Controllers
                     //    return View(playModel);
                     //}
 
-                    ViewData["Expired"] = "This recording has expired. "; 
+                    ViewData["Expired"] = "This recording has expired. ";
                     return View(playModel);
                 }
-                
+
                 if (_stateService.HasValue(WebUiConstants.AnonUserIdentified) && _stateService.GetValue<bool>(WebUiConstants.AnonUserIdentified))
                 {
                     ProcessAccessPermissionsForMaterials(order, playModel);
@@ -584,7 +584,7 @@ namespace CUWebinars.Web.Controllers
                         comments = order.AdminComments.Trim();
                     }
 
-                    var newJson = new JProperty(string.Concat("AnonUser-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                    var newJson = new JProperty(string.Concat("PostEventAccessByAnonUser-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
                         new JObject(
                             new JProperty("Name", identifyModel.FullName),
                             new JProperty("Email", identifyModel.Email)
@@ -606,7 +606,7 @@ namespace CUWebinars.Web.Controllers
 
                     _stateService.SetValue(WebUiConstants.AnonUserIdentified, true);
 
-                    return RedirectToAction("OnDemand", new {id = identifyModel.idOrder});
+                    return RedirectToAction("OnDemand", new { id = identifyModel.idOrder });
                 }
             }
 
@@ -673,7 +673,7 @@ namespace CUWebinars.Web.Controllers
                         .SingleOrDefault();
 
                     var aff = _affiliateManagementService.LoadByTTSDomain(ttsDomain);
-                    
+
                     var orders = _orderManagementService.GetOrdersForWebinar(model.Webinar.idWebinar)
                         .Where(o => o.Affiliate == aff)
                         .ToList();
@@ -692,7 +692,7 @@ namespace CUWebinars.Web.Controllers
 
                 // perf tweak: ensures no multiple enumerations of usersOrders
                 var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray();
-                
+
                 if (checkOrders.Any())
                 // Webinar.Status > scheduled - WebinarFiles presenter files etc. Files only exist until init or activated Webinar
                 {
@@ -742,6 +742,7 @@ namespace CUWebinars.Web.Controllers
                     var additionalLocationsViewModel =
                         model.RegistrationSummaryViewModel.OrderHasAdditionalLocationsViewModel;
                     var orderRow = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+                    var order = orderRow.Order;
                     var webUser = orderRow.Order.WebUser;
                     var userFullName = string.Concat(webUser.FirstName, " ", webUser.LastName);
                     var addresses = webUser.Addresses.ToArray();
@@ -749,96 +750,129 @@ namespace CUWebinars.Web.Controllers
                     var shippingAddress = addresses.FirstOrDefault(a => a.AddressType == WebUiConstants.ShippingAddress);
                     //var CheckoutDiscount = orderRow.Discount == null ? string.Empty : _orderManagementService.GetDiscountByCode()
 
-                    model.CheckoutConfirmViewModel = new CheckoutConfirmViewModel
+                    if (!ReferenceEquals(null, order))
                     {
-                        AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
-                        AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
-                        {
-                            Email = webUser.email,
-                            FirstName = webUser.FirstName,
-                            idUser = webUser.idUser,
-                            LastName = webUser.LastName,
-                            Institution = orderRow.Order.Institution
-                        },
-                        AdminComments = model.Order.AdminComments,
-                        AffiliateComments = model.Order.AffiliateComments,
-                        //CCUserDetails = "",
-                        CheckoutDiscountCode = orderRow.Discount == null ? string.Empty : orderRow.Discount.DiscountCode,
-                        DisplayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
-                        {
-                            Options = _orderManagementService.GetOptionsByWebinarId(orderRow.idWebinar, true),
-                            OrderRowId = orderRow.idOrderRow,
-                            OrderRowRegistrationType = orderRow.RegistrationType
-                        },
-                        DisplayRowPriceViewModel =
-                            model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel,
-                        idUser = model.Order.idUser,
-                        DiscountDetailsModel = new DiscountDetailsModel()
-                        {
-                            UserId = webUser.idUser,
-                            Discount = orderRow.Discount == null
-                                ? new DiscountModel()
-                                 : new DiscountModel()
-                                 {
-                                     //Cost = discountModel.Cost,
-                                     //DateBilled = discountModel.DateBilled,
-                                     //DateValidFrom = discountModel.DateValidFrom,
-                                     ////idUser = idUser,
-                                     //DateValidTo = discountModel.DateValidTo,
-                                     //DiscountCode = discountModel.DiscountCode,
-                                     //DiscountType = discountModel.TypeOfDiscount,
-                                     //FlatOff = discountModel.FlatOff,
-                                     //Notes = discountModel.Notes,
-                                     //PercentOff = discountModel.PercentOff,
-                                     //RenewalTerm = discountModel.RenewalTerm,
-                                     //Status = discountModel.Status,
-                                     //UsesCount = discountModel.UsesCount,
-                                     //UsesRemain = discountModel.UsesRemain,
-                                     ////WebUserDiscountXref = 
-                                     ////idDiscount = 
-                                 },
-                        },
-                        ShippingDetailsModel = new ShippingDetailsModel()
-                        {
-                            UserId = webUser.idUser,
-                            ShippingAddress = shippingAddress == null
-                                ? new AddressModel()
-                                : new AddressModel
-                                {
-                                    City = shippingAddress.City,
-                                    Country = shippingAddress.Country,
-                                    StreetAddress = shippingAddress.StreetAddress,
-                                    StreetAddress2 = shippingAddress.StreetAddress2,
-                                    State = shippingAddress.State,
-                                    Zip = shippingAddress.Zip,
-                                    Phone = shippingAddress.Phone,
-                                    Name = shippingAddress.Name,
-                                    TypeOfAddress = AddressType.Shipping
-                                },
-                        },
-                        OptionLabel = orderRow.RegistrationType.OptionLabel,
-                        OrderExists = true,
-                        OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
-                        {
-                            AdditionalLocations =
-                                model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
-                                    .AdditionalLocation,
-                            Addresses = additionalLocationsViewModel.Addresses,
-                            OptionsCost = additionalLocationsViewModel.OptionsCost,
-                        },
-                        OrderRowExists = true,
-                        OrderRowHasId = true,
-                        OrderStatus = OrderStatus.InProcess,
-                        Origin = model.Order.Origin,
-                        UserComments = model.Order.UserComments,
-                        UserDetails = string.Concat("<span id='userFullnameLabel'>", userFullName,
-                            "</span> - <span id='userInstitutionLabel'>", orderRow.Order.Institution, "</span><br>",
-                            "<span id='userEmailLabel'>", webUser.email, "</span>"),
-                        UserFullname = userFullName,
-                        UserType = UserType.Customer
-                    };
-                }
 
+                        JObject existingJObject = null;
+
+                        string comments = string.Empty;
+
+
+                        if (!ReferenceEquals(null, order.AdminComments))
+                        {
+                            comments = order.AdminComments.Trim();
+                        }
+
+                        var newJson =
+                            new JProperty(
+                                string.Concat("LegacyCommentsInDetails-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                                    new JObject(new JProperty("LegacyComments", order.AdminComments))
+                                );
+
+                        if (string.IsNullOrWhiteSpace(comments))
+                        {
+                            existingJObject = new JObject(newJson);
+                        }
+                        else
+                        {
+                            existingJObject = JObject.Parse(comments);
+                            existingJObject.Add(newJson);
+                        }
+
+                        order.AdminComments = existingJObject.ToString(Formatting.None);
+
+                        _orderManagementService.SaveChanges();
+                        model.CheckoutConfirmViewModel = new CheckoutConfirmViewModel
+                        {
+                            AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
+                            AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
+                            {
+                                Email = webUser.email,
+                                FirstName = webUser.FirstName,
+                                idUser = webUser.idUser,
+                                LastName = webUser.LastName,
+                                Institution = orderRow.Order.Institution
+                            },
+                            AdminComments = order.AdminComments,
+                            //AffiliateComments = model.Order.AffiliateComments,
+                            //CCUserDetails = "",
+                            CheckoutDiscountCode =
+                                orderRow.Discount == null ? string.Empty : orderRow.Discount.DiscountCode,
+                            DisplayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
+                            {
+                                Options = _orderManagementService.GetOptionsByWebinarId(orderRow.idWebinar, true),
+                                OrderRowId = orderRow.idOrderRow,
+                                OrderRowRegistrationType = orderRow.RegistrationType
+                            },
+                            DisplayRowPriceViewModel =
+                                model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel,
+                            idUser = model.Order.idUser,
+                            DiscountDetailsModel = new DiscountDetailsModel()
+                            {
+                                UserId = webUser.idUser,
+                                Discount = orderRow.Discount == null
+                                    ? new DiscountModel()
+                                    : new DiscountModel()
+                                    {
+                                        //Cost = discountModel.Cost,
+                                        //DateBilled = discountModel.DateBilled,
+                                        //DateValidFrom = discountModel.DateValidFrom,
+                                        ////idUser = idUser,
+                                        //DateValidTo = discountModel.DateValidTo,
+                                        //DiscountCode = discountModel.DiscountCode,
+                                        //DiscountType = discountModel.TypeOfDiscount,
+                                        //FlatOff = discountModel.FlatOff,
+                                        //Notes = discountModel.Notes,
+                                        //PercentOff = discountModel.PercentOff,
+                                        //RenewalTerm = discountModel.RenewalTerm,
+                                        //Status = discountModel.Status,
+                                        //UsesCount = discountModel.UsesCount,
+                                        //UsesRemain = discountModel.UsesRemain,
+                                        ////WebUserDiscountXref = 
+                                        ////idDiscount = 
+                                    },
+                            },
+                            ShippingDetailsModel = new ShippingDetailsModel()
+                            {
+                                UserId = webUser.idUser,
+                                ShippingAddress = shippingAddress == null
+                                    ? new AddressModel()
+                                    : new AddressModel
+                                    {
+                                        City = shippingAddress.City,
+                                        Country = shippingAddress.Country,
+                                        StreetAddress = shippingAddress.StreetAddress,
+                                        StreetAddress2 = shippingAddress.StreetAddress2,
+                                        State = shippingAddress.State,
+                                        Zip = shippingAddress.Zip,
+                                        Phone = shippingAddress.Phone,
+                                        Name = shippingAddress.Name,
+                                        TypeOfAddress = AddressType.Shipping
+                                    },
+                            },
+                            OptionLabel = orderRow.RegistrationType.OptionLabel,
+                            OrderExists = true,
+                            OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
+                            {
+                                AdditionalLocations =
+                                    model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
+                                        .AdditionalLocation,
+                                Addresses = additionalLocationsViewModel.Addresses,
+                                OptionsCost = additionalLocationsViewModel.OptionsCost,
+                            },
+                            OrderRowExists = true,
+                            OrderRowHasId = true,
+                            OrderStatus = OrderStatus.InProcess,
+                            Origin = model.Order.Origin,
+                            UserComments = model.Order.UserComments,
+                            UserDetails = string.Concat("<span id='userFullnameLabel'>", userFullName,
+                                "</span> - <span id='userInstitutionLabel'>", orderRow.Order.Institution, "</span><br>",
+                                "<span id='userEmailLabel'>", webUser.email, "</span>"),
+                            UserFullname = userFullName,
+                            UserType = UserType.Customer
+                        };
+                    }
+                }
                 return View(model);
             }
 
@@ -1612,7 +1646,7 @@ namespace CUWebinars.Web.Controllers
 
                 _orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
 
-                     return Json(new { result = WebUiConstants.Success });
+                return Json(new { result = WebUiConstants.Success });
             }
             catch (Exception exception)
             {

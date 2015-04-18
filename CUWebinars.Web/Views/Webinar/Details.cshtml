@@ -67,11 +67,29 @@
             <!--close aside widget-->
         </section>
         <div class="span6">
+
+
+            <div id="EventDescription">
+                @Html.Raw(Model.Webinar.DescriptionLong)
+                <h2 class="short_headline">
+                    <span>
+                        @Html.Raw(Model.Webinar.LearnCaption)
+                    </span>
+                </h2>
+                @Html.Raw(Model.Webinar.LearnBody)
+                <h2 class="short_headline">
+                    <span>
+                        Who Should Attend?
+                    </span>
+                </h2>
+                @Html.Raw(Model.Webinar.WhoAttend)
+                <hr />
+            </div>
             @{
                 if (Model.Webinar.Status != WebinarStatus.Archived
-                                                                                && Model.Webinar.Status != WebinarStatus.Deleted
-                                                                                && Model.Webinar.Status != WebinarStatus.Pending
-                                                                                )
+                    && Model.Webinar.Status != WebinarStatus.Deleted
+                    && Model.Webinar.Status != WebinarStatus.Pending
+                    )
                 {
                     if (Model.UserOwnsThisEvent < 1 || Model.CheckoutInProcess)
                     {
@@ -124,23 +142,6 @@
                         <!-- closes SignUpFormContainer div-->
                     }
                 }
-
-                <div id="EventDescription">
-                    @Html.Raw(Model.Webinar.DescriptionLong)
-                    <h2 class="short_headline">
-                        <span>
-                            @Html.Raw(Model.Webinar.LearnCaption)
-                        </span>
-                    </h2>
-                    @Html.Raw(Model.Webinar.LearnBody)
-                    <h2 class="short_headline">
-                        <span>
-                            Who Should Attend?
-                        </span>
-                    </h2>
-                    @Html.Raw(Model.Webinar.WhoAttend)
-                    <hr />
-                </div>
             }
         </div>
         <!-- opens Container div-->
@@ -173,14 +174,7 @@
             </aside>
             @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
             <!-- close .widget -->
-            <!-- For Generate ics file widget -->
-            @*<aside class="widget">
-                    <h5 class="short_headline"><span>iCalendar</span></h5>
-                    <button id="CreateICSButton" class="btn btn-primary">Generate ICS</button>
-                    <div class="span12" style="display:none;"><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>
-                    <div id="InputFormFields" style="margin-top: 20px;"></div>
-                </aside>*@
-            <!-- Close ics file widget -->
+
             <aside class="widget">
                 <h5 class="short_headline">
                     <span>Topics</span>

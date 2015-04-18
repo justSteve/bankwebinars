@@ -7,6 +7,8 @@ namespace CUWebinars.Business.CQS.Commands
     {
         public Affiliate Affiliate { get; set; }
         public string AffiliateComments { get; set; }
+        public string AdminComments { get; set; }
+        public string UserComments { get; set; }
         public Address BillingAddress { get; set; }
         public string ConfirmChangeEmailUrl { get; set; }
         public string Email { get; set; }

@@ -750,7 +750,7 @@ namespace CUWebinars.Business.Services
         public void FireSendRecordingIsPostedEvent(IList<Order> orders)
         {
 
-            Double[] i = _webinarRepository.GetCostOfUpgrades(orders[0].OrderRows.Single().idWebinar);
+            Double[] i = _webinarRepository.GetCostOfUpgrades(orders[0].OrderRows.Single().idRegType);
 
             Double basePrice = i[0];
             Double cost6 = i[1];
@@ -833,8 +833,8 @@ namespace CUWebinars.Business.Services
             sb.Append("    </td>");
             sb.Append("    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
             sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-            sb.Append("            <b>");
-            sb.Append(myRow.Order.Total.ToString().Replace(".0000", ""));
+            sb.Append("            <b>$");
+            sb.Append(myRow.Order.Total.ToString().Replace(".00", ""));
             sb.Append("            </b>");
             sb.Append("        </span>");
             sb.Append("    </td>");

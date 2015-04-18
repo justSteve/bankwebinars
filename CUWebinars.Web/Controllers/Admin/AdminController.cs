@@ -110,19 +110,9 @@ namespace CUWebinars.Web.Controllers.Admin
 //            var orderUser = _membershipService.GetUserByEmail(order.BillingEmail);
 
             string buildMessage = "<br>Affiliate changed for order " + order.idOrder + " from " + originalAffiliate.ttsDomain + " to " +
-                                  newAffiliate.ttsDomain + " by TODO: Get currentUser" +// currentUser.FullName +
+                                  newAffiliate.ttsDomain + " by "+  User.Identity.Name +
                                   " on " + DateTime.Now.ToShortDateString() +
                                   "<br>";
-
-            //try
-            //{
-            //    _orderManagementService.AssignAffiliateToOrder(order.Affiliate, order);
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.FatalException("ChangeAffiliate: ", ex);
-            //    //order.AdminComments = "<br><h1>Error via ChangeAffiliateOnOrder </h1><p>idOrder=" + order.idOrder + "</p>" + order.AdminComments;
-            //}
 
             if (!ReferenceEquals(null, order))
             {
@@ -389,66 +379,66 @@ namespace CUWebinars.Web.Controllers.Admin
                     });
         }
 
-        public virtual void ChangeAffiliateOnOrder(Order order, Affiliate newAffiliate, WebUser currentUser)
-        {
+        //public virtual void ChangeAffiliateOnOrder(Order order, Affiliate newAffiliate, WebUser currentUser)
+        //{
 
-            var originalAffiliate = new CUWebinars.Business.Repository.AffiliateRepository().FindByIdWithIncluding(order.idAffiliate);
-            var orderUser = _membershipService.GetUserByEmail(order.BillingEmail);
-
-
-            string buildMessage = "<br>Affiliate changed for order " + order.idOrder + " from " + originalAffiliate.ttsDomain + " to " +
-                                  newAffiliate.ttsDomain + " by " + currentUser.FullName +
-                                  " on " + DateTime.Now.ToShortDateString() +
-                                  "<br>";
-
-            try
-            {
-                _orderManagementService.AssignAffiliateToOrder(newAffiliate, order);
-            }
-            catch (Exception ex)
-            {
-                _logger.FatalException("ChangeAffiliate: ", ex);
-                //order.AdminComments = "<br><h1>Error via ChangeAffiliateOnOrder </h1><p>idOrder=" + order.idOrder + "</p>" + order.AdminComments;
-            }
-
-            if (!ReferenceEquals(null, order))
-            {
-                //following copies pattern found at WebinarController | Identify
-                JObject existingJObject = null;
-
-                string comments = string.Empty;
+        //    var originalAffiliate = new CUWebinars.Business.Repository.AffiliateRepository().FindByIdWithIncluding(order.idAffiliate);
+        //    var orderUser = _membershipService.GetUserByEmail(order.BillingEmail);
 
 
-                if (!ReferenceEquals(null, order.AdminComments))
-                {
-                    comments = order.AdminComments.Trim();
-                }
+        //    string buildMessage = "<br>Affiliate changed for order " + order.idOrder + " from " + originalAffiliate.ttsDomain + " to " +
+        //                          newAffiliate.ttsDomain + " by " + currentUser.FullName +
+        //                          " on " + DateTime.Now.ToShortDateString() +
+        //                          "<br>";
 
-                var newJson = new JProperty(string.Concat("ChangeAffiliate-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
-                    new JObject(
-                        new JProperty("ChangeAffiliate", newAffiliate.ttsDomain),
-                        new JProperty("Details", buildMessage)
-                        ));
+        //    try
+        //    {
+        //        _orderManagementService.AssignAffiliateToOrder(newAffiliate, order);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.FatalException("ChangeAffiliate: ", ex);
+        //        //order.AdminComments = "<br><h1>Error via ChangeAffiliateOnOrder </h1><p>idOrder=" + order.idOrder + "</p>" + order.AdminComments;
+        //    }
 
-                if (string.IsNullOrWhiteSpace(comments))
-                {
-                    existingJObject = new JObject(newJson);
-                }
-                else
-                {
-                    existingJObject = JObject.Parse(comments);
-                    existingJObject.Add(newJson);
-                }
+        //    if (!ReferenceEquals(null, order))
+        //    {
+        //        //following copies pattern found at WebinarController | Identify
+        //        JObject existingJObject = null;
 
-                order.AdminComments = existingJObject.ToString(Formatting.None);
+        //        string comments = string.Empty;
 
-                _orderManagementService.SaveChanges();
 
-            }
+        //        if (!ReferenceEquals(null, order.AdminComments))
+        //        {
+        //            comments = order.AdminComments.Trim();
+        //        }
 
-            _logger.Info(buildMessage);
+        //        var newJson = new JProperty(string.Concat("ChangeAffiliate-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+        //            new JObject(
+        //                new JProperty("ChangeAffiliate", newAffiliate.ttsDomain),
+        //                new JProperty("Details", buildMessage)
+        //                ));
 
-        }
+        //        if (string.IsNullOrWhiteSpace(comments))
+        //        {
+        //            existingJObject = new JObject(newJson);
+        //        }
+        //        else
+        //        {
+        //            existingJObject = JObject.Parse(comments);
+        //            existingJObject.Add(newJson);
+        //        }
+
+        //        order.AdminComments = existingJObject.ToString(Formatting.None);
+
+        //        _orderManagementService.SaveChanges();
+
+        //    }
+
+        //    _logger.Info(buildMessage);
+
+        //}
 
 
         //[AcceptVerbs(HttpVerbs.Post)]

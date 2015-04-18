@@ -485,7 +485,7 @@ namespace CUWebinars.Business.Repository
             {
                 foreach (var err in error)
                 {
-                    order.AdminComments += err.Entry.ToString();
+                    order.AuditInfo += err.Entry.ToString();
                 }
 
             }
