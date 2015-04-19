@@ -191,7 +191,6 @@
     <Compile Include="Notification\IOrderConfirmedForAdditionalLocationDelivery.cs" />
     <Compile Include="Notification\IAdditionalLocationOrderDetailsMessage.cs" />
     <Compile Include="Notification\IConfirmAdditionalLocationsOrderMessage.cs" />
-    <Compile Include="Notification\Email\LocalOrderNotifierMessageDelivery.cs" />
     <Compile Include="Notification\Events\AdminEmailConnectionInfoEvent.cs" />
     <Compile Include="Notification\Events\AdminEmailRecordingPostedEvent.cs" />
     <Compile Include="Notification\Events\AdminEmailSendShippedOrderEvent.cs" />

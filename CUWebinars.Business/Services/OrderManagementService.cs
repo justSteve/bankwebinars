@@ -637,7 +637,7 @@ namespace CUWebinars.Business.Services
 
             AddEvent(new OrderSubmittedEvent<ConfirmOrderMessage>
             {
-                //Details = order.NotificationStorage, <------ now in the ConfirmOrderMessage itself.
+                Details = order.NotificationStorage, 
                 EventObject = orderSubmittedViewModel,
                 RelativePath = addPasswordUrl,
                 ResendEvent = resending

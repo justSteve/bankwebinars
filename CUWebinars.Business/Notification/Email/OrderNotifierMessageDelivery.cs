@@ -35,16 +35,7 @@ namespace CUWebinars.Business.Notification.Email
             notificationMessage.PersistedName = confirmOrderMessage.PersistedName;
 
             notificationMessage.To = order.idAffiliate == 62 ? "steve@ttstrain.com" : order.BillingEmail;
-            
-            string details = confirmOrderMessage.Details;
 
-            if (details != null)
-            {
-                order.NotificationStorage =
-                    details.Insert(details.Length - 1,
-                        string.Concat(",", @"""OrderSubmittedEventMsg-", DateTime.Now.Ticks, '"', @":", '"',
-                            notificationMessage.PersistedName, '"'));
-            }
             SendMessage(notificationMessage);
         }
 

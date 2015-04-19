@@ -3,6 +3,8 @@ using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Notification.Formatters;
 using CUWebinars.NotificationSystem.Event;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using System;
 
@@ -39,23 +41,26 @@ namespace CUWebinars.Business.Notification.Handlers
                     );
 
                 //  adds the name of the message to the Json object stored in NotificationStorage.
-                //string details = orderSubmittedAdditionalLocationEvent.Details;
-                //if (details != null)
-                //{
+                JObject notificationStorage;
 
-                //    orderSubmittedAdditionalLocationEvent.EventObject.Order.NotificationStorage =
-                //        details.Insert(details.Length - 1,
-                //            string.Concat(",", @"""OrderSubmittedAdditionalLocationEventMsg-", DateTime.Now.Ticks, '"',
-                //                @":", '"', notificationMessage.PersistedName, '"'));
-                //}
-                //if (orderSubmittedAdditionalLocationEvent.EventObject.Order.idAffiliate == 62)
-                //{
-                //    notificationMessage.To = "steve@ttstrain.com";
-                //}
-                //else
-                //{
-                //    notificationMessage.To = orderSubmittedAdditionalLocationEvent.EventObject.Order.BillingEmail;
-                //}
+                if (string.IsNullOrWhiteSpace(orderSubmittedAdditionalLocationEvent.Details))
+                {
+                    notificationStorage = new JObject();
+                }
+                else
+                {
+                    notificationStorage = JObject.Parse(orderSubmittedAdditionalLocationEvent.Details);
+                }
+
+                JProperty orderSubmittedAdditionalLocationEventMsg = new JProperty(
+                    string.Concat("OrderSubmittedAdditionalLocationEventMsg-", DateTime.Now.Ticks),
+                    orderSubmittedAdditionalLocationEvent.EventObject.PersistedName
+                    );
+
+                notificationStorage.Add(orderSubmittedAdditionalLocationEventMsg);
+
+                orderSubmittedAdditionalLocationEvent.EventObject.Order.NotificationStorage =
+                    orderSubmittedAdditionalLocationEvent.EventObject.Details = notificationStorage.ToString(Formatting.None);
 
                 _logger.Info("PersistedName for Additional Location {0} is {1}", idOrder, orderSubmittedAdditionalLocationEvent.EventObject.PersistedName);
                 _notificationDelivery.Notify(orderSubmittedAdditionalLocationEvent.EventObject);

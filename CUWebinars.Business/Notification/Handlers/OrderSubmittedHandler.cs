@@ -1,13 +1,11 @@
-﻿using System.Diagnostics;
-using CUWebinars.Business.Constants;
+﻿using CUWebinars.Business.Constants;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
-using CUWebinars.Business.Notification.ViewModel;
 using CUWebinars.NotificationSystem.Event;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using System;
-using Ninject.Extensions.Logging.Log4net.Infrastructure;
 
 namespace CUWebinars.Business.Notification.Handlers
 {
@@ -28,6 +26,7 @@ namespace CUWebinars.Business.Notification.Handlers
         public virtual void Process(OrderSubmittedEvent<T> orderSubmittedEvent)
         {
             _logger.Info("Begins OrderSubmitted Notification");
+
             try
             {
                 if (orderSubmittedEvent.EventObject.UserCreatedInCart)
@@ -46,6 +45,27 @@ namespace CUWebinars.Business.Notification.Handlers
                     DateTime.Now.ToString(DomainConstants.DateTimeLongFormat),
                     ".htm"
                     );
+
+                JObject notificationStorage;
+
+                if (string.IsNullOrWhiteSpace(orderSubmittedEvent.Details))
+                {
+                    notificationStorage = new JObject();
+                }
+                else
+                {
+                    notificationStorage = JObject.Parse(orderSubmittedEvent.Details);
+                }
+
+                JProperty orderSubmittedEventMsg = new JProperty(
+                    string.Concat("OrderSubmittedEventMsg-", DateTime.Now.Ticks),
+                    orderSubmittedEvent.EventObject.PersistedName
+                    );
+
+                notificationStorage.Add(orderSubmittedEventMsg);
+                
+                orderSubmittedEvent.EventObject.Order.NotificationStorage =
+                    orderSubmittedEvent.EventObject.Details = notificationStorage.ToString(Formatting.None);
 
                 _logger.Info("PersistedName for Order {0} is {1}", orderId, orderSubmittedEvent.EventObject.PersistedName);
 
