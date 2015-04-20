@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Constants;
+﻿using System.Collections.Generic;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification.Email;
@@ -101,10 +102,22 @@ namespace CUWebinars.Business.Notification.Handlers
                     }
                 }
 
-                var userCommentsField = sendConnectionInfoEvent.EventObject.UserComments;
-                var addresses = userCommentsField.Substring(userCommentsField.IndexOf(":") + 1);
+                //  adds the name of the message to the Json object stored in NotificationStorage.
+                IList<string> ccEmailAddresses = null;
 
-                var ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(addresses);
+                if (!string.IsNullOrWhiteSpace(sendConnectionInfoEvent.EventObject.UserComments))
+                {
+                    JObject userCommentsObject = JObject.Parse(sendConnectionInfoEvent.EventObject.UserComments);
+
+                    var addresses =
+                        userCommentsObject.Properties().FirstOrDefault(p => p.Name.ToLower().Contains("Addresses"));
+
+
+                    if (!ReferenceEquals(null, addresses) && addresses.HasValues)
+                    {
+                        ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(addresses.Value.ToString());
+                    }
+                }
 
                 notificationMessage.To = sendConnectionInfoEvent.EventObject.BillingEmail;
                 notificationMessage.Addresses = ccEmailAddresses;
