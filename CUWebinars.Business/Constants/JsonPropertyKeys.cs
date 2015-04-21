@@ -6,5 +6,6 @@ namespace CUWebinars.Business.Constants
         public static readonly string ExpiryDate = "ExpiryDate";
         public static readonly string ObfuscationString = "ObfuscationString";
         public static readonly string OrderId = "OrderId";
+        public static readonly string CarbonCopy = "CarbonCopy";
     }
 }

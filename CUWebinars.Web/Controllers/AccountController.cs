@@ -13,6 +13,8 @@ using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -470,8 +472,34 @@ namespace CUWebinars.Web.Controllers
             var order = _orderManagementService.GetOrderById(idOrder);
             try
             {
-                order.UserComments = "cc:" + addresses.ToString() + order.UserComments;
+                //following copies pattern found at WebinarController | Identify
+                JObject existingJObject = null;
+
+                string comments = string.Empty;
+
+
+                if (!ReferenceEquals(null, order.UserComments))
+                {
+                    comments = order.UserComments.Trim();
+                }
+
+                var newJson = new JProperty(string.Concat("CarbonCopy"),
+                    addresses);
+
+                if (string.IsNullOrWhiteSpace(comments))
+                {
+                    existingJObject = new JObject(newJson);
+                }
+                else
+                {
+                    existingJObject = JObject.Parse(comments);
+                    existingJObject.Add(newJson);
+                }
+
+                order.UserComments = existingJObject.ToString(Formatting.None);
+
                 _orderManagementService.SaveChanges();
+
 
             }
             catch (Exception)

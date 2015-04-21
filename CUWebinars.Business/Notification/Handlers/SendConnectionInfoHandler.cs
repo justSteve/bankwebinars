@@ -121,18 +121,15 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 //  adds the name of the message to the Json object stored in NotificationStorage.
                 IList<string> ccEmailAddresses = null;
-
+                //see Account/ShareNotifications
                 if (!string.IsNullOrWhiteSpace(sendConnectionInfoEvent.EventObject.UserComments))
                 {
-                    JObject userCommentsObject = JObject.Parse(sendConnectionInfoEvent.EventObject.UserComments);
+                    var addresses = JObject.Parse(sendConnectionInfoEvent.EventObject.UserComments).GetValue(JsonPropertyKeys.CarbonCopy).ToString();
 
-                    var addresses =
-                        userCommentsObject.Properties().FirstOrDefault(p => p.Name.ToLower().Contains("Addresses"));
-
-
-                    if (!ReferenceEquals(null, addresses) && addresses.HasValues)
+                    
+                    if (!ReferenceEquals(null, addresses))
                     {
-                        ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(addresses.Value.ToString());
+                        ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(addresses);
                     }
                 }
 
