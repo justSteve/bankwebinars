@@ -42,10 +42,12 @@ namespace CUWebinars.Business.Notification.Handlers
 
         public virtual void Process(SendConnectionInfoEvent<T> sendConnectionInfoEvent)
         {
+            int orderId = sendConnectionInfoEvent.EventObject.idOrder;
+
             _logger.Info("SendConnectionInfoEventmailer is processing " + sendConnectionInfoEvent.EventObject.OrderRows
                 .Single(or => or.RowStatus == OrderRowStatus.Active).idOrder);
 
-            var notificationMessage = _generalFormatter.Format(sendConnectionInfoEvent.EventObject, "SendConnectionInfo");
+            INotificationMessage notificationMessage = _generalFormatter.Format(sendConnectionInfoEvent.EventObject, "SendConnectionInfo");
 
             var isAdditionalLocation =
                 sendConnectionInfoEvent.EventObject.OrderRows
@@ -57,8 +59,8 @@ namespace CUWebinars.Business.Notification.Handlers
             {
 
                 var persistedNamePrefix = sendConnectionInfoEvent.ResendEvent
-                    ? "ConnectionInfo_ReSend_" + sendConnectionInfoEvent.EventObject.idOrder
-                    : "ConnectionInfo_" + sendConnectionInfoEvent.EventObject.idOrder;
+                    ? "ConnectionInfo_ReSend_" + orderId
+                    : "ConnectionInfo_" + orderId;
 
                 notificationMessage.PersistedName = string.Format("{0}_{1}{2}",
                     persistedNamePrefix,
@@ -85,20 +87,35 @@ namespace CUWebinars.Business.Notification.Handlers
                 sendConnectionInfoEvent.EventObject.NotificationStorage =
                     notificationStorage.ToString(Formatting.None);
 
-                if (isAdditionalLocation.Count != 0)
+                if (isAdditionalLocation.Any())
                 {
                     //send a notification to each of any additional locations records
-                    notificationMessage.To = sendConnectionInfoEvent.EventObject.BillingEmail;
+                    int count = 0;
                     foreach (var additionalLocation in isAdditionalLocation)
                     {
+                        INotificationMessage additionalLocationNotificationMessage =
+                            _generalFormatter.Format(
+                            sendConnectionInfoEvent.EventObject,
+                            "SendConnectionInfo"
+                            );
+
                         _logger.Info("Sending Connection Info: " + additionalLocation.Email);
                         //override the order's Name property so that additional locations addressees 
                         // get correct name. order isn't saved so after execution, the property reverts.
                         sendConnectionInfoEvent.EventObject.FirstName = additionalLocation.FullName;
-                        notificationMessage = _generalFormatter.Format(sendConnectionInfoEvent.EventObject,
-                            "SendConnectionInfo");
-                        notificationMessage.To = additionalLocation.Email;
-                        _notificationDelivery.Notify(notificationMessage);
+
+                        persistedNamePrefix = sendConnectionInfoEvent.ResendEvent
+                                                ? "AddLoc_ConnectionInfo_ReSend_" + ++count + "_" + orderId
+                                                : "AddLoc_ConnectionInfo_" + ++count + "_" + orderId;
+
+                        additionalLocationNotificationMessage.PersistedName = string.Format("{0}_{1}{2}",
+                            persistedNamePrefix,
+                            DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm"
+                            );
+
+                        additionalLocationNotificationMessage.To = additionalLocation.Email;
+                        
+                        _notificationDelivery.Notify(additionalLocationNotificationMessage);
                     }
                 }
 
@@ -136,7 +153,7 @@ namespace CUWebinars.Business.Notification.Handlers
                     _logger.Error(
                         string.Format(
                             "Event processing failed for sendConnectionInfoEvent - OrderId {0}. ExceptionMessage: {1}",
-                            sendConnectionInfoEvent.EventObject.idOrder,
+                            orderId,
                             nullReferenceException.Message)
                         , nullReferenceException);
                 }
@@ -146,7 +163,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 _logger.Error(
                     string.Format(
                         "Event processing (outer) failed for sendConnectionInfoEvent - OrderId {0}. ExceptionMessage: {1}"
-                        , sendConnectionInfoEvent.EventObject.idOrder,
+                        , orderId,
                         exception.Message), exception);
             }
         }
