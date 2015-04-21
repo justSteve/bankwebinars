@@ -40,7 +40,8 @@ namespace CUWebinars.Business.Notification.Handlers
 
         public virtual void Process(SendRecordingPostedEvent<T> sendRecordingPostedEvent)
         {
-            int orderId = sendRecordingPostedEvent.EventObject.Order.idOrder;
+            var order = sendRecordingPostedEvent.EventObject.Order;
+            int orderId = order.idOrder;
 
             try
             {
@@ -55,7 +56,7 @@ namespace CUWebinars.Business.Notification.Handlers
                     , DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)
                     , ".htm");
 
-                var isAdditionalLocation = sendRecordingPostedEvent.EventObject.Order.OrderRows
+                var isAdditionalLocation = order.OrderRows
                     .Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation;
 
                 //  adds the name of the message to the Json object stored in NotificationStorage.
@@ -79,7 +80,7 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 if (isAdditionalLocation.Any())
                 {
-                    string tmpNameStorage = sendRecordingPostedEvent.EventObject.Order.FirstName;
+                    string tmpNameStorage = order.FirstName;
 
                     //send a notification to each of any additional locations records
                     int count = 0;
@@ -87,7 +88,7 @@ namespace CUWebinars.Business.Notification.Handlers
                     {
                         //override the order's Name property so that additional locations addressees 
                         // get correct name. order isn't saved so after execution, the property reverts.
-                        sendRecordingPostedEvent.EventObject.Order.FirstName = additionalLocation.FullName;
+                        order.FirstName = additionalLocation.FullName;
 
                         INotificationMessage additionalLocationNotificationMessage =
                             _generalFormatter.Format(
@@ -117,19 +118,19 @@ namespace CUWebinars.Business.Notification.Handlers
 
                         _notificationDelivery.Notify(additionalLocationNotificationMessage);                        
                     }
-                    sendRecordingPostedEvent.EventObject.Order.FirstName = tmpNameStorage; // assign name back.
+                    order.FirstName = tmpNameStorage; // assign name back.
                     
                 }
 
-                sendRecordingPostedEvent.EventObject.Order.NotificationStorage = notificationStorage.ToString(Formatting.None);
+                order.NotificationStorage = notificationStorage.ToString(Formatting.None);
 
 
                 IList<string> ccEmailAddresses = null;
 
 
-                if (!string.IsNullOrWhiteSpace(sendRecordingPostedEvent.EventObject.Order.UserComments))
+                if (!string.IsNullOrWhiteSpace(order.UserComments))
                 {
-                    var addresses = JObject.Parse(sendRecordingPostedEvent.EventObject.Order.UserComments).GetValue(JsonPropertyKeys.CarbonCopy).ToString();
+                    var addresses = JObject.Parse(order.UserComments).GetValue(JsonPropertyKeys.CarbonCopy).ToString();
 
                     if (!ReferenceEquals(null, addresses))
                     {
@@ -137,7 +138,7 @@ namespace CUWebinars.Business.Notification.Handlers
                     }
                 }
                 
-                notificationMessage.To = sendRecordingPostedEvent.EventObject.Order.BillingEmail;
+                notificationMessage.To = order.BillingEmail;
                 notificationMessage.Addresses = ccEmailAddresses;
 
                 _notificationDelivery.Notify(notificationMessage);
