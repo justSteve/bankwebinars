@@ -782,6 +782,8 @@ namespace CUWebinars.Business.Services
             }
 
             Clear();
+
+            int numRows = _orderRepository.SaveChanges();
         }
 
         private string OrderSummaryBuilder(Order order)
@@ -940,6 +942,8 @@ namespace CUWebinars.Business.Services
             }
 
             Clear();
+
+            int numRows = _orderRepository.SaveChanges();
         }
 
         public void FireSendRecordingPostedNotificationEvent(IList<Order> orders)
@@ -962,6 +966,8 @@ namespace CUWebinars.Business.Services
             }
 
             Clear();
+
+            int numRows = _orderRepository.SaveChanges();
         }
 
         public string UpdateOrderChanges(Order currentOrder, ref PricesAndDiscounts pricesAndDiscounts)

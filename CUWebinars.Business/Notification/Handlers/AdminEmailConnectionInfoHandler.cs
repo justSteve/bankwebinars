@@ -41,7 +41,7 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 _notificationDelivery.Notify(notificationMessage);
 
-                if (adminEmailConnectionInfoEvent.Recipients.Count() > 1)
+                if (!ReferenceEquals(null, adminEmailConnectionInfoEvent.Recipients) && adminEmailConnectionInfoEvent.Recipients.Count() > 1)
                 {
                     foreach (var recipient in adminEmailConnectionInfoEvent.Recipients.Skip(1))
                     {

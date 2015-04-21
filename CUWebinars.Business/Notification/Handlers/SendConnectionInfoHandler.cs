@@ -133,7 +133,6 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 sendConnectionInfoEvent.EventObject.NotificationStorage = notificationStorage.ToString(Formatting.None);
 
-                //  adds the name of the message to the Json object stored in NotificationStorage.
                 IList<string> ccEmailAddresses = null;
                 //see Account/ShareNotifications
                 if (!string.IsNullOrWhiteSpace(sendConnectionInfoEvent.EventObject.UserComments))

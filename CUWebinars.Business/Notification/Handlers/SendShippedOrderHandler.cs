@@ -5,6 +5,8 @@ using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Notification.Formatters;
 using CUWebinars.NotificationSystem.Event;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using Ninject.Extensions.Logging.Log4net.Infrastructure;
 
@@ -34,11 +36,34 @@ namespace CUWebinars.Business.Notification.Handlers
             try
             {
                 var notificationMessage = _generalFormatter.Format(sendShippedOrderEvent.EventObject, "SendShippedOrder");
+                
                 notificationMessage.PersistedName = string.Format("ShippedOrder_{0}_{1}{2}"
                     , sendShippedOrderEvent.EventObject.idOrder
                     , DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm");
 
+                //  adds the name of the message to the Json object stored in NotificationStorage.
+                JObject notificationStorage;
+
+                if (string.IsNullOrWhiteSpace(sendShippedOrderEvent.Details))
+                {
+                    notificationStorage = new JObject();
+                }
+                else
+                {
+                    notificationStorage = JObject.Parse(sendShippedOrderEvent.Details);
+                }
+
+                JProperty sendShippedOrderMsgProperty = new JProperty(
+                    string.Concat("SendShippedOrderMsg-", DateTime.Now.Ticks),
+                    notificationMessage.PersistedName
+                    );
+
+                notificationStorage.Add(sendShippedOrderMsgProperty);
+
+                sendShippedOrderEvent.EventObject.NotificationStorage = notificationStorage.ToString(Formatting.None);
+
                 notificationMessage.To = sendShippedOrderEvent.EventObject.BillingEmail;
+
                 _notificationDelivery.Notify(notificationMessage);
             }
             catch (NullReferenceException nullReferenceException)
