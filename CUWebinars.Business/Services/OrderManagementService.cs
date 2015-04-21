@@ -922,6 +922,8 @@ namespace CUWebinars.Business.Services
             }
 
             Clear();
+
+            int numRows = _orderRepository.SaveChanges();
         }
 
         public void FireSendOrderShippedNotificationEvent(IList<Order> orders)

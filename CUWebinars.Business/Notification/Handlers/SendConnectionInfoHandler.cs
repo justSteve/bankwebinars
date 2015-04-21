@@ -89,10 +89,16 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 if (isAdditionalLocation.Any())
                 {
+                    string tmpNameStorage = sendConnectionInfoEvent.EventObject.FirstName;
+
                     //send a notification to each of any additional locations records
                     int count = 0;
                     foreach (var additionalLocation in isAdditionalLocation)
-                    {
+                    {   
+                        //override the order's Name property so that additional locations addressees 
+                        // get correct name. order isn't saved so after execution, the property reverts.
+                        sendConnectionInfoEvent.EventObject.FirstName = additionalLocation.FullName;
+
                         INotificationMessage additionalLocationNotificationMessage =
                             _generalFormatter.Format(
                             sendConnectionInfoEvent.EventObject,
@@ -100,9 +106,6 @@ namespace CUWebinars.Business.Notification.Handlers
                             );
 
                         _logger.Info("Sending Connection Info: " + additionalLocation.Email);
-                        //override the order's Name property so that additional locations addressees 
-                        // get correct name. order isn't saved so after execution, the property reverts.
-                        sendConnectionInfoEvent.EventObject.FirstName = additionalLocation.FullName;
 
                         persistedNamePrefix = sendConnectionInfoEvent.ResendEvent
                                                 ? "AddLoc_ConnectionInfo_ReSend_" + ++count + "_" + orderId
@@ -113,11 +116,22 @@ namespace CUWebinars.Business.Notification.Handlers
                             DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm"
                             );
 
+                        JProperty sendConnectionInfoAddLocMsg = new JProperty(
+                                string.Concat(string.Format("AddLocSendConnectionInfoMsg-{0}-", count), DateTime.Now.Ticks),
+                                notificationMessage.PersistedName
+                                );
+
+                        notificationStorage.Add(sendConnectionInfoAddLocMsg);
+
                         additionalLocationNotificationMessage.To = additionalLocation.Email;
                         
                         _notificationDelivery.Notify(additionalLocationNotificationMessage);
                     }
+
+                    sendConnectionInfoEvent.EventObject.FirstName = tmpNameStorage; // assign name back.
                 }
+
+                sendConnectionInfoEvent.EventObject.NotificationStorage = notificationStorage.ToString(Formatting.None);
 
                 //  adds the name of the message to the Json object stored in NotificationStorage.
                 IList<string> ccEmailAddresses = null;

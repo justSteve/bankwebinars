@@ -49,6 +49,8 @@ $(function () {
 
                 labelCheckRemove();
 
+                var self = this;
+
                 var orderId = $.trim($('#OrderId').val());
 
                 //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
@@ -65,7 +67,7 @@ $(function () {
                     dataType: constants.JsonDataType,
                     data: JSON.stringify({ orderId: orderId }),
                     beforeSend: function () {
-                        $('#WaitIndicator').show();
+                        $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
                     }
                 }).done(function (result) {
 
@@ -74,6 +76,7 @@ $(function () {
                     } else if (result.Result === 'Fail') {
                         $('#InputFormFields').append(noOrderScreenMessage);
                     }
+                    $('#spinnerLabel').remove();
 
                 }).fail(function () {
 
