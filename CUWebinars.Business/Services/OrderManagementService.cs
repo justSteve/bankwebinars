@@ -1,5 +1,4 @@
-﻿using CUWebinars.Business.AccountService;
-using CUWebinars.Business.Constants;
+﻿using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Cache;
 using CUWebinars.Business.Core.Exceptions;
@@ -689,6 +688,8 @@ namespace CUWebinars.Business.Services
             }
 
             Clear();
+
+            int rowsUpdated = _orderRepository.SaveChanges();
         }
 
         public void FireAdminEmailRecordingPostedHandler(Order order, IEnumerable<string> recipients)
@@ -702,6 +703,8 @@ namespace CUWebinars.Business.Services
             }
 
             Clear();
+
+            int rowsUpdated = _orderRepository.SaveChanges();
         }
 
         public void FireOrderSubmittedAdditionalLocationEvent(Order order, string address, bool resending)
@@ -887,6 +890,8 @@ namespace CUWebinars.Business.Services
             }
 
             Clear();
+
+            int rowsUpdated = _orderRepository.SaveChanges();
         }
 
         public void FireSendPerWeekPromoEvent(IList<Affiliate> affiliates, Webinar webinar)

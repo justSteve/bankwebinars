@@ -36,8 +36,6 @@ namespace CUWebinars.Business.Notification.Handlers
         {
             try
             {
-
-
                 var notificationMessage = _generalFormatter.Format(sendReminderEvent.EventObject,
                     "SendReminder");
                 notificationMessage.PersistedName = string.Format("SendReminder_{0}_{1}{2}",
