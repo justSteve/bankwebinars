@@ -137,7 +137,18 @@ namespace CUWebinars.Business.Notification.Handlers
                 //see Account/ShareNotifications
                 if (!string.IsNullOrWhiteSpace(sendConnectionInfoEvent.EventObject.UserComments))
                 {
-                    var addresses = JObject.Parse(sendConnectionInfoEvent.EventObject.UserComments).GetValue(JsonPropertyKeys.CarbonCopy).ToString();
+
+
+                    string addresses = null;
+
+                    try
+                    {
+                        addresses = JObject.Parse(sendConnectionInfoEvent.EventObject.UserComments).GetValue(JsonPropertyKeys.CarbonCopy).ToString();
+                    }
+                    catch (Exception)
+                    {
+                        addresses = null;
+                    }
 
                     
                     if (!ReferenceEquals(null, addresses))
