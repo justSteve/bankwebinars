@@ -1436,10 +1436,11 @@
 copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).pdb"
 copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).dll"
 copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).pdb"
-copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AddLocOrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).dll"
-copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AddLocOrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).pdb"
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AddLocConfirm\ThirdPartyAssemblies\$(ProjectName).dll"
+
+copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AddLocConfirm\ThirdPartyAssemblies\$(ProjectName).pdb"
 copy /Y "$(ProjectDir)Notification\Templates\OrderSubmitted.cshtml" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\CUWebinars.Azure.OrderConfirmNotifier\Notifications\Templates\OrderSubmitted.cshtml"
-copy /Y "$(ProjectDir)Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AddLocOrderConfirmNotifier\CUWebinars.Azure.AddLocOrderConfirmNotifier\Notifications\Templates\OrderSubmittedAdditionalLocation.cshtml"
+copy /Y "$(ProjectDir)Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AddLocConfirm\CUWebinars.Azure.AddLocConfirm\Notifications\Templates\OrderSubmittedAdditionalLocation.cshtml"
 copy /Y "$(ProjectDir)Membership\Email\EmailTemplates\*" "$(SolutionDir)..\CUUserAccount\CUWebinars.Azure.UserCreationFromAnon\Notifications\EmailTemplates\"
 
 
