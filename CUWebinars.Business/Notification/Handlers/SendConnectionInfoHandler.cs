@@ -22,16 +22,16 @@ namespace CUWebinars.Business.Notification.Handlers
         private readonly INotificationDelivery _notificationDelivery;
         private readonly ILogger _logger;
 
-        public SendConnectionInfoHandler(IFormatter generalFormatter, 
-            ILogger logger, 
+        public SendConnectionInfoHandler(IFormatter generalFormatter,
+            ILogger logger,
             EnvironmentInformation environmentInformation)
             : this(generalFormatter, new SmtpMessageDelivery(new Log4NetLogger(typeof(SmtpMessageDelivery))), logger, environmentInformation)
         {
 
         }
-        public SendConnectionInfoHandler(IFormatter generalFormatter, 
-            INotificationDelivery notificationDelivery, 
-            ILogger logger, 
+        public SendConnectionInfoHandler(IFormatter generalFormatter,
+            INotificationDelivery notificationDelivery,
+            ILogger logger,
             EnvironmentInformation environmentInformation)
         {
             _generalFormatter = generalFormatter;
@@ -94,7 +94,7 @@ namespace CUWebinars.Business.Notification.Handlers
                     //send a notification to each of any additional locations records
                     int count = 0;
                     foreach (var additionalLocation in isAdditionalLocation)
-                    {   
+                    {
                         //override the order's Name property so that additional locations addressees 
                         // get correct name. order isn't saved so after execution, the property reverts.
                         sendConnectionInfoEvent.EventObject.FirstName = additionalLocation.FullName;
@@ -124,7 +124,7 @@ namespace CUWebinars.Business.Notification.Handlers
                         notificationStorage.Add(sendConnectionInfoAddLocMsg);
 
                         additionalLocationNotificationMessage.To = additionalLocation.Email;
-                        
+
                         _notificationDelivery.Notify(additionalLocationNotificationMessage);
                     }
 
@@ -137,12 +137,13 @@ namespace CUWebinars.Business.Notification.Handlers
                 //see Account/ShareNotifications
                 if (!string.IsNullOrWhiteSpace(sendConnectionInfoEvent.EventObject.UserComments))
                 {
-                    var addresses = JObject.Parse(sendConnectionInfoEvent.EventObject.UserComments).GetValue(JsonPropertyKeys.CarbonCopy).ToString();
+                    JToken addresses;
 
-                    
+                    addresses = JObject.Parse(sendConnectionInfoEvent.EventObject.UserComments).GetValue(JsonPropertyKeys.CarbonCopy);
+
                     if (!ReferenceEquals(null, addresses))
                     {
-                        ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(addresses);
+                        ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(addresses.ToString());
                     }
                 }
 
