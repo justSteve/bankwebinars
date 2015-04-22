@@ -1112,7 +1112,8 @@ namespace CUWebinars.Business.Services
         {
             var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             var regKeyResponse = string.Empty;
-            if (additionalLocation.Email == null)
+
+            if (string.IsNullOrWhiteSpace(additionalLocation.Email))
             {
                 if (row.JoinURL == null && row.RegistrationType.ShowLiveNotifications.TrimEnd().Equals("Yes", StringComparison.OrdinalIgnoreCase))
                 {
@@ -1126,9 +1127,7 @@ namespace CUWebinars.Business.Services
                     order.LastName, additionalLocation.Email, row.Webinar.idWebinar, row.Webinar.WebinarKey);
             }
 
-            JObject parsedJsonObject;
-
-            if (ReferenceEquals(null, regKeyResponse))
+            if (string.IsNullOrWhiteSpace(regKeyResponse))
             {
                 //throw new NullReferenceException(
                 //    "The Registration Key Response from the Citrix API resulted in a null response.");
@@ -1141,7 +1140,7 @@ namespace CUWebinars.Business.Services
                 if (!regKeyResponse.Contains("{"))
                     regKeyResponse = string.Concat("{ \"error\": \"", regKeyResponse, "\"}");
 
-                parsedJsonObject = JObject.Parse(regKeyResponse);
+                JObject parsedJsonObject = JObject.Parse(regKeyResponse);
 
                 if (parsedJsonObject[DomainConstants.RegistrantKey] != null)
                 {

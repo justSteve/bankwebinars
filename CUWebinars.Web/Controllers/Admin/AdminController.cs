@@ -887,11 +887,13 @@ namespace CUWebinars.Web.Controllers.Admin
                 return Json(new { Result = WebUiConstants.Fail });
             }
 
-            if (order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count > 0)
+            var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active); // perf bump by assigning to local variable
+
+            if (orderRow.AdditionalLocation.Any())
             {
-                foreach (var additionalLocation in order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
+                foreach (var additionalLocation in orderRow.AdditionalLocation.Where(additionalLocation => string.IsNullOrEmpty(orderRow.JoinURL)))
                 {
-                    if (string.IsNullOrEmpty(order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).JoinURL)) _orderManagementService.GenerateRegistrantKey(order, additionalLocation);
+                    _orderManagementService.GenerateRegistrantKey(order, additionalLocation);
                 }
             }
 
@@ -920,16 +922,18 @@ namespace CUWebinars.Web.Controllers.Admin
                 return Json(new { Result = WebUiConstants.Fail });
             }
 
+            var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active); // perf bump by assigning to local variable
+
             AdditionalLocation nuller = new AdditionalLocation();
 
-            if (string.IsNullOrEmpty(order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).JoinURL))
+            if (string.IsNullOrEmpty(orderRow.JoinURL))
                 _orderManagementService.GenerateRegistrantKey(order, nuller);
 
-            if (order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count > 0)
+            if (orderRow.AdditionalLocation.Any())
             {
-                foreach (var additionalLocation in order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
+                foreach (var additionalLocation in orderRow.AdditionalLocation)
                 {
-                    if (string.IsNullOrEmpty(order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).JoinURL)) _orderManagementService.GenerateRegistrantKey(order, additionalLocation);
+                    if (string.IsNullOrEmpty(orderRow.JoinURL)) _orderManagementService.GenerateRegistrantKey(order, additionalLocation);
                 }
             }
 
