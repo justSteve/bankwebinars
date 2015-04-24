@@ -46,7 +46,6 @@ namespace CUWebinars.Web.Controllers
         private const string FromFluentPrefix = "fromfluent-";
         private const string EnterValidIdMsg = "Enter a valid id";
         private const string ServerErrorLoggedMsg = "Server Error Logged";
-        public const string WebinarFromCode = "WebinarFromCode";
         private IStateService _stateService;
         private readonly IWebinarControllerOrchestrator _webinarControllerOrchestrator;
         private readonly IAppHelper _appHelper;
@@ -462,51 +461,7 @@ namespace CUWebinars.Web.Controllers
         {
             if (id.HasValue)
             {
-                var order = _orderManagementService.GetOrderById(id.Value);
-
-                var webinar =
-                    _webinarManagementService.GetWebinar(
-                        order.OrderRows.SingleOrDefault(s => s.RowStatus == OrderRowStatus.Active).idWebinar);
-
-                var playModel = new OnDemandPlaybackModel
-                {
-                    Presenter = webinar.Presenter,
-                    Webinar = webinar
-                };
-
-                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
-
-                if (claimsIdentityOfAuthenticatedUser.IsAuthenticated)
-                {
-                    if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == ClaimTypes.Admin))
-                    {
-                        return RedirectToAction("Index", "Admin");
-                    }
-
-                    ProcessAccessPermissionsForMaterials(order, playModel);
-
-                    //if (accessPermitted)
-                    //{
-
-                    //    playModel.WebinarFiles = playModel.Webinar.WebinarFiles.Where(f => f.idWebinar == order.OrderRows.FirstOrDefault().idWebinar)
-                    //        .Select(f => f.fileDesc + "|/webinar/GetWebinarFile?idWebinarFile=" + f.idWebinarFile)
-                    //        .ToArray();
-
-                    //    return View(playModel);
-                    //}
-
-                    ViewData["Expired"] = "This recording has expired. ";
-                    return View(playModel);
-                }
-
-                if (_stateService.HasValue(WebUiConstants.AnonUserIdentified) && _stateService.GetValue<bool>(WebUiConstants.AnonUserIdentified))
-                {
-                    ProcessAccessPermissionsForMaterials(order, playModel);
-
-                    return View(playModel);
-                }
-
-                return RedirectToAction("Identify", new { orderId = id.Value });
+                return _webinarControllerOrchestrator.OnDemand(id.Value, User.Identity);
             }
 
             //TODO: implement response for error condition. Here, no id passed in.
@@ -568,46 +523,7 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                // do something with name and email address
-                var order = _orderManagementService.GetOrderById(identifyModel.idOrder);
-
-                if (!ReferenceEquals(null, order))
-                {
-
-                    JObject existingJObject = null;
-
-                    string comments = string.Empty;
-
-
-                    if (!ReferenceEquals(null, order.AdminComments))
-                    {
-                        comments = order.AdminComments.Trim();
-                    }
-
-                    var newJson = new JProperty(string.Concat("PostEventAccessByAnonUser-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
-                        new JObject(
-                            new JProperty("Name", identifyModel.FullName),
-                            new JProperty("Email", identifyModel.Email)
-                            ));
-
-                    if (string.IsNullOrWhiteSpace(comments))
-                    {
-                        existingJObject = new JObject(newJson);
-                    }
-                    else
-                    {
-                        existingJObject = JObject.Parse(comments);
-                        existingJObject.Add(newJson);
-                    }
-
-                    order.AdminComments = existingJObject.ToString(Formatting.None);
-
-                    _orderManagementService.SaveChanges();
-
-                    _stateService.SetValue(WebUiConstants.AnonUserIdentified, true);
-
-                    return RedirectToAction("OnDemand", new { id = identifyModel.idOrder });
-                }
+                return _webinarControllerOrchestrator.Identify(identifyModel);
             }
 
             return View(identifyModel);
@@ -1432,50 +1348,24 @@ namespace CUWebinars.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult UpdateWebinarFiles(WebinarFilesEditModel webinarFilesEditModel)
         {
-            /*
-                This is a batch update operation. The WebinarFiles collection contains the webinar files to be updated. 
-                The three possibilities are updated, deleted and created. (Even if a file was unchanged at the client, it will be treated as updated.)
-                    * If the idWebinar in the WebinarFiles is a positive number and does not end with -D, it is updated
-                    * If the idWebinar in the WebinarFiles is 0, and does not end with -ND, it has been created (suffix of 'N' appended at client deserializes to 0)
-                    * If the fileDesc in the WebinarFile ends with -D, it has been marked for deletion.             
-             */
-            var filesForThisEvent = _webinarManagementService.GetWebinarFilesPerWebinar(webinarFilesEditModel.idWebinar);
-            try
+            if (ModelState.IsValid)
             {
-                var deletedFiles = webinarFilesEditModel.WebinarFiles.Where(f => f.fileDesc.EndsWith("-D")).ToList();
-                var newFiles =
-                    webinarFilesEditModel.WebinarFiles.Where(f => f.idWebinarFile == 0
-                        && !f.fileDesc.EndsWith("-ND")
-                        && f.fileLocation != filesForThisEvent.Select(wf => wf.fileLocation).ToString())
-                        .ToList();
-                var updatedFiles =
-                    webinarFilesEditModel.WebinarFiles.Where(f => f.idWebinarFile > 0 && !f.fileDesc.EndsWith("-D"))
-                        .ToList();
-
-                foreach (var webinarFile in newFiles)
+                try
                 {
-                    webinarFile.fileLocation = Regex.Replace(webinarFile.fileLocation, @"\s+", "");
-                    var checkThatNewFilesExist = CheckThatFilesExists(webinarFile);
-                    if (!checkThatNewFilesExist)
-                    {
-                        return Json(new { Result = webinarFile + "does not exist." });
-                    }
+                    string message;
+
+                    if (_webinarControllerOrchestrator.UpdateWebinarFiles(webinarFilesEditModel, out message))
+                        return Json(new {Result = WebUiConstants.Success});
+
+                    return Json(new { Result = message });
                 }
-
-                _webinarManagementService.AddWebinarFiles(newFiles);
-                _webinarManagementService.DeleteWebinarFiles(deletedFiles);
-                _webinarManagementService.UpdateWebinarFiles(updatedFiles);
-
-                return Json(new { Result = WebUiConstants.Success });
+                catch (Exception)
+                {
+                    ModelState.AddModelError(string.Empty,
+                        "There was a problem with the update operation. Please consult with the system administrator to resolve the issue."
+                        );
+                }
             }
-            catch (Exception exception)
-            {
-                _logger.ErrorException(
-                    string.Format("UpdateWebinarFiles| UpdateWebinarFiles failed {0}", exception.Message), exception);
-                ModelState.AddModelError(string.Empty,
-                    "There was a problem with the update operation. Please consult with the system administrator to resolve the issue.");
-            }
-
             return this.ModelStateJson(ModelState);
         }
 
@@ -1502,73 +1392,6 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
-        private class MyClient : WebClient
-        {
-            public bool HeadOnly { get; set; }
-
-            protected override WebRequest GetWebRequest(Uri address)
-            {
-                WebRequest req = base.GetWebRequest(address);
-                if (HeadOnly && req.Method == "GET")
-                {
-                    req.Method = "HEAD";
-                }
-                return req;
-            }
-        }
-
-        private bool CheckThatFilesExists(WebinarFile newFile)
-        {
-            var handoutRepo = "http://ttsmedia.ttstrain.com/";
-            //http://stackoverflow.com/questions/153451/how-to-check-if-system-net-webclient-downloaddata-is-downloading-a-binary-file#156750
-
-            using (MyClient client = new MyClient())
-            {
-                client.HeadOnly = true;
-                string uri = handoutRepo + newFile.fileLocation;
-                byte[] body = client.DownloadData(uri); // note should be 0-length
-                string type = client.ResponseHeaders["content-type"];
-                client.HeadOnly = false;
-                //
-                //there's probably a better way to test that the file exists
-                if (type.Contains(@"/"))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-
-            }
-        }
-
-        private bool CheckThatRecordingExists(string checkFile)
-        {
-            var handoutRepo = "http://ttsmedia.ttstrain.com/";
-            //http://stackoverflow.com/questions/153451/how-to-check-if-system-net-webclient-downloaddata-is-downloading-a-binary-file#156750
-
-            using (MyClient client = new MyClient())
-            {
-                client.HeadOnly = true;
-                string uri = handoutRepo + checkFile;
-                byte[] body = client.DownloadData(uri); // note should be 0-length
-                string type = client.ResponseHeaders["content-type"];
-                client.HeadOnly = false;
-                //
-                //there's probably a better way to test that the file exists
-                if (type.Contains(@"/"))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-
-            }
-        }
-
         public ActionResult ClickToJoin(string joinCode)
         {
             var webinar = _orderManagementService.GetWebinarByJoinCode(joinCode);
@@ -1580,137 +1403,49 @@ namespace CUWebinars.Web.Controllers
                 Webinar = webinar
             };
 
-            if (_stateService.HasValue(WebinarFromCode))
-                _stateService.ClearValue(WebinarFromCode);
-            _stateService.SetValue(WebinarFromCode, webinar);
+            if (_stateService.HasValue(WebUiConstants.WebinarFromCode))
+                _stateService.ClearValue(WebUiConstants.WebinarFromCode);
+            _stateService.SetValue(WebUiConstants.WebinarFromCode, webinar);
 
             return View(clickToJoinViewModel);
         }
 
         public ActionResult OpenMeeting(string joinCode)
         {
-            string webinarUrl = string.Empty;
-            Webinar webinar = null;
-
-            if (_stateService.HasValue(WebinarFromCode))
+            try
             {
-                webinar = _stateService.GetValue<Webinar>(WebinarFromCode);
-                _stateService.ClearValue(WebinarFromCode);
+                // It is assumed that the url will always be in the database by now. Hance, no special message/handling for an empty string.
+                string webinarUrl = _webinarControllerOrchestrator.OpenMeeting(joinCode, User.Identity);
 
-                var orderRow = webinar.OrderRows.SingleOrDefault(or => or.TtsJoinUrl == joinCode);
-
-
-                if (!ReferenceEquals(null, orderRow))
-                {
-
-                    if (User.Identity.IsAuthenticated && !ReferenceEquals(null, orderRow.JoinURL)) // JoinURL will be null for impromtu user
-                    {
-
-                        webinarUrl = orderRow.JoinURL; // fully qualified authorative webinar-access link from Citrix.
-                    }
-                    else
-                    {
-                        // non-individualized version of webinar-access link from Citrix.
-                        webinarUrl = webinar.CitrixRegisterUrl;
-                    }
-                }
-
+                return new RedirectResult(webinarUrl);
             }
-            return new RedirectResult(webinarUrl);
+            catch (Exception exception)
+            {
+                _logger.ErrorException(string.Format("OpenMeeting | Session {0}", _appHelper.GetUserAuditInfo()), exception);
+                throw;
+            }
         }
 
         public ActionResult UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel)
         {
-            Webinar webinar = _webinarManagementService.GetWebinar(webinarDetailsViewModel.Webinar.idWebinar);
-
-            try
+            if (ModelState.IsValid)
             {
-                var checkThatNewFilesExist = CheckThatRecordingExists(webinarDetailsViewModel.Webinar.RecordingUrl);
-
-                if (!checkThatNewFilesExist)
-                {
-                    return Json(new { result = webinarDetailsViewModel.Webinar.RecordingUrl + " does not exist." });
-                }
-
-                var ordersForWebinar = _orderManagementService.GetOrdersForWebinar(webinar.idWebinar);
-
-                AddClaimForPostEventMaterials(ordersForWebinar);
-
-                webinar.RecordingUrl = webinarDetailsViewModel.Webinar.RecordingUrl;
-
-                webinar.Status = WebinarStatus.Recorded;
-
-                //var sendRecording = SendRecordingPosted();
-
-                _webinarManagementService.UpdateWebinar(webinar);
-
-                _orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
-
-                return Json(new { result = WebUiConstants.Success });
-            }
-            catch (Exception exception)
-            {
-                _logger.ErrorException(
-                    string.Format("UpdateWebinarRecording| UpdateWebinarRecording failed {0} on idWebinar: {1}", exception.Message, webinar.idWebinar), exception);
-                ModelState.AddModelError(string.Empty,
-                    "There was a problem with the update operation. Please consult with the system administrator to resolve the issue.");
-            }
-
-            return this.ModelStateJson(ModelState);
-        }
-
-        private void AddClaimForPostEventMaterials(IEnumerable<Order> orders)
-        {
-            foreach (var order in orders)
-            {
-                var userAccountOfOrderer = _membershipService.GetUserAccountByEmail(
-                    _globalConfig.Tenant,
-                    order.WebUser.email
-                    );
-
-                var expiryDate = GetPostEventMaterialsAccessExpiry(order);
-
                 try
                 {
-                    var onDemandCode = RandomHelpers.GetUniqueCode(8);
+                    string message;
 
-                    var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
-                    var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, expiryDate.ToString("yyyy-MM-dd"));
-                    var obfuscationStringProperty = new JProperty(JsonPropertyKeys.ObfuscationString, onDemandCode);
+                    if (_webinarControllerOrchestrator.UpdateWebinarRecording(webinarDetailsViewModel, out message))
+                        return Json(new { Result = WebUiConstants.Success });
 
-                    var claimValue = new JObject(
-                        orderIdProperty,
-                        expiryDateProperty,
-                        obfuscationStringProperty
-                        );
-
-                    _membershipService.AddClaim(
-                        userAccountOfOrderer, ClaimTypes.DisplayPostEventMaterials, claimValue.ToString(Formatting.None)
-                        );
-
-                    _logger.Info("Claim added for " + order.idOrder);
-
+                    return Json(new {Result = message});
                 }
                 catch (Exception)
                 {
-                    _logger.Error(string.Format("AddClaimForPostEventMaterials| MR record not found {0}", order.BillingEmail));
+                    ModelState.AddModelError(string.Empty,
+                        "There was a problem with the update operation. Please consult with the system administrator to resolve the issue.");
                 }
             }
-        }
-
-        private DateTime GetPostEventMaterialsAccessExpiry(Order order)
-        {
-            if (order == null) throw new ArgumentNullException("order");
-
-            var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-            // let exception be thrown if there is not a single 
-
-            var regType = _orderManagementService.GetRegTypeOfOrderRow(orderRow.idRegType);
-
-            if (regType.ShowRecordingNotifications.Equals("yes", StringComparison.OrdinalIgnoreCase))
-                return DateTime.Today.AddMonths(6);
-
-            return DateTime.Today.AddDays(5);
+            return this.ModelStateJson(ModelState);
         }
     }
 }

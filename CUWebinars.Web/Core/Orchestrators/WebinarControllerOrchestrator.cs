@@ -2,21 +2,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using CUWebinars.Business.AccountService;
+using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Infrastructure;
 using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
+using Microsoft.VisualBasic.ApplicationServices;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using WebGrease.Css.Extensions;
+using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
 namespace CUWebinars.Web.Core.Orchestrators
 {
@@ -72,6 +81,154 @@ namespace CUWebinars.Web.Core.Orchestrators
         public Webinar GetWebinar(int idWebinar)
         {
             return _webinarManagementService.GetWebinar(idWebinar);
+        }
+
+        public ActionResult Identify(IdentifyModel identifyModel)
+        {
+            // do something with name and email address
+            var order = _orderManagementService.GetOrderById(identifyModel.idOrder);
+
+            if (!ReferenceEquals(null, order))
+            {
+
+                JObject existingJObject = null;
+
+                string comments = string.Empty;
+
+
+                if (!ReferenceEquals(null, order.AdminComments))
+                {
+                    comments = order.AdminComments.Trim();
+                }
+
+                var newJson = new JProperty(string.Concat("PostEventAccessByAnonUser-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                    new JObject(
+                        new JProperty("Name", identifyModel.FullName),
+                        new JProperty("Email", identifyModel.Email)
+                        ));
+
+                if (string.IsNullOrWhiteSpace(comments))
+                {
+                    existingJObject = new JObject(newJson);
+                }
+                else
+                {
+                    existingJObject = JObject.Parse(comments);
+                    existingJObject.Add(newJson);
+                }
+
+                order.AdminComments = existingJObject.ToString(Formatting.None);
+
+                _orderManagementService.SaveChanges();
+
+                _stateService.SetValue(WebUiConstants.AnonUserIdentified, true);
+
+                return new RedirectToRouteResult(new RouteValueDictionary(new { action = "OnDemand", controller = "Webinar", id = identifyModel.idOrder }));
+            }
+
+            return new ViewResult { ViewName = "Identify", ViewData = { Model = identifyModel } }; 
+        }
+
+        public ActionResult OnDemand(int id, IIdentity userIdentity)
+        {
+            var claimsIdentityOfAuthenticatedUser = (ClaimsIdentity) userIdentity;
+
+            var order = _orderManagementService.GetOrderById(id);
+
+            var webinar =
+                _webinarManagementService.GetWebinar(order.OrderRows.SingleOrDefault(s => s.RowStatus == OrderRowStatus.Active).idWebinar);
+
+            var playModel = new OnDemandPlaybackModel
+            {
+                Presenter = webinar.Presenter,
+                Webinar = webinar
+            };
+
+            var viewResult = new ViewResult { ViewName = "OnDemand" };
+            viewResult.ViewData.Model = playModel;
+
+
+            if (claimsIdentityOfAuthenticatedUser.IsAuthenticated)
+            {
+                if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == ClaimTypes.Admin))
+                {
+                    return new RedirectToRouteResult(new RouteValueDictionary(new { action = "Index", controller = "Admin"}));
+                }
+
+                ProcessAccessPermissionsForMaterials(order, playModel);
+
+                return viewResult;
+            }
+
+            if (_stateService.HasValue(WebUiConstants.AnonUserIdentified) && _stateService.GetValue<bool>(WebUiConstants.AnonUserIdentified))
+            {
+                ProcessAccessPermissionsForMaterials(order, playModel);
+
+                return viewResult;
+            }
+
+            return new RedirectToRouteResult(new RouteValueDictionary(new { action = "Identify", controller = "Webinar", orderId = id }));
+        }
+
+        private void ProcessAccessPermissionsForMaterials(Order order, OnDemandPlaybackModel playModel)
+        {
+            var webUser = _membershipService.GetWebUserById(order.idUser);
+
+            if (order.idUser == 19)
+            {
+                playModel.AuthorizedToAccessMaterials = true;
+            }
+            else if (webUser != null)
+            {
+                string messageIfFalse;
+
+                if (_membershipService.CheckDisplayPostEventMaterials(
+                    _globalConfig.Tenant,
+                    webUser.email,
+                    out messageIfFalse))
+                {
+                    playModel.AuthorizedToAccessMaterials = true;
+                }
+                else
+                {
+                    playModel.AuthorizedToAccessMaterials = false;
+                    _logger.Error(messageIfFalse);
+                }
+            }
+            else
+            {
+                _logger.Error("No WebUser exists with the Id {0}", order.idUser);
+                //ModelState.AddModelError(string.Empty,
+                //    string.Format("No WebUser exists with the Id {0}", order.idUser));
+            }
+        }
+        public string OpenMeeting(string joinCode, IIdentity userIdentity)
+        {
+            string webinarUrl = string.Empty;
+
+            if (_stateService.HasValue(WebUiConstants.WebinarFromCode))
+            {
+                Webinar webinar = _stateService.GetValue<Webinar>(WebUiConstants.WebinarFromCode);
+                _stateService.ClearValue(WebUiConstants.WebinarFromCode);
+
+                var orderRow = webinar.OrderRows.SingleOrDefault(or => or.TtsJoinUrl == joinCode);
+
+                if (!ReferenceEquals(null, orderRow))
+                {
+
+                    if (userIdentity.IsAuthenticated && !ReferenceEquals(null, orderRow.JoinURL)) // JoinURL will be null for impromtu user
+                    {
+
+                        webinarUrl = orderRow.JoinURL; // fully qualified authorative webinar-access link from Citrix.
+                    }
+                    else
+                    {
+                        // non-individualized version of webinar-access link from Citrix.
+                        webinarUrl = webinar.CitrixRegisterUrl;
+                    }
+                }
+            }
+            return webinarUrl;
         }
 
         public Webinar PopulateWebinarFromViewModel(ConnectionInfoEditModel connectionInfoModel, out bool detailsValid)
@@ -210,6 +367,49 @@ namespace CUWebinars.Web.Core.Orchestrators
             return unionOfResultSets;
         }
 
+        public bool UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel, out string message)
+        {
+            int webinarId = 0;
+            message = string.Empty;
+
+            try
+            {
+                Webinar webinar = _webinarManagementService.GetWebinar(webinarDetailsViewModel.Webinar.idWebinar);
+                webinarId = webinar.idWebinar;
+
+                var checkThatNewFilesExist = CheckThatRecordingExists(webinarDetailsViewModel.Webinar.RecordingUrl);
+
+                if (!checkThatNewFilesExist)
+                {
+                    message = string.Concat(webinarDetailsViewModel.Webinar.RecordingUrl, " does not exist.");
+                    return false;
+                }
+
+                var ordersForWebinar = _orderManagementService.GetOrdersForWebinar(webinar.idWebinar);
+
+                AddClaimForPostEventMaterials(ordersForWebinar);
+
+                webinar.RecordingUrl = webinarDetailsViewModel.Webinar.RecordingUrl;
+
+                webinar.Status = WebinarStatus.Recorded;
+
+                //var sendRecording = SendRecordingPosted();
+
+                _webinarManagementService.UpdateWebinar(webinar);
+
+                _orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
+
+                return true;
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException(
+                    string.Format("UpdateWebinarRecording| UpdateWebinarRecording failed {0} on idWebinar: {1}", exception.Message, webinarId), exception);
+            }
+
+            return false;
+        }
+
         public string SetEventToRecorded(int webinarId)
         {
             var webinar = _webinarManagementService.GetWebinar(webinarId);
@@ -228,6 +428,58 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void UpdateWebinar(Webinar webinar)
         {
             _webinarManagementService.UpdateWebinar(webinar);
+        }
+
+        public bool UpdateWebinarFiles(WebinarFilesEditModel webinarFilesEditModel, out string message)
+        {
+            /*
+                This is a batch update operation. The WebinarFiles collection contains the webinar files to be updated. 
+                The three possibilities are updated, deleted and created. (Even if a file was unchanged at the client, it will be treated as updated.)
+                    * If the idWebinar in the WebinarFiles is a positive number and does not end with -D, it is updated
+                    * If the idWebinar in the WebinarFiles is 0, and does not end with -ND, it has been created (suffix of 'N' appended at client deserializes to 0)
+                    * If the fileDesc in the WebinarFile ends with -D, it has been marked for deletion.             
+             */
+            message = string.Empty;
+
+            try
+            {
+
+                var filesForThisEvent = _webinarManagementService.GetWebinarFilesPerWebinar(webinarFilesEditModel.idWebinar);
+
+                var deletedFiles = webinarFilesEditModel.WebinarFiles.Where(f => f.fileDesc.EndsWith("-D")).ToList();
+                var newFiles =
+                    webinarFilesEditModel.WebinarFiles.Where(f => f.idWebinarFile == 0
+                        && !f.fileDesc.EndsWith("-ND")
+                        && f.fileLocation != filesForThisEvent.Select(wf => wf.fileLocation).ToString())
+                        .ToList();
+                var updatedFiles =
+                    webinarFilesEditModel.WebinarFiles.Where(f => f.idWebinarFile > 0 && !f.fileDesc.EndsWith("-D"))
+                        .ToList();
+
+                foreach (var webinarFile in newFiles)
+                {
+                    webinarFile.fileLocation = Regex.Replace(webinarFile.fileLocation, @"\s+", "");
+                    var checkThatNewFilesExist = CheckThatFilesExists(webinarFile);
+                    if (!checkThatNewFilesExist)
+                    {
+                        message = string.Concat(webinarFile, " does not exist.");
+                        return false;
+                    }
+                }
+
+                _webinarManagementService.AddWebinarFiles(newFiles);
+                _webinarManagementService.DeleteWebinarFiles(deletedFiles);
+                _webinarManagementService.UpdateWebinarFiles(updatedFiles);
+
+                return true;
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException(
+                    string.Format("UpdateWebinarFiles| UpdateWebinarFiles failed {0}", exception.Message), exception);
+            }
+
+            return false;
         }
 
         public AdhocNotificationViewModel BuildAdhocNotificationViewModel(WebinarType webinarType)
@@ -468,6 +720,109 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
 
             _webinarManagementService.UpdateWebinar(webinar);
+        }
+
+        private bool CheckThatRecordingExists(string checkFile)
+        {
+            const string handoutRepo = "http://ttsmedia.ttstrain.com/";
+            //http://stackoverflow.com/questions/153451/how-to-check-if-system-net-webclient-downloaddata-is-downloading-a-binary-file#156750
+
+            using (var client = new HeadOnlyWebClient())
+            {
+                client.HeadOnly = true;
+                string uri = handoutRepo + checkFile;
+                byte[] body = client.DownloadData(uri); // note should be 0-length
+                string type = client.ResponseHeaders["content-type"];
+                client.HeadOnly = false;
+                //
+                //there's probably a better way to test that the file exists
+                if (type.Contains(@"/"))
+                {
+                    return true;
+                }
+                
+                return false;
+            }
+        }
+
+        private DateTime GetPostEventMaterialsAccessExpiry(Order order)
+        {
+            if (order == null) throw new ArgumentNullException("order");
+
+            var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+            // let exception be thrown if there is not a single 
+
+            var regType = _orderManagementService.GetRegTypeOfOrderRow(orderRow.idRegType);
+
+            if (regType.ShowRecordingNotifications.Equals("yes", StringComparison.OrdinalIgnoreCase))
+                return DateTime.Today.AddMonths(6);
+
+            return DateTime.Today.AddDays(5);
+        }
+
+        private void AddClaimForPostEventMaterials(IEnumerable<Order> orders)
+        {
+            foreach (var order in orders)
+            {
+                var userAccountOfOrderer = _membershipService.GetUserAccountByEmail(
+                    _globalConfig.Tenant,
+                    order.WebUser.email
+                    );
+
+                var expiryDate = GetPostEventMaterialsAccessExpiry(order);
+
+                try
+                {
+                    var onDemandCode = RandomHelpers.GetUniqueCode(8);
+
+                    var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
+                    var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, expiryDate.ToString("yyyy-MM-dd"));
+                    var obfuscationStringProperty = new JProperty(JsonPropertyKeys.ObfuscationString, onDemandCode);
+
+                    var claimValue = new JObject(
+                        orderIdProperty,
+                        expiryDateProperty,
+                        obfuscationStringProperty
+                        );
+
+                    _membershipService.AddClaim(
+                        userAccountOfOrderer, ClaimTypes.DisplayPostEventMaterials, claimValue.ToString(Formatting.None)
+                        );
+
+                    _logger.Info("Claim added for " + order.idOrder);
+
+                }
+                catch (Exception)
+                {
+                    _logger.Error(string.Format("AddClaimForPostEventMaterials| MR record not found {0}", order.BillingEmail));
+                }
+            }
+        }
+
+        private bool CheckThatFilesExists(WebinarFile newFile)
+        {
+            var handoutRepo = "http://ttsmedia.ttstrain.com/";
+            //http://stackoverflow.com/questions/153451/how-to-check-if-system-net-webclient-downloaddata-is-downloading-a-binary-file#156750
+
+            using (var client = new HeadOnlyWebClient())
+            {
+                client.HeadOnly = true;
+                string uri = handoutRepo + newFile.fileLocation;
+                byte[] body = client.DownloadData(uri); // note should be 0-length
+                string type = client.ResponseHeaders["content-type"];
+                client.HeadOnly = false;
+                //
+                //there's probably a better way to test that the file exists
+                if (type.Contains(@"/"))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
         }
 
         public void Dispose()

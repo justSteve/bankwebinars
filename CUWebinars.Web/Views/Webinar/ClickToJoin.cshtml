@@ -8,25 +8,34 @@
     <div style="margin-left: 200px;height:310px" id="reset">
 
         <div class="legendImitator">Webinar Details</div>
-
-        <h3>Event Summary</h3>
-        <div class="row">
-            <div class="span2">Title:</div>
-            <div class="span4">@Model.Webinar.Title</div>
-        </div>
-        <div class="row">
-            <div class="span2">Presenter:</div>
-            <div class="span4">@Model.Webinar.Presenter.WebUser.FullName</div>
-        </div>
-        <div class="row">
-            <div class="span2">Date:</div>
-            <div class="span4">@Model.Webinar.Date</div>
-        </div>
-        <div class="row">
-            <div class="span2">Webinar ID:</div>
-            <div class="span4"><a href="@Url.Action("OpenMeeting", "Webinar", new { joinCode = Model.JoinCode })">@Model.RedirectLinkText</a></div>
-        </div>
-
+        
+        @{
+            if (ReferenceEquals(Model.Webinar, null))
+            {
+                <div class="row">
+                    <div class="span4 text text-error">Invalid code. No webinar corresponds to that code.</div>
+                </div>
+            }
+            else
+            {
+                <div class="row">
+                    <div class="span2">Title:</div>
+                    <div class="span4">@Model.Webinar.Title</div>
+                </div>
+                <div class="row">
+                    <div class="span2">Presenter:</div>
+                    <div class="span4">@Model.Webinar.Presenter.WebUser.FullName</div>
+                </div>
+                <div class="row">
+                    <div class="span2">Date:</div>
+                    <div class="span4">@Model.Webinar.Date</div>
+                </div>
+                <div class="row">
+                    <div class="span2">Webinar ID:</div>
+                    <div class="span4"><a href="@Url.Action("OpenMeeting", "Webinar", new { joinCode = Model.JoinCode })">@Model.RedirectLinkText</a></div>
+                </div>
+            }
+        }
     </div>
 </div>
 

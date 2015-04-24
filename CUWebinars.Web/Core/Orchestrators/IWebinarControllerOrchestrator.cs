@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Principal;
+using System.Web.Mvc;
 using CUWebinars.Business.Models;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.ViewModel;
@@ -14,13 +16,16 @@ namespace CUWebinars.Web.Core.Orchestrators
         void CreateWebinarFromViewInput(WebinarEditModel webinarEditModel);
         void FireSendConnectionInfoNotificationEvent(int idWebinar);
         Webinar GetWebinar(int idWebinar);
-
+        ActionResult Identify(IdentifyModel identifyModel);
+        ActionResult OnDemand(int id, IIdentity userIdentity);
+        string OpenMeeting(string joinCode, IIdentity userIdentity);
         Webinar PopulateWebinarFromViewModel(ConnectionInfoEditModel connectionInfoEditModel, out bool detailsValid);
         string PublishStateChange(string stateFromTo, Webinar webinar);
         IEnumerable<Webinar> SearchWebinars(string lastName);
-        //string SetEventToRecorded(int webinarId);
-        void UpdateWebinar(Webinar webinar);
-        void UpdateWebinarFromViewInput(WebinarEditModel webinarEditModel);
         string SetEventToRecorded(int webinarId);
+        void UpdateWebinar(Webinar webinar);
+        bool UpdateWebinarFiles(WebinarFilesEditModel webinarFilesEditModel, out string message);
+        void UpdateWebinarFromViewInput(WebinarEditModel webinarEditModel);
+        bool UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel, out string message);
     }
 }
