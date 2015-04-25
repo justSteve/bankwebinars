@@ -1083,7 +1083,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             } while (retries++ < _globals.RetryCount);
 
             //if still null at this point, we have exceeded the retry limit and assume that something has gone wrong.
-            if (ReferenceEquals(userAccount, null)) throw new Exception("User does not exist in system");
+            if (ReferenceEquals(userAccount, null)) throw new Exception("User does not exist in system: " + email);
 
             if (!userAccount.HasClaim(ClaimTypes.FullName))
             {
@@ -1140,7 +1140,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             var userAccount = _membershipService.GetUserAccountByEmail(_globals.Tenant, email);
 
-            if (ReferenceEquals(userAccount, null)) throw new Exception("User does not exist in system");
+            if (ReferenceEquals(userAccount, null)) throw new Exception("User does not exist in system: " + email);
 
             bool hasAlreadyVerifiedAccount = !userAccount.HasClaim(ClaimTypes.HasNotVerified);
 
