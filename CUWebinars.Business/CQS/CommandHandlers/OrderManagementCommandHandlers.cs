@@ -468,7 +468,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             migratedOrder.Total = command.Total;
 
 
-            string buildMessage = "MigratedOn" + DateTime.UtcNow + string.Format("OrginalTotal: {0}", command.Total);
+            string buildMessage = "MigratedOn: " + DateTime.UtcNow + string.Format(" OrginalTotal: {0}", command.Total);
 
 
             //following copies pattern found at WebinarController | Identify
@@ -486,7 +486,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
             var newJson =
                 new JProperty(
-                    string.Concat("Mirgrated-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                    string.Concat("Migrated-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
                     new JObject(
                         new JProperty("MigratedOrder", command.Affiliate.ttsDomain),
                         new JProperty("Details", buildMessage)
