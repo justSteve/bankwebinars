@@ -10,12 +10,34 @@ namespace CUWebinars.Business.Core.Tracing
         
         public override void Write(string message)
         {
-            _log4NetLogger.Warn(message);
+            ExecuteTraceWrite(message);
         }
 
         public override void WriteLine(string message)
         {
-            _log4NetLogger.Warn(message);
+            ExecuteTraceWrite(message);
+        }
+
+        private void ExecuteTraceWrite(string message)
+        {
+            switch (_tracingLevel)
+            {
+                case "Error":
+                    _log4NetLogger.Error(message);
+                    break;
+                case "Warning":
+                    _log4NetLogger.Warn(message);
+                    break;
+                case "Info":
+                    _log4NetLogger.Info(message);
+                    break;
+                case "Verbose":
+                    _log4NetLogger.Error(message);
+                    break;
+                default:
+                    _log4NetLogger.Warn(message);
+                    break;
+            }
         }
     }
 }
