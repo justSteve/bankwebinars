@@ -78,7 +78,7 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 notificationStorage.Add(SendShippedOrderMsgProperty);
 
-                if (isAdditionalLocation.Any())
+                if (isAdditionalLocation != null && isAdditionalLocation.Any())
                 {
                     string tmpNameStorage = order.FirstName;
 
@@ -116,10 +116,10 @@ namespace CUWebinars.Business.Notification.Handlers
 
                         additionalLocationNotificationMessage.To = additionalLocation.Email;
 
-                        _notificationDelivery.Notify(additionalLocationNotificationMessage);                        
+                        _notificationDelivery.Notify(additionalLocationNotificationMessage);
                     }
                     order.FirstName = tmpNameStorage; // assign name back.
-                    
+
                 }
 
                 order.NotificationStorage = notificationStorage.ToString(Formatting.None);
@@ -130,11 +130,11 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 if (!string.IsNullOrWhiteSpace(order.UserComments))
                 {
-                    var addresses = JObject.Parse(order.UserComments).GetValue(JsonPropertyKeys.CarbonCopy).ToString();
+                    var addresses = JObject.Parse(order.UserComments).GetValue(JsonPropertyKeys.CarbonCopy);
 
                     if (!ReferenceEquals(null, addresses))
                     {
-                        ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(addresses);
+                        ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(addresses.ToString());
                     }
                 }
                 
