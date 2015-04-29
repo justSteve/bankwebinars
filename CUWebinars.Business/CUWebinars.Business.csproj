@@ -135,6 +135,7 @@
     <Compile Include="Core\DataOperations.cs" />
     <Compile Include="Core\Exceptions\UserCreatedMembershipException.cs" />
     <Compile Include="Core\Extensions\CollectionExtensions.cs" />
+    <Compile Include="Core\Extensions\WebinarExtensions.cs" />
     <Compile Include="Core\Helpers\DateTimeHelper.cs" />
     <Compile Include="Core\Helpers\EventHandlerHelpers.cs" />
     <Compile Include="Core\Helpers\GenericHelpers.cs" />

@@ -84,7 +84,7 @@ namespace CUWebinars.Business.Services
         Discount GetDiscountByUser(WebUser currentUser);
         void GetJoinUrl(OrderRow row);
         Discount ApplyDiscountCode(string code, OrderRow row);
-        void GenerateRegistrantKey(Order order, AdditionalLocation nuller);
+        void GenerateRegistrantKey(Order order, AdditionalLocation additionalLocation = null);
         int GetNumberOfOrdersPerWebinar(int id);
         void RemoveAndDeleteAdditionalLocation(AdditionalLocation deletedAdditionalLocation);
         

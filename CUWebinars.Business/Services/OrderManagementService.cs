@@ -2,6 +2,7 @@
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Cache;
 using CUWebinars.Business.Core.Exceptions;
+using CUWebinars.Business.Core.Extensions;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
@@ -989,7 +990,6 @@ namespace CUWebinars.Business.Services
 
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, (int)currentOrder.OrderStatus);
 
-
                 _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
 
                 Clear();
@@ -1108,23 +1108,39 @@ namespace CUWebinars.Business.Services
             return myDiscount;
         }
 
-        public void GenerateRegistrantKey(Order order, AdditionalLocation additionalLocation)
+        public void GenerateRegistrantKey(Order order, AdditionalLocation additionalLocation = null)
         {
+            if (order == null) throw new ArgumentNullException("order");
+
             var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             var regKeyResponse = string.Empty;
 
-            if (string.IsNullOrWhiteSpace(additionalLocation.Email))
+            Debug.Assert(!string.IsNullOrWhiteSpace(row.JoinURL), "JoinURL should always be null or empty before this method is called as a pre-condition.");
+            
+            if (additionalLocation == null)
             {
-                if (row.JoinURL == null && row.RegistrationType.ShowLiveNotifications.TrimEnd().Equals("Yes", StringComparison.OrdinalIgnoreCase))
+                // This branch gets key for main registrant - BillingEmail on the Order
+                if (row.RegistrationType.ShowLiveNotifications.TrimEnd().Equals("Yes", StringComparison.OrdinalIgnoreCase))
                 {
-                    regKeyResponse = CreateRegistrantKey(order.FirstName, order.LastName
-                        , order.BillingEmail, row.Webinar.idWebinar, row.Webinar.WebinarKey);
+                    regKeyResponse = CreateRegistrantKey(
+                        order.FirstName, 
+                        order.LastName, 
+                        order.BillingEmail, 
+                        row.Webinar.idWebinar, 
+                        row.Webinar.WebinarKey
+                        );
                 }
             }
             else
             {
-                regKeyResponse = CreateRegistrantKey("c/o " + order.FirstName,//DomainConstants.CareOfString,
-                    order.LastName, additionalLocation.Email, row.Webinar.idWebinar, row.Webinar.WebinarKey);
+                // This branch gets key for main Additional Locations
+                regKeyResponse = CreateRegistrantKey(
+                    "c/o " + order.FirstName,
+                    order.LastName, 
+                    additionalLocation.Email, 
+                    row.Webinar.idWebinar, 
+                    row.Webinar.WebinarKey
+                    );
             }
 
             if (string.IsNullOrWhiteSpace(regKeyResponse))
@@ -1148,7 +1164,8 @@ namespace CUWebinars.Business.Services
 
                     var registrantKey = parsedJsonObject[DomainConstants.RegistrantKey].ToString();
                     var joinUrl = parsedJsonObject[DomainConstants.JoinUrl].ToString();
-                    if (additionalLocation.Email == null)
+
+                    if (additionalLocation == null)
                     {
                         row.RegistrantKey = registrantKey;
                         row.JoinURL = joinUrl;
@@ -1160,10 +1177,10 @@ namespace CUWebinars.Business.Services
                     }
 
 
-                    // Next variable not needed here. Just used b/c ref parameter required below.
+                    // Next variable not needed here. Just used b/c ref parameter in next method-call.
                     var pricesAndDiscounts = default(PricesAndDiscounts);
 
-                    // Return result is actually not required. Do nothing with it, unless want to log something.
+                    // Return result is actually not required. Do nothing with it, unless want to log something. Context SaveChanges is called.
                     var resultOfUpdate = UpdateOrderChanges(order, ref pricesAndDiscounts);
                 }
             }
@@ -1199,7 +1216,7 @@ namespace CUWebinars.Business.Services
         {
             Order order = row.Order;
 
-            if (row.Webinar.Status != WebinarStatus.Active && row.Webinar.Status != WebinarStatus.InProgress)
+            if (row.Webinar.Status != WebinarStatus.Active && row.Webinar.Status != WebinarStatus.InProgress || row.Webinar.CitrixJoinInfoAvailable())
             {
                 //if not initialized, don't hit Citrix
                 return;
@@ -1477,6 +1494,7 @@ namespace CUWebinars.Business.Services
             }
 
             _logger.Info("CreateRegistrantKey starts: " + billingEmail + ", webinarKey = " + webinarKey + ", OrgKey = " + orgKey + ", oauth_token=" + accessToken);
+
             try
             {
                 HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse();

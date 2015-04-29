@@ -964,9 +964,12 @@ namespace CUWebinars.Web.Controllers
                     }
                     else
                     {
+                        var watch = Stopwatch.StartNew();
                         if (_accountControllerOrchestrator.ChangePasswordFromResetKey(model.Key, model.Password))
                         {
                             model.ChangePasswordSucceeded = true;
+                            watch.Stop();
+                            Trace.TraceInformation("Reset total in seconds: {0}", watch.Elapsed.Seconds);
                             return Json(new { Result = "Success" });
                         }
 
