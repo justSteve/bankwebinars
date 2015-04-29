@@ -181,6 +181,10 @@
     <Compile Include="Models\Mapping\OptionMap.cs" />
     <Compile Include="Models\Mapping\QuestionMap.cs" />
     <Compile Include="Models\Mapping\QuestionWithOptionMap.cs" />
+    <Compile Include="Models\Mapping\QuizMap.cs" />
+    <Compile Include="Models\Mapping\QuizUserAnswerMap.cs" />
+    <Compile Include="Models\Mapping\QuizUserOrderMap.cs" />
+    <Compile Include="Models\Mapping\QuizWithQuestionMap.cs" />
     <Compile Include="Models\Mapping\TimeLimitMap.cs" />
     <Compile Include="Models\Mapping\WebUserDiscountXrefMap.cs" />
     <Compile Include="Models\Option.cs" />

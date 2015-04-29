@@ -10,5 +10,6 @@ namespace CUWebinars.Business.Models
         public int QuestionNumber { get; set; }
 
         public Quiz Quiz { get; set; }
+        public Question Question { get; set; }
     }
 }

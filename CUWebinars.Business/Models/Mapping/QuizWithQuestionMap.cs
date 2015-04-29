@@ -2,26 +2,25 @@
 
 namespace CUWebinars.Business.Models.Mapping
 {
-    public class QuestionWithOptionMap : EntityTypeConfiguration<QuestionWithOption>
+    public class QuizWithQuestionMap : EntityTypeConfiguration<QuizWithQuestion>
     {
-        public QuestionWithOptionMap()
+        public QuizWithQuestionMap()
         {
             // Primary Key
             HasKey(t => t.Id);
 
             // Properties
             Property(t => t.idQuestion).IsRequired();
-            Property(t => t.idOption).IsRequired();
-            Property(t => t.CorrectAnswer).IsRequired();
-            Property(t => t.Letter).IsRequired();
+            Property(t => t.idQuiz).IsRequired();
+            Property(t => t.QuestionNumber).IsRequired();
 
             // Table & Column Mappings
-            ToTable("QuestionWithOption");
+            ToTable("QuizWithQuestion");
 
             // Relationships
-            HasRequired(t => t.Option)
+            HasRequired(t => t.Quiz)
                 .WithMany()
-                .HasForeignKey(t => t.idOption);
+                .HasForeignKey(t => t.idQuiz);
 
             HasRequired(t => t.Question)
                 .WithMany()
