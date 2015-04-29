@@ -1,6 +1,7 @@
 ﻿using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core.Exceptions;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
@@ -473,34 +474,10 @@ namespace CUWebinars.Web.Controllers
             try
             {
                 //following copies pattern found at WebinarController | Identify
-                JObject existingJObject = null;
-
-                string comments = string.Empty;
-
-
-                if (!ReferenceEquals(null, order.UserComments))
-                {
-                    comments = order.UserComments.Trim();
-                }
-
-                var newJson = new JProperty(string.Concat("CarbonCopy"),
-                    addresses);
-
-                if (string.IsNullOrWhiteSpace(comments))
-                {
-                    existingJObject = new JObject(newJson);
-                }
-                else
-                {
-                    existingJObject = JObject.Parse(comments);
-                    existingJObject.Add(newJson);
-                }
-
-                order.UserComments = existingJObject.ToString(Formatting.None);
+                var newJson = new JProperty(string.Concat(JsonPropertyKeys.CarbonCopy),addresses);
+                order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, newJson);
 
                 _orderManagementService.SaveChanges();
-
-
             }
             catch (Exception)
             {

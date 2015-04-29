@@ -139,6 +139,7 @@
     <Compile Include="Core\Helpers\DateTimeHelper.cs" />
     <Compile Include="Core\Helpers\EventHandlerHelpers.cs" />
     <Compile Include="Core\Helpers\GenericHelpers.cs" />
+    <Compile Include="Core\Helpers\JsonHelpers.cs" />
     <Compile Include="Core\Helpers\RandomHelpers.cs" />
     <Compile Include="Core\Helpers\ValidationHelper.cs" />
     <Compile Include="Core\MigrationOperations.cs" />
