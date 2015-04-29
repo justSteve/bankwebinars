@@ -856,6 +856,7 @@
     <Content Include="Views\Webinar\ClickToJoin.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\ShowUpgradeCost.cshtml" />
     <Content Include="Views\Admin\GenerateClickToJoin.cshtml" />
+    <Content Include="Views\Admin\AddQuiz.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>

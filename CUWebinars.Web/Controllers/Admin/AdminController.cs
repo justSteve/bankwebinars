@@ -65,6 +65,11 @@ namespace CUWebinars.Web.Controllers.Admin
             return View("~/Views/Admin/Home/Index.cshtml");
         }
 
+        public ActionResult AddQuiz()
+        {
+            return View();
+        }
+
         //
         // GET: /Admin/
         public AdminController(
