@@ -141,7 +141,7 @@ namespace CUWebinars.Business.AccountService
             return false;
         }
 
-        public bool CheckDisplayPostEventMaterials(string tenant, string email, out string messageIfFalse)
+        public string CheckDisplayPostEventMaterials(string tenant, string email, out string messageIfFalse)
         {
             messageIfFalse = string.Empty;
             var userAccount = GetUserAccountByEmail(tenant, email);
@@ -158,7 +158,7 @@ namespace CUWebinars.Business.AccountService
 
                     if (DateTime.TryParse(expiryAsString, out expiryDate))
                     {
-                        return DateTime.Today <= expiryDate;
+                        return claimValue;
                     }
                 }
                 else
@@ -171,8 +171,9 @@ namespace CUWebinars.Business.AccountService
                 messageIfFalse = string.Format("No UserAccount exists with the email {0}", email);
             }
 
-            return false;
+            return "false";
         }
+
 
         public void CleanUser(string tenant, string email, string newPassword)
         {

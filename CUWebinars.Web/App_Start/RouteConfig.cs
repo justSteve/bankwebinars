@@ -18,6 +18,13 @@ namespace CUWebinars.Web.App_Start
             );
 
             routes.MapRoute(
+                "OnDemand",
+                url: "Webinar/Ondemand/{onDemandCode}",
+                defaults: new { controller = "Webinar", action = "OnDemand" }
+                //,constraints: new { id = @"\d+" }
+            );
+
+            routes.MapRoute(
                 "ClickToJoin",
                 url: "j/{joinCode}",
                 defaults: new { controller = "Webinar", action = "ClickToJoin", joinCode = string.Empty }
