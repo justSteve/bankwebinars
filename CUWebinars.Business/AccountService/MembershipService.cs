@@ -63,7 +63,7 @@ namespace CUWebinars.Business.AccountService
             var webUser = _webUserRepository.GetWebUserByEmail(email);
             return webUser;
         }
-        
+
         public WebUser GetUserByEmailLoadedWithOrdersData(string email)
         {
             if (email == null) throw new ArgumentNullException("email");
@@ -123,7 +123,7 @@ namespace CUWebinars.Business.AccountService
         {
             if (domain == null) throw new ArgumentNullException("domain");
             return _institutionRepository.GetByDomain(domain);
-            
+
         }
 
         public bool HasPassword(string tenant, string emailAddress)
@@ -141,38 +141,38 @@ namespace CUWebinars.Business.AccountService
             return false;
         }
 
-        public string CheckDisplayPostEventMaterials(string tenant, string email, out string messageIfFalse)
-        {
-            messageIfFalse = string.Empty;
-            var userAccount = GetUserAccountByEmail(tenant, email);
+        //public string CheckDisplayPostEventMaterials(string tenant, string email, out string messageIfFalse)
+        //{
+        //    messageIfFalse = string.Empty;
+        //    var userAccount = GetUserAccountByEmail(tenant, email);
 
-            if (userAccount != null)
-            {
-                var claimValue = GetDisplayPostEventMaterialsClaimValue(userAccount);
+        //    if (userAccount != null)
+        //    {
+        //        var claimValue = GetDisplayPostEventMaterialsClaimValue(userAccount);
 
-                if (!string.IsNullOrWhiteSpace(claimValue))
-                {
-                    var expiryAsString = claimValue.Substring(claimValue.IndexOf(":", StringComparison.Ordinal) + 1);
+        //        if (!string.IsNullOrWhiteSpace(claimValue))
+        //        {
+        //            var expiryAsString = claimValue.Substring(claimValue.IndexOf(":", StringComparison.Ordinal) + 1);
 
-                    DateTime expiryDate;
+        //            DateTime expiryDate;
 
-                    if (DateTime.TryParse(expiryAsString, out expiryDate))
-                    {
-                        return claimValue;
-                    }
-                }
-                else
-                {
-                    messageIfFalse = string.Format("User with email {0} is not authorised to access materials", email);
-                }
-            }
-            else
-            {
-                messageIfFalse = string.Format("No UserAccount exists with the email {0}", email);
-            }
+        //            if (DateTime.TryParse(expiryAsString, out expiryDate))
+        //            {
+        //                return claimValue;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            messageIfFalse = string.Format("User with email {0} is not authorised to access materials", email);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        messageIfFalse = string.Format("No UserAccount exists with the email {0}", email);
+        //    }
 
-            return "false";
-        }
+        //    return "false";
+        //}
 
 
         public void CleanUser(string tenant, string email, string newPassword)
@@ -206,7 +206,7 @@ namespace CUWebinars.Business.AccountService
             var account = _userAccountService.CreateAccount(tenant, userName, password, email);
             _userAccountService.AddClaim(account.ID, ClaimTypes.FullName, string.Format("{0} {1}", firstName, lastName));
             _userAccountService.AddClaim(account.ID, System.Security.Claims.ClaimTypes.Role, "WebUser");
-            
+
             return account;
         }
 
@@ -218,7 +218,7 @@ namespace CUWebinars.Business.AccountService
         {
             var account = _userAccountService.CreateAccount(tenant, string.Empty, password, email);
             _userAccountService.AddClaim(account.ID, System.Security.Claims.ClaimTypes.Role, "WebUser");
-            
+
             return account;
         }
 
@@ -349,7 +349,7 @@ namespace CUWebinars.Business.AccountService
                 InstitutionType = institutionType,
                 domainName = new string(email.SkipWhile(ltr => ltr != '@').Skip(1).ToArray())
             };
-            
+
             _institutionRepository.Add(newInstitution);
 
             return newInstitution;
@@ -485,7 +485,7 @@ namespace CUWebinars.Business.AccountService
                     || !(lastName.Equals(webUser.LastName, StringComparison.OrdinalIgnoreCase))
                     )
                 {
-                    billingAddress.Name =  string.Format("{0} {1}", firstName, lastName);
+                    billingAddress.Name = string.Format("{0} {1}", firstName, lastName);
                     _userAccountService.RemoveClaim(_userAccountService.GetByEmail(tenant, webUser.email).ID, ClaimTypes.FullName);
                     _userAccountService.AddClaim(_userAccountService.GetByEmail(tenant, webUser.email).ID, ClaimTypes.FullName, string.Format("{0} {1}", firstName, lastName));
 
@@ -595,7 +595,7 @@ namespace CUWebinars.Business.AccountService
                 shippingAddressFromDb.Phone = shippingAddress.Phone;
                 shippingAddressFromDb.Zip = shippingAddress.Zip;
                 shippingAddressFromDb.Country = shippingAddress.Country;
-            
+
                 _webUserRepository.UpdateAddresses(shippingAddressFromDb);
 
                 webUser.Addresses.Clear();
@@ -608,7 +608,7 @@ namespace CUWebinars.Business.AccountService
                 webUser.generalComments = comments.Length < 1000 ? comments : comments.Substring(0, 1000);
 
 
-            
+
                 _webUserRepository.Update(webUser);
             }
             catch (Exception exception)
@@ -622,16 +622,19 @@ namespace CUWebinars.Business.AccountService
             _webUserRepository.Update(webUser);
         }
 
-        public string GetDisplayPostEventMaterialsClaimValue(string tenant, string email)
+        public string GetDisplayPostEventMaterialsClaimValue(string tenant, string email, int idOrder, string onDemandCode)
         {
-            return GetDisplayPostEventMaterialsClaimValue(GetUserAccountByEmail(tenant, email));
+            return GetDisplayPostEventMaterialsClaimValue(GetUserAccountByEmail(tenant, email), idOrder, onDemandCode);
         }
 
-        public string GetDisplayPostEventMaterialsClaimValue(UserAccount userAccount)
+
+        public string GetDisplayPostEventMaterialsClaimValue(UserAccount userAccount, int idOrder, string onDemandCode)
         {
             if (userAccount == null) throw new ArgumentNullException("userAccount");
-            
-            var claim = userAccount.Claims.SingleOrDefault(c => c.Type == ClaimTypes.DisplayPostEventMaterials);
+
+            var claim = userAccount.Claims.FirstOrDefault(c => c.Type == ClaimTypes.DisplayPostEventMaterials
+                &&  c.Value.Contains(idOrder.ToString()) && c.Value.Contains(onDemandCode)
+                );
 
             return !ReferenceEquals(null, claim) ? claim.Value : null;
         }

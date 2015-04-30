@@ -125,7 +125,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 _stateService.SetValue(WebUiConstants.AnonUserIdentified, true);
 
-                return new RedirectToRouteResult(new RouteValueDictionary(new { action = "OnDemand", controller = "Webinar", id = idOrder }));
+                return new RedirectToRouteResult(new RouteValueDictionary(new { action = "OnDemand", controller = "Webinar", onDemandCode = identifyModel.OnDemandCode }));
             }
 
             return new ViewResult { ViewName = "Identify", ViewData = { Model = identifyModel } };
@@ -143,7 +143,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             var playModel = new OnDemandPlaybackModel
             {
                 Presenter = webinar.Presenter,
-                Webinar = webinar
+                Webinar = webinar,
+                idOrder = order.idOrder,
+                OnDemandCode = onDemandCode
             };
 
             var viewResult = new ViewResult { ViewName = "OnDemand" };
@@ -169,10 +171,10 @@ namespace CUWebinars.Web.Core.Orchestrators
                 return viewResult;
             }
 
-            return new RedirectToRouteResult(new RouteValueDictionary(new { action = "Identify", controller = "Webinar", onDemandCode = id.ToString() +"-"+ onDemandCode }));
+            return new RedirectToRouteResult(new RouteValueDictionary(new { action = "Identify", controller = "Webinar", onDemandCode = id.ToString() + "-" + onDemandCode }));
         }
 
-        private void ProcessAccessPermissionsForMaterials(Order order, OnDemandPlaybackModel playModel)
+        private string ProcessAccessPermissionsForMaterials(Order order, OnDemandPlaybackModel playModel)
         {
             var webUser = _membershipService.GetWebUserById(order.idUser);
 
@@ -181,32 +183,37 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 var myClaim = _membershipService.GetDisplayPostEventMaterialsClaimValue(
                     _globalConfig.Tenant,
-                    webUser.email);
+                    webUser.email, playModel.idOrder, playModel.OnDemandCode);
 
                 if (myClaim != null)
                 {
                     playModel.AuthorizedToAccessMaterials = true;
                     //here's a chance for a handy bit of scripting
                     AddJsonCommentToUser(order, "AccessedMaterials:" + webUser.email);
+                    //TODO: Check that the email being logged here is the email provided at the Identify page
+                    //  it is NOT the order's email.
+
                     //what i'm looking for here as an encapsulation of all those bits that have to happen each
                     // time we'd want to add a jsoned comment to any of the levels (admin, affil, user)
                     // 
 
                     // so a call as above would return (paying no attn to quotes for well-formed):
                     //"{"AccessedMaterials":"idOrder:43298,email:steve@ttstrain.com,dated:datetime.Now(),session:getUserSession()"}
-                    
-                    playModel.OnDemandCode = myClaim;
+
                     _logger.Info("AuthorizedToAccessMaterials granted to: " + webUser.email);
+
+                    return myClaim;
                 }
-                else
-                {
-                    playModel.AuthorizedToAccessMaterials = false;
-                    _logger.Warn("AuthorizedToAccessMaterials denied to: " + webUser.email);
-                }
+                playModel.AuthorizedToAccessMaterials = false;
+                _logger.Warn("AuthorizedToAccessMaterials denied to: " + webUser.email);
+
+                return "Not Authorized";
             }
             else
             {
                 _logger.Error("No WebUser exists with the Id {0}", order.idUser);
+
+                return "User Not Found";
                 //ModelState.AddModelError(string.Empty,
                 //    string.Format("No WebUser exists with the Id {0}", order.idUser));
             }
@@ -214,7 +221,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         private void AddJsonCommentToUser(Order order, string s)
         {
-            throw new NotImplementedException();
+            var a = 1;
+            //throw new NotImplementedException();
         }
 
         public string OpenMeeting(string joinCode, IIdentity userIdentity)
@@ -399,6 +407,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     return false;
                 }
 
+
                 var ordersForWebinar = _orderManagementService.GetOrdersForWebinar(webinar.idWebinar);
 
                 AddClaimForPostEventMaterials(ordersForWebinar);
@@ -412,7 +421,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _webinarManagementService.UpdateWebinar(webinar);
 
                 _orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
-
                 return true;
             }
             catch (Exception exception)
@@ -743,19 +751,27 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             using (var client = new HeadOnlyWebClient())
             {
-                client.HeadOnly = true;
-                string uri = handoutRepo + checkFile;
-                byte[] body = client.DownloadData(uri); // note should be 0-length
-                string type = client.ResponseHeaders["content-type"];
-                client.HeadOnly = false;
-                //
-                //there's probably a better way to test that the file exists
-                if (type.Contains(@"/"))
+                try
                 {
-                    return true;
-                }
 
+                    client.HeadOnly = true;
+                    string uri = handoutRepo + checkFile;
+                    byte[] body = client.DownloadData(uri); // note should be 0-length
+                    string type = client.ResponseHeaders["content-type"];
+                    client.HeadOnly = false;
+                    //
+                    //there's probably a better way to test that the file exists
+                    if (type.Contains(@"/"))
+                    {
+                        return true;
+                    }
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
                 return false;
+
             }
         }
 

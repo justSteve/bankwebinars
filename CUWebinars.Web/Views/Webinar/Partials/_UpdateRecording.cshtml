@@ -27,7 +27,7 @@
 </style>
 @{
     var buttonCaption = "Set Recording URL";
-    if (Model.Webinar.RecordingUrl != "")
+    if (Model.Webinar.RecordingUrl != "" && Model.Webinar.RecordingUrl != null)
     {
         buttonCaption = Model.Webinar.RecordingUrl;
     }

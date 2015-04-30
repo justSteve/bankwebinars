@@ -461,14 +461,19 @@ namespace CUWebinars.Web.Controllers
         {
             int _id;
             var isNum = Int32.TryParse(onDemandCode.Split('-')[0], out _id);
+            string hasVal = null;
+            if (onDemandCode.Split('-').Length > 1)
+            {
+                hasVal = onDemandCode.Split('-')[1];
+            }
             var order = _orderManagementService.GetOrderById(_id);
 
-            if (order != null && onDemandCode.Split('-')[1] != null)
+            if (order != null && hasVal != null)
             {
-                return _webinarControllerOrchestrator.OnDemand(_id, onDemandCode.Split('-')[1], User.Identity);
+                return _webinarControllerOrchestrator.OnDemand(_id, hasVal, User.Identity);
             }
 
-            ModelState.AddModelError(string.Empty, "Order Not Found");
+            ModelState.AddModelError(string.Empty, "Invalid Code");
             return View();
         }
 //resharper says this method is non-used

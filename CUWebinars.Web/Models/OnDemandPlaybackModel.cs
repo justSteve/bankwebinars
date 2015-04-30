@@ -9,6 +9,7 @@ namespace CUWebinars.Web.Models
         public bool AuthorizedToAccessMaterials { get; set; }
         public Presenter Presenter { get; set; }
         public Webinar Webinar { get; set; }
+        public int idOrder { get; set; }
         public String OnDemandCode { get; set; }
         public IEnumerable<string> WebinarFiles { get; set; }
     }
