@@ -125,6 +125,7 @@ namespace CUWebinars.Web.App_Start
             kernel.Bind<IInstitutionRepository>().To<InstitutionRepository>().InRequestScope();
             kernel.Bind<IUserAccountRepository>().To<DefaultUserAccountRepository>().InRequestScope();
             kernel.Bind<IRegTypeRepository>().To<RegTypeRepository>().InRequestScope();
+            kernel.Bind<IQuizRepository>().To<QuizRepository>().InRequestScope();
 
             kernel.Bind<IWebinarManagementService>().ToMethod(ctx =>
             {
@@ -139,6 +140,7 @@ namespace CUWebinars.Web.App_Start
                     new WebUserRepository(sharedContext, loggerForWebinarManagementService),
                     new WebinarRepository(sharedContext),
                     new WebinarFileRepository(sharedContext),
+                    new QuizRepository(sharedContext), 
                     loggerForWebinarManagementService,
                     ctx.Kernel.Get<TtsConfiguration>(),
                     createWebinarValidator,

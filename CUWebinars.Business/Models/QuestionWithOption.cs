@@ -12,7 +12,7 @@ namespace CUWebinars.Business.Models
         public int idQuestion { get; set; }
         public int idOption { get; set; }
         public bool CorrectAnswer { get; set; }
-        public char Letter { get; set; }
+        public string Letter { get; set; }
 
         public Question Question { get; set; }
         public Option Option { get; set; }

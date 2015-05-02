@@ -38,5 +38,6 @@ namespace CUWebinars.Business.Services
         void SynchToLegacy();
         int GetRegTypeByACS(string registrationType, int idWebinar);
         void DeleteWebinarTopicXref(Webinar webinar, int exisingTopicId);
+        void AddQuiz(int selectedWebinar, IEnumerable<Question> questions);
     }
 }

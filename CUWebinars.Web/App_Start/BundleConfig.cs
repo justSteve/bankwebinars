@@ -30,8 +30,8 @@ namespace CUWebinars.Web.App_Start
                         );
 
             bundles.Add(new ScriptBundle("~/bundles/toastr").Include(
-                            "~/Scripts/toastr.js"
-                            ));
+                        "~/Scripts/toastr.js"
+                        ));
 
             bundles.Add(new ScriptBundle("~/bundles/AdditionalLocation").Include(
                 "~/Scripts/app/cart/add-additional-locations.js"
@@ -51,6 +51,12 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/toastr.js",
                 "~/Scripts/app/toastLogger.js",
                 "~/Scripts/app/admin/manage-order.js"
+                ));
+
+            bundles.Add(new ScriptBundle("~/bundles/add-quiz").Include(
+                "~/Scripts/app/toastLogger.js",
+                "~/Scripts/app/admin/question.js",
+                "~/Scripts/app/admin/add-quiz.js"
                 ));
 
             bundles.Add(new ScriptBundle("~/bundles/manage-order-from-details").Include(
@@ -81,6 +87,7 @@ namespace CUWebinars.Web.App_Start
 
             bundles.Add(new ScriptBundle("~/bundles/CommonModules").Include(
                 "~/Scripts/app/constants.js",
+                "~/Scripts/app/extensions.js",
                 "~/Scripts/underscore.js",
                 "~/Scripts/purl.js", // excellent lib for parsing and working with the address bar content i.e. urls
                 "~/Scripts/app/utilities.js",
@@ -177,6 +184,10 @@ namespace CUWebinars.Web.App_Start
 
             bundles.Add(new StyleBundle("~/Content/webinar-ops").Include(
                 "~/Content/webinar.css"
+                ));
+
+            bundles.Add(new StyleBundle("~/Content/add-quiz").Include(
+                "~/Content/quiz.css"
                 ));
 
             bundles.Add(new StyleBundle("~/Content/notifications-ops-styles").Include(

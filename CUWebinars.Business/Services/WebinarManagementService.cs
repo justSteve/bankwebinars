@@ -19,6 +19,7 @@ namespace CUWebinars.Business.Services
         private readonly IRefDataRepository _refDataRepository;
         private readonly IWebinarRepository _webinarRepository;
         private readonly IWebinarFileRepository _webinarFileRepository;
+        private readonly IQuizRepository _quizRepository;
         private readonly ILogger _logger;
         private readonly IWebUserRepository _webUserRepository;
         private readonly TtsConfiguration _ttsConfig;
@@ -35,6 +36,7 @@ namespace CUWebinars.Business.Services
             IWebUserRepository webUserRepository,
             IWebinarRepository webinarRepository,
             IWebinarFileRepository webinarFileRepository,
+            IQuizRepository quizRepository,
             ILogger logger,
             TtsConfiguration ttsConfig,
             IValidator<Webinar> createWebinarValidator,
@@ -48,6 +50,7 @@ namespace CUWebinars.Business.Services
             _createWebinarValidator = createWebinarValidator;
             _updateWebinarValidator = updateWebinarValidator;
             _webinarFileRepository = webinarFileRepository;
+            _quizRepository = quizRepository;
             _webinarRepository = webinarRepository;
             _logger = logger;
             _webUserRepository = webUserRepository;
@@ -116,6 +119,31 @@ namespace CUWebinars.Business.Services
             webinar.WebinarTopicXrefs.Remove(webinarTopicXRef);
 
             _webinarRepository.MarkForDeletion(webinarTopicXRef);
+        }
+
+        public void AddQuiz(int selectedWebinar, IEnumerable<Question> questions)
+        {
+            var quiz = new Quiz
+            {
+                idWebinar = selectedWebinar
+            };
+            _quizRepository.AddQuiz(quiz);
+
+            int nr = 1;
+            foreach (var question in questions)
+            {
+                var quizWithQuestion = new QuizWithQuestion
+                {
+                    Quiz = quiz,
+                    Question = question,
+                    QuestionNumber = nr++
+                };
+
+                question.QuizWithQuestions = new List<QuizWithQuestion> {quizWithQuestion};
+                _quizRepository.AddQuestion(question);
+            }
+
+            _quizRepository.SaveChanges();
         }
 
         public IEnumerable<Webinar> GetByTopic(int topicId)

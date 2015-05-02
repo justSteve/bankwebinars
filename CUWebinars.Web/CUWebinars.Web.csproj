@@ -442,6 +442,7 @@
     <Compile Include="Mapping\Mappers\UniversalMapper.cs" />
     <Compile Include="Mapping\Profiles\TtsProfile.cs" />
     <Compile Include="Models\AddClaimInputModel.cs" />
+    <Compile Include="Models\AddQuizEditModel.cs" />
     <Compile Include="Models\ConnectionInfoEditModel.cs" />
     <Compile Include="Models\DiscountModel.cs" />
     <Compile Include="Models\EditContactInfoModel.cs" />
@@ -521,6 +522,7 @@
     <Content Include="Content\claims-mment.css" />
     <Content Include="Content\common.css" />
     <Content Include="Content\manage-order.css" />
+    <Content Include="Content\quiz.css" />
     <Content Include="Content\toastr.css" />
     <Content Include="Content\toastr.min.css" />
     <Content Include="Content\toastr.scss" />
@@ -655,6 +657,7 @@
     <Content Include="Notification\Templates\SendPerWeekPromo.cshtml">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="Scripts\app\admin\add-quiz.js" />
     <Content Include="Scripts\app\admin\click-to-join.js" />
     <Content Include="Scripts\app\admin\claims-management.js" />
     <Content Include="Scripts\app\admin\manage-order-from-details.js" />
@@ -668,6 +671,7 @@
     <Content Include="Scripts\app\cart\register-during-checkout.js" />
     <Content Include="Scripts\app\cart\details.js" />
     <Content Include="Scripts\app\cart\register-user-in-cart.js" />
+    <Content Include="Scripts\app\extensions.js" />
     <Content Include="Scripts\app\form-processor.js" />
     <Content Include="Scripts\app\passwordReset\password-reset-submitter.js" />
     <Content Include="Scripts\app\utilities.js" />
@@ -857,6 +861,7 @@
     <Content Include="Views\Shared\DisplayTemplates\ShowUpgradeCost.cshtml" />
     <Content Include="Views\Admin\GenerateClickToJoin.cshtml" />
     <Content Include="Views\Admin\AddQuiz.cshtml" />
+    <Content Include="Views\Admin\Partials\_Question.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
@@ -1379,6 +1384,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="Scripts\app\admin\question.ts" />
     <TypeScriptCompile Include="Scripts\app\cart\create-order-new.ts" />
     <TypeScriptCompile Include="Scripts\app\cart\register-user-in-cart.ts" />
     <TypeScriptCompile Include="Scripts\app\register\register-user.ts" />
@@ -1388,6 +1394,7 @@
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.validation.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\toastr\toastr.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\underscore\underscore.d.ts" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

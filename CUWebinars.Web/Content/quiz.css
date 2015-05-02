@@ -1,0 +1,33 @@
+﻿#quizContainer {
+    width: 1100px;
+    margin: 20px auto;
+}
+
+#addQuestionText {
+    vertical-align: top;
+}
+
+#optionsWrapper, #optionsWrapper div, #addQuizButtonWrapper {
+    margin-top: 10px;
+}
+
+#addQuizButtonWrapper {
+    clear: both;
+}
+
+.quSummary {
+    margin: 2px 0 2px 0;
+    border-top: 2px solid #C0C0C0;
+    border-bottom: 2px solid #C0C0C0;
+    padding-top: 4px;
+    padding-bottom: 2px;    
+}
+
+.quSummaryPart {
+    display: inline-block;
+    margin: 0 5px 0 5px;
+} 
+
+.quSummaryPart i {
+    cursor: pointer;
+} 

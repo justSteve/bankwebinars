@@ -33,10 +33,18 @@ namespace CUWebinars.Business.Models
         public DbSet<RegTypesGroup> RegTypesGroups { get; set; }
         public DbSet<RegTypesGroupsXref> RegTypesGroupsXrefs { get; set; }
         public DbSet<RegTypesXref> RegTypesXrefs { get; set; }
+        public DbSet<Option> Option { get; set; }
         public DbSet<OrderRow> OrderRows { get; set; }
         public DbSet<Order> Orders { get; set; }
+        public DbSet<Quiz> Quiz { get; set; }
+        public DbSet<Question> Question { get; set; }
+        public DbSet<QuestionWithOption> QuestionWithOption { get; set; }
+        public DbSet<QuizWithQuestion> QuizWithQuestion { get; set; }
+        public DbSet<QuizUserAnswer> QuizUserAnswer { get; set; }
+        public DbSet<QuizUserOrder> QuizUserOrder { get; set; }
         public DbSet<Presenter> Presenters { get; set; }
         //public DbSet<GTWebinar> GTWebinar { get; set; }
+        public DbSet<TimeLimit> TimeLimit { get; set; }
         public DbSet<Topic> Topics { get; set; }
         public DbSet<Webinar> Webinars { get; set; }
         public DbSet<WebinarFile> WebinarFiles { get; set; }
@@ -56,9 +64,17 @@ namespace CUWebinars.Business.Models
             modelBuilder.Configurations.Add(new RegTypesGroupMap());
             modelBuilder.Configurations.Add(new RegTypesGroupsXrefMap());
             modelBuilder.Configurations.Add(new RegTypesXrefMap());
+            modelBuilder.Configurations.Add(new OptionMap());
             modelBuilder.Configurations.Add(new OrderRowMap());
             modelBuilder.Configurations.Add(new OrderMap());
+            modelBuilder.Configurations.Add(new QuestionMap());
+            modelBuilder.Configurations.Add(new QuestionWithOptionMap());
+            modelBuilder.Configurations.Add(new QuizMap());
+            modelBuilder.Configurations.Add(new QuizUserAnswerMap());
+            modelBuilder.Configurations.Add(new QuizUserOrderMap());
+            modelBuilder.Configurations.Add(new QuizWithQuestionMap());
             modelBuilder.Configurations.Add(new PresenterMap());
+            modelBuilder.Configurations.Add(new TimeLimitMap());
             modelBuilder.Configurations.Add(new TopicMap());
             modelBuilder.Configurations.Add(new WebinarMap());
             modelBuilder.Configurations.Add(new WebinarFileMap());

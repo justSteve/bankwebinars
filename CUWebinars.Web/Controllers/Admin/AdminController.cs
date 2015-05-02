@@ -65,11 +65,6 @@ namespace CUWebinars.Web.Controllers.Admin
             return View("~/Views/Admin/Home/Index.cshtml");
         }
 
-        public ActionResult AddQuiz()
-        {
-            return View();
-        }
-
         //
         // GET: /Admin/
         public AdminController(
@@ -86,6 +81,20 @@ namespace CUWebinars.Web.Controllers.Admin
             _webinarManagementService = webinarManagementService;
             _orderManagementService = orderManagementService;
             _appHelper = appHelper;
+        }
+
+        public ActionResult AddQuiz()
+        {
+            var addQuizEditModel = new AddQuizEditModel();
+            return View(addQuizEditModel);
+        }
+
+        [HttpPost]
+        public ActionResult AddQuiz(AddQuizEditModel addQuizEditModel)
+        {
+            _webinarManagementService.AddQuiz(addQuizEditModel.SelectedWebinar, addQuizEditModel.Questions);
+
+            return View(addQuizEditModel);
         }
 
         public PartialViewResult GetAffiliates()

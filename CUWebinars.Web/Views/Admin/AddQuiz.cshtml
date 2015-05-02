@@ -1,7 +1,45 @@
-﻿
+﻿@model AddQuizEditModel
 @{
     ViewBag.Title = "AddQuiz";
 }
 
-<h2>AddQuiz</h2>
+@Styles.Render("~/Content/add-quiz")
 
+<div class="container" id="quizContainer">
+    <div class="legendImitator">Create a Quiz</div>
+
+    @using (Html.BeginForm("AddQuiz", "Admin", FormMethod.Post, new { id = "AddQuizForm"}))
+    {
+        <div id="mainForm" class="span7">
+            
+            @Html.LabelFor(m => m.SelectedWebinar, new { @class = "control-label" })
+                
+            @Html.EditorFor(m => m.SelectedWebinar)
+            
+            <div id="newQuestionContainer">
+                <div id="newQuestionTextDiv" class="initialHide well"><span id="newQuestionTextSpan"></span>&nbsp;<button id="editQuestionTextButton" class="btn btn-mini">edit</button></div>
+                <div id="questionTextAreaWrapper">
+                    <textarea id="questionText" rows="5" class="field span3" placeholder="Enter question text here"></textarea>
+                    <button id="addQuestionText" class="btn btn-mini">Add Question Text</button>
+                </div>
+                <div id="optionsWrapper" class="initialHide">
+                    <div><button id="addOptionButton" class="btn btn-mini">Add Option</button></div>
+                </div>
+            </div>
+        </div>
+
+    <div class="span2 pull-right">
+        <div id="questionsWrapper">
+            @* questions will go here when created in js *@
+        </div>
+    </div>
+    <div id="addQuizButtonWrapper" class="pull-right">
+        <button id="addQuizButton" class="btn btn-primary initialHide">Create Quiz</button>
+    </div>
+    }
+
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/add-quiz")
+}
