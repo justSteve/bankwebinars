@@ -8,29 +8,29 @@ namespace CUWebinars.Business.Models.Mapping
         public QuizUserAnswerMap()
         {
             // Primary Key
-            HasKey(t => t.Id);
-            Property(a => a.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+            this.HasKey(t => t.Id);
 
             // Properties
-            Property(t => t.idUser).IsRequired();
-            Property(t => t.idQuizQuestion).IsRequired();
-            Property(t => t.Letter).HasMaxLength(1)
+
+            this.Property(t => t.Letter)
+                .IsRequired()
                 .IsFixedLength()
-                .IsUnicode(false)
-                .IsRequired();
+                .HasMaxLength(1);
 
             // Table & Column Mappings
-            ToTable("QuizUserAnswer");
+            this.ToTable("QuizUserAnswer");
+            this.Property(t => t.Id).HasColumnName("Id").HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity); ;
+            this.Property(t => t.idUser).HasColumnName("idUser");
+            this.Property(t => t.idQuizQuestion).HasColumnName("idQuizQuestion");
+            this.Property(t => t.Letter).HasColumnName("Letter");
 
             // Relationships
-            HasRequired(t => t.WebUser)
+            this.HasRequired(t => t.QuizWithQuestion)
+                .WithMany(t => t.QuizUserAnswers)
+                .HasForeignKey(d => d.idQuizQuestion);
+            this.HasRequired(t => t.WebUser)
                 .WithMany()
-                .HasForeignKey(t => t.idUser);
-
-            HasRequired(t => t.QuizWithQuestion)
-                .WithMany()
-                .HasForeignKey(t => t.idQuizQuestion);
-
+                .HasForeignKey(d => d.idUser);
         }
     }
 }

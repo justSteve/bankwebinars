@@ -7,6 +7,5 @@ namespace CUWebinars.Business.Models
         public int Hours { get; set; }
         public int Minutes { get; set; }
         public int Seconds { get; set; }
-
     }
 }

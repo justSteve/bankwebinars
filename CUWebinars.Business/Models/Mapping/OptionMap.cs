@@ -13,18 +13,24 @@ namespace CUWebinars.Business.Models.Mapping
         public OptionMap()
         {
             // Primary Key
-            HasKey(t => t.Id);
-            Property(a => a.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+            this.HasKey(t => t.Id);
+            this.Property(t => t.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
 
 
             // Properties
-            Property(t => t.Text).HasMaxLength(800).IsRequired();
+            this.Property(t => t.Text)
+                .IsRequired()
+                .HasMaxLength(800);
 
             // Table & Column Mappings
-            ToTable("Option");
+            this.ToTable("Option");
+            this.Property(t => t.Id).HasColumnName("Id");
+            this.Property(t => t.Text).HasColumnName("Text");
 
             // Relationships
-
+            HasMany(t => t.QuestionWithOptions)
+                .WithRequired(t => t.Option)
+                .HasForeignKey(t => t.idOption);
         }
     }
 }

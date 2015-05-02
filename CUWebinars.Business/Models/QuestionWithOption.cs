@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace CUWebinars.Business.Models
 {
     public partial class QuestionWithOption
@@ -13,8 +8,7 @@ namespace CUWebinars.Business.Models
         public int idOption { get; set; }
         public bool CorrectAnswer { get; set; }
         public string Letter { get; set; }
-
-        public Question Question { get; set; }
-        public Option Option { get; set; }
+        public virtual Option Option { get; set; }
+        public virtual Question Question { get; set; }
     }
 }

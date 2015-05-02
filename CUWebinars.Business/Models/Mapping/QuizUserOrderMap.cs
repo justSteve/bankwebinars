@@ -8,30 +8,27 @@ namespace CUWebinars.Business.Models.Mapping
         public QuizUserOrderMap()
         {
             // Primary Key
-            HasKey(t => t.Id);
-            Property(a => a.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+            this.HasKey(t => t.Id);
 
-            // Properties
-            Property(t => t.idUser).IsRequired();
-            Property(t => t.idOrder).IsRequired();
-            Property(t => t.idQuiz).IsRequired();
 
             // Table & Column Mappings
-            ToTable("QuizUserOrder");
+            this.ToTable("QuizUserOrder");
+            this.Property(t => t.Id).HasColumnName("Id").HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity); ;
+            this.Property(t => t.idUser).HasColumnName("idUser");
+            this.Property(t => t.idOrder).HasColumnName("idOrder");
+            this.Property(t => t.idQuiz).HasColumnName("idQuiz");
 
             // Relationships
-            HasRequired(t => t.Order)
+            this.HasRequired(t => t.Order)
                 .WithMany()
-                .HasForeignKey(t => t.idOrder);
+                .HasForeignKey(d => d.idOrder);
+            this.HasRequired(t => t.Quiz)
+                .WithMany(t => t.QuizUserOrders)
+                .HasForeignKey(d => d.idQuiz);
+            this.HasRequired(t => t.WebUser)
+                .WithMany()
+                .HasForeignKey(d => d.idUser);
 
-            HasRequired(t => t.Quiz)
-                .WithMany()
-                .HasForeignKey(t => t.idQuiz);
-            
-            HasRequired(t => t.WebUser)
-                .WithMany()
-                .HasForeignKey(t => t.idUser);
-            
         }
     }
 }

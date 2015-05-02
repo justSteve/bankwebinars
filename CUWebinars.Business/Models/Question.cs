@@ -13,10 +13,9 @@ namespace CUWebinars.Business.Models
         public int Id { get; set; }
         public string Text { get; set; }
         public int? idTimeLimit { get; set; }
-        public QuestionType QuestionType { get; set; }
+        public QuestionType idType { get; set; }
 
-        public TimeLimit TimeLimit { get; set; }
-        public ICollection<QuestionWithOption> QuestionWithOptions { get; set; }
-        public ICollection<QuizWithQuestion> QuizWithQuestions { get; set; }
+        public virtual ICollection<QuestionWithOption> QuestionWithOptions { get; set; }
+        public virtual ICollection<QuizWithQuestion> QuizWithQuestions { get; set; }
     }
 }

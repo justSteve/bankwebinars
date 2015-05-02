@@ -7,8 +7,7 @@ namespace CUWebinars.Business.Models
         public int idUser { get; set; }
         public int idQuizQuestion { get; set; }
         public string Letter { get; set; }
-
-        public QuizWithQuestion QuizWithQuestion { get; set; }
-        public WebUser WebUser { get; set; }
+        public virtual QuizWithQuestion QuizWithQuestion { get; set; }
+        public virtual WebUser WebUser { get; set; }
     }
 }

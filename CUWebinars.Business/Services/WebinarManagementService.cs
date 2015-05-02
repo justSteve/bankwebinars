@@ -129,21 +129,38 @@ namespace CUWebinars.Business.Services
             };
             _quizRepository.AddQuiz(quiz);
 
+            _quizRepository.SaveChanges();
+
+
             int nr = 1;
             foreach (var question in questions)
             {
+                //foreach (var questionWithOption in question.QuestionWithOptions)
+                //{
+                //    _quizRepository.AddQuestionWithOption(questionWithOption);
+                    
+                //}
+
+                _quizRepository.AddQuestion(question);
+
+                _quizRepository.SaveChanges();
+
+
                 var quizWithQuestion = new QuizWithQuestion
                 {
+                    idQuiz = quiz.Id,
                     Quiz = quiz,
-                    Question = question,
+                    Question =question,
+                    //idQuestion = question.Id,
                     QuestionNumber = nr++
                 };
+                
+                _quizRepository.AddQuizWithQuestion(quizWithQuestion);
 
-                question.QuizWithQuestions = new List<QuizWithQuestion> {quizWithQuestion};
-                _quizRepository.AddQuestion(question);
+                quiz.QuizWithQuestions.Add(quizWithQuestion);
+                
+                _quizRepository.SaveChanges();
             }
-
-            _quizRepository.SaveChanges();
         }
 
         public IEnumerable<Webinar> GetByTopic(int topicId)

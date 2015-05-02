@@ -30,9 +30,14 @@ namespace CUWebinars.Business.Repository
             items.Add(quiz);
         }
 
+        public void AddQuestionWithOption(QuestionWithOption questionWithOption)
+        {
+            ((TTSWebinarsContext) db).QuestionWithOption.Add(questionWithOption);
+        }
+
         public void AddQuizWithQuestion(QuizWithQuestion quizWithQuestion)
         {
-            throw new NotImplementedException();
+            ((TTSWebinarsContext) db).QuizWithQuestion.Add(quizWithQuestion);
         }
 
         public void SaveChanges()

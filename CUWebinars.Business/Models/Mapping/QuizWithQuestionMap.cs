@@ -21,12 +21,14 @@ namespace CUWebinars.Business.Models.Mapping
 
             // Relationships
             HasRequired(t => t.Quiz)
-                .WithMany()
+                .WithMany(t => t.QuizWithQuestions)
                 .HasForeignKey(t => t.idQuiz);
-
             HasRequired(t => t.Question)
-                .WithMany(t => t.QuizWithQuestions);
-
+                .WithMany(t => t.QuizWithQuestions)
+                .HasForeignKey(t => t.idQuestion);
+            HasMany(t => t.QuizUserAnswers)
+                .WithRequired(t => t.QuizWithQuestion)
+                .HasForeignKey(t => t.idQuizQuestion);
         }
     }
 }

@@ -8,28 +8,29 @@ namespace CUWebinars.Business.Models.Mapping
         public QuestionWithOptionMap()
         {
             // Primary Key
-            HasKey(t => t.Id);
-            Property(a => a.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+            this.HasKey(t => t.Id);
 
             // Properties
-            Property(t => t.idQuestion).IsRequired();
-            Property(t => t.idOption).IsRequired();
-            Property(t => t.CorrectAnswer).IsRequired();
-            Property(t => t.Letter).HasMaxLength(1)
+            this.Property(t => t.Letter)
+                .IsRequired()
                 .IsFixedLength()
-                .IsUnicode(false)
-                .IsRequired();
+                .HasMaxLength(1);
 
             // Table & Column Mappings
-            ToTable("QuestionWithOption");
+            this.ToTable("QuestionWithOption");
+            this.Property(t => t.Id).HasColumnName("Id").HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+            this.Property(t => t.idQuestion).HasColumnName("idQuestion");
+            this.Property(t => t.idOption).HasColumnName("idOption");
+            this.Property(t => t.CorrectAnswer).HasColumnName("CorrectAnswer");
+            this.Property(t => t.Letter).HasColumnName("Letter");
 
             // Relationships
-            HasRequired(t => t.Option)
-                .WithMany()
+            this.HasRequired(t => t.Option)
+                .WithMany(t => t.QuestionWithOptions)
                 .HasForeignKey(t => t.idOption);
-
-            HasRequired(t => t.Question)
-                .WithMany(t => t.QuestionWithOptions);
+            this.HasRequired(t => t.Question)
+                .WithMany(t => t.QuestionWithOptions)
+                .HasForeignKey(t => t.idQuestion);
 
         }
     }

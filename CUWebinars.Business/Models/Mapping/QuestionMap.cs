@@ -8,22 +8,28 @@ namespace CUWebinars.Business.Models.Mapping
         public QuestionMap()
         {
             // Primary Key
-            HasKey(t => t.Id);
-            Property(a => a.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+            this.HasKey(t => t.Id);
 
             // Properties
-            Property(t => t.Text).HasMaxLength(800).IsRequired();
-            Property(t => t.QuestionType).HasColumnName("idType");
+            this.Property(t => t.Text)
+                .IsRequired()
+                .HasMaxLength(800);
 
             // Table & Column Mappings
-            ToTable("Question");
+            this.ToTable("Question");
+            this.Property(t => t.Id).HasColumnName("Id").HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+            this.Property(t => t.Text).HasColumnName("Text");
+            this.Property(t => t.idTimeLimit).HasColumnName("idTimeLimit");
+            this.Property(t => t.idType).HasColumnName("idType");
 
             // Relationships
-            HasOptional(t => t.TimeLimit)
-                .WithMany()
-                .HasForeignKey(t => t.idTimeLimit);
+            HasMany(t => t.QuestionWithOptions)
+                .WithRequired(t => t.Question)
+                .HasForeignKey(t => t.idQuestion);
+            HasMany(t => t.QuizWithQuestions)
+                .WithRequired(t => t.Question)
+                .HasForeignKey(t => t.idQuestion);
 
-            
         }
     }
 }
