@@ -8,6 +8,7 @@ using System.Xml;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core.Extensions;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification;
@@ -39,6 +40,7 @@ using ClaimTypes = System.Security.Claims.ClaimTypes;
 using DataOperations = CUWebinars.Web.Membership.DataOperations;
 using DateTimeHelper = CUWebinars.Web.Helpers.DateTimeHelper;
 using Formatting = Newtonsoft.Json.Formatting;
+using WebinarExtensions = CUWebinars.Business.Core.Extensions.WebinarExtensions;
 
 namespace CUWebinars.Web.Controllers.Admin
 {
@@ -230,7 +232,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             if (model.AdditionalLocations == null || !model.AdditionalLocations.Any())
             {
-                deletedAdditionalLocations.AddRange(orderRow.AdditionalLocation);
+                CollectionExtensions.AddRange(deletedAdditionalLocations, orderRow.AdditionalLocation);
                 model.AdditionalLocations = new List<AdditionalLocation>();
             }
             else
@@ -245,7 +247,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             if (!orderRow.AdditionalLocation.Any())
             {
-                addedAdditionalLocations.AddRange(model.AdditionalLocations);
+                CollectionExtensions.AddRange(addedAdditionalLocations, model.AdditionalLocations);
             }
             else
             {
@@ -903,11 +905,16 @@ namespace CUWebinars.Web.Controllers.Admin
 
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active); // perf bump by assigning to local variable
 
-            if (orderRow.AdditionalLocation.Any())
+            if (string.IsNullOrEmpty(orderRow.JoinURL) && orderRow.Webinar.CitrixJoinInfoAvailable())
             {
-                foreach (var additionalLocation in orderRow.AdditionalLocation.Where(additionalLocation => string.IsNullOrEmpty(orderRow.JoinURL)))
+                _orderManagementService.GenerateRegistrantKey(order);
+
+                if (orderRow.AdditionalLocation.Any())
                 {
-                    _orderManagementService.GenerateRegistrantKey(order, additionalLocation);
+                    foreach (var additionalLocation in orderRow.AdditionalLocation)
+                    {
+                        _orderManagementService.GenerateRegistrantKey(order, additionalLocation);
+                    }
                 }
             }
 
@@ -938,20 +945,21 @@ namespace CUWebinars.Web.Controllers.Admin
 
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active); // perf bump by assigning to local variable
 
-            AdditionalLocation nuller = new AdditionalLocation();
-
-            if (string.IsNullOrEmpty(orderRow.JoinURL))
-                _orderManagementService.GenerateRegistrantKey(order, nuller);
-
-            if (orderRow.AdditionalLocation.Any())
+            if (string.IsNullOrEmpty(orderRow.JoinURL) && orderRow.Webinar.CitrixJoinInfoAvailable())
             {
-                foreach (var additionalLocation in orderRow.AdditionalLocation)
+                _orderManagementService.GenerateRegistrantKey(order);
+
+                if (orderRow.AdditionalLocation.Any())
                 {
-                    if (string.IsNullOrEmpty(orderRow.JoinURL)) _orderManagementService.GenerateRegistrantKey(order, additionalLocation);
+                    foreach (var additionalLocation in orderRow.AdditionalLocation)
+                    {
+                        _orderManagementService.GenerateRegistrantKey(order, additionalLocation);
+                    }
                 }
             }
 
             _orderManagementService.FireSendConnectionInfoNotificationEvent(new[] { order }, resending: true);
+
             return Json(new { Result = WebUiConstants.Success });
         }
 
@@ -1016,14 +1024,18 @@ namespace CUWebinars.Web.Controllers.Admin
 
             foreach (var order in orders)
             {
-                AdditionalLocation nuller = new AdditionalLocation();
-                if (string.IsNullOrEmpty(order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).JoinURL)) _orderManagementService.GenerateRegistrantKey(order, nuller);
+                var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active); // perf bump by assigning to local variable
 
-                if (order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count > 0)
+                if (string.IsNullOrEmpty(orderRow.JoinURL) && orderRow.Webinar.CitrixJoinInfoAvailable())
                 {
-                    foreach (var additionalLocation in order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
+                    _orderManagementService.GenerateRegistrantKey(order);
+
+                    if (orderRow.AdditionalLocation.Any())
                     {
-                        if (string.IsNullOrEmpty(order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).JoinURL)) _orderManagementService.GenerateRegistrantKey(order, additionalLocation);
+                        foreach (var additionalLocation in orderRow.AdditionalLocation)
+                        {
+                            _orderManagementService.GenerateRegistrantKey(order, additionalLocation);
+                        }
                     }
                 }
             }

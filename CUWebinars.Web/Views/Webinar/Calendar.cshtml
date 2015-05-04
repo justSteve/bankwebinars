@@ -7,13 +7,13 @@
     ViewBag.Title = "Calendar";
     Layout = "/Views/Shared/_LayoutPublic.cshtml";
 
-    var identity = ((ClaimsIdentity)User.Identity)
-        .Claims.FirstOrDefault(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName);
+    //var identity = ((ClaimsIdentity)User.Identity)
+    //    .Claims.FirstOrDefault(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName);
 
-    if (!ReferenceEquals(null, identity))
-    {
-        ViewBag.LoggedInUserIdentity = identity;
-    }
+    //if (!ReferenceEquals(null, identity))
+    //{
+    //    ViewBag.LoggedInUserIdentity = identity;
+    //}
 }
 
 <script src="/Scripts/fullcalendar/fullcalendar.js" type="text/javascript"></script>

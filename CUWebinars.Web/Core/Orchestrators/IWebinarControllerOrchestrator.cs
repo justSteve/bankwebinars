@@ -17,7 +17,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         void FireSendConnectionInfoNotificationEvent(int idWebinar);
         Webinar GetWebinar(int idWebinar);
         ActionResult Identify(IdentifyModel identifyModel);
-        ActionResult OnDemand(int id, IIdentity userIdentity);
+        ActionResult OnDemand(int id, string onDemandCode, IIdentity userIdentity);
         string OpenMeeting(string joinCode, IIdentity userIdentity);
         Webinar PopulateWebinarFromViewModel(ConnectionInfoEditModel connectionInfoEditModel, out bool detailsValid);
         string PublishStateChange(string stateFromTo, Webinar webinar);

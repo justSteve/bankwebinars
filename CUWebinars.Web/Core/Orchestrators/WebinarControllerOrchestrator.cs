@@ -85,8 +85,10 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public ActionResult Identify(IdentifyModel identifyModel)
         {
+
+            var idOrder = Convert.ToInt32(identifyModel.OnDemandCode.Substring(0, 5));
             // do something with name and email address
-            var order = _orderManagementService.GetOrderById(identifyModel.idOrder);
+            var order = _orderManagementService.GetOrderById(idOrder);
 
             if (!ReferenceEquals(null, order))
             {
@@ -123,15 +125,15 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 _stateService.SetValue(WebUiConstants.AnonUserIdentified, true);
 
-                return new RedirectToRouteResult(new RouteValueDictionary(new { action = "OnDemand", controller = "Webinar", id = identifyModel.idOrder }));
+                return new RedirectToRouteResult(new RouteValueDictionary(new { action = "OnDemand", controller = "Webinar", onDemandCode = identifyModel.OnDemandCode }));
             }
 
-            return new ViewResult { ViewName = "Identify", ViewData = { Model = identifyModel } }; 
+            return new ViewResult { ViewName = "Identify", ViewData = { Model = identifyModel } };
         }
 
-        public ActionResult OnDemand(int id, IIdentity userIdentity)
+        public ActionResult OnDemand(int id, string onDemandCode, IIdentity userIdentity)
         {
-            var claimsIdentityOfAuthenticatedUser = (ClaimsIdentity) userIdentity;
+            var claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)userIdentity;
 
             var order = _orderManagementService.GetOrderById(id);
 
@@ -141,7 +143,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             var playModel = new OnDemandPlaybackModel
             {
                 Presenter = webinar.Presenter,
-                Webinar = webinar
+                Webinar = webinar,
+                idOrder = order.idOrder,
+                OnDemandCode = onDemandCode
             };
 
             var viewResult = new ViewResult { ViewName = "OnDemand" };
@@ -152,11 +156,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == ClaimTypes.Admin))
                 {
-                    return new RedirectToRouteResult(new RouteValueDictionary(new { action = "Index", controller = "Admin"}));
+                    return new RedirectToRouteResult(new RouteValueDictionary(new { action = "Index", controller = "Admin" }));
                 }
 
                 ProcessAccessPermissionsForMaterials(order, playModel);
-
+                //playModel.OnDemandCode = onDemandCode;
                 return viewResult;
             }
 
@@ -167,41 +171,60 @@ namespace CUWebinars.Web.Core.Orchestrators
                 return viewResult;
             }
 
-            return new RedirectToRouteResult(new RouteValueDictionary(new { action = "Identify", controller = "Webinar", orderId = id }));
+            return new RedirectToRouteResult(new RouteValueDictionary(new { action = "Identify", controller = "Webinar", onDemandCode = id.ToString() + "-" + onDemandCode }));
         }
 
-        private void ProcessAccessPermissionsForMaterials(Order order, OnDemandPlaybackModel playModel)
+        private string ProcessAccessPermissionsForMaterials(Order order, OnDemandPlaybackModel playModel)
         {
             var webUser = _membershipService.GetWebUserById(order.idUser);
 
-            if (order.idUser == 19)
+            if (webUser != null)
             {
-                playModel.AuthorizedToAccessMaterials = true;
-            }
-            else if (webUser != null)
-            {
-                string messageIfFalse;
 
-                if (_membershipService.CheckDisplayPostEventMaterials(
+                var myClaim = _membershipService.GetDisplayPostEventMaterialsClaimValue(
                     _globalConfig.Tenant,
-                    webUser.email,
-                    out messageIfFalse))
+                    webUser.email, playModel.idOrder, playModel.OnDemandCode);
+
+                if (myClaim != null)
                 {
                     playModel.AuthorizedToAccessMaterials = true;
+                    //here's a chance for a handy bit of scripting
+                    AddJsonCommentToUser(order, "AccessedMaterials:" + webUser.email);
+                    //TODO: Check that the email being logged here is the email provided at the Identify page
+                    //  it is NOT the order's email.
+
+                    //what i'm looking for here as an encapsulation of all those bits that have to happen each
+                    // time we'd want to add a jsoned comment to any of the levels (admin, affil, user)
+                    // 
+
+                    // so a call as above would return (paying no attn to quotes for well-formed):
+                    //"{"AccessedMaterials":"idOrder:43298,email:steve@ttstrain.com,dated:datetime.Now(),session:getUserSession()"}
+
+                    _logger.Info("AuthorizedToAccessMaterials granted to: " + webUser.email);
+
+                    return myClaim;
                 }
-                else
-                {
-                    playModel.AuthorizedToAccessMaterials = false;
-                    _logger.Error(messageIfFalse);
-                }
+                playModel.AuthorizedToAccessMaterials = false;
+                _logger.Warn("AuthorizedToAccessMaterials denied to: " + webUser.email);
+
+                return "Not Authorized";
             }
             else
             {
                 _logger.Error("No WebUser exists with the Id {0}", order.idUser);
+
+                return "User Not Found";
                 //ModelState.AddModelError(string.Empty,
                 //    string.Format("No WebUser exists with the Id {0}", order.idUser));
             }
         }
+
+        private void AddJsonCommentToUser(Order order, string s)
+        {
+            var a = 1;
+            //throw new NotImplementedException();
+        }
+
         public string OpenMeeting(string joinCode, IIdentity userIdentity)
         {
             string webinarUrl = string.Empty;
@@ -218,7 +241,6 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     if (userIdentity.IsAuthenticated && !ReferenceEquals(null, orderRow.JoinURL)) // JoinURL will be null for impromtu user
                     {
-
                         webinarUrl = orderRow.JoinURL; // fully qualified authorative webinar-access link from Citrix.
                     }
                     else
@@ -266,7 +288,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (ReferenceEquals(audioNode, null))
             {
                 throw new Exception("Audio node was null");
-                    // TODO: [dar] handle error condition. Better message? Right Exception-type?
+                // TODO: [dar] handle error condition. Better message? Right Exception-type?
             }
 
             foreach (var aNode in audioNode.Nodes())
@@ -350,10 +372,10 @@ namespace CUWebinars.Web.Core.Orchestrators
                     break;
 
                 default:
-                {
-                    System.Console.WriteLine("Other number");
-                    break;
-                }
+                    {
+                        System.Console.WriteLine("Other number");
+                        break;
+                    }
             }
             return sb.ToString();
 
@@ -385,6 +407,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     return false;
                 }
 
+
                 var ordersForWebinar = _orderManagementService.GetOrdersForWebinar(webinar.idWebinar);
 
                 AddClaimForPostEventMaterials(ordersForWebinar);
@@ -398,7 +421,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _webinarManagementService.UpdateWebinar(webinar);
 
                 _orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
-
                 return true;
             }
             catch (Exception exception)
@@ -506,7 +528,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             var upcomingRegTypeGroups = _webinarManagementService.GetUpcomingRegTypesForWebinars().ToList();
             var presenters = _webinarManagementService.GetAllPresenters()
                 .Select(presenter =>
-                    new SelectListItem {Text = presenter.WebUser.FullName, Value = presenter.idUser.ToString()}
+                    new SelectListItem { Text = presenter.WebUser.FullName, Value = presenter.idUser.ToString() }
                 );
             var statuses = (from object value in Enum.GetValues(typeof(WebinarStatus))
                             select new SelectListItem { Text = value.ToString(), Value = ((int)value).ToString() }).ToList();
@@ -538,8 +560,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 });
             var topics = _webinarManagementService.GetAllTopics();
 
-            var statuses = (from object value in Enum.GetValues(typeof (WebinarStatus))
-                select new SelectListItem {Text = value.ToString(), Value = ((int) value).ToString()}).ToList();
+            var statuses = (from object value in Enum.GetValues(typeof(WebinarStatus))
+                            select new SelectListItem { Text = value.ToString(), Value = ((int)value).ToString() }).ToList();
 
             // The database does not support the business rule that there will only be a single price for Additional Locations.
             // We ae therefore enforcing this rule here.
@@ -549,7 +571,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             var webinarEditModel = new WebinarEditModel
             {
                 AdditionalLocationsPrice = additionalLocationsPricing == null ? 0.00M : additionalLocationsPricing.Cost,
-                PostedTopics = new PostedTopics {TopicIds = topicIdsForWebinar.Select(topic => topic.idTopic).ToArray()},
+                PostedTopics = new PostedTopics { TopicIds = topicIdsForWebinar.Select(topic => topic.idTopic).ToArray() },
                 PostedRegTypeGroups =
                     new PostedRegTypeGroups
                     {
@@ -560,7 +582,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 SelectedPresenter = webinar.idPresenter,
                 SelectedRegTypeGroups = regTypeGroupsForWebinars,
                 SelectedTopics = topicIdsForWebinar,
-                SelectedStatus = (int) webinar.Status,
+                SelectedStatus = (int)webinar.Status,
                 Statuses = statuses,
                 Topics = topics
             };
@@ -574,9 +596,9 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void CreateWebinarFromViewInput(WebinarEditModel webinarEditModel)
         {
             if (ReferenceEquals(webinarEditModel.PostedRegTypeGroups, null))
-                webinarEditModel.PostedRegTypeGroups = new PostedRegTypeGroups {RegTypeGroupIds = new int[0]};
+                webinarEditModel.PostedRegTypeGroups = new PostedRegTypeGroups { RegTypeGroupIds = new int[0] };
             if (ReferenceEquals(webinarEditModel.PostedTopics, null))
-                webinarEditModel.PostedTopics = new PostedTopics {TopicIds = new int[0]};
+                webinarEditModel.PostedTopics = new PostedTopics { TopicIds = new int[0] };
 
             var webinar = new Webinar
             {
@@ -585,7 +607,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 Date = webinarEditModel.Date,
                 DateChanged = DateTime.Now,
                 DateCreated = DateTime.Now,
-                Status = (WebinarStatus) webinarEditModel.SelectedStatus,
+                Status = (WebinarStatus)webinarEditModel.SelectedStatus,
                 Duration = webinarEditModel.Duration,
                 ceu = webinarEditModel.ceu,
                 Description = webinarEditModel.Description,
@@ -603,12 +625,12 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             foreach (var regTypeGroupId in webinarEditModel.PostedRegTypeGroups.RegTypeGroupIds)
             {
-                webinar.RegTypesGroupsXref.Add(new RegTypesGroupsXref {idRegTypeGroup = regTypeGroupId});
+                webinar.RegTypesGroupsXref.Add(new RegTypesGroupsXref { idRegTypeGroup = regTypeGroupId });
             }
 
             foreach (var topicId in webinarEditModel.PostedTopics.TopicIds)
             {
-                webinar.WebinarTopicXrefs.Add(new WebinarTopicXref {idTopic = topicId});
+                webinar.WebinarTopicXrefs.Add(new WebinarTopicXref { idTopic = topicId });
             }
 
             _webinarManagementService.AddWebinar(webinar);
@@ -639,14 +661,14 @@ namespace CUWebinars.Web.Core.Orchestrators
             var webinar = _webinarManagementService.GetWebinar(webinarEditModel.idWebinar);
 
             if (ReferenceEquals(webinarEditModel.PostedRegTypeGroups, null))
-                webinarEditModel.PostedRegTypeGroups = new PostedRegTypeGroups {RegTypeGroupIds = new int[0]};
+                webinarEditModel.PostedRegTypeGroups = new PostedRegTypeGroups { RegTypeGroupIds = new int[0] };
             if (ReferenceEquals(webinarEditModel.PostedTopics, null))
-                webinarEditModel.PostedTopics = new PostedTopics {TopicIds = new int[0]};
+                webinarEditModel.PostedTopics = new PostedTopics { TopicIds = new int[0] };
 
             webinar.Title = webinarEditModel.Title;
             webinar.idPresenter = webinarEditModel.SelectedPresenter;
             webinar.Date = webinarEditModel.Date;
-            webinar.Status = (WebinarStatus) webinarEditModel.SelectedStatus;
+            webinar.Status = (WebinarStatus)webinarEditModel.SelectedStatus;
             webinar.Duration = webinarEditModel.Duration;
             webinar.ceu = webinarEditModel.ceu;
             webinar.Description = webinarEditModel.Description;
@@ -693,7 +715,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 var topicId in
                     webinarEditModel.PostedTopics.TopicIds.Where(topicId => !existingTopicIds.Contains(topicId)))
             {
-                webinar.WebinarTopicXrefs.Add(new WebinarTopicXref {idWebinar = webinar.idWebinar, idTopic = topicId});
+                webinar.WebinarTopicXrefs.Add(new WebinarTopicXref { idWebinar = webinar.idWebinar, idTopic = topicId });
             }
 
             foreach (
@@ -729,19 +751,27 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             using (var client = new HeadOnlyWebClient())
             {
-                client.HeadOnly = true;
-                string uri = handoutRepo + checkFile;
-                byte[] body = client.DownloadData(uri); // note should be 0-length
-                string type = client.ResponseHeaders["content-type"];
-                client.HeadOnly = false;
-                //
-                //there's probably a better way to test that the file exists
-                if (type.Contains(@"/"))
+                try
                 {
-                    return true;
+
+                    client.HeadOnly = true;
+                    string uri = handoutRepo + checkFile;
+                    byte[] body = client.DownloadData(uri); // note should be 0-length
+                    string type = client.ResponseHeaders["content-type"];
+                    client.HeadOnly = false;
+                    //
+                    //there's probably a better way to test that the file exists
+                    if (type.Contains(@"/"))
+                    {
+                        return true;
+                    }
                 }
-                
+                catch (Exception)
+                {
+                    return false;
+                }
                 return false;
+
             }
         }
 

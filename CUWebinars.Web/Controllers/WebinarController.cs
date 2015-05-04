@@ -457,60 +457,69 @@ namespace CUWebinars.Web.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Get)]
-        public ActionResult OnDemand(int? id)
+        public ActionResult OnDemand(string onDemandCode)
         {
-            if (id.HasValue)
+            int _id;
+            var isNum = Int32.TryParse(onDemandCode.Split('-')[0], out _id);
+            string hasVal = null;
+            if (onDemandCode.Split('-').Length > 1)
             {
-                return _webinarControllerOrchestrator.OnDemand(id.Value, User.Identity);
+                hasVal = onDemandCode.Split('-')[1];
+            }
+            var order = _orderManagementService.GetOrderById(_id);
+
+            if (order != null && hasVal != null)
+            {
+                return _webinarControllerOrchestrator.OnDemand(_id, hasVal, User.Identity);
             }
 
-            //TODO: implement response for error condition. Here, no id passed in.
-            return null;
+            ModelState.AddModelError(string.Empty, "Invalid Code");
+            return View();
         }
+//resharper says this method is non-used
+        //private void ProcessAccessPermissionsForMaterials(Order order, OnDemandPlaybackModel playModel)
+        //{
+        //    var webUser = _membershipService.GetWebUserById(order.idUser);
 
-        private void ProcessAccessPermissionsForMaterials(Order order, OnDemandPlaybackModel playModel)
-        {
-            var webUser = _membershipService.GetWebUserById(order.idUser);
+        //    if (order.idUser == 19)
+        //    {
+        //        playModel.AuthorizedToAccessMaterials = true;
+        //    }
+        //    else if (webUser != null)
+        //    {
+        //        string messageIfFalse;
 
-            if (order.idUser == 19)
-            {
-                playModel.AuthorizedToAccessMaterials = true;
-            }
-            else if (webUser != null)
-            {
-                string messageIfFalse;
+        //        if (_membershipService.GetPostEventMaterialsClaim(
+        //            _globalConfig.Tenant,
+        //            webUser.email,
+        //            out messageIfFalse))
+        //        {
+        //            playModel.AuthorizedToAccessMaterials = true;
+        //        }
+        //        else
+        //        {
+        //            playModel.AuthorizedToAccessMaterials = false;
+        //            _logger.Error(messageIfFalse);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        _logger.Error("No WebUser exists with the Id {0}", order.idUser);
+        //        ModelState.AddModelError(string.Empty,
+        //            string.Format("No WebUser exists with the Id {0}", order.idUser));
+        //    }
+        //}
 
-                if (_membershipService.CheckDisplayPostEventMaterials(
-                    _globalConfig.Tenant,
-                    webUser.email,
-                    out messageIfFalse))
-                {
-                    playModel.AuthorizedToAccessMaterials = true;
-                }
-                else
-                {
-                    playModel.AuthorizedToAccessMaterials = false;
-                    _logger.Error(messageIfFalse);
-                }
-            }
-            else
-            {
-                _logger.Error("No WebUser exists with the Id {0}", order.idUser);
-                ModelState.AddModelError(string.Empty,
-                    string.Format("No WebUser exists with the Id {0}", order.idUser));
-            }
-        }
-
-        public ActionResult Identify(int orderId)
+        public ActionResult Identify(string onDemandCode)
         {
             var model = new IdentifyModel
             {
                 Email = string.Empty,
-                idOrder = orderId,
+                OnDemandCode = onDemandCode,
                 FullName = string.Empty,
                 SignInModel = new SignInModel
                 {
-                    ReturnUrl = "Webinar/OnDemand/" + orderId
+                    ReturnUrl = "Webinar/OnDemand/" + onDemandCode
                 }
             };
 
@@ -528,24 +537,6 @@ namespace CUWebinars.Web.Controllers
 
             return View(identifyModel);
         }
-
-        //[AcceptVerbs(HttpVerbs.Post)]
-        //public ActionResult RegistrationsTableDataLoader(
-        //    [DataTablesRequestModelBinder] DataTablesRequestModel dataTablesRequest)
-        //{
-        //    int currentUserID = 62;
-        //    var searchResult = _orderManagementService.SearchRegistrations
-        //        (
-        //            currentUserID,
-        //            null,
-        //            dataTablesRequest.DisplayStart,
-        //            dataTablesRequest.DisplayLength,
-        //            dataTablesRequest.Search
-        //        );
-
-        //    var data = new RegistrationsBrowserTableDataDTOAssembler(dataTablesRequest.EchoId).Entity2DTO(searchResult);
-        //    return Json(data);
-        //}
 
         public ActionResult Details(int? id)
         {
@@ -1348,24 +1339,24 @@ namespace CUWebinars.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult UpdateWebinarFiles(WebinarFilesEditModel webinarFilesEditModel)
         {
-            if (ModelState.IsValid)
+            //if (ModelState.IsValid)
+            //{
+            try
             {
-                try
-                {
-                    string message;
+                string message;
 
-                    if (_webinarControllerOrchestrator.UpdateWebinarFiles(webinarFilesEditModel, out message))
-                        return Json(new {Result = WebUiConstants.Success});
+                if (_webinarControllerOrchestrator.UpdateWebinarFiles(webinarFilesEditModel, out message))
+                    return Json(new { Result = WebUiConstants.Success });
 
-                    return Json(new { Result = message });
-                }
-                catch (Exception)
-                {
-                    ModelState.AddModelError(string.Empty,
-                        "There was a problem with the update operation. Please consult with the system administrator to resolve the issue."
-                        );
-                }
+                return Json(new { Result = message });
             }
+            catch (Exception)
+            {
+                ModelState.AddModelError(string.Empty,
+                    "There was a problem with the update operation. Please consult with the system administrator to resolve the issue."
+                    );
+            }
+            //}
             return this.ModelStateJson(ModelState);
         }
 
@@ -1437,7 +1428,7 @@ namespace CUWebinars.Web.Controllers
                     if (_webinarControllerOrchestrator.UpdateWebinarRecording(webinarDetailsViewModel, out message))
                         return Json(new { Result = WebUiConstants.Success });
 
-                    return Json(new {Result = message});
+                    return Json(new { Result = message });
                 }
                 catch (Exception)
                 {

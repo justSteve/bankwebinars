@@ -1,6 +1,7 @@
 ﻿using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core.Exceptions;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
@@ -473,34 +474,10 @@ namespace CUWebinars.Web.Controllers
             try
             {
                 //following copies pattern found at WebinarController | Identify
-                JObject existingJObject = null;
-
-                string comments = string.Empty;
-
-
-                if (!ReferenceEquals(null, order.UserComments))
-                {
-                    comments = order.UserComments.Trim();
-                }
-
-                var newJson = new JProperty(string.Concat("CarbonCopy"),
-                    addresses);
-
-                if (string.IsNullOrWhiteSpace(comments))
-                {
-                    existingJObject = new JObject(newJson);
-                }
-                else
-                {
-                    existingJObject = JObject.Parse(comments);
-                    existingJObject.Add(newJson);
-                }
-
-                order.UserComments = existingJObject.ToString(Formatting.None);
+                var newJson = new JProperty(string.Concat(JsonPropertyKeys.CarbonCopy),addresses);
+                order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, newJson);
 
                 _orderManagementService.SaveChanges();
-
-
             }
             catch (Exception)
             {
@@ -964,9 +941,12 @@ namespace CUWebinars.Web.Controllers
                     }
                     else
                     {
+                        var watch = Stopwatch.StartNew();
                         if (_accountControllerOrchestrator.ChangePasswordFromResetKey(model.Key, model.Password))
                         {
                             model.ChangePasswordSucceeded = true;
+                            watch.Stop();
+                            Trace.TraceInformation("Reset total in seconds: {0}", watch.Elapsed.Seconds);
                             return Json(new { Result = "Success" });
                         }
 
