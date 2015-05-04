@@ -216,6 +216,7 @@ namespace CUWebinars.Web.App_Start
             kernel.Bind<IAccountControllerOrchestrator>().To<AccountControllerOrchestrator>().InRequestScope()
                 .WithConstructorArgument(Request, x => new HttpRequestWrapper(HttpContext.Current.Request));
             kernel.Bind<IWebinarControllerOrchestrator>().To<WebinarControllerOrchestrator>().InRequestScope();
+            kernel.Bind<IQuizControllerOrchestrator>().To<QuizControllerOrchestrator>().InRequestScope();
 
         }
 

@@ -18,6 +18,7 @@ $(function () {
     AQ.optionsWrapper = $('#optionsWrapper');
     AQ.addOptionButton = $('#addOptionButton');
     AQ.addQuizButton = $('#addQuizButton');
+    AQ.addNextQuizButton = $('#addNextQuizButton');
     AQ.selectedWebinar = $('#SelectedWebinar');
     AQ.selectedWebinar.val('');
 
@@ -58,6 +59,7 @@ $(function () {
         }
 
         AQ.optionsWrapper.append(AQ.optionInputHtml.format(currentCount, String.fromCharCode(97 + currentCount)));
+        $('#optionInput-' + currentCount).focus();
 
     });
 
@@ -84,15 +86,32 @@ $(function () {
             data: JSON.stringify(payload),
             beforeSend: function () {
                 AQ.addQuizButton.append('&nbsp;<i id="addQuizSpinner" class="icon-spinner icon-spin"></i>');
+                $('#addQuizResult').remove();
             }
         }).done(function (data, textStatus, jqXHR) {
             if (data.Result === 'Success') {
-
+                AQ.addQuizButton.after('<span id="addQuizResult">&nbsp;<span class="label label-success"><span> Quiz has been added! </span></span></span>').fadeIn(200).before().hide();
+                $('#addQuizResult')
+                AQ.selectedWebinar.val('');
+                AQ.newQuestionTextSpan.text('');
+                AQ.questionTextAreaWrapper.show();
+                AQ.newQuestionTextDiv.hide();
+                AQ.addNextQuizButton.show();
+            } else if (!data.isSuccessful) {
+                
             } else {
 
             }
             $('#addQuizSpinner').remove();
         });
+    });
+
+    AQ.addNextQuizButton.on('click', function(e) {
+        e.preventDefault();
+
+        AQ.questionsWrapper.empty();
+        $('#addQuizResult').fadeOut(400);
+        $(this).fadeOut(400);
     });
 
     AQ.selectedWebinar.focus();
@@ -113,20 +132,16 @@ $(function () {
         e.preventDefault();
         
         AQ.newQuestion = null;
-        AQ.newQuestion = new AddQuiz.Question();
+        AQ.newQuestion = new QuizDomain.Question();
         AQ.newQuestion.setText(AQ.newQuestionTextSpan.text());
         AQ.questionsList.push(AQ.newQuestion);
         AQ.newQuestion.setOptions(AQ.getOptionsForNewQuestion());
 
         AQ.questionsWrapper.append('<div id="{0}" class="quSummary"><div class="quSummaryPart">Question {1}</div><div class="quSummaryPart"><i class="icon-trash icon-white" id="qdelete-{2}"></i></div><div class="quSummaryPart"><i class="icon-pencil icon-white" id="qedit-{2}"></i></div></div>'.format('question-' + AQ.numberOfQuestions(), AQ.numberOfQuestions()));
 
-        var optionInputDivs = AQ.optionsWrapper.find('div[id^="option-"]');
-
-        _.each(optionInputDivs, function (input) {
-            input.remove();
-        });
-
+        AQ.clearOptionsWrapper();
         AQ.optionsWrapper.hide();
+
         AQ.newQuestionTextDiv.hide();
         AQ.questionTextInput.val('');
         AQ.questionTextAreaWrapper.show();
@@ -137,6 +152,16 @@ $(function () {
         AQ.addQuizButton.removeClass('initialHide'); // with first question created, display the 'add quiz' button.
     };
 
+    ns.clearOptionsWrapper = function() {
+        
+        var optionInputDivs = AQ.optionsWrapper.find('div[id^="option-"]');
+
+        _.each(optionInputDivs, function (input) {
+            input.remove();
+        });
+
+    };
+
     ns.getOptionsForNewQuestion = function() {
 
         var optionInputs = AQ.optionsWrapper.find('input[type="text"]');
@@ -145,7 +170,7 @@ $(function () {
 
         _.each(optionInputs, function(input) {
             var input$ = $(input); 
-            var option = new AddQuiz.Option();
+            var option = new QuizDomain.Option();
 
             option.setText(input$.val());
             option.setLetter(input$.prev().text());

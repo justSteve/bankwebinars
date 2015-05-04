@@ -14,6 +14,7 @@ namespace CUWebinars.Business.Models
         public int Id { get; set; }
         public int idWebinar { get; set; }
         public int? idTimeLimit { get; set; }
+        public string QuizCode { get; set; }
 
         public virtual Webinar Webinar { get; set; }
         public virtual ICollection<QuizUserOrder> QuizUserOrders { get; set; }

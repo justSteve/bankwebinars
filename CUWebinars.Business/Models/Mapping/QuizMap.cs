@@ -14,6 +14,7 @@ namespace CUWebinars.Business.Models.Mapping
             // Properties
             Property(t => t.idWebinar).IsRequired();
             Property(t => t.idTimeLimit).IsOptional();
+            Property(t => t.QuizCode).IsOptional();
 
             // Table & Column Mappings
             ToTable("Quiz");

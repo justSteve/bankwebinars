@@ -411,12 +411,15 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\NavigationController.cs" />
+    <Compile Include="Controllers\QuizController.cs" />
     <Compile Include="Controllers\StaticContentController.cs" />
     <Compile Include="Core\ConstantType.cs" />
     <Compile Include="Core\DataTables\RegistrationsBrowserSearchResultDTO.cs" />
     <Compile Include="Core\DataTables\RegistrationsBrowserTableDataDTO.cs" />
     <Compile Include="Core\DataTables\RegistrationsBrowserTableDataDTOAssembler.cs" />
+    <Compile Include="Core\Orchestrators\IQuizControllerOrchestrator.cs" />
     <Compile Include="Core\Orchestrators\IWebinarControllerOrchestrator.cs" />
+    <Compile Include="Core\Orchestrators\QuizControllerOrchestrator.cs" />
     <Compile Include="Core\Orchestrators\WebinarControllerOrchestrator.cs" />
     <Compile Include="Core\WebinarType.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
@@ -461,6 +464,7 @@
     <Compile Include="Models\ShowMessagesModel.cs" />
     <Compile Include="Models\TTSAttendance.cs" />
     <Compile Include="Models\TTSQuiz.cs" />
+    <Compile Include="Models\UserQuizEditModel.cs" />
     <Compile Include="ViewModel\AdjustUserDetailsEditModel.cs" />
     <Compile Include="ViewModel\AffiliatesChooserModel.cs" />
     <Compile Include="ViewModel\AffPromoMsgViewModel.cs" />
@@ -862,6 +866,8 @@
     <Content Include="Views\Admin\GenerateClickToJoin.cshtml" />
     <Content Include="Views\Admin\AddQuiz.cshtml" />
     <Content Include="Views\Admin\Partials\_Question.cshtml" />
+    <Content Include="Views\Shared\_LayoutQuiz.cshtml" />
+    <Content Include="Views\Quiz\Index.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
@@ -1387,6 +1393,7 @@
     <TypeScriptCompile Include="Scripts\app\admin\question.ts" />
     <TypeScriptCompile Include="Scripts\app\cart\create-order-new.ts" />
     <TypeScriptCompile Include="Scripts\app\cart\register-user-in-cart.ts" />
+    <TypeScriptCompile Include="Scripts\app\quiz\quiz.ts" />
     <TypeScriptCompile Include="Scripts\app\register\register-user.ts" />
     <TypeScriptCompile Include="Scripts\app\toastLogger.ts" />
     <TypeScriptCompile Include="Scripts\app\utilities.ts" />

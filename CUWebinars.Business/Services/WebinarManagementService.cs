@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CUWebinars.Business.Core;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using System.Net;
 using CUWebinars.Business.Repository;
@@ -125,7 +126,8 @@ namespace CUWebinars.Business.Services
         {
             var quiz = new Quiz
             {
-                idWebinar = selectedWebinar
+                idWebinar = selectedWebinar,
+                QuizCode =  RandomHelpers.GetUniqueCode(10)
             };
             _quizRepository.AddQuiz(quiz);
 
@@ -166,6 +168,11 @@ namespace CUWebinars.Business.Services
         public IEnumerable<Webinar> GetByTopic(int topicId)
         {
             return _webinarRepository.GetByTopic(topicId);
+        }
+
+        public Quiz GetQuizByWebinarId(int idWebinar)
+        {
+            return _quizRepository.GetQuizByWebinarId(idWebinar);
         }
 
         public void UpdateWebinarFiles(IEnumerable<WebinarFile> webinarFiles)

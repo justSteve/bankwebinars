@@ -94,9 +94,24 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpPost]
         public ActionResult AddQuiz(AddQuizEditModel addQuizEditModel)
         {
-            _webinarManagementService.AddQuiz(addQuizEditModel.SelectedWebinar, addQuizEditModel.Questions);
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _webinarManagementService.AddQuiz(addQuizEditModel.SelectedWebinar, addQuizEditModel.Questions);
 
-            return View(addQuizEditModel);
+                    return Json(new {Result = WebUiConstants.Success});
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException(string.Format("AddQuiz. Session | {0}", 
+                        _appHelper.GetUserAuditInfo()),
+                        exception);
+
+                    return Json(new { Result = WebUiConstants.Fail });
+                }
+            }
+            return this.ModelStateJson(ModelState);
         }
 
         public PartialViewResult GetAffiliates()

@@ -3,17 +3,62 @@
 /// <reference path="../../typings/bootstrap/bootstrap.d.ts" />
 /// <reference path="../../typings/underscore/underscore.d.ts" />
 
-
-module AddQuiz {
+module QuizDomain {
 
     declare var $; // declare jQuery
     declare var _; // declare underscore
 
-    export class Question {
+    export enum CompletionStatus { NotStarted, Incomlete, Complete };
+
+    export class Quiz {
+        private status: CompletionStatus;
+        private orderId: number;
+        private webinarId: number;
+        private webUserId: number;
+        private questionsList: Question[];
         
-        private optionsCount: number;  
+        getCompleted(): CompletionStatus {
+            return this.status;
+        }
+
+        getQuestions(): Question[] {
+            return this.questionsList;
+        }
+
+        getOrderrId(): number {
+            return this.orderId;
+        }
+
+        getWebinarId(): number {
+            return this.webinarId;
+        }
+
+        getWebUserId(): number {
+            return this.webUserId;
+        }
+
+        setCompleted(val: CompletionStatus): void {
+            this.status = val;
+        }
+
+        setOrderId(val: number): void {
+            this.orderId = val;
+        }
+
+        setWebinarId(val: number): void {
+            this.webinarId = val;
+        }
+
+        setWebUserId(val: number): void {
+            this.webUserId = val;
+        }
+    }
+
+    export class Question {
+
+        private optionsCount: number;
         private optionsList: Option[];
-        private text : string;
+        private text: string;
 
         constructor() { }
 
@@ -41,7 +86,7 @@ module AddQuiz {
         }
 
         getAnswer(): string {
-            _.each(this.optionsList, function(option) {
+            _.each(this.optionsList, function (option) {
                 if (option.getCorrectAnswer() === true)
                     return option.getLetter();
             });
@@ -90,5 +135,5 @@ module AddQuiz {
         }
     };
 
-
-}
+    
+} 

@@ -9,5 +9,6 @@ namespace CUWebinars.Business.Repository
         void AddQuestionWithOption(QuestionWithOption questionWithOption);
         void AddQuizWithQuestion(QuizWithQuestion quizWithQuestion);
         void SaveChanges();
+        Quiz GetQuizByWebinarId(int idWebinar);
     }
 }
