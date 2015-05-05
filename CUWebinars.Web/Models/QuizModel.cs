@@ -1,0 +1,12 @@
+﻿using CUWebinars.Business.Models;
+
+namespace CUWebinars.Web.Models
+{
+    public class QuizModel
+    {
+        public int OrderId { get; set; }
+        public int QuestionCount { get; set; }
+        public string QuizCode { get; set; }
+        public Webinar Webinar { get; set; }
+    }
+}

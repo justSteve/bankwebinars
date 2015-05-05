@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CUWebinars.Business.Models;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.Repository
 {
@@ -48,12 +44,34 @@ namespace CUWebinars.Business.Repository
 
         public Quiz GetQuizByWebinarId(int idWebinar)
         {
-            return ((TTSWebinarsContext) db).Quiz.Include(
+            return items.Include(
                 q => q.QuizWithQuestions.Select(qwq => qwq.Question.QuestionWithOptions.Select(qwo => qwo.Option)))
                 .Include(q => q.QuizWithQuestions.Select(qwq => qwq.QuizUserAnswers))
                 .Include(q => q.QuizUserOrders.Select(quo => quo.Order))
                 .Include(q => q.Webinar)
                 .Where(q => q.idWebinar == idWebinar).FirstOrDefault();
+        }
+
+        public Quiz GetQuizByCode(string quizCode)
+        {
+            return items.Include(
+                q => q.QuizWithQuestions.Select(qwq => qwq.Question.QuestionWithOptions.Select(qwo => qwo.Option)))
+                .Include(q => q.QuizWithQuestions.Select(qwq => qwq.QuizUserAnswers))
+                .Include(q => q.QuizUserOrders.Select(quo => quo.Order))
+                .Include(q => q.Webinar)
+                .Where(q => q.QuizCode == quizCode).FirstOrDefault();
+
+        }
+
+        public QuestionCountAndWebinarId GetQuestionCountAndWebinarId(string quizCode)
+        {
+            var quiz = items.Include(q => q.QuizWithQuestions).Where(q => q.QuizCode == quizCode).First();
+
+            return new QuestionCountAndWebinarId
+            {
+                QuestionCount = quiz.QuizWithQuestions.Count,
+                WebinarId = quiz.idWebinar
+            };
         }
     }
 }

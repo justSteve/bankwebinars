@@ -1,8 +1,38 @@
-﻿@model UserQuizEditModel
+﻿@model QuizModel
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_LayoutQuiz.cshtml";
 }
 
-<h2>Index</h2>
+@functions{
 
+    private string GetQuestionCountText(int count)
+    {
+        return string.Format("{0} {1}", count, count == 1 ? "question" : "questions");
+    }
+}
+
+<h3>Quiz - @Model.Webinar.Title</h3>
+
+<div id="startPanel">
+    <div class="row-fluid">Welcome to the quiz for the webinar <strong>@Model.Webinar.Title</strong>.</div>
+    <div class="row-fluid">The quiz contains @GetQuestionCountText(Model.QuestionCount).</div>
+    <div class="row-fluid">&nbsp;</div>
+    <div class="row-fluid"><button id="startButton" class="btn btn-primary">Click here to begin</button></div>
+    <input type="hidden" id="codeInput" value="@Model.QuizCode"/>
+    <input type="hidden" id="orderIdInput" value="@Model.OrderId"/>
+</div>
+
+<div id="questionPanel">
+    <p id="questionNr"></p>
+    <div id="questionWrapper" class="row-fluid">
+
+    </div>
+    <div id="optionsWrapper" class="row-fluid">
+
+    </div>
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/do-quiz")
+}

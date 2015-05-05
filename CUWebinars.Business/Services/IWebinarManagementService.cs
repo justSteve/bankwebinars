@@ -1,6 +1,7 @@
 ﻿using CUWebinars.Business.Models;
 using System;
 using System.Collections.Generic;
+using CUWebinars.Business.Repository;
 
 namespace CUWebinars.Business.Services
 {
@@ -26,6 +27,7 @@ namespace CUWebinars.Business.Services
         IEnumerable<RegTypesGroup> GetRegTypeGroupsForWebinars(int idWebinar);
         IEnumerable<RegTypesGroup> GetUpcomingRegTypesForWebinars();
         Webinar GetWebinar(int id);
+        Webinar GetWebinarThin(int id);
         IEnumerable<Webinar> GetWebinarByPresenterLastName(string lastName);
         IEnumerable<Webinar> GetWebinarByDescription(string topicDescription);
         WebinarFile GetWebinarFile(int idWebinarFile);
@@ -40,5 +42,7 @@ namespace CUWebinars.Business.Services
         int GetRegTypeByACS(string registrationType, int idWebinar);
         void DeleteWebinarTopicXref(Webinar webinar, int exisingTopicId);
         void AddQuiz(int selectedWebinar, IEnumerable<Question> questions);
+        Quiz GetQuizByCode(string quizCode);
+        QuestionCountAndWebinarId GetQuizQuestionCountAndWebinarId(string quizCode);
     }
 }

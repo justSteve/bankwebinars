@@ -165,6 +165,16 @@ namespace CUWebinars.Business.Services
             }
         }
 
+        public Quiz GetQuizByCode(string quizCode)
+        {
+            return _quizRepository.GetQuizByCode(quizCode);
+        }
+
+        public QuestionCountAndWebinarId GetQuizQuestionCountAndWebinarId(string quizCode)
+        {
+            return _quizRepository.GetQuestionCountAndWebinarId(quizCode);
+        }
+
         public IEnumerable<Webinar> GetByTopic(int topicId)
         {
             return _webinarRepository.GetByTopic(topicId);
@@ -238,6 +248,11 @@ namespace CUWebinars.Business.Services
         public Webinar GetWebinar(int id)
         {
             return _webinarRepository.FindByIdLoaded(id);
+        }
+
+        public Webinar GetWebinarThin(int id)
+        {
+            return _webinarRepository.FindById(id);
         }
 
         public IEnumerable<Webinar> GetWebinarByPresenterLastName(string lastName)

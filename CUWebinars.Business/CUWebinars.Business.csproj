@@ -277,6 +277,7 @@
     <Compile Include="Repository\IQuizRepository.cs" />
     <Compile Include="Repository\IWebinarFileRepository.cs" />
     <Compile Include="Repository\IWebinarRepository.cs" />
+    <Compile Include="Repository\QuestionCountAndWebinarId.cs" />
     <Compile Include="Repository\QuizRepository.cs" />
     <Compile Include="Repository\WebinarFileRepository.cs" />
     <Compile Include="Repository\WebinarRepository.cs" />

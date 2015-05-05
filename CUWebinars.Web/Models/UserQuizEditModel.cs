@@ -5,7 +5,9 @@ namespace CUWebinars.Web.Models
 {
     public class UserQuizEditModel
     {
-        public Quiz Quiz { get; set; }
+        public int QuizId { get; set; }
+        public int WebinarId { get; set; }
+        public int OrderId { get; set; }
         public IEnumerable<QuizQuestion> QuizQuestions { get; set; }
     }
 

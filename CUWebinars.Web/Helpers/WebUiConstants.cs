@@ -5,7 +5,7 @@ namespace CUWebinars.Web.Helpers
     {
         public const string AdminUserEmail = "AdminUserEmail";
         public const string AnonUserIdentified = "AnonUserIdentified";
-
+        public const string QuizAnonUserIdentified = "QuizAnonUserIdentified";
 
         public const string BillingAddress = "Billing";
         public const string ShippingAddress = "Shipping";

@@ -10,5 +10,7 @@ namespace CUWebinars.Business.Repository
         void AddQuizWithQuestion(QuizWithQuestion quizWithQuestion);
         void SaveChanges();
         Quiz GetQuizByWebinarId(int idWebinar);
+        Quiz GetQuizByCode(string quizCode);
+        QuestionCountAndWebinarId GetQuestionCountAndWebinarId(string quizCode);
     }
 }

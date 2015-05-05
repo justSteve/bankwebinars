@@ -25,6 +25,12 @@ namespace CUWebinars.Web.App_Start
             );
 
             routes.MapRoute(
+                "Quiz",
+                url: "Quiz/Index/{quizCode}",
+                defaults: new { controller = "Quiz", action = "Index" }
+            );
+
+            routes.MapRoute(
                 "ClickToJoin",
                 url: "j/{joinCode}",
                 defaults: new { controller = "Webinar", action = "ClickToJoin", joinCode = string.Empty }

@@ -92,34 +92,13 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             if (!ReferenceEquals(null, order))
             {
-
-                JObject existingJObject = null;
-
-                string comments = string.Empty;
-
-
-                if (!ReferenceEquals(null, order.AdminComments))
-                {
-                    comments = order.AdminComments.Trim();
-                }
-
                 var newJson = new JProperty(string.Concat("PostEventAccessByAnonUser-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
                     new JObject(
                         new JProperty("Name", identifyModel.FullName),
                         new JProperty("Email", identifyModel.Email)
                         ));
 
-                if (string.IsNullOrWhiteSpace(comments))
-                {
-                    existingJObject = new JObject(newJson);
-                }
-                else
-                {
-                    existingJObject = JObject.Parse(comments);
-                    existingJObject.Add(newJson);
-                }
-
-                order.AdminComments = existingJObject.ToString(Formatting.None);
+                order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, newJson);
 
                 _orderManagementService.SaveChanges();
 

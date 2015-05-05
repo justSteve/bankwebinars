@@ -112,6 +112,7 @@ $(function () {
         AQ.questionsWrapper.empty();
         $('#addQuizResult').fadeOut(400);
         $(this).fadeOut(400);
+        AQ.addQuizButton.show();
     });
 
     AQ.selectedWebinar.focus();
