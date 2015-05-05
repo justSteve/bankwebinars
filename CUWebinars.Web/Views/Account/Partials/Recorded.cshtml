@@ -1,13 +1,18 @@
 ﻿@model CUWebinars.Web.Core.MyWebinarsDTO
 @using System.Linq
+@using System.Runtime.Serialization.Json
 @using CUWebinars.Web.Core
 @using CUWebinars.Web.Helpers
 
 @{
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
-
+    DataContractJsonSerializer odClaim = new DataContractJsonSerializer(typeof(Claim));
+    
+    //var thisClaim = myClaimToRecording.
+    
     var nfi = new CultureInfo("en-US", false).NumberFormat;
     nfi.CurrencyDecimalDigits = 0;
+    
 }
 <div class="container">
     <!--begin main content-->
@@ -94,7 +99,7 @@
 
                                     </div>
                                     <div class="span6">
-                                        <p>Need to share this event with a co-worker? Provide them this URL:<br /> <tt><b>@globalConfig.TenantURL/Webinar/OnDemand/@row.Order.idOrder</b></tt></p>
+                                        <p>Need to share this event with a co-worker? Provide them this URL:<br /> <tt><b>@globalConfig.TenantURL/Webinar/OnDemand/myClaimToRecording</b></tt></p>
                                     </div>
                                     <div class="span2">
                                         <form method="POST" action="/Account/MyCertificate">

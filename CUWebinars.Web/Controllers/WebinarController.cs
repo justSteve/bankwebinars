@@ -1344,8 +1344,9 @@ namespace CUWebinars.Web.Controllers
             try
             {
                 string message;
-
-                if (_webinarControllerOrchestrator.UpdateWebinarFiles(webinarFilesEditModel, out message))
+                var setWebinarFiles = _webinarControllerOrchestrator.UpdateWebinarFiles(webinarFilesEditModel,
+                    out message);
+                if (setWebinarFiles == WebUiConstants.Success)
                     return Json(new { Result = WebUiConstants.Success });
 
                 return Json(new { Result = message });
@@ -1424,16 +1425,17 @@ namespace CUWebinars.Web.Controllers
                 try
                 {
                     string message;
-
-                    if (_webinarControllerOrchestrator.UpdateWebinarRecording(webinarDetailsViewModel, out message))
+                    var setRecordingURL = _webinarControllerOrchestrator.UpdateWebinarRecording(
+                        webinarDetailsViewModel, out message);
+                    if (setRecordingURL != "OK")
                         return Json(new { Result = WebUiConstants.Success });
 
                     return Json(new { Result = message });
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     ModelState.AddModelError(string.Empty,
-                        "There was a problem with the update operation. Please consult with the system administrator to resolve the issue.");
+                        "Invalid recording location requested: " + ex.Message);
                 }
             }
             return this.ModelStateJson(ModelState);
