@@ -136,7 +136,6 @@ namespace CUWebinars.Business.Core
                     }
 
                     return Convert.ToInt32(message);
-
                 }
             }
         }

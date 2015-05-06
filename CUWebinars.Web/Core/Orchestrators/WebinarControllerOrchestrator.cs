@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
@@ -368,7 +369,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             return unionOfResultSets;
         }
 
-        public bool UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel, out string message)
+        public string UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel, out string message)
         {
             int webinarId = 0;
             message = string.Empty;
@@ -378,14 +379,13 @@ namespace CUWebinars.Web.Core.Orchestrators
                 Webinar webinar = _webinarManagementService.GetWebinar(webinarDetailsViewModel.Webinar.idWebinar);
                 webinarId = webinar.idWebinar;
 
-                var checkThatNewFilesExist = CheckThatRecordingExists(webinarDetailsViewModel.Webinar.RecordingUrl);
+                var checkThatNewFilesExist = CheckThatFileExists(webinarDetailsViewModel.Webinar.RecordingUrl);
 
-                if (!checkThatNewFilesExist)
+                if (checkThatNewFilesExist != "OK")
                 {
-                    message = string.Concat(webinarDetailsViewModel.Webinar.RecordingUrl, " does not exist.");
-                    return false;
+                    _logger.Error(string.Format(webinarDetailsViewModel.Webinar.RecordingUrl, " does not exist."));
+                    return string.Format(webinarDetailsViewModel.Webinar.RecordingUrl, " does not exist.");
                 }
-
 
                 var ordersForWebinar = _orderManagementService.GetOrdersForWebinar(webinar.idWebinar);
 
@@ -395,43 +395,42 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 webinar.Status = WebinarStatus.Recorded;
 
-                //var sendRecording = SendRecordingPosted();
-
                 _webinarManagementService.UpdateWebinar(webinar);
 
                 _orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
-                return true;
+                _logger.Info(string.Format("Recording for {0} is saved to {1}", webinar.idWebinar, webinar.RecordingUrl));
+                return WebUiConstants.Success;
+
             }
             catch (Exception exception)
             {
-                _logger.ErrorException(
-                    string.Format("UpdateWebinarRecording| UpdateWebinarRecording failed {0} on idWebinar: {1}", exception.Message, webinarId), exception);
+                _logger.ErrorException(string.Format("UpdateWebinarRecording| UpdateWebinarRecording failed {0} on idWebinar: {1}", exception.Message, webinarId), exception);
+                return string.Format("UpdateWebinarRecording| UpdateWebinarRecording failed {0} on idWebinar: {1}",
+                    exception.Message, webinarId);
             }
-
-            return false;
         }
 
-        public string SetEventToRecorded(int webinarId)
-        {
-            var webinar = _webinarManagementService.GetWebinar(webinarId);
-            if (webinar.RecordingUrl != null)
-            {
-                String setPostEventClaims = _orderManagementService.SetPostEventClaims(webinarId);
-                webinar.Status = WebinarStatus.Recorded;
+        //public string SetEventToRecorded(int webinarId)
+        //{
+        //    var webinar = _webinarManagementService.GetWebinar(webinarId);
+        //    if (webinar.RecordingUrl != null)
+        //    {
+        //        String setPostEventClaims = _orderManagementService.SetPostEventClaims(webinarId);
+        //        webinar.Status = WebinarStatus.Recorded;
 
-                var changeString = PublishStateChange(webinar.Status.ToString() + " to " + "recorded", webinar);
+        //        var changeString = PublishStateChange(webinar.Status.ToString() + " to " + "recorded", webinar);
 
-                webinar.ConnectionInfo = changeString;
-            }
-            return null;
-        }
+        //        webinar.ConnectionInfo = changeString;
+        //    }
+        //    return null;
+        //}
 
         public void UpdateWebinar(Webinar webinar)
         {
             _webinarManagementService.UpdateWebinar(webinar);
         }
 
-        public bool UpdateWebinarFiles(WebinarFilesEditModel webinarFilesEditModel, out string message)
+        public string UpdateWebinarFiles(WebinarFilesEditModel webinarFilesEditModel, out string message)
         {
             /*
                 This is a batch update operation. The WebinarFiles collection contains the webinar files to be updated. 
@@ -448,39 +447,35 @@ namespace CUWebinars.Web.Core.Orchestrators
                 var filesForThisEvent = _webinarManagementService.GetWebinarFilesPerWebinar(webinarFilesEditModel.idWebinar);
 
                 var deletedFiles = webinarFilesEditModel.WebinarFiles.Where(f => f.fileDesc.EndsWith("-D")).ToList();
-                var newFiles =
-                    webinarFilesEditModel.WebinarFiles.Where(f => f.idWebinarFile == 0
-                        && !f.fileDesc.EndsWith("-ND")
-                        && f.fileLocation != filesForThisEvent.Select(wf => wf.fileLocation).ToString())
-                        .ToList();
-                var updatedFiles =
-                    webinarFilesEditModel.WebinarFiles.Where(f => f.idWebinarFile > 0 && !f.fileDesc.EndsWith("-D"))
-                        .ToList();
+                var newFiles = webinarFilesEditModel.WebinarFiles.Where(f => f.idWebinarFile == 0 && !f.fileDesc.EndsWith("-ND") && f.fileLocation != filesForThisEvent.Select(wf => wf.fileLocation).ToString()).ToList();
+                var updatedFiles = webinarFilesEditModel.WebinarFiles.Where(f => f.idWebinarFile > 0 && !f.fileDesc.EndsWith("-D")).ToList();
 
                 foreach (var webinarFile in newFiles)
                 {
                     webinarFile.fileLocation = Regex.Replace(webinarFile.fileLocation, @"\s+", "");
-                    var checkThatNewFilesExist = CheckThatFilesExists(webinarFile);
-                    if (!checkThatNewFilesExist)
+                    var checkThatNewFilesExist = CheckThatFileExists(webinarFile.ToString());
+                    if (checkThatNewFilesExist != "OK")
                     {
-                        message = string.Concat(webinarFile, " does not exist.");
-                        return false;
+                        _logger.Error(string.Format(webinarFile.ToString(), " does not exist."));
+                        return string.Format("{0} does not exist.", webinarFile.ToString());
                     }
+
                 }
 
                 _webinarManagementService.AddWebinarFiles(newFiles);
                 _webinarManagementService.DeleteWebinarFiles(deletedFiles);
                 _webinarManagementService.UpdateWebinarFiles(updatedFiles);
 
-                return true;
+                return WebUiConstants.Success;
             }
             catch (Exception exception)
             {
                 _logger.ErrorException(
                     string.Format("UpdateWebinarFiles| UpdateWebinarFiles failed {0}", exception.Message), exception);
+                return string.Format("UpdateWebinarFiles| UpdateWebinarFiles failed {0}", exception.Message);
+
             }
 
-            return false;
         }
 
         public AdhocNotificationViewModel BuildAdhocNotificationViewModel(WebinarType webinarType)
@@ -723,37 +718,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             _webinarManagementService.UpdateWebinar(webinar);
         }
 
-        private bool CheckThatRecordingExists(string checkFile)
-        {
-            const string handoutRepo = "http://ttsmedia.ttstrain.com/";
-            //http://stackoverflow.com/questions/153451/how-to-check-if-system-net-webclient-downloaddata-is-downloading-a-binary-file#156750
-
-            using (var client = new HeadOnlyWebClient())
-            {
-                try
-                {
-
-                    client.HeadOnly = true;
-                    string uri = handoutRepo + checkFile;
-                    byte[] body = client.DownloadData(uri); // note should be 0-length
-                    string type = client.ResponseHeaders["content-type"];
-                    client.HeadOnly = false;
-                    //
-                    //there's probably a better way to test that the file exists
-                    if (type.Contains(@"/"))
-                    {
-                        return true;
-                    }
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-                return false;
-
-            }
-        }
-
         private DateTime GetPostEventMaterialsAccessExpiry(Order order)
         {
             if (order == null) throw new ArgumentNullException("order");
@@ -808,29 +772,30 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
         }
 
-        private bool CheckThatFilesExists(WebinarFile newFile)
+
+        private string CheckThatFileExists(string newFile)
         {
             var handoutRepo = "http://ttsmedia.ttstrain.com/";
-            //http://stackoverflow.com/questions/153451/how-to-check-if-system-net-webclient-downloaddata-is-downloading-a-binary-file#156750
 
-            using (var client = new HeadOnlyWebClient())
+            HttpWebResponse response = null;
+            string uri = handoutRepo + newFile;
+            var request = (HttpWebRequest)WebRequest.Create(uri);
+            request.Method = "HEAD";
+            try
             {
-                client.HeadOnly = true;
-                string uri = handoutRepo + newFile.fileLocation;
-                byte[] body = client.DownloadData(uri); // note should be 0-length
-                string type = client.ResponseHeaders["content-type"];
-                client.HeadOnly = false;
-                //
-                //there's probably a better way to test that the file exists
-                if (type.Contains(@"/"))
+                response = (HttpWebResponse)request.GetResponse();
+                return response.StatusCode.ToString();
+            }
+            catch (WebException ex)
+            {
+                return string.Format("File Requested could not be found: {0}", ex.Message);
+            }
+            finally
+            {
+                if (response != null)
                 {
-                    return true;
+                    response.Close();
                 }
-                else
-                {
-                    return false;
-                }
-
             }
         }
 
