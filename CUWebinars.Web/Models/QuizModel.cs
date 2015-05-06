@@ -8,5 +8,6 @@ namespace CUWebinars.Web.Models
         public int QuestionCount { get; set; }
         public string QuizCode { get; set; }
         public Webinar Webinar { get; set; }
+        public int WebUserId { get; set; }
     }
 }

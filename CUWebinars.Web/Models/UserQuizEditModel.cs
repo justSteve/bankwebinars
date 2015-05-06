@@ -15,6 +15,7 @@ namespace CUWebinars.Web.Models
     {
         public ICollection<QuestionOption> Options { get; set; }
         public int QuestionNumber { get; set; }
+        public string QuestionText { get; set; }
         public ICollection<char> Solutions { get; set; }
         public ICollection<char> UserAnswers { get; set; }
     }

@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Principal;
 using System.Web.Mvc;
 using System.Web.Routing;
+using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
@@ -21,12 +22,17 @@ namespace CUWebinars.Web.Core.Orchestrators
     {
         private readonly IWebinarManagementService _webinarManagementService;
         private readonly IOrderManagementService _orderManagementService;
+        private readonly IMembershipService _membershipService;
         private readonly IStateService _stateService;
 
-        public QuizControllerOrchestrator(IWebinarManagementService webinarManagementService, IOrderManagementService orderManagementService, IStateService stateService)
+        public QuizControllerOrchestrator(IWebinarManagementService webinarManagementService, 
+            IOrderManagementService orderManagementService, 
+            IMembershipService membershipService,
+            IStateService stateService)
         {
             _webinarManagementService = webinarManagementService;
             _orderManagementService = orderManagementService;
+            _membershipService = membershipService;
             _stateService = stateService;
         }
 
@@ -39,7 +45,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         public UserQuizEditModel BuildUserQuizEditModel(string quizCode, int orderId)
         {
             var quiz = _webinarManagementService.GetQuizByCode(quizCode);
-            
             var model = GetUserQuizEditModelFromQuiz(quiz);
             model.OrderId = orderId;
 
@@ -52,7 +57,9 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             if (claimsIdentityOfAuthenticatedUser.IsAuthenticated)
             {
+                var webUserId = _membershipService.GetWebUserIdByEmail(claimsIdentityOfAuthenticatedUser.Name);
                 var viewResult = GetIndexViewResult(quizCode, idOrder);
+
 
                 return viewResult;
             }
@@ -138,7 +145,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 quizQuestion.QuestionNumber =
                         question.QuizWithQuestions.First(q => q.idQuestion == question.Id).QuestionNumber;
-
+                quizQuestion.QuestionText = question.Text;
                 quizQuestions.Add(quizQuestion);
             }
 

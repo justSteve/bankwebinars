@@ -76,6 +76,14 @@ var QuizDomain;
             return this.optionsList.length;
         };
 
+        Question.prototype.getQuestionNumber = function () {
+            return this.questionNumber;
+        };
+
+        Question.prototype.getuserAnswers = function () {
+            return this.userAnswers;
+        };
+
         Question.prototype.getText = function () {
             return this.text;
         };
@@ -88,8 +96,16 @@ var QuizDomain;
             return '';
         };
 
+        Question.prototype.setQuestionNumber = function (value) {
+            this.questionNumber = value;
+        };
+
         Question.prototype.setText = function (value) {
             this.text = value;
+        };
+
+        Question.prototype.setUserAnswers = function (value) {
+            this.userAnswers = value;
         };
 
         Question.prototype.setOptions = function (value) {
@@ -131,4 +147,4 @@ var QuizDomain;
     QuizDomain.Option = Option;
     ;
 })(QuizDomain || (QuizDomain = {}));
-//# sourceMappingURL=Quiz.js.map
+//# sourceMappingURL=quiz.js.map

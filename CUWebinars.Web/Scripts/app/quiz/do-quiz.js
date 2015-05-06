@@ -61,6 +61,30 @@ $(function () {
         quiz.setCompleted(QuizDomain.CompletionStatus.NotStarted);
         quiz.setOrderId(data.OrderId);
         quiz.setWebinarId(data.WebinarId);
+        quiz.setWebUserId(data.WebUserId);
+
+        var questions = [];
+
+        _.each(data.QuizQuestions, function(item, index) {
+
+            var question = new QuizDomain.Question();
+            question.setText(item.QuestionText);
+            question.setQuestionNumber(item.QuestionNumber);
+
+            var options = [];
+
+            _.each(item.Options, function(option, index) {
+                var optionForQu = new QuizDomain.Option();
+                optionForQu.setText(option.Text);
+                optionForQu.setLetter(option.Letter);
+                options.push(optionForQu);
+            });
+
+            question.setOptions(options);
+            questions.push(question);
+
+        });
+
     };
 
     ns.setUiState = function(state) {

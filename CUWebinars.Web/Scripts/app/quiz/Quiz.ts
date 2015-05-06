@@ -57,7 +57,9 @@ module QuizDomain {
     export class Question {
 
         private optionsCount: number;
+        private questionNumber: number;
         private optionsList: Option[];
+        private userAnswers: string[];
         private text: string;
 
         constructor() { }
@@ -81,6 +83,14 @@ module QuizDomain {
             return this.optionsList.length;
         }
 
+        getQuestionNumber(): number {
+            return this.questionNumber;
+        }
+
+        getuserAnswers(): string[] {
+            return this.userAnswers;
+        }
+
         getText(): string {
             return this.text;
         }
@@ -93,8 +103,16 @@ module QuizDomain {
             return '';
         }
 
+        setQuestionNumber(value: number): void {
+            this.questionNumber = value;
+        }
+
         setText(value: string): void {
             this.text = value;
+        }
+
+        setUserAnswers(value: string[]): void {
+            this.userAnswers = value;
         }
 
         setOptions(value: Option[]): void {
@@ -105,7 +123,7 @@ module QuizDomain {
     export class Option {
         private text: string;
         private letter: string;
-        private correctAnswer: boolean;
+        private correctAnswer: boolean; // only relevant for Admin section in creating the Quiz
 
         constructor() { }
 
