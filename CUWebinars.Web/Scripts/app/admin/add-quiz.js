@@ -119,7 +119,7 @@ $(function () {
         }).done(function(data, textStatus, jqXHR) {
             if (data.Result === 'Success') {
                 AQ.addQuizButton.after('<span id="addQuizResult">&nbsp;<span class="label label-success"><span> Quiz has been added! </span></span></span>').fadeIn(200).before().hide();
-                $('#addQuizResult')
+                //$('#addQuizResult')
                 AQ.selectedWebinar.val('');
                 AQ.newQuestionTextSpan.text('');
                 AQ.questionTextAreaWrapper.show();
@@ -138,9 +138,9 @@ $(function () {
         e.preventDefault();
 
         AQ.questionsWrapper.empty();
+        AQ.questionsList.length = 0;
         $('#addQuizResult').fadeOut(400);
         $(this).fadeOut(400);
-        AQ.addQuizButton.show();
     };
 
     ns.addNewQuestionToList = function(e) {
@@ -171,7 +171,7 @@ $(function () {
 
         $(this).remove();
 
-        AQ.addQuizButton.fadeIn(4001507111).removeClass('initialHide'); // with first question created, display the 'add quiz' button.
+        AQ.addQuizButton.fadeIn(400).removeClass('initialHide'); // with first question created, display the 'add quiz' button.
     };
 
     ns.deleteQuestion = function(e) {
