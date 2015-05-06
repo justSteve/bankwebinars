@@ -8,24 +8,38 @@ var DQ = DOQUIZ; // create shortcut alias
 // document.ready function
 $(function () {
 
-    DQ.startButton = $('#startButton');
-    DQ.startPanel = $('#startPanel');
+    DQ.primeDomVariables();
 
     DQ.startButton.on('click', DQ.startQuiz);
+    DQ.prevButton.on('click', DQ.prevClicked);
+    DQ.nextButton.on('click', DQ.nextClicked);
 
 });
 
 // self-invoking function for creating methods using Module pattern.
 (function(ns) {
 
-    ns.questionsList = [];
+    ns.questionCount = 0;
+    ns.currentQuestionNr = 1;
+
+    ns.questionTemplateFirst = '<div id="{0}-question"><p id="{0}-questionText">{1}</p><div id="{0}-options">{2}</div></div>';
+    ns.questionTemplate = '<div id="{0}-question" class="initialHide"><p id="{0}-questionText">{1}</p><div id="{0}-options">{2}</div></div>';
+    ns.optionsTemplate = '<label class="radio"><input id="{0}-option" name="option" type="radio" value="{1}" />{2}</label>';
+
+    ns.primeDomVariables = function() {
+        DQ.startButton = $('#startButton');
+        DQ.startPanel = $('#startPanel');
+        DQ.questionPanel = $('#questionPanel');
+        DQ.questionsWrapper = $('#questionWrapper');
+        DQ.prevButton = $('#prev');
+        DQ.nextButton = $('#next');
+    };
 
     ns.startQuiz = function(e) {
         e.preventDefault();
 
-        DQ.getQuestions();
-
         DQ.setUiState('start');
+        DQ.getQuestions();
     };
 
     ns.getQuestions = function () {
@@ -48,6 +62,24 @@ $(function () {
         }).done(function (data, textStatus, jqXHR) {
             if (data.Result === 'Success') {
                 DQ.populateClientObjects(data.Quiz);
+
+                _.each(DQ.quiz.getQuestions(), function(question, idx) {
+
+                    var optionsHtml = '';
+
+                    _.each(question.getOptions(), function(option, idx) {
+                        optionsHtml += DQ.optionsTemplate.format((idx + 1).toString(), option.getLetter(), option.getText());
+                    });
+
+                    if (idx === 0) {
+                        var questionHtml = DQ.questionTemplateFirst.format((idx + 1).toString(), question.getText(), optionsHtml);
+                    } else {
+                        var questionHtml = DQ.questionTemplate.format((idx + 1).toString(), question.getText(), optionsHtml);
+                    }
+
+                    DQ.questionsWrapper.append(questionHtml);
+                });
+
             } else {
 
             }
@@ -57,12 +89,12 @@ $(function () {
     };
 
     ns.populateClientObjects = function(data) {
-        var quiz = new QuizDomain.Quiz();
-        quiz.setCompleted(QuizDomain.CompletionStatus.NotStarted);
-        quiz.setOrderId(data.OrderId);
-        quiz.setWebinarId(data.WebinarId);
-        quiz.setWebUserId(data.WebUserId);
-
+        DQ.quiz = new QuizDomain.Quiz();
+        DQ.quiz.setCompleted(QuizDomain.CompletionStatus.NotStarted);
+        DQ.quiz.setOrderId(data.OrderId);
+        DQ.quiz.setWebinarId(data.WebinarId);
+        DQ.quiz.setWebUserId(data.WebUserId);
+        
         var questions = [];
 
         _.each(data.QuizQuestions, function(item, index) {
@@ -82,16 +114,21 @@ $(function () {
 
             question.setOptions(options);
             questions.push(question);
-
         });
 
+        DQ.quiz.setQuestions(questions);
+        DQ.questionCount = DQ.quiz.getQuestions().length;
     };
 
     ns.setUiState = function(state) {
 
         switch(state) {
             case 'start':
-                DQ.startPanel.fadeOut(400);
+                DQ.startPanel.fadeOut(400, function() {
+                    DQ.questionPanel.fadeIn(400, function () {
+                        $(this).removeClass('initialHide');
+                    });
+                });
                 break;
             default:
                 break;
@@ -100,4 +137,59 @@ $(function () {
 
     };
 
+    ns.nextClicked = function(e) {
+        e.preventDefault();
+
+        if (DQ.currentQuestionNr + 1 === DQ.questionCount) {
+            $(this).attr('disabled', 'disabled');
+        } else {
+            DQ.dealWithDisabled($(this));
+        }
+
+        if (DQ.currentQuestionNr === 1) {
+            DQ.prevButton.removeAttr('disabled');
+        }
+
+        $('#' + DQ.currentQuestionNr + '-question').fadeOut(400, function() {
+
+            DQ.currentQuestionNr += 1;
+
+            $('#' + DQ.currentQuestionNr + '-question').fadeIn(400, function () {
+                if($(this).hasClass('initialHide'))
+                    $(this).removeClass('initialHide');
+            });
+
+        });
+
+    };
+
+    ns.prevClicked = function (e) {
+        e.preventDefault();
+
+        if (DQ.currentQuestionNr - 1 === 1) {
+            $(this).attr('disabled', 'disabled');
+        } else {
+            DQ.dealWithDisabled($(this));
+        }
+
+        if (DQ.currentQuestionNr === DQ.questionCount) {
+            DQ.nextButton.removeAttr('disabled');
+        }
+
+        $('#' + DQ.currentQuestionNr + '-question').fadeOut(400, function () {
+
+            DQ.currentQuestionNr -= 1;
+
+            $('#' + DQ.currentQuestionNr + '-question').fadeIn(400);
+
+        });
+    };
+
+    ns.dealWithDisabled = function(jqueryObject) {
+        var disabledAttr = jqueryObject.attr('disabled');
+
+        if (typeof disabledAttr !== typeof 'undefined' && disabledAttr !== false) {
+            jqueryObject.removeAttr('disabled');
+        }
+    };
 })(DQ);

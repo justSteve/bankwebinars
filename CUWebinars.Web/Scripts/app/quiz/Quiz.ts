@@ -45,6 +45,10 @@ module QuizDomain {
             this.orderId = val;
         }
 
+        setQuestions(val: Question[]): void {
+            this.questionsList = val;
+        }
+
         setWebinarId(val: number): void {
             this.webinarId = val;
         }

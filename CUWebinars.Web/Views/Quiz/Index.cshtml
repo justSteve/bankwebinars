@@ -23,16 +23,14 @@
     <input type="hidden" id="orderIdInput" value="@Model.OrderId"/>
 </div>
 
-<div id="questionPanel">
-    <p id="questionNr"></p>
+<div id="questionPanel" class="initialHide">
+    
     <div id="questionWrapper" class="row-fluid">
-
     </div>
-    <div id="optionsWrapper" class="row-fluid">
-
-    </div>
+    <div class="btn-toolbar"><button id="prev" class="btn btn-default btn-mini" disabled="disabled">previous</button><button id="next" class="btn btn-default btn-mini">next</button></div>  
 </div>
 
 @section scripts {
+    <script src="@Url.Content("~/Scripts/app/extensions.js")"></script>
     @Scripts.Render("~/bundles/do-quiz")
 }

@@ -43,6 +43,10 @@ var QuizDomain;
             this.orderId = val;
         };
 
+        Quiz.prototype.setQuestions = function (val) {
+            this.questionsList = val;
+        };
+
         Quiz.prototype.setWebinarId = function (val) {
             this.webinarId = val;
         };
