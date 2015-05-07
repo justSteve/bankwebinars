@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Security.Principal;
+using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
 using CUWebinars.Business.AccountService;
@@ -14,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace CUWebinars.Web.Core.Orchestrators
@@ -51,37 +53,76 @@ namespace CUWebinars.Web.Core.Orchestrators
             return model;
         }
 
-        public ActionResult ShowQuizLandingView(int idOrder, string quizCode, string quizCodeWithOrderId, IIdentity userIdentity)
+        public ActionResult ShowQuizLandingView(int idOrder, string quizCode, string quizCodeWithOrderId, IIdentity userIdentity, string email = null)
         {
             var claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)userIdentity;
 
             if (claimsIdentityOfAuthenticatedUser.IsAuthenticated)
             {
-                var webUserId = _membershipService.GetWebUserIdByEmail(claimsIdentityOfAuthenticatedUser.Name);
-                var viewResult = GetIndexViewResult(quizCode, idOrder);
-
+                var viewResult = GetIndexViewResult(quizCode, idOrder, email);
 
                 return viewResult;
             }
 
             if (_stateService.HasValue(WebUiConstants.QuizAnonUserIdentified) && _stateService.GetValue<bool>(WebUiConstants.QuizAnonUserIdentified))
             {
-                var viewResult = GetIndexViewResult(quizCode, idOrder);
-
+                var viewResult = GetIndexViewResult(quizCode, idOrder, email);
+                _stateService.ClearValue(WebUiConstants.QuizAnonUserIdentified);
                 return viewResult;
             }
 
             return new RedirectToRouteResult(new RouteValueDictionary(new { action = "Identify", controller = "Quiz", onDemandCode = quizCodeWithOrderId }));
         }
 
-        private ViewResult GetIndexViewResult(string quizCode, int orderId)
+        public ContentResult ScoreQuizAndPersistResults(UserQuizEditModel userQuizEditModel)
+        {
+            Quiz quiz =_webinarManagementService.GetQuizByQuizId(userQuizEditModel.QuizId);
+
+            int talley = 0;
+            bool isCorrect;
+            var questionResult = new Dictionary<int, bool>();
+
+            foreach (var result in quiz.QuizWithQuestions)
+            {
+                isCorrect = false;
+
+                foreach (var quizQuestion in userQuizEditModel.QuizQuestions)
+                {
+                    if (result.QuestionNumber == quizQuestion.QuestionNumber)
+                    {
+                        var correctAnswers = result.Question.QuestionWithOptions
+                            .Select(q => new { QuId = q.idQuestion, Letter = q.Letter, Solution = q.CorrectAnswer})
+                            .First(q => q.QuId == result.idQuestion && q.Solution == true);
+
+                        if (quizQuestion.UserAnswers.First() == correctAnswers.Letter.ElementAt(0))
+                        {
+                            talley++;
+                            isCorrect = true;
+                        }
+                    }
+                }
+                questionResult.Add(result.QuestionNumber, isCorrect);
+            }
+            
+            return new ContentResult
+            {
+                // use Json.NET to handle serialization of the Dictionary.
+                Content = JsonConvert.SerializeObject(new { Result = WebUiConstants.Success,  Score = talley, QuestionsResult = questionResult }),
+                ContentEncoding= Encoding.UTF8,
+                ContentType = "application/json"
+            };
+        }
+
+        private ViewResult GetIndexViewResult(string quizCode, int orderId, string email = null)
         {
             var questionCountAndWebinarId = _webinarManagementService.GetQuizQuestionCountAndWebinarId(quizCode);
 
             var quizModel = new QuizModel
             {
+                Email = email ?? string.Empty,
                 OrderId = orderId,
                 QuestionCount = questionCountAndWebinarId.QuestionCount,
+                QuizId = questionCountAndWebinarId.QuizId,
                 QuizCode = quizCode,
                 Webinar = _webinarManagementService.GetWebinarThin(questionCountAndWebinarId.WebinarId)
             };
@@ -100,19 +141,19 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             if (!ReferenceEquals(null, order))
             {
-                var newJson = new JProperty(string.Concat("QuizAccessByAnonUser-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
-                    new JObject(
-                        new JProperty("Name", identifyModel.FullName),
-                        new JProperty("Email", identifyModel.Email)
-                        ));
+                //var newJson = new JProperty(string.Concat("QuizAccessByAnonUser-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                //    new JObject(
+                //        new JProperty("Name", identifyModel.FullName),
+                //        new JProperty("Email", identifyModel.Email)
+                //        ));
 
-                order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, newJson);
+                //order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, newJson);
 
-                _orderManagementService.SaveChanges();
+                //_orderManagementService.SaveChanges();
 
                 _stateService.SetValue(WebUiConstants.QuizAnonUserIdentified, true);
 
-                return new RedirectToRouteResult(new RouteValueDictionary(new { action = "Index", controller = "Quiz", onDemandCode = identifyModel.OnDemandCode }));
+                return new RedirectToRouteResult(new RouteValueDictionary(new { action = "Index", controller = "Quiz", quizCode = identifyModel.OnDemandCode }));
             }
 
             return new ViewResult { ViewName = "Identify", ViewData = { Model = identifyModel } };

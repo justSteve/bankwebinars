@@ -42,6 +42,13 @@ namespace CUWebinars.Business.Repository
             db.SaveChanges();
         }
 
+        public Quiz GetQuizByIdWithOptions(int id)
+        {
+            var quiz = items.Include(q => q.QuizWithQuestions.Select(qwq => qwq.Question.QuestionWithOptions))
+                .SingleOrDefault(q => q.Id == id);
+            return quiz;
+        }
+
         public Quiz GetQuizByWebinarId(int idWebinar)
         {
             return items.Include(
@@ -69,6 +76,7 @@ namespace CUWebinars.Business.Repository
 
             return new QuestionCountAndWebinarId
             {
+                QuizId = quiz.Id,
                 QuestionCount = quiz.QuizWithQuestions.Count,
                 WebinarId = quiz.idWebinar
             };

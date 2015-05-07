@@ -11,18 +11,19 @@ module QuizDomain {
     export enum CompletionStatus { NotStarted, Incomlete, Complete };
 
     export class Quiz {
-        private status: CompletionStatus;
+        private status: CompletionStatus; // not relevant for current requirements. Useful if incomplete quiz can be resumed.
         private orderId: number;
         private webinarId: number;
-        private webUserId: number;
-        private questionsList: Question[];
+        private email: string;
+        private quizQuestions: Question[];
+        private quizId: number;
         
         getCompleted(): CompletionStatus {
             return this.status;
         }
 
         getQuestions(): Question[] {
-            return this.questionsList;
+            return this.quizQuestions;
         }
 
         getOrderrId(): number {
@@ -33,8 +34,8 @@ module QuizDomain {
             return this.webinarId;
         }
 
-        getWebUserId(): number {
-            return this.webUserId;
+        getEmail(): string {
+            return this.email;
         }
 
         setCompleted(val: CompletionStatus): void {
@@ -46,25 +47,29 @@ module QuizDomain {
         }
 
         setQuestions(val: Question[]): void {
-            this.questionsList = val;
+            this.quizQuestions = val;
+        }
+
+        setQuizId(val: number): void {
+            this.quizId= val;
         }
 
         setWebinarId(val: number): void {
             this.webinarId = val;
         }
 
-        setWebUserId(val: number): void {
-            this.webUserId = val;
+        setEmail(val: string): void {
+            this.email = val;
         }
     }
 
     export class Question {
 
         private optionsCount: number;
-        private questionNumber: number;
-        private optionsList: Option[];
-        private userAnswers: string[];
-        private text: string;
+        private QuestionNumber: number;
+        private Options: Option[];
+        private UserAnswers: string[];
+        private Questiontext: string;
 
         constructor() { }
 
@@ -76,68 +81,70 @@ module QuizDomain {
         }
 
         addOption(newOption: Option) {
-            this.optionsList.push(newOption);
+            this.Options.push(newOption);
         }
 
         getOptions(): Option[] {
-            return this.optionsList;
+            return this.Options;
         }
 
         getOptionsCount(): number {
-            return this.optionsList.length;
+            return this.Options.length;
         }
 
         getQuestionNumber(): number {
-            return this.questionNumber;
+            return this.QuestionNumber;
         }
 
-        getuserAnswers(): string[] {
-            return this.userAnswers;
+        getUserAnswers(): string[] {
+            return this.UserAnswers;
         }
 
         getText(): string {
-            return this.text;
+            return this.Questiontext;
         }
 
         getAnswer(): string {
-            _.each(this.optionsList, function (option) {
+            _.each(this.Options, function (option) {
                 if (option.getCorrectAnswer() === true)
                     return option.getLetter();
+                return '';
             });
             return '';
         }
 
         setQuestionNumber(value: number): void {
-            this.questionNumber = value;
+            this.QuestionNumber = value;
         }
 
         setText(value: string): void {
-            this.text = value;
+            this.Questiontext = value;
         }
 
         setUserAnswers(value: string[]): void {
-            this.userAnswers = value;
+            this.UserAnswers = null;
+            this.UserAnswers = value;
         }
 
         setOptions(value: Option[]): void {
-            this.optionsList = value;
+            this.Options = value;
         }
     };
 
     export class Option {
-        private text: string;
-        private letter: string;
+        private Text: string;
+        private Letter: string;
         private correctAnswer: boolean; // only relevant for Admin section in creating the Quiz
 
         constructor() { }
 
 
         getText(): string {
-            return this.text;
+            return this.Text;
         }
 
         getLetter(): string {
-            return this.letter;
+            return this.Letter;
         }
 
         getCorrectAnswer(): boolean {
@@ -149,11 +156,11 @@ module QuizDomain {
         }
 
         setText(value: string): void {
-            this.text = value;
+            this.Text = value;
         }
 
         setLetter(value: string): void {
-            this.letter = value;
+            this.Letter = value;
         }
     };
 

@@ -9,7 +9,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         UserQuizEditModel BuildUserQuizEditModel(int idWebinar);
         UserQuizEditModel BuildUserQuizEditModel(string quizCode, int orderId);
         ActionResult Identify(IdentifyModel identifyModel);
-        ActionResult ShowQuizLandingView(int idOrder, string quizCode, string quizCodeWithOrderId,
-            IIdentity userIdentity);
+        ActionResult ShowQuizLandingView(int idOrder, string quizCode, string quizCodeWithOrderId, IIdentity userIdentity, string email = null);
+        ContentResult ScoreQuizAndPersistResults(UserQuizEditModel userQuizEditModel);
     }
 }

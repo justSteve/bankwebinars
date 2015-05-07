@@ -20,7 +20,7 @@ var QuizDomain;
         };
 
         Quiz.prototype.getQuestions = function () {
-            return this.questionsList;
+            return this.quizQuestions;
         };
 
         Quiz.prototype.getOrderrId = function () {
@@ -31,8 +31,8 @@ var QuizDomain;
             return this.webinarId;
         };
 
-        Quiz.prototype.getWebUserId = function () {
-            return this.webUserId;
+        Quiz.prototype.getEmail = function () {
+            return this.email;
         };
 
         Quiz.prototype.setCompleted = function (val) {
@@ -44,15 +44,19 @@ var QuizDomain;
         };
 
         Quiz.prototype.setQuestions = function (val) {
-            this.questionsList = val;
+            this.quizQuestions = val;
+        };
+
+        Quiz.prototype.setQuizId = function (val) {
+            this.quizId = val;
         };
 
         Quiz.prototype.setWebinarId = function (val) {
             this.webinarId = val;
         };
 
-        Quiz.prototype.setWebUserId = function (val) {
-            this.webUserId = val;
+        Quiz.prototype.setEmail = function (val) {
+            this.email = val;
         };
         return Quiz;
     })();
@@ -69,51 +73,53 @@ var QuizDomain;
         };
 
         Question.prototype.addOption = function (newOption) {
-            this.optionsList.push(newOption);
+            this.Options.push(newOption);
         };
 
         Question.prototype.getOptions = function () {
-            return this.optionsList;
+            return this.Options;
         };
 
         Question.prototype.getOptionsCount = function () {
-            return this.optionsList.length;
+            return this.Options.length;
         };
 
         Question.prototype.getQuestionNumber = function () {
-            return this.questionNumber;
+            return this.QuestionNumber;
         };
 
-        Question.prototype.getuserAnswers = function () {
-            return this.userAnswers;
+        Question.prototype.getUserAnswers = function () {
+            return this.UserAnswers;
         };
 
         Question.prototype.getText = function () {
-            return this.text;
+            return this.Questiontext;
         };
 
         Question.prototype.getAnswer = function () {
-            _.each(this.optionsList, function (option) {
+            _.each(this.Options, function (option) {
                 if (option.getCorrectAnswer() === true)
                     return option.getLetter();
+                return '';
             });
             return '';
         };
 
         Question.prototype.setQuestionNumber = function (value) {
-            this.questionNumber = value;
+            this.QuestionNumber = value;
         };
 
         Question.prototype.setText = function (value) {
-            this.text = value;
+            this.Questiontext = value;
         };
 
         Question.prototype.setUserAnswers = function (value) {
-            this.userAnswers = value;
+            this.UserAnswers = null;
+            this.UserAnswers = value;
         };
 
         Question.prototype.setOptions = function (value) {
-            this.optionsList = value;
+            this.Options = value;
         };
         return Question;
     })();
@@ -124,11 +130,11 @@ var QuizDomain;
         function Option() {
         }
         Option.prototype.getText = function () {
-            return this.text;
+            return this.Text;
         };
 
         Option.prototype.getLetter = function () {
-            return this.letter;
+            return this.Letter;
         };
 
         Option.prototype.getCorrectAnswer = function () {
@@ -140,15 +146,15 @@ var QuizDomain;
         };
 
         Option.prototype.setText = function (value) {
-            this.text = value;
+            this.Text = value;
         };
 
         Option.prototype.setLetter = function (value) {
-            this.letter = value;
+            this.Letter = value;
         };
         return Option;
     })();
     QuizDomain.Option = Option;
     ;
 })(QuizDomain || (QuizDomain = {}));
-//# sourceMappingURL=Quiz.js.map
+//# sourceMappingURL=quiz.js.map

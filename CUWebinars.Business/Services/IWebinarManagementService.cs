@@ -44,5 +44,6 @@ namespace CUWebinars.Business.Services
         void AddQuiz(int selectedWebinar, IEnumerable<Question> questions);
         Quiz GetQuizByCode(string quizCode);
         QuestionCountAndWebinarId GetQuizQuestionCountAndWebinarId(string quizCode);
+        Quiz GetQuizByQuizId(int quizId);
     }
 }

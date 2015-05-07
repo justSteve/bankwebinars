@@ -175,6 +175,11 @@ namespace CUWebinars.Business.Services
             return _quizRepository.GetQuestionCountAndWebinarId(quizCode);
         }
 
+        public Quiz GetQuizByQuizId(int quizId)
+        {
+            return _quizRepository.GetQuizByIdWithOptions(quizId);
+        }
+
         public IEnumerable<Webinar> GetByTopic(int topicId)
         {
             return _webinarRepository.GetByTopic(topicId);

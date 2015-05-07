@@ -47,7 +47,7 @@
 
 <div class="well">
 
-@using (Html.BeginForm("Identify", "Webinar", FormMethod.Post, new {id = "IdentifyDetailsForm" }))
+@using (Html.BeginForm("Identify", "Quiz", FormMethod.Post, new {id = "IdentifyDetailsForm" }))
 {
     @Html.ValidationSummary("Please address the following issues in the form below:", new {id = "valSummaryIdentifyDetailsForm"})
     @Html.AntiForgeryToken()
