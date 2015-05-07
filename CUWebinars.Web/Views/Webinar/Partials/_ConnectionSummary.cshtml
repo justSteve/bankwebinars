@@ -10,7 +10,7 @@
             <tr>
                 <td colspan="2">
                     @{
-                        if (@Model.JoinURL == null)
+                        if (@Model.CitrixJoinUrl == null)
                         {
                             <p class="btn btn-warning btn-mini">Click-To-Join link generation is pending.</p>
                         }
@@ -18,11 +18,11 @@
                         {
                             if (Model.Webinar.Status == WebinarStatus.InProgress)
                             {
-                                <a href="@Model.JoinURL"><b>Join the webinar.</b></a>
+                                <a href="@Model.CitrixJoinUrl"><b>Join the webinar.</b></a>
                             }
                             else
                             {
-                                <p>Please use this link 15-20 minutes prior to the scheduled start time of the event:<br /> <input type="text" width="90px" value="@Model.JoinURL"></p>
+                                <p>Please use this link 15-20 minutes prior to the scheduled start time of the event:<br /> <input type="text" width="90px" value="@Model.CitrixJoinUrl"></p>
                             }
                         }
                     }

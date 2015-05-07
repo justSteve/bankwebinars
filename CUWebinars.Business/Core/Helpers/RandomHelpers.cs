@@ -16,7 +16,7 @@ namespace CUWebinars.Business.Core.Helpers
         /// <returns></returns>
         public static string GetUniqueCode(int maxSize)
         {
-            char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".ToCharArray();
+            char[] chars = "abcdefghijkmnopqrstwvxyz234567890".ToCharArray();
 
             byte[] data = null;
 

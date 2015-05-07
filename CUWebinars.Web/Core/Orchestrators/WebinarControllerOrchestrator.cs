@@ -240,9 +240,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 if (!ReferenceEquals(null, orderRow))
                 {
 
-                    if (userIdentity.IsAuthenticated && !ReferenceEquals(null, orderRow.JoinURL)) // JoinURL will be null for impromtu user
+                    if (userIdentity.IsAuthenticated && !ReferenceEquals(null, orderRow.CitrixJoinUrl)) // CitrixJoinUrl will be null for impromtu user
                     {
-                        webinarUrl = orderRow.JoinURL; // fully qualified authorative webinar-access link from Citrix.
+                        webinarUrl = orderRow.CitrixJoinUrl; // fully qualified authorative webinar-access link from Citrix.
                     }
                     else
                     {
@@ -767,7 +767,11 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 try
                 {
-                    var onDemandCode = RandomHelpers.GetUniqueCode(8);
+                    var onDemandCode = RandomHelpers.GetUniqueCode(5);
+
+                    order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).OnDemandCode = onDemandCode;
+
+                    _orderManagementService.SaveChanges();
 
                     var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
                     var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, expiryDate.ToString("yyyy-MM-dd"));
@@ -783,7 +787,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         userAccountOfOrderer, ClaimTypes.DisplayPostEventMaterials, claimValue.ToString(Formatting.None)
                         );
 
-                    _logger.Info("Claim added for " + order.idOrder);
+                    _logger.Info("Claim for onDemand access added for " + order.idOrder);
 
                 }
                 catch (Exception)

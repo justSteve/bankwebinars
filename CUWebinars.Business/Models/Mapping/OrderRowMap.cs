@@ -11,11 +11,12 @@ namespace CUWebinars.Business.Models.Mapping
             HasKey(t => t.idOrderRow);
             
             Property(o => o.RegistrantKey).HasMaxLength(25);
-            Property(o => o.JoinURL).HasMaxLength(125);
+            Property(o => o.CitrixJoinUrl).HasMaxLength(125).HasColumnName("JoinURL"); ;
             Property(o => o.Royalty).HasPrecision(8,2);
             Property(o => o.UnitPrice).HasPrecision(8,2);
             Property(o => o.RowPrice).HasPrecision(8,2);
             Property(o => o.TtsJoinUrl).IsVariableLength().IsOptional().HasMaxLength(10);
+            Property(o => o.OnDemandCode).IsVariableLength().IsOptional().HasMaxLength(10);
 
 
             // Table & Column Mappings
@@ -29,7 +30,6 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.ShipmentDate).HasColumnName("ShipmentDate");
             Property(t => t.AccessExpires).HasColumnName("AccessExpires");
             Property(t => t.Royalty).HasColumnName("Royalty");
-            Property(t => t.TtsJoinUrl).HasColumnName("TtsJoinUrl");
 
             // Relationships
             HasRequired(t => t.Order)

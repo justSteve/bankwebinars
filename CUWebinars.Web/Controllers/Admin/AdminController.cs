@@ -891,7 +891,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active); // perf bump by assigning to local variable
 
-            if (string.IsNullOrEmpty(orderRow.JoinURL) && orderRow.Webinar.CitrixJoinInfoAvailable())
+            if (string.IsNullOrEmpty(orderRow.CitrixJoinUrl) && orderRow.Webinar.CitrixJoinInfoAvailable())
             {
                 _orderManagementService.GenerateRegistrantKey(order);
 
@@ -931,7 +931,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active); // perf bump by assigning to local variable
 
-            if (string.IsNullOrEmpty(orderRow.JoinURL) && orderRow.Webinar.CitrixJoinInfoAvailable())
+            if (string.IsNullOrEmpty(orderRow.CitrixJoinUrl) && orderRow.Webinar.CitrixJoinInfoAvailable())
             {
                 _orderManagementService.GenerateRegistrantKey(order);
 
@@ -1012,7 +1012,7 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active); // perf bump by assigning to local variable
 
-                if (string.IsNullOrEmpty(orderRow.JoinURL) && orderRow.Webinar.CitrixJoinInfoAvailable())
+                if (string.IsNullOrEmpty(orderRow.CitrixJoinUrl) && orderRow.Webinar.CitrixJoinInfoAvailable())
                 {
                     _orderManagementService.GenerateRegistrantKey(order);
 
@@ -1624,7 +1624,7 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 if (string.IsNullOrWhiteSpace(newExpiryDate)) throw new ValidationException("You need to enter a value.");
                 
-                var onDemandCode = RandomHelpers.GetUniqueCode(8);
+                var onDemandCode = RandomHelpers.GetUniqueCode(5);
 
                 var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, orderID.Value);
                 var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, newExpiryDate);

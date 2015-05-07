@@ -119,7 +119,7 @@ namespace CUWebinars.Business.Repository
                 newOrderRow.Webinar = webinar;
                 newOrderRow.RegistrationType = registrationType;
                 newOrderRow.RowStatus = OrderRowStatus.Active;
-                newOrderRow.TtsJoinUrl = RandomHelpers.GetUniqueCode(10);
+                newOrderRow.TtsJoinUrl = RandomHelpers.GetUniqueCode(5);
 
                 // The RowPrice is just the starting point. The full price for an 
                 // order is calculated in CalculateOrderCost of the OrderManagementService

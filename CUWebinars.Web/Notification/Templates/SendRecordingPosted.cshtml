@@ -1,11 +1,6 @@
-﻿@using System.Linq
-@using System.Text
-@using System.Web.Mvc.Html
-@using CUWebinars.Business.Core
+﻿@using System.Text
 @using CUWebinars.Business.Models
 @*@model CUWebinars.Web.ViewModel.PostEventPublishModel*@
-@using CUWebinars.Business.Notification.ViewModel
-@using Ninject
 @model CUWebinars.Web.ViewModel.PostEventPublishModel
 
 <title>
@@ -29,7 +24,7 @@
     var webinar = row.Single().Webinar;
     var myRow = row.Single();
 
-    var joinURL = row.Single().JoinURL;
+    var joinURL = row.Single().CitrixJoinUrl;
     var phone = "TBA";
     var code = "TBA";
 
@@ -95,7 +90,7 @@
         }
     }
 
-    onDemandLink.Append(" <p>This link provides access to the event's materials until " + Model.ExpiryDate + " and may be shared with associates and co-workers within you organization:</p><p><b>" + TenantURL + "/Webinar/OnDemand/" + @Model.Order.idOrder + "</b></p>Order Summary:");
+    onDemandLink.Append(" <p>This link provides access to the event's materials until " + Model.ExpiryDate + " and may be shared with associates and co-workers within you organization:</p><p><b>" + TenantURL + "/Webinar/OnDemand/" + Model.Order.idOrder + "-"+myRow.OnDemandCode+"</b></p>Order Summary:");
 
 
     <head>
