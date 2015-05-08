@@ -730,6 +730,18 @@ namespace CUWebinars.Business.AccountService
             return webUser;
         }
 
+        public string FindDisplayPostEventMaterialsClaimValue(Order order)
+        {
+            if (order == null) throw new ArgumentNullException("order");
+            var userAccount = _userAccountService.GetByEmail(order.BillingEmail);
+
+            var claim = userAccount.Claims.FirstOrDefault(c => c.Type == ClaimTypes.DisplayPostEventMaterials
+                && c.Value.Contains(order.idOrder.ToString())
+                );
+
+            return !ReferenceEquals(null, claim) ? claim.Value : null;
+        }
+
 
         public IEnumerable<Address> GetAddressesForUser(int id)
         {

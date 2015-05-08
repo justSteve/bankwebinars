@@ -1115,7 +1115,7 @@ namespace CUWebinars.Business.Services
             var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             var regKeyResponse = string.Empty;
 
-            Debug.Assert(!string.IsNullOrWhiteSpace(row.JoinURL), "JoinURL should always be null or empty before this method is called as a pre-condition.");
+            Debug.Assert(!string.IsNullOrWhiteSpace(row.CitrixJoinUrl), "CitrixJoinUrl should always be null or empty before this method is called as a pre-condition.");
             
             if (additionalLocation == null)
             {
@@ -1168,7 +1168,7 @@ namespace CUWebinars.Business.Services
                     if (additionalLocation == null)
                     {
                         row.RegistrantKey = registrantKey;
-                        row.JoinURL = joinUrl;
+                        row.CitrixJoinUrl = joinUrl;
                     }
                     else
                     {
@@ -1221,7 +1221,7 @@ namespace CUWebinars.Business.Services
                 //if not initialized, don't hit Citrix
                 return;
             }
-            if (row.JoinURL == null && row.RegistrationType.ShowLiveNotifications == "Yes")
+            if (row.CitrixJoinUrl == null && row.RegistrationType.ShowLiveNotifications == "Yes")
             {
                 var regKeyResponse = CreateRegistrantKey(order.FirstName, order.LastName
                     , order.BillingEmail, row.Webinar.idWebinar, row.Webinar.WebinarKey);
@@ -1232,7 +1232,7 @@ namespace CUWebinars.Business.Services
                     {
                         if (
                             string.IsNullOrEmpty(
-                                order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).JoinURL))
+                                order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).CitrixJoinUrl))
                         {
                             GenerateRegistrantKey(order, additionalLocation);
                         }
@@ -1263,7 +1263,7 @@ namespace CUWebinars.Business.Services
                         var joinUrl = parsedJsonObject[DomainConstants.JoinUrl].ToString();
 
                         row.RegistrantKey = registrantKey;
-                        row.JoinURL = joinUrl;
+                        row.CitrixJoinUrl = joinUrl;
                     }
                     else
                     {

@@ -145,11 +145,11 @@
                                                     <td valign="top">Click-To-Join:</td>
                                                     @if (row.Webinar.Status == WebinarStatus.InProgress)
                                                     {
-                                                        <td><a href="@row.JoinURL" target="_JoinWebinar">Join the webinar.</a></td>
+                                                        <td><a href="@row.CitrixJoinUrl" target="_JoinWebinar">Join the webinar.</a></td>
                                                     }
                                                     else
                                                     {
-                                                        <td><a href="@row.JoinURL" target="_JoinWebinar">This link will be enabled 15-20 minutes prior to the start of the event.</a></td>
+                                                        <td><a href="@row.CitrixJoinUrl" target="_JoinWebinar">This link will be enabled 15-20 minutes prior to the start of the event.</a></td>
                                                     }
                                                 </tr>
                                                 <tr>
