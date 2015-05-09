@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using CUWebinars.Business.Models;
-using CUWebinars.Web.Core;
+using CUWebinars.Web.Infrastructure.Extensions;
 
 namespace CUWebinars.Web.Core
 {
@@ -11,18 +9,22 @@ namespace CUWebinars.Web.Core
     {
         public CalendarDTO Entity2DTO(Webinar entity)
         {
-            //if (idAffiliate != null)
-            //{
 
+            string seoTitle =
+                entity.Title.RemoveIllegalCharacters()
+                    .ReplaceSpacesWithHyphens()
+                    .ReplaceAmpersandsWithAnd()
+                    .ToLower()
+                    .TrimEnd('.');
 
-            //}
             var dto = new CalendarDTO
             {
                 id = entity.idWebinar,
                 title = entity.Title,
                 start = ToUnixTimespan(entity.Date),
                 end = ToUnixTimespan(entity.Date.AddHours((double)entity.Duration)),
-                url = "/Webinar/Details/" + entity.idWebinar
+                url =  "/" + entity.idWebinar + "/" + seoTitle
+                //url = "/Webinar/Details/" + entity.idWebinar
             };
 
             return dto;

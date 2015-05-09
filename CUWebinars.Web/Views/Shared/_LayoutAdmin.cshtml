@@ -136,7 +136,7 @@
                 <ul class="primary_menu">
                     @*<li><a href="/home">Home</a></li>*@
 
-                    <li><a href="webinar/calendar">calendar</a></li>
+                    <li><a href="/webinar/calendar">calendar</a></li>
                     <li class="parent">
                         <a href="javascript:void(0)">topics<i></i></a>
                         <ul>
@@ -162,7 +162,8 @@
                         <ul>@Html.Action("GetRecordedWebinarMenu", "Navigation")</ul>
                     </li>
                     <li class="parent">
-                        <a href="javascript:void(0)">Admin<i></i></a>
+                        @*<a href="javascript:void(0)">Admin<i></i></a>*@
+                        <a role="menuitem" tabindex="1" href="/Admin">Admin</a>
                         <ul>
                             <li role="presentation"><a role="menuitem" tabindex="1" href="/Admin">Admin</a></li>
                             @*<li role="presentation"><a role="menuitem" tabindex="2" href="/Admin/Users">Users</a></li>

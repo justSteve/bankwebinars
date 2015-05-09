@@ -3,16 +3,18 @@
 @using System.Runtime.Serialization.Json
 @using CUWebinars.Web.Core
 @using CUWebinars.Web.Helpers
+@using CUWebinars.Web.Models.JsonModels
+@using Newtonsoft.Json
 
 @{
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     DataContractJsonSerializer odClaim = new DataContractJsonSerializer(typeof(Claim));
-    
+
     //var thisClaim = myClaimToRecording.
-    
+
     var nfi = new CultureInfo("en-US", false).NumberFormat;
     nfi.CurrencyDecimalDigits = 0;
-    
+
 }
 <div class="container">
     <!--begin main content-->
@@ -24,19 +26,22 @@
                 var row = recorded.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
 
 
-                var hasClaim = false;
+                var onDemandClaim = new OnDemandClaim();
                 if (Model.MyClaims != null)
                 {
                     foreach (var claim in Model.MyClaims)
                     {
-                        if (claim.ToString().Split(':')[0] == row.idOrder.ToString())
+                        var thisClaim = JsonConvert.DeserializeObject<OnDemandClaim>(claim.ToString());
+                        if (thisClaim.OrderId == row.idOrder)
                         {
-                            hasClaim = true;
+                            onDemandClaim.OrderId = row.idOrder;
+                            onDemandClaim.ObfuscationString = thisClaim.ObfuscationString;
+                            onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
                         }
-
                     }
                 }
 
+                var onDemandClaimString = onDemandClaim.OrderId.ToString() + "-" + onDemandClaim.ObfuscationString;
                 var expiresDate = row.Webinar.Date.AddMonths(6);
                 var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
                 var accessPhrase = "will be accessible ";
@@ -58,16 +63,15 @@
                                     This event was recorded on @Html.DisplayDate(row.Webinar.Date) and @accessPhrase until @Html.DisplayDate(expiresDate)
                                     - @remainingDays more days.
                                 </p>
-
-
-                                @if (row.RegistrationType.ShowRecordingNotifications == "No")
-                                {
-                                    <p style="font-size: small;">
-                                        @{Html.RenderPartial("DisplayTemplates/ShowUpgradeCost", row.Order);}
-                                    </p>
-                                }
                             </div>
                         </div>
+                    </div>
+
+                    <div class="span2 pull-right">
+                        <form method="POST" action="/Account/MyCertificate">
+                            <input type="hidden" name="orderID" value="@row.idOrder" />
+                            <input type="submit" value="My Certificate" id="ShowCertificate" class="btn btn-success pull-right btn-mini pull-left" />
+                        </form>
                     </div>
                     <div class="container-fluid">
                         @if (row.RegistrationType.ShowRecordingNotifications == "Yes")
@@ -99,15 +103,8 @@
 
                                     </div>
                                     <div class="span6">
-                                        <p>Need to share this event with a co-worker? Provide them this URL:<br /> <tt><b>@globalConfig.TenantURL/Webinar/OnDemand/myClaimToRecording</b></tt></p>
+                                        <p>Need to share this event with a co-worker? Provide them this URL:<br /> <tt><b>@globalConfig.TenantURL/Webinar/OnDemand/@onDemandClaimString</b></tt></p>
                                     </div>
-                                    <div class="span2">
-                                        <form method="POST" action="/Account/MyCertificate">
-                                            <input type="hidden" name="orderID" value="@row.idOrder" />
-                                            <input type="submit" value="My Certificate" id="ShowCertificate" class="btn btn-success pull-right btn-mini pull-left" />
-                                        </form>
-                                    </div>
-
                                 }
                                 else
                                 {
@@ -121,7 +118,7 @@
                         {
                             // user has not purchased recording
                             <div class="row-fluid">
-                                @if (hasClaim)
+                                @if (onDemandClaim.ExpiryDate > DateTime.Now)
                                 {
                                     <div class="span4">
                                         <a target="_blank" href="/webinar/GetWebinarRecording/@row.Webinar.idWebinar"><span style="margin-left: 15px;"><i class="icon-facetime-video"></i></span> Playback</a>
@@ -132,7 +129,7 @@
                                     <div class="span7">
                                         <p>
                                             Complementary access to the OnDemand recording is provided for five business days following the event - @row.Webinar.Date.AddDays(8).
-                                            Need to share this event with a co-worker? Provide them this URL:<br /> <tt><b>@globalConfig.TenantURL/Webinar/OnDemand/@row.Order.idOrder</b></tt>
+                                            Need to share this event with a co-worker? Provide them this URL:<br /> <tt><b>@globalConfig.TenantURL/Webinar/OnDemand/@onDemandClaimString</b></tt>
                                         </p>
                                     </div>
                                 }
