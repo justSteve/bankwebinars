@@ -145,6 +145,7 @@
     <Compile Include="Core\MigrationOperations.cs" />
     <Compile Include="Core\OrderGenesis.cs" />
     <Compile Include="Core\PricesAndDiscounts.cs" />
+    <Compile Include="Core\QuizScore.cs" />
     <Compile Include="Core\Tracing\Log4NetTracer.cs" />
     <Compile Include="Core\Tracing\Tracer.cs" />
     <Compile Include="CQS\Commands\AddOrderCommand.cs" />

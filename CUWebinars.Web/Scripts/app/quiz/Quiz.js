@@ -73,31 +73,32 @@ var QuizDomain;
         };
 
         Question.prototype.addOption = function (newOption) {
-            this.Options.push(newOption);
+            this.options.push(newOption);
         };
 
         Question.prototype.getOptions = function () {
-            return this.Options;
+            return this.options;
         };
 
         Question.prototype.getOptionsCount = function () {
-            return this.Options.length;
+            return this.options.length;
         };
 
         Question.prototype.getQuestionNumber = function () {
-            return this.QuestionNumber;
+            return this.questionNumber;
         };
 
         Question.prototype.getUserAnswers = function () {
-            return this.UserAnswers;
+            return this.userAnswers;
         };
 
         Question.prototype.getText = function () {
-            return this.Questiontext;
+            return this.questiontext;
         };
 
+        // getAnswer not used as solutions are not stored in the dom. Have to go back to server for solution/s
         Question.prototype.getAnswer = function () {
-            _.each(this.Options, function (option) {
+            _.each(this.options, function (option) {
                 if (option.getCorrectAnswer() === true)
                     return option.getLetter();
                 return '';
@@ -106,20 +107,20 @@ var QuizDomain;
         };
 
         Question.prototype.setQuestionNumber = function (value) {
-            this.QuestionNumber = value;
+            this.questionNumber = value;
         };
 
         Question.prototype.setText = function (value) {
-            this.Questiontext = value;
+            this.questiontext = value;
         };
 
         Question.prototype.setUserAnswers = function (value) {
-            this.UserAnswers = null;
-            this.UserAnswers = value;
+            this.userAnswers = null;
+            this.userAnswers = value;
         };
 
         Question.prototype.setOptions = function (value) {
-            this.Options = value;
+            this.options = value;
         };
         return Question;
     })();
@@ -130,11 +131,11 @@ var QuizDomain;
         function Option() {
         }
         Option.prototype.getText = function () {
-            return this.Text;
+            return this.text;
         };
 
         Option.prototype.getLetter = function () {
-            return this.Letter;
+            return this.letter;
         };
 
         Option.prototype.getCorrectAnswer = function () {
@@ -146,11 +147,11 @@ var QuizDomain;
         };
 
         Option.prototype.setText = function (value) {
-            this.Text = value;
+            this.text = value;
         };
 
         Option.prototype.setLetter = function (value) {
-            this.Letter = value;
+            this.letter = value;
         };
         return Option;
     })();

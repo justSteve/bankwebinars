@@ -66,10 +66,10 @@ module QuizDomain {
     export class Question {
 
         private optionsCount: number;
-        private QuestionNumber: number;
-        private Options: Option[];
-        private UserAnswers: string[];
-        private Questiontext: string;
+        private questionNumber: number;
+        private options: Option[];
+        private userAnswers: string[];
+        private questiontext: string;
 
         constructor() { }
 
@@ -81,31 +81,32 @@ module QuizDomain {
         }
 
         addOption(newOption: Option) {
-            this.Options.push(newOption);
+            this.options.push(newOption);
         }
 
         getOptions(): Option[] {
-            return this.Options;
+            return this.options;
         }
 
         getOptionsCount(): number {
-            return this.Options.length;
+            return this.options.length;
         }
 
         getQuestionNumber(): number {
-            return this.QuestionNumber;
+            return this.questionNumber;
         }
 
         getUserAnswers(): string[] {
-            return this.UserAnswers;
+            return this.userAnswers;
         }
 
         getText(): string {
-            return this.Questiontext;
+            return this.questiontext;
         }
 
+        // getAnswer not used as solutions are not stored in the dom. Have to go back to server for solution/s
         getAnswer(): string {
-            _.each(this.Options, function (option) {
+            _.each(this.options, function (option) {
                 if (option.getCorrectAnswer() === true)
                     return option.getLetter();
                 return '';
@@ -114,37 +115,37 @@ module QuizDomain {
         }
 
         setQuestionNumber(value: number): void {
-            this.QuestionNumber = value;
+            this.questionNumber = value;
         }
 
         setText(value: string): void {
-            this.Questiontext = value;
+            this.questiontext = value;
         }
 
         setUserAnswers(value: string[]): void {
-            this.UserAnswers = null;
-            this.UserAnswers = value;
+            this.userAnswers = null;
+            this.userAnswers = value;
         }
 
         setOptions(value: Option[]): void {
-            this.Options = value;
+            this.options = value;
         }
     };
 
     export class Option {
-        private Text: string;
-        private Letter: string;
+        private text: string;
+        private letter: string;
         private correctAnswer: boolean; // only relevant for Admin section in creating the Quiz
 
         constructor() { }
 
 
         getText(): string {
-            return this.Text;
+            return this.text;
         }
 
         getLetter(): string {
-            return this.Letter;
+            return this.letter;
         }
 
         getCorrectAnswer(): boolean {
@@ -156,11 +157,11 @@ module QuizDomain {
         }
 
         setText(value: string): void {
-            this.Text = value;
+            this.text = value;
         }
 
         setLetter(value: string): void {
-            this.Letter = value;
+            this.letter = value;
         }
     };
 

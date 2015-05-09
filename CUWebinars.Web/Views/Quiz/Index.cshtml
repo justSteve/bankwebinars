@@ -26,17 +26,19 @@
     <input type="hidden" id="quizIdInput" value="@Model.QuizId" />
 </div>
 
-<div id="questionPanel" class="initialHide">
+<div id="questionPanel" class="initialHide row-fluid">
 
-    <div id="questionWrapper" class="row-fluid">
+    <div id="questionWrapper">
     </div>
     <div class="btn-toolbar span3">
         <button id=" prev" class="btn btn-default btn-mini" disabled="disabled">
-        previous</button>
+            previous</button>
         <button id="next" class="btn btn-default btn-mini">next</button>
         <button id="submitAnswersButton" class="btn btn-primary btn-mini initialHide">submit answers</button>
     </div>
-    <div id="scores" class="span3 initialHide"></div>
+</div>
+<div id="scoresWrapper" class="row-fluid">
+    <div id="scores" class="span4 initialHide"></div>
 </div>
 
 @section scripts {

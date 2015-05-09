@@ -180,6 +180,31 @@ namespace CUWebinars.Business.Services
             return _quizRepository.GetQuizByIdWithOptions(quizId);
         }
 
+        public QuizScore GetQuizScoreForUser(int quizId, string email, int orderId)
+        {
+            var quiz = _quizRepository.GetQuizByIdWithOptionsAndUserAnswers(quizId);
+
+            // ReSharper disable once TooWideLocalVariableScope
+            bool isCorrect;
+            int talley = 0;
+            var questionResult = new Dictionary<int, bool>();
+
+            foreach (var quizWithQuestion in quiz.QuizWithQuestions)
+            {
+                isCorrect = false;
+                if (quizWithQuestion.QuizUserAnswers.Where(qua => qua.idQuizQuestion == quizWithQuestion.Id)
+                    .Select(qua => qua.Letter).ToList()
+                    .Contains(quizWithQuestion.Question.QuestionWithOptions.Single(qwo => qwo.CorrectAnswer).Letter))
+                {
+                    isCorrect = true;
+                    talley++;
+                }
+                questionResult.Add(quizWithQuestion.QuestionNumber, isCorrect);
+            }
+
+            return new QuizScore { QuestionResult = questionResult, TotalCorrectAnswerCount = talley, TotalQuestionCount = quiz.QuizWithQuestions.Count};
+        }
+
         public IEnumerable<Webinar> GetByTopic(int topicId)
         {
             return _webinarRepository.GetByTopic(topicId);

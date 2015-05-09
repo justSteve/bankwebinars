@@ -1,22 +1,18 @@
-﻿using System;
+﻿using CUWebinars.Business.AccountService;
+using CUWebinars.Business.Models;
+using CUWebinars.Business.Services;
+using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Models;
+using CUWebinars.Web.Services;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
-using CUWebinars.Business.AccountService;
-using CUWebinars.Business.Constants;
-using CUWebinars.Business.Core.Helpers;
-using CUWebinars.Business.Models;
-using CUWebinars.Business.Services;
-using CUWebinars.Web.Helpers;
-using CUWebinars.Web.Models;
-using System.Collections.Generic;
-using System.Linq;
-using CUWebinars.Web.Services;
-using CUWebinars.Web.ViewModel;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace CUWebinars.Web.Core.Orchestrators
 {
@@ -76,23 +72,69 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public ContentResult ScoreQuizAndPersistResults(UserQuizEditModel userQuizEditModel)
         {
-            Quiz quiz =_webinarManagementService.GetQuizByQuizId(userQuizEditModel.QuizId);
+            int score;
 
-            int talley = 0;
+            ContentResult result = ScoreQuiz(userQuizEditModel, out score);
+            
+            PersistResultsForQuizAttempt(userQuizEditModel, score);
+
+            return result;
+        }
+
+        private void PersistResultsForQuizAttempt(UserQuizEditModel userQuizEditModel, int score)
+        {
+            Quiz quiz = _webinarManagementService.GetQuizByQuizId(userQuizEditModel.QuizId);
+
+            quiz.QuizUserOrders.Add(new QuizUserOrder
+            {
+                Email = userQuizEditModel.Email,
+                idOrder = userQuizEditModel.OrderId,
+                idQuiz = quiz.Id,
+                Score = score,
+                QuestionCount = userQuizEditModel.QuizQuestions.Count(),
+                DateQuizTaken = DateTime.Now
+            });
+
+            foreach (var quizWithQuestion in quiz.QuizWithQuestions)
+            {
+                var quizQuestion =
+                    userQuizEditModel.QuizQuestions.First(q => q.QuestionNumber == quizWithQuestion.QuestionNumber);
+
+                quizWithQuestion.QuizUserAnswers.Add(new QuizUserAnswer
+                {
+                    Email = userQuizEditModel.Email,
+                    idQuizQuestion = quizWithQuestion.Id,
+                    Letter = quizQuestion.UserAnswers.First().ToString()
+
+                });
+            }
+
+            _webinarManagementService.SaveChanges();
+
+        }
+
+        private ContentResult ScoreQuiz(UserQuizEditModel userQuizEditModel, out int score)
+        {
+            Quiz quiz = _webinarManagementService.GetQuizByQuizId(userQuizEditModel.QuizId);
+
+            // ReSharper disable once TooWideLocalVariableScope
             bool isCorrect;
+            int talley = 0;
             var questionResult = new Dictionary<int, bool>();
 
+            // Compare user attempts with stored solutions. Then create talley for score and 
+            // populate dictionary with answer to each question against that question number.
             foreach (var result in quiz.QuizWithQuestions)
             {
-                isCorrect = false;
+                isCorrect = false; // assume user got it wrong until determined otherwise (see inner foreach).
 
                 foreach (var quizQuestion in userQuizEditModel.QuizQuestions)
                 {
                     if (result.QuestionNumber == quizQuestion.QuestionNumber)
                     {
                         var correctAnswers = result.Question.QuestionWithOptions
-                            .Select(q => new { QuId = q.idQuestion, Letter = q.Letter, Solution = q.CorrectAnswer})
-                            .First(q => q.QuId == result.idQuestion && q.Solution == true);
+                            .Select(q => new { QuId = q.idQuestion, Letter = q.Letter, Solution = q.CorrectAnswer })
+                            .First(q => q.QuId == result.idQuestion && q.Solution);
 
                         if (quizQuestion.UserAnswers.First() == correctAnswers.Letter.ElementAt(0))
                         {
@@ -103,12 +145,14 @@ namespace CUWebinars.Web.Core.Orchestrators
                 }
                 questionResult.Add(result.QuestionNumber, isCorrect);
             }
-            
+
+            score = talley;
+
             return new ContentResult
             {
-                // use Json.NET to handle serialization of the Dictionary.
-                Content = JsonConvert.SerializeObject(new { Result = WebUiConstants.Success,  Score = talley, QuestionsResult = questionResult }),
-                ContentEncoding= Encoding.UTF8,
+                // use Json.NET to handle serialization of the Dictionary. Hence, did not use JsonResult.
+                Content = JsonConvert.SerializeObject(new { Result = WebUiConstants.Success, Score = talley, QuestionsResult = questionResult }),
+                ContentEncoding = Encoding.UTF8,
                 ContentType = "application/json"
             };
         }

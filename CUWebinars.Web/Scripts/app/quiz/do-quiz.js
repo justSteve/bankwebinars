@@ -238,6 +238,8 @@ $(function () {
 
         console.info(DQ.quiz);
 
+        var self = this;
+
         var payload = { userQuizEditModel: DQ.quiz };
         var url = '/Quiz/SubmitQuiz';
 
@@ -249,18 +251,18 @@ $(function () {
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
             beforeSend: function () {
-
+                $(self).append('<span id="submitQuizSpinner">&nbsp;<i class="icon-spinner icon-spin "></i></span>');
             }
         }).done(function (data, textStatus, jqXHR) {
             if (data.Result === 'Success') {
 
                 DQ.scores.append('<div>You scored<strong> {0} out of {1}</strong>.</div>'.format(data.Score, DQ.questionCount));
-                DQ.scores.append('<div>The breakdown of your results is:</div>'.format(data.Score, DQ.questionCount));
+                DQ.scores.append('<div class="topBuffer10">The breakdown of your results is:</div>'.format(data.Score, DQ.questionCount));
 
-                var rows = '';
+                var rows = '<th>Question Number</th><th>Result</th>';
 
                 _.each(data.QuestionsResult, function(value, idx, coll) {
-                    rows += '<tr><td>' + idx + '</td><td>' + value + '</td></tr>';
+                    rows += '<tr><td>{0}</td><td>{1}</td></tr>'.format(idx, value === true ? '<span class="icon-ok-sign" style="color:green">' : '<span class="icon-remove-sign" style="color:red">');
                     }
                 );
 
@@ -271,6 +273,9 @@ $(function () {
             } else {
 
             }
+
+            $('#submitQuizSpinner').remove();
+            $(self).attr('disabled', 'disabled');
         });
 
 

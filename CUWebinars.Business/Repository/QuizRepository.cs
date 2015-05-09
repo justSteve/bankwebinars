@@ -49,6 +49,14 @@ namespace CUWebinars.Business.Repository
             return quiz;
         }
 
+        public Quiz GetQuizByIdWithOptionsAndUserAnswers(int id)
+        {
+            var quiz = items.Include(q => q.QuizWithQuestions.Select(qwq => qwq.Question.QuestionWithOptions))
+                .Include(q => q.QuizWithQuestions.Select(qwq => qwq.QuizUserAnswers))
+                .SingleOrDefault(q => q.Id == id);
+            return quiz;
+        }
+
         public Quiz GetQuizByWebinarId(int idWebinar)
         {
             return items.Include(

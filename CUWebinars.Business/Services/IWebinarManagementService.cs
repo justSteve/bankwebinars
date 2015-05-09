@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Models;
+﻿using CUWebinars.Business.Core;
+using CUWebinars.Business.Models;
 using System;
 using System.Collections.Generic;
 using CUWebinars.Business.Repository;
@@ -45,5 +46,6 @@ namespace CUWebinars.Business.Services
         Quiz GetQuizByCode(string quizCode);
         QuestionCountAndWebinarId GetQuizQuestionCountAndWebinarId(string quizCode);
         Quiz GetQuizByQuizId(int quizId);
+        QuizScore GetQuizScoreForUser(int quizId, string email, int orderId);
     }
 }

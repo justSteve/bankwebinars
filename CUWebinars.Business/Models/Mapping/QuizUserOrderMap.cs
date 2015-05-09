@@ -11,6 +11,11 @@ namespace CUWebinars.Business.Models.Mapping
             this.HasKey(t => t.Id);
 
             this.Property(t => t.Email).IsRequired().HasMaxLength(150);
+            this.Property(t => t.idOrder).IsRequired();
+            this.Property(t => t.idQuiz).IsRequired();
+            this.Property(t => t.Score).IsRequired();
+            this.Property(t => t.QuestionCount).IsRequired();
+            this.Property(t => t.DateQuizTaken).IsRequired();
 
             // Table & Column Mappings
             this.ToTable("QuizUserOrder");
@@ -18,6 +23,9 @@ namespace CUWebinars.Business.Models.Mapping
             this.Property(t => t.idOrder).HasColumnName("idOrder");
             this.Property(t => t.idQuiz).HasColumnName("idQuiz");
             this.Property(t => t.Email).HasColumnName("Email");
+            this.Property(t => t.Score).HasColumnName("Score");
+            this.Property(t => t.QuestionCount).HasColumnName("QuestionCount");
+            this.Property(t => t.DateQuizTaken).HasColumnName("DateQuizTaken");
 
             // Relationships
             this.HasRequired(t => t.Order)
