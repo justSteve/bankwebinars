@@ -139,6 +139,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 }
                 
                 notificationMessage.To = order.BillingEmail;
+                
                 notificationMessage.Addresses = ccEmailAddresses;
 
                 _notificationDelivery.Notify(notificationMessage);

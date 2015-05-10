@@ -688,7 +688,8 @@
     <None Include="Properties\PublishProfiles\BankWebinars31.pubxml" />
     <Content Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
     <Content Include="Scripts\app\webinar\identify.js" />
-    <None Include="Properties\PublishProfiles\CUWebinars33.pubxml" />
+    <None Include="Properties\PublishProfiles\CUWebinars33 - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\CUWebinars33 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\app\webinar\manage-webinar-from-details.js" />
     <Content Include="Scripts\app\webinar\manage-webinar.js" />
@@ -1423,7 +1424,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>3538</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
