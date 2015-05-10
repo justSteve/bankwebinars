@@ -29,7 +29,6 @@ namespace CUWebinars.Web.Controllers
             {
                 Email = string.Empty,
                 OnDemandCode = onDemandCode,
-                FullName = string.Empty,
                 SignInModel = new SignInModel
                 {
                     ReturnUrl = "Quiz/Index/" + onDemandCode

@@ -43,7 +43,7 @@
     }
 </div>
 
-<div>Otherwise, we just need your name and email address:</div>
+<div>Otherwise, we just need your email address:</div>
 
 <div class="well">
 
@@ -52,10 +52,6 @@
     @Html.ValidationSummary("Please address the following issues in the form below:", new {id = "valSummaryIdentifyDetailsForm"})
     @Html.AntiForgeryToken()
 
-    <div class="row-fluid">
-        @Html.LabelFor(m => m.FullName)
-        @Html.EditorFor(m => m.FullName)
-    </div>
     <div class="row-fluid">
         @Html.LabelFor(m => m.Email)
         @Html.EditorFor(m => m.Email)
@@ -68,3 +64,4 @@
 </div>
 
     @Scripts.Render("~/bundles/identify")
+    @Scripts.Render("~/bundles/quiz-identify")

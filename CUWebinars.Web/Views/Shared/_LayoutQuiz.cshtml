@@ -20,6 +20,7 @@
     @Styles.Render("~/Content/CrispCSS")
     @Styles.Render("~/Content/common-styles")
 
+
     <!-- Icons ================ -->
     <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
     <link rel="apple-touch-icon-precomposed" href="http://ttsmedia.ttstrain.com/images/BankWebinars/apple-touch-icon.png" />
@@ -36,10 +37,10 @@
         with yours and get your fb:admis content information where the XXXX goes.
         ================================================== -->
 </head>
-<body>
-    <div class="container-fluid">
-        @RenderBody()
-    </div>
-    @RenderSection("scripts", required: false)
-</body>
+    <body>
+        <div class="container-fluid">
+            @RenderBody()
+        </div>
+        @RenderSection("scripts", required: false)
+    </body>
 </html>
