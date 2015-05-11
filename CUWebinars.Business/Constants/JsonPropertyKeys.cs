@@ -9,5 +9,7 @@ namespace CUWebinars.Business.Constants
         public static readonly string CarbonCopy = "CarbonCopy";
         //from: to: order:
         public static readonly string RealTimeTextBasedSupport = "RealTimeTextBasedSupport";
+        public static readonly string OrderChanges = "OrderChanges";
+
     }
 }

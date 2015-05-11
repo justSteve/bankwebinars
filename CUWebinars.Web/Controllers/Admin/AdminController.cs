@@ -109,12 +109,12 @@ namespace CUWebinars.Web.Controllers.Admin
 
             var originalAffiliate = new CUWebinars.Business.Repository.AffiliateRepository().FindByIdWithIncluding(order.idAffiliate);
             var newAffiliate = new CUWebinars.Business.Repository.AffiliateRepository().FindByIdWithIncluding(idAffiliate.Value);
-//            var orderUser = _membershipService.GetUserByEmail(order.BillingEmail);
+            //            var orderUser = _membershipService.GetUserByEmail(order.BillingEmail);
 
-            string buildMessage = "<br>Affiliate changed for order " + order.idOrder + " from " + originalAffiliate.ttsDomain + " to " +
-                                  newAffiliate.ttsDomain + " by "+  User.Identity.Name +
+            string buildMessage = "<div class=\"affiliateChanged\">Affiliate changed for order " + order.idOrder + " from " + originalAffiliate.ttsDomain + " to " +
+                                  newAffiliate.ttsDomain + " by " + User.Identity.Name +
                                   " on " + DateTime.Now.ToShortDateString() +
-                                  "<br>";
+                                  "</div>";
 
             if (!ReferenceEquals(null, order))
             {
@@ -154,7 +154,7 @@ namespace CUWebinars.Web.Controllers.Admin
             _logger.Info(buildMessage);
 
 
-            return Json(new { Result = WebUiConstants.Success});
+            return Json(new { Result = WebUiConstants.Success });
         }
 
         public ActionResult ManageOrder()
@@ -169,8 +169,17 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             if (ModelState.IsValid)
             {
-                var order = ApplyModelChangesToOrder(model);
-                _orderManagementService.UpdateOrderByAdmin(order);
+                var newOrder = ApplyModelChangesToOrder(model);
+                var oldOrder = model.Order;
+
+                //var orderchanges = new OrderChanges
+                //{
+                    
+                //}
+
+                //model.PostEventAccessExpires = _membershipService.SetPostEventAccessExpireyDate(userAccount, id.Value);
+
+                _orderManagementService.UpdateOrderByAdmin(newOrder);
             }
 
             return Json(new { Result = WebUiConstants.Success });
@@ -187,7 +196,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, _orderManagementService.GetOrderById(id.Value).WebUser.email);
                 if (userAccount == null) throw new NullReferenceException(string.Format("UserAccount does not exist in system for OrderId {0}", id.Value));
 
-                model.PostEventAccessExpires = _membershipService.GetPostEventAccessExpireyDate(userAccount, id.Value); 
+                model.PostEventAccessExpires = _membershipService.GetPostEventAccessExpireyDate(userAccount, id.Value);
                 return View(model);
             }
 
@@ -223,7 +232,7 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             else
             {
-                foreach (var additionalLocation in 
+                foreach (var additionalLocation in
                     model.AdditionalLocations.Where(
                         al => !orderRow.AdditionalLocation.Select(eal => eal.Email).Contains(al.Email)))
                 {
@@ -237,7 +246,7 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             else
             {
-                foreach (var additionalLocation 
+                foreach (var additionalLocation
                     in
                     orderRow.AdditionalLocation.Where(
                         al => !model.AdditionalLocations.Select(mal => mal.Email).Contains(al.Email)))
@@ -286,7 +295,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     TempData["EditResult"] = "Invalid UserID";
                     TempData["alertType"] = "alert-error";
-                    return RedirectToAction("Edit", new {ID = orderID});
+                    return RedirectToAction("Edit", new { ID = orderID });
                 }
 
                 var order = _orderManagementService.GetOrderByIdThin(orderID);
@@ -295,7 +304,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 if (ReferenceEquals(null, webUser))
                 {
-                    return Json(new {Result = WebUiConstants.Fail, Reason = "No user with that Id exists in our system."});
+                    return Json(new { Result = WebUiConstants.Fail, Reason = "No user with that Id exists in our system." });
                 }
 
                 var linkToNewUser = string.Concat(
@@ -321,7 +330,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         ordersToMove[j].BillingEmail = webUser.email;
                         ordersToMove[j].idUser = targetUserID;
                         ordersToMove[j].FirstName = webUser.FirstName;
-                        ordersToMove[j].LastName= webUser.LastName;
+                        ordersToMove[j].LastName = webUser.LastName;
                     }
 
                     _orderManagementService.SaveChanges();
@@ -377,7 +386,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     new
                     {
                         Result = WebUiConstants.Fail,
-                        Reason = "There has been an error at the server. Please call us at 800-831-0678 ext. 3 to resolve."                    
+                        Reason = "There has been an error at the server. Please call us at 800-831-0678 ext. 3 to resolve."
                     });
         }
 
@@ -549,11 +558,11 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     if (generateClickToJoinViewModel.OrderId.HasValue)
                     {
-                        var orderRow = 
+                        var orderRow =
                             _orderManagementService.GetOrderById(generateClickToJoinViewModel.OrderId.Value).OrderRows
                             .Single(or => or.RowStatus == OrderRowStatus.Active);
-                        
-                        return Json(new {Result = WebUiConstants.Success, Code = orderRow.TtsJoinUrl});
+
+                        return Json(new { Result = WebUiConstants.Success, Code = orderRow.TtsJoinUrl });
                     }
 
                     var user = _membershipService.GetUserByEmail(generateClickToJoinViewModel.Email);
@@ -584,7 +593,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     _orderManagementService.SaveChanges();
 
-                    return Json(new {Result = WebUiConstants.Success, Code = newOrderRow.TtsJoinUrl});
+                    return Json(new { Result = WebUiConstants.Success, Code = newOrderRow.TtsJoinUrl });
                 }
                 catch (DbEntityValidationException dbEntityValidationException)
                 {
@@ -604,7 +613,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
             }
 
-            return Json(new { Result = WebUiConstants.Fail});
+            return Json(new { Result = WebUiConstants.Fail });
         }
 
         [HttpPost]
@@ -616,12 +625,12 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, email);
 
-                if(ReferenceEquals(userAccount, null))
-                    return PartialView("~/Views/Admin/Partials/_ServerError.cshtml", 
+                if (ReferenceEquals(userAccount, null))
+                    return PartialView("~/Views/Admin/Partials/_ServerError.cshtml",
                         string.Format("There's no User in the system with the email {0}", email)
                         );
 
-                var claimsViewModel = new ClaimsViewModel{ UserClaims = userAccount.Claims };
+                var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
 
                 return PartialView("~/Views/Admin/Partials/_ViewClaims.cshtml", claimsViewModel);
             }
@@ -725,7 +734,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             // Need to decide whether the selected option in the DropDownList can add additional locations
             var regType = manageOrderEditModel.DisplayOptionsInDropDownViewModel.OrderRowRegistrationType;
-            
+
             {
                 var option = CheckIfAddLocAvailable(regType.idRegType);
                 if (option.HasValue)
@@ -1488,7 +1497,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             _membershipService.RemoveClaim(_globalConfig.Tenant, email, claim);
 
-            return Json(new { Result = WebUiConstants.Success});
+            return Json(new { Result = WebUiConstants.Success });
         }
 
         [System.Web.Mvc.HttpPost]
@@ -1623,7 +1632,7 @@ namespace CUWebinars.Web.Controllers.Admin
             try
             {
                 if (string.IsNullOrWhiteSpace(newExpiryDate)) throw new ValidationException("You need to enter a value.");
-                
+
                 var onDemandCode = RandomHelpers.GetUniqueCode(5);
 
                 var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, orderID.Value);
@@ -1635,9 +1644,9 @@ namespace CUWebinars.Web.Controllers.Admin
                     expiryDateProperty,
                     obfuscationStringProperty
                     );
-                
+
                 _membershipService.UpdateDisplayPostEventMaterialsClaim(
-                    _globalConfig.Tenant, 
+                    _globalConfig.Tenant,
                     email,
                     claimValue.ToString(Formatting.None)
                     );

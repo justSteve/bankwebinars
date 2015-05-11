@@ -16,17 +16,15 @@
 
     @Html.AntiForgeryToken()
     <div class="row navbar">
+
         <div class="span6 navbar-inner">
             <ul class="nav" aria-labelledby="dLabel">
-                <li><a tabindex="-1" href="#" onclick="payByCC(); return true;" role="button" data-toggle="modal">Submit Payment</a></li>
+                @*<li><a tabindex="-1" href="#" onclick="payByCC(); return true;" role="button" data-toggle="modal">Submit Payment</a></li>*@
                 <li><a tabindex="-1" id="showChangeUser">Assign to Different User</a></li>
                 <li><a tabindex="-1" id="showChangeAssignedAffiliate">Credited to <span id="affiliateNameText">@Model.AffiliateName</span> Change?</a></li>
+
             </ul>
-        </div>
-        <div class="span2">
-            <p>Origin: @Model.Order.Origin</p>
-            <p>Affiliate: <span id="idAffiliate">@Model.Order.idAffiliate</span></p>
-            <p>JoinUrl: <span id="joinCode">@Model.JoinCode</span></p>
+            <div><input type="checkbox" checked="checked" name="addToUserComments" title="Write to User Comments?"/> Write to User Comments? </div>
         </div>
     </div>
     <div class="row">
@@ -34,9 +32,9 @@
             <div class="control-group">
                 <div class="controls">
                     @Html.ActionLink("Edit?", "edituser", "account", new { id = @Model.UserId, returnUrl = "/Admin/ManageOrder/" + Model.Id }, new { id = "editUserLink", @class = "btn  btn-mini pull-right" })
-                    @Html.TextBoxFor(m => m.WebUser.email, new { id = "UserEmail", disabled = "disabled" }) @*read-only*@
-                    @Html.TextBoxFor(m => m.WebUser.FullName, new { id = "FullName", disabled = "disabled" }) @*read-only*@
-                    @Html.TextBoxFor(m => m.PhoneNumber, new { id = "Phone", disabled = "disabled" }) @*read-only*@
+                    @Html.TextBoxFor(m => m.WebUser.email, new { id = "UserEmail"  }) 
+                    @Html.TextBoxFor(m => m.WebUser.FullName, new { id = "FullName"}) @*read-only*@
+                    @Html.TextBoxFor(m => m.PhoneNumber, new { id = "Phone"}) @*read-only*@
                 </div>
             </div>
         </div>
@@ -207,7 +205,7 @@
         </div>
         <div class="modal-body">
             <input type="hidden" name="orderID" value="@Model.Order.idOrder" />
-            <input type="text" id="newExpiryDate" name="newExpiryDate" placeholder="Expires On" /> <span class="text text-info">yyyy-mm-dd (e.g. 2015-04-12)</span>
+            <input type="text" id="newExpiryDate" name="newExpiryDate" placeholder="Expires On" /> <span class="text text-info">Insert Date to Expire</span>
 
         </div>
         <div class="modal-footer">

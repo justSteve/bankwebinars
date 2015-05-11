@@ -450,7 +450,12 @@
     <Compile Include="Models\EditUserModel.cs" />
     <Compile Include="Models\IdentifyModel.cs" />
     <Compile Include="Models\ImportOrderModel.cs" />
-    <Compile Include="Models\JsonModels\OnDemandClaim.cs" />
+    <Compile Include="Models\JsonModels\OnDemandClaim.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Models\JsonModels\OrderChangedComments.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Models\ManageOrderEditModel.cs" />
     <Compile Include="Models\MigrateOrderModel.cs" />
     <Compile Include="Models\OnDemandPlaybackModel.cs" />
