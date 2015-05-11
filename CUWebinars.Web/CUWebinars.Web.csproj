@@ -620,7 +620,7 @@
     <Content Include="Content\css\BootstrapTemplates\font-awesome\font\README.TXT" />
     <Content Include="Content\css\calendarview.css" />
     <Content Include="Content\css\create-user-form.css" />
-    <Content Include="Content\css\details.css" />
+    <Content Include="Content\details.css" />
     <Content Include="Content\css\nova.css" />
     <Content Include="Content\css\styles\form.css" />
     <Content Include="Content\css\styles\nova.css" />
@@ -873,7 +873,6 @@
     <Content Include="Views\Shared\_LayoutQuiz.cshtml" />
     <Content Include="Views\Quiz\Index.cshtml" />
     <Content Include="Views\Quiz\Identify.cshtml" />
-    <Content Include="Views\Quiz\Partials\_QuizLayout.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>

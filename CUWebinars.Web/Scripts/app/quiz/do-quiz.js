@@ -73,16 +73,15 @@ $(function () {
             if (data.Result === 'Success') {
                 DQ.populateClientObjects(data.Quiz);
 
+                var count = 1;
+
                 _.each(DQ.quiz.getQuestions(), function(question, idx) {
 
                     var optionsHtml = '';
-                    var count = 1;
 
                     _.each(question.getOptions(), function(option, innerIdx) {
                         optionsHtml += DQ.optionsTemplate.format((idx + 1).toString() + (innerIdx + 1).toString(), option.getLetter(), option.getText(), count);
                     });
-
-                    count += 1;
 
                     if (idx === 0) {
                         var questionHtml = DQ.questionTemplateFirst.format((idx + 1).toString(), question.getText(), optionsHtml, DQ.currentQuestionNr, DQ.questionCount);
@@ -91,6 +90,8 @@ $(function () {
                     }
 
                     DQ.questionsWrapper.append(questionHtml);
+
+                    count += 1;
                 });
 
                 DQ.wireUpOptions($('#questionWrapper').find('input[type="radio"]'));
@@ -159,7 +160,7 @@ $(function () {
 
         if (DQ.currentQuestionNr + 1 === DQ.questionCount) {
             $(this).attr('disabled', 'disabled');
-            DQ.submitButton.fadeIn(600, function () { $(this).removeClass('initialHide'); });
+            DQ.submitButton.fadeIn(400, function () { $(this).removeClass('initialHide'); });
         } else {
             DQ.dealWithDisabled($(this));
         }

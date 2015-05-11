@@ -185,7 +185,7 @@ namespace CUWebinars.Web.App_Start
             ));
 
             bundles.Add(new StyleBundle("~/Content/create-order-details").Include(
-                "~/Content/css/details.css"
+                "~/Content/details.css"
                 ));
 
             bundles.Add(new StyleBundle("~/Content/webinar-ops").Include(
@@ -221,6 +221,12 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/AutoComplete/css/styles.css/ui-lightness/jquery-ui-1.10.3.custom.css",
                 "~/Content/validation.css"
                 ));
+
+            bundles.Add(new StyleBundle("~/Content/quiz-bootstrap").Include(
+                "~/Content/css/bootstrap.css",
+                "~/Content/css/bootstrap-responsive.css")
+                );
+
 
             bundles.Add(new StyleBundle("~/Content/common-styles").Include(
                 "~/Content/common.css")
