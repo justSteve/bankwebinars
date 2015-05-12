@@ -5,8 +5,10 @@ namespace CUWebinars.Business.Models
     {
         public int Id { get; set; }
         public int idQuizQuestion { get; set; }
+        public int idQuizUserOrder { get; set; }
         public string Email { get; set; }
         public string Letter { get; set; }
         public virtual QuizWithQuestion QuizWithQuestion { get; set; }
+        public virtual QuizUserOrder QuizUserOrder { get; set; }
     }
 }

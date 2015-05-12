@@ -20,12 +20,16 @@ namespace CUWebinars.Business.Models.Mapping
 
             // Table & Column Mappings
             this.ToTable("QuizUserAnswer");
-            this.Property(t => t.Id).HasColumnName("Id").HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity); ;
+            this.Property(t => t.Id).HasColumnName("Id").HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
             this.Property(t => t.idQuizQuestion).HasColumnName("idQuizQuestion");
+            this.Property(t => t.idQuizUserOrder).HasColumnName("idQuizUserOrder");
             this.Property(t => t.Letter).HasColumnName("Letter");
             this.Property(t => t.Email).HasColumnName("Email");
 
             // Relationships
+            this.HasRequired(t => t.QuizUserOrder)
+                .WithMany(t => t.QuizUserAnswers)
+                .HasForeignKey(d => d.idQuizUserOrder);
             this.HasRequired(t => t.QuizWithQuestion)
                 .WithMany(t => t.QuizUserAnswers)
                 .HasForeignKey(d => d.idQuizQuestion);

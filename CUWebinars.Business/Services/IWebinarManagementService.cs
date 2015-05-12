@@ -46,6 +46,6 @@ namespace CUWebinars.Business.Services
         Quiz GetQuizByCode(string quizCode);
         QuestionCountAndWebinarId GetQuizQuestionCountAndWebinarId(string quizCode);
         Quiz GetQuizByQuizId(int quizId);
-        QuizScore GetQuizScoreForUser(int quizId, string email, int orderId);
+        IList<QuizScore> GetQuizScoreForUser(int quizId, string email, int orderId);
     }
 }

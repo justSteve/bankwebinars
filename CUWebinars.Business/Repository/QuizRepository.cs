@@ -53,6 +53,7 @@ namespace CUWebinars.Business.Repository
         {
             var quiz = items.Include(q => q.QuizWithQuestions.Select(qwq => qwq.Question.QuestionWithOptions))
                 .Include(q => q.QuizWithQuestions.Select(qwq => qwq.QuizUserAnswers))
+                .Include(q => q.QuizUserOrders)
                 .SingleOrDefault(q => q.Id == id);
             return quiz;
         }

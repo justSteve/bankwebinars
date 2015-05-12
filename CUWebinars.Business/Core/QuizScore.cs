@@ -6,6 +6,6 @@ namespace CUWebinars.Business.Core
     {
         public int TotalQuestionCount { get; set; }
         public int TotalCorrectAnswerCount { get; set; }
-        public IDictionary<int, bool> QuestionResult { get; set; }
+        public IDictionary<int, KeyValuePair<char, bool>> QuestionResult { get; set; }
     }
 }

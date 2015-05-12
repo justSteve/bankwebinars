@@ -78,6 +78,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             
             PersistResultsForQuizAttempt(userQuizEditModel, score);
 
+            var oi = _webinarManagementService.GetQuizScoreForUser(userQuizEditModel.QuizId, userQuizEditModel.Email,
+                userQuizEditModel.OrderId);
+
+            var hi = oi.Count;
+
             return result;
         }
 
@@ -85,7 +90,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             Quiz quiz = _webinarManagementService.GetQuizByQuizId(userQuizEditModel.QuizId);
 
-            quiz.QuizUserOrders.Add(new QuizUserOrder
+            var quizUserOrder = new QuizUserOrder
             {
                 Email = userQuizEditModel.Email,
                 idOrder = userQuizEditModel.OrderId,
@@ -93,7 +98,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 Score = score,
                 QuestionCount = userQuizEditModel.QuizQuestions.Count(),
                 DateQuizTaken = DateTime.Now
-            });
+            };
+
+            quiz.QuizUserOrders.Add(quizUserOrder);
 
             foreach (var quizWithQuestion in quiz.QuizWithQuestions)
             {
@@ -104,8 +111,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     Email = userQuizEditModel.Email,
                     idQuizQuestion = quizWithQuestion.Id,
-                    Letter = quizQuestion.UserAnswers.First().ToString()
-
+                    Letter = quizQuestion.UserAnswers.First().ToString(),
+                    QuizUserOrder = quizUserOrder
                 });
             }
 

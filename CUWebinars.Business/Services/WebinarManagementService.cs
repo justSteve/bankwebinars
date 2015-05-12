@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using CUWebinars.Business.Core;
@@ -180,29 +181,42 @@ namespace CUWebinars.Business.Services
             return _quizRepository.GetQuizByIdWithOptions(quizId);
         }
 
-        public QuizScore GetQuizScoreForUser(int quizId, string email, int orderId)
+        public IList<QuizScore> GetQuizScoreForUser(int quizId, string email, int orderId)
         {
             var quiz = _quizRepository.GetQuizByIdWithOptionsAndUserAnswers(quizId);
 
             // ReSharper disable once TooWideLocalVariableScope
             bool isCorrect;
-            int talley = 0;
-            var questionResult = new Dictionary<int, bool>();
+            var questionResult = new Dictionary<int, KeyValuePair<char, bool>>();
+            IList<QuizScore> quizScores = new List<QuizScore>();
 
-            foreach (var quizWithQuestion in quiz.QuizWithQuestions)
+            foreach (var quizUserOrder in quiz.QuizUserOrders.Where(quo => quo.Email == email && quo.idQuiz == quizId && quo.idOrder == orderId))
             {
-                isCorrect = false;
-                if (quizWithQuestion.QuizUserAnswers.Where(qua => qua.idQuizQuestion == quizWithQuestion.Id)
-                    .Select(qua => qua.Letter).ToList()
-                    .Contains(quizWithQuestion.Question.QuestionWithOptions.Single(qwo => qwo.CorrectAnswer).Letter))
+                int talley = 0;
+
+                QuizUserOrder order = quizUserOrder; // to avoid unpredicted behaviour if different versions of the compiler compile this code.
+
+                questionResult = new Dictionary<int, KeyValuePair<char, bool>>();
+
+                foreach (var quizWithQuestion in quiz.QuizWithQuestions.Where(qwq => qwq.idQuiz == order.idQuiz))
                 {
-                    isCorrect = true;
-                    talley++;
+                    foreach (var quizUserAnswer in quizWithQuestion.QuizUserAnswers.Where(qua => qua.idQuizUserOrder == order.Id))
+                    {
+                        isCorrect = false;
+
+                        if (quizUserAnswer.Letter.Contains(quizUserAnswer.QuizWithQuestion.Question.QuestionWithOptions.Single(qwo => qwo.CorrectAnswer).Letter))
+                        {
+                            isCorrect = true;
+                            talley++;
+                        }
+
+                        questionResult.Add(quizWithQuestion.QuestionNumber, new KeyValuePair<char, bool>(quizUserAnswer.Letter.First(), isCorrect));
+                    }
                 }
-                questionResult.Add(quizWithQuestion.QuestionNumber, isCorrect);
+                quizScores.Add(new QuizScore { QuestionResult = questionResult, TotalCorrectAnswerCount = talley, TotalQuestionCount = quiz.QuizWithQuestions.Count });
             }
 
-            return new QuizScore { QuestionResult = questionResult, TotalCorrectAnswerCount = talley, TotalQuestionCount = quiz.QuizWithQuestions.Count};
+            return quizScores;
         }
 
         public IEnumerable<Webinar> GetByTopic(int topicId)
