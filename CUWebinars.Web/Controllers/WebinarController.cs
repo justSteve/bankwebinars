@@ -788,30 +788,30 @@ namespace CUWebinars.Web.Controllers
             return RedirectToAction("allActive", new { eventsToShow = "upcoming" });
         }
 
-        public IEnumerable<Order> CheckDisplayPostEventMaterials(UserAccount userAccount, Order checkOrder)
-        {
-            if (userAccount != null && userAccount.HasClaim(Business.Constants.ClaimTypes.DisplayPostEventMaterials))
-            {
-                var claimsForOrder =
-                    userAccount.Claims.FirstOrDefault(c => c.Value.ToLower().Contains(checkOrder.idOrder.ToString()));
+        //public IEnumerable<Order> CheckDisplayPostEventMaterials(UserAccount userAccount, Order checkOrder)
+        //{
+        //    if (userAccount != null && userAccount.HasClaim(Business.Constants.ClaimTypes.DisplayPostEventMaterials))
+        //    {
+        //        var claimsForOrder =
+        //            userAccount.Claims.FirstOrDefault(c => c.Value.ToLower().Contains(checkOrder.idOrder.ToString()));
 
-                // extract the date
-                if (claimsForOrder != null)
-                {
-                    var expiryAsString = claimsForOrder.Value.Substring(claimsForOrder.Value.IndexOf(":") + 1);
+        //        // extract the date
+        //        if (claimsForOrder != null)
+        //        {
+        //            var expiryAsString = claimsForOrder.Value.Substring(claimsForOrder.Value.IndexOf(":") + 1);
 
-                    DateTime expiryDate;
+        //            DateTime expiryDate;
 
-                    if (DateTime.TryParse(expiryAsString, out expiryDate))
-                    {
-                        if (DateTime.Today <= expiryDate)
-                        {
-                            yield return checkOrder;
-                        }
-                    }
-                }
-            }
-        }
+        //            if (DateTime.TryParse(expiryAsString, out expiryDate))
+        //            {
+        //                if (DateTime.Today <= expiryDate)
+        //                {
+        //                    yield return checkOrder;
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// This method initializes state for variables which needed to be retrieved from the Database

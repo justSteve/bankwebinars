@@ -5,6 +5,7 @@ using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using System;
@@ -633,7 +634,7 @@ namespace CUWebinars.Business.AccountService
             if (userAccount == null) throw new ArgumentNullException("userAccount");
 
             var claim = userAccount.Claims.FirstOrDefault(c => c.Type == ClaimTypes.DisplayPostEventMaterials
-                &&  c.Value.Contains(idOrder.ToString()) && c.Value.Contains(onDemandCode)
+                &&  c.Value.ToLower().Contains(idOrder.ToString()) && c.Value.Contains(onDemandCode)
                 );
 
             return !ReferenceEquals(null, claim) ? claim.Value : null;
@@ -661,16 +662,26 @@ namespace CUWebinars.Business.AccountService
             return USTimeZone.Central;
         }
 
-        public void UpdateDisplayPostEventMaterialsClaim(string tenant, string email, string newClaimValue)
+        public void UpdateDisplayPostEventMaterialsClaim(string tenant, string email, DateTime newDate, int orderId)
         {
             var userAccount = _userAccountService.GetByEmail(tenant, email);
-            UpdateDisplayPostEventMaterialsClaim(userAccount, newClaimValue);
+            UpdateDisplayPostEventMaterialsClaim(userAccount, newDate, orderId);
         }
 
-        public void UpdateDisplayPostEventMaterialsClaim(UserAccount userAccount, string claimValue)
+        public void UpdateDisplayPostEventMaterialsClaim(UserAccount userAccount, DateTime newDate, int orderId)
         {
-            _userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials);
-            _userAccountService.AddClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials, claimValue);
+            var allPostEventMaterialsClaimsForUser = userAccount.Claims.Where(c => c.Type == ClaimTypes.DisplayPostEventMaterials);
+            var claimForOrder = allPostEventMaterialsClaimsForUser.FirstOrDefault(c => c.Value.Contains(orderId.ToString()));
+
+            if (!ReferenceEquals(null, claimForOrder))
+            {
+                JObject jsonParsedClaim = JObject.Parse(claimForOrder.Value);
+                var dateJProperty = jsonParsedClaim.Property(JsonPropertyKeys.ExpiryDate);
+                dateJProperty.Value = newDate.ToString("yyyy-MM-dd");
+
+                _userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials, claimForOrder.Value);
+                _userAccountService.AddClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials, jsonParsedClaim.ToString(Formatting.None));
+            }            
         }
 
         public void UpdateShippingAddressDetails(Address shippingAddress)

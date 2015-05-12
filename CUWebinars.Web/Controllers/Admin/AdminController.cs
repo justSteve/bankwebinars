@@ -109,7 +109,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             var originalAffiliate = new CUWebinars.Business.Repository.AffiliateRepository().FindByIdWithIncluding(order.idAffiliate);
             var newAffiliate = new CUWebinars.Business.Repository.AffiliateRepository().FindByIdWithIncluding(idAffiliate.Value);
-            //            var orderUser = _membershipService.GetUserByEmail(order.BillingEmail);
+//            var orderUser = _membershipService.GetUserByEmail(order.BillingEmail);
 
             string buildMessage = "<div class=\"affiliateChanged\">Affiliate changed for order " + order.idOrder + " from " + originalAffiliate.ttsDomain + " to " +
                                   newAffiliate.ttsDomain + " by " + User.Identity.Name +
@@ -196,7 +196,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, _orderManagementService.GetOrderById(id.Value).WebUser.email);
                 if (userAccount == null) throw new NullReferenceException(string.Format("UserAccount does not exist in system for OrderId {0}", id.Value));
 
-                model.PostEventAccessExpires = _membershipService.GetPostEventAccessExpireyDate(userAccount, id.Value);
+                model.PostEventAccessExpires = _membershipService.GetPostEventAccessExpireyDate(userAccount, id.Value); 
                 return View(model);
             }
 
@@ -232,7 +232,7 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             else
             {
-                foreach (var additionalLocation in
+                foreach (var additionalLocation in 
                     model.AdditionalLocations.Where(
                         al => !orderRow.AdditionalLocation.Select(eal => eal.Email).Contains(al.Email)))
                 {
@@ -246,7 +246,7 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             else
             {
-                foreach (var additionalLocation
+                foreach (var additionalLocation 
                     in
                     orderRow.AdditionalLocation.Where(
                         al => !model.AdditionalLocations.Select(mal => mal.Email).Contains(al.Email)))
@@ -386,7 +386,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     new
                     {
                         Result = WebUiConstants.Fail,
-                        Reason = "There has been an error at the server. Please call us at 800-831-0678 ext. 3 to resolve."
+                        Reason = "There has been an error at the server. Please call us at 800-831-0678 ext. 3 to resolve."                    
                     });
         }
 
@@ -558,10 +558,10 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     if (generateClickToJoinViewModel.OrderId.HasValue)
                     {
-                        var orderRow =
+                        var orderRow = 
                             _orderManagementService.GetOrderById(generateClickToJoinViewModel.OrderId.Value).OrderRows
                             .Single(or => or.RowStatus == OrderRowStatus.Active);
-
+                        
                         return Json(new { Result = WebUiConstants.Success, Code = orderRow.TtsJoinUrl });
                     }
 
@@ -626,7 +626,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, email);
 
                 if (ReferenceEquals(userAccount, null))
-                    return PartialView("~/Views/Admin/Partials/_ServerError.cshtml",
+                    return PartialView("~/Views/Admin/Partials/_ServerError.cshtml", 
                         string.Format("There's no User in the system with the email {0}", email)
                         );
 
@@ -734,7 +734,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             // Need to decide whether the selected option in the DropDownList can add additional locations
             var regType = manageOrderEditModel.DisplayOptionsInDropDownViewModel.OrderRowRegistrationType;
-
+            
             {
                 var option = CheckIfAddLocAvailable(regType.idRegType);
                 if (option.HasValue)
@@ -1632,23 +1632,24 @@ namespace CUWebinars.Web.Controllers.Admin
             try
             {
                 if (string.IsNullOrWhiteSpace(newExpiryDate)) throw new ValidationException("You need to enter a value.");
+                
+                //var onDemandCode = RandomHelpers.GetUniqueCode(5);
 
-                var onDemandCode = RandomHelpers.GetUniqueCode(5);
+                //var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, orderID.Value);
+                //var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, newExpiryDate);
+                //var obfuscationStringProperty = new JProperty(JsonPropertyKeys.ObfuscationString, onDemandCode);
 
-                var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, orderID.Value);
-                var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, newExpiryDate);
-                var obfuscationStringProperty = new JProperty(JsonPropertyKeys.ObfuscationString, onDemandCode);
-
-                var claimValue = new JObject(
-                    orderIdProperty,
-                    expiryDateProperty,
-                    obfuscationStringProperty
-                    );
-
+                //var claimValue = new JObject(
+                //    orderIdProperty,
+                //    expiryDateProperty,
+                //    obfuscationStringProperty
+                //    );
+                
                 _membershipService.UpdateDisplayPostEventMaterialsClaim(
-                    _globalConfig.Tenant,
+                    _globalConfig.Tenant, 
                     email,
-                    claimValue.ToString(Formatting.None)
+                    DateTime.Parse(newExpiryDate),
+                    orderID.Value
                     );
 
                 return Json(new { Result = WebUiConstants.Success });
