@@ -472,11 +472,11 @@ namespace CUWebinars.Web.Core.Orchestrators
                 foreach (var webinarFile in newFiles)
                 {
                     webinarFile.fileLocation = Regex.Replace(webinarFile.fileLocation, @"\s+", "");
-                    var checkThatNewFilesExist = CheckThatFileExists(webinarFile.ToString());
+                    var checkThatNewFilesExist = CheckThatFileExists(webinarFile.fileLocation.ToString());
                     if (checkThatNewFilesExist != "OK")
                     {
-                        _logger.Error(string.Format(webinarFile.ToString(), " does not exist."));
-                        return string.Format("{0} does not exist.", webinarFile.ToString());
+                        _logger.Error(string.Format("{0} does not exist.", webinarFile.fileLocation));
+                        return string.Format("{0} does not exist.", webinarFile.fileLocation.ToString());
                     }
 
                 }
