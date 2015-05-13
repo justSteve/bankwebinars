@@ -1653,22 +1653,23 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 if (string.IsNullOrWhiteSpace(newExpiryDate)) throw new ValidationException("You need to enter a value.");
                 
-                var onDemandCode = RandomHelpers.GetUniqueCode(5);
+                //var onDemandCode = RandomHelpers.GetUniqueCode(5);
 
-                var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, orderID.Value);
-                var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, newExpiryDate);
-                var obfuscationStringProperty = new JProperty(JsonPropertyKeys.ObfuscationString, onDemandCode);
+                //var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, orderID.Value);
+                //var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, newExpiryDate);
+                //var obfuscationStringProperty = new JProperty(JsonPropertyKeys.ObfuscationString, onDemandCode);
 
-                var claimValue = new JObject(
-                    orderIdProperty,
-                    expiryDateProperty,
-                    obfuscationStringProperty
-                    );
+                //var claimValue = new JObject(
+                //    orderIdProperty,
+                //    expiryDateProperty,
+                //    obfuscationStringProperty
+                //    );
                 
                 _membershipService.UpdateDisplayPostEventMaterialsClaim(
                     _globalConfig.Tenant, 
                     email,
-                    claimValue.ToString(Formatting.None)
+                    DateTime.Parse(newExpiryDate),
+                    orderID.Value
                     );
 
                 return Json(new { Result = WebUiConstants.Success });

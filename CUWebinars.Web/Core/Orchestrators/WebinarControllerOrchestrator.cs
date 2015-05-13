@@ -189,14 +189,12 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 return "Not Authorized";
             }
-            else
-            {
-                _logger.Error("No WebUser exists with the Id {0}", order.idUser);
+            
+            _logger.Error("No WebUser exists with the Id {0}", order.idUser);
 
-                return "User Not Found";
-                //ModelState.AddModelError(string.Empty,
-                //    string.Format("No WebUser exists with the Id {0}", order.idUser));
-            }
+            return "User Not Found";
+            //ModelState.AddModelError(string.Empty,
+            //    string.Format("No WebUser exists with the Id {0}", order.idUser));
         }
 
         private void AddJsonCommentToUser(Order order, string s)
