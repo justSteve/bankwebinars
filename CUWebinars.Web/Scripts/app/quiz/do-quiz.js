@@ -263,7 +263,7 @@ $(function () {
                 var rows = '<th>Question Number</th><th>Result</th>';
 
                 _.each(data.QuestionsResult, function(value, idx, coll) {
-                    rows += '<tr><td>{0}</td><td>{1}</td></tr>'.format(idx, value === true ? '<span class="icon-ok-sign" style="color:green">' : '<span class="icon-remove-sign" style="color:red">');
+                    rows += '<tr><td>{0}</td><td>{1}</td></tr>'.format(idx, value === true ? '<span class="icon-ok-circle" style="color:green">' : '<span class="icon-remove-circle" style="color:red">');
                     }
                 );
 
@@ -277,6 +277,7 @@ $(function () {
 
             $('#submitQuizSpinner').remove();
             $(self).attr('disabled', 'disabled');
+            DQ.prevButton.attr('disabled', 'disabled');
         });
 
 

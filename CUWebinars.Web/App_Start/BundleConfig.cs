@@ -236,6 +236,10 @@ namespace CUWebinars.Web.App_Start
                 "~/Content/claims-mment.css")
                 );
 
+            bundles.Add(new StyleBundle("~/Content/quiz-general").Include(
+                "~/Content/do-quiz.css")
+                );
+
             bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(
                         "~/Content/themes/base/jquery.ui.core.css",
                         "~/Content/themes/base/jquery.ui.resizable.css",

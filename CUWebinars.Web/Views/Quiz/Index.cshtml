@@ -12,35 +12,38 @@
     }
 }
 
-<h3>Quiz - @Model.Webinar.Title</h3>
+<div id="quizWrapper">
+    <h3>Quiz - @Model.Webinar.Title</h3>
 
-<div id="startPanel">
-    <div class="row-fluid">Welcome to the quiz for the webinar <strong>@Model.Webinar.Title</strong>.</div>
-    <div class="row-fluid">The quiz contains @GetQuestionCountText(Model.QuestionCount).</div>
-    <div class="row-fluid">&nbsp;</div>
-    <div class="row-fluid"><button id="startButton" class="btn btn-primary">Click here to begin</button></div>
-    <input type="hidden" id="codeInput" value="@Model.QuizCode" />
-    <input type="hidden" id="orderIdInput" value="@Model.OrderId" />
-    <input type="hidden" id="emailInput" value="@Model.Email" />
-    <input type="hidden" id="webinarIdInput" value="@Model.Webinar.idWebinar" />
-    <input type="hidden" id="quizIdInput" value="@Model.QuizId" />
-</div>
-
-<div id="questionPanel" class="initialHide row-fluid">
-
-    <div id="questionWrapper">
+    <div id="startPanel">
+        <div class="row-fluid">Welcome to the quiz for the webinar <strong>@Model.Webinar.Title</strong>.</div>
+        <div class="row-fluid">The quiz contains @GetQuestionCountText(Model.QuestionCount).</div>
+        <div class="row-fluid">&nbsp;</div>
+        <div class="row-fluid"><button id="startButton" class="btn btn-primary">Click here to begin</button></div>
+        <input type="hidden" id="codeInput" value="@Model.QuizCode" />
+        <input type="hidden" id="orderIdInput" value="@Model.OrderId" />
+        <input type="hidden" id="emailInput" value="@Model.Email" />
+        <input type="hidden" id="webinarIdInput" value="@Model.Webinar.idWebinar" />
+        <input type="hidden" id="quizIdInput" value="@Model.QuizId" />
     </div>
-    <div class="btn-toolbar span3">
-        <button id="prev" class="btn btn-default btn-mini" disabled="disabled">previous</button>
-        <button id="next" class="btn btn-default btn-mini">next</button>
-        <button id="submitAnswersButton" class="btn btn-primary btn-mini initialHide">submit answers</button>
-    </div>
-</div>
-<div id="scoresWrapper" class="row-fluid">
-    <div id="scores" class="span4 initialHide"></div>
-</div>
 
-@section scripts {
-    <script src="@Url.Content("~/Scripts/app/extensions.js")"></script>
-    @Scripts.Render("~/bundles/do-quiz")
-}
+    <div id="questionPanel" class="initialHide row-fluid">
+
+        <div id="questionWrapper">
+        </div>
+        <div class="btn-toolbar span3">
+            <button id="prev" class="btn btn-default btn-mini" disabled="disabled">previous</button>
+            <button id="next" class="btn btn-default btn-mini">next</button>
+            <button id="submitAnswersButton" class="btn btn-primary btn-mini initialHide">submit answers</button>
+        </div>
+    </div>
+    <div id="scoresWrapper" class="row-fluid">
+        <div id="scores" class="span4 initialHide"></div>
+    </div>
+
+    @section scripts {
+        <script src="@Url.Content("~/Scripts/app/extensions.js")"></script>
+        @Scripts.Render("~/bundles/do-quiz")
+    }
+
+</div>
