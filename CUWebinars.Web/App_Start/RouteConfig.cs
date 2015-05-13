@@ -19,7 +19,7 @@ namespace CUWebinars.Web.App_Start
 
             routes.MapRoute(
                 "OnDemand",
-                url: "Webinar/Ondemand/{onDemandCode}",
+                url: "o/{onDemandCode}",
                 defaults: new { controller = "Webinar", action = "OnDemand" }
                 //,constraints: new { id = @"\d+" }
             );
@@ -46,7 +46,7 @@ namespace CUWebinars.Web.App_Start
             
             routes.MapRoute(
                 "AddPasswordFromUserEmail",
-                url: "ACC/APWD/{email}",
+                url: "acc/apwd/{email}",
                 defaults: new { controller = "Account", action = "AddPasswordForCartCreatedUser", email = "" }
             );
 

@@ -34,6 +34,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Web.Hosting;
 using System.Web.Mvc;
+using CUWebinars.Web.Models.JsonModels;
 using WebGrease.Css.Extensions;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 using DateTimeHelper = CUWebinars.Web.Helpers.DateTimeHelper;
@@ -519,7 +520,7 @@ namespace CUWebinars.Web.Controllers
                 FullName = string.Empty,
                 SignInModel = new SignInModel
                 {
-                    ReturnUrl = "Webinar/OnDemand/" + onDemandCode
+                    ReturnUrl = "o/" + onDemandCode
                 }
             };
 
@@ -532,6 +533,29 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                int _id;
+                var isNum = Int32.TryParse(identifyModel.OnDemandCode.Split('-')[0], out _id);
+
+                var order = _orderManagementService.GetOrderById(_id);
+                if (order == null) throw new ArgumentNullException("order");
+
+                var FieldsToComments = new PostEventMaterialsWereAccessed
+                {
+                    DateAccessed = DateTime.UtcNow,
+                    OnDemandCode = identifyModel.OnDemandCode,
+                    UserEmail = identifyModel.Email,
+                    UserName = identifyModel.FullName,
+                    UserIP = Request.UserHostAddress
+                };
+
+
+                //desired output:
+                //{"PostEventMaterialsWereAccessed":{"DateAccessed":"05/13/2015 4:07 pm","OnDemandCode":"49674-fwg0","UserName":"John Doe","UserEmail":"anEmail@that.com","UserIP":"195.159.153.0"}}
+                //var newJson = new JProperty(string.Concat(JsonPropertyKeys.PostEventMaterialsWereAccessed), FieldsToComments);
+                //order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, newJson);
+                
+                //_orderManagementService.SaveChanges();
+
                 return _webinarControllerOrchestrator.Identify(identifyModel);
             }
 

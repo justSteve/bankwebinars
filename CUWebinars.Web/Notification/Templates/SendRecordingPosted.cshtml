@@ -51,7 +51,7 @@
         phone = webinar.AccessPhone;
     }
     var HeaderText = "Your Recording is posted!";
-    var BannerText = "Order Number: " + TenantPrefix + Model.Order.idOrder + "<br />Attendance Type: " + row.Single().RegistrationType.OptionLabel;
+    var BannerText = "Order Number: " + TenantPrefix + Model.Order.idOrderLegacy + "<br />Attendance Type: " + row.Single().RegistrationType.OptionLabel;
 
 
     var infoPhrase = new StringBuilder();
@@ -78,19 +78,22 @@
             infoPhrase.Append("<p>Dear " + Model.Order.FirstName + ",<br /><br />We hope you enjoyed <i>");
             infoPhrase.Append(row.Single().Webinar.Title + "</i>.</p>");
 
-            infoPhrase.Append("<p>Your materials will be shipped soon and are typically in your hands within 7-10 business days.");
-            infoPhrase.Append("Your registration also includes access to OnDemand playback for the next six months.</p>");
+            if (myRow.RegistrationType.ShowLiveNotifications == "Yes")
+            {
+                infoPhrase.Append("<p>Your materials will be shipped soon and are typically in your hands within 7-10 business days.");
+                infoPhrase.Append(" Your registration also includes access to OnDemand playback for the next six months.</p>");
+            }
         }
         else
         {
-            infoPhrase.Append("<p>Dear " + Model.Order.FirstName + ",<br /><br />The recording for  <i>"+ row.Single().Webinar.Title + "</i> has been posted!</p>");
+            infoPhrase.Append("<p>Dear " + Model.Order.FirstName + ",<br /><br />The recording for  <i>" + row.Single().Webinar.Title + "</i> has been posted!</p>");
 
             infoPhrase.Append("<p>Your registration includes access to OnDemand playback for the next six months.");
             infoPhrase.Append("  If you would like to upgrade to the CD-ROM plus printouts package ($" + Model.CostForCD + " extra) we'll be happy to upgrade your registration.</p>");
         }
     }
 
-    onDemandLink.Append(" <p>This link provides access to the event's materials until " + Model.ExpiryDate + " and may be shared with associates and co-workers within you organization:</p><p><b>" + TenantURL + "/Webinar/OnDemand/" + Model.Order.idOrder + "-"+myRow.OnDemandCode+"</b></p>Order Summary:");
+    onDemandLink.Append(" <p>This link provides access to the event's materials until " + Model.ExpiryDate + " and may be shared with associates and co-workers within your organization:</p><p><b>" + TenantURL + "/o/" + Model.Order.idOrder + "-" + myRow.OnDemandCode + "</b></p>Order Summary:");
 
 
     <head>

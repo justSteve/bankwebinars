@@ -453,6 +453,7 @@
     <Compile Include="Models\JsonModels\OnDemandClaim.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Models\JsonModels\PostEventMaterialsWereAccessed.cs" />
     <Compile Include="Models\JsonModels\OrderChangedComments.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -210,7 +210,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 return "Not Authorized";
             }
-            
+
             _logger.Error("No WebUser exists with the Id {0}", order.idUser);
 
             return "User Not Found";
@@ -772,7 +772,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     _orderManagementService.SaveChanges();
 
                     var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
-                    var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, expiryDate.ToString("yyyy-MM-dd"));
+                    var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, expiryDate.ToString(DomainConstants.ClaimDateFormatText));
                     var obfuscationStringProperty = new JProperty(JsonPropertyKeys.ObfuscationString, onDemandCode);
 
                     var claimValue = new JObject(
@@ -785,7 +785,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         userAccountOfOrderer, ClaimTypes.DisplayPostEventMaterials, claimValue.ToString(Formatting.None)
                         );
 
-                    _logger.Info("Claim for onDemand access added for " + order.idOrder);
+                    _logger.Info("Claim for onDemand access added for " + order.idOrder + "-" + onDemandCode);
 
                 }
                 catch (Exception)
