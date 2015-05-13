@@ -149,6 +149,7 @@
     @Html.HiddenFor(m => m.DisplayRowPriceViewModel.Price)
     @Html.HiddenFor(m => m.DisplayRowPriceViewModel.RowPrice)
     @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.FlatOff)
+    @Html.Hidden("titleInput", myRow.Webinar.Title + " - " + myRow.Webinar.Date.ToShortDateString() + " " + myRow.Webinar.Date.ToShortTimeString())
 }
 
 <div id="changeAssignedAffiliate" class="modal hide fade">
