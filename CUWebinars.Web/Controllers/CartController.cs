@@ -422,11 +422,15 @@ namespace CUWebinars.Web.Controllers
         {
             if (idOrderRow.HasValue && idRegType.HasValue)
             {
+
                 try
                 {
+
                     var regType = _cartControllerOrchestrator.GetRegTypeById(idRegType.Value);
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(idOrderRow);
                     model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType = regType;
+
+
 
                     var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
 
@@ -443,7 +447,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     _logger.ErrorException(
-                        "RemoveAdditionalLocationsFromOrder|Session=" + _appHelper.GetUserAuditInfo(), exception);
+                        String.Format("UpdateOrderDetails failed on {0} with {1} Session={2}",idRegType,exception.Message,  _appHelper.GetUserAuditInfo()), exception);
                     Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 }
 

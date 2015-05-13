@@ -1,5 +1,5 @@
 ﻿@model AffiliatesChooserModel
            
 <p>
-    @Html.DropDownListFor(m => m.SelectedAffiliate, new SelectList(Model.AffiliatesList, "Value", "Text"), "Choose an Affiliate")
+    @Html.DropDownListFor(m => m.SelectedAffiliate, new SelectList(Model.AffiliatesList.OrderBy(x => x.Text), "Value", "Text"), "Choose an Affiliate")
 </p>

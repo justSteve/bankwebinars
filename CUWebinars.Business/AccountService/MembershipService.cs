@@ -677,7 +677,7 @@ namespace CUWebinars.Business.AccountService
             {
                 JObject jsonParsedClaim = JObject.Parse(claimForOrder.Value);
                 var dateJProperty = jsonParsedClaim.Property(JsonPropertyKeys.ExpiryDate);
-                dateJProperty.Value = newDate.ToString("yyyy-MM-dd");
+                dateJProperty.Value = newDate.ToString(DomainConstants.ClaimDateFormatText);
 
                 _userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials, claimForOrder.Value);
                 _userAccountService.AddClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials, jsonParsedClaim.ToString(Formatting.None));

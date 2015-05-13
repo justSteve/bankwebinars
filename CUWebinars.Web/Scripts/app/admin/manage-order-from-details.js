@@ -93,7 +93,7 @@ $(function () {
 
         ns.numberOfAdditionalLocations -= 1;
 
-        var trashClicked = event.currentTarget.id;
+        var trashClicked = e.currentTarget.id;
         var idx = trashClicked.substring(0, 1);
         var spanToRemove = ns.locationsSpanPrefix + idx;
 
@@ -151,6 +151,10 @@ $(function () {
         ns.orderIdHiddenInputInDropdownPartial = $('#regTypeSelectWrapper input[type="hidden"]');
         ns.orderIdHiddenInputInDropdownPartial.attr('name', 'DisplayOptionsInDropDownViewModel.OrderRowId');
         ns.orderRowIdHidden = $('input[name="DisplayOptionsInDropDownViewModel.OrderRowId"]');
+
+        ns.titleHeading = null;
+        ns.titleHeading = $('#webinarHeading');
+        ns.titleInput = $('#titleInput');
 
         ns.gatherPricingData();
 
@@ -573,6 +577,7 @@ $(function () {
             } else {
                 ns.primeDomVariables();
                 ns.wireUpHandlers();
+                ns.titleHeading.text(ns.titleInput.val());
 
                 ns.addLocsUnitPrice = $('#CostPerAdditionalLocation').val();
                 ns.addLocsTotalPrice = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions').val();
