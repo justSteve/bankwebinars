@@ -189,7 +189,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 return "Not Authorized";
             }
-            
+
             _logger.Error("No WebUser exists with the Id {0}", order.idUser);
 
             return "User Not Found";
@@ -451,11 +451,11 @@ namespace CUWebinars.Web.Core.Orchestrators
                 foreach (var webinarFile in newFiles)
                 {
                     webinarFile.fileLocation = Regex.Replace(webinarFile.fileLocation, @"\s+", "");
-                    var checkThatNewFilesExist = CheckThatFileExists(webinarFile.ToString());
+                    var checkThatNewFilesExist = CheckThatFileExists(webinarFile.fileLocation.ToString());
                     if (checkThatNewFilesExist != "OK")
                     {
-                        _logger.Error(string.Format(webinarFile.ToString(), " does not exist."));
-                        return string.Format("{0} does not exist.", webinarFile.ToString());
+                        _logger.Error(string.Format("{0} does not exist.", webinarFile.fileLocation));
+                        return string.Format("{0} does not exist.", webinarFile.fileLocation.ToString());
                     }
 
                 }
@@ -764,7 +764,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         userAccountOfOrderer, ClaimTypes.DisplayPostEventMaterials, claimValue.ToString(Formatting.None)
                         );
 
-                    _logger.Info("Claim for onDemand access added for " + order.idOrder);
+                    _logger.Info("Claim for onDemand access added for " + order.idOrder + "-" + onDemandCode);
 
                 }
                 catch (Exception)

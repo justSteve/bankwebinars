@@ -10,6 +10,10 @@ namespace CUWebinars.Business.Constants
         //from: to: order:
         public static readonly string RealTimeTextBasedSupport = "RealTimeTextBasedSupport";
         public static readonly string OrderChanges = "OrderChanges";
+        public static readonly string PostEventMaterialsWereAccessed = "PostEventMaterialsWereAccessed";
+        public static readonly string UserName = "UserName";
+        public static readonly string UserEmail = "UserEmail";
+        public static readonly string UserIP = "UserIP";
 
     }
 }

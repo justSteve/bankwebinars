@@ -7,7 +7,7 @@
 <div>
     <div class="legendImitator"> A Few Small Details Required </div>
 
-    <div style="margin-bottom: 20px;">If you are an existing user, please log in to proceed with accessing the On Demand Webinar:</div>
+    @*<div style="margin-bottom: 20px;">If you are an existing user, please log in to proceed with accessing the On Demand Webinar:</div>
 
     @using (Html.BeginForm("SignIn", "Account", FormMethod.Post, new { name = "frmSignIn", id = "frmSignIn", @class = "form-horizontal" }))
     {
@@ -48,20 +48,20 @@
                         <label class="checkbox inline">
                             <input id="RememberMe" class="check-box" type="checkbox" checked="checked" value="true" name="RememberMe" />Remember Me
                         </label>
-                        <br/>
+                    <br />
                         <input id="SignInButton" name="SignInButton" class='btn' type="submit" value="Log in" />
 
                         <div id="loginMsgLabelWrap" style="display: inline-block"></div>
                     </div>
                 </div>
             </div>
-            }
+    }*@
 
-            <div style="margin-bottom: 20px;">Otherwise, we just need your name and email address:</div>
+    <div style="margin-bottom: 20px;">Accessing this contents requires entering your name and email address:</div>
 
-            @using (Html.BeginForm("Identify", "Webinar", FormMethod.Post, new {id = "IdentifyDetailsForm", @class = "form-horizontal"}))
+    @using (Html.BeginForm("Identify", "Webinar", FormMethod.Post, new { id = "IdentifyDetailsForm", @class = "form-horizontal" }))
             {
-                @Html.ValidationSummary("Please address the following issues in the form below:", new {id = "valSummaryIdentifyDetailsForm"})
+        @Html.ValidationSummary("Please address the following issues in the form below:", new { id = "valSummaryIdentifyDetailsForm" })
                 @Html.AntiForgeryToken()
 
                 <div class="row">

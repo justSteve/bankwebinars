@@ -754,15 +754,16 @@ namespace CUWebinars.Business.Services
         public void FireSendRecordingIsPostedEvent(IList<Order> orders)
         {
 
-            Double[] i = _webinarRepository.GetCostOfUpgrades(orders[0].OrderRows.Single().idRegType);
-
-            Double basePrice = i[0];
-            Double cost6 = i[1];
-            Double costCD = i[2];
 
 
             foreach (var order in orders)
             {
+                Double[] i = _webinarRepository.GetCostOfUpgrades(order.OrderRows.Single().idRegType);
+
+                Double basePrice = i[0];
+                Double cost6 = i[1];
+                Double costCD = i[2];
+
                 string orderSum = OrderSummaryBuilder(order);
 
                 var postEventPublishModel = new PostEventPublishModel()
