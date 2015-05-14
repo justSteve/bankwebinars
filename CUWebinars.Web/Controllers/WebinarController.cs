@@ -501,12 +501,13 @@ namespace CUWebinars.Web.Controllers
             if (ModelState.IsValid)
             {
                 int _id;
+                
                 var isNum = Int32.TryParse(identifyModel.OnDemandCode.Split('-')[0], out _id);
 
                 var order = _orderManagementService.GetOrderById(_id);
                 if (order == null) throw new ArgumentNullException("order");
 
-                var FieldsToComments = new PostEventMaterialsWereAccessed
+                var fieldsToComments = new PostEventMaterialsWereAccessed
                 {
                     DateAccessed = DateTime.UtcNow,
                     OnDemandCode = identifyModel.OnDemandCode,
@@ -516,17 +517,13 @@ namespace CUWebinars.Web.Controllers
                 };
 
 
-                var mkJson = JsonConvert.SerializeObject(FieldsToComments);
+                var mkJson = JsonConvert.SerializeObject(fieldsToComments);
                 //desired output:
                 //{"PostEventMaterialsWereAccessed":{"DateAccessed":"05/13/2015 4:07 pm","OnDemandCode":"49674-fwg0","UserName":"John Doe","UserEmail":"anEmail@that.com","UserIP":"195.159.153.0"}}
+                //var newJson = new JProperty(string.Concat(JsonPropertyKeys.PostEventMaterialsWereAccessed), FieldsToComments);
+                order.UserComments = JsonHelpers.AddObjectToJsonArray(order.UserComments, "PostEventMaterialsWereAccessed", fieldsToComments);
                 
-                //current output: \"PostEventMaterialsWereAccessed\":\"{\\\"OnDemandCode\\\":\\\"49674-fwg0\\\",\\\"DateAccessed\\\":\\\"2015-05-14T09:35:15.7700378Z\\\",\\\"UserName\\\":\\\"ste\\\",\\\"UserEmail\\\":\\\"steve@juststeve.com\\\",\\\"UserIP\\\":\\\"::1\\\"}\"}
-                // 
-
-                var newJson = new JProperty(string.Concat(JsonPropertyKeys.PostEventMaterialsWereAccessed), mkJson);
-                order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, newJson);
-                
-                //_orderManagementService.SaveChanges();
+                _orderManagementService.SaveChanges();
 
                 return _webinarControllerOrchestrator.Identify(identifyModel);
             }
