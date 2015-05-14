@@ -477,39 +477,6 @@ namespace CUWebinars.Web.Controllers
             ModelState.AddModelError(string.Empty, "Invalid Code");
             return View();
         }
-//resharper says this method is non-used
-        //private void ProcessAccessPermissionsForMaterials(Order order, OnDemandPlaybackModel playModel)
-        //{
-        //    var webUser = _membershipService.GetWebUserById(order.idUser);
-
-        //    if (order.idUser == 19)
-        //    {
-        //        playModel.AuthorizedToAccessMaterials = true;
-        //    }
-        //    else if (webUser != null)
-        //    {
-        //        string messageIfFalse;
-
-        //        if (_membershipService.GetPostEventMaterialsClaim(
-        //            _globalConfig.Tenant,
-        //            webUser.email,
-        //            out messageIfFalse))
-        //        {
-        //            playModel.AuthorizedToAccessMaterials = true;
-        //        }
-        //        else
-        //        {
-        //            playModel.AuthorizedToAccessMaterials = false;
-        //            _logger.Error(messageIfFalse);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        _logger.Error("No WebUser exists with the Id {0}", order.idUser);
-        //        ModelState.AddModelError(string.Empty,
-        //            string.Format("No WebUser exists with the Id {0}", order.idUser));
-        //    }
-        //}
 
         public ActionResult Identify(string onDemandCode)
         {
@@ -545,14 +512,19 @@ namespace CUWebinars.Web.Controllers
                     OnDemandCode = identifyModel.OnDemandCode,
                     UserEmail = identifyModel.Email,
                     UserName = identifyModel.FullName,
-                    UserIP = Request.UserHostAddress
+                    UserAudit = _appHelper.GetUserAuditInfo()
                 };
 
 
+                var mkJson = JsonConvert.SerializeObject(FieldsToComments);
                 //desired output:
                 //{"PostEventMaterialsWereAccessed":{"DateAccessed":"05/13/2015 4:07 pm","OnDemandCode":"49674-fwg0","UserName":"John Doe","UserEmail":"anEmail@that.com","UserIP":"195.159.153.0"}}
-                //var newJson = new JProperty(string.Concat(JsonPropertyKeys.PostEventMaterialsWereAccessed), FieldsToComments);
-                //order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, newJson);
+                
+                //current output: \"PostEventMaterialsWereAccessed\":\"{\\\"OnDemandCode\\\":\\\"49674-fwg0\\\",\\\"DateAccessed\\\":\\\"2015-05-14T09:35:15.7700378Z\\\",\\\"UserName\\\":\\\"ste\\\",\\\"UserEmail\\\":\\\"steve@juststeve.com\\\",\\\"UserIP\\\":\\\"::1\\\"}\"}
+                // 
+
+                var newJson = new JProperty(string.Concat(JsonPropertyKeys.PostEventMaterialsWereAccessed), mkJson);
+                order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, newJson);
                 
                 //_orderManagementService.SaveChanges();
 

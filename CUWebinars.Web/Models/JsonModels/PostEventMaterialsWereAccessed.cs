@@ -12,6 +12,6 @@ namespace CUWebinars.Web.Models.JsonModels
         public DateTime DateAccessed { get; set; }
         public String UserName { get; set; }
         public String UserEmail { get; set; }
-        public String UserIP { get; set; }
+        public String UserAudit { get; set; }
     }
 }
