@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace CUWebinars.Web.Models.JsonModels
 {
@@ -10,6 +7,6 @@ namespace CUWebinars.Web.Models.JsonModels
         public int OrderId { get; set; }
         public int UserIdOfEditor { get; set; }
         public DateTime ChangeDate { get; set; }
-        public String Comments { get; set; }
+        public string Comments { get; set; }
     }
 }
