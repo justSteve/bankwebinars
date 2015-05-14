@@ -148,6 +148,12 @@ $(function () {
                     });
                 });
                 break;
+            case 'restart':
+                DQ.currentQuestionNr = 1;
+                DQ.prevClicked.attr('disabled', 'disabled');
+                DQ.submitButton.fadeOut(400);
+                $('#' + DQ.currentQuestionNr + '-question').fadeIn(500);
+                break;
             default:
                 break;
         }
