@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
@@ -111,6 +112,16 @@ namespace CUWebinars.Web.Core
             get
             {
                 return GlobalConfigSingletonCreator.UniqueInstance;
+            }
+        }
+
+        public DateTimeOffset Now
+        {
+            get
+            {
+                var utc = DateTimeOffset.UtcNow;
+                var centralTime = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
+                return TimeZoneInfo.ConvertTime(utc, centralTime);
             }
         }
 

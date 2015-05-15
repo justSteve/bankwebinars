@@ -15,5 +15,6 @@ namespace CUWebinars.Business.Constants
         public static readonly string UserEmail = "UserEmail";
         public static readonly string UserIP = "UserIP";
 
+        public static readonly string PostEventMaterialsWereAccessedKey = "PostEventMaterialsWereAccessed";
     }
 }

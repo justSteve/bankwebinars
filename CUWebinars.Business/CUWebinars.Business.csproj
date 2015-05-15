@@ -125,7 +125,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountService\IMembershipService.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="Constants\ClaimValues.cs" />
     <Compile Include="Constants\ErrorMessageConstants.cs" />
     <Compile Include="Constants\JsonPropertyKeys.cs" />
@@ -354,7 +353,6 @@
     <Compile Include="Core\TtsConfiguration.cs" />
     <Compile Include="Core\TtsConfig.cs" />
     <Compile Include="Services\WebinarManagementService.cs" />
-    <Compile Include="TTSLogger.cs" />
     <Compile Include="Validation\Order\CreateOrderValidator.cs" />
     <Compile Include="Validation\Webinar\CreateWebinarValidator.cs" />
     <Compile Include="Validation\Webinar\UpdateWebinarValidator.cs" />
@@ -363,14 +361,6 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Notification\Templates\OrderSubmitted.cshtml" />
-    <Content Include="Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" />
-    <Content Include="Notification\Templates\SendConnectionInfo.cshtml" />
-    <Content Include="Notification\Templates\SendPerDayPromo.cshtml" />
-    <Content Include="Notification\Templates\SendPerWeekPromo.cshtml" />
-    <Content Include="Notification\Templates\SendRecordingPosted.cshtml" />
-    <Content Include="Notification\Templates\SendReminder.cshtml" />
-    <Content Include="Notification\Templates\SendShippedOrder.cshtml" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
