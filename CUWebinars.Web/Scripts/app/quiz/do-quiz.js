@@ -14,6 +14,10 @@ $(function () {
     DQ.prevButton.on('click', DQ.prevClicked);
     DQ.nextButton.on('click', DQ.nextClicked);
     DQ.submitButton.on('click', DQ.submitClicked);
+    DQ.retakeButton.on('click', DQ.retakeClicked);
+    DQ.homeButton.on('click', DQ.homeClicked);
+
+    DQ.utilities = new Common.Utilities();
 });
 
 // self-invoking function for creating methods using Module pattern.
@@ -35,6 +39,8 @@ $(function () {
         DQ.nextButton = $('#next');
         DQ.submitButton = $('#submitAnswersButton');
         DQ.scores = $('#scores');
+        DQ.retakeButton = $('#retakeButton');
+        DQ.homeButton = $('#homeButton');
     };
 
     ns.wireUpOptions = function(jQuerySet) {
@@ -149,10 +155,19 @@ $(function () {
                 });
                 break;
             case 'restart':
-                DQ.currentQuestionNr = 1;
-                DQ.prevClicked.attr('disabled', 'disabled');
-                DQ.submitButton.fadeOut(400);
-                $('#' + DQ.currentQuestionNr + '-question').fadeIn(500);
+                DQ.prevButton.attr('disabled', 'disabled');
+                DQ.nextButton.removeAttr('disabled');
+                DQ.submitButton.removeAttr('disabled').hide();
+                DQ.retakeButton.hide();
+
+                DQ.scores.hide();
+
+                $('#' + DQ.currentQuestionNr + '-question').fadeOut(400, function() {
+
+                    DQ.currentQuestionNr = 1;
+                    $('#' + DQ.currentQuestionNr + '-question').fadeIn(500);
+
+                });
                 break;
             default:
                 break;
@@ -166,7 +181,8 @@ $(function () {
 
         if (DQ.currentQuestionNr + 1 === DQ.questionCount) {
             $(this).attr('disabled', 'disabled');
-            DQ.submitButton.fadeIn(400, function () { $(this).removeClass('initialHide'); });
+            DQ.submitButton.fadeIn(800, function () { $(this).removeClass('initialHide'); });
+            DQ.retakeButton.fadeIn(800, function () { $(this).removeClass('initialHide'); });
         } else {
             DQ.dealWithDisabled($(this));
         }
@@ -277,6 +293,8 @@ $(function () {
                 
                 DQ.scores.fadeIn(400, function () { $(this).removeClass('initialHide'); });
 
+                DQ.retakeButton.removeAttr('disabled');
+
             } else {
 
             }
@@ -287,6 +305,22 @@ $(function () {
         });
 
 
+    };
+
+    DQ.retakeClicked = function(e) {
+
+        e.preventDefault();
+
+        DQ.setUiState('restart');
+
+        DQ.questionsWrapper.find('input[type="radio"]').prop('checked', false);
+    };
+
+    DQ.homeClicked = function (e) {
+
+        e.preventDefault();
+
+        DQ.utilities.goToUrl(''); // go home
     };
 
 })(DQ);

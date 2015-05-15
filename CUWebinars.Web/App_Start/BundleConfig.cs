@@ -224,7 +224,8 @@ namespace CUWebinars.Web.App_Start
 
             bundles.Add(new StyleBundle("~/Content/quiz-bootstrap").Include(
                 "~/Content/css/bootstrap.css",
-                "~/Content/css/bootstrap-responsive.css")
+                "~/Content/css/bootstrap-responsive.css",
+                "~/Content/css/font-awesome.css")
                 );
 
 
