@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reflection;
-using CUWebinars.Business.Core.Extensions;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 
 namespace CUWebinars.Business.Core.Helpers
 {
@@ -43,46 +41,47 @@ namespace CUWebinars.Business.Core.Helpers
 
         public static string AddObjectToJsonArray(string jsonAsString, string keyOfArray, Object objectToJsonify)
         {
-            JObject ob;
+            JObject existingStoredJsonObject;
             JArray jArray;
 
-            var jObject = new JObject(CreateJsonPropertiesFromObject(objectToJsonify));
+            // convert object to a json object
+            var newJsonObject = new JObject(CreateJsonPropertiesFromObject(objectToJsonify));
 
-
+            // if the existing stored string is null or emptiness, just create it and return.
             if (string.IsNullOrWhiteSpace(jsonAsString))
             {
-                ob = new JObject();
-                jArray = new JArray(jObject);
-                ob.Add(keyOfArray, jArray);
+                existingStoredJsonObject = new JObject();
+                jArray = new JArray(newJsonObject);
+                existingStoredJsonObject.Add(keyOfArray, jArray);
 
-                return ob.ToString(Formatting.None);
+                return existingStoredJsonObject.ToString(Formatting.None);
             }
 
-            ob = JObject.Parse(jsonAsString);
+            // ************* if we got here, we need to now process the existing stored json as an input *************
+            existingStoredJsonObject = JObject.Parse(jsonAsString);
 
-            // 1st, see if json is stored at all
-
-            if (!ReferenceEquals(null, ob))
+            // 1st, see if valid json is stored at all
+            if (!ReferenceEquals(null, existingStoredJsonObject))
             {
                 JToken jToken;
 
-                //  see if array property already exists
-                if (ob.TryGetValue(keyOfArray, StringComparison.OrdinalIgnoreCase, out jToken))
+                // 2nd, see if the array which we are augmenting already exists
+                if (existingStoredJsonObject.TryGetValue(keyOfArray, StringComparison.OrdinalIgnoreCase, out jToken))
                 {
                     jArray = jToken.Value<JArray>();
+                    jArray.AddFirst(newJsonObject); // add so most recent is at beginning of the array
 
-                    jArray.Add(jObject);
-                    return ob.ToString(Formatting.None);
-
+                    return existingStoredJsonObject.ToString(Formatting.None);
                 }
 
-                // if not, just create it
-                jArray = new JArray(jObject);
-                ob.Add(keyOfArray, jArray);
-                return ob.ToString(Formatting.None);
-            }
+                // if the array does not exist in the existing json, just create it
+                jArray = new JArray(newJsonObject);
+                existingStoredJsonObject.Add(keyOfArray, jArray);
 
-            return string.Empty;
+                return existingStoredJsonObject.ToString(Formatting.None);
+            }
+            
+            throw new InvalidDataException("The stored string is not valid json.");
         }
 
     }

@@ -533,30 +533,34 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                int _id;
-                
-                var isNum = Int32.TryParse(identifyModel.OnDemandCode.Split('-')[0], out _id);
+                int id;
 
-                var order = _orderManagementService.GetOrderById(_id);
-                if (order == null) throw new ArgumentNullException("order");
-
-                var fieldsToComments = new PostEventMaterialsWereAccessed
+                if (int.TryParse(identifyModel.OnDemandCode.Split('-')[0], out id))
                 {
-                    DateAccessed = DateTime.UtcNow,
-                    OnDemandCode = identifyModel.OnDemandCode,
-                    UserEmail = identifyModel.Email,
-                    UserName = identifyModel.FullName,
-                    UserIP = Request.UserHostAddress
-                };
+                    var order = _orderManagementService.GetOrderById(id);
+                    if (order == null) throw new NullReferenceException("order");
 
-                //desired output:
-                //{"PostEventMaterialsWereAccessed":{"DateAccessed":"05/13/2015 4:07 pm","OnDemandCode":"49674-fwg0","UserName":"John Doe","UserEmail":"anEmail@that.com","UserIP":"195.159.153.0"}}
-                //var newJson = new JProperty(string.Concat(JsonPropertyKeys.PostEventMaterialsWereAccessed), FieldsToComments);
-                order.UserComments = JsonHelpers.AddObjectToJsonArray(order.UserComments, "PostEventMaterialsWereAccessed", fieldsToComments);
-                
-                _orderManagementService.SaveChanges();
+                    var fieldsToComments = new PostEventMaterialsWereAccessed
+                    {
+                        DateAccessed = _globalConfig.Now,
+                        OnDemandCode = identifyModel.OnDemandCode,
+                        UserEmail = identifyModel.Email,
+                        UserName = identifyModel.FullName,
+                        UserIP = Request.UserHostAddress
+                    };
 
-                return _webinarControllerOrchestrator.Identify(identifyModel);
+                    //desired output:
+                    //{"PostEventMaterialsWereAccessed":{"DateAccessed":"05/13/2015 4:07 pm","OnDemandCode":"49674-fwg0","UserName":"John Doe","UserEmail":"anEmail@that.com","UserIP":"195.159.153.0"}}
+                    //var newJson = new JProperty(string.Concat(JsonPropertyKeys.PostEventMaterialsWereAccessed), FieldsToComments);
+                    
+                    order.UserComments = JsonHelpers.AddObjectToJsonArray(order.UserComments, JsonPropertyKeys.PostEventMaterialsWereAccessedKey, fieldsToComments);
+
+                    _orderManagementService.SaveChanges();
+
+                    return _webinarControllerOrchestrator.Identify(identifyModel);
+                }
+
+                ModelState.AddModelError(string.Empty, "The Order Id in the browser address bar is not valid.");
             }
 
             return View(identifyModel);
