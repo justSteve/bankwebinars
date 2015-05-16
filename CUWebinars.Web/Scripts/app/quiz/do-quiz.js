@@ -160,7 +160,7 @@ $(function () {
                 DQ.submitButton.removeAttr('disabled').hide();
                 DQ.retakeButton.hide();
 
-                DQ.scores.hide();
+                DQ.scores.empty();
 
                 $('#' + DQ.currentQuestionNr + '-question').fadeOut(400, function() {
 
@@ -176,8 +176,26 @@ $(function () {
 
     };
 
+    ns.validateOptions = function(jQuerySet) {
+
+        var valid = _.some(jQuerySet, function (item, idx) {
+            if ($(item).prop('checked') && $(item).prop('checked', true)) {
+                return true;
+            }
+        });
+
+        return valid;
+    };
+
     ns.nextClicked = function(e) {
         e.preventDefault();
+
+        $('#valFailMsg').remove();
+
+        if (!(DQ.validateOptions($('#' + DQ.currentQuestionNr + '-options').find('input')))) {
+            $(this).after('<div id="valFailMsg" style="display:inline-block;margin-left:5px;">&nbsp;<span class="label label-important"><i class="icon icon-exclamation-sign"></i>&nbsp;You have to select an option</span></div>');
+            return false;
+        }
 
         if (DQ.currentQuestionNr + 1 === DQ.questionCount) {
             $(this).attr('disabled', 'disabled');
@@ -258,6 +276,13 @@ $(function () {
 
     ns.submitClicked = function(e) {
         e.preventDefault();
+
+        $('#valFailMsg').remove();
+
+        if (!(DQ.validateOptions($('#' + DQ.currentQuestionNr + '-options').find('input')))) {
+            $(this).after('<div id="valFailMsg" style="display:inline-block;margin-left:5px;">&nbsp;<span class="label label-important"><i class="icon icon-exclamation-sign"></i>&nbsp;You have to select an option</span></div>');
+            return false;
+        }
 
         console.info(DQ.quiz);
 
