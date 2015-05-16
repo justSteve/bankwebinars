@@ -501,33 +501,28 @@ namespace CUWebinars.Web.Controllers
             if (ModelState.IsValid)
             {
                 int id;
-                
+
                 if (int.TryParse(identifyModel.OnDemandCode.Split('-')[0], out id))
                 {
                     var order = _orderManagementService.GetOrderById(id);
                     if (order == null) throw new NullReferenceException("order");
 
-                var fieldsToComments = new PostEventMaterialsWereAccessed
-                {
-                        DateAccessed = _globalConfig.Now,
-                    OnDemandCode = identifyModel.OnDemandCode,
-                    UserEmail = identifyModel.Email,
-                    UserName = identifyModel.FullName,
-                    UserAudit = _appHelper.GetUserAuditInfo()
-                };
+                    var fieldsToComments = new PostEventMaterialsWereAccessed
+                    {
+                        DateAdded = _globalConfig.UtcNowAsCts,
+                        OnDemandCode = identifyModel.OnDemandCode,
+                        UserEmail = identifyModel.Email,
+                        UserName = identifyModel.FullName,
+                        UserAudit = _appHelper.GetUserAuditInfo()
+                    };
 
 
-                var mkJson = JsonConvert.SerializeObject(fieldsToComments);
-                //desired output:
-                //{"PostEventMaterialsWereAccessed":{"DateAccessed":"05/13/2015 4:07 pm","OnDemandCode":"49674-fwg0","UserName":"John Doe","UserEmail":"anEmail@that.com","UserIP":"195.159.153.0"}}
-                //var newJson = new JProperty(string.Concat(JsonPropertyKeys.PostEventMaterialsWereAccessed), FieldsToComments);
-                    
                     order.UserComments = JsonHelpers.AddObjectToJsonArray(order.UserComments, JsonPropertyKeys.PostEventMaterialsWereAccessedKey, fieldsToComments);
-                
-                _orderManagementService.SaveChanges();
 
-                return _webinarControllerOrchestrator.Identify(identifyModel);
-            }
+                    _orderManagementService.SaveChanges();
+
+                    return _webinarControllerOrchestrator.Identify(identifyModel);
+                }
 
                 ModelState.AddModelError(string.Empty, "The Order Id in the browser address bar is not valid.");
             }

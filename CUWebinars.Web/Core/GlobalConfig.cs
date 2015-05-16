@@ -26,7 +26,7 @@ namespace CUWebinars.Web.Core
         public string RelativeConfirmChangeUrl { get; private set; }
         public string RelativeCancelVerificationUrl { get; private set; }
         public string RelativeConfirmPasswordResetUrl { get; private set; }
-        public int RetryCount{ get; private set; }
+        public int RetryCount { get; private set; }
         public string StorageAccessKey { get; private set; }
         public string StorageAccountName { get; private set; }
         public string Tenant { get; private set; }
@@ -96,7 +96,7 @@ namespace CUWebinars.Web.Core
                 Debug.Assert(sources != null, "Web.config must contain a Tracing section.");
 
                 return (
-                    from ConfigurationElement source in sources 
+                    from ConfigurationElement source in sources
                     select source.ElementInformation.Properties["switchValue"].Value.ToString())
                     .FirstOrDefault();
             }
@@ -115,13 +115,12 @@ namespace CUWebinars.Web.Core
             }
         }
 
-        public DateTimeOffset Now
+        public DateTime UtcNowAsCts
         {
             get
             {
-                var utc = DateTimeOffset.UtcNow;
-                var centralTime = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
-                return TimeZoneInfo.ConvertTime(utc, centralTime);
+                DateTime timeUtc = DateTime.UtcNow;
+                return TimeZoneInfo.ConvertTimeFromUtc(timeUtc, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
             }
         }
 
