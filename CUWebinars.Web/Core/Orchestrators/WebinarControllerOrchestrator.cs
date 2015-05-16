@@ -104,7 +104,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     comments = order.AdminComments.Trim();
                 }
 
-                var newJson = new JProperty(string.Concat("PostEventAccessByAnonUser-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                var newJson = new JProperty(string.Concat("PostEventAccessByAnonUser-", _globalConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
                     new JObject(
                         new JProperty("Name", identifyModel.FullName),
                         new JProperty("Email", identifyModel.Email)
@@ -589,8 +589,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 Title = webinarEditModel.Title,
                 idPresenter = webinarEditModel.SelectedPresenter,
                 Date = webinarEditModel.Date,
-                DateChanged = DateTime.Now,
-                DateCreated = DateTime.Now,
+                DateChanged = _globalConfig.UtcNowAsCts,
+                DateCreated = _globalConfig.UtcNowAsCts,
                 Status = (WebinarStatus)webinarEditModel.SelectedStatus,
                 Duration = webinarEditModel.Duration,
                 ceu = webinarEditModel.ceu,

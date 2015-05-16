@@ -664,7 +664,7 @@ namespace CUWebinars.Web.Controllers
 
                         var newJson =
                             new JProperty(
-                                string.Concat("LegacyCommentsInDetails-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                                string.Concat("LegacyCommentsInDetails-", _globalConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
                                     new JObject(new JProperty("LegacyComments", order.AdminComments))
                                 );
 
@@ -1001,7 +1001,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     var webinarEditModel = _webinarControllerOrchestrator.BuildEditModelForWebinar(id.Value);
 
-                    webinarEditModel.DateChanged = webinarEditModel.DateCreated = DateTime.Now;
+                    webinarEditModel.DateChanged = webinarEditModel.DateCreated = _globalConfig.UtcNowAsCts;
 
                     return PartialView("Partials/_CloneWebinar", webinarEditModel);
                 }

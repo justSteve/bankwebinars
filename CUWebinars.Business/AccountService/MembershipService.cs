@@ -244,12 +244,14 @@ namespace CUWebinars.Business.AccountService
 
             if (idUserImported == 0) idUserImported = null;
 
+            DateTime timeUtc = DateTime.UtcNow;
+            timeUtc = TimeZoneInfo.ConvertTimeFromUtc(timeUtc, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
             var webUser = new WebUser
             {
                 idUser = idUserImported.HasValue ? idUserImported.Value : _refDataRepository.GetMaxWebUserId() + 1,
                 // Check what default should be for non-nullable field -- A: default is 'New'.
                 AcctStatus = accountStatus ?? DomainConstants.New,
-                DateCreated = DateTime.Now,
+                DateCreated = timeUtc,
                 email = email,
                 FirstName = firstName,
                 idUserInstitution = institutionId,
