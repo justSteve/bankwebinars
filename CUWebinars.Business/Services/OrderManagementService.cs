@@ -343,7 +343,7 @@ namespace CUWebinars.Business.Services
 
         public void SetUserStatusToUnChanged(WebUser user)
         {
-            _webUserRepository.SetUserStatusToUnChanged(user);     
+            _webUserRepository.SetUserStatusToUnChanged(user);
         }
 
         public void SetAffiliateStatusToUnChanged(Affiliate affiliate)
@@ -436,7 +436,7 @@ namespace CUWebinars.Business.Services
                             numberOfUsesOfMostRecentAffiliate = current;
                         }
                     }
-                    
+
                     if (mostUses >= 2 * numberOfUsesOfMostRecentAffiliate)
                         affiliateIdForOrder = mostUsedAffiliateId;
 
@@ -637,7 +637,7 @@ namespace CUWebinars.Business.Services
 
             AddEvent(new OrderSubmittedEvent<ConfirmOrderMessage>
             {
-                Details = order.NotificationStorage, 
+                Details = order.NotificationStorage,
                 EventObject = orderSubmittedViewModel,
                 RelativePath = addPasswordUrl,
                 ResendEvent = resending
@@ -821,6 +821,20 @@ namespace CUWebinars.Business.Services
             sb.Append("<tr>");
             sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
             sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+            sb.Append("            Date:");
+            sb.Append("        </span>");
+            sb.Append("    </td>");
+            sb.Append("    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+            sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+            sb.Append("            <b>");
+            sb.Append(webinar.Date.ToShortDateString());
+            sb.Append("            </b>");
+            sb.Append("        </span>");
+            sb.Append("    </td>");
+            sb.Append("</tr>");
+            sb.Append("<tr>");
+            sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+            sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
             sb.Append("            Attendance Type:");
             sb.Append("        </span>");
             sb.Append("    </td>");
@@ -842,20 +856,6 @@ namespace CUWebinars.Business.Services
             sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
             sb.Append("            <b>$");
             sb.Append(myRow.Order.Total.ToString().Replace(".00", ""));
-            sb.Append("            </b>");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("</tr>");
-            sb.Append("<tr>");
-            sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-            sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-            sb.Append("            Date:");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-            sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-            sb.Append("            <b>");
-            sb.Append(webinar.Date.ToShortDateString());
             sb.Append("            </b>");
             sb.Append("        </span>");
             sb.Append("    </td>");
@@ -1117,17 +1117,17 @@ namespace CUWebinars.Business.Services
             var regKeyResponse = string.Empty;
 
             Debug.Assert(!string.IsNullOrWhiteSpace(row.CitrixJoinUrl), "CitrixJoinUrl should always be null or empty before this method is called as a pre-condition.");
-            
+
             if (additionalLocation == null)
             {
                 // This branch gets key for main registrant - BillingEmail on the Order
                 if (row.RegistrationType.ShowLiveNotifications.TrimEnd().Equals("Yes", StringComparison.OrdinalIgnoreCase))
                 {
                     regKeyResponse = CreateRegistrantKey(
-                        order.FirstName, 
-                        order.LastName, 
-                        order.BillingEmail, 
-                        row.Webinar.idWebinar, 
+                        order.FirstName,
+                        order.LastName,
+                        order.BillingEmail,
+                        row.Webinar.idWebinar,
                         row.Webinar.WebinarKey
                         );
                 }
@@ -1137,9 +1137,9 @@ namespace CUWebinars.Business.Services
                 // This branch gets key for main Additional Locations
                 regKeyResponse = CreateRegistrantKey(
                     "c/o " + order.FirstName,
-                    order.LastName, 
-                    additionalLocation.Email, 
-                    row.Webinar.idWebinar, 
+                    order.LastName,
+                    additionalLocation.Email,
+                    row.Webinar.idWebinar,
                     row.Webinar.WebinarKey
                     );
             }
@@ -1454,7 +1454,7 @@ namespace CUWebinars.Business.Services
         {
             _orderRepository.SendOrderToLegacy(newOrder);
         }
-        
+
 
         public WebUser GetWebUserWithAddressAndInstitution(int idUser)
         {

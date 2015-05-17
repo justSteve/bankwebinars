@@ -1,41 +1,35 @@
-﻿using System.Data.Entity.Validation;
-using System.Text.RegularExpressions;
-using System.Threading;
-using BrockAllen.MembershipReboot;
+﻿using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
-using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Browsers.Webinars;
-using CUWebinars.Web.Core.DataTables;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models;
+using CUWebinars.Web.Models.JsonModels;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using FluentValidation;
-using Microsoft.Ajax.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Web.Hosting;
 using System.Web.Mvc;
-using CUWebinars.Web.Models.JsonModels;
 using WebGrease.Css.Extensions;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 using DateTimeHelper = CUWebinars.Web.Helpers.DateTimeHelper;
@@ -478,39 +472,6 @@ namespace CUWebinars.Web.Controllers
             ModelState.AddModelError(string.Empty, "Invalid Code");
             return View();
         }
-//resharper says this method is non-used
-        //private void ProcessAccessPermissionsForMaterials(Order order, OnDemandPlaybackModel playModel)
-        //{
-        //    var webUser = _membershipService.GetWebUserById(order.idUser);
-
-        //    if (order.idUser == 19)
-        //    {
-        //        playModel.AuthorizedToAccessMaterials = true;
-        //    }
-        //    else if (webUser != null)
-        //    {
-        //        string messageIfFalse;
-
-        //        if (_membershipService.GetPostEventMaterialsClaim(
-        //            _globalConfig.Tenant,
-        //            webUser.email,
-        //            out messageIfFalse))
-        //        {
-        //            playModel.AuthorizedToAccessMaterials = true;
-        //        }
-        //        else
-        //        {
-        //            playModel.AuthorizedToAccessMaterials = false;
-        //            _logger.Error(messageIfFalse);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        _logger.Error("No WebUser exists with the Id {0}", order.idUser);
-        //        ModelState.AddModelError(string.Empty,
-        //            string.Format("No WebUser exists with the Id {0}", order.idUser));
-        //    }
-        //}
 
         public ActionResult Identify(string onDemandCode)
         {
@@ -543,16 +504,13 @@ namespace CUWebinars.Web.Controllers
 
                     var fieldsToComments = new PostEventMaterialsWereAccessed
                     {
-                        DateAccessed = TtsConfig.UtcNowAsCts,
+                        DateAdded = TtsConfig.UtcNowAsCts,
                         OnDemandCode = identifyModel.OnDemandCode,
                         UserEmail = identifyModel.Email,
                         UserName = identifyModel.FullName,
-                        UserIP = Request.UserHostAddress
+                        UserAudit = _appHelper.GetUserAuditInfo()
                     };
 
-                    //desired output:
-                    //{"PostEventMaterialsWereAccessed":{"DateAccessed":"05/13/2015 4:07 pm","OnDemandCode":"49674-fwg0","UserName":"John Doe","UserEmail":"anEmail@that.com","UserIP":"195.159.153.0"}}
-                    //var newJson = new JProperty(string.Concat(JsonPropertyKeys.PostEventMaterialsWereAccessed), FieldsToComments);
                     
                     order.UserComments = JsonHelpers.AddObjectToJsonArray(order.UserComments, JsonPropertyKeys.PostEventMaterialsWereAccessedKey, fieldsToComments);
 
@@ -701,7 +659,7 @@ namespace CUWebinars.Web.Controllers
 
                         var newJson =
                             new JProperty(
-                                string.Concat("LegacyCommentsInDetails-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                                string.Concat("LegacyCommentsInDetails-", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
                                     new JObject(new JProperty("LegacyComments", order.AdminComments))
                                 );
 
@@ -1038,7 +996,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     var webinarEditModel = _webinarControllerOrchestrator.BuildEditModelForWebinar(id.Value);
 
-                    webinarEditModel.DateChanged = webinarEditModel.DateCreated = DateTime.Now;
+                    webinarEditModel.DateChanged = webinarEditModel.DateCreated = TtsConfig.UtcNowAsCts;
 
                     return PartialView("Partials/_CloneWebinar", webinarEditModel);
                 }

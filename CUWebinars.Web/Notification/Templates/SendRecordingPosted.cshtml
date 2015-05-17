@@ -93,7 +93,7 @@
         }
     }
 
-    onDemandLink.Append(" <p>This link provides access to the event's materials until " + Model.ExpiryDate + " and may be shared with associates and co-workers within your organization:</p><p><b>" + TenantURL + "/o/" + Model.Order.idOrder + "-" + myRow.OnDemandCode + "</b></p>Order Summary:");
+    onDemandLink.Append(" <p>This link provides access to the event's materials until " + Model.ExpiryDate + " and may be shared with associates and co-workers within your organization:</p><p><b>http://" + TenantURL + "/o/" + Model.Order.idOrder + "-" + myRow.OnDemandCode + "</b></p>Order Summary:");
 
 
     <head>
@@ -239,9 +239,7 @@
                             <tbody>
                                 <tr>
                                     <td align="right" style="padding-top: 10px;">
-                                        <div style="color: rgb(255, 255, 255); font-size: 11px;">
-                                            <p style="width: 274px; height: 59px;" title="footer" vspace="0" width="274">Tel: 800-831-0678<br />Fax: 800-831-3776</p>
-                                        </div>
+                                        <img alt="Phone 800-831-0678" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/NotiFooter.gif" />
                                     </td>
                                 </tr>
                             </tbody>

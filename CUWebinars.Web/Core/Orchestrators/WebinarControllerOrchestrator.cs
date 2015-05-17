@@ -104,7 +104,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     comments = order.AdminComments.Trim();
                 }
 
-                var newJson = new JProperty(string.Concat("PostEventAccessByAnonUser-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                var newJson = new JProperty(string.Concat("PostEventAccessByAnonUser-", _globalConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
                     new JObject(
                         new JProperty("Name", identifyModel.FullName),
                         new JProperty("Email", identifyModel.Email)
@@ -155,13 +155,14 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             if (claimsIdentityOfAuthenticatedUser.IsAuthenticated)
             {
-                if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == ClaimTypes.Admin))
-                {
-                    return new RedirectToRouteResult(new RouteValueDictionary(new { action = "Index", controller = "Admin" }));
-                }
+                //permits admins to preview onDemand pages
+                //if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == ClaimTypes.Admin))
+                //{
+                //    return new RedirectToRouteResult(new RouteValueDictionary(new { action = "Index", controller = "Admin" }));
+                //}
 
                 ProcessAccessPermissionsForMaterials(order, playModel);
-                //playModel.OnDemandCode = onDemandCode;
+                
                 return viewResult;
             }
 
@@ -190,17 +191,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     playModel.AuthorizedToAccessMaterials = true;
                     //here's a chance for a handy bit of scripting
-                    AddJsonCommentToUser(order, "AccessedMaterials:" + webUser.email);
-                    //TODO: Check that the email being logged here is the email provided at the Identify page
-                    //  it is NOT the order's email.
-
-                    //what i'm looking for here as an encapsulation of all those bits that have to happen each
-                    // time we'd want to add a jsoned comment to any of the levels (admin, affil, user)
-                    // 
-
-                    // so a call as above would return (paying no attn to quotes for well-formed):
-                    //"{"AccessedMaterials":"idOrder:43298,email:steve@ttstrain.com,dated:datetime.Now(),session:getUserSession()"}
-
+                    
                     _logger.Info("AuthorizedToAccessMaterials granted to: " + webUser.email);
 
                     return myClaim;
@@ -598,8 +589,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 Title = webinarEditModel.Title,
                 idPresenter = webinarEditModel.SelectedPresenter,
                 Date = webinarEditModel.Date,
-                DateChanged = DateTime.Now,
-                DateCreated = DateTime.Now,
+                DateChanged = _globalConfig.UtcNowAsCts,
+                DateCreated = _globalConfig.UtcNowAsCts,
                 Status = (WebinarStatus)webinarEditModel.SelectedStatus,
                 Duration = webinarEditModel.Duration,
                 ceu = webinarEditModel.ceu,

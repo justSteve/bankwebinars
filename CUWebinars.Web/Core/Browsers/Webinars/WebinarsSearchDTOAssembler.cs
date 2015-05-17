@@ -9,6 +9,7 @@ namespace CUWebinars.Web.Core.Browsers.Webinars
     public class WebinarsSearchDTOAssembler : AbstractDTOAssembler<EntitiesBrowserTableDataDTO, WebinarsBrowserSearchResultDTO>
     {
         private readonly string _echoId;
+        private GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingletonCreator.UniqueInstance;
 
         public WebinarsSearchDTOAssembler(string echoId)
         {
@@ -25,7 +26,7 @@ namespace CUWebinars.Web.Core.Browsers.Webinars
 
             foreach (var entry in entity.Entries)
             {
-                var numDaysLeft = (entry.Webinar.Date.AddMonths(6) - DateTime.Now).Days;
+                var numDaysLeft = (entry.Webinar.Date.AddMonths(6) - _globalConfig.UtcNowAsCts).Days;
 
                 var showDateValue = DateTimeHelper.FormatDate(entry.Webinar.Date) + " - " +
                                     DateTimeHelper.FormatTime(entry.Webinar.Date) + " Central Time Zone";

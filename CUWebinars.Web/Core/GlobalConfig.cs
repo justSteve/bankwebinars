@@ -26,7 +26,7 @@ namespace CUWebinars.Web.Core
         public string RelativeConfirmChangeUrl { get; private set; }
         public string RelativeCancelVerificationUrl { get; private set; }
         public string RelativeConfirmPasswordResetUrl { get; private set; }
-        public int RetryCount{ get; private set; }
+        public int RetryCount { get; private set; }
         public string StorageAccessKey { get; private set; }
         public string StorageAccountName { get; private set; }
         public string Tenant { get; private set; }

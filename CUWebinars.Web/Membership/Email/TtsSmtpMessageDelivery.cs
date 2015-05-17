@@ -35,7 +35,7 @@ namespace CUWebinars.Web.Membership.Email
             }
 
             var mailMessage = new MailMessage();
-            DateTime timeStamp = DateTime.Now;
+            DateTime timeStamp = _globalConfig.UtcNowAsCts;
             var tmpMsg = string.Empty;
             string destinationEmailAddress = msg.To;
 
