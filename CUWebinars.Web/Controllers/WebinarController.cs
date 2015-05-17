@@ -4,6 +4,7 @@ using System.Threading;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
@@ -542,7 +543,7 @@ namespace CUWebinars.Web.Controllers
 
                     var fieldsToComments = new PostEventMaterialsWereAccessed
                     {
-                        DateAccessed = _globalConfig.Now,
+                        DateAccessed = TtsConfig.UtcNowAsCts,
                         OnDemandCode = identifyModel.OnDemandCode,
                         UserEmail = identifyModel.Email,
                         UserName = identifyModel.FullName,

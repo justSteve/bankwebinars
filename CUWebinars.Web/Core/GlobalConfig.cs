@@ -115,16 +115,6 @@ namespace CUWebinars.Web.Core
             }
         }
 
-        public DateTimeOffset Now
-        {
-            get
-            {
-                var utc = DateTimeOffset.UtcNow;
-                var centralTime = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
-                return TimeZoneInfo.ConvertTime(utc, centralTime);
-            }
-        }
-
         internal string PropertiesAsString
         {
             // nb: this property is internal to prevent StackOverflow exception. 

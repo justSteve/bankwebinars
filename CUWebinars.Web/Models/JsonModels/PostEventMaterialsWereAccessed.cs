@@ -6,7 +6,7 @@ namespace CUWebinars.Web.Models.JsonModels
     {
  
         public string OnDemandCode{ get; set; }
-        public DateTimeOffset DateAccessed { get; set; }
+        public DateTime DateAccessed { get; set; }
         public string UserName { get; set; }
         public string UserEmail { get; set; }
         public string UserIP { get; set; }

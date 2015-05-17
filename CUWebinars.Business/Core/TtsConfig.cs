@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Specialized;
 using System.Configuration;
 using CUWebinars.Business.Notification;
@@ -97,6 +98,15 @@ namespace CUWebinars.Business.Core
             ConnectionStringSettingsCollection connectionStringSettingsCollection = ConfigurationManager.ConnectionStrings;
 
             DefaultConnectionString = connectionStringSettingsCollection["DefaultConnection"].ConnectionString;
+        }
+
+        public static DateTime UtcNowAsCts
+        {
+            get
+            {
+                DateTime timeUtc = DateTime.UtcNow;
+                return TimeZoneInfo.ConvertTimeFromUtc(timeUtc, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
+            }
         }
     }
 }
