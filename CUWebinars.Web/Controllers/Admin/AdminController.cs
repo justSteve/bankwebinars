@@ -35,6 +35,7 @@ using System.Text;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
+using CUWebinars.Business.Core;
 using ClaimsExtensions = CUWebinars.Web.Helpers.ClaimsExtensions;
 using ClaimTypes = System.Security.Claims.ClaimTypes;
 using DataOperations = CUWebinars.Web.Membership.DataOperations;
@@ -113,7 +114,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             string buildMessage = "<div class=\"affiliateChanged\">Affiliate changed for order " + order.idOrder + " from " + originalAffiliate.ttsDomain + " to " +
                                   newAffiliate.ttsDomain + " by " + User.Identity.Name +
-                                  " on " + _globalConfig.UtcNowAsCts.ToShortDateString() +
+                                  " on " + TtsConfig.UtcNowAsCts.ToShortDateString() +
                                   "</div>";
 
             if (!ReferenceEquals(null, order))
@@ -129,7 +130,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     comments = order.AdminComments.Trim();
                 }
 
-                var newJson = new JProperty(string.Concat("ChangeAffiliate-", _globalConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                var newJson = new JProperty(string.Concat("ChangeAffiliate-", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
                     new JObject(
                         new JProperty("ChangeAffiliateTo", newAffiliate.ttsDomain),
                         new JProperty("Details", buildMessage)
@@ -992,7 +993,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 DateTime? expiryDate = _membershipService.GetPostEventAccessExpireyDate(userAccount, order.idOrder);
 
-                if (expiryDate.HasValue && expiryDate > _globalConfig.UtcNowAsCts)
+                if (expiryDate.HasValue && expiryDate > TtsConfig.UtcNowAsCts)
                 {
                     eligableOrders.Add(order);
                 }
@@ -1217,7 +1218,7 @@ namespace CUWebinars.Web.Controllers.Admin
             {
 
             };
-            model.SendDate = _globalConfig.UtcNowAsCts;
+            model.SendDate = TtsConfig.UtcNowAsCts;
             model.Webinars = _webinarManagementService.GetUpcomingWebinars().ToList();
             model.Webinar = _webinarManagementService.GetWebinar(id);
             model.TimeZone = USTimeZone.Eastern;
@@ -1234,7 +1235,7 @@ namespace CUWebinars.Web.Controllers.Admin
             {
 
             };
-            model.SendDate = _globalConfig.UtcNowAsCts;
+            model.SendDate = TtsConfig.UtcNowAsCts;
             model.Webinars = _webinarManagementService.GetUpcomingWebinars().ToList();
             model.Webinar = _webinarManagementService.GetWebinar(id);
             model.TimeZone = USTimeZone.Eastern;

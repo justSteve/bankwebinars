@@ -162,7 +162,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                         var newJson =
                             new JProperty(
-                                string.Concat("LegacyCommentsFromCheckout-", _globalConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                                string.Concat("LegacyCommentsFromCheckout-", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
                                     new JObject(new JProperty("LegacyComments", order.AdminComments))
                                 );
 

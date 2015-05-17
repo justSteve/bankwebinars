@@ -6,6 +6,7 @@ using System;
 using System.Configuration;
 using System.Net.Configuration;
 using System.Net.Mail;
+using CUWebinars.Business.Core;
 using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Web.Membership.Email
@@ -35,7 +36,7 @@ namespace CUWebinars.Web.Membership.Email
             }
 
             var mailMessage = new MailMessage();
-            DateTime timeStamp = _globalConfig.UtcNowAsCts;
+            DateTime timeStamp = TtsConfig.UtcNowAsCts;
             var tmpMsg = string.Empty;
             string destinationEmailAddress = msg.To;
 
