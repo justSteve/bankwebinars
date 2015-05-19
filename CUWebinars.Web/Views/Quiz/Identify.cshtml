@@ -6,9 +6,9 @@
 }
 
 <div id="identifyWrapper">
-    <h3> A Few Small Details Required </h3>
+    <h3>Sign-In for Quiz</h3>
 
-    <div>If you are an existing user, please log in to proceed with accessing the On Demand Webinar:</div>
+    @*<div>If you are an existing user, please log in to proceed with accessing the On Demand Webinar:</div>
 
     <div class="well">
 
@@ -41,9 +41,8 @@
                 <div id="loginMsgLabelWrap" style="display: inline-block"></div>
             </div>
         }
-    </div>
+    </div>*@
 
-    <div>Otherwise, we just need your email address:</div>
 
     <div class="well">
 
@@ -52,6 +51,10 @@
             @Html.ValidationSummary("Please address the following issues in the form below:", new { id = "valSummaryIdentifyDetailsForm" })
             @Html.AntiForgeryToken()
 
+            <div class="row-fluid">
+                @Html.LabelFor(m => m.FullName)
+                @Html.EditorFor(m => m.FullName)
+            </div>
             <div class="row-fluid">
                 @Html.LabelFor(m => m.Email)
                 @Html.EditorFor(m => m.Email)
