@@ -678,7 +678,6 @@
     <Content Include="Scripts\app\admin\click-to-join.js" />
     <Content Include="Scripts\app\admin\claims-management.js" />
     <Content Include="Scripts\app\admin\manage-order-from-details.js" />
-    <Content Include="Scripts\app\admin\manage-order.js" />
     <Content Include="Scripts\app\cart\add-password.js" />
     <Content Include="Scripts\app\cart\details-affiliate.js" />
     <Content Include="Scripts\app\cart\update-connection-info.js" />
@@ -705,7 +704,6 @@
     <None Include="Properties\PublishProfiles\CUWebinars33.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\app\webinar\manage-webinar-from-details.js" />
-    <Content Include="Scripts\app\webinar\manage-webinar.js" />
     <Content Include="Scripts\bootstrap-filestyle.min.js" />
     <Content Include="Scripts\jquery-1.11.1.js" />
     <Content Include="Scripts\jquery-1.11.1.min.js" />
@@ -829,7 +827,6 @@
     <Content Include="Views\Account\EditUser.cshtml" />
     <Content Include="Views\Account\OrderComplete.cshtml" />
     <Content Include="Views\Account\AddPasswordForCartCreatedUser.cshtml" />
-    <Content Include="Views\Admin\ManageOrder.cshtml" />
     <Content Include="Views\Admin\Home\_OrderEditDetails.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutConfirmForAffiliate.cshtml" />
     <Content Include="Views\Shared\_LayoutAffiliate.cshtml" />
@@ -1323,7 +1320,6 @@
     <Content Include="Views\Webinar\Create.cshtml" />
     <Content Include="Views\Webinar\Delete.cshtml" />
     <Content Include="Views\Webinar\Error.cshtml" />
-    <Content Include="Views\Webinar\Index.cshtml" />
     <Content Include="Views\Webinar\ListByTopic.cshtml" />
     <Content Include="Views\Webinar\Partials\AdditionalLocationsView.cshtml" />
     <Content Include="Views\Webinar\Partials\DisplayOptions.cshtml" />

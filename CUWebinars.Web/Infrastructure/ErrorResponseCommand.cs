@@ -1,4 +1,5 @@
-﻿using CUWebinars.Web.Helpers;
+﻿using System;
+using CUWebinars.Web.Helpers;
 using System.Web;
 using System.Web.Mvc;
 using log4net;
@@ -21,6 +22,8 @@ namespace CUWebinars.Web.Infrastructure
 
                 if (originalRouteData != null)
                 {
+
+
                     string controllerNameOfOriginalRequest = GetRoutePart(WebUiConstants.Controller,
                         originalRouteData
                         );
@@ -32,6 +35,8 @@ namespace CUWebinars.Web.Infrastructure
                         );
 
                     logger.Error(string.Format("Action of Original Request: {0}", actionNameOfOriginalRequest));
+                    
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(new Exception(string.Format("error in: {1} | {0} ", actionNameOfOriginalRequest, controllerNameOfOriginalRequest)));
 
                     errorResponse.Controller.ViewData.Model = new HandleErrorInfo(errorResponse.ExceptionInstance,
                         controllerNameOfOriginalRequest,

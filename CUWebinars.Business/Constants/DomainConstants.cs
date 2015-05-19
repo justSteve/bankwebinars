@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace CUWebinars.Business.Constants
 {
     public sealed class DomainConstants
@@ -36,5 +38,15 @@ namespace CUWebinars.Business.Constants
         // ReSharper disable once InconsistentNaming
         public const string CUWebinars = "CUWebinars";
         public const string ClaimDateFormatText = "yyyy-MM-dd";
+        public const string UtcNowAsCts = "yyyy-MM-dd";
+
+        public DateTime BuildUtcNowAsCts
+        {
+            get
+            {
+                DateTime timeUtc = DateTime.UtcNow;
+                return TimeZoneInfo.ConvertTimeFromUtc(timeUtc, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
+            }
+        }
     }
 }
