@@ -47,12 +47,7 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/cart/update-webinar-files.js"
                 ));
 
-            bundles.Add(new ScriptBundle("~/bundles/manage-order").Include(
-                "~/Scripts/toastr.js",
-                "~/Scripts/app/toastLogger.js",
-                "~/Scripts/app/admin/manage-order.js"
-                ));
-
+            
             bundles.Add(new ScriptBundle("~/bundles/add-quiz").Include(
                 "~/Scripts/app/toastLogger.js",
                 "~/Scripts/app/quiz/quiz.js",
@@ -77,12 +72,6 @@ namespace CUWebinars.Web.App_Start
 
             bundles.Add(new ScriptBundle("~/bundles/click-to-join").Include(
                 "~/Scripts/app/admin/click-to-join.js"
-                ));
-
-            bundles.Add(new ScriptBundle("~/bundles/manage-webinar").Include(
-                "~/Scripts/cleditor/jquery.cleditor.min.js",
-                "~/Scripts/cleditor/jquery.cleditor.xhtml.min.js",
-                "~/Scripts/app/webinar/manage-webinar.js"
                 ));
 
             bundles.Add(new ScriptBundle("~/bundles/manage-webinar-from-details").Include(
