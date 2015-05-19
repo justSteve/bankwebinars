@@ -35,6 +35,7 @@ using System.Text;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
+using CUWebinars.Business.Core;
 using ClaimsExtensions = CUWebinars.Web.Helpers.ClaimsExtensions;
 using ClaimTypes = System.Security.Claims.ClaimTypes;
 using DataOperations = CUWebinars.Web.Membership.DataOperations;
@@ -142,7 +143,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             string buildMessage = "<div class=\"affiliateChanged\">Affiliate changed for order " + order.idOrder + " from " + originalAffiliate.ttsDomain + " to " +
                                   newAffiliate.ttsDomain + " by " + User.Identity.Name +
-                                  " on " + DateTime.Now.ToShortDateString() +
+                                  " on " + TtsConfig.UtcNowAsCts.ToShortDateString() +
                                   "</div>";
 
             if (!ReferenceEquals(null, order))
@@ -158,7 +159,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     comments = order.AdminComments.Trim();
                 }
 
-                var newJson = new JProperty(string.Concat("ChangeAffiliate-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                var newJson = new JProperty(string.Concat("ChangeAffiliate-", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
                     new JObject(
                         new JProperty("ChangeAffiliateTo", newAffiliate.ttsDomain),
                         new JProperty("Details", buildMessage)
@@ -418,108 +419,6 @@ namespace CUWebinars.Web.Controllers.Admin
                         Reason = "There has been an error at the server. Please call us at 800-831-0678 ext. 3 to resolve."                    
                     });
         }
-
-        //public virtual void ChangeAffiliateOnOrder(Order order, Affiliate newAffiliate, WebUser currentUser)
-        //{
-
-        //    var originalAffiliate = new CUWebinars.Business.Repository.AffiliateRepository().FindByIdWithIncluding(order.idAffiliate);
-        //    var orderUser = _membershipService.GetUserByEmail(order.BillingEmail);
-
-
-        //    string buildMessage = "<br>Affiliate changed for order " + order.idOrder + " from " + originalAffiliate.ttsDomain + " to " +
-        //                          newAffiliate.ttsDomain + " by " + currentUser.FullName +
-        //                          " on " + DateTime.Now.ToShortDateString() +
-        //                          "<br>";
-
-        //    try
-        //    {
-        //        _orderManagementService.AssignAffiliateToOrder(newAffiliate, order);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.FatalException("ChangeAffiliate: ", ex);
-        //        //order.AdminComments = "<br><h1>Error via ChangeAffiliateOnOrder </h1><p>idOrder=" + order.idOrder + "</p>" + order.AdminComments;
-        //    }
-
-        //    if (!ReferenceEquals(null, order))
-        //    {
-        //        //following copies pattern found at WebinarController | Identify
-        //        JObject existingJObject = null;
-
-        //        string comments = string.Empty;
-
-
-        //        if (!ReferenceEquals(null, order.AdminComments))
-        //        {
-        //            comments = order.AdminComments.Trim();
-        //        }
-
-        //        var newJson = new JProperty(string.Concat("ChangeAffiliate-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
-        //            new JObject(
-        //                new JProperty("ChangeAffiliate", newAffiliate.ttsDomain),
-        //                new JProperty("Details", buildMessage)
-        //                ));
-
-        //        if (string.IsNullOrWhiteSpace(comments))
-        //        {
-        //            existingJObject = new JObject(newJson);
-        //        }
-        //        else
-        //        {
-        //            existingJObject = JObject.Parse(comments);
-        //            existingJObject.Add(newJson);
-        //        }
-
-        //        order.AdminComments = existingJObject.ToString(Formatting.None);
-
-        //        _orderManagementService.SaveChanges();
-
-        //    }
-
-        //    _logger.Info(buildMessage);
-
-        //}
-
-
-        //[AcceptVerbs(HttpVerbs.Post)]
-        //public ActionResult SetAffiliateAssignedToOrder(int idOrder, int assignedAffiliate)
-        //{
-        //    IList<ErrorInfo> errors = new List<ErrorInfo>();
-
-        //    var order = _orderManagementService.GetOrderById(idOrder);
-
-
-        //    var updatedAffiliate = new CUWebinars.Business.Repository.AffiliateRepository().FindByIdWithIncluding(assignedAffiliate));
-
-        //    OrderFacade.Instance.ChangeAffiliateOnOrder(order, updatedAffiliate,
-        //                                                UserFacade.Instance.GetCurrentUser());
-        //    if (errors.Count > 0)
-        //    {
-        //        var e = new RulesException(errors);
-        //        AppHelper.AddErrorsToModel(ModelState, e, "OrderRow");
-        //        Logger.Instance.LogException(e);
-        //    }
-        //    else
-        //    {
-        //        try
-        //        {
-        //            OrderFacade.Instance.Save(order);
-        //            TempData["EditResult"] = "Order Successfully Updated!";
-        //            TempData["alertType"] = "alert-success";
-
-        //            TempData["Message"] = "Update Successful";
-        //        }
-        //        catch (RulesException e)
-        //        {
-        //            AppHelper.AddErrorsToModel(ModelState, e, "OrderRow");
-        //            Logger.Instance.LogMessage("Error SetAffiliate" + e);
-        //        }
-        //    }
-
-        //    //OrderFacade.Instance.UpdateRoyalties( order, originalAffiliate, updatedAffiliate );
-        //    //return View("~/Views/Admin/Registrations/Edit.cshtml", row);
-        //    return RedirectToAction("Edit", new { ID = idOrder });
-        //}
 
 
         public ActionResult ClaimsManagement()
@@ -1123,7 +1022,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 DateTime? expiryDate = _membershipService.GetPostEventAccessExpireyDate(userAccount, order.idOrder);
 
-                if (expiryDate.HasValue && expiryDate > DateTime.Now)
+                if (expiryDate.HasValue && expiryDate > TtsConfig.UtcNowAsCts)
                 {
                     eligableOrders.Add(order);
                 }
@@ -1348,7 +1247,7 @@ namespace CUWebinars.Web.Controllers.Admin
             {
 
             };
-            model.SendDate = DateTime.Now;
+            model.SendDate = TtsConfig.UtcNowAsCts;
             model.Webinars = _webinarManagementService.GetUpcomingWebinars().ToList();
             model.Webinar = _webinarManagementService.GetWebinar(id);
             model.TimeZone = USTimeZone.Eastern;
@@ -1365,7 +1264,7 @@ namespace CUWebinars.Web.Controllers.Admin
             {
 
             };
-            model.SendDate = DateTime.Now;
+            model.SendDate = TtsConfig.UtcNowAsCts;
             model.Webinars = _webinarManagementService.GetUpcomingWebinars().ToList();
             model.Webinar = _webinarManagementService.GetWebinar(id);
             model.TimeZone = USTimeZone.Eastern;

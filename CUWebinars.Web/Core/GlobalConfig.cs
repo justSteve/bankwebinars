@@ -26,7 +26,7 @@ namespace CUWebinars.Web.Core
         public string RelativeConfirmChangeUrl { get; private set; }
         public string RelativeCancelVerificationUrl { get; private set; }
         public string RelativeConfirmPasswordResetUrl { get; private set; }
-        public int RetryCount{ get; private set; }
+        public int RetryCount { get; private set; }
         public string StorageAccessKey { get; private set; }
         public string StorageAccountName { get; private set; }
         public string Tenant { get; private set; }
@@ -112,16 +112,6 @@ namespace CUWebinars.Web.Core
             get
             {
                 return GlobalConfigSingletonCreator.UniqueInstance;
-            }
-        }
-
-        public DateTimeOffset Now
-        {
-            get
-            {
-                var utc = DateTimeOffset.UtcNow;
-                var centralTime = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
-                return TimeZoneInfo.ConvertTime(utc, centralTime);
             }
         }
 

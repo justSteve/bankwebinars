@@ -38,6 +38,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         private readonly IOrderManagementService _orderManagementService;
         private readonly IWebinarManagementService _webinarManagementService;
         private bool _disposed;
+        private GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingletonCreator.UniqueInstance;
 
         public CartControllerOrchestrator(IMembershipService membershipService,
             IOrderManagementService orderManagementService,
@@ -161,7 +162,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                         var newJson =
                             new JProperty(
-                                string.Concat("LegacyCommentsFromCheckout-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                                string.Concat("LegacyCommentsFromCheckout-", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
                                     new JObject(new JProperty("LegacyComments", order.AdminComments))
                                 );
 

@@ -52,7 +52,7 @@ namespace CUWebinars.Business.Core.Helpers
             {
                 existingStoredJsonObject = new JObject();
                 jArray = new JArray(newJsonObject);
-                existingStoredJsonObject.Add(keyOfArray, jArray);
+                existingStoredJsonObject.AddFirst(jArray);
 
                 return existingStoredJsonObject.ToString(Formatting.None);
             }
