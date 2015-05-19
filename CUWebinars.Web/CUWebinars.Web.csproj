@@ -411,12 +411,15 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\NavigationController.cs" />
+    <Compile Include="Controllers\QuizController.cs" />
     <Compile Include="Controllers\StaticContentController.cs" />
     <Compile Include="Core\ConstantType.cs" />
     <Compile Include="Core\DataTables\RegistrationsBrowserSearchResultDTO.cs" />
     <Compile Include="Core\DataTables\RegistrationsBrowserTableDataDTO.cs" />
     <Compile Include="Core\DataTables\RegistrationsBrowserTableDataDTOAssembler.cs" />
+    <Compile Include="Core\Orchestrators\IQuizControllerOrchestrator.cs" />
     <Compile Include="Core\Orchestrators\IWebinarControllerOrchestrator.cs" />
+    <Compile Include="Core\Orchestrators\QuizControllerOrchestrator.cs" />
     <Compile Include="Core\Orchestrators\WebinarControllerOrchestrator.cs" />
     <Compile Include="Core\WebinarType.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
@@ -442,6 +445,7 @@
     <Compile Include="Mapping\Mappers\UniversalMapper.cs" />
     <Compile Include="Mapping\Profiles\TtsProfile.cs" />
     <Compile Include="Models\AddClaimInputModel.cs" />
+    <Compile Include="Models\AddQuizEditModel.cs" />
     <Compile Include="Models\ConnectionInfoEditModel.cs" />
     <Compile Include="Models\DiscountModel.cs" />
     <Compile Include="Models\EditContactInfoModel.cs" />
@@ -463,12 +467,14 @@
     <Compile Include="Models\MigrateOrderModel.cs" />
     <Compile Include="Models\OnDemandPlaybackModel.cs" />
     <Compile Include="Models\PostEventInfoModel.cs" />
+    <Compile Include="Models\QuizModel.cs" />
     <Compile Include="Models\RegisterFieldsDTO.cs" />
     <Compile Include="Models\ShippingDetailsModel.cs" />
     <Compile Include="Models\DiscountDetailsModel.cs" />
     <Compile Include="Models\ShowMessagesModel.cs" />
     <Compile Include="Models\TTSAttendance.cs" />
     <Compile Include="Models\TTSQuiz.cs" />
+    <Compile Include="Models\UserQuizEditModel.cs" />
     <Compile Include="ViewModel\AdjustUserDetailsEditModel.cs" />
     <Compile Include="ViewModel\AffiliatesChooserModel.cs" />
     <Compile Include="ViewModel\AffPromoMsgViewModel.cs" />
@@ -479,6 +485,7 @@
     <Compile Include="ViewModel\Discount_SubscriptionViewModel.cs" />
     <Compile Include="ViewModel\GenerateClickToJoinViewModel.cs" />
     <Compile Include="ViewModel\OrderSumUserViewModel.cs" />
+    <Compile Include="ViewModel\QuizViewModel.cs" />
     <Compile Include="ViewModel\RegistrationSummaryViewModel.cs" />
     <Compile Include="ViewModel\ShowOrdersViewModel.cs" />
     <Compile Include="ViewModel\WebinarEditModel.cs" />
@@ -529,7 +536,9 @@
     <Content Include="App_Data\Orders\OrdersImporter.xlsm" />
     <Content Include="Content\claims-mment.css" />
     <Content Include="Content\common.css" />
+    <Content Include="Content\do-quiz.css" />
     <Content Include="Content\manage-order.css" />
+    <Content Include="Content\quiz.css" />
     <Content Include="Content\toastr.css" />
     <Content Include="Content\toastr.min.css" />
     <Content Include="Content\toastr.scss" />
@@ -621,7 +630,7 @@
     <Content Include="Content\css\BootstrapTemplates\font-awesome\font\README.TXT" />
     <Content Include="Content\css\calendarview.css" />
     <Content Include="Content\css\create-user-form.css" />
-    <Content Include="Content\css\details.css" />
+    <Content Include="Content\details.css" />
     <Content Include="Content\css\nova.css" />
     <Content Include="Content\css\styles\form.css" />
     <Content Include="Content\css\styles\nova.css" />
@@ -664,10 +673,11 @@
     <Content Include="Notification\Templates\SendPerWeekPromo.cshtml">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="Scripts\app\quiz\do-quiz.js" />
+    <Content Include="Scripts\app\admin\add-quiz.js" />
     <Content Include="Scripts\app\admin\click-to-join.js" />
     <Content Include="Scripts\app\admin\claims-management.js" />
     <Content Include="Scripts\app\admin\manage-order-from-details.js" />
-    <Content Include="Scripts\app\admin\manage-order.js" />
     <Content Include="Scripts\app\cart\add-password.js" />
     <Content Include="Scripts\app\cart\details-affiliate.js" />
     <Content Include="Scripts\app\cart\update-connection-info.js" />
@@ -677,6 +687,7 @@
     <Content Include="Scripts\app\cart\register-during-checkout.js" />
     <Content Include="Scripts\app\cart\details.js" />
     <Content Include="Scripts\app\cart\register-user-in-cart.js" />
+    <Content Include="Scripts\app\extensions.js" />
     <Content Include="Scripts\app\form-processor.js" />
     <Content Include="Scripts\app\passwordReset\password-reset-submitter.js" />
     <Content Include="Scripts\app\utilities.js" />
@@ -693,7 +704,6 @@
     <None Include="Properties\PublishProfiles\CUWebinars33.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\app\webinar\manage-webinar-from-details.js" />
-    <Content Include="Scripts\app\webinar\manage-webinar.js" />
     <Content Include="Scripts\bootstrap-filestyle.min.js" />
     <Content Include="Scripts\jquery-1.11.1.js" />
     <Content Include="Scripts\jquery-1.11.1.min.js" />
@@ -817,7 +827,6 @@
     <Content Include="Views\Account\EditUser.cshtml" />
     <Content Include="Views\Account\OrderComplete.cshtml" />
     <Content Include="Views\Account\AddPasswordForCartCreatedUser.cshtml" />
-    <Content Include="Views\Admin\ManageOrder.cshtml" />
     <Content Include="Views\Admin\Home\_OrderEditDetails.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutConfirmForAffiliate.cshtml" />
     <Content Include="Views\Shared\_LayoutAffiliate.cshtml" />
@@ -869,6 +878,11 @@
     <Content Include="Views\Webinar\ClickToJoin.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\ShowUpgradeCost.cshtml" />
     <Content Include="Views\Admin\GenerateClickToJoin.cshtml" />
+    <Content Include="Views\Admin\AddQuiz.cshtml" />
+    <Content Include="Views\Admin\Partials\_Question.cshtml" />
+    <Content Include="Views\Shared\_LayoutQuiz.cshtml" />
+    <Content Include="Views\Quiz\Index.cshtml" />
+    <Content Include="Views\Quiz\Identify.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
@@ -1306,7 +1320,6 @@
     <Content Include="Views\Webinar\Create.cshtml" />
     <Content Include="Views\Webinar\Delete.cshtml" />
     <Content Include="Views\Webinar\Error.cshtml" />
-    <Content Include="Views\Webinar\Index.cshtml" />
     <Content Include="Views\Webinar\ListByTopic.cshtml" />
     <Content Include="Views\Webinar\Partials\AdditionalLocationsView.cshtml" />
     <Content Include="Views\Webinar\Partials\DisplayOptions.cshtml" />
@@ -1391,8 +1404,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="Scripts\app\admin\question.ts" />
     <TypeScriptCompile Include="Scripts\app\cart\create-order-new.ts" />
     <TypeScriptCompile Include="Scripts\app\cart\register-user-in-cart.ts" />
+    <TypeScriptCompile Include="Scripts\app\quiz\quiz.ts" />
     <TypeScriptCompile Include="Scripts\app\register\register-user.ts" />
     <TypeScriptCompile Include="Scripts\app\toastLogger.ts" />
     <TypeScriptCompile Include="Scripts\app\utilities.ts" />
@@ -1400,6 +1415,7 @@
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.validation.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\toastr\toastr.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\underscore\underscore.d.ts" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

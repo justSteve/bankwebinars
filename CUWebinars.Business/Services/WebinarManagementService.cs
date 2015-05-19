@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using CUWebinars.Business.Core;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using System.Net;
 using CUWebinars.Business.Repository;
@@ -19,6 +21,7 @@ namespace CUWebinars.Business.Services
         private readonly IRefDataRepository _refDataRepository;
         private readonly IWebinarRepository _webinarRepository;
         private readonly IWebinarFileRepository _webinarFileRepository;
+        private readonly IQuizRepository _quizRepository;
         private readonly ILogger _logger;
         private readonly IWebUserRepository _webUserRepository;
         private readonly TtsConfiguration _ttsConfig;
@@ -35,6 +38,7 @@ namespace CUWebinars.Business.Services
             IWebUserRepository webUserRepository,
             IWebinarRepository webinarRepository,
             IWebinarFileRepository webinarFileRepository,
+            IQuizRepository quizRepository,
             ILogger logger,
             TtsConfiguration ttsConfig,
             IValidator<Webinar> createWebinarValidator,
@@ -48,6 +52,7 @@ namespace CUWebinars.Business.Services
             _createWebinarValidator = createWebinarValidator;
             _updateWebinarValidator = updateWebinarValidator;
             _webinarFileRepository = webinarFileRepository;
+            _quizRepository = quizRepository;
             _webinarRepository = webinarRepository;
             _logger = logger;
             _webUserRepository = webUserRepository;
@@ -118,9 +123,110 @@ namespace CUWebinars.Business.Services
             _webinarRepository.MarkForDeletion(webinarTopicXRef);
         }
 
+        public void AddQuiz(int selectedWebinar, IEnumerable<Question> questions)
+        {
+            var quiz = new Quiz
+            {
+                idWebinar = selectedWebinar,
+                QuizCode =  RandomHelpers.GetUniqueCode(10)
+            };
+            _quizRepository.AddQuiz(quiz);
+
+            _quizRepository.SaveChanges();
+
+
+            int nr = 1;
+            foreach (var question in questions)
+            {
+                //foreach (var questionWithOption in question.QuestionWithOptions)
+                //{
+                //    _quizRepository.AddQuestionWithOption(questionWithOption);
+                    
+                //}
+
+                _quizRepository.AddQuestion(question);
+
+                _quizRepository.SaveChanges();
+
+
+                var quizWithQuestion = new QuizWithQuestion
+                {
+                    idQuiz = quiz.Id,
+                    Quiz = quiz,
+                    Question =question,
+                    //idQuestion = question.Id,
+                    QuestionNumber = nr++
+                };
+                
+                _quizRepository.AddQuizWithQuestion(quizWithQuestion);
+
+                quiz.QuizWithQuestions.Add(quizWithQuestion);
+                
+                _quizRepository.SaveChanges();
+            }
+        }
+
+        public Quiz GetQuizByCode(string quizCode)
+        {
+            return _quizRepository.GetQuizByCode(quizCode);
+        }
+
+        public QuestionCountAndWebinarId GetQuizQuestionCountAndWebinarId(string quizCode)
+        {
+            return _quizRepository.GetQuestionCountAndWebinarId(quizCode);
+        }
+
+        public Quiz GetQuizByQuizId(int quizId)
+        {
+            return _quizRepository.GetQuizByIdWithOptions(quizId);
+        }
+
+        public IList<QuizScore> GetQuizScoreForUser(int quizId, string email, int orderId)
+        {
+            var quiz = _quizRepository.GetQuizByIdWithOptionsAndUserAnswers(quizId);
+
+            // ReSharper disable once TooWideLocalVariableScope
+            bool isCorrect;
+            var questionResult = new Dictionary<int, KeyValuePair<char, bool>>();
+            IList<QuizScore> quizScores = new List<QuizScore>();
+
+            foreach (var quizUserOrder in quiz.QuizUserOrders.Where(quo => quo.Email == email && quo.idQuiz == quizId && quo.idOrder == orderId))
+            {
+                int talley = 0;
+
+                QuizUserOrder order = quizUserOrder; // to avoid unpredicted behaviour if different versions of the compiler compile this code.
+
+                questionResult = new Dictionary<int, KeyValuePair<char, bool>>();
+
+                foreach (var quizWithQuestion in quiz.QuizWithQuestions.Where(qwq => qwq.idQuiz == order.idQuiz))
+                {
+                    foreach (var quizUserAnswer in quizWithQuestion.QuizUserAnswers.Where(qua => qua.idQuizUserOrder == order.Id))
+                    {
+                        isCorrect = false;
+
+                        if (quizUserAnswer.Letter.Contains(quizUserAnswer.QuizWithQuestion.Question.QuestionWithOptions.Single(qwo => qwo.CorrectAnswer).Letter))
+                        {
+                            isCorrect = true;
+                            talley++;
+                        }
+
+                        questionResult.Add(quizWithQuestion.QuestionNumber, new KeyValuePair<char, bool>(quizUserAnswer.Letter.First(), isCorrect));
+                    }
+                }
+                quizScores.Add(new QuizScore { QuestionResult = questionResult, TotalCorrectAnswerCount = talley, TotalQuestionCount = quiz.QuizWithQuestions.Count });
+            }
+
+            return quizScores;
+        }
+
         public IEnumerable<Webinar> GetByTopic(int topicId)
         {
             return _webinarRepository.GetByTopic(topicId);
+        }
+
+        public Quiz GetQuizByWebinarId(int idWebinar)
+        {
+            return _quizRepository.GetQuizByWebinarId(idWebinar);
         }
 
         public void UpdateWebinarFiles(IEnumerable<WebinarFile> webinarFiles)
@@ -186,6 +292,11 @@ namespace CUWebinars.Business.Services
         public Webinar GetWebinar(int id)
         {
             return _webinarRepository.FindByIdLoaded(id);
+        }
+
+        public Webinar GetWebinarThin(int id)
+        {
+            return _webinarRepository.FindById(id);
         }
 
         public IEnumerable<Webinar> GetWebinarByPresenterLastName(string lastName)

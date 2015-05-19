@@ -1,0 +1,13 @@
+﻿@media only screen and (min-width:992px) {
+    #quizWrapper, #identifyWrapper {
+        margin: 20px auto;
+        width: 700px;
+    }
+}
+
+@media only screen and (min-width:768px) and (max-width: 992px) {
+    #quizWrapper, #identifyWrapper {
+        margin: 20px auto;
+        width: 500px;
+    }
+}

@@ -30,8 +30,8 @@ namespace CUWebinars.Web.App_Start
                         );
 
             bundles.Add(new ScriptBundle("~/bundles/toastr").Include(
-                            "~/Scripts/toastr.js"
-                            ));
+                        "~/Scripts/toastr.js"
+                        ));
 
             bundles.Add(new ScriptBundle("~/bundles/AdditionalLocation").Include(
                 "~/Scripts/app/cart/add-additional-locations.js"
@@ -47,10 +47,17 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/cart/update-webinar-files.js"
                 ));
 
-            bundles.Add(new ScriptBundle("~/bundles/manage-order").Include(
-                "~/Scripts/toastr.js",
+            
+            bundles.Add(new ScriptBundle("~/bundles/add-quiz").Include(
                 "~/Scripts/app/toastLogger.js",
-                "~/Scripts/app/admin/manage-order.js"
+                "~/Scripts/app/quiz/quiz.js",
+                "~/Scripts/app/admin/add-quiz.js"
+                ));
+
+            bundles.Add(new ScriptBundle("~/bundles/do-quiz").Include(
+                "~/Scripts/app/toastLogger.js",
+                "~/Scripts/app/quiz/quiz.js",
+                "~/Scripts/app/quiz/do-quiz.js"
                 ));
 
             bundles.Add(new ScriptBundle("~/bundles/manage-order-from-details").Include(
@@ -67,12 +74,6 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/admin/click-to-join.js"
                 ));
 
-            bundles.Add(new ScriptBundle("~/bundles/manage-webinar").Include(
-                "~/Scripts/cleditor/jquery.cleditor.min.js",
-                "~/Scripts/cleditor/jquery.cleditor.xhtml.min.js",
-                "~/Scripts/app/webinar/manage-webinar.js"
-                ));
-
             bundles.Add(new ScriptBundle("~/bundles/manage-webinar-from-details").Include(
                 "~/Scripts/cleditor/jquery.cleditor.min.js",
                 "~/Scripts/cleditor/jquery.cleditor.xhtml.min.js",
@@ -81,6 +82,7 @@ namespace CUWebinars.Web.App_Start
 
             bundles.Add(new ScriptBundle("~/bundles/CommonModules").Include(
                 "~/Scripts/app/constants.js",
+                "~/Scripts/app/extensions.js",
                 "~/Scripts/underscore.js",
                 "~/Scripts/purl.js", // excellent lib for parsing and working with the address bar content i.e. urls
                 "~/Scripts/app/utilities.js",
@@ -172,11 +174,15 @@ namespace CUWebinars.Web.App_Start
             ));
 
             bundles.Add(new StyleBundle("~/Content/create-order-details").Include(
-                "~/Content/css/details.css"
+                "~/Content/details.css"
                 ));
 
             bundles.Add(new StyleBundle("~/Content/webinar-ops").Include(
                 "~/Content/webinar.css"
+                ));
+
+            bundles.Add(new StyleBundle("~/Content/add-quiz").Include(
+                "~/Content/quiz.css"
                 ));
 
             bundles.Add(new StyleBundle("~/Content/notifications-ops-styles").Include(
@@ -205,12 +211,23 @@ namespace CUWebinars.Web.App_Start
                 "~/Content/validation.css"
                 ));
 
+            bundles.Add(new StyleBundle("~/Content/quiz-bootstrap").Include(
+                "~/Content/css/bootstrap.css",
+                "~/Content/css/bootstrap-responsive.css",
+                "~/Content/css/font-awesome.css")
+                );
+
+
             bundles.Add(new StyleBundle("~/Content/common-styles").Include(
                 "~/Content/common.css")
                 );
 
             bundles.Add(new StyleBundle("~/Content/claims-management").Include(
                 "~/Content/claims-mment.css")
+                );
+
+            bundles.Add(new StyleBundle("~/Content/quiz-general").Include(
+                "~/Content/do-quiz.css")
                 );
 
             bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(

@@ -86,6 +86,35 @@ namespace CUWebinars.Web.Controllers.Admin
             _appHelper = appHelper;
         }
 
+        public ActionResult AddQuiz()
+        {
+            var addQuizEditModel = new AddQuizEditModel();
+            return View(addQuizEditModel);
+        }
+
+        [HttpPost]
+        public ActionResult AddQuiz(AddQuizEditModel addQuizEditModel)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _webinarManagementService.AddQuiz(addQuizEditModel.SelectedWebinar, addQuizEditModel.Questions);
+
+                    return Json(new {Result = WebUiConstants.Success});
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException(string.Format("AddQuiz. Session | {0}", 
+                        _appHelper.GetUserAuditInfo()),
+                        exception);
+
+                    return Json(new { Result = WebUiConstants.Fail });
+                }
+            }
+            return this.ModelStateJson(ModelState);
+        }
+
         public PartialViewResult GetAffiliates()
         {
             var affiliates = _orderManagementService.GetAffiliatesForDisplayList();

@@ -1,0 +1,70 @@
+﻿@model IdentifyModel
+
+@{
+    ViewBag.Title = "Identify";
+    Layout = "~/Views/Shared/_LayoutQuiz.cshtml";
+}
+
+<div id="identifyWrapper">
+    <h3>Sign-In for Quiz</h3>
+
+    @*<div>If you are an existing user, please log in to proceed with accessing the On Demand Webinar:</div>
+
+    <div class="well">
+
+        @using (Html.BeginForm("SignIn", "Account", FormMethod.Post, new { name = "frmSignIn", id = "frmSignIn" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary("Please address the following login errors: ", new { id = "LoginValSummary" })
+
+            <div class="row-fluid">
+
+                @Html.LabelFor(m => m.SignInModel.Email)
+
+                <input type="email" name="Email" data-val="true" data-val-required="The Email field is required." />
+                @Html.ValidationMessageFor(m => m.SignInModel.Email)
+            </div>
+            <div class="row-fluid">
+                @Html.LabelFor(m => m.SignInModel.Password)
+
+                <input type="password" name="Password" data-val="true" data-val-required="The Password field is required." />
+                @Html.ValidationMessageFor(m => m.SignInModel.Password)
+            </div>
+            <div class="row-fluid">
+                <input name="ReturnUrl" type="hidden" value="@Model.SignInModel.ReturnUrl" />
+                <label class="checkbox inline">
+                    <input id="RememberMe" class="check-box" type="checkbox" checked="checked" value="true" name="RememberMe" />Remember Me
+                </label>
+                <br />
+                <input id="SignInButton" name="SignInButton" class='btn' type="submit" value="Log in" />
+
+                <div id="loginMsgLabelWrap" style="display: inline-block"></div>
+            </div>
+        }
+    </div>*@
+
+
+    <div class="well">
+
+        @using (Html.BeginForm("Identify", "Quiz", FormMethod.Post, new { id = "IdentifyDetailsForm" }))
+        {
+            @Html.ValidationSummary("Please address the following issues in the form below:", new { id = "valSummaryIdentifyDetailsForm" })
+            @Html.AntiForgeryToken()
+
+            <div class="row-fluid">
+                @Html.LabelFor(m => m.FullName)
+                @Html.EditorFor(m => m.FullName)
+            </div>
+            <div class="row-fluid">
+                @Html.LabelFor(m => m.Email)
+                @Html.EditorFor(m => m.Email)
+            </div>
+            <div class="row-fluid">
+                @Html.HiddenFor(m => m.OnDemandCode)
+                <button id="submitDetails" class="btn btn-default">Submit</button>
+            </div>
+        }
+    </div>
+
+    @Scripts.Render("~/bundles/identify")
+</div>

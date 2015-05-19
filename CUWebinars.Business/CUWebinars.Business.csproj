@@ -144,6 +144,7 @@
     <Compile Include="Core\MigrationOperations.cs" />
     <Compile Include="Core\OrderGenesis.cs" />
     <Compile Include="Core\PricesAndDiscounts.cs" />
+    <Compile Include="Core\QuizScore.cs" />
     <Compile Include="Core\Tracing\Log4NetTracer.cs" />
     <Compile Include="Core\Tracing\Tracer.cs" />
     <Compile Include="CQS\Commands\AddOrderCommand.cs" />
@@ -179,7 +180,24 @@
     <Compile Include="Models\IncomingAdditionalLocation.cs" />
     <Compile Include="Models\Mapping\AdditionalLocationsLookupPriceMap.cs" />
     <Compile Include="Models\Mapping\GTWebinarMap.cs" />
+    <Compile Include="Models\Mapping\OptionMap.cs" />
+    <Compile Include="Models\Mapping\QuestionMap.cs" />
+    <Compile Include="Models\Mapping\QuestionWithOptionMap.cs" />
+    <Compile Include="Models\Mapping\QuizMap.cs" />
+    <Compile Include="Models\Mapping\QuizUserAnswerMap.cs" />
+    <Compile Include="Models\Mapping\QuizUserOrderMap.cs" />
+    <Compile Include="Models\Mapping\QuizWithQuestionMap.cs" />
+    <Compile Include="Models\Mapping\TimeLimitMap.cs" />
     <Compile Include="Models\Mapping\WebUserDiscountXrefMap.cs" />
+    <Compile Include="Models\Option.cs" />
+    <Compile Include="Models\Question.cs" />
+    <Compile Include="Models\QuestionType.cs" />
+    <Compile Include="Models\QuestionWithOption.cs" />
+    <Compile Include="Models\Quiz.cs" />
+    <Compile Include="Models\QuizUserAnswer.cs" />
+    <Compile Include="Models\QuizUserOrder.cs" />
+    <Compile Include="Models\QuizWithQuestion.cs" />
+    <Compile Include="Models\TimeLimit.cs" />
     <Compile Include="Models\WebUserDiscountXref.cs" />
     <Compile Include="Notification\Email\AdditionalLocationOrderDetailsMessage.cs" />
     <Compile Include="Notification\Email\AzureCuwWebJobSmtpMessageDelivery.cs" />
@@ -256,8 +274,11 @@
     <Compile Include="Repository\IAdditionalLocationsRepository.cs" />
     <Compile Include="Repository\IAffiliateRepository.cs" />
     <Compile Include="Repository\AffiliateRepository.cs" />
+    <Compile Include="Repository\IQuizRepository.cs" />
     <Compile Include="Repository\IWebinarFileRepository.cs" />
     <Compile Include="Repository\IWebinarRepository.cs" />
+    <Compile Include="Repository\QuestionCountAndWebinarId.cs" />
+    <Compile Include="Repository\QuizRepository.cs" />
     <Compile Include="Repository\WebinarFileRepository.cs" />
     <Compile Include="Repository\WebinarRepository.cs" />
     <Compile Include="Services\AffiliateManagementService.cs" />
@@ -355,7 +376,10 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="SQLSeeding\SQLScripts\Quiz Results.sql" />
+    <Content Include="SQLSeeding\SQLScripts\QuizSchemaScript.sql" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <PropertyGroup>

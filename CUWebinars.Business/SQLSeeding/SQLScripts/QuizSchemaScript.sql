@@ -1,4 +1,4 @@
-/******************************************************** Tables etc. ********************************************************/
+﻿/******************************************************** Tables etc. ********************************************************/
 GO
 /****** Object:  Table [dbo].[Option]    Script Date: 17/05/2015 3:43:48 PM ******/
 SET ANSI_NULLS ON
@@ -11,7 +11,7 @@ CREATE TABLE [dbo].[Option](
  CONSTRAINT [PK_Option] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)
 ) ON [PRIMARY]
 
 GO
@@ -28,7 +28,7 @@ CREATE TABLE [dbo].[Question](
  CONSTRAINT [PK_Question] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)
 ) ON [PRIMARY]
 
 GO
@@ -48,7 +48,7 @@ CREATE TABLE [dbo].[QuestionWithOption](
  CONSTRAINT [PK_QuestionWithOption] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)
 ) ON [PRIMARY]
 
 GO
@@ -67,7 +67,7 @@ CREATE TABLE [dbo].[Quiz](
  CONSTRAINT [PK_Quiz] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)
 ) ON [PRIMARY]
 
 GO
@@ -87,7 +87,7 @@ CREATE TABLE [dbo].[QuizUserAnswer](
  CONSTRAINT [PK_QuizUserAnswer] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)
 ) ON [PRIMARY]
 
 GO
@@ -109,7 +109,7 @@ CREATE TABLE [dbo].[QuizUserOrder](
  CONSTRAINT [PK_QuizUserOrder] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)
 ) ON [PRIMARY]
 
 GO
@@ -126,7 +126,7 @@ CREATE TABLE [dbo].[QuizWithQuestion](
  CONSTRAINT [PK_QuizWithQuestion] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)
 ) ON [PRIMARY]
 
 GO
@@ -143,7 +143,7 @@ CREATE TABLE [dbo].[TimeLimit](
  CONSTRAINT [PK_TimeLimit] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)
 ) ON [PRIMARY]
 
 /******************************************************** Indexes, FKs etc. ********************************************************/

@@ -8,7 +8,7 @@ namespace CUWebinars.Web.Models
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
         public string OnDemandCode { get; set; }
-        [Required]
+ 
         [Display(Name = "Full Name")]
         public string FullName { get; set; }
 

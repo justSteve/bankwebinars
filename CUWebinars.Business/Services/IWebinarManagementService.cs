@@ -1,6 +1,8 @@
-﻿using CUWebinars.Business.Models;
+﻿using CUWebinars.Business.Core;
+using CUWebinars.Business.Models;
 using System;
 using System.Collections.Generic;
+using CUWebinars.Business.Repository;
 
 namespace CUWebinars.Business.Services
 {
@@ -18,6 +20,7 @@ namespace CUWebinars.Business.Services
         IEnumerable<Presenter> GetAllPresenters();
         IEnumerable<Topic> GetAllTopics();
         IEnumerable<Webinar> GetByTopic(int topicId);
+        Quiz GetQuizByWebinarId(int idWebinar);
         IEnumerable<Webinar> GetRecordedWebinars();
         IEnumerable<Topic> GetTopicsPerWebinar(int idWebinar);
         IEnumerable<WebinarFile> GetWebinarFilesPerWebinar(int idWebinar);
@@ -25,6 +28,7 @@ namespace CUWebinars.Business.Services
         IEnumerable<RegTypesGroup> GetRegTypeGroupsForWebinars(int idWebinar);
         IEnumerable<RegTypesGroup> GetUpcomingRegTypesForWebinars();
         Webinar GetWebinar(int id);
+        Webinar GetWebinarThin(int id);
         IEnumerable<Webinar> GetWebinarByPresenterLastName(string lastName);
         IEnumerable<Webinar> GetWebinarByDescription(string topicDescription);
         WebinarFile GetWebinarFile(int idWebinarFile);
@@ -38,5 +42,10 @@ namespace CUWebinars.Business.Services
         void SynchToLegacy();
         int GetRegTypeByACS(string registrationType, int idWebinar);
         void DeleteWebinarTopicXref(Webinar webinar, int exisingTopicId);
+        void AddQuiz(int selectedWebinar, IEnumerable<Question> questions);
+        Quiz GetQuizByCode(string quizCode);
+        QuestionCountAndWebinarId GetQuizQuestionCountAndWebinarId(string quizCode);
+        Quiz GetQuizByQuizId(int quizId);
+        IList<QuizScore> GetQuizScoreForUser(int quizId, string email, int orderId);
     }
 }

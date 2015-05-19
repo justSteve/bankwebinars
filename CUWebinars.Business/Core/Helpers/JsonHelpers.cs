@@ -19,7 +19,7 @@ namespace CUWebinars.Business.Core.Helpers
             }
             else
             {
-                jObject = JObject.Parse(existingJson);
+                jObject = JObject.Parse(existingJson.Trim());
                 jObject.Add(newJson);
             }
 

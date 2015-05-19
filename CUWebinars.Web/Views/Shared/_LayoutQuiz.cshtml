@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en" dir="ltr"> <![endif]-->
+<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8" lang="en" dir="ltr"> <![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="en" dir="ltr"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html lang="en">
+<!--<![endif]-->
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <title>@ViewBag.Title</title>
+
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/CommonModules")
+    @Scripts.Render("~/bundles/myApp")
+
+    @Styles.Render("~/Content/quiz-bootstrap")
+    @Styles.Render("~/Content/common-styles")
+    @Styles.Render("~/Content/quiz-general")
+
+
+    <!-- Icons ================ -->
+    <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
+    <link rel="apple-touch-icon-precomposed" href="http://ttsmedia.ttstrain.com/images/BankWebinars/apple-touch-icon.png" />
+    <!-- For first- and second-generation iPad: -->
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://ttsmedia.ttstrain.com/images/BankWebinars/apple-touch-icon-72x72-precomposed.png" />
+    <!-- For iPhone with high-resolution Retina display: -->
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://ttsmedia.ttstrain.com/images/BankWebinars/apple-touch-icon-114x114-precomposed.png" />
+    <!-- For third-generation iPad with high-resolution Retina display: -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://ttsmedia.ttstrain.com/images/BankWebinars/apple-touch-icon-144x144-precomposed.png" />
+
+    <link rel="shortcut icon" href="http://ttsmedia.ttstrain.com/images/BankWebinars/favicon.ico" />
+    <!-- Open Graph for facebook
+        http://graph.facebook.com/[UserName] replace [UserName]
+        with yours and get your fb:admis content information where the XXXX goes.
+        ================================================== -->
+</head>
+    <body>
+        <div class="container-fluid">
+            @RenderBody()
+        </div>
+        @RenderSection("scripts", required: false)
+    </body>
+</html>
