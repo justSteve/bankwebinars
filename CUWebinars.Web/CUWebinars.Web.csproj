@@ -673,6 +673,7 @@
     <Content Include="Notification\Templates\SendPerWeekPromo.cshtml">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="Scripts\app\quiz\edit-quiz.js" />
     <Content Include="Scripts\app\quiz\do-quiz.js" />
     <Content Include="Scripts\app\admin\add-quiz.js" />
     <Content Include="Scripts\app\admin\click-to-join.js" />
@@ -883,6 +884,7 @@
     <Content Include="Views\Shared\_LayoutQuiz.cshtml" />
     <Content Include="Views\Quiz\Index.cshtml" />
     <Content Include="Views\Quiz\Identify.cshtml" />
+    <Content Include="Views\Quiz\EditQuizFromDetails.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
