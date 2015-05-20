@@ -1,0 +1,19 @@
+﻿@model UserQuizEditModel
+
+@{
+    ViewBag.Title = "Edit Quiz";
+}
+
+
+<div class="container" id="quizContainer">
+    <div class="legendImitator">Edit Quiz</div>
+
+    @using (Html.BeginForm("EditQuiz", "Quiz", FormMethod.Post, new {id = "EditCloneQuizForm"}))
+    {
+        <div id="mainForm" class="span7">
+            
+        </div>
+
+    }
+
+</div>

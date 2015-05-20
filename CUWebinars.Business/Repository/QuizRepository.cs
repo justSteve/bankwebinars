@@ -76,7 +76,6 @@ namespace CUWebinars.Business.Repository
                 .Include(q => q.QuizUserOrders.Select(quo => quo.Order))
                 .Include(q => q.Webinar)
                 .Where(q => q.QuizCode == quizCode).FirstOrDefault();
-
         }
 
         public QuestionCountAndWebinarId GetQuestionCountAndWebinarId(string quizCode)

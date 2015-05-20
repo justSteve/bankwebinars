@@ -23,6 +23,19 @@ namespace CUWebinars.Web.Controllers
             _quizControllerOrchestrator = quizControllerOrchestrator;
         }
 
+        public ActionResult EditQuizFromDetails(int? webinarId)
+        {
+            if(webinarId.HasValue)
+            {
+                var model = _quizControllerOrchestrator.BuildUserQuizEditModel(webinarId.Value);
+                return View(model);
+            }
+
+            ModelState.AddModelError(string.Empty, "No Webinar Id was passed to the Server.");
+
+            return View();
+        }
+
         public ActionResult Identify(string onDemandCode)
         {
             var model = new IdentifyModel
@@ -88,6 +101,19 @@ namespace CUWebinars.Web.Controllers
             if (orderId.HasValue && !string.IsNullOrWhiteSpace(quizCode))
             {
                 var model = _quizControllerOrchestrator.BuildUserQuizEditModel(quizCode, orderId.Value);
+                return Json(new { Result = WebUiConstants.Success, Quiz = model} );
+            }
+
+            return View();
+        }
+
+        [System.Web.Mvc.HttpPost]
+        [HandleAjaxException]
+        public ActionResult GetQuestionsByWebinarId(int? webinarId)
+        {
+            if (webinarId.HasValue)
+            {
+                var model = _quizControllerOrchestrator.BuildUserQuizEditModel(webinarId.Value);
                 return Json(new { Result = WebUiConstants.Success, Quiz = model} );
             }
 
