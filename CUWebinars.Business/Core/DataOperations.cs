@@ -132,7 +132,7 @@ namespace CUWebinars.Business.Core
                     var message = command.ExecuteScalar();
                     if (message == null)
                     {
-                        _logger.Fatal("Invalid Registration Type ");
+                        _logger.Fatal("Invalid Registration Type {0} for idWebinar {1) ", registrationType, idWebinar);
                     }
 
                     return Convert.ToInt32(message);

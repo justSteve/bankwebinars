@@ -673,6 +673,7 @@
     <Content Include="Notification\Templates\SendPerWeekPromo.cshtml">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="robots.txt" />
     <Content Include="Scripts\app\quiz\do-quiz.js" />
     <Content Include="Scripts\app\admin\add-quiz.js" />
     <Content Include="Scripts\app\admin\click-to-join.js" />

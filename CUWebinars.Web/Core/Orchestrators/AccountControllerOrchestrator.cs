@@ -62,6 +62,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public bool LogUserIn(SignInModel signInModel)
         {
+            _logger.Info("LogUserIn {0}. Session={1} ", signInModel.Email, _appHelper.GetUserAuditInfo());
+
             return _membershipService.LogInUser(_globals.Tenant, signInModel.Email, signInModel.Password, signInModel.RememberMe);
         }
 
@@ -222,12 +224,12 @@ namespace CUWebinars.Web.Core.Orchestrators
                             string.Empty
                             );
 
-                    _logger.Info("Account.SignIn Post Success. Redirecting to: {1},  Session={0} ", _appHelper.GetUserAuditInfo(), retUrl);
+                    _logger.Info("Account.SignIn {0}. Redirecting to: {2},  Session={1} ", model.Email, _appHelper.GetUserAuditInfo(), retUrl);
                 }
 
                 return true;
             }
-
+            _logger.Info("Account.SignIn FAILED on {0}. Session={1} ", model.Email, _appHelper.GetUserAuditInfo());
             return false;
         }
 
@@ -262,7 +264,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 _membershipService.LogInUser(_globals.Tenant, model.Email, model.NewPassword, true);
 
-                _logger.Info("Account.Confirmed POST. Session={0}", _appHelper.GetUserAuditInfo());
+                _logger.Info("Account.Confirmed {1}. Session={0}", _appHelper.GetUserAuditInfo(), model.Email);
 
                 return true;
             }

@@ -1,8 +1,8 @@
 USE TTSWebinars2;
 GO
 
-UPDATE dbo.OrdersRows SET idWebinar = 1722 WHERE idOrder = 80263
-SELECT * FROM dbo.Webinar WHERE idWebinar = 842
+--UPDATE dbo.OrdersRows SET idWebinar = 1722 WHERE idOrder = 80263
+--SELECT * FROM dbo.Webinar WHERE idWebinar = 842
 --SELECT  ( SELECT    optionGroupDesc
 --          FROM      dbo.OptionsGroups
 --          WHERE     idOptionGroup = o.idOptionGroup
@@ -137,12 +137,7 @@ FROM    TTSWebinars2.dbo.Orders o
         INNER JOIN dbo.OrdersRows r ON r.idOrder = o.idOrder
 WHERE   r.status < 6
         AND r.status > 1
-        AND r.idWebinar IN ( 842)--( SELECT r.idWebinar FROM dbo.Webinar WHERE status = 2 OR status = 3) -- 1745 = understanding...
+        AND r.idWebinar IN ( 1779)--( SELECT r.idWebinar FROM dbo.Webinar WHERE status = 2 OR status = 3) -- 1745 = understanding...
 ORDER BY o.lastName DESC;
 GO
-EXEC dbo.OrdersByEvent @idWebinar = 842-- int
-
-
-
-EXEC  dbo.OrdersByEvent @idWebinar = 842 -- int
-
+EXEC dbo.OrdersByEvent @idWebinar = 1779
