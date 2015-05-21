@@ -45,6 +45,14 @@ namespace CUWebinars.Business.Repository
         public Quiz GetQuizByIdWithOptions(int id)
         {
             var quiz = items.Include(q => q.QuizWithQuestions.Select(qwq => qwq.Question.QuestionWithOptions))
+                .Include(q => q.QuizWithQuestions.Select(qwq => qwq.QuizUserAnswers))
+                .SingleOrDefault(q => q.Id == id);
+            return quiz;
+        }
+
+        public Quiz GetQuizByIdWithOptionsText(int id)
+        {
+            var quiz = items.Include(q => q.QuizWithQuestions.Select(qwq => qwq.Question.QuestionWithOptions.Select(qwo => qwo.Option)))
                 .SingleOrDefault(q => q.Id == id);
             return quiz;
         }
@@ -76,7 +84,6 @@ namespace CUWebinars.Business.Repository
                 .Include(q => q.QuizUserOrders.Select(quo => quo.Order))
                 .Include(q => q.Webinar)
                 .Where(q => q.QuizCode == quizCode).FirstOrDefault();
-
         }
 
         public QuestionCountAndWebinarId GetQuestionCountAndWebinarId(string quizCode)
@@ -89,6 +96,16 @@ namespace CUWebinars.Business.Repository
                 QuestionCount = quiz.QuizWithQuestions.Count,
                 WebinarId = quiz.idWebinar
             };
+        }
+
+        public void SetQuizUserAnswerAsModified(QuizUserAnswer quizUserAnswer)
+        {
+            db.Entry(quizUserAnswer).State = EntityState.Deleted;
+        }
+
+        public void DeleteQuizWithQuestion(QuizWithQuestion quizWithQuestion)
+        {
+            db.Entry(quizWithQuestion).State = EntityState.Deleted;
         }
     }
 }

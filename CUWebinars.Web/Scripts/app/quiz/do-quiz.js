@@ -284,8 +284,6 @@ $(function () {
             return false;
         }
 
-        console.info(DQ.quiz);
-
         var self = this;
 
         var payload = { userQuizEditModel: DQ.quiz };

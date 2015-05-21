@@ -51,7 +51,7 @@ module QuizDomain {
         }
 
         setQuizId(val: number): void {
-            this.quizId= val;
+            this.quizId = val;
         }
 
         setWebinarId(val: number): void {
@@ -135,7 +135,7 @@ module QuizDomain {
     export class Option {
         private text: string;
         private letter: string;
-        private correctAnswer: boolean; // only relevant for Admin section in creating the Quiz
+        private correctAnswer: boolean; // only relevant for Admin section in creating the Quiz and Editing
 
         constructor() { }
 
@@ -165,5 +165,63 @@ module QuizDomain {
         }
     };
 
-    
+    export class EditableQuestion extends Question {
+
+        private questionId: number;
+
+
+        constructor() { super(); }
+
+        getQuestionId(): number {
+            return this.questionId;
+        }
+
+        setQuestionId(value: number): void {
+            this.questionId = value;
+        }
+
+    }
+
+    export class EditableOption extends Option {
+
+        private optionId: number;
+
+
+        constructor() { super(); }
+
+        getOptionId(): number {
+            return this.optionId;
+        }
+
+        setOptionId(value: number): void {
+            this.optionId= value;
+        }
+
+    }
+
+    export class EditedQuestion {
+        QuestionId: number;
+        OriginalQuestionNumber: number;
+        NewQuestionNumber: number;
+        OriginalQuestionText: number;
+        NewQuestionText: number;
+        DeletedOptions: number[];
+        EditedOptions: EditedOption[];
+
+        constructor(id:number) {
+            this.QuestionId = id;
+        }
+
+
+    }
+
+    export class EditedOption {
+        OptionId: number;
+        OriginalOptionLetter: string; 
+        NewOptionLetter: string;
+        OriginalOptionText: string;
+        NewOptionText: string;
+        OriginalCorrectStatus: boolean; 
+        NewCorrectStatus: boolean;
+    }
 } 

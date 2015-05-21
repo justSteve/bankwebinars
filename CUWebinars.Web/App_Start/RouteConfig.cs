@@ -12,9 +12,16 @@ namespace CUWebinars.Web.App_Start
 
             routes.MapRoute(
                 "EditWebinar",
-                url: "{id}/edit",
+                url: "{id}/editWebinar",
                 defaults: new { controller = "Webinar", action = "EditWebinarFromDetails", id = 0 },
-                constraints: new { id = @"\d+" }
+                constraints: new { id = @"\d+"}
+            );
+
+            routes.MapRoute(
+                "EditQuiz",
+                url: "{webinarId}/editquiz",
+                defaults: new { controller = "Quiz", action = "EditQuizFromDetails", webinarId = 0 },
+                constraints: new { webinarId = @"\d+" }
             );
 
             routes.MapRoute(

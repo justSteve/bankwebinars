@@ -60,6 +60,12 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/quiz/do-quiz.js"
                 ));
 
+            bundles.Add(new ScriptBundle("~/bundles/edit-quiz").Include(
+                "~/Scripts/app/toastLogger.js",
+                "~/Scripts/app/quiz/quiz.js",
+                "~/Scripts/app/quiz/edit-quiz.js"
+                ));
+
             bundles.Add(new ScriptBundle("~/bundles/manage-order-from-details").Include(
                 "~/Scripts/toastr.js",
                 "~/Scripts/app/toastLogger.js",
