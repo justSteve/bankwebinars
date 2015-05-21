@@ -219,6 +219,35 @@ namespace CUWebinars.Business.Services
             return quizScores;
         }
 
+        public void RemoveQuestionsFromQuiz(IEnumerable<int> deletedQuestions, int quizId)
+        {
+            var quiz = _quizRepository.GetQuizByIdWithOptions(quizId);
+
+            foreach (var deletedQuestion in deletedQuestions)
+            {
+                var quizWithQuestion = quiz.QuizWithQuestions.FirstOrDefault(q => q.Id == deletedQuestion);
+
+                if (!ReferenceEquals(null, quizWithQuestion))
+                {
+                    foreach (var quizUserAnswer in quizWithQuestion.QuizUserAnswers)
+                    {
+                        quizUserAnswer.idQuizQuestion = null;
+                        quizWithQuestion.QuizUserAnswers.Remove(quizUserAnswer);
+                        _quizRepository.SetQuizUserAnswerAsModified(quizUserAnswer);
+                    }
+
+                    quiz.QuizWithQuestions.Remove(quizWithQuestion);
+
+                    _quizRepository.DeleteQWQs(quizWithQuestion);
+
+                    _quizRepository.SaveChanges();
+
+                }
+
+            }
+            _quizRepository.SaveChanges();
+        }
+
         public IEnumerable<Webinar> GetByTopic(int topicId)
         {
             return _webinarRepository.GetByTopic(topicId);

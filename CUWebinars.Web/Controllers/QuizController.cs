@@ -36,6 +36,18 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
+        [System.Web.Mvc.HttpPost]
+        [HandleAjaxException]
+        public ActionResult EditQuiz(EditQuizEditModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                _quizControllerOrchestrator.ProcessEditModel(model);
+            }
+            
+            return View();
+        }
+
         public ActionResult Identify(string onDemandCode)
         {
             var model = new IdentifyModel

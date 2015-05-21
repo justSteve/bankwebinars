@@ -11,5 +11,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         ActionResult Identify(IdentifyModel identifyModel);
         ActionResult ShowQuizLandingView(int idOrder, string quizCode, string quizCodeWithOrderId, IIdentity userIdentity, string email = null);
         ContentResult ScoreQuizAndPersistResults(UserQuizEditModel userQuizEditModel);
+        void ProcessEditModel(EditQuizEditModel model);
     }
 }

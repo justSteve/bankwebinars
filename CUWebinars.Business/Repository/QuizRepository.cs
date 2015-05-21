@@ -89,5 +89,15 @@ namespace CUWebinars.Business.Repository
                 WebinarId = quiz.idWebinar
             };
         }
+
+        public void SetQuizUserAnswerAsModified(QuizUserAnswer quizUserAnswer)
+        {
+            db.Entry(quizUserAnswer).State = EntityState.Deleted;
+        }
+
+        public void DeleteQWQs(QuizWithQuestion quizWithQuestion)
+        {
+            db.Entry(quizWithQuestion).State = EntityState.Deleted;
+        }
     }
 }

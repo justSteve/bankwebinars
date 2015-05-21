@@ -2,6 +2,12 @@
 /// <reference path="../../typings/jquery/jquery.validation.d.ts" />
 /// <reference path="../../typings/bootstrap/bootstrap.d.ts" />
 /// <reference path="../../typings/underscore/underscore.d.ts" />
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
 var QuizDomain;
 (function (QuizDomain) {
     (function (CompletionStatus) {
@@ -45,10 +51,6 @@ var QuizDomain;
 
         Quiz.prototype.setQuestions = function (val) {
             this.quizQuestions = val;
-        };
-
-        Quiz.prototype.setQuizId = function (val) {
-            this.quizId = val;
         };
 
         Quiz.prototype.setWebinarId = function (val) {
@@ -157,5 +159,63 @@ var QuizDomain;
     })();
     QuizDomain.Option = Option;
     ;
+
+    var EditableQuiz = (function (_super) {
+        __extends(EditableQuiz, _super);
+        function EditableQuiz() {
+            _super.call(this);
+        }
+        EditableQuiz.prototype.setQuizId = function (val) {
+            this.quizId = val;
+        };
+        return EditableQuiz;
+    })(Quiz);
+    QuizDomain.EditableQuiz = EditableQuiz;
+
+    var EditableQuestion = (function (_super) {
+        __extends(EditableQuestion, _super);
+        function EditableQuestion() {
+            _super.call(this);
+        }
+        EditableQuestion.prototype.getQuestionId = function () {
+            return this.questionId;
+        };
+
+        EditableQuestion.prototype.setQuestionId = function (value) {
+            this.questionId = value;
+        };
+        return EditableQuestion;
+    })(Question);
+    QuizDomain.EditableQuestion = EditableQuestion;
+
+    var EditableOption = (function (_super) {
+        __extends(EditableOption, _super);
+        function EditableOption() {
+            _super.call(this);
+        }
+        EditableOption.prototype.getOptionId = function () {
+            return this.optionId;
+        };
+
+        EditableOption.prototype.setOptionId = function (value) {
+            this.optionId = value;
+        };
+        return EditableOption;
+    })(Option);
+    QuizDomain.EditableOption = EditableOption;
+
+    var EditedQuestion = (function () {
+        function EditedQuestion() {
+        }
+        return EditedQuestion;
+    })();
+    QuizDomain.EditedQuestion = EditedQuestion;
+
+    var EditedOption = (function () {
+        function EditedOption() {
+        }
+        return EditedOption;
+    })();
+    QuizDomain.EditedOption = EditedOption;
 })(QuizDomain || (QuizDomain = {}));
-//# sourceMappingURL=Quiz.js.map
+//# sourceMappingURL=quiz.js.map

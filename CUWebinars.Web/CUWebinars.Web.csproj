@@ -450,6 +450,7 @@
     <Compile Include="Models\DiscountModel.cs" />
     <Compile Include="Models\EditContactInfoModel.cs" />
     <Compile Include="Models\EditDiscountModel.cs" />
+    <Compile Include="Models\EditQuizEditModel.cs" />
     <Compile Include="Models\EditUserInfoModel.cs" />
     <Compile Include="Models\EditUserModel.cs" />
     <Compile Include="Models\IdentifyModel.cs" />

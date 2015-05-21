@@ -27,7 +27,7 @@ namespace CUWebinars.Business.Models.Mapping
                 .WithMany(t => t.QuizWithQuestions)
                 .HasForeignKey(t => t.idQuestion);
             HasMany(t => t.QuizUserAnswers)
-                .WithRequired(t => t.QuizWithQuestion)
+                .WithOptional(t => t.QuizWithQuestion)
                 .HasForeignKey(t => t.idQuizQuestion);
         }
     }

@@ -10,7 +10,7 @@ $(function () {
 
     EQ.primeDomVariables();
 
-    //EQ.startButton.on('click', EQ.startQuiz);
+    EQ.editCloneSubmitButton.on('click', EQ.submitEditedQuiz);
     //EQ.prevButton.on('click', EQ.prevClicked);
     //EQ.nextButton.on('click', EQ.nextClicked);
     //EQ.submitButton.on('click', EQ.submitClicked);
@@ -18,49 +18,54 @@ $(function () {
     //EQ.homeButton.on('click', EQ.homeClicked);
 
     EQ.utilities = new Common.Utilities();
+
+    EQ.getQuestions();
 });
 
 // self-invoking function for creating methods using Module pattern.
 (function(ns) {
 
+    ns.questionsList = [];
     ns.questionCount = 0;
     ns.currentQuestionNr = 1;
 
-    ns.accordionTemplate = '<div class="accordion" id="accordion2">{0}</div>';
-    ns.questionTemplate = '<div id="{0}-question" class="initialHide"><p><strong>Question Number <span id="{0}-questionNr"></span> of {3}</strong></p><p id="{0}-questionText">{1}</p><div id="{0}-options">{2}</div></div>';
-    ns.optionsTemplate = '<label class="radio"><input id="{0}-option" name="{3}-option" type="radio" value="{1}" />{2}</label>';
+    ns.deletedQuestions = [];
+    ns.editedQuestions = [];
+    ns.newQuestions = [];
+
+    ns.accordionTemplate = '<div class="accordion" id="questions">{0}</div>';
+    ns.questionTemplate = '<div class="accordion-group" id="{0}-question" data-id={2}><div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#questions" href="#collapse{0}">Question #{0}</a></div><div id="collapse{0}" class="accordion-body collapse in"><div id="{0}-options" class="accordion-inner">{1}</div><button class="btn btn-default btn-mini">&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="{0}-delete"></i>&nbsp;Delete Question</button><button class="btn btn-default btn-mini">Add Option</button></div></div>';
+    ns.optionsTemplate = '<div id="{0}{1}-option" data-id="{5}" class="input-prepend input-append"><span class="add-on">{2}</span><input id="{0}{1}-optionInput" name="Options[{0}{1}].Text" class="input input-xxlarge" value="{3}" placeholder="Enter option text and tick box at end if correct answer"  type="text" />&nbsp;<span class="add-on"><input id="{0}{1}-answer" type="checkbox" title="Is this the answer?" {4} />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="{0}{1}-delete"></i></span></div>';
 
     ns.primeDomVariables = function() {
-
+        EQ.mainForm = $('#mainForm');
+        EQ.form = $('#EditCloneQuizForm');
+        EQ.webinarId = $('#WebinarId');
+        EQ.quizId = $('#QuizId');
+        EQ.editCloneSubmitButton = $('#EditCloneSubmitButton');
     };
 
     ns.wireUpOptions = function(jQuerySet) {
 
         // this wires up the change handler for each radio button.
-        _.each(jQuerySet, function(jQueryObj) {
-            $(jQueryObj).on('change', EQ.optionSelected);
-        });
+        //_.each(jQuerySet, function(jQueryObj) {
+        //    $(jQueryObj).on('change', EQ.optionSelected);
+        //});
     };
 
-    ns.startQuiz = function(e) {
-        e.preventDefault();
-
-        EQ.setUiState('start');
-        EQ.getQuestions();
-    };
+    
 
     ns.getQuestions = function () {
 
         var payload = {
-            quizCode: $('#codeInput').val(),
-            orderId: $('#orderIdInput').val()
+            webinarId: $('#WebinarId').val(),
         };
 
         $.ajax({
             type: 'POST',
             contentType: constants.JsonContentType,
             cache: false,
-            url: '/Quiz/GetQuestions',
+            url: '/Quiz/GetQuestionsByWebinarId',
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
             beforeSend: function () {
@@ -70,6 +75,7 @@ $(function () {
             if (data.Result === 'Success') {
                 EQ.populateClientObjects(data.Quiz);
 
+                var questions = '';
                 var count = 1;
 
                 _.each(EQ.quiz.getQuestions(), function(question, idx) {
@@ -77,52 +83,129 @@ $(function () {
                     var optionsHtml = '';
 
                     _.each(question.getOptions(), function(option, innerIdx) {
-                        optionsHtml += EQ.optionsTemplate.format((idx + 1).toString() + (innerIdx + 1).toString(), option.getLetter(), option.getText(), count);
+                        optionsHtml += EQ.optionsTemplate.format((idx + 1).toString(),(innerIdx + 1).toString(), option.getLetter(), option.getText(), option.getCorrectAnswer() ? 'checked' : '', option.getOptionId());
                     });
-
-                    if (idx === 0) {
-                        var questionHtml = EQ.questionTemplateFirst.format((idx + 1).toString(), question.getText(), optionsHtml, EQ.currentQuestionNr, EQ.questionCount);
-                    } else {
-                        var questionHtml = EQ.questionTemplate.format((idx + 1).toString(), question.getText(), optionsHtml, EQ.questionCount);
-                    }
-
-                    EQ.questionsWrapper.append(questionHtml);
+                    
+                    questions += EQ.questionTemplate.format(count, optionsHtml, question.getQuestionId());
 
                     count += 1;
                 });
 
-                EQ.wireUpOptions($('#questionWrapper').find('input[type="radio"]'));
+                EQ.accordionTemplate.format(questions);
+                EQ.mainForm.append(questions);
+
+                var optionTrashCans = $('div[id$="-option"]').find('i.icon-trash');
+
+                _.each(optionTrashCans, function (trash, idx) {
+                    $(trash).on('click', EQ.deleteOption);
+                });
+
+                var questionTrashCans = $('div[id^="collapse"] button').find('i.icon-trash').parent();
+
+                _.each(questionTrashCans, function (trash, idx) {
+                    $(trash).on('click', EQ.deleteQuestion);
+                });
+
+
+                $(".collapse").not('#collapse1').collapse('hide');
 
             } else {
 
             }
         });
+    };
+
+    ns.deleteOption = function(e) {
+        e.preventDefault();
+
+        console.info('delete');
+    };
+
+
+    ns.deleteQuestion = function (e) {
+        e.preventDefault();
+
+        var accordionGroup = $(e.currentTarget.closest('div.accordion-group'));
+        var questionId = accordionGroup.data('id');
+        var questionNumber = parseInt(accordionGroup.attr('id').slice(0, 1));
+
+        // record the id of the question which we are deleting from the quiz.
+        EQ.deletedQuestions.push(questionId);
+
+        // shuffle the remaining questions up and re-number them accordingly.
+        EQ.reArrangeRemainingQuestions(accordionGroup, questionNumber);
+
+        // delete this question from the dom.
+        accordionGroup.fadeOut(200, function() {
+            $(this).remove();
+        });
+
+    };
+
+
+    ns.reArrangeRemainingQuestions = function (accordionGroup, questionId) {
+
+        var followingQuestions = accordionGroup.nextAll();
+        var newId = questionId;
+
+        _.each(followingQuestions, function (accordionGroup, idx) {
+            var accordionGroup$ = $(accordionGroup);
+            accordionGroup$.attr('id', newId.toString() + '-question');
+
+            var anchorTitle = accordionGroup$.find('div > a');
+            anchorTitle.attr('href', '#collapse' + newId.toString());
+            anchorTitle.text('Question #' + newId.toString());
+
+            var collapseDiv = accordionGroup$.find('div[id^="collapse"]');
+            collapseDiv.attr('id', 'collapse' + newId.toString());
+            collapseDiv.find('div[id$="-options"]').attr('id', newId.toString() + '-options');
+
+            _.each(collapseDiv.find('div > div[id$="-option"]'), function(option, idx) {
+                var optionDiv = $(option);
+                var newIdentifier = newId.toString() + (idx + 1).toString();
+                optionDiv.attr('id', newIdentifier + '-option');
+                optionDiv.find('input[type="text"]').attr('id', newIdentifier + '-optionInput').attr('name', 'Options[' + newIdentifier + '].Text');
+                optionDiv.find('input[type="checkbox"]').attr('id', newIdentifier + '-answer');
+                optionDiv.find('i').attr('id', newIdentifier + '-delete');
+            });
+
+            accordionGroup$.find('button i').attr('id', newId.toString() + '-delete');
+
+            newId += 1;
+        });
 
 
     };
 
+
     ns.populateClientObjects = function(data) {
-        EQ.quiz = new QuizDomain.Quiz();
+        EQ.quiz = new QuizDomain.EditableQuiz();
         EQ.quiz.setCompleted(QuizDomain.CompletionStatus.NotStarted);
-        EQ.quiz.setOrderId(data.OrderId);
         EQ.quiz.setWebinarId(data.WebinarId);
-        EQ.quiz.setEmail($('#emailInput').val());
-        EQ.quiz.setQuizId($('#quizIdInput').val());
+        EQ.quiz.setQuizId(EQ.quizId.val());
         
         var questions = [];
 
         _.each(data.QuizQuestions, function(item, index) {
 
-            var question = new QuizDomain.Question();
+            var question = new QuizDomain.EditableQuestion();
             question.setText(item.QuestionText);
             question.setQuestionNumber(item.QuestionNumber);
+            question.setQuestionId(item.QuestionId);
 
             var options = [];
 
             _.each(item.Options, function(option, index) {
-                var optionForQu = new QuizDomain.Option();
+                var optionForQu = new QuizDomain.EditableOption();
                 optionForQu.setText(option.Text);
                 optionForQu.setLetter(option.Letter);
+                optionForQu.setOptionId(option.QuestionOptionId);
+                
+                if (option.Letter == item.Solutions[0]) {
+                    optionForQu.setCorrectAnswer(true);
+                } else {
+                    optionForQu.setCorrectAnswer(false);
+                }
 
                 options.push(optionForQu);
             });
@@ -133,154 +216,66 @@ $(function () {
 
         EQ.quiz.setQuestions(questions);
         EQ.questionCount = EQ.quiz.getQuestions().length;
+        EQ.questionsList = questions;
     };
 
-    ns.setUiState = function(state) {
+    ns.getQuestionsList = function () {
 
-        switch(state) {
-            case 'start':
-                EQ.startPanel.fadeOut(400, function() {
-                    EQ.questionPanel.fadeIn(400, function () {
-                        $(this).removeClass('initialHide');
-                    });
-                });
-                break;
-            case 'restart':
-                EQ.prevButton.attr('disabled', 'disabled');
-                EQ.nextButton.removeAttr('disabled');
-                EQ.submitButton.removeAttr('disabled').hide();
-                EQ.retakeButton.hide();
+        var options;
+        var questions = [];
 
-                EQ.scores.empty();
+        _.each(EQ.questionsList, function (question) {
 
-                $('#' + EQ.currentQuestionNr + '-question').fadeOut(400, function() {
+            options = null;
+            options = [];
+            quizWithQuestions = [];
 
-                    EQ.currentQuestionNr = 1;
-                    $('#' + EQ.currentQuestionNr + '-question').fadeIn(500);
+            _.each(question.getOptions(), function (option) {
 
-                });
-                break;
-            default:
-                break;
-        }
+                var opt = { Text: option.getText() };
+                var questionWithOption = {
+                    Letter: option.getLetter(),
+                    CorrectAnswer: option.getCorrectAnswer(),
+                    Option: opt
+                };
 
-
-    };
-
-    ns.validateOptions = function(jQuerySet) {
-
-        var valid = _.some(jQuerySet, function (item, idx) {
-            if ($(item).prop('checked') && $(item).prop('checked', true)) {
-                return true;
-            }
-        });
-
-        return valid;
-    };
-
-    ns.nextClicked = function(e) {
-        e.preventDefault();
-
-        $('#valFailMsg').remove();
-
-        if (!(EQ.validateOptions($('#' + EQ.currentQuestionNr + '-options').find('input')))) {
-            $(this).after('<div id="valFailMsg" style="display:inline-block;margin-left:5px;">&nbsp;<span class="label label-important"><i class="icon icon-exclamation-sign"></i>&nbsp;You have to select an option</span></div>');
-            return false;
-        }
-
-        if (EQ.currentQuestionNr + 1 === EQ.questionCount) {
-            $(this).attr('disabled', 'disabled');
-            EQ.submitButton.fadeIn(800, function () { $(this).removeClass('initialHide'); });
-            EQ.retakeButton.fadeIn(800, function () { $(this).removeClass('initialHide'); });
-        } else {
-            EQ.dealWithDisabled($(this));
-        }
-
-        if (EQ.currentQuestionNr === 1) {
-            EQ.prevButton.removeAttr('disabled');
-        }
-
-        $('#' + EQ.currentQuestionNr + '-question').fadeOut(400, function() {
-
-            EQ.currentQuestionNr += 1;
-
-            var qNrSpan = $('#' + EQ.currentQuestionNr + '-questionNr');
-
-            if (!qNrSpan.text())
-                qNrSpan.text(EQ.currentQuestionNr);
-
-            $('#' + EQ.currentQuestionNr + '-question').fadeIn(400, function () {
-                if($(this).hasClass('initialHide'))
-                    $(this).removeClass('initialHide');
+                options.push(questionWithOption);
             });
 
+            quizWithQuestions.push({
+                QuestionNumber: question.getQuestionNumber(),
+                idQuiz: EQ.quizId.val(),
+                idQuestion: question.getQuestionId()
+            });
+
+
+            questions.push({
+                Text: question.getText(),
+                QuestionWithOptions: options,
+                QuizWithQuestions: quizWithQuestions
+            });
         });
 
+        return questions;
     };
 
-    ns.prevClicked = function (e) {
+    ns.submitEditedQuiz = function (e) {
+
         e.preventDefault();
 
-        if (EQ.currentQuestionNr - 1 === 1) {
-            $(this).attr('disabled', 'disabled');
-        } else {
-            EQ.dealWithDisabled($(this));
-        }
+        var url = EQ.form.attr('action');
 
-        if (EQ.currentQuestionNr === EQ.questionCount) {
-            EQ.nextButton.removeAttr('disabled');
-        }
+        var webinarId = EQ.webinarId.val();
+        var quizId = EQ.quizId.val();
+        var questions = EQ.getQuestionsList();
+        
 
-        $('#' + EQ.currentQuestionNr + '-question').fadeOut(400, function () {
-
-            EQ.currentQuestionNr -= 1;
-
-            $('#' + EQ.currentQuestionNr + '-question').fadeIn(400);
-
-        });
-    };
-
-    ns.dealWithDisabled = function(jqueryObject) {
-        var disabledAttr = jqueryObject.attr('disabled');
-
-        if (typeof disabledAttr !== typeof 'undefined' && disabledAttr !== false) {
-            jqueryObject.removeAttr('disabled');
-        }
-    };
-
-    ns.optionSelected = function(e) {
-        e.preventDefault();
-
-        var optionClickedId = e.currentTarget.id;
-        var question = _.find(EQ.quiz.getQuestions(), function(question) {
-            return question.getQuestionNumber() == optionClickedId.slice(0, 1);
-        });
-
-        var userAnswers = [];
-        userAnswers.push($('#' + optionClickedId).val());
-
-        question.setUserAnswers(userAnswers);
-
-        console.info(question.getUserAnswers());
-
-    };
-
-    ns.submitClicked = function(e) {
-        e.preventDefault();
-
-        $('#valFailMsg').remove();
-
-        if (!(EQ.validateOptions($('#' + EQ.currentQuestionNr + '-options').find('input')))) {
-            $(this).after('<div id="valFailMsg" style="display:inline-block;margin-left:5px;">&nbsp;<span class="label label-important"><i class="icon icon-exclamation-sign"></i>&nbsp;You have to select an option</span></div>');
-            return false;
-        }
-
-        console.info(EQ.quiz);
-
-        var self = this;
-
-        var payload = { userQuizEditModel: EQ.quiz };
-        var url = '/Quiz/SubmitQuiz';
+        var payload = {
+            SelectedWebinar: webinarId,
+            Questions: questions,
+            QuizId: quizId,
+            DeletedQuestions: EQ.deletedQuestions
+        };
 
         $.ajax({
             type: 'POST',
@@ -290,53 +285,20 @@ $(function () {
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
             beforeSend: function () {
-                $(self).append('<span id="submitQuizSpinner">&nbsp;<i class="icon-spinner icon-spin "></i></span>');
+                EQ.editCloneSubmitButton.append('&nbsp;<i id="editQuizSpinner" class="icon-spinner icon-spin"></i>');
+                $('#editQuizResult').remove();
             }
         }).done(function (data, textStatus, jqXHR) {
             if (data.Result === 'Success') {
+                EQ.editCloneSubmitButton.after('<span id="editQuizResult">&nbsp;<span class="label label-success"><span> Quiz has been added! </span></span></span>').fadeIn(200).before().hide();
 
-                EQ.scores.append('<div>You scored<strong> {0} out of {1}</strong>.</div>'.format(data.Score, EQ.questionCount));
-                EQ.scores.append('<div class="topBuffer10">The breakdown of your results is:</div>'.format(data.Score, EQ.questionCount));
-
-                var rows = '<th>Question Number</th><th>Result</th>';
-
-                _.each(data.QuestionsResult, function(value, idx, coll) {
-                    rows += '<tr><td>{0}</td><td>{1}</td></tr>'.format(idx, value === true ? '<span class="icon-ok-circle" style="color:green">' : '<span class="icon-remove-circle" style="color:red">');
-                    }
-                );
-
-                EQ.scores.append('<table class="table table-striped">{0}</table>'.format(rows));
-                
-                EQ.scores.fadeIn(400, function () { $(this).removeClass('initialHide'); });
-
-                EQ.retakeButton.removeAttr('disabled');
+            } else if (!data.isSuccessful) {
 
             } else {
 
             }
-
-            $('#submitQuizSpinner').remove();
-            $(self).attr('disabled', 'disabled');
-            EQ.prevButton.attr('disabled', 'disabled');
+            $('#editQuizSpinner').remove();
         });
-
-
-    };
-
-    EQ.retakeClicked = function(e) {
-
-        e.preventDefault();
-
-        EQ.setUiState('restart');
-
-        EQ.questionsWrapper.find('input[type="radio"]').prop('checked', false);
-    };
-
-    EQ.homeClicked = function (e) {
-
-        e.preventDefault();
-
-        EQ.utilities.goToUrl(''); // go home
     };
 
 })(EQ);

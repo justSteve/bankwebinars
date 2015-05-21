@@ -86,6 +86,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             return result;
         }
 
+        public void ProcessEditModel(EditQuizEditModel model)
+        {
+            _webinarManagementService.RemoveQuestionsFromQuiz(model.DeletedQuestions, model.QuizId);
+        }
+
         private void PersistResultsForQuizAttempt(UserQuizEditModel userQuizEditModel, int score)
         {
             Quiz quiz = _webinarManagementService.GetQuizByQuizId(userQuizEditModel.QuizId);
@@ -227,6 +232,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     quizQuestion.Options.Add(new QuestionOption
                     {
+                        QuestionOptionId = questionWithOptions.Id, 
                         Letter = questionWithOptions.Letter[0],
                         Text = questionWithOptions.Option.Text
                     });
@@ -238,6 +244,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 quizQuestion.QuestionNumber =
                         question.QuizWithQuestions.First(q => q.idQuestion == question.Id).QuestionNumber;
                 quizQuestion.QuestionText = question.Text;
+                quizQuestion.QuestionId = question.Id;
                 quizQuestions.Add(quizQuestion);
             }
 

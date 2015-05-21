@@ -16,6 +16,7 @@ namespace CUWebinars.Business.Models.Mapping
                 .IsRequired()
                 .IsFixedLength()
                 .HasMaxLength(1);
+            this.Property(t => t.idQuizQuestion).IsOptional();
             this.Property(t => t.Email).IsRequired().HasMaxLength(150);
 
             // Table & Column Mappings
@@ -30,7 +31,7 @@ namespace CUWebinars.Business.Models.Mapping
             this.HasRequired(t => t.QuizUserOrder)
                 .WithMany(t => t.QuizUserAnswers)
                 .HasForeignKey(d => d.idQuizUserOrder);
-            this.HasRequired(t => t.QuizWithQuestion)
+            this.HasOptional(t => t.QuizWithQuestion)
                 .WithMany(t => t.QuizUserAnswers)
                 .HasForeignKey(d => d.idQuizQuestion);
         }

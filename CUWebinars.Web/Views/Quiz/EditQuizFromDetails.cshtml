@@ -1,4 +1,5 @@
-﻿@model UserQuizEditModel
+﻿@using System.Web.UI.WebControls
+@model UserQuizEditModel
 
 @{
     ViewBag.Title = "Edit Quiz";
@@ -14,6 +15,12 @@
             
         </div>
 
+        @Html.HiddenFor(m => m.WebinarId)
+        @Html.HiddenFor(m => m.QuizId)
+        
+        <button id="EditCloneSubmitButton" class="btn btn-primary">Edit Quiz</button>
     }
 
 </div>
+
+@Scripts.Render("~/bundles/edit-quiz")
