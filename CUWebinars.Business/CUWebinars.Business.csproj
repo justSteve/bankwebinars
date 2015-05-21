@@ -132,6 +132,8 @@
     <Compile Include="Core\Cache\ICachingService.cs" />
     <Compile Include="Core\Cache\OrderCachingService.cs" />
     <Compile Include="Core\DataOperations.cs" />
+    <Compile Include="Core\EditableOption.cs" />
+    <Compile Include="Core\EditedQuestion.cs" />
     <Compile Include="Core\Exceptions\UserCreatedMembershipException.cs" />
     <Compile Include="Core\Extensions\CollectionExtensions.cs" />
     <Compile Include="Core\Extensions\WebinarExtensions.cs" />

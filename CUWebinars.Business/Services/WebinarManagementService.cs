@@ -219,9 +219,15 @@ namespace CUWebinars.Business.Services
             return quizScores;
         }
 
-        public void RemoveQuestionsFromQuiz(IEnumerable<int> deletedQuestions, int quizId)
+        public bool RemoveQuestionsFromQuiz(IEnumerable<int> deletedQuestions, int quizId)
         {
             var quiz = _quizRepository.GetQuizByIdWithOptions(quizId);
+
+            // if there are any QuizUserAnswers for this quiz, this means someone has taken the quiz and no questions can be deleted.
+            if (quiz.QuizWithQuestions.SelectMany(q => q.QuizUserAnswers).Any())
+            {
+                return false;
+            }
 
             foreach (var deletedQuestion in deletedQuestions)
             {
@@ -229,21 +235,40 @@ namespace CUWebinars.Business.Services
 
                 if (!ReferenceEquals(null, quizWithQuestion))
                 {
-                    foreach (var quizUserAnswer in quizWithQuestion.QuizUserAnswers)
+                    _quizRepository.DeleteQuizWithQuestion(quizWithQuestion);
+                }
+            }
+            _quizRepository.SaveChanges();
+
+            return true;
+        }
+
+        public void UpdateQuestions(IEnumerable<EditedQuestion> editedQuestions, int quizId)
+        {
+            var quiz = _quizRepository.GetQuizByIdWithOptionsText(quizId);
+            
+
+            foreach (var editedQuestion in editedQuestions)
+            {
+                var question = quiz.QuizWithQuestions.Select(q => q.Question).SingleOrDefault(q => q.Id == editedQuestion.QuestionId);
+
+                if (!ReferenceEquals(null, question))
+                {
+                    if (editedQuestion.NewQuestionNumber != editedQuestion.OriginalQuestionNumber)
                     {
-                        quizUserAnswer.idQuizQuestion = null;
-                        quizWithQuestion.QuizUserAnswers.Remove(quizUserAnswer);
-                        _quizRepository.SetQuizUserAnswerAsModified(quizUserAnswer);
+                        var quizWithQuestion = question.QuizWithQuestions.SingleOrDefault(q => q.idQuestion == question.Id && q.idQuiz == quizId);
+
+                        if (!ReferenceEquals(null, quizWithQuestion))
+                        {
+                            quizWithQuestion.QuestionNumber = editedQuestion.NewQuestionNumber;
+                        }
                     }
 
-                    quiz.QuizWithQuestions.Remove(quizWithQuestion);
-
-                    _quizRepository.DeleteQWQs(quizWithQuestion);
-
-                    _quizRepository.SaveChanges();
-
+                    if (editedQuestion.NewQuestionText != editedQuestion.OriginalQuestionText)
+                    {
+                        question.Text = editedQuestion.NewQuestionText;
+                    }
                 }
-
             }
             _quizRepository.SaveChanges();
         }

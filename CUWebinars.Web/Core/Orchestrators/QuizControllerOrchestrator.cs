@@ -88,7 +88,19 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public void ProcessEditModel(EditQuizEditModel model)
         {
-            _webinarManagementService.RemoveQuestionsFromQuiz(model.DeletedQuestions, model.QuizId);
+            var quizId = model.QuizId;
+
+            if (!ReferenceEquals(null, model.DeletedQuestions) && model.DeletedQuestions.Any())
+            {
+                bool noUsersHaveAttemptedQuizYet = _webinarManagementService.RemoveQuestionsFromQuiz(model.DeletedQuestions, quizId);
+            }
+            
+            if (!ReferenceEquals(null, model.EditedQuestions) && model.EditedQuestions.Any())
+            {
+                _webinarManagementService.UpdateQuestions(model.EditedQuestions, quizId);
+            }
+
+
         }
 
         private void PersistResultsForQuizAttempt(UserQuizEditModel userQuizEditModel, int score)

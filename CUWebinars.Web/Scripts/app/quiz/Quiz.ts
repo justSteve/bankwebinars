@@ -16,6 +16,7 @@ module QuizDomain {
         private webinarId: number;
         private email: string;
         private quizQuestions: Question[];
+        private quizId: number;
         
         getCompleted(): CompletionStatus {
             return this.status;
@@ -47,6 +48,10 @@ module QuizDomain {
 
         setQuestions(val: Question[]): void {
             this.quizQuestions = val;
+        }
+
+        setQuizId(val: number): void {
+            this.quizId = val;
         }
 
         setWebinarId(val: number): void {
@@ -160,17 +165,6 @@ module QuizDomain {
         }
     };
 
-    export class EditableQuiz extends Quiz {
-        private quizId: number;
-
-
-        constructor() { super(); }
-
-        setQuizId(val: number): void {
-            this.quizId = val;
-        }
-    }
-
     export class EditableQuestion extends Question {
 
         private questionId: number;
@@ -209,10 +203,16 @@ module QuizDomain {
         QuestionId: number;
         OriginalQuestionNumber: number;
         NewQuestionNumber: number;
+        OriginalQuestionText: number;
+        NewQuestionText: number;
         DeletedOptions: number[];
         EditedOptions: EditedOption[];
 
-        constructor() {}
+        constructor(id:number) {
+            this.QuestionId = id;
+        }
+
+
     }
 
     export class EditedOption {

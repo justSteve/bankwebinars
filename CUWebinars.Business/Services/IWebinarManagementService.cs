@@ -47,6 +47,7 @@ namespace CUWebinars.Business.Services
         QuestionCountAndWebinarId GetQuizQuestionCountAndWebinarId(string quizCode);
         Quiz GetQuizByQuizId(int quizId);
         IList<QuizScore> GetQuizScoreForUser(int quizId, string email, int orderId);
-        void RemoveQuestionsFromQuiz(IEnumerable<int> deletedQuestions, int quizId);
+        bool RemoveQuestionsFromQuiz(IEnumerable<int> deletedQuestions, int quizId);
+        void UpdateQuestions(IEnumerable<EditedQuestion> editedQuestions, int quizId);
     }
 }

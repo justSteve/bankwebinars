@@ -53,6 +53,10 @@ var QuizDomain;
             this.quizQuestions = val;
         };
 
+        Quiz.prototype.setQuizId = function (val) {
+            this.quizId = val;
+        };
+
         Quiz.prototype.setWebinarId = function (val) {
             this.webinarId = val;
         };
@@ -160,18 +164,6 @@ var QuizDomain;
     QuizDomain.Option = Option;
     ;
 
-    var EditableQuiz = (function (_super) {
-        __extends(EditableQuiz, _super);
-        function EditableQuiz() {
-            _super.call(this);
-        }
-        EditableQuiz.prototype.setQuizId = function (val) {
-            this.quizId = val;
-        };
-        return EditableQuiz;
-    })(Quiz);
-    QuizDomain.EditableQuiz = EditableQuiz;
-
     var EditableQuestion = (function (_super) {
         __extends(EditableQuestion, _super);
         function EditableQuestion() {
@@ -205,7 +197,8 @@ var QuizDomain;
     QuizDomain.EditableOption = EditableOption;
 
     var EditedQuestion = (function () {
-        function EditedQuestion() {
+        function EditedQuestion(id) {
+            this.QuestionId = id;
         }
         return EditedQuestion;
     })();
