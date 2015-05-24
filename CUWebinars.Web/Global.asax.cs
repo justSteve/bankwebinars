@@ -225,6 +225,7 @@ namespace CUWebinars.Web
                 switch (httpException.GetHttpCode())
                 {
                     case 404:
+                        logger.Info("404 served to: " + httpContext.Request.UrlReferrer);
                         Response.StatusCode = 404;
                         newRouteData.Values[WebUiConstants.Action] = WebUiConstants.PageNotFound;
                         _errorResponseCommand.Execute(errorResponse);

@@ -35,13 +35,13 @@
                         if (thisClaim.OrderId == row.idOrder)
                         {
                             onDemandClaim.OrderId = row.idOrder;
-                            onDemandClaim.ObfuscationString = thisClaim.ObfuscationString;
+                            onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
                             onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
                         }
                     }
                 }
 
-                var onDemandClaimString = onDemandClaim.OrderId.ToString() + "-" + onDemandClaim.ObfuscationString;
+                var onDemandClaimString = onDemandClaim.OrderId.ToString() + "-" + onDemandClaim.OnDemandCode;
                 var expiresDate = row.Webinar.Date.AddMonths(6);
                 var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
                 var accessPhrase = "will be accessible ";
@@ -81,7 +81,7 @@
                                 {
                                     <div class="span3 well well-large">
                                         <a target="_blank" href="/webinar/GetWebinarRecording/@row.Webinar.idWebinar">
-                                            <span style="margin-left: 15px;"><i class="icon-facetime-video"></i></span> Playback
+                                            <span><i class="icon-facetime-video"> </i></span> Video Playback
                                         </a>
 
                                         @{Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);}
@@ -103,7 +103,13 @@
 
                                     </div>
                                     <div class="span6">
-                                        <p>Need to share this event with a co-worker? Provide them this URL:<br /> <tt><b>@globalConfig.TenantURL/o/@onDemandClaimString</b></tt></p>
+                                        <p>
+                                            Need to share this event with a co-worker? Provide them this URL:<br /> <tt><b>http://@globalConfig.TenantURL/o/@onDemandClaimString</b></tt>
+                                        </p>
+                                        <p>
+                                            A post-event assement is available:<br /> <tt><b>http://beta.bankwebinars.com/quiz/index/77790-27ixbqr</b></tt>
+                                        </p>
+
                                     </div>
                                 }
                                 else

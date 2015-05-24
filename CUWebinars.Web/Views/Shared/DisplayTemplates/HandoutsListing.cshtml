@@ -2,11 +2,11 @@
 @model Webinar
 
 <div id="showHandouts-@Model.idWebinar" style="width: 350px;">
-    @{
-        foreach (var file in Model.WebinarFiles)
-        {
-            var href = "/webinar/GetWebinarFile?idWebinarFile=" + file.idWebinarFile;
-              <a style="margin: 6px;" href=@href target='_blank'><span style="margin-right: 10px;"><i class="icon-print"></i></span> @file.fileDesc </a><br />
+        @{
+            foreach (var file in Model.WebinarFiles)
+            {
+                var href = "/webinar/GetWebinarFile?idWebinarFile=" + file.idWebinarFile;
+                <a style="display: inline-block; width: 200px;" href=@href target='_blank'><span><i class="icon-print"></i></span> @file.fileDesc </a><br />
         }
     }
 </div>

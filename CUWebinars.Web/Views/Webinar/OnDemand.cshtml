@@ -22,6 +22,9 @@
     ViewBag.Title = "OnDemand Access";
     Layout = "~/Views/Shared/_LayoutPublic.cshtml";
 
+    var expiresDate = Model.Webinar.Date.AddMonths(6);
+    var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
+
     //WebUser currentUser = Model.Webinar.WebUser;
     var EditResult = "<span>&nbsp;</span>";
 
@@ -40,102 +43,108 @@
 
 </div>
 <!--close hero-unit-->
-
 @{
     //if (userIsKnown)
-    
 
-<div class="container clearfix" id="main-content">
 
-    <!--begin main content-->
-    <div id="webinarContent" class="row-fluid holy-grail">
-        <!--begin row-fluid-->
+    <div class="container clearfix" id="main-content">
 
-        <section class="span3 sidebar">
-            <aside class="widget well-large">
-                <h5 class="short_headline"><span>@Model.Presenter.WebUser.FullName</span></h5>
-                @Html.Raw(Model.Presenter.BiographyLong)
-                @*@Html.Partial("Partials/_OtherEventsBySpeaker")*@
-            </aside>
-            <!--close aside widget-->
-        </section>
-        <!--*** add class "holy-grail" to row-fluid class to make a three column skinny, fat, skinny layout ***-->
-        <div class="span6">
+        <!--begin main content-->
+        <div id="webinarContent" class="row-fluid holy-grail">
+            <!--begin row-fluid-->
 
-            <h3 class="short_headline">
-                Webinar Description
-            </h3>
-            <div class="description">
-                @Html.Raw(Model.Webinar.DescriptionLong)
-            </div>
-            <div class="description">
+            <section class="span3 sidebar">
+                <aside class="widget well-large">
+                    <h5 class="short_headline"><span>@Model.Presenter.WebUser.FullName</span></h5>
+                    @Html.Raw(Model.Presenter.BiographyLong)
+                    @*@Html.Partial("Partials/_OtherEventsBySpeaker")*@
+                </aside>
+                <!--close aside widget-->
+            </section>
+            <!--*** add class "holy-grail" to row-fluid class to make a three column skinny, fat, skinny layout ***-->
+            <div class="span6">
+
                 <h2 class="short_headline">
-                    <span>
-                        @Html.Raw(Model.Webinar.LearnCaption)
-                    </span>
+                    Description
                 </h2>
-                @Html.Raw(Model.Webinar.LearnBody)
-            </div>
-            <div class="description">
-                <h2 class="short_headline">
-                    <span>
-                        Who Should Attend?
-                    </span>
-                </h2>
-                @Html.Raw(Model.Webinar.WhoAttend)
-            </div>
-
-            <hr />
-        </div>
-
-        <section class="span3">
-            <aside class="widget">
-                <div style="padding: 10px; margin-left: 20px; width: 200px; " class="well pull-right well-large">
-                    <h3>Webinar Materials</h3>
-                    @{
-                        if (Model.AuthorizedToAccessMaterials)
-                        {
-                            <div>
-                                <a target="_blank" href="/webinar/GetWebinarRecording/@Model.Webinar.idWebinar"><span style="margin-left: 15px;"><i class="icon-facetime-video"></i></span> Playback</a>
-                            </div>
-                            <div>
-                                @{ Html.RenderPartial("DisplayTemplates/HandoutsListing", Model.Webinar); }
-                            </div>
-                        }
-                    }
-
-                    @{
-                        var expiresDate = Model.Webinar.Date.AddMonths(6);
-                        var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
-                    }
-                    <div style="font-size: smaller; line-height: 1.2; text-align: center; margin-bottom: 10px;">
-                        This event was recorded on <i>@Html.DisplayDate(Model.Webinar.Date)</i> and is available for OnDemand Playback until @Html.DisplayDate(expiresDate)
-                        - @remainingDays.ToString() more days.
-                    </div>
-                    <div id="cert">
-                        <form method="POST" action="/Account/MyCertificate">
-                            <input type="hidden" name="orderID" value="@ViewBag.idOrder" />
-                            <aside class="widget">
-                                <input type="submit" value="My Certificate" id="ShowCertificate" class="btn btn-success btn-mini pull-right " />
-                            </aside>
-                        </form>
-                    </div>
-                    <div id="ceu">
-                        <a href="#" title="@ceuStmt ">
-                            @Html.Raw(ceuShort)
-                        </a>
-                    </div>
+                <div class="description">
+                    @Html.Raw(Model.Webinar.DescriptionLong)
                 </div>
-            </aside>
-            <!--close aside .widget -->
-            <aside class="widget">
-                <h5 class="short_headline"><span>Stay Updated</span></h5>
-                @{Html.RenderPartial("Partials/_AddToMailingBox");}
-            </aside>
-            <!--close aside .widget -->
-        </section>
-        <!--close section tertiary-column sidebar span3-->
+                <div class="description">
+                    <h2 class="short_headline">
+                        <span>
+                            @Html.Raw(Model.Webinar.LearnCaption.ToString().Replace(":", ""))
+                        </span>
+                    </h2>
+                    @Html.Raw(Model.Webinar.LearnBody)
+                </div>
+                <div class="description">
+                    <h2 class="short_headline">
+                        <span>
+                            Who Should Attend?
+                        </span>
+                    </h2>
+                    @Html.Raw(Model.Webinar.WhoAttend)
+                </div>
+
+                <hr />
+            </div>
+
+            <section class="span3">
+                <aside class="widget">
+                    <div style="padding: 10px; margin-left: 20px; width: 200px; " class="well pull-right well-large">
+                        <div style="font-size: smaller; line-height: 1.2; text-align: center; margin-bottom: 10px; margin-top: 10px;">
+                            This event was recorded on <i>@Html.DisplayDate(Model.Webinar.Date)</i> and is available for OnDemand Playback until @Html.DisplayDate(expiresDate)
+                            - @remainingDays.ToString() more days.
+                        </div>
+                        <h4 align="center">Webinar Materials</h4>
+                        @{
+                            if (Model.AuthorizedToAccessMaterials)
+                            {
+                                <div>
+                                    <a target="_blank" href="/webinar/GetWebinarRecording/@Model.Webinar.idWebinar"><span><i class="icon-facetime-video"></i> </span> Video Playback</a>
+                                </div>
+                                <div>
+                                    @{ Html.RenderPartial("DisplayTemplates/HandoutsListing", Model.Webinar); }
+                                </div>
+                            }
+                        }
+
+                        <div style="text-align: center;" id="quiz">
+                            <hr />
+                            <form method="POST" action="/Account/MyQuiz">
+                                <input type="hidden" name="orderID" value="@ViewBag.idOrder" />
+                                <input type="hidden" name="FullName" value="@ViewBag.FullName" />
+
+                                <input type="submit" value="Event's Quiz"  id="ShowQuiz" class="btn btn-success btn-mini " />
+
+                            </form>
+                        </div>
+                        <div id="cert">
+                            <form method="POST" action="/Account/MyCertificate">
+                                <input type="hidden" name="orderID" value="@ViewBag.idOrder" />
+                                <aside class="widget">
+                                    <input type="submit" value="My Certificate" id="ShowCertificate" class="btn btn-success btn-mini pull-right " />
+                                    <div id="ceu">
+                                        <a href="#" style="font-size: x-small;" title="@ceuStmt ">
+                                            @Html.Raw(ceuShort)
+                                        </a>
+                                    </div>
+                                </aside>
+                            </form>
+                        </div>
+
+                    </div>
+                </aside>
+                <!--close aside .widget -->
+                <aside class="widget">
+                    <h5 class="short_headline"><span>Stay Updated</span></h5>
+                    @{Html.RenderPartial("Partials/_AddToMailingBox");}
+                </aside>
+                <!--close aside .widget -->
+            </section>
+            <!--close section tertiary-column sidebar span3-->
+        </div>
     </div>
-</div>
 
 }

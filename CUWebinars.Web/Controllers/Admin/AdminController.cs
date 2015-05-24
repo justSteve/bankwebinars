@@ -1565,12 +1565,12 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 //var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, orderID.Value);
                 //var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, newExpiryDate);
-                //var obfuscationStringProperty = new JProperty(JsonPropertyKeys.ObfuscationString, onDemandCode);
+                //var OnDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, onDemandCode);
 
                 //var claimValue = new JObject(
                 //    orderIdProperty,
                 //    expiryDateProperty,
-                //    obfuscationStringProperty
+                //    OnDemandCodeProperty
                 //    );
                 
                 _membershipService.UpdateDisplayPostEventMaterialsClaim(

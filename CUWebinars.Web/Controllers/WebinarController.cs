@@ -511,7 +511,7 @@ namespace CUWebinars.Web.Controllers
                         UserAudit = _appHelper.GetUserAuditInfo()
                     };
 
-                    
+
                     order.UserComments = JsonHelpers.AddObjectToJsonArray(order.UserComments, JsonPropertyKeys.PostEventMaterialsWereAccessedKey, fieldsToComments);
 
                     _orderManagementService.SaveChanges();
@@ -1336,7 +1336,8 @@ namespace CUWebinars.Web.Controllers
                 if (setWebinarFiles == WebUiConstants.Success)
                     return Json(new { Result = WebUiConstants.Success });
 
-                return Json(new { Result = message });
+                return Json(new { Result = setWebinarFiles });
+                //return Json(new { Result = message });
             }
             catch (Exception)
             {
