@@ -17,5 +17,6 @@ namespace CUWebinars.Business.Repository
         QuestionCountAndWebinarId GetQuestionCountAndWebinarId(string quizCode);
         void SetQuizUserAnswerAsModified(QuizUserAnswer quizUserAnswer);
         void DeleteQuizWithQuestion(QuizWithQuestion quizWithQuestion);
+        void DeleteQuizWithOption(QuestionWithOption questionWithOption);
     }
 }

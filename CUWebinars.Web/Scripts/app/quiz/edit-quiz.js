@@ -314,6 +314,14 @@ $(function () {
 
         var editedOption = EQ.addOrUpdateOption(editedQuestion, optionId);
 
+        // If option is one that was Added in this editing session, just remove it from the 
+        // question's EditedOption's list.
+        if (optionId < 0) {
+            editedQuestion.EditedOptions = _.without(editedQuestion.EditedOptions, _.find(editedQuestion.EditedOptions, function(editedOption, idx) {
+                return editedOption.OptionId === optionId;
+            }));
+        }
+
         editedOption.EditType = QuizDomain.EditType.Deleted;
 
         EQ.reArrangeRemainingOptions(optionDiv.nextAll(), optionDivId, questionNumber);

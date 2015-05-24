@@ -100,12 +100,17 @@ namespace CUWebinars.Business.Repository
 
         public void SetQuizUserAnswerAsModified(QuizUserAnswer quizUserAnswer)
         {
-            db.Entry(quizUserAnswer).State = EntityState.Deleted;
+            db.Entry(quizUserAnswer).State = EntityState.Modified;
         }
 
         public void DeleteQuizWithQuestion(QuizWithQuestion quizWithQuestion)
         {
             db.Entry(quizWithQuestion).State = EntityState.Deleted;
+        }
+
+        public void DeleteQuizWithOption(QuestionWithOption questionWithOption)
+        {
+            db.Entry(questionWithOption).State = EntityState.Deleted;
         }
     }
 }

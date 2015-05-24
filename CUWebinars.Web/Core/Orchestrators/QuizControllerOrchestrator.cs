@@ -100,7 +100,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _webinarManagementService.UpdateQuestions(model.EditedQuestions, quizId);
             }
 
-
         }
 
         private void PersistResultsForQuizAttempt(UserQuizEditModel userQuizEditModel, int score)

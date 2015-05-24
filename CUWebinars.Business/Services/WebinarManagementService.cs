@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
@@ -251,6 +252,48 @@ namespace CUWebinars.Business.Services
             foreach (var editedQuestion in editedQuestions)
             {
                 var question = quiz.QuizWithQuestions.Select(q => q.Question).SingleOrDefault(q => q.Id == editedQuestion.QuestionId);
+
+                // get deleted options list
+                var deletedOptions = editedQuestion.EditedOptions.Where(e => e.EditType == EditType.Deleted);
+                // get added options list
+                var addedOptions = editedQuestion.EditedOptions.Where(e => e.EditType == EditType.Added);
+                // get edited options list
+                var editedOptions = editedQuestion.EditedOptions.Where(e => e.EditType == EditType.Edited);
+
+                // deal with option edits
+                foreach (var editedQuestion1 in editedOptions)
+                {
+                    Trace.WriteLine(editedQuestion1.NewOptionLetter);
+                }
+
+                // deal with option deletions
+                foreach (var deletedOption in deletedOptions)
+                {
+                    var questionWithOption = question.QuestionWithOptions.SingleOrDefault(q => q.Id == deletedOption.OptionId);
+
+                    if (!ReferenceEquals(null, questionWithOption))
+                    {
+                        question.QuestionWithOptions.Remove(questionWithOption);
+                    }
+
+                    _quizRepository.DeleteQuizWithOption(questionWithOption);
+                }
+
+                // deal with option additions
+                foreach (var addedOption in addedOptions)
+                {
+                    var newOption = new Option {Text = addedOption.NewOptionText};
+
+                    var questionWithOption = new QuestionWithOption
+                    {
+                        CorrectAnswer = addedOption.NewCorrectStatus,
+                        Option = newOption,
+                        idQuestion = question.Id,
+                        Letter = addedOption.NewOptionLetter,
+                    };
+
+                    question.QuestionWithOptions.Add(questionWithOption);
+                }
 
                 if (!ReferenceEquals(null, question))
                 {
