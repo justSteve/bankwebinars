@@ -1,16 +1,12 @@
-﻿using System;
+﻿using BrockAllen.MembershipReboot;
+using CUWebinars.Business.Models;
+using Ninject.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Web;
-using System.Net;
-using System.Text;
-using BrockAllen.MembershipReboot;
-using CUWebinars.Business.Models;
-using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Business.Core
 {
@@ -132,7 +128,7 @@ namespace CUWebinars.Business.Core
                     var message = command.ExecuteScalar();
                     if (message == null)
                     {
-                        _logger.Fatal("Invalid Registration Type ");
+                        _logger.Fatal("Invalid Registration Type {0} for idWebinar {1) ", registrationType, idWebinar);
                     }
 
                     return Convert.ToInt32(message);

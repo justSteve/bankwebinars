@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using CUWebinars.Business.Core;
+﻿using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
-using System.Net;
 using CUWebinars.Business.Repository;
 using CUWebinars.NotificationSystem.Event;
 using FluentValidation;
 using Ninject.Extensions.Logging;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CUWebinars.Business.Services
 {

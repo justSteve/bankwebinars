@@ -80,8 +80,8 @@ namespace CUWebinars.Web
         {
             const string infrastructureLogconfigs = @"Infrastructure/LogConfigs";
 
-            //switch (GlobalConfig.GlobalConfigSingleton.Tenant)
-            switch ("Dave")
+            switch (GlobalConfig.GlobalConfigSingleton.Tenant)
+            //switch ("Dave")
             {
                 case DomainConstants.BankWebinars:
                     log4net.Config.XmlConfigurator.Configure(new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs, "BWLog4net.xml")));
@@ -225,6 +225,7 @@ namespace CUWebinars.Web
                 switch (httpException.GetHttpCode())
                 {
                     case 404:
+                        logger.Info("404 served to: " + httpContext.Request.UrlReferrer);
                         Response.StatusCode = 404;
                         newRouteData.Values[WebUiConstants.Action] = WebUiConstants.PageNotFound;
                         _errorResponseCommand.Execute(errorResponse);

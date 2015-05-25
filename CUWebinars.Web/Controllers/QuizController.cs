@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Web;
-using System.Web.Http;
-using System.Web.Mvc;
-using CUWebinars.Web.Core.Orchestrators;
+﻿using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Models;
-using CUWebinars.Web.ViewModel;
-using Newtonsoft.Json;
+using System.Linq;
+using System.Security.Claims;
+using System.Web.Mvc;
 
 namespace CUWebinars.Web.Controllers
 {

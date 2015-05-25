@@ -676,6 +676,7 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="Scripts\app\quiz\edit-quiz.js" />
+    <Content Include="robots.txt" />
     <Content Include="Scripts\app\quiz\do-quiz.js" />
     <Content Include="Scripts\app\admin\add-quiz.js" />
     <Content Include="Scripts\app\admin\click-to-join.js" />
@@ -699,6 +700,8 @@
     <Content Include="Notification\PreviewTemplates\PreviewRecordingPosted.cshtml" />
     <Content Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
     <Content Include="Scripts\app\webinar\identify.js" />
+    <None Include="Properties\PublishProfiles\BankWebinars - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars31.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars33 - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars33 - FTP.pubxml" />

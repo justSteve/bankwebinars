@@ -437,7 +437,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 var filesForThisEvent = _webinarManagementService.GetWebinarFilesPerWebinar(webinarFilesEditModel.idWebinar);
 
                 var deletedFiles = webinarFilesEditModel.WebinarFiles.Where(f => f.fileDesc.EndsWith("-D")).ToList();
-                var newFiles = webinarFilesEditModel.WebinarFiles.Where(f => f.idWebinarFile == 0 && !f.fileDesc.EndsWith("-ND") && f.fileLocation != filesForThisEvent.Select(wf => wf.fileLocation).ToString()).ToList();
+                var newFiles = webinarFilesEditModel.WebinarFiles
+                    .Where(f => f.idWebinarFile == 0 && !f.fileDesc.EndsWith("-ND") && f.fileLocation != filesForThisEvent.Select(wf => wf.fileLocation).ToString()).ToList();
                 var updatedFiles = webinarFilesEditModel.WebinarFiles.Where(f => f.idWebinarFile > 0 && !f.fileDesc.EndsWith("-D")).ToList();
 
                 foreach (var webinarFile in newFiles)
@@ -744,12 +745,12 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
                     var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, expiryDate.ToString(DomainConstants.ClaimDateFormatText));
-                    var obfuscationStringProperty = new JProperty(JsonPropertyKeys.ObfuscationString, onDemandCode);
+                    var OnDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, onDemandCode);
 
                     var claimValue = new JObject(
                         orderIdProperty,
                         expiryDateProperty,
-                        obfuscationStringProperty
+                        OnDemandCodeProperty
                         );
 
                     _membershipService.AddClaim(
