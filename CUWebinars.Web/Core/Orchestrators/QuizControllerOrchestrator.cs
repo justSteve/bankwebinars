@@ -99,6 +99,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 _webinarManagementService.UpdateQuestions(model.EditedQuestions, quizId);
             }
+            
+            if (!ReferenceEquals(null, model.NewQuestions) && model.NewQuestions.Any())
+            {
+                _webinarManagementService.AddQuestionsToQuiz(model.SelectedWebinar, model.NewQuestions);
+            }
 
         }
 

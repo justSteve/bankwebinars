@@ -83,6 +83,24 @@ namespace CUWebinars.Business.Services
             _webinarRepository.AddAdditionalLocationsLookupPrice(additionalLocationsLookupPrice);
         }
 
+        public void AddQuestionsToQuiz(int selectedWebinar, IEnumerable<Question> newQuestions)
+        {
+            var quiz = _quizRepository.GetQuizByWebinarId(selectedWebinar);
+
+            foreach (var question in newQuestions)
+            {
+                _quizRepository.AddQuestion(question);
+
+                _quizRepository.SaveChanges();
+
+                //_quizRepository.AddQuizWithQuestion(quizWithQuestion);
+
+                //quiz.QuizWithQuestions.Add(quizWithQuestion);
+
+                _quizRepository.SaveChanges();
+            }
+        }
+
         public void AddWebinar(Webinar webinar)
         {
             _createWebinarValidator.ValidateAndThrow(webinar);
@@ -251,7 +269,7 @@ namespace CUWebinars.Business.Services
 
             foreach (var editedQuestion in editedQuestions)
             {
-                var question = quiz.QuizWithQuestions.Select(q => q.Question).SingleOrDefault(q => q.Id == editedQuestion.QuestionId);
+                var question = quiz.QuizWithQuestions.Select(q => q.Question).Single(q => q.Id == editedQuestion.QuestionId);
 
                 // get deleted options list
                 var deletedOptions = editedQuestion.EditedOptions.Where(e => e.EditType == EditType.Deleted);
@@ -261,9 +279,30 @@ namespace CUWebinars.Business.Services
                 var editedOptions = editedQuestion.EditedOptions.Where(e => e.EditType == EditType.Edited);
 
                 // deal with option edits
-                foreach (var editedQuestion1 in editedOptions)
+                foreach (var editableOption in editedOptions)
                 {
-                    Trace.WriteLine(editedQuestion1.NewOptionLetter);
+                    if (editableOption.NewCorrectStatus != editableOption.OriginalCorrectStatus ||
+                        editableOption.NewOptionLetter != editableOption.OriginalOptionLetter ||
+                        editableOption.NewOptionText.Trim() != editableOption.OriginalOptionText.Trim())
+                    {
+                        var questionWithOption = question.QuestionWithOptions.SingleOrDefault(qwo => qwo.Id == editableOption.OptionId);
+                        if (ReferenceEquals(null, questionWithOption)) continue;
+
+                        if (editableOption.NewCorrectStatus != editableOption.OriginalCorrectStatus)
+                        {
+                            questionWithOption.CorrectAnswer = editableOption.NewCorrectStatus;
+                        }
+
+                        if (editableOption.NewOptionLetter != editableOption.OriginalOptionLetter)
+                        {
+                            questionWithOption.Letter = editableOption.NewOptionLetter;
+                        }
+
+                        if (editableOption.NewOptionText.Trim() != editableOption.OriginalOptionText.Trim())
+                        {
+                            questionWithOption.Option.Text = editableOption.NewOptionText.Trim();
+                        }
+                    }
                 }
 
                 // deal with option deletions
@@ -335,7 +374,6 @@ namespace CUWebinars.Business.Services
         {
             GetRegistrants_CP();
             return null;
-
         }
 
         public int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar)

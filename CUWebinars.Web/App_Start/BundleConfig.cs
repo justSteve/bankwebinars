@@ -191,6 +191,10 @@ namespace CUWebinars.Web.App_Start
                 "~/Content/quiz.css"
                 ));
 
+            bundles.Add(new StyleBundle("~/Content/edit-quiz").Include(
+                "~/Content/edit-quiz.css"
+                ));
+
             bundles.Add(new StyleBundle("~/Content/notifications-ops-styles").Include(
                 "~/Content/toastr.css",
                 "~/Content/notification-ops.css"

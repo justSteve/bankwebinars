@@ -9,6 +9,7 @@ namespace CUWebinars.Business.Services
     public interface IWebinarManagementService : IDisposable
     {
         void AddAdditionalLocationsLookupPrice(AdditionalLocationsLookupPrice additionalLocationsLookupPrice);
+        void AddQuestionsToQuiz(int selectedWebinar, IEnumerable<Question> newQuestions);
         void AddWebinar(Webinar webinar);
         void AddWebinarFiles(IEnumerable<WebinarFile> webinarFiles);
         void DeleteWebinar(int idWebinar );
