@@ -81,22 +81,24 @@ namespace CUWebinars.Business.Services
             _webinarRepository.AddAdditionalLocationsLookupPrice(additionalLocationsLookupPrice);
         }
 
-        public void AddQuestionsToQuiz(int selectedWebinar, IEnumerable<Question> newQuestions)
+        public bool AddQuestionsToQuiz(int selectedWebinar, IEnumerable<Question> newQuestions)
         {
             var quiz = _quizRepository.GetQuizByWebinarId(selectedWebinar);
+
+            // if there are any QuizUserAnswers for this quiz, this means someone has taken the quiz and no questions can be deleted.
+            if (quiz.QuizWithQuestions.SelectMany(q => q.QuizUserAnswers).Any())
+            {
+                return false;
+            }
 
             foreach (var question in newQuestions)
             {
                 _quizRepository.AddQuestion(question);
 
                 _quizRepository.SaveChanges();
-
-                //_quizRepository.AddQuizWithQuestion(quizWithQuestion);
-
-                //quiz.QuizWithQuestions.Add(quizWithQuestion);
-
-                _quizRepository.SaveChanges();
             }
+
+            return true;
         }
 
         public void AddWebinar(Webinar webinar)
@@ -260,10 +262,15 @@ namespace CUWebinars.Business.Services
             return true;
         }
 
-        public void UpdateQuestions(IEnumerable<EditedQuestion> editedQuestions, int quizId)
+        public bool UpdateQuestions(IEnumerable<EditedQuestion> editedQuestions, int quizId)
         {
             var quiz = _quizRepository.GetQuizByIdWithOptionsText(quizId);
-            
+
+            // if there are any QuizUserAnswers for this quiz, this means someone has taken the quiz and no questions can be deleted.
+            if (quiz.QuizWithQuestions.SelectMany(q => q.QuizUserAnswers).Any())
+            {
+                return false;
+            }
 
             foreach (var editedQuestion in editedQuestions)
             {
@@ -351,6 +358,8 @@ namespace CUWebinars.Business.Services
                 }
             }
             _quizRepository.SaveChanges();
+
+            return true;
         }
 
         public IEnumerable<Webinar> GetByTopic(int topicId)

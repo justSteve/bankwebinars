@@ -1,20 +1,27 @@
-﻿using CUWebinars.Web.Core.Orchestrators;
+﻿using System;
+using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
+using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Models;
 using System.Linq;
 using System.Security.Claims;
 using System.Web.Mvc;
+using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Web.Controllers
 {
     public class QuizController : Controller
     {
         private readonly IQuizControllerOrchestrator _quizControllerOrchestrator;
+        private readonly ILogger _logger;
+        private readonly IAppHelper _appHelper;
 
-        public QuizController(IQuizControllerOrchestrator quizControllerOrchestrator)
+        public QuizController(IQuizControllerOrchestrator quizControllerOrchestrator, ILogger logger, IAppHelper appHelper)
         {
             _quizControllerOrchestrator = quizControllerOrchestrator;
+            _logger = logger;
+            _appHelper = appHelper;
         }
 
         public ActionResult EditQuizFromDetails(int? webinarId)
@@ -36,10 +43,19 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _quizControllerOrchestrator.ProcessEditModel(model);
+                try
+                {
+                    _quizControllerOrchestrator.ProcessEditModel(model);
+
+                    return Json(new {Result = WebUiConstants.Success});
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException(string.Format("EditQuiz | Session details: {0}", _appHelper.GetUserAuditInfo()), exception);
+                }
             }
-            
-            return View();
+
+            return this.ModelStateJson(ModelState);
         }
 
         public ActionResult Identify(string onDemandCode)

@@ -9,14 +9,8 @@ var EQ = EDITQUIZ; // create shortcut alias
 $(function () {
 
     EQ.primeDomVariables();
-
-    EQ.editCloneSubmitButton.on('click', EQ.submitEditedQuiz);
-    EQ.AddQuestionButton.on('click', EQ.addQuestionClicked);
-    //EQ.nextButton.on('click', EQ.nextClicked);
-    //EQ.submitButton.on('click', EQ.submitClicked);
-    //EQ.retakeButton.on('click', EQ.retakeClicked);
-    //EQ.homeButton.on('click', EQ.homeClicked);
-
+    EQ.wireUpHandlers();
+    
     EQ.utilities = new Common.Utilities();
 
     EQ.getQuestions();
@@ -26,12 +20,11 @@ $(function () {
 (function(ns) {
 
     ns.questionsList = [];
-    ns.questionCount = 0;
-    ns.currentQuestionNr = 1;
-
     ns.deletedQuestions = [];
     ns.editedQuestions = [];
     ns.newQuestions = [];
+
+    ns.newQuestionLastId = 0;
 
     ns.accordionTemplate = '<div class="accordion" id="questions">{0}</div>';
     ns.questionTemplate = '<div class="accordion-group" id="{0}-question" data-id={2}><div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#questions" href="#collapse{0}">Question #{0}</a></div><div id="collapse{0}" class="accordion-body collapse in"><div id="{0}-options" class="accordion-inner">{1}</div><div class="btn-toolbar"><button class="btn btn-default btn-mini">&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="{0}-delete"></i>&nbsp;Delete Question</button><button class="btn btn-default btn-mini">&nbsp;<i class="icon-plus-sign icon-white" style="cursor: pointer" id="{0}-addOption"></i>&nbsp;Add Option</button><span id="{0}-oCnt">{3}</span></div></div></div>';
@@ -45,7 +38,14 @@ $(function () {
         EQ.webinarId = $('#WebinarId');
         EQ.quizId = $('#QuizId');
         EQ.editCloneSubmitButton = $('#EditCloneSubmitButton');
-        EQ.AddQuestionButton = $('#AddQuestionButton');
+        EQ.editCloneSubmitButtonTop = $('#EditCloneSubmitButtonTop');
+        EQ.addQuestionButton = $('#AddQuestionButton');
+    };
+
+    ns.wireUpHandlers = function() {
+        EQ.editCloneSubmitButton.on('click', EQ.submitEditedQuiz);
+        EQ.editCloneSubmitButtonTop.on('click', EQ.submitEditedQuiz);
+        EQ.addQuestionButton.on('click', EQ.addQuestionClicked);
     };
 
     ns.wireUpOptions = function(jQuerySet) {
@@ -56,7 +56,28 @@ $(function () {
         //});
     };
 
-    
+    ns.rePopulateInputs = function() {
+
+        EQ.mainForm.fadeOut(300, function() {
+            EQ.mainForm.empty();
+
+            EQ.addQuestionButton = $('<button id="AddQuestionButton" class="btn btn-default">&nbsp;<i class="icon-plus-sign icon-white"></i>&nbsp;Add Question</button>');
+            EQ.editCloneSubmitButton = $('<button id="EditCloneSubmitButton" class="btn btn-primary">Submit Edits</button>');
+            EQ.editCloneSubmitButton.on('click', EQ.submitEditedQuiz);
+            EQ.addQuestionButton.on('click', EQ.addQuestionClicked);
+
+            EQ.questionsList.length = 0;
+            EQ.deletedQuestions.length = 0;
+            EQ.editedQuestions.length = 0;
+            EQ.newQuestions.length = 0;
+            ns.newQuestionLastId = 0;
+
+            EQ.getQuestions();
+
+            EQ.mainForm.fadeIn(200);
+        });
+
+    };
 
     ns.getQuestions = function () {
 
@@ -95,7 +116,10 @@ $(function () {
 
                 EQ.accordionTemplate.format(questions);
                 EQ.mainForm.append(questions);
-                EQ.AddQuestionButton.appendTo(EQ.mainForm);
+                EQ.mainForm.append('<div id="SubmitButtons" class="btn-toolbar"></div>');
+                EQ.submitButtons = $('#SubmitButtons');
+                EQ.addQuestionButton.appendTo(EQ.submitButtons);
+                EQ.editCloneSubmitButton.appendTo(EQ.submitButtons);
 
                 var optionTrashCans = EQ.mainForm.find('div[id$="-option"]').find('i.icon-trash');
 
@@ -288,7 +312,7 @@ $(function () {
                 editedOption.NewOptionLetter = optionDiv$.find('span:first-child').text();
                 editedOption.OriginalOptionText = origOption.getText();
                 editedOption.NewOptionText = optionDiv$.find('input[type="text"]').val();
-                editedOption.OriginalCorrectStatus = origOption.setCorrectAnswer();
+                editedOption.OriginalCorrectStatus = origOption.getCorrectAnswer();
                 editedOption.NewCorrectStatus = optionDiv$.find('input[type="checkbox"]').prop('checked');
             }
         });
@@ -535,7 +559,6 @@ $(function () {
         });
 
         EQ.quiz.setQuestions(questions);
-        EQ.questionCount = EQ.quiz.getQuestions().length;
         EQ.questionsList = questions;
     };
 
@@ -583,6 +606,8 @@ $(function () {
 
         e.preventDefault();
 
+        var btnClickedId = $(e.currentTarget).attr('id');
+
         var url = EQ.form.attr('action');
 
         var webinarId = EQ.webinarId.val();
@@ -607,12 +632,22 @@ $(function () {
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
             beforeSend: function () {
-                EQ.editCloneSubmitButton.append('&nbsp;<i id="editQuizSpinner" class="icon-spinner icon-spin"></i>');
+                if (btnClickedId === 'EditCloneSubmitButtonTop') {
+                    EQ.editCloneSubmitButtonTop.append('&nbsp;<i id="editQuizSpinner" class="icon-spinner icon-spin"></i>');
+                } else {
+                    EQ.editCloneSubmitButton.append('&nbsp;<i id="editQuizSpinner" class="icon-spinner icon-spin"></i>');
+                }
                 $('#editQuizResult').remove();
             }
         }).done(function (data, textStatus, jqXHR) {
             if (data.Result === 'Success') {
-                EQ.editCloneSubmitButton.after('<span id="editQuizResult">&nbsp;<span class="label label-success"><span> Quiz has been added! </span></span></span>').fadeIn(200).before().hide();
+                if (btnClickedId === 'EditCloneSubmitButtonTop') {
+                    EQ.editCloneSubmitButtonTop.after('<span id="editQuizResult">&nbsp;<span class="label label-success"><span> Quiz has been edited! </span></span></span>').hide().fadeIn(200);
+                } else {
+                    EQ.editCloneSubmitButton.parent().after('<span id="editQuizResult">&nbsp;<span class="label label-success"><span> Quiz has been edited! </span></span></span>').hide().fadeIn(200);
+                }
+
+                EQ.rePopulateInputs();
 
             } else if (!data.isSuccessful) {
 
@@ -638,7 +673,7 @@ $(function () {
         EQ.newQuestionLastId -= 1;
         var newQuestionHtml = EQ.questionTemplate.format(questionNumber, optionsHtml, EQ.newQuestionLastId, '1');
 
-        $(this).before(newQuestionHtml);
+        EQ.submitButtons.before(newQuestionHtml);
 
         var newQuestionPanel = bottomAccordionBar.next();
 
@@ -653,9 +688,7 @@ $(function () {
 
         EQ.newQuestions.push(EQ.newQuestionLastId);
     };
-
-    ns.newQuestionLastId = 0;
-
+    
     ns.newQuDeleteOption = function (e) {
 
         e.preventDefault();

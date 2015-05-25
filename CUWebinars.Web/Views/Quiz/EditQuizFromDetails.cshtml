@@ -10,8 +10,9 @@
 <div class="container" id="quizContainer">
     <div class="legendImitator">Edit Quiz</div>
 
-    @using (Html.BeginForm("EditQuiz", "Quiz", FormMethod.Post, new {id = "EditCloneQuizForm"}))
+    @using (Html.BeginForm("EditQuiz", "Quiz", FormMethod.Post, new { id = "EditCloneQuizForm" }))
     {
+        <div><button id="EditCloneSubmitButtonTop" class="btn btn-primary paddBottom20">Submit Edits</button></div>
         <div id="mainForm" class="span7 paddBottom20">
             
         </div>
@@ -19,8 +20,8 @@
         @Html.HiddenFor(m => m.WebinarId)
         @Html.HiddenFor(m => m.QuizId)
         
-        <button id="AddQuestionButton" class="btn btn-default paddTop10">&nbsp;<i class="icon-plus-sign icon-white"></i>&nbsp;Add Question</button>
-        <button id="EditCloneSubmitButton" class="btn btn-primary">Edit Quiz</button>
+        <button id="AddQuestionButton" class="btn btn-default">&nbsp;<i class="icon-plus-sign icon-white"></i>&nbsp;Add Question</button>
+        <button id="EditCloneSubmitButton" class="btn btn-primary">Submit Edits</button>
     }
 
 </div>
