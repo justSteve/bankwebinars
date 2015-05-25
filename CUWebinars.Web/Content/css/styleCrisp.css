@@ -2480,7 +2480,7 @@ html[xmlns] .slides, .no-js .slides > li:first-child {
     }
 
     ul.navigation li, .widget ul.navigation li {
-        background-image: url(http://ttsmedia.ttstrain.com/images/retina/sidebar-list-icon_@2x.png);
+        /*background-image: url(http://ttsmedia.ttstrain.com/images/retina/sidebar-list-icon_@2x.png);*/
         -moz-background-size: 6px 8px;
         -ie-background-size: 6px 8px;
         -o-background-size: 6px 8px;

@@ -112,7 +112,9 @@ if (document.documentElement.clientWidth < 767) { //if client width is less than
 $(document).ready(function () {
 
     $('.mobile_nav a').click(function () {
-        $('#main_menu').slideToggle(400);
+        
+        //$('#main_menu').slideToggle(400);
+        $('#main_menu').show();
         $(this).toggleClass('active'); return false;
     });
 

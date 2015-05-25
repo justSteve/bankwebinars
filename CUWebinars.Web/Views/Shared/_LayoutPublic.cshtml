@@ -218,54 +218,58 @@
     <!-- begin .header-->
     <header class="header  clearfix" style="margin-bottom: 0px; padding-bottom: 0; ">
         <div class="container">
-            <!-- begin #logo-->
+            <div class="row-fluid">
+                <!-- begin #logo-->
 
-            <div id="logo" style='background:  url("@currentAffiliate.Logo") no-repeat scroll 0 0 rgba(0, 0, 0, 0)'> <a href="/Home"><img alt="" src="http://ttsmedia.ttstrain.com/images/BankWebinars/trans.gif" /><em> Webinars</em><!--effing ie7 support--></a> </div>
-            <!-- end #logo -->
-            <!-- begin #main_menu -->
-            <nav id="main_menu">
-                <ul class="primary_menu">
-                    <li class="parent"><a href="/webinar/calendar">calendar</a></li>
-                    <li class="parent">
-                        <a href="javascript:void(0)">topics<i></i></a>
-                        <ul>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/15">Compliance</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/26">Risk Management</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/16">IRA</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/17">Customer Service</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/19">Operations</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/18">Security</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/20">Auditing</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/21">Sales</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/22">Lending</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/23">Human Resources</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/27">Teller</a></li>
-                        </ul>
-                    </li>
-                    <li class="parent">
-                        <a href="javascript:void(0)">Upcoming Webinars<i></i></a>
-                        <ul>@Html.Action("UpComingWebinarMenu", "Navigation")</ul>
-                    </li>
-                    <li class="parent">
-                        <a href="javascript:void(0)">OnDemand Webinars<i></i></a>
-                        <ul>@Html.Action("GetRecordedWebinarMenu", "Navigation")</ul>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0)">About Us<i></i></a>
-                        <ul>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/WhatIsAWebinar">What Is A Webinar?</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/CommonQuestions">Commonly Asked Questions</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/DetailedConnectionInstructions">Connecting to Your Webinar</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/contactus">Contact Us</a></li>
-                        </ul>
-                    </li>
-                    @if (Request.IsAuthenticated)
-                    {
-                        <li><a href="/Account/MyWebinars">My Webinars</a></li>
-                    }
-                </ul>
-            </nav>
-            <!-- close / #main_menu -->
+                <div id="logo" class="span3" style='background: url("@currentAffiliate.Logo") no-repeat scroll 0 0 rgba(0, 0, 0, 0)'>
+                    
+                </div>
+                <!-- end #logo -->
+                <!-- begin #main_menu -->
+                <nav id="main_menu" class="span8">
+                    <ul class="primary_menu">
+                        <li class="parent"><a href="/webinar/calendar">calendar</a></li>
+                        <li class="parent">
+                            <a href="javascript:void(0)">topics<i></i></a>
+                            <ul>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/15">Compliance</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/26">Risk Management</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/16">IRA</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/17">Customer Service</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/19">Operations</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/18">Security</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/20">Auditing</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/21">Sales</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/22">Lending</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/23">Human Resources</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/27">Teller</a></li>
+                            </ul>
+                        </li>
+                        <li class="parent">
+                            <a href="javascript:void(0)">Upcoming Webinars<i></i></a>
+                            <ul>@Html.Action("UpComingWebinarMenu", "Navigation")</ul>
+                        </li>
+                        <li class="parent">
+                            <a href="javascript:void(0)">OnDemand Webinars<i></i></a>
+                            <ul>@Html.Action("GetRecordedWebinarMenu", "Navigation")</ul>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)">About Us<i></i></a>
+                            <ul>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/WhatIsAWebinar">What Is A Webinar?</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/CommonQuestions">Commonly Asked Questions</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/DetailedConnectionInstructions">Connecting to Your Webinar</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/contactus">Contact Us</a></li>
+                            </ul>
+                        </li>
+                        @if (Request.IsAuthenticated)
+                        {
+                            <li><a href="/Account/MyWebinars">My Webinars</a></li>
+                        }
+                    </ul>
+                </nav>
+                <!-- close / #main_menu -->
+            </div>
         </div>
         <!-- close / .container-->
     </header>
