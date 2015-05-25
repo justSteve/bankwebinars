@@ -28,7 +28,7 @@ $(function () {
 
     ns.questionTemplateFirst = '<div id="{0}-question"><p><strong>Question Number {3} of {4}</strong></p><p id="{0}-questionText">{1}</p><div id="{0}-options">{2}</div></div>';
     ns.questionTemplate = '<div id="{0}-question" class="initialHide"><p><strong>Question Number <span id="{0}-questionNr"></span> of {3}</strong></p><p id="{0}-questionText">{1}</p><div id="{0}-options">{2}</div></div>';
-    ns.optionsTemplate = '<label class="radio"><input id="{0}-option" name="{3}-option" type="radio" value="{1}" />{2}</label>';
+    ns.optionsTemplate = '<label class="radio">({1})&nbsp;<input id="{0}-option" name="{3}-option" type="radio" value="{1}" />{2}</label>';
 
     ns.primeDomVariables = function() {
         DQ.startButton = $('#startButton');
@@ -224,7 +224,7 @@ $(function () {
             });
 
         });
-
+        return null;
     };
 
     ns.prevClicked = function (e) {
@@ -262,7 +262,7 @@ $(function () {
 
         var optionClickedId = e.currentTarget.id;
         var question = _.find(DQ.quiz.getQuestions(), function(question) {
-            return question.getQuestionNumber() == optionClickedId.slice(0, 1);
+            return question.getQuestionNumber() === parseInt(optionClickedId.slice(0, 1));
         });
 
         var userAnswers = [];
@@ -270,7 +270,9 @@ $(function () {
 
         question.setUserAnswers(userAnswers);
 
-        console.info(question.getUserAnswers());
+        if (DQ.currentQuestionNr === DQ.questionCount) {
+            DQ.submitButton.removeAttr('disabled');
+        }
 
     };
 

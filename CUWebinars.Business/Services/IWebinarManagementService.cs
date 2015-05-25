@@ -9,6 +9,7 @@ namespace CUWebinars.Business.Services
     public interface IWebinarManagementService : IDisposable
     {
         void AddAdditionalLocationsLookupPrice(AdditionalLocationsLookupPrice additionalLocationsLookupPrice);
+        bool AddQuestionsToQuiz(int selectedWebinar, IEnumerable<Question> newQuestions);
         void AddWebinar(Webinar webinar);
         void AddWebinarFiles(IEnumerable<WebinarFile> webinarFiles);
         void DeleteWebinar(int idWebinar );
@@ -48,6 +49,6 @@ namespace CUWebinars.Business.Services
         Quiz GetQuizByQuizId(int quizId);
         IList<QuizScore> GetQuizScoreForUser(int quizId, string email, int orderId);
         bool RemoveQuestionsFromQuiz(IEnumerable<int> deletedQuestions, int quizId);
-        void UpdateQuestions(IEnumerable<EditedQuestion> editedQuestions, int quizId);
+        bool UpdateQuestions(IEnumerable<EditedQuestion> editedQuestions, int quizId);
     }
 }

@@ -53,6 +53,7 @@ namespace CUWebinars.Business.Repository
         public Quiz GetQuizByIdWithOptionsText(int id)
         {
             var quiz = items.Include(q => q.QuizWithQuestions.Select(qwq => qwq.Question.QuestionWithOptions.Select(qwo => qwo.Option)))
+                .Include(q => q.QuizWithQuestions.Select(qwq => qwq.QuizUserAnswers))
                 .SingleOrDefault(q => q.Id == id);
             return quiz;
         }
@@ -100,12 +101,17 @@ namespace CUWebinars.Business.Repository
 
         public void SetQuizUserAnswerAsModified(QuizUserAnswer quizUserAnswer)
         {
-            db.Entry(quizUserAnswer).State = EntityState.Deleted;
+            db.Entry(quizUserAnswer).State = EntityState.Modified;
         }
 
         public void DeleteQuizWithQuestion(QuizWithQuestion quizWithQuestion)
         {
             db.Entry(quizWithQuestion).State = EntityState.Deleted;
+        }
+
+        public void DeleteQuizWithOption(QuestionWithOption questionWithOption)
+        {
+            db.Entry(questionWithOption).State = EntityState.Deleted;
         }
     }
 }

@@ -537,6 +537,7 @@
     <Content Include="App_Data\Orders\OrdersImporter.xlsm" />
     <Content Include="Content\claims-mment.css" />
     <Content Include="Content\common.css" />
+    <Content Include="Content\edit-quiz.css" />
     <Content Include="Content\do-quiz.css" />
     <Content Include="Content\manage-order.css" />
     <Content Include="Content\quiz.css" />

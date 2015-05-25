@@ -17,6 +17,13 @@ var QuizDomain;
     })(QuizDomain.CompletionStatus || (QuizDomain.CompletionStatus = {}));
     var CompletionStatus = QuizDomain.CompletionStatus;
     ;
+    (function (EditType) {
+        EditType[EditType["Added"] = 0] = "Added";
+        EditType[EditType["Edited"] = 1] = "Edited";
+        EditType[EditType["Deleted"] = 2] = "Deleted";
+    })(QuizDomain.EditType || (QuizDomain.EditType = {}));
+    var EditType = QuizDomain.EditType;
+    ;
 
     var Quiz = (function () {
         function Quiz() {

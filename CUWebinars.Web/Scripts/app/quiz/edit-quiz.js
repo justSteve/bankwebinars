@@ -9,14 +9,8 @@ var EQ = EDITQUIZ; // create shortcut alias
 $(function () {
 
     EQ.primeDomVariables();
-
-    EQ.editCloneSubmitButton.on('click', EQ.submitEditedQuiz);
-    //EQ.prevButton.on('click', EQ.prevClicked);
-    //EQ.nextButton.on('click', EQ.nextClicked);
-    //EQ.submitButton.on('click', EQ.submitClicked);
-    //EQ.retakeButton.on('click', EQ.retakeClicked);
-    //EQ.homeButton.on('click', EQ.homeClicked);
-
+    EQ.wireUpHandlers();
+    
     EQ.utilities = new Common.Utilities();
 
     EQ.getQuestions();
@@ -26,17 +20,17 @@ $(function () {
 (function(ns) {
 
     ns.questionsList = [];
-    ns.questionCount = 0;
-    ns.currentQuestionNr = 1;
-
     ns.deletedQuestions = [];
     ns.editedQuestions = [];
     ns.newQuestions = [];
 
+    ns.newQuestionLastId = 0;
+
     ns.accordionTemplate = '<div class="accordion" id="questions">{0}</div>';
-    ns.questionTemplate = '<div class="accordion-group" id="{0}-question" data-id={2}><div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#questions" href="#collapse{0}">Question #{0}</a></div><div id="collapse{0}" class="accordion-body collapse in"><div id="{0}-options" class="accordion-inner">{1}</div><button class="btn btn-default btn-mini">&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="{0}-delete"></i>&nbsp;Delete Question</button><button class="btn btn-default btn-mini">Add Option</button></div></div>';
-    ns.questionTextTemplate = '<div><input id="{0}-questionText" type="text" value="{1}" class="input input-xxlarge" /></div>';
+    ns.questionTemplate = '<div class="accordion-group" id="{0}-question" data-id={2}><div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#questions" href="#collapse{0}">Question #{0}</a></div><div id="collapse{0}" class="accordion-body collapse in"><div id="{0}-options" class="accordion-inner">{1}</div><div class="btn-toolbar"><button class="btn btn-default btn-mini">&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="{0}-delete"></i>&nbsp;Delete Question</button><button class="btn btn-default btn-mini">&nbsp;<i class="icon-plus-sign icon-white" style="cursor: pointer" id="{0}-addOption"></i>&nbsp;Add Option</button><span id="{0}-oCnt">{3}</span></div></div></div>';
+    ns.questionTextTemplate = '<div><input id="{0}-questionText" type="text" value="{1}" class="input input-xxlarge" placeholder="Enter question text here" /></div>';
     ns.optionsTemplate = '<div id="{0}{1}-option" data-id="{5}" class="input-prepend input-append"><span class="add-on">{2}</span><input id="{0}{1}-optionInput" name="Options[{0}{1}].Text" class="input input-xxlarge" value="{3}" placeholder="Enter option text and tick box at end if correct answer"  type="text" />&nbsp;<span class="add-on"><input id="{0}{1}-answer" type="checkbox" title="Is this the answer?" {4} />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="{0}{1}-delete"></i></span></div>';
+    
 
     ns.primeDomVariables = function() {
         EQ.mainForm = $('#mainForm');
@@ -44,6 +38,14 @@ $(function () {
         EQ.webinarId = $('#WebinarId');
         EQ.quizId = $('#QuizId');
         EQ.editCloneSubmitButton = $('#EditCloneSubmitButton');
+        EQ.editCloneSubmitButtonTop = $('#EditCloneSubmitButtonTop');
+        EQ.addQuestionButton = $('#AddQuestionButton');
+    };
+
+    ns.wireUpHandlers = function() {
+        EQ.editCloneSubmitButton.on('click', EQ.submitEditedQuiz);
+        EQ.editCloneSubmitButtonTop.on('click', EQ.submitEditedQuiz);
+        EQ.addQuestionButton.on('click', EQ.addQuestionClicked);
     };
 
     ns.wireUpOptions = function(jQuerySet) {
@@ -54,7 +56,28 @@ $(function () {
         //});
     };
 
-    
+    ns.rePopulateInputs = function() {
+
+        EQ.mainForm.fadeOut(300, function() {
+            EQ.mainForm.empty();
+
+            EQ.addQuestionButton = $('<button id="AddQuestionButton" class="btn btn-default">&nbsp;<i class="icon-plus-sign icon-white"></i>&nbsp;Add Question</button>');
+            EQ.editCloneSubmitButton = $('<button id="EditCloneSubmitButton" class="btn btn-primary">Submit Edits</button>');
+            EQ.editCloneSubmitButton.on('click', EQ.submitEditedQuiz);
+            EQ.addQuestionButton.on('click', EQ.addQuestionClicked);
+
+            EQ.questionsList.length = 0;
+            EQ.deletedQuestions.length = 0;
+            EQ.editedQuestions.length = 0;
+            EQ.newQuestions.length = 0;
+            ns.newQuestionLastId = 0;
+
+            EQ.getQuestions();
+
+            EQ.mainForm.fadeIn(200);
+        });
+
+    };
 
     ns.getQuestions = function () {
 
@@ -81,16 +104,22 @@ $(function () {
                 _.each(EQ.quiz.getQuestions(), function(question, idx) {
 
                     var optionsHtml = EQ.questionTextTemplate.format(question.getQuestionNumber(), question.getText());
-                    
-                    _.each(question.getOptions(), function(option, innerIdx) {
-                        optionsHtml += EQ.optionsTemplate.format((idx + 1).toString(),(innerIdx + 1).toString(), option.getLetter(), option.getText(), option.getCorrectAnswer() ? 'checked' : '', option.getOptionId());
+
+                    var optionsCount = 0;
+                    _.each(question.getOptions(), function (option, innerIdx) {
+                        optionsCount += 1;
+                        optionsHtml += EQ.optionsTemplate.format((idx + 1).toString(), (innerIdx + 1).toString(), option.getLetter(), option.getText(), option.getCorrectAnswer() ? 'checked' : '', option.getOptionId());
                     });
                     
-                    questions += EQ.questionTemplate.format(question.getQuestionNumber(), optionsHtml, question.getQuestionId());
+                    questions += EQ.questionTemplate.format(question.getQuestionNumber(), optionsHtml, question.getQuestionId(), optionsCount);
                 });
 
                 EQ.accordionTemplate.format(questions);
                 EQ.mainForm.append(questions);
+                EQ.mainForm.append('<div id="SubmitButtons" class="btn-toolbar"></div>');
+                EQ.submitButtons = $('#SubmitButtons');
+                EQ.addQuestionButton.appendTo(EQ.submitButtons);
+                EQ.editCloneSubmitButton.appendTo(EQ.submitButtons);
 
                 var optionTrashCans = EQ.mainForm.find('div[id$="-option"]').find('i.icon-trash');
 
@@ -98,10 +127,16 @@ $(function () {
                     $(trash).on('click', EQ.deleteOption);
                 });
 
-                var questionTrashCans = EQ.mainForm.find('div[id^="collapse"] button').find('i.icon-trash').parent();
+                var deleteQuestionButtons = EQ.mainForm.find('div[id^="collapse"] button').find('i.icon-trash').parent();
 
-                _.each(questionTrashCans, function (trash, idx) {
+                _.each(deleteQuestionButtons, function (trash, idx) {
                     $(trash).on('click', EQ.deleteQuestion);
+                });
+
+                var addOptionButtons = EQ.mainForm.find('div[id^="collapse"] button').find('i.icon-plus-sign').parent();
+
+                _.each(addOptionButtons, function (btn, idx) {
+                    $(btn).on('click', EQ.addOption);
                 });
 
                 var questionTexts = EQ.mainForm.find('input[id$="-questionText"]');
@@ -111,13 +146,98 @@ $(function () {
                     input$.on('blur', EQ.qTextEdited);
                 });
 
+                var optionTexts = EQ.mainForm.find('input[id$="-optionInput"]');
+
+                _.each(optionTexts, function (optionTextInput, idx) {
+                    var input$ = $(optionTextInput);
+                    input$.on('blur', EQ.optionEdited);
+                });
+
+                var optionChkBoxes = EQ.mainForm.find('input[id$="-answer"]');
+
+                _.each(optionChkBoxes, function (optionChkBox, idx) {
+                    var input$ = $(optionChkBox);
+                    input$.on('change', EQ.optionEdited);
+                });
+
                 $(".collapse").not('#collapse1').collapse('hide');
 
             } else {
-
+                // todo: unhappy path
             }
         });
     };
+
+    ns.addOption = function (e) {
+
+        e.preventDefault();
+
+        var btnClicked$ = $(e.currentTarget);
+
+        var lastOption = btnClicked$.parent().parent().find('div[id$="-option"]').last();
+
+        // make sure that the most recent option added has text
+        if (lastOption.length !== 0 && $.trim(lastOption.find('input[type="text"]').val()) === '') {
+            console.info('toast this');
+            return;
+        }
+
+        var accordionGroup = $(e.currentTarget.closest('div.accordion-group'));
+        var questionId = accordionGroup.data('id');
+        var questionNumber = parseInt(accordionGroup.attr('id').slice(0, 1));
+
+        var optionCntSpan = $('#' + questionNumber + '-oCnt');
+        var currentOptionCount = parseInt(optionCntSpan.text());
+        optionCntSpan.text((currentOptionCount + 1).toString());
+
+
+        var letterOfLastOption,
+            nextletter,
+            idOfLastOption;
+
+        if (lastOption.length === 0) {
+            nextletter = 'a';
+            idOfLastOption = 0;
+        } else {
+            letterOfLastOption = lastOption.find('span:first-child').text();
+            nextletter = String.fromCharCode((letterOfLastOption.charCodeAt(0) + 1));
+            idOfLastOption = parseInt(lastOption.data('id'));
+        }
+
+        var newOptionId = 0;
+        // If last option was already existing, make the new one -1. Else, decrement it by 1.
+        // The idea being each new option has a lower negative number.
+        if (idOfLastOption > 0) {
+            newOptionId = -1;
+        } else {
+            newOptionId = idOfLastOption - 1;
+        }
+
+        var newOptionDiv = EQ.optionsTemplate.format(questionNumber, currentOptionCount + 1, nextletter, '', '', newOptionId);
+
+        btnClicked$.parent().prev().append(newOptionDiv);
+
+        // hook up events for new option
+        var newOptionDiv$ = accordionGroup.find('#' + questionNumber.toString() + (currentOptionCount + 1).toString() + '-option');
+        newOptionDiv$.find('i.icon-trash').on('click', EQ.deleteOption);
+        newOptionDiv$.find('input[id$="-optionInput"]').on('blur', EQ.optionEdited);
+        newOptionDiv$.find('input[id$="-answer"]').on('change', EQ.optionEdited);
+
+        var editedOption = new QuizDomain.EditableOption();
+        editedOption.EditType = QuizDomain.EditType.Added;
+        editedOption.NewOptionLetter = nextletter;
+        editedOption.NewCorrectStatus = false;
+        editedOption.OptionId = newOptionId;
+
+
+        // if we are adding an option, the question will now have a status of edited. 
+        var editedQuestion = EQ.addOrUpdateQuestion(questionId);
+
+        editedQuestion.EditedOptions.push(editedOption);
+
+        EQ.addToEditedOptionsList($(newOptionDiv), editedQuestion, newOptionId);
+    };
+
 
     ns.qTextEdited = function (e) {
 
@@ -129,11 +249,119 @@ $(function () {
 
     };
 
+    ns.optionEdited = function (e) {
+
+        e.preventDefault();
+
+        var currentTarget = e.currentTarget;
+
+        var optionDiv = null;
+        if (currentTarget.id.includes('-answer')) {
+            optionDiv = $(currentTarget).parent().parent();
+        } else {
+            optionDiv = $(currentTarget).parent();
+        }
+        
+        var optionId = optionDiv.data('id');
+        var accordionGroup = $(e.currentTarget.closest('div.accordion-group'));
+        var questionId = accordionGroup.data('id');
+
+        var editedQuestion = EQ.addOrUpdateQuestion(questionId);
+        var editedOption = EQ.addOrUpdateOption(editedQuestion, optionId);
+        
+        editedOption.EditType = EQ.assignEditType(editedOption.EditType);
+
+        EQ.addToEditedOptionsList($(optionDiv), editedQuestion, optionId);
+    };
+
+    ns.assignEditType = function(editType) {
+
+        // if we are editing a newly added option, leave its EdiType as 'Added'
+        if (editType === null || typeof editType === 'undefined' || editType != QuizDomain.EditType.Added)
+            editType = QuizDomain.EditType.Edited;
+
+        return editType;
+    };
+
+    ns.addToEditedOptionsList = function (optionDivs, editedQuestion) {
+
+        _.each(optionDivs, function(optionDiv, idx) {
+
+            var optionDiv$ = $(optionDiv);
+
+            var optionId = optionDiv$.data('id');
+
+            var origQuestion = _.find(EQ.questionsList, function (question) {
+                return question.getQuestionId() === editedQuestion.QuestionId;
+            });
+
+            var origOption = _.find(origQuestion.getOptions(), function(option, idx) {
+                return option.getOptionId() === optionId;
+            });
+
+            var editedOption = EQ.addOrUpdateOption(editedQuestion, optionId);
+
+            editedOption.EditType = EQ.assignEditType(editedOption.EditType);
+
+            if (!origOption) {
+                editedOption.NewOptionLetter = optionDiv$.find('span:first-child').text();
+                editedOption.NewOptionText = optionDiv$.find('input[type="text"]').val();
+                editedOption.NewCorrectStatus = optionDiv$.find('input[type="checkbox"]').prop('checked');
+            } else {
+                editedOption.OriginalOptionLetter = origOption.getLetter();
+                editedOption.NewOptionLetter = optionDiv$.find('span:first-child').text();
+                editedOption.OriginalOptionText = origOption.getText();
+                editedOption.NewOptionText = optionDiv$.find('input[type="text"]').val();
+                editedOption.OriginalCorrectStatus = origOption.getCorrectAnswer();
+                editedOption.NewCorrectStatus = optionDiv$.find('input[type="checkbox"]').prop('checked');
+            }
+        });
+    };
+
     
     ns.deleteOption = function(e) {
         e.preventDefault();
 
-        console.info('delete');
+        var currentTarget = e.currentTarget;
+
+        // get info about the question
+        var accordionGroup = $(currentTarget.closest('div.accordion-group'));
+        var questionId = accordionGroup.data('id');
+        var questionNumber = parseInt(accordionGroup.attr('id').slice(0, 1));
+
+        // get info about the option
+        var optionDiv = $(currentTarget).parent().parent();
+        var optionId = optionDiv.data('id');
+        var optionDivId = optionDiv.attr('id').slice(1,2);
+
+        // If in the list of edited options, set its status to 'deleted'
+        // 1st, check if the question is already in the edited questions list.
+        var editedQuestion = EQ.addOrUpdateQuestion(questionId);
+
+        var editedOption = EQ.addOrUpdateOption(editedQuestion, optionId);
+
+        // If option is one that was Added in this editing session, just remove it from the 
+        // question's EditedOption's list.
+        if (optionId < 0) {
+            editedQuestion.EditedOptions = _.without(editedQuestion.EditedOptions, _.find(editedQuestion.EditedOptions, function(editedOption, idx) {
+                return editedOption.OptionId === optionId;
+            }));
+        }
+
+        editedOption.EditType = QuizDomain.EditType.Deleted;
+
+        EQ.reArrangeRemainingOptions(optionDiv.nextAll(), optionDivId, questionNumber);
+
+        EQ.addToEditedOptionsList(optionDiv.next(), editedQuestion, optionId);
+
+        var optionCntSpan = $('#' + questionNumber + '-oCnt');
+        var optionCount = parseInt(optionCntSpan.text());
+        optionCntSpan.text((optionCount - 1).toString());
+
+        // delete this question from the dom.
+        optionDiv.fadeOut(200, function () {
+            $(this).remove();
+        });
     };
 
 
@@ -144,6 +372,7 @@ $(function () {
         var questionId = accordionGroup.data('id');
         var questionNumber = parseInt(accordionGroup.attr('id').slice(0, 1));
 
+        // if in the list of edited questions, remove it, because we are deleting it
         var qInList = _.find(EQ.editedQuestions, function(editedQuestion) { return editedQuestion.QuestionId === questionId; });
 
         if (qInList) {
@@ -163,10 +392,35 @@ $(function () {
             $(this).remove();
             $('#collapse1').collapse('show');
         });
-
     };
 
-    ns.addOrUpdate = function (questionId) {
+    ns.reArrangeRemainingOptions = function (remainingOptionDivs, deletedOptionId, questionNumber) {
+
+        var newId = deletedOptionId;
+
+        _.each(remainingOptionDivs, function (remainingOptionDiv, idx) {
+            var remainingOptionDiv$ = $(remainingOptionDiv);
+            var newIdentifier = questionNumber.toString() + newId.toString();
+
+            var optionLetterSpan = remainingOptionDiv$.find('span:first-child');
+
+            var currentLetter = optionLetterSpan.text();
+
+            var newletter = String.fromCharCode((currentLetter.charCodeAt(0) - 1));
+
+            optionLetterSpan.text(newletter);
+
+            remainingOptionDiv$.attr('id', newIdentifier + '-option');
+
+            remainingOptionDiv$.find('input[type="text"]').attr('id', newIdentifier + '-optionInput').attr('name', 'Options[' + newIdentifier + '].Text');
+            remainingOptionDiv$.find('input[type="checkbox"]').attr('id', newIdentifier + '-answer');
+            remainingOptionDiv$.find('i').attr('id', newIdentifier + '-delete');
+
+            newId += 1;
+        });
+    };
+
+    ns.addOrUpdateQuestion = function (questionId) {
 
         // check if the question is already in the edited questions list.
         var editedQuestion = _.find(EQ.editedQuestions, function (question) {
@@ -176,10 +430,28 @@ $(function () {
         // if not, create it.
         if (!editedQuestion) {
             editedQuestion = new QuizDomain.EditedQuestion(questionId);
+            editedQuestion.EditedOptions = [];
             EQ.editedQuestions.push(editedQuestion);
         }
 
         return editedQuestion;
+    };
+
+    ns.addOrUpdateOption = function (editedQuestion, optionId) {
+
+        // check if the question is already in the edited questions list.
+        var editedOption = _.find(editedQuestion.EditedOptions, function (option) {
+            return option.OptionId === optionId;
+        });
+
+        // if not, create it.
+        if (!editedOption) {
+            editedOption = new QuizDomain.EditedOption();
+            editedOption.OptionId = optionId;
+            editedQuestion.EditedOptions.push(editedOption);
+        }
+
+        return editedOption;
     };
 
 
@@ -190,26 +462,31 @@ $(function () {
             var questionPanel$ = $(questionPanel);
             var questionId = questionPanel$.data('id');
 
-            var editedQuestion = EQ.addOrUpdate(questionId);
+            // if questionId = 0, we know we have a new question and need not bother with adding it to the edited question array.
+            if (questionId > 0) {
+                var editedQuestion = EQ.addOrUpdateQuestion(questionId);
 
-            var origQuestion = _.find(EQ.questionsList, function(question) {
-                return question.getQuestionId() === editedQuestion.QuestionId;
-            });
+                var origQuestion = _.find(EQ.questionsList, function(question) {
+                    return question.getQuestionId() === questionId;
+                });
 
-            editedQuestion.OriginalQuestionNumber = origQuestion.getQuestionNumber();
-            editedQuestion.NewQuestionNumber = parseInt(questionPanel$.attr('id').slice(0,1));
-            editedQuestion.OriginalQuestionText = origQuestion.getText();
-            editedQuestion.NewQuestionText = questionPanel$.find('input[id$="-questionText"]').val();
+                if (origQuestion) {
+                    editedQuestion.OriginalQuestionNumber = origQuestion.getQuestionNumber();
+                    editedQuestion.NewQuestionNumber = parseInt(questionPanel$.attr('id').slice(0, 1));
+                    editedQuestion.OriginalQuestionText = origQuestion.getText();
+                    editedQuestion.NewQuestionText = questionPanel$.find('input[id$="-questionText"]').val();
+                }
+            }
         });
 
     };
 
 
 
-    ns.reArrangeRemainingQuestions = function (accordionGroup, questionId) {
+    ns.reArrangeRemainingQuestions = function (accordionGroup, questionNumber) {
 
         var followingQuestions = accordionGroup.nextAll();
-        var newId = questionId;
+        var newId = questionNumber;
 
         _.each(followingQuestions, function (accordionGroup, idx) {
             var accordionGroup$ = $(accordionGroup);
@@ -235,6 +512,8 @@ $(function () {
             });
 
             accordionGroup$.find('button i').attr('id', newId.toString() + '-delete');
+
+            accordionGroup$.find('span[id$="-oCnt"]').attr('id', newId.toString() + '-oCnt');
 
             newId += 1;
         });
@@ -280,7 +559,6 @@ $(function () {
         });
 
         EQ.quiz.setQuestions(questions);
-        EQ.questionCount = EQ.quiz.getQuestions().length;
         EQ.questionsList = questions;
     };
 
@@ -328,19 +606,22 @@ $(function () {
 
         e.preventDefault();
 
+        var btnClickedId = $(e.currentTarget).attr('id');
+
         var url = EQ.form.attr('action');
 
         var webinarId = EQ.webinarId.val();
         var quizId = EQ.quizId.val();
-        var questions = EQ.getQuestionsList();
+        //var questions = EQ.getQuestionsList();
         
 
         var payload = {
             SelectedWebinar: webinarId,
-            Questions: questions,
+            //Questions: questions, <======= not necessary
             QuizId: quizId,
             DeletedQuestions: EQ.deletedQuestions,
-            EditedQuestions: EQ.editedQuestions
+            EditedQuestions: EQ.editedQuestions,
+            NewQuestions: EQ.getNewQuestionsFromDom()
         };
 
         $.ajax({
@@ -351,12 +632,22 @@ $(function () {
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
             beforeSend: function () {
-                EQ.editCloneSubmitButton.append('&nbsp;<i id="editQuizSpinner" class="icon-spinner icon-spin"></i>');
+                if (btnClickedId === 'EditCloneSubmitButtonTop') {
+                    EQ.editCloneSubmitButtonTop.append('&nbsp;<i id="editQuizSpinner" class="icon-spinner icon-spin"></i>');
+                } else {
+                    EQ.editCloneSubmitButton.append('&nbsp;<i id="editQuizSpinner" class="icon-spinner icon-spin"></i>');
+                }
                 $('#editQuizResult').remove();
             }
         }).done(function (data, textStatus, jqXHR) {
             if (data.Result === 'Success') {
-                EQ.editCloneSubmitButton.after('<span id="editQuizResult">&nbsp;<span class="label label-success"><span> Quiz has been added! </span></span></span>').fadeIn(200).before().hide();
+                if (btnClickedId === 'EditCloneSubmitButtonTop') {
+                    EQ.editCloneSubmitButtonTop.after('<span id="editQuizResult">&nbsp;<span class="label label-success"><span> Quiz has been edited! </span></span></span>').hide().fadeIn(200);
+                } else {
+                    EQ.editCloneSubmitButton.parent().after('<span id="editQuizResult">&nbsp;<span class="label label-success"><span> Quiz has been edited! </span></span></span>').hide().fadeIn(200);
+                }
+
+                EQ.rePopulateInputs();
 
             } else if (!data.isSuccessful) {
 
@@ -365,6 +656,185 @@ $(function () {
             }
             $('#editQuizSpinner').remove();
         });
+    };
+
+
+    ns.addQuestionClicked = function (e) {
+        e.preventDefault();
+
+        var bottomAccordionBar = EQ.mainForm.find('div.accordion-group').last();
+
+        var questionNumber = 1 + parseInt(bottomAccordionBar.attr('id').slice(0, 1));
+        
+        var optionsHtml = EQ.questionTextTemplate.format(questionNumber, '');
+
+        optionsHtml += EQ.optionsTemplate.format(questionNumber.toString(), '1', 'a', '', '', '-1');
+
+        EQ.newQuestionLastId -= 1;
+        var newQuestionHtml = EQ.questionTemplate.format(questionNumber, optionsHtml, EQ.newQuestionLastId, '1');
+
+        EQ.submitButtons.before(newQuestionHtml);
+
+        var newQuestionPanel = bottomAccordionBar.next();
+
+        var newQid = questionNumber.toString() + '1';
+        
+        var trashOption = newQuestionPanel.find('i#' + newQid + '-delete');
+        trashOption.on('click', EQ.newQuDeleteOption);
+
+        // hook up event handlers
+        newQuestionPanel.find('button').first().on('click', EQ.newQuDeleteQuestion);
+        newQuestionPanel.find('button').last().on('click', EQ.newQuAddOption);
+
+        EQ.newQuestions.push(EQ.newQuestionLastId);
+    };
+    
+    ns.newQuDeleteOption = function (e) {
+
+        e.preventDefault();
+    
+        var currentTarget = e.currentTarget;
+
+        // get info about the question
+        var accordionGroup = $(currentTarget.closest('div.accordion-group'));
+        var questionId = accordionGroup.data('id');
+        var questionNumber = parseInt(accordionGroup.attr('id').slice(0, 1));
+
+        // get info about the option
+        var optionDiv = $(currentTarget).parent().parent();
+        var optionId = optionDiv.data('id');
+        var optionDivId = optionDiv.attr('id').slice(1, 2);
+
+        EQ.reArrangeRemainingOptions(optionDiv.nextAll(), optionDivId, questionNumber);
+        
+        var optionCntSpan = $('#' + questionNumber + '-oCnt');
+        var optionCount = parseInt(optionCntSpan.text());
+        optionCntSpan.text((optionCount - 1).toString());
+
+        // delete this option from the dom.
+        optionDiv.fadeOut(200, function () {
+            $(this).remove();
+        });
+    };
+
+    ns.newQuDeleteQuestion = function(e) {
+        e.preventDefault();
+
+        var currentTarget = e.currentTarget;
+
+        // get info about the question
+        var accordionGroup = $(currentTarget.closest('div.accordion-group'));
+        var questionId = accordionGroup.data('id');
+        var questionNumber = parseInt(accordionGroup.attr('id').slice(0, 1));
+
+        EQ.newQuestions = _.without(EQ.newQuestions, _.find(EQ.newQuestions, function(newQuestionId) {
+            return newQuestionId === questionId;
+        }));
+
+        EQ.reArrangeRemainingQuestions(accordionGroup, questionNumber);
+
+        // delete this question from the dom.
+        accordionGroup.fadeOut(200, function () {
+            $(this).remove();
+        });
+    };
+
+    ns.newQuAddOption = function(e) {
+        e.preventDefault();
+
+        var btnClicked$ = $(e.currentTarget);
+
+        var lastOption = btnClicked$.parent().parent().find('div[id$="-option"]').last();
+
+        // make sure that the most recent option added has text
+        if (lastOption.length !== 0 && $.trim(lastOption.find('input[type="text"]').val()) === '') {
+            console.info('toast this');
+            return;
+        }
+
+        var accordionGroup = $(e.currentTarget.closest('div.accordion-group'));
+        var questionNumber = parseInt(accordionGroup.attr('id').slice(0, 1));
+
+        var optionCntSpan = $('#' + questionNumber + '-oCnt');
+        var currentOptionCount = parseInt(optionCntSpan.text());
+        optionCntSpan.text((currentOptionCount + 1).toString());
+
+        var letterOfLastOption,
+            nextletter,
+            idOfLastOption;
+
+        if (lastOption.length === 0) {
+            nextletter = 'a';
+            idOfLastOption = 0;
+        } else {
+            letterOfLastOption = lastOption.find('span:first-child').text();
+            nextletter = String.fromCharCode((letterOfLastOption.charCodeAt(0) + 1));
+            idOfLastOption = parseInt(lastOption.data('id'));
+        }
+
+        var newOptionId = 0;
+        // If last option was already existing, make the new one -1. Else, decrement it by 1.
+        // The idea being each new option has a lower negative number.
+        if (idOfLastOption > 0) {
+            newOptionId = -1;
+        } else {
+            newOptionId = idOfLastOption - 1;
+        }
+
+        var newOptionDiv = EQ.optionsTemplate.format(questionNumber, currentOptionCount + 1, nextletter, '', '', newOptionId);
+
+        btnClicked$.parent().prev().append(newOptionDiv);
+
+        // hook up events for new option
+        var newOptionDiv$ = accordionGroup.find('#' + questionNumber.toString() + (currentOptionCount + 1).toString() + '-option');
+        newOptionDiv$.find('i.icon-trash').on('click', EQ.newQuDeleteOption);
+        
+    };
+
+    ns.getNewQuestionsFromDom = function() {
+
+        var options;
+        var questions = [];
+        var quizQuizWithQuestions;
+
+        _.each(EQ.newQuestions, function (questionId, idx) {
+
+            var accordionGroup = EQ.mainForm.find('div[class="accordion-group"][data-id="' + questionId + '"]');
+            var optionDivs = accordionGroup.find('div[id$="-option"]');
+            var questionNumber = parseInt(accordionGroup.attr('id').slice(0, 1));
+
+            options = null;
+            options = [];
+            quizQuizWithQuestions = [];
+
+            _.each(optionDivs, function (optionDiv, idx) {
+
+                var commonIdPrefix = '#' + questionNumber.toString() + (idx + 1).toString();
+
+                var opt = { Text: $(commonIdPrefix + '-optionInput').val() };
+                var questionWithOption = {
+                    Letter: $(commonIdPrefix + '-option').find('span:first-child').text(),
+                    CorrectAnswer: $(commonIdPrefix + '-option').find('input[type="checkbox"]').prop('checked'),
+                    Option: opt
+                };
+
+                options.push(questionWithOption);
+            });
+
+            var quizWithQuestion = {
+                idQuiz: EQ.quizId.val(),
+                QuestionNumber: questionNumber
+            };
+
+            quizQuizWithQuestions.push(quizWithQuestion);
+
+            questions.push({
+                Text: $('#' + questionNumber.toString() + '-questionText').val(),
+                QuestionWithOptions: options,
+                QuizWithQuestions: quizQuizWithQuestions
+            });
+        });
+        return questions;
     };
 
 })(EQ);

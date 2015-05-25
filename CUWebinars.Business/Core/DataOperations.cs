@@ -1,16 +1,12 @@
-﻿using System;
+﻿using BrockAllen.MembershipReboot;
+using CUWebinars.Business.Models;
+using Ninject.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Web;
-using System.Net;
-using System.Text;
-using BrockAllen.MembershipReboot;
-using CUWebinars.Business.Models;
-using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Business.Core
 {

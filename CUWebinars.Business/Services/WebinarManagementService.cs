@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using CUWebinars.Business.Core;
+﻿using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
-using System.Net;
 using CUWebinars.Business.Repository;
 using CUWebinars.NotificationSystem.Event;
 using FluentValidation;
 using Ninject.Extensions.Logging;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CUWebinars.Business.Services
 {
@@ -80,6 +79,26 @@ namespace CUWebinars.Business.Services
         {
             // NOTE: db.SaveChanges is not called in the following method. 
             _webinarRepository.AddAdditionalLocationsLookupPrice(additionalLocationsLookupPrice);
+        }
+
+        public bool AddQuestionsToQuiz(int selectedWebinar, IEnumerable<Question> newQuestions)
+        {
+            var quiz = _quizRepository.GetQuizByWebinarId(selectedWebinar);
+
+            // if there are any QuizUserAnswers for this quiz, this means someone has taken the quiz and no questions can be deleted.
+            if (quiz.QuizWithQuestions.SelectMany(q => q.QuizUserAnswers).Any())
+            {
+                return false;
+            }
+
+            foreach (var question in newQuestions)
+            {
+                _quizRepository.AddQuestion(question);
+
+                _quizRepository.SaveChanges();
+            }
+
+            return true;
         }
 
         public void AddWebinar(Webinar webinar)
@@ -243,14 +262,82 @@ namespace CUWebinars.Business.Services
             return true;
         }
 
-        public void UpdateQuestions(IEnumerable<EditedQuestion> editedQuestions, int quizId)
+        public bool UpdateQuestions(IEnumerable<EditedQuestion> editedQuestions, int quizId)
         {
             var quiz = _quizRepository.GetQuizByIdWithOptionsText(quizId);
-            
+
+            // if there are any QuizUserAnswers for this quiz, this means someone has taken the quiz and no questions can be deleted.
+            if (quiz.QuizWithQuestions.SelectMany(q => q.QuizUserAnswers).Any())
+            {
+                return false;
+            }
 
             foreach (var editedQuestion in editedQuestions)
             {
-                var question = quiz.QuizWithQuestions.Select(q => q.Question).SingleOrDefault(q => q.Id == editedQuestion.QuestionId);
+                var question = quiz.QuizWithQuestions.Select(q => q.Question).Single(q => q.Id == editedQuestion.QuestionId);
+
+                // get deleted options list
+                var deletedOptions = editedQuestion.EditedOptions.Where(e => e.EditType == EditType.Deleted);
+                // get added options list
+                var addedOptions = editedQuestion.EditedOptions.Where(e => e.EditType == EditType.Added);
+                // get edited options list
+                var editedOptions = editedQuestion.EditedOptions.Where(e => e.EditType == EditType.Edited);
+
+                // deal with option edits
+                foreach (var editableOption in editedOptions)
+                {
+                    if (editableOption.NewCorrectStatus != editableOption.OriginalCorrectStatus ||
+                        editableOption.NewOptionLetter != editableOption.OriginalOptionLetter ||
+                        editableOption.NewOptionText.Trim() != editableOption.OriginalOptionText.Trim())
+                    {
+                        var questionWithOption = question.QuestionWithOptions.SingleOrDefault(qwo => qwo.Id == editableOption.OptionId);
+                        if (ReferenceEquals(null, questionWithOption)) continue;
+
+                        if (editableOption.NewCorrectStatus != editableOption.OriginalCorrectStatus)
+                        {
+                            questionWithOption.CorrectAnswer = editableOption.NewCorrectStatus;
+                        }
+
+                        if (editableOption.NewOptionLetter != editableOption.OriginalOptionLetter)
+                        {
+                            questionWithOption.Letter = editableOption.NewOptionLetter;
+                        }
+
+                        if (editableOption.NewOptionText.Trim() != editableOption.OriginalOptionText.Trim())
+                        {
+                            questionWithOption.Option.Text = editableOption.NewOptionText.Trim();
+                        }
+                    }
+                }
+
+                // deal with option deletions
+                foreach (var deletedOption in deletedOptions)
+                {
+                    var questionWithOption = question.QuestionWithOptions.SingleOrDefault(q => q.Id == deletedOption.OptionId);
+
+                    if (!ReferenceEquals(null, questionWithOption))
+                    {
+                        question.QuestionWithOptions.Remove(questionWithOption);
+                    }
+
+                    _quizRepository.DeleteQuizWithOption(questionWithOption);
+                }
+
+                // deal with option additions
+                foreach (var addedOption in addedOptions)
+                {
+                    var newOption = new Option {Text = addedOption.NewOptionText};
+
+                    var questionWithOption = new QuestionWithOption
+                    {
+                        CorrectAnswer = addedOption.NewCorrectStatus,
+                        Option = newOption,
+                        idQuestion = question.Id,
+                        Letter = addedOption.NewOptionLetter,
+                    };
+
+                    question.QuestionWithOptions.Add(questionWithOption);
+                }
 
                 if (!ReferenceEquals(null, question))
                 {
@@ -271,6 +358,8 @@ namespace CUWebinars.Business.Services
                 }
             }
             _quizRepository.SaveChanges();
+
+            return true;
         }
 
         public IEnumerable<Webinar> GetByTopic(int topicId)
@@ -292,7 +381,6 @@ namespace CUWebinars.Business.Services
         {
             GetRegistrants_CP();
             return null;
-
         }
 
         public int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar)

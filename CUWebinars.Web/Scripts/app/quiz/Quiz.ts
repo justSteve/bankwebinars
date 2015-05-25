@@ -9,6 +9,8 @@ module QuizDomain {
     declare var _; // declare underscore
 
     export enum CompletionStatus { NotStarted, Incomlete, Complete };
+    export enum EditType { Added, Edited, Deleted };
+    
 
     export class Quiz {
         private status: CompletionStatus; // not relevant for current requirements. Useful if incomplete quiz can be resumed.
@@ -216,6 +218,7 @@ module QuizDomain {
     }
 
     export class EditedOption {
+        EditType: EditType; // not relevant for current requirements. Useful if incomplete quiz can be resumed.
         OptionId: number;
         OriginalOptionLetter: string; 
         NewOptionLetter: string;

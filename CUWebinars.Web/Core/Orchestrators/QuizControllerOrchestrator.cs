@@ -18,6 +18,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 {
     public class QuizControllerOrchestrator : IQuizControllerOrchestrator
     {
+        public const string UserHasAlreadyAchievedAResultForThisQuiz = "A user has already achieved a result for this quiz.";
         private readonly IWebinarManagementService _webinarManagementService;
         private readonly IOrderManagementService _orderManagementService;
         private readonly IMembershipService _membershipService;
@@ -78,10 +79,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             
             PersistResultsForQuizAttempt(userQuizEditModel, score);
 
-            var oi = _webinarManagementService.GetQuizScoreForUser(userQuizEditModel.QuizId, userQuizEditModel.Email,
-                userQuizEditModel.OrderId);
-
-            var hi = oi.Count;
+            //var quizScores = _webinarManagementService.GetQuizScoreForUser(userQuizEditModel.QuizId, userQuizEditModel.Email,
+            //    userQuizEditModel.OrderId);
 
             return result;
         }
@@ -89,17 +88,25 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void ProcessEditModel(EditQuizEditModel model)
         {
             var quizId = model.QuizId;
+            bool noUsersHaveAttemptedQuizYet;
 
             if (!ReferenceEquals(null, model.DeletedQuestions) && model.DeletedQuestions.Any())
             {
-                bool noUsersHaveAttemptedQuizYet = _webinarManagementService.RemoveQuestionsFromQuiz(model.DeletedQuestions, quizId);
+                 noUsersHaveAttemptedQuizYet = _webinarManagementService.RemoveQuestionsFromQuiz(model.DeletedQuestions, quizId);
+                if (!noUsersHaveAttemptedQuizYet) throw new InvalidOperationException(UserHasAlreadyAchievedAResultForThisQuiz);
             }
             
             if (!ReferenceEquals(null, model.EditedQuestions) && model.EditedQuestions.Any())
             {
-                _webinarManagementService.UpdateQuestions(model.EditedQuestions, quizId);
+                noUsersHaveAttemptedQuizYet = _webinarManagementService.UpdateQuestions(model.EditedQuestions, quizId);
+                if (!noUsersHaveAttemptedQuizYet) throw new InvalidOperationException(UserHasAlreadyAchievedAResultForThisQuiz);
             }
-
+            
+            if (!ReferenceEquals(null, model.NewQuestions) && model.NewQuestions.Any())
+            {
+                noUsersHaveAttemptedQuizYet = _webinarManagementService.AddQuestionsToQuiz(model.SelectedWebinar, model.NewQuestions);
+                if (!noUsersHaveAttemptedQuizYet) throw new InvalidOperationException(UserHasAlreadyAchievedAResultForThisQuiz);
+            }
 
         }
 
