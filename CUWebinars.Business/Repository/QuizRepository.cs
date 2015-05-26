@@ -122,7 +122,7 @@ namespace CUWebinars.Business.Repository
             get { return db as TTSWebinarsContext; } 
         }
 
-        public void CloneQuiz(Quiz quiz, int idWebinar)
+        public int CloneQuiz(Quiz quiz, int idWebinar)
         {
             var newQuiz = new Quiz
             {
@@ -163,6 +163,8 @@ namespace CUWebinars.Business.Repository
             items.Add(newQuiz);
 
             db.SaveChanges();
+
+            return newQuiz.Id;
         }
     }
 }
