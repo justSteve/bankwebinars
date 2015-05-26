@@ -18,5 +18,7 @@ namespace CUWebinars.Business.Repository
         void SetQuizUserAnswerAsModified(QuizUserAnswer quizUserAnswer);
         void DeleteQuizWithQuestion(QuizWithQuestion quizWithQuestion);
         void DeleteQuizWithOption(QuestionWithOption questionWithOption);
+
+        TTSWebinarsContext Context { get; }
     }
 }

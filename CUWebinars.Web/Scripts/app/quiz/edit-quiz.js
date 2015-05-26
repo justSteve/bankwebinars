@@ -14,6 +14,7 @@ $(function () {
     EQ.utilities = new Common.Utilities();
 
     EQ.getQuestions();
+
 });
 
 // self-invoking function for creating methods using Module pattern.
@@ -48,14 +49,6 @@ $(function () {
         EQ.addQuestionButton.on('click', EQ.addQuestionClicked);
     };
 
-    ns.wireUpOptions = function(jQuerySet) {
-
-        // this wires up the change handler for each radio button.
-        //_.each(jQuerySet, function(jQueryObj) {
-        //    $(jQueryObj).on('change', EQ.optionSelected);
-        //});
-    };
-
     ns.rePopulateInputs = function() {
 
         EQ.mainForm.fadeOut(300, function() {
@@ -79,10 +72,67 @@ $(function () {
 
     };
 
+    ns.populateClientObjectsEmptyList = function () {
+
+        EQ.quiz = new QuizDomain.Quiz();
+        EQ.quiz.setCompleted(QuizDomain.CompletionStatus.NotStarted);
+        EQ.quiz.setWebinarId(parseInt(EQ.webinarId.val()));
+        EQ.quiz.setQuizId(-1);
+
+        var questions = [];
+        
+        var question = new QuizDomain.EditableQuestion();
+        question.setText('');
+        question.setQuestionNumber(1);
+        question.setQuestionId(-1);
+
+        var options = [];
+
+        question.setOptions(options);
+        questions.push(question);
+
+        EQ.quiz.setQuestions(questions);
+        EQ.questionsList = questions;
+
+        return questions;
+    };
+
+    ns.setStateForAddQuizStory = function () {
+
+        EQ.populateClientObjectsEmptyList();
+
+        var optionsHtml = EQ.questionTextTemplate.format('1', '');
+
+        optionsHtml += EQ.optionsTemplate.format('1', '1', 'a', '', '', '-1');
+
+        EQ.newQuestionLastId -= 1;
+        var newQuestionHtml = EQ.questionTemplate.format(1, optionsHtml, EQ.newQuestionLastId, '1');
+
+        EQ.mainForm.append(newQuestionHtml);
+
+        var newQuestionPanel = $('#collapse1');
+
+        var newQid = '11';
+
+        var trashOption = newQuestionPanel.find('i#' + newQid + '-delete');
+        trashOption.on('click', EQ.newQuDeleteOption);
+
+        // hook up event handlers
+        newQuestionPanel.find('button').first().on('click', EQ.newQuDeleteQuestion);
+        newQuestionPanel.find('button').last().on('click', EQ.newQuAddOption);
+
+        EQ.newQuestions.push(EQ.newQuestionLastId);
+
+        EQ.mainForm.append('<div id="SubmitButtons" class="btn-toolbar"></div>');
+        EQ.submitButtons = $('#SubmitButtons');
+        EQ.addQuestionButton.appendTo(EQ.submitButtons);
+        EQ.editCloneSubmitButton.appendTo(EQ.submitButtons);
+    };
+
     ns.getQuestions = function () {
 
         var payload = {
-            webinarId: $('#WebinarId').val(),
+            webinarId: EQ.webinarId.val(),
         };
 
         $.ajax({
@@ -97,6 +147,12 @@ $(function () {
             }
         }).done(function (data, textStatus, jqXHR) {
             if (data.Result === 'Success') {
+
+                if (!data.Quiz) {
+                    EQ.setStateForAddQuizStory();
+                    return;
+                }
+
                 EQ.populateClientObjects(data.Quiz);
 
                 var questions = '';
@@ -115,7 +171,7 @@ $(function () {
                 });
 
                 EQ.accordionTemplate.format(questions);
-                EQ.mainForm.append(questions);
+                EQ.mainForm.append(questions); // accordion set as child of mainForm div in dom
                 EQ.mainForm.append('<div id="SubmitButtons" class="btn-toolbar"></div>');
                 EQ.submitButtons = $('#SubmitButtons');
                 EQ.addQuestionButton.appendTo(EQ.submitButtons);
@@ -602,6 +658,46 @@ $(function () {
         return questions;
     };
 
+    ns.postAddQuiz = function (btnClickedId, webinarId, questions) {
+
+        var payload = {
+            Questions: questions,
+            SelectedWebinar: webinarId
+        };
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: '/Quiz/AddQuiz',
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payload),
+            beforeSend: function () {
+                if (btnClickedId === 'EditCloneSubmitButtonTop') {
+                    EQ.editCloneSubmitButtonTop.append('&nbsp;<i id="editQuizSpinner" class="icon-spinner icon-spin"></i>');
+                } else {
+                    EQ.editCloneSubmitButton.append('&nbsp;<i id="editQuizSpinner" class="icon-spinner icon-spin"></i>');
+                }
+                $('#editQuizResult').remove();
+
+            }
+        }).done(function (data, textStatus, jqXHR) {
+            if (data.Result === 'Success') {
+
+                EQ.webinarId.val(data.WebinarId);
+                EQ.rePopulateInputs();
+
+            } else {
+
+            }
+
+            $('#editQuizSpinner').remove();
+        });
+
+
+    
+    };
+
     ns.submitEditedQuiz = function (e) {
 
         e.preventDefault();
@@ -612,12 +708,16 @@ $(function () {
 
         var webinarId = EQ.webinarId.val();
         var quizId = EQ.quizId.val();
-        //var questions = EQ.getQuestionsList();
+        
+        if (!quizId) {
+            var questions = EQ.getNewQuestionsFromDom();
+            EQ.postAddQuiz(btnClickedId, webinarId, questions);
+            return;
+        }
         
 
         var payload = {
             SelectedWebinar: webinarId,
-            //Questions: questions, <======= not necessary
             QuizId: quizId,
             DeletedQuestions: EQ.deletedQuestions,
             EditedQuestions: EQ.editedQuestions,
@@ -663,8 +763,14 @@ $(function () {
         e.preventDefault();
 
         var bottomAccordionBar = EQ.mainForm.find('div.accordion-group').last();
+        var questionNumber;
 
-        var questionNumber = 1 + parseInt(bottomAccordionBar.attr('id').slice(0, 1));
+        // edge case, questions being created after all had previously been deleted until there were no questions on the screen
+        if (bottomAccordionBar.length === 0) {
+            questionNumber = 1;
+        } else {
+            questionNumber = 1 + parseInt(bottomAccordionBar.attr('id').slice(0, 1));
+        }
         
         var optionsHtml = EQ.questionTextTemplate.format(questionNumber, '');
 
@@ -676,6 +782,10 @@ $(function () {
         EQ.submitButtons.before(newQuestionHtml);
 
         var newQuestionPanel = bottomAccordionBar.next();
+
+        if (newQuestionPanel.length === 0) {
+            newQuestionPanel = $('#collapse1');
+        }
 
         var newQid = questionNumber.toString() + '1';
         
@@ -822,7 +932,7 @@ $(function () {
             });
 
             var quizWithQuestion = {
-                idQuiz: EQ.quizId.val(),
+                idQuiz: EQ.quizId.val() || -1,
                 QuestionNumber: questionNumber
             };
 

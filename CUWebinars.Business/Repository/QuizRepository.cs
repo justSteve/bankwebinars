@@ -113,5 +113,10 @@ namespace CUWebinars.Business.Repository
         {
             db.Entry(questionWithOption).State = EntityState.Deleted;
         }
+
+        public TTSWebinarsContext Context
+        {
+            get { return db as TTSWebinarsContext; } 
+        }
     }
 }
