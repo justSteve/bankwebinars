@@ -45,6 +45,17 @@ namespace CUWebinars.Web.Controllers
             return this.ModelStateJson(ModelState);
         }
 
+        [System.Web.Mvc.HttpPost]
+        [HandleAjaxException]
+        public ActionResult CloneWebinar(int? webinarId, int? quizId)
+        {
+            if (webinarId.HasValue && quizId.HasValue)
+            {
+                _quizControllerOrchestrator.CloneQuizForWebinar(webinarId.Value, quizId.Value);
+            }
+
+            return View();
+        }
 
         [System.Web.Mvc.HttpPost]
         [HandleAjaxException]

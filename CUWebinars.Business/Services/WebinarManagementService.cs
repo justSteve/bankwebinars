@@ -154,7 +154,7 @@ namespace CUWebinars.Business.Services
             quiz = new Quiz
             {
                 idWebinar = selectedWebinar,
-                QuizCode =  RandomHelpers.GetUniqueCode(10)
+                QuizCode =  RandomHelpers.GetUniqueCode(6)
             };
             _quizRepository.AddQuiz(quiz);
 
@@ -164,6 +164,7 @@ namespace CUWebinars.Business.Services
             {
                 _quizRepository.AddQuestion(question);
 
+                // new quiz was given an id < 0 at the client.
                 question.QuizWithQuestions.Single(qwq => qwq.idQuiz < 0).idQuiz = quiz.Id;
             }
 
@@ -346,6 +347,12 @@ namespace CUWebinars.Business.Services
             _quizRepository.SaveChanges();
 
             return true;
+        }
+
+        public void CloneQuizForWebinar(Webinar webinar, int existingQuizId)
+        {
+            var quiz = _quizRepository.GetQuizByIdWithOptionsText(existingQuizId);
+            _quizRepository.CloneQuiz(quiz, webinar.idWebinar);
         }
 
         public IEnumerable<Webinar> GetByTopic(int topicId)

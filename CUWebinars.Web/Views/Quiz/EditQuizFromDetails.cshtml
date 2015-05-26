@@ -12,6 +12,7 @@
 
     @using (Html.BeginForm("EditQuiz", "Quiz", FormMethod.Post, new { id = "EditCloneQuizForm" }))
     {
+        <div><button id="CloneWebinar" class="btn btn-primary vertAlignTop">Clone Webinar</button>&nbsp;<input type="text" id="CloneInput" class="input input-xlarge" name="Clone_Input" value="" placeholder="Enter Webinar Id for new quiz" /></div>
         <div><button id="EditCloneSubmitButtonTop" class="btn btn-primary paddBottom20">Submit Edits</button></div>
         <div id="mainForm" class="span7 paddBottom20">
             

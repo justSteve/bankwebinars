@@ -1,4 +1,7 @@
-﻿using CUWebinars.Business.Models;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using CUWebinars.Business.Core.Helpers;
+using CUWebinars.Business.Models;
 using System.Data.Entity;
 using System.Linq;
 
@@ -117,6 +120,49 @@ namespace CUWebinars.Business.Repository
         public TTSWebinarsContext Context
         {
             get { return db as TTSWebinarsContext; } 
+        }
+
+        public void CloneQuiz(Quiz quiz, int idWebinar)
+        {
+            var newQuiz = new Quiz
+            {
+                idWebinar = idWebinar,
+                QuizWithQuestions = new List<QuizWithQuestion>(),
+                QuizCode = RandomHelpers.GetUniqueCode(6)
+            };
+
+            foreach (var quizWithQuestion in quiz.QuizWithQuestions)
+            {
+                IList<QuestionWithOption> questionWithOptions = new List<QuestionWithOption>();
+
+                foreach (var questionWithOption in quizWithQuestion.Question.QuestionWithOptions)
+                {
+                    questionWithOptions.Add(new QuestionWithOption
+                    {
+                        CorrectAnswer = questionWithOption.CorrectAnswer,
+                        Letter = questionWithOption.Letter,
+                        Option = new Option
+                        {
+                         Text = questionWithOption.Option.Text   
+                        }
+                    });
+                }
+
+                newQuiz.QuizWithQuestions.Add(new QuizWithQuestion
+                {
+                    QuestionNumber = quizWithQuestion.QuestionNumber,
+                    Question = new Question
+                    {
+                        idType = QuestionType.MultipleChoice,
+                        QuestionWithOptions = questionWithOptions,
+                        Text = quizWithQuestion.Question.Text
+                    }
+                });
+            }
+
+            items.Add(newQuiz);
+
+            db.SaveChanges();
         }
     }
 }

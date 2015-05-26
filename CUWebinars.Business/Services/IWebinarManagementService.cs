@@ -50,5 +50,6 @@ namespace CUWebinars.Business.Services
         IList<QuizScore> GetQuizScoreForUser(int quizId, string email, int orderId);
         bool RemoveQuestionsFromQuiz(IEnumerable<int> deletedQuestions, int quizId);
         bool UpdateQuestions(IEnumerable<EditedQuestion> editedQuestions, int quizId);
+        void CloneQuizForWebinar(Webinar webinar, int existingQuizId);
     }
 }

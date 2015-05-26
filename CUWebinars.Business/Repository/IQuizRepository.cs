@@ -20,5 +20,6 @@ namespace CUWebinars.Business.Repository
         void DeleteQuizWithOption(QuestionWithOption questionWithOption);
 
         TTSWebinarsContext Context { get; }
+        void CloneQuiz(Quiz quiz, int idWebinar);
     }
 }

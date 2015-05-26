@@ -41,12 +41,15 @@ $(function () {
         EQ.editCloneSubmitButton = $('#EditCloneSubmitButton');
         EQ.editCloneSubmitButtonTop = $('#EditCloneSubmitButtonTop');
         EQ.addQuestionButton = $('#AddQuestionButton');
+        EQ.cloneWebinarButton = $('#CloneWebinar');
+        EQ.cloneInput = $('#CloneInput');
     };
 
     ns.wireUpHandlers = function() {
         EQ.editCloneSubmitButton.on('click', EQ.submitEditedQuiz);
         EQ.editCloneSubmitButtonTop.on('click', EQ.submitEditedQuiz);
         EQ.addQuestionButton.on('click', EQ.addQuestionClicked);
+        //EQ.cloneWebinarButton.on('click'), EQ.cloneWebinar);
     };
 
     ns.rePopulateInputs = function() {
@@ -932,7 +935,7 @@ $(function () {
             });
 
             var quizWithQuestion = {
-                idQuiz: EQ.quizId.val() || -1,
+                idQuiz: EQ.quizId.val() || -1, // -1 is important as the fact that a value less than 0 is given for new Quizes is used at the server.
                 QuestionNumber: questionNumber
             };
 
@@ -946,5 +949,32 @@ $(function () {
         });
         return questions;
     };
+
+    ns.cloneWebinar = function(e) {
+        e.preventDefault();        
+
+
+            
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: url,
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payload),
+            beforeSend: function () {
+                
+            }
+        }).done(function (data, textStatus, jqXHR) {
+            if (data.Result === 'Success') {                
+
+            } else {
+                
+            }            
+        });
+
+
+    };
+	  
 
 })(EQ);

@@ -119,6 +119,16 @@ namespace CUWebinars.Web.Core.Orchestrators
             _webinarManagementService.AddQuiz(model.SelectedWebinar, model.Questions);
         }
 
+        public void CloneQuizForWebinar(int webinarId, int existingQuizId)
+        {
+            var webinar = _webinarManagementService.GetWebinarThin(webinarId);
+
+            if (!ReferenceEquals(null, webinar))
+            {
+                _webinarManagementService.CloneQuizForWebinar(webinar, existingQuizId);
+            }
+        }
+
         private void PersistResultsForQuizAttempt(UserQuizEditModel userQuizEditModel, int score)
         {
             Quiz quiz = _webinarManagementService.GetQuizByQuizId(userQuizEditModel.QuizId);
