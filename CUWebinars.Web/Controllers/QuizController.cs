@@ -24,15 +24,35 @@ namespace CUWebinars.Web.Controllers
             _appHelper = appHelper;
         }
 
-        public ActionResult EditQuizFromDetails(int? webinarId)
+        [System.Web.Mvc.HttpPost]
+        [HandleAjaxException]
+        public ActionResult AddQuiz(AddQuizEditModel model)
         {
-            if(webinarId.HasValue)
+            if (ModelState.IsValid)
             {
-                var model = _quizControllerOrchestrator.BuildUserQuizEditModel(webinarId.Value);
-                return View(model);
+                try
+                {
+                    _quizControllerOrchestrator.AddQuiz(model);
+
+                    return Json(new {Result = WebUiConstants.Success, WebinarId = model.SelectedWebinar });
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException(string.Format("EditQuiz | Session details: {0}", _appHelper.GetUserAuditInfo()), exception);
+                }
             }
 
-            ModelState.AddModelError(string.Empty, "No Webinar Id was passed to the Server.");
+            return this.ModelStateJson(ModelState);
+        }
+
+        [System.Web.Mvc.HttpPost]
+        [HandleAjaxException]
+        public ActionResult CloneWebinar(int? webinarId, int? quizId)
+        {
+            if (webinarId.HasValue && quizId.HasValue)
+            {
+                _quizControllerOrchestrator.CloneQuizForWebinar(webinarId.Value, quizId.Value);
+            }
 
             return View();
         }
@@ -47,7 +67,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     _quizControllerOrchestrator.ProcessEditModel(model);
 
-                    return Json(new {Result = WebUiConstants.Success});
+                    return Json(new { Result = WebUiConstants.Success });
                 }
                 catch (Exception exception)
                 {
@@ -56,6 +76,20 @@ namespace CUWebinars.Web.Controllers
             }
 
             return this.ModelStateJson(ModelState);
+        }
+
+
+        public ActionResult EditQuizFromDetails(int? webinarId)
+        {
+            if(webinarId.HasValue)
+            {
+                var model = _quizControllerOrchestrator.BuildUserQuizEditModel(webinarId.Value);
+                return View(model);
+            }
+
+            ModelState.AddModelError(string.Empty, "No Webinar Id was passed to the Server.");
+
+            return View();
         }
 
         public ActionResult Identify(string onDemandCode)
@@ -139,14 +173,26 @@ namespace CUWebinars.Web.Controllers
                 return Json(new { Result = WebUiConstants.Success, Quiz = model} );
             }
 
-            return View();
+            return Json(new { Result = WebUiConstants.Success }); // Quiz property will be null. Empty quiz created at client
         }
 
         [System.Web.Mvc.HttpPost]
         [HandleAjaxException]
         public ActionResult SubmitQuiz(UserQuizEditModel userQuizEditModel)
         {
-            return  _quizControllerOrchestrator.ScoreQuizAndPersistResults(userQuizEditModel);
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    return _quizControllerOrchestrator.ScoreQuizAndPersistResults(userQuizEditModel);
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException(string.Format("SubmitQuiz | Session details: {0}", _appHelper.GetUserAuditInfo()), exception);
+                }
+            }
+
+            return Json(new { Result = WebUiConstants.Fail }); // todo: error message for user. Not admin user, but quiz-taker
         }
     }
 }

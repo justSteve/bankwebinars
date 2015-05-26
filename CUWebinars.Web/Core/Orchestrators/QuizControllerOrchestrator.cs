@@ -38,12 +38,16 @@ namespace CUWebinars.Web.Core.Orchestrators
         public UserQuizEditModel BuildUserQuizEditModel(int idWebinar)
         {
             var quiz = _webinarManagementService.GetQuizByWebinarId(idWebinar);
+
+            if (ReferenceEquals(null, quiz)) return null;
+
             return GetUserQuizEditModelFromQuiz(quiz);
         }
         
         public UserQuizEditModel BuildUserQuizEditModel(string quizCode, int orderId)
         {
             var quiz = _webinarManagementService.GetQuizByCode(quizCode);
+            if (ReferenceEquals(null, quiz)) return null;
             var model = GetUserQuizEditModelFromQuiz(quiz);
             model.OrderId = orderId;
 
@@ -108,6 +112,21 @@ namespace CUWebinars.Web.Core.Orchestrators
                 if (!noUsersHaveAttemptedQuizYet) throw new InvalidOperationException(UserHasAlreadyAchievedAResultForThisQuiz);
             }
 
+        }
+
+        public void AddQuiz(AddQuizEditModel model)
+        {
+            _webinarManagementService.AddQuiz(model.SelectedWebinar, model.Questions);
+        }
+
+        public void CloneQuizForWebinar(int webinarId, int existingQuizId)
+        {
+            var webinar = _webinarManagementService.GetWebinarThin(webinarId);
+
+            if (!ReferenceEquals(null, webinar))
+            {
+                _webinarManagementService.CloneQuizForWebinar(webinar, existingQuizId);
+            }
         }
 
         private void PersistResultsForQuizAttempt(UserQuizEditModel userQuizEditModel, int score)

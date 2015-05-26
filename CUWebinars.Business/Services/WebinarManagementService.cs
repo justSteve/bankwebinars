@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Core;
+﻿using System.Diagnostics;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
@@ -9,6 +10,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using RazorEngine.Templating;
 
 namespace CUWebinars.Business.Services
 {
@@ -144,45 +146,30 @@ namespace CUWebinars.Business.Services
 
         public void AddQuiz(int selectedWebinar, IEnumerable<Question> questions)
         {
-            var quiz = new Quiz
+            var quiz = _quizRepository.GetQuizByWebinarId(selectedWebinar);
+
+            if (!ReferenceEquals(null, quiz))
+                throw new InvalidOperationException(string.Format("Webinar with id {0} already has a quiz.", selectedWebinar));
+
+            quiz = new Quiz
             {
                 idWebinar = selectedWebinar,
-                QuizCode =  RandomHelpers.GetUniqueCode(10)
+                QuizCode =  RandomHelpers.GetUniqueCode(6)
             };
             _quizRepository.AddQuiz(quiz);
 
             _quizRepository.SaveChanges();
 
-
-            int nr = 1;
             foreach (var question in questions)
             {
-                //foreach (var questionWithOption in question.QuestionWithOptions)
-                //{
-                //    _quizRepository.AddQuestionWithOption(questionWithOption);
-                    
-                //}
-
                 _quizRepository.AddQuestion(question);
 
-                _quizRepository.SaveChanges();
-
-
-                var quizWithQuestion = new QuizWithQuestion
-                {
-                    idQuiz = quiz.Id,
-                    Quiz = quiz,
-                    Question =question,
-                    //idQuestion = question.Id,
-                    QuestionNumber = nr++
-                };
-                
-                _quizRepository.AddQuizWithQuestion(quizWithQuestion);
-
-                quiz.QuizWithQuestions.Add(quizWithQuestion);
-                
-                _quizRepository.SaveChanges();
+                // new quiz was given an id < 0 at the client.
+                question.QuizWithQuestions.Single(qwq => qwq.idQuiz < 0).idQuiz = quiz.Id;
             }
+
+            _quizRepository.SaveChanges();
+
         }
 
         public Quiz GetQuizByCode(string quizCode)
@@ -360,6 +347,12 @@ namespace CUWebinars.Business.Services
             _quizRepository.SaveChanges();
 
             return true;
+        }
+
+        public void CloneQuizForWebinar(Webinar webinar, int existingQuizId)
+        {
+            var quiz = _quizRepository.GetQuizByIdWithOptionsText(existingQuizId);
+            _quizRepository.CloneQuiz(quiz, webinar.idWebinar);
         }
 
         public IEnumerable<Webinar> GetByTopic(int topicId)
