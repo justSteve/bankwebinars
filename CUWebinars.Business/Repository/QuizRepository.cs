@@ -166,5 +166,18 @@ namespace CUWebinars.Business.Repository
 
             return newQuiz.Id;
         }
+
+        public Quiz GetQuizFromOrder(int idOrder)
+        {
+            var context = (TTSWebinarsContext) db;
+
+            var orderRow = context.OrderRows.Single(orow => orow.idOrder == idOrder);
+
+            var webinar = context.Webinars.Single(w => w.idWebinar == orderRow.idWebinar);
+
+            var quiz = items.SingleOrDefault(q => q.idWebinar == webinar.idWebinar);
+
+            return quiz;
+        }
     }
 }

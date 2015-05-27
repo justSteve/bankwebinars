@@ -184,7 +184,8 @@ namespace CUWebinars.Web.App_Start
                 ));
 
             bundles.Add(new StyleBundle("~/Content/webinar-ops").Include(
-                "~/Content/webinar.css"
+                "~/Content/webinar.css",
+                "~/Scripts/cleditor/jquery.cleditor.css"
                 ));
 
             bundles.Add(new StyleBundle("~/Content/add-quiz").Include(
@@ -238,6 +239,11 @@ namespace CUWebinars.Web.App_Start
 
             bundles.Add(new StyleBundle("~/Content/quiz-general").Include(
                 "~/Content/do-quiz.css")
+                );
+
+
+            bundles.Add(new StyleBundle("~/Content/rich-editor").Include(
+                "~/Scripts/cleditor/jquery.cleditor.css")
                 );
 
             bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(

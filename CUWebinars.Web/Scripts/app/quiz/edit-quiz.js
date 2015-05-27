@@ -402,9 +402,10 @@ $(function () {
         // If option is one that was Added in this editing session, just remove it from the 
         // question's EditedOption's list.
         if (optionId < 0) {
-            editedQuestion.EditedOptions = _.without(editedQuestion.EditedOptions, _.find(editedQuestion.EditedOptions, function(editedOption, idx) {
+            var qInList = _.find(editedQuestion.EditedOptions, function (editedOption, idx) {
                 return editedOption.OptionId === optionId;
-            }));
+            });
+            editedQuestion.EditedOptions = _.without(editedQuestion.EditedOptions, qInList);
         }
 
         editedOption.EditType = QuizDomain.EditType.Deleted;

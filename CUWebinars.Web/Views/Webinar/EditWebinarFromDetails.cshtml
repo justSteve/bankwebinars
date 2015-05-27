@@ -1,7 +1,7 @@
 ﻿@model WebinarEditModel
 
 <div class="container">
-
+@Styles.Render("~/Content/webinar-ops")
 
     <div id="webinarContent" class="row">
         <div id="webinarWrapper" class=" span3 pull-right">
@@ -37,6 +37,3 @@
 @section scripts{
     @Scripts.Render("~/bundles/manage-webinar-from-details")
 }
-
-@Styles.Render("~/Content/webinar-ops")
-<link rel="stylesheet" type="text/css" href="/Scripts/cleditor/jquery.cleditor.css" />
