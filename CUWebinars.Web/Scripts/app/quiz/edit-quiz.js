@@ -49,7 +49,7 @@ $(function () {
         EQ.editCloneSubmitButton.on('click', EQ.submitEditedQuiz);
         EQ.editCloneSubmitButtonTop.on('click', EQ.submitEditedQuiz);
         EQ.addQuestionButton.on('click', EQ.addQuestionClicked);
-        //EQ.cloneWebinarButton.on('click'), EQ.cloneWebinar);
+        EQ.cloneWebinarButton.on('click', EQ.cloneWebinar);
     };
 
     ns.rePopulateInputs = function() {
@@ -402,9 +402,10 @@ $(function () {
         // If option is one that was Added in this editing session, just remove it from the 
         // question's EditedOption's list.
         if (optionId < 0) {
-            editedQuestion.EditedOptions = _.without(editedQuestion.EditedOptions, _.find(editedQuestion.EditedOptions, function(editedOption, idx) {
+            var qInList = _.find(editedQuestion.EditedOptions, function (editedOption, idx) {
                 return editedOption.OptionId === optionId;
-            }));
+            });
+            editedQuestion.EditedOptions = _.without(editedQuestion.EditedOptions, qInList);
         }
 
         editedOption.EditType = QuizDomain.EditType.Deleted;
@@ -951,22 +952,31 @@ $(function () {
     };
 
     ns.cloneWebinar = function(e) {
-        e.preventDefault();        
+        e.preventDefault();
 
-
+        var payload = {
+            webinarId: EQ.cloneInput.val(),
+            quizId: EQ.quizId.val()
+        };
             
         $.ajax({
             type: 'POST',
             contentType: constants.JsonContentType,
             cache: false,
-            url: url,
+            url: '/Quiz/CloneWebinar',
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
             beforeSend: function () {
                 
             }
         }).done(function (data, textStatus, jqXHR) {
-            if (data.Result === 'Success') {                
+            if (data.Result === 'Success') {
+                EQ.quizId.val(data.QuizId);
+                $('#webinarIdSpan').text(payload.webinarId);
+                EQ.webinarId.val(payload.webinarId);
+                EQ.cloneInput.val('');
+
+                EQ.rePopulateInputs();
 
             } else {
                 

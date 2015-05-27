@@ -9,6 +9,7 @@
 
 <div class="container" id="quizContainer">
     <div class="legendImitator">Edit Quiz</div>
+    <div class="paddBottom20">Currently editing quiz for Webinar <span id="webinarIdSpan" class="text text-success">@Model.WebinarId</span></div>
 
     @using (Html.BeginForm("EditQuiz", "Quiz", FormMethod.Post, new { id = "EditCloneQuizForm" }))
     {

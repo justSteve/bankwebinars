@@ -261,69 +261,74 @@ namespace CUWebinars.Business.Services
 
             foreach (var editedQuestion in editedQuestions)
             {
-                var question = quiz.QuizWithQuestions.Select(q => q.Question).Single(q => q.Id == editedQuestion.QuestionId);
+                var question = quiz.QuizWithQuestions.Single(q => q.Id == editedQuestion.QuestionId).Question;
 
-                // get deleted options list
-                var deletedOptions = editedQuestion.EditedOptions.Where(e => e.EditType == EditType.Deleted);
-                // get added options list
-                var addedOptions = editedQuestion.EditedOptions.Where(e => e.EditType == EditType.Added);
-                // get edited options list
-                var editedOptions = editedQuestion.EditedOptions.Where(e => e.EditType == EditType.Edited);
-
-                // deal with option edits
-                foreach (var editableOption in editedOptions)
+                if (editedQuestion.EditedOptions != null)
                 {
-                    if (editableOption.NewCorrectStatus != editableOption.OriginalCorrectStatus ||
-                        editableOption.NewOptionLetter != editableOption.OriginalOptionLetter ||
-                        editableOption.NewOptionText.Trim() != editableOption.OriginalOptionText.Trim())
+                    // get deleted options list
+                    var deletedOptions = editedQuestion.EditedOptions.Where(e => e.EditType == EditType.Deleted);
+                    // get added options list
+                    var addedOptions = editedQuestion.EditedOptions.Where(e => e.EditType == EditType.Added);
+                    // get edited options list
+                    var editedOptions = editedQuestion.EditedOptions.Where(e => e.EditType == EditType.Edited);
+
+                    // deal with option edits
+                    foreach (var editableOption in editedOptions)
                     {
-                        var questionWithOption = question.QuestionWithOptions.SingleOrDefault(qwo => qwo.Id == editableOption.OptionId);
-                        if (ReferenceEquals(null, questionWithOption)) continue;
-
-                        if (editableOption.NewCorrectStatus != editableOption.OriginalCorrectStatus)
+                        if (editableOption.NewCorrectStatus != editableOption.OriginalCorrectStatus ||
+                            editableOption.NewOptionLetter != editableOption.OriginalOptionLetter ||
+                            editableOption.NewOptionText.Trim() != editableOption.OriginalOptionText.Trim())
                         {
-                            questionWithOption.CorrectAnswer = editableOption.NewCorrectStatus;
-                        }
+                            var questionWithOption =
+                                question.QuestionWithOptions.SingleOrDefault(qwo => qwo.Id == editableOption.OptionId);
+                            if (ReferenceEquals(null, questionWithOption)) continue;
 
-                        if (editableOption.NewOptionLetter != editableOption.OriginalOptionLetter)
-                        {
-                            questionWithOption.Letter = editableOption.NewOptionLetter;
-                        }
+                            if (editableOption.NewCorrectStatus != editableOption.OriginalCorrectStatus)
+                            {
+                                questionWithOption.CorrectAnswer = editableOption.NewCorrectStatus;
+                            }
 
-                        if (editableOption.NewOptionText.Trim() != editableOption.OriginalOptionText.Trim())
-                        {
-                            questionWithOption.Option.Text = editableOption.NewOptionText.Trim();
+                            if (editableOption.NewOptionLetter != editableOption.OriginalOptionLetter)
+                            {
+                                questionWithOption.Letter = editableOption.NewOptionLetter;
+                            }
+
+                            if (editableOption.NewOptionText.Trim() != editableOption.OriginalOptionText.Trim())
+                            {
+                                questionWithOption.Option.Text = editableOption.NewOptionText.Trim();
+                            }
                         }
                     }
-                }
 
-                // deal with option deletions
-                foreach (var deletedOption in deletedOptions)
-                {
-                    var questionWithOption = question.QuestionWithOptions.SingleOrDefault(q => q.Id == deletedOption.OptionId);
-
-                    if (!ReferenceEquals(null, questionWithOption))
+                    // deal with option deletions
+                    foreach (var deletedOption in deletedOptions)
                     {
-                        question.QuestionWithOptions.Remove(questionWithOption);
+                        var questionWithOption =
+                            question.QuestionWithOptions.SingleOrDefault(q => q.Id == deletedOption.OptionId);
+
+                        if (!ReferenceEquals(null, questionWithOption))
+                        {
+                            question.QuestionWithOptions.Remove(questionWithOption);
+                        }
+
+                        _quizRepository.DeleteQuizWithOption(questionWithOption);
                     }
 
-                    _quizRepository.DeleteQuizWithOption(questionWithOption);
-                }
-
-                // deal with option additions
-                foreach (var addedOption in addedOptions)
-                {
-                    var newOption = new Option {Text = addedOption.NewOptionText};
-
-                    var questionWithOption = new QuestionWithOption
+                    // deal with option additions
+                    foreach (var addedOption in addedOptions)
                     {
-                        CorrectAnswer = addedOption.NewCorrectStatus,
-                        Option = newOption,
-                        idQuestion = question.Id,
-                        Letter = addedOption.NewOptionLetter,
-                    };
+                        var newOption = new Option {Text = addedOption.NewOptionText};
 
-                    question.QuestionWithOptions.Add(questionWithOption);
+                        var questionWithOption = new QuestionWithOption
+                        {
+                            CorrectAnswer = addedOption.NewCorrectStatus,
+                            Option = newOption,
+                            idQuestion = question.Id,
+                            Letter = addedOption.NewOptionLetter,
+                        };
+
+                        question.QuestionWithOptions.Add(questionWithOption);
+                    }
                 }
 
                 if (!ReferenceEquals(null, question))
@@ -349,10 +354,10 @@ namespace CUWebinars.Business.Services
             return true;
         }
 
-        public void CloneQuizForWebinar(Webinar webinar, int existingQuizId)
+        public int CloneQuizForWebinar(Webinar webinar, int existingQuizId)
         {
             var quiz = _quizRepository.GetQuizByIdWithOptionsText(existingQuizId);
-            _quizRepository.CloneQuiz(quiz, webinar.idWebinar);
+            return _quizRepository.CloneQuiz(quiz, webinar.idWebinar);
         }
 
         public IEnumerable<Webinar> GetByTopic(int topicId)

@@ -51,7 +51,8 @@ namespace CUWebinars.Web.Controllers
         {
             if (webinarId.HasValue && quizId.HasValue)
             {
-                _quizControllerOrchestrator.CloneQuizForWebinar(webinarId.Value, quizId.Value);
+                var newQuizId = _quizControllerOrchestrator.CloneQuizForWebinar(webinarId.Value, quizId.Value);
+                return Json(new { Result = WebUiConstants.Success, QuizId = newQuizId });
             }
 
             return View();

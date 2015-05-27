@@ -119,14 +119,16 @@ namespace CUWebinars.Web.Core.Orchestrators
             _webinarManagementService.AddQuiz(model.SelectedWebinar, model.Questions);
         }
 
-        public void CloneQuizForWebinar(int webinarId, int existingQuizId)
+        public int? CloneQuizForWebinar(int webinarId, int existingQuizId)
         {
             var webinar = _webinarManagementService.GetWebinarThin(webinarId);
 
             if (!ReferenceEquals(null, webinar))
             {
-                _webinarManagementService.CloneQuizForWebinar(webinar, existingQuizId);
+                return _webinarManagementService.CloneQuizForWebinar(webinar, existingQuizId);
             }
+
+            return null;
         }
 
         private void PersistResultsForQuizAttempt(UserQuizEditModel userQuizEditModel, int score)
@@ -279,10 +281,10 @@ namespace CUWebinars.Web.Core.Orchestrators
                         quizQuestion.Solutions.Add(questionWithOptions.Letter[0]);
                 };
 
-                quizQuestion.QuestionNumber =
-                        question.QuizWithQuestions.First(q => q.idQuestion == question.Id).QuestionNumber;
+                var quizWithQuestion = question.QuizWithQuestions.First(q => q.idQuestion == question.Id);
+                quizQuestion.QuestionNumber = quizWithQuestion.QuestionNumber;
                 quizQuestion.QuestionText = question.Text;
-                quizQuestion.QuestionId = question.Id;
+                quizQuestion.QuestionId = quizWithQuestion.Id;
                 quizQuestions.Add(quizQuestion);
             }
 

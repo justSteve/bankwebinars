@@ -122,7 +122,7 @@ namespace CUWebinars.Business.Repository
             get { return db as TTSWebinarsContext; } 
         }
 
-        public void CloneQuiz(Quiz quiz, int idWebinar)
+        public int CloneQuiz(Quiz quiz, int idWebinar)
         {
             var newQuiz = new Quiz
             {
@@ -163,6 +163,21 @@ namespace CUWebinars.Business.Repository
             items.Add(newQuiz);
 
             db.SaveChanges();
+
+            return newQuiz.Id;
+        }
+
+        public Quiz GetQuizFromOrder(int idOrder)
+        {
+            var context = (TTSWebinarsContext) db;
+
+            var orderRow = context.OrderRows.Single(orow => orow.idOrder == idOrder);
+
+            var webinar = context.Webinars.Single(w => w.idWebinar == orderRow.idWebinar);
+
+            var quiz = items.SingleOrDefault(q => q.idWebinar == webinar.idWebinar);
+
+            return quiz;
         }
     }
 }
