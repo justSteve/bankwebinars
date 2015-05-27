@@ -24,8 +24,8 @@ namespace CUWebinars.Web.Core.Orchestrators
         IEnumerable<Webinar> SearchWebinars(string lastName);
         //string SetEventToRecorded(int webinarId);
         void UpdateWebinar(Webinar webinar);
-        string UpdateWebinarFiles(WebinarFilesEditModel webinarFilesEditModel, out string message);
+        bool UpdateWebinarFiles(WebinarFilesEditModel webinarFilesEditModel, out string message);
         void UpdateWebinarFromViewInput(WebinarEditModel webinarEditModel);
-        string UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel, out string message);
+        bool UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel, out string message);
     }
 }

@@ -70,7 +70,7 @@
                                     </div>
                                     <div id="fileDescDiv_@file.idWebinarFile">
                                         <span class="control-label">Label</span>
-                                        <input type="text" class="form-control" name="WebinarFiles[@idx].fileDesc" value="@file.fileDesc" /><br />
+                                        <input type="text" class="form-control" name="WebinarFiles[@idx].fileDesc" value="@file.fileDesc.TrimEnd()" /><br />
                                     </div>
                                 </div>
                                 idx++;

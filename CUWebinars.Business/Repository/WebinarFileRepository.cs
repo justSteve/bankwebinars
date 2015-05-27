@@ -20,7 +20,6 @@ namespace CUWebinars.Business.Repository
 
         public void AddRange(IEnumerable<WebinarFile> webinarFiles)
         {
-
             items.AddRange(webinarFiles);
             db.SaveChanges();
         }
@@ -31,13 +30,23 @@ namespace CUWebinars.Business.Repository
             {
                 CheckDisposed();
 
-                var entry = db.Entry(webinarFile);
+                var file = items.SingleOrDefault(wf => wf.idWebinarFile == webinarFile.idWebinarFile);
 
-                if (entry.State == EntityState.Detached)
+                if (ReferenceEquals(null, file))
                 {
-                    items.Attach(webinarFile);
-                    entry.State = EntityState.Deleted;
+                    var entry = db.Entry(webinarFile);
+
+                    if (entry.State == EntityState.Detached)
+                    {
+                        items.Attach(webinarFile);
+                        entry.State = EntityState.Deleted;
+                    }
                 }
+                else
+                {
+                    items.Remove(file);
+                }
+
             }
             db.SaveChanges();
         }
@@ -48,12 +57,23 @@ namespace CUWebinars.Business.Repository
             {
                 CheckDisposed();
 
-                var entry = db.Entry(webinarFile);
+                var file = items.SingleOrDefault(wf => wf.idWebinarFile == webinarFile.idWebinarFile);
 
-                if (entry.State == EntityState.Detached)
+                if (ReferenceEquals(null, file))
                 {
-                    items.Attach(webinarFile);
-                    entry.State = EntityState.Modified;
+                    var entry = db.Entry(webinarFile);
+
+                    if (entry.State == EntityState.Detached)
+                    {
+                        items.Attach(webinarFile);
+                        entry.State = EntityState.Modified;
+                    }
+                }
+                else
+                {
+                    file.fileDesc = webinarFile.fileDesc;
+                    file.fileLocation= webinarFile.fileLocation;
+                    db.Entry(file).State = EntityState.Modified;
                 }
             }
 
