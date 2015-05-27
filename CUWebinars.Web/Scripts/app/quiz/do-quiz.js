@@ -1,5 +1,7 @@
 ﻿/// <reference path="../Utilities/formProcessor.js" />
 /// <reference path="../Constants.js" />
+/// <reference path="../utilities.js" />
+/// <reference path="Quiz.js" />
 
 var DOQUIZ = {}; // object to holds all references and methods.
 

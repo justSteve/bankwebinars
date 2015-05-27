@@ -1326,26 +1326,24 @@ namespace CUWebinars.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult UpdateWebinarFiles(WebinarFilesEditModel webinarFilesEditModel)
         {
-            //if (ModelState.IsValid)
-            //{
             try
             {
                 string message;
-                var setWebinarFiles = _webinarControllerOrchestrator.UpdateWebinarFiles(webinarFilesEditModel,
-                    out message);
-                if (setWebinarFiles == WebUiConstants.Success)
+                if (_webinarControllerOrchestrator.UpdateWebinarFiles(webinarFilesEditModel, out message))
+                {
                     return Json(new { Result = WebUiConstants.Success });
+                }
 
-                return Json(new { Result = setWebinarFiles });
-                //return Json(new { Result = message });
+                return Json(new { Result = WebUiConstants.Fail, Message = message });
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                ModelState.AddModelError(string.Empty,
+                ModelState.AddModelError(
+                    string.Empty,
                     "There was a problem with the update operation. Please consult with the system administrator to resolve the issue."
                     );
             }
-            //}
+            
             return this.ModelStateJson(ModelState);
         }
 
@@ -1413,17 +1411,16 @@ namespace CUWebinars.Web.Controllers
                 try
                 {
                     string message;
-                    var setRecordingURL = _webinarControllerOrchestrator.UpdateWebinarRecording(
-                        webinarDetailsViewModel, out message);
-                    if (setRecordingURL != "OK")
-                        return Json(new { Result = WebUiConstants.Success });
+                    if (_webinarControllerOrchestrator.UpdateWebinarRecording(webinarDetailsViewModel, out message))
+                    {
+                        return Json(new {Result = WebUiConstants.Success});
+                    }
 
-                    return Json(new { Result = message });
+                    return Json(new { Result = WebUiConstants.Fail, Message = message });
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty,
-                        "Invalid recording location requested: " + ex.Message);
+                    ModelState.AddModelError(string.Empty, "Invalid recording location requested: " + ex.Message);
                 }
             }
             return this.ModelStateJson(ModelState);

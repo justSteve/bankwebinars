@@ -9,11 +9,12 @@
 
 <div class="container" id="quizContainer">
     <div class="legendImitator">Edit Quiz</div>
-    <div class="paddBottom20">Currently editing quiz for Webinar <span id="webinarIdSpan" class="text text-success">@Model.WebinarId</span></div>
+    <div class="paddBottom20">Currently editing quiz for Webinar <span id="webinarIdSpan" class="text text-success">@Model.WebinarId</span>. <small class="text text-info">Note: not necessarily the same webinar as the id in the Address Bar of the browser</small></div>
 
     @using (Html.BeginForm("EditQuiz", "Quiz", FormMethod.Post, new { id = "EditCloneQuizForm" }))
     {
-        <div><button id="CloneWebinar" class="btn btn-primary vertAlignTop">Clone Webinar</button>&nbsp;<input type="text" id="CloneInput" class="input input-xlarge" name="Clone_Input" value="" placeholder="Enter Webinar Id for new quiz" /></div>
+        <div><button id="EditWebinar" class="btn btn-default vertAlignTop">Edit Webinar</button>&nbsp;<input type="text" id="EditInput" class="input input-xlarge" name="Edit_Input" value="" placeholder="Enter Webinar Id for quiz to be edited" /></div>
+        <div><button id="CloneWebinar" class="btn btn-default vertAlignTop">Clone Webinar</button>&nbsp;<input type="text" id="CloneInput" class="input input-xlarge" name="Clone_Input" value="" placeholder="Enter Webinar Id for new quiz" /></div>
         <div><button id="EditCloneSubmitButtonTop" class="btn btn-primary paddBottom20">Submit Edits</button></div>
         <div id="mainForm" class="span7 paddBottom20">
             

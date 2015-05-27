@@ -1,14 +1,5 @@
 ﻿var WR = {}; // create namespace to prevent collisions. WR is 'Update Webinar Files'
 
-var addFilesButton,
-    recordingFilesSubmitButton,
-    manageFilesWrapper,
-    breakSuffix,
-    deleteItem,
-    locationsSpanPrefix,
-    numberOfWebinarRecording;
-
-
 $(function () {
     WR.primeDomVariables();
     WR.wireUpHandlersForAddFilesModal();
@@ -24,13 +15,12 @@ $(function () {
     updateWebinarRecordingModalButton.on('click', function (e) {
 
         e.preventDefault();
+
         clearValidationSummary();
+
         $('#result').remove();
+
         updateWebinarRecordingModal.modal(modalFormOptionsOnPageLoad);
-
-    });
-
-    updateWebinarRecordingModal.on('shown', function () {
 
     });
 });
@@ -38,7 +28,7 @@ $(function () {
 (function (ns) {
 
     ns.deleteItem = function (event) {
-        numberOfWebinarRecording--;
+        WR.numberOfWebinarFiles--;
         var trashClicked = event.currentTarget;
         //var trashClickedId = trashClicked.id;
         //var idx = trashClickedId.substring(0, trashClickedId.indexOf('-'));
@@ -59,40 +49,40 @@ $(function () {
     };
 
     ns.primeDomVariables = function () {
-        addFilesButton = $('#addFilesButton');
-        manageFilesWrapper = $('#manageFilesWrapper');
+        WR.addFilesButton = $('#addFilesButton');
+        WR.manageRecordingsWrapper = $('#manageRecordingsWrapper');
     };
 
     ns.wireUpHandlersForAddFilesModal = function () {
 
         var newFileId;
-        numberOfWebinarRecording = $('#manageFilesWrapper div[id^="fileDetails_"]').length;
-        newFileId = numberOfWebinarRecording++;
+        WR.numberOfWebinarFiles = WR.manageRecordingsWrapper.find('div[id^="fileDetails_"]').length;
+        newFileId = WR.numberOfWebinarFiles++;
 
-        if (numberOfWebinarRecording < 1) {
+        if (WR.numberOfWebinarFiles < 1) {
             //$('#sumbitAdditionalLocationsButton').off('click');
 
         } else {
 
-            var trashCans = manageFilesWrapper.find('i[id$="-Filedetails-delete"]');
+            var trashCans = WR.manageRecordingsWrapper.find('i[id$="-Filedetails-delete"]');
 
             $.each(trashCans, function (idx, i) {
                 $(i).on('click', ns.deleteItem);
             });
         }
 
-        $('#addFilesButton').on('click', function (e) {
+        //WR.addFilesButton.on('click', function (e) {
 
-            e.preventDefault();
-            // Add 'N' suffix so at server we can tell that it is a new file. The identifier is just for client-side purposes and for the form submission.
-            $(getNewFileDetailsFragment(newFileId + 'N')).hide().appendTo(manageFilesWrapper).fadeIn(500, function (e) {
-                $(this).find('i').on('click', ns.deleteItem);
-            });
+        //    e.preventDefault();
+        //    // Add 'N' suffix so at server we can tell that it is a new file. The identifier is just for client-side purposes and for the form submission.
+        //    $(getNewFileDetailsFragment(newFileId + 'N')).hide().appendTo(manageRecordingsWrapper).fadeIn(500, function (e) {
+        //        $(this).find('i').on('click', ns.deleteItem);
+        //    });
 
-            numberOfWebinarRecording++;
-            newFileId++;
+        //    WR.numberOfWebinarFiles++;
+        //    newFileId++;
 
-        });
+        //});
 
         var updateWebinarRecordingButton = $('#updateWebinarRecordingButton');
 
@@ -128,8 +118,10 @@ $(function () {
                 if (data.result === 'Success') {
                     var label = $('<div id="result" class="label label-success pull-left block buttonAdjacentLabel">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Files Updated</div>');
                     label.hide().insertAfter(updateWebinarRecordingButton).fadeIn(500);
+                } else if (data['Result'] === 'Fail') {
+                    var label = $('<div id="result" class="label label-important pull-left block buttonAdjacentLabel">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;' + data['Message'] + '</div>');
+                    label.hide().insertAfter(updateWebinarRecordingButton).fadeIn(500);
                 } else {
-
                     formProcessor.lightUpValidationSummary('updateFilesValSummary', data);
                 }
             }).always(function (data) {

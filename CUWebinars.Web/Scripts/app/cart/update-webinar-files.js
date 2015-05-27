@@ -1,14 +1,6 @@
 ﻿var UWF = {}; // create namespace to prevent collisions. UWF is 'Update Webinar Files'
 
-var addFilesButton,
-    webinarFilesSubmitButton,
-    manageFilesWrapper,
-    breakSuffix,
-    deleteItem,
-    locationsSpanPrefix,
-    numberOfWebinarFiles;
-
-
+// document.ready function
 $(function() {
     UWF.primeDomVariables();
     UWF.wireUpHandlersForAddFilesModal();
@@ -27,17 +19,17 @@ $(function() {
         $('#result').remove();
         updateWebinarHandoutsModal.modal(modalFormOptionsOnPageLoad);
 
-});
-
-    updateWebinarHandoutsModal.on('shown', function() {
-        
     });
 });
 
+// self-invoking function for creating methods using Module pattern.
 (function (ns) {
 
-    ns.deleteItem = function(event) {
-        numberOfWebinarFiles--;
+    ns.deleteItem = function (event) {
+
+        event.preventDefault();
+
+        UWF.numberOfWebinarFiles -= 1;
         var trashClicked = event.currentTarget;
         //var trashClickedId = trashClicked.id;
         //var idx = trashClickedId.substring(0, trashClickedId.indexOf('-'));
@@ -52,52 +44,53 @@ $(function() {
                 input.val(input.val() + '-ND'); // If new file mark to be ignored. Not removed from dom because indexing of collection must be preserved for the Model Binders to deserialize ViewModel.
 
             } else {
-                input.val(input.val() + '-D'); // If an existing file mark for deletion at the server
+                var fileDescr = $.trim(input.val());
+                input.val(fileDescr + '-D'); // If an existing file mark for deletion at the server
             }
         });
     };
 
     ns.primeDomVariables = function() {
-        addFilesButton = $('#addFilesButton');
-        manageFilesWrapper = $('#manageFilesWrapper');
+        UWF.addFilesButton = $('#addFilesButton');
+        UWF.manageFilesWrapper = $('#manageFilesWrapper');
     };
 
     ns.wireUpHandlersForAddFilesModal = function() {
 
         var newFileId;
-        numberOfWebinarFiles = $('#manageFilesWrapper div[id^="fileDetails_"]').length;
-        newFileId = numberOfWebinarFiles++;
+        UWF.numberOfWebinarFiles = UWF.manageFilesWrapper.find('div[id^="fileDetails_"]').length;
+        newFileId = UWF.numberOfWebinarFiles;
 
         if (!UWF.manageFilesWrapper) {
             UWF.manageFilesWrapper = $('#manageFilesWrapper');
             UWF.webinarFilesSelected = $('#webinarFilesSelected');
         }
 
-        if (numberOfWebinarFiles < 1) {
+        if (UWF.numberOfWebinarFiles < 1) {
             //$('#sumbitAdditionalLocationsButton').off('click');
 
         } else {
 
-            var trashCans = manageFilesWrapper.find('i[id$="-Filedetails-delete"]');
+            var trashCans = UWF.manageFilesWrapper.find('i[id$="-Filedetails-delete"]');
             
             $.each(trashCans, function(idx, i) {
                 $(i).on('click', ns.deleteItem);
             });
         }
 
-        $('#addFilesButton').on('click', function(e) {
+        UWF.addFilesButton.on('click', function(e) {
 
             e.preventDefault();
 
             var newFile = UWF.getNewFileDetailsFragment(newFileId + 'N');
 
             // Add 'N' suffix so at server we can tell that it is a new file. The identifier is just for client-side purposes and for the form submission.
-            $(newFile).hide().appendTo(manageFilesWrapper).fadeIn(500, function (e) {
+            $(newFile).hide().appendTo(UWF.manageFilesWrapper).fadeIn(500, function (e) {
                 $(this).find('i.icon-trash').on('click', ns.deleteItem);
             }); 
 
-            numberOfWebinarFiles++;
-            newFileId++;
+            UWF.numberOfWebinarFiles += 1;
+            newFileId += 1;
 
         });
 
@@ -123,7 +116,9 @@ $(function() {
                 data: payload,
                 beforeSend: function () {
 
-                    UWF.webinarFilesSelected.empty();
+                    if (UWF.webinarFilesSelected) {
+                        UWF.webinarFilesSelected.empty();
+                    }
 
                     $('#result').remove();
 
@@ -144,7 +139,9 @@ $(function() {
                         UWF.webinarFilesSelected.append(clone);
                     });
 
-
+                } else if (data['Result'] === 'Fail') {
+                    var label = $('<div id="result" class="label label-important pull-left block buttonAdjacentLabel">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;' + data['Message'] +'</div>');
+                    label.hide().insertAfter(updateWebinarFilesButton).fadeIn(500);
                 } else {
                     formProcessor.lightUpValidationSummary('updateFilesValSummary', data);
                 }

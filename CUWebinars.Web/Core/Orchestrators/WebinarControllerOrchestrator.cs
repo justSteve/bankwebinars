@@ -359,7 +359,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             return unionOfResultSets;
         }
 
-        public string UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel, out string message)
+        public bool UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel, out string message)
         {
             int webinarId = 0;
             message = string.Empty;
@@ -373,8 +373,9 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 if (checkThatNewFilesExist != "OK")
                 {
+                    message = string.Concat(webinarDetailsViewModel.Webinar.RecordingUrl, " does not exist.");
                     _logger.Error(string.Format(webinarDetailsViewModel.Webinar.RecordingUrl, " does not exist."));
-                    return string.Format(webinarDetailsViewModel.Webinar.RecordingUrl, " does not exist.");
+                    return false;
                 }
 
                 var ordersForWebinar = _orderManagementService.GetOrdersForWebinar(webinar.idWebinar);
@@ -389,15 +390,16 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 _orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
                 _logger.Info(string.Format("Recording for {0} is saved to {1}", webinar.idWebinar, webinar.RecordingUrl));
-                return WebUiConstants.Success;
+                return true;
 
             }
             catch (Exception exception)
             {
                 _logger.ErrorException(string.Format("UpdateWebinarRecording| UpdateWebinarRecording failed {0} on idWebinar: {1}", exception.Message, webinarId), exception);
-                return string.Format("UpdateWebinarRecording| UpdateWebinarRecording failed {0} on idWebinar: {1}",
-                    exception.Message, webinarId);
+                message = string.Format("UpdateWebinarRecording| UpdateWebinarRecording failed {0} on idWebinar: {1}", exception.Message, webinarId);
             }
+
+            return false;
         }
 
         //public string SetEventToRecorded(int webinarId)
@@ -420,7 +422,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             _webinarManagementService.UpdateWebinar(webinar);
         }
 
-        public string UpdateWebinarFiles(WebinarFilesEditModel webinarFilesEditModel, out string message)
+        public bool UpdateWebinarFiles(WebinarFilesEditModel webinarFilesEditModel, out string message)
         {
             /*
                 This is a batch update operation. The WebinarFiles collection contains the webinar files to be updated. 
@@ -434,6 +436,14 @@ namespace CUWebinars.Web.Core.Orchestrators
             try
             {
 
+                if (ReferenceEquals(null, webinarFilesEditModel.WebinarFiles))
+                {
+                    message = "No updates, additions or deletions were submitted.";
+                    _logger.Error("No updates, additions or deletions were submitted.");
+                    return false;
+                }
+
+
                 var filesForThisEvent = _webinarManagementService.GetWebinarFilesPerWebinar(webinarFilesEditModel.idWebinar);
 
                 var deletedFiles = webinarFilesEditModel.WebinarFiles.Where(f => f.fileDesc.EndsWith("-D")).ToList();
@@ -445,10 +455,12 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     webinarFile.fileLocation = Regex.Replace(webinarFile.fileLocation, @"\s+", "");
                     var checkThatNewFilesExist = CheckThatFileExists(webinarFile.fileLocation.ToString());
+
                     if (checkThatNewFilesExist != "OK")
                     {
+                        message = string.Concat(webinarFile.fileLocation, " does not exist.");
                         _logger.Error(string.Format("{0} does not exist.", webinarFile.fileLocation));
-                        return string.Format("{0} does not exist.", webinarFile.fileLocation.ToString());
+                        return false;
                     }
 
                 }
@@ -457,16 +469,18 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _webinarManagementService.DeleteWebinarFiles(deletedFiles);
                 _webinarManagementService.UpdateWebinarFiles(updatedFiles);
 
-                return WebUiConstants.Success;
+                return true;
             }
             catch (Exception exception)
             {
                 _logger.ErrorException(
-                    string.Format("UpdateWebinarFiles| UpdateWebinarFiles failed {0}", exception.Message), exception);
-                return string.Format("UpdateWebinarFiles| UpdateWebinarFiles failed {0}", exception.Message);
+                    string.Format("UpdateWebinarFiles| UpdateWebinarFiles failed {0}", exception.Message), 
+                    exception
+                    );
+                message = "Update failed. We have logged the error. Please call us at 800-831-0678 ext. 3 to resolve.";
 
             }
-
+            return false;
         }
 
         public AdhocNotificationViewModel BuildAdhocNotificationViewModel(WebinarType webinarType)

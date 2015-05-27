@@ -58,6 +58,20 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
+
+        [System.Web.Mvc.HttpPost]
+        [HandleAjaxException]
+        public ActionResult LoadExistingQuiz(int? webinarId)
+        {
+            if (webinarId.HasValue)
+            {
+                var quizId = _quizControllerOrchestrator.GetQuizIdByWebinarId(webinarId.Value);
+                return Json(new { Result = WebUiConstants.Success, QuizId = quizId });
+            }
+
+            return View();
+        }
+
         [System.Web.Mvc.HttpPost]
         [HandleAjaxException]
         public ActionResult EditQuiz(EditQuizEditModel model)

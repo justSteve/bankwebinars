@@ -1,5 +1,7 @@
 ﻿/// <reference path="../Utilities/formProcessor.js" />
 /// <reference path="../Constants.js" />
+/// <reference path="../utilities.js" />
+/// <reference path="Quiz.js" />
 
 var EDITQUIZ = {}; // object to holds all references and methods.
 
@@ -43,6 +45,8 @@ $(function () {
         EQ.addQuestionButton = $('#AddQuestionButton');
         EQ.cloneWebinarButton = $('#CloneWebinar');
         EQ.cloneInput = $('#CloneInput');
+        EQ.editWebinarButton = $('#EditWebinar');
+        EQ.editInput = $('#EditInput');
     };
 
     ns.wireUpHandlers = function() {
@@ -50,6 +54,7 @@ $(function () {
         EQ.editCloneSubmitButtonTop.on('click', EQ.submitEditedQuiz);
         EQ.addQuestionButton.on('click', EQ.addQuestionClicked);
         EQ.cloneWebinarButton.on('click', EQ.cloneWebinar);
+        EQ.editWebinarButton.on('click', EQ.editWebinar);
     };
 
     ns.rePopulateInputs = function() {
@@ -986,5 +991,40 @@ $(function () {
 
     };
 	  
+    ns.editWebinar = function(e) {
+
+        e.preventDefault();
+
+        var payload = {
+            webinarId: EQ.editInput.val()
+        };
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: '/Quiz/LoadExistingQuiz',
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payload),
+            beforeSend: function() {
+
+            }
+        }).done(function(data, textStatus, jqXHR) {
+            if (data.Result === 'Success') {
+                EQ.quizId.val(data.QuizId);
+                $('#webinarIdSpan').text(payload.webinarId);
+                EQ.webinarId.val(payload.webinarId);
+                EQ.editInput.val('');
+
+                EQ.rePopulateInputs();
+
+            } else {
+
+            }
+        });
+
+
+    };
+
 
 })(EQ);

@@ -80,6 +80,11 @@ namespace CUWebinars.Business.Repository
                 .Where(q => q.idWebinar == idWebinar).FirstOrDefault();
         }
 
+        public int GetQuizIdByWebinarId(int idWebinar)
+        {
+            return items.Where(q => q.idWebinar == idWebinar).Select(q => q.Id).Single();
+        }
+
         public Quiz GetQuizByCode(string quizCode)
         {
             return items.Include(
@@ -171,11 +176,16 @@ namespace CUWebinars.Business.Repository
         {
             var context = (TTSWebinarsContext) db;
 
-            var orderRow = context.OrderRows.Single(orow => orow.idOrder == idOrder);
+            //var orderRow = context.OrderRows.Single(orow => orow.idOrder == idOrder);
 
-            var webinar = context.Webinars.Single(w => w.idWebinar == orderRow.idWebinar);
+            //var webinar = context.Webinars.Single(w => w.idWebinar == orderRow.idWebinar);
 
-            var quiz = items.SingleOrDefault(q => q.idWebinar == webinar.idWebinar);
+            //var quiz = items.SingleOrDefault(q => q.idWebinar == webinar.idWebinar);
+            var quiz = items.SingleOrDefault(
+                q => q.idWebinar == context.Webinars.Single(
+                    webinar => webinar.idWebinar == context.OrderRows.Single(
+                        orderRow => orderRow.idOrder == idOrder).idWebinar).idWebinar
+                        );
 
             return quiz;
         }

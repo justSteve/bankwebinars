@@ -14,6 +14,8 @@ namespace CUWebinars.Business.Repository
         Quiz GetQuizByIdWithOptionsAndUserAnswers(int id);
         Quiz GetQuizByWebinarId(int idWebinar);
         Quiz GetQuizByCode(string quizCode);
+        Quiz GetQuizFromOrder(int idOrder);
+        int GetQuizIdByWebinarId(int idWebinar);
         QuestionCountAndWebinarId GetQuestionCountAndWebinarId(string quizCode);
         void SetQuizUserAnswerAsModified(QuizUserAnswer quizUserAnswer);
         void DeleteQuizWithQuestion(QuizWithQuestion quizWithQuestion);
