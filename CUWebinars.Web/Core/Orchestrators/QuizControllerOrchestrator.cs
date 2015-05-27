@@ -131,6 +131,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             return null;
         }
 
+        public int GetQuizIdByWebinarId(int idWebinar)
+        {
+            return _webinarManagementService.GetQuizIdByWebinarId(idWebinar);
+        }
+
         private void PersistResultsForQuizAttempt(UserQuizEditModel userQuizEditModel, int score)
         {
             Quiz quiz = _webinarManagementService.GetQuizByQuizId(userQuizEditModel.QuizId);

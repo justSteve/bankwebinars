@@ -14,5 +14,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         void ProcessEditModel(EditQuizEditModel model);
         void AddQuiz(AddQuizEditModel model);
         int? CloneQuizForWebinar(int webinarId, int existingQuizId);
+        int GetQuizIdByWebinarId(int idWebinar);
     }
 }

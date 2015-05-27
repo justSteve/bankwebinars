@@ -22,6 +22,7 @@ namespace CUWebinars.Business.Services
         IEnumerable<Topic> GetAllTopics();
         IEnumerable<Webinar> GetByTopic(int topicId);
         Quiz GetQuizByWebinarId(int idWebinar);
+        Quiz GetQuizByOrderId(int idOrder);
         IEnumerable<Webinar> GetRecordedWebinars();
         IEnumerable<Topic> GetTopicsPerWebinar(int idWebinar);
         IEnumerable<WebinarFile> GetWebinarFilesPerWebinar(int idWebinar);
@@ -51,5 +52,6 @@ namespace CUWebinars.Business.Services
         bool RemoveQuestionsFromQuiz(IEnumerable<int> deletedQuestions, int quizId);
         bool UpdateQuestions(IEnumerable<EditedQuestion> editedQuestions, int quizId);
         int CloneQuizForWebinar(Webinar webinar, int existingQuizId);
+        int GetQuizIdByWebinarId(int idWebinar);
     }
 }

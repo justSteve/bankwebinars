@@ -370,6 +370,16 @@ namespace CUWebinars.Business.Services
             return _quizRepository.GetQuizByWebinarId(idWebinar);
         }
 
+        public int GetQuizIdByWebinarId(int idWebinar)
+        {
+            return _quizRepository.GetQuizIdByWebinarId(idWebinar);
+        }
+
+        public Quiz GetQuizByOrderId(int idOrder)
+        {
+            return _quizRepository.GetQuizFromOrder(idOrder);
+        }
+
         public void UpdateWebinarFiles(IEnumerable<WebinarFile> webinarFiles)
         {
             _webinarFileRepository.UpdateRange(webinarFiles);
