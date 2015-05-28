@@ -1127,8 +1127,8 @@ namespace CUWebinars.Web.Controllers
                 {
                     foreach (var validationError in validationErrors.ValidationErrors)
                     {
-                        Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
-                            validationError.ErrorMessage);
+                        //Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
+                        //    validationError.ErrorMessage);
                         stringBuilder.AppendFormat("Property: {0} Error: {1} ", validationError.PropertyName,
                             validationError.ErrorMessage);
                     }

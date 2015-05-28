@@ -50,6 +50,7 @@
                                 <div>
                                     <label>Email:</label> <input id="Email1" name="Email1" value="" type="text" class="input-large"> <br>
                                     <label>Password:</label> <input id="Password1" name="Password1" type="password" class="input-large"><br>
+                                    <div><b>Note: </b>Due to a website upgrade with enhanced security, accounts<br /> created prior to 5/18/2015 require a password reset (button above). </div>
                                 </div>
                                 <div id="LogintoexistingaccountBTN"></div>
                             </div>
@@ -111,9 +112,9 @@
                         </div>
                         <div>
                             <div id="wrapPhone">
-                                      <label>Phone:</label>
-                                      @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Phone)
-                                  </div>
+                                <label>Phone:</label>
+                                @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Phone)
+                            </div>
                             <div id="wrapTimeZone">
                                 <label for="TimeZone" style="display: inline-block">Time Zone:</label>
                                 <select style="width: 120px" id="TimeZone" name="TimeZone">
@@ -125,9 +126,9 @@
                             </div>
                             @*TODO: Figure out how to show this only when dealing with feriners.*@
                             @*<div id="nonUSAddressInputWrap">
-                                <label>&nbsp;</label>
-                                <textarea name="nonUSAddressInput" rows="5" cols="100">Special Handling for Address:</textarea>
-                            </div>*@
+                                    <label>&nbsp;</label>
+                                    <textarea name="nonUSAddressInput" rows="5" cols="100">Special Handling for Address:</textarea>
+                                </div>*@
                             @Html.ValidationMessageFor(model => model.RegisterFields.FirstName)
                             @Html.ValidationMessageFor(model => model.RegisterFields.LastName)
                             @Html.ValidationMessageFor(model => model.RegisterFields.Institution)

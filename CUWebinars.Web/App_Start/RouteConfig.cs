@@ -30,6 +30,12 @@ namespace CUWebinars.Web.App_Start
                 defaults: new { controller = "Webinar", action = "OnDemand" }
                 //,constraints: new { id = @"\d+" }
             );
+            routes.MapRoute(
+                "RedirectLegacy",
+                url: "Webinar/Play/w={idWebinar}&amp;u={idUser}",
+                defaults: new { controller = "Webinar", action = "RedirectLegacy" }
+                //,constraints: new { id = @"\d+" }
+            );
 
             routes.MapRoute(
                 "Quiz",

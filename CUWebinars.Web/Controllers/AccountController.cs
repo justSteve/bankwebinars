@@ -474,7 +474,7 @@ namespace CUWebinars.Web.Controllers
             try
             {
                 //following copies pattern found at WebinarController | Identify
-                var newJson = new JProperty(string.Concat(JsonPropertyKeys.CarbonCopy),addresses);
+                var newJson = new JProperty(string.Concat(JsonPropertyKeys.CarbonCopy), addresses);
                 order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, newJson);
 
                 _orderManagementService.SaveChanges();
@@ -784,7 +784,7 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 // If we got this far, something failed, redisplay form
-                _logger.Warn("Account.SignIn Failed. {0} | {1} Session= {2}",
+                _logger.Warn("Account.SignInFromCart Failed. {0} | {1} Session= {2}",
                     model.Email,
                     model.Password,
                     _appHelper.GetUserAuditInfo()
@@ -817,7 +817,7 @@ namespace CUWebinars.Web.Controllers
                 Stopwatch sw = Stopwatch.StartNew();
                 _accountControllerOrchestrator.ResetPassword(_globalConfig.Tenant, email);
                 sw.Stop();
-                Trace.TraceInformation(string.Format("ResetPassword took {0}s to run.", sw.Elapsed.Seconds));
+                //Trace.TraceInformation(string.Format("ResetPassword took {0}s to run.", sw.Elapsed.Seconds));
                 return Json(new { Result = WebUiConstants.Success });
             }
             catch (ValidationException validationException)
@@ -946,7 +946,7 @@ namespace CUWebinars.Web.Controllers
                         {
                             model.ChangePasswordSucceeded = true;
                             watch.Stop();
-                            Trace.TraceInformation("Reset total in seconds: {0}", watch.Elapsed.Seconds);
+                            //Trace.TraceInformation("Reset total in seconds: {0}", watch.Elapsed.Seconds);
                             return Json(new { Result = "Success" });
                         }
 
@@ -1283,6 +1283,8 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
+
+                    _logger.Info("CreateUserAccountFromCart for: " + email);
                     var tempPassword = _accountControllerOrchestrator.CreateUserAccountFromCart(email);
 
                     return Json(new { Result = WebUiConstants.Success, KeyForUser = tempPassword });
@@ -1328,8 +1330,7 @@ namespace CUWebinars.Web.Controllers
                     {
                         foreach (var validationError in validationErrors.ValidationErrors)
                         {
-                            Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
-                                validationError.ErrorMessage);
+                            //Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,validationError.ErrorMessage);
                             stringBuilder.AppendFormat("Property: {0} Error: {1} ", validationError.PropertyName,
                                 validationError.ErrorMessage);
                         }
@@ -1503,8 +1504,7 @@ namespace CUWebinars.Web.Controllers
                     {
                         foreach (var validationError in validationErrors.ValidationErrors)
                         {
-                            Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
-                                validationError.ErrorMessage);
+                            //Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,validationError.ErrorMessage);
                             stringBuilder.AppendFormat("Property: {0} Error: {1} ", validationError.PropertyName,
                                 validationError.ErrorMessage);
                         }

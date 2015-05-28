@@ -289,9 +289,16 @@ namespace CUWebinars.Web.Controllers
             int idRegType;
             if (importedOrder.idAffiliate == 62)
             {
-                _logger.Info("ACS Importer hears: " + importedOrder.Email + " idWebinar: " + importedOrder.idWebinar);
-                idRegType = _webinarManagementService.GetRegTypeByACS(importedOrder.RegistrationType,
-                    importedOrder.idWebinar);
+                if (importedOrder.Source == "ACSGmailImportViaWebJob?Version=3")
+                {
+                    _logger.Info("ACS Importer hears: " + importedOrder.Email + " idWebinar: " + importedOrder.idWebinar);
+                    idRegType = _webinarManagementService.GetRegTypeByACS(importedOrder.RegistrationType,
+                        importedOrder.idWebinar);
+                }
+                else
+                {
+                    return Json(new { Result = 0 }, JsonRequestBehavior.AllowGet);
+                }
             }
             else
             {
@@ -360,7 +367,7 @@ namespace CUWebinars.Web.Controllers
 
                     _logger.Info("ACS Importer heard: " + newOrder.BillingEmail);
                     _orderManagementService.SendOrderToLegacy(newOrder);
-                    
+
                     //DataOperations dataop = new DataOperations();
                     //dataop.BuildACSImporter(newOrder);
 

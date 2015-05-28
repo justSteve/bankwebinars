@@ -110,16 +110,16 @@
                             }
                         }
 
-                        <div style="text-align: center;" id="quiz">
-                            <hr />
-                            <form method="POST" action="/Account/MyQuiz">
-                                <input type="hidden" name="orderID" value="@ViewBag.idOrder" />
-                                <input type="hidden" name="FullName" value="@ViewBag.FullName" />
+                        @*<div style="text-align: center;" id="quiz">
+                                <hr />
+                                <form method="POST" action="/Account/MyQuiz">
+                                    <input type="hidden" name="orderID" value="@ViewBag.idOrder" />
+                                    <input type="hidden" name="FullName" value="@ViewBag.FullName" />
 
-                                <input type="submit" value="Event's Quiz"  id="ShowQuiz" class="btn btn-success btn-mini " />
+                                    <input type="submit" value="Event's Quiz"  id="ShowQuiz" class="btn btn-success btn-mini " />
 
-                            </form>
-                        </div>
+                                </form>
+                            </div>*@
                         <div id="cert">
                             <form method="POST" action="/Account/MyCertificate">
                                 <input type="hidden" name="orderID" value="@ViewBag.idOrder" />

@@ -64,10 +64,15 @@ namespace CUWebinars.Web.Helpers
 
                     while (msgReader.Read())
                     {
+                        string tz = "-6";
+                        if (msgReader[2] == null)
+                        {
+                            tz = msgReader[2].ToString();
+                        }
                         cityStateFromZip =
                             msgReader.FieldCount > 0
                                 ? msgReader[0].ToString() + "," + msgReader[1].ToString() + "," +
-                                  msgReader[2].ToString()
+                                  tz
                                 : null;
                     }
 

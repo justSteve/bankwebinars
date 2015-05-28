@@ -32,6 +32,7 @@ using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
+using CUWebinars.Business.Core.Helpers;
 using ClaimTypes = System.Security.Claims.ClaimTypes;
 using DateTimeHelper = CUWebinars.Web.Helpers.DateTimeHelper;
 using Formatting = Newtonsoft.Json.Formatting;
@@ -524,13 +525,13 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         foreach (var validationError in validationErrors.ValidationErrors)
                         {
-                            Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
-                                validationError.ErrorMessage);
+                            //Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,validationError.ErrorMessage);
                             stringBuilder.AppendFormat("Property: {0} Error: {1} ", validationError.PropertyName,
                                 validationError.ErrorMessage);
                         }
                     }
-                    Trace.TraceInformation(stringBuilder.ToString());
+                    _logger.Error("GenerateClickToJoingForAdHocCaller dbEntityValidationException errors | {0}",
+                        stringBuilder.ToString());
                 }
             }
 
@@ -1553,18 +1554,18 @@ namespace CUWebinars.Web.Controllers.Admin
             try
             {
                 if (string.IsNullOrWhiteSpace(newExpiryDate)) throw new ValidationException("You need to enter a value.");
-                
-                //var onDemandCode = RandomHelpers.GetUniqueCode(5);
 
-                //var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, orderID.Value);
-                //var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, newExpiryDate);
-                //var OnDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, onDemandCode);
+                var onDemandCode = RandomHelpers.GetUniqueCode(5);
 
-                //var claimValue = new JObject(
-                //    orderIdProperty,
-                //    expiryDateProperty,
-                //    OnDemandCodeProperty
-                //    );
+                var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, orderID.Value);
+                var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, newExpiryDate);
+                var OnDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, onDemandCode);
+
+                var claimValue = new JObject(
+                    orderIdProperty,
+                    expiryDateProperty,
+                    OnDemandCodeProperty
+                    );
                 
                 _membershipService.UpdateDisplayPostEventMaterialsClaim(
                     _globalConfig.Tenant, 

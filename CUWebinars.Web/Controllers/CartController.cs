@@ -88,10 +88,10 @@ namespace CUWebinars.Web.Controllers
 
         public PartialViewResult GetAdditionalLocationByOrderId(int webinarId, int? webUserId = null)
         {
-            if(webUserId.HasValue)
+            if (webUserId.HasValue)
             {
                 return PartialView(
-                    "~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml", 
+                    "~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml",
                     _cartControllerOrchestrator.BuildAdditionalLocationOfferViewModel(webUserId.Value, webinarId)
                     );
             }
@@ -115,7 +115,7 @@ namespace CUWebinars.Web.Controllers
                     model.Order.OrderStatus = OrderStatus.Submitted;
 
                     sw.Stop();
-                    Trace.TraceInformation(string.Format("{0} took {1}s to run.", "ConfirmOrder-a", sw.Elapsed.Seconds));
+                    //Trace.TraceInformation(string.Format("{0} took {1}s to run.", "ConfirmOrder-a", sw.Elapsed.Seconds));
                     sw.Reset();
                     sw.Start();
 
@@ -129,14 +129,14 @@ namespace CUWebinars.Web.Controllers
                     }
 
                     sw.Stop();
-                    Trace.TraceInformation(string.Format("{0} took {1}s to run.", "ConfirmOrder-b", sw.Elapsed.Seconds));
+                    //Trace.TraceInformation(string.Format("{0} took {1}s to run.", "ConfirmOrder-b", sw.Elapsed.Seconds));
                     sw.Reset();
                     sw.Start();
 
                     _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
 
                     sw.Stop();
-                    Trace.TraceInformation(string.Format("{0} took {1}s to run.", "ConfirmOrder-c", sw.Elapsed.Seconds));
+                    //Trace.TraceInformation(string.Format("{0} took {1}s to run.", "ConfirmOrder-c", sw.Elapsed.Seconds));
 
                     return Json(new
                     {
@@ -248,7 +248,7 @@ namespace CUWebinars.Web.Controllers
         {
             return PartialView("~/Views/cart/Partials/CheckoutContact.cshtml", _cartControllerOrchestrator.BuildRegisterViewModel());
         }
-        
+
 
         public PartialViewResult UpdateOrderWithUserIdForm()
         {
@@ -275,8 +275,8 @@ namespace CUWebinars.Web.Controllers
                         formModel
                         );
                     sw.Stop();
-                    Trace.TraceInformation(string.Format("{0} took {1}s to run", "CreateOrder", sw.Elapsed.Seconds));
-                    
+                    Trace.TraceInformation(string.Format("Creating {0} took {1}s to run", order.idOrder, sw.Elapsed.Seconds));
+
                     return Json(new
                     {
                         success = "success",
@@ -293,7 +293,7 @@ namespace CUWebinars.Web.Controllers
                             ? ErrorMessageConstants.ExistingNonCancelledOrderMessage
                             : "There has been an error at the server which has been logged.");
 
-                    _logger.FatalException("Signup2 order excepted: ", exception);
+                    _logger.FatalException("Signup2 order died. ", exception);
 
                     Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 }
@@ -341,7 +341,7 @@ namespace CUWebinars.Web.Controllers
             if (!string.IsNullOrWhiteSpace(lastName))
             {
                 var currentAffiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
-         
+
                 var webUsers = _cartControllerOrchestrator.GetWebUsersByLastNameForAffiliate(lastName,
                     currentAffiliate.idUserAff)
                     .Select(w => new
@@ -350,8 +350,8 @@ namespace CUWebinars.Web.Controllers
                         lastname = w.LastName,
                         firstname = w.FirstName
                     });
-                
-                return Json(new {people = webUsers}, JsonRequestBehavior.AllowGet);
+
+                return Json(new { people = webUsers }, JsonRequestBehavior.AllowGet);
             }
             return View();
         }
@@ -388,7 +388,7 @@ namespace CUWebinars.Web.Controllers
             if (id.HasValue)
             {
                 var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
-                
+
                 var message = _cartControllerOrchestrator.GenerateMessagePreview(model.Order);
 
                 return File(message.Body.GenerateStreamFromString(), "text/html");
@@ -447,7 +447,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     _logger.ErrorException(
-                        String.Format("UpdateOrderDetails failed on {0} with {1} Session={2}",idRegType,exception.Message,  _appHelper.GetUserAuditInfo()), exception);
+                        String.Format("UpdateOrderDetails failed on {0} with {1} Session={2}", idRegType, exception.Message, _appHelper.GetUserAuditInfo()), exception);
                     Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 }
 
@@ -488,7 +488,7 @@ namespace CUWebinars.Web.Controllers
 
             return Json(new { Result = WebUiConstants.Success });
         }
-        
+
         protected override void Dispose(bool disposing)
         {
             if (_disposed) return;
