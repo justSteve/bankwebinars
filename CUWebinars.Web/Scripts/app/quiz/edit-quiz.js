@@ -3,7 +3,8 @@
 /// <reference path="../utilities.js" />
 /// <reference path="Quiz.js" />
 
-var EDITQUIZ = {}; // object to holds all references and methods.
+if (EDITQUIZ === null || typeof EDITQUIZ === 'undefined')
+    var EDITQUIZ = {}; // object to holds all references and methods.
 
 var EQ = EDITQUIZ; // create shortcut alias
 
