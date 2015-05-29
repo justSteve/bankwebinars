@@ -127,6 +127,8 @@ namespace CUWebinars.Web.App_Start
             kernel.Bind<IRegTypeRepository>().To<RegTypeRepository>().InRequestScope();
             kernel.Bind<IQuizRepository>().To<QuizRepository>().InRequestScope();
 
+            kernel.Bind<IDataTablesService>().To<DataTablesService>().InRequestScope();
+
             kernel.Bind<IWebinarManagementService>().ToMethod(ctx =>
             {
                 var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();

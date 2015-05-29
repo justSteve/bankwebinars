@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.AccountService;
+﻿using System.Collections.ObjectModel;
+using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Extensions;
@@ -14,6 +15,7 @@ using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
+using DataTables.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
@@ -47,6 +49,7 @@ namespace CUWebinars.Web.Controllers.Admin
     {
         public const string HtmlMimeType = "text/html";
         private readonly IOrderManagementService _orderManagementService;
+        private readonly IDataTablesService _dataTablesService;
         private readonly IAppHelper _appHelper;
         private readonly IMembershipService _membershipService;
         private readonly ILogger _logger;
@@ -70,6 +73,7 @@ namespace CUWebinars.Web.Controllers.Admin
             IStateService stateService,
             IWebinarManagementService webinarManagementService,
             IOrderManagementService orderManagementService,
+            IDataTablesService dataTablesService,
             IAppHelper appHelper)
         {
             _membershipService = membershipService;
@@ -77,6 +81,7 @@ namespace CUWebinars.Web.Controllers.Admin
             _stateService = stateService;
             _webinarManagementService = webinarManagementService;
             _orderManagementService = orderManagementService;
+            _dataTablesService = dataTablesService;
             _appHelper = appHelper;
         }
 
@@ -1668,6 +1673,51 @@ namespace CUWebinars.Web.Controllers.Admin
             _orderManagementService.SaveChanges();
 
             return Json(new { Result = WebUiConstants.Success });
+        }
+
+
+        public ActionResult DisplayOrders()
+        {
+            return View();
+        }
+
+        [HandleAjaxException]
+        [HttpPost]
+        public ActionResult GetGridData([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel)
+        {
+            var ordersViewModel = BuildDisplayOrdersViewModel();
+
+            return Json(new
+            {
+                data = ordersViewModel.OrderSummaries, 
+                draw = requestModel.Draw,
+                recordsFiltered = ordersViewModel.RecordsFiltered,
+                recordsTotal = ordersViewModel.RecordsTotal
+            
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        private DisplayOrdersViewModel BuildDisplayOrdersViewModel()
+        {
+            ICollection<Order> orders = _dataTablesService.GetAllOrders().Take(10).ToList();
+
+            ICollection<OrderSummary> orderSummaries = new List<OrderSummary>();
+
+            foreach (var order in orders)
+            {
+                orderSummaries.Add(new OrderSummary
+                {
+                 BillingAddress   = order.BillingAddress,
+                 BillingAddress2   = order.BillingAddress2,
+                 BillingCity =  order.BillingCity,
+                 BillingEmail = order.BillingEmail,
+                 BillingPhone= order.BillingPhone,
+                 BillingState= order.BillingState,
+                 BillingZip= order.BillingZip,
+                });
+            }
+
+            return new DisplayOrdersViewModel {Draw = 0, RecordsFiltered = orders.Count, RecordsTotal = orders.Count, OrderSummaries = orderSummaries };
         }
 
         private List<Address> ProcessAddresses(RegisterViewModel registerViewModel)

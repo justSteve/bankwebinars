@@ -172,6 +172,7 @@
     <Compile Include="CQS\Queries\MigratorQueryResult.cs" />
     <Compile Include="CQS\Queries\OrderManagementQuery.cs" />
     <Compile Include="CQS\Queries\OrderManagementQueryResult.cs" />
+    <Compile Include="CQS\Queries\OrderReportingQuery.cs" />
     <Compile Include="CQS\QueryHandlers\OrderManagementQueryHandlers.cs" />
     <Compile Include="CQS\QueryProcessor.cs" />
     <Compile Include="Models\AdditionalLocationsLookupPrice.cs" />
@@ -284,6 +285,7 @@
     <Compile Include="Repository\WebinarFileRepository.cs" />
     <Compile Include="Repository\WebinarRepository.cs" />
     <Compile Include="Services\AffiliateManagementService.cs" />
+    <Compile Include="Services\DataTablesService.cs" />
     <Compile Include="Services\IAffiliateManagementService.cs" />
     <Compile Include="Services\IOrderManagementService.cs" />
     <Compile Include="AccountService\IUserAccountService.cs" />

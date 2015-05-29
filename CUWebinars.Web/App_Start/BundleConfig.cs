@@ -23,6 +23,10 @@ namespace CUWebinars.Web.App_Start
                         "~/Scripts/jquery-ui-1.11.1.js"));
             //"~/Scripts/jquery-ui-1.10.3.custom.js"));
             //"~/Scripts/jquery-ui-1.8.24.js"));
+            
+            bundles.Add(new ScriptBundle("~/bundles/dataTables").Include(
+                        "~/Scripts/DataTables/jquery.dataTables.js")
+                        );
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.unobtrusive*",
@@ -58,6 +62,11 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/toastLogger.js",
                 "~/Scripts/app/quiz/quiz.js",
                 "~/Scripts/app/quiz/do-quiz.js"
+                ));
+
+            bundles.Add(new ScriptBundle("~/bundles/display-orders").Include(
+                "~/Scripts/app/toastLogger.js",
+                "~/Scripts/app/admin/display-orders.js"
                 ));
 
             bundles.Add(new ScriptBundle("~/bundles/edit-quiz").Include(
@@ -244,6 +253,11 @@ namespace CUWebinars.Web.App_Start
 
             bundles.Add(new StyleBundle("~/Content/rich-editor").Include(
                 "~/Scripts/cleditor/jquery.cleditor.css")
+                );
+
+            bundles.Add(new StyleBundle("~/Content/data-tables").Include(
+                "~/Content/DataTables/jquery.dataTables.css",
+                "~/Content/DataTables/dataTables.bootstrap.css")
                 );
 
             bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(
