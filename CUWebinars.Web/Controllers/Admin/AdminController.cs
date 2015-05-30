@@ -1685,7 +1685,8 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpPost]
         public ActionResult GetGridData([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel)
         {
-            var ordersViewModel = BuildDisplayOrdersViewModel();
+            int totalNumberOrders;
+            var ordersViewModel = BuildDisplayOrdersViewModel(requestModel.Start, requestModel.Length, out totalNumberOrders);
 
             return Json(new
             {
@@ -1697,9 +1698,9 @@ namespace CUWebinars.Web.Controllers.Admin
             }, JsonRequestBehavior.AllowGet);
         }
 
-        private DisplayOrdersViewModel BuildDisplayOrdersViewModel()
+        private DisplayOrdersViewModel BuildDisplayOrdersViewModel(int start, int length, out int totalNumberOrders)
         {
-            ICollection<Order> orders = _dataTablesService.GetAllOrders().Take(10).ToList();
+            IEnumerable<Order> orders = _dataTablesService.GetOrdersPaged(start, length, out totalNumberOrders);
 
             ICollection<OrderSummary> orderSummaries = new List<OrderSummary>();
 
@@ -1707,17 +1708,27 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 orderSummaries.Add(new OrderSummary
                 {
-                 BillingAddress   = order.BillingAddress,
-                 BillingAddress2   = order.BillingAddress2,
-                 BillingCity =  order.BillingCity,
-                 BillingEmail = order.BillingEmail,
-                 BillingPhone= order.BillingPhone,
-                 BillingState= order.BillingState,
-                 BillingZip= order.BillingZip,
+                    OrderId = order.idOrder,
+                    FirstName = order.FirstName,
+                    LastName = order.LastName,
+                    Institution = order.Institution,
+                    BillingAddress = order.BillingAddress,
+                    BillingAddress2 = order.BillingAddress2,
+                    BillingCity = order.BillingCity,
+                    BillingEmail = order.BillingEmail,
+                    BillingPhone = order.BillingPhone,
+                    BillingState = order.BillingState,
+                    BillingZip = order.BillingZip,
                 });
             }
 
-            return new DisplayOrdersViewModel {Draw = 0, RecordsFiltered = orders.Count, RecordsTotal = orders.Count, OrderSummaries = orderSummaries };
+            return new DisplayOrdersViewModel
+            {
+                Draw = 0,
+                RecordsFiltered = totalNumberOrders,
+                RecordsTotal = totalNumberOrders,
+                OrderSummaries = orderSummaries
+            };
         }
 
         private List<Address> ProcessAddresses(RegisterViewModel registerViewModel)

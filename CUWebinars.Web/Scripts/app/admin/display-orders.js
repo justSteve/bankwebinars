@@ -21,6 +21,7 @@ $(function () {
             "type": "POST"
         },
         "columns": [
+            { "data": "OrderId" },
             { "data": "FirstName" },
             { "data": "LastName" },
             { "data": "Institution" },
