@@ -10,8 +10,6 @@
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     DataContractJsonSerializer odClaim = new DataContractJsonSerializer(typeof(Claim));
 
-    //var thisClaim = myClaimToRecording.
-
     var nfi = new CultureInfo("en-US", false).NumberFormat;
     nfi.CurrencyDecimalDigits = 0;
 
@@ -25,7 +23,8 @@
             {
                 var row = recorded.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
 
-
+                
+                
                 var onDemandClaim = new OnDemandClaim();
                 if (Model.MyClaims != null)
                 {
@@ -107,7 +106,7 @@
                                             Need to share this event with a co-worker? Provide them this URL:<br /> <tt><b>http://@globalConfig.TenantURL/o/@onDemandClaimString</b></tt>
                                         </p>
                                         @*<p>
-                                                A post-event assement is available:<br /> <tt><b>http://beta.bankwebinars.com/quiz/index/77790-27ixbqr</b></tt>
+                                                A post-event assesment is available:<br /> <tt><b>http://beta.bankwebinars.com/quiz/index/77790-27ixbqr</b></tt>
                                             </p>*@
 
                                     </div>
