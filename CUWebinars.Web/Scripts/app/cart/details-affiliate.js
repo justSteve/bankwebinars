@@ -5,12 +5,13 @@ var OCA = ORDERCREATIONAFFILIATE; // shortcut alias to ORDERCREATIONAFFILIATE ob
 
 OCA.shippingAddressRequired = {};
 OCA.checkoutConfirm = {};
-    
+OCA.searchBy = "";
+
 OCA.initializeFunctions = function () {
 
-    OCA.hookUpChangeTypeLogic = function(dropDown) {
-        
-        dropDown.on('change', function(e) {
+    OCA.hookUpChangeTypeLogic = function (dropDown) {
+
+        dropDown.on('change', function (e) {
 
             e.preventDefault();
 
@@ -25,10 +26,10 @@ OCA.initializeFunctions = function () {
                 cache: false,
                 url: url,
                 dataType: constants.JsonDataType,
-                beforeSend: function() {
+                beforeSend: function () {
                     dropDown.attr('disabled', 'disabled').after('<i id="discountSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
                 }
-            }).done(function(data) {
+            }).done(function (data) {
 
                 // see CartController's CheckIfAddLocShouldHide method for commented explanation regarding the 'shouldShow' property.
                 if (data) {
@@ -80,7 +81,7 @@ OCA.initializeFunctions = function () {
         });
     };
 
-    OCA.setUpEditButtons = function() {
+    OCA.setUpEditButtons = function () {
         $('#revealOptions').on('click', function (e) {
             e.preventDefault();
             $('#AdjustOrder').slideToggle();
@@ -257,7 +258,7 @@ OCA.initializeFunctions = function () {
         });
 
         var formData = adjustAddLocsForm.serialize();
-        
+
         $.ajax({
             type: 'POST',
             contentType: RegistrationInCart.Constants.FormPostContentType,
@@ -286,29 +287,29 @@ OCA.initializeFunctions = function () {
 
     };
 
-    OCA.isShippindAddressRequired = function(jQueryObject) {
+    OCA.isShippindAddressRequired = function (jQueryObject) {
         if ($.trim(jQueryObject.val()).toLowerCase() === 'false')
             return false;
         return true;
     };
 
-    OCA.wireUpMainButtonsOn3rdTab = function() {
+    OCA.wireUpMainButtonsOn3rdTab = function () {
         // The Bill Me button on 3rd tab
-        $('#ConfirmRegistrationBillMe').on('click', function(e) {
+        $('#ConfirmRegistrationBillMe').on('click', function (e) {
             e.preventDefault();
             var confirmOrderForm = $('#confirmOrderForAffiliateForm');
             confirmOrderForm.submit();
         });
 
         // The Cancel Registration button on 3rd tab
-        $('#Canceller').on('click', function(e) {
+        $('#Canceller').on('click', function (e) {
             e.preventDefault();
             var cancelOrderForm = $('#cancelOrder');
             cancelOrderForm.submit();
         });
     };
 
-    OCA.displayModal = function(modalForm) {
+    OCA.displayModal = function (modalForm) {
 
         modalForm.modal('show');
 
@@ -339,8 +340,8 @@ OCA.initializeFunctions = function () {
         OCA.cartStateManager.setConfirmOrderForm($('#confirmOrderForAffiliateForm'));
         var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
 
-        OCA.cartStateManager.getConfirmOrderForm().on('submit', function(e) {
-            
+        OCA.cartStateManager.getConfirmOrderForm().on('submit', function (e) {
+
             e.preventDefault();
 
             var self = $(this);
@@ -356,11 +357,11 @@ OCA.initializeFunctions = function () {
                 url: self.attr('action'),
                 dataType: constants.JsonDataType,
                 data: data,
-                beforeSend: function() {
+                beforeSend: function () {
                     confirmRegistrationBillMe.attr('disabled', 'disabled');
                     //$('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Working...</span>');
                 }
-            }).done(function(data) {
+            }).done(function (data) {
                 if (data.Result === 'Success') {
                     orderRowId = data.OrderRowId;
 
@@ -368,7 +369,7 @@ OCA.initializeFunctions = function () {
                     $('#orderDetails').append(data.Msg);
 
                     $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
-                    
+
                 } else {
                     confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                 }
@@ -376,7 +377,7 @@ OCA.initializeFunctions = function () {
                 $('#finalLoadingSpinner').remove();
                 confirmRegistrationBillMe.removeAttr('disabled');
 
-            }).fail(function(jqXHR, textStatus, errorThrown) {
+            }).fail(function (jqXHR, textStatus, errorThrown) {
                 $('#finalLoadingSpinner').remove();
                 confirmRegistrationBillMe.removeAttr('disabled');
                 confirmRegistrationBillMe.after('<span class="field-validation-error">Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
@@ -385,7 +386,7 @@ OCA.initializeFunctions = function () {
 
         var cancelOrderForm = OCA.cartStateManager.getCancelOrderForm();
 
-        cancelOrderForm.on('submit', function(e) {
+        cancelOrderForm.on('submit', function (e) {
 
             console.log('cancelOrderForm submit hit');
             //Rollbar.info('Submitting cancelOrderForm');
@@ -397,13 +398,13 @@ OCA.initializeFunctions = function () {
 
             var self = $(this);
 
-            $('#cancelRegistration').on('click', function(e) {
+            $('#cancelRegistration').on('click', function (e) {
                 e.preventDefault();
 
                 // disable button while operation in progress
                 $('#cancelRegistration').attr('disabled', 'disabled');
 
-                $.post(self.attr('action'), data, function(response, status, xhr) {
+                $.post(self.attr('action'), data, function (response, status, xhr) {
 
                     if (status !== 'error') {
                         if (xhr.responseJSON['success']) {
@@ -434,7 +435,7 @@ OCA.initializeFunctions = function () {
                 $('#rtn').off('click');
             });
 
-            $('#rtn').on('click', function(e) {
+            $('#rtn').on('click', function (e) {
                 e.preventDefault();
                 $('#CancelModal').modal('hide');
                 $(this).off('click');
@@ -450,7 +451,7 @@ OCA.initializeFunctions = function () {
     };
 };
 
-OCA.initializeState = function() {
+OCA.initializeState = function () {
 
     OCA.signUpForm = $('#affiliateSignUpForm');
     OCA.signUpFormContainer = $('#SignUpFormContainer'); // The big beige box
@@ -476,7 +477,7 @@ OCA.initializeState = function() {
     OCA.numberOfAdditionalLocationsTab3 = 0;
 };
 
-OCA.wireUpHandlers = function() {
+OCA.wireUpHandlers = function () {
 
     /* Click event for the big green SignUp button */
     $('#AddToCart').on('click', function () {
@@ -545,7 +546,7 @@ OCA.wireUpHandlers = function() {
                                 }
 
                                 OCA.hookUpChangeTypeLogic($('#RegType'));
-                                
+
                                 OCA.checkoutConfirm.initialize();
 
                                 OCA.wireUpMainButtonsOn3rdTab();
@@ -563,9 +564,9 @@ OCA.wireUpHandlers = function() {
                     } else if (xhr.responseJSON['isSuccessful'] === false) {
                         formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
 
-                        
+
                         $('#AddToCart').removeAttr('disabled');
-                        
+
                     }
                     spinner.remove();
                 } else {
@@ -580,7 +581,7 @@ OCA.wireUpHandlers = function() {
         }
         return false;
     });
-    
+
     //var searchPeople = _.debounce(function( query, process ){
 
     //    OCA.foundUsersList.hide();
@@ -619,9 +620,34 @@ OCA.wireUpHandlers = function() {
 
         if (searchTerm === '')
             return;
-
-        if (searchTerm.indexOf('@') > 0) {
+        if (searchTerm.indexOf('@') == 0) {
             // in here if searching for an email
+            searchBy = 'emailDomain';
+            $.ajax({
+                type: 'GET',
+                contentType: constants.FormPostContentType,
+                cache: false,
+                url: '/Admin/GetOrdersByEmailDomain',
+                dataType: constants.JsonDataType,
+                data: { email: searchTerm },
+                beforeSend: function () {
+                    OCA.users = null; // dereference whatever is currently in 'OCA.users'. 
+                }
+            }).done(function (data) {
+
+                OCA.users = _.map(data.results, function (item) {
+                    var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName, email: item.billingEmail, institution: item.institution };
+                    return JSON.stringify(aItem);
+                });
+
+                process(OCA.users);
+
+            });
+
+        }
+        else if (searchTerm.indexOf('@') > 1) {
+            // in here if searching for an email
+            searchBy = 'email';
             $.ajax({
                 type: 'GET',
                 contentType: constants.FormPostContentType,
@@ -645,7 +671,7 @@ OCA.wireUpHandlers = function() {
 
         } else if (_.isFinite(searchTerm)) {
             // in here if searching on an order number
-
+            searchBy = 'orderID';
             $.ajax({
                 type: 'GET',
                 contentType: constants.FormPostContentType,
@@ -657,7 +683,7 @@ OCA.wireUpHandlers = function() {
                     OCA.users = null; // dereference whatever is currently in 'OCA.users'. 
                 }
             }).done(function (data) {
-                
+
                 OCA.users = _.map(data.results, function (item) {
                     var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName, email: item.billingEmail, institution: item.institution };
                     return JSON.stringify(aItem);
@@ -667,6 +693,7 @@ OCA.wireUpHandlers = function() {
             });
         } else {
             // if not a number and not an email address, search is by lastname
+            searchBy = 'lastName';
             $.ajax({
                 type: 'GET',
                 contentType: constants.FormPostContentType,
@@ -689,57 +716,69 @@ OCA.wireUpHandlers = function() {
         }
 
     }, 200);
-//}).done(function (data) {
-//    OCA.users = data.people;
+    //}).done(function (data) {
+    //    OCA.users = data.people;
 
-//    var results = _.map(OCA.users, function (user) {
-//        return user.id;
-//    });
-//    process(results);
-//});
-
-//}, 500);
-
-
-    //OCA.lastNameInput.typeahead({
-    //    source: function (query, process) {
-    //        searchPeople(query, process);
-    //    },
-
-    //    matcher: function (item) {
-    //        return true;
-    //    },
-
-    //    highlighter: function (listedUser) {
-    //        var item = JSON.parse(listedUser);
-    //        var user = _.find(OCA.users, function (webUser) {
-    //            return JSON.parse(webUser)['id'] === item.id;
-    //        });
-    //        if (user !== null && typeof user !== 'undefined') {
-    //            var userParsed = JSON.parse(user);
-    //            return userParsed.lastName + ', ' + userParsed.firstName;
-    //        }
-    //    },
-
-    //    sorter: function (items) {
-    //        return items;
-    //    },
-
-    //    updater: function (userJson) {
-    //        var userParsed = JSON.parse(userJson);
-    //        var user = _.find(OCA.users, function (p) {
-    //            return JSON.parse(p)['id'] === userParsed['id'];
-    //        });
-
-    //        if (typeof user !== 'undefined') {
-    //            var parsedUser = JSON.parse(user);
-    //            OCA.setSelectedProduct(parsedUser);
-    //            return parsedUser['lastName'] + ', ' + parsedUser['firstName'];
-    //        }
-    //        return '';
-    //    }
-
+    //    var results = _.map(OCA.users, function (user) {
+    //        return user.id;
+    //    });
+    //    process(results);
     //});
+
+    //}, 500);
+
+
+    OCA.lastNameInput.typeahead({
+        source: function (query, process) {
+            searchPeople(query, process);
+        },
+
+        matcher: function (item) {
+            return true;
+        },
+
+        highlighter: function (listedUser) {
+            var item = JSON.parse(listedUser);
+            var user = _.find(OCA.users, function (webUser) {
+                return JSON.parse(webUser)['id'] === item.id;
+            });
+            if (user !== null && typeof user !== 'undefined') {
+                var userParsed = JSON.parse(user);
+                if (searchBy == "email") {
+                    return userParsed.email + ', ' + userParsed.lastName;
+                }
+                if (searchBy == "orderID") {
+                    return userParsed.email + ', ' + userParsed.lastName;
+                }
+                if (searchBy == "emailDomain") {
+                    return userParsed.institution + ', ' + userParsed.email;
+                }
+                if (searchBy == "lastName") {
+                    return userParsed.lastName + ', ' + userParsed.firstName;
+                }
+
+            }
+        },
+
+        sorter: function (items) {
+            return items;
+        },
+
+        updater: function (userJson) {
+            var userParsed = JSON.parse(userJson);
+            var user = _.find(OCA.users, function (p) {
+                return JSON.parse(p)['id'] === userParsed['id'];
+            });
+
+            if (typeof user !== 'undefined') {
+                var parsedUser = JSON.parse(user);
+                OCA.setSelectedProduct(parsedUser);
+                return parsedUser['lastName'] + ', ' + parsedUser['firstName'];
+            }
+            return '';
+        }
+
+    });
 
     OCA.emailOrderButtonHandler = function (e) {
 
@@ -779,11 +818,11 @@ OCA.wireUpHandlers = function() {
 
                 $('#emailSendingSpinner').remove();
                 $(self).removeAttr('disabled');
-                
+
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 $('#emailSendingSpinner').remove();
                 $(self).removeAttr('disabled');
-                
+
                 $(self).after('<span class="field-validation-error">Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
             });
         });
@@ -810,17 +849,17 @@ $(function () {
     OCA.wireUpHandlers();
 });
 
-function modalShown (e) {
+function modalShown(e) {
 
     $('#updateShippingMsgLabelWrap').empty();
 
-    $('#saveChangesButton').on('click', function() {
+    $('#saveChangesButton').on('click', function () {
         e.preventDefault();
 
         $('#userDetailsForm').submit();
     });
 
-    $('#userDetailsForm').on('submit', function(e) {
+    $('#userDetailsForm').on('submit', function (e) {
         e.preventDefault();
 
         var url = $(this).attr('action');
@@ -834,7 +873,7 @@ function modalShown (e) {
             cache: false,
             url: url,
             dataType: constants.JsonDataType,
-            beforeSend: function(xhr) {
+            beforeSend: function (xhr) {
                 $('#updateShippingMsgLabelWrap').html('<span class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Updating details...</span>');
 
                 var valSummary = $('#userDetailsValSummary');
@@ -845,7 +884,7 @@ function modalShown (e) {
                 errorsList.append('<li style="display:none"></li>');
 
             }
-        }).done(function(data) {
+        }).done(function (data) {
             //BUG:  A submitted order prematurely turns off the 'in-process' spinner.
             // Intermittent - Can't reproduce. Is same as was earlier reported where the lag between
             //  new user submission and the point where panel 3 displays is quite long
@@ -868,8 +907,8 @@ function modalShown (e) {
 
                 $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>[Connection Error #348] Please call us at 800-831-0678 ext. 3 to resolve.</span>');
             }
-        }).fail(function(data) {
-            
+        }).fail(function (data) {
+
             Rollbar.error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData + ' !data.isSuccessful');
             Rollbar.error("#348 userDetailsFormUrl static marker");
             $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Connection Error #048] Please call us at 800-831-0678 ext. 3 to resolve.</span>');

@@ -194,14 +194,45 @@ namespace CUWebinars.Business.Repository
             return item.FirstOrDefault();
         }
 
-        public IQueryable<Order> FindOrdersByBillingEmail(string email)
+        public IQueryable<Order> FindOrdersByBillingEmail(string email, int aff)
         {
-            return items.Include(o => o.WebUser).Where(o => o.BillingEmail == email);
+            if (aff > 0)
+            {
+                return items.Include(o => o.WebUser).Where(o => o.BillingEmail == email && o.Affiliate.idUserAff == aff);
+            }
+            else
+            {
+                return items.Include(o => o.WebUser).Where(o => o.BillingEmail == email);
+                
+            }
         }
 
-        public IQueryable<Order> FindOrdersByLastName(string lastName)
+        public IQueryable<Order> FindOrdersByBillingEmailDomain(string email, int aff)
         {
-            return items.Include(o => o.WebUser).Where(o => o.LastName.ToLower().Contains(lastName));
+            if (aff > 0)
+            {
+                return items.Include(o => o.WebUser).Where(o => o.BillingEmail.Contains( email) && o.Affiliate.idUserAff == aff);
+            }
+            else
+            {
+                return items.Include(o => o.WebUser).Where(o => o.BillingEmail.Contains(email));
+
+            }
+        }
+
+        public IQueryable<Order> FindOrdersByLastName(string lastName, int idAffiliate)
+        {
+            if (idAffiliate > 0)
+            {
+                return items.Include(o => o.WebUser).Where(o => o.LastName.ToLower().StartsWith(lastName)
+                   && o.idAffiliate == idAffiliate 
+                    );
+            }
+            else
+            {
+                return items.Include(o => o.WebUser).Where(o => o.LastName.ToLower().StartsWith(lastName));
+            }
+            ;
         }
 
         public IList<Order> FindOrdersByUserId(int userId)

@@ -48,8 +48,8 @@ namespace CUWebinars.Business.Services
         Affiliate GetAffiliateById(int id);
         Affiliate GetAffiliateByIdLoaded(int id, params Expression<Func<Affiliate, object>>[] includeProperties);
         IDictionary<RegType, bool> GetOptionsByWebinarId(int id, bool detached);
-        IEnumerable<Order> GetOrdersByEmail(string email);
-        IEnumerable<Order> GetOrdersByLastName(string lastName);
+        IEnumerable<Order> GetOrdersByEmail(string email, int aff);
+        IEnumerable<Order> GetOrdersByLastName(string lastName, int aff);
         Order GetOrderById(int id);
         Order GetOrderByIdThin(int id);
         IEnumerable<int> GetOrderIdsByPartialId(int id);
@@ -103,5 +103,6 @@ namespace CUWebinars.Business.Services
         void LoadWebinarIntoOrderRow(OrderRow newOrderRow);
         void SetUserStatusToUnChanged(WebUser user);
         void SetAffiliateStatusToUnChanged(Affiliate affiliate);
+        IEnumerable<Order> GetOrdersByEmailDomain(string email, int aff);
     }
 }

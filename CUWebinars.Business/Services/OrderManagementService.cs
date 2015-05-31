@@ -238,15 +238,20 @@ namespace CUWebinars.Business.Services
             return (IDictionary<RegType, bool>)options;
         }
 
-        public IEnumerable<Order> GetOrdersByEmail(string email)
+        public IEnumerable<Order> GetOrdersByEmail(string email, int aff)
         {
-            return _orderRepository.FindOrdersByBillingEmail(email);
+            return _orderRepository.FindOrdersByBillingEmail(email, aff);
+        }
+        public IEnumerable<Order> GetOrdersByEmailDomain(string email, int aff)
+        {
+            return _orderRepository.FindOrdersByBillingEmailDomain(email, aff);
         }
 
-        public IEnumerable<Order> GetOrdersByLastName(string lastName)
+        public IEnumerable<Order> GetOrdersByLastName(string lastName, int aff)
         {
-            return _orderRepository.FindOrdersByLastName(lastName);
+            return _orderRepository.FindOrdersByLastName(lastName, aff);
         }
+
 
         public IList<Order> GetOrdersForLiveNotifications(int idWebinar)
         {
@@ -350,6 +355,8 @@ namespace CUWebinars.Business.Services
         {
             _affiliateRepository.SetAffiliateStatusToUnChanged(affiliate);
         }
+
+
 
 
         public IList<Order> GetOrdersByUserId(int id)
