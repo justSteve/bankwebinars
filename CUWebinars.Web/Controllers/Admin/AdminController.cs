@@ -1,8 +1,8 @@
-﻿using System.Collections.ObjectModel;
-using CUWebinars.Business.AccountService;
+﻿using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Extensions;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification;
 using CUWebinars.Business.Notification.Formatters;
@@ -106,7 +106,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
                 catch (Exception exception)
                 {
-                    _logger.ErrorException(string.Format("AddQuiz. Session | {0}",
+                    _logger.ErrorException(string.Format("AddQuiz. Session | {0}", 
                         _appHelper.GetUserAuditInfo()),
                         exception);
 
@@ -140,7 +140,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             var originalAffiliate = new CUWebinars.Business.Repository.AffiliateRepository().FindByIdWithIncluding(order.idAffiliate);
             var newAffiliate = new CUWebinars.Business.Repository.AffiliateRepository().FindByIdWithIncluding(idAffiliate.Value);
-            //            var orderUser = _membershipService.GetUserByEmail(order.BillingEmail);
+//            var orderUser = _membershipService.GetUserByEmail(order.BillingEmail);
 
             string buildMessage = "<div class=\"affiliateChanged\">Affiliate changed for order " + order.idOrder + " from " + originalAffiliate.ttsDomain + " to " +
                                   newAffiliate.ttsDomain + " by " + User.Identity.Name +
@@ -205,7 +205,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 //var orderchanges = new OrderChanges
                 //{
-
+                    
                 //}
 
                 //model.PostEventAccessExpires = _membershipService.SetPostEventAccessExpireyDate(userAccount, id.Value);
@@ -227,7 +227,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, _orderManagementService.GetOrderById(id.Value).WebUser.email);
                 if (userAccount == null) throw new NullReferenceException(string.Format("UserAccount does not exist in system for OrderId {0}", id.Value));
 
-                model.PostEventAccessExpires = _membershipService.GetPostEventAccessExpireyDate(userAccount, id.Value);
+                model.PostEventAccessExpires = _membershipService.GetPostEventAccessExpireyDate(userAccount, id.Value); 
                 return View(model);
             }
 
@@ -263,7 +263,7 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             else
             {
-                foreach (var additionalLocation in
+                foreach (var additionalLocation in 
                     model.AdditionalLocations.Where(
                         al => !orderRow.AdditionalLocation.Select(eal => eal.Email).Contains(al.Email)))
                 {
@@ -277,7 +277,7 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             else
             {
-                foreach (var additionalLocation
+                foreach (var additionalLocation 
                     in
                     orderRow.AdditionalLocation.Where(
                         al => !model.AdditionalLocations.Select(mal => mal.Email).Contains(al.Email)))
@@ -417,7 +417,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     new
                     {
                         Result = WebUiConstants.Fail,
-                        Reason = "There has been an error at the server. Please call us at 800-831-0678 ext. 3 to resolve."
+                        Reason = "There has been an error at the server. Please call us at 800-831-0678 ext. 3 to resolve."                    
                     });
         }
 
@@ -487,10 +487,10 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     if (generateClickToJoinViewModel.OrderId.HasValue)
                     {
-                        var orderRow =
+                        var orderRow = 
                             _orderManagementService.GetOrderById(generateClickToJoinViewModel.OrderId.Value).OrderRows
                             .Single(or => or.RowStatus == OrderRowStatus.Active);
-
+                        
                         return Json(new { Result = WebUiConstants.Success, Code = orderRow.TtsJoinUrl });
                     }
 
@@ -555,7 +555,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, email);
 
                 if (ReferenceEquals(userAccount, null))
-                    return PartialView("~/Views/Admin/Partials/_ServerError.cshtml",
+                    return PartialView("~/Views/Admin/Partials/_ServerError.cshtml", 
                         string.Format("There's no User in the system with the email {0}", email)
                         );
 
@@ -663,7 +663,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             // Need to decide whether the selected option in the DropDownList can add additional locations
             var regType = manageOrderEditModel.DisplayOptionsInDropDownViewModel.OrderRowRegistrationType;
-
+            
             {
                 var option = CheckIfAddLocAvailable(regType.idRegType);
                 if (option.HasValue)
@@ -783,10 +783,6 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(new { Error = WebUiConstants.NullValueParameter });
         }
 
-        private string GetAffiliateName(int idAffiliate)
-        {
-            return _orderManagementService.GetAffiliateEmailById(idAffiliate);
-        }
 
         private TagBuilder GetRenderer(IList<string> emailAddresses)
         {
@@ -1632,9 +1628,9 @@ namespace CUWebinars.Web.Controllers.Admin
                     expiryDateProperty,
                     OnDemandCodeProperty
                     );
-
+                
                 _membershipService.UpdateDisplayPostEventMaterialsClaim(
-                    _globalConfig.Tenant,
+                    _globalConfig.Tenant, 
                     email,
                     DateTime.Parse(newExpiryDate),
                     orderID.Value
@@ -1746,22 +1742,30 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpPost]
         public ActionResult GetGridData([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel)
         {
-            int totalNumberOrders;
-            var ordersViewModel = BuildDisplayOrdersViewModel(requestModel.Start, requestModel.Length, out totalNumberOrders);
+            int totalNumberOrders, totalFilteredOrders;
+            var ordersViewModel = BuildDisplayOrdersViewModel(requestModel, out totalNumberOrders, out totalFilteredOrders);
 
             return Json(new
             {
-                data = ordersViewModel.OrderSummaries,
+                data = ordersViewModel.OrderSummaries, 
                 draw = requestModel.Draw,
                 recordsFiltered = ordersViewModel.RecordsFiltered,
                 recordsTotal = ordersViewModel.RecordsTotal
-
+            
             }, JsonRequestBehavior.AllowGet);
         }
 
-        private DisplayOrdersViewModel BuildDisplayOrdersViewModel(int start, int length, out int totalNumberOrders)
+        private DisplayOrdersViewModel BuildDisplayOrdersViewModel(IDataTablesRequest requestModel, out int totalNumberOrders, out int totalFilteredOrders)
         {
-            IEnumerable<Order> orders = _dataTablesService.GetOrdersByWebinar(1851, 19, start, length, out totalNumberOrders);
+            string orderIdFragment = string.Empty;
+            var filteredCols = requestModel.Columns.GetFilteredColumns().ToList();
+
+            if (filteredCols.Any())
+        {
+                orderIdFragment = filteredCols.ElementAt(0).Search.Value.ToLower();
+            }
+
+            IEnumerable<Order> orders = _dataTablesService.GetOrdersPaged(requestModel.Start, requestModel.Length, orderIdFragment, out totalNumberOrders, out totalFilteredOrders);
 
             ICollection<OrderSummary> orderSummaries = new List<OrderSummary>();
 
@@ -1785,8 +1789,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return new DisplayOrdersViewModel
             {
-                Draw = 0,
-                RecordsFiltered = totalNumberOrders,
+                Draw = requestModel.Draw,
+                RecordsFiltered = totalFilteredOrders,
                 RecordsTotal = totalNumberOrders,
                 OrderSummaries = orderSummaries
             };
