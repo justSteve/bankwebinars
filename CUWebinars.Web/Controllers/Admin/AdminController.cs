@@ -1,8 +1,8 @@
-﻿using System.Collections.ObjectModel;
-using CUWebinars.Business.AccountService;
+﻿using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Extensions;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification;
 using CUWebinars.Business.Notification.Formatters;
@@ -34,7 +34,6 @@ using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
-using CUWebinars.Business.Core.Helpers;
 using ClaimTypes = System.Security.Claims.ClaimTypes;
 using DateTimeHelper = CUWebinars.Web.Helpers.DateTimeHelper;
 using Formatting = Newtonsoft.Json.Formatting;
@@ -1685,8 +1684,8 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpPost]
         public ActionResult GetGridData([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel)
         {
-            int totalNumberOrders;
-            var ordersViewModel = BuildDisplayOrdersViewModel(requestModel.Start, requestModel.Length, out totalNumberOrders);
+            int totalNumberOrders, totalFilteredOrders;
+            var ordersViewModel = BuildDisplayOrdersViewModel(requestModel, out totalNumberOrders, out totalFilteredOrders);
 
             return Json(new
             {
@@ -1698,9 +1697,17 @@ namespace CUWebinars.Web.Controllers.Admin
             }, JsonRequestBehavior.AllowGet);
         }
 
-        private DisplayOrdersViewModel BuildDisplayOrdersViewModel(int start, int length, out int totalNumberOrders)
+        private DisplayOrdersViewModel BuildDisplayOrdersViewModel(IDataTablesRequest requestModel, out int totalNumberOrders, out int totalFilteredOrders)
         {
-            IEnumerable<Order> orders = _dataTablesService.GetOrdersPaged(start, length, out totalNumberOrders);
+            string orderIdFragment = string.Empty;
+            var filteredCols = requestModel.Columns.GetFilteredColumns().ToList();
+
+            if (filteredCols.Any())
+            {
+                orderIdFragment = filteredCols.ElementAt(0).Search.Value.ToLower();
+            }
+
+            IEnumerable<Order> orders = _dataTablesService.GetOrdersPaged(requestModel.Start, requestModel.Length, orderIdFragment, out totalNumberOrders, out totalFilteredOrders);
 
             ICollection<OrderSummary> orderSummaries = new List<OrderSummary>();
 
@@ -1724,8 +1731,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return new DisplayOrdersViewModel
             {
-                Draw = 0,
-                RecordsFiltered = totalNumberOrders,
+                Draw = requestModel.Draw,
+                RecordsFiltered = totalFilteredOrders,
                 RecordsTotal = totalNumberOrders,
                 OrderSummaries = orderSummaries
             };

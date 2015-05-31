@@ -7,7 +7,8 @@ namespace CUWebinars.Business.Services
     public interface IDataTablesService
     {
         IEnumerable<Order> GetAllOrders();
-        IEnumerable<Order> GetOrdersPaged(int start, int length, out int totalNumberOrders);
+
+        IEnumerable<Order> GetOrdersPaged(int start, int length, string orderIdFragment, out int totalNumberOrders, out int totalFilteredOrders);
     }
 
     public class DataTablesService : IDataTablesService
@@ -24,11 +25,14 @@ namespace CUWebinars.Business.Services
             return _context.Orders;
         }
 
-        public IEnumerable<Order> GetOrdersPaged(int start, int length, out int totalNumberOrders)
+        public IEnumerable<Order> GetOrdersPaged(int start, int length, string orderIdFragment, out int totalNumberOrders, out int totalFilteredOrders)
         {
             totalNumberOrders = _context.Orders.Count();
+            
+            var filteredResult =_context.Orders.Where(o => o.idOrder.ToString().ToLower().Contains(orderIdFragment));
+            totalFilteredOrders = filteredResult.Count();
 
-            return _context.Orders.OrderByDescending(order => order.idOrder).Skip(start).Take(length);
+            return filteredResult.OrderByDescending(order => order.idOrder).Skip(start).Take(length); ;
         }
     }
 }
