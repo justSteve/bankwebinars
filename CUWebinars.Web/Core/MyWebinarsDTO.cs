@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using CUWebinars.Business.Constants;
-using CUWebinars.Business.Models;
+﻿using CUWebinars.Business.Models;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.ViewModel;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace CUWebinars.Web.Core
 {
@@ -12,7 +11,7 @@ namespace CUWebinars.Web.Core
 
         public OrderHasAdditionalLocationsViewModel OrderHasAdditionalLocationsViewModel { get; set; }
         public IList<Order> Scheduled { get; set; }
-        public IList<Order> Recorded { get; set; }
+        public IDictionary<string, Order> Recorded { get; set; }
         public IList<Order> Archived { get; set; }
         public IEnumerable MyClaims { get; set; }
         public DiscountModel Subscription { get; set; }

@@ -40,12 +40,14 @@ namespace CUWebinars.Web.Core.Orchestrators
         private readonly IAppHelper _appHelper;
         private readonly IUniversalMapper _universalMapper;
         private readonly IOrderManagementService _orderManagementService;
+        private readonly IWebinarManagementService _webinarManagementService;
         private bool _disposed;
 
         public
             AccountControllerOrchestrator(ILogger logger,
             IMembershipService membershipService,
             IOrderManagementService orderManagementService,
+            IWebinarManagementService webinarManagementService,
             IStateService stateService,
             HttpRequestBase request,
             IAppHelper appHelper,
@@ -55,6 +57,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             _logger = logger;
             _membershipService = membershipService;
             _orderManagementService = orderManagementService;
+            _webinarManagementService = webinarManagementService;
             _stateService = stateService;
             _appHelper = appHelper;
             _universalMapper = universalMapper;
@@ -448,8 +451,17 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
 
             model.Scheduled = _orderManagementService.SelectOrdersWithScheduledWebinars(currentUser.idUser);
-            model.Recorded = _orderManagementService.SelectOrdersWithRecordedWebinars(currentUser.idUser);
+
+            var ordersForRecordedWebinars = _orderManagementService.SelectOrdersWithRecordedWebinars(currentUser.idUser);
+            model.Recorded = new Dictionary<string, Order>(ordersForRecordedWebinars.Count, StringComparer.OrdinalIgnoreCase);
             model.Archived = _orderManagementService.SelectOrdersWithArchivedWebinars(currentUser.idUser);
+
+            foreach (var selectOrdersWithRecordedWebinar in ordersForRecordedWebinars)
+            {
+                var quiz =
+                    _webinarManagementService.GetQuizByWebinarId(selectOrdersWithRecordedWebinar.OrderRows.Single().idWebinar);
+                model.Recorded.Add(new KeyValuePair<string, Order>(quiz.QuizCode, selectOrdersWithRecordedWebinar));    
+            }
 
             foreach (var orderRow in model.Scheduled.Select(order => order.OrderRows
                 .Single(or => or.RowStatus == OrderRowStatus.Active))
@@ -495,8 +507,17 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
 
             model.Scheduled = _orderManagementService.SelectOrdersWithScheduledWebinars(currentUser.idUser);
-            model.Recorded = _orderManagementService.SelectOrdersWithRecordedWebinars(currentUser.idUser);
             model.Archived = _orderManagementService.SelectOrdersWithArchivedWebinars(currentUser.idUser);
+
+            var ordersForRecordedWebinars = _orderManagementService.SelectOrdersWithRecordedWebinars(currentUser.idUser);
+            model.Recorded = new Dictionary<string, Order>(ordersForRecordedWebinars.Count, StringComparer.OrdinalIgnoreCase);
+
+            foreach (var selectOrdersWithRecordedWebinar in ordersForRecordedWebinars)
+            {
+                var quiz =
+                    _webinarManagementService.GetQuizByWebinarId(selectOrdersWithRecordedWebinar.OrderRows.Single().idWebinar);
+                model.Recorded.Add(new KeyValuePair<string, Order>(quiz.QuizCode, selectOrdersWithRecordedWebinar));
+            }
 
             foreach (var orderRow in model.Scheduled.Select(order => order.OrderRows
                 .Single(or => or.RowStatus == OrderRowStatus.Active))
