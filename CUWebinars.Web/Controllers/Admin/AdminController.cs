@@ -34,6 +34,9 @@ using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
+using BrockAllen.MembershipReboot;
+using CUWebinars.Business.Core.Helpers;
+using Microsoft.AspNet.Identity;
 using ClaimTypes = System.Security.Claims.ClaimTypes;
 using DateTimeHelper = CUWebinars.Web.Helpers.DateTimeHelper;
 using Formatting = Newtonsoft.Json.Formatting;
@@ -99,7 +102,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     _webinarManagementService.AddQuiz(addQuizEditModel.SelectedWebinar, addQuizEditModel.Questions);
 
-                    return Json(new {Result = WebUiConstants.Success});
+                    return Json(new { Result = WebUiConstants.Success });
                 }
                 catch (Exception exception)
                 {
@@ -690,7 +693,49 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             if (!string.IsNullOrWhiteSpace(email))
             {
-                var results = _orderManagementService.GetOrdersByEmail(email).Select(o =>
+                var aff = 0;
+                var currentUser = User.Identity as ClaimsIdentity;
+
+                if (currentUser.HasClaim(
+                        (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
+                {
+                    aff = _membershipService.GetUserByEmail(User.Identity.Name).idUser;
+
+                }
+
+
+                var results = _orderManagementService.GetOrdersByEmail(email, aff).Select(o =>
+                    new
+                    {
+                        id = o.WebUser.idUser,
+                        billingEmail = o.WebUser.email,
+                        firstName = o.WebUser.FirstName,
+                        lastName = o.WebUser.LastName,
+                        institution = o.Institution
+                    }).Distinct();
+
+                return Json(new { results }, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json(new { Error = WebUiConstants.NullValueParameter });
+        }
+
+        public ActionResult GetOrdersByEmailDomain(string email)
+        {
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                var aff = 0;
+                var currentUser = User.Identity as ClaimsIdentity;
+
+                if (currentUser.HasClaim(
+                        (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
+                {
+                    aff = _membershipService.GetUserByEmail(User.Identity.Name).idUser;
+
+                }
+
+
+                var results = _orderManagementService.GetOrdersByEmailDomain(email, aff).Select(o =>
                     new
                     {
                         id = o.WebUser.idUser,
@@ -710,9 +755,20 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             if (!string.IsNullOrWhiteSpace(lastName))
             {
-                var results = _orderManagementService.GetOrdersByLastName(lastName)
+                var aff = 0; 
+                var currentUser = User.Identity as ClaimsIdentity;
+
+                if (currentUser.HasClaim(
+                        (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
+                {
+                    aff = _membershipService.GetUserByEmail(User.Identity.Name).idUser;
+
+                }
+
+                var results = _orderManagementService.GetOrdersByLastName(lastName, aff)
                     .Select(o => new
                     {
+                        //AffiliateName = GetAffiliateName(o.idAffiliate),
                         id = o.WebUser.idUser,
                         billingEmail = o.WebUser.email,
                         lastName = o.WebUser.LastName,
@@ -720,11 +776,13 @@ namespace CUWebinars.Web.Controllers.Admin
                         institution = o.Institution
                     }).Distinct();
 
+
                 return Json(new { results }, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { Error = WebUiConstants.NullValueParameter });
         }
+
 
         private TagBuilder GetRenderer(IList<string> emailAddresses)
         {
@@ -1703,7 +1761,7 @@ namespace CUWebinars.Web.Controllers.Admin
             var filteredCols = requestModel.Columns.GetFilteredColumns().ToList();
 
             if (filteredCols.Any())
-            {
+        {
                 orderIdFragment = filteredCols.ElementAt(0).Search.Value.ToLower();
             }
 

@@ -10,7 +10,6 @@ namespace CUWebinars.Business.Services
         IEnumerable<Order> GetAllOrders();
         IEnumerable<Order> GetOrdersByWebinar(int idWebinar, int idAffliate, int start, int length, out int totalNumberOrders);
         IEnumerable<Order> GetOrdersByUser(int idUser, int idAffliate, int start, int length, out int totalNumberOrders);
-
         IEnumerable<Order> GetOrdersPaged(int start, int length, string orderIdFragment, out int totalNumberOrders, out int totalFilteredOrders);
     }
 
@@ -68,7 +67,7 @@ namespace CUWebinars.Business.Services
             return null;
         }
 
-        public IEnumerable<Order> GetOrdersByUser(int idUser, int idAffliate, int start, int length, out int totalNumberOrders)
+        public IEnumerable<Order> GetOrdersByUser(int idWebinar, int idAffliate, int start, int length, out int totalNumberOrders)
         {
             throw new NotImplementedException();
         }
