@@ -10,7 +10,7 @@
 
     WebUser currentUser = Model.WebUser;
     var EditResult = "<span>&nbsp;</span>";
-    var userSubscription = new DiscountDetailsModel() { Discount = Model.Subscription, UserId = currentUser.idUser };
+    var userSubscription = new CompPersSubscriptionsModel() { Discount = Model.Subscription, UserId = currentUser.idUser };
     //var userPackage = new DiscountDetailsModel() { Discount = Model.Package, UserId = currentUser.idUser };
     if (TempData["EditResult"] != null && (string)TempData["EditResult"] != "")
     {
@@ -20,6 +20,14 @@
     if (@Html.ValidationMessage("GeneralError") != null)
     {
         EditResult = "ERROR: " + @Html.ValidationMessage("GeneralError").ToHtmlString();
+    }
+    var activeScheduled = "active";
+    var activeRec = "";
+
+    if (Model.Scheduled.Count == 0)
+    {
+        activeScheduled = "";
+        activeRec = "active";
     }
 }
 
@@ -41,7 +49,7 @@
 
 
     <div class="tab-content" id="mywebinars">
-        <div class="tab-pane active" id="upcoming1">
+        <div class="tab-pane @activeScheduled" id="upcoming1">
             @if (Model.Scheduled.Count > 0)
             {
                 Html.RenderPartial("Partials/upcoming");
@@ -51,7 +59,7 @@
                 <div>No orders for an upcoming event were found.</div>
             }
         </div>
-        <div class="tab-pane" id="recorded1">
+        <div class="tab-pane @activeRec" id="recorded1">
             @if (Model.Recorded.Count > 0)
             {
                 Html.RenderPartial("Partials/Recorded");
@@ -61,7 +69,7 @@
             @if (userSubscription.Discount != null)
             {
 
-                Html.RenderPartial("Partials/Subscription", userSubscription);
+                Html.RenderPartial("Partials/Subscription", userSubscription );
 
             }
         </div>

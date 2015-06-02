@@ -449,6 +449,7 @@
     <Compile Include="Mapping\Profiles\TtsProfile.cs" />
     <Compile Include="Models\AddClaimInputModel.cs" />
     <Compile Include="Models\AddQuizEditModel.cs" />
+    <Compile Include="Models\CompPersSubscriptionsModel.cs" />
     <Compile Include="Models\ConnectionInfoEditModel.cs" />
     <Compile Include="Models\DiscountModel.cs" />
     <Compile Include="Models\EditContactInfoModel.cs" />
@@ -976,6 +977,7 @@
     <Content Include="Views\Quiz\Identify.cshtml" />
     <Content Include="Views\Quiz\EditQuizFromDetails.cshtml" />
     <Content Include="Views\Admin\DisplayOrders.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\CompPersSubscriptionEditor.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>

@@ -460,7 +460,14 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 var quiz =
                     _webinarManagementService.GetQuizByWebinarId(selectOrdersWithRecordedWebinar.OrderRows.Single().idWebinar);
-                model.Recorded.Add(new KeyValuePair<string, Order>(quiz.QuizCode, selectOrdersWithRecordedWebinar));    
+                if (!ReferenceEquals(null, quiz))
+                {
+                    model.Recorded.Add(new KeyValuePair<string, Order>(quiz.QuizCode, selectOrdersWithRecordedWebinar));
+                }
+                else
+                {
+                    model.Recorded.Add(new KeyValuePair<string, Order>("na" + selectOrdersWithRecordedWebinar.idOrder, selectOrdersWithRecordedWebinar));
+                }
             }
 
             foreach (var orderRow in model.Scheduled.Select(order => order.OrderRows
