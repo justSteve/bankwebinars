@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using CUWebinars.Business.Core;
+﻿using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
@@ -10,7 +9,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using RazorEngine.Templating;
 
 namespace CUWebinars.Business.Services
 {

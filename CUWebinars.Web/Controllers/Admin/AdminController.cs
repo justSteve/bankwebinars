@@ -1735,65 +1735,42 @@ namespace CUWebinars.Web.Controllers.Admin
 
         public ActionResult DisplayOrders()
         {
-            return View();
+            return View("DisplayOrders", 1720); // hard coded value. It's a webinar id
         }
 
         [HandleAjaxException]
         [HttpPost]
-        public ActionResult GetGridData([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel)
+        public ActionResult GetGridData(int? webinarId)
         {
-            int totalNumberOrders, totalFilteredOrders;
-            var ordersViewModel = BuildDisplayOrdersViewModel(requestModel, out totalNumberOrders, out totalFilteredOrders);
+            int totalNumberOrders;
 
             return Json(new
             {
-                data = ordersViewModel.OrderSummaries, 
-                draw = requestModel.Draw,
-                recordsFiltered = ordersViewModel.RecordsFiltered,
-                recordsTotal = ordersViewModel.RecordsTotal
-            
-            }, JsonRequestBehavior.AllowGet);
+                data = BuildDisplayOrdersViewModel(webinarId.Value, out totalNumberOrders)
+            });
         }
 
-        private DisplayOrdersViewModel BuildDisplayOrdersViewModel(IDataTablesRequest requestModel, out int totalNumberOrders, out int totalFilteredOrders)
+        private IList<IDictionary<string, string>> BuildDisplayOrdersViewModel(int webinarId, out int totalNumberOrders)
         {
-            string orderIdFragment = string.Empty;
-            var filteredCols = requestModel.Columns.GetFilteredColumns().ToList();
+            var orders =_dataTablesService.GetOrdersByWebinar(webinarId, 19, out totalNumberOrders);
 
-            if (filteredCols.Any())
-        {
-                orderIdFragment = filteredCols.ElementAt(0).Search.Value.ToLower();
-            }
-
-            IEnumerable<Order> orders = _dataTablesService.GetOrdersPaged(requestModel.Start, requestModel.Length, orderIdFragment, out totalNumberOrders, out totalFilteredOrders);
-
-            ICollection<OrderSummary> orderSummaries = new List<OrderSummary>();
+            IList<IDictionary<string, string>> responsePayload = new List<IDictionary<string, string>>(); 
+            IDictionary<string, string> responsePayloadInner = new Dictionary<string, string>();
 
             foreach (var order in orders)
             {
-                orderSummaries.Add(new OrderSummary
-                {
-                    OrderId = order.idOrder,
-                    FirstName = order.FirstName,
-                    LastName = order.LastName,
-                    Institution = order.Institution,
-                    BillingAddress = order.BillingAddress,
-                    BillingAddress2 = order.BillingAddress2,
-                    BillingCity = order.BillingCity,
-                    BillingEmail = order.BillingEmail,
-                    BillingPhone = order.BillingPhone,
-                    BillingState = order.BillingState,
-                    BillingZip = order.BillingZip,
-                });
+                responsePayloadInner = new Dictionary<string, string>();
+
+                responsePayloadInner.Add("OrderId", order.idOrder.ToString());
+                responsePayloadInner.Add("Last, First", string.Concat(order.ShippingLastName, ", ", order.ShippingFirstName));
+                responsePayloadInner.Add("Institution", order.Institution);
+                responsePayloadInner.Add("Phone", order.ShippingPhone);
+                responsePayloadInner.Add("Email", order.BillingEmail);
+
+                responsePayload.Add(responsePayloadInner);
             }
 
-            return new DisplayOrdersViewModel
-            {
-                Draw = requestModel.Draw,
-                RecordsFiltered = totalFilteredOrders,
-                RecordsTotal = totalNumberOrders,
-                OrderSummaries = orderSummaries
-            };
+            return responsePayload;
         }
 
         private List<Address> ProcessAddresses(RegisterViewModel registerViewModel)

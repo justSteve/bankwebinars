@@ -20,6 +20,7 @@ $(function () {
 
     ns.primeDomVariables = function() {
         DO.ordersTable = $('#ordersTable');
+        DO.webinarIdDiv = $('#webinarIdDiv');
     };
 
     ns.wireUpHandlers = function() {
@@ -28,56 +29,22 @@ $(function () {
 
     ns.wireUpDataTable = function() {
 
-        DO.ordersTable.dataTable({
-            "processing": true,
-            "serverSide": true,
-            "pagingType": "full_numbers",
-            "ajax": {
-                "url": "GetGridData",
+            DO.ordersTable.dataTable({
+                "ajax": {
+                    "url": "GetGridData",
+                    "data": {
+                        "webinarId": parseInt(DO.webinarIdDiv.text())
+        },
                 "type": "POST"
             },
             "columns": [
                 { "data": "OrderId" },
-                { "data": "FirstName" },
-                { "data": "LastName" },
+                { "data": "Last, First" },
                 { "data": "Institution" },
-                { "data": "BillingPhone" },
-                { "data": "BillingEmail" },
-                { "data": "BillingAddress" },
-                { "data": "BillingAddress2" },
-                { "data": "BillingCity" },
-                { "data": "BillingState" },
-                { "data": "BillingZip" },
-                { "data": "ShippingFirstName" },
-                { "data": "ShippingLastName" },
-                { "data": "ShippingPhone" },
-                { "data": "ShippingAddress" },
-                { "data": "ShippingAddress2" },
-                { "data": "ShippingCity" },
-                { "data": "ShippingState" },
-                { "data": "ShippingZip" }
+                { "data": "Phone" },
+                { "data": "Email" },
             ]
         });
-
-        DO.ordersTable.find('tfoot th:first').each(function () {
-            var title = DO.ordersTable.find('thead th').eq($(this).index()).text();
-            $(this).html('<input type="text" placeholder="Search ' + title + '" />');
-        });
-
-        var table = DO.ordersTable.DataTable(); // note capital D - used to access DataTables API.
-
-        table.columns(0).each(function() {
-
-            var self = this;
-
-            //DO.ordersTable.find('input', self.footer()).changeOrDelayedKey(table, function(e) {
-            //    self.search(self.value).draw();
-            //}, 500, 'keyup');
-            DO.ordersTable.find('input:first', this.footer()).on('keyup change', function () {
-                self.search(this.value).draw();
-            });
-        });
-
     };
 
 })(DO);

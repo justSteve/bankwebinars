@@ -1,4 +1,6 @@
-﻿@{
+﻿@model int
+
+@{
     ViewBag.Title = "Orders";
 }
 
@@ -25,6 +27,8 @@
         </tr>
     </tfoot>
 </table>
+
+<div id="webinarIdDiv" class="initialHide">@Model</div>
 
 @section scripts{
     @Scripts.Render("~/bundles/dataTables")
