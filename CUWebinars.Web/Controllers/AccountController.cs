@@ -709,6 +709,12 @@ namespace CUWebinars.Web.Controllers
 
                     if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
                     {
+                        _logger.Info("Account.SignIn. Session={0}, Email: {1}",
+                            _appHelper.GetUserAuditInfo(),
+                            model.Email
+                            );
+
+
                         var returnUrl = Server.HtmlDecode(model.ReturnUrl);
 
                         return Json(new { result = LoggedInResult, returnUrl = returnUrl });
@@ -716,19 +722,17 @@ namespace CUWebinars.Web.Controllers
 
                     if (!string.IsNullOrEmpty(userMustVerify))
                     {
-                        _logger.Info("Account.SignIn UserMustVerify. Session={0}, Email: {1} Password: {2}",
+                        _logger.Info("Account.SignIn UserMustVerify. Session={0}, Email: {1}",
                             _appHelper.GetUserAuditInfo(),
-                            model.Email,
-                            model.Password
+                            model.Email
                             );
 
                         return Json(new { result = ConfirmedResult, email = model.Email, password = model.Password });
                     }
 
                     // If we got this far, something failed, redisplay form
-                    _logger.Warn("Account.SignIn Failed. {0} | {1} Session= {2}",
+                    _logger.Warn("Account.SignIn Failed. {0} | Session= {1}",
                         model.Email,
-                        model.Password,
                         _appHelper.GetUserAuditInfo()
                         );
 
@@ -771,7 +775,7 @@ namespace CUWebinars.Web.Controllers
 
                     if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
                     {
-                        _logger.Info("Account.SignIn Post Success in cart. Session={0}", _appHelper.GetUserAuditInfo());
+                        _logger.Info("Account.SignIn Post Success in cart.{1} Session={0}", _appHelper.GetUserAuditInfo(), model.Email);
                         WebUser webUser = _accountControllerOrchestrator.GetWebUserByEmail(model.Email);
 
                         return Json(new { result = LoggedInResult, UserId = webUser.idUser });
@@ -784,9 +788,8 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 // If we got this far, something failed, redisplay form
-                _logger.Warn("Account.SignInFromCart Failed. {0} | {1} Session= {2}",
+                _logger.Warn("Account.SignInFromCart Failed. {0} |  Session= {1}",
                     model.Email,
-                    model.Password,
                     _appHelper.GetUserAuditInfo()
                     );
 

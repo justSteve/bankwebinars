@@ -4,7 +4,7 @@ registerDuringCheckout.institutionNames = {};
 
 registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, addressOptions, callback) {
 
-    //Rollbar.info({ 'reg-during-check': { orderId: orderId, webinarId: webinarId, orderRowId: orderRowId, shippingAddressRequired: shippingAddressRequired } });
+    Rollbar.info({ 'registerDuringCheckout.initialize': { orderId: orderId, webinarId: webinarId, orderRowId: orderRowId, shippingAddressRequired: shippingAddressRequired } });
 
     cartStateManager.setCancelOrderForm($('#cancelOrder'));
     cartStateManager.setConfirmOrderForm($('#confirmOrder'));
@@ -20,11 +20,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
             if (x.status == 403) {
                 alert('Sorry, your session has expired. Please login again to continue');
                 window.location.href = '/Account/Login';
+            } else {
+                //  handle in the Fail method of AJAX calls if not session expiry
+                Rollbar.critical('An error occurred: ' + status + 'nError: ' + error);
             }
-            //  handle in the Fail method of AJAX calls if not session expiry
-            //} else {
-            //    alert('An error occurred: ' + status + 'nError: ' + error);
-            //}
         }
     });
 
@@ -60,7 +59,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
         if (regUserStateManager.getAction() === '') {
 
             $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #893. Please refresh the page and re-try or contact @tenantTechEmail or, for immediate assistant, call @tenant.TechPhone.</span>');
-            Rollbar.error("The registration has encountered a problem.", e);
+            Rollbar.error("Connection Error #893.", e);
             return false;
         }
 
@@ -89,6 +88,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 regUserStateManager.nonUsAdddressInvoked();
                 break;
             case RegistrationInCart.Button.ResetPass:
+                Rollbar.info("ResetPass");
                 regUserStateManager.resetPassword(normalResetPasswordButton);
                 break;
             case RegistrationInCart.Button.YesUseAddress:
@@ -464,6 +464,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                             data: JSON.stringify(payloadForUpdate),
                             headers: headers,
                             beforeSend: function () {
+                                Rollbar.log("submitting " + url + " with: ", {
+                                    orderId: orderId, 
+                                    userId: data.UserId
+                                });
                                 $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
                             }
                         }).done(function () {

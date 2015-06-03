@@ -97,6 +97,7 @@ module RegistrationInCart {
             this.ensureFormValidatorParsed();
             if ($('#RegisterFields_Email').valid() == true) {
                 //console.log(REG.PageObjects.emailInput().valid());
+                //Rollbar.log("hitr");
                 $('#emailAddress').val($('#checkEmail').val());
                 $('form#checkEmail').submit();
                 return true;

@@ -137,10 +137,10 @@ FROM    TTSWebinars2.dbo.Orders o
         INNER JOIN dbo.OrdersRows r ON r.idOrder = o.idOrder
 WHERE   r.status < 6
         AND r.status > 1
-        AND r.idWebinar IN ( 1821)--( SELECT r.idWebinar FROM dbo.Webinar WHERE status = 2 OR status = 3) -- 1745 = understanding...
+        AND r.idWebinar IN ( 1812)--( SELECT r.idWebinar FROM dbo.Webinar WHERE status = 2 OR status = 3) -- 1745 = understanding...
 ORDER BY o.lastName DESC;
 GO
 
-EXEC dbo.OrdersByEventReconcile @idWebinar = 1821
+EXEC dbo.OrdersByEventReconcile @idWebinar = 1812
 
-EXEC dbo.OrdersByEvent @idWebinar = 1821
+EXEC dbo.OrdersByEvent @idWebinar = 1812

@@ -10,7 +10,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using DDay.iCal;
+using DDay.iCal.Serialization.iCalendar;
 using RazorEngine.Templating;
+using IEvent = CUWebinars.NotificationSystem.Event.IEvent;
 
 namespace CUWebinars.Business.Services
 {
@@ -526,29 +529,45 @@ namespace CUWebinars.Business.Services
             }
         }
 
-    //    string IWebinarManagementService.CreateCalendarEvent(string title,
-    //string body,
-    //DateTime startDate,
-    //double duration,
-    //string location,
-    //string organizer,
-    //string eventId,
-    //bool allDayEvent)
-    //    {
-    //        try
-    //        {
-    //            return CreateCalendarEvent(title, body, startDate, duration, location, organizer, eventId, allDayEvent);
-    //        }
-    //        catch (Exception exception)
-    //        {
-    //            _logger.ErrorException(string.Format("Title:{0},body:{1},startDate:{2},duration{3},location{4},organizer{5},eventId{6},allDayEvent" +
-    //                                                 "{7}", title, body, startDate.ToString("yyyy-MM-dd-hh-mm-ss-fff-tt"), duration, location,
-    //                                                 organizer, eventId, allDayEvent),
-    //                                                 exception
-    //                                                 );
-    //            throw;
-    //        }
-    //    }
+
+        
+        public static string CreateCalendarEvent(string title, string body, DateTime startDate, double duration, string location, string organizer, string eventId, bool allDayEvent)
+        {
+            // mandatory for outlook 2007
+            if (String.IsNullOrEmpty(organizer))
+                throw new Exception("Organizer provided was null");
+
+            var iCal = new iCalendar
+            {
+                Method = "PUBLISH",
+                Version = "2.0"
+            };
+
+            // "REQUEST" will update an existing event with the same UID (Unique ID) and a newer time stamp.
+            //if (updatePreviousEvent)
+            //{
+            //    iCal.Method = "REQUEST";
+            //}
+
+            var evt = iCal.Create<Event>();
+            evt.Summary = title;
+            evt.Start = new iCalDateTime(startDate);
+            evt.Duration = TimeSpan.FromHours(duration);
+            evt.Description = body;
+            evt.Location = location;
+            evt.IsAllDay = allDayEvent;
+            evt.UID = String.IsNullOrEmpty(eventId) ? new Guid().ToString() : eventId;
+            evt.Organizer = new Organizer(organizer);
+            evt.Alarms.Add(new Alarm
+            {
+                Duration = new TimeSpan(0, 15, 0),
+                Trigger = new Trigger(new TimeSpan(0, 15, 0)),
+                Action = AlarmAction.Display,
+                Description = "Reminder"
+            });
+
+            return new iCalendarSerializer().SerializeToString(iCal);
+        }
 
 
         public IEnumerable<Webinar> GetAllActive()

@@ -96,7 +96,9 @@ namespace CUWebinars.Business.AccountService
         {
             if (userAccount == null || !userAccount.HasClaim(ClaimTypes.DisplayPostEventMaterials)) return null;
 
-            var claimsForOrder = userAccount.Claims.FirstOrDefault(c => c.Value.ToLower().Contains(idOrder.ToString()));
+
+            var claimsForOrder = userAccount.Claims.FirstOrDefault(c => c.Value.ToLower().Contains(idOrder.ToString())
+                && c.Type == ClaimTypes.DisplayPostEventMaterials);
 
             // extract the date
             if (claimsForOrder == null) return null;
@@ -392,15 +394,23 @@ namespace CUWebinars.Business.AccountService
 
         public void AddClaim(UserAccount userAccount, string claimType, string claimValue)
         {
+            _logger.Info("AddClaim: uA: {0}, cT: {1}, cV: {2}", userAccount.Email, claimType, claimValue);
+            var validateClaimValue = ValidateClaimValue(claimValue, claimType);
             _userAccountService.AddClaim(
                 userAccount.ID,
                 claimType,
-                claimValue
+               validateClaimValue
                 );
+        }
+
+        private string ValidateClaimValue(string claimValue, string claimType)
+        {
+            throw new NotImplementedException();
         }
 
         public void AddAccountTypeNotVerifiedClaim(UserAccount userAccount, string accountType)
         {
+            _logger.Info("AddAccountTypeNotVerifiedClaim: {0}", userAccount.Email);
             if (userAccount == null)
                 throw new ArgumentNullException("userAccount");
             if (string.IsNullOrWhiteSpace(accountType))
@@ -419,6 +429,7 @@ namespace CUWebinars.Business.AccountService
 
         public bool ChangePasswordFromResetKey(string key, string newPassword)
         {
+            _logger.Info("ChangePasswordFromResetKey: {0}", key);
             try
             {
                 return _userAccountService.ChangePasswordFromResetKey(key, newPassword);
@@ -452,7 +463,7 @@ namespace CUWebinars.Business.AccountService
 
         public void UpdateUserDetails(string tenant, string firstName, string lastName, string email, string institutionName, Address billingAddress, Address shippingAddress, string title)
         {
-
+            _logger.Info("UpdateUserDetails: {0}", email);
             //if (_userAccountService.AuthenticateWithEmail(tenant, email, password))
             //{
             // removed authenticate requirement to permit Admin editing
@@ -606,12 +617,14 @@ namespace CUWebinars.Business.AccountService
                 webUser.Addresses.Add(shippingAddressFromDb);
 
                 // This string has blown out a couple of times. This following code ensures it does not exceed the max size of the database column.
+                // I'll update field to VarChar(max) - just not worth skimping. Let's ensure we apply same to all *Comments fields
+                // TODO: Convert comments using the newly adopted 'everything in JSON' pattern.
+                // serialize webUser and auditChanges to json, right?
                 var comments = (auditChanges + Environment.NewLine + "--------" +
                                 Environment.NewLine + webUser.generalComments);
                 webUser.generalComments = comments.Length < 1000 ? comments : comments.Substring(0, 1000);
 
-
-
+                
                 _webUserRepository.Update(webUser);
             }
             catch (Exception exception)
@@ -636,7 +649,7 @@ namespace CUWebinars.Business.AccountService
             if (userAccount == null) throw new ArgumentNullException("userAccount");
 
             var claim = userAccount.Claims.FirstOrDefault(c => c.Type == ClaimTypes.DisplayPostEventMaterials
-                &&  c.Value.ToLower().Contains(idOrder.ToString()) && c.Value.Contains(onDemandCode)
+                && c.Value.ToLower().Contains(idOrder.ToString()) && c.Value.Contains(onDemandCode)
                 );
 
             return !ReferenceEquals(null, claim) ? claim.Value : null;
@@ -644,6 +657,7 @@ namespace CUWebinars.Business.AccountService
 
         public UserAccount VerifyEmailFromKey(string key, string password)
         {
+            _logger.Info("VerifyEmailFromKey: {0}", key);
             UserAccount userAccount = null;
 
             try
@@ -660,7 +674,9 @@ namespace CUWebinars.Business.AccountService
 
         public USTimeZone GetTimeZoneByZip()
         {
-            //todo: [sjh] REMOVING THIS BRAKES Handle(RegisterNewAccountCommand command)  - can we refactor? [dar] I think this method is redundant. Refer to GetCityStateFromZip inAppHelper
+
+            //todo: [sjh] This is a problem needing resolution. Ensure the RUIC (the dropdown on user creation) relfects this value. 
+            // REMOVING THIS BRAKES Handle(RegisterNewAccountCommand command)  - can we refactor? [dar] I think this method is redundant. Refer to GetCityStateFromZip inAppHelper
             return USTimeZone.Central;
         }
 
@@ -672,6 +688,7 @@ namespace CUWebinars.Business.AccountService
 
         public void UpdateDisplayPostEventMaterialsClaim(UserAccount userAccount, DateTime newDate, int orderId)
         {
+            _logger.Info("UpdateDisplayPostEventMaterialsClaim: uA: {0}, nD: {1}, oID: {2}", userAccount.Email, newDate, orderId);
             var allPostEventMaterialsClaimsForUser = userAccount.Claims.Where(c => c.Type == ClaimTypes.DisplayPostEventMaterials);
             var claimForOrder = allPostEventMaterialsClaimsForUser.FirstOrDefault(c => c.Value.Contains(orderId.ToString()));
 
@@ -681,9 +698,23 @@ namespace CUWebinars.Business.AccountService
                 var dateJProperty = jsonParsedClaim.Property(JsonPropertyKeys.ExpiryDate);
                 dateJProperty.Value = newDate.ToString(DomainConstants.ClaimDateFormatText);
 
-                _userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials, claimForOrder.Value);
-                _userAccountService.AddClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials, jsonParsedClaim.ToString(Formatting.None));
-            }            
+                _userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials,
+                    claimForOrder.Value);
+                _userAccountService.AddClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials,
+                    jsonParsedClaim.ToString(Formatting.None));
+            }
+            //else
+            //{
+            //    //TODO: Account for possibiliity of no prior claim.
+            //    JObject jsonParsedClaim = GetPostEventMaterialsAccessExpiry(order);
+            //    var dateJProperty = jsonParsedClaim.Property(JsonPropertyKeys.ExpiryDate);
+            //    dateJProperty.Value = newDate.ToString(DomainConstants.ClaimDateFormatText);
+
+            //    _userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials, claimForOrder.Value);
+            //    _userAccountService.AddClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials, jsonParsedClaim.ToString(Formatting.None));
+            //}
+
+
         }
 
         public void UpdateShippingAddressDetails(Address shippingAddress)
@@ -725,6 +756,7 @@ namespace CUWebinars.Business.AccountService
 
         public WebUser CreateBareUserFromEmail(string email)
         {
+            _logger.Info("CreateBareUserFromEmail: {0}", email);
             var webUser = new WebUser
             {
                 idUser = _refDataRepository.GetMaxWebUserId() + 1,
@@ -735,7 +767,7 @@ namespace CUWebinars.Business.AccountService
                 LastName = "User",
                 idUserInstitution = 8,
                 email = email,
-                timeZone = USTimeZone.Central
+                timeZone = USTimeZone.Central, generalComments = "Origin: CreateBareUserFromEmail"
             };
 
             _webUserRepository.Add(webUser);

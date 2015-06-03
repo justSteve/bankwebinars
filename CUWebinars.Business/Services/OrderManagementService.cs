@@ -760,7 +760,7 @@ namespace CUWebinars.Business.Services
 
         public void FireSendRecordingIsPostedEvent(IList<Order> orders)
         {
-
+            
 
 
             foreach (var order in orders)
@@ -1266,12 +1266,13 @@ namespace CUWebinars.Business.Services
 
                     if (parsedJsonObject[DomainConstants.RegistrantKey] != null)
                     {
-                        //_logger.Info("Successful CreateRegistrantKey");
                         var registrantKey = parsedJsonObject[DomainConstants.RegistrantKey].ToString();
                         var joinUrl = parsedJsonObject[DomainConstants.JoinUrl].ToString();
 
                         row.RegistrantKey = registrantKey;
                         row.CitrixJoinUrl = joinUrl;
+
+                        _logger.Info("Successful CreateRegistrantKey: {0}", row.RegistrantKey);
                     }
                     else
                     {
@@ -1288,6 +1289,7 @@ namespace CUWebinars.Business.Services
 
         public Discount ApplyDiscountCode(string code, OrderRow row)
         {
+            _logger.Info("ApplyDiscountCode: {0}", code);
             var thisDiscount = GetDiscountByCode(code);
 
             if (!ReferenceEquals(null, thisDiscount))
@@ -1301,6 +1303,7 @@ namespace CUWebinars.Business.Services
 
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink, OrderGenesis orderGenesis = OrderGenesis.ImportedForExistingUser)
         {
+
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
             var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(currentOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar);
             var tuple = additionalLocationsPricing.SingleOrDefault();
@@ -1442,7 +1445,7 @@ namespace CUWebinars.Business.Services
             var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow, origin);
             var email = webUser == null ? "notauthenticated@cuwebinars.com" : webUser.email;
 
-            //_logger.Info("CreateNewOrder: " + email + " | " + orderRow.Webinar.Title + " | " + orderRow.RegistrationType.OptionLabel);
+            _logger.Info("CreateNewOrder: " + email + " | " + orderRow.Webinar.Title + " | " + orderRow.RegistrationType.OptionLabel);
             return order;
         }
 
@@ -1644,43 +1647,6 @@ namespace CUWebinars.Business.Services
         public void Clear()
         {
             _events.Clear();
-        }
-        public static string CreateCalendarEvent(string title, string body, DateTime startDate, double duration, string location, string organizer, string eventId, bool allDayEvent)
-        {
-            // mandatory for outlook 2007
-            if (String.IsNullOrEmpty(organizer))
-                throw new Exception("Organizer provided was null");
-
-            var iCal = new iCalendar
-            {
-                Method = "PUBLISH",
-                Version = "2.0"
-            };
-
-            // "REQUEST" will update an existing event with the same UID (Unique ID) and a newer time stamp.
-            //if (updatePreviousEvent)
-            //{
-            //    iCal.Method = "REQUEST";
-            //}
-
-            var evt = iCal.Create<Event>();
-            evt.Summary = title;
-            evt.Start = new iCalDateTime(startDate);
-            evt.Duration = TimeSpan.FromHours(duration);
-            evt.Description = body;
-            evt.Location = location;
-            evt.IsAllDay = allDayEvent;
-            evt.UID = String.IsNullOrEmpty(eventId) ? new Guid().ToString() : eventId;
-            evt.Organizer = new Organizer(organizer);
-            evt.Alarms.Add(new Alarm
-            {
-                Duration = new TimeSpan(0, 15, 0),
-                Trigger = new Trigger(new TimeSpan(0, 15, 0)),
-                Action = AlarmAction.Display,
-                Description = "Reminder"
-            });
-
-            return new iCalendarSerializer().SerializeToString(iCal);
         }
 
         public void Dispose()

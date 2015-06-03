@@ -1,16 +1,29 @@
-﻿@model Order
+﻿@using CUWebinars.Web.Core
+@model Order
+@{
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
+    var NewUserMsg = "<div>Please keep an eye out for an email confirming your registration. </div>";
+    if (!User.Identity.IsAuthenticated)
+    {
+        NewUserMsg = "<div><p>We've recorded your order but the email address used is not yet verified. " +
+                     "An order confirmation email has been dispatched to the order's address and includes " +
+                     "a link that will confirm your identity and activate this account. You will not be able " +
+                     "to log into our website until visiting the link provided in that email. </p>" +
+                     "<p>If you do not see our message in a timely fashion (and after checking your spam folder " +
+                     "for a message from " + _globalConfig.TenantEmail + ") please contact Customer Service at 800-831-0678 ext. 703.</div>";
+    }
+}
 <div id="LogInContainer" class="container">
-    <div style="margin-left: 200px;height:310px" id="reset">
-        
+    <div id="reset">
+
         <div class="legendImitator">Order Completion</div>
 
         <div class="text-success"> Thank you for your order!</div>
-        <div> Please keep an eye out for an email confirming your registration for this webinar. It will <strong>contain a link</strong> which will lead you to a page where you will be able to <strong>enter a password</strong> for your newly created account.</div>
-        
+
+
         <div id="OrderSummaryContainer" class="pull-right">
             @Html.Partial("~/Views/Shared/Partials/_OrderSumUser.cshtml", Model)
         </div>
-
     </div>
 </div>

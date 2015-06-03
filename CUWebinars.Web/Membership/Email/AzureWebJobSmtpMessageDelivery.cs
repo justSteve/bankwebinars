@@ -36,7 +36,7 @@ namespace CUWebinars.Web.Membership.Email
                 return;
             }
 
-            _logger.Info("Sending MR notification to {0}", msg.To);
+            _logger.Info("Sending MR notification to {0}. Subject: {1} ", msg.To, msg.Subject);
 
             var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName, _globalConfig.StorageAccessKey);
             var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);

@@ -773,7 +773,7 @@ $(function () {
 
     };
 
-    ns.extendEventAccess = function (e) {
+    ns.editDiscount = function (e) {
 
         e.preventDefault();
 

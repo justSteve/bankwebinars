@@ -1,6 +1,7 @@
 ﻿/// <reference path="../../typings/jquery/jquery.d.ts" />
 /// <reference path="../../typings/jquery/jquery.validation.d.ts" />
 /// <reference path="../../typings/bootstrap/bootstrap.d.ts" />
+//TODO: force TS to permit Rollbar references that current compiler setting forbids.
 var RegistrationInCart;
 (function (RegistrationInCart) {
     var Button = (function () {
@@ -106,6 +107,7 @@ var RegistrationInCart;
             this.ensureFormValidatorParsed();
             if ($('#RegisterFields_Email').valid() == true) {
                 //console.log(REG.PageObjects.emailInput().valid());
+                //Rollbar.log("hitr");
                 $('#emailAddress').val($('#checkEmail').val());
                 $('form#checkEmail').submit();
                 return true;

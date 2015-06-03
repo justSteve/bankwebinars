@@ -5,7 +5,7 @@
 }
 
 <div>
-    <div class="legendImitator"> A Few Small Details Required </div>
+    <div class="legendImitator">Please Sign In</div>
 
     @*<div style="margin-bottom: 20px;">If you are an existing user, please log in to proceed with accessing the On Demand Webinar:</div>
 
@@ -57,8 +57,7 @@
             </div>
     }*@
 
-    <div style="margin-bottom: 20px;">Accessing this content requires recording your name and email address:</div>
-
+    
     @using (Html.BeginForm("Identify", "Webinar", FormMethod.Post, new { id = "IdentifyDetailsForm", @class = "form-horizontal" }))
             {
         @Html.ValidationSummary("Please address the following issues in the form below:", new { id = "valSummaryIdentifyDetailsForm" })
