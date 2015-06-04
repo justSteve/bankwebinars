@@ -1,14 +1,15 @@
-﻿using System;
-using System.Linq;
-using CUWebinars.Business.Models;
+﻿using CUWebinars.Business.Models;
+using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 
 namespace CUWebinars.Business.Services
 {
     public interface IDataTablesService
     {
         IEnumerable<Order> GetAllOrders();
-        IEnumerable<Order> GetOrdersByWebinar(int idWebinar, int idAffliate, int start, int length, out int totalNumberOrders);
+        IEnumerable<Order> GetOrdersByWebinar(int idWebinar, int idAffliate, out int totalNumberOrders);
         IEnumerable<Order> GetOrdersByUser(int idUser, int idAffliate, int start, int length, out int totalNumberOrders);
         IEnumerable<Order> GetOrdersPaged(int start, int length, string orderIdFragment, out int totalNumberOrders, out int totalFilteredOrders);
     }
@@ -27,44 +28,36 @@ namespace CUWebinars.Business.Services
             return _context.Orders;
         }
 
-        public IEnumerable<Order> GetOrdersByWebinar(int idWebinar, int idAffliate, int start, int length, out int totalNumberOrders)
+        public IEnumerable<Order> GetOrdersByWebinar(int idWebinar, int idAffliate, out int totalNumberOrders)
         {
-            //if (idAffliate != 19)
-            //{
-            //    var theseOrders = _context.Orders
-            //        .Include(o => o.WebUser)
-            //        .Include(o => o.Affiliate)
-            //        .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
-            //        .Include(o => o.OrderRows.Select(or => or.RegistrationType))
-            //        .Include(o => o.OrderRows.Select(or => or.Discount))
-            //        .Where(
-            //            OrderRows.Single(
-            //                or =>
-            //                    or.RowStatus == OrderRowStatus.Active && or.idWebinar == idWebinar &&
-            //                    or.idAffliate == idAffliate));
+            IList<Order> theseOrders;
 
-            //    totalNumberOrders = theseOrders.Count();
-            //}
-            //else
-            //{
-            //    var theseOrders = _context.Orders
-            //        .Include(o => o.WebUser)
-            //        .Include(o => o.Affiliate)
-            //        .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
-            //        .Include(o => o.OrderRows.Select(or => or.RegistrationType))
-            //        .Include(o => o.OrderRows.Select(or => or.Discount))
-            //        .Where(
-            //            OrderRows.Single(
-            //                or =>
-            //                    or.RowStatus == OrderRowStatus.Active && or.idWebinar == idWebinar ));
+            if (idAffliate != 19)
+            {
+                theseOrders = _context.Orders
+                    .Include(o => o.WebUser)
+                    .Include(o => o.Affiliate)
+                    .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                    .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                    .Include(o => o.OrderRows.Select(or => or.Discount))
+                    .Where(o => o.OrderRows.Any(or => or.RowStatus == OrderRowStatus.Active && or.idWebinar == idWebinar) && o.idAffiliate == idAffliate)
+                    .ToList();
+            }
+            else
+            {
+                theseOrders = _context.Orders
+                    .Include(o => o.WebUser)
+                    .Include(o => o.Affiliate)
+                    .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                    .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                    .Include(o => o.OrderRows.Select(or => or.Discount))
+                    .Where(o => o.OrderRows.Any(or => or.RowStatus == OrderRowStatus.Active && or.idWebinar == idWebinar))
+                    .ToList();
+            }
 
-            //    totalNumberOrders = theseOrders.Count();
-            
-            //return theseOrders.OrderByDescending(order => order.idOrder).Skip(start).Take(length);
-            
-            //}
-            totalNumberOrders = 0;
-            return null;
+            totalNumberOrders = theseOrders.Count;
+
+            return theseOrders;
         }
 
         public IEnumerable<Order> GetOrdersByUser(int idWebinar, int idAffliate, int start, int length, out int totalNumberOrders)
