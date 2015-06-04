@@ -147,10 +147,12 @@ $(function () {
         var self = $(this);
 
         var userClaimCell = $(this).parent().prevAll().eq(1);
+        var claimValueCell = userClaimCell.next();
 
         var payload = {
             email: CM.emailInput.val(),
-            claim: userClaimCell.text()
+            claim: userClaimCell.text(),
+            claimValue: claimValueCell.text()
         };
 
         $.ajax({

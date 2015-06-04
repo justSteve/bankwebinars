@@ -1477,9 +1477,9 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
         [HttpPost]
-        public ActionResult DeleteClaim(string email, string claim)
+        public ActionResult DeleteClaim(string email, string claim, string claimValue)
         {
-            _membershipService.RemoveClaim(_globalConfig.Tenant, email, claim);
+            _membershipService.RemoveClaim(_globalConfig.Tenant, email, claim, claimValue);
 
             return Json(new { Result = WebUiConstants.Success });
         }

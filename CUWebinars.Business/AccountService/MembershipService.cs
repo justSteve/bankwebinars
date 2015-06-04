@@ -358,10 +358,10 @@ namespace CUWebinars.Business.AccountService
             return newInstitution;
         }
 
-        public void RemoveClaim(string tenant, string email, string claim)
+        public void RemoveClaim(string tenant, string email, string claim, string claimValue)
         {
             var userAccount = GetUserAccountByEmail(tenant, email);
-            _userAccountService.RemoveClaim(userAccount.ID, claim);
+            _userAccountService.RemoveClaim(userAccount.ID, claim, claimValue);
         }
 
         public void ResetPassword(string tenant, string email)
