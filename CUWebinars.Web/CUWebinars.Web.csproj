@@ -978,6 +978,7 @@
     <Content Include="Views\Quiz\EditQuizFromDetails.cshtml" />
     <Content Include="Views\Admin\DisplayOrders.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\CompPersSubscriptionEditor.cshtml" />
+    <Content Include="Views\StaticContent\IncorrectPassword.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>

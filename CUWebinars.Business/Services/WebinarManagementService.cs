@@ -3,12 +3,15 @@ using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.NotificationSystem.Event;
+using DDay.iCal;
+using DDay.iCal.Serialization.iCalendar;
 using FluentValidation;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using IEvent = CUWebinars.NotificationSystem.Event.IEvent;
 
 namespace CUWebinars.Business.Services
 {

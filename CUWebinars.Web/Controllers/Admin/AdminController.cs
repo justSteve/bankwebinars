@@ -1371,12 +1371,15 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 _stateService.SetValue(WebUiConstants.AdminUserEmail, adminUserEmail);
 
-                _membershipService.LogInAdminUserAsOtherUser(_globalConfig.Tenant,
-                    adminUserEmail.Trim(), model.Password.Trim(),
-                    impersonatedUserAccount
-                    );
+                if (_membershipService.LogInAdminUserAsOtherUser(_globalConfig.Tenant,
+                        adminUserEmail.Trim(), model.Password.Trim(),
+                        impersonatedUserAccount
+                        ))
+                {
+                    return RedirectToAction("Index", "Home");
+                }
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToRoute("Default", new { Action = "IncorrectPassword", Controller = "StaticContent" });
             }
 
             return RedirectToAction("Index", "Home");

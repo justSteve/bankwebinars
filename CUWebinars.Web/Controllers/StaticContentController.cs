@@ -23,5 +23,10 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
+        public ViewResult IncorrectPassword()
+        {
+            return View();
+        }
+
     }
 }

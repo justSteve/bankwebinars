@@ -1,7 +1,6 @@
 ﻿/// <reference path="../../typings/jquery/jquery.d.ts" />
 /// <reference path="../../typings/jquery/jquery.validation.d.ts" />
 /// <reference path="../../typings/bootstrap/bootstrap.d.ts" />
-//TODO: force TS to permit Rollbar references that current compiler setting forbids.
 var RegistrationInCart;
 (function (RegistrationInCart) {
     var Button = (function () {
