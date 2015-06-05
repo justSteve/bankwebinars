@@ -2,6 +2,7 @@
 using CUWebinars.Business.Models;
 using BrockAllen.MembershipReboot;
 using System;
+using FluentValidation.Results;
 
 namespace CUWebinars.Business.AccountService
 {
@@ -86,11 +87,12 @@ namespace CUWebinars.Business.AccountService
         //string GetDisplayPostEventMaterialsClaimValue(UserAccount userAccount);
         UserAccount VerifyEmailFromKey(string key, string password);
         bool VerifyUserByEmail(string tenant, string email);
-        void UpdateDisplayPostEventMaterialsClaim(string tenant, string email, DateTime newDate, int orderId);
-        void UpdateDisplayPostEventMaterialsClaim(UserAccount userAccount, DateTime newDate, int orderId);
+        void UpdateDisplayPostEventMaterialsClaim(string tenant, string email, DateTime newDate, Order order);
+        void UpdateDisplayPostEventMaterialsClaim(UserAccount userAccount, DateTime newDate, Order order);
         void UpdateShippingAddressDetails(Address shippingAddress);
         void UpdateDiscountDetails(Discount discount);
         WebUser CreateBareUserFromEmail(string email);
         string FindDisplayPostEventMaterialsClaimValue(Order order);
+        ValidationResult ValidatePostEventMaterialsAccessClaimValue(string claimValue, string claimType);
     }
 }

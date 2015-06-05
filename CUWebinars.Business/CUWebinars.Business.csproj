@@ -138,8 +138,10 @@
     <Compile Include="Core\Extensions\CollectionExtensions.cs" />
     <Compile Include="Core\Extensions\WebinarExtensions.cs" />
     <Compile Include="Core\Helpers\DateTimeHelper.cs" />
+    <Compile Include="Core\Helpers\DomainHelper.cs" />
     <Compile Include="Core\Helpers\EventHandlerHelpers.cs" />
     <Compile Include="Core\Helpers\GenericHelpers.cs" />
+    <Compile Include="Core\Helpers\IDomainHelper.cs" />
     <Compile Include="Core\Helpers\JsonHelpers.cs" />
     <Compile Include="Core\Helpers\RandomHelpers.cs" />
     <Compile Include="Core\Helpers\ValidationHelper.cs" />
@@ -357,6 +359,7 @@
     <Compile Include="Core\TtsConfiguration.cs" />
     <Compile Include="Core\TtsConfig.cs" />
     <Compile Include="Services\WebinarManagementService.cs" />
+    <Compile Include="Validation\Identity\PostEventMaterialsAccessClaimValidator.cs" />
     <Compile Include="Validation\Order\CreateOrderValidator.cs" />
     <Compile Include="Validation\Webinar\CreateWebinarValidator.cs" />
     <Compile Include="Validation\Webinar\UpdateWebinarValidator.cs" />

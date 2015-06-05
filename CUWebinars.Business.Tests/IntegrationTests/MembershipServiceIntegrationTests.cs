@@ -2,9 +2,11 @@
 using BrockAllen.MembershipReboot.Ef;
 using BrockAllen.MembershipReboot.WebHost;
 using CUWebinars.Business.AccountService;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Tests.Config;
+using CUWebinars.Business.Validation.Identity;
 using CUWebinars.Tests.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ninject.Extensions.Logging.Log4net.Infrastructure;
@@ -55,6 +57,8 @@ namespace CUWebinars.Business.Tests.IntegrationTests
                 new SamAuthenticationService(userAccountService),
                 userAccountService,
                 new WebUserRepository(ctx, new Log4NetLogger(typeof(MembershipService))),
+                new PostEventMaterialsAccessClaimValidator(),
+                new DomainHelper(new RegTypeRepository(ctx)),
                 logger
                 );
 
@@ -183,6 +187,8 @@ namespace CUWebinars.Business.Tests.IntegrationTests
                 new SamAuthenticationService(userAccountService),
                 userAccountService,
                 new WebUserRepository(ctx, new Log4NetLogger(typeof(MembershipService))),
+                new PostEventMaterialsAccessClaimValidator(),
+                new DomainHelper(new RegTypeRepository(ctx)),
                 logger
                 );
             return membershipService;

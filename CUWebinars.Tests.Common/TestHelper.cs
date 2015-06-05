@@ -5,9 +5,11 @@ using BrockAllen.MembershipReboot.Ef;
 using BrockAllen.MembershipReboot.WebHost;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Core;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
+using CUWebinars.Business.Validation.Identity;
 using CUWebinars.Web.App_Start;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Models;
@@ -41,6 +43,8 @@ namespace CUWebinars.Tests.Common
                 new SamAuthenticationService(userAccountService),
                 userAccountService,
                 new WebUserRepository(ctx, new Log4NetLogger(typeof(MembershipService))),
+                new PostEventMaterialsAccessClaimValidator(),
+                new DomainHelper(new RegTypeRepository(ctx)),
                 logger
                 );
 

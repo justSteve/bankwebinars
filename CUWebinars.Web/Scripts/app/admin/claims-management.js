@@ -107,6 +107,8 @@ $(function () {
         }).done(function(data, textStatus, jqXHR) {
             if (data.Result === 'Success') {
                 CM.addClaimMsgLabelWrap.html('<span id="feedbackLabel" class="label label-success">&nbspClaim added!</span>');
+            } else if (data.Result === 'Fail') {
+                CM.addClaimMsgLabelWrap.html('<span id="feedbackLabel" class="label label-important">&nbsp' + data.Msg +'</span>');
             } else {
                 CM.addClaimMsgLabelWrap.html('<span id="feedbackLabel" class="label label-important">&nbsp;<i class="fa fa-exclamation-circle"></i>&nbsp;Error ...</span>');
                 formProcessor.lightUpValidationSummary('addClaimSummary', data);

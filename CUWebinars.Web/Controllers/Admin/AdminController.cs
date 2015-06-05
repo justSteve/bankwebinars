@@ -444,28 +444,69 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             if (ModelState.IsValid)
             {
-                var webUser = _membershipService.GetUserByEmail(model.UserEmail);
-
-                if (ReferenceEquals(webUser, null))
+                try
                 {
-                    ModelState.AddModelError(string.Empty, "There is no user with that email address on file.");
-                    return this.ModelStateJson(ModelState);
-                }
-                var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, webUser.email);
+                    var webUser = _membershipService.GetUserByEmail(model.UserEmail);
 
-                if (ReferenceEquals(userAccount, null))
+                    if (ReferenceEquals(webUser, null))
+                    {
+                        ModelState.AddModelError(string.Empty, "There is no user with that email address on file.");
+                        return this.ModelStateJson(ModelState);
+                    }
+                    var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, webUser.email);
+
+                    if (ReferenceEquals(userAccount, null))
+                    {
+                        ModelState.AddModelError(string.Empty, "There is no user with that email address on file.");
+                        return this.ModelStateJson(ModelState);
+                    }
+
+                    if (model.NewClaimType.Equals(
+                        Business.Constants.ClaimTypes.DisplayPostEventMaterials, StringComparison.OrdinalIgnoreCase))
+                    {
+                        var result = _membershipService.ValidatePostEventMaterialsAccessClaimValue(
+                            model.NewClaimValue,
+                            model.NewClaimType
+                            );
+
+                        if (result.IsValid)
+                        {
+                            var claimArray = model.NewClaimValue.Split(':');
+                            var order = _orderManagementService.GetOrderById(int.Parse(claimArray[0]));
+                            var onDemandCode = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).OnDemandCode;
+
+                            var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
+                            var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, DateTime.Parse(claimArray[1]));
+                            var onDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, onDemandCode);
+
+                            var claimValue = new JObject(
+                                orderIdProperty,
+                                expiryDateProperty,
+                                onDemandCodeProperty
+                                );
+
+                            _membershipService.AddClaim(
+                                        userAccount,
+                                        model.NewClaimType,
+                                        claimValue.ToString(Formatting.None)
+                                        );
+                            return Json(new { Result = WebUiConstants.Success });
+                        }
+                        return Json(new { Result = WebUiConstants.Fail, Msg = result.Errors.ElementAt(0).ErrorMessage });
+                    }
+
+                    _membershipService.AddClaim(
+                        userAccount,
+                        model.NewClaimType,
+                        model.NewClaimValue
+                        );
+
+                    return Json(new {Result = WebUiConstants.Success});
+                }
+                catch (Exception exception)
                 {
-                    ModelState.AddModelError(string.Empty, "There is no user with that email address on file.");
-                    return this.ModelStateJson(ModelState);
+                        
                 }
-
-                _membershipService.AddClaim(
-                    userAccount,
-                    model.NewClaimType,
-                    model.NewClaimValue
-                    );
-
-                return Json(new { Result = WebUiConstants.Success });
             }
 
             return this.ModelStateJson(ModelState);
@@ -1632,11 +1673,13 @@ namespace CUWebinars.Web.Controllers.Admin
                     OnDemandCodeProperty
                     );
                 
+                var order = _orderManagementService.GetOrderById(orderID.Value);
+
                 _membershipService.UpdateDisplayPostEventMaterialsClaim(
                     _globalConfig.Tenant, 
                     email,
                     DateTime.Parse(newExpiryDate),
-                    orderID.Value
+                    order
                     );
                 _logger.Info("Added expiryDate claim for: {0}. Date: {1}", orderID.Value, DateTime.Parse(newExpiryDate));
                 return Json(new { Result = WebUiConstants.Success });

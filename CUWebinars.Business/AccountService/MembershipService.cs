@@ -3,8 +3,11 @@ using System.Configuration;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
+using FluentValidation;
+using FluentValidation.Results;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
@@ -22,6 +25,8 @@ namespace CUWebinars.Business.AccountService
         private readonly AuthenticationService _samAuthenticationService;
         private readonly UserAccountService _userAccountService;
         private readonly IWebUserRepository _webUserRepository;
+        private readonly FluentValidation.IValidator<Tuple<string, string>> _postEventMaterialsAccessClaimValidator;
+        private readonly IDomainHelper _domainHelper;
         private readonly ILogger _logger;
         private bool _disposed;
 
@@ -30,6 +35,8 @@ namespace CUWebinars.Business.AccountService
             AuthenticationService samAuthenticationService,
             UserAccountService userAccountService,
             IWebUserRepository webUserRepository,
+            FluentValidation.IValidator<Tuple<string, string>> postEventMaterialsAccessClaimValidator,
+            IDomainHelper domainHelper,
             ILogger logger)
         {
             _institutionRepository = institutionRepository;
@@ -37,6 +44,8 @@ namespace CUWebinars.Business.AccountService
             _samAuthenticationService = samAuthenticationService;
             _userAccountService = userAccountService;
             _webUserRepository = webUserRepository;
+            _postEventMaterialsAccessClaimValidator = postEventMaterialsAccessClaimValidator;
+            _domainHelper = domainHelper;
             _logger = logger;
         }
 
@@ -395,17 +404,17 @@ namespace CUWebinars.Business.AccountService
         public void AddClaim(UserAccount userAccount, string claimType, string claimValue)
         {
             _logger.Info("AddClaim: uA: {0}, cT: {1}, cV: {2}", userAccount.Email, claimType, claimValue);
-            var validateClaimValue = ValidateClaimValue(claimValue, claimType);
+
             _userAccountService.AddClaim(
                 userAccount.ID,
                 claimType,
-               validateClaimValue
+                claimValue
                 );
         }
 
-        private string ValidateClaimValue(string claimValue, string claimType)
+        public ValidationResult ValidatePostEventMaterialsAccessClaimValue(string claimValue, string claimType)
         {
-            throw new NotImplementedException();
+            return _postEventMaterialsAccessClaimValidator.Validate(new Tuple<string, string>(claimType, claimValue));
         }
 
         public void AddAccountTypeNotVerifiedClaim(UserAccount userAccount, string accountType)
@@ -680,17 +689,17 @@ namespace CUWebinars.Business.AccountService
             return USTimeZone.Central;
         }
 
-        public void UpdateDisplayPostEventMaterialsClaim(string tenant, string email, DateTime newDate, int orderId)
+        public void UpdateDisplayPostEventMaterialsClaim(string tenant, string email, DateTime newDate, Order order)
         {
             var userAccount = _userAccountService.GetByEmail(tenant, email);
-            UpdateDisplayPostEventMaterialsClaim(userAccount, newDate, orderId);
+            UpdateDisplayPostEventMaterialsClaim(userAccount, newDate, order);
         }
 
-        public void UpdateDisplayPostEventMaterialsClaim(UserAccount userAccount, DateTime newDate, int orderId)
+        public void UpdateDisplayPostEventMaterialsClaim(UserAccount userAccount, DateTime newDate, Order order)
         {
-            _logger.Info("UpdateDisplayPostEventMaterialsClaim: uA: {0}, nD: {1}, oID: {2}", userAccount.Email, newDate, orderId);
+            _logger.Info("UpdateDisplayPostEventMaterialsClaim: uA: {0}, nD: {1}, oID: {2}", userAccount.Email, newDate, order);
             var allPostEventMaterialsClaimsForUser = userAccount.Claims.Where(c => c.Type == ClaimTypes.DisplayPostEventMaterials);
-            var claimForOrder = allPostEventMaterialsClaimsForUser.FirstOrDefault(c => c.Value.Contains(orderId.ToString()));
+            var claimForOrder = allPostEventMaterialsClaimsForUser.FirstOrDefault(c => c.Value.Contains(order.ToString()));
 
             if (!ReferenceEquals(null, claimForOrder))
             {
@@ -703,18 +712,22 @@ namespace CUWebinars.Business.AccountService
                 _userAccountService.AddClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials,
                     jsonParsedClaim.ToString(Formatting.None));
             }
-            //else
-            //{
-            //    //TODO: Account for possibiliity of no prior claim.
-            //    JObject jsonParsedClaim = GetPostEventMaterialsAccessExpiry(order);
-            //    var dateJProperty = jsonParsedClaim.Property(JsonPropertyKeys.ExpiryDate);
-            //    dateJProperty.Value = newDate.ToString(DomainConstants.ClaimDateFormatText);
+            else
+            {
+                var onDemandCode = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).OnDemandCode;
 
-            //    _userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials, claimForOrder.Value);
-            //    _userAccountService.AddClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials, jsonParsedClaim.ToString(Formatting.None));
-            //}
+                var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
+                var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, newDate.ToString(DomainConstants.ClaimDateFormatText));
+                var onDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, onDemandCode);
 
-
+                var claimValue = new JObject(
+                    orderIdProperty,
+                    expiryDateProperty,
+                    onDemandCodeProperty
+                    );
+                
+                _userAccountService.AddClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials, claimValue.ToString(Formatting.None));
+            }
         }
 
         public void UpdateShippingAddressDetails(Address shippingAddress)

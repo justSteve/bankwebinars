@@ -4,12 +4,14 @@ using BrockAllen.MembershipReboot.Ef;
 using BrockAllen.MembershipReboot.WebHost;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Core;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.CQS;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification;
 using CUWebinars.Business.Notification.Formatters;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
+using CUWebinars.Business.Validation.Identity;
 using CUWebinars.Business.Validation.Webinar;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Orchestrators;
@@ -126,6 +128,7 @@ namespace CUWebinars.Web.App_Start
             kernel.Bind<IUserAccountRepository>().To<DefaultUserAccountRepository>().InRequestScope();
             kernel.Bind<IRegTypeRepository>().To<RegTypeRepository>().InRequestScope();
             kernel.Bind<IQuizRepository>().To<QuizRepository>().InRequestScope();
+            kernel.Bind<IDomainHelper>().To<DomainHelper>().InRequestScope();
 
             kernel.Bind<IDataTablesService>().To<DataTablesService>().InRequestScope();
 
@@ -203,6 +206,8 @@ namespace CUWebinars.Web.App_Start
                     new SamAuthenticationService(userAccountService),
                     userAccountService,
                     new WebUserRepository(sharedContext, loggerForMembershipService),
+                    new PostEventMaterialsAccessClaimValidator(), 
+                    ctx.Kernel.Get<IDomainHelper>(),
                     loggerForMembershipService
                     );
             }).InRequestScope();
