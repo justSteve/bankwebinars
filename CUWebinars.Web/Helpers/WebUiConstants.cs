@@ -39,7 +39,11 @@ namespace CUWebinars.Web.Helpers
         public const string IncludeUpcoming = "IncludeUpcoming";
         public const string IncludeRecorded = "IncludeRecorded";
         public const string SessionId = "SessionID";
+        public const string FirstPage = "FirstPage";
+        public const string FirstCookies = "FirstCookies";
+        public const string InitialQueryString = "InitialQueryString";
         public const string SubdomainBranding = "SubdomainBranding";
+
 
         public const string Webinars = "webinars";
         

@@ -599,7 +599,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             // Try and find the user for up to 20s. 
             // If it still does not exist, chuck an exception.
-            _logger.Error(string.Format("Beginning GetUserAccountByEmail with timeout set to {0} seconds.", _globals.RetryCount / 2));
+            _logger.Info(string.Format("Beginning GetUserAccountByEmail ({1}) with timeout set to {0} seconds.", _globals.RetryCount / 2), model.Email);
 
             do
             {
@@ -629,8 +629,10 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             //  if still null here, retries have exceeded RetryCount and operation aborted
             if (ReferenceEquals(userAccount, null))
+            {
+                _logger.Error(string.Format("GetUserAccountByEmail ({1}) failed after {0} seconds.", _globals.RetryCount / 2), model.Email);
                 return false;
-
+            }
             if (!userAccount.HasClaim(ClaimTypes.FullName))
             {
                 _membershipService.AddClaim(userAccount, ClaimTypes.FullName, _orderManagementService.GetWebUserFullname(model.Email));
@@ -685,7 +687,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             _stateService.ClearValue(DomainConstants.VerificationKey);
 
-            _logger.Info("Account.Confirmed POST. Session={0}", _appHelper.GetUserAuditInfo());
+            _logger.Info("Account.Confirmed for {1}. Session={0}", _appHelper.GetUserAuditInfo(), model.Email);
 
             return true;
         }
