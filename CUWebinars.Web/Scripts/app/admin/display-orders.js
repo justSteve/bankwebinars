@@ -31,7 +31,7 @@ $(function () {
 
             DO.ordersTable.dataTable({
                 "ajax": {
-                    "url": "GetGridData",
+                    "url": "/admin/GetGridData",
                     "data": {
                         "webinarId": parseInt(DO.webinarIdDiv.text())
         },

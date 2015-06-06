@@ -46,6 +46,7 @@ namespace CUWebinars.Web.Controllers
         private readonly IWebinarControllerOrchestrator _webinarControllerOrchestrator;
         private readonly IAppHelper _appHelper;
         private readonly IUniversalMapper _universalMapper;
+        private readonly IDataTablesService _dataTablesService;
         private GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingletonCreator.UniqueInstance;
 
         //Steve added MembershipService dependancy to allow for 'currentUser' in Details.
@@ -66,7 +67,8 @@ namespace CUWebinars.Web.Controllers
             IStateService stateService,
             IWebinarControllerOrchestrator webinarControllerOrchestrator,
             IAppHelper appHelper,
-            IUniversalMapper universalMapper)
+            IUniversalMapper universalMapper,
+            IDataTablesService dataTablesService)
         {
             _affiliateManagementService = affiliateManagementService;
             _membershipService = membershipService;
@@ -77,6 +79,7 @@ namespace CUWebinars.Web.Controllers
             _webinarControllerOrchestrator = webinarControllerOrchestrator;
             _appHelper = appHelper;
             _universalMapper = universalMapper;
+            _dataTablesService = dataTablesService;
         }
 
 
@@ -567,15 +570,19 @@ namespace CUWebinars.Web.Controllers
                         .SingleOrDefault();
 
                     var aff = _affiliateManagementService.LoadByTTSDomain(ttsDomain);
+                    
+                    int totalNumberOrders;
 
-                    var orders = _orderManagementService.GetOrdersForWebinar(model.Webinar.idWebinar)
-                        .Where(o => o.Affiliate == aff)
-                        .ToList();
+                    var orders = _dataTablesService.GetOrdersByWebinar(
+                        model.Webinar.idWebinar, 
+                        aff.idUserAff,
+                        out totalNumberOrders
+                        );
 
                     model.ShowOrdersViewModel = new ShowOrdersViewModel
                     {
                         Affiliate = aff,
-                        Orders = orders,
+                        Orders = orders.ToList(),
                         Webinar = model.Webinar
                     };
                     return PartialView("DetailsAffiliate", model);
