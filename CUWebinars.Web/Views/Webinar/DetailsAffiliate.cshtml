@@ -38,6 +38,9 @@
 @section scripts{
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/create-order-affiliate")
+    @Scripts.Render("~/bundles/dataTables")
+    @Scripts.Render("~/bundles/display-orders")
+
     @* includes:
         ~/Scripts/app/cart/create-order-new.js
         ~/Scripts/app/cart/details-affiliate.js
@@ -62,8 +65,7 @@
 
     <div id="webinarOrders" class="collapse">
         
-        @*@Html.Partial("~/Views/Admin/Partials/_ShowOrders.cshtml", Model.ShowOrdersViewModel)*@
-        @Html.Partial("~/Views/Admin/DisplayOrders.cshtml", Model.ShowOrdersViewModel)
+        @Html.Partial("~/Views/Admin/Partials/_ShowOrders.cshtml", Model.ShowOrdersViewModel)
 
     </div>
 

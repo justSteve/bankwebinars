@@ -1,8 +1,10 @@
-﻿@{
+﻿@model ShowOrdersViewModel
+
+@{
     ViewBag.Title = "Orders";
 }
 
-<h2>Display Orders</h2>
+<div class="legendImitator">Display Orders</div>
 @Styles.Render("~/Content/data-tables")
 <table id="ordersTable" class="table table-striped table-bordered dataTable no-footer" cellspacing="0" width="100%">
     <thead>
@@ -26,8 +28,4 @@
     </tfoot>
 </table>
 
-@section scripts{
-    @Scripts.Render("~/bundles/dataTables")
-    @Scripts.Render("~/bundles/display-orders")
-}
-
+<div id="webinarIdDiv" class="initialHide">@Model.Webinar.idWebinar</div>
