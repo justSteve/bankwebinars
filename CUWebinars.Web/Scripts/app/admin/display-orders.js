@@ -1,6 +1,8 @@
 ﻿/// <reference path="../Constants.js" />
 /// <reference path="../utilities.js" />
 
+var aff = $("#ordersTable").data('aff');
+
 if (DISPLAYORDERS === null || typeof DISPLAYORDERS === 'undefined')
     var DISPLAYORDERS = {}; // create namespace - object to holds all references and methods.
 
@@ -38,11 +40,17 @@ $(function () {
                 "type": "POST"
             },
             "columns": [
-                { "data": "OrderId" },
-                { "data": "Last, First" },
-                { "data": "Institution" },
-                { "data": "Phone" },
-                { "data": "Email" },
+                { "data": "OrderColumn" },
+                
+                { "data": "UserColumn" },
+                { "data": "InstitutionColumn" },
+                { "data": "BillingColumn" },
+                {
+                    "data": "AffiliateColumn",
+                    "visible": aff
+                },
+                { "data": "OrderDateColumn" },
+                { "data": "StatusColumn" },
             ]
         });
     };

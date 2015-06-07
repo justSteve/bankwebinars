@@ -556,6 +556,22 @@ namespace CUWebinars.Web.Controllers
                 if (claimsIdentityOfAuthenticatedUser.HasClaim(
                         (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
                 {
+                    int totalNumberOrders;
+                    var aff = _affiliateManagementService.LoadByTTSDomain("bankwebinars");
+                    
+                    var orders = _dataTablesService.GetOrdersByWebinar(
+                        model.Webinar.idWebinar,
+                        19,
+                        out totalNumberOrders
+                        );
+
+                    model.ShowOrdersViewModel = new ShowOrdersViewModel
+                    {
+                        Affiliate = aff,
+                        Orders = orders.ToList(),
+                        Webinar = model.Webinar
+                    };
+
                     return PartialView("DetailsAdmin", model);
                 }
 
