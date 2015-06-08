@@ -204,6 +204,31 @@ namespace CUWebinars.Web.Helpers
             "<Cookie>#HTTP_COOKIE#</Cookie>" +
             "</AuditInfo>";
 
+        private const string AUDIT_JSON_TEMPLATE =
+            "{\"AuditInfo\": {" +
+            "\"RemoteAddress\":\"#REMOTE_ADDR#\"," +
+            "\"RemoteHost\":\"#REMOTE_HOST#\"," +
+            "\"RemoteUser\":\"#REMOTE_USER#\"," +
+            "\"UserAgent\":\"#HTTP_USER_AGENT#\"," +
+            "\"Cookie\":\"#HTTP_COOKIE#\"}}";
+
+        //public string GetUserAuditInfo()
+        //{
+        //    string remoteAddres = SecurityElement.Escape(_request.ServerVariables["REMOTE_ADDR"]);
+        //    string remoteHost = SecurityElement.Escape(_request.ServerVariables["REMOTE_HOST"]);
+        //    string remoteUser = SecurityElement.Escape(_request.ServerVariables["REMOTE_USER"]);
+        //    string userAgent = SecurityElement.Escape(_request.ServerVariables["HTTP_USER_AGENT"]);
+        //    string userCookie = SecurityElement.Escape(_request.ServerVariables["HTTP_COOKIE"]);
+
+        //    var auditXML = new StringBuilder(AUDIT_XML_TEMPLATE);
+        //    auditXML.Replace("#REMOTE_ADDR#", remoteAddres);
+        //    auditXML.Replace("#REMOTE_HOST#", remoteHost);
+        //    auditXML.Replace("#REMOTE_USER#", remoteUser);
+        //    auditXML.Replace("#HTTP_USER_AGENT#", userAgent);
+        //    auditXML.Replace("#HTTP_COOKIE#", userCookie);
+        //    return auditXML.ToString();
+        //}
+
         public string GetUserAuditInfo()
         {
             string remoteAddres = SecurityElement.Escape(_request.ServerVariables["REMOTE_ADDR"]);
@@ -212,13 +237,13 @@ namespace CUWebinars.Web.Helpers
             string userAgent = SecurityElement.Escape(_request.ServerVariables["HTTP_USER_AGENT"]);
             string userCookie = SecurityElement.Escape(_request.ServerVariables["HTTP_COOKIE"]);
 
-            var auditXML = new StringBuilder(AUDIT_XML_TEMPLATE);
-            auditXML.Replace("#REMOTE_ADDR#", remoteAddres);
-            auditXML.Replace("#REMOTE_HOST#", remoteHost);
-            auditXML.Replace("#REMOTE_USER#", remoteUser);
-            auditXML.Replace("#HTTP_USER_AGENT#", userAgent);
-            auditXML.Replace("#HTTP_COOKIE#", userCookie);
-            return auditXML.ToString();
+            var auditJson = new StringBuilder(AUDIT_JSON_TEMPLATE);
+            auditJson.Replace("#REMOTE_ADDR#", remoteAddres.Replace("\"", "'"));
+            auditJson.Replace("#REMOTE_HOST#", remoteHost.Replace("\"", "'"));
+            auditJson.Replace("#REMOTE_USER#", remoteUser.Replace("\"", "'"));
+            auditJson.Replace("#HTTP_USER_AGENT#", userAgent.Replace("\"", "'"));
+            auditJson.Replace("#HTTP_COOKIE#", userCookie.Replace("\"", "'"));
+            return auditJson.ToString();
         }
 
         public string GetUserAuditInfoAlt()

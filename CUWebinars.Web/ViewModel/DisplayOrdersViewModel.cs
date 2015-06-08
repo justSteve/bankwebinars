@@ -14,24 +14,14 @@ namespace CUWebinars.Web.ViewModel
     public class OrderSummary
     {
         public int OrderId { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Institution { get; set; }
-        public string BillingPhone { get; set; }
-        public string BillingEmail { get; set; }
-        public string BillingAddress { get; set; }
-        public string BillingAddress2 { get; set; }
-        public string BillingCity { get; set; }
-        public string BillingState { get; set; }
-        public string BillingZip { get; set; }
-        public string ShippingFirstName { get; set; }
-        public string ShippingLastName { get; set; }
-        public string ShippingPhone { get; set; }
-        public string ShippingAddress { get; set; }
-        public string ShippingAddress2 { get; set; }
-        public string ShippingCity { get; set; }
-        public string ShippingState { get; set; }
-        public string ShippingZip { get; set; }
 
+
+        public string OrderColumn { get; set; }
+        public string UserColumn { get; set; }
+        public string InstitutionColumn { get; set; }
+        public string BillingColumn { get; set; }
+        public string AffiliateColumn { get; set; }
+        public string OrderDateColumn { get; set; }
+        public string StatusColumn { get; set; }
     }
 }

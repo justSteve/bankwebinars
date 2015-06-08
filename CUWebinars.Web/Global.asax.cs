@@ -77,8 +77,8 @@ namespace CUWebinars.Web
         {
             const string infrastructureLogconfigs = @"Infrastructure/LogConfigs";
 
-            //switch (GlobalConfig.GlobalConfigSingleton.Tenant)
-            switch ("Dave")
+            switch (GlobalConfig.GlobalConfigSingleton.Tenant)
+            //switch ("Dave")
             {
                 case DomainConstants.BankWebinars:
                     log4net.Config.XmlConfigurator.Configure(new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs, "BWLog4net.xml")));
@@ -184,7 +184,7 @@ namespace CUWebinars.Web
             var mailSettings = smtpSection.Network;
 
             return mailSettings;
-        } 
+        }
 
         //https://www.simple-talk.com/dotnet/asp.net/handling-errors-effectively-in-asp.net-mvc/
         protected void Application_Error(object sender, EventArgs e)
@@ -277,8 +277,8 @@ namespace CUWebinars.Web
                         StateService.SetValue(WebUiConstants.SubdomainBranding,
                             HttpContext.Current.Request.UrlReferrer.ToString().Trim());
 
-                    StateService.SetValue("FirstPage", HttpContext.Current.Request.Url.ToString().Trim());
-                    StateService.SetValue("InitialQueryString", Request.Url.Query);
+                    StateService.SetValue(WebUiConstants.FirstPage, HttpContext.Current.Request.Url.ToString().Trim());
+                    StateService.SetValue(WebUiConstants.InitialQueryString, Request.Url.Query);
                     StateService.SetValue(WebUiConstants.SessionId, HttpContext.Current.Session.SessionID);
 
                     //DETERMINE CURRENT AFFILIATE
@@ -369,7 +369,7 @@ namespace CUWebinars.Web
                 //    
                 //}
                 */
-                    logger.Info("Start Session: " + StateService.GetValue<string>(WebUiConstants.SessionId));
+
 
                     var allCookies = new StringBuilder();
 
@@ -377,36 +377,63 @@ namespace CUWebinars.Web
                     {
                         HttpCookie aCookie = Request.Cookies[i];
 
+                        if (i > 0) allCookies.Append(", ");
                         if (aCookie != null)
                         {
-                            allCookies.Append("Name = " + aCookie.Name + HtmlBreak);
+
+                            allCookies.Append("\"CookieName\": \"" + aCookie.Name);
 
                             if (aCookie.HasKeys)
                             {
                                 NameValueCollection cookieValues = aCookie.Values;
 
                                 string[] cookieValueNames = cookieValues.AllKeys;
-
+                                allCookies.Append("\":  {\"SubKeys:\"");
                                 for (int j = 0; j < cookieValues.Count; j++)
                                 {
                                     string subkeyName = Server.HtmlEncode(cookieValueNames[j]);
                                     string subkeyValue = Server.HtmlEncode(cookieValues[j]);
-                                    allCookies.Append("Subkey name = " + subkeyName + HtmlBreak);
-                                    allCookies.Append("Subkey value = " + subkeyValue + HtmlBreak + HtmlBreak);
+                                    if (!subkeyName.StartsWith("__") &&
+                                        !subkeyName.StartsWith("Fed")
+                                        )
+                                    {
+                                        allCookies.Append("\"SubkeyName: \"" + subkeyName);
+                                        allCookies.Append("\", \"SubkeyValue: \"" + subkeyValue);
+                                    }
                                 }
+                                allCookies.Append("\"},");
+
                             }
                             else
                             {
-                                allCookies.Append("Value = " + Server.HtmlEncode(aCookie.Value) + HtmlBreak + HtmlBreak);
+                                allCookies.Append("\", \"Value\": \"" + Server.HtmlEncode(aCookie.Value) + "\"");
                             }
                         }
                     }
 
-                    StateService.SetValue("FirstCookies", allCookies.ToString());
-
+                    StateService.SetValue(WebUiConstants.FirstCookies, allCookies.ToString());
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        logger.Info("{\"Name\": \"" + User.Identity.Name
+                            + "\", \"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
+                            + "\", \"QueryString\": \"" + StateService.GetValue<string>(WebUiConstants.InitialQueryString)
+                            + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
+                            + "\", \"FirstCookies\": {" + StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
+                            );
+                    }
+                    else
+                    {
+                        logger.Info("Anon Session Starts with: {"
+                            + "\"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
+                            + "\", \"QueryString\": \"" + StateService.GetValue<string>(WebUiConstants.InitialQueryString)
+                            + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
+                            + "\", \"FirstCookies\": {" + StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
+                            );
+                    }
                 }
                 catch (Exception exception)
                 {
+                    logger.Fatal("SessionStart Exception!!!", exception);
                     Console.WriteLine(exception);
                 }
                 finally

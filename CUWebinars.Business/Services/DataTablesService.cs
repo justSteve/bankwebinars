@@ -27,11 +27,13 @@ namespace CUWebinars.Business.Services
             if (idAffliate != 19)
             {
                 theseOrders = _context.Orders
+                    
                     .Include(o => o.WebUser)
                     .Include(o => o.Affiliate)
                     .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
                     .Include(o => o.OrderRows.Select(or => or.RegistrationType))
                     .Include(o => o.OrderRows.Select(or => or.Discount))
+                    .Include(o => o.OrderRows.Select(or => or.Webinar))
                     .Where(o => o.OrderRows.Any(or => or.RowStatus == OrderRowStatus.Active && or.idWebinar == idWebinar) && o.idAffiliate == idAffliate)
                     .ToList();
             }
@@ -43,6 +45,7 @@ namespace CUWebinars.Business.Services
                     .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
                     .Include(o => o.OrderRows.Select(or => or.RegistrationType))
                     .Include(o => o.OrderRows.Select(or => or.Discount))
+                    .Include(o => o.OrderRows.Select(or => or.Webinar))
                     .Where(o => o.OrderRows.Any(or => or.RowStatus == OrderRowStatus.Active && or.idWebinar == idWebinar))
                     .ToList();
             }
