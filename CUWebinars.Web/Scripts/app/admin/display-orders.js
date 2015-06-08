@@ -31,28 +31,34 @@ $(function () {
 
     ns.wireUpDataTable = function() {
 
-            DO.ordersTable.dataTable({
-                "ajax": {
-                    "url": "/admin/GetGridData",
-                    "data": {
-                        "webinarId": parseInt(DO.webinarIdDiv.text())
-        },
+        DO.ordersTable.dataTable({
+            "dom": 'T<"clear">lfrtip'
+            ,
+            "tableTools": {
+                "sSwfPath": "/swf/copy_csv_xls_pdf.swf"
+            },
+            "ajax": {
+                "url": "/admin/GetGridData",
+                "data": {
+                    "webinarId": parseInt(DO.webinarIdDiv.text())
+                },
                 "type": "POST"
             },
-            "columns": [
-                { "data": "OrderColumn" },
+                "columns": [
+                    { "data": "OrderColumn" },
                 
-                { "data": "UserColumn" },
-                { "data": "InstitutionColumn" },
-                { "data": "BillingColumn" },
-                {
-                    "data": "AffiliateColumn",
-                    "visible": aff
-                },
-                { "data": "OrderDateColumn" },
-                { "data": "StatusColumn" },
-            ]
+                    { "data": "UserColumn" },
+                    { "data": "InstitutionColumn" },
+                    { "data": "BillingColumn" },
+                    {
+                        "data": "AffiliateColumn",
+                        "visible": aff
+                    },
+                    { "data": "OrderDateColumn" },
+                    { "data": "StatusColumn" },
+                ]
         });
+
     };
 
 })(DO);
