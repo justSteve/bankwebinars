@@ -8,9 +8,14 @@ using System.Security;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
+using Glimpse.Core.Tab;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Trace = System.Diagnostics.Trace;
 
 namespace CUWebinars.Web.Helpers
 {
@@ -214,6 +219,26 @@ namespace CUWebinars.Web.Helpers
             auditXML.Replace("#HTTP_USER_AGENT#", userAgent);
             auditXML.Replace("#HTTP_COOKIE#", userCookie);
             return auditXML.ToString();
+        }
+
+        public string GetUserAuditInfoAlt()
+        {
+            IDictionary<string,string> auditInfoDictionary = new Dictionary<string, string>();
+
+            auditInfoDictionary.Add("RemoteAddress", SecurityElement.Escape(_request.ServerVariables["REMOTE_ADDR"]));
+            auditInfoDictionary.Add("RemoteHost", SecurityElement.Escape(_request.ServerVariables["REMOTE_HOST"]));
+            auditInfoDictionary.Add("RemoteUser", SecurityElement.Escape(_request.ServerVariables["REMOTE_USER"]));
+            auditInfoDictionary.Add("UserAgent", SecurityElement.Escape(_request.ServerVariables["HTTP_USER_AGENT"]));
+            auditInfoDictionary.Add("Cookie", SecurityElement.Escape(_request.ServerVariables["HTTP_COOKIE"]));
+
+            var auditObjectInner = JsonHelpers.CreateJsonObjectFromDictionary(auditInfoDictionary);
+
+            var jobject = new JObject();
+            jobject.Add("AuditInfo", auditObjectInner);
+
+            //Trace.TraceInformation(jobject.ToString(Newtonsoft.Json.Formatting.None));
+
+            return jobject.ToString(Newtonsoft.Json.Formatting.None);
         }
 
 

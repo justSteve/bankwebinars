@@ -84,5 +84,17 @@ namespace CUWebinars.Business.Core.Helpers
             throw new InvalidDataException("The stored string is not valid json.");
         }
 
+        public static JObject CreateJsonObjectFromDictionary(IDictionary<string, string> dataForJson)
+        {
+            var outObject = new JObject();
+
+            foreach (var keyValuePair in dataForJson)
+            {
+                outObject.Add(keyValuePair.Key, keyValuePair.Value);
+            }
+
+            return outObject;
+        }
+
     }
 }
