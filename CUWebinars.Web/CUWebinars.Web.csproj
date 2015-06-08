@@ -735,6 +735,7 @@
     <Content Include="Notification\Templates\SendPerWeekPromo.cshtml">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="Scripts\app\admin\session-checker.js" />
     <Content Include="Scripts\app\admin\display-orders.js" />
     <Content Include="Scripts\app\quiz\edit-quiz.js" />
     <Content Include="robots.txt" />

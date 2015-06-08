@@ -2,7 +2,7 @@
 <log4net>
   <appender name="FileAppender" type="log4net.Appender.RollingFileAppender">
     <threshold value="INFO" />
-    <file type="log4net.Util.PatternString" value="App_Data/Logs/log4net_%date{yyyyMMdd}.log" />
+    <file type="log4net.Util.PatternString" value="D:/home/site/wwwroot/App_Data/Logs/Web/log4net_%date{yyyyMMdd}.log" />
     <appendToFile value="true" />
     <rollingStyle value="Date" />
     <datePattern value="yyyyMMdd" />

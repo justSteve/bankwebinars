@@ -27,6 +27,10 @@ module Common {
             window.location.href = this.setPathToBaseUrl() + actionMethod;
         }
 
+        openInNewWindow(actionMethod: string, title: string): void {
+            window.open(this.setPathToBaseUrl() + actionMethod, title);
+        }
+
         relativePathStartsWith(stringToCheck : string) : boolean {
             var path = this.getRelativePath();
             var len = stringToCheck.length;

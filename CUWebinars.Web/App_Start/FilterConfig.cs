@@ -35,6 +35,7 @@ namespace CUWebinars.Web.App_Start
                 case DomainConstants.CUWebinars: break;
                 default:break;
             }
+
             //filters.Add(new HandleErrorAttribute());
         }
     }

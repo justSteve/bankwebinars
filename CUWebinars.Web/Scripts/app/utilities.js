@@ -22,6 +22,10 @@ var Common;
             window.location.href = this.setPathToBaseUrl() + actionMethod;
         };
 
+        Utilities.prototype.openInNewWindow = function (actionMethod, title) {
+            window.open(this.setPathToBaseUrl() + actionMethod, title);
+        };
+
         Utilities.prototype.relativePathStartsWith = function (stringToCheck) {
             var path = this.getRelativePath();
             var len = stringToCheck.length;

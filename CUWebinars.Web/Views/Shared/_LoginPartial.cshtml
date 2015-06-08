@@ -24,8 +24,6 @@
                 @Html.AntiForgeryToken()
 
                 @Html.ActionLink(identity.Value, "EditUser", "Account", routeValues: null, htmlAttributes: new { title = "Manage", id = "btnLogin" })
-                @*@Html.ActionLink(identity.Value, "Manage", "Account", routeValues: null, htmlAttributes: new {title = "Edit Billing", id = "btnLogin"})*@
-                @*<span>@identity.Value</span>*@
 
                 if (ReferenceEquals(Session["AdminUserEmail"], null))
                 {
@@ -63,3 +61,4 @@ else
 {
     <nav class="user clearfix"> <a id="btnLogin" href="@Url.Action("Login", "Account")"><i class="icon-user"></i> Login</a> </nav>
 }
+

@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using CUWebinars.Business.Core;
-using CUWebinars.Business.Models;
-using CUWebinars.Business.Repository;
+﻿using CUWebinars.Business.Repository;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
-using CUWebinars.Web.ViewModel;
 using Ninject.Extensions.Logging;
+using System;
 using System.Linq;
-using System.ServiceModel.Syndication;
 using System.Web.Mvc;
-using System.Xml;
 
 namespace CUWebinars.Web.Controllers
 {
@@ -83,6 +76,18 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
+        [HttpPost]
+        //[ValidateAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
+        public ActionResult SessionIsActive()
+        {
+            if (Request.IsAuthenticated)
+            {
+                return Json(new {Result = WebUiConstants.Success});
+            }
+
+            return Json(new { Result = WebUiConstants.Fail });
+        }
 
         //[HttpPost]
         //public ActionResult Contact(ContactModel model)

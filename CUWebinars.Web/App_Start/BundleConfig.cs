@@ -101,6 +101,7 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/underscore.js",
                 "~/Scripts/purl.js", // excellent lib for parsing and working with the address bar content i.e. urls
                 "~/Scripts/app/utilities.js",
+                "~/Scripts/app/admin/session-checker.js",
                 "~/Scripts/app/form-processor.js"
                 ));
 
