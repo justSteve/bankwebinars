@@ -1807,11 +1807,16 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 var orderRow = order.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
 
-                var orderColumn = order.idOrder.ToString() + ", " + order.Origin;
-                var userColumn = order.LastName + ", " +  order.FirstName;
+                var orderColumn = order.idOrderLegacy.ToString() + ", " + order.Origin;
+                var userColumn = "<a href='/account/edituser/" + order.idUser + "' target='_new' />" + order.LastName + ", " + order.FirstName + "</a>";
                 var institutionColumn = order.Institution;
-                var billingColumn = orderRow.RegistrationType.OptionLabel + "<br>Total: " + order.Total.ToString().Replace(".00", "");
+                var billingColumn = orderRow.RegistrationType.OptionLabel.Replace(" and Hardcopy Handouts", "").Replace("Plus Five", "Only") + "<br>Total: " + order.Total.ToString().Replace(".00", "");
 
+                var resendMsg = "Resend Confirmation";
+                if (orderRow.Webinar.Status == WebinarStatus.Active)
+                {
+                    resendMsg = "Resend Connection Info";
+                }
 
                 responsePayloadInner = new Dictionary<string, string>();
 
@@ -1824,7 +1829,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 responsePayloadInner.Add("AffiliateColumn", order.Affiliate.ttsDomain);
 
                 responsePayloadInner.Add("OrderDateColumn", order.OrderDate.ToShortDateString());
-                responsePayloadInner.Add("StatusColumn", order.OrderStatus.ToString());
+                responsePayloadInner.Add("StatusColumn", "<a href='/Admin/manageOrder/" + order.idOrderLegacy + "' target='_new' />" + order.OrderStatus.ToString()+"</a><br/>" + resendMsg);
 
                 responsePayload.Add(responsePayloadInner);
             }
