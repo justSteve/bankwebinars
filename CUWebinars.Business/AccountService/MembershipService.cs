@@ -257,6 +257,7 @@ namespace CUWebinars.Business.AccountService
 
             DateTime timeUtc = DateTime.UtcNow;
             timeUtc = TimeZoneInfo.ConvertTimeFromUtc(timeUtc, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
+
             var webUser = new WebUser
             {
                 idUser = idUserImported.HasValue ? idUserImported.Value : _refDataRepository.GetMaxWebUserId() + 1,

@@ -108,16 +108,12 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
-                    Stopwatch sw = Stopwatch.StartNew();
-
+                    _logger.Info("Confirming Order for OrderRow with Id {0}", id.Value);
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
-                    var orderID = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
+                    _logger.Info("WebinarDetailsViewModel{0}built successully", model == null ? " NOT " : " ");
+
                     model.Order.OrderStatus = OrderStatus.Submitted;
 
-                    sw.Stop();
-                    //Trace.TraceInformation(string.Format("{0} took {1}s to run.", "ConfirmOrder-a", sw.Elapsed.Seconds));
-                    sw.Reset();
-                    sw.Start();
 
                     if (User.Identity.IsAuthenticated)
                     {
@@ -128,21 +124,14 @@ namespace CUWebinars.Web.Controllers
                         _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: true);
                     }
 
-                    sw.Stop();
-                    //Trace.TraceInformation(string.Format("{0} took {1}s to run.", "ConfirmOrder-b", sw.Elapsed.Seconds));
-                    sw.Reset();
-                    sw.Start();
 
                     _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
-
-                    sw.Stop();
-                    //Trace.TraceInformation(string.Format("{0} took {1}s to run.", "ConfirmOrder-c", sw.Elapsed.Seconds));
 
                     return Json(new
                     {
                         Result = WebUiConstants.Success,
-                        OrderRowID = orderID,
-                        Msg = string.Format("<p>Your Order ID is {0}. Please check your email for connection information for the webinar.</p>", orderID)
+                        OrderRowID = id.Value,
+                        Msg = string.Format("<p>Your Order ID is {0}. Please check your email for connection information for the webinar.</p>", id.Value)
                     }, JsonRequestBehavior.AllowGet);
                 }
                 catch (Exception exception)
@@ -152,6 +141,9 @@ namespace CUWebinars.Web.Controllers
                     Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 }
             }
+
+            _logger.Error("ConfirmOrder Action | Id parameter was null");
+            _logger.Error(string.Format("ConfirmOrder Action | {0}", _appHelper.GetUserAuditInfo()));
 
             return this.ModelStateJson(ModelState);
         }
@@ -263,19 +255,13 @@ namespace CUWebinars.Web.Controllers
             {
                 _logger.Info("Signup2 Enters: " + _appHelper.GetUserAuditInfo());
 
-                //_logger.Info("Signup2 order initialized: " + _appHelper.GetUserAuditInfo());
-
                 //var telemetry = new TelemetryClient();
                 //telemetry.TrackEvent("Signup2Start");
                 try
                 {
-                    Stopwatch sw = new Stopwatch();
-                    sw.Start();
                     var order = _cartControllerOrchestrator.CreateOrder(
                         formModel
                         );
-                    sw.Stop();
-                    Trace.TraceInformation(string.Format("Creating {0} took {1}s to run", order.idOrder, sw.Elapsed.Seconds));
 
                     return Json(new
                     {

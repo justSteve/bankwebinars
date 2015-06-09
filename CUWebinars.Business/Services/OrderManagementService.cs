@@ -1330,6 +1330,7 @@ namespace CUWebinars.Business.Services
 
                 _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
 
+                _logger.Info("currentOrder.WebUser is{0}null", currentOrder.WebUser == null ? " " : " not ");
 
                 var orderSubmittedViewModel = new ConfirmOrderMessage
                 {
@@ -1360,6 +1361,7 @@ namespace CUWebinars.Business.Services
 
                 foreach (var evt in GetEvents())
                 {
+                    _logger.Info("OrderSubmittedEvent being raised for order {0}", orderSubmittedViewModel.idOrder);
                     _ttsConfig.NotificationEventBus.RaiseEvent(evt);
                 }
 

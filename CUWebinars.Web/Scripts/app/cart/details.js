@@ -48,7 +48,7 @@ $(function () {
                 if (data.Result === 'Success') {
                     var orderRowId = data.OrderRowId;
 
-                    console.info('Posted order:' + orderRowId);
+                    console.info('Posted orderRow:' + orderRowId);
                     
                     $('#orderDetails').empty();
                     $('#orderDetails').append(data.Msg);

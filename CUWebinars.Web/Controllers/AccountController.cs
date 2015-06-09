@@ -1199,8 +1199,10 @@ namespace CUWebinars.Web.Controllers
                 {
                     ModelState.AddModelError(string.Empty, validationException.Message);
 
-                    _logger.FatalException("Account.Register Catch block: " + validationException.Message + "| Session=" +
-                                  _appHelper.GetUserAuditInfo(), validationException);
+                    _logger.FatalException("Account.Register Catch block: " + 
+                        validationException.Message + "| Session=" +
+                        _appHelper.GetUserAuditInfo(), 
+                        validationException);
                 }
                 catch (Exception exception)
                 {

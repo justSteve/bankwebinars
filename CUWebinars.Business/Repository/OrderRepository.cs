@@ -2,6 +2,7 @@
 using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Infrastructure;
 using System.Security.Cryptography;
+using System.Text;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
@@ -130,15 +131,19 @@ namespace CUWebinars.Business.Repository
             }
             catch (DbEntityValidationException dbEx)
             {
+                var stringBuilder = new StringBuilder();
+
                 foreach (var validationErrors in dbEx.EntityValidationErrors)
                 {
                     foreach (var validationError in validationErrors.ValidationErrors)
                     {
-                        Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
+                        Trace.TraceInformation("Property: {0} Error: {1} ", validationError.PropertyName,
+                            validationError.ErrorMessage);
+                        stringBuilder.AppendFormat("Property: {0} Error: {1} ", validationError.PropertyName,
                             validationError.ErrorMessage);
                     }
                 }
-                throw;
+                throw new Exception(stringBuilder.ToString());
             }
         }
 
