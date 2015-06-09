@@ -39,7 +39,7 @@ namespace CUWebinars.Business.Notification.Email
             cloudQueue.EncodeMessage = true;
             cloudQueue.AddMessage(cloudQueueMessage);
 
-            _logger.Info("Notification successfully enqueued");
+            _logger.Info("Notification successfully enqueued AzureCuwWebJobSmtpMessageDelivery: " + notificationMessage.To);
         }
 
         private void EnsureMessage(INotificationMessage message)

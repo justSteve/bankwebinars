@@ -3,11 +3,12 @@
 @{
     GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
-    var NewUserMsg = "<div>Please keep an eye out for an email confirming your registration. </div>";
+    var newUserMsg = "<div>An order confirmation email has been dispatched to "+Model.BillingEmail+" and includes " +
+                     "complete details of your registration. </div>";
     if (!User.Identity.IsAuthenticated)
     {
-        NewUserMsg = "<div><p>We've recorded your order but the email address used is not yet verified. " +
-                     "An order confirmation email has been dispatched to the order's address and includes " +
+        newUserMsg = "<div><p>" +
+                     "An order confirmation email has been dispatched to " + Model.BillingEmail + " and includes " +
                      "a link that will confirm your identity and activate this account. You will not be able " +
                      "to log into our website until visiting the link provided in that email. </p>" +
                      "<p>If you do not see our message in a timely fashion (and after checking your spam folder " +
@@ -17,12 +18,13 @@
 <div id="LogInContainer" class="container">
     <div id="reset">
 
-        <div class="legendImitator">Order Completion</div>
+        <div class="legendImitator">Order Submitted</div>
 
-        <div class="text-success"> Thank you for your order!</div>
+        <div class="text-success"> <b>Thank you for your order!</b></div>
 
+        @Html.Raw(newUserMsg)
 
-        <div id="OrderSummaryContainer" class="pull-right">
+        <div id="OrderSummaryContainer">
             @Html.Partial("~/Views/Shared/Partials/_OrderSumUser.cshtml", Model)
         </div>
     </div>

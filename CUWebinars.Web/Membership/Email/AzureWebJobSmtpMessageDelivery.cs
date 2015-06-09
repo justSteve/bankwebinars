@@ -52,7 +52,7 @@ namespace CUWebinars.Web.Membership.Email
             cloudQueue.EncodeMessage = true;
             cloudQueue.AddMessage(cloudQueueMessage);
 
-            _logger.Info("Notification successfully enqueued");
+            _logger.Info("Notification successfully enqueued AzureWebJobSmtpMessageDelivery" + msg.To);
         }
     }
 }

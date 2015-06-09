@@ -91,7 +91,7 @@ namespace CUWebinars.Business.Notification.Handlers
             {
                 _logger.Error(string.Format("orderSubmittedEvent (outer) ExceptionMessage: {0}", exception.Message), exception);
             }
-            _logger.Info("Ends OrderSubmitted Notification");
+            _logger.Info("Ends OrderSubmitted Notification: {0}", orderSubmittedEvent.EventObject.idOrder);
         }
 
         public void Handle(OrderSubmittedEvent<T> @event)

@@ -41,7 +41,7 @@ namespace CUWebinars.Business.Notification.Email
             cloudQueue.EncodeMessage = true;
             cloudQueue.AddMessage(cloudQueueMessage);
 
-            _logger.Info("Notification successfully enqueued");
+            _logger.Info("Notification successfully enqueued additionalLocationOrderDetailsMessage: " + additionalLocationOrderDetailsMessage.idOrder);
         }
 
     }
