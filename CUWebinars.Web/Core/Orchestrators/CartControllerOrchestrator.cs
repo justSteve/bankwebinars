@@ -570,6 +570,11 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             if (ReferenceEquals(null, webUser))
             {
+                if(!_stateService.HasValue(WebUiConstants.SessionId))
+                    _logger.Info("Session id is not in session.");
+                if(!_stateService.HasValue(WebUiConstants.SessionId))
+                    _logger.Info("AValidInstitution is not in session.");
+
                 webUser = _membershipService.CreateWebUser(
                     _globals.Tenant,
                     "Not",
