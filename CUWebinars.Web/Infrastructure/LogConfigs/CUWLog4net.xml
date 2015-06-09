@@ -10,16 +10,7 @@
       <conversionPattern value="%date [%thread] %-5level %logger %property – %message%newline" />
     </layout>
   </appender>
-  <!--<appender name="DebugAppender" type="log4net.Appender.DebugAppender">
-    <immediateFlush value="true" />
-    <layout type="log4net.Layout.SimpleLayout" />
-  </appender>-->
-  <!--<appender name="TraceAppender" type="log4net.Appender.TraceAppender">
-    <layout type="log4net.Layout.PatternLayout">
-      --><!-- can be any pattern you like --><!--
-      <conversionPattern value="%date [%thread] %-5level %logger %property – %message%newline" />
-    </layout>
-  </appender>-->
+
   <appender name="AdoNetAppender" type="log4net.Appender.AdoNetAppender">
     <threshold value="INFO" />
     <bufferSize value="1" />
@@ -63,19 +54,10 @@
       </layout>
     </parameter>
   </appender>
-  <!--<appender name="ConsoleAppender" type="log4net.Appender.ConsoleAppender">
-    <layout type="log4net.Layout.PatternLayout">
-      <param name="Header" value="[Header]\r\n" />
-      <param name="Footer" value="[Footer]\r\n" />
-      <param name="ConversionPattern" value="%d [%t] %-5p %c %m%n" />
-    </layout>
-  </appender>-->
 
   <root>
     <appender-ref ref="AdoNetAppender" />
     <appender-ref ref="FileAppender" />
-    <!--<appender-ref ref="ConsoleAppender" />
-    <appender-ref ref="TraceAppender" />-->
   </root>
 
 </log4net>

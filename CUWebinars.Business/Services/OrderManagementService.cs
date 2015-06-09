@@ -615,7 +615,8 @@ namespace CUWebinars.Business.Services
             throw new NotImplementedException();
         }
 
-        public void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, bool resending = false, Uri url = null)
+        public void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, bool resending = false,
+            Uri url = null)
         {
             string addPasswordUrl = string.Empty;
 
@@ -626,7 +627,8 @@ namespace CUWebinars.Business.Services
                 Details = order.NotificationStorage,
                 idOrder = order.idOrder,
                 Order = order,
-                OrderGenesis = userCreatedInCart ? OrderGenesis.CreatedViaCartByNewUser : OrderGenesis.CreatedViaCartByExistingUser,
+                OrderGenesis =
+                    userCreatedInCart ? OrderGenesis.CreatedViaCartByNewUser : OrderGenesis.CreatedViaCartByExistingUser,
                 UserCreatedInCart = userCreatedInCart,
                 UserCreatedOnImport = false
             };
@@ -639,8 +641,6 @@ namespace CUWebinars.Business.Services
                     string.Concat(@"ACC/APWD/", order.WebUser.email)
                     ).ToString();
             }
-
-            var sw = Stopwatch.StartNew();
 
             AddEvent(new OrderSubmittedEvent<ConfirmOrderMessage>
             {
@@ -661,15 +661,12 @@ namespace CUWebinars.Business.Services
 
             if (order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count != 0)
             {
-                foreach (var addLoc in order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
+                foreach (var addLoc in order.OrderRows
+                    .Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
                 {
                     FireOrderSubmittedAdditionalLocationEvent(order, addLoc.Email, resending);
                 }
             }
-
-            sw.Stop();
-            Trace.TraceInformation(string.Format("{0} took {1}s to run.", "Raising Event", sw.Elapsed.Seconds));
-
         }
 
         public void FireAdminEmailSendShippedOrderEvent(Order order, IEnumerable<string> recipients, bool resending = false)
