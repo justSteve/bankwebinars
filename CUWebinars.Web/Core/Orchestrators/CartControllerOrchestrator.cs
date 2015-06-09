@@ -138,7 +138,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 try
                 {
-                    _logger.Info("Building ");
+                    _logger.Info("BuildCheckoutConfirmViewModel " + idOrderRow.Value);
                     var orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
                     var order = orderRow.Order;
                     var webUser = orderRow.Order.WebUser;
@@ -287,7 +287,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 try
                 {
-                    _logger.Info("Building ");
+                    _logger.Info("BuildCheckoutOptionsViewModel " + idOrder.Value);
 
                     var checkoutOptionsViewModel = new CheckoutOptionsViewModel
                     {
@@ -336,7 +336,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 }
 
             }
-
+            // in real-world, this should never hit, correct?
+            _logger.Error("BuildCheckoutOptionsViewModel fell thru too far!");
             return null;
         }
 
@@ -388,7 +389,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     if (orderRow.RowStatus != OrderRowStatus.Active)
                         return null;
 
-                    _logger.Info("Building price for " + orderRow.Order.idOrder);
+                    _logger.Info("BuildDisplayRowPriceViewModel price for " + orderRow.Order.idOrder);
 
                     if (!optionsCost.HasValue)
                     {
@@ -442,7 +443,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     var webUser = order.WebUser;
                     var webinar = orderRow.Webinar;
 
-                    _logger.Info("Building BuildCheckOutViewModel for " + orderRow.Order.idOrder);
+                    _logger.Info("BuildCheckOutViewModel for " + orderRow.Order.idOrder);
 
                     var webinarDetailsViewModel = new WebinarDetailsViewModel
                     {
@@ -467,6 +468,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                     throw;
                 }
             }
+            //
+            _logger.Error("BuildCheckOutViewModel fell thru too far!");
             return null;
         }
 
@@ -481,7 +484,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 try
                 {
-                    _logger.Info("Building OrderHasAdditionalLocationsViewModel for: " + orderRow.Order.idOrder);
+                    _logger.Info("OrderHasAdditionalLocationsViewModel for: " + orderRow.Order.idOrder);
 
                     var addressesAndOptionsCost =
                         _orderManagementService.GetCostOfAdditionalLocations(orderRow.AdditionalLocation,
@@ -503,11 +506,13 @@ namespace CUWebinars.Web.Core.Orchestrators
                     throw;
                 }
             }
+            _logger.Error("OrderHasAdditionalLocationsViewModel fell thru too far!");
             return null;
         }
 
         public void CancelOrder(int idOrder)
         {
+            _logger.Info("CancelOrder hit {0}", idOrder);
             _orderManagementService.DeleteOrder(orderId: idOrder);
         }
 

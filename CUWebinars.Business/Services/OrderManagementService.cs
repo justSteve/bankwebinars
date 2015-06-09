@@ -760,7 +760,7 @@ namespace CUWebinars.Business.Services
 
         public void FireSendRecordingIsPostedEvent(IList<Order> orders)
         {
-            
+
 
 
             foreach (var order in orders)
@@ -1318,6 +1318,8 @@ namespace CUWebinars.Business.Services
 
             try
             {
+                _logger.Info("SaveOrderChanges: {0}", currentOrder.idOrder);
+
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, 0);
 
                 // If linkToVerifyAccount is true, then we know that the user was created during an importation. When that occurs, 
@@ -1328,9 +1330,12 @@ namespace CUWebinars.Business.Services
                 // the notification confirming registration for this webinar.  
                 bool linkToVerifyAccount = !string.IsNullOrWhiteSpace(confirmChangeEmailLink);
 
-                _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
 
-                _logger.Info("currentOrder.WebUser is{0}null", currentOrder.WebUser == null ? " " : " not ");
+                _logger.Info("SaveOrderChanges: {0}", currentOrder.idOrder);
+
+
+                //this is just a smoke test, right? currentOrder.Webuser should never be null at this point. 
+                _logger.Info("currentOrder.WebUser ({1}) is{0}null", currentOrder.WebUser == null ? " " : " not ", currentOrder.WebUser.email);
 
                 var orderSubmittedViewModel = new ConfirmOrderMessage
                 {
@@ -1352,17 +1357,23 @@ namespace CUWebinars.Business.Services
                 if (!currentOrder.Origin.Equals("Migrator", StringComparison.OrdinalIgnoreCase) &&
                     !currentOrder.Origin.Equals(DomainConstants.Cart, StringComparison.OrdinalIgnoreCase))
                 {
+                    //From sjh: to clarify this - the only time a event is added at this point is if the user is authenticated, right?
+                    // if so, we can move the logging statement into the If test
+                    _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
+
                     AddEvent(new OrderSubmittedEvent<ConfirmOrderMessage>
                     {
                         EventObject = orderSubmittedViewModel,
                         RelativePath = string.Empty
                     });
-                }
+                    //it appears that the only way an event could be added within this method is a true response in the above If test.
+                    // hence this statement can be safely moved up here?
+                    foreach (var evt in GetEvents())
+                    {
+                        _logger.Info("OrderSubmittedEvent being raised for order {0}", orderSubmittedViewModel.idOrder);
+                        _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+                    }
 
-                foreach (var evt in GetEvents())
-                {
-                    _logger.Info("OrderSubmittedEvent being raised for order {0}", orderSubmittedViewModel.idOrder);
-                    _ttsConfig.NotificationEventBus.RaiseEvent(evt);
                 }
 
                 Clear();
@@ -1373,6 +1384,8 @@ namespace CUWebinars.Business.Services
             {
                 _logger.ErrorException(string.Format("SaveOrderChanges method: {0}", exception.Message), exception);
             }
+            //not seeing anyway the 'return null' could be hit but resharper is not flagging it as unreachable.
+            _logger.Error(string.Format("SaveOrderChanges method fell all the way thru "));
             return null;
         }
 
