@@ -36,7 +36,7 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 orderSubmittedAdditionalLocationEvent.EventObject.PersistedName = string.Format("{0}_{1}{2}",
                     persistedNamePrefix,
-                    DateTime.Now.ToString(DomainConstants.DateTimeLongFormat),
+                    DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat),
                     ".htm"
                     );
 
@@ -53,7 +53,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 }
 
                 JProperty orderSubmittedAdditionalLocationEventMsg = new JProperty(
-                    string.Concat("OrderSubmittedAdditionalLocationEventMsg-", DateTime.Now.Ticks),
+                    string.Concat("OrderSubmittedAdditionalLocationEventMsg-", DomainConstants.BuildUtcNowAsCts.Ticks),
                     orderSubmittedAdditionalLocationEvent.EventObject.PersistedName
                     );
 

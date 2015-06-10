@@ -94,7 +94,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             if (!ReferenceEquals(null, order))
             {
-                var newJson = new JProperty(string.Concat("PostEventAccessByAnonUser-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                var newJson = new JProperty(string.Concat("PostEventAccessByAnonUser-", DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
                     new JObject(
                         new JProperty("Name", identifyModel.FullName),
                         new JProperty("Email", identifyModel.Email)

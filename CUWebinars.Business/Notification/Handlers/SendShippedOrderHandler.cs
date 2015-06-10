@@ -39,7 +39,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 
                 notificationMessage.PersistedName = string.Format("ShippedOrder_{0}_{1}{2}"
                     , sendShippedOrderEvent.EventObject.idOrder
-                    , DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm");
+                    , DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat), ".htm");
 
                 //  adds the name of the message to the Json object stored in NotificationStorage.
                 JObject notificationStorage;
@@ -54,7 +54,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 }
 
                 JProperty sendShippedOrderMsgProperty = new JProperty(
-                    string.Concat("SendShippedOrderMsg-", DateTime.Now.Ticks),
+                    string.Concat("SendShippedOrderMsg-", DomainConstants.BuildUtcNowAsCts.Ticks),
                     notificationMessage.PersistedName
                     );
 

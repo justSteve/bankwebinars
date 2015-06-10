@@ -40,7 +40,7 @@ namespace CUWebinars.Business.Constants
         public const string ClaimDateFormatText = "yyyy-MM-dd";
         public const string UtcNowAsCts = "yyyy-MM-dd";
 
-        public DateTime BuildUtcNowAsCts
+        public static DateTime BuildUtcNowAsCts
         {
             get
             {

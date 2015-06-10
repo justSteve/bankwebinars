@@ -35,7 +35,7 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 notificationMessage.PersistedName = string.Format("{0}_{1}{2}", 
                     string.Concat(DomainConstants.AdminEmailedPrefix, NotificationName, "_", adminEmailConnectionInfoEvent.EventObject.idOrder),
-                    DateTime.Now.ToString(DomainConstants.DateTimeLongFormat),
+                    DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat),
                     ".htm"
                     );
 

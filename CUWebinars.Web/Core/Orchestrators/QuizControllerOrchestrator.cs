@@ -13,6 +13,10 @@ using System.Security.Principal;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
+using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core.Helpers;
+using Newtonsoft.Json.Linq;
+using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Web.Core.Orchestrators
 {
@@ -24,15 +28,18 @@ namespace CUWebinars.Web.Core.Orchestrators
         private readonly IMembershipService _membershipService;
         private readonly IStateService _stateService;
 
+        private readonly ILogger _logger;
+
         public QuizControllerOrchestrator(IWebinarManagementService webinarManagementService, 
             IOrderManagementService orderManagementService, 
             IMembershipService membershipService,
-            IStateService stateService)
+            IStateService stateService, ILogger logger)
         {
             _webinarManagementService = webinarManagementService;
             _orderManagementService = orderManagementService;
             _membershipService = membershipService;
             _stateService = stateService;
+            _logger = logger;
         }
 
         public UserQuizEditModel BuildUserQuizEditModel(int idWebinar)
@@ -147,7 +154,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 idQuiz = quiz.Id,
                 Score = score,
                 QuestionCount = userQuizEditModel.QuizQuestions.Count(),
-                DateQuizTaken = DateTime.Now
+                DateQuizTaken = DomainConstants.BuildUtcNowAsCts
             };
 
             quiz.QuizUserOrders.Add(quizUserOrder);
@@ -242,15 +249,23 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             if (!ReferenceEquals(null, order))
             {
-                //var newJson = new JProperty(string.Concat("QuizAccessByAnonUser-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
-                //    new JObject(
-                //        new JProperty("Name", identifyModel.FullName),
-                //        new JProperty("Email", identifyModel.Email)
-                //        ));
+                var newJson = new JProperty(string.Concat("QuizAccessByAnonUser-", DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                    new JObject(
+                        new JProperty("Name", identifyModel.FullName),
+                        new JProperty("Email", identifyModel.Email)
+                        ));
 
-                //order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, newJson);
+                try
+                {
+                    order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, newJson);
 
-                //_orderManagementService.SaveChanges();
+                    _orderManagementService.SaveChanges();
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.FatalException("QuizIdentify did not log access.", ex);
+                }
 
                 _stateService.SetValue(WebUiConstants.QuizAnonUserIdentified, true);
 

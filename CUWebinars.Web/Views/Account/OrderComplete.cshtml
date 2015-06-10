@@ -3,7 +3,7 @@
 @{
     GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
-    var newUserMsg = "<div>An order confirmation email has been dispatched to "+Model.BillingEmail+" and includes " +
+    var newUserMsg = "<div>An order confirmation email has been dispatched to " + Model.BillingEmail + " and includes " +
                      "complete details of your registration. </div>";
     if (!User.Identity.IsAuthenticated)
     {
@@ -22,10 +22,18 @@
 
         <div class="text-success"> <b>Thank you for your order!</b></div>
 
-        @Html.Raw(newUserMsg)
-
+        <div class="row">
+            @Html.Raw(newUserMsg)
+        </div>
         <div id="OrderSummaryContainer">
             @Html.Partial("~/Views/Shared/Partials/_OrderSumUser.cshtml", Model)
+        </div>
+
+        <div id="FeedbackContainer" class="span4">
+            <section>
+                <h4>Feedback</h4>
+                @{Html.RenderPartial("Partials/_CheckoutFeedback");}
+            </section>
         </div>
     </div>
 </div>

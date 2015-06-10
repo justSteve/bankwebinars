@@ -42,7 +42,7 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 orderSubmittedEvent.EventObject.PersistedName = string.Format("{0}_{1}{2}",
                     persistedNamePrefix,
-                    DateTime.Now.ToString(DomainConstants.DateTimeLongFormat),
+                    DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat),
                     ".htm"
                     );
 
@@ -58,7 +58,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 }
 
                 JProperty orderSubmittedEventMsg = new JProperty(
-                    string.Concat("OrderSubmittedEventMsg-", DateTime.Now.Ticks),
+                    string.Concat("OrderSubmittedEventMsg-", DomainConstants.BuildUtcNowAsCts.Ticks),
                     orderSubmittedEvent.EventObject.PersistedName
                     );
 

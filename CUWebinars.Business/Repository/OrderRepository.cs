@@ -33,7 +33,7 @@ namespace CUWebinars.Business.Repository
         {
 
             var newOrder = items.Create();
-            newOrder.OrderDate = DateTime.Now;
+            newOrder.OrderDate = DomainConstants.BuildUtcNowAsCts;
             newOrder.OrderStatus = OrderStatus.InProcess;
             newOrder.Affiliate = affiliate;
             newOrder.BillingEmail = webUser.email;
@@ -75,7 +75,7 @@ namespace CUWebinars.Business.Repository
         {
 
             var newOrder = items.Create();
-            newOrder.OrderDate = DateTime.Now;
+            newOrder.OrderDate = DomainConstants.BuildUtcNowAsCts;
             newOrder.OrderStatus = OrderStatus.InProcess;
             newOrder.idAffiliate = affiliateId;
             newOrder.BillingEmail = webUser.email;

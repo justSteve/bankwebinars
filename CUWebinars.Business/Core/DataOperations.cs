@@ -7,6 +7,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
+using CUWebinars.Business.Constants;
 
 namespace CUWebinars.Business.Core
 {
@@ -369,7 +370,7 @@ namespace CUWebinars.Business.Core
                         {
                             errorLogger.CommandText =
                                 "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DateTime.Now.ToShortDateString() + "',";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() + "',";
                             errorLogger.CommandText += "'ACSIMPORTER' ,";
                             errorLogger.CommandText += "9 ,9 ,9 ,'[InsertACSUser]', 9 ,";
                             errorLogger.CommandText += "'error at InsertACSUser " + ex.Message + "')";
@@ -382,7 +383,7 @@ namespace CUWebinars.Business.Core
                     {
                         errorLogger.CommandText =
                             "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                        errorLogger.CommandText += DateTime.Now.ToShortDateString() + "',";
+                        errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() + "',";
                         errorLogger.CommandText += "'ACSIMPORTER' ,";
                         errorLogger.CommandText += "0 ,0 ,0 ,'[InsertACSUser]', 0 ,";
                         errorLogger.CommandText += "'InsertACSUser returned " + idUser.ToString() + "')";
@@ -410,7 +411,7 @@ namespace CUWebinars.Business.Core
                     {
                         errorLogger.CommandText =
                             "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                        errorLogger.CommandText += DateTime.Now.ToShortDateString() + "',";
+                        errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() + "',";
                         errorLogger.CommandText += "'ACSIMPORTER' ,";
                         errorLogger.CommandText += "0 ,0 ,0 ,'[InsertACSUser]', 0 ,";
                         errorLogger.CommandText += "'importOrder returned " + orderid.ToString() + "')";
