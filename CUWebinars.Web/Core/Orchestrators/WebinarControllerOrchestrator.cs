@@ -99,10 +99,18 @@ namespace CUWebinars.Web.Core.Orchestrators
                         new JProperty("Name", identifyModel.FullName),
                         new JProperty("Email", identifyModel.Email)
                         ));
+                try
+                {
+                    order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, newJson);
 
-                order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, newJson);
+                    _orderManagementService.SaveChanges();
 
-                _orderManagementService.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    _logger.FatalException("OndemandIdentify from WebinarControllerOrchestrator", ex);
+                    _logger.Warn("UserComments for OnDemand access failed to save: {0}", order.UserComments);
+                }
 
                 _stateService.SetValue(WebUiConstants.AnonUserIdentified, true);
 

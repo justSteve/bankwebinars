@@ -7,12 +7,12 @@
                      "complete details of your registration. </div>";
     if (!User.Identity.IsAuthenticated)
     {
-        newUserMsg = "<div><p>" +
+        newUserMsg = "<div class='span7'><p>" +
                      "An order confirmation email has been dispatched to " + Model.BillingEmail + " and includes " +
                      "a link that will confirm your identity and activate this account. You will not be able " +
                      "to log into our website until visiting the link provided in that email. </p>" +
                      "<p>If you do not see our message in a timely fashion (and after checking your spam folder " +
-                     "for a message from " + _globalConfig.TenantEmail + ") please contact Customer Service at 800-831-0678 ext. 703.</div>";
+                     "for a message from " + _globalConfig.TenantEmail + ") please contact Customer Service at 800-831-0678 ext. 703.</p></div>";
     }
 }
 <div id="LogInContainer" class="container">
