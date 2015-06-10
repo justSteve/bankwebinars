@@ -9,11 +9,9 @@ var SC = SESSIONCHECK; // create shortcut alias
 // document.ready function
 $(function () {
 
-    //SC.checkSessionForm = $('#sessionCheckForm');
-    //SC.checkSessionForm.on('submit', SC.checkSession);
     SC.loginBtn = $('#btnLogin');
 
-    //window.setInterval(SC.checkSession, 10000);
+    window.setInterval(SC.checkSession, 10000);
 });
 
 // self-invoking function for creating methods using Module pattern.
@@ -40,7 +38,7 @@ $(function () {
                 }); 
             }
 
-        });
+        }).fail(commonFuncs.failCallBack);
     }
 
 })(SC);

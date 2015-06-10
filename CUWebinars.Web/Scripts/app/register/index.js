@@ -9,19 +9,6 @@ $(function () {
     institutionInput = $('#RegisterFields_Institution');
     institutionNames = {};
 
-    //setup ajax error handling
-    $.ajaxSetup({
-        error: function (x, status, error) {
-            if (x.status == 403) {
-                alert('Sorry, your session has expired. Please login again to continue');
-                window.location.href = '/Account/Login';
-            }
-            else {
-                alert('An error occurred: ' + status + 'nError: ' + error);
-            }
-        }
-    });
-
     utilities = new Common.Utilities();
 
     stateManager = new Registration.StateManager();
@@ -160,7 +147,7 @@ $(function () {
     });
 
 
-    $('form#checkEmail').submit(function (e) {
+    $('form#checkEmail').submit(function(e) {
 
         e.preventDefault();
 
@@ -176,34 +163,31 @@ $(function () {
             var token = $(this).find('input[name="__RequestVerificationToken"]').val();
 
             $.ajax({
-                type: 'POST',
-                contentType: Registration.Constants.FormPostContentType,
-                cache: false,
-                url: jsonUrl,
-                dataType: Registration.Constants.JsonDataType,
-                data: { email: email, disregardInstitutionDomain: stateManager.getDisregardInstitutionDomain(), __RequestVerificationToken: token },
-                beforeSend: function () {
-                    // this is where we append a loading image
-                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Email...</span>');
-                }
-            }).done(function (data) {
-                // successful request; do something with the data
-                if (data.success === 'foundExisting') {
-                    stateManager.resetPasswordOrLoginView(email);
+                    type: 'POST',
+                    contentType: Registration.Constants.FormPostContentType,
+                    cache: false,
+                    url: jsonUrl,
+                    dataType: Registration.Constants.JsonDataType,
+                    data: { email: email, disregardInstitutionDomain: stateManager.getDisregardInstitutionDomain(), __RequestVerificationToken: token },
+                    beforeSend: function() {
+                        // this is where we append a loading image
+                        $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Email...</span>');
+                    }
+                }).done(function(data) {
+                    // successful request; do something with the data
+                    if (data.success === 'foundExisting') {
+                        stateManager.resetPasswordOrLoginView(email);
 
-                } else if (data.success === 'foundInstitution') {
-                    stateManager.foundInstitutionView(data, email);
+                    } else if (data.success === 'foundInstitution') {
+                        stateManager.foundInstitutionView(data, email);
 
-                } else if (data.email === 'wasNotFound') {
-                    stateManager.newPasswordView(email);
-                }
+                    } else if (data.email === 'wasNotFound') {
+                        stateManager.newPasswordView(email);
+                    }
 
-            }).fail(function () {
-                // failed request; give feedback to user
-                $('#wrapEmail').html('<p class="error"><i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Try that again in a few moments.</p>');
-            }).always(function () {
-                stateManager.setInputAction(Registration.InputAction.None);
-            });
+                }).fail(commonFuncs.failCallBack).always(function() {
+                    stateManager.setInputAction(Registration.InputAction.None);
+                });
         }
     });
 
@@ -229,10 +213,7 @@ $(function () {
             }).done(function (data) {
                 // successful request; do something with the data
                 stateManager.zipCodeVerified(data, zipCode);
-            }).fail(function () {
-                // failed request; give feedback to user
-                $('#wrapZip').html('<p class="error"><i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Try that again in a few moments.</p>');
-            }).always(function () {
+            }).fail(commonFuncs.failCallBack).always(function () {
                 stateManager.setInputAction(Registration.InputAction.None);
             });
         }
@@ -323,11 +304,7 @@ $(function () {
                     }
                 }
             }
-        }).fail(function (data) {
-
-        }).always(function (data) {
-
-        });
+        }).fail(commonFuncs.failCallBack);
 
     });
 
@@ -416,9 +393,7 @@ $(function () {
                 formProcessor.lightUpValidationSummary('registerValSummary', data);
             }
 
-        }).fail(function (data) {
-            //console.log('failed: ' + data);
-        }).always(function () {
+        }).fail(commonFuncs.failCallBack).always(function () {
             stateManager.setInputAction(Registration.InputAction.None);
         });
 
@@ -476,13 +451,13 @@ var searchInstitution = _.debounce(function (query, process) {
         url: '/Account/GetInstitutionsByName',
         dataType: constants.JsonDataType,
         data: { institutionName: searchTerm },
-        beforeSend: function () {
+        beforeSend: function() {
             institutionNames = null; // dereference whatever is currently in 'institutionNames'. 
         }
-    }).done(function (data) {
+    }).done(function(data) {
         institutionNames = data.institutions;
 
         process(institutionNames);
-    });
+    }).fail(commonFuncs.failCallBack);
 
 }, 200);
