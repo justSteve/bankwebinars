@@ -55,7 +55,7 @@ var commonFuncs = function() {
         } else if (jqXHR.statusCode().status === 0 && errorThrown === '' && textStatus === 'error') {
             // do nothing
         } else {
-            alert('An error occurred: ' + jqXHR.statusCode().status + ' nError: ' + jqXHR.statusCode().statusText);
+            alert('An error occurred: ' + jqXHR.statusCode().status + ' nError: ' + jqXHR.statusCode().statusText); 
         };
     };
 

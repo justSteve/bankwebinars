@@ -69,16 +69,11 @@ namespace CUWebinars.Web.Helpers
 
                     while (msgReader.Read())
                     {
-                        string tz = "-6";
-                        if (msgReader[2] == null)
-                        {
-                            tz = msgReader[2].ToString();
-                        }
-                        cityStateFromZip =
-                            msgReader.FieldCount > 0
-                                ? msgReader[0].ToString() + "," + msgReader[1].ToString() + "," +
-                                  tz
-                                : null;
+                        var city = msgReader.GetString(0);
+                        var state = msgReader.GetString(1);
+                        var zip = msgReader.GetString(2);
+
+                        cityStateFromZip = string.Concat(city, ",", state, ",", zip);
                     }
 
                     return cityStateFromZip;

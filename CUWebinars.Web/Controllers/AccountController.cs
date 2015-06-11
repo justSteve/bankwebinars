@@ -1,5 +1,7 @@
-﻿using CUWebinars.Business.AccountService;
+﻿using System.Web.Configuration;
+using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Exceptions;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
@@ -1039,7 +1041,7 @@ namespace CUWebinars.Web.Controllers
                 Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 throw;
             }
-
+            
             //  If no zip address fields found, send error to client
             if (string.IsNullOrWhiteSpace(zipAddress))
             {

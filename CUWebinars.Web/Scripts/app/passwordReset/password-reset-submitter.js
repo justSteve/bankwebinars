@@ -36,7 +36,7 @@ $(function () {
                 form.fadeOut(500, function () {
                     formParent.append('<div class="legendImitator">Password Reset</div><div style="margin-bottom: 25px"><span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp; Password reset succeeded!</span></div>');
                 });
-                Rollbar.Info("#699. reset succeeded");
+                Rollbar.info("#699. reset succeeded");
             } else if (data.isSuccessful === false) {
                 formProcessor.lightUpValidationSummary('valSummaryResetPwdForm', data);
 

@@ -169,7 +169,10 @@ namespace CUWebinars.Business.Core
                     int timeZoneAsInt;
                     USTimeZone timeZone = USTimeZone.Central;
 
-                    if (int.TryParse(timeZoneAsString, NumberStyles.AllowLeadingSign, CultureInfo.CurrentCulture,
+                    if (int.TryParse(
+                        timeZoneAsString, 
+                        NumberStyles.AllowLeadingSign, 
+                        CultureInfo.CurrentCulture,
                         out timeZoneAsInt))
                     {
                         timeZoneAsInt += 10;

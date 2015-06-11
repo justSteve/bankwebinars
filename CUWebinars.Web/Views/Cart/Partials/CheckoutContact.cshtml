@@ -45,7 +45,7 @@
                         </div>
                         <div id="wrapReset">
                             <div id="LoginPart">
-                                <p id="loginErrorSummary"></p>
+                                @Html.ValidationSummary("There were 1 or more errors:", new { id = "loginErrorSummary" })
                                 <h3>Login to existing account?</h3>
                                 <div>
                                     <label>Email:</label> <input id="Email1" name="Email1" value="" type="text" class="input-large"> <br>

@@ -831,7 +831,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             cityStateTimeZoneData.Add("success", "true");
             cityStateTimeZoneData.Add("City", myCity);
             cityStateTimeZoneData.Add("State", zipCentricFields[1]);
-            cityStateTimeZoneData.Add("TimeZone", ((int)Enum.Parse(typeof(USTimeZone), zipCentricFields[2])).ToString(CultureInfo.InvariantCulture));
+            cityStateTimeZoneData.Add("TimeZone", ((int)Enum.Parse(typeof(USTimeZone), zipCentricFields[2]) + 10).ToString(CultureInfo.InvariantCulture));
         }
 
         public bool ChangePasswordFromResetKey(string key, string password)
