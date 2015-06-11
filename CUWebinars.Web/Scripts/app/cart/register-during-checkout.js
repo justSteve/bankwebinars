@@ -235,9 +235,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                     $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Error.Connection Error #454. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 }
             }
-        }).always(function (data) {
-
-        });
+        }).fail(commonFuncs.failCallBack);
 
     });
 
@@ -270,13 +268,16 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 // successful request; do something with the data
                 if (data.success === 'foundExisting') {
                     regUserStateManager.resetPasswordOrLoginView(email, webinarId);
-
                 } else if (data.success === 'foundInstitution') {
                     regUserStateManager.foundInstitutionView(data, email);
-                    createUserAccount(email);
+                    if (data.createUser === "true") {
+                        createUserAccount(email);
+                    }
                 } else if (data.email === 'wasNotFound') {
                     regUserStateManager.goToAddressFields(email);
-                    createUserAccount(email);
+                    if (data.createUser === "true") {
+                        createUserAccount(email);
+                    }
                 } else if (data.error === 'Fail') {
 
                     Rollbar.info("goToAddressFields 319");
@@ -287,13 +288,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                     $('#labelEmail').html('<span class="label label-important">&nbsp;Uncaught Ajax Error 343</span>');
                 }
 
-            }).fail(function () {
-                // failed request; give feedback to user
-                $('#labelEmail').html('<p class="error"><span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Connection Error #451. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span></p>');
-                Rollbar.error("Connection Error #451 ", data);
-                Rollbar.error("Connection Error #451  static marker");
-                //$('#wrapEmail').html('<p class="error"><i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Try that again in a few moments.</p>');
-            }).always(function (data, status, message) {
+            }).fail(commonFuncs.failCallBack).always(function (data, status, message) {
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
 
                 if (status === 'error' && JSON.parse(data.responseText)['Message'] === 'Uncaught Ajax Error') {
@@ -327,13 +322,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
             }).done(function (data) {
                 // successful request; do something with the data
                 regUserStateManager.zipCodeVerified(data, zipCode);
-            }).fail(function () {
-                Rollbar.error("RegistrationInCart | ZipCodeCheck: 374", data);
-                Rollbar.error("static 374");
-
-                // failed request; give feedback to user
-                $('#wrapZip').html('<p class="error"><i class="icon icon-exclamation-sign"></i>Connection Error #374. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</p>');
-            }).always(function () {
+            }).fail(commonFuncs.failCallBack).always(function () {
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
             });
         }
@@ -512,7 +501,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                 }
                             });
 
-                        });
+                        }).fail(commonFuncs.failCallBack);
 
                         $('#confirmationTab a').tab('show');
 
@@ -532,11 +521,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 formProcessor.lightUpValidationSummary('valSummarySignUpInCart', data);
             }
 
-        }).fail(function (data) {
-            Rollbar.error("Connection Error #225", data.Result);
-            Rollbar.error("Connection Error #225 static marker");
-            //console.log('failed: ' + data);
-        }).always(function () {
+        }).fail(commonFuncs.failCallBack).always(function () {
             regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
         });
     });
@@ -647,7 +632,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
                                     $('#confirmationTab a').tab('show');
                                 }
-                            });
+                            }).fail(commonFuncs.failCallBack);
                         });
                     });
                 }
@@ -675,9 +660,17 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 }
             }
 
-        }).fail(function (data) {
+        }).fail(function (jqXHR, textStatus, errorThrown) {
 
-            Rollbar.error("Error #902", data.Result);
+            if (jqXHR.statusCode().status == 403) {
+                alert('Sorry, your session has expired. Please login again to continue');
+                window.location.href = '/Account/Login';
+            } else if (jqXHR.statusCode().status === 0 && errorThrown === '' && textStatus === 'error') {
+                // do nothing
+            } else {
+                alert('An error occurred: ' + jqXHR.statusCode().status + ' nError: ' + jqXHR.statusCode().statusText);
+            };
+            
             Rollbar.error("Error #902 static marker");
             //console.log('failed: ' + data);
         }).always(function () {
@@ -738,7 +731,7 @@ registerDuringCheckout.searchInstitution = _.debounce(function (query, process) 
         registerDuringCheckout.institutionNames = data.institutions;
 
         process(registerDuringCheckout.institutionNames);
-    });
+    }).fail(commonFuncs.failCallBack);
 
 }, 200);
 
@@ -798,7 +791,7 @@ function completeOrder(userId, orderRowId, webinarId, orderId) {
 
             $('#finalLoadingSpinner').remove();
             confirmRegistrationBillMe.removeAttr('disabled');
-        });
+        }).fail(commonFuncs.failCallBack);
     });
     confirmOrderForm.submit();
     confirmOrderForm.off('submit');
@@ -928,6 +921,15 @@ function hookUpEditUserLogic(button, shippingAddressRequired) {
                 }
             }).fail(function (data) {
 
+                if (jqXHR.statusCode().status == 403) {
+                    alert('Sorry, your session has expired. Please login again to continue');
+                    window.location.href = '/Account/Login';
+                } else if (jqXHR.statusCode().status === 0 && errorThrown === '' && textStatus === 'error') {
+                    // do nothing
+                } else {
+                    alert('An error occurred: ' + jqXHR.statusCode().status + ' nError: ' + jqXHR.statusCode().statusText);
+                };
+
                 Rollbar.error("417", data.Result);
                 Rollbar.error("417 static marker");
                 $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #417. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
@@ -1013,7 +1015,7 @@ function hookUpChangeTypeLogic(dropDown) {
 
                             updatePriceOnNewSelection(valOfTypeChosenCurrent, totalPrice, dropDown);
                         }
-                    });
+                    }).fail(commonFuncs.failCallBack);
 
                     valOfTypeChosenCurrent = valOfTypeChosenPrevious = dropDown.val();
                     typeChosenCurrent = typeChosenPrevious = $.trim($('#RegType option:selected').text());
@@ -1037,7 +1039,7 @@ function hookUpChangeTypeLogic(dropDown) {
             } else {
                 registerDuringCheckout.addressOptions['shippingAddressRequired'] = false;
             }
-        });
+        }).fail(commonFuncs.failCallBack);
     });
 }
 
@@ -1075,7 +1077,7 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
         $('#discountSpinner').remove();
 
         ShowModalForShippingDetails();
-    });
+    }).fail(commonFuncs.failCallBack);
 }
 
 function ShowModalForShippingDetails(shippingDetailsRqrd) {
@@ -1134,7 +1136,7 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
 
             $('#discountSpinner').remove();
 
-        }).always(function (e) {
+        }).fail(commonFuncs.failCallBack).always(function (e) {
             $('#discountSpinner').remove();
             $(self).removeAttr('disabled');
         });
@@ -1178,5 +1180,5 @@ function createUserAccount(email) {
         }
     }).done(function (data) {
         // do nothing. This is a fire and forget operation.
-    });
+    }).fail(commonFuncs.failCallBack);
 }

@@ -1133,9 +1133,13 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 resultObject.Add("email", "wasNotFound");
+                resultObject.Add("createUser", "true");
 
                 if (disregardInstitutionDomain)
+                {
+                    resultObject["createUser"] = "false";
                     return Json(resultObject);
+                }
 
                 var institution = _accountControllerOrchestrator.GetInstitutionFromEmail(email);
 
