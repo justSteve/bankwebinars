@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Net.Configuration;
 using System.Net.Mail;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core.Tracing;
 using Ninject.Extensions.Logging;
 
@@ -21,7 +22,7 @@ namespace CUWebinars.Business.Notification.Email
 
         public void Notify(INotificationMessage notificationMessage)
         {
-            var timeStamp = DateTime.Now;
+            var timeStamp = DomainConstants.BuildUtcNowAsCts;
             var mailMessage = new MailMessage();
             var tmpMsg = string.Empty;
             string destinationEmailAddress = notificationMessage.To;

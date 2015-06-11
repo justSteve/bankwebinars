@@ -232,7 +232,7 @@ namespace CUWebinars.Business.Services
             options = _regTypeRepository.FindRegTypesByWebinarId(id, false);
 
             //    // keeps options object in cache for 1 hour.
-            //    _cachingService.Add(cachKey, options, DateTime.Now.AddHours(1));
+            //    _cachingService.Add(cachKey, options, DomainConstants.BuildUtcNowAsCts.AddHours(1));
             //}
 
             return (IDictionary<RegType, bool>)options;
@@ -405,7 +405,7 @@ namespace CUWebinars.Business.Services
                                     .ToList();
 
                 // keeps affiliateIds object in cache for 1 hour.
-                _cachingService.Add(cachKey, affiliateIds, DateTime.Now.AddHours(1));
+                _cachingService.Add(cachKey, affiliateIds, DomainConstants.BuildUtcNowAsCts.AddHours(1));
             }
 
             if (affiliateIds.Any())
@@ -413,7 +413,7 @@ namespace CUWebinars.Business.Services
                 //  get the most recent
                 int affiliateIdForOrder, mostRecentAffiliateId;
                 affiliateIdForOrder = mostRecentAffiliateId = affiliateIds.First();
-
+                
                 var sb = new StringBuilder();
                 // The history is of more than 1 affiliate
                 if (affiliateIds.Distinct().Count() > 1)
@@ -458,7 +458,7 @@ namespace CUWebinars.Business.Services
                 {
                     affiliate = _affiliateRepository.FindByIdWithIncluding(affiliateIdForOrder, a => a.WebUser); // use the most recent
                     // keeps Affiliate object in cache for 1 hour.
-                    _cachingService.Add(cachKey, affiliate, DateTime.Now.AddHours(1));
+                    _cachingService.Add(cachKey, affiliate, DomainConstants.BuildUtcNowAsCts.AddHours(1));
                 }
 
                 return affiliate;
@@ -734,7 +734,7 @@ namespace CUWebinars.Business.Services
 
             };
 
-            //var relativePath = Path.Combine(@"App_Data\Notifications", string.Format("OrderNotificationAddLoc-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm"));
+            //var relativePath = Path.Combine(@"App_Data\Notifications", string.Format("OrderNotificationAddLoc-{0}{1}", DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat), ".htm"));
 
             AddEvent(new OrderSubmittedAdditionalLocationEvent<AdditionalLocationOrderDetailsMessage>
             {

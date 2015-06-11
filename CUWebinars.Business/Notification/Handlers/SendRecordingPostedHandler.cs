@@ -53,7 +53,7 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 notificationMessage.PersistedName = string.Format("{0}_{1}{2}"
                     , persistedNamePrefix
-                    , DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)
+                    , DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)
                     , ".htm");
 
                 var isAdditionalLocation = order.OrderRows
@@ -72,7 +72,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 }
 
                 JProperty SendShippedOrderMsgProperty = new JProperty(
-                    string.Concat("SendShippedOrderMsg-", DateTime.Now.Ticks),
+                    string.Concat("SendShippedOrderMsg-", DomainConstants.BuildUtcNowAsCts.Ticks),
                     notificationMessage.PersistedName
                     );
 
@@ -104,11 +104,11 @@ namespace CUWebinars.Business.Notification.Handlers
 
                         additionalLocationNotificationMessage.PersistedName = string.Format("{0}_{1}{2}",
                             persistedNamePrefix,
-                            DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm"
+                            DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat), ".htm"
                             );
 
                         JProperty sendRecordingPostedInfoAddLocMsg = new JProperty(
-                                string.Concat(string.Format("AddLocSendRecordingPostedInfoMsg-{0}-", count), DateTime.Now.Ticks),
+                                string.Concat(string.Format("AddLocSendRecordingPostedInfoMsg-{0}-", count), DomainConstants.BuildUtcNowAsCts.Ticks),
                                 notificationMessage.PersistedName
                                 );
 

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Text;
+using CUWebinars.Business.Constants;
 
 namespace CUWebinars.Web.Membership
 {
     public class PasswordGenerator
     {
-        private static readonly Random Random = new Random((int)DateTime.Now.Ticks);
+        private static readonly Random Random = new Random((int)DomainConstants.BuildUtcNowAsCts.Ticks);
 
         public static string GenerateRandomString(int size)
         {

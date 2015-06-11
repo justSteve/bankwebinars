@@ -1,4 +1,5 @@
-﻿@using FluentDate
+﻿@using CUWebinars.Business.Constants
+@using FluentDate
 @using FluentDateTime
 @using Newtonsoft.Json
 @model CUWebinars.Business.Notification.ViewModel.WebinarPromoViewModel
@@ -15,14 +16,14 @@
 
     ViewBag.Title = "Send VR - Weekly: " + @promoEvent.Title;
 
-    var minDay = 1.Days().Since(DateTime.Now);
-    var maxDay = DateTime.Now.NextMonth();
+    var minDay = 1.Days().Since(DomainConstants.BuildUtcNowAsCts);
+    var maxDay = DomainConstants.BuildUtcNowAsCts.NextMonth();
 
 
 
     var query = from webinar in webinars
                 select new {label = (webinar.Title.Substring(0, Math.Min(webinar.Title.Length, 20)) + " <b>(" + ViewBag.NumberOfOrders + "</b>) " + webinar.Date.ToShortDateString()).ToString(),
-                               value = (Webinar.idWebinarWebinar).ToString()};
+                               value = (Model.Webinar.idWebinar).ToString()};
 
     var json = JsonConvert.SerializeObject(query.ToArray());
 

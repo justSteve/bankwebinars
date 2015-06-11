@@ -52,7 +52,7 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 notificationMessage.PersistedName = string.Format("{0}_{1}{2}",
                     persistedNamePrefix,
-                    DateTime.Now.ToString(DomainConstants.DateTimeLongFormat),
+                    DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat),
                     ".htm"
                     );
 

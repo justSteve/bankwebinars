@@ -460,7 +460,7 @@ namespace CUWebinars.Business.AccountService
 
                 var auditChanges = new StringBuilder();
 
-                auditChanges.Append("Record edited on " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + Environment.NewLine);
+                auditChanges.Append("Record edited on " + DomainConstants.BuildUtcNowAsCts.ToShortDateString() + " " + DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + Environment.NewLine);
 
                 _webUserRepository.Update(webUser);
             }
@@ -484,7 +484,7 @@ namespace CUWebinars.Business.AccountService
 
                 var auditChanges = new StringBuilder();
 
-                auditChanges.Append("Record edited on " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + Environment.NewLine);
+                auditChanges.Append("Record edited on " + DomainConstants.BuildUtcNowAsCts.ToShortDateString() + " " + DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + Environment.NewLine);
 
 
                 var billingAddressFromDb = webUser.Addresses.Single(a => a.AddressType == DomainConstants.BillingAddress);
@@ -776,7 +776,7 @@ namespace CUWebinars.Business.AccountService
                 idUser = _refDataRepository.GetMaxWebUserId() + 1,
                 AcctStatus = DomainConstants.New,
                 UserType = UserType.Customer,
-                DateCreated = DateTime.Now,
+                DateCreated = DomainConstants.BuildUtcNowAsCts,
                 FirstName = "Impromptu",
                 LastName = "User",
                 idUserInstitution = 8,

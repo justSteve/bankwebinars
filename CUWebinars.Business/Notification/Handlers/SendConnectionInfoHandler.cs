@@ -64,7 +64,7 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 notificationMessage.PersistedName = string.Format("{0}_{1}{2}",
                     persistedNamePrefix,
-                    DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm"
+                    DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat), ".htm"
                     );
 
                 JObject notificationStorage;
@@ -79,7 +79,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 }
 
                 JProperty sendConnectionInfoMsg = new JProperty(
-                    string.Concat("SendConnectionInfoMsg-", DateTime.Now.Ticks),
+                    string.Concat("SendConnectionInfoMsg-", DomainConstants.BuildUtcNowAsCts.Ticks),
                     notificationMessage.PersistedName
                     );
                 notificationStorage.Add(sendConnectionInfoMsg);
@@ -113,11 +113,11 @@ namespace CUWebinars.Business.Notification.Handlers
 
                         additionalLocationNotificationMessage.PersistedName = string.Format("{0}_{1}{2}",
                             persistedNamePrefix,
-                            DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm"
+                            DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat), ".htm"
                             );
 
                         JProperty sendConnectionInfoAddLocMsg = new JProperty(
-                                string.Concat(string.Format("AddLocSendConnectionInfoMsg-{0}-", count), DateTime.Now.Ticks),
+                                string.Concat(string.Format("AddLocSendConnectionInfoMsg-{0}-", count), DomainConstants.BuildUtcNowAsCts.Ticks),
                                 notificationMessage.PersistedName
                                 );
 

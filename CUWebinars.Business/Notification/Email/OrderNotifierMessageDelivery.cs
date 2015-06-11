@@ -4,6 +4,7 @@ using Ninject.Extensions.Logging;
 using System;
 using System.Configuration;
 using System.Net.Mail;
+using CUWebinars.Business.Constants;
 
 namespace CUWebinars.Business.Notification.Email
 {
@@ -45,7 +46,7 @@ namespace CUWebinars.Business.Notification.Email
             _logger.Info(string.Format("Message Subject is:{0}, PersistedName is:{1}",
                 notificationMessage.Subject, notificationMessage.PersistedName ?? "null"));
 
-            var timeStamp = DateTime.Now;
+            var timeStamp = DomainConstants.BuildUtcNowAsCts;
             var mailMessage = new MailMessage();
             var tmpMsg = string.Empty;
             var destinationEmailAddress = notificationMessage.To;

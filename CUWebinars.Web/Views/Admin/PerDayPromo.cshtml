@@ -1,4 +1,5 @@
-﻿@using FluentDate
+﻿@using CUWebinars.Business.Constants
+@using FluentDate
 @using FluentDateTime
 @using CUWebinars.Web.ViewModel
 
@@ -27,8 +28,8 @@
 
     ViewBag.Title = "Send VR - Daily " + promoEvent.Title;
 
-    var minDay = 1.Days().Since(DateTime.Now);
-    var maxDay = DateTime.Now.NextMonth();
+    var minDay = 1.Days().Since(DomainConstants.BuildUtcNowAsCts);
+    var maxDay = DomainConstants.BuildUtcNowAsCts.NextMonth();
 
 }
 <script type="text/javascript" src="/Scripts/cleditor/jquery.cleditor.min.js"></script>

@@ -3,16 +3,16 @@
 @{
     GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
-    var newUserMsg = "<div>An order confirmation email has been dispatched to "+Model.BillingEmail+" and includes " +
+    var newUserMsg = "<div>An order confirmation email has been dispatched to " + Model.BillingEmail + " and includes " +
                      "complete details of your registration. </div>";
     if (!User.Identity.IsAuthenticated)
     {
-        newUserMsg = "<div><p>" +
+        newUserMsg = "<div class='span7'><p>" +
                      "An order confirmation email has been dispatched to " + Model.BillingEmail + " and includes " +
                      "a link that will confirm your identity and activate this account. You will not be able " +
                      "to log into our website until visiting the link provided in that email. </p>" +
                      "<p>If you do not see our message in a timely fashion (and after checking your spam folder " +
-                     "for a message from " + _globalConfig.TenantEmail + ") please contact Customer Service at 800-831-0678 ext. 703.</div>";
+                     "for a message from " + _globalConfig.TenantEmail + ") please contact Customer Service at 800-831-0678 ext. 703.</p></div>";
     }
 }
 <div id="LogInContainer" class="container">
@@ -22,10 +22,18 @@
 
         <div class="text-success"> <b>Thank you for your order!</b></div>
 
-        @Html.Raw(newUserMsg)
-
+        <div class="row">
+            @Html.Raw(newUserMsg)
+        </div>
         <div id="OrderSummaryContainer">
             @Html.Partial("~/Views/Shared/Partials/_OrderSumUser.cshtml", Model)
+        </div>
+
+        <div id="FeedbackContainer" class="span4">
+            <section>
+                <h4>Feedback</h4>
+                @{Html.RenderPartial("Partials/_CheckoutFeedback");}
+            </section>
         </div>
     </div>
 </div>

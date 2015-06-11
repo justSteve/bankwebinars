@@ -514,11 +514,18 @@ namespace CUWebinars.Web.Controllers
                         UserAudit = _appHelper.GetUserAuditInfo()
                     };
 
+                    try
+                    {
+                        order.UserComments = JsonHelpers.AddObjectToJsonArray(order.UserComments, JsonPropertyKeys.PostEventMaterialsWereAccessedKey, fieldsToComments);
 
-                    order.UserComments = JsonHelpers.AddObjectToJsonArray(order.UserComments, JsonPropertyKeys.PostEventMaterialsWereAccessedKey, fieldsToComments);
+                        _orderManagementService.SaveChanges();
 
-                    _orderManagementService.SaveChanges();
-
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.FatalException("OndemandIdentify", ex);
+                        _logger.Warn("UserComments for OnDemand access failed to save: {0}", order.UserComments);
+                    }
                     return _webinarControllerOrchestrator.Identify(identifyModel);
                 }
 

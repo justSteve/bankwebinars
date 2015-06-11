@@ -303,7 +303,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
                 var newJson =
                     new JProperty(
-                        string.Concat("LegacyCommentsAddOrder-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                        string.Concat("LegacyCommentsAddOrder-", DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
                         new JObject(
 
                             new JProperty("LegacyComments", importedOrder.AdminComments)
@@ -395,7 +395,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
                     var newJson =
                         new JProperty(
-                            string.Concat("Imported-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                            string.Concat("Imported-", DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
                             new JObject(
                                 new JProperty("ImportedOrder", command.Affiliate.ttsDomain),
                                 new JProperty("Details", buildMessage)
@@ -486,7 +486,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
             var newJson =
                 new JProperty(
-                    string.Concat("Migrated-", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)),
+                    string.Concat("Migrated-", DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
                     new JObject(
                         new JProperty("MigratedOrder", command.Affiliate.ttsDomain),
                         new JProperty("Details", buildMessage)

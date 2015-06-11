@@ -40,7 +40,7 @@ namespace CUWebinars.Business.Notification.Handlers
                     "SendReminder");
                 notificationMessage.PersistedName = string.Format("SendReminder_{0}_{1}{2}",
                     sendReminderEvent.EventObject.idOrder
-                    , DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)
+                    , DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)
                     , ".htm");
 
                 //  adds the name of the message to the Json object stored in NotificationStorage.
@@ -56,7 +56,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 }
 
                 JProperty sendConnectionInfoMsg = new JProperty(
-                    string.Concat("SendReminderEventMsg-", DateTime.Now.Ticks),
+                    string.Concat("SendReminderEventMsg-", DomainConstants.BuildUtcNowAsCts.Ticks),
                     notificationMessage.PersistedName
                     );
                 notificationStorage.Add(sendConnectionInfoMsg);
