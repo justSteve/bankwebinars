@@ -50,11 +50,12 @@ var commonFuncs = function() {
     var fail = function(jqXHR, textStatus, errorThrown) {
 
         if (jqXHR.statusCode().status == 403) {
-            alert('Sorry, your session has expired. Please login again to continue');
+            alert('Session expired. Please login again to continue.');
             window.location.href = '/Account/Login';
         } else if (jqXHR.statusCode().status === 0 && errorThrown === '' && textStatus === 'error') {
             // do nothing
         } else {
+
             alert('An error occurred: ' + jqXHR.statusCode().status + ' nError: ' + jqXHR.statusCode().statusText); 
         };
     };
