@@ -361,6 +361,8 @@
     <Compile Include="Core\TtsConfig.cs" />
     <Compile Include="Services\WebinarManagementService.cs" />
     <Compile Include="Validation\Identity\PostEventMaterialsAccessClaimValidator.cs" />
+    <Compile Include="Validation\Json\JsonIsWellFormedValidator.cs" />
+    <Compile Include="Validation\Json\ValidationString.cs" />
     <Compile Include="Validation\Order\CreateOrderValidator.cs" />
     <Compile Include="Validation\Webinar\CreateWebinarValidator.cs" />
     <Compile Include="Validation\Webinar\UpdateWebinarValidator.cs" />

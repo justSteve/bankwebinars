@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using CUWebinars.Business.Constants;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -52,7 +53,7 @@ namespace CUWebinars.Business.Core.Helpers
             {
                 existingStoredJsonObject = new JObject();
                 jArray = new JArray(newJsonObject);
-                existingStoredJsonObject.AddFirst(jArray);
+                existingStoredJsonObject.Add(JsonPropertyKeys.PostEventMaterialsWereAccessed, jArray);
 
                 return existingStoredJsonObject.ToString(Formatting.None);
             }
@@ -80,8 +81,8 @@ namespace CUWebinars.Business.Core.Helpers
 
                 return existingStoredJsonObject.ToString(Formatting.None);
             }
-            
-            throw new InvalidDataException("The stored string is not valid json.");
+
+            return jsonAsString;
         }
 
         public static JObject CreateJsonObjectFromDictionary(IDictionary<string, string> dataForJson)

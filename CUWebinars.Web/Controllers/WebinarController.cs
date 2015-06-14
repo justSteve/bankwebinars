@@ -502,31 +502,7 @@ namespace CUWebinars.Web.Controllers
 
                 if (int.TryParse(identifyModel.OnDemandCode.Split('-')[0], out id))
                 {
-                    var order = _orderManagementService.GetOrderById(id);
-                    if (order == null) throw new NullReferenceException("order");
-
-                    var fieldsToComments = new PostEventMaterialsWereAccessed
-                    {
-                        DateAdded = TtsConfig.UtcNowAsCts,
-                        OnDemandCode = identifyModel.OnDemandCode,
-                        UserEmail = identifyModel.Email,
-                        UserName = identifyModel.FullName,
-                        UserAudit = _appHelper.GetUserAuditInfo()
-                    };
-
-                    try
-                    {
-                        order.UserComments = JsonHelpers.AddObjectToJsonArray(order.UserComments, JsonPropertyKeys.PostEventMaterialsWereAccessedKey, fieldsToComments);
-
-                        _orderManagementService.SaveChanges();
-
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.FatalException("OndemandIdentify", ex);
-                        _logger.Warn("UserComments for OnDemand access failed to save: {0}", order.UserComments);
-                    }
-                    return _webinarControllerOrchestrator.Identify(identifyModel);
+                    return _webinarControllerOrchestrator.Identify(identifyModel, id);
                 }
 
                 ModelState.AddModelError(string.Empty, "The Order Id in the browser address bar is not valid.");
