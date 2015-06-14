@@ -76,7 +76,8 @@ namespace CUWebinars.Web.App_Start
             bundles.Add(new ScriptBundle("~/bundles/manage-order-from-details").Include(
                 "~/Scripts/toastr.js",
                 "~/Scripts/app/toastLogger.js",
-                "~/Scripts/app/admin/manage-order-from-details.js"
+                "~/Scripts/app/admin/manage-order-from-details.js",
+                "~/Scripts/app/admin/display-orders-by-user.js"
                 ));
 
             bundles.Add(new ScriptBundle("~/bundles/manage-claims").Include(
@@ -272,7 +273,7 @@ namespace CUWebinars.Web.App_Start
                         "~/Content/themes/base/jquery.ui.progressbar.css",
                         "~/Content/themes/base/jquery.ui.theme.css"));
 
-            BundleTable.EnableOptimizations = true;
+            //BundleTable.EnableOptimizations = true;
         }
     }
 }

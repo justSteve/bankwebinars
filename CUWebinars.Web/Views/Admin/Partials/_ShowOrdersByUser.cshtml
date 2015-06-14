@@ -1,0 +1,42 @@
+﻿@model ManageOrderEditModel
+
+@{
+    ViewBag.Title = "Orders By User";
+    ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+
+    var showAffColumn = "false";
+    if (claimsIdentityOfAuthenticatedUser.HasClaim(
+        (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Admin))
+    {
+        showAffColumn = "true";
+    }
+    
+    @Styles.Render("~/Content/data-tables")
+    <table data-aff="@showAffColumn" id="ordersTable" class="table table-striped table-bordered dataTable no-footer" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Order</th>
+                <th>User</th>
+                <th>Institution</th>
+                <th>Billing</th>
+                <th>Affiliate</th>
+                <th>OrderDate</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tfoot>
+            <tr>
+                <th>Order</th>
+                <th>User</th>
+                <th>Institution</th>
+                <th>Billing</th>
+                <th>Affiliate</th>
+                <th>OrderDate</th>
+                <th>Status</th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div id="userEmailDiv" class="initialHide">@Model.WebUser.email</div>
+}

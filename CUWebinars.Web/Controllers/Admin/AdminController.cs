@@ -1783,6 +1783,17 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             return View("DisplayOrders", 1720); // hard coded value. It's a webinar id
         }
+        [HandleAjaxException]
+        [HttpPost]
+        public ActionResult GetOrdersByUser(string email)
+        {
+            int totalNumberOrders;
+
+            return Json(new
+            {
+                data = BuildDisplayOrdersByUserViewModel(email, out totalNumberOrders)
+            });
+        }
 
         [HandleAjaxException]
         [HttpPost]
@@ -1799,6 +1810,47 @@ namespace CUWebinars.Web.Controllers.Admin
         private IList<IDictionary<string, string>> BuildDisplayOrdersViewModel(int webinarId, out int totalNumberOrders)
         {
             var orders = _dataTablesService.GetOrdersByWebinar(webinarId, 19, out totalNumberOrders);
+
+            IList<IDictionary<string, string>> responsePayload = new List<IDictionary<string, string>>();
+            IDictionary<string, string> responsePayloadInner = new Dictionary<string, string>();
+
+            foreach (var order in orders)
+            {
+                var orderRow = order.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
+
+                var orderColumn = order.idOrderLegacy.ToString() + ", " + order.Origin;
+                var userColumn = "<a href='/account/edituser/" + order.idUser + "' target='_new' />" + order.LastName + ", " + order.FirstName + "</a>";
+                var institutionColumn = order.Institution;
+                var billingColumn = orderRow.RegistrationType.OptionLabel.Replace(" and Hardcopy Handouts", "").Replace("Plus Five", "Only") + "<br>Total: " + order.Total.ToString().Replace(".00", "");
+
+                var resendMsg = "Resend Confirmation";
+                if (orderRow.Webinar.Status == WebinarStatus.Active)
+                {
+                    resendMsg = "Resend Connection Info";
+                }
+
+                responsePayloadInner = new Dictionary<string, string>();
+
+                responsePayloadInner.Add("OrderId", orderColumn);
+                responsePayloadInner.Add("OrderColumn", orderColumn);
+                responsePayloadInner.Add("UserColumn", userColumn);
+                responsePayloadInner.Add("InstitutionColumn", institutionColumn);
+                responsePayloadInner.Add("BillingColumn", billingColumn);
+
+                responsePayloadInner.Add("AffiliateColumn", order.Affiliate.ttsDomain);
+
+                responsePayloadInner.Add("OrderDateColumn", order.OrderDate.ToShortDateString());
+                responsePayloadInner.Add("StatusColumn", "<a href='/Admin/manageOrder/" + order.idOrderLegacy + "' target='_new' />" + order.OrderStatus.ToString()+"</a><br/>" + resendMsg);
+
+                responsePayload.Add(responsePayloadInner);
+            }
+
+            return responsePayload;
+        }
+
+        private IList<IDictionary<string, string>> BuildDisplayOrdersByUserViewModel(string email, out int totalNumberOrders)
+        {
+            var orders = _dataTablesService.GetOrdersByUser(email, 19, out totalNumberOrders);
 
             IList<IDictionary<string, string>> responsePayload = new List<IDictionary<string, string>>();
             IDictionary<string, string> responsePayloadInner = new Dictionary<string, string>();

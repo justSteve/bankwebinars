@@ -21,17 +21,23 @@
         <div class="legendImitator">
             Edit Order
             <div class="pull-right">
+                <button id="byUser" type="button" class="btn" data-toggle="collapse" data-target="#byUserWrapper">Show Orders By This User</button>
                 <input type="text" style="width: 75px; margin-top: 8px;" id="orderIdInput" value="@Model.Id" />
                 <button id="getOrderButton" class="btn">Lookup Order</button>
             </div>
         </div>
-        <h4 id="webinarHeading">@Model.Order.OrderRows.FirstOrDefault().Webinar.Title - @Model.Order.OrderRows.FirstOrDefault().Webinar.Date.ToShortDateString() @Model.Order.OrderRows.FirstOrDefault().Webinar.Date.ToShortTimeString()</h4>
+        <div id="byUserWrapper" class="collapse">
+            @Html.Partial("~/Views/Admin/Partials/_ShowOrdersByUser.cshtml", Model)
+        </div>
 
         <div id="manageOrderWrapper span7">
             <div style="padding: 0;" id="orderRelatedFields">
+                <h4 id="webinarHeading">@Model.Order.OrderRows.FirstOrDefault().Webinar.Title - @Model.Order.OrderRows.FirstOrDefault().Webinar.Date.ToShortDateString() @Model.Order.OrderRows.FirstOrDefault().Webinar.Date.ToShortTimeString()</h4>
                 @Html.Partial("~/Views/Admin/Home/_OrderEditDetails.cshtml", Model)
             </div>
         </div>
+
+
 
     </div>
 </div>

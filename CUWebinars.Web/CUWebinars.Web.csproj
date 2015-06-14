@@ -736,6 +736,7 @@
     <Content Include="Notification\Templates\SendPerWeekPromo.cshtml">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="Scripts\app\admin\display-orders-by-user.js" />
     <Content Include="Scripts\app\admin\session-checker.js" />
     <Content Include="Scripts\app\admin\display-orders.js" />
     <Content Include="Scripts\app\quiz\edit-quiz.js" />
@@ -980,6 +981,7 @@
     <Content Include="Views\StaticContent\IncorrectPassword.cshtml" />
     <Content Include="Views\Shared\Partials\_404Feedback.cshtml" />
     <Content Include="Views\Admin\ManageOrder.cshtml" />
+    <Content Include="Views\Admin\Partials\_ShowOrdersByUser.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>

@@ -55,9 +55,39 @@ namespace CUWebinars.Business.Services
             return theseOrders;
         }
 
-        public IEnumerable<Order> GetOrdersByUser(int idWebinar, int idAffliate, int start, int length, out int totalNumberOrders)
+        public IEnumerable<Order> GetOrdersByUser(string email, int idAffliate, out int totalNumberOrders)
         {
-            throw new NotImplementedException();
+            IList<Order> theseOrders;
+
+            if (idAffliate != 19)
+            {
+                theseOrders = _context.Orders
+
+                    .Include(o => o.WebUser)
+                    .Include(o => o.Affiliate)
+                    .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                    .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                    .Include(o => o.OrderRows.Select(or => or.Discount))
+                    .Include(o => o.OrderRows.Select(or => or.Webinar))
+                    .Where(o => o.OrderRows.Any(or => or.RowStatus == OrderRowStatus.Active && o.BillingEmail == email) && o.idAffiliate == idAffliate)
+                    .ToList();
+            }
+            else
+            {
+                theseOrders = _context.Orders
+                    .Include(o => o.WebUser)
+                    .Include(o => o.Affiliate)
+                    .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                    .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                    .Include(o => o.OrderRows.Select(or => or.Discount))
+                    .Include(o => o.OrderRows.Select(or => or.Webinar))
+                    .Where(o => o.OrderRows.Any(or => or.RowStatus == OrderRowStatus.Active && o.BillingEmail == email))
+                    .ToList();
+            }
+
+            totalNumberOrders = theseOrders.Count;
+
+            return theseOrders;
         }
 
         public IEnumerable<Order> GetOrdersPaged(int start, int length, string orderIdFragment, out int totalNumberOrders, out int totalFilteredOrders)
