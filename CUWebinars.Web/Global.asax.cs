@@ -81,8 +81,21 @@ namespace CUWebinars.Web
             //switch ("Dave")
             {
                 case DomainConstants.BankWebinars:
-                    log4net.Config.XmlConfigurator.Configure(new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs, "BWLog4net.xml")));
+                    if (!HttpContext.Current.IsDebuggingEnabled)
+                    {
+                        log4net.Config.XmlConfigurator.Configure(
+                            new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
+                                "BWLog4net.xml")));
+
+                    }
+                    else
+                    {
+                         log4net.Config.XmlConfigurator.Configure(
+                            new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
+                                "BWLocal.xml")));                       
+                    }
                     break;
+
                 case DomainConstants.CUWebinars:
                     log4net.Config.XmlConfigurator.Configure(new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs, "CUWLog4net.xml")));
                     break;
@@ -229,6 +242,14 @@ namespace CUWebinars.Web
                         break;
 
                     case 500:
+                        //if (User.Identity.IsAuthenticated && User.Identity.Name.StartsWith("admin"))
+                        //{
+                        //    //Now that we know we have an authenticated/authorized Admin
+                        //    // no need to hide sensitive info. Let's dump the Context's error message
+                        //    // instead of the generic boiler plate.
+
+                        //}
+                        //break;
                     default:
                         Response.StatusCode = 500;
                         newRouteData.Values[WebUiConstants.Action] = WebUiConstants.ServerErrorPage;

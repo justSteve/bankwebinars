@@ -5,19 +5,19 @@
     var url = "";
     if (@ConfigurationManager.AppSettings["Tenant"] == "BankWebinars")
     {
-        url = "http://form.jotformpro.com/form/51606487629162?yourEmail21=";
+        url = "http://form.jotformpro.com/form/51606487629162?feedback=";
     }
     if (@ConfigurationManager.AppSettings["Tenant"] == "CUWebinars")
     {
-        url = "http://form.jotform.us/form/50827231711953?yourEmail21=";
+        url = "http://form.jotform.us/form/50827231711953?feedback=";
 
     }
 
 }
 
 <script language="javascript" type="text/javascript">
-    function openJWindow() {
-        window.open('@url' + $("#getEmail").val(), 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');
+    function openCOWindow() {
+        window.open('@url' + $("#getFeedback").val(), 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');
     }
 </script>
 
@@ -26,8 +26,8 @@
         Your feedback is critical to our ability to improve your experience!<br />
 
         <span class="input-append">
-            <input type="email" id="getEmail" placeholder="Your Comment?" class="span6" name="email" />
-            <button onclick="javascript: openJWindow();" class="btn btn-primary">How'd We Do?</button>
+            <input type="text" id="getFeedback" placeholder="Your Comment?" class="span6" name="Comment" />
+            <button onclick="javascript: openCOWindow();" class="btn btn-primary">How'd We Do?</button>
 
         </span>
     </p>

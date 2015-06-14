@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<log4net>
+  <appender name="FileAppender" type="log4net.Appender.RollingFileAppender">
+    <threshold value="INFO" />
+    <file type="log4net.Util.PatternString" value="D:/home/site/wwwroot/App_Data/Logs/Web/log4net_%date{yyyyMMdd}.log" />
+    <appendToFile value="true" />
+    <rollingStyle value="Date" />
+    <datePattern value="yyyyMMdd" />
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date [%thread] %-5level %logger %property – %message%newline" />
+    </layout>
+  </appender>
+
+  <appender name="AdoNetAppender" type="log4net.Appender.AdoNetAppender">
+    <threshold value="INFO" />
+    <bufferSize value="1" />
+    <connectionType value="System.Data.SqlClient.SqlConnection, System.Data,  Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+    <connectionString value="Server=.;Initial Catalog=BankWebinars;Integrated Security=True;MultipleActiveResultSets=True" providerName="System.Data.SqlClient" />
+    <!--<connectionString value="Server=.;Initial Catalog=TTSDatabase;Integrated Security=True;MultipleActiveResultSets=True" />-->
+    <commandText value="INSERT INTO BWLog ([Date],[Level],[Message],[Exception], [Logger]) VALUES (@log_date, @log_level, @message, @exception, @logger)" />
+    <parameter>
+      <parameterName value="@log_date" />
+      <dbType value="DateTime" />
+      <layout type="log4net.Layout.RawTimeStampLayout" />
+    </parameter>
+    <parameter>
+      <parameterName value="@log_level" />
+      <dbType value="String" />
+      <size value="50" />
+      <layout type="log4net.Layout.PatternLayout">
+        <conversionPattern value="%level" />
+      </layout>
+    </parameter>
+    <parameter>
+      <parameterName value="@message" />
+      <dbType value="String" />
+      <size value="4000" />
+      <layout type="log4net.Layout.PatternLayout">
+        <conversionPattern value="%message" />
+      </layout>
+    </parameter>
+    <parameter>
+      <parameterName value="@exception" />
+      <dbType value="String" />
+      <size value="4000" />
+      <layout type="log4net.Layout.ExceptionLayout" />
+    </parameter>
+    <parameter>
+      <parameterName value="@logger" />
+      <dbType value="String" />
+      <size value="4000" />
+      <layout type="log4net.Layout.PatternLayout">
+        <conversionPattern value="%logger" />
+      </layout>
+    </parameter>
+  </appender>
+  <root>
+    <appender-ref ref="AdoNetAppender" />
+    <appender-ref ref="FileAppender" />
+  </root>
+</log4net>

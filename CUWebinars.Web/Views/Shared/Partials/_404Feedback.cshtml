@@ -1,0 +1,38 @@
+﻿@using System.Configuration
+
+
+@{
+    var url = "";
+    if (@ConfigurationManager.AppSettings["Tenant"] == "BankWebinars")
+    {
+        url = "http://form.jotformpro.com/form/50827231711953?feedback=";
+    }
+    if (@ConfigurationManager.AppSettings["Tenant"] == "CUWebinars")
+    {
+        url = "http://form.jotform.us/form/51606487629162?feedback=";
+
+    }
+
+}
+
+<script language="javascript" type="text/javascript">
+    function openFBWindow() {
+        window.open('@url' + $("#getFeedback").val(), 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');
+    }
+</script>
+
+<section>
+    <p style="font-size: small;">
+        We know it can be frustrating to not find what you are looking for and would like to help resolve this problem. Please submit a brief description of what you'd expected to find here.<br />
+
+        <span class="input-append">
+            <input type="text" id="getFeedback" placeholder="Your Question?" class="span6" name="Comment" />
+            <button onclick="javascript: openFBWindow();" class="btn btn-primary">Submit</button>
+
+        </span>
+    </p>
+</section>
+
+
+
+

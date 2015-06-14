@@ -1,5 +1,7 @@
 ﻿@model ManageOrderEditModel
-
+@{
+    ViewBag.Test = "";
+}
 <style type="text/css">
     div.addLocsBox {
         background-color: #ddd;
@@ -19,7 +21,7 @@
         <div class="legendImitator">
             Edit Order
             <div class="pull-right">
-                <input type="text" style="width: 75px; margin-top: 8px;" id="orderIdInput" value="@Model.Id"/>
+                <input type="text" style="width: 75px; margin-top: 8px;" id="orderIdInput" value="@Model.Id" />
                 <button id="getOrderButton" class="btn">Lookup Order</button>
             </div>
         </div>
@@ -35,6 +37,9 @@
 </div>
 @section scripts {
     @Scripts.Render("~/bundles/manage-order-from-details")
+    <script src="@Url.Content("~/Scripts/app/notification-ops/order-event-notifications.js")"></script>
+    <script src="@Url.Content("~/Scripts/app/notification-ops/membership-notifications.js")"></script>
+    <script src="@Url.Content("~/Scripts/app/ToastLogger.js")"></script>
 }
 
 @Styles.Render("~/Content/manage-order-styles")
