@@ -766,7 +766,7 @@
     <Content Include="Scripts\app\webinar\identify.js" />
     <Content Include="Content\DataTables\css\dataTables.responsive.scss" />
     <Content Include="Content\DataTables\css\dataTables.jqueryui.scss" />
-    <Content Include="App_Data\BankWebinarsV3.bacpac" />
+    <Content Include="App_Data\CU31.bacpac" />
     <None Include="Properties\PublishProfiles\BankWebinars - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars33 - FTP.pubxml" />

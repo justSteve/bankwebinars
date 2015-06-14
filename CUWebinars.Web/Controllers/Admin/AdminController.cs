@@ -1867,7 +1867,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 var resendMsg = "Resend Confirmation";
                 if (orderRow.Webinar.Status == WebinarStatus.Active)
                 {
-                    resendMsg = "Resend Connection Info";
+                    resendMsg = "<button id='fireResendConfirmation' data-orderid='"+order.idOrder+"' type='button' class='btn btn-success btn-small' >Resend Connection Info</button>";
                 }
 
                 responsePayloadInner = new Dictionary<string, string>();

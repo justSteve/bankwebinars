@@ -19,18 +19,18 @@ $(function () {
 
 // self-invoking function for creating methods using Module pattern.
 // 
-(function (ns) {
+(function (ns1) {
 
-    ns.primeDomVariables = function () {
+    ns1.primeDomVariables = function () {
         DOBU.ordersTable = $('#ordersTable');
         DOBU.userEmailDiv = $('#userEmailDiv');
     };
 
-    ns.wireUpHandlers = function () {
+    ns1.wireUpHandlers = function () {
 
     };
 
-    ns.wireUpDataTable = function () {
+    ns1.wireUpDataTable = function () {
 
         DOBU.ordersTable.dataTable({
             "dom": 'T<"clear">lfrtip'

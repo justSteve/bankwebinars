@@ -21,7 +21,7 @@
         <div class="legendImitator">
             Edit Order
             <div class="pull-right">
-                <button id="byUser" type="button" class="btn" data-toggle="collapse" data-target="#byUserWrapper">Show Orders By This User</button>
+                <button id="byUser" type="button" class="btn btn-success btn-small" data-toggle="collapse" data-target="#byUserWrapper">Show Orders By This User</button>
                 <input type="text" style="width: 75px; margin-top: 8px;" id="orderIdInput" value="@Model.Id" />
                 <button id="getOrderButton" class="btn">Lookup Order</button>
             </div>
@@ -48,4 +48,5 @@
     <script src="@Url.Content("~/Scripts/app/ToastLogger.js")"></script>
 }
 
+<script src="@Url.Content("~/Scripts/app/notification-ops/details-event-webpart.js")"></script>
 @Styles.Render("~/Content/manage-order-styles")
