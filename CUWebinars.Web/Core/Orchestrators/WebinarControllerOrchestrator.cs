@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Entity.Validation;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
@@ -16,12 +18,15 @@ using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
+using CUWebinars.Business.Validation.Json;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure;
 using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models;
+using CUWebinars.Web.Models.JsonModels;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
+using FluentValidation;
 using Microsoft.VisualBasic.ApplicationServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -42,6 +47,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         private readonly IStateService _stateService;
         private readonly IAppHelper _appHelper;
         private readonly IUniversalMapper _universalMapper;
+        private readonly IValidator<ValidationString> _jsonValidator;
         private bool _disposed;
 
         public WebinarControllerOrchestrator(
@@ -51,7 +57,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             ILogger logger,
             IStateService stateService,
             IAppHelper appHelper,
-            IUniversalMapper universalMapper)
+            IUniversalMapper universalMapper,
+            IValidator<ValidationString> jsonValidator)
         {
             _membershipService = membershipService;
             _orderManagementService = orderManagementService;
@@ -60,6 +67,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             _stateService = stateService;
             _appHelper = appHelper;
             _universalMapper = universalMapper;
+            _jsonValidator = jsonValidator;
         }
 
         public void FireSendConnectionInfoNotificationEvent(int idWebinar)
@@ -85,40 +93,83 @@ namespace CUWebinars.Web.Core.Orchestrators
             return _webinarManagementService.GetWebinar(idWebinar);
         }
 
-        public ActionResult Identify(IdentifyModel identifyModel)
+        public ActionResult Identify(IdentifyModel identifyModel, int id)
         {
-
-            var idOrder = Convert.ToInt32(identifyModel.OnDemandCode.Substring(0, 5));
             // do something with name and email address
-            var order = _orderManagementService.GetOrderById(idOrder);
+            var order = _orderManagementService.GetOrderById(id);
+            if (order == null) throw new NullReferenceException("order");
 
-            if (!ReferenceEquals(null, order))
+            var fieldsToComments = new PostEventMaterialsWereAccessed
             {
-                var newJson = new JProperty(string.Concat("PostEventAccessByAnonUser-", DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                DateAdded = TtsConfig.UtcNowAsCts,
+                OnDemandCode = identifyModel.OnDemandCode,
+                UserEmail = identifyModel.Email,
+                UserName = identifyModel.FullName,
+                UserAudit = _appHelper.GetUserAuditInfo()
+            };
+
+            var validationResultUser = _jsonValidator.Validate(new ValidationString(order.UserComments));
+
+            if (validationResultUser.IsValid || string.IsNullOrWhiteSpace(order.UserComments))
+            {
+                string updatedUserComments = JsonHelpers.AddObjectToJsonArray(
+                    order.UserComments,
+                    JsonPropertyKeys.PostEventMaterialsWereAccessedKey, 
+                    fieldsToComments
+                    );
+                order.UserComments = updatedUserComments;
+            }
+            else
+            {
+                _logger.Warn("UserComments for OnDemand access failed to save: {0}", order.UserComments);
+            }
+
+            try
+            {
+                _orderManagementService.SaveChanges();
+            }
+            catch (DbEntityValidationException dbEntityValidationException)
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+                foreach (var error in dbEntityValidationException.EntityValidationErrors.SelectMany(s => s.ValidationErrors))
+                {
+                    stringBuilder.AppendFormat("Property: {0} Error: {1} ", error.PropertyName, error.ErrorMessage);
+                }
+                Trace.TraceInformation(stringBuilder.ToString());
+            }
+
+            // now that we've updated UserComments, add claim for PostEvent Access
+            var newJson =
+                new JProperty(
+                    string.Concat("PostEventAccessByAnonUser-",
+                        DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
                     new JObject(
                         new JProperty("Name", identifyModel.FullName),
                         new JProperty("Email", identifyModel.Email)
                         ));
-                try
-                {
-                    order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, newJson);
 
-                    _orderManagementService.SaveChanges();
+            var validationResultAdmin = _jsonValidator.Validate(new ValidationString(order.AdminComments));
 
-                }
-                catch (Exception ex)
-                {
-                    _logger.FatalException("OndemandIdentify from WebinarControllerOrchestrator", ex);
-                    _logger.Warn("UserComments for OnDemand access failed to save: {0}", order.UserComments);
-                }
-
-                _stateService.SetValue(WebUiConstants.AnonUserIdentified, true);
-
-                return new RedirectToRouteResult(new RouteValueDictionary(new { action = "OnDemand", controller = "Webinar", onDemandCode = identifyModel.OnDemandCode }));
+            if (validationResultAdmin.IsValid || string.IsNullOrWhiteSpace(order.AdminComments))
+            {
+                order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, newJson);
             }
+            else
+            {
+                _logger.Warn("UserComments for OnDemand access failed to save: {0}", order.UserComments);                
+            }
+            
+            _orderManagementService.SaveChanges();
 
-            return new ViewResult { ViewName = "Identify", ViewData = { Model = identifyModel } };
+            _stateService.SetValue(WebUiConstants.AnonUserIdentified, true);
+
+            return
+                new RedirectToRouteResult(
+                    new RouteValueDictionary(
+                        new {action = "OnDemand", controller = "Webinar", onDemandCode = identifyModel.OnDemandCode})
+                        );
         }
+
 
         public ActionResult OnDemand(int id, string onDemandCode, IIdentity userIdentity)
         {

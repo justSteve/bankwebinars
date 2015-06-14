@@ -12,7 +12,9 @@ using CUWebinars.Business.Notification.Formatters;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
 using CUWebinars.Business.Validation.Identity;
+using CUWebinars.Business.Validation.Json;
 using CUWebinars.Business.Validation.Webinar;
+using CUWebinars.Web.Controllers;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
@@ -222,7 +224,8 @@ namespace CUWebinars.Web.App_Start
                 .WithConstructorArgument(Request, x => new HttpRequestWrapper(HttpContext.Current.Request));
             kernel.Bind<IAccountControllerOrchestrator>().To<AccountControllerOrchestrator>().InRequestScope()
                 .WithConstructorArgument(Request, x => new HttpRequestWrapper(HttpContext.Current.Request));
-            kernel.Bind<IWebinarControllerOrchestrator>().To<WebinarControllerOrchestrator>().InRequestScope();
+            kernel.Bind<IWebinarControllerOrchestrator>().To<WebinarControllerOrchestrator>()
+                .InRequestScope().WithConstructorArgument("jsonValidator", new JsonIsWellFormedValidator());
             kernel.Bind<IQuizControllerOrchestrator>().To<QuizControllerOrchestrator>().InRequestScope();
 
         }
