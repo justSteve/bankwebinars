@@ -1,26 +1,19 @@
 USE TTSWebinars2;
 GO
 
---UPDATE dbo.OrdersRows SET idWebinar = 1722 WHERE idOrder = 80263
---SELECT * FROM dbo.Webinar WHERE idWebinar = 842
---SELECT  ( SELECT    optionGroupDesc
---          FROM      dbo.OptionsGroups
---          WHERE     idOptionGroup = o.idOptionGroup
---        ) ,
---        *
---FROM    dbo.OptionsGroupsXref o
---WHERE   idWebinar IN (1790); 
---SELECT * FROM dbo.Options WHERE idOption IN (SELECT idOption FROM dbo.OptionsXref WHERE idOptionGroup = 27)
---SELECT * FROM dbo.Options WHERE idOption IN (SELECT idOption FROM dbo.OptionsXref WHERE idOptionGroup = 34)
---SELECT TOP 500 * FROM dbo.Orders o INNER JOIN	dbo.OrdersRows r ON r.idOrder = o.idOrder
---WHERE o.idAffiliate = 62
-------AND r.status > 1 AND r.status < 5
-----AND r.idWebinar = 1745
---ORDER BY o.orderDate desc
+--SELECT  *
+--FROM    dbo.OptionsGroups
+--SELECT  idOption ,
+--        optionLabel ,
+--        optionExplain ,
+--        priceToAdd
+--FROM    dbo.Options
+--WHERE   idOption IN ( SELECT    idOption
+--                      FROM      dbo.OptionsXref
+--                      WHERE     idOptionGroup = 29 )
+--ORDER BY sortOrder
 
-
-SELECT  
-        ( SELECT    o.idAffiliate
+SELECT  ( SELECT    o.idAffiliate
           FROM      dbo.OrdersRows
           WHERE     o.idOrder = idOrder
         ) AS AffiliateID ,
@@ -76,7 +69,7 @@ SELECT
                                WHEN 87 THEN 17
                                WHEN 88 THEN 3
                                WHEN 89 THEN 18
-							   ELSE r.registrationType
+                               ELSE r.registrationType
                              END )
             WHEN 1767 THEN ( CASE r.registrationType
                                WHEN 85 THEN 1
@@ -84,7 +77,7 @@ SELECT
                                WHEN 87 THEN 17
                                WHEN 88 THEN 3
                                WHEN 89 THEN 18
-							   ELSE r.registrationType
+                               ELSE r.registrationType
                              END )
 							 
             --WHEN 1790 THEN ( CASE r.registrationType
@@ -99,14 +92,15 @@ SELECT
         o.firstName AS FirstName ,
         o.lastName AS LastName ,
         '' AS Title ,
-        ISNULL(o.customerInstitution, ( SELECT  name
-                                        FROM    dbo.Institution
-                                        WHERE   idInstitution = ( SELECT    idUserInstitution
-                                                                  FROM      dbo.Users
-                                                                  WHERE     idUser = o.idUser
-                                                                )
-                                                AND idUser = o.idUser
-                                      )) AS Institution ,
+        ISNULL(o.customerInstitution,
+               ( SELECT name
+                 FROM   dbo.Institution
+                 WHERE  idInstitution = ( SELECT    idUserInstitution
+                                          FROM      dbo.Users
+                                          WHERE     idUser = o.idUser
+                                        )
+                        AND idUser = o.idUser
+               )) AS Institution ,
         --REPLACE(o.email, '@', '@NN') AS Email ,
         email AS Email ,
         o.phone AS Phone ,
@@ -116,7 +110,8 @@ SELECT
         ISNULL(o.state, 'na') AS State ,
         o.zip AS Zip ,
         ISNULL(CAST(r.idDiscount AS VARCHAR), '') AS DiscountCode ,--r.idDiscount ,
-        ( SELECT    REPLACE(ISNULL(additional_locations_emails, ''), 'NULL', '')
+        ( SELECT    REPLACE(ISNULL(additional_locations_emails, ''), 'NULL',
+                            '')
           FROM      dbo.OrdersRowsOptions
           WHERE     r.idOrderRow = idOrderRow
         ) AS AdditionalLocations ,
@@ -129,7 +124,8 @@ SELECT
         REPLACE(ISNULL(o.shippingZip, o.zip), 'NULL', o.zip) AS Zip ,
         o.total ,
         r.shipmentDate ,
-        'Migrated on: ' + CAST(GETDATE() AS VARCHAR) + ISNULL(o.storeCommentsPriv, '') AS StoreComments ,
+        'Migrated on: ' + CAST(GETDATE() AS VARCHAR)
+        + ISNULL(o.storeCommentsPriv, '') AS StoreComments ,
         o.idOrder ,
         o.orderDate ,
         r.status
@@ -137,10 +133,10 @@ FROM    TTSWebinars2.dbo.Orders o
         INNER JOIN dbo.OrdersRows r ON r.idOrder = o.idOrder
 WHERE   r.status < 6
         AND r.status > 1
-        AND r.idWebinar IN ( 1810)--( SELECT r.idWebinar FROM dbo.Webinar WHERE status = 2 OR status = 3) -- 1745 = understanding...
+        AND r.idWebinar IN ( 1832 )--( SELECT r.idWebinar FROM dbo.Webinar WHERE status = 2 OR status = 3) -- 1745 = understanding...
 ORDER BY o.lastName DESC;
 GO
 
-EXEC dbo.OrdersByEventReconcile @idWebinar = 1810
+EXEC dbo.OrdersByEventReconcile @idWebinar = 1832
 
-EXEC dbo.OrdersByEvent @idWebinar = 1810
+EXEC dbo.OrdersByEvent @idWebinar = 1832
