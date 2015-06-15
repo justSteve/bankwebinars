@@ -22,7 +22,7 @@
             Edit Order
             <div class="pull-right">
                 <button id="byUser" type="button" class="btn btn-success btn-small" data-toggle="collapse" data-target="#byUserWrapper">Show Orders By This User</button>
-                <input type="text" style="width: 75px; margin-top: 8px;" id="orderIdInput" value="@Model.Id" />
+                <input type="text" style="margin-top: 8px;" id="orderIdInput" class="input input-large" value="@Model.Id" />
                 <button id="getOrderButton" class="btn">Lookup Order</button>
             </div>
         </div>
@@ -43,6 +43,7 @@
 </div>
 @section scripts {
     @Scripts.Render("~/bundles/manage-order-from-details")
+    @Scripts.Render("~/bundles/dataTables")
     <script src="@Url.Content("~/Scripts/app/notification-ops/order-event-notifications.js")"></script>
     <script src="@Url.Content("~/Scripts/app/notification-ops/membership-notifications.js")"></script>
     <script src="@Url.Content("~/Scripts/app/ToastLogger.js")"></script>

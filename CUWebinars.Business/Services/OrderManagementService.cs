@@ -240,11 +240,11 @@ namespace CUWebinars.Business.Services
 
         public IEnumerable<Order> GetOrdersByEmail(string email, int aff)
         {
-            return _orderRepository.FindOrdersByBillingEmail(email, aff);
+            return _orderRepository.FindOrdersByBillingEmail(email.Trim(), aff);
         }
         public IEnumerable<Order> GetOrdersByEmailDomain(string email, int aff)
         {
-            return _orderRepository.FindOrdersByBillingEmailDomain(email, aff);
+            return _orderRepository.FindOrdersByBillingEmailDomain(email.Trim(), aff);
         }
 
         public IEnumerable<Order> GetOrdersByLastName(string lastName, int aff)

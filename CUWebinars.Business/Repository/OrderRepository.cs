@@ -203,26 +203,18 @@ namespace CUWebinars.Business.Repository
         {
             if (aff > 0)
             {
-                return items.Include(o => o.WebUser).Where(o => o.BillingEmail == email && o.Affiliate.idUserAff == aff);
+                return items.Include(o => o.WebUser).Where(o => o.BillingEmail.ToLower().Contains(email.ToLower()) && o.Affiliate.idUserAff == aff);
             }
-            else
-            {
-                return items.Include(o => o.WebUser).Where(o => o.BillingEmail == email);
-                
-            }
+            return items.Include(o => o.WebUser).Where(o => o.BillingEmail.ToLower().Contains(email.ToLower()));
         }
 
         public IQueryable<Order> FindOrdersByBillingEmailDomain(string email, int aff)
         {
             if (aff > 0)
             {
-                return items.Include(o => o.WebUser).Where(o => o.BillingEmail.Contains( email) && o.Affiliate.idUserAff == aff);
+                return items.Include(o => o.WebUser).Where(o => o.BillingEmail.ToLower().Contains(email.ToLower()) && o.Affiliate.idUserAff == aff);
             }
-            else
-            {
-                return items.Include(o => o.WebUser).Where(o => o.BillingEmail.Contains(email));
-
-            }
+            return items.Include(o => o.WebUser).Where(o => o.BillingEmail.ToLower().Contains(email.ToLower()));
         }
 
         public IQueryable<Order> FindOrdersByLastName(string lastName, int idAffiliate)
@@ -233,11 +225,7 @@ namespace CUWebinars.Business.Repository
                    && o.idAffiliate == idAffiliate 
                     );
             }
-            else
-            {
-                return items.Include(o => o.WebUser).Where(o => o.LastName.ToLower().StartsWith(lastName));
-            }
-            ;
+            return items.Include(o => o.WebUser).Where(o => o.LastName.ToLower().StartsWith(lastName));
         }
 
         public IList<Order> FindOrdersByUserId(int userId)

@@ -20,16 +20,53 @@ $(function () {
             return true;
         },
 
-        highlighter: function (name) {
-            return name;
+        highlighter: function (listedUser) {
+            
+            // if integer, return it as we are dealing with an orderID
+            if (_.isFinite(listedUser)) {
+                return listedUser;
+            }
+
+            var item = JSON.parse(listedUser);
+            var user = _.find(MANAGE.orderIdList, function (webUser) {
+                return JSON.parse(webUser)['id'] === item.id;
+            });
+            if (user !== null && typeof user !== 'undefined') {
+                var userParsed = JSON.parse(user);
+                if (MANAGE.searchBy == "email") {
+                    return userParsed.email + ', ' + userParsed.lastName;
+                }
+                if (MANAGE.searchBy == "orderID") {
+                    return userParsed.email + ', ' + userParsed.lastName;
+                }
+                if (MANAGE.searchBy == "lastName") {
+                    return userParsed.lastName + ', ' + userParsed.firstName;
+                }
+
+            }
         },
 
         sorter: function (items) {
             return items;
         },
 
-        updater: function (name) {
-            return name;
+        updater: function (selection) {
+
+            if (_.isFinite(selection)) {
+                return selection;
+            }
+
+            var userParsed = JSON.parse(selection);
+            var user = _.find(MANAGE.orderIdList, function (p) {
+                return JSON.parse(p)['id'] === userParsed['id'];
+            });
+
+            if (typeof user !== 'undefined') {
+                var parsedUser = JSON.parse(user);
+                //OCA.setSelectedProduct(parsedUser);
+                return parsedUser['lastName'] + ', ' + parsedUser['firstName'];
+            }
+            return '';
         }
     });
 
@@ -412,6 +449,9 @@ $(function () {
 
         if (searchTerm.indexOf('@') > 0) {
             // in here if searching for an email
+
+            MANAGE.searchBy = 'email';
+
             $.ajax({
                 type: 'GET',
                 contentType: constants.FormPostContentType,
@@ -423,12 +463,18 @@ $(function () {
                     ns.orderIdList = null; // dereference whatever is currently in 'ns.orderIdList'. 
                 }
             }).done(function (data) {
-                ns.orderIdList = data.results;
-                process(ns.orderIdList);
+                MANAGE.orderIdList = _.map(data.results, function (item) {
+                    var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName, email: item.billingEmail, institution: item.institution };
+                    return JSON.stringify(aItem);
+                });
+
+                process(MANAGE.orderIdList);
             });
 
         } else if (_.isFinite(searchTerm)) {
             // in here if searching on an order number
+
+            MANAGE.searchBy = 'orderID';
 
             $.ajax({
                 type: 'GET',
@@ -446,6 +492,9 @@ $(function () {
             });
         } else {
             // if not a number and not an email address, search is by lastname
+
+            MANAGE.searchBy = 'lastName';
+
             $.ajax({
                 type: 'GET',
                 contentType: constants.FormPostContentType,
@@ -457,8 +506,13 @@ $(function () {
                     ns.orderIdList = null; // dereference whatever is currently in 'ns.orderIdList'. 
                 }
             }).done(function (data) {
-                ns.orderIdList = data.results;
-                process(ns.orderIdList);
+
+                MANAGE.orderIdList = _.map(data.results, function (item) {
+                    var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName, email: item.billingEmail, institution: item.institution };
+                    return JSON.stringify(aItem);
+                });
+
+                process(MANAGE.orderIdList);
             });
         }
 
