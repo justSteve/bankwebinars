@@ -11,7 +11,7 @@ $(function () {
 
     SC.loginBtn = $('#btnLogin');
 
-    window.setInterval(SC.checkSession, 10000);
+    window.setInterval(SC.checkSession, 1000000);
 });
 
 // self-invoking function for creating methods using Module pattern.

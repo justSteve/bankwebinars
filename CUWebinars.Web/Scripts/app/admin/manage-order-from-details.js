@@ -1,10 +1,10 @@
 ﻿// MANAGE namespace
 if (MANAGE === null || typeof MANAGE === 'undefined')
-    var MANAGE = {}; 
+    var MANAGE = {};
 
 // jQuery doc.ready function
 $(function () {
-    
+
     MANAGE.orderIdInput = $('#orderIdInput');
     MANAGE.orderIdInput.focus();
     MANAGE.idOrder = MANAGE.orderIdInput.val();
@@ -50,7 +50,7 @@ $(function () {
 // replace MANAGE with parameter 'ns' as MANAGE is passed in at bottom in the self-invoking parentheses.
 (function (ns) {
 
-    ns.addAdditionalLocation = function(e) {
+    ns.addAdditionalLocation = function (e) {
 
         e.preventDefault();
 
@@ -87,7 +87,7 @@ $(function () {
         ns.adjustTotalPrice();
     };
 
-    ns.deleteItem = function(e) {
+    ns.deleteItem = function (e) {
 
         e.preventDefault();
 
@@ -97,11 +97,11 @@ $(function () {
         var idx = trashClicked.substring(0, 1);
         var spanToRemove = ns.locationsSpanPrefix + idx;
 
-        $('#' + spanToRemove).hide(500, function() {
+        $('#' + spanToRemove).hide(500, function () {
             $(this).remove();
         });
 
-        $('#' + idx + ns.breakSuffix).hide(500, function() {
+        $('#' + idx + ns.breakSuffix).hide(500, function () {
             $(this).remove();
         });
 
@@ -109,16 +109,16 @@ $(function () {
         ns.adjustTotalPrice();
     };
 
-    ns.wireUpTrashIcons = function() {
+    ns.wireUpTrashIcons = function () {
 
         var trashCans = ns.wrapperDiv.find('i');
 
-        $.each(trashCans, function(idx, i) {
+        $.each(trashCans, function (idx, i) {
             $(i).on('click', ns.deleteItem);
         });
     };
 
-    ns.primeDomVariables = function() {
+    ns.primeDomVariables = function () {
 
         ns.getOrderButton = $('#getOrderButton');
         ns.wrapperDiv = $('#collectAdditionalLocations');
@@ -134,6 +134,7 @@ $(function () {
         ns.changeUserOrdersButton = $('#changeUserOrdersButton');
         ns.extendPostEventAccessModal = $('#ExtendPostEventAccessModal');
         ns.extendEventAccessButton = $('#extendEventAccessButton');
+        ns.fireResendConfirmationButton = $('#fireResendConfirmationButton');
 
         ns.regTypesList = $('#RegType');
         ns.orderRowId = $('#manageOrderForm input[name="ID"]').val();
@@ -163,14 +164,14 @@ $(function () {
     };
 
     ns.submitForm = function (e) {
-        
+
         e.preventDefault();
 
         var emailInputs = ns.wrapperDiv.find('input[type="email"]');
 
         var invalidEmailInput = [];
 
-        $.each(emailInputs, function(idx, i) {
+        $.each(emailInputs, function (idx, i) {
             if ($(i).val().indexOf('@') < 0) {
                 invalidEmailInput.push($(i).attr('id'));
                 $(i).css('border-color', '#b94a48').css('background-color', '#ec8d8d');
@@ -206,18 +207,18 @@ $(function () {
             url: form.attr('action'),
             dataType: constants.JsonDataType,
             data: form.serialize(),
-            beforeSend: function() {
+            beforeSend: function () {
                 $('#postFeedbackLabel').remove();
                 self.append('<span id="submitSpinWrapper">&nbsp;<span class="label label-info"><i id="spinner" class="icon-spinner icon-spin"></i>&nbsp;loading...</span></span>');
             }
-        }).done(function(data, bla, bla) {
+        }).done(function (data, bla, bla) {
             $('#submitSpinWrapper').remove();
             self.after('<span id="postFeedbackLabel">&nbsp;<span class="label label-success">&nbsp;Operation succeeded</span></span>');
         });
     };
 
-    ns.changeRegType = function(e) {
-       
+    ns.changeRegType = function (e) {
+
         e.preventDefault();
 
         var self = this;
@@ -230,7 +231,7 @@ $(function () {
             cache: false,
             dataType: constants.JsonDataType,
 
-            beforeSend: function() {
+            beforeSend: function () {
                 var valSummary = $('#manageOrderFormValSummary');
                 valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
 
@@ -240,7 +241,7 @@ $(function () {
 
                 ns.regTypesList.after('<span id="regTypeSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>')
             }
-        }).done(function(data) {
+        }).done(function (data) {
             //console.log('done CheckIfAddLocShouldHide');
             if (data.shouldShow === 'Yes') {
                 ns.addAdditionalLocationsButton.removeAttr('disabled');
@@ -280,12 +281,12 @@ $(function () {
             } else if (!data.isSuccessful) {
                 formProcessor.lightUpValidationSummary('manageOrderFormValSummary', data);
             }
-        }).fail(function(data) {
+        }).fail(function (data) {
             $('#orderRelatedFields').html('<div class="text-error">There has been a transport-level error, please call 800-831-0678 ext 706 for immediate assistance.</div>');
         });
     };
 
-    ns.updatePriceOnNewSelection = function(registrationTypeId, totalPrice, dropDown) {
+    ns.updatePriceOnNewSelection = function (registrationTypeId, totalPrice, dropDown) {
 
         ns.gatherPricingData();
 
@@ -303,7 +304,7 @@ $(function () {
             url: url,
             dataType: constants.JsonDataType,
             data: JSON.stringify(payLoad),
-        }).done(function(data) {
+        }).done(function (data) {
 
             if (data) {
 
@@ -324,7 +325,7 @@ $(function () {
         });
     };
 
-    ns.wireUpHandlers = function() {
+    ns.wireUpHandlers = function () {
 
         ns.addAdditionalLocationsButton.on('click', ns.addAdditionalLocation);
         $('#editOrderSubmitButton').on('click', ns.submitForm);
@@ -360,7 +361,7 @@ $(function () {
             errorsList.append('<li style="display:none"></li>');
         });
 
-        ns.showChangeUser.on('click', function(e) {
+        ns.showChangeUser.on('click', function (e) {
 
             e.preventDefault();
 
@@ -372,19 +373,19 @@ $(function () {
 
             ns.changeAssignedUser.modal(modalFormOptions);
 
-            ns.changeAssignedUser.on('hidden', function() {
+            ns.changeAssignedUser.on('hidden', function () {
                 modalFormOptions = null;
             });
         });
 
         ns.changeUserOrderButton.on('click', ns.changeUserOrder);
-        
+
         ns.changeUserOrdersButton.on('click', ns.changeUserOrders);
 
         ns.showChangeAssignedAffiliate.on('click', ns.displayChangeAffiliateModal);
     };
 
-    ns.adjustAdditionalLocationsTotal = function(number) {
+    ns.adjustAdditionalLocationsTotal = function (number) {
 
         ns.numberAddLocsLabel.text(ns.numberOfAdditionalLocations);
 
@@ -395,14 +396,14 @@ $(function () {
         ns.totalPriceSansDiscount = ns.allAddLocsPrice + ns.basePrice;
     };
 
-    ns.adjustTotalPrice = function() {
+    ns.adjustTotalPrice = function () {
         var newTotalPrice = ns.totalPriceSansDiscount - (ns.totalDiscount || 0);
 
         ns.totalPrice = newTotalPrice;
         ns.totalPriceInput.val(newTotalPrice);
     };
 
-    ns.searchOrder = _.debounce(function(query, process) {
+    ns.searchOrder = _.debounce(function (query, process) {
 
         var searchTerm = $.trim(ns.orderIdInput.val());
 
@@ -418,10 +419,10 @@ $(function () {
                 url: '/Admin/GetOrdersByEmailTypeahead',
                 dataType: constants.JsonDataType,
                 data: { email: searchTerm },
-                beforeSend: function() {
+                beforeSend: function () {
                     ns.orderIdList = null; // dereference whatever is currently in 'ns.orderIdList'. 
                 }
-            }).done(function(data) {
+            }).done(function (data) {
                 ns.orderIdList = data.results;
                 process(ns.orderIdList);
             });
@@ -436,10 +437,10 @@ $(function () {
                 url: '/Admin/GetOrdersByTypeahead',
                 dataType: constants.JsonDataType,
                 data: { id: searchTerm },
-                beforeSend: function() {
+                beforeSend: function () {
                     ns.orderIdList = null; // dereference whatever is currently in 'ns.orderIdList'. 
                 }
-            }).done(function(data) {
+            }).done(function (data) {
                 ns.orderIdList = data.results;
                 process(ns.orderIdList);
             });
@@ -452,10 +453,10 @@ $(function () {
                 url: '/Admin/GetOrdersByLastName',
                 dataType: constants.JsonDataType,
                 data: { lastName: searchTerm },
-                beforeSend: function() {
+                beforeSend: function () {
                     ns.orderIdList = null; // dereference whatever is currently in 'ns.orderIdList'. 
                 }
-            }).done(function(data) {
+            }).done(function (data) {
                 ns.orderIdList = data.results;
                 process(ns.orderIdList);
             });
@@ -463,10 +464,10 @@ $(function () {
 
     }, 200);
 
-    ns.hookUpApplyDiscountLogic = function(e) {
+    ns.hookUpApplyDiscountLogic = function (e) {
 
         e.preventDefault();
-        
+
         ns.gatherPricingData();
 
         if (ns.totalPriceSansDiscount < 1) {
@@ -484,11 +485,11 @@ $(function () {
             url: url,
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
-            beforeSend: function() {
+            beforeSend: function () {
                 $(self).prepend('<span id="discountSpinner"><i class="icon-spinner icon-spin"></i>&nbsp;</span>');
                 $(self).attr('disabled', 'disabled');
             }
-        }).done(function(data) {
+        }).done(function (data) {
 
             if (data.Result.indexOf('%') !== -1) {
                 var amount2Discount = data.Result.replace('.00%', '') / 100;
@@ -502,7 +503,7 @@ $(function () {
 
             $('#discountSpinner').remove();
 
-        }).always(function(e) {
+        }).always(function (e) {
             $('#discountSpinner').remove();
             $(self).removeAttr('disabled');
         });
@@ -515,7 +516,7 @@ $(function () {
         ns.updateAdditionalLocationsForm.submit();
     };
 
-    ns.submitUpdateAddLocsForm = function(e) {
+    ns.submitUpdateAddLocsForm = function (e) {
 
         e.preventDefault();
 
@@ -549,17 +550,65 @@ $(function () {
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
             headers: headers,
-            beforeSend: function() {
+            beforeSend: function () {
                 ns.updateAddLocsButton.append('<span id="addLocUpSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
             }
-        }).done(function(data) {
+        }).done(function (data) {
             if (data.Result === 'Success') {
                 $('#addLocUpSpinner').remove();
             }
         });
     };
 
-    ns.getOrder = function(e) {
+
+    ns.fireResendConfirmation = function (e) {
+
+        e.preventDefault();
+
+        var fireResendConfirmationDiv = $('#fireResendConfirmation');
+
+        $('#fireResendConfirmation').on('click', function () {
+            labelCheckRemove();
+
+            var orderId = fireResendConfirmationDiv.data("orderid");
+
+            var self = this;
+            alert(orderId);
+            //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+
+            //var logStartOperation = toastLogger.getLogFn('ResendOrderConfirmation');
+            //logStartOperation("Re-sending Order Confirmation", null, true);
+
+            $.ajax({
+                type: 'POST',
+                contentType: constants.JsonContentType,
+                cache: false,
+                url: resendOrderConfirmationUrl,
+                dataType: constants.JsonDataType,
+                data: JSON.stringify({ orderId: orderId }),
+                beforeSend: function () {
+                    $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
+                }
+            }).done(function (result) {
+
+                if (result.Result === 'Success') {
+                    $('#fireResendConfirmationDiv').append(successScreenMessage);
+                } else if (result.Result === 'Fail') {
+                    $('#fireResendConfirmationDiv').append("fail");
+                }
+                $('#spinnerLabel').remove();
+            }).fail(function () {
+
+            }).always(function () {
+                //$('#loadingSpinner').remove();
+            });
+        });
+
+        $('#getHtmlSpinner').remove();
+
+    };
+
+    ns.getOrder = function (e) {
 
         e.preventDefault();
 
@@ -570,7 +619,7 @@ $(function () {
         if ($('#errorDiv').length > 0)
             $('#errorDiv').remove();
 
-        $('#orderRelatedFields').load('/Admin/GetOrderDetails/' + ns.idOrder, function(response, status, xhr) {
+        $('#orderRelatedFields').load('/Admin/GetOrderDetails/' + ns.idOrder, function (response, status, xhr) {
 
             if (status === 'error') {
                 $(this).html('<div id="errorDiv" class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance. <br />' + (xhr.statusText === 'Internal Server Error' ? '' : xhr.statusText) + '</div>');
@@ -590,7 +639,7 @@ $(function () {
         });
     };
 
-    ns.displayChangeAffiliateModal = function(e) {
+    ns.displayChangeAffiliateModal = function (e) {
 
         e.preventDefault();
 
@@ -602,13 +651,13 @@ $(function () {
 
         $(this).after('<span id="loadAffModal">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
 
-        $('#frmChangeAffiliate > div.modal-body').load('/Admin/GetAffiliates', function() {
-            
+        $('#frmChangeAffiliate > div.modal-body').load('/Admin/GetAffiliates', function () {
+
             $('#SelectedAffiliate').val($('#idAffiliate').text());
 
             $('#changeAssignedAffiliate').modal(modalFormOptions);
 
-            $('#submitChangeAffilate').on('click', function(e) {
+            $('#submitChangeAffilate').on('click', function (e) {
 
                 e.preventDefault();
 
@@ -628,11 +677,11 @@ $(function () {
                     url: url,
                     dataType: constants.JsonDataType,
                     data: JSON.stringify(payload),
-                    beforeSend: function() {
+                    beforeSend: function () {
                         $(self).append('<span id="changeAffSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
                         $(self).attr('disabled', 'disabled');
                     }
-                }).done(function(data) {
+                }).done(function (data) {
 
                     var oi = data.Result;
 
@@ -644,18 +693,18 @@ $(function () {
             });
         });
 
-        $('#changeAssignedAffiliate').on('hidden', function(e) {
+        $('#changeAssignedAffiliate').on('hidden', function (e) {
             $('#submitChangeAffilate').off('click');
             modalFormOptions = null;
         });
 
-        $('#changeAssignedAffiliate').on('shown', function(e) {
+        $('#changeAssignedAffiliate').on('shown', function (e) {
             $('#loadAffModal').remove();
         });
 
     };
 
-    ns.changeUserOrder = function(e) {
+    ns.changeUserOrder = function (e) {
         e.preventDefault();
 
         var self = this;
@@ -672,11 +721,11 @@ $(function () {
             url: url,
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
-            beforeSend: function() {
+            beforeSend: function () {
                 $(self).append('<span id="changeUserSpinner"><i class="icon-spinner icon-spin"></i>&nbsp;</span>');
                 $(self).attr('disabled', 'disabled');
             }
-        }).done(function(data) {
+        }).done(function (data) {
 
             if (data.Result === 'Success') {
                 $('#editUserLink').attr('href', data.NewHref);
@@ -690,7 +739,7 @@ $(function () {
         });
     };
 
-    ns.changeUserOrders = function(e) {
+    ns.changeUserOrders = function (e) {
         e.preventDefault();
 
         var self = this;
@@ -708,11 +757,11 @@ $(function () {
             url: url,
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
-            beforeSend: function() {
+            beforeSend: function () {
                 $(self).append('<span id="changeUserSpinner"><i class="icon-spinner icon-spin"></i>&nbsp;</span>');
                 $(self).attr('disabled', 'disabled');
             }
-        }).done(function(data) {
+        }).done(function (data) {
 
             if (data.Result === 'Success') {
                 $('#editUserLink').attr('href', data.NewHref);
@@ -726,7 +775,7 @@ $(function () {
         });
     };
 
-    ns.extendEventAccess = function(e) {
+    ns.extendEventAccess = function (e) {
 
         e.preventDefault();
 
@@ -757,10 +806,10 @@ $(function () {
             headers: headers,
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
-            beforeSend: function() {
+            beforeSend: function () {
                 $(self).append('<span id="extendTimeSpinner"><i class="icon-spinner icon-spin"></i>&nbsp;</span>');
             }
-        }).done(function(data, textStatus, jqXHR) {
+        }).done(function (data, textStatus, jqXHR) {
             if (data.Result === 'Success') {
                 $(self).after('<span id="resultLabel">&nbsp;<span class="label label-success">Access Extended!</span></span>');
                 $('#postEventAccessExpirey').text($('#newExpiryDate').val());
@@ -821,7 +870,7 @@ $(function () {
     };
 
 
-    ns.gatherPricingData = function() {
+    ns.gatherPricingData = function () {
         ns.allAddLocsPrice = parseInt(ns.additionalLocationsTotal.val());
         ns.totalDiscount = parseInt(ns.totalDiscountInput.val());
         ns.totalPrice = parseInt(ns.totalPriceInput.val());
