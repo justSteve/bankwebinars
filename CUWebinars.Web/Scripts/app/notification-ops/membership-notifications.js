@@ -19,7 +19,8 @@ $(function () {
     ns.passwordConfirmResetInitialized = false;
     ns.jsonDataForImportedOrder;
 
-    ns.primeDomVariables = function() {
+    ns.primeDomVariables = function () {
+        MN.inputFormFields = $('#InputFormFields');
         MN.impersonateUserButton = $('#ImpersonateUserButton');
         MN.createUserButton = $('#CreateUserButton');
         MN.accountsBrandLink = MN.impersonateUserButton.parent().parent().prev();
@@ -28,6 +29,7 @@ $(function () {
         MN.getImportOrderFieldsButton = $('#GetImportOrderFieldsButton');
         MN.getManualResetPasswordFieldsButton = $('#GetManualResetPasswordFieldsButton');
         MN.getImportOrderFieldsFromCsvButton = $('#GetImportOrderFieldsFromCsvButton');
+        MN.getBatchPwdResetHtmlButton = $('#BatchPwdResetHtmlButton');
     };
 
     ns.wireUpHandlers = function() {
@@ -39,6 +41,7 @@ $(function () {
         MN.getImportOrderFieldsButton.on('click', MN.getImportOrderFieldsButtonClicked);
         MN.getManualResetPasswordFieldsButton.on('click', MN.getManualResetPasswordFieldsButtonClicked);
         MN.getImportOrderFieldsFromCsvButton.on('click', MN.getImportOrderFieldsFromCsvButtonClicked);
+        MN.getBatchPwdResetHtmlButton.on('click', MN.getBatchPwdResetHtmlButtonClicked);
     };
 
     ns.impersonateUserButtonClicked = function(e) {
@@ -59,7 +62,7 @@ $(function () {
                 MN.accountsBrandLink.after('<span id="loadSpinner1">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
             }
         }).done(function(result) {
-            $('#InputFormFields').html(result);
+            MN.inputFormFields.html(result);
             $('#loadSpinner1').remove();
         }).fail(function(jqXHR, textStatus, errorThrown) {
 
@@ -89,7 +92,7 @@ $(function () {
             }
         }).done(function (result) {
 
-            $('#InputFormFields').html(result);
+            MN.inputFormFields.html(result);
             MN.initializeCreateUserFields();
             $('#loadSpinner1');
 
@@ -175,7 +178,7 @@ $(function () {
             }
         }).done(function(result) {
 
-            $('#InputFormFields').html(result);
+            MN.inputFormFields.html(result);
             MN.initializePasswordResetFields();
             $('#loadSpinner1').remove();
         });
@@ -197,7 +200,7 @@ $(function () {
             }
         }).done(function (result) {
 
-            $('#InputFormFields').html(result);
+            MN.inputFormFields.html(result);
             MN.initializePasswordResetConfirmFields();
             $('#loadSpinner1').remove();
         });
@@ -209,8 +212,8 @@ $(function () {
 
         if (MN.jsonDataForImportedOrder) {
             $('#OrderSucceeded').remove();
-            $('#InputFormFields').append('<button id="ImportOrderButton" class =" btn btn-success">Import Order</button>');
-            $('#InputFormFields').append('<textarea id="JsonPayloadTextArea" rows="40" cols="100" style="width:100%;margin-top:10px"></textarea>');
+            MN.inputFormFields.append('<button id="ImportOrderButton" class =" btn btn-success">Import Order</button>');
+            MN.inputFormFields.append('<textarea id="JsonPayloadTextArea" rows="40" cols="100" style="width:100%;margin-top:10px"></textarea>');
             $('#JsonPayloadTextArea').val(MN.jsonDataForImportedOrder);
             MN.addImportOrderButtonClick();
         } else {
@@ -230,7 +233,7 @@ $(function () {
                 }
             }).done(function(result) {
 
-                $('#InputFormFields').html(result);
+                MN.inputFormFields.html(result);
 
                 MN.addImportOrderButtonClick();
 
@@ -257,7 +260,7 @@ $(function () {
             }
         }).done(function(result) {
 
-            $('#InputFormFields').html(result);
+            MN.inputFormFields.html(result);
 
             $('#ManualResetPasswordButton').on('click', function(args) {
 
@@ -326,12 +329,12 @@ $(function () {
 
                 var resultAsJson = JSON.parse(result);
 
-                $('#InputFormFields').html('<span id="OrderSucceeded" class="label label-success">' + resultAsJson.Result + '</span>');
+                MN.inputFormFields.html('<span id="OrderSucceeded" class="label label-success">' + resultAsJson.Result + '</span>');
                 $('#loadSpinner1').remove();
 
             }).fail(function (result) {
                 var resultAsJson = JSON.parse(result.responseText);
-                $('#InputFormFields').html('<span id="OrderSucceeded" class="label label-important">' + resultAsJson.Result + '</span>');
+                MN.inputFormFields.html('<span id="OrderSucceeded" class="label label-important">' + resultAsJson.Result + '</span>');
                 $('#loadSpinner1').remove();
             });
         });
@@ -367,9 +370,9 @@ $(function () {
                 var id = parseInt(result.Result, 10); // this is base 10 (2nd param)
 
                 if (id > 0) {
-                    $('#InputFormFields').html('<span id="OrderSucceeded" class="label label-success">Success! Order Id: ' + id + '</span>');
+                    MN.inputFormFields.html('<span id="OrderSucceeded" class="label label-success">Success! Order Id: ' + id + '</span>');
                 } else {
-                    $('#InputFormFields').html('<span id="OrderFailed" class="label label-important">There was an error at the server and the order was not imported.</span>');
+                    MN.inputFormFields.html('<span id="OrderFailed" class="label label-important">There was an error at the server and the order was not imported.</span>');
                 }
 
                 $('#loadSpinner2').remove();
@@ -379,7 +382,7 @@ $(function () {
                 var id = parseInt(result.Result, 10); // this is base 10 (2nd param)
 
                 if (id < 1) {
-                    $('#InputFormFields').html('<span id="OrderFailed" class="label label-important">There was an error at the server and the order was not imported.</span>');
+                    MN.inputFormFields.html('<span id="OrderFailed" class="label label-important">There was an error at the server and the order was not imported.</span>');
                 }
                 $('#loadSpinner2').remove();
             });
@@ -514,4 +517,67 @@ $(function () {
             MN.passwordConfirmResetInitialized = true;
         }
     };
+
+    ns.getBatchPwdResetHtmlButtonClicked = function(e) {
+
+        e.preventDefault();
+
+        var url = '/Admin/BatchPasswordReset';
+
+        $.ajax({
+            type: 'GET',
+            cache: true,
+            url: url,
+            dataType: constants.HtmlDataType,
+            data: null,
+            beforeSend: function () {
+                // this is where we append a loading image
+                MN.accountsBrandLink.after('<span id="loadSpinner1">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+            }
+        }).done(function (data, textStatus, jqXHR) {
+            MN.inputFormFields.html(data);
+            $('#loadSpinner1').remove();
+
+            $('#ResetBatchButton').on('click', MN.ResetBatchButtonClicked);
+
+        }).fail(commonFuncs.failCallBack);
+    }
+
+    ns.ResetBatchButtonClicked = function(e) {
+
+        e.preventDefault();
+
+        var batchPasswordResetForm = $('#BatchPasswordResetForm');
+        var url = batchPasswordResetForm.attr('action');
+        var token = batchPasswordResetForm.find('input[name=__RequestVerificationToken]').val();
+
+        var headers = {};
+        headers['__RequestVerificationToken'] = token;
+
+        var payload = {
+            UserEmails: $('#usersTextArea').val()
+        };
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: url,
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payload),
+            headers: headers,
+            beforeSend: function () {
+
+            }
+        }).done(function (data, textStatus, jqXHR) {
+            if (data.Result === 'Success') {
+
+            } else {
+
+            }
+        });
+
+
+    };
+
 })(MN);

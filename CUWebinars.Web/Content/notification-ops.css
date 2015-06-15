@@ -34,3 +34,7 @@ div#emailPanel {
 #getHtmlSpinner {
     margin-top: 10px;
 }
+
+textarea {
+    width: 500px;
+}

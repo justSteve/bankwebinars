@@ -17,6 +17,8 @@ deleteItem = function (event) {
     var idx = trashClicked.substring(0, 1);
     var spanToRemove = locationsSpanPrefix + idx;
 
+    Rollbar.info({ "aal-#1": { 'deleting AdLoc': trashClicked } });
+
     $('#' + spanToRemove).hide(500, function () {
         $(this).remove();
     });
@@ -35,7 +37,6 @@ deleteItem = function (event) {
 $(function() {
     primeDomVariables();
     wireUpHandlers();
-
 });
 
 function wireUpHandlers() {
@@ -87,12 +88,10 @@ function wireUpHandlersForModal() {
 
     collectAdditionalLocations.empty();
 
-
     additionalLocationEmailWrapper = $('#AdditionalLocationEmailWrapper');
     if (locationsCloned)
         additionalLocationEmailWrapper.append(locationsCloned);
-
-
+    
     $('#AddInputsButton').on('click', function(e) {
 
         e.preventDefault();
@@ -133,6 +132,7 @@ function wireUpHandlersForModal() {
         $('#AdditionalLocationEmail_' + newId).focus();
         numberOfAdditionalLocations++;
 
+        Rollbar.info({ "aal-#2": { AddInputClicked: newId, NumberAdLocs: numberOfAdditionalLocations } }); 
     });
 
     numberOfAdditionalLocations = $('#AdditionalLocationEmailWrapper input[type="email"]').length;
@@ -155,8 +155,9 @@ function wireUpHandlersForModal() {
             collectAdditionalLocations.append(additionalLocationEmailWrapper.children());
 
             $('#additionalLocationsModalDialog').modal('hide');
-
             $(this).remove();
+
+            Rollbar.info({ "aal-#3": { SubmitClicked: numberOfAdditionalLocations } });
         });
         var trashCans = additionalLocationEmailWrapper.find('i');
 
@@ -173,6 +174,6 @@ function wireUpHandlersForModal() {
             });
             collectAdditionalLocations.append(locationsBakForCancel);
         }
-
+        Rollbar.info({ "aal-#4": "CloseClicked" });
     });
 }

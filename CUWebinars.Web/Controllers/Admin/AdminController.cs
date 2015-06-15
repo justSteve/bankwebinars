@@ -37,6 +37,7 @@ using System.Xml;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Core.Helpers;
 using Microsoft.AspNet.Identity;
+using Thinktecture.IdentityModel.Authorization.Mvc;
 using ClaimTypes = System.Security.Claims.ClaimTypes;
 using DateTimeHelper = CUWebinars.Web.Helpers.DateTimeHelper;
 using Formatting = Newtonsoft.Json.Formatting;
@@ -115,6 +116,35 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             return this.ModelStateJson(ModelState);
         }
+
+        //[ClaimsAuthorize(IdentityConstants.Access, "BatchPasswordReset")]
+        public PartialViewResult BatchPasswordReset()
+        {
+            var batchPasswordResetViewModel = new BatchPasswordResetViewModel {UserEmails = string.Empty};
+            return PartialView("~/Views/Admin/Partials/_BatchPasswordReset.cshtml", batchPasswordResetViewModel);
+        }
+
+        [HttpPost]
+        [ValidateJsonAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
+        public ActionResult BatchPasswordReset(BatchPasswordResetViewModel batchPasswordResetViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var emails = batchPasswordResetViewModel.UserEmails.Split(";".ToCharArray(),
+                    StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var email in emails)
+                {
+                    _membershipService.ResetPassword(_globalConfig.Tenant, email);
+                }
+
+                return Json(new {Result = WebUiConstants.Success});
+            }
+
+            return this.ModelStateJson(ModelState);
+        }
+
 
         public PartialViewResult GetAffiliates()
         {

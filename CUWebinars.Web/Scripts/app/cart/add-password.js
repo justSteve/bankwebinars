@@ -28,6 +28,8 @@ $(function() {
         var url = addPasswordForm.attr('action');
         var data = addPasswordForm.serialize();
 
+        Rollbar.info({ "ap-#1": { payload: data } });
+
         $.ajax({
             type: 'POST',
             contentType: constants.FormPostContentType,
@@ -53,16 +55,19 @@ $(function() {
                 feedbackContainer.show();
 
                 $('#main_menu ul.primary_menu').append('<li><a href="/Account/MyWebinars">My Webinars</a></li>');
+
+                Rollbar.info({ 'ap-#2': { result: 'add password succeeded' } });
             } else if (data.Result === 'TimedOut') {
                 feedbackContainer.show();
 
                 addPasswordContainer.height(containerHeight);
                 var formParent = addPasswordForm.parent();
                 addPasswordForm.fadeOut();
-                Rollbar.error("AddPasswordFromCartCheckoutTimedOut");
+                Rollbar.error({ 'ap-#3': { result: data, msg: 'add password timed out' } });
                 formParent.prepend('<div class="legendImitator">Order Entry Completed</div><div>Your order is recorded. Watch your email for links to your event\'s materials and other important information.</p></div>');
             } else if (!data.isSuccessful) {
                 addPwdMsgLabelWrap.html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;There has been an error</span>');
+                Rollbar.error({ 'ap-#4': { result: data } });
                 formProcessor.lightUpValidationSummary('addPwdValSummary', data);
             }
         });

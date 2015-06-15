@@ -77,8 +77,8 @@ namespace CUWebinars.Web
         {
             const string infrastructureLogconfigs = @"Infrastructure/LogConfigs";
 
-            switch (GlobalConfig.GlobalConfigSingleton.Tenant)
-            //switch ("Dave")
+            //switch (GlobalConfig.GlobalConfigSingleton.Tenant)
+            switch ("Dave")
             {
                 case DomainConstants.BankWebinars:
                     if (!HttpContext.Current.IsDebuggingEnabled)
