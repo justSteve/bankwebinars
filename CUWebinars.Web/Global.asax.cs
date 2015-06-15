@@ -77,8 +77,8 @@ namespace CUWebinars.Web
         {
             const string infrastructureLogconfigs = @"Infrastructure/LogConfigs";
 
-            //switch (GlobalConfig.GlobalConfigSingleton.Tenant)
-            switch ("Dave")
+            switch (GlobalConfig.GlobalConfigSingleton.Tenant)
+            //switch ("Dave")
             {
                 case DomainConstants.BankWebinars:
                     if (!HttpContext.Current.IsDebuggingEnabled)
@@ -90,14 +90,28 @@ namespace CUWebinars.Web
                     }
                     else
                     {
-                         log4net.Config.XmlConfigurator.Configure(
-                            new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
-                                "BWLocal.xml")));                       
+                        log4net.Config.XmlConfigurator.Configure(
+                           new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
+                               "BWLocal.xml")));
                     }
                     break;
 
                 case DomainConstants.CUWebinars:
-                    log4net.Config.XmlConfigurator.Configure(new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs, "CUWLog4net.xml")));
+                    if (!HttpContext.Current.IsDebuggingEnabled)
+                    {
+                        log4net.Config.XmlConfigurator.Configure(
+                            new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
+                                "CULog4net.xml")));
+
+                    }
+                    else
+                    {
+                        log4net.Config.XmlConfigurator.Configure(
+                           new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
+                               "CULocal.xml")));
+                    }
+                    break;
+
                     break;
                 case "Dave":
                     log4net.Config.XmlConfigurator.Configure(new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs, "DARLog4net.xml")));
@@ -242,14 +256,14 @@ namespace CUWebinars.Web
                         break;
 
                     case 500:
-                        //if (User.Identity.IsAuthenticated && User.Identity.Name.StartsWith("admin"))
-                        //{
-                        //    //Now that we know we have an authenticated/authorized Admin
-                        //    // no need to hide sensitive info. Let's dump the Context's error message
-                        //    // instead of the generic boiler plate.
+                    //if (User.Identity.IsAuthenticated && User.Identity.Name.StartsWith("admin"))
+                    //{
+                    //    //Now that we know we have an authenticated/authorized Admin
+                    //    // no need to hide sensitive info. Let's dump the Context's error message
+                    //    // instead of the generic boiler plate.
 
-                        //}
-                        //break;
+                    //}
+                    //break;
                     default:
                         Response.StatusCode = 500;
                         newRouteData.Values[WebUiConstants.Action] = WebUiConstants.ServerErrorPage;

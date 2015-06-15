@@ -147,7 +147,7 @@ body.tall-logo nav.user {
     float: left;
     line-height: 30px;
     height: 45px;
-    border-right: 1px solid #d8dfe5;
+    border-left: 1px solid #d8dfe5;
     margin-right: 0;
     position: relative;
     padding-right: 20px;
