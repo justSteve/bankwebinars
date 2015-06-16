@@ -28,7 +28,6 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.ShippingCity).HasMaxLength(100);
             Property(t => t.ShippingState).HasMaxLength(100);
             Property(t => t.ShippingZip).HasMaxLength(20);
-            Property(t => t.UserComments).HasMaxLength(2550);
             Property(t => t.ShippingPhone).HasMaxLength(30);
 
             // Table & Column Mappings
