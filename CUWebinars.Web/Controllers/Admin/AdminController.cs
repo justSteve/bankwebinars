@@ -1,4 +1,6 @@
-﻿using CUWebinars.Business.AccountService;
+﻿using BrockAllen.MembershipReboot.Ef;
+using BrockAllen.MembershipReboot.WebHost;
+using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Extensions;
@@ -8,10 +10,13 @@ using CUWebinars.Business.Notification;
 using CUWebinars.Business.Notification.Formatters;
 using CUWebinars.Business.Notification.ViewModel;
 using CUWebinars.Business.Services;
+using CUWebinars.Web.App_Start;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Infrastructure;
 using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
+using CUWebinars.Web.Membership.Email;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
@@ -37,6 +42,8 @@ using System.Xml;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Core.Helpers;
 using Microsoft.AspNet.Identity;
+using Ninject.Extensions.Logging.Log4net.Infrastructure;
+using Thinktecture.IdentityModel.Authorization;
 using Thinktecture.IdentityModel.Authorization.Mvc;
 using ClaimTypes = System.Security.Claims.ClaimTypes;
 using DateTimeHelper = CUWebinars.Web.Helpers.DateTimeHelper;
@@ -116,12 +123,16 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             return this.ModelStateJson(ModelState);
         }
-
-        //[ClaimsAuthorize(IdentityConstants.Access, "BatchPasswordReset")]
+        
         public PartialViewResult BatchPasswordReset()
         {
-            var batchPasswordResetViewModel = new BatchPasswordResetViewModel {UserEmails = string.Empty};
-            return PartialView("~/Views/Admin/Partials/_BatchPasswordReset.cshtml", batchPasswordResetViewModel);
+            if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.BatchPasswordResetFeature))
+            {
+                var batchPasswordResetViewModel = new BatchPasswordResetViewModel {UserEmails = string.Empty};
+                return PartialView("~/Views/Admin/Partials/_BatchPasswordReset.cshtml", batchPasswordResetViewModel);
+            }
+
+            return null;
         }
 
         [HttpPost]
@@ -131,13 +142,26 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             if (ModelState.IsValid)
             {
-                var emails = batchPasswordResetViewModel.UserEmails.Split(";".ToCharArray(),
-                    StringSplitOptions.RemoveEmptyEntries);
+                var emails = batchPasswordResetViewModel.UserEmails.Split(
+                    ";".ToCharArray(),
+                    StringSplitOptions.RemoveEmptyEntries
+                    );
 
-                foreach (var email in emails)
-                {
-                    _membershipService.ResetPassword(_globalConfig.Tenant, email);
-                }
+                var membershipRebootConfiguration = MembershipRebootConfigInert.Create(
+                    HttpRuntime.AppDomainAppPath,
+                    _stateService
+                    );
+
+                var userAccountService = new UserAccountService(
+                    membershipRebootConfiguration,
+                    new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase())
+                    );
+
+                userAccountService.ResetPassword(_globalConfig.Tenant, emails[0]);
+
+                var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKeyForBatchChangePwd);
+
+                userAccountService.ChangePasswordFromResetKey(verificationKey, emails[1]);
 
                 return Json(new {Result = WebUiConstants.Success});
             }
@@ -2033,6 +2057,34 @@ namespace CUWebinars.Web.Controllers.Admin
             }
 
             return null;
+        }
+
+    }
+
+    public class MembershipRebootConfigInert
+    {
+        private static readonly GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+
+        public static MembershipRebootConfiguration Create(string pathToRootDirectory, IStateService stateService)
+        {
+            var settings = SecuritySettings.FromConfiguration();
+            var config = new MembershipRebootConfiguration(settings);
+
+            var appinfo = new AspNetApplicationInformation(
+                _globalConfig.Tenant,
+                _globalConfig.EmailSignature,
+                _globalConfig.RelativeLoginUrl,
+                _globalConfig.RelativeConfirmChangeUrl,
+                _globalConfig.RelativeCancelVerificationUrl,
+                _globalConfig.RelativeConfirmPasswordResetUrl);
+
+            IMessageDelivery delivery = new TtsSmtpMessageDeliveryInert();
+
+            var emailFormatter = new TtsEmailFormatterInert(appinfo, stateService);
+
+            config.AddEventHandler(new EmailAccountEventsHandler(emailFormatter, delivery));
+
+            return config;
         }
 
     }

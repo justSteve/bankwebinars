@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using CUWebinars.Business.Constants;
+﻿using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.CQS;
 using CUWebinars.Business.CQS.Commands;
@@ -8,7 +7,6 @@ using CUWebinars.Business.Models;
 using CUWebinars.Web.Membership;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
-using Microsoft.VisualBasic.FileIO;
 using Ninject.Extensions.Logging;
 using System;
 using System.Diagnostics;

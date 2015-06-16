@@ -33,6 +33,7 @@ namespace CUWebinars.Business.Constants
         public const string UserNotFound = "User not found";
         public const string UsLocale = "en-US";
         public const string VerificationKey = "VerificationKey";
+        public const string VerificationKeyForBatchChangePwd = "VerificationKeyForBatchChangePwd";
         public const string VerifyEmailLink = "VerifyEmailLink";
         public const string BankWebinars = "BankWebinars";
         // ReSharper disable once InconsistentNaming

@@ -432,6 +432,8 @@
     <Compile Include="Helpers\SessionStartInfo.cs" />
     <Compile Include="Infrastructure\Attributes\HandleAjaxExceptionAttribute.cs" />
     <Compile Include="Infrastructure\Attributes\MonitorAffiliateFilter.cs" />
+    <Compile Include="Infrastructure\Auth\BatchPasswordResetAuthorizationProcessor.cs" />
+    <Compile Include="Infrastructure\Auth\IAuthorizationProcessor.cs" />
     <Compile Include="Infrastructure\ErrorResponse.cs" />
     <Compile Include="Infrastructure\ErrorResponseCommand.cs" />
     <Compile Include="Infrastructure\HeadOnlyWebClient.cs">
@@ -447,6 +449,9 @@
     <Compile Include="Mapping\Mappers\IUniversalMapper.cs" />
     <Compile Include="Mapping\Mappers\UniversalMapper.cs" />
     <Compile Include="Mapping\Profiles\TtsProfile.cs" />
+    <Compile Include="Membership\Email\TtsEmailFormatterInert.cs" />
+    <Compile Include="Membership\Email\TtsSmtpMessageDeliveryInert.cs" />
+    <Compile Include="Membership\Email\TtsTokenizerInert.cs" />
     <Compile Include="Models\AddClaimInputModel.cs" />
     <Compile Include="Models\AddQuizEditModel.cs" />
     <Compile Include="Models\BatchPasswordResetViewModel.cs" />

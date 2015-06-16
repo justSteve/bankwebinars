@@ -13,6 +13,7 @@ namespace CUWebinars.Web.Helpers
         //  Resources
         public const string Account = "Account";
         public const string AdminResources = "AdminResources";
+        public const string BatchPasswordResetFeature = "BatchPasswordResetFeature";
 
         //  Error messages
         public const string Invalid = "{0} is not a valid {1}";
