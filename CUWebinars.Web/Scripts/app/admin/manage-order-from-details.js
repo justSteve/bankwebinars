@@ -2,18 +2,20 @@
 if (MANAGE === null || typeof MANAGE === 'undefined')
     var MANAGE = {};
 
+var M = MANAGE; // alias for code brevity
+
 // jQuery doc.ready function
 $(function () {
 
-    MANAGE.orderIdInput = $('#orderIdInput');
-    MANAGE.orderIdInput.focus();
-    MANAGE.idOrder = MANAGE.orderIdInput.val();
+    M.orderIdInput = $('#orderIdInput');
+    M.orderIdInput.focus();
+    M.idOrder = M.orderIdInput.val();
 
-    MANAGE.orderIdList = {}; // javascript object to be used in the Bootstrap typahead as in-memory list
+    M.orderIdList = {}; // javascript object to be used in the Bootstrap typahead as in-memory list
 
-    MANAGE.orderIdInput.typeahead({
+    M.orderIdInput.typeahead({
         source: function (query, process) {
-            MANAGE.searchOrder(query, process);
+            M.searchOrder(query, process);
         },
 
         matcher: function (item) {
@@ -28,18 +30,18 @@ $(function () {
             }
 
             var item = JSON.parse(listedUser);
-            var user = _.find(MANAGE.orderIdList, function (webUser) {
+            var user = _.find(M.orderIdList, function (webUser) {
                 return JSON.parse(webUser)['id'] === item.id;
             });
             if (user !== null && typeof user !== 'undefined') {
                 var userParsed = JSON.parse(user);
-                if (MANAGE.searchBy == "email") {
+                if (M.searchBy == "email") {
                     return userParsed.email + ', ' + userParsed.lastName;
                 }
-                if (MANAGE.searchBy == "orderID") {
+                if (M.searchBy == "orderID") {
                     return userParsed.email + ', ' + userParsed.lastName;
                 }
-                if (MANAGE.searchBy == "lastName") {
+                if (M.searchBy == "lastName") {
                     return userParsed.lastName + ', ' + userParsed.firstName;
                 }
 
@@ -57,7 +59,7 @@ $(function () {
             }
 
             var userParsed = JSON.parse(selection);
-            var user = _.find(MANAGE.orderIdList, function (p) {
+            var user = _.find(M.orderIdList, function (p) {
                 return JSON.parse(p)['id'] === userParsed['id'];
             });
 
@@ -71,15 +73,15 @@ $(function () {
     });
 
 
-    MANAGE.primeDomVariables();
-    MANAGE.wireUpHandlers();
+    M.primeDomVariables();
+    M.wireUpHandlers();
 
-    MANAGE.addLocsUnitPrice = $('#CostPerAdditionalLocation').val();
-    MANAGE.addLocsTotalPrice = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions').val();
+    M.addLocsUnitPrice = $('#CostPerAdditionalLocation').val();
+    M.addLocsTotalPrice = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions').val();
 
-    MANAGE.wireUpTrashIcons();
+    M.wireUpTrashIcons();
 
-    MANAGE.getOrderButton.on('click', MANAGE.getOrder);
+    M.getOrderButton.on('click', M.getOrder);
 });
 
 
@@ -450,7 +452,7 @@ $(function () {
         if (searchTerm.indexOf('@') > 0) {
             // in here if searching for an email
 
-            MANAGE.searchBy = 'email';
+            M.searchBy = 'email';
 
             $.ajax({
                 type: 'GET',
@@ -463,18 +465,18 @@ $(function () {
                     ns.orderIdList = null; // dereference whatever is currently in 'ns.orderIdList'. 
                 }
             }).done(function (data) {
-                MANAGE.orderIdList = _.map(data.results, function (item) {
+                M.orderIdList = _.map(data.results, function (item) {
                     var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName, email: item.billingEmail, institution: item.institution };
                     return JSON.stringify(aItem);
                 });
 
-                process(MANAGE.orderIdList);
+                process(M.orderIdList);
             });
 
         } else if (_.isFinite(searchTerm)) {
             // in here if searching on an order number
 
-            MANAGE.searchBy = 'orderID';
+            M.searchBy = 'orderID';
 
             $.ajax({
                 type: 'GET',
@@ -493,7 +495,7 @@ $(function () {
         } else {
             // if not a number and not an email address, search is by lastname
 
-            MANAGE.searchBy = 'lastName';
+            M.searchBy = 'lastName';
 
             $.ajax({
                 type: 'GET',
@@ -507,12 +509,12 @@ $(function () {
                 }
             }).done(function (data) {
 
-                MANAGE.orderIdList = _.map(data.results, function (item) {
+                M.orderIdList = _.map(data.results, function (item) {
                     var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName, email: item.billingEmail, institution: item.institution };
                     return JSON.stringify(aItem);
                 });
 
-                process(MANAGE.orderIdList);
+                process(M.orderIdList);
             });
         }
 
