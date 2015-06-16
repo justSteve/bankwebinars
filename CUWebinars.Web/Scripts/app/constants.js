@@ -53,7 +53,7 @@ var commonFuncs = function() {
             alert('Session expired. Please login again to continue.');
             window.location.href = '/Account/Login';
         } else if (jqXHR.statusCode().status === 0 && errorThrown === '' && textStatus === 'error') {
-            Rollbar.error( jqXHR.statusCode().status + ' nError: ' + jqXHR.statusCode().statusText);
+            return; // do nothing
         } else {
             Rollbar.error( jqXHR.statusCode().status + ' nError: ' + jqXHR.statusCode().statusText);
             alert('An error occurred: '); 

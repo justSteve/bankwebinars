@@ -659,7 +659,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 alert('Sorry, your session has expired. Please login again to continue');
                 window.location.href = '/Account/Login';
             } else if (jqXHR.statusCode().status === 0 && errorThrown === '' && textStatus === 'error') {
-                // do nothing
+                ;// do nothing
             } else {
                 alert('An error occurred: ' + jqXHR.statusCode().status + ' nError: ' + jqXHR.statusCode().statusText);
             };
@@ -917,7 +917,7 @@ function hookUpEditUserLogic(button, shippingAddressRequired) {
                     alert('Sorry, your session has expired. Please login again to continue');
                     window.location.href = '/Account/Login';
                 } else if (jqXHR.statusCode().status === 0 && errorThrown === '' && textStatus === 'error') {
-                    // do nothing
+                    ; // do nothing
                 } else {
                     alert('An error occurred: ' + jqXHR.statusCode().status + ' nError: ' + jqXHR.statusCode().statusText);
                 };
@@ -1171,6 +1171,6 @@ function createUserAccount(email) {
 
         }
     }).done(function (data) {
-        // do nothing. This is a fire and forget operation.
+        return; // do nothing. This is a fire and forget operation.
     }).fail(commonFuncs.failCallBack);
 }
