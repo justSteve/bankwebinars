@@ -29,7 +29,7 @@ $(function () {
 
             // if Success, session is still alive. If Fail, it is expired.
             if(data.Result === 'Success') {
-                
+                ;
             } else if (data.Result === 'Fail') {
 
                 SC.loginBtn.fadeOut(200, function() {

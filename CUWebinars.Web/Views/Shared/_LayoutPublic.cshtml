@@ -74,7 +74,7 @@
     </script>
 
 
-    @if (!Html.IsDebug())
+    @if (!HttpContext.Current.IsDebuggingEnabled)
     {
         if (globalConfig.Tenant == "CUWebinars")
         {
@@ -172,7 +172,7 @@
             <script>
 
                 $zopim(function() {
-                    $zopim.livechat.setName(@User.Identity.Name);
+                    $zopim.livechat.setName(@User.Identity.Name.ToString().Replace("@", "_"));
                 });
 
             </script>
