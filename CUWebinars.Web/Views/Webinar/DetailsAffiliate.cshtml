@@ -24,8 +24,6 @@
 }
 
 <script type="text/javascript">
-    
-
     var checkoutInProcess = @(Model.CheckoutInProcess ? "true" : "false");
     var isUserLoggedIn = @(@Model.UserIsLoggedIn ? "true" : "false");
     var webinarId = @(@Model.Webinar.idWebinar);
@@ -48,6 +46,7 @@
 }
 
 @Styles.Render("~/Content/create-order-details")
+@Styles.Render("~/Content/data-tables")
 
 <div class="hero-unit">
     <div id="webinarTitle" class="container">
@@ -216,4 +215,5 @@
         <!--close section tertiary-column sidebar span3-->
     </div>
 </div> <!-- closes main-content -->
+
 

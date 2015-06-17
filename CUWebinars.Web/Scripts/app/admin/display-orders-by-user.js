@@ -1,7 +1,7 @@
 ﻿/// <reference path="../Constants.js" />
 /// <reference path="../utilities.js" />
 
-var aff = $("#ordersTable").data('aff');
+var aff = $('#ordersTable').data('aff');
 
 if (DISPLAYORDERSBU === null || typeof DISPLAYORDERSBU === 'undefined')
     var DISPLAYORDERSBU = {}; // create namespace - object to holds all references and methods.
@@ -33,8 +33,7 @@ $(function () {
     ns1.wireUpDataTable = function () {
 
         DOBU.ordersTable.dataTable({
-            "dom": 'T<"clear">lfrtip'
-            ,
+            "dom": 'T<"clear">lfrtip',
             'tableTools': {
                 'sSwfPath': '/Content/DataTables/swf/copy_csv_xls_pdf.swf'
             },

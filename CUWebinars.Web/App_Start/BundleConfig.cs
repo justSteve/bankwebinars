@@ -81,6 +81,13 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/admin/display-orders-by-user.js"
                 ));
 
+
+            bundles.Add(new ScriptBundle("~/bundles/admin-notifications").Include(
+                "~/Scripts/app/notification-ops/order-event-notifications.js",
+                "~/Scripts/app/notification-ops/membership-notifications.js",
+                "~/Scripts/app/notification-ops/details-event-webpart.js"
+                ));
+
             bundles.Add(new ScriptBundle("~/bundles/manage-claims").Include(
                 "~/Scripts/app/admin/claims-management.js"
                 ));

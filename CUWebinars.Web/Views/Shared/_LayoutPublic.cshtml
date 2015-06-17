@@ -48,13 +48,23 @@
         <!--Start of Zopim Live Chat Script-->
         <script type="text/javascript">
             window.$zopim || (function (d, s) {
-                var z = $zopim = function (c) { z._.push(c) }, $ = z.s =
-                d.createElement(s), e = d.getElementsByTagName(s)[0]; z.set = function (o) {
-                    z.set.
-                    _.push(o)
-                }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute("charset", "utf-8");
-                $.src = "//v2.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU"; z.t = +new Date; $.
-                type = "text/javascript"; e.parentNode.insertBefore($, e)
+                var z = window.$zopim = function (c) {
+                         z._.push(c);
+                },
+                    $ = z.s = d.createElement(s),
+                    e = d.getElementsByTagName(s)[0];
+
+                z.set = function (o) {
+                    z.set._.push(o);
+                };
+                z._ = [];
+                z.set._ = [];
+                $.async = !0;
+                $.setAttribute("charset", "utf-8");
+                $.src = "//v2.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU";
+                z.t = +new Date;
+                $.type = "text/javascript";
+                e.parentNode.insertBefore($, e);
             })(document, "script");
         </script>
         <!--End of Zopim Live Chat Script-->
@@ -106,13 +116,13 @@
                 (function (i, s, o, g, r, a, m) {
                     i['GoogleAnalyticsObject'] = r;
                     i[r] = i[r] || function () {
-                        (i[r].q = i[r].q || []).push(arguments)
+                        (i[r].q = i[r].q || []).push(arguments);
                     }, i[r].l = 1 * new Date();
                     a = s.createElement(o),
                         m = s.getElementsByTagName(o)[0];
                     a.async = 1;
                     a.src = g;
-                    m.parentNode.insertBefore(a, m)
+                    m.parentNode.insertBefore(a, m);
                 })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
                 ga('create', 'UA-1443899-1', 'auto');
@@ -169,13 +179,14 @@
     @{
         if (@User.Identity.IsAuthenticated)
         {
-            <script>
-
-                $zopim(function() {
-                    $zopim.livechat.setName(@User.Identity.Name.ToString().Replace("@", "_"));
-                });
-
-            </script>
+            if (!Html.IsDebug())
+             {
+                 <script>
+                     window.$zopim(function() {
+                         window.$zopim.livechat.setName(@User.Identity.Name.ToString().Replace("@", "_"));
+                     });
+                 </script>
+             }
         }
     }
 
