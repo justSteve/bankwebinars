@@ -11,6 +11,8 @@
         margin-top: 10px;
     }
 </style>
+@Styles.Render("~/Content/manage-order-styles")
+@Styles.Render("~/Content/data-tables")
 
 @{
     ViewBag.Title = "Edit Order";
@@ -44,10 +46,5 @@
 @section scripts {
     @Scripts.Render("~/bundles/manage-order-from-details")
     @Scripts.Render("~/bundles/dataTables")
-    <script src="@Url.Content("~/Scripts/app/notification-ops/order-event-notifications.js")"></script>
-    <script src="@Url.Content("~/Scripts/app/notification-ops/membership-notifications.js")"></script>
-    <script src="@Url.Content("~/Scripts/app/ToastLogger.js")"></script>
+    @Scripts.Render("~/bundles/admin-notifications")
 }
-
-<script src="@Url.Content("~/Scripts/app/notification-ops/details-event-webpart.js")"></script>
-@Styles.Render("~/Content/manage-order-styles")

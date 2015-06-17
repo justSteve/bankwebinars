@@ -1,4 +1,5 @@
-﻿using BrockAllen.MembershipReboot.Ef;
+﻿using System.Configuration;
+using BrockAllen.MembershipReboot.Ef;
 using BrockAllen.MembershipReboot.WebHost;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
@@ -156,6 +157,18 @@ namespace CUWebinars.Web.Controllers.Admin
                     membershipRebootConfiguration,
                     new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase())
                     );
+
+                var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
+
+                var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, "" /* set to email address*/);
+
+                if (ReferenceEquals(null, userAccount))
+                {
+                    throw new NullReferenceException(DomainConstants.UserNotFound);
+                }
+
+                
+                dataOperations.SetFieldsConsistantWithVerifiedUser(userAccount);
 
                 userAccountService.ResetPassword(_globalConfig.Tenant, emails[0]);
 

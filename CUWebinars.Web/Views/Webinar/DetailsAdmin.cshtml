@@ -39,11 +39,11 @@
     @Scripts.Render("~/bundles/manage-webinar-files")
     @Scripts.Render("~/bundles/dataTables")
     @Scripts.Render("~/bundles/display-orders")
-    <script src="@Url.Content("~/Scripts/app/notification-ops/order-event-notifications.js")"></script>
-    <script src="@Url.Content("~/Scripts/app/notification-ops/membership-notifications.js")"></script>
+    @Scripts.Render("~/bundles/admin-notifications")
 }
 
 @Styles.Render("~/Content/create-order-details")
+@Styles.Render("~/Content/data-tables")
 
 <div class="hero-unit">
     <div id="webinarTitle" class="container">

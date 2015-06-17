@@ -114,7 +114,6 @@ namespace CUWebinars.Web
                            new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
                                "CULocal.xml")));
                     }
-                    break;
 
                     break;
                 case "Dave":
