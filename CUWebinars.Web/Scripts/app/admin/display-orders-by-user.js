@@ -35,28 +35,28 @@ $(function () {
         DOBU.ordersTable.dataTable({
             "dom": 'T<"clear">lfrtip'
             ,
-            "tableTools": {
-                "sSwfPath": "/swf/copy_csv_xls_pdf.swf"
+            'tableTools': {
+                'sSwfPath': '/Content/DataTables/swf/copy_csv_xls_pdf.swf'
             },
-            "ajax": {
-                "url": "/admin/GetOrdersByUser",
-                "data": {
-                    "email": DOBU.userEmailDiv.text()
+            'ajax': {
+                'url': '/admin/GetOrdersByUser',
+                'data': {
+                    'email': DOBU.userEmailDiv.text()
                 },
-                "type": "POST"
+                'type': 'POST'
             },
-            "columns": [
-                { "data": "OrderColumn" },
+            'columns': [
+                { 'data': 'OrderColumn' },
 
-                { "data": "UserColumn" },
-                { "data": "InstitutionColumn" },
-                { "data": "BillingColumn" },
+                { 'data': 'UserColumn' },
+                { 'data': 'InstitutionColumn' },
+                { 'data': 'BillingColumn' },
                 {
-                    "data": "AffiliateColumn",
-                    "visible": aff
+                    'data': 'AffiliateColumn',
+                    'visible': aff
                 },
-                { "data": "OrderDateColumn" },
-                { "data": "StatusColumn" },
+                { 'data': 'OrderDateColumn' },
+                { 'data': 'StatusColumn' }
             ]
         });
 

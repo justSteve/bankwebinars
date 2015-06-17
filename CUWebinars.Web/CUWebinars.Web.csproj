@@ -647,7 +647,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Infrastructure\LogConfigs\CULocal.xml" />
-    <Content Include="Infrastructure\LogConfigs\CUWLog4net.xml">
+    <Content Include="Infrastructure\LogConfigs\CULog4net.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>

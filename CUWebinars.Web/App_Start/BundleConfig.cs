@@ -23,7 +23,8 @@ namespace CUWebinars.Web.App_Start
             //"~/Scripts/jquery-ui-1.8.24.js"));
             
             bundles.Add(new ScriptBundle("~/bundles/dataTables").Include(
-                        "~/Scripts/DataTables/jquery.dataTables.js")
+                        "~/Scripts/DataTables/jquery.dataTables.js",
+                        "~/Scripts/DataTables/dataTables.tableTools.js")
                         );
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
@@ -256,7 +257,8 @@ namespace CUWebinars.Web.App_Start
 
             bundles.Add(new StyleBundle("~/Content/data-tables").Include(
                 "~/Content/DataTables/css/jquery.dataTables.css",
-                "~/Content/DataTables/css/dataTables.bootstrap.css")
+                "~/Content/DataTables/css/dataTables.bootstrap.css",
+                "~/Content/DataTables/css/dataTables.tableTools.css")
                 );
 
             bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(
