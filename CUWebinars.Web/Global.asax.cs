@@ -106,6 +106,10 @@ namespace CUWebinars.Web
                     }
                     else
                     {
+                        //log4net.Config.XmlConfigurator.Configure(
+                        //    new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
+                        //        "CULog4net.xml")));
+
                         log4net.Config.XmlConfigurator.Configure(
                            new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
                                "CULocal.xml")));
