@@ -8,7 +8,7 @@ $(function () {
     signUpForm = $('#SignUpForm');
     signUpFormContainer = $('#SignUpFormContainer'); // The big beige box
 
-    /* This function gets invoked when the 3rd tab is loaded and an existing user is using the cart */
+    // This function gets invoked when the 3rd tab is loaded and an existing user is using the cart
     checkoutConfirm.initialize = function (userId) {
         cartStateManager.setCancelOrderForm($('#cancelOrder'));
         cartStateManager.setConfirmOrderForm($('#confirmOrder'));
@@ -21,10 +21,12 @@ $(function () {
 
             var self = $(this);
             self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
-            var err = new Error('submitting ConfirmOrder' + cartStateManager.getOrderRowId());
-            //NREUM.noticeError(err);
+
+            Rollbar.info({'d-#1': {'submitting ConfirmOrder': cartStateManager.getOrderRowId()} });
 
             var data = $(this).serialize();
+
+            Rollbar.info({ 'd-#2': { 'Serialized Form': data } });
 
             var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
 
@@ -40,12 +42,11 @@ $(function () {
                 dataType: RegistrationInCart.Constants.JsonDataType,
                 data: data,
                 beforeSend: function () {
-
                     confirmRegistrationBillMe.attr('disabled', 'disabled');
-                    
                 }
             }).done(function (data) {
                 if (data.Result === 'Success') {
+                    Rollbar.info({ 'd-#3': { 'OrderRowId': data.OrderRowId } });
                     var orderRowId = data.OrderRowId;
 
                     console.info('Posted orderRow:' + orderRowId);
@@ -61,6 +62,7 @@ $(function () {
 
                 } else {
                     console.error('Failed to post order');
+                    Rollbar.error({ 'd-#4': { 'jsonResponse': data } });
                     confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                 }
 
@@ -72,16 +74,18 @@ $(function () {
                 confirmRegistrationBillMe.removeAttr('disabled');
                 $('#signUpSpinner').remove();
                 confirmRegistrationBillMe.after('<span class="field-validation-error">Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                Rollbar.error({ 'd-#5': { 'ajaxError': 'Ajax deferred promise fail method invoked' } });
             });
 
         });
 
+        
         var cancelOrderForm = cartStateManager.getCancelOrderForm();
-
+        // CANCEL REGISTRATION BUTTON CLICKED
         cancelOrderForm.on('submit', function (e) {
 
             console.log('cancelOrderForm submit hit');
-            //Rollbar.info('Submitting cancelOrderForm');
+            
             e.preventDefault();
             e.stopImmediatePropagation();
 
@@ -89,35 +93,32 @@ $(function () {
             var data = $(this).serialize();
 
             var self = $(this);
-
+            // RED BUTTON - DELETE REGISTRATION
             $('#cancelRegistration').on('click', function (e) {
                 e.preventDefault();
 
                 // disable button while operation in progress
                 $('#cancelRegistration').attr('disabled', 'disabled');
 
+                Rollbar.info({ 'd-#6': { 'orderCancellation': 'deleting order at 3rd tab', 'orderId': cartStateManager.getOrderId() } });
+
                 $.post(self.attr('action'), data, function (response, status, xhr) {
 
                     if (status !== 'error') {
                         if (xhr.responseJSON['success']) {
-                            var err = new Error('Suceeded in cancelling order');
-                            //NREUM.noticeError(err);
+                            Rollbar.info({ 'd-#7': { 'orderCancellationConfirmed': 'deletion succeeded' } });
 
                             var utilities = new Common.Utilities();
                             console.log('/webinar/details/' + cartStateManager.getWebinarId());
                             utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
                         } else {
-                            var err = new Error('Cancel Order Failure');
-                            //NREUM.noticeError(err);
-
+                            Rollbar.error({ 'd-#8': { 'orderCancellationFailed': 'Deletion failed. System potentially in error state.' } });
                             $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                             $('#CancelModal').modal('hide');
                         }
 
-                        // enable button again upon ending operation.
-                        //$('#cancelRegistration').removeAttr('disabled');  // [dar] NO. On staging, redirect is slow and button enabled again. User could have clicked it again.
-
                     } else {
+                        Rollbar.error({ 'd-#9': { 'orderCancellationFailed': 'Deletion failed. System potentially in error state.' } });
                         $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Server Error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                         $('#CancelModal').modal('hide');
                     }
@@ -127,7 +128,7 @@ $(function () {
                 $(this).off('click');
                 $('#rtn').off('click');
             });
-
+            // BLACK BUTTON - RETURN TO ORDER
             $('#rtn').on('click', function (e) {
                 e.preventDefault();
                 $('#CancelModal').modal('hide');
@@ -136,7 +137,6 @@ $(function () {
             });
 
             $('#CancelModal').modal('show');
-
         });
     };
 
@@ -150,14 +150,25 @@ $(function () {
     cartStateManager.setAddressVerified(addressVerified); // addressVerified is set in a script tag in razor view Details.cshtml
     cartStateManager.setNotificationsTesting(notificationsTesting); // notificationsTesting is set in a script tag in razor view Details.cshtml
 
+    Rollbar.info({
+        'd-#10': { 'serverVariables': {
+            'webinarId': webinarId,
+            'orderRowId': orderRowId,
+            'isUserLoggedIn': isUserLoggedIn,
+            'checkoutInProcess': checkoutInProcess,
+            'addressVerified': addressVerified,
+            'notificationsTesting': notificationsTesting
+            }
+        }
+    });
+
     cartStateManager.SetCartState();
 
     $("[id^='regTypeID_']").on("click", function (oEvent) {
-
         cartStateManager.CheckIfAddLocShouldHide(oEvent.currentTarget.value);
     });
 
-    /* Click event for the big green SignUp button */
+    // Click event for the BIG GREEN SignUp button
     $('#AddToCart').on('click', function () {
         $(this).prepend('<i id="signUpSpinner" class="icon-spinner icon-spin"></i>').attr('disabled', 'disabled');
         signUpForm.submit();
@@ -167,9 +178,11 @@ $(function () {
         $('#showDiscount').css('display', 'block');
     }
 
-    //  flow goes inside this block where the order exists and is in process e.g. previously abandoned before finializing
+    // Flow goes inside this block where the order exists and is in process e.g. previously abandoned before finializing
     if (cartStateManager.getOrderRowId() > 0 && cartStateManager.getCheckoutInProcess()) {
         
+        Rollbar.info({ 'd-#11': { 'returnUnfinishedOrder': 'User finishing order row: ' + cartStateManager.getOrderRowId() } });
+
         if (shippingAddressRequired && !cartStateManager.getNotificationsTesting() && !cartStateManager.getAddressVerified()) {
             // Following function lives in the register-during-checkout.js script
             // which will be in memory at this point and thus will have been hoisted.
@@ -177,18 +190,19 @@ $(function () {
         }
 
         cartStateManager.setOrderId(orderId);
+        Rollbar.info({ 'd-#12': { 'returnUnfinishedOrder': 'User finishing order: ' + orderId } });
 
         // see top of this file
         checkoutConfirm.initialize();
 
-         //The Bill Me button on 3rd tab
+         //The BIG GREEN 'Bill Me' button on 3rd tab
         $('#ConfirmRegistrationBillMe').on('click', function (e) {
             e.preventDefault();
             var confirmOrderForm = $('#confirmOrder');
             confirmOrderForm.submit();
         });
 
-        // The Cancel Registration button on 3rd tab
+        // The grey Cancel Registration button on 3rd tab
         $('#Canceller').on('click', function (e) {
             e.preventDefault();
             var cancelOrderForm = $('#cancelOrder');
@@ -199,7 +213,7 @@ $(function () {
         setUpEditButtons();
 
         // Following 3 functions live in the register-during-checkout.js script
-        // which will be in memory at this point and thus will be hoisted
+        // which will be in memory at this point. So these functions will be hoisted.
         hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
         hookUpChangeTypeLogic($('#RegType'));
         hookUpEditUserLogic(null, shippingAddressRequired);
@@ -220,14 +234,16 @@ $(function () {
 
         var data = signUpForm.serialize();
 
+        Rollbar.info({ 'd-#19': { 'signupData': data } });
+
         var spinner = $('#signUpSpinner');
         $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
         var loadingSpinner = $('#loadingSpinner');
 
         // If the user IS NOT LOGGED IN - control moves to the register-during-checkout.js script
         if (!cartStateManager.getIsUserLoggedIn()) {
-            var err = new Error('anon user hits signup');
-            //NREUM.noticeError(err);
+
+            Rollbar.info({ 'd-#20': { 'anonymousUser': 'Order created for anonymous user. Not yet finalized.' } });
 
             $.post(signUpForm.attr('action'), data, function (response, status, xhr) {
                 if (status !== 'error') {
@@ -248,6 +264,8 @@ $(function () {
                                 registerDuringCheckout.initialize(cartStateManager.getOrderId(), cartStateManager.getWebinarId(), cartStateManager.getOrderRowId(), addressOptions, checkoutConfirm.initialize);
                             } else {
                                 $('#labelEmail').html('<span class="label label-important">&nbsp;Server error. Try again or call 800-831-0678 ext 706 for immediate assistance!</span>');
+                                Rollbar.error({ 'd-#21': { 'anonymousUserSubmit': 'Fail condition.' } });
+                                Rollbar.error({ 'd-#28': { 'responseObject': xhr.responseJSON } });
                             }
                             loadingSpinner.remove();
                         });
@@ -257,10 +275,12 @@ $(function () {
                         $('#labelEmail').html('<span class="label label-important">&nbsp;There were some problems with the form. Please refer to the items in red.</span>');
                         formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
                         loadingSpinner.remove();
+                        Rollbar.error({ 'd-#22': { 'anonymousUserSubmit': 'Fail condition.' } });
                     }
                 } else {
                     $('#labelEmail').html('<span class="label label-important">&nbsp;Server error. Try again or call 800-831-0678 ext 706 for immediate assistance!</span>');
                     loadingSpinner.remove();
+                    Rollbar.error({ 'd-#23': { 'anonymousUserSubmit': 'Fail condition.' } });
                 }
             }, constants.JsonDataType);
         } else {
@@ -272,9 +292,8 @@ $(function () {
                         cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
                         cartStateManager.setOrderId(xhr.responseJSON['orderId']);
                         cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
-
-                        var err = new Error('submitting ConfirmOrder' + xhr.responseJSON['orderId']);
-                        //NREUM.noticeError(err);
+                        
+                        Rollbar.info({ 'd-#30': { 'loggedInUser': 'submitting ConfirmOrder' + xhr.responseJSON['orderId'] } });
 
                         $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function(response, status, xhr) {
 
@@ -282,6 +301,8 @@ $(function () {
                                 $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
                                 $('#loadingSpinner').remove();
                                 $('#confirmationTab a').tab('show');
+                                Rollbar.error({ 'd-#24': { 'loggedInUser': 'Fail condition.' } });
+                                Rollbar.error({ 'd-#31': { 'responseObject': xhr.responseJSON } });
                             } else {
 
                                 $('#confirmationTab a').tab('show');
@@ -329,10 +350,13 @@ $(function () {
                         formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
 
                         spinner.remove();
+                        Rollbar.error({ 'd-#25': { 'loggedInUser': 'Fail condition.' } });
+                        Rollbar.error({ 'd-#27': { 'responseObject': xhr.responseJSON } });
                     }
                 } else {
                     spinner.remove();
                     $('#confirmation').html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+                    Rollbar.error({ 'd-#26': { 'loggedInUser': 'Fail condition.' } });
                 }
             }, constants.JsonDataType);
 
@@ -391,6 +415,8 @@ function setUpEditButtons() {
             Institution: $('#AdjustUserDetailsPanel_Institution').val()
         };
 
+        Rollbar.info({ 'd-#17': { 'userDetailEdits': payload } });
+
         $.ajax({
             type: 'POST',
             contentType: constants.JsonContentType,
@@ -407,11 +433,10 @@ function setUpEditButtons() {
 
             if (data.Result === 'Success') {
                 self.after('<span id="editUserResult">&nbsp;<span class="label label-success"><span> Details updated successfully! </span></span></span>').hide().fadeIn(500);
+                Rollbar.info({ 'd-#18': { 'userDetailEditsResult': 'edits succeeded' } });
             }
 
             $('#userDetailsSpinner').remove();
-
-        }).always(function (data) {
         });
     });
 
@@ -450,14 +475,19 @@ function setUpEditButtons() {
 
 function populateAdditionalLocationsOn3rdTab() {
 
+    // There is re-use involved with additional locations as they can be manipulated on either the 1st or 3rd tab. 
+    // Hence, the locationsSpanPrefix may already exist in some scenarios.
     if (!locationsSpanPrefix) {
         locationsSpanPrefix = 'LocationSpan-',
         breakSuffix = '-break';
     }
 
+    // This variable gets declared elsewhere. Hnce, no 'var' keyword
     addLocsOn1stTabContainer = $('#collectAdditionalLocations');
     var locations = addLocsOn1stTabContainer.children();
     numberOfAdditionalLocationsTab3 = locations.filter('span').length;
+
+    Rollbar.info({ 'd-#13': { 'numOfOfAdditionalLocationsOnTab3': numberOfAdditionalLocationsTab3 } });
 
     var copyOfLocations = locations.clone();
 
@@ -526,6 +556,8 @@ var applyAdditionalLocations = function(e) {
 
     var formData = adjustAddLocsForm.serialize();
 
+    Rollbar.info({ 'd-#14': { 'applyEditsToAdditionalLocationsTab3': formData } });
+
     $.ajax({
         type: 'POST',
         contentType: RegistrationInCart.Constants.FormPostContentType,
@@ -550,8 +582,10 @@ var applyAdditionalLocations = function(e) {
                 infoLabel.fadeIn(200);
             });
 
+            Rollbar.info({ 'd-#15': { 'applyEditsToAdditionalLocationsResult': 'edits succeeded' } });
+
         } else {
-            console.error('Failed to post order');
+            Rollbar.error({ 'd-#16': { 'applyEditsToAdditionalLocationsResult': 'edits failed', 'returnObject': data } });
         }
         $('#waitSpinner').remove();
     });
