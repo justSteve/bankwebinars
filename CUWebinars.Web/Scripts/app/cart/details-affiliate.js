@@ -408,15 +408,14 @@ OCA.initializeFunctions = function () {
 
                     if (status !== 'error') {
                         if (xhr.responseJSON['success']) {
-                            var err = new Error('Suceeded in cancelling order');
-                            //NREUM.noticeError(err);
+                            Rollbar.info('Succeeded in cancelling order: ', { data: xhr && xhr.data });
 
                             var utilities = new Common.Utilities();
                             console.log('/webinar/details/' + OCA.cartStateManager.getWebinarId());
                             utilities.goToUrl('/webinar/details/' + OCA.cartStateManager.getWebinarId());
                         } else {
-                            var err = new Error('Cancel Order Failure');
-                            //NREUM.noticeError(err);
+                            
+                            Rollbar.error( 'Cancel Order Failure: ', { data: xhr && xhr.data });
 
                             confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                             $('#CancelModal').modal('hide');
@@ -425,6 +424,8 @@ OCA.initializeFunctions = function () {
                         // enable button again upon ending operation.
                         //$('#cancelRegistration').removeAttr('disabled');  // [dar] NO. On staging, redirect is slow and button enabled again. User could have clicked it again.
                     } else {
+                        Rollbar.error({ 'Cancel Order Failure: ': { data: xhr.data } });
+
                         confirmRegistrationBillMe.after('<span class="field-validation-error">Server Error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                         $('#CancelModal').modal('hide');
                     }
@@ -896,21 +897,18 @@ function modalShown(e) {
                 $('#updateShippingMsgLabelWrap').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details updated successfully.</span>');
 
             } else if (!data.isSuccessful) {
-                Rollbar.error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
+                Rollbar.error('#348 userDetailsFormUrl: ' + userDetailsFormUrl, { data: data });
                 $('#updateShippingMsgLabelWrap').empty();
                 formProcessor.lightUpValidationSummary('userDetailsValSummary', data);
             } else {
-                var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
-                //NREUM.noticeError(err);
-                Rollbar.error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
-                Rollbar.error("#348 userDetailsFormUrl static marker");
-
+                Rollbar.error('#348 userDetailsFormUrl Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
+                
                 $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>[Connection Error #348] Please call us at 800-831-0678 ext. 3 to resolve.</span>');
             }
         }).fail(function (data) {
 
-            Rollbar.error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData + ' !data.isSuccessful');
-            Rollbar.error("#348 userDetailsFormUrl static marker");
+            Rollbar.error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData, { data: data });
+            
             $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Connection Error #048] Please call us at 800-831-0678 ext. 3 to resolve.</span>');
         });
     });

@@ -22,7 +22,7 @@ $(function () {
             var self = $(this);
             self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
 
-            Rollbar.info({'d-#1': {'submitting ConfirmOrder': cartStateManager.getOrderRowId()} });
+            Rollbar.info({ 'd-#1': { 'submitting ConfirmOrder': cartStateManager.getOrderRowId() } });
 
             var data = $(this).serialize();
 
@@ -50,7 +50,7 @@ $(function () {
                     var orderRowId = data.OrderRowId;
 
                     console.info('Posted orderRow:' + orderRowId);
-                    
+
                     $('#orderDetails').empty();
                     $('#orderDetails').append(data.Msg);
 
@@ -69,7 +69,7 @@ $(function () {
                 $('#finalLoadingSpinner').remove();
                 confirmRegistrationBillMe.removeAttr('disabled');
                 $('#signUpSpinner').remove();
-            }).fail(function(jqXHR, textStatus, errorThrown) {
+            }).fail(function (jqXHR, textStatus, errorThrown) {
                 $('#finalLoadingSpinner').remove();
                 confirmRegistrationBillMe.removeAttr('disabled');
                 $('#signUpSpinner').remove();
@@ -79,13 +79,13 @@ $(function () {
 
         });
 
-        
+
         var cancelOrderForm = cartStateManager.getCancelOrderForm();
         // CANCEL REGISTRATION BUTTON CLICKED
         cancelOrderForm.on('submit', function (e) {
 
             console.log('cancelOrderForm submit hit');
-            
+
             e.preventDefault();
             e.stopImmediatePropagation();
 
@@ -151,13 +151,14 @@ $(function () {
     cartStateManager.setNotificationsTesting(notificationsTesting); // notificationsTesting is set in a script tag in razor view Details.cshtml
 
     Rollbar.info({
-        'd-#10': { 'serverVariables': {
-            'webinarId': webinarId,
-            'orderRowId': orderRowId,
-            'isUserLoggedIn': isUserLoggedIn,
-            'checkoutInProcess': checkoutInProcess,
-            'addressVerified': addressVerified,
-            'notificationsTesting': notificationsTesting
+        'd-#10': {
+            'serverVariables': {
+                'webinarId': webinarId,
+                'orderRowId': orderRowId,
+                'isUserLoggedIn': isUserLoggedIn,
+                'checkoutInProcess': checkoutInProcess,
+                'addressVerified': addressVerified,
+                'notificationsTesting': notificationsTesting
             }
         }
     });
@@ -180,7 +181,7 @@ $(function () {
 
     // Flow goes inside this block where the order exists and is in process e.g. previously abandoned before finializing
     if (cartStateManager.getOrderRowId() > 0 && cartStateManager.getCheckoutInProcess()) {
-        
+
         Rollbar.info({ 'd-#11': { 'returnUnfinishedOrder': 'User finishing order row: ' + cartStateManager.getOrderRowId() } });
 
         if (shippingAddressRequired && !cartStateManager.getNotificationsTesting() && !cartStateManager.getAddressVerified()) {
@@ -195,7 +196,7 @@ $(function () {
         // see top of this file
         checkoutConfirm.initialize();
 
-         //The BIG GREEN 'Bill Me' button on 3rd tab
+        //The BIG GREEN 'Bill Me' button on 3rd tab
         $('#ConfirmRegistrationBillMe').on('click', function (e) {
             e.preventDefault();
             var confirmOrderForm = $('#confirmOrder');
@@ -292,10 +293,10 @@ $(function () {
                         cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
                         cartStateManager.setOrderId(xhr.responseJSON['orderId']);
                         cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
-                        
+
                         Rollbar.info({ 'd-#30': { 'loggedInUser': 'submitting ConfirmOrder' + xhr.responseJSON['orderId'] } });
 
-                        $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function(response, status, xhr) {
+                        $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
 
                             if (status === 'error') {
                                 $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
@@ -317,14 +318,14 @@ $(function () {
                                 checkoutConfirm.initialize();
 
                                 // The Bill Me button on 3rd tab
-                                $('#ConfirmRegistrationBillMe').on('click', function(e) {
+                                $('#ConfirmRegistrationBillMe').on('click', function (e) {
                                     e.preventDefault();
                                     var confirmOrderForm = $('#confirmOrder');
                                     confirmOrderForm.submit();
                                 });
 
                                 // The Cancel Registration button on 3rd tab
-                                $('#Canceller').on('click', function(e) {
+                                $('#Canceller').on('click', function (e) {
                                     e.preventDefault();
                                     var cancelOrderForm = $('#cancelOrder');
                                     cancelOrderForm.submit();
@@ -337,7 +338,7 @@ $(function () {
                                 // which will be in memory at this point and thus will be hoisted
                                 hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
                                 hookUpChangeTypeLogic($('#RegType'));
-                                hookUpEditUserLogic(null, shippingAddressRequired); 
+                                hookUpEditUserLogic(null, shippingAddressRequired);
 
                                 beigeFormArea.height($('#confirmation').height() + 30);
                             }
@@ -456,7 +457,7 @@ function setUpEditButtons() {
             }));
 
             $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
-            
+
             newId = 0;
         } else {
             // first get the last previous email input
@@ -507,7 +508,7 @@ function populateAdditionalLocationsOn3rdTab() {
         }));
 
         $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
-        
+
         var trashCans = additionalLocationsList.find('i');
 
         $.each(trashCans, function (idx, i) {
@@ -516,7 +517,7 @@ function populateAdditionalLocationsOn3rdTab() {
     }
 }
 
-var deleteAddLocInputTabb3 = function(event) {
+var deleteAddLocInputTabb3 = function (event) {
 
     numberOfAdditionalLocationsTab3--;
 
@@ -524,22 +525,22 @@ var deleteAddLocInputTabb3 = function(event) {
     var idx = trashClicked.substring(0, 1);
     var spanToRemove = locationsSpanPrefix + idx;
 
-    $('#' + spanToRemove).hide(500, function() {
+    $('#' + spanToRemove).hide(500, function () {
         $(this).remove();
     });
 
-    $('#' + idx + breakSuffix).hide(500, function() {
+    $('#' + idx + breakSuffix).hide(500, function () {
         $(this).remove();
     });
 
     if (numberOfAdditionalLocationsTab3 < 1) {
-        $('#applyAdditionalLocationsButton').hide(300, function() {
+        $('#applyAdditionalLocationsButton').hide(300, function () {
             $(this).remove();
         });
     }
 };
 
-var applyAdditionalLocations = function(e) {
+var applyAdditionalLocations = function (e) {
 
     e.preventDefault();
 
@@ -565,10 +566,10 @@ var applyAdditionalLocations = function(e) {
         url: url,
         dataType: RegistrationInCart.Constants.JsonDataType,
         data: formData,
-        beforeSend: function() {
+        beforeSend: function () {
             self.append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
         }
-    }).done(function(data) {
+    }).done(function (data) {
         if (data.Result === 'Success') {
             var infoLabel = $('#addLocsText');
 
@@ -577,7 +578,7 @@ var applyAdditionalLocations = function(e) {
 
             var newText = numberOfAdditionalLocationsTab3 + $.trim(infoLabel.html()).slice(1);
 
-            infoLabel.fadeOut(200, function() {
+            infoLabel.fadeOut(200, function () {
                 infoLabel.html(newText);
                 infoLabel.fadeIn(200);
             });
