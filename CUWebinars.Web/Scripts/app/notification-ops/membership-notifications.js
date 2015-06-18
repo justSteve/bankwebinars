@@ -68,9 +68,8 @@ $(function () {
 
             // errorThrown has error message, or "timeout" in case of timeout.
 
-            var err = new Error('LogInAsUser AJAX error: ' + errorThrown);
-            //NREUM.noticeError(err);
-            var i = 0;
+            Rollbar.error({ 'LogInAsUser AJAX error: ': { 'errorThrown': errorThrown } });
+
             $('#loadSpinner1').remove();
         });
     };

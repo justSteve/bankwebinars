@@ -59,6 +59,9 @@ $(function () {
                     $('#wrapReset div.container').hide("slow");
                     $('#NormalResetPasswordButton').hide();
                 } else {
+
+                    Rollbar.error({ 'Else branch of form#ResetPasswordForm: ': { 'data': data} });
+
                     if (data['Invalid'] === 'UserNotVerified') {
                         crunchingLabel.html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Our system is in an in invalid state. This error is known and can be <br>easily rectified by calling us at 800-831-0678 ext. 3. Or email us at support@ttstrain.com</span>');
                     } else if (data['Invalid'] === 'UnkownEmail') {
@@ -70,13 +73,10 @@ $(function () {
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 // failed request; give feedback to user
                 crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;<strong>Oops!</strong> Try that again in a few moments.In case of continued problems, please contact us at 800-831-0678 ext 707.</span>');
-                    // Request failed. Show error message to user. 
-                    // errorThrown has error message, or "timeout" in case of timeout.
                 
-                var err = new Error("ResetPassword AJAX error: " + errorThrown);
-                //NREUM.noticeError(err);
-                
-                
+
+                Rollbar.error({ 'ResetPassword AJAX error: ': { 'errorThrown': errorThrown } });
+
             });
         }
         return false;

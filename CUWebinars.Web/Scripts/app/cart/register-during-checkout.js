@@ -34,7 +34,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
     });
 
     $('body').on('click', 'input:button', (function (e, data) {
-        
+
         if (e.currentTarget.value === 'Create New Account?') // called directly in the razor partial view
             return false;
 
@@ -74,7 +74,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 regUserStateManager.nonUsAdddressInvoked();
                 break;
             case RegistrationInCart.Button.ResetPass:
-                Rollbar.info({'ResetPass': { Action : regUserStateManager.getAction() }});
+                Rollbar.info({ 'ResetPass': { Action: regUserStateManager.getAction() } });
                 regUserStateManager.resetPassword(normalResetPasswordButton);
                 break;
             case RegistrationInCart.Button.YesUseAddress:
@@ -100,7 +100,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
         if (normalResetPasswordButton.filter(':visible').length > 0)
             inputElementTriggered = 'NormalResetPasswordInput';
-        
+
         // 13 is enter key
         if (event.which == 13) {
 
@@ -211,8 +211,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 $('#labelEmail').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Reset instructions are on the way.</span>');
             } else {
                 if (data['Invalid'] === 'UserNotVerified') {
-                    Rollbar.error("UserNotVerified", { result: data.Result } );
-                    Rollbar.error("#388 UserNotVerified static marker");
+                    Rollbar.error("#388 UserNotVerified ", { result: data && data.Result });
 
                     $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #388. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 } else if (data['Invalid'] === 'UnkownEmail') {
@@ -256,7 +255,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
             }).done(function (data) {
 
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
-                
+
                 // successful request; do something with the data
                 if (data.success === 'foundExisting') {
                     Rollbar.info('Existing user came anon: ' + email);
@@ -354,7 +353,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
     });
 
-    
+
     $('#_CreateUserFromCartForm').on('submit', function (event) {
         event.preventDefault();
 
@@ -448,7 +447,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                             headers: headers,
                             beforeSend: function () {
                                 Rollbar.log("submitting " + url + " with: ", {
-                                    orderId: orderId, 
+                                    orderId: orderId,
                                     userId: data.UserId
                                 });
                                 $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
@@ -633,7 +632,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                     });
                 }
             } else if (!data.isSuccessful) {
-                Rollbar.error("Error #641.  static marker");
+                Rollbar.error("Error #641: ", { data: data && data });
 
                 valSummary.removeClass('validation-summary-valid').addClass('validation-summary-errors');
                 var errorsList = valSummary.find('ul');
@@ -659,12 +658,12 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 alert('Sorry, your session has expired. Please login again to continue');
                 window.location.href = '/Account/Login';
             } else if (jqXHR.statusCode().status === 0 && errorThrown === '' && textStatus === 'error') {
-                ;// do nothing
+                    ;// do nothing
             } else {
                 alert('An error occurred: ' + jqXHR.statusCode().status + ' nError: ' + jqXHR.statusCode().statusText);
             };
-            
-            Rollbar.error("Error #902 static marker");
+
+            Rollbar.error("Error #902: ", { data: xhr && xhr.data });
 
             labelEmail.remove();
 
@@ -778,7 +777,7 @@ function completeOrder(userId, orderRowId, webinarId, orderId) {
 
             } else {
 
-                Rollbar.error("Error #935 static marker");
+                Rollbar.error("Error #935: ", { result: result && result.Result });
                 confirmRegistrationBillMe.after('<span class="text-error">Error #935. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
             }
 
@@ -815,7 +814,7 @@ function cancelOrder(orderId, webinarId) {
 
             } else {
 
-                Rollbar.error("Cancel Order Failure static marker");
+                Rollbar.error("Cancel Order Failure: ", { data: xhr && xhr.data });
 
                 $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Error #216. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                 $('#CancelModal').modal('hide');
@@ -848,7 +847,7 @@ function hookUpModal(modalForm) {
 }
 
 function hookUpEditUserLogic(button, shippingAddressRequired) {
-    
+
     var modalForm = $('#UserDetailsModal');
 
     // There may be times where a button does not trigger the modal.
@@ -893,42 +892,39 @@ function hookUpEditUserLogic(button, shippingAddressRequired) {
 
                 if (data.Result === 'Success') {
                     var fullname = $('#ShippingAddress_Name').val();
-                    
+
                     $('#userFullnameLabel').text(fullname);
 
                     $('#updateShippingMsgLabelWrap').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details updated successfully.</span>');
 
                 } else if (!data.isSuccessful) {
 
-                    Rollbar.error("userDetailsForm Submission Fails", data);
-                    Rollbar.error("userDetailsForm Submission Fails static marker");
-
+                    Rollbar.error("userDetailsForm Submission Fails: ", { data: data && data.Result });
                     $('#updateShippingMsgLabelWrap').empty();
                     formProcessor.lightUpValidationSummary('userDetailsValSummary', data);
                 } else {
+                    Rollbar.error("Error #416: ", { data: data && data.Result });
+                };
 
-                    Rollbar.error("416", data.Result);
-                    Rollbar.error("416 static marker");
-                    $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #416. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
-                }
+                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #416. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
+
             }).fail(function (data) {
 
                 if (jqXHR.statusCode().status == 403) {
                     alert('Sorry, your session has expired. Please login again to continue');
                     window.location.href = '/Account/Login';
                 } else if (jqXHR.statusCode().status === 0 && errorThrown === '' && textStatus === 'error') {
-                    ; // do nothing
+                        ; // do nothing
                 } else {
                     alert('An error occurred: ' + jqXHR.statusCode().status + ' nError: ' + jqXHR.statusCode().statusText);
                 };
 
-                Rollbar.error("417", data.Result);
-                Rollbar.error("417 static marker");
+                Rollbar.error("Error #417", { jqXHR: jqXHR && jqXHR.statusCode().statusText });
                 $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #417. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
             });
         });
 
-        
+
     });
 
     modalForm.on('hidden', function (e) {
