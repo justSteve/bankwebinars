@@ -133,7 +133,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 return PartialView("~/Views/Admin/Partials/_BatchPasswordReset.cshtml", batchPasswordResetViewModel);
             }
 
-            return null;
+            return PartialView("~/Views/Admin/Partials/_NotAuthorized.cshtml");
         }
 
         [HttpPost]
@@ -141,42 +141,66 @@ namespace CUWebinars.Web.Controllers.Admin
         [HandleAjaxException(Order = 1)]
         public ActionResult BatchPasswordReset(BatchPasswordResetViewModel batchPasswordResetViewModel)
         {
+            const string CommaDelimiter = "|,|";
+            const string SemiColonDelimiter = "|;|";
+
             if (ModelState.IsValid)
             {
-                var emails = batchPasswordResetViewModel.UserEmails.Split(
-                    ";".ToCharArray(),
-                    StringSplitOptions.RemoveEmptyEntries
-                    );
-
-                var membershipRebootConfiguration = MembershipRebootConfigInert.Create(
-                    HttpRuntime.AppDomainAppPath,
-                    _stateService
-                    );
-
-                var userAccountService = new UserAccountService(
-                    membershipRebootConfiguration,
-                    new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase())
-                    );
-
-                var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
-
-                var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, "" /* set to email address*/);
-
-                if (ReferenceEquals(null, userAccount))
+                try
                 {
-                    throw new NullReferenceException(DomainConstants.UserNotFound);
+                    var emailsPlusPasswordsCollection = 
+                        batchPasswordResetViewModel.UserEmails.Split(new[] {SemiColonDelimiter}, StringSplitOptions.RemoveEmptyEntries);
+
+                    var membershipRebootConfiguration = MembershipRebootConfigInert.Create(
+                        HttpRuntime.AppDomainAppPath,
+                        _stateService
+                        );
+
+                    var userAccountService = new UserAccountService(
+                        membershipRebootConfiguration,
+                        new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase())
+                        );
+
+                    var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
+
+
+                    foreach (var emailPwdPairing in emailsPlusPasswordsCollection)
+                    {
+                        if(string.IsNullOrWhiteSpace(emailPwdPairing))
+                            continue;
+
+                        var pairingAsArray = emailPwdPairing.Split(
+                            new[] {CommaDelimiter},
+                            StringSplitOptions.RemoveEmptyEntries
+                            );
+
+                        var email = pairingAsArray[0].Trim();
+                        var password = pairingAsArray[1].Trim();
+
+                        var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, email);
+
+                        if (ReferenceEquals(null, userAccount))
+                        {
+                            throw new NullReferenceException(DomainConstants.UserNotFound);
+                        }
+
+                        dataOperations.SetFieldsConsistantWithVerifiedUser(userAccount);
+
+                        userAccountService.ResetPassword(_globalConfig.Tenant, email);
+
+                        var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKeyForBatchChangePwd);
+
+                        userAccountService.ChangePasswordFromResetKey(verificationKey, password);
+
+                        _stateService.ClearValue(DomainConstants.VerificationKeyForBatchChangePwd);
+                    }
+                    return Json(new {Result = WebUiConstants.Success});
                 }
-
-                
-                dataOperations.SetFieldsConsistantWithVerifiedUser(userAccount);
-
-                userAccountService.ResetPassword(_globalConfig.Tenant, emails[0]);
-
-                var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKeyForBatchChangePwd);
-
-                userAccountService.ChangePasswordFromResetKey(verificationKey, emails[1]);
-
-                return Json(new {Result = WebUiConstants.Success});
+                catch (Exception exception)
+                {
+                    _logger.ErrorException(string.Format("BatchPasswordReset | Session {0}", _appHelper.GetUserAuditInfo()), exception);
+                    ModelState.AddModelError(string.Empty, string.Format("There was an error at the server. The exception message is {0}", exception.Message));
+                }
             }
 
             return this.ModelStateJson(ModelState);

@@ -1,5 +1,6 @@
 /// <reference path="../Constants.js" />
 /// <reference path="../utilities.js" />
+/// <reference path="../Utilities/formProcessor.js" />
 
 if (MEMBERSHIPNOTIFICATIONS === null || typeof MEMBERSHIPNOTIFICATIONS === 'undefined')
     var MEMBERSHIPNOTIFICATIONS = {}; // create namespace - object to holds all references and methods.
@@ -547,6 +548,8 @@ $(function () {
 
         e.preventDefault();
 
+        var self = $(this);
+
         var batchPasswordResetForm = $('#BatchPasswordResetForm');
         var url = batchPasswordResetForm.attr('action');
         var token = batchPasswordResetForm.find('input[name=__RequestVerificationToken]').val();
@@ -567,17 +570,21 @@ $(function () {
             data: JSON.stringify(payload),
             headers: headers,
             beforeSend: function () {
-
+                $('#resultLabel').remove();
+                self.append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+                formProcessor.clearValidationSummary($('#batchPwdMigrateValSummary'));
             }
         }).done(function (data, textStatus, jqXHR) {
             if (data.Result === 'Success') {
-
+                self.after('<span id="resultLabel">&nbsp;<span class="label label-success">&nbsp;Migration of passwords succeeded!</span></span>');
+            } else if (!data.isSuccessful) {
+                formProcessor.lightUpValidationSummary('batchPwdMigrateValSummary', data);
             } else {
-
+                self.after('<span id="resultLabel" class="label label-success">&nbsp;Migration of passwords did not succeed.</span>');
             }
-        });
 
-
+            $('#waitSpinner').remove();
+        }).fail(commonFuncs.failCallBack);
     };
 
 })(MN);

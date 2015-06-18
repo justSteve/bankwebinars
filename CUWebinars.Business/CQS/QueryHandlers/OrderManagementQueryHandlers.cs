@@ -8,7 +8,8 @@ namespace CUWebinars.Business.CQS.QueryHandlers
 {
     public class OrderManagementQueryHandlers :
         IQueryHandler<OrderManagementQuery, OrderManagementQueryResult>,
-IQueryHandler<MigratorQuery, MigratorQueryResult>, IQueryHandler<ImportQuery, ImportQueryResult>
+        IQueryHandler<MigratorQuery, MigratorQueryResult>, 
+        IQueryHandler<ImportQuery, ImportQueryResult>
     {
         private readonly IMembershipService _membershipService;
         private readonly IOrderManagementService _orderManagementService;
