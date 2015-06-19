@@ -215,13 +215,11 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
                     $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #388. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 } else if (data['Invalid'] === 'UnkownEmail') {
-                    Rollbar.error("UnkownEmail", { result: data.Result });
-                    Rollbar.error("UnkownEmail static marker");
+                    Rollbar.error("UnkownEmail", { result: data && data.Result });
 
                     $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 } else {
-                    Rollbar.error("Unknown error #454", { result: data.Result });
-                    Rollbar.error("Unknown #454 static marker");
+                    Rollbar.error("Unknown error #454", { result: data && data.Result });
                     $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Error.Connection Error #454. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 }
             }
@@ -276,21 +274,21 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                     Rollbar.info("goToAddressFields 319");
                     $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #319. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 } else if (data.error === 'Uncaught Ajax Error') {
-                    Rollbar.error("Uncaught Ajax Error 343", { result: data });
-                    Rollbar.error("Uncaught Ajax Error 343 static marker");
-                    Rollbar.error(payload);
+                    Rollbar.error("Uncaught Ajax Error 343", { result: data || 'data was falsey' });
+                    
+                    Rollbar.error("payload", payload);
                     $('#labelEmail').html('<span class="label label-important">&nbsp;Uncaught Ajax Error 343</span>');
                 }
 
             }).fail(commonFuncs.failCallBack).always(function (data, status, message) {
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
 
-                if (status === 'error' && JSON.parse(data.responseText)['Message'] === 'Uncaught Ajax Error') {
-                    Rollbar.error("HandleAjaxExceptionAttribute #458 ", data);
-                    Rollbar.error("HandleAjaxExceptionAttribute #458 static marker");
-                    Rollbar.error(payload);
-                    //  if in here, we know the error got caught and logged in a HandleAjaxExceptionAttribute 
+                if (data && data.responseText) {
+                    if (status === 'error' && JSON.parse(data.responseText)['Message'] === 'Uncaught Ajax Error') {
+                        Rollbar.error("HandleAjaxExceptionAttribute #458 ", data);
+                    }
                 }
+                Rollbar.error("Static marker #320 payload", payload);
             });
         }
     });
@@ -316,9 +314,11 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 }
             }).done(function (data) {
                 // successful request; do something with the data
+                Rollbar.info({ 'Zipcode check result': { 'data': data || 'data was falsey'} });
                 regUserStateManager.zipCodeVerified(data, zipCode);
             }).fail(commonFuncs.failCallBack).always(function () {
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
+                Rollbar.info({ 'Zipcode checked': { 'zipCode': zipCode } });
             });
         }
         return false;
@@ -590,8 +590,8 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
 
                                         if (status == 'error') {
-                                            Rollbar.error("Connection Error #106.", data);
-                                            Rollbar.error("Connection Error #106. static marker");
+                                            Rollbar.error("Connection Error #106.", { 'data': data || 'data was falsey'});
+                                            
                                             $(this).html('<div class="text-error">Connection Error #106. Email support@ttstrain.com or call 800-831-0678 ext 706 for immediate assistance.</div>');
                                             $('#confirmationTab a').tab('show');
                                         } else {

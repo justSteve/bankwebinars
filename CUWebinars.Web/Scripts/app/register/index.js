@@ -213,8 +213,10 @@ $(function () {
             }).done(function (data) {
                 // successful request; do something with the data
                 stateManager.zipCodeVerified(data, zipCode);
+                Rollbar.info({ 'rdc-#1 Zipcode check result': { 'data': data || 'data was falsey' } });
             }).fail(commonFuncs.failCallBack).always(function () {
                 stateManager.setInputAction(Registration.InputAction.None);
+                Rollbar.info({ 'rdc-#2 Zipcode checked': { 'zipCode': zipCode } });
             });
         }
         return false;
@@ -229,7 +231,7 @@ $(function () {
 
         var data = $(this).serialize();
         var url = $(this).attr('action');
-
+        
         $.ajax({
             url: url,
             type: 'POST',
@@ -267,6 +269,7 @@ $(function () {
 
             } else if (data.result === 'Confirmed') {
                 //  if here, user has to verify before they can log in
+                Rollbar.info('rdc-#3 Unverified', { 'msg': 'user has to verify before they can log in' });
                 utilities.goToUrl('/Account/Confirmed?email=' + data.email + '&password=' + data.password);
             } else if (data.data) {
 
@@ -275,34 +278,9 @@ $(function () {
 
                 if ($('#labelEmail').is(':visible')) {
                     $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;Login error...</span>');
-                    var valSummary = $('#loginErrorSummary');
-                    valSummary.addClass('validation-summary-errors');
-                    valSummary.append('Please address the following login errors: <ul></ul>');
-
-                    var errorsList = valSummary.find('ul');
-                    errorsList.empty();
-
-                    for (var error in data.data) {
-                        if (data.data.hasOwnProperty(error)) {
-                            errorsList.append('<li>' + data.data[error] + '</li>');
-                            console.log(data.data[error]);
-                        }
-                    }
-
-                } else {
-                    var valSummary = $('#LoginValSummary');
-                    valSummary.removeClass('validation-summary-valid').addClass('validation-summary-errors');
-
-                    var errorsList = valSummary.find('ul');
-                    errorsList.empty();
-
-                    for (var error in data.data) {
-                        if (data.data.hasOwnProperty(error)) {
-                            errorsList.append('<li>' + data.data[error] + '</li>');
-                            console.log(data.data[error]);
-                        }
-                    }
                 }
+                Rollbar.error('rdc-#4 Validation Fail', { 'data': data && data.data });
+                formProcessor.lightUpValidationSummary('loginErrorSummary');
             }
         }).fail(commonFuncs.failCallBack);
 
