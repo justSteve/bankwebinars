@@ -49,7 +49,8 @@ namespace CUWebinars.Web.Controllers
                             upcomingWebinar.idWebinar,
                             seoTitle
                             ),
-                            upcomingWebinars[i].idWebinar + "'>" + Server.HtmlEncode(shortTitle) + "</a></li>")
+                            //upcomingWebinars[i].idWebinar + "'>" + Server.HtmlEncode(shortTitle) + "</a></li>")
+                           ">" + Server.HtmlEncode(shortTitle) + "</a></li>")
                         );
                 }
 
@@ -92,7 +93,7 @@ namespace CUWebinars.Web.Controllers
                             recordedWebinar.idWebinar,
                             seoTitle
                             ),
-                            recordedWebinars[i].idWebinar + "'>" + Server.HtmlEncode(shortTitle) + "</a></li>"));
+                            ">" + Server.HtmlEncode(shortTitle) + "</a></li>"));
 
                     //recordedWebinarsListItems.Append(
                     //    "<li role='presentation'><a role=\"menuitem\" tabindex=\"-1\" href='/Webinar/Details/" +

@@ -231,7 +231,6 @@ namespace CUWebinars.Web.App_Start
                 "~/Content/css/header-1.css",
                 "~/Content/css/bootstrap.css",
                 "~/Content/css/bootstrap-responsive.css",
-//                "~/Scripts/bootstrap3/css/bootstrap.css",
                 "~/Content/css/html-content-slider-flexslider.css",
                 "~/Scripts/AutoComplete/css/styles.css",
                 "~/Scripts/AutoComplete/css/styles.css/ui-lightness/jquery-ui-1.10.3.custom.css",

@@ -113,7 +113,7 @@ body.tall-logo nav.user {
     .container.preheader form {
         margin: 0;
         padding: 0;
-        height: 30px;
+        /*height: 30px;*/
     }
 
 .search-wrapper {

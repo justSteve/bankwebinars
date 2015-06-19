@@ -295,10 +295,6 @@ namespace CUWebinars.Web
                     IAffiliateRepository affiliateRepository = new AffiliateRepository(ttsWebinarsContext);
                     IInstitutionRepository institutionRepository = new InstitutionRepository(ttsWebinarsContext);
 
-                    //StateService.SetValue("searchTerm", string.Empty);
-                    //StateService.SetValue("IncludeRecorded", false);
-                    //StateService.SetValue("IncludeUpcoming", true);
-                    //StateService.SetValue("searchExtent", "Upcoming");
 
                     StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(AppConst.DEFAULT_AFFILIATE, a => a.WebUser));
                     StateService.SetValue("AValidInstitution", institutionRepository.FindFirst());
@@ -323,7 +319,6 @@ namespace CUWebinars.Web
                     //MEHTOD 1: VIA QUERY STRING -- idAff=[idUserAff]   
                     if (!string.IsNullOrEmpty(Request.QueryString[WebUiConstants.AffiliateId]))
                     {
-
                         int loadAff;
 
                         if (int.TryParse(Request.QueryString[WebUiConstants.AffiliateId], out loadAff))
@@ -384,30 +379,6 @@ namespace CUWebinars.Web
                             }
                         }
                     }
-
-                    /*METHOD 3: VIA THE SUBDOMAIN -- implementation of this method is on hold pending SEO considerations.
-                //  when passed 'cftws.bankwebinars.com' this method
-                 
-                //  set the Session Affiliate to 380
-                //    
-                //        if (currentHost.ToLower() == "www" || currentHost.ToLower() == "testing" || currentHost.ToLower() == "bankwebinars" || currentHost == "localhost")
-                //        {
-                //            return 0;
-                //        }
-                //        try
-                //        {
-                //            return AffiliateFacade.Instance.LoadByTTSDomain(currentHost).ID;
-                //        }
-                //        catch (Exception ex)
-                //        {
-                //            Logger.Instance.LogException(ex);
-                //            Logger.Instance.LogMessage("ERROR: GetAffilliateByTTSDomain: was passed: " + currentHost);
-                //            return 0;
-                //        }
-                //    
-                //}
-                */
-
 
                     var allCookies = new StringBuilder();
 

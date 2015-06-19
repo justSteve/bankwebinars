@@ -28,8 +28,8 @@
             {
                 <strong>@fullNameClaim.Value</strong><text>.</text>
             }
-        }
-    </p>
+        }<br />Email: <strong>@Model.EditFields.Email</strong>
+</p>
 
     @using (Html.BeginForm("EditUser", "Account", FormMethod.Post, new { id = "editUserForm", @class = "form-horizontal" }))
     {

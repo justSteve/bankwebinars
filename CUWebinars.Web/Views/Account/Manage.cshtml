@@ -1,6 +1,6 @@
 ﻿@model  ManageModel
 @{
-    ViewBag.Title = "Edit Contact Info";
+    ViewBag.Title = "Edit Contact Information";
     var identity = ((ClaimsIdentity)User.Identity)
         .Claims
         .Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName)
@@ -34,11 +34,8 @@
                     {
                         <strong>@identity.Value</strong><text>.</text>
                     }
-                    @*foreach (var claim in ((ClaimsIdentity)User.Identity).Claims)
-                        {
-                            <span>my claim to: @claim.Type is: @claim.Value<br/></span>
-                        }*@
-                }
+                    
+                }<br/>Email: @Model.RegisterFields.Email
             </p>
             <style>
                 .form-horizontal .control-group {
