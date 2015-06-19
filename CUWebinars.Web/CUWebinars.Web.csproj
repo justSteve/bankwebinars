@@ -504,6 +504,7 @@
     <Compile Include="ViewModel\WebinarFileViewModel.cs" />
     <Content Include="Content\claims-mment.css" />
     <Content Include="Content\common.css" />
+    <Content Include="Content\css\bootstrapOverrides.css" />
     <Content Include="Content\DataTables\css\dataTables.autoFill.css" />
     <Content Include="Content\DataTables\css\dataTables.autoFill.min.css" />
     <Content Include="Content\DataTables\css\dataTables.bootstrap.css" />
@@ -561,6 +562,8 @@
     <Content Include="Content\DataTables\swf\copy_csv_xls_pdf.swf" />
     <Content Include="Content\edit-quiz.css" />
     <Content Include="Content\do-quiz.css" />
+    <Content Include="Content\images\buttons.gif" />
+    <Content Include="Content\images\toolbar.gif" />
     <Content Include="Content\manage-order.css" />
     <Content Include="Content\quiz.css" />
     <Content Include="Content\toastr.css" />

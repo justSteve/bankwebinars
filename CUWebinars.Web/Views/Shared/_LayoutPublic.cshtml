@@ -1,5 +1,6 @@
 ﻿@using System.Configuration
 @using System.Text
+@using System.Web
 @using CUWebinars.Web.Core
 @{
     var PageStyleType = ViewBag.PageStyleType;
@@ -200,7 +201,8 @@
              {
             <script>
                      window.$zopim(function() {
-                         window.$zopim.livechat.setName(@User.Identity.Name.ToString().Replace("@", "_"));
+                         //window.$zopim.livechat.setName(@User.Identity.Name.ToString().Replace("@", "_"));
+                         window.$zopim.livechat.setName("steve");
                 });
             </script>
         }
@@ -397,6 +399,7 @@
         });
     </script>
     @RenderSection("scripts", required: false)
+    <link rel="stylesheet" href="~/Content/css/bootstrapOverrides.css" type="text/css" media="screen" />
 
 </body>
 </html>
