@@ -987,7 +987,7 @@ namespace CUWebinars.Web.Controllers
 
                 try
                 {
-                    _accountControllerOrchestrator.LogUserOut();
+                    _accountControllerOrchestrator.LogUserOut((ClaimsPrincipal)User);
                 }
                 catch (Exception exception)
                 {

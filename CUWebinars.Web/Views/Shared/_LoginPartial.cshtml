@@ -1,31 +1,33 @@
-﻿@if (Request.IsAuthenticated)
+﻿@using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes
+@if (Request.IsAuthenticated)
 {
     <nav class="user clearfix">
         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
         {
-            Claim identity;
+            Claim fullNameClaim;
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
 
             if (ReferenceEquals(null, ViewBag.LoggedInUserIdentity))
             {
-                identity = ((ClaimsIdentity)User.Identity)
-                    .Claims
+                fullNameClaim = claimsIdentity.Claims
                     .FirstOrDefault(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName);
+                
                 ViewBag.CurrentIdentity = User.Identity;
                 
             }
             else
             {
-                identity = ViewBag.LoggedInUserIdentity as Claim;
+                fullNameClaim = ViewBag.LoggedInUserIdentity as Claim;
 
             }
 
-            if (!ReferenceEquals(null, identity))
+            if (!ReferenceEquals(null, fullNameClaim))
             {
                 @Html.AntiForgeryToken()
 
-                @Html.ActionLink(identity.Value, "EditUser", "Account", routeValues: null, htmlAttributes: new { title = "Manage", id = "btnLogin" })
+                @Html.ActionLink(fullNameClaim.Value, "EditUser", "Account", routeValues: null, htmlAttributes: new { title = "Manage", id = "btnLogin" })
 
-                if (ReferenceEquals(Session["AdminUserEmail"], null))
+                if (claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.BeingImpersonated) == null)
                 {
                     <a href="javascript:document.getElementById('logoutForm').submit()">&nbsp;&nbsp;[Log Off]</a>
                 }

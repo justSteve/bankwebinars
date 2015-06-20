@@ -70,17 +70,34 @@ namespace CUWebinars.Web.Core.Orchestrators
             return _membershipService.LogInUser(_globals.Tenant, signInModel.Email, signInModel.Password, signInModel.RememberMe);
         }
 
-        public void LogUserOut()
+        public void LogUserOut(ClaimsPrincipal user = null)
         {
+            // check if user is being impersonated
+            string adminUserEmail = string.Empty;
+
+            if (user != null)
+            {
+                var beingImpersonatedClaim = user.Claims.SingleOrDefault(c => c.Type == ClaimTypes.BeingImpersonated);
+
+                if (beingImpersonatedClaim != null)
+                {
+                    adminUserEmail = beingImpersonatedClaim.Value.Trim();
+
+                    _membershipService.RemoveClaim(_globals.Tenant, 
+                        user.Claims.Single(c => c.Type == System.IdentityModel.Claims.ClaimTypes.Email).Value, // email address
+                        ClaimTypes.BeingImpersonated, 
+                        beingImpersonatedClaim.Value
+                        );
+                }
+            }
+
             _membershipService.LogOutUser();
 
-            if (_stateService.HasValue(WebUiConstants.AdminUserEmail))
+            if (!string.IsNullOrEmpty(adminUserEmail))
             {
-                var adminUserAccount = _membershipService.GetUserAccountByEmail(_globals.Tenant, _stateService.GetValue<string>(WebUiConstants.AdminUserEmail));
+                var adminUserAccount = _membershipService.GetUserAccountByEmail(_globals.Tenant, adminUserEmail);
 
                 _membershipService.SignIn(adminUserAccount, false);
-
-                _stateService.ClearValue(WebUiConstants.AdminUserEmail);
             }
         }
 

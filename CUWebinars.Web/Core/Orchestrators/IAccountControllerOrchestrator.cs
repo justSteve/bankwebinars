@@ -36,7 +36,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         string GetZipAddress(int zip);
         LoginModel BuildLoginModel(string returnUrl);
         bool LogUserIn(SignInModel signInModel);
-        void LogUserOut();
+        void LogUserOut(ClaimsPrincipal user = null);
         int? ParseZip(string zip);
         CreateUserConfirmedViewModel PrepareViewForCartUserAddingPassword(string email, bool viaBillMePostRequest = false);
         void RegisterAndLogInUser(RegisterViewModel registerViewModel);
