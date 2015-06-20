@@ -1499,9 +1499,10 @@ namespace CUWebinars.Web.Controllers.Admin
                     return View("", "", ""); //   TODO: Figure out how to show error messages
                 }
 
+                _membershipService.AddClaim(impersonatedUserAccount,Business.Constants.ClaimTypes.BeingImpersonated, adminUserEmail);
                 _membershipService.LogOutUser();
 
-                _stateService.SetValue(WebUiConstants.AdminUserEmail, adminUserEmail);
+                //_stateService.SetValue(WebUiConstants.AdminUserEmail, adminUserEmail);
 
                 if (_membershipService.LogInAdminUserAsOtherUser(_globalConfig.Tenant,
                         adminUserEmail.Trim(), model.Password.Trim(),

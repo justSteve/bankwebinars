@@ -280,7 +280,7 @@ $(function () {
                     $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;Login error...</span>');
                 }
                 Rollbar.error('rdc-#4 Validation Fail', { 'data': data && data.data });
-                formProcessor.lightUpValidationSummary('loginErrorSummary');
+                formProcessor.lightUpValidationSummary('LoginValSummary', data);
             }
         }).fail(commonFuncs.failCallBack);
 
