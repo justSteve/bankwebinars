@@ -966,7 +966,7 @@ $(function () {
         var mm = (dateVal.getMonth() + 1).toString();
         var dd = dateVal.getDate().toString();
 
-        return (dd[1] ? dd : "0" + dd[0]) + '/' + (mm[1] ? mm : "0" + mm[0]) + '/' + yyyy;
+        return (mm[1] ? mm : "0" + mm[0]) + '/' + (dd[1] ? dd : "0" + dd[0]) + '/' + yyyy;
     };
 
     ns.gatherPricingData = function () {
