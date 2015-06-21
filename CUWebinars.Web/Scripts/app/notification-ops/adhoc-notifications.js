@@ -33,13 +33,17 @@ $(function () {
 
         var url = '/AdhocNotification/Index';
 
+        var payload = { webinarId: selectedUpcomingWebinarId };
+
+        Rollbar.info({ 'an-#1': { 'payload': payload } });
+
         $.ajax({
             type: 'POST',
             contentType: constants.JsonContentType,
             cache: false,
             url: url,
             dataType: constants.JsonDataType,
-            data: JSON.stringify({ webinarId: selectedUpcomingWebinarId }),
+            data: JSON.stringify(payload),
             beforeSend: function () {
                 // this is where we append a loading image
                 //pageObjects.labelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</span>');
@@ -69,6 +73,8 @@ $(function () {
                     regTypeIds: $.makeArray(regTypes)
                 };
 
+                Rollbar.info({ 'an-#2': { 'payload': payload } });
+
                 var url = '/AdhocNotification/WebUsersOfWebinars';
 
                 $.ajax({
@@ -83,7 +89,7 @@ $(function () {
                         //pageObjects.labelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</span>');
                     }
                 }).done(function (emails) {
-
+                    
                     var recipientsEmailAddresses = '';
                         $.each(emails, function (idx, value) {
                             return recipientsEmailAddresses += value + ';';
@@ -94,18 +100,12 @@ $(function () {
                     pageObjects.RegTypesCheckBoxesDiv().append('<br /><input type="Text" id="SubjectInput" class="input-xxlarge" style="margin-top:10px;" placeholder="Enter Subject" />');
                     pageObjects.RegTypesCheckBoxesDiv().append('<input type="Text" id="RecipientsInput" style="width:100%;margin-top:10px;clear:left" value="' + recipientsEmailAddresses + '" />');
                     pageObjects.RegTypesCheckBoxesDiv().append('<button id="SendNotificationButton" class="btn btn-primary" style="margin-top:10px;">Send Notification</button>');
+
+                    Rollbar.info({ 'an-#3': { 'result': emails } });
                 });
-
             });
+            Rollbar.info({ 'an-#4': { 'result': data } });
 
-        }).fail(function () {
-            // failed request; give feedback to user
-            
-        }).always(function () {
-            
-        });
+        }).fail(commonFuncs.failCallBack);
     });
-
-    
 });
-

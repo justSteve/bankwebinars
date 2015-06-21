@@ -97,8 +97,13 @@ $(function () {
 
             e.preventDefault();
 
+            var updateFilesValSummary = $('#updateFilesValSummary');
+
             var url = $(this).attr('action');
             var payload = $(this).serialize();
+
+            Rollbar.info({ 'ur-#1': { 'payload': payload } });
+
             $.ajax({
                 type: 'POST',
                 contentType: 'application/x-www-form-urlencoded',
@@ -109,8 +114,7 @@ $(function () {
                 beforeSend: function () {
 
                     $('#result').remove();
-
-                    clearValidationSummary();
+                    formProcessor.clearValidationSummary(updateFilesValSummary);
 
                     updateWebinarRecordingButton.append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
                 }
@@ -118,11 +122,14 @@ $(function () {
                 if (data.result === 'Success') {
                     var label = $('<div id="result" class="label label-success pull-left block buttonAdjacentLabel">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Files Updated</div>');
                     label.hide().insertAfter(updateWebinarRecordingButton).fadeIn(500);
+                    Rollbar.info({ 'ur-#2': { 'result': data } });
                 } else if (data['Result'] === 'Fail') {
                     var label = $('<div id="result" class="label label-important pull-left block buttonAdjacentLabel">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;' + data['Message'] + '</div>');
                     label.hide().insertAfter(updateWebinarRecordingButton).fadeIn(500);
+                    Rollbar.info({ 'ur-#3': { 'fail-result': data } });
                 } else {
                     formProcessor.lightUpValidationSummary('updateFilesValSummary', data);
+                    Rollbar.info({ 'ur-#4': { 'fail-result': data } });
                 }
             }).always(function (data) {
                 $('#waitSpinner').remove();
@@ -136,13 +143,4 @@ $(function () {
 function getNewFileDetailsFragment(id) {
 //placeholder 
     return '<div id="fileDetails_' + id + '" class="recordingFile"></div>';
-}
-
-function clearValidationSummary() {
-    var valSummary = $('#updateFilesValSummary');
-    valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
-
-    var errorsList = valSummary.find('ul');
-    errorsList.empty();
-    errorsList.append('<li style="display:none"></li>');
 }
