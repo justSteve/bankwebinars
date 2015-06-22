@@ -58,6 +58,8 @@ $(function () {
                 //var logStartOperation = toastLogger.getLogFn('ResendConnectionInfo');
                 //logStartOperation("Re-sending ConnectionInfo", null, true);
 
+                var payload = { orderId: orderId };
+                Rollbar.info({ 'oen-#1': { 'payload': payload } });
 
                 $.ajax({
                     type: 'POST',
@@ -65,7 +67,7 @@ $(function () {
                     cache: false,
                     url: resendConnectionInfoUrl,
                     dataType: constants.JsonDataType,
-                    data: JSON.stringify({ orderId: orderId }),
+                    data: JSON.stringify(payload),
                     beforeSend: function () {
                         $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
                     }
@@ -77,6 +79,8 @@ $(function () {
                         $('#InputFormFields').append(noOrderScreenMessage);
                     }
                     $('#spinnerLabel').remove();
+
+                    Rollbar.info({ 'oen-#2': { 'result': result } });
 
                 }).fail(function () {
 
@@ -112,13 +116,16 @@ $(function () {
                 //var logStartOperation = toastLogger.getLogFn('ResendOrderConfirmation');
                 //logStartOperation("Re-sending Order Confirmation", null, true);
 
+                var payload = { orderId: orderId };
+                Rollbar.info({ 'oen-#3': { 'payload': payload } });
+
                 $.ajax({
                     type: 'POST',
                     contentType: constants.JsonContentType,
                     cache: false,
                     url: resendOrderConfirmationUrl,
                     dataType: constants.JsonDataType,
-                    data: JSON.stringify({ orderId: orderId }),
+                    data: JSON.stringify(payload),
                     beforeSend: function() {
                         $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
                     }
@@ -130,8 +137,9 @@ $(function () {
                         $('#InputFormFields').append(noOrderScreenMessage);
                     }
                     $('#spinnerLabel').remove();
+                    Rollbar.info({ 'oen-#4': { 'result': result }});
                 }).fail(function() {
-                    
+                    Rollbar.error({ 'oen-#5': { 'fail-result': 'no data' } });
                 }).always(function() {
                     //$('#loadingSpinner').remove();
                 });
@@ -155,7 +163,10 @@ $(function () {
             selectedUpcomingWebinarIdDropDown.on('change', function (args) {
                 selectedUpcomingWebinarId = $(this).val();
                 $('#RegTypesCheckBoxes').show(100);
-                
+
+                var payload = { webinarId: selectedUpcomingWebinarId };
+                Rollbar.info({ 'oen-#6': { 'payload': payload } });
+
                 $.ajax({
                     type: 'POST',
                     contentType: constants.JsonContentType,
@@ -170,7 +181,6 @@ $(function () {
 
                     // successful request; do something with the data
                     regTypesCheckBoxesDiv = $('#RegTypesCheckBoxes').find('.controls');
-
 
                     $.each(data, function (idx, value) {
                         regTypesCheckBoxesDiv.append('<label class="checkbox-inline"><input type="checkbox" id="inlineCheckbox_' + idx + '" value="' + value["Value"] + '">' + value["Text"] + '</label>');
@@ -217,12 +227,18 @@ $(function () {
                             regTypesCheckBoxesDiv.append('<br /><input type="Text" id="SubjectInput" class="input-xxlarge" style="margin-top:10px;" placeholder="Enter Subject" />');
                             regTypesCheckBoxesDiv.append('<input type="Text" id="RecipientsInput" style="width:100%;margin-top:10px;clear:left" value="' + recipientsEmailAddresses + '" />');
                             regTypesCheckBoxesDiv.append('<button id="SendNotificationButton" class="btn btn-primary" style="margin-top:10px;">Send Notification</button>');
+
+                            Rollbar.info({ 'oen-#9': { 'result': emails } });
                         });
 
+                        Rollbar.info({ 'oen-#8': { 'payload': payload } });// added after the AJAX call so as not to hold it up.
                     });
 
-                }).fail(function () {
+                    Rollbar.info({ 'oen-#7': { 'result': data } });
+                }).fail(function (jqXHR, textStatus, errorThrown) {
                     // failed request; give feedback to user
+                    Rollbar.error({ 'oen-#14': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
+                    Rollbar.error({ 'oen-#15': { 'errorThrown': errorThrown } });
 
                 }).always(function () {
 
@@ -274,13 +290,19 @@ $(function () {
                     } else if (result.Result === 'No Orders to send for that webinar') {
                         $('#InputFormFields').append(noOrdersScreenMessage);
                     }
-                }).fail(function () {
+                    Rollbar.info({ 'oen-#11': { 'result': result } });
+                }).fail(function (jqXHR, textStatus, errorThrown) {
                     labelCheckRemove();
                     $('#InputFormFields').append(failedScreenMessage);
+                    
+                    Rollbar.error({ 'oen-#12': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
+                    Rollbar.error({ 'oen-#13': { 'errorThrown': errorThrown } });
                 }).always(function () {
                     //$('#loadingSpinner').remove();
 
                 });;
+
+                Rollbar.info({ 'oen-#10': { 'payload': payload } });// added after the AJAX call so as not to hold it up.
             });
 
             $('#PreviewShippedOrderEmailButton').on('click', function (e) {
@@ -291,9 +313,9 @@ $(function () {
                 if (resultLabel.length > 0)
                     resultLabel.remove();
 
-                var payload = selectedOrderId.val();
+                var selectedOrderIdVal = selectedOrderIdVal.val();
 
-                if (!payload) {
+                if (!selectedOrderIdVal) {
                     $('#EmailOrderButton').after('<span id="resultLabel" class="label label-important" style="margin-left:5px"><i class="icon icon-exclamation-sign"></i>&nbsp;You need to select an Order from the Dropdown List.</span>');
                     return;
                 }
@@ -303,7 +325,7 @@ $(function () {
                 
                 var that = this;
 
-                var url = '/Admin/PreviewShippedOrder/' + selectedOrderId.val();
+                var url = '/Admin/PreviewShippedOrder/' + selectedOrderIdVal;
 
                 var modalPreview = $('#previewModal'),
                     modalFormOptionsOnPageLoad = {
@@ -317,8 +339,9 @@ $(function () {
                     $('#loadingSpinner').remove();
 
                     modalPreview.modal(modalFormOptionsOnPageLoad);
-
                 });
+
+                Rollbar.info({ 'oen-#16': { 'selectedOrderId': selectedOrderIdVal } });// added after the AJAX call so as not to hold it up.
             });
 
             $('#EmailOrderButton').on('click', function (e) {
@@ -329,9 +352,9 @@ $(function () {
                 if (resultLabel.length > 0)
                     resultLabel.remove();
 
-                var payload = selectedOrderId.val();
+                var selectedOrderIdVal = selectedOrderId.val();
 
-                if (!payload) {
+                if (!selectedOrderIdVal) {
                     $('#EmailOrderButton').after('<span id="resultLabel" class="label label-important" style="margin-left:5px"><i class="icon icon-exclamation-sign"></i>&nbsp;You need to select an Order from the Dropdown List.</span>');
                     return;
                 }
@@ -349,7 +372,7 @@ $(function () {
                         type: 'POST',
                         contentType: constants.JsonContentType,
                         cache: false,
-                        url: '/Admin/EmailOrder/' + selectedOrderId.val(),
+                        url: '/Admin/EmailOrder/' + selectedOrderIdVal,
                         dataType: constants.JsonDataType,
                         data: JSON.stringify(payload),
                         beforeSend: function () {
@@ -380,6 +403,8 @@ $(function () {
 
                         $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                     });
+                    Rollbar.info({ 'oen-#17': { 'selectedOrderId': selectedOrderIdVal } });// added after the AJAX call so as not to hold it up.
+                    Rollbar.info({ 'oen-#18': { 'payload': payload } });// added after the AJAX call so as not to hold it up.
                 });
             });
 
@@ -398,10 +423,10 @@ $(function () {
 
             $('#FireSendReminderEventButton').on('click', function (eventArgs) {
                 
-                var payload = $('#SelectedWebinarId').val();
+                var selectedWebinarIdVal = $('#SelectedWebinarId').val();
+                var payload = { webinarId: selectedWebinarIdVal };
 
                 $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-
 
                 $.ajax({
                     type: 'POST',
@@ -409,7 +434,7 @@ $(function () {
                     cache: false,
                     url: sendReminderUrl,
                     dataType: constants.JsonDataType,
-                    data: JSON.stringify({ webinarId: payload }),
+                    data: JSON.stringify(payload),
                     beforeSend: function() {
                         $('#WaitIndicator').show();
                     }
@@ -422,12 +447,17 @@ $(function () {
                     } else if (result.Result === 'No Orders to send for that webinar') {
                         $('#InputFormFields').append(noOrdersScreenMessage);
                     }
-                }).fail(function () {
+                }).fail(function (jqXHR, textStatus, errorThrown) {
                     labelCheckRemove();
                     $('#InputFormFields').append(failedScreenMessage);
+                    Rollbar.error({ 'oen-#21': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
+                    Rollbar.error({ 'oen-#22': { 'errorThrown': errorThrown } });
+
                 }).always(function () {
                     $('#loadingSpinner').remove();
                 });;
+
+                Rollbar.info({ 'oen-#19': { 'payload': payload } });// added after the AJAX call so as not to hold it up.
             });
 
             $('#getHtmlSpinner').remove();
@@ -445,13 +475,13 @@ $(function () {
 
             $('#SendConnectionInfoRecipientsButton').on('click', function (eventArgs) {
                 
-                var payload = webinarsDropdownList.val();
+                var webinarsDropdownListVal = webinarsDropdownList.val();
+                var payload = { webinarId: webinarsDropdownListVal };
 
                 //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
                 
                 //var logStartOperation = toastLogger.getLogFn('SendConnectionInfo');
                 //logStartOperation("Sending ConnectionInfo", null, true);
-
 
                 $.ajax({
                     type: 'POST',
@@ -459,7 +489,7 @@ $(function () {
                     cache: false,
                     url: sendConnectionInfoUrl,
                     dataType: constants.JsonDataType,
-                    data: JSON.stringify({ webinarId: payload }),
+                    data: JSON.stringify(payload),
                     beforeSend: function () {
                         $('#WaitIndicator').show();
                     }
@@ -473,14 +503,20 @@ $(function () {
                         $('#InputFormFields').append(noOrdersScreenMessage);
                     }
 
-                }).fail(function () {
+                }).fail(function (jqXHR, textStatus, errorThrown) {
 
                     labelCheckRemove();
 
                     $('#InputFormFields').append(failedScreenMessage);
+                    Rollbar.error({ 'oen-#23': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
+                    Rollbar.error({ 'oen-#24': { 'errorThrown': errorThrown } });
+
                 }).always(function () {
                     //$('#loadingSpinner').remove();
                 });;
+
+                Rollbar.info({ 'oen-#20': { 'payload': payload } });// added after the AJAX call so as not to hold it up.
+
             });
 
             $('#PreviewSendConnectionInfoEmailButton').on('click', function (e) {
@@ -516,6 +552,9 @@ $(function () {
 
                     modalPreview.modal(modalFormOptionsOnPageLoad);
                 });
+
+                Rollbar.info({ 'oen-#24': { 'webinar': webinar } });// added after the AJAX call so as not to hold it up.
+
             });
 
             $('#EmailConnectionInfo').on('click', function (e) {
@@ -577,6 +616,8 @@ $(function () {
 
                         $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                     });
+                    Rollbar.info({ 'oen-#26': { 'webinar': webinar } });// added after the AJAX call so as not to hold it up.
+                    Rollbar.info({ 'oen-#27': { 'payload': payload } });
                 });
             });
 
@@ -596,7 +637,8 @@ $(function () {
             
             $('#SendRecordingPostedButton').on('click', function (eventArgs) {
                 
-                var payload = webinarsDropdownList.val();
+                var webinarsDropdownListVal = webinarsDropdownList.val();
+                var payload = { webinarId: webinarsDropdownListVal };
 
                 $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
 
@@ -606,7 +648,7 @@ $(function () {
                     cache: false,
                     url: sendRecordingPostedUrl,
                     dataType: constants.JsonDataType,
-                    data: JSON.stringify({ webinarId: payload }),
+                    data: JSON.stringify(payload),
                     beforeSend: function () {
                         $('#WaitIndicator').show();
                     }
@@ -619,14 +661,20 @@ $(function () {
                     } else if (result.Result === 'No Orders to send for that webinar') {
                         $('#InputFormFields').append(noOrdersScreenMessage);
                     }
+                    Rollbar.info({ 'oen-#29': { 'result': result } });
 
-                }).fail(function () {
+                }).fail(function (jqXHR, textStatus, errorThrown) {
                     labelCheckRemove();
 
                     $('#InputFormFields').append(failedScreenMessage);
+                    Rollbar.error({ 'oen-#30': { 'statusCode': jqXHR && jqXHR.statusCode().status } });// added after the AJAX call so as not to hold it up.
+                    Rollbar.error({ 'oen-#31': { 'errorThrown': errorThrown } });
+
                 }).always(function () {
                     $('#loadingSpinner').hide();
                 });
+
+                Rollbar.info({ 'oen-#28': { 'payload': payload } });// added after the AJAX call so as not to hold it up.
             });
 
             $('#PreviewSendRecordingPostedButton').on('click', function (e) {
@@ -643,7 +691,6 @@ $(function () {
                     $('#EmailPostedRecording').after('<span id="resultLabel" class="label label-important" style="margin-left:5px"><i class="icon icon-exclamation-sign"></i>&nbsp;You need to select an Order from the Dropdown List.</span>');
                     return;
                 }
-
 
                 $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
 
@@ -662,6 +709,7 @@ $(function () {
 
                     modalPreview.modal(modalFormOptionsOnPageLoad);
                 });
+                Rollbar.info({ 'oen-#32': { 'webinar': webinar } });// added after the AJAX call so as not to hold it up.
             });
 
             $('#EmailPostedRecording').on('click', function (e) {
@@ -716,13 +764,18 @@ $(function () {
 
                         $('#emailSendingSpinner').remove();
                         $(self).removeAttr('disabled');
-
+                        Rollbar.info({ 'oen-#35': { 'result': data } });
                     }).fail(function (jqXHR, textStatus, errorThrown) {
                         $('#emailSendingSpinner').remove();
                         $(self).removeAttr('disabled');
 
                         $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                        Rollbar.error({ 'oen-#36': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
+                        Rollbar.error({ 'oen-#37': { 'errorThrown': errorThrown } });
                     });
+
+                    Rollbar.info({ 'oen-#33': { 'webinar': webinar } });// added after the AJAX call so as not to hold it up.
+                    Rollbar.info({ 'oen-#34': { 'payload': payload } });
                 });
             });
 

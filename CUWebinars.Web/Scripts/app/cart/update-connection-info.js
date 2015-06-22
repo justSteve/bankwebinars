@@ -50,9 +50,13 @@ $(function() {
             var inputs = formProcessor.getApplicableInputs('_UpdateConnectionInfo');
             var payload = formProcessor.processInputs(inputs);
 
+            Rollbar.info({ 'uci-#1': { 'payload': payload}});
+
             var token = UCI.updateConnectionInfoForm.find('input[name=__RequestVerificationToken]').val();
             var headers = {};
             headers['__RequestVerificationToken'] = token;
+
+            var updateConnInfoValSummary = $('#updateConnInfoValSummary');
             
             $.ajax({
                 type: 'POST',
@@ -65,7 +69,7 @@ $(function() {
                 beforeSend: function() {
                     $('#result').remove();
 
-                    clearValidationSummary();
+                    formProcessor.clearValidationSummary(updateConnInfoValSummary);
 
                     $(self).append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
                 }
@@ -73,8 +77,10 @@ $(function() {
                 if (data.Result == "Success") {
                     var label = $('<div id="result" class="label label-success pull-left block buttonAdjacentLabel">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details Updated</div>');
                     label.hide().insertAfter($(self)).fadeIn(500);
+                    Rollbar.info({ 'uci-#2': { 'result': data } });
                 } else if (!data.isSuccessful) {
                     formProcessor.lightUpValidationSummary('updateConnInfoValSummary', data);
+                    Rollbar.info({ 'uci-#3': { 'fail-result': data } });
                 }
             }).always(function (data) {
                 $('#waitSpinner').remove();
@@ -86,7 +92,7 @@ $(function() {
 
 }(UCI));
 
-
+// refactor opportunity - this function now lives in the formProcessor object in form-processor.js
 function clearValidationSummary() {
     var valSummary = $('#updateConnInfoValSummary');
     valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');

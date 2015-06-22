@@ -174,6 +174,9 @@ $(function () {
         ns.extendPostEventAccessModal = $('#ExtendPostEventAccessModal');
         ns.extendEventAccessButton = $('#extendEventAccessButton');
         ns.fireResendConfirmationButton = $('#fireResendConfirmationButton');
+        ns.add6MonthsButton = $('#Add6MonthsButton');
+        ns.add5DaysButton = $('#Add5DaysButton');
+        ns.adInfinitumButton = $('#AdInfinitumButton');
 
         ns.regTypesList = $('#RegType');
         ns.orderRowId = $('#manageOrderForm input[name="ID"]').val();
@@ -374,6 +377,9 @@ $(function () {
         ns.updateAdditionalLocationsForm.on('submit', ns.submitUpdateAddLocsForm);
 
         ns.extendEventAccessButton.on('click', ns.extendEventAccess);
+        ns.add6MonthsButton.on('click', ns.add6MonthsButtonClick);
+        ns.add5DaysButton.on('click', ns.add5DaysButtonClick);
+        ns.adInfinitumButton.on('click', ns.adInfinitumButtonClick);
 
         ns.extendPostEventAccessModal.on('shown', function () {
 
@@ -925,6 +931,43 @@ $(function () {
 
     };
 
+    ns.add6MonthsButtonClick = function(e) {
+
+        e.preventDefault();
+
+        var dateVal = new Date();
+        dateVal.setDate(dateVal.getDate() + 183);
+
+        $('#frmExtendPostEventAccess').find('input[name="newExpiryDate"]').val(ns.convertDateToStringUSFormat(dateVal));
+    };
+
+    ns.add5DaysButtonClick = function(e) {
+
+        e.preventDefault();
+
+        var dateVal = new Date();
+        dateVal.setDate(dateVal.getDate() + 5);
+
+        $('#frmExtendPostEventAccess').find('input[name="newExpiryDate"]').val(ns.convertDateToStringUSFormat(dateVal));
+    };
+
+    ns.adInfinitumButtonClick = function(e) {
+
+        e.preventDefault();
+
+        var dateVal = new Date();
+        dateVal.setDate(dateVal.getDate() + 10000);
+
+        $('#frmExtendPostEventAccess').find('input[name="newExpiryDate"]').val(ns.convertDateToStringUSFormat(dateVal));
+    };
+
+    ns.convertDateToStringUSFormat = function(dateVal) {
+        var yyyy = dateVal.getFullYear().toString();
+        var mm = (dateVal.getMonth() + 1).toString();
+        var dd = dateVal.getDate().toString();
+
+        return (mm[1] ? mm : "0" + mm[0]) + '/' + (dd[1] ? dd : "0" + dd[0]) + '/' + yyyy;
+    };
 
     ns.gatherPricingData = function () {
         ns.allAddLocsPrice = parseInt(ns.additionalLocationsTotal.val());

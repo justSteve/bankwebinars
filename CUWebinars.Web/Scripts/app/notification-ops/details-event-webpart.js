@@ -33,7 +33,7 @@ $(function () {
     waitIndicator.hide();
 
     getSendConnectionInfoEventHtmlButton.on('click', function (eventArgs) {
-        alert("hit");
+        //alert("hit");
         inputFormFieldsDiv.empty();
         buttonsContainer.fadeOut(500, function() {
             inputFormFieldsDiv.fadeIn(500);
@@ -46,7 +46,10 @@ $(function () {
 
             $('#FireSendConnInfoButton').on('click', function (eventArgs) {
                 
-                var payload = $('#SelectedWebinarId').val();
+                var selectedWebinarId = $('#SelectedWebinarId').val();
+                var payload = { webinarId: selectedWebinarId };
+
+                Rollbar.info({ 'dew-#1': { 'payload': payload } });
 
                 $.ajax({
                     type: 'POST',
@@ -54,7 +57,7 @@ $(function () {
                     cache: false,
                     url: sendConnectionInfoUrl,
                     dataType: constants.JsonDataType,
-                    data: JSON.stringify({ webinarId: payload }),
+                    data: JSON.stringify(payload),
                     beforeSend: function () {
                         waitIndicator.show();
                     }
@@ -68,11 +71,15 @@ $(function () {
                         inputFormFieldsDiv.append(noOrdersScreenMessage);
                     }
 
-                }).fail(function () {
+                    Rollbar.info({ 'dew-#2': { 'result': result } });
+
+                }).fail(function (jqXHR, textStatus, errorThrown) {
 
                     labelCheckRemove();
 
                     inputFormFieldsDiv.append(failedScreenMessage);
+                    Rollbar.error({ 'dew-#5': { 'fail-callback': jqXHR && jqXHR.statusCode().status } });
+                    Rollbar.error({ 'dew-#6': { 'fail-callback': errorThrown } });
                 }).always(function () {
                     waitIndicator.hide();
                     resetButton.show();
@@ -90,6 +97,8 @@ $(function () {
         eventArgs.preventDefault();
 
         var webinarFileName = webinarFileInput().val();
+        var payload = { webinarId: EvtWebPart.RecordedWebinar, fileName: webinarFileName };
+        Rollbar.info({ 'dew-#3': { 'payload': payload } });
 
         $.ajax({
             type: 'POST',
@@ -97,7 +106,7 @@ $(function () {
             cache: false,
             url: sendRecordingPostedUrl,
             dataType: constants.JsonDataType,
-            data: JSON.stringify({ webinarId: EvtWebPart.RecordedWebinar, fileName: webinarFileName }),
+            data: JSON.stringify(payload),
             beforeSend: function () {
                 waitIndicator.show();
             }
@@ -111,9 +120,12 @@ $(function () {
                 inputFormFieldsDiv.append(noOrdersScreenMessage);
             }
 
-        }).fail(function () {
-            labelCheckRemove();
+            Rollbar.info({ 'dew-#4': { 'result': result } });
 
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            labelCheckRemove();
+            Rollbar.error({ 'dew-#8': { 'fail-callback': jqXHR && jqXHR.statusCode().status } });
+            Rollbar.error({ 'dew-#9': { 'fail-callback': errorThrown } });
             inputFormFieldsDiv.append(failedScreenMessage);
         }).always(function () {
             waitIndicator.hide();
