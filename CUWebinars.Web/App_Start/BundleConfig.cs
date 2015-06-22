@@ -113,7 +113,6 @@ namespace CUWebinars.Web.App_Start
                 ));
 
             bundles.Add(new ScriptBundle("~/bundles/myApp").Include(
-                //TODO: devise bundles such that the Public layout calls BS2.3x while AdminLayout calls 3x
                         //"~/Scripts/bootstrap3/bootstrap.js",
                         "~/Scripts/bootstrap.js",
                         "~/Scripts/bootstrap-modal.js",
