@@ -666,6 +666,7 @@
     <Content Include="Scripts\app\admin\display-orders-by-user.js" />
     <Content Include="Scripts\app\admin\session-checker.js" />
     <Content Include="Scripts\app\admin\display-orders.js" />
+    <Content Include="Scripts\app\client-logger.js" />
     <Content Include="Scripts\app\quiz\edit-quiz.js" />
     <Content Include="robots.txt" />
     <Content Include="Scripts\app\quiz\do-quiz.js" />

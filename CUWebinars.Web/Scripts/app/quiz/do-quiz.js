@@ -67,6 +67,8 @@ $(function () {
             orderId: $('#orderIdInput').val()
         };
 
+        L.clientLogger.info('dq-#1', payload);
+
         $.ajax({
             type: 'POST',
             contentType: constants.JsonContentType,
