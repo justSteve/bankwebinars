@@ -36,6 +36,9 @@ $(function () {
 
         var jsonUrl = $(this).attr('action');
         var email = resetPassEmail.val();
+        var payload = { email: email };
+
+        L.clientLogger.info('pw-#1', payload);
 
         if (email.length === 0) {
             resetPassEmail.focus();
@@ -46,7 +49,7 @@ $(function () {
                 dataType: constants.JsonDataType,
                 cache: false,
                 url: jsonUrl,
-                data: JSON.stringify({ email: email }),
+                data: JSON.stringify(payload),
                 headers: headers,
                 beforeSend: function() {
                     // this is where we append a loading image
