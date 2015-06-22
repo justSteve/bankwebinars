@@ -24,7 +24,54 @@ namespace CUWebinars.Business.Repository
         {
             return items.Where(o => o.idRegType == optionId).ToList();
         }
+        public IDictionary<RegType, bool> FindAllPossibleRegTypesByWebinarId(int id, bool detached)
+        {
+            //return every RegType a given event without regard to current state of the event. 
+            // permits admins to change a recorded order to 'live' even after the event has occurred
+            IDictionary<RegType, bool> regTypesAndShippingRequirement = new Dictionary<RegType, bool>();
 
+            var stronglyTypedContext = (TTSWebinarsContext)db;
+
+            var webinars = stronglyTypedContext.Webinars
+                .Where(w => w.idWebinar == id);
+
+            // There can be only one RegTypesGroupsXrefs per webinar at any one time for end-user.
+            // But when an Admin is editing an order he needs to see all RegTypes without filtering
+            // against the 'PreEvent' or 'PostEvent' state. To support this need a column is added
+            // to the RegTypesGroup that provides a CrossRefenence from the current state to it's alternate.
+
+            var regTypesGroupsXrefs = webinars.SelectMany(w => w.RegTypesGroupsXref);
+
+            //  For each of those RegTypesGroupsXrefs, get the relevant OptionGroup
+            var regtypesGroups = regTypesGroupsXrefs.Include(o => o.RegTypesGroup)
+                .Select(o => o.RegTypesGroup);
+
+            //TODO: Add the RegTypeGroup where idRegTypeGroup = AltState
+
+
+            //  Get all OptionsXrefs for those RegTypesGroups
+            var regtypesXrefs = regtypesGroups.Include(o => o.RegTypesXrefs)
+                .SelectMany(opt => opt.RegTypesXrefs);
+
+            //  Finally, get the RegTypes
+            var regTypes =
+                regtypesXrefs.Include(o => o.RegType)
+                    .Select(o => o.RegType)
+                    .Distinct()
+                    .ToList()
+                    .ToDictionary(r => r, rt => rt.ShowShippedNotifications.Trim().Equals("Yes", StringComparison.OrdinalIgnoreCase), new RegTypeComparer());
+
+            if (!detached)
+                return regTypes;
+
+            foreach (var regType in regTypes)
+            {
+                stronglyTypedContext.Entry(regType.Key).State = EntityState.Detached;
+            }
+
+            return regTypes;
+
+        }
         public IDictionary<RegType, bool> FindRegTypesByWebinarId(int id, bool detached)
         {
             IDictionary<RegType, bool> regTypesAndShippingRequirement = new Dictionary<RegType, bool>();
@@ -61,6 +108,8 @@ namespace CUWebinars.Business.Repository
 
             return regTypes;
         }
+
+
 
         public bool IsShippingAddressRequired(int regTypeId)
         {
