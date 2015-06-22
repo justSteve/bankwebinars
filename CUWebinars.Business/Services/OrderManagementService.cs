@@ -238,6 +238,23 @@ namespace CUWebinars.Business.Services
             return (IDictionary<RegType, bool>)options;
         }
 
+        public IDictionary<RegType, bool> GetAllPossibleOptionsByWebinarId(int idWebinar, bool detached)
+        {
+            string cachKey = "options-" + idWebinar;
+            var options = _cachingService.Get(cachKey);
+
+            //if (options == null)
+            //{
+            options = _regTypeRepository.FindAllPossibleRegTypesByWebinarId(idWebinar, false);
+
+            //    // keeps options object in cache for 1 hour.
+            //    _cachingService.Add(cachKey, options, DomainConstants.BuildUtcNowAsCts.AddHours(1));
+            //}
+
+            return (IDictionary<RegType, bool>)options;
+        }
+
+
         public IEnumerable<Order> GetOrdersByEmail(string email, int aff)
         {
             return _orderRepository.FindOrdersByBillingEmail(email.Trim(), aff);

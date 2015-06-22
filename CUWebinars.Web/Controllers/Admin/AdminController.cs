@@ -767,7 +767,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 CostPerAdditionalLocation = additionalLocationsPricing.Item2,
                 DisplayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
                 {
-                    Options = _orderManagementService.GetOptionsByWebinarId(orderRow.idWebinar, false),
+                    Options = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.idWebinar, false),
                     OrderRowId = orderRow.idOrderRow,
                     OrderRowRegistrationType = orderRow.RegistrationType
                 },
@@ -1496,14 +1496,14 @@ namespace CUWebinars.Web.Controllers.Admin
                             model.Email));
                     _logger.ErrorException("LogInAsUser | No User Found For Email", nullReferenceException);
                     ModelState.AddModelError(string.Empty, nullReferenceException);
-                    return View("", "", ""); //   TODO: Figure out how to show error messages
+                    return View("", "", "");
                 }
 
                 _membershipService.AddClaim(impersonatedUserAccount,Business.Constants.ClaimTypes.BeingImpersonated, adminUserEmail);
                 _membershipService.LogOutUser();
 
                 //_stateService.SetValue(WebUiConstants.AdminUserEmail, adminUserEmail);
-
+                //   TODO: Remove password challenge -- 
                 if (_membershipService.LogInAdminUserAsOtherUser(_globalConfig.Tenant,
                         adminUserEmail.Trim(), model.Password.Trim(),
                         impersonatedUserAccount
