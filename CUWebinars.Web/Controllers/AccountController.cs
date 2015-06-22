@@ -31,6 +31,7 @@ using System.Text;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Security;
+using Thinktecture.IdentityModel.Authorization.Mvc;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
 
@@ -498,6 +499,7 @@ namespace CUWebinars.Web.Controllers
         }
 
         [System.Web.Mvc.HttpGet]
+        [ClaimsAuthorize(IdentityConstants.Manage, new []{ IdentityConstants.Account}, Roles = "Admin")]
         public ActionResult EditUser(int? id, string returnUrl = null)
         {
             if (id.HasValue && id > 0) // if not, assume it is logged in user
@@ -600,7 +602,7 @@ namespace CUWebinars.Web.Controllers
             return this.ModelStateJson(ModelState);
         }
 
-        //[ClaimsAuthorize(Roles = "CUWebinarsAbsoluteAdmin")]
+//        [ClaimsAuthorize(Roles = "CUWebinarsAbsoluteAdmin")]
         public ActionResult Manage(ManageMessageId? message)
         {
             try

@@ -20,8 +20,9 @@ namespace CUWebinars.Web.Infrastructure
             {
                 case IdentityConstants.Account:
                 {
-                    //return PrincipalCanPerformActionOnResource(action, context.Principal);
-                    return false;
+                    authorizationProcessor = new EditAccountAuthorizationProcessor();
+
+                    return authorizationProcessor.GetAuthorizationProcessorForAction(action)(context.Principal);
                 }
                 case IdentityConstants.AdminResources:
                 {

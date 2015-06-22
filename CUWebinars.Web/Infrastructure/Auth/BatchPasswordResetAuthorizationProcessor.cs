@@ -14,7 +14,7 @@ namespace CUWebinars.Web.Infrastructure.Auth
             {
                 case IdentityConstants.Manage:
                 {
-                    return null;
+                    throw new NotImplementedException();
                 }
                 case IdentityConstants.Access:
                 {

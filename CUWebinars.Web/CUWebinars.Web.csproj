@@ -433,6 +433,7 @@
     <Compile Include="Infrastructure\Attributes\HandleAjaxExceptionAttribute.cs" />
     <Compile Include="Infrastructure\Attributes\MonitorAffiliateFilter.cs" />
     <Compile Include="Infrastructure\Auth\BatchPasswordResetAuthorizationProcessor.cs" />
+    <Compile Include="Infrastructure\Auth\EditAccountAuthorizationProcessor.cs" />
     <Compile Include="Infrastructure\Auth\IAuthorizationProcessor.cs" />
     <Compile Include="Infrastructure\ErrorResponse.cs" />
     <Compile Include="Infrastructure\ErrorResponseCommand.cs" />
