@@ -288,7 +288,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                         Rollbar.error("HandleAjaxExceptionAttribute #458 ", data);
                     }
                 }
-                Rollbar.error("Static marker #320 payload", payload);
+                Rollbar.error({ "Static marker #320 payload": { payload: payload } });
             });
         }
     });

@@ -453,7 +453,6 @@ namespace CUWebinars.Business.AccountService
 
         public void UpdateNameTitle(string firstName, string lastName, string email, string title)
         {
-            // TODO: [sjh] deal with during construct of User/Institution Editor [dar] Seems to be an unfinished method. Comes down from EditNameTitle in AccountController
             try
             {
                 var webUser = GetDetailsOfUser(email);
@@ -634,7 +633,7 @@ namespace CUWebinars.Business.AccountService
                                 Environment.NewLine + webUser.generalComments);
                 webUser.generalComments = comments.Length < 1000 ? comments : comments.Substring(0, 1000);
 
-                
+
                 _webUserRepository.Update(webUser);
             }
             catch (Exception exception)
@@ -726,7 +725,7 @@ namespace CUWebinars.Business.AccountService
                     expiryDateProperty,
                     onDemandCodeProperty
                     );
-                
+
                 _userAccountService.AddClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials, claimValue.ToString(Formatting.None));
             }
         }
@@ -781,7 +780,8 @@ namespace CUWebinars.Business.AccountService
                 LastName = "User",
                 idUserInstitution = 8,
                 email = email,
-                timeZone = USTimeZone.Central, generalComments = "Origin: CreateBareUserFromEmail"
+                timeZone = USTimeZone.Central,
+                generalComments = "Origin: CreateBareUserFromEmail"
             };
 
             _webUserRepository.Add(webUser);

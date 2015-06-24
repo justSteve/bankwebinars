@@ -162,7 +162,6 @@ namespace CUWebinars.Web.Helpers
         }
         public SessionStartInfo GetSessionStartInfo()
         {
-            //TODO: time to transition the legacy xml object to a native class.
             HttpRequest request = HttpContext.Current.Request;
             var info = new SessionStartInfo
             {
@@ -224,7 +223,7 @@ namespace CUWebinars.Web.Helpers
         //    return auditXML.ToString();
         //}
 
-        public string GetUserAuditInfo()
+        public string GetUserAuditInfoOriginal()
         {
             string remoteAddres = SecurityElement.Escape(_request.ServerVariables["REMOTE_ADDR"]);
             string remoteHost = SecurityElement.Escape(_request.ServerVariables["REMOTE_HOST"]);
@@ -241,7 +240,7 @@ namespace CUWebinars.Web.Helpers
             return auditJson.ToString();
         }
 
-        public string GetUserAuditInfoAlt()
+        public string GetUserAuditInfo()
         {
             IDictionary<string,string> auditInfoDictionary = new Dictionary<string, string>();
 
