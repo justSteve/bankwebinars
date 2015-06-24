@@ -138,9 +138,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 try
                 {
-                    _logger.Info("BuildCheckoutConfirmViewModel " + idOrderRow.Value);
+                    _logger.Info("BuildCheckoutConfirmViewModel idOrderRow: " + idOrderRow.Value);
                     var orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
                     var order = orderRow.Order;
+                    _logger.Info("BuildCheckoutConfirmViewModel idOrder: " + order.idOrder);
                     var webUser = orderRow.Order.WebUser;
                     var userFullName = string.Concat(webUser.FirstName, " ", webUser.LastName);
 
