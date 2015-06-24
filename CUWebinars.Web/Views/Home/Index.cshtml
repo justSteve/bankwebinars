@@ -1,18 +1,13 @@
 ﻿@using System.Configuration
 @using CUWebinars.Business.Models
+@using CUWebinars.Web.Core
 @model List<Webinar>
 @{
-    //any session props originally set or read here should be handled at
+    
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
 
-    //ViewBag.Title = "Banker and Compliance at BankWebinars.com";
-    ////ViewBag.Title = "Credit Union Training and Compliance at CUWebinars.com";
-    //var timeZ = USTimeZone.Central;
-    ////if (Model.WebUser != null)
-    ////{
-    ////    isUserLogged = "true";
-    ////    timeZ = Model.WebUser.timeZone;
-    ////}
+
 
 }
 <!-- Begin Slider
@@ -23,6 +18,23 @@
     <div class="flexslider loading content-slider">
         <ul class="slides">
             <!--begin slide content inside each li tag-->
+            <li>
+                <div class="img">
+                    <div>
+                        <img alt="" src="http://ttsmedia.ttstrain.com/images/menu/L/Lending.jpg">
+                    </div>
+                </div>
+                <div class="caption">
+                    <h2 align="center">Welcome!</h2>
+                    <div style="margin-left: 50px;">
+
+                        <p>Welcome to the new @globalConfig.Tenant website.  If you are a first time visitor, welcome.  If you have visited us before, welcome back.  We hope you find what you want and that the ordering process is efficient.  Be sure and let us know if you have any comments by using the Help & Feedback link below. </p>
+
+                    </div>
+
+                    @*<p class="more"><a class="btn btn-primary" href="~/Content/template/portfolio-single.html">Details &rarr;</a></p>*@
+                </div>
+            </li>
             <li>
                 <div class="img">
                     @*<div><img alt="" src="http://ttsmedia.ttstrain.com/images/menu/L/Compliance.jpg"></div>*@
@@ -48,11 +60,11 @@
             </li>
             <!--add the "full" class for an image or video only slide w/o text-->
             @*<li>
-                    <div class="img full">
+                <div class="img full">
 
-                        <div><img alt="" src="http://ttsmedia.ttstrain.com/images/menu/L/Compliance.jpg"></div>
-                    </div>
-                </li>*@
+                    <div><img alt="" src="http://ttsmedia.ttstrain.com/images/menu/L/Compliance.jpg"></div>
+                </div>
+            </li>*@
             <li>
                 <div class="img">
                     <div><img alt="" src="http://ttsmedia.ttstrain.com/images/menu/L/Security.jpg"></div>

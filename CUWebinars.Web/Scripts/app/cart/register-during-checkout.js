@@ -208,7 +208,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
                     $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #388. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 } else if (data['Invalid'] === 'UnkownEmail') {
-                    L.clientLogger.error("UnkownEmail", { result: data && data.Result });
+                    L.clientLogger.error("UnknownEmail", { result: data && data.Result });
 
                     $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 } else {

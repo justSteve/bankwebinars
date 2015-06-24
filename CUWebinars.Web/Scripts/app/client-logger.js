@@ -18,18 +18,22 @@ L.clientLogger = function () {
         switch (logLevel) {
             case errorLevel:
                 Rollbar.error(logObj);
-                window.$zopim(function () {
-                    window.$zopim.livechat.setTag(id);
+                //
+                $zopim(function () {
+
+                    $zopim.livechat.addTags(id);
 
                     $zopim.livechat.bubble.setTitle('Get Help Here!');
                 });
                 break;
             case infoLevel:
                 Rollbar.info(logObj);
-                window.$zopim(function () {
-                    window.$zopim.livechat.setTag(id);
+                
+                $zopim(function() {
+                
+                    $zopim.livechat.addTags(id);
 
-                    $zopim.livechat.bubble.setTitle('Get Help Here!');
+                    //$zopim.livechat.bubble.setTitle('Get Help Here!');
                 });
                 break;
         }

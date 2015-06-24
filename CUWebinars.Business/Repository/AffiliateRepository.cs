@@ -27,7 +27,10 @@ namespace CUWebinars.Business.Repository
             {
                 queryable = queryable.Include<Affiliate, object>(includeProperty);
             }
-
+            if (queryable.Count() == 0)
+            {
+                return items.Single(a => a.idUserAff == 19);
+            }
                 return queryable.First(a => a.idUserAff == id);
         }
 
