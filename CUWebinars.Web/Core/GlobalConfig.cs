@@ -37,7 +37,7 @@ namespace CUWebinars.Web.Core
         public string TenantPrefix { get; private set; }
         public string TestEmailAddress { get; private set; }
         public string TestEmailAddress2 { get; private set; }
-        public string TraceLevel { get; set; }
+        public string TraceLevel { get; private set; }
         public string UnAuthenticatedUser { get; private set; }
         public bool UseAzureWebjobs { get; private set; }
         public string WMVRepository { get; private set; }

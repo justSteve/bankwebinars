@@ -715,9 +715,10 @@ namespace CUWebinars.Web.Controllers
                             _appHelper.GetUserAuditInfo(),
                             model.Email
                             );
-
-
-                        var returnUrl = Server.HtmlDecode(model.ReturnUrl);
+                        // Handles an edge case where a user has been created anonymously in the cart and has just set their password.
+                        // In such a case, we don't want to redirect back to the page where they just set their password. So send to base instead.
+                        var returnUrl = string.IsNullOrWhiteSpace(model.ReturnUrl) ? @"/" :
+                            model.ReturnUrl.Contains(@"ACC/APWD") ? @"/" : Server.HtmlDecode(model.ReturnUrl);
 
                         return Json(new { result = LoggedInResult, returnUrl = returnUrl });
                     }

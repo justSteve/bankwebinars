@@ -175,7 +175,7 @@ namespace CUWebinars.Business.Core
                         CultureInfo.CurrentCulture,
                         out timeZoneAsInt))
                     {
-                        timeZoneAsInt += 10;
+                        //timeZoneAsInt += 10;
                         timeZone = (USTimeZone)timeZoneAsInt;
                     }
 
