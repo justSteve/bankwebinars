@@ -940,9 +940,8 @@
     <Content Include="Views\Admin\Partials\_BatchPasswordReset.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowOrdersByUser.cshtml" />
     <Content Include="Views\Admin\Partials\_NotAuthorized.cshtml" />
-    <None Include="Web.BankWebinars31.config">
+    <None Include="Web.BankWebinars - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
-      <SubType>Designer</SubType>
     </None>
     <None Include="Web.CUWebinars33 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>

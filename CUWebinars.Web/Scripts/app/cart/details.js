@@ -13,20 +13,19 @@ $(function () {
         cartStateManager.setCancelOrderForm($('#cancelOrder'));
         cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
-        console.log('initialize hit');
+        //console.log('initialize hit');
 
         cartStateManager.getConfirmOrderForm().on('submit', function (e) {
-            //Rollbar.info('submitting confirmOrder form');
             e.preventDefault();
 
             var self = $(this);
             self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
 
-            Rollbar.info({ 'd-#1': { 'submitting ConfirmOrder': cartStateManager.getOrderRowId() } });
+            L.clientLogger.info( 'd-#1', { 'submitting getConfirmOrderForm': cartStateManager.getOrderRowId() } );
 
             var data = $(this).serialize();
 
-            Rollbar.info({ 'd-#2': { 'Serialized Form': data } });
+            L.clientLogger.info( 'd-#2', { 'Serialized Form': data } );
 
             var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
 
@@ -46,9 +45,9 @@ $(function () {
                 }
             }).done(function (data) {
                 if (data.Result === 'Success') {
-                    Rollbar.info({ 'd-#3': { 'OrderRowId': data.OrderRowId } });
+                    L.clientLogger.info( 'd-#3', { 'OrderRowId': data.OrderRowId } );
                     var orderRowId = data.OrderRowId;
-
+                    
                     console.info('Posted orderRow:' + orderRowId);
 
                     $('#orderDetails').empty();
@@ -62,8 +61,9 @@ $(function () {
 
                 } else {
                     console.error('Failed to post order');
-                    Rollbar.error({ 'd-#4': { 'jsonResponse': data } });
-                    confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                    L.clientLogger.error('d-#4 Failed to post order', { 'jsonResponse': data });
+
+                    confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data #554. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                 }
 
                 $('#finalLoadingSpinner').remove();
@@ -73,8 +73,8 @@ $(function () {
                 $('#finalLoadingSpinner').remove();
                 confirmRegistrationBillMe.removeAttr('disabled');
                 $('#signUpSpinner').remove();
-                confirmRegistrationBillMe.after('<span class="field-validation-error">Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
-                Rollbar.error({ 'd-#5': { 'ajaxError': 'Ajax deferred promise fail method invoked' } });
+                confirmRegistrationBillMe.after('<span class="field-validation-error">Transport error #555. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                L.clientLogger.error('d-#5', { 'Error': jqXHR.responseText });
             });
 
         });
@@ -100,25 +100,25 @@ $(function () {
                 // disable button while operation in progress
                 $('#cancelRegistration').attr('disabled', 'disabled');
 
-                Rollbar.info({ 'd-#6': { 'orderCancellation': 'deleting order at 3rd tab', 'orderId': cartStateManager.getOrderId() } });
+                L.clientLogger.info( 'd-#6', { 'orderCancellation':'deleting order at 3rd tab', 'orderId': cartStateManager.getOrderId() } );
 
                 $.post(self.attr('action'), data, function (response, status, xhr) {
 
                     if (status !== 'error') {
                         if (xhr.responseJSON['success']) {
-                            Rollbar.info({ 'd-#7': { 'orderCancellationConfirmed': 'deletion succeeded' } });
+                            L.clientLogger.infor( 'd-#7', { 'orderCancellationConfirmed': 'deletion succeeded' } );
 
                             var utilities = new Common.Utilities();
-                            console.log('/webinar/details/' + cartStateManager.getWebinarId());
+                            //console.log('/webinar/details/' + cartStateManager.getWebinarId());
                             utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
                         } else {
-                            Rollbar.error({ 'd-#8': { 'orderCancellationFailed': 'Deletion failed. System potentially in error state.' } });
-                            $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                            L.clientLogger.error( 'd-#8', { 'orderCancellationFailed': 'Deletion failed. System potentially in error state.' } );
+                            $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Invalid Data #88. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                             $('#CancelModal').modal('hide');
                         }
 
                     } else {
-                        Rollbar.error({ 'd-#9': { 'orderCancellationFailed': 'Deletion failed. System potentially in error state.' } });
+                        L.clientLogger.error( 'd-#9', { 'orderCancellationFailed': 'Deletion failed. System potentially in error state.' } );
                         $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Server Error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                         $('#CancelModal').modal('hide');
                     }
@@ -150,8 +150,8 @@ $(function () {
     cartStateManager.setAddressVerified(addressVerified); // addressVerified is set in a script tag in razor view Details.cshtml
     cartStateManager.setNotificationsTesting(notificationsTesting); // notificationsTesting is set in a script tag in razor view Details.cshtml
 
-    Rollbar.info({
-        'd-#10': {
+    L.clientLogger.info(
+        'd-#10', {
             'serverVariables': {
                 'webinarId': webinarId,
                 'orderRowId': orderRowId,
@@ -160,8 +160,7 @@ $(function () {
                 'addressVerified': addressVerified,
                 'notificationsTesting': notificationsTesting
             }
-        }
-    });
+        });
 
     cartStateManager.SetCartState();
 
@@ -182,189 +181,188 @@ $(function () {
     // Flow goes inside this block where the order exists and is in process e.g. previously abandoned before finializing
     if (cartStateManager.getOrderRowId() > 0 && cartStateManager.getCheckoutInProcess()) {
 
-        Rollbar.info({ 'd-#11': { 'returnUnfinishedOrder': 'User finishing order row: ' + cartStateManager.getOrderRowId() } });
+        L.clientLogger.info( 'd-#11', { 'returnUnfinishedOrder': 'User finishing order row: ' + cartStateManager.getOrderRowId() } );
 
-        if (shippingAddressRequired && !cartStateManager.getNotificationsTesting() && !cartStateManager.getAddressVerified()) {
-            // Following function lives in the register-during-checkout.js script
-            // which will be in memory at this point and thus will have been hoisted.
-            hookUpModal($('#UserDetailsModal'));
-        }
-
-        cartStateManager.setOrderId(orderId);
-        Rollbar.info({ 'd-#12': { 'returnUnfinishedOrder': 'User finishing order: ' + orderId } });
-
-        // see top of this file
-        checkoutConfirm.initialize();
-
-        //The BIG GREEN 'Bill Me' button on 3rd tab
-        $('#ConfirmRegistrationBillMe').on('click', function (e) {
-            e.preventDefault();
-            var confirmOrderForm = $('#confirmOrder');
-            confirmOrderForm.submit();
-        });
-
-        // The grey Cancel Registration button on 3rd tab
-        $('#Canceller').on('click', function (e) {
-            e.preventDefault();
-            var cancelOrderForm = $('#cancelOrder');
-            cancelOrderForm.submit();
-        });
-
-        populateAdditionalLocationsOn3rdTab();
-        setUpEditButtons();
-
-        // Following 3 functions live in the register-during-checkout.js script
-        // which will be in memory at this point. So these functions will be hoisted.
-        hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
-        hookUpChangeTypeLogic($('#RegType'));
-        hookUpEditUserLogic(null, shippingAddressRequired);
+    if (shippingAddressRequired && !cartStateManager.getNotificationsTesting() && !cartStateManager.getAddressVerified()) {
+        // Following function lives in the register-during-checkout.js script
+        // which will be in memory at this point and thus will have been hoisted.
+        hookUpModal($('#UserDetailsModal'));
     }
 
-    /* Submit event for the big green SignUp button */
-    signUpForm.on('submit', function (e) {
-        e.preventDefault();
+    cartStateManager.setOrderId(orderId);
+    L.clientLogger.info( 'd-#12', { 'returnUnfinishedOrder': 'User finishing order: ' + orderId } );
 
-        var beigeFormArea = signUpFormContainer.find('div.well');
+// see top of this file
+checkoutConfirm.initialize();
 
-        $('#loginEmail').val($('#Email1').val());
-        $('#loginPassword').val($('#Password1').val());
+//The BIG GREEN 'Bill Me' button on 3rd tab
+$('#ConfirmRegistrationBillMe').on('click', function (e) {
+    e.preventDefault();
+    var confirmOrderForm = $('#confirmOrder');
+    confirmOrderForm.submit();
+});
 
-        //  value converted to a Boolean in isShippindAddressRequired function
-        //  value comes from a hidden input in the radio btn list next to the relevant radio button (previous-sibling)
-        shippingAddressRequired = isShippindAddressRequired($('#RegistrationType > dl dt input:checked').prev());
+// The grey Cancel Registration button on 3rd tab
+$('#Canceller').on('click', function (e) {
+    e.preventDefault();
+    var cancelOrderForm = $('#cancelOrder');
+    cancelOrderForm.submit();
+});
 
-        var data = signUpForm.serialize();
+populateAdditionalLocationsOn3rdTab();
+setUpEditButtons();
 
-        Rollbar.info({ 'd-#19': { 'signupData': data } });
+// Following 3 functions live in the register-during-checkout.js script
+// which will be in memory at this point. So these functions will be hoisted.
+hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
+hookUpChangeTypeLogic($('#RegType'));
+hookUpEditUserLogic(null, shippingAddressRequired);
+}
 
-        var spinner = $('#signUpSpinner');
-        $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
-        var loadingSpinner = $('#loadingSpinner');
+/* Submit event for the big green SignUp button */
+signUpForm.on('submit', function (e) {
+    e.preventDefault();
 
-        // If the user IS NOT LOGGED IN - control moves to the register-during-checkout.js script
-        if (!cartStateManager.getIsUserLoggedIn()) {
+    var beigeFormArea = signUpFormContainer.find('div.well');
 
-            Rollbar.info({ 'd-#20': { 'anonymousUser': 'Order created for anonymous user. Not yet finalized.' } });
+    $('#loginEmail').val($('#Email1').val());
+    $('#loginPassword').val($('#Password1').val());
 
-            $.post(signUpForm.attr('action'), data, function (response, status, xhr) {
+    //  value converted to a Boolean in isShippindAddressRequired function
+    //  value comes from a hidden input in the radio btn list next to the relevant radio button (previous-sibling)
+    shippingAddressRequired = isShippindAddressRequired($('#RegistrationType > dl dt input:checked').prev());
+
+    var data = signUpForm.serialize();
+
+    L.clientLogger.info( 'd-#19', { 'signupData': data } );
+
+var spinner = $('#signUpSpinner');
+$('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
+var loadingSpinner = $('#loadingSpinner');
+
+// If the user IS NOT LOGGED IN - control moves to the register-during-checkout.js script
+if (!cartStateManager.getIsUserLoggedIn()) {
+
+    L.clientLogger.info( 'd-#20', { 'anonymousUser': 'Order created for anonymous user. Not yet finalized.' } );
+
+$.post(signUpForm.attr('action'), data, function (response, status, xhr) {
+    if (status !== 'error') {
+        if (xhr.responseJSON['success']) {
+            cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
+            cartStateManager.setOrderId(xhr.responseJSON['orderId']);
+            cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
+            $('#contactInfo').load('/Cart/CheckoutContactDetails', function (response, status, xhr) {
                 if (status !== 'error') {
-                    if (xhr.responseJSON['success']) {
-                        cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
-                        cartStateManager.setOrderId(xhr.responseJSON['orderId']);
-                        cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
-                        $('#contactInfo').load('/Cart/CheckoutContactDetails', function (response, status, xhr) {
-                            if (status !== 'error') {
-                                $('#_CreateUserForm input[name="returnUrl"]').val('/Webinar/Details/' + cartStateManager.getWebinarId());
+                    $('#_CreateUserForm input[name="returnUrl"]').val('/Webinar/Details/' + cartStateManager.getWebinarId());
 
-                                var addressOptions = {
-                                    'shippingAddressRequired': shippingAddressRequired,
-                                    'notificationsTesting': cartStateManager.getNotificationsTesting(),
-                                    'addressVerified': cartStateManager.getAddressVerified()
-                                };
+                    var addressOptions = {
+                        'shippingAddressRequired': shippingAddressRequired,
+                        'notificationsTesting': cartStateManager.getNotificationsTesting(),
+                        'addressVerified': cartStateManager.getAddressVerified()
+                    };
 
-                                registerDuringCheckout.initialize(cartStateManager.getOrderId(), cartStateManager.getWebinarId(), cartStateManager.getOrderRowId(), addressOptions, checkoutConfirm.initialize);
-                            } else {
-                                $('#labelEmail').html('<span class="label label-important">&nbsp;Server error. Try again or call 800-831-0678 ext 706 for immediate assistance!</span>');
-                                Rollbar.error({ 'd-#21': { 'anonymousUserSubmit': 'Fail condition.' } });
-                                Rollbar.error({ 'd-#28': { 'responseObject': xhr.responseJSON } });
-                            }
-                            loadingSpinner.remove();
-                        });
-
-                        $('#contactInfoTab a').tab('show');
-                    } else if (!xhr.responseJSON['isSuccessful']) {
-                        $('#labelEmail').html('<span class="label label-important">&nbsp;There were some problems with the form. Please refer to the items in red.</span>');
-                        formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
-                        loadingSpinner.remove();
-                        Rollbar.error({ 'd-#22': { 'anonymousUserSubmit': 'Fail condition.' } });
-                    }
+                    registerDuringCheckout.initialize(cartStateManager.getOrderId(), cartStateManager.getWebinarId(), cartStateManager.getOrderRowId(), addressOptions, checkoutConfirm.initialize);
                 } else {
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;Server error. Try again or call 800-831-0678 ext 706 for immediate assistance!</span>');
-                    loadingSpinner.remove();
-                    Rollbar.error({ 'd-#23': { 'anonymousUserSubmit': 'Fail condition.' } });
+                    $('#labelEmail').html('<span class="label label-important">Server error #21. Try again or call 800-831-0678 ext 706 for immediate assistance!</span>');
+                    L.clientLogger.error( 'd-#28', { 'responseObject': xhr.responseJSON, 'anonymousUserSubmit': 'Fail condition.' } );
                 }
-            }, constants.JsonDataType);
-        } else {
-            // If the user IS LOGGED IN
-            $.post(signUpForm.attr('action'), data, function (response, status, xhr) {
-                if (status !== 'error') {
-                    if (xhr.responseJSON['success']) {
-                        //Rollbar.info({ signup: { from: 'EndUser Checkout', orderRowId: data.orderRowId } });
-                        cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
-                        cartStateManager.setOrderId(xhr.responseJSON['orderId']);
-                        cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
+                loadingSpinner.remove();
+            });
 
-                        Rollbar.info({ 'd-#30': { 'loggedInUser': 'submitting ConfirmOrder' + xhr.responseJSON['orderId'] } });
-
-                        $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
-
-                            if (status === 'error') {
-                                $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
-                                $('#loadingSpinner').remove();
-                                $('#confirmationTab a').tab('show');
-                                Rollbar.error({ 'd-#24': { 'loggedInUser': 'Fail condition.' } });
-                                Rollbar.error({ 'd-#31': { 'responseObject': xhr.responseJSON } });
-                            } else {
-
-                                $('#confirmationTab a').tab('show');
-
-                                if (shippingAddressRequired && !cartStateManager.getNotificationsTesting() && !cartStateManager.getAddressVerified()) {
-                                    // Following function lives in the register-during-checkout.js script
-                                    // which will be in memory at this point and thus will have been hoisted.
-                                    hookUpModal($('#UserDetailsModal'));
-                                }
-
-                                // see top of this file
-                                checkoutConfirm.initialize();
-
-                                // The Bill Me button on 3rd tab
-                                $('#ConfirmRegistrationBillMe').on('click', function (e) {
-                                    e.preventDefault();
-                                    var confirmOrderForm = $('#confirmOrder');
-                                    confirmOrderForm.submit();
-                                });
-
-                                // The Cancel Registration button on 3rd tab
-                                $('#Canceller').on('click', function (e) {
-                                    e.preventDefault();
-                                    var cancelOrderForm = $('#cancelOrder');
-                                    cancelOrderForm.submit();
-                                });
-
-                                populateAdditionalLocationsOn3rdTab();
-                                setUpEditButtons();
-
-                                // Following 3 functions live in the register-during-checkout.js script
-                                // which will be in memory at this point and thus will be hoisted
-                                hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
-                                hookUpChangeTypeLogic($('#RegType'));
-                                hookUpEditUserLogic(null, shippingAddressRequired);
-
-                                beigeFormArea.height($('#confirmation').height() + 30);
-                            }
-
-                            spinner.remove();
-                            $('#loadingSpinner').remove();
-
-                        }, constants.HtmlDataType);
-                    } else if (xhr.responseJSON['isSuccessful'] === false) {
-                        formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
-
-                        spinner.remove();
-                        Rollbar.error({ 'd-#25': { 'loggedInUser': 'Fail condition.' } });
-                        Rollbar.error({ 'd-#27': { 'responseObject': xhr.responseJSON } });
-                    }
-                } else {
-                    spinner.remove();
-                    $('#confirmation').html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
-                    Rollbar.error({ 'd-#26': { 'loggedInUser': 'Fail condition.' } });
-                }
-            }, constants.JsonDataType);
-
-            return false;
+            $('#contactInfoTab a').tab('show');
+        } else if (!xhr.responseJSON['isSuccessful']) {
+            $('#labelEmail').html('<span class="label label-important">&nbsp;There were some problems with the form. Please refer to the items in red.</span>');
+            formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
+            loadingSpinner.remove();
+            L.clientLogger.error( 'd-#22', { 'anonymousUserSubmit': 'Fail condition.'  });
         }
-        return false;
-    });
+    } else {
+        $('#labelEmail').html('<span class="label label-important">&nbsp;Server error. Try again or call 800-831-0678 ext 706 for immediate assistance!</span>');
+        loadingSpinner.remove();
+        L.clientLogger.error( 'd-#23', { 'anonymousUserSubmit': 'Fail condition.' } );
+    }
+}, constants.JsonDataType);
+} else {
+    // If the user IS LOGGED IN
+    $.post(signUpForm.attr('action'), data, function (response, status, xhr) {
+        if (status !== 'error') {
+            if (xhr.responseJSON['success']) {
+                
+                cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
+                cartStateManager.setOrderId(xhr.responseJSON['orderId']);
+                cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
+
+                L.clientLogger.info( 'd-#30', { 'loggedInUser': 'submitting ConfirmOrder' + xhr.responseJSON['orderId'] } );
+
+            $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
+
+                if (status === 'error') {
+                    $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+                    $('#loadingSpinner').remove();
+                    $('#confirmationTab a').tab('show');
+
+                    L.clientLogger.error( 'd-#31', { 'loggedInUser': 'Fail condition.', 'responseObject': xhr.responseJSON } );
+                } else {
+
+                    $('#confirmationTab a').tab('show');
+
+                    if (shippingAddressRequired && !cartStateManager.getNotificationsTesting() && !cartStateManager.getAddressVerified()) {
+                        // Following function lives in the register-during-checkout.js script
+                        // which will be in memory at this point and thus will have been hoisted.
+                        hookUpModal($('#UserDetailsModal'));
+                    }
+
+                    // see top of this file
+                    checkoutConfirm.initialize();
+
+                    // The Bill Me button on 3rd tab
+                    $('#ConfirmRegistrationBillMe').on('click', function (e) {
+                        e.preventDefault();
+                        var confirmOrderForm = $('#confirmOrder');
+                        confirmOrderForm.submit();
+                    });
+
+                    // The Cancel Registration button on 3rd tab
+                    $('#Canceller').on('click', function (e) {
+                        e.preventDefault();
+                        var cancelOrderForm = $('#cancelOrder');
+                        cancelOrderForm.submit();
+                    });
+
+                    populateAdditionalLocationsOn3rdTab();
+                    setUpEditButtons();
+
+                    // Following 3 functions live in the register-during-checkout.js script
+                    // which will be in memory at this point and thus will be hoisted
+                    hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
+                    hookUpChangeTypeLogic($('#RegType'));
+                    hookUpEditUserLogic(null, shippingAddressRequired);
+
+                    beigeFormArea.height($('#confirmation').height() + 30);
+                }
+
+                spinner.remove();
+                $('#loadingSpinner').remove();
+
+            }, constants.HtmlDataType);
+        } else if (xhr.responseJSON['isSuccessful'] === false) {
+            formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
+
+            spinner.remove();
+
+            L.clientLogger.error( 'd-#27', { 'loggedInUser': 'Fail condition.','responseObject': xhr.responseJSON } );
+        }
+    } else {
+            spinner.remove();
+    $('#confirmation').html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+    L.clientLogger.error( 'd-#26', { 'loggedInUser': 'Fail condition.' } );
+}
+}, constants.JsonDataType);
+
+return false;
+}
+return false;
+});
 });
 
 function isShippindAddressRequired(jQueryObject) {
@@ -416,62 +414,62 @@ function setUpEditButtons() {
             Institution: $('#AdjustUserDetailsPanel_Institution').val()
         };
 
-        Rollbar.info({ 'd-#17': { 'userDetailEdits': payload } });
+        L.clientLogger.info( 'd-#17', { 'userDetailEdits': payload } );
 
-        $.ajax({
-            type: 'POST',
-            contentType: constants.JsonContentType,
-            cache: false,
-            url: url,
-            dataType: constants.JsonDataType,
-            data: JSON.stringify(payload),
-            headers: headers,
-            beforeSend: function () {
-                $('#editUserResult').remove();
-                self.after('<span id="userDetailsSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
-            }
-        }).done(function (data) {
-
-            if (data.Result === 'Success') {
-                self.after('<span id="editUserResult">&nbsp;<span class="label label-success"><span> Details updated successfully! </span></span></span>').hide().fadeIn(500);
-                Rollbar.info({ 'd-#18': { 'userDetailEditsResult': 'edits succeeded' } });
-            }
-
-            $('#userDetailsSpinner').remove();
-        });
-    });
-
-    $('#addAnotherAddLoc').on('click', function (e) {
-
-        e.preventDefault();
-
-        var newId;
-
-        if (numberOfAdditionalLocationsTab3 == 0) {
-
-            additionalLocationsList.after($('<button>',
-            {
-                id: 'applyAdditionalLocationsButton',
-                text: 'apply',
-                'class': 'btn btn-mini btn-primary',
-            }));
-
-            $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
-
-            newId = 0;
-        } else {
-            // first get the last previous email input
-            var lastInput = additionalLocationsList.find('input[type="email"]:last');
-            // get its id
-            var lastInputId = lastInput.attr('id');
-            var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
-            newId = id + 1;
+    $.ajax({
+        type: 'POST',
+        contentType: constants.JsonContentType,
+        cache: false,
+        url: url,
+        dataType: constants.JsonDataType,
+        data: JSON.stringify(payload),
+        headers: headers,
+        beforeSend: function () {
+            $('#editUserResult').remove();
+            self.after('<span id="userDetailsSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
         }
-        additionalLocationsList.append('<span id="' + locationsSpanPrefix + newId + '"><input id="AdditionalLocationEmail_' + newId + '" name="AdditionalLocations[' + newId + '].Email" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + newId + '-AdditionLocationEmail-delete"></i></span> <br id="' + newId + breakSuffix + '">');
-        additionalLocationsList.find('i#' + newId + '-AdditionLocationEmail-delete').on('click', deleteAddLocInputTabb3);
-        $('#AdditionalLocationEmail_' + newId).focus();
-        numberOfAdditionalLocationsTab3++;
-    });
+    }).done(function (data) {
+
+        if (data.Result === 'Success') {
+            self.after('<span id="editUserResult">&nbsp;<span class="label label-success"><span> Details updated successfully! </span></span></span>').hide().fadeIn(500);
+            L.clientLogger.info( 'd-#18', { 'userDetailEditsResult': 'edits succeeded' } );
+    }
+
+        $('#userDetailsSpinner').remove();
+});
+});
+
+$('#addAnotherAddLoc').on('click', function (e) {
+
+    e.preventDefault();
+
+    var newId;
+
+    if (numberOfAdditionalLocationsTab3 == 0) {
+
+        additionalLocationsList.after($('<button>',
+        {
+            id: 'applyAdditionalLocationsButton',
+            text: 'apply',
+            'class': 'btn btn-mini btn-primary',
+        }));
+
+        $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
+
+        newId = 0;
+    } else {
+        // first get the last previous email input
+        var lastInput = additionalLocationsList.find('input[type="email"]:last');
+        // get its id
+        var lastInputId = lastInput.attr('id');
+        var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
+        newId = id + 1;
+    }
+    additionalLocationsList.append('<span id="' + locationsSpanPrefix + newId + '"><input id="AdditionalLocationEmail_' + newId + '" name="AdditionalLocations[' + newId + '].Email" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + newId + '-AdditionLocationEmail-delete"></i></span> <br id="' + newId + breakSuffix + '">');
+    additionalLocationsList.find('i#' + newId + '-AdditionLocationEmail-delete').on('click', deleteAddLocInputTabb3);
+    $('#AdditionalLocationEmail_' + newId).focus();
+    numberOfAdditionalLocationsTab3++;
+});
 }
 
 function populateAdditionalLocationsOn3rdTab() {
@@ -488,33 +486,32 @@ function populateAdditionalLocationsOn3rdTab() {
     var locations = addLocsOn1stTabContainer.children();
     numberOfAdditionalLocationsTab3 = locations.filter('span').length;
 
-    Rollbar.info({ 'd-#13': { 'numOfOfAdditionalLocationsOnTab3': numberOfAdditionalLocationsTab3 } });
 
-    var copyOfLocations = locations.clone();
+var copyOfLocations = locations.clone();
 
-    addLocsOn1stTabContainer.remove();
+addLocsOn1stTabContainer.remove();
 
-    additionalLocationsList = $('#additionalLocationsList');
+additionalLocationsList = $('#additionalLocationsList');
 
-    additionalLocationsList.append('<input id="newOrderRowId" name="newOrderRowId"  type="hidden" value=' + cartStateManager.getOrderRowId() + ' data-val="true" data-val-number="The field newOrderRowId must be a number." data-val-required="The newOrderRowId field is required."/>');
-    additionalLocationsList.append(copyOfLocations);
+additionalLocationsList.append('<input id="newOrderRowId" name="newOrderRowId"  type="hidden" value=' + cartStateManager.getOrderRowId() + ' data-val="true" data-val-number="The field newOrderRowId must be a number." data-val-required="The newOrderRowId field is required."/>');
+additionalLocationsList.append(copyOfLocations);
 
-    if (numberOfAdditionalLocationsTab3 > 0) {
-        additionalLocationsList.after($('<button>',
-        {
-            id: 'applyAdditionalLocationsButton',
-            text: 'apply',
-            'class': 'btn btn-mini btn-primary',
-        }));
+if (numberOfAdditionalLocationsTab3 > 0) {
+    additionalLocationsList.after($('<button>',
+    {
+        id: 'applyAdditionalLocationsButton',
+        text: 'apply',
+        'class': 'btn btn-mini btn-primary',
+    }));
 
-        $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
+    $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
 
-        var trashCans = additionalLocationsList.find('i');
+    var trashCans = additionalLocationsList.find('i');
 
-        $.each(trashCans, function (idx, i) {
-            $(i).on('click', deleteAddLocInputTabb3);
-        });
-    }
+    $.each(trashCans, function (idx, i) {
+        $(i).on('click', deleteAddLocInputTabb3);
+    });
+}
 }
 
 var deleteAddLocInputTabb3 = function (event) {
@@ -557,37 +554,37 @@ var applyAdditionalLocations = function (e) {
 
     var formData = adjustAddLocsForm.serialize();
 
-    Rollbar.info({ 'd-#14': { 'applyEditsToAdditionalLocationsTab3': formData } });
+    L.clientLogger.info( 'd-#14', { 'applyEditsToAdditionalLocationsTab3': formData } );
 
-    $.ajax({
-        type: 'POST',
-        contentType: RegistrationInCart.Constants.FormPostContentType,
-        cache: false,
-        url: url,
-        dataType: RegistrationInCart.Constants.JsonDataType,
-        data: formData,
-        beforeSend: function () {
-            self.append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
-        }
-    }).done(function (data) {
-        if (data.Result === 'Success') {
-            var infoLabel = $('#addLocsText');
+$.ajax({
+    type: 'POST',
+    contentType: RegistrationInCart.Constants.FormPostContentType,
+    cache: false,
+    url: url,
+    dataType: RegistrationInCart.Constants.JsonDataType,
+    data: formData,
+    beforeSend: function () {
+        self.append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+    }
+}).done(function (data) {
+    if (data.Result === 'Success') {
+        var infoLabel = $('#addLocsText');
 
-            var priceLabel = $('#totalAdLocsPrice');
-            priceLabel.text('$' + (numberOfAdditionalLocationsTab3 * ADDLOC.price));
+        var priceLabel = $('#totalAdLocsPrice');
+        priceLabel.text('$' + (numberOfAdditionalLocationsTab3 * ADDLOC.price));
 
-            var newText = numberOfAdditionalLocationsTab3 + $.trim(infoLabel.html()).slice(1);
+        var newText = numberOfAdditionalLocationsTab3 + $.trim(infoLabel.html()).slice(1);
 
-            infoLabel.fadeOut(200, function () {
-                infoLabel.html(newText);
-                infoLabel.fadeIn(200);
-            });
+        infoLabel.fadeOut(200, function () {
+            infoLabel.html(newText);
+            infoLabel.fadeIn(200);
+        });
 
-            Rollbar.info({ 'd-#15': { 'applyEditsToAdditionalLocationsResult': 'edits succeeded' } });
+        L.clientLogger.info( 'd-#15', { 'applyEditsToAdditionalLocationsResult': 'edits succeeded' } );
 
-        } else {
-            Rollbar.error({ 'd-#16': { 'applyEditsToAdditionalLocationsResult': 'edits failed', 'returnObject': data } });
-        }
-        $('#waitSpinner').remove();
-    });
+} else {
+        L.clientLogger.error( 'd-#16', { 'applyEditsToAdditionalLocationsResult': 'edits failed', 'returnObject': data } );
+}
+$('#waitSpinner').remove();
+});
 };

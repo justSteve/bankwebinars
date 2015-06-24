@@ -4,7 +4,7 @@ registerDuringCheckout.institutionNames = {};
 
 registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, addressOptions, callback) {
 
-    Rollbar.info({ 'registerDuringCheckout.initialize': { orderId: orderId, webinarId: webinarId, orderRowId: orderRowId, shippingAddressRequired: shippingAddressRequired } });
+    L.clientLogger.info('registerDuringCheckout.initialize', { orderId: orderId, webinarId: webinarId, orderRowId: orderRowId, shippingAddressRequired: shippingAddressRequired });
 
     cartStateManager.setCancelOrderForm($('#cancelOrder'));
     cartStateManager.setConfirmOrderForm($('#confirmOrder'));
@@ -46,7 +46,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
         if (regUserStateManager.getAction() === '') {
 
             $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #893. Please refresh the page and re-try or contact @tenantTechEmail or, for immediate assistant, call @tenant.TechPhone.</span>');
-            Rollbar.error("Connection Error #893. Item clicked: " + e.currentTarget.value);
+            L.clientLogger.error("Connection Error #893. Item clicked: ", { value: e.currentTarget.value });
             return false;
         }
 
@@ -74,19 +74,16 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 regUserStateManager.nonUsAdddressInvoked();
                 break;
             case RegistrationInCart.Button.ResetPass:
-                Rollbar.info({ 'ResetPass': { Action: regUserStateManager.getAction() } });
                 regUserStateManager.resetPassword(normalResetPasswordButton);
                 break;
             case RegistrationInCart.Button.YesUseAddress:
-                Rollbar.info({ 'YesUseAddress': { Action: regUserStateManager.getAction() } });
                 regUserStateManager.useRegisteredAddress();
                 break;
             case RegistrationInCart.Button.EnterDiffAddress:
-                Rollbar.info({ 'EnterDiffAddress': { Action: regUserStateManager.getAction() } });
                 regUserStateManager.enterDifferentAddress();
                 break;
             case RegistrationInCart.Button.NotInstitution:
-                Rollbar.info({ 'NotInstitution': { Action: regUserStateManager.getAction() } });
+
                 regUserStateManager.notInstitutionAddress();
                 break;
             default:
@@ -103,8 +100,6 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
         // 13 is enter key
         if (event.which == 13) {
-
-            Rollbar.info({ 'keypress': { Element: inputElementTriggered } });
 
             if ($('#modalInstitution').filter(':visible').length > 0
                 && inputElementTriggered !== RegistrationInCart.Button.YesUseAddress
@@ -171,14 +166,12 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
     $('#collapseShipping').on('shown', function () {
         if ($(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
             regUserStateManager.setShippingToBilling();
-            Rollbar.info('Shipping set to same as Billing via on-shown.');
         }
     });
 
     $('#TheSubmitButton').on('mouseenter', function () {
         if ($('#TheSubmitButton').val() === regUserStateManager.getRegisterButtonText() && $(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
             regUserStateManager.setShippingToBilling();
-            Rollbar.info('Shipping set to same as Billing via mouse-enter.');
         }
     });
 
@@ -211,15 +204,15 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 $('#labelEmail').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Reset instructions are on the way.</span>');
             } else {
                 if (data['Invalid'] === 'UserNotVerified') {
-                    Rollbar.error("#388 UserNotVerified ", { result: data && data.Result });
+                    L.clientLogger.error("#388 UserNotVerified ", { result: data && data.Result });
 
                     $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #388. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 } else if (data['Invalid'] === 'UnkownEmail') {
-                    Rollbar.error("UnkownEmail", { result: data && data.Result });
+                    L.clientLogger.error("UnkownEmail", { result: data && data.Result });
 
                     $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 } else {
-                    Rollbar.error("Unknown error #454", { result: data && data.Result });
+                    L.clientLogger.error("Unknown error #454", { result: data && data.Result });
                     $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Error.Connection Error #454. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 }
             }
@@ -256,11 +249,11 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
                 // successful request; do something with the data
                 if (data.success === 'foundExisting') {
-                    Rollbar.info('Existing user came anon: ' + email);
+                    L.clientLogger.info('Existing user came anon: ' , { email: email });
                     regUserStateManager.resetPasswordOrLoginView(email, webinarId);
                 } else if (data.success === 'foundInstitution') {
                     regUserStateManager.foundInstitutionView(data, email);
-                    Rollbar.info('foundInstitution for user: ' + email);
+                    L.clientLogger.info('foundInstitution for user: ' , { email: email});
                     if (data.createUser === "true") {
                         createUserAccount(email);
                     }
@@ -271,25 +264,26 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                     }
                 } else if (data.error === 'Fail') {
 
-                    Rollbar.info("goToAddressFields 319");
+                    L.clientLogger.info("goToAddressFields 319", {data: data});
                     $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #319. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 } else if (data.error === 'Uncaught Ajax Error') {
-                    Rollbar.error("Uncaught Ajax Error 343", { result: data || 'data was falsey' });
-                    
-                    Rollbar.error("payload", payload);
+                    L.clientLogger.error("Uncaught Ajax Error 343", { result: data || "data was falsey", payload: payload });
+
+
                     $('#labelEmail').html('<span class="label label-important">&nbsp;Uncaught Ajax Error 343</span>');
                 }
 
-            }).fail(commonFuncs.failCallBack).always(function (data, status, message) {
-                regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
+            }).fail(commonFuncs.failCallBack)
+              .always(function (data, status, message) {
+                  regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
 
-                if (data && data.responseText) {
-                    if (status === 'error' && JSON.parse(data.responseText)['Message'] === 'Uncaught Ajax Error') {
-                        Rollbar.error("HandleAjaxExceptionAttribute #458 ", data);
-                    }
-                }
-                Rollbar.error({ "Static marker #320 payload": { payload: payload } });
-            });
+                  if (data && data.responseText) {
+                      if (status === 'error' && JSON.parse(data.responseText)['Message'] === 'Uncaught Ajax Error') {
+                          L.clientLogger.error("HandleAjaxExceptionAttribute #458 ", { result: data });
+                      }
+
+                  }
+              });
         }
     });
 
@@ -314,12 +308,13 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 }
             }).done(function (data) {
                 // successful request; do something with the data
-                Rollbar.info({ 'Zipcode check result': { 'data': data || 'data was falsey'} });
+                L.clientLogger.info('Zipcode check result', { 'data': data || 'data was falsey' });
                 regUserStateManager.zipCodeVerified(data, zipCode);
-            }).fail(commonFuncs.failCallBack).always(function () {
-                regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
-                Rollbar.info({ 'Zipcode checked': { 'zipCode': zipCode } });
-            });
+            }).fail(commonFuncs.failCallBack)
+                .always(function () {
+                    regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
+                    L.clientLogger.info('Zipcode checked', { 'zipCode': zipCode });
+                });
         }
         return false;
     });
@@ -409,7 +404,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 errorsList.append('<li style="display:none"></li>');
 
                 beigeFormArea.height(500);
-                //TODO: scroll screen upwards.
+                //TODO: Why are we setting this height?
             }
         }).done(function (data) {
             //alert('done: ');
@@ -446,7 +441,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                             data: JSON.stringify(payloadForUpdate),
                             headers: headers,
                             beforeSend: function () {
-                                Rollbar.log("submitting " + url + " with: ", {
+                                L.clientLogger.log("submitting " + url + " with: ", {
                                     orderId: orderId,
                                     userId: data.UserId
                                 });
@@ -460,8 +455,8 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                             $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
 
                                 if (status == 'error') {
-                                    Rollbar.error("Error at /cart/checkoutConfirm/");
-                                    $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+                                    L.clientLogger.error("Error at /cart/checkoutConfirm/", { rowid: cartStateManager.getOrderRowId() });
+                                    $(this).html('<div class="text-error">There has been error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
                                     $('#loadingSpinner').remove();
                                     $('#confirmationTab a').tab('show');
                                 } else {
@@ -503,12 +498,12 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                     }
 
                 } else if (data.Result === 'Fail') {
-                    Rollbar.error("Connection Error #332 static marker");
+                    L.clientLogger.error("Connection Error #332", { data: data });
                     $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #332. Please try again or call tech support at 800-831-0678 ext 706.</span>');
                     regUserStateManager.setAction(RegistrationInCart.Action.SubmitRegister);
                 }
             } else if (!data.isSuccessful) {
-                Rollbar.error("Connection Error #332 static marker");
+                L.clientLogger.error("Connection Error #332", { data: data });
 
                 $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;There were some problems with the form. Please refer to the items in red.</span>');
                 formProcessor.lightUpValidationSummary('valSummarySignUpInCart', data);
@@ -590,8 +585,8 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
 
                                         if (status == 'error') {
-                                            Rollbar.error("Connection Error #106.", { 'data': data || 'data was falsey'});
-                                            
+                                            L.clientLogger.error("Connection Error #106.", { 'data': data || 'data was falsey' });
+
                                             $(this).html('<div class="text-error">Connection Error #106. Email support@ttstrain.com or call 800-831-0678 ext 706 for immediate assistance.</div>');
                                             $('#confirmationTab a').tab('show');
                                         } else {
@@ -632,7 +627,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                     });
                 }
             } else if (!data.isSuccessful) {
-                Rollbar.error("Error #641: ", { data: data && data });
+                L.clientLogger.error("Error #641: ", { data: data && data });
 
                 valSummary.removeClass('validation-summary-valid').addClass('validation-summary-errors');
                 var errorsList = valSummary.find('ul');
@@ -642,14 +637,12 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                     if (data.data.hasOwnProperty(error)) {
                         errorsList.append('<li>' + data.data[error] + '</li>');
                         if (data.data[error].toString().indexOf("password") < 1) {
-                            Rollbar.error("Login error with somethhing besides Invalid Password. " + data.data[error]);
+                            L.clientLogger.error("Login error with something besides Invalid Password. " , { data: data.data[error] })};
                         } else {
-                            Rollbar.info("Invalid Password. " + data.data[error]);
+                            L.clientLogger.info("Invalid Password. " , { data: data.data[error] });
                         }
                     }
-                }
-            }
-
+                };
             labelEmail.remove();
 
         }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -663,7 +656,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 alert('An error occurred: ' + jqXHR.statusCode().status + ' nError: ' + jqXHR.statusCode().statusText);
             };
 
-            Rollbar.error("Error #902: ", { data: xhr && xhr.data });
+            L.clientLogger.error("Error #902: ", { data: xhr && xhr.data });
 
             labelEmail.remove();
 
@@ -777,7 +770,7 @@ function completeOrder(userId, orderRowId, webinarId, orderId) {
 
             } else {
 
-                Rollbar.error("Error #935: ", { result: result && result.Result });
+                L.clientLogger.error("Error #935: ", { result: result && result.Result });
                 confirmRegistrationBillMe.after('<span class="text-error">Error #935. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
             }
 
@@ -814,7 +807,7 @@ function cancelOrder(orderId, webinarId) {
 
             } else {
 
-                Rollbar.error("Cancel Order Failure: ", { data: xhr && xhr.data });
+                L.clientLogger.error("Cancel Order Failure: ", { data: xhr && xhr.data });
 
                 $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Error #216. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                 $('#CancelModal').modal('hide');
@@ -899,11 +892,11 @@ function hookUpEditUserLogic(button, shippingAddressRequired) {
 
                 } else if (!data.isSuccessful) {
 
-                    Rollbar.error("userDetailsForm Submission Fails: ", { data: data && data.Result });
+                    L.clientLogger.error("userDetailsForm Submission Fails: ", { data: data && data.Result });
                     $('#updateShippingMsgLabelWrap').empty();
                     formProcessor.lightUpValidationSummary('userDetailsValSummary', data);
                 } else {
-                    Rollbar.error("Error #416: ", { data: data && data.Result });
+                    L.clientLogger.error("Error #416: ", { data: data && data.Result });
                 };
 
                 $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #416. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
@@ -919,7 +912,7 @@ function hookUpEditUserLogic(button, shippingAddressRequired) {
                     alert('An error occurred: ' + jqXHR.statusCode().status + ' nError: ' + jqXHR.statusCode().statusText);
                 };
 
-                Rollbar.error("Error #417", { jqXHR: jqXHR && jqXHR.statusCode().statusText });
+                L.clientLogger.error("Error #417", { jqXHR: jqXHR && jqXHR.statusCode().statusText });
                 $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #417. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
             });
         });
