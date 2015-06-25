@@ -1,9 +1,8 @@
-﻿
-@*@model Order
+﻿@model Order
 @using System.Configuration
 @{
-    Layout = "/Views/Shared/_Layout_PayCC.cshtml";
-    var title = Model.Rows.SingleOrDefault().Webinar.Title;
+    //Layout = "/Views/Shared/_Layout_PayCC.cshtml";
+    var title = Model.OrderRows.SingleOrDefault().Webinar.Title;
     title = title.Replace("%", "");
     title = title.Replace("&", "");
     title = title.Replace("#", "");
@@ -22,26 +21,26 @@
     <input type="hidden" name="T_amt" value="@Model.Total" />
     <input type="hidden" name="T_shipping" value="0" />
     <input type="hidden" name="T_tax" value="0" />
-    <input type="hidden" name="T_ordernum" value="@Model.ID" />
-    <input type="hidden" name="C_company" value="@Model.CustomerInstitution" />
+    <input type="hidden" name="T_ordernum" value="@Model.idOrder" />
+    <input type="hidden" name="C_company" value="@Model.Institution" />
     <input type="hidden" name="C_fname" value="@Model.FirstName" />
     <input type="hidden" name="C_lname" value="@Model.LastName" />
-    <input type="hidden" name="C_address" value="@Model.Address" />
-    <input type="hidden" name="C_city" value="@Model.City" />
-    <input type="hidden" name="C_state" value="@Model.State" />
-    <input type="hidden" name="C_zip" value="@Model.Zip" />
-    <input type="hidden" name="C_email" value="@Model.Email" />
-    <input type="hidden" name="C_telephone" value="@Model.Phone" />
-    <input type="hidden" name="C_telephone" value="@Model.Phone" />
+    <input type="hidden" name="C_address" value="@Model.BillingAddress" />
+    <input type="hidden" name="C_city" value="@Model.BillingCity" />
+    <input type="hidden" name="C_state" value="@Model.BillingState" />
+    <input type="hidden" name="C_zip" value="@Model.BillingZip" />
+    <input type="hidden" name="C_email" value="@Model.BillingEmail" />
+    <input type="hidden" name="C_telephone" value="@Model.BillingPhone" />
+    <input type="hidden" name="C_telephone" value="@Model.BillingPhone" />
     <input type="hidden" name="C_memo" value="@title" />
     <h4 align="center">
         Redirecting to our credit card processor - SagePayment.net - for entry of credit card information. The result of that transaction will display here when completed.
     </h4>
     <p style="margin-left: 200px;">
-        <i>Registration ID: <b>BW-@Model.ID</b></i><br />
+        <i>Registration ID: <b>BW-@Model.idOrder</b></i><br />
 
         <b>
-            @Model.Rows.SingleOrDefault().Webinar.Title<br />
+            @Model.OrderRows.SingleOrDefault().Webinar.Title<br />
     </b>
     @Model.Total.ToString("C")
 </p>
@@ -49,5 +48,5 @@
 
 <input type="submit" value="Continue" />
 <input type="reset" onclick="self.close();" value="Cancel" />
-</form>*@
+</form>
 

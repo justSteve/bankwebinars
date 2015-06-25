@@ -38,5 +38,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         void UpdateOrderWithUserId(int orderId, int userId);
         string GetDiscountAmountAsPercentageOrDollarAmount(Discount myDiscount);
         void UpdateAdditionalLocationsForOrderRow(IEnumerable<AdditionalLocation> additionalLocations, int newOrderRowId);
+        Order LoadOrder(int id);
+        void SetOrderPaidByCC(int qOrder, string s, string formFields);
     }
 }

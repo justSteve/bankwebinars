@@ -15,6 +15,7 @@ using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web.Mvc;
 
 namespace CUWebinars.Web.Controllers
@@ -464,6 +465,80 @@ namespace CUWebinars.Web.Controllers
                 return Json(new { Result = WebUiConstants.Success });
             }
 
+            return View();
+        }
+        public ActionResult PayCC(int id)
+        {
+            var order = _cartControllerOrchestrator.LoadOrder(id);
+
+            string formFields = Request.QueryString.ToString();
+            _logger.Info("PayCC: " + formFields);
+            if (Request["referred"] != null && WebUtility.HtmlDecode(Request["referred"]) != "How did you hear about this webinar?")
+            {
+                order.Origin = Request["referred"] + Environment.NewLine + order.Origin;
+                _logger.Info("PayCC Declined: " + formFields);
+                //ViewData["referred"] = Request["referred"];
+            }
+            return View("~/Views/Home/PayCC.cshtml", order);
+        }
+
+        public void CCPostBack(FormCollection form)
+        {
+            string formFields = Request.Form.ToString();
+
+
+            _logger.Info("CCPostBack: " + formFields);
+
+        }
+
+
+        public ActionResult PayCC_Declined()
+        {
+            string formFields = Request.QueryString.ToString();
+            _logger.Info("PayCC Declined: " + formFields);
+            int qOrder;
+            bool oResult = Int32.TryParse(Request.QueryString["T_ordernum"], out qOrder);
+
+            if (oResult)
+            {
+                var order = _cartControllerOrchestrator.LoadOrder(qOrder);
+                return View("~/Views/Home/PayCC_Declined.cshtml", order);
+
+            }
+            _logger.Info("ERROR: PayCC Declined Fell too far: " + formFields);
+            return View();
+        }
+
+
+        public ActionResult PayCC_Approved()
+        {
+            string formFields = Request.QueryString.ToString();
+            _logger.Info("PayCC_Approved: " + formFields);
+            int qOrder;
+            bool oResult = Int32.TryParse(Request.QueryString["T_ordernum"], out qOrder);
+
+            if (oResult)
+            {
+                try
+                {
+                    var order =  _cartControllerOrchestrator.LoadOrder(qOrder);
+                    _cartControllerOrchestrator.SetOrderPaidByCC(qOrder, Request.QueryString["Approval_Code"], formFields);
+
+                    //if (order.IsEverythingPaid)
+                    //{
+                    //    Session["IsOrderPaid"] = true;
+                    //}
+                    return View("~/Views/Home/PayCC_Approved.cshtml", order);
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error("ERROR: PayCC Approval exception", ex);
+                    
+                    return View();
+                }
+            }
+            _logger.Info("ERROR: PayCC Approved fell too far: " + formFields);
             return View();
         }
 

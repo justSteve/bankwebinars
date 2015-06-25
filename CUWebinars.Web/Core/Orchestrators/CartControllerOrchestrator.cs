@@ -612,6 +612,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             return _orderManagementService.GetRegTypeOption(idRegType).SingleOrDefault();
         }
 
+
         public OrderRow LoadOrderRow(int id, OrderStatus status)
         {
             OrderRow row = _orderManagementService.LoadOrderRow(id);
@@ -686,6 +687,30 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
 
             _orderManagementService.SaveChanges();
+        }
+
+        public Order LoadOrder(int id)
+        {
+            return _orderManagementService.GetOrderById(id);
+        
+        }
+
+        public void SetOrderPaidByCC(int qOrder, string s, string formFields)
+        {
+            {
+                Order order = LoadOrder(qOrder);
+
+                //order.PaymentType = (PaymentType)2;
+
+
+                //order.AdminComments = order.StoreComments + "\r\nCredit Card Order Approved: " + txApprovalCode.ToString();
+
+                string buildMessage = "Step2_PayCC: " + order.idOrder + " QueryString: " + formFields;
+                //Logger.Instance.LogMessage(buildMessage);
+
+                order.OrderStatus = OrderStatus.Paid;
+                _orderManagementService.SaveChanges();
+            }
         }
 
         public INotificationMessage GenerateMessagePreview(Order order)

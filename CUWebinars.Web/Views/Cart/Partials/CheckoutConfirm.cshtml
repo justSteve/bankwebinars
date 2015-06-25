@@ -1,5 +1,11 @@
 ﻿@using CUWebinars.Business.Core
 @model CheckoutConfirmViewModel
+<script language="javascript" type="text/javascript">
+
+    function PayByCC() {
+        alert("Please call us at 800-831-0678 ext. 3 to place your Credit Card payment");
+    }
+</script>
 
 @{
     if (Model.OrderExists)
@@ -80,7 +86,7 @@
                         </div>
                         <div style="font-size: x-small; text-align: center;">
                             <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button><br />
-                            @*<button class="btn btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button><br />*@
+                            <button class="btn btn-success" id="ConfirmRegistrationPayByCC">To pay by credit card call 800-831-0678 ext. 3</button><br />
                             <a class="btn" id="Canceller">Cancel Registration</a><br />
                             Sales tax may be added to orders in Wisconsin or Illinois.
                         </div>
