@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Core;
+﻿using System.Data.Entity;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
@@ -98,6 +99,25 @@ namespace CUWebinars.Business.Services
             {
                 _quizRepository.AddQuestion(question);
 
+                var options = question.QuestionWithOptions.Select(q => q.Option).ToList();
+
+                // This loop is an edge case. true and false will be very common answers. Rather than storing them over and over again,
+                // this loop will re-use the already stored answers for true and false, which complies with the quiz schema.
+                foreach (var option in options)
+                {
+                    if (option.Text.Equals("true", StringComparison.OrdinalIgnoreCase) ||
+                        option.Text.Equals("false", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var storedOption = _quizRepository.Context.Option.Single(o => o.Id == option.Id);
+                        foreach (var questionWithOption in question.QuestionWithOptions)
+                        {
+                            if(questionWithOption.Option.Id == storedOption.Id)
+                                questionWithOption.Option = storedOption;
+                        }
+                    }                    
+                }
+
+                
                 _quizRepository.SaveChanges();
             }
 

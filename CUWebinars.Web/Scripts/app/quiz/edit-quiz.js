@@ -908,7 +908,7 @@ $(function () {
         // hook up events for new option
         var newOptionDiv$ = accordionGroup.find('#' + questionNumber.toString() + (currentOptionCount + 1).toString() + '-option');
         newOptionDiv$.find('i.icon-trash').on('click', EQ.newQuDeleteOption);
-        
+        newOptionDiv$.find('input[type="text"]').focus();
     };
 
     ns.getNewQuestionsFromDom = function() {
@@ -931,7 +931,21 @@ $(function () {
 
                 var commonIdPrefix = '#' + questionNumber.toString() + (idx + 1).toString();
 
-                var opt = { Text: $(commonIdPrefix + '-optionInput').val() };
+                var optionText = $.trim($(commonIdPrefix + '-optionInput').val());
+
+                var optionId;
+                if (optionText === 'true') {
+                    optionId = 1;
+                } else if (optionText === 'false') {
+                    optionId = 2;
+                }
+
+                var opt;
+                if (optionId) {
+                    opt = { Text: optionText, Id: optionId };
+                } else {
+                    opt = { Text: optionText };
+                }
                 var questionWithOption = {
                     Letter: $(commonIdPrefix + '-option').find('span:first-child').text(),
                     CorrectAnswer: $(commonIdPrefix + '-option').find('input[type="checkbox"]').prop('checked'),

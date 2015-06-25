@@ -30,6 +30,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Web.Hosting;
 using System.Web.Mvc;
+using Thinktecture.IdentityModel.Authorization;
 using WebGrease.Css.Extensions;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 using DateTimeHelper = CUWebinars.Web.Helpers.DateTimeHelper;
@@ -536,8 +537,7 @@ namespace CUWebinars.Web.Controllers
 
                 ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
 
-                if (claimsIdentityOfAuthenticatedUser.HasClaim(
-                        (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
+                if(ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.AdminFunction))
                 {
                     int totalNumberOrders;
                     var aff = _affiliateManagementService.LoadByTTSDomain("bankwebinars");

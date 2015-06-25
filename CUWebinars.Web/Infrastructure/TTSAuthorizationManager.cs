@@ -23,23 +23,36 @@ namespace CUWebinars.Web.Infrastructure
                     //return PrincipalCanPerformActionOnResource(action, context.Principal);
                     return false;
                 }
-                case IdentityConstants.AdminResources:
+                case IdentityConstants.admin:
+                case IdentityConstants.Admin:
                 {
-                    //if (PrincipalCanPerformActionOnResource(action, context.Principal))
-                    //    return true;
-                    return false;
+                    authorizationProcessor = new AdminControllerAuthorizationProcessor();
+                    return ProcessAuthorizationRequest(context, authorizationProcessor, action);
+                }
+                case IdentityConstants.AdminFunction:
+                {
+                    authorizationProcessor = new AdminFunctionAuthorizationProcessor();
+                    return ProcessAuthorizationRequest(context, authorizationProcessor, action);
                 }
                 case IdentityConstants.BatchPasswordResetFeature:
                 {
                     authorizationProcessor = new BatchPasswordResetAuthorizationProcessor();
-                    var processor = authorizationProcessor.GetAuthorizationProcessorForAction(action);
-                    return processor(context.Principal);
+                    return ProcessAuthorizationRequest(context, authorizationProcessor, action);
                 }
                 default:
                 {
                     throw new NotSupportedException(string.Format(IdentityConstants.Invalid, resource, "resource"));
                 }
             }
+        }
+
+        private bool ProcessAuthorizationRequest(
+            AuthorizationContext context,
+            IAuthorizationProcessor authorizationProcessor, 
+            Claim action)
+        {
+            var processor = authorizationProcessor.GetAuthorizationProcessorForAction(action);
+            return processor(context.Principal);
         }
     }
 }

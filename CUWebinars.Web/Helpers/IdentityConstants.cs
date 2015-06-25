@@ -4,6 +4,7 @@ namespace CUWebinars.Web.Helpers
     public class IdentityConstants
     {
         //  Claim values
+        public const string admin = "admin";
         public const string Admin = "Admin";
 
         //  Actions
@@ -12,7 +13,7 @@ namespace CUWebinars.Web.Helpers
 
         //  Resources
         public const string Account = "Account";
-        public const string AdminResources = "AdminResources";
+        public const string AdminFunction = "AdminFunction";
         public const string BatchPasswordResetFeature = "BatchPasswordResetFeature";
 
         //  Error messages
