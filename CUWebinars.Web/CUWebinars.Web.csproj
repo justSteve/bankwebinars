@@ -724,8 +724,8 @@
     <Content Include="Content\DataTables\css\dataTables.responsive.scss" />
     <Content Include="Content\DataTables\css\dataTables.jqueryui.scss" />
     <Content Include="App_Data\CU31.bacpac" />
-    <None Include="Properties\PublishProfiles\BankWebinars - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\BankWebinars31 - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\BankWebinars31 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars33 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
@@ -940,7 +940,7 @@
     <Content Include="Views\Admin\Partials\_BatchPasswordReset.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowOrdersByUser.cshtml" />
     <Content Include="Views\Admin\Partials\_NotAuthorized.cshtml" />
-    <None Include="Web.BankWebinars - Web Deploy.config">
+    <None Include="Web.BankWebinars31 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <None Include="Web.CUWebinars33 - Web Deploy.config">
