@@ -10,7 +10,7 @@ L.clientLogger = function () {
     var errorLevel = 'error';
     var infoLevel = 'log';
 
-    var log = function(logLevel, id, obj) {
+    var log = function (logLevel, id, obj) {
 
         var logObj = {};
         logObj[id] = obj;
@@ -18,14 +18,24 @@ L.clientLogger = function () {
         switch (logLevel) {
             case errorLevel:
                 Rollbar.error(logObj);
+                window.$zopim(function () {
+                    window.$zopim.livechat.setTag(id);
+
+                    $zopim.livechat.bubble.setTitle('Get Help Here!');
+                });
                 break;
             case infoLevel:
                 Rollbar.info(logObj);
+                window.$zopim(function () {
+                    window.$zopim.livechat.setTag(id);
+
+                    $zopim.livechat.bubble.setTitle('Get Help Here!');
+                });
                 break;
         }
     };
 
-    var error = function(id, obj) {
+    var error = function (id, obj) {
         log(errorLevel, id, obj);
     };
 
@@ -34,7 +44,7 @@ L.clientLogger = function () {
     };
 
 
-    return{
+    return {
         errorLevel: errorLevel,
         infoLevel: infoLevel,
         log: log,
