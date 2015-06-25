@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Diagnostics;
+using System.Security.Claims;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Models.Mapping;
 using CUWebinars.Business.Notification;
@@ -21,6 +23,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web;
+using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
 namespace CUWebinars.Web.Core.Orchestrators
 {
@@ -539,6 +542,13 @@ namespace CUWebinars.Web.Core.Orchestrators
         public Order CreateOrder(CheckoutOptionsViewModel formModel)
         {
             _stateService.SetValue(DomainConstants.CheckoutInProcess, true);
+            Claim beingImpersonatedClaim = null;
+
+            if (Request.IsAuthenticated)
+            {
+                var user = Request.RequestContext.HttpContext.User as ClaimsPrincipal;
+                beingImpersonatedClaim = user.Claims.SingleOrDefault(c => c.Type == ClaimTypes.BeingImpersonated);
+            }
             
             var webinar = _webinarManagementService.GetWebinar(formModel.idWebinar);
 
@@ -559,7 +569,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             // does not exist, a dummy user with an email of notauthenticated@cuwebinars.com will be created.
             var webUser = _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.idUser);
 
-            return CreateNewOrder(currentAffiliate, webUser, webinar, newOrderRow);
+            return CreateNewOrder(currentAffiliate, webUser, webinar, newOrderRow, beingImpersonatedClaim);
         }
 
         public OrderRow GetOrderRowLoaded(int idOrderRow)
@@ -572,7 +582,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             return _membershipService.GetWebUsersByLastNameForAffiliate(lastName, idAffiliate);
         }
 
-        private Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow)
+        private Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, Claim createdByImpersonatedClaim = null)
         {
             if (ReferenceEquals(null, webUser))
             {
@@ -601,6 +611,16 @@ namespace CUWebinars.Web.Core.Orchestrators
             var newOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
             newOrder.AuditInfo = _appHelper.GetUserAuditInfo();
             newOrder.Origin = DomainConstants.Cart;
+
+            if (!ReferenceEquals(createdByImpersonatedClaim, null))
+            {
+                JProperty createdByImpersonatedUserMsg = new JProperty(
+                    JsonPropertyKeys.OrderCreatedByImpersonatedUserKey, 
+                    createdByImpersonatedClaim.Value
+                    );
+
+                newOrder.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrder.AdminComments,createdByImpersonatedUserMsg);
+            }
 
             newOrder = _orderManagementService.SaveOrderChanges(newOrder, string.Empty, string.Empty);
 
@@ -747,15 +767,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void RemoveAdditionalLocationsFromOrder(int idOrderRow)
         {
             _orderManagementService.RemoveAdditionalLocationsForOrder(idOrderRow);
-        }
-
-        private int GetDummyUserId()
-        {
-            int userId;
-            if (int.TryParse(_globals.UnAuthenticatedUser, out userId))
-                return userId;
-
-            throw new FormatException("Value in AppSetting in Web.config must be a valid integer.");
         }
 
         private OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocations,
