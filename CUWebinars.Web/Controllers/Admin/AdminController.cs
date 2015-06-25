@@ -54,7 +54,7 @@ namespace CUWebinars.Web.Controllers.Admin
 {
 
     [ElmahHandleError]
-    [System.Web.Mvc.Authorize]
+    [ClaimsAuthorize]
 
     public class AdminController : Controller
     {
