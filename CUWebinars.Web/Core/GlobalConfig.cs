@@ -38,7 +38,6 @@ namespace CUWebinars.Web.Core
         public string TestEmailAddress { get; private set; }
         public string TestEmailAddress2 { get; private set; }
         public string TraceLevel { get; private set; }
-        public string UnAuthenticatedUser { get; private set; }
         public bool UseAzureWebjobs { get; private set; }
         public string WMVRepository { get; private set; }
 
@@ -76,7 +75,6 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.TestEmailAddress = ApplicationSettingsSection["TestEmailAddress"];
                 UniqueInstance.TestEmailAddress2 = ApplicationSettingsSection["TestEmailAddress2"];
                 UniqueInstance.TraceLevel = GetTraceLevel();
-                //UniqueInstance.UnAuthenticatedUser = ApplicationSettingsSection["UnAuthenticatedUser"];
                 UniqueInstance.UseAzureWebjobs = bool.Parse(ApplicationSettingsSection["UseAzureWebjobs"]);
                 UniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
 

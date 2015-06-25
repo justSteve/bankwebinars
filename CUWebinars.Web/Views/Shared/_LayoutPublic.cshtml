@@ -1,6 +1,7 @@
 ﻿@using System.Configuration
 @using System.Text
 @using System.Web
+@using CUWebinars.Business.Constants
 @using CUWebinars.Web.Core
 @{
     var PageStyleType = ViewBag.PageStyleType;
@@ -71,7 +72,7 @@
 
     <title>@ViewBag.Title</title>
     @{
-        if (globalConfig.Tenant == "CUWebinars")
+        if (globalConfig.Tenant == DomainConstants.CUWebinars)
         {
 
             <script>
@@ -98,7 +99,7 @@
 
             </script>
         }
-        if (globalConfig.Tenant == "BankWebinars")
+        if (globalConfig.Tenant == DomainConstants.BankWebinars)
         {
             //
             <script>
