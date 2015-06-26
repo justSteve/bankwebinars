@@ -230,7 +230,7 @@ signUpForm.on('submit', function (e) {
 
     //  value converted to a Boolean in isShippindAddressRequired function
     //  value comes from a hidden input in the radio btn list next to the relevant radio button (previous-sibling)
-    shippingAddressRequired = isShippindAddressRequired($('#RegistrationType > dl dt input:checked').prev());
+    shippingAddressRequired =  isShippindAddressRequired($('#RegistrationType > dl dt input:checked').prev());
 
     var data = signUpForm.serialize();
 
@@ -366,9 +366,10 @@ return false;
 });
 
 function isShippindAddressRequired(jQueryObject) {
-    if ($.trim(jQueryObject.val()).toLowerCase() === 'false')
+    //todo: re-enable
+    //if ($.trim(jQueryObject.val()).toLowerCase() === 'false')
         return false;
-    return true;
+    //return true;
 }
 
 function setUpEditButtons() {

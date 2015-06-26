@@ -434,6 +434,8 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void AddShippingAddressVerifiedClaim(int userId)
         {
             var userAccount = _membershipService.GetUserAccountByWebUserId(_globals.Tenant, userId);
+            
+            //
             _membershipService.AddClaim(userAccount, ClaimTypes.AddressVerified, "true");
         }
 
