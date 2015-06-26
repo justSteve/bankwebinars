@@ -1287,7 +1287,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return File(formatter.FormatToString(firstRetrievedOrderForWebinar, "PreviewConnectionInfo").GenerateStreamFromString(), HtmlMimeType);
         }
 
-
+        [ClaimsAuthorize(IdentityConstants.Access, IdentityConstants.ImpersonateFeature)]
         public PartialViewResult LogInAsUser()
         {
             var logInAsOtherUserViewModel = new LogInAsOtherUserViewModel

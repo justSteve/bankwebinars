@@ -426,6 +426,7 @@
     <Compile Include="Core\Orchestrators\WebinarControllerOrchestrator.cs" />
     <Compile Include="Core\WebinarType.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
+    <Compile Include="Helpers\ControllerIdentityConstants.cs" />
     <Compile Include="Helpers\DomainHelpers.cs" />
     <Compile Include="Helpers\IAppHelper.cs" />
     <Compile Include="Helpers\NotificationStorage.cs" />
@@ -436,6 +437,7 @@
     <Compile Include="Infrastructure\Auth\AdminFunctionAuthorizationProcessor.cs" />
     <Compile Include="Infrastructure\Auth\BatchPasswordResetAuthorizationProcessor.cs" />
     <Compile Include="Infrastructure\Auth\IAuthorizationProcessor.cs" />
+    <Compile Include="Infrastructure\Auth\ImpersonateFeatureAuthorizationProcessor.cs" />
     <Compile Include="Infrastructure\ErrorResponse.cs" />
     <Compile Include="Infrastructure\ErrorResponseCommand.cs" />
     <Compile Include="Infrastructure\HeadOnlyWebClient.cs">

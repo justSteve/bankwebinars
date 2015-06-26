@@ -467,19 +467,21 @@ namespace CUWebinars.Web.Controllers
 
             return View();
         }
+        
         public ActionResult PayCC(int id)
         {
             var order = _cartControllerOrchestrator.LoadOrder(id);
 
             string formFields = Request.QueryString.ToString();
-            _logger.Info("PayCC: " + formFields);
+            _logger.Info("PayCC: OrderId {0}." + id);
+
             if (Request["referred"] != null && WebUtility.HtmlDecode(Request["referred"]) != "How did you hear about this webinar?")
             {
                 order.Origin = Request["referred"] + Environment.NewLine + order.Origin;
                 _logger.Info("PayCC Declined: " + formFields);
                 //ViewData["referred"] = Request["referred"];
             }
-            return View("~/Views/Home/PayCC.cshtml", order);
+            return View("~/Views/Cart/PayCC.cshtml", order);
         }
 
         public void CCPostBack(FormCollection form)
