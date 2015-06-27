@@ -2098,6 +2098,21 @@ namespace CUWebinars.Web.Controllers.Admin
             return null;
         }
 
+        public ActionResult GetDiscountForUser()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ActionResult DiscountManagement()
+        {
+
+            var model = new DiscountPackageViewModel();
+            {
+
+            };
+
+            return View(model);
+        }
     }
 
     public class MembershipRebootConfigInert

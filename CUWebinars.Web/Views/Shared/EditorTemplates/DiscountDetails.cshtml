@@ -1,5 +1,25 @@
 ﻿@model DiscountDetailsModel
 
+
+@*
+    types of discounts to implement
+    Promo = 1,
+            Not tied to Email
+            Validate against Expry
+            Do not validate against UseCount
+    Compensation = 2,
+            Is tied to Email
+            Validate against Expry
+            Validate against UseCount
+    Subscription = 3,
+            Is tied to Email
+            Validate against Expry
+            Do not validate against UseCount
+    Package = 4,
+            Is tied to Email
+            Validate against Expry
+            Do not validate against UseCount
+*@
 <div id="DiscountContainer" class="well-large">
     @Html.EditorFor(b => b.Discount)
 </div>

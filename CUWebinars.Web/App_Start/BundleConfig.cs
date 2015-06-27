@@ -21,7 +21,7 @@ namespace CUWebinars.Web.App_Start
                         "~/Scripts/jquery-ui-1.11.1.js"));
             //"~/Scripts/jquery-ui-1.10.3.custom.js"));
             //"~/Scripts/jquery-ui-1.8.24.js"));
-            
+
             bundles.Add(new ScriptBundle("~/bundles/dataTables").Include(
                         "~/Scripts/DataTables/jquery.dataTables.js",
                         "~/Scripts/DataTables/dataTables.tableTools.js")
@@ -50,7 +50,7 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/cart/update-webinar-files.js"
                 ));
 
-            
+
             bundles.Add(new ScriptBundle("~/bundles/add-quiz").Include(
                 "~/Scripts/app/toastLogger.js",
                 "~/Scripts/app/quiz/quiz.js",
@@ -87,6 +87,9 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/notification-ops/membership-notifications.js",
                 "~/Scripts/app/notification-ops/details-event-webpart.js"
                 ));
+            bundles.Add(new ScriptBundle("~/bundles/manage-discounts").Include(
+                "~/Scripts/app/admin/discounts-management.js"
+                ));
 
             bundles.Add(new ScriptBundle("~/bundles/manage-claims").Include(
                 "~/Scripts/app/admin/claims-management.js"
@@ -114,7 +117,7 @@ namespace CUWebinars.Web.App_Start
                 ));
 
             bundles.Add(new ScriptBundle("~/bundles/myApp").Include(
-                        //"~/Scripts/bootstrap3/bootstrap.js",
+                //"~/Scripts/bootstrap3/bootstrap.js",
                         "~/Scripts/bootstrap.js",
                         "~/Scripts/bootstrap-modal.js",
                         "~/Scripts/bootstrap-modalmanager.js",
@@ -123,7 +126,7 @@ namespace CUWebinars.Web.App_Start
                 //"~/Scripts/app/cart/additional-locations.js"
                 //,"~/Scripts/app/cart/edit-order.js"
                         ));
-            
+
             bundles.Add(new ScriptBundle("~/bundles/create-order").Include(
                 //"~/Scripts/app/cart/additional-locations.js",
                          "~/Scripts/app/cart/create-order-new.js",
@@ -154,7 +157,7 @@ namespace CUWebinars.Web.App_Start
                 //"~/Scripts/app/waitButton.js",
                 //"~/Scripts/app/EditOrder.js"
                         ));
- 
+
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/modernizr-*"));
 
@@ -190,7 +193,7 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/membership-notifications.js",
                 "~/Scripts/app/web-user-details-register.js"
             ));
-            
+
             bundles.Add(new ScriptBundle("~/bundles/identify").Include(
                 "~/Scripts/app/webinar/identify.js"
             ));

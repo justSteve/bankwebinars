@@ -1,0 +1,92 @@
+﻿
+@model DiscountPackageViewModel
+
+@{
+    ViewBag.Title = "DiscountsManagement";
+}
+@Styles.Render("~/Content/create-order-details")
+@Styles.Render("~/Content/Discounts-management")
+
+<div id="mainContentWrap" class="container bufferBottom30">
+
+    <div class="legendImitator">Discounts Management</div>
+
+    @using (Html.BeginForm("GetDiscountForUser", "admin", FormMethod.Post, new { id = "popDiscountsForm" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <label for="UserEmail">User Email</label><input id="emailInput" class="input input-xlarge" placeholder="Enter email address" type="email" /><br />
+        <button id="popDiscounts" class="btn btn-default">Populate Discounts</button>
+    }
+
+    <ul class="nav nav-tabs" id="mgementTabs">
+        <li id="viewDiscountsTab" class="active"><a href="#viewDiscounts" data-toggle="tab">View Discounts</a></li>
+        <li id="addDiscountsTab"><a href="#addDiscounts" data-toggle="tab">Add Discount</a></li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" id="viewDiscounts">
+            <div id="viewDiscountsPanel">
+                <span class="text text-info">Discounts will be displayed here</span>
+            </div>
+        </div>
+        <div class="tab-pane" id="addDiscounts">
+            <div id="addDiscountFormWrapper" class="initialHide">
+                @using (Html.BeginForm("DiscountManagement", "Admin", FormMethod.Post, new { id = "addDiscountForm" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary("There have been some errors:", new { id = "addDiscountSummary" })
+
+                    @Html.HiddenFor(m => m.Discount)
+
+                    <div class="row">
+                        <div class="span4">
+                            @Html.LabelFor(m => m.PrimaryUser)
+                            @Html.EditorFor(m => m.PrimaryUser)
+                            @Html.ValidationMessageFor(m => m.PrimaryUser)
+                        </div>
+                    </div>
+                    @*<div class="well well-large DiscountsBox">
+                        <div class="row">
+                            <div class="span4">
+                                <div id="stockDiscountsWrapper">
+                                    @Html.LabelFor(m => m.TtsDiscountTypes)
+                                    @Html.DropDownListFor(m => m.SelectedDiscountType, new SelectList(Model.TtsDiscountTypes, "Value", "Text"), "Choose a Discount", new { @class = "darkText", id = "ttsDiscountType" })
+                                    <input type="checkbox" id="useCustomFromListCheck" checked /> &nbsp;use this
+                                </div>
+                            </div>
+                            <div class="span4">
+                                <div id="stockDiscountsWrapper">
+                                    @Html.LabelFor(m => m.DiscountTypes)
+                                    @Html.DropDownListFor(m => m.SelectedDiscountType, new SelectList(Model.DiscountTypes, "Value", "Text"), "Choose a Discount", new { @class = "darkText", id = "dotNetDiscountType", disabled = "disabled" })
+                                    <input type="checkbox" id="useFrameworkCheck" /> &nbsp;use this
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div id="customDiscountWrapper" class="span4">
+                                @Html.LabelFor(m => m.CustomDiscountType)
+                                @Html.TextBoxFor(m => m.CustomDiscountType, new { disabled = "disabled" })
+                                <input type="checkbox" id="useCustomFromTextCheck" /> &nbsp;use this
+                            </div>
+                        </div>
+                    </div>*@
+
+
+                    @Html.LabelFor(m => m.Discount)
+                    @Html.EditorFor(m => m.Discount)
+                    @Html.ValidationMessageFor(m => m.Discount)
+
+                    <button id="createDiscountButton" class="btn btn-default">Create Discount</button>
+                    <div id="addDiscountMsgLabelWrap" class="initialHide"></div>
+
+                    <div id="validationErors"></div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/manage-discounts")
+}

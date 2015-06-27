@@ -495,6 +495,7 @@
     <Compile Include="ViewModel\AffPromoMsgViewModel.cs" />
     <Compile Include="ViewModel\ClaimsViewModel.cs" />
     <Compile Include="ViewModel\ClickToJoinViewModel.cs" />
+    <Compile Include="ViewModel\DiscountPackageViewModel.cs" />
     <Compile Include="ViewModel\DisplayOrdersViewModel.cs" />
     <Compile Include="ViewModel\EditUserViewModel.cs" />
     <Compile Include="ViewModel\DiscountPromotionViewModel.cs" />
@@ -696,6 +697,7 @@
     <Content Include="Notification\Templates\SendPerWeekPromo.cshtml">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="Scripts\app\admin\discounts-management.js" />
     <Content Include="Scripts\app\admin\display-orders-by-user.js" />
     <Content Include="Scripts\app\admin\session-checker.js" />
     <Content Include="Scripts\app\admin\display-orders.js" />
@@ -944,6 +946,7 @@
     <Content Include="Views\Admin\Partials\_BatchPasswordReset.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowOrdersByUser.cshtml" />
     <Content Include="Views\Admin\Partials\_NotAuthorized.cshtml" />
+    <Content Include="Views\Admin\DiscountManagement.cshtml" />
     <None Include="Web.BankWebinars31 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
