@@ -72,14 +72,18 @@
 
 
     }
-    <script>
+    @if (@User.Identity.IsAuthenticated && !HttpContext.Current.IsDebuggingEnabled)
+    {
+        if (!Html.IsDebug())
+        {
+            <script>
+                window.$zopim(function () {
+                    window.$zopim.livechat.setName("@User.Identity.Name.ToString().Replace("@", "_")");
 
-        $zopim(function () {
-            $zopim.livechat.setName(@User.Identity.Name);
-            $zopim.livechat.setTag('Affiliate');
-        });
-
-    </script>
+                });
+            </script>
+        }
+    }
 
     <title>@ViewBag.Title</title>
     <!-- Meta Data ================ -->
@@ -145,16 +149,15 @@
     <section class="container preheader">
         <!--this is the login for the user-->
         @Html.Partial("_LoginPartial")
-        close user nav
+
         <div id="search-wrapper" class="search-wrapper">
             <form class="search" method="post" action="/webinar/search">
                 <ul class="notifications" id="userNotifications">
                     <li><i class="icon-search"></i></li>
                 </ul>
-                <input id="search-box" name="searchTerm" type="text" placeholder="search + enter">
+                <input id="search-box" name="searchTerm" type="text" placeholder="Search for?">
             </form>
         </div>
-
         <div class="phone">@currentAffiliate.ttsDomain</div>
         <ul class="social">
             @*
@@ -201,10 +204,15 @@
                         <ul>@Html.Action("GetRecordedWebinarMenu", "Navigation")</ul>
                     </li>
 
-                    @if (Request.IsAuthenticated)
-                    {
-                        <li><a href="/Account/MyOrders">All Orders</a></li>
-                    }
+                    <li class="parent">
+                        @*<a href="javascript:void(0)">Admin<i></i></a>*@
+                        <a role="menuitem" tabindex="1" href="/Admin">Admin</a>
+                        <ul>
+                            <li role="presentation"><a role="menuitem" tabindex="1" href="/Admin">Admin</a></li>
+                            @*<li role="presentation"><a role="menuitem" tabindex="2" href="/Admin/Users">Users</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="3" href="/Admin/Edit">Edit</a></li>*@
+                        </ul>
+                    </li>
                 </ul>
             </nav>
             <!-- close / #main_menu -->
