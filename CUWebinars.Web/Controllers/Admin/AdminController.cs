@@ -785,6 +785,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 Id = order.idOrder,
                 AffiliateName = _appHelper.GetAffiliateName(order.idAffiliate),
                 JoinCode = orderRow.TtsJoinUrl,
+                OnDemandCode = orderRow.OnDemandCode,
                 Order = order,
                 NumberOfAdditionalLocations = additionalLocationsCount,
                 PhoneNumber = order.BillingPhone,
@@ -1287,7 +1288,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return File(formatter.FormatToString(firstRetrievedOrderForWebinar, "PreviewConnectionInfo").GenerateStreamFromString(), HtmlMimeType);
         }
 
-
+        [ClaimsAuthorize(IdentityConstants.Access, IdentityConstants.ImpersonateFeature)]
         public PartialViewResult LogInAsUser()
         {
             var logInAsOtherUserViewModel = new LogInAsOtherUserViewModel

@@ -465,6 +465,15 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                         completeOrder(userId, orderRowId, webinarId, orderId);
                                     });
 
+                                    // The 'TO PAY BY CREDIT CARD' button on 3rd tab
+                                    $('#ConfirmRegistrationPayByCC').on('click', function (e) {
+                                        e.preventDefault();
+
+                                        var url = '/Cart/PayCC/' + orderId;
+
+                                        utilities.goToUrl(url);
+                                    });
+
                                     $('#Canceller').on('click', function (e) {
                                         cancelOrder(orderId, webinarId);
                                     });

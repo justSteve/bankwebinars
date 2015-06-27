@@ -307,6 +307,18 @@ OCA.initializeFunctions = function () {
             var cancelOrderForm = $('#cancelOrder');
             cancelOrderForm.submit();
         });
+
+
+        // The 'TO PAY BY CREDIT CARD' button on 3rd tab
+        $('#ConfirmRegistrationPayByCC').on('click', function (e) {
+            e.preventDefault();
+
+            var orderId = cartStateManager.getOrderId();
+            var url = '/Cart/PayCC/' + orderId;
+
+            utilities.goToUrl(url);
+
+        });
     };
 
     OCA.displayModal = function (modalForm) {

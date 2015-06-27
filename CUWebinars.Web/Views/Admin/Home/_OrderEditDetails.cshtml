@@ -1,7 +1,12 @@
 ﻿@using System
 @using System.Web.Mvc.Html
+@using CUWebinars.Web.Core
 @model ManageOrderEditModel
 @{
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+
+    var nfi = new CultureInfo("en-US", false).NumberFormat;
+    nfi.CurrencyDecimalDigits = 0;
 
     var myRow = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
 }
@@ -18,15 +23,43 @@
     @Html.AntiForgeryToken()
     <div class="row navbar">
 
-        <div class="span6 navbar-inner">
+        <div class="span6 navbar-inner" style="margin-right: 10px;">
             <ul class="nav" aria-labelledby="dLabel">
                 @*<li><a tabindex="-1" href="#" onclick="payByCC(); return true;" role="button" data-toggle="modal">Submit Payment</a></li>*@
                 <li><a tabindex="-1" id="showChangeUser">Assign to Different User</a></li>
                 <li><a tabindex="-1" id="showChangeAssignedAffiliate">Credited to <span id="affiliateNameText">@Model.AffiliateName</span> Change?</a></li>
-
             </ul>
-            <div><input type="checkbox" checked="checked" name="addToUserComments" title="Write to User Comments?" /> Write to User Comments? </div>
+            <div>
+                <input type="checkbox" checked="checked" name="addToUserComments" title="Write to User Comments?" /> Write to User Comments?
+            </div>
+
         </div>
+        <div id="postEventClaim">
+            @if (Model.PostEventAccessExpires.HasValue)
+            {
+
+                if (Model.PostEventAccessExpires < DateTime.Now)
+                {
+                    <label for="PostEventAccess">Access to PostEvent Materials:</label>
+                }
+                else
+                {
+                    <label for="PostEvent">Post Event Expires:</label>
+                }
+                <span id="postEventAccessExpirey" class="text text-info">
+                    @Model.PostEventAccessExpires.Value.ToString("yyyy-MM-dd")<br />
+                    http://@globalConfig.TenantURL/o/@Model.OnDemandCode
+                </span>
+
+            }
+            else
+            {
+                <label for="PostEvent">Post Event Expires:</label>
+                <span id="postEventAccessExpirey" class="text text-warning">No information available.</span>
+            }
+            <a tabindex="-1" href="#ExtendPostEventAccessModal" class="btn btn-mini" role="button" data-toggle="modal">Extend Access</a>
+        </div>
+
     </div>
     <div class="row">
         <div id="UserSummaryPanel" class="well span3">
@@ -85,28 +118,7 @@
                     @Html.Partial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel)
                 </div>
             </div>
-            <h5>Set Carbon Copy Address</h5>
-            @{Html.RenderPartial("Partials/_ShareNotifications", myRow.Order);}
-            <div id="postEventClaim">
-                @if (Model.PostEventAccessExpires.HasValue)
-                {
-                    if (Model.PostEventAccessExpires < DateTime.Now)
-                    {
-                        <label for="PostEventAccess">Access to PostEvent Materials:</label>
-                    }
-                    else
-                    {
-                        <label for="PostEvent">Post Event Expires:</label>
-                    }
-                    <span id="postEventAccessExpirey" class="text text-info">@Model.PostEventAccessExpires.Value.ToString("yyyy-MM-dd")</span>
-                }
-                else
-                {
-                    <label for="PostEvent">Post Event Expires:</label>
-                    <span id="postEventAccessExpirey" class="text text-warning">No information available.</span>
-                }
-                <a tabindex="-1" href="#ExtendPostEventAccessModal" class="btn btn-mini" role="button" data-toggle="modal">Extend Access</a>
-            </div>
+
         </div>
     </div>
     <div class="row">
@@ -115,16 +127,15 @@
             <div class="control-group">
                 <div class="controls">
                     There are <span id="nrAddLocs">@Model.NumberOfAdditionalLocations</span> Additional Locations for this order.
-                    @{
-    if (Model.AdditionalLocationsAvailableOnLoad)
-    {
-        <button id="addLocationsButton" class="btn btn-default btn-small">add more?</button>
-    }
-    else
-    {
-        <button id="addLocationsButton" class="btn btn-default btn-small" disabled="disabled">add more?</button>
-    }
+                    @if (Model.AdditionalLocationsAvailableOnLoad)
+                    {
+                        <button id="addLocationsButton" class="btn btn-default btn-small">add more?</button>
                     }
+                    else
+                    {
+                        <button id="addLocationsButton" class="btn btn-default btn-small" disabled="disabled">add more?</button>
+                    }
+
                 </div>
                 @Html.Raw(Model.AdditionalLocationsRenderer.ToString())
             </div>
@@ -134,19 +145,20 @@
 
                     @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions, new { id = "TotalCostOfOptionsText", disabled = "disabled" }) @*read-only*@
                     @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions) @* Required for POST. TextBoxFor won't ModelBind *@
-
                     &nbsp;
                     <button id="UpdateAddLocsButton" class="btn btn-primary btn-mini">Update Additional Locations</button>
-
                 </div>
             </div>
         </div>
-
-        <div id="SubmitPanel" class="span2">
-            <div class="control-group">
-                <div class="controls">
-                    <button id="editOrderSubmitButton" class="btn btn-primary">Submit Edited Details</button>
-                </div>
+        <div class="span4">
+            <h5>Set Carbon Copy Address</h5>
+            @{Html.RenderPartial("Partials/_ShareNotifications", myRow.Order);}
+        </div>
+    </div>
+    <div id="SubmitPanel" style="margin-top: 0;" class="span2">
+        <div class="control-group">
+            <div class="controls">
+                <button id="editOrderSubmitButton" class="btn btn-primary">Submit Edited Details</button>
             </div>
         </div>
     </div>

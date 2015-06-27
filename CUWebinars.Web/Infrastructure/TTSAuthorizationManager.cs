@@ -16,6 +16,14 @@ namespace CUWebinars.Web.Infrastructure
 
             IAuthorizationProcessor authorizationProcessor;
 
+            // First check controller-decorated attribute
+            if (resource.Equals(ControllerIdentityConstants.Admin, StringComparison.OrdinalIgnoreCase))
+            {
+                authorizationProcessor = new AdminControllerAuthorizationProcessor();
+                return ProcessAuthorizationRequest(context, authorizationProcessor, action);
+            }
+
+            // Then, if not returned yet, check more granular Action method attributes
             switch (resource)
             {
                 case IdentityConstants.Account:
@@ -23,10 +31,9 @@ namespace CUWebinars.Web.Infrastructure
                     //return PrincipalCanPerformActionOnResource(action, context.Principal);
                     return false;
                 }
-                case IdentityConstants.admin:
-                case IdentityConstants.Admin:
+                case IdentityConstants.ImpersonateFeature:
                 {
-                    authorizationProcessor = new AdminControllerAuthorizationProcessor();
+                    authorizationProcessor = new ImpersonateFeatureAuthorizationProcessor();
                     return ProcessAuthorizationRequest(context, authorizationProcessor, action);
                 }
                 case IdentityConstants.AdminFunction:
