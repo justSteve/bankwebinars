@@ -36,7 +36,7 @@ namespace CUWebinars.Business.Tests.IntegrationTests
 
             var timeZone = dataOperations.GetTimeZoneByZipCode("00210");
 
-            Assert.AreEqual(USTimeZone.Alaska, timeZone);
+            Assert.AreEqual(USTimeZone.Eastern, timeZone);
         }
 
     }
