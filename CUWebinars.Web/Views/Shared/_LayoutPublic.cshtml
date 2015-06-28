@@ -178,6 +178,11 @@
             padding-bottom: 0px;
         }
     </style>
+    <script>
+        window.$zopim(function () {
+            window.$zopim.livechat.bubble.setTitle('Help & Feedback');
+        });
+    </script>
     @{
         if (@User.Identity.IsAuthenticated && !HttpContext.Current.IsDebuggingEnabled)
         {
@@ -186,6 +191,7 @@
                 <script>
                     window.$zopim(function () {
                         window.$zopim.livechat.setName("@User.Identity.Name.ToString().Replace("@", "_")");
+                      
                     });
                 </script>
             }
@@ -241,10 +247,9 @@
         <div class="container">
             <div class="row-fluid">
                 <!-- begin #logo-->
-
-                <div id="logo" class="span3" style='background: url("@currentAffiliate.Logo") no-repeat scroll 0 0 rgba(0, 0, 0, 0)'>
-
-                </div>
+                <a href="/">
+                    <div id="logo" class="span3" style='background: url("@currentAffiliate.Logo") no-repeat scroll 0 0 rgba(0, 0, 0, 0)'></div>
+                </a>
                 <!-- end #logo -->
                 <!-- begin #main_menu -->
                 <nav id="main_menu" class="span8">

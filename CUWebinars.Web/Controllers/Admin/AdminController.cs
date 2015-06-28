@@ -785,6 +785,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 Id = order.idOrder,
                 AffiliateName = _appHelper.GetAffiliateName(order.idAffiliate),
                 JoinCode = orderRow.TtsJoinUrl,
+                OnDemandCode = orderRow.OnDemandCode,
                 Order = order,
                 NumberOfAdditionalLocations = additionalLocationsCount,
                 PhoneNumber = order.BillingPhone,

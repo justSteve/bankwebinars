@@ -264,6 +264,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     throw;
                 }
             }
+            _logger.Error("BuildCheckoutConfirmViewModel fell thru to Return Null");
             return null;
         }
 
@@ -422,6 +423,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                         RowPrice = orderRow.RowPrice,
                         RegistrationType = orderRow.RegistrationType
                     };
+
+                    _logger.Info("Returning BuildDisplayRowPriceViewModel price for " + orderRow.Order.idOrder);
 
                     return displayRowPriceViewModel;
                 }

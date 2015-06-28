@@ -38,12 +38,12 @@
     @Scripts.Render("~/bundles/create-order-affiliate")
     @Scripts.Render("~/bundles/dataTables")
     @Scripts.Render("~/bundles/display-orders")
-
-    @* includes:
-        ~/Scripts/app/cart/create-order-new.js
-        ~/Scripts/app/cart/details-affiliate.js
-    *@
-}
+    @Scripts.Render("~/bundles/admin-notifications")
+@* includes:
+    ~/Scripts/app/cart/create-order-new.js
+    ~/Scripts/app/cart/details-affiliate.js
+*@
+}}
 
 @Styles.Render("~/Content/create-order-details")
 @Styles.Render("~/Content/data-tables")
@@ -53,7 +53,9 @@
         <div class="span10">
             <h1>@Model.Webinar.Title</h1>
             <button id="showOrdersButton" type="button" class="btn btn-info pull-right"
-                 data-toggle="collapse" data-target="#webinarOrders">Show Orders!</button>
+                    data-toggle="collapse" data-target="#webinarOrders">
+                Show Orders!
+            </button>
         </div>
     </div>
 </div>
@@ -63,7 +65,7 @@
     <!--begin main content-->
 
     <div id="webinarOrders" class="collapse">
-        
+
         @Html.Partial("~/Views/Admin/Partials/_ShowOrders.cshtml", Model.ShowOrdersViewModel)
 
     </div>
@@ -83,8 +85,8 @@
         <div class="span6">
             @{
                 if (Model.Webinar.Status != WebinarStatus.Archived
-                                        && Model.Webinar.Status != WebinarStatus.Deleted
-                                        && Model.Webinar.Status != WebinarStatus.Pending)
+                                                    && Model.Webinar.Status != WebinarStatus.Deleted
+                                                    && Model.Webinar.Status != WebinarStatus.Pending)
                 {
                     <div id="SignUpFormContainer" class="row-fluid">
 
@@ -215,5 +217,3 @@
         <!--close section tertiary-column sidebar span3-->
     </div>
 </div> <!-- closes main-content -->
-
-
