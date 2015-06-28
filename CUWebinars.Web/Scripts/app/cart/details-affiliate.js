@@ -6,6 +6,11 @@ var OCA = ORDERCREATIONAFFILIATE; // shortcut alias to ORDERCREATIONAFFILIATE ob
 OCA.shippingAddressRequired = {};
 OCA.checkoutConfirm = {};
 OCA.searchBy = "";
+OCA.showSetAssignedAffiliate = $('#showSetAssignedAffiliate');
+        $("#showSetAssignedAffiliate").on('click', function(e) {
+            e.preventDefault();
+
+        });
 
 OCA.initializeFunctions = function () {
 
@@ -82,6 +87,8 @@ OCA.initializeFunctions = function () {
     };
 
     OCA.setUpEditButtons = function () {
+
+
         $('#revealOptions').on('click', function (e) {
             e.preventDefault();
             $('#AdjustOrder').slideToggle();
@@ -850,6 +857,74 @@ OCA.wireUpHandlers = function () {
         OCA.webUserIdInput.val(webUser.id);
     };
 
+    OCA.displaySetAffiliateModal = function (e) {
+        alert("hit");
+        // permits Admin to choose which affiliate will be credited with order
+        e.preventDefault();
+
+        var modalFormOptions = {
+            keyboard: true,
+            backdrop: 'static',
+            show: true
+        };
+
+        $(this).after('<span id="loadAffModal">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+
+        $('#frmChangeAffiliate > div.modal-body').load('/Admin/GetAffiliates', function () {
+
+            $('#SelectedAffiliate').val($('#idAffiliate').text());
+
+            $('#setAssignedAffiliate').modal(modalFormOptions);
+
+            $('#submitChangeAffilate').on('click', function (e) {
+
+                e.preventDefault();
+
+                var self = this;
+
+                var payload = {
+                    idAffiliate: $('#SelectedAffiliate').val(),
+                    idOrder: $('#Id').val()
+                };
+
+                var url = $('#frmChangeAffiliate').attr('action');
+
+                $.ajax({
+                    type: 'POST',
+                    contentType: constants.JsonContentType,
+                    cache: false,
+                    url: url,
+                    dataType: constants.JsonDataType,
+                    data: JSON.stringify(payload),
+                    beforeSend: function () {
+                        $(self).append('<span id="changeAffSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+                        $(self).attr('disabled', 'disabled');
+                    }
+                }).done(function (data) {
+
+                    var oi = data.Result;
+
+                    $(self).removeAttr('disabled');
+                    $('#changeAffSpinner').remove();
+                    $('#idAffiliate').text(payload['idAffiliate']);
+                    $('#affiliateNameText').text($('#SelectedAffiliate :selected').text());
+                });
+            });
+        });
+
+        $('#setAssignedAffiliate').on('hidden', function (e) {
+            $('#submitChangeAffilate').off('click');
+            modalFormOptions = null;
+        });
+
+        $('#setAssignedAffiliate').on('shown', function (e) {
+            $('#loadAffModal').remove();
+        });
+
+    };
+
+
+
 };
 
 // $(document).ready function
@@ -861,6 +936,7 @@ $(function () {
 
     OCA.wireUpHandlers();
 });
+
 
 function modalShown(e) {
 
