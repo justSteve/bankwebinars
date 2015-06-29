@@ -722,7 +722,7 @@ INSERT [dbo].[Affiliate] ([idUserAff], [CommissionModel], [URL], [WebBanner], [W
 				<a href="http://www.TTSTrain.com">(800) 831-0678 | www.TTSTrain.com </a>
 				<br />
 				<br />
-				@*<a href="/Home/PrivacyStatement">Privacy Statement</a>&nbsp;&nbsp; &nbsp;  &nbsp; <a href="javascript:void( window.open(''http://form.jotform.us/form/21224022479143'', ''blank'',''scrollbars=yes,toolbar=no,width=700,height=500''))">Technical Support</a>*@
+				@*<a href="/Home/PrivacyStatement">Privacy Statement</a>&nbsp;&nbsp; &nbsp;  &nbsp; <a href="javascript:void( window.open(''http://form.jotformpro.com/form/21224022479143'', ''blank'',''scrollbars=yes,toolbar=no,width=700,height=500''))">Technical Support</a>*@
 			</p>
 		</div>
 		<div class="span2">

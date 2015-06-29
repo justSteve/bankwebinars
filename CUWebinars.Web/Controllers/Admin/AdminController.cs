@@ -1890,6 +1890,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
         [HandleAjaxException]
         [HttpPost]
+
         [AllowAnonymous]
         public ActionResult GetGridData(int? webinarId)
         {

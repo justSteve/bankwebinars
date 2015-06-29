@@ -48,7 +48,8 @@ namespace CUWebinars.Web.Infrastructure
                 }
                 case IdentityConstants.GetGridDataFeature:
                 {
-                    return true;
+                    authorizationProcessor = new GetGridDataAuthorizationProcessor();
+                    return ProcessAuthorizationRequest(context, authorizationProcessor, action);
                 }
                 default:
                 {
