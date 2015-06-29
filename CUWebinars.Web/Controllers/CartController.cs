@@ -473,7 +473,7 @@ namespace CUWebinars.Web.Controllers
             var order = _cartControllerOrchestrator.LoadOrder(id);
 
             string formFields = Request.QueryString.ToString();
-            _logger.Info("PayCC: OrderId {0}." + id);
+            _logger.Info("PayCC on OrderId: {0}", id);
 
             if (Request["referred"] != null && WebUtility.HtmlDecode(Request["referred"]) != "How did you hear about this webinar?")
             {

@@ -436,6 +436,7 @@
     <Compile Include="Infrastructure\Auth\AdminControllerAuthorizationProcessor.cs" />
     <Compile Include="Infrastructure\Auth\AdminFunctionAuthorizationProcessor.cs" />
     <Compile Include="Infrastructure\Auth\BatchPasswordResetAuthorizationProcessor.cs" />
+    <Compile Include="Infrastructure\Auth\GetGridDataAuthorizationProcessor.cs" />
     <Compile Include="Infrastructure\Auth\IAuthorizationProcessor.cs" />
     <Compile Include="Infrastructure\Auth\ImpersonateFeatureAuthorizationProcessor.cs" />
     <Compile Include="Infrastructure\ErrorResponse.cs" />
@@ -495,6 +496,7 @@
     <Compile Include="ViewModel\AffPromoMsgViewModel.cs" />
     <Compile Include="ViewModel\ClaimsViewModel.cs" />
     <Compile Include="ViewModel\ClickToJoinViewModel.cs" />
+    <Compile Include="ViewModel\DiscountPackageViewModel.cs" />
     <Compile Include="ViewModel\DisplayOrdersViewModel.cs" />
     <Compile Include="ViewModel\EditUserViewModel.cs" />
     <Compile Include="ViewModel\DiscountPromotionViewModel.cs" />
@@ -696,6 +698,7 @@
     <Content Include="Notification\Templates\SendPerWeekPromo.cshtml">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="Scripts\app\admin\discounts-management.js" />
     <Content Include="Scripts\app\admin\display-orders-by-user.js" />
     <Content Include="Scripts\app\admin\session-checker.js" />
     <Content Include="Scripts\app\admin\display-orders.js" />
@@ -791,7 +794,13 @@
     <Content Include="Views\Cart\Partials\_LogsModal.cshtml" />
     <Content Include="Views\Cart\Partials\_UserDetailsModal.cshtml" />
     <Content Include="Views\Home\robots.txt" />
+    <Content Include="Views\Shared\DisplayTemplates\ShowDiscountSubscription.cshtml">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="Views\Shared\EditorTemplates\DiscountDetails.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Views\Shared\EditorTemplates\DiscountEditor.cshtml">
       <SubType>Code</SubType>
     </Content>
     <Content Include="Views\Webinar\Details.cshtml" />
@@ -921,7 +930,6 @@
     <Content Include="Views\Admin\ManageOrderFromDetails.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\AdjustUserDetails.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowOrders.cshtml" />
-    <Content Include="Views\Shared\EditorTemplates\Discount.cshtml" />
     <Content Include="Views\Shared\Partials\_ShareNotifications.cshtml" />
     <Content Include="Views\Shared\Partials\_EditDiscount.cshtml" />
     <Content Include="Views\Webinar\Identify.cshtml" />
@@ -944,6 +952,9 @@
     <Content Include="Views\Admin\Partials\_BatchPasswordReset.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowOrdersByUser.cshtml" />
     <Content Include="Views\Admin\Partials\_NotAuthorized.cshtml" />
+    <Content Include="Views\Admin\DiscountManagement.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\DiscountGeneral.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\DiscountSubscription.cshtml" />
     <None Include="Web.BankWebinars31 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

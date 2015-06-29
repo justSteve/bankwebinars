@@ -2,7 +2,7 @@
 --/* show UserAccount records which do not appear to be properly verified */
 --/************************************************************************************************************/
 
---SELECT  [Key] ,
+--SELECT Email, Created,  [Key] ,
 --        IsAccountVerified ,
 --        VerificationKey ,
 --        VerificationPurpose ,
@@ -43,43 +43,43 @@
 /************************************************************************************************************/
 /* show WebUser records which do not have corresponding UserAccount records */
 /************************************************************************************************************/
-SELECT  wu.email ,
-        wu.idUser -- add any more cols desired
-        ,
-        wu.DateCreated
-FROM    WebUser wu
-WHERE   NOT EXISTS ( SELECT *
-                     FROM   UserAccounts ua
-                     WHERE  ua.Email = wu.email )
-        AND wu.UserType = 1
-ORDER BY wu.DateCreated DESC
+--SELECT  wu.email ,
+--        wu.idUser -- add any more cols desired
+--        ,
+--        wu.DateCreated
+--FROM    WebUser wu
+--WHERE   NOT EXISTS ( SELECT *
+--                     FROM   UserAccounts ua
+--                     WHERE  ua.Email = wu.email )
+--        AND wu.UserType = 1
+--ORDER BY wu.DateCreated DESC
 
 /************************************************************************************************************/
 /* show Order records which do not have corresponding WebUser records */
 /************************************************************************************************************/
-SELECT  o.BillingEmail ,
-        o.idUser -- add any more cols desired
-        ,
-        o.OrderDate
-FROM    dbo.[Order] o
-WHERE   NOT EXISTS ( SELECT *
-                     FROM   dbo.WebUser u
-                     WHERE  o.idUser = u.idUser )
-ORDER BY o.OrderDate DESC
+--SELECT  o.BillingEmail ,
+--        o.idUser -- add any more cols desired
+--        ,
+--        o.OrderDate
+--FROM    dbo.[Order] o
+--WHERE   NOT EXISTS ( SELECT *
+--                     FROM   dbo.WebUser u
+--                     WHERE  o.idUser = u.idUser )
+--ORDER BY o.OrderDate DESC
 
 /************************************************************************************************************/
 /* show WebUser records which do not have corresponding Address records */
 /************************************************************************************************************/
-SELECT  wu.email ,
-        wu.idUser -- add any more cols desired
-        ,
-        wu.DateCreated
-FROM    WebUser wu
-WHERE   NOT EXISTS ( SELECT *
-                     FROM   dbo.Address ua
-                     WHERE  ua.idUser = wu.idUser )
-        AND wu.UserType = 1
-ORDER BY wu.DateCreated DESC
+--SELECT  wu.email ,
+--        wu.idUser -- add any more cols desired
+--        ,
+--        wu.DateCreated
+--FROM    WebUser wu
+--WHERE   NOT EXISTS ( SELECT *
+--                     FROM   dbo.Address ua
+--                     WHERE  ua.idUser = wu.idUser )
+--        AND wu.UserType = 1
+--ORDER BY wu.DateCreated DESC
 
 --/************************************************************************************************************/
 --/* show UserAccount records which do not have corresponding WebUser records */
