@@ -1891,7 +1891,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [HandleAjaxException]
         [HttpPost]
 
-        [ClaimsAuthorize(IdentityConstants.Access, IdentityConstants.GetGridDataFeature)]
+        [AllowAnonymous]
         public ActionResult GetGridData(int? webinarId)
         {
             if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
