@@ -10,6 +10,7 @@ namespace CUWebinars.Business.Constants
         public static readonly string FullName = "http://cuwebinars.com/ws/2014/01/identity/claims/FullName";
         public static readonly string BeingImpersonated = "http://cuwebinars.com/ws/2014/01/identity/claims/BeingImpersonated";
         public static readonly string HasNotVerified = "http://ttstrain.com/ws/2014/01/identity/claims/HasNotVerified";
+        public static readonly string Impersonate = "http://ttstrain.com/ws/2014/01/identity/claims/Impersonate";
         public static readonly string DisplayPostEventMaterials = "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials";
         public static readonly string CUMigratorPasswordReset = "http://ttstrain.com/ws/2014/01/identity/claims/CUMigratorPasswordReset";
         public static readonly string BWMigratorPasswordReset = "http://ttstrain.com/ws/2014/01/identity/claims/BWMigratorPasswordReset";

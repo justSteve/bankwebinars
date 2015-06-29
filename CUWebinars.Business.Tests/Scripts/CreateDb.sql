@@ -331,6 +331,7 @@ CREATE TABLE [dbo].[Order](
 	[AdminComments] [nvarchar](max) NULL,
 	[TaxExempt] [bit] NOT NULL,
 	[Origin] [nvarchar](max) NULL,
+	[NotificationStorage] [nvarchar](max) NULL,
 	[idOrderLegacy] [int] NULL,
  CONSTRAINT [PK_dbo.Order] PRIMARY KEY CLUSTERED 
 (
@@ -358,6 +359,8 @@ CREATE TABLE [dbo].[OrderRow](
 	[AccessExpires] [datetime] NULL,
 	[RowStatus] [int] NOT NULL,
 	[Discount_idDiscount] [int] NULL,
+	[OnDemandCode] [VARCHAR](10) NULL,
+	[TtsJoinUrL] [VARCHAR](10) NULL,
  CONSTRAINT [PK_dbo.OrderRow] PRIMARY KEY CLUSTERED 
 (
 	[idOrderRow] ASC

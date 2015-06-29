@@ -433,10 +433,34 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public void AddShippingAddressVerifiedClaim(int userId)
         {
-            var userAccount = _membershipService.GetUserAccountByWebUserId(_globals.Tenant, userId);
+            bool userAccountExists = false;
+            UserAccount userAccount = null;
+            int retryCount = 0;
+
+            while (!userAccountExists && retryCount < 2) // break when user exists or after 2 attempts to retrieve it.
+            {
+                userAccount = _membershipService.GetUserAccountByWebUserId(_globals.Tenant, userId);
+
+                if (ReferenceEquals(null, userAccount))
+                {
+                    retryCount++;
+                    Thread.Sleep(500); // half second wait
+                }
+                else
+                {
+                    userAccountExists = true;
+                }
+            }
             
-            //
-            _membershipService.AddClaim(userAccount, ClaimTypes.AddressVerified, "true");
+            // if it did not exist after 2 attempts, just log it. and move on.
+            if (ReferenceEquals(null, userAccount))
+            {
+                _logger.Info(string.Format("The UserAccount for WebUser with id {0} has not been created yet. As such, the AddressVerified claim has not been added.", userId));
+            }
+            else
+            {
+                _membershipService.AddClaim(userAccount, ClaimTypes.AddressVerified, "true");
+            }
         }
 
         public MyWebinarsDTO BuildMyWebinarsDTO(DiscountModel discountModel, ClaimsIdentity claimsIdentityOfAuthenticatedUser)

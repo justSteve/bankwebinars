@@ -111,8 +111,11 @@ namespace CUWebinars.Business.Services
                         var storedOption = _quizRepository.Context.Option.Single(o => o.Id == option.Id);
                         foreach (var questionWithOption in question.QuestionWithOptions)
                         {
-                            if(questionWithOption.Option.Id == storedOption.Id)
+                            if (questionWithOption.Option.Id == storedOption.Id)
+                            {
                                 questionWithOption.Option = storedOption;
+                                _quizRepository.Context.Entry(questionWithOption.Option).State = EntityState.Unchanged;
+                            }
                         }
                     }                    
                 }

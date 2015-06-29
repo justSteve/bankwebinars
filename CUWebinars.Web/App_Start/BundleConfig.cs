@@ -107,6 +107,7 @@ namespace CUWebinars.Web.App_Start
 
             bundles.Add(new ScriptBundle("~/bundles/CommonModules").Include(
                 "~/Scripts/app/constants.js",
+                "~/Scripts/toastr.js",
                 "~/Scripts/app/client-logger.js",
                 "~/Scripts/app/extensions.js",
                 "~/Scripts/underscore.js",
@@ -249,6 +250,7 @@ namespace CUWebinars.Web.App_Start
 
 
             bundles.Add(new StyleBundle("~/Content/common-styles").Include(
+                "~/Content/toastr.css",
                 "~/Content/common.css")
                 );
 
