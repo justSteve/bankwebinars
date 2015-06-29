@@ -15,6 +15,7 @@ $(function () {
     EQ.wireUpHandlers();
     
     EQ.utilities = new Common.Utilities();
+    EQ.toastLogger = new Common.Logger(); // for toast notifications
 
     EQ.getQuestions();
 
@@ -58,6 +59,7 @@ $(function () {
         EQ.editWebinarButton.on('click', EQ.editWebinar);
     };
 
+    // this method re-populates inputs following a post to the server.
     ns.rePopulateInputs = function() {
 
         EQ.mainForm.fadeOut(300, function() {
@@ -138,6 +140,7 @@ $(function () {
         EQ.editCloneSubmitButton.appendTo(EQ.submitButtons);
     };
 
+    // This method is the one which retrieves the questions for the quiz from the server.
     ns.getQuestions = function () {
 
         var payload = {
@@ -303,7 +306,7 @@ $(function () {
         EQ.addToEditedOptionsList($(newOptionDiv), editedQuestion, newOptionId);
     };
 
-
+    // this handler gets invoked on the blur event of an input. It checks to see whether the question text has changed.
     ns.qTextEdited = function (e) {
 
         e.preventDefault();
@@ -314,6 +317,7 @@ $(function () {
 
     };
 
+    // this handler gets invoked on the blur or change event of an Option input. It checks to see whether the Option text has changed.
     ns.optionEdited = function (e) {
 
         e.preventDefault();
@@ -460,6 +464,8 @@ $(function () {
         });
     };
 
+    // this method is used when an option is deleted. It shuffles up all the following options. E.g. if (a)
+    // is deleted, (b) becomes (a), (c) becomes (b) etc.
     ns.reArrangeRemainingOptions = function (remainingOptionDivs, deletedOptionId, questionNumber) {
 
         var newId = deletedOptionId;
@@ -520,7 +526,6 @@ $(function () {
         return editedOption;
     };
 
-
     ns.addToEditedQuestionsList = function (questionsToAdd) {
 
         _.each(questionsToAdd, function(questionPanel, idx) {
@@ -547,8 +552,8 @@ $(function () {
 
     };
 
-
-
+    // this method is used when a question is deleted. It shuffles up all the following questions. E.g. if (1)
+    // is deleted, (2) becomes (1), (3) becomes (2) etc.
     ns.reArrangeRemainingQuestions = function (accordionGroup, questionNumber) {
 
         var followingQuestions = accordionGroup.nextAll();
@@ -587,7 +592,7 @@ $(function () {
         return followingQuestions;
     };
 
-
+    // this method populates some strongly-types Typescript objects to recreate our domain objects at the client.
     ns.populateClientObjects = function(data) {
         EQ.quiz = new QuizDomain.Quiz();
         EQ.quiz.setCompleted(QuizDomain.CompletionStatus.NotStarted);
@@ -721,17 +726,28 @@ $(function () {
         
         if (!quizId) {
             var questions = EQ.getNewQuestionsFromDom();
-            EQ.postAddQuiz(btnClickedId, webinarId, questions);
+
+            if (questions['valid']) {
+                EQ.postAddQuiz(btnClickedId, webinarId, questions['data']);
+            } else {
+                EQ.toastErrorMessage(questions['data']);
+            }
             return;
         }
         
+        questions = EQ.getNewQuestionsFromDom();
+
+        if (!questions['valid']) {
+            EQ.toastErrorMessage(questions['data']);
+            return;
+        }
 
         var payload = {
             SelectedWebinar: webinarId,
             QuizId: quizId,
             DeletedQuestions: EQ.deletedQuestions,
             EditedQuestions: EQ.editedQuestions,
-            NewQuestions: EQ.getNewQuestionsFromDom()
+            NewQuestions: questions['data']
         };
 
         $.ajax({
@@ -768,6 +784,17 @@ $(function () {
         });
     };
 
+    ns.toastErrorMessage = function (invalidArray) {
+        
+        var logMsg = '';
+
+        for (var index in invalidArray) {
+            logMsg += "Question Nr " + index + " has " + invalidArray[index] + " answers<br />";
+        }
+
+        var logValidationFail = EQ.toastLogger.getLogFn('', 'logError');
+        logValidationFail(logMsg, null, true);
+    };
 
     ns.addQuestionClicked = function (e) {
         e.preventDefault();
@@ -807,6 +834,7 @@ $(function () {
         newQuestionPanel.find('button').last().on('click', EQ.newQuAddOption);
 
         EQ.newQuestions.push(EQ.newQuestionLastId);
+        $('#' + questionNumber + '-questionText').focus();
     };
     
     ns.newQuDeleteOption = function (e) {
@@ -916,6 +944,8 @@ $(function () {
         var options;
         var questions = [];
         var quizQuizWithQuestions;
+        var invalidAnswersList = []; // for validating number of answers per question.
+        var numOfCorrectAnswers;
 
         _.each(EQ.newQuestions, function (questionId, idx) {
 
@@ -926,10 +956,18 @@ $(function () {
             options = null;
             options = [];
             quizQuizWithQuestions = [];
+            numOfCorrectAnswers = [];
 
             _.each(optionDivs, function (optionDiv, idx) {
 
                 var commonIdPrefix = '#' + questionNumber.toString() + (idx + 1).toString();
+
+                // Next couple of lines check to ensure that there is at least 1 answer and at most 1 answer.
+                // If not, function returns the number of answers.
+                var answer = $(commonIdPrefix + '-option').find('input[type="checkbox"]').is(':checked');
+                if (answer) {
+                    numOfCorrectAnswers.push(commonIdPrefix);
+                }
 
                 var optionText = $.trim($(commonIdPrefix + '-optionInput').val());
 
@@ -967,8 +1005,18 @@ $(function () {
                 QuestionWithOptions: options,
                 QuizWithQuestions: quizQuizWithQuestions
             });
+
+            if (numOfCorrectAnswers.length !== 1) {
+                invalidAnswersList[questionNumber.toString()] = numOfCorrectAnswers.length;
+            }
         });
-        return questions;
+
+        if (invalidAnswersList.length > 0) {
+            return { valid: false, data: invalidAnswersList };
+        }
+        else {
+            return { valid: true, data: questions };
+        }
     };
 
     ns.cloneWebinar = function(e) {
