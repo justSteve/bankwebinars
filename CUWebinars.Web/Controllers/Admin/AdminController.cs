@@ -276,7 +276,7 @@ namespace CUWebinars.Web.Controllers.Admin
             _logger.Info(buildMessage);
 
 
-            return Json(new { Result = WebUiConstants.Success });
+            return Json(new { Result = WebUiConstants.Success, NewAffiliate = newAffiliate.ttsDomain });
         }
 
         public ActionResult ManageOrder()
@@ -1890,8 +1890,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
         [HandleAjaxException]
         [HttpPost]
-
-        [ClaimsAuthorize(IdentityConstants.Access, IdentityConstants.GetGridDataFeature)]
+        [AllowAnonymous]
         public ActionResult GetGridData(int? webinarId)
         {
             if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))

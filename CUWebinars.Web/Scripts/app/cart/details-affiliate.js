@@ -7,10 +7,6 @@ OCA.shippingAddressRequired = {};
 OCA.checkoutConfirm = {};
 OCA.searchBy = "";
 OCA.showSetAssignedAffiliate = $('#showSetAssignedAffiliate');
-        $("#showSetAssignedAffiliate").on('click', function(e) {
-            e.preventDefault();
-
-        });
 
 OCA.initializeFunctions = function () {
 
@@ -320,10 +316,10 @@ OCA.initializeFunctions = function () {
         $('#ConfirmRegistrationPayByCC').on('click', function (e) {
             e.preventDefault();
 
-            var orderId = cartStateManager.getOrderId();
+            var orderId = OCA.cartStateManager.getOrderId();
             var url = '/Cart/PayCC/' + orderId;
 
-            utilities.goToUrl(url);
+            OCA.utilities.goToUrl(url);
 
         });
     };
@@ -389,6 +385,8 @@ OCA.initializeFunctions = function () {
 
                     $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
 
+                    OCA.utilities.goToUrl('/Account/OrderCompleteAffiliate/' + OCA.cartStateManager.getOrderId());
+
                 } else {
                     confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                 }
@@ -421,7 +419,8 @@ OCA.initializeFunctions = function () {
                 e.preventDefault();
 
                 // disable button while operation in progress
-                $('#cancelRegistration').attr('disabled', 'disabled');
+                $(this).attr('disabled', 'disabled');
+                $('#CancelModal').find('div[class="modal-footer"]').prepend('<span id="cancelSpinner"><span>&nbsp;<i class="icon icon-spinner icon-spin"></i></span></span>');
 
                 $.post(self.attr('action'), data, function (response, status, xhr) {
 
@@ -448,6 +447,8 @@ OCA.initializeFunctions = function () {
                         confirmRegistrationBillMe.after('<span class="field-validation-error">Server Error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                         $('#CancelModal').modal('hide');
                     }
+
+                    $('#cancelSpinner').remove();
                 }, 'json');
 
                 // unbind event so we don't get them building up each time the user clicks the Cancel Registration button.
@@ -495,26 +496,30 @@ OCA.initializeState = function () {
 
     OCA.cartStateManager.SetCartState('affiliate');
     OCA.numberOfAdditionalLocationsTab3 = 0;
+
+    OCA.utilities = new Common.Utilities();
 };
 
 OCA.wireUpHandlers = function () {
 
-    /* Click event for the big green SignUp button */
+    /* Click event for the big GREEN SignUp button */
     $('#AddToCart').on('click', function () {
+
+        var chosenUserName = $('#chosenUserName');
+
+        if (chosenUserName.length < 1 || !chosenUserName.is(':visible')) {
+            alert('You must select a user using the textbox to the left of the Sign Up button.');
+            return;
+        }
 
         $(this).append('<i id="signUpSpinnerInButton" class="icon-spinner icon-spin"></i>');
 
-        var valSummary = $('#valSummarySignUpForm');
-        valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
-
-        var errorsList = valSummary.find('ul');
-        errorsList.empty();
-        errorsList.append('<li style="display:none"></li>');
+        formProcessor.clearValidationSummary($('#valSummarySignUpForm'));
 
         OCA.signUpForm.submit();
     });
 
-    /* Submit event for the big green SignUp button */
+    /* Submit event for the big GREEN SignUp button */
     OCA.signUpForm.on('submit', function (e) {
         e.preventDefault();
 
@@ -576,6 +581,8 @@ OCA.wireUpHandlers = function () {
                                 $('#EmailOrderButton').on('click', OCA.emailOrderButtonHandler);
 
                                 beigeFormArea.height(confirmationForAffiliateDiv.height() + 25);
+
+                                $('#showSetAssignedAffiliate').removeAttr('disabled');
                             }
 
                             spinner.remove();
@@ -857,10 +864,9 @@ OCA.wireUpHandlers = function () {
         OCA.webUserIdInput.val(webUser.id);
     };
 
-    OCA.displaySetAffiliateModal = function (e) {
-        alert("hit");
+    OCA.displaySetAffiliateModal = function (link) {
+        
         // permits Admin to choose which affiliate will be credited with order
-        e.preventDefault();
 
         var modalFormOptions = {
             keyboard: true,
@@ -868,7 +874,7 @@ OCA.wireUpHandlers = function () {
             show: true
         };
 
-        $(this).after('<span id="loadAffModal">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+        $(link).after('<span id="loadAffModal">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
 
         $('#frmChangeAffiliate > div.modal-body').load('/Admin/GetAffiliates', function () {
 
@@ -884,7 +890,7 @@ OCA.wireUpHandlers = function () {
 
                 var payload = {
                     idAffiliate: $('#SelectedAffiliate').val(),
-                    idOrder: $('#Id').val()
+                    idOrder: OCA.cartStateManager.getOrderId()
                 };
 
                 var url = $('#frmChangeAffiliate').attr('action');
@@ -899,15 +905,17 @@ OCA.wireUpHandlers = function () {
                     beforeSend: function () {
                         $(self).append('<span id="changeAffSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
                         $(self).attr('disabled', 'disabled');
+                        $('#resultLabel').remove();
                     }
                 }).done(function (data) {
 
-                    var oi = data.Result;
-
-                    $(self).removeAttr('disabled');
-                    $('#changeAffSpinner').remove();
-                    $('#idAffiliate').text(payload['idAffiliate']);
-                    $('#affiliateNameText').text($('#SelectedAffiliate :selected').text());
+                    if(data.Result === 'Success') {
+                        $('#setAssignedAffiliate').find('div[class="modal-footer"]').prepend('<span id="resultLabel" class="label label-success"><span>&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Affiliate updated successfully</span>&nbsp;</span>');
+                        $(self).removeAttr('disabled');
+                        $('#changeAffSpinner').remove();
+                        
+                        $('#showSetAssignedAffiliate').text('Selected Affiliate: ' + $('#SelectedAffiliate :selected').text());
+                    }
                 });
             });
         });
@@ -915,16 +923,20 @@ OCA.wireUpHandlers = function () {
         $('#setAssignedAffiliate').on('hidden', function (e) {
             $('#submitChangeAffilate').off('click');
             modalFormOptions = null;
+            $('#resultLabel').remove();
         });
 
         $('#setAssignedAffiliate').on('shown', function (e) {
             $('#loadAffModal').remove();
+            $('#resultLabel').remove();
         });
 
     };
 
-
-
+    OCA.showSetAssignedAffiliate.on('click', function (e) {
+        e.preventDefault();
+        OCA.displaySetAffiliateModal(this);
+    });
 };
 
 // $(document).ready function

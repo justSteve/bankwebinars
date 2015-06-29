@@ -282,6 +282,18 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
+        [System.Web.Mvc.AllowAnonymous]
+        public ActionResult OrderCompleteAffiliate(int? id)
+        {
+            // id is the Order's id.
+            if (id.HasValue)
+            {
+                var order = _accountControllerOrchestrator.GetOrderById(id.Value);
+                return View(order);
+            }
+            return View();
+        }
+
         public ActionResult MyWebinars()
         {
             ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;

@@ -955,6 +955,7 @@
     <Content Include="Views\Admin\DiscountManagement.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\DiscountGeneral.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\DiscountSubscription.cshtml" />
+    <Content Include="Views\Account\OrderCompleteAffiliate.cshtml" />
     <None Include="Web.BankWebinars31 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -13,7 +13,7 @@ namespace CUWebinars.Web.Infrastructure.Auth
         public bool CanAccessImpersonateFeature(ClaimsPrincipal claimsPrincipal)
         {
             // possibly check another claim targeted at impersonation.
-            return claimsPrincipal.HasClaim(c => c.Type == Business.Constants.ClaimTypes.Affiliate || c.Type == Business.Constants.ClaimTypes.Admin);
+            return claimsPrincipal.HasClaim(c => c.Type == Business.Constants.ClaimTypes.Impersonate);
         }
     }
 }

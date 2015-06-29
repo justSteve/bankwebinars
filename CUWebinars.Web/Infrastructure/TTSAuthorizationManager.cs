@@ -46,6 +46,10 @@ namespace CUWebinars.Web.Infrastructure
                     authorizationProcessor = new BatchPasswordResetAuthorizationProcessor();
                     return ProcessAuthorizationRequest(context, authorizationProcessor, action);
                 }
+                case IdentityConstants.GetGridDataFeature:
+                {
+                    return true;
+                }
                 default:
                 {
                     throw new NotSupportedException(string.Format(IdentityConstants.Invalid, resource, "resource"));

@@ -113,14 +113,12 @@
 
         <div class="span6">
             @{
-                if (Model.Webinar.Status != WebinarStatus.Archived
-                                                                                                                    && Model.Webinar.Status != WebinarStatus.Deleted
-                                                                                                                    && Model.Webinar.Status != WebinarStatus.Pending)
+                if (Model.Webinar.Status != WebinarStatus.Archived && Model.Webinar.Status != WebinarStatus.Deleted && Model.Webinar.Status != WebinarStatus.Pending)
                 {
                     <div id="SignUpFormContainer" class="row-fluid">
 
                         <div class="content span12 well">
-                            <a tabindex="-1" id="showSetAssignedAffiliate">Choose Affiliate to Credit</a>
+                            <button class="btn btn-link" tabindex="-1" id="showSetAssignedAffiliate" disabled="disabled">Choose Affiliate to Credit</button>
                             <ul class="nav nav-tabs" id="regTabs">
                                 <li id="findUserTab" class="active"><a href="#findUserForAffiliate" data-toggle="tab">@Model.SignUpCaption</a></li>
                                 <li id="confirmationTabForAffiliate"><a href="#confirmationForAffiliate" data-toggle="tab">@Model.ConfirmationCaption</a></li>

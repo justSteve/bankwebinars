@@ -570,7 +570,9 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             // At this point, user may not be registered. So, when creating the Order, if user 
             // does not exist, a dummy user with an email of notauthenticated@cuwebinars.com will be created.
-            var webUser = _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.idUser);
+            WebUser webUser = formModel.SelectedWebUser > 0 ? 
+                _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.SelectedWebUser) : // if logged in as admin or affiliate
+                _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.idUser);
 
             return CreateNewOrder(currentAffiliate, webUser, webinar, newOrderRow, beingImpersonatedClaim);
         }

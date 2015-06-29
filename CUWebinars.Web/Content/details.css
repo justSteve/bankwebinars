@@ -83,3 +83,7 @@ blockquote {
 #SignUpFormContainer {
     overflow-y: auto;
 }
+
+a {
+    cursor: pointer;
+}
