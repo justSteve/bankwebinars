@@ -1890,14 +1890,21 @@ namespace CUWebinars.Web.Controllers.Admin
 
         [HandleAjaxException]
         [HttpPost]
+
+        [ClaimsAuthorize(IdentityConstants.Access, IdentityConstants.GetGridDataFeature)]
         public ActionResult GetGridData(int? webinarId)
         {
-            int totalNumberOrders;
-
-            return Json(new
+            if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
             {
-                data = BuildDisplayOrdersViewModel(webinarId.Value, out totalNumberOrders)
-            });
+                int totalNumberOrders;
+
+                return Json(new
+                {
+                    data = BuildDisplayOrdersViewModel(webinarId.Value, out totalNumberOrders)
+                });
+            }
+
+            return PartialView("~/Views/Admin/Partials/_NotAuthorized.cshtml");
         }
 
         private IList<IDictionary<string, string>> BuildDisplayOrdersViewModel(int webinarId, out int totalNumberOrders)
