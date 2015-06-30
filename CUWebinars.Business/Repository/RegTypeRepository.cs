@@ -54,6 +54,9 @@ namespace CUWebinars.Business.Repository
                 .SelectMany(opt => opt.RegTypesXrefs);
 
             //  Finally, get the RegTypes
+            //  NOTE: ToDictionary is called here with the "shape" <RegType, bool> because I am pairing the RegType with a bool
+            //  that determines whether the RegType in question includes materials to be physically shipped. This "pairing" needs
+            //  to make it all the way to the view so when the user clicks on a radio button, that information is right there in the dom.
             var regTypes =
                 regtypesXrefs.Include(o => o.RegType)
                     .Select(o => o.RegType)
