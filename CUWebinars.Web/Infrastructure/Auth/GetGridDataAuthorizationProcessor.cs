@@ -32,23 +32,7 @@ namespace CUWebinars.Web.Infrastructure.Auth
 
         public bool GetGridDataFeature(ClaimsPrincipal claimsPrincipal)
         {
-            switch (GlobalConfig.GlobalConfigSingleton.Tenant)
-            {
-                case DomainConstants.BankWebinars:
-                    if (claimsPrincipal.HasClaim(Business.Constants.ClaimTypes.Affiliate, "true"))
-                    {
-                        return true;
-                    }
-                    return false;
-                case DomainConstants.CUWebinars:
-                    if (claimsPrincipal.HasClaim(Business.Constants.ClaimTypes.Affiliate, "true"))
-                    {
-                        return true;
-                    }
-                    return false;
-                default:
-                    throw new NotSupportedException(string.Format("{0} is not a known tenant", GlobalConfig.GlobalConfigSingleton.Tenant));
-            }
+            return claimsPrincipal.HasClaim(c => c.Type == Business.Constants.ClaimTypes.Affiliate || c.Type == Business.Constants.ClaimTypes.Admin);
         }
 
     }

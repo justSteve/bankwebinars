@@ -6,6 +6,7 @@ namespace CUWebinars.Web.ViewModel
 {
     public class ShowOrdersViewModel
     {
+        public bool UserIsAdmin { get; set; }
         public IList<Order> Orders { get; set; }
         public Affiliate Affiliate { get; set; }
         public Webinar Webinar { get; set; }

@@ -11,6 +11,7 @@ namespace CUWebinars.Web.Helpers
         public const string Account = "Account";
         public const string AdminFunction = "AdminFunction";
         public const string BatchPasswordResetFeature = "BatchPasswordResetFeature";
+        public const string GetOrdersByLastNameFeature = "GetOrdersByLastNameFeature";
         public const string ImpersonateFeature = "ImpersonateFeature";
         public const string GetGridDataFeature = "GetGridDataFeature";
 

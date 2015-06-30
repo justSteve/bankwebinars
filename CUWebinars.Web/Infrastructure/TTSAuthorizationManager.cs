@@ -31,6 +31,11 @@ namespace CUWebinars.Web.Infrastructure
                     //return PrincipalCanPerformActionOnResource(action, context.Principal);
                     return false;
                 }
+                case IdentityConstants.GetOrdersByLastNameFeature:
+                {
+                    authorizationProcessor = new GetOrdersByLastNameFeatureAuthorizationProcessor();
+                    return ProcessAuthorizationRequest(context, authorizationProcessor, action);
+                }
                 case IdentityConstants.ImpersonateFeature:
                 {
                     authorizationProcessor = new ImpersonateFeatureAuthorizationProcessor();

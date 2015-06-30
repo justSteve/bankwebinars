@@ -884,33 +884,38 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(new { Error = WebUiConstants.NullValueParameter });
         }
 
+        [AllowAnonymous]
         public ActionResult GetOrdersByLastName(string lastName)
         {
             if (!string.IsNullOrWhiteSpace(lastName))
             {
-                var aff = 0;
-                var currentUser = User.Identity as ClaimsIdentity;
-
-                if (currentUser.HasClaim(
-                        (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
+                if(ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetOrdersByLastNameFeature))
                 {
-                    aff = _membershipService.GetUserByEmail(User.Identity.Name).idUser;
+                    var aff = 0;
+                    var currentUser = User.Identity as ClaimsIdentity;
 
-                }
-
-                var results = _orderManagementService.GetOrdersByLastName(lastName, aff)
-                    .Select(o => new
+                    if (currentUser.HasClaim(
+                        (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
                     {
-                        //AffiliateName = GetAffiliateName(o.idAffiliate),
-                        id = o.WebUser.idUser,
-                        billingEmail = o.WebUser.email,
-                        lastName = o.WebUser.LastName,
-                        firstName = o.WebUser.FirstName,
-                        institution = o.Institution
-                    }).Distinct();
+                        aff = _membershipService.GetUserByEmail(User.Identity.Name).idUser;
+
+                    }
+
+                    var results = _orderManagementService.GetOrdersByLastName(lastName, aff)
+                        .Select(o => new
+                        {
+                            //AffiliateName = GetAffiliateName(o.idAffiliate),
+                            id = o.WebUser.idUser,
+                            billingEmail = o.WebUser.email,
+                            lastName = o.WebUser.LastName,
+                            firstName = o.WebUser.FirstName,
+                            institution = o.Institution
+                        }).Distinct();
 
 
-                return Json(new { results }, JsonRequestBehavior.AllowGet);
+                    return Json(new { results }, JsonRequestBehavior.AllowGet);
+                }
+                return Json(new { NotAuthorized = "true" });
             }
 
             return Json(new { Error = WebUiConstants.NullValueParameter });
@@ -1892,7 +1897,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpPost]
 
         [AllowAnonymous]
-        public ActionResult GetGridData(int? webinarId)
+        public ActionResult GetGridData(int? webinarId, int? affiliateId)
         {
             if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
             {
@@ -1900,16 +1905,16 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 return Json(new
                 {
-                    data = BuildDisplayOrdersViewModel(webinarId.Value, out totalNumberOrders)
+                    data = BuildDisplayOrdersViewModel(webinarId.Value, affiliateId, out totalNumberOrders)
                 });
             }
 
-            return PartialView("~/Views/Admin/Partials/_NotAuthorized.cshtml");
+            return Json(new { NotAuthorized = true });
         }
 
-        private IList<IDictionary<string, string>> BuildDisplayOrdersViewModel(int webinarId, out int totalNumberOrders)
+        private IList<IDictionary<string, string>> BuildDisplayOrdersViewModel(int webinarId, int? affiliateId, out int totalNumberOrders)
         {
-            var orders = _dataTablesService.GetOrdersByWebinar(webinarId, 19, out totalNumberOrders);
+            var orders = _dataTablesService.GetOrdersByWebinar(webinarId, affiliateId.HasValue ? affiliateId.Value : 62, out totalNumberOrders);
 
             IList<IDictionary<string, string>> responsePayload = new List<IDictionary<string, string>>();
             IDictionary<string, string> responsePayloadInner = new Dictionary<string, string>();

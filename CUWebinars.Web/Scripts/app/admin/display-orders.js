@@ -39,7 +39,8 @@ $(function () {
             'ajax': {
                 'url': '/admin/GetGridData',
                 'data': {
-                    'webinarId': parseInt(DO.webinarIdDiv.text())
+                    'webinarId': parseInt(DO.webinarIdDiv.text()),
+                    'affiliateId': DO.affiliateId
                 },
                 'type': 'POST'
             },

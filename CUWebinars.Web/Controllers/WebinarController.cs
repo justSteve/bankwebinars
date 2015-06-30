@@ -542,16 +542,17 @@ namespace CUWebinars.Web.Controllers
                     int totalNumberOrders;
                     var aff = _affiliateManagementService.LoadByTTSDomain("bankwebinars");
                     
-                    var orders = _dataTablesService.GetOrdersByWebinar(
-                        model.Webinar.idWebinar,
-                        19,
-                        out totalNumberOrders
-                        );
+                    //var orders = _dataTablesService.GetOrdersByWebinar(
+                    //    model.Webinar.idWebinar,
+                    //    19,
+                    //    out totalNumberOrders
+                    //    );
 
                     model.ShowOrdersViewModel = new ShowOrdersViewModel
                     {
                         Affiliate = aff,
-                        Orders = orders.ToList(),
+                        Orders = null,
+                        UserIsAdmin = true,
                         Webinar = model.Webinar
                     };
 
@@ -572,16 +573,17 @@ namespace CUWebinars.Web.Controllers
                     
                     int totalNumberOrders;
 
-                    var orders = _dataTablesService.GetOrdersByWebinar(
-                        model.Webinar.idWebinar, 
-                        aff.idUserAff,
-                        out totalNumberOrders
-                        );
+                    //var orders = _dataTablesService.GetOrdersByWebinar(
+                    //    model.Webinar.idWebinar, 
+                    //    aff.idUserAff,
+                    //    out totalNumberOrders
+                    //    );
 
                     model.ShowOrdersViewModel = new ShowOrdersViewModel
                     {
                         Affiliate = aff,
-                        Orders = orders.ToList(),
+                        Orders = null,
+                        UserIsAdmin = false,
                         Webinar = model.Webinar
                     };
                     return PartialView("DetailsAffiliate", model);
