@@ -1914,7 +1914,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
         private IList<IDictionary<string, string>> BuildDisplayOrdersViewModel(int webinarId, int? affiliateId, out int totalNumberOrders)
         {
-            var orders = _dataTablesService.GetOrdersByWebinar(webinarId, affiliateId.HasValue ? affiliateId.Value : 62, out totalNumberOrders);
+            var orders = _dataTablesService.GetOrdersByWebinar(webinarId, affiliateId ?? 19, out totalNumberOrders);
 
             IList<IDictionary<string, string>> responsePayload = new List<IDictionary<string, string>>();
             IDictionary<string, string> responsePayloadInner = new Dictionary<string, string>();

@@ -523,6 +523,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             return model;
         }
 
+        public void CreateUserForAdmin(EditUserModel editUserModel)
+        {
+            
+        }
 
 
         public MyWebinarsDTO BuildOnDemandDTO(DiscountModel discountModel, ClaimsIdentity claimsIdentityOfAuthenticatedUser)

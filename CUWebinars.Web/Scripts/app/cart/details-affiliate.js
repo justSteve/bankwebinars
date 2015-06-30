@@ -482,6 +482,7 @@ OCA.initializeState = function () {
     OCA.selectedWebUserInput = $('#SelectedWebUser');
     OCA.chosenUserNameSpan = $('#chosenUserName');
     OCA.webUserIdInput = $('#idUser');
+    OCA.createNewUserButton = $('#createNewUserButton');
     OCA.users = {};
 
     OCA.cartStateManager = new OrderRegistration.StateManager();
@@ -863,6 +864,67 @@ OCA.wireUpHandlers = function () {
         OCA.selectedWebUserInput.val(webUser.id);
         OCA.webUserIdInput.val(webUser.id);
     };
+
+    OCA.displayNewUserModal = function(e) {
+
+        e.preventDefault();
+
+        $(this).attr('disabled', 'disabled').after('<i id="loadSpinner" class="icon-spinner icon-spin"></i>');
+
+        var modalFormOptions = {
+            keyboard: true,
+            backdrop: 'static',
+            show: true
+        };
+
+        $('#addNewUserModal > div.modal-body').load('/Account/GetAddUserFieldsForModal', function(data) {
+
+            $('#addNewUserModal').modal(modalFormOptions);
+
+            $('#confirmCreateUserButton').on('click', function(e) {
+
+                e.preventDefault();
+
+                var self = this;
+
+                var form = $('#adminAddUserForm');
+                var url = form.attr('action');
+
+                var data = form.serialize();
+
+                $.ajax({
+                    type: 'POST',
+                    contentType: constants.FormPostContentType,
+                    cache: false,
+                    url: url,
+                    dataType: constants.JsonDataType,
+                    data: data,
+                    beforeSend: function() {
+                        $(self).attr('disabled', 'disabled').after('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
+
+                        //Rollbar.info("addPasswordForm Sent");
+
+                    }
+                }).done(function(data) {
+                    $('#loadingSpinner').remove();
+                    $(self).removeAttr('disabled');
+                });
+            });
+
+        });
+
+        $('#addNewUserModal ').on('hidden', function (e) {
+            //$('#submitChangeAffilate').off('click');
+            modalFormOptions = null;
+            //$('#resultLabel').remove();
+        });
+
+        $('#addNewUserModal ').on('shown', function (e) {
+            $('#loadSpinner').remove();
+        });
+    }
+
+    OCA.createNewUserButton.on('click', OCA.displayNewUserModal);
 
     OCA.displaySetAffiliateModal = function (link) {
         

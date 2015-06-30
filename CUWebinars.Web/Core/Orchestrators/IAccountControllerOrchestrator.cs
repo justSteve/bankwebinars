@@ -52,5 +52,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         void AddShippingAddressVerifiedClaim(int userId);
         // ReSharper disable once InconsistentNaming
         MyWebinarsDTO BuildMyWebinarsDTO(DiscountModel discountModel, ClaimsIdentity claimsIdentityOfAuthenticatedUser);
+        void CreateUserForAdmin(EditUserModel editUserModel);
     }
 }

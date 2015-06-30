@@ -1330,6 +1330,28 @@ namespace CUWebinars.Web.Controllers
             return Json(new { Result = WebUiConstants.Fail }); // This actually gets discarded by view.           
         }
 
+        public PartialViewResult GetAddUserFieldsForModal()
+        {
+            var editUserModel = new EditUserModel
+            {
+                BillingAddress = new AddressModel{ TypeOfAddress = AddressType.Billing },
+                UserType = UserType.Customer,
+            };
+
+            return PartialView("~/Views/Webinar/Partials/_AddNewUser.cshtml", editUserModel);
+        }
+
+        [System.Web.Mvc.HttpPost]
+        [ValidateAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
+
+        public ActionResult AdminAddNewUser(EditUserModel editUserModel)
+        {
+            _accountControllerOrchestrator.CreateUserForAdmin(editUserModel);
+
+            return View();
+        }
+
         [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
