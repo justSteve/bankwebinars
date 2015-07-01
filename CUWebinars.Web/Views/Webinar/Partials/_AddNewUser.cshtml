@@ -10,7 +10,7 @@
             <div class="span4 control-group">
                 @Html.LabelFor(model => model.FirstName, new { @class = "control-label" })
                 <div class="controls">
-                    @Html.EditorFor(model => model.FirstName)
+                    @Html.TextBoxFor(model => model.FirstName, new { id = "NewUserFirstName", name = "FirstName" })
                     @Html.ValidationMessageFor(model => model.FirstName)
                 </div>
             </div>
@@ -20,7 +20,7 @@
             <div class="span4 control-group">
                 @Html.LabelFor(model => model.LastName, new { @class = "control-label" })
                 <div class="controls">
-                    @Html.EditorFor(model => model.LastName)
+                    @Html.TextBoxFor(model => model.LastName, new { id = "NewUserLastName", name = "LastName" })
                     @Html.ValidationMessageFor(model => model.LastName)
                 </div>
             </div>
@@ -62,7 +62,7 @@
         <div class="row-fluid">
             <div id="ShippingAddressContainer" class="initialHide">
                 <div class="span5">
-                    @Html.EditorFor(b => b.BillingAddress)
+                    @Html.EditorFor(b => b.ShippingAddress)
                 </div>
             </div>
         </div>

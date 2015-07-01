@@ -662,18 +662,13 @@ namespace CUWebinars.Web.Core.Orchestrators
                 idOrder = order.idOrder,
                 SessionStartInfo = _appHelper.GetSessionStartInfo()
             };
-            Stopwatch jsonWatch = Stopwatch.StartNew();
 
             order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
-
-            jsonWatch.Stop();
-            Trace.TraceInformation("{0} took {1}s to run.", "JSON Serialization", jsonWatch.Elapsed.Seconds);
-
+            
             if (userCreatedInCart.HasValue)
                 _orderManagementService.FireOrderSubmittedEvent(order, userCreatedInCart.Value, url: Request.Url);
             else
                 _orderManagementService.FireOrderSubmittedEvent(order, url: Request.Url);
-
         }
 
         public void UpdateOrderWithUserId(int orderId, int userId)
@@ -736,6 +731,25 @@ namespace CUWebinars.Web.Core.Orchestrators
                 order.OrderStatus = OrderStatus.Paid;
                 _orderManagementService.SaveChanges();
             }
+        }
+
+        public int ProcessModelForConfirmation(WebinarDetailsViewModel model, bool? adminCreatedWebUser)
+        {
+            model.Order.OrderStatus = OrderStatus.Submitted;
+            model.Order.Origin = "Cart";
+
+            if (Request.IsAuthenticated && !adminCreatedWebUser.HasValue)
+            {
+                FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
+            }
+            else
+            {
+                FireOrderSubmittedNotification(model.Order, userCreatedInCart: true);
+            }
+
+            UpdateOrderPricing(model.Order);
+
+            return model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
         }
 
         public INotificationMessage GenerateMessagePreview(Order order)

@@ -359,6 +359,10 @@ OCA.initializeFunctions = function () {
 
             e.preventDefault();
 
+            if (OCA.selectedWebUserInput.val() == OCA.adminCreatedUserInput.val()) {
+                $('#userCreatedByAdmin').val(true);
+            }
+
             var self = $(this);
             self.find('input[name="id"]').val(OCA.cartStateManager.getOrderRowId());
 
@@ -483,6 +487,7 @@ OCA.initializeState = function () {
     OCA.chosenUserNameSpan = $('#chosenUserName');
     OCA.webUserIdInput = $('#idUser');
     OCA.createNewUserButton = $('#createNewUserButton');
+    OCA.adminCreatedUserInput = $('#adminCreatedUser');
     OCA.users = {};
 
     OCA.cartStateManager = new OrderRegistration.StateManager();
@@ -890,6 +895,17 @@ OCA.wireUpHandlers = function () {
                 var form = $('#adminAddUserForm');
                 var url = form.attr('action');
 
+                $('#ShippingAddress_Name').val($('#BillingAddress_Name').val());
+                $('#ShippingAddress_StreetAddress').val($('#BillingAddress_StreetAddress').val());
+                $('#ShippingAddress_StreetAddress2').val($('#BillingAddress_StreetAddress2').val());
+                $('#ShippingAddress_City').val($('#BillingAddress_City').val());
+                $('#ShippingAddress_State').val($('#BillingAddress_State').val());
+                $('#ShippingAddress_Zip').val($('#BillingAddress_Zip').val());
+                $('#ShippingAddress_Country').val($('#BillingAddress_Country').val());
+                $('#ShippingAddress_Phone').val($('#BillingAddress_Phone').val());
+                $('#ShippingAddress_TypeOfAddress').val('Shipping');
+                $('#BillingAddress_TypeOfAddress').val('Billing');
+
                 var data = form.serialize();
 
                 $.ajax({
@@ -901,13 +917,23 @@ OCA.wireUpHandlers = function () {
                     data: data,
                     beforeSend: function() {
                         $(self).attr('disabled', 'disabled').after('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
-
                         //Rollbar.info("addPasswordForm Sent");
 
                     }
-                }).done(function(data) {
+                }).done(function(data, textStatus, jqXHR) {
                     $('#loadingSpinner').remove();
-                    $(self).removeAttr('disabled');
+                    OCA.createNewUserButton.removeAttr('disabled');
+
+                    if (data.Result === "Success") {
+                        OCA.adminCreatedUserInput.val(data.UserId);
+                        OCA.selectedWebUserInput.val(data.UserId);
+                        $('#userCreatedByAdmin').val(true);
+                        OCA.chosenUserNameSpan.text($('#NewUserFirstName').val() + ' ' + $('#NewUserLastName').val());
+                        OCA.lastNameInput.attr('disabled', 'disabled');
+                        $('#confirmCreateUserButton').removeAttr('disabled');
+                        $('#cancelCreateUserButton').text('close');
+                        $(self).before('<span id="newUserResultLabel">&nbsp;<span class="label label-success">User created successully!</span>&nbsp;</span>');
+                    }
                 });
             });
 
@@ -916,7 +942,8 @@ OCA.wireUpHandlers = function () {
         $('#addNewUserModal ').on('hidden', function (e) {
             //$('#submitChangeAffilate').off('click');
             modalFormOptions = null;
-            //$('#resultLabel').remove();
+            $('#cancelCreateUserButton').text('Cancel');
+            $('#newUserResultLabel').remove();
         });
 
         $('#addNewUserModal ').on('shown', function (e) {

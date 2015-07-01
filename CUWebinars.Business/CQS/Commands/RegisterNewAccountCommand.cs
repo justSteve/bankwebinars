@@ -5,6 +5,7 @@ namespace CUWebinars.Business.CQS.Commands
     public class RegisterNewAccountCommand 
     {
         public Address BillingAddress { get; set; }
+        public string CreationMode { get; set; }
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
