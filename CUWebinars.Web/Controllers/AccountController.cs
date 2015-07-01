@@ -1307,7 +1307,6 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
-
                     _logger.Info("CreateUserAccountFromCart for: " + email);
                     var tempPassword = _accountControllerOrchestrator.CreateUserAccountFromCart(email);
 
@@ -1347,9 +1346,21 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult AdminAddNewUser(EditUserModel editUserModel)
         {
-            _accountControllerOrchestrator.CreateUserForAdmin(editUserModel);
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var idUser = _accountControllerOrchestrator.CreateUserForAdmin(editUserModel);
 
-            return View();
+                    return Json(new {Result = WebUiConstants.Success, UserId = idUser });
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException("In AdminAddNewUser Action", exception);
+                    return Json(new {Result = WebUiConstants.Fail});
+                }
+            }
+            return this.ModelStateJson(ModelState);
         }
 
         [System.Web.Mvc.HttpPost]

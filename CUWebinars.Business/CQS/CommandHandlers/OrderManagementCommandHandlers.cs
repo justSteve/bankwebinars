@@ -260,7 +260,17 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                 , command.Email
                 );
 
-            _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.OrderImportRegistration);
+            switch (command.CreationMode)
+            {
+                case DomainConstants.CreationModeImported:
+                    _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.OrderImportRegistration);
+                    break;
+                case DomainConstants.CreationModeMigrated:
+                    _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.OrderMigrated);
+                    break;
+                default:
+                    break;
+            }
 
             _postCommitRegistrator.Committed += () =>
             {

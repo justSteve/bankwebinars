@@ -523,12 +523,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             return model;
         }
 
-        public void CreateUserForAdmin(EditUserModel editUserModel)
-        {
-            
-        }
-
-
         public MyWebinarsDTO BuildOnDemandDTO(DiscountModel discountModel, ClaimsIdentity claimsIdentityOfAuthenticatedUser)
         {
             var currentUser = GetWebUserFromIPrincipal();
@@ -1244,6 +1238,114 @@ namespace CUWebinars.Web.Core.Orchestrators
             return changeEmailFromKeyInputModel;
         }
 
+        public int CreateUserForAdmin(EditUserModel editUserModel)
+        {
+            var email = editUserModel.Email.Trim();
+            var firstName = editUserModel.FirstName.Trim();
+            var lastName = editUserModel.LastName.Trim();
+
+            bool emailIsAvailable = _membershipService.GetUserByEmail(email) == null;
+
+            if (!emailIsAvailable)
+                throw new ValidationException(string.Format("The email address {0} is already in use by an existing user.", email));
+
+            var myInstitution = _membershipService.ProcessInstitutionForUser(
+                editUserModel.Institution.Trim(),
+                email,
+                editUserModel.BillingAddress.City.Trim(),
+                editUserModel.BillingAddress.State.Trim(),
+                "N",
+                "New",
+                editUserModel.BillingAddress.Zip.Trim());
+
+            IList<Address> addresses = new List<Address>
+            {
+                new Address
+                {
+                    AddressType = DomainConstants.BillingAddress,
+                    City = editUserModel.BillingAddress.City.Trim(),
+                    Country = editUserModel.BillingAddress.Country.Trim(),
+                    Name = firstName + ' ' + lastName,
+                    Phone = editUserModel.BillingAddress.Phone.Trim(),
+                    State = editUserModel.BillingAddress.State.Trim(),
+                    StreetAddress = editUserModel.BillingAddress.StreetAddress.Trim(),
+                    StreetAddress2 =
+                        editUserModel.BillingAddress.StreetAddress2 == null
+                            ? editUserModel.BillingAddress.StreetAddress2
+                            : editUserModel.BillingAddress.StreetAddress2.Trim(),
+                    Zip = editUserModel.BillingAddress.Zip.Trim()
+                },
+                new Address
+                {
+                    AddressType = DomainConstants.ShippingAddress,
+                    City = editUserModel.BillingAddress.City.Trim(),
+                    Country = editUserModel.BillingAddress.Country.Trim(),
+                    Name = firstName + ' ' + lastName,
+                    Phone = editUserModel.BillingAddress.Phone.Trim(),
+                    State = editUserModel.BillingAddress.State.Trim(),
+                    StreetAddress = editUserModel.BillingAddress.StreetAddress.Trim(),
+                    StreetAddress2 =
+                        editUserModel.BillingAddress.StreetAddress2 == null
+                            ? editUserModel.BillingAddress.StreetAddress2
+                            : editUserModel.BillingAddress.StreetAddress2.Trim(),
+                    Zip = editUserModel.BillingAddress.Zip.Trim()
+                }
+            };
+
+            // get timezone for the new user.
+            var cityStateFromZip = _appHelper.GetCityStateFromZip(int.Parse(editUserModel.BillingAddress.Zip.Trim()));
+            var timezoneEtc = new Dictionary<string, string>();
+            BuildCityStateTimeZoneData(timezoneEtc, cityStateFromZip);
+
+            var webUser = _membershipService.CreateWebUser(_globals.Tenant
+                , firstName
+                , lastName
+                , string.Empty
+                , email
+                , (USTimeZone)Enum.Parse(typeof(USTimeZone), timezoneEtc["TimeZone"])
+                , UserType.Customer
+                , myInstitution.idInstitution
+                , addresses
+                ,
+                editUserModel.Title == null
+                    ? editUserModel.Title
+                    : editUserModel.Title.Trim()
+                , null
+                , DomainConstants.Active
+                );
+
+            var password = PasswordGenerator.GenerateRandomString(8);
+
+            _stateService.SetValue(DomainConstants.UserCreatedDuringCartCheckout, "true");
+
+            var userAccount = _membershipService.CreateUser(
+                _globals.Tenant,
+                firstName,
+                lastName,
+                string.Empty,
+                //  Pass empty string for username because MembershipReboot assigns the email to the username field where emailIsUsername is true
+                password,
+                email);
+
+            // The following Claim is added so the system knows that the User is yet to pro-actively verify its account.
+            // Note: this is a CUW/BW construct of Verified, as distinct from the MR idea of Verified (which is dealt with below)
+            _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.CartRegistration);
+            
+            Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey), "There's no reason session should not have a value for the VerificationKey at this point ");
+
+            var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
+            _stateService.ClearValue(DomainConstants.VerificationKey);
+            _stateService.ClearValue(DomainConstants.UserCreatedDuringCartCheckout);
+
+            _membershipService.VerifyEmailFromKey(
+                verificationKey,
+                password 
+                ); // verify the user to unlock functionality like PasswordReset
+
+
+
+            return webUser.idUser;
+        }
 
         public void Dispose()
         {

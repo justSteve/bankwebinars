@@ -293,6 +293,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             var registerNewAccountCommand = new RegisterNewAccountCommand
             {
                 BillingAddress = incomingOrderModel.BillingAddress,
+                CreationMode = "",
                 Email = email,
                 FirstName = firstName,
                 LastName = lastName,
@@ -330,6 +331,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             var registerNewAccountCommand = new RegisterNewAccountCommand
             {
                 BillingAddress = migrateOrder.BillingAddress,
+                CreationMode = DomainConstants.CreationModeMigrated,
                 Email = email,
                 FirstName = firstName,
                 LastName = lastName,
@@ -369,6 +371,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             var registerNewAccountCommand = new RegisterNewAccountCommand
             {
                 BillingAddress = importOrder.BillingAddress,
+                CreationMode = DomainConstants.CreationModeImported,
                 Email = email,
                 FirstName = firstName,
                 LastName = lastName,

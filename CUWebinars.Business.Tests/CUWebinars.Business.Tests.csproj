@@ -190,6 +190,7 @@
     <Compile Include="UnitTests\OrderManagementQueriesTests.cs" />
     <Compile Include="Fakes\UserAccountServiceHappyPathFake.cs" />
     <Compile Include="Fakes\UserAccountServiceUnHappyPathFake.cs" />
+    <Compile Include="UnitTests\TempTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\CreateDb.sql" />

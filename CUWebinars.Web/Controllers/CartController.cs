@@ -151,33 +151,20 @@ namespace CUWebinars.Web.Controllers
 
 
         [System.Web.Mvc.HttpPost]
-        public ActionResult ConfirmOrderForAffiliate(string referred, int? id = null)
+        public ActionResult ConfirmOrderForAffiliate(string referred, int? id = null, bool? adminCreatedWebUser = null)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
-                    var orderID = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
-                    model.Order.OrderStatus = OrderStatus.Submitted;
-                    model.Order.Origin = "Cart";
-
-                    if (User.Identity.IsAuthenticated)
-                    {
-                        _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
-                    }
-                    else
-                    {
-                        _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: true);
-                    }
-
-                    _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
+                    int orderId = _cartControllerOrchestrator.ProcessModelForConfirmation(model, adminCreatedWebUser);
 
                     return Json(new
                     {
                         Result = WebUiConstants.Success,
-                        OrderRowID = orderID,
-                        Msg = string.Format("<p>Your Order ID is {0}. Please check your email for connection information for the webinar.</p>", orderID)
+                        OrderRowID = orderId,
+                        Msg = string.Format("<p>Your Order ID is {0}. Please check your email for connection information for the webinar.</p>", orderId)
                     }, JsonRequestBehavior.AllowGet);
                 }
                 catch (Exception exception)

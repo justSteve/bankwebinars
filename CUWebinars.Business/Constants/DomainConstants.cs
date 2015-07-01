@@ -49,5 +49,8 @@ namespace CUWebinars.Business.Constants
                 return TimeZoneInfo.ConvertTimeFromUtc(timeUtc, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
             }
         }
+
+        public const string CreationModeImported = "imported";
+        public const string CreationModeMigrated = "migrated";
     }
 }
