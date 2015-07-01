@@ -733,8 +733,6 @@
     <Content Include="Content\DataTables\css\dataTables.jqueryui.scss" />
     <None Include="Properties\PublishProfiles\BankWebinars31 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars31 - Web Deploy.pubxml" />
-    <None Include="Properties\PublishProfiles\CUWebinars33 - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\CUWebinars33 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\app\webinar\manage-webinar-from-details.js" />
     <Content Include="Scripts\bootstrap-filestyle.min.js" />
