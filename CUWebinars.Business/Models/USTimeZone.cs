@@ -1,6 +1,11 @@
 ﻿
 namespace CUWebinars.Business.Models
 {
+    ////legacy zones:
+    //        Pacific = 1,
+    //    Mountain = 2,
+    //    Central = 3,
+    //    Eastern = 4
 
     public enum USTimeZone
     {

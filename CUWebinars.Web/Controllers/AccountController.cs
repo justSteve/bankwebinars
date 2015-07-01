@@ -968,13 +968,13 @@ namespace CUWebinars.Web.Controllers
                             return Json(new { Result = "Success" });
                         }
 
-                        _logger.Error("_accountControllerOrchestrator.ChangePasswordFromResetKey tossed error.");
+                        _logger.Error("_accountControllerOrchestrator.ChangePasswordFromResetKey {0} tossed error to: " , model.Key);
                         ModelState.AddModelError(string.Empty,
                             "We've logged an error. Please attempt the password reset procedure again. In case of persisant failures contact us at support@ttstrain.com - or, for immediate assistance contact us at 800-831-0678 ext. 707.");
                     }
-                    _logger.Info("Account.PasswordResetConfirm Post. Session=" + _appHelper.GetUserAuditInfo());
+                    _logger.Info("Account.PasswordResetConfirm Success. Session=" + _appHelper.GetUserAuditInfo());
                 }
-                _logger.Error("Invalid ModelState in PasswordResetConfirm");
+                _logger.Error("Invalid ModelState in PasswordResetConfirm" + model.Key);
             }
             catch (ValidationException validationException)
             {
