@@ -8,6 +8,10 @@ var Common;
             this.sourceAttribute = 'source';
             this.relativeAttribute = 'relative';
         }
+        Utilities.prototype.getFullPath = function () {
+            return $.url().attr(this.sourceAttribute);
+        };
+
         Utilities.prototype.getRelativePath = function () {
             return $.url().attr(this.relativeAttribute);
         };

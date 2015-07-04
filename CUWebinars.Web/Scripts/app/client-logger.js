@@ -3,39 +3,41 @@
 
 var L = LOGGING; // create shortcut alias
 
-
-
 L.clientLogger = function () {
 
     var errorLevel = 'error';
     var infoLevel = 'log';
 
-    var log = function (logLevel, id, obj) {
+    var log = function(logLevel, id, obj) {
 
         var logObj = {};
         logObj[id] = obj;
 
         switch (logLevel) {
-            case errorLevel:
-                Rollbar.error(logObj);
-                //
-                $zopim(function () {
+        case errorLevel:
+            Rollbar.error(logObj);
+            //
+            if (typeof $zopim !== 'undefined') {
+                $zopim && $zopim(function() {
 
                     $zopim.livechat.addTags(id);
 
                     $zopim.livechat.bubble.setTitle('Get Help Here!');
                 });
-                break;
-            case infoLevel:
-                Rollbar.info(logObj);
-                
+            }
+            break;
+        case infoLevel:
+            Rollbar.info(logObj);
+
+            if (typeof $zopim !== 'undefined') {
                 $zopim(function() {
-                
+
                     $zopim.livechat.addTags(id);
 
                     //$zopim.livechat.bubble.setTitle('Get Help Here!');
                 });
-                break;
+            }
+            break;
         }
     };
 

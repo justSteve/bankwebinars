@@ -820,7 +820,7 @@ namespace CUWebinars.Web.Controllers
             OrderRow orderRowForOrder = null;
 
             model.WebUser = Request.IsAuthenticated
-                ? _membershipService.GetUserByEmailLoadedWithOrdersData(User.Identity.Name)
+                ? _membershipService.GetUserByEmailLoadedWithOrdersData(User.Identity.Name) ?? new WebUser() // new for admin/affiliates
                 : new WebUser();
 
             if (Request.IsAuthenticated && model.WebUser.Orders.FirstOrDefault() != null)

@@ -218,4 +218,4 @@ var QuizDomain;
     })();
     QuizDomain.EditedOption = EditedOption;
 })(QuizDomain || (QuizDomain = {}));
-//# sourceMappingURL=Quiz.js.map
+//# sourceMappingURL=quiz.js.map

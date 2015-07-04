@@ -22,8 +22,8 @@ namespace CUWebinars.Business.Repository
 
         public void AddQuestion(Question question)
         {
-            ((TTSWebinarsContext) db).Question.Attach(question);
-            //((TTSWebinarsContext) db).Question.Add(question);
+            //((TTSWebinarsContext) db).Question.Attach(question);
+            ((TTSWebinarsContext) db).Question.Add(question);
         }
 
         public void AddQuiz(Quiz quiz)
