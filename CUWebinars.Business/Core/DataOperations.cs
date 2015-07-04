@@ -170,8 +170,8 @@ namespace CUWebinars.Business.Core
                     USTimeZone timeZone = USTimeZone.Central;
 
                     if (int.TryParse(
-                        timeZoneAsString, 
-                        NumberStyles.AllowLeadingSign, 
+                        timeZoneAsString,
+                        NumberStyles.AllowLeadingSign,
                         CultureInfo.CurrentCulture,
                         out timeZoneAsInt))
                     {
@@ -534,7 +534,7 @@ namespace CUWebinars.Business.Core
 
         public string GetUserEmailByVerificationKey(string tenant, string key)
         {
-            int numRows = 0;
+            string email = "";
 
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
@@ -562,15 +562,21 @@ namespace CUWebinars.Business.Core
                     setFieldsVerifiedCommand.CommandType = CommandType.Text;
                     setFieldsVerifiedCommand.Parameters.Add(tenantParameter);
                     setFieldsVerifiedCommand.Parameters.Add(keyParameter);
-                    
+
                     setFieldsVerifiedCommand.CommandText =
                         "SELECT email FROM dbo.UserAccounts WHERE VerificationKey = '@key';";
 
-                    numRows = setFieldsVerifiedCommand.ExecuteNonQuery();
+                    using (var reader = setFieldsVerifiedCommand.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            email = reader.GetString(0);
+                        }
+                    }
+                    return email;
                 }
             }
 
-            return numRows == 1;
 
         }
     }
