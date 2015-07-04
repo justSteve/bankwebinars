@@ -12,6 +12,10 @@ module Common {
         private sourceAttribute : string = 'source';
         private relativeAttribute: string = 'relative';
 
+        getFullPath(): string {
+            return $.url().attr(this.sourceAttribute);
+        }
+
         getRelativePath(): string {
             return $.url().attr(this.relativeAttribute);
         }

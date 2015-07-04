@@ -262,6 +262,18 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (Exception exception)
                 {
+                    if (exception.Message.Equals(
+                        ErrorMessageConstants.ExistingNonCancelledOrderMessage,
+                        StringComparison.OrdinalIgnoreCase))
+                    {
+                        _logger.ErrorException(string.Format("Signup2 | {0}", _appHelper.GetUserAuditInfo()), exception);
+                        return Json(new
+                        {
+                            Result = WebUiConstants.Fail, 
+                            Msg = exception.Message
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+
                     ModelState.AddModelError(string.Empty,
                         exception.Message.Contains(ErrorMessageConstants.ExistingNonCancelledOrderMessage)
                             ? ErrorMessageConstants.ExistingNonCancelledOrderMessage

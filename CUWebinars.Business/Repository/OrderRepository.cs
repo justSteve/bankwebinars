@@ -58,14 +58,15 @@ namespace CUWebinars.Business.Repository
                 return newOrder;
             }
 
-            if (origin == "Imported" || origin == "Migrated")
+            if (validationResult.Errors.FirstOrDefault().ErrorMessage.Contains("already has"))
             {
-                if (validationResult.Errors.FirstOrDefault().ErrorMessage.Contains("already has"))
+                if (origin == "Imported" || origin == "Migrated")
                 {
                     //instead of throwing error - passback the pre-existing order id
                     return FindOrderForUserByWebinarID(newOrder.idUser, webinar.idWebinar);
-
                 }
+                
+                throw new Exception(ErrorMessageConstants.ExistingNonCancelledOrderMessage);
             }
 
             var errors = ValidationHelper.GetMessagesAsXmlElement(validationResult.Errors);

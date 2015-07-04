@@ -543,6 +543,7 @@ OCA.wireUpHandlers = function () {
         var data = OCA.signUpForm.serialize();
 
         $('#SignUpFormContainer').before('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
+        $('#errorAtServer').remove(); // remove error text, if present from a previous fail
 
         var spinner = $('#loadingSpinner');
 
@@ -594,12 +595,12 @@ OCA.wireUpHandlers = function () {
                             spinner.remove();
 
                         }, constants.HtmlDataType);
+                    } else if (xhr.responseJSON['Result'] === 'Fail') {
+                        $('#AttendRegTypes').before('<div id="errorAtServer" class="text-error">' + xhr.responseJSON['Msg'] + '.</div>');
+                        $('#signUpSpinnerInButton').remove();
                     } else if (xhr.responseJSON['isSuccessful'] === false) {
                         formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
-
-
                         $('#AddToCart').removeAttr('disabled');
-
                     }
                     spinner.remove();
                 } else {
