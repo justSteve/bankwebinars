@@ -464,7 +464,7 @@ namespace CUWebinars.Business.Services
                     if (mostUses >= 2 * numberOfUsesOfMostRecentAffiliate)
                         affiliateIdForOrder = mostUsedAffiliateId;
 
-                    _logger.Error("{4} affiliates considered: {0} for idUser {1}. Credited to {2}.", sb.ToString(), idUser, affiliateIdForOrder, current);
+                    _logger.Error("{3} affiliates considered: {0} for idUser {1}. Credited to {2}.", sb.ToString(), idUser, affiliateIdForOrder, current);
 
                 }
 
@@ -1237,11 +1237,11 @@ namespace CUWebinars.Business.Services
         public void GetJoinUrl(OrderRow row)
         {
             Order order = row.Order;
-
+return;
             if (row.Webinar.Status != WebinarStatus.Active && row.Webinar.Status != WebinarStatus.InProgress || row.Webinar.CitrixJoinInfoAvailable())
             {
                 //if not initialized, don't hit Citrix
-                return;
+                
             }
             if (row.CitrixJoinUrl == null && row.RegistrationType.ShowLiveNotifications == "Yes")
             {

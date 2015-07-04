@@ -124,12 +124,12 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             return this.ModelStateJson(ModelState);
         }
-        
+
         public PartialViewResult BatchPasswordReset()
         {
             if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.BatchPasswordResetFeature))
             {
-                var batchPasswordResetViewModel = new BatchPasswordResetViewModel {UserEmails = string.Empty};
+                var batchPasswordResetViewModel = new BatchPasswordResetViewModel { UserEmails = string.Empty };
                 return PartialView("~/Views/Admin/Partials/_BatchPasswordReset.cshtml", batchPasswordResetViewModel);
             }
 
@@ -146,31 +146,32 @@ namespace CUWebinars.Web.Controllers.Admin
 
             if (ModelState.IsValid)
             {
-                try
+
+                var emailsPlusPasswordsCollection =
+                    batchPasswordResetViewModel.UserEmails.Split(new[] { SemiColonDelimiter }, StringSplitOptions.RemoveEmptyEntries);
+
+                var membershipRebootConfiguration = MembershipRebootConfigInert.Create(
+                    HttpRuntime.AppDomainAppPath,
+                    _stateService
+                    );
+
+                var userAccountService = new UserAccountService(
+                    membershipRebootConfiguration,
+                    new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase())
+                    );
+
+                var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
+
+
+                foreach (var emailPwdPairing in emailsPlusPasswordsCollection)
                 {
-                    var emailsPlusPasswordsCollection = 
-                        batchPasswordResetViewModel.UserEmails.Split(new[] {SemiColonDelimiter}, StringSplitOptions.RemoveEmptyEntries);
-
-                    var membershipRebootConfiguration = MembershipRebootConfigInert.Create(
-                        HttpRuntime.AppDomainAppPath,
-                        _stateService
-                        );
-
-                    var userAccountService = new UserAccountService(
-                        membershipRebootConfiguration,
-                        new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase())
-                        );
-
-                    var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
-
-
-                    foreach (var emailPwdPairing in emailsPlusPasswordsCollection)
+                    try
                     {
-                        if(string.IsNullOrWhiteSpace(emailPwdPairing))
+                        if (string.IsNullOrWhiteSpace(emailPwdPairing))
                             continue;
 
                         var pairingAsArray = emailPwdPairing.Split(
-                            new[] {CommaDelimiter},
+                            new[] { CommaDelimiter },
                             StringSplitOptions.RemoveEmptyEntries
                             );
 
@@ -181,9 +182,12 @@ namespace CUWebinars.Web.Controllers.Admin
 
                         if (ReferenceEquals(null, userAccount))
                         {
+                            _logger.Warn("User Not Found: " + email);
                             throw new NullReferenceException(DomainConstants.UserNotFound);
                         }
 
+
+                        _logger.Info("Batch Password Reset for {0}. ", email);
                         dataOperations.SetFieldsConsistantWithVerifiedUser(userAccount);
 
                         userAccountService.ResetPassword(_globalConfig.Tenant, email);
@@ -193,16 +197,22 @@ namespace CUWebinars.Web.Controllers.Admin
                         userAccountService.ChangePasswordFromResetKey(verificationKey, password);
 
                         _stateService.ClearValue(DomainConstants.VerificationKeyForBatchChangePwd);
-                    }
-                    return Json(new {Result = WebUiConstants.Success});
-                }
-                catch (Exception exception)
-                {
-                    _logger.ErrorException(string.Format("BatchPasswordReset | Session {0}", _appHelper.GetUserAuditInfo()), exception);
-                    ModelState.AddModelError(string.Empty, string.Format("There was an error at the server. The exception message is {0}", exception.Message));
-                }
-            }
 
+
+
+                        return Json(new { Result = WebUiConstants.Success });
+
+
+                    }
+                    catch (Exception exception)
+                    {
+                        _logger.ErrorException(string.Format("BatchPasswordReset | Session {0}", _appHelper.GetUserAuditInfo()), exception);
+                        ModelState.AddModelError(string.Empty, string.Format("There was an error at the server. The exception message is {0}", exception.Message));
+                    }
+                }
+
+            }
+            _logger.Error("Invalid BatchPasswordResetViewModel");
             return this.ModelStateJson(ModelState);
         }
 
@@ -889,7 +899,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             if (!string.IsNullOrWhiteSpace(lastName))
             {
-                if(ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetOrdersByLastNameFeature))
+                if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetOrdersByLastNameFeature))
                 {
                     var aff = 0;
                     var currentUser = User.Identity as ClaimsIdentity;
@@ -1022,18 +1032,18 @@ namespace CUWebinars.Web.Controllers.Admin
 
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active); // perf bump by assigning to local variable
 
-            if (string.IsNullOrEmpty(orderRow.CitrixJoinUrl) && orderRow.Webinar.CitrixJoinInfoAvailable())
-            {
-                _orderManagementService.GenerateRegistrantKey(order);
+            //if (string.IsNullOrEmpty(orderRow.CitrixJoinUrl) && orderRow.Webinar.CitrixJoinInfoAvailable())
+            //{
+            //    _orderManagementService.GenerateRegistrantKey(order);
 
-                if (orderRow.AdditionalLocation.Any())
-                {
-                    foreach (var additionalLocation in orderRow.AdditionalLocation)
-                    {
-                        _orderManagementService.GenerateRegistrantKey(order, additionalLocation);
-                    }
-                }
-            }
+            //    if (orderRow.AdditionalLocation.Any())
+            //    {
+            //        foreach (var additionalLocation in orderRow.AdditionalLocation)
+            //        {
+            //            _orderManagementService.GenerateRegistrantKey(order, additionalLocation);
+            //        }
+            //    }
+            //}
 
             //TODO: orders that have been migrated are going to have the OrderGenisis over-written by FireOrderSubmittedEvent
             _orderManagementService.FireOrderSubmittedEvent(order, resending: true);
@@ -1062,18 +1072,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active); // perf bump by assigning to local variable
 
-            if (string.IsNullOrEmpty(orderRow.CitrixJoinUrl) && orderRow.Webinar.CitrixJoinInfoAvailable())
-            {
-                _orderManagementService.GenerateRegistrantKey(order);
 
-                if (orderRow.AdditionalLocation.Any())
-                {
-                    foreach (var additionalLocation in orderRow.AdditionalLocation)
-                    {
-                        _orderManagementService.GenerateRegistrantKey(order, additionalLocation);
-                    }
-                }
-            }
 
             _orderManagementService.FireSendConnectionInfoNotificationEvent(new[] { order }, resending: true);
 
@@ -1505,7 +1504,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     return View("", "", "");
                 }
 
-                _membershipService.AddClaim(impersonatedUserAccount,Business.Constants.ClaimTypes.BeingImpersonated, adminUserEmail);
+                _membershipService.AddClaim(impersonatedUserAccount, Business.Constants.ClaimTypes.BeingImpersonated, adminUserEmail);
                 _membershipService.LogOutUser();
 
                 //_stateService.SetValue(WebUiConstants.AdminUserEmail, adminUserEmail);
@@ -1557,7 +1556,9 @@ namespace CUWebinars.Web.Controllers.Admin
                 try
                 {
                     _membershipService.CleanUser(_globalConfig.Tenant, model.Email, model.NewPassword);
+                    _logger.Info("Manual Password Reset for {0} by: {1}. ", model.Email, _appHelper.GetUserAuditInfo());
                     return Json(new { Result = WebUiConstants.Success });
+
                 }
                 catch (NullReferenceException nullReferenceException)
                 {
@@ -1573,7 +1574,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     _logger.Error("ManualPasswordReset: {0}", exception.Message);
                 }
             }
-
+            _logger.Error("Invalid ManualPasswordResetViewModel {0}", _appHelper.GetUserAuditInfo());
             return this.ModelStateJson(ModelState);
         }
 
@@ -1594,7 +1595,7 @@ namespace CUWebinars.Web.Controllers.Admin
         public JsonResult ResetPassword(string email)
         {
             var globals = GlobalConfig.GlobalConfigSingleton;
-
+            _logger.Info("Resetting password for: {0}", email);
             try
             {
                 _membershipService.ResetPassword(globals.Tenant, email);
@@ -1602,7 +1603,8 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             catch (Exception exception)
             {
-                _logger.Error("ResetPassword : {0}", exception.Message);
+                _logger.ErrorException("ResetPassword exception on: " + email, exception);
+                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
             }
 
             return Json(new { Result = WebUiConstants.Fail });
@@ -1797,7 +1799,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             if (_membershipService.ChangePasswordFromResetKey(verificationKey, model.Password))
                 model.ChangePasswordSucceeded = true;
-
+            _logger.Info("FirePasswordResetEvent ");
             return Json(model);
         }
 
@@ -1945,7 +1947,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 responsePayloadInner.Add("AffiliateColumn", order.Affiliate.ttsDomain);
 
                 responsePayloadInner.Add("OrderDateColumn", order.OrderDate.ToShortDateString());
-                responsePayloadInner.Add("StatusColumn", "<a href='/Admin/manageOrder/" + order.idOrderLegacy + "' target='_new' />" + order.OrderStatus.ToString()+"</a><br/>" + resendMsg);
+                responsePayloadInner.Add("StatusColumn", "<a href='/Admin/manageOrder/" + order.idOrderLegacy + "' target='_new' />" + order.OrderStatus.ToString() + "</a><br/>" + resendMsg);
 
                 responsePayload.Add(responsePayloadInner);
             }
@@ -1972,7 +1974,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 var resendMsg = "Resend Confirmation";
                 if (orderRow.Webinar.Status == WebinarStatus.Active)
                 {
-                    resendMsg = "<button id='fireResendConfirmation' data-orderid='"+order.idOrder+"' type='button' class='btn btn-success btn-small' >Resend Connection Info</button>";
+                    resendMsg = "<button id='fireResendConfirmation' data-orderid='" + order.idOrder + "' type='button' class='btn btn-success btn-small' >Resend Connection Info</button>";
                 }
 
                 responsePayloadInner = new Dictionary<string, string>();
@@ -1986,7 +1988,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 responsePayloadInner.Add("AffiliateColumn", order.Affiliate.ttsDomain);
 
                 responsePayloadInner.Add("OrderDateColumn", order.OrderDate.ToShortDateString());
-                responsePayloadInner.Add("StatusColumn", "<a href='/Admin/manageOrder/" + order.idOrderLegacy + "' target='_new' />" + order.OrderStatus.ToString()+"</a><br/>" + resendMsg);
+                responsePayloadInner.Add("StatusColumn", "<a href='/Admin/manageOrder/" + order.idOrderLegacy + "' target='_new' />" + order.OrderStatus.ToString() + "</a><br/>" + resendMsg);
 
                 responsePayload.Add(responsePayloadInner);
             }

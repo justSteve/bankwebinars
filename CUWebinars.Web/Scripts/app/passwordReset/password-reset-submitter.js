@@ -34,7 +34,7 @@ $(function () {
 
             if (data.Result === 'Success') {
                 form.fadeOut(500, function () {
-                    formParent.append('<div class="legendImitator">Password Reset</div><div style="margin-bottom: 25px"><span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp; Password reset succeeded!</span><p>You have successfully changed your password and can @Html.ActionLink("proceed to the Login Page", "Login").</p></div>');
+                    formParent.append('<div class="legendImitator">Password Reset</div><div style="margin-bottom: 25px"><span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp; Password reset succeeded!</span><p>You have successfully changed your password and can click the <i>Login</i> link in the upper left corner of this page.</p></div>');
                 });
                 Rollbar.info("#699. reset succeeded");
             } else if (data.isSuccessful === false) {

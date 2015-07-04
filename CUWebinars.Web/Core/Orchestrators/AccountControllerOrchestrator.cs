@@ -877,6 +877,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public bool ChangePasswordFromResetKey(string key, string password)
         {
+            _membershipService.CleanUser();
             return _membershipService.ChangePasswordFromResetKey(key, password);
         }
 

@@ -26,7 +26,7 @@
 --        OR AccountClosed IS NOT NULL
 
 --/************************************************************************************************************/
---/* show UserAccounts records which do not have a FullName claim or a WebUser claim */
+--/* show UserAccounts records which do not have a FullName claim  */
 --/************************************************************************************************************/
 --SELECT  *
 --FROM    UserAccounts ua
@@ -34,10 +34,18 @@
 --                     FROM   UserClaims uc
 --                     WHERE  uc.ParentKey = ua.[Key]
 --                            AND [Type] = 'http://cuwebinars.com/ws/2014/01/identity/claims/FullName' )
---        OR NOT EXISTS ( SELECT  *
---                        FROM    UserClaims uc
---                        WHERE   uc.ParentKey = ua.[Key]
---                                AND [Type] = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role' )
+
+
+------/************************************************************************************************************/
+------/* show UserAccounts records which do not have a WebUser claim */
+------/************************************************************************************************************/
+--SELECT  *
+--FROM    UserAccounts ua
+--WHERE   NOT EXISTS ( SELECT *
+--                     FROM   UserClaims uc
+--                     WHERE  uc.ParentKey = ua.[Key]
+--                            AND [Type] = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role' )
+
 
 
 /************************************************************************************************************/
@@ -51,7 +59,7 @@
 --WHERE   NOT EXISTS ( SELECT *
 --                     FROM   UserAccounts ua
 --                     WHERE  ua.Email = wu.email )
---        AND wu.UserType = 1
+--        AND wu.UserType = 1 AND wu.email NOT LIKE '%@notauthenticated.com'
 --ORDER BY wu.DateCreated DESC
 
 /************************************************************************************************************/
@@ -78,7 +86,7 @@
 --WHERE   NOT EXISTS ( SELECT *
 --                     FROM   dbo.Address ua
 --                     WHERE  ua.idUser = wu.idUser )
---        AND wu.UserType = 1
+--        AND wu.UserType = 1 AND wu.email NOT LIKE '%notauthenticated.com'
 --ORDER BY wu.DateCreated DESC
 
 --/************************************************************************************************************/

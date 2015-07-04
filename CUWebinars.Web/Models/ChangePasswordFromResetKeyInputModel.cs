@@ -21,6 +21,9 @@ namespace CUWebinars.Web.Models
 
 
         [HiddenInput]
+        public string Email { get; set; }
+
+        [HiddenInput]
         public string Key { get; set; }
     }
 }
