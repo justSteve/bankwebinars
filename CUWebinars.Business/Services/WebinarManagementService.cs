@@ -114,12 +114,10 @@ namespace CUWebinars.Business.Services
                             if (questionWithOption.Option.Id == storedOption.Id)
                             {
                                 questionWithOption.Option = storedOption;
-                                _quizRepository.Context.Entry(questionWithOption.Option).State = EntityState.Unchanged;
                             }
                         }
-                    }                    
+                    }
                 }
-
                 
                 _quizRepository.SaveChanges();
             }
