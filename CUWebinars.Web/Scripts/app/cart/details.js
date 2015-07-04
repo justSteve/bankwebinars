@@ -1,8 +1,9 @@
 ﻿//  This script correlates with the Details View.
-var additionalLocationsList, checkoutConfirm, discount, cartStateManager, shippingAddressRequired, signUpForm, signUpFormContainer, storedHeight, numberOfAdditionalLocationsTab3;
+var additionalLocationsList, checkoutConfirm, discount, cartStateManager, okToLeave, shippingAddressRequired, signUpForm, signUpFormContainer, storedHeight, numberOfAdditionalLocationsTab3;
 
 discount = '';
 checkoutConfirm = {};
+okToLeave = false;
 
 $(function() {
     signUpForm = $('#SignUpForm');
@@ -47,7 +48,7 @@ $(function() {
                 if (data.Result === 'Success') {
                     L.clientLogger.info('d-#3', { 'OrderRowId': data.OrderRowId });
                     var orderRowId = data.OrderRowId;
-                    
+
                     console.info('Posted orderRow:' + orderRowId);
 
                     $('#orderDetails').empty();
@@ -56,6 +57,9 @@ $(function() {
                     $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
 
                     confirmRegistrationBillMe.after('<span>&nbsp;<span class="label label-success">&nbsp;<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;Transferring you now...</span></span>');
+
+                    okToLeave = true;
+
                     var utilities = new Common.Utilities();
                     utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
 
@@ -98,7 +102,7 @@ $(function() {
                 e.preventDefault();
 
                 // disable button while operation in progress
-                $('#cancelRegistration').attr('disabled', 'disabled');
+                $('#cancelRegistration').attr('disabled', 'disabled').after('<span id="cancelSpinner"><span>&nbsp;<i class="icon icon-spinner icon-spin"></i></span></span>');
 
                 L.clientLogger.info('d-#6', { 'orderCancellation': 'deleting order at 3rd tab', 'orderId': cartStateManager.getOrderId() });
 
@@ -106,10 +110,13 @@ $(function() {
 
                     if (status !== 'error') {
                         if (xhr.responseJSON['success']) {
-                            L.clientLogger.infor('d-#7', { 'orderCancellationConfirmed': 'deletion succeeded' });
+                            L.clientLogger.info('d-#7', { 'orderCancellationConfirmed': 'deletion succeeded' });
+
+                            okToLeave = true;
 
                             var utilities = new Common.Utilities();
                             //console.log('/webinar/details/' + cartStateManager.getWebinarId());
+                            $('#cancelSpinner').remove();
                             utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
                         } else {
                             L.clientLogger.error('d-#8', { 'orderCancellationFailed': 'Deletion failed. System potentially in error state.' });
@@ -183,28 +190,28 @@ $(function() {
 
         L.clientLogger.info('d-#11', { 'returnUnfinishedOrder': 'User finishing order row: ' + cartStateManager.getOrderRowId() });
 
-    if (shippingAddressRequired && !cartStateManager.getNotificationsTesting() && !cartStateManager.getAddressVerified()) {
-        // Following function lives in the register-during-checkout.js script
-        // which will be in memory at this point and thus will have been hoisted.
-        hookUpModal($('#UserDetailsModal'));
-    }
+        if (shippingAddressRequired && !cartStateManager.getNotificationsTesting() && !cartStateManager.getAddressVerified()) {
+            // Following function lives in the register-during-checkout.js script
+            // which will be in memory at this point and thus will have been hoisted.
+            hookUpModal($('#UserDetailsModal'));
+        }
 
-    cartStateManager.setOrderId(orderId);
+        cartStateManager.setOrderId(orderId);
         L.clientLogger.info('d-#12', { 'returnUnfinishedOrder': 'User finishing order: ' + orderId });
 
 // see top of this file
-checkoutConfirm.initialize();
+        checkoutConfirm.initialize();
 
 //The BIG GREEN 'Bill Me' button on 3rd tab
         $('#ConfirmRegistrationBillMe').on('click', function(e) {
-    e.preventDefault();
-    var confirmOrderForm = $('#confirmOrder');
-    confirmOrderForm.submit();
-});
+            e.preventDefault();
+            var confirmOrderForm = $('#confirmOrder');
+            confirmOrderForm.submit();
+        });
 
 
         // The 'TO PAY BY CREDIT CARD' button on 3rd tab
-        $('#ConfirmRegistrationPayByCC').on('click', function (e) {
+        $('#ConfirmRegistrationPayByCC').on('click', function(e) {
             e.preventDefault();
 
             var orderId = cartStateManager.getOrderId();
@@ -218,124 +225,124 @@ checkoutConfirm.initialize();
 
         // The grey CANCEL Registration button on 3rd tab       
         $('#Canceller').on('click', function(e) {
-    e.preventDefault();
-    var cancelOrderForm = $('#cancelOrder');
-    cancelOrderForm.submit();
-});
+            e.preventDefault();
+            var cancelOrderForm = $('#cancelOrder');
+            cancelOrderForm.submit();
+        });
 
-populateAdditionalLocationsOn3rdTab();
-setUpEditButtons();
+        populateAdditionalLocationsOn3rdTab();
+        setUpEditButtons();
 
 // Following 3 functions live in the register-during-checkout.js script
 // which will be in memory at this point. So these functions will be hoisted.
-hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
-hookUpChangeTypeLogic($('#RegType'));
-hookUpEditUserLogic(null, shippingAddressRequired);
-}
+        hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
+        hookUpChangeTypeLogic($('#RegType'));
+        hookUpEditUserLogic(null, shippingAddressRequired);
+    }
 
 /* Submit event for the big green SIGNUP button */
     signUpForm.on('submit', function(e) {
-    e.preventDefault();
+        e.preventDefault();
 
-    var beigeFormArea = signUpFormContainer.find('div.well');
+        var beigeFormArea = signUpFormContainer.find('div.well');
 
-    $('#loginEmail').val($('#Email1').val());
-    $('#loginPassword').val($('#Password1').val());
+        $('#loginEmail').val($('#Email1').val());
+        $('#loginPassword').val($('#Password1').val());
 
-    //  value converted to a Boolean in isShippindAddressRequired function
-    //  value comes from a hidden input in the radio btn list next to the relevant radio button (previous-sibling)
-    shippingAddressRequired =  isShippindAddressRequired($('#RegistrationType > dl dt input:checked').prev());
+        //  value converted to a Boolean in isShippindAddressRequired function
+        //  value comes from a hidden input in the radio btn list next to the relevant radio button (previous-sibling)
+        shippingAddressRequired = isShippindAddressRequired($('#RegistrationType > dl dt input:checked').prev());
 
-    var data = signUpForm.serialize();
+        var data = signUpForm.serialize();
 
         L.clientLogger.info('d-#19', { 'signupData': data });
 
-var spinner = $('#signUpSpinner');
-$('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
-var loadingSpinner = $('#loadingSpinner');
+        var spinner = $('#signUpSpinner');
+        $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
+        var loadingSpinner = $('#loadingSpinner');
 
 // If the user IS NOT LOGGED IN - control moves to the register-during-checkout.js script
-if (!cartStateManager.getIsUserLoggedIn()) {
+        if (!cartStateManager.getIsUserLoggedIn()) {
 
             L.clientLogger.info('d-#20', { 'anonymousUser': 'Order created for anonymous user. Not yet finalized.' });
 
             $.post(signUpForm.attr('action'), data, function(response, status, xhr) {
-    if (status !== 'error') {
-        if (xhr.responseJSON['success']) {
-            cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
-            cartStateManager.setOrderId(xhr.responseJSON['orderId']);
-            cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
-                        $('#contactInfo').load('/Cart/CheckoutContactDetails', function(response, status, xhr) {
                 if (status !== 'error') {
-                    $('#_CreateUserForm input[name="returnUrl"]').val('/Webinar/Details/' + cartStateManager.getWebinarId());
+                    if (xhr.responseJSON['success']) {
+                        cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
+                        cartStateManager.setOrderId(xhr.responseJSON['orderId']);
+                        cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
+                        $('#contactInfo').load('/Cart/CheckoutContactDetails', function(response, status, xhr) {
+                            if (status !== 'error') {
+                                $('#_CreateUserForm input[name="returnUrl"]').val('/Webinar/Details/' + cartStateManager.getWebinarId());
 
-                    var addressOptions = {
-                        'shippingAddressRequired': shippingAddressRequired,
-                        'notificationsTesting': cartStateManager.getNotificationsTesting(),
-                        'addressVerified': cartStateManager.getAddressVerified()
-                    };
+                                var addressOptions = {
+                                    'shippingAddressRequired': shippingAddressRequired,
+                                    'notificationsTesting': cartStateManager.getNotificationsTesting(),
+                                    'addressVerified': cartStateManager.getAddressVerified()
+                                };
 
-                    registerDuringCheckout.initialize(cartStateManager.getOrderId(), cartStateManager.getWebinarId(), cartStateManager.getOrderRowId(), addressOptions, checkoutConfirm.initialize);
-                } else {
-                    $('#labelEmail').html('<span class="label label-important">Server error #21. Try again or call 800-831-0678 ext 706 for immediate assistance!</span>');
+                                registerDuringCheckout.initialize(cartStateManager.getOrderId(), cartStateManager.getWebinarId(), cartStateManager.getOrderRowId(), addressOptions, checkoutConfirm.initialize);
+                            } else {
+                                $('#labelEmail').html('<span class="label label-important">Server error #21. Try again or call 800-831-0678 ext 706 for immediate assistance!</span>');
                                 L.clientLogger.error('d-#28', { 'responseObject': xhr.responseJSON, 'anonymousUserSubmit': 'Fail condition.' });
-                }
-                loadingSpinner.remove();
-            });
+                            }
+                            loadingSpinner.remove();
+                        });
 
-            $('#contactInfoTab a').tab('show');
-        } else if (!xhr.responseJSON['isSuccessful']) {
-            $('#labelEmail').html('<span class="label label-important">&nbsp;There were some problems with the form. Please refer to the items in red.</span>');
-            formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
-            loadingSpinner.remove();
+                        $('#contactInfoTab a').tab('show');
+                    } else if (!xhr.responseJSON['isSuccessful']) {
+                        $('#labelEmail').html('<span class="label label-important">&nbsp;There were some problems with the form. Please refer to the items in red.</span>');
+                        formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
+                        loadingSpinner.remove();
                         L.clientLogger.error('d-#22', { 'anonymousUserSubmit': 'Fail condition.' });
-        }
-    } else {
-        $('#labelEmail').html('<span class="label label-important">&nbsp;Server error. Try again or call 800-831-0678 ext 706 for immediate assistance!</span>');
-        loadingSpinner.remove();
+                    }
+                } else {
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;Server error. Try again or call 800-831-0678 ext 706 for immediate assistance!</span>');
+                    loadingSpinner.remove();
                     L.clientLogger.error('d-#23', { 'anonymousUserSubmit': 'Fail condition.' });
-    }
-}, constants.JsonDataType);
-} else {
-    // If the user IS LOGGED IN
+                }
+            }, constants.JsonDataType);
+        } else {
+            // If the user IS LOGGED IN
             $.post(signUpForm.attr('action'), data, function(response, status, xhr) {
-        if (status !== 'error') {
-            if (xhr.responseJSON['success']) {
-                
-                cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
-                cartStateManager.setOrderId(xhr.responseJSON['orderId']);
-                cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
+                if (status !== 'error') {
+                    if (xhr.responseJSON['success']) {
+
+                        cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
+                        cartStateManager.setOrderId(xhr.responseJSON['orderId']);
+                        cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
 
                         L.clientLogger.info('d-#30', { 'loggedInUser': 'submitting ConfirmOrder' + xhr.responseJSON['orderId'] });
 
                         $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function(response, status, xhr) {
 
-                if (status === 'error') {
-                    $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
-                    $('#loadingSpinner').remove();
-                    $('#confirmationTab a').tab('show');
+                            if (status === 'error') {
+                                $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+                                $('#loadingSpinner').remove();
+                                $('#confirmationTab a').tab('show');
 
                                 L.clientLogger.error('d-#31', { 'loggedInUser': 'Fail condition.', 'responseObject': xhr.responseJSON });
-                } else {
+                            } else {
 
-                    $('#confirmationTab a').tab('show');
+                                $('#confirmationTab a').tab('show');
                                 var utilities = new Common.Utilities();
 
-                    if (shippingAddressRequired && !cartStateManager.getNotificationsTesting() && !cartStateManager.getAddressVerified()) {
-                        // Following function lives in the register-during-checkout.js script
-                        // which will be in memory at this point and thus will have been hoisted.
-                        hookUpModal($('#UserDetailsModal'));
-                    }
+                                if (shippingAddressRequired && !cartStateManager.getNotificationsTesting() && !cartStateManager.getAddressVerified()) {
+                                    // Following function lives in the register-during-checkout.js script
+                                    // which will be in memory at this point and thus will have been hoisted.
+                                    hookUpModal($('#UserDetailsModal'));
+                                }
 
-                    // see top of this file
-                    checkoutConfirm.initialize();
+                                // see top of this file
+                                checkoutConfirm.initialize();
 
-                    // The Bill Me button on 3rd tab
+                                // The Bill Me button on 3rd tab
                                 $('#ConfirmRegistrationBillMe').on('click', function(e) {
-                        e.preventDefault();
-                        var confirmOrderForm = $('#confirmOrder');
-                        confirmOrderForm.submit();
-                    });
+                                    e.preventDefault();
+                                    var confirmOrderForm = $('#confirmOrder');
+                                    confirmOrderForm.submit();
+                                });
 
                                 // The 'To pay by credit card' button on 3rd tab
                                 $('#ConfirmRegistrationPayByCC').on('click', function(e) {
@@ -348,47 +355,63 @@ if (!cartStateManager.getIsUserLoggedIn()) {
 
                                 });
 
-                    // The Cancel Registration button on 3rd tab
+                                // The Cancel Registration button on 3rd tab
                                 $('#Canceller').on('click', function(e) {
-                        e.preventDefault();
-                        var cancelOrderForm = $('#cancelOrder');
-                        cancelOrderForm.submit();
-                    });
+                                    e.preventDefault();
+                                    var cancelOrderForm = $('#cancelOrder');
+                                    cancelOrderForm.submit();
+                                });
 
-                    populateAdditionalLocationsOn3rdTab();
-                    setUpEditButtons();
+                                populateAdditionalLocationsOn3rdTab();
+                                setUpEditButtons();
 
-                    // Following 3 functions live in the register-during-checkout.js script
-                    // which will be in memory at this point and thus will be hoisted
-                    hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
-                    hookUpChangeTypeLogic($('#RegType'));
-                    hookUpEditUserLogic(null, shippingAddressRequired);
+                                // Following 3 functions live in the register-during-checkout.js script
+                                // which will be in memory at this point and thus will be hoisted
+                                hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
+                                hookUpChangeTypeLogic($('#RegType'));
+                                hookUpEditUserLogic(null, shippingAddressRequired);
 
-                    beigeFormArea.height($('#confirmation').height() + 30);
-                }
+                                beigeFormArea.height($('#confirmation').height() + 30);
+                            }
 
-                spinner.remove();
-                $('#loadingSpinner').remove();
+                            spinner.remove();
+                            $('#loadingSpinner').remove();
 
-            }, constants.HtmlDataType);
-        } else if (xhr.responseJSON['isSuccessful'] === false) {
-            formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
+                        }, constants.HtmlDataType);
+                    } else if (xhr.responseJSON['isSuccessful'] === false) {
+                        formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
 
-            spinner.remove();
+                        spinner.remove();
 
                         L.clientLogger.error('d-#27', { 'loggedInUser': 'Fail condition.', 'responseObject': xhr.responseJSON });
-        }
-    } else {
-            spinner.remove();
-    $('#confirmation').html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+                    }
+                } else {
+                    spinner.remove();
+                    $('#confirmation').html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
                     L.clientLogger.error('d-#26', { 'loggedInUser': 'Fail condition.' });
-}
-}, constants.JsonDataType);
+                }
+            }, constants.JsonDataType);
 
-return false;
-}
-return false;
-});
+            return false;
+        }
+        return false;
+    });
+
+    $(window).on('beforeunload', function (e) {
+
+        if (okToLeave) {
+            return undefined;
+        }
+
+        L.clientLogger.info('d-#32', { 'User error': 'User attempted to abandoned order', OrderId: cartStateManager.getOrderId() || 'No order id available yet' });
+
+        var confirmationMessage = 'It looks like you have been creating an order.\r\n';
+        cartStateManager.getOrderId() && (confirmationMessage += 'OrderId: ' + cartStateManager.getOrderId() + '.\r\n');
+        confirmationMessage += 'If you leave before completing the order, your changes will be lost.\r\n';
+        confirmationMessage += 'Are you sure you want to abandon this order?';
+
+        return confirmationMessage;
+    });
 });
 
 function isShippindAddressRequired(jQueryObject) {

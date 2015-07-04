@@ -5,8 +5,9 @@ var OCA = ORDERCREATIONAFFILIATE; // shortcut alias to ORDERCREATIONAFFILIATE ob
 
 OCA.shippingAddressRequired = {};
 OCA.checkoutConfirm = {};
-OCA.searchBy = "";
+OCA.searchBy = '';
 OCA.showSetAssignedAffiliate = $('#showSetAssignedAffiliate');
+OCA.okToLeave = false;
 
 OCA.initializeFunctions = function () {
 
@@ -389,6 +390,8 @@ OCA.initializeFunctions = function () {
 
                     $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
 
+                    OCA.okToLeave = true;
+
                     OCA.utilities.goToUrl('/Account/OrderCompleteAffiliate/' + OCA.cartStateManager.getOrderId());
 
                 } else {
@@ -431,6 +434,8 @@ OCA.initializeFunctions = function () {
                     if (status !== 'error') {
                         if (xhr.responseJSON['success']) {
                             Rollbar.info('Succeeded in cancelling order: ', { data: xhr && xhr.data });
+
+                            OCA.okToLeave = true;
 
                             var utilities = new Common.Utilities();
                             console.log('/webinar/details/' + OCA.cartStateManager.getWebinarId());
@@ -1037,6 +1042,22 @@ $(function () {
     OCA.initializeState();
 
     OCA.wireUpHandlers();
+
+    $(window).on('beforeunload', function (e) {
+        
+        if (OCA.okToLeave) {
+            return undefined;
+        }
+
+        L.clientLogger.info('da-#1', { 'User error': 'User attempted to abandoned order', OrderId: OCA.cartStateManager.getOrderId() || 'No order id available yet'});
+
+        var confirmationMessage = 'It looks like you have been creating an order.\r\n';
+        OCA.cartStateManager.getOrderId() && (confirmationMessage += 'OrderId: ' + OCA.cartStateManager.getOrderId() + '.\r\n');
+        confirmationMessage += 'If you leave before completing the order, your changes will be lost.\r\n';
+        confirmationMessage += 'Are you sure you want to abandon this order?';
+        
+        return confirmationMessage; 
+    });
 });
 
 
