@@ -1596,9 +1596,18 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             var globals = GlobalConfig.GlobalConfigSingleton;
             _logger.Info("Resetting password for: {0}", email);
+
+            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
+
+
             try
             {
-                _membershipService.ResetPassword(globals.Tenant, email);
+                var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, email);
+
+                dataOperations.SetFieldsConsistantWithVerifiedUser(userAccount);
+
+                _membershipService.ResetPassword(globals.Tenant, email);            
+                
                 return Json(new { Result = WebUiConstants.Success });
             }
             catch (Exception exception)

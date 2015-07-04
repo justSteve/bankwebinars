@@ -263,8 +263,8 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             switch (command.CreationMode)
             {
                 case DomainConstants.CreationModeImported:
-                    _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.CartRegistration);
-                    //_membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.OrderImportRegistration);
+                    //_membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.CartRegistration);
+                    _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.OrderImportRegistration);
                     break;
                 case DomainConstants.CreationModeMigrated:
                     _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.OrderMigrated);
