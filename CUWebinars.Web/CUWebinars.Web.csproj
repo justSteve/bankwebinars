@@ -731,11 +731,8 @@
     <Content Include="Scripts\app\webinar\identify.js" />
     <Content Include="Content\DataTables\css\dataTables.responsive.scss" />
     <Content Include="Content\DataTables\css\dataTables.jqueryui.scss" />
-    <Content Include="App_Data\CU31.bacpac" />
     <None Include="Properties\PublishProfiles\BankWebinars31 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars31 - Web Deploy.pubxml" />
-    <None Include="Properties\PublishProfiles\CUWebinars33 - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\CUWebinars33 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\app\webinar\manage-webinar-from-details.js" />
     <Content Include="Scripts\bootstrap-filestyle.min.js" />
@@ -885,7 +882,6 @@
     <Content Include="Views\Home\PrivacyStatement.cshtml" />
     <Content Include="Views\Cart\Partials\_ConfirmModal.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\ShippingDetails.cshtml" />
-    <Content Include="Views\Home\ContactUsJF.cshtml" />
     <Content Include="Views\Account\ThankYouConfirmed.cshtml" />
     <Content Include="Views\Account\EditUser.cshtml" />
     <Content Include="Views\Account\OrderComplete.cshtml" />
@@ -918,7 +914,6 @@
     <Content Include="Views\Admin\SynchWebinars.cshtml" />
     <Content Include="Views\Webinar\Partials\_EditWebinar.cshtml" />
     <Content Include="Views\Webinar\Partials\_CreateWebinar.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\MyCertificate.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\OrderSumUser.cshtml" />
     <Content Include="Views\Webinar\Partials\_CloneWebinar.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\EditUser.cshtml" />
@@ -1399,7 +1394,6 @@
     <Content Include="Views\Cart\Partials\CheckoutConfirm.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutContact.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutOptions.cshtml" />
-    <Content Include="Views\Shared\NotFound.cshtml" />
     <Content Include="Views\Shared\PageNotFound.cshtml" />
     <Content Include="Views\Shared\Partials\_AddToMailingBox.cshtml" />
     <Content Include="Views\Shared\Partials\_ShowAddedEventsFeed.cshtml" />

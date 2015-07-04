@@ -61,7 +61,7 @@ namespace CUWebinars.Web.Controllers
         [OutputCache(Duration = 3600)]
         public string GetRecordedWebinarMenu()
         {
-            var recordedWebinars = _webinarRepository.GetRecorded().OrderBy(w => w.Date).Take(8).ToList();
+            var recordedWebinars = _webinarRepository.GetRecorded().OrderByDescending(w => w.Date).Take(8).ToList();
 
             var recordedWebinarsListItems = new StringBuilder();
 
