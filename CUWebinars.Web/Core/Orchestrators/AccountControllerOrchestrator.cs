@@ -272,9 +272,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 try
                 {
-
-                    //Should we clear UserNotVerified claims here?
-                    _membershipService.ChangePasswordFromResetKey(verificationKey, model.NewPassword);
+                    _membershipService.ChangePasswordFromResetKey(_globals.Tenant, verificationKey, model.NewPassword);
+                    _membershipService.RemoveClaim(_globals.Tenant, model.Email, ClaimTypes.HasNotVerified);
                 }
                 catch (Exception exception)
                 {
@@ -716,7 +715,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 try
                 {
                     //Should we clear UserNotVerified claims here?
-                    _membershipService.ChangePasswordFromResetKey(verificationKey, model.NewPassword);
+                    _membershipService.ChangePasswordFromResetKey(_globals.Tenant, verificationKey, model.NewPassword);
+                    _membershipService.RemoveClaim(_globals.Tenant, model.Email, ClaimTypes.HasNotVerified);
                     break; // reached if no exception is thrown
                 }
                 catch (Exception exception)
@@ -880,9 +880,18 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public bool ChangePasswordFromResetKey(string key, string password)
         {
+            UserAccount userAccount = _membershipService.GetUserAccountByVerificationKey(key);
 
             //Should we clear UserNotVerified claims here?
-            return _membershipService.ChangePasswordFromResetKey(key, password);
+            _membershipService.RemoveClaim(_globals.Tenant, userAccount.Email, ClaimTypes.HasNotVerified);
+
+            if (!_membershipService.UserHasClaim(userAccount, ClaimTypes.FullName))
+            {
+                var webUser = _membershipService.GetWebUserById(_membershipService.GetWebUserIdByEmail(userAccount.Email).Value);
+                _membershipService.AddClaim(userAccount, ClaimTypes.FullName, webUser.FirstName + " " + webUser.LastName);
+            }
+
+            return _membershipService.ChangePasswordFromResetKey(_globals.Tenant, key, password);
         }
 
         public string CreateUserAccountFromCart(string email)
@@ -1236,6 +1245,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (userAccount.HasClaim(ClaimTypes.HasNotVerified, ClaimValues.ManualRegistration))
             {
                 changeEmailFromKeyInputModel.ScreenMessage = "Thank you for verifying your account with us.";
+
+                _membershipService.RemoveClaim(_globals.Tenant, email, ClaimTypes.HasNotVerified, ClaimValues.ManualRegistration);
 
                 return changeEmailFromKeyInputModel;
             }
