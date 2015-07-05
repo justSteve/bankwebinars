@@ -774,6 +774,8 @@ function completeOrder(userId, orderRowId, webinarId, orderId) {
                 $('#orderStatusLabel').text('Submitted').removeClass('label-warning').addClass('label-success');
                 confirmRegistrationBillMe.after('<span>&nbsp;<span class="label label-success">&nbsp;<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;Transferring you now...</span></span>');
 
+                okToLeave = true;
+
                 var utilities = new Common.Utilities();
                 utilities.goToUrl('/Account/OrderComplete/' + orderId);
 

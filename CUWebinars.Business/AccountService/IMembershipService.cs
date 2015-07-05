@@ -10,7 +10,7 @@ namespace CUWebinars.Business.AccountService
     {
         void AddClaim(UserAccount userAccount, string claimType, string claimValue);
         void AddAccountTypeNotVerifiedClaim(UserAccount userAccount, string accountType);
-        bool ChangePasswordFromResetKey(string key, string newPassword);
+        bool ChangePasswordFromResetKey(string tenant, string key, string newPassword);
         //string CheckDisplayPostEventMaterials(string tenant, string email, out string messageIfFalse);
         void CleanUser(string tenant, string email, string newPassword);
         UserAccount CreateUser(
@@ -63,7 +63,8 @@ namespace CUWebinars.Business.AccountService
             string regIdentifier,
             string institutionType,
             string zip);
-        void RemoveClaim(string tenant, string email, string claim, string claimValue);
+
+        void RemoveClaim(string tenant, string email, string claim, string claimValue = null);
         void ResetPassword(string tenant, string email);
         void SignIn(UserAccount userAccount, bool persistant);
         void UpdateNameTitle(
@@ -91,8 +92,10 @@ namespace CUWebinars.Business.AccountService
         void UpdateDisplayPostEventMaterialsClaim(UserAccount userAccount, DateTime newDate, Order order);
         void UpdateShippingAddressDetails(Address shippingAddress);
         void UpdateDiscountDetails(Discount discount);
+        bool UserHasClaim(UserAccount userAccount, string claim, string value = null);
         WebUser CreateBareUserFromEmail(string email);
         string FindDisplayPostEventMaterialsClaimValue(Order order);
+        UserAccount GetUserAccountByVerificationKey(string key);
         ValidationResult ValidatePostEventMaterialsAccessClaimValue(string claimValue, string claimType);
     }
 }

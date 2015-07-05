@@ -130,6 +130,11 @@ namespace CUWebinars.Business.AccountService
             // While attempting to naviate to the definition of GetByEmail 
             return _userAccountService.GetByEmail(tenant, email);
         }
+        public UserAccount GetUserAccountByVerificationKey(string key)
+        {
+            if (key == null) throw new ArgumentNullException("key");
+            return _userAccountService.GetByVerificationKey(key);
+        }
 
         public Institution GetInstitutionByDomain(string domain)
         {
@@ -370,10 +375,14 @@ namespace CUWebinars.Business.AccountService
             return newInstitution;
         }
 
-        public void RemoveClaim(string tenant, string email, string claim, string claimValue)
+        public void RemoveClaim(string tenant, string email, string claim, string claimValue = null)
         {
             var userAccount = GetUserAccountByEmail(tenant, email);
-            _userAccountService.RemoveClaim(userAccount.ID, claim, claimValue);
+
+            if(string.IsNullOrWhiteSpace(claimValue))
+                _userAccountService.RemoveClaim(userAccount.ID, claim);
+            else
+                _userAccountService.RemoveClaim(userAccount.ID, claim, claimValue);
         }
 
         public void ResetPassword(string tenant, string email)
@@ -437,19 +446,19 @@ namespace CUWebinars.Business.AccountService
             }
         }
 
-        public bool ChangePasswordFromResetKey(string key, string newPassword)
+        public bool ChangePasswordFromResetKey(string tenant, string key, string newPassword)
         {
             _logger.Info("ChangePasswordFromResetKey: {0}", key);
             try
             {
                 //Should we clear UserNotVerified claims here?
-                var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
+                //var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
                 
-                //not sure if how best to inject the globalConfig so tenant is hardwired.
-                UserAccount userAccount = GetUserAccountByEmail("BankWebinars", key);
+                var userAccount = _userAccountService.GetByVerificationKey(key);
 
                 //dataOperations.SetFieldsConsistantWithVerifiedUser(userAccount);
-
+                RemoveClaim(tenant, userAccount.Email, ClaimTypes.HasNotVerified);
+                
                 return _userAccountService.ChangePasswordFromResetKey(key, newPassword);
             }
             catch (Exception exception)
@@ -785,6 +794,15 @@ namespace CUWebinars.Business.AccountService
         public void UpdateDiscountDetails(Discount discount)
         {
             throw new NotImplementedException();
+        }
+
+        public bool UserHasClaim(UserAccount userAccount, string claim, string value = null)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return userAccount.HasClaim(claim);
+            }
+            return userAccount.HasClaim(claim, value);
         }
 
         public WebUser CreateBareUserFromEmail(string email)

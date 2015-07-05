@@ -1806,7 +1806,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [System.Web.Mvc.HttpPost]
         public JsonResult FirePasswordResetEvent(ChangePasswordFromResetKeyInputModel model, string verificationKey)
         {
-            if (_membershipService.ChangePasswordFromResetKey(verificationKey, model.Password))
+            if (_membershipService.ChangePasswordFromResetKey(_globalConfig.Tenant, verificationKey, model.Password))
                 model.ChangePasswordSucceeded = true;
             _logger.Info("FirePasswordResetEvent ");
             return Json(model);
