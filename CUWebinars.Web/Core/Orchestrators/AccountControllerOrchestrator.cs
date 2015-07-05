@@ -1232,6 +1232,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 changeEmailFromKeyInputModel.ScreenMessage = "Thank you for verifying your account with us.";
 
+                _membershipService.RemoveClaim(_globals.Tenant, email, ClaimTypes.HasNotVerified, ClaimValues.ManualRegistration);
+
                 return changeEmailFromKeyInputModel;
             }
 

@@ -1045,6 +1045,7 @@ $(function () {
 
     $(window).on('beforeunload', function (e) {
         
+        //  taken from this SO answer http://stackoverflow.com/a/7317311/540156
         if (OCA.okToLeave) {
             return undefined;
         }
