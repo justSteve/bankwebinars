@@ -359,8 +359,8 @@ namespace CUWebinars.Web.Controllers
                     return RedirectToLocal(null);
                 }
 
-                _logger.Info("Email is successfully verified in our system. Session={0}",
-                    _appHelper.GetUserAuditInfo());
+                _logger.Info("Email is successfully verified in our system: {1} Session={0}",
+                    _appHelper.GetUserAuditInfo(), model.Email);
 
                 model.ScreenMessage = "Your email is confirmed.";
 
@@ -369,7 +369,7 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 _logger.Fatal(
-                    "Account.Confirm Exception On GET: {0} Session={1}",
+                    "Account.Confirm Exception On Post: {0} Session={1}",
                     exception.Message,
                     _appHelper.GetUserAuditInfo()
                     );
@@ -960,17 +960,25 @@ namespace CUWebinars.Web.Controllers
                     else
                     {
                         var watch = Stopwatch.StartNew();
-                        if (_accountControllerOrchestrator.ChangePasswordFromResetKey(model.Key, model.Password))
+                        try
                         {
-                            model.ChangePasswordSucceeded = true;
-                            watch.Stop();
-                            //Trace.TraceInformation("Reset total in seconds: {0}", watch.Elapsed.Seconds);
-                            return Json(new { Result = "Success" });
+                            if (_accountControllerOrchestrator.ChangePasswordFromResetKey(model.Key, model.Password))
+                            {
+                                model.ChangePasswordSucceeded = true;
+                                watch.Stop();
+                                _logger.Info("PWReset {1} total seconds: {0}", watch.Elapsed.Seconds, model.Password);
+                                //Trace.TraceInformation();
+                                return Json(new { Result = "Success" });
+                            }
                         }
+                        catch (Exception exception)
+                        {
+                            _logger.Error("_accountControllerOrchestrator.ChangePasswordFromResetKey {0} tossed error to: ", model.Key);
+                            ModelState.AddModelError(string.Empty,
+                                "We've logged an error. Please attempt the password reset procedure again. In case of persisant failures contact us at support@ttstrain.com - or, for immediate assistance contact us at 800-831-0678 ext. 707.");
+                            Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
 
-                        _logger.Error("_accountControllerOrchestrator.ChangePasswordFromResetKey {0} tossed error to: " , model.Key);
-                        ModelState.AddModelError(string.Empty,
-                            "We've logged an error. Please attempt the password reset procedure again. In case of persisant failures contact us at support@ttstrain.com - or, for immediate assistance contact us at 800-831-0678 ext. 707.");
+                        }
                     }
                     _logger.Info("Account.PasswordResetConfirm Success. Session=" + _appHelper.GetUserAuditInfo());
                 }
@@ -1054,7 +1062,7 @@ namespace CUWebinars.Web.Controllers
                 Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 throw;
             }
-            
+
             //  If no zip address fields found, send error to client
             if (string.IsNullOrWhiteSpace(zipAddress))
             {
@@ -1218,9 +1226,9 @@ namespace CUWebinars.Web.Controllers
                 {
                     ModelState.AddModelError(string.Empty, validationException.Message);
 
-                    _logger.FatalException("Account.Register Catch block: " + 
+                    _logger.FatalException("Account.Register Catch block: " +
                         validationException.Message + "| Session=" +
-                        _appHelper.GetUserAuditInfo(), 
+                        _appHelper.GetUserAuditInfo(),
                         validationException);
                 }
                 catch (Exception exception)
@@ -1333,7 +1341,7 @@ namespace CUWebinars.Web.Controllers
         {
             var editUserModel = new EditUserModel
             {
-                BillingAddress = new AddressModel{ TypeOfAddress = AddressType.Billing },
+                BillingAddress = new AddressModel { TypeOfAddress = AddressType.Billing },
                 UserType = UserType.Customer,
             };
 
@@ -1352,12 +1360,12 @@ namespace CUWebinars.Web.Controllers
                 {
                     var idUser = _accountControllerOrchestrator.CreateUserForAdmin(editUserModel);
 
-                    return Json(new {Result = WebUiConstants.Success, UserId = idUser });
+                    return Json(new { Result = WebUiConstants.Success, UserId = idUser });
                 }
                 catch (Exception exception)
                 {
                     _logger.ErrorException("In AdminAddNewUser Action", exception);
-                    return Json(new {Result = WebUiConstants.Fail});
+                    return Json(new { Result = WebUiConstants.Fail });
                 }
             }
             return this.ModelStateJson(ModelState);

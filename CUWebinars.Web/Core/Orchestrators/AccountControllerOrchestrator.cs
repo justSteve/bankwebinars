@@ -272,6 +272,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 try
                 {
+
+                    //Should we clear UserNotVerified claims here?
                     _membershipService.ChangePasswordFromResetKey(verificationKey, model.NewPassword);
                 }
                 catch (Exception exception)
@@ -713,6 +715,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 try
                 {
+                    //Should we clear UserNotVerified claims here?
                     _membershipService.ChangePasswordFromResetKey(verificationKey, model.NewPassword);
                     break; // reached if no exception is thrown
                 }
@@ -877,6 +880,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public bool ChangePasswordFromResetKey(string key, string password)
         {
+
+            //Should we clear UserNotVerified claims here?
             return _membershipService.ChangePasswordFromResetKey(key, password);
         }
 

@@ -442,6 +442,14 @@ namespace CUWebinars.Business.AccountService
             _logger.Info("ChangePasswordFromResetKey: {0}", key);
             try
             {
+                //Should we clear UserNotVerified claims here?
+                var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
+                
+                //not sure if how best to inject the globalConfig so tenant is hardwired.
+                UserAccount userAccount = GetUserAccountByEmail("BankWebinars", key);
+
+                //dataOperations.SetFieldsConsistantWithVerifiedUser(userAccount);
+
                 return _userAccountService.ChangePasswordFromResetKey(key, newPassword);
             }
             catch (Exception exception)
@@ -449,6 +457,18 @@ namespace CUWebinars.Business.AccountService
                 _logger.ErrorException("ChangePasswordFromResetKey", exception);
                 throw;
             }
+        }
+
+        private UserAccount GetUserAccountByVerificationKey(string tenant, string key)
+        {
+            if (tenant == null) throw new ArgumentNullException("tenant");
+            if (key == null) throw new ArgumentNullException("key");
+            
+            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
+
+            var email = dataOperations.GetUserEmailByVerificationKey(tenant, key);
+            
+            return _userAccountService.GetByEmail(tenant, email);
         }
 
         public void UpdateNameTitle(string firstName, string lastName, string email, string title)

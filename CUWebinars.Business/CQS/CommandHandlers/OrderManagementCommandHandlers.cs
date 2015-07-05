@@ -179,19 +179,19 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             if (command == null) throw new ArgumentNullException("command");
             IList<AdditionalLocation> additionalLocations = new List<AdditionalLocation>();
 
-            //if (!string.IsNullOrWhiteSpace(command.AdditionalLocationsString) && command.AdditionalLocationsString != "NULL")
-            //{
+            if (!string.IsNullOrWhiteSpace(command.AdditionalLocationsString) && command.AdditionalLocationsString != "NULL")
+            {
 
-            //    string[] addLocs = command.AdditionalLocationsString.Split(',');
-            //    foreach (var additionalLocationEmail in addLocs)
-            //    {
-            //        additionalLocations.Add(_orderManagementService.CreateAdditionalLocation(
-            //            additionalLocationEmail,
-            //            0,
-            //            null) // field for FullName
-            //            );
-            //    }
-            //}
+                string[] addLocs = command.AdditionalLocationsString.Split(',');
+                foreach (var additionalLocationEmail in addLocs)
+                {
+                    additionalLocations.Add(_orderManagementService.CreateAdditionalLocation(
+                        additionalLocationEmail,
+                        0,
+                        null) // field for FullName
+                        );
+                }
+            }
 
             var orderRow = _orderManagementService.CreateOrderRow(command.Webinar,
                additionalLocations,
@@ -263,6 +263,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             switch (command.CreationMode)
             {
                 case DomainConstants.CreationModeImported:
+                    //_membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.CartRegistration);
                     _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.OrderImportRegistration);
                     break;
                 case DomainConstants.CreationModeMigrated:
