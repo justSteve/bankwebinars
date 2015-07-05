@@ -26,6 +26,7 @@ namespace CUWebinars.Business.Notification.Email
             var orderSubmittedViewModel = new OrderSubmittedViewModel
             {
                 AddPasswordUrl = confirmOrderMessage.AddPasswordUrl,
+                ConfirmChangeEmailUrl = confirmOrderMessage.ConfirmChangeEmailUrl,
                 Order = confirmOrderMessage.Order,
                 OrderGenesis = confirmOrderMessage.OrderGenesis,
                 UserCreatedInCart = confirmOrderMessage.UserCreatedInCart,

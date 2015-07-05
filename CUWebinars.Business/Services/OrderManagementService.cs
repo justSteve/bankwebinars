@@ -10,8 +10,6 @@ using CUWebinars.Business.Notification.ViewModel;
 using CUWebinars.Business.Repository;
 using CUWebinars.NotificationSystem.Event;
 using CUWebinars.Web.Core.Cache;
-using DDay.iCal;
-using DDay.iCal.Serialization.iCalendar;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
@@ -1371,8 +1369,6 @@ return;
                 if (!currentOrder.Origin.Equals("Migrator", StringComparison.OrdinalIgnoreCase) &&
                     !currentOrder.Origin.Equals(DomainConstants.Cart, StringComparison.OrdinalIgnoreCase))
                 {
-                    //From sjh: to clarify this - the only time a event is added at this point is if the user is authenticated, right?
-                    // if so, we can move the logging statement into the If test
                     _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
 
                     AddEvent(new OrderSubmittedEvent<ConfirmOrderMessage>
@@ -1380,8 +1376,9 @@ return;
                         EventObject = orderSubmittedViewModel,
                         RelativePath = string.Empty
                     });
+                    
                     //it appears that the only way an event could be added within this method is a true response in the above If test.
-                    // hence this statement can be safely moved up here?
+                    // hence this statement can be safely moved up here? [dar] not sure what you mean.
                     foreach (var evt in GetEvents())
                     {
                         _logger.Info("OrderSubmittedEvent being raised for order {0}", orderSubmittedViewModel.idOrder);
