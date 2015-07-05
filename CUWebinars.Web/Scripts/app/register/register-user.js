@@ -99,6 +99,7 @@ var Registration;
 
         StateManager.prototype.checkAndSubmitEmail = function () {
             if ($('#RegisterFields_Email').valid() == true) {
+
                 $('#emailAddress').val($('#checkEmail').val());
                 $('form#checkEmail').submit();
                 return true;

@@ -129,6 +129,8 @@ $(function () {
                         if ($(stateManager.getSameAsBillingCheckedFilter()).val()) {
                             stateManager.setShippingToBilling();
                         }
+
+
                         stateManager.setAction(Registration.Action.SubmitRegister);
                         stateManager.submit();
                     }

@@ -2,6 +2,9 @@
 /// <reference path="../../typings/jquery/jquery.validation.d.ts" />
 /// <reference path="../../typings/bootstrap/bootstrap.d.ts" />
 
+
+//  Disabling the TypeScript for this deploy so Rollbar logging can be inserted.
+//  
 module Registration {
 
 	declare var $;
@@ -93,7 +96,8 @@ module Registration {
 				$('#emailAddress').val($('#checkEmail').val());
 				$('form#checkEmail').submit();
 				return true;
-			} else {
+            } else {
+                //fire popup offering Express Entry
 				this.inputAction = InputAction.None;
 				return false;
 			}

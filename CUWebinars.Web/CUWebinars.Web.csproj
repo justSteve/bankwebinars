@@ -1473,7 +1473,6 @@
     <TypeScriptCompile Include="Scripts\app\cart\create-order-new.ts" />
     <TypeScriptCompile Include="Scripts\app\cart\register-user-in-cart.ts" />
     <TypeScriptCompile Include="Scripts\app\quiz\quiz.ts" />
-    <TypeScriptCompile Include="Scripts\app\register\register-user.ts" />
     <TypeScriptCompile Include="Scripts\app\toastLogger.ts" />
     <TypeScriptCompile Include="Scripts\app\utilities.ts" />
     <TypeScriptCompile Include="Scripts\typings\bootstrap\bootstrap.d.ts" />

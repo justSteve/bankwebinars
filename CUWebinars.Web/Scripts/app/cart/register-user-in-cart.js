@@ -372,6 +372,8 @@ var RegistrationInCart;
         };
 
         StateManager.prototype.registerView = function () {
+            alert("registerView hit");
+
             $('#login').hide('slow');
 
             this.action = Action.CheckEmail;
@@ -396,13 +398,13 @@ var RegistrationInCart;
         };
 
         StateManager.prototype.resetPasswordOrLoginView = function (email, webinarId) {
-            //console.log("call resetPasswordOrLoginView: " + email);
             $('#Email1').val(email);
             $('#ResetPassEmail').val(email);
             $('#labelEmail').html('<span class="label label-important"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is already on file.</span>');
             $('#wrapEmail').hide('slow');
 
             var showLoginInput = $.Deferred(function () {
+                $('#modalUserHasAccount').modal('show');
                 $('#wrapReset').show('slow');
             });
 

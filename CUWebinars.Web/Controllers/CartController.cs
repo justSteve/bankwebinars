@@ -283,6 +283,7 @@ namespace CUWebinars.Web.Controllers
 
                     Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 }
+
             }
             return this.ModelStateJson(ModelState);
         }
@@ -529,7 +530,7 @@ namespace CUWebinars.Web.Controllers
                     //{
                     //    Session["IsOrderPaid"] = true;
                     //}
-                    return View("~/Views/Home/PayCC_Approved.cshtml", order);
+                    return View("~/Views/Cart/PayCC_Approved.cshtml", order);
 
                 }
                 catch (Exception ex)

@@ -3,9 +3,12 @@ var additionalLocationsList, checkoutConfirm, discount, cartStateManager, okToLe
 
 discount = '';
 checkoutConfirm = {};
-okToLeave = false;
+okToLeave = true;
+pagetitle = $("h1:first").text();
 
-$(function() {
+
+$(function () {
+
     signUpForm = $('#SignUpForm');
     signUpFormContainer = $('#SignUpFormContainer'); // The big beige box
 
@@ -26,7 +29,7 @@ $(function() {
 
             var data = $(this).serialize();
 
-            L.clientLogger.info('d-#2', { 'Serialized Form': data });
+            L.clientLogger.info('d-#2', { 'Serialized Form: ': data });
 
             var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
 
@@ -58,7 +61,7 @@ $(function() {
 
                     confirmRegistrationBillMe.after('<span>&nbsp;<span class="label label-success">&nbsp;<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;Transferring you now...</span></span>');
 
-                    okToLeave = true;
+                    okToLeave = false;
 
                     var utilities = new Common.Utilities();
                     utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());

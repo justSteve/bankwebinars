@@ -1,4 +1,26 @@
-﻿@model RegisterViewModel
+﻿@using System.Configuration
+@using CUWebinars.Web.Core
+@model RegisterViewModel
+@{
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+}
+
+@{
+    var url = "";
+    if (@ConfigurationManager.AppSettings["Tenant"] == "BankWebinars")
+    {
+        url = "http://form.jotform.us/form/32525522499156?";
+    }
+}
+
+<script language="javascript" type="text/javascript">
+
+    function openECWindow() {
+        window.open('@url' + 'webinarTitle=' + pagetitle + '&email5=' + $('#Email1').val() + '&webinarid=' + cartStateManager.getWebinarId() + '', 'scrollbars=yes,toolbar=no,width=700,height=500');
+        okToLeave = true;
+        location.reload(true);
+    }
+</script>
 
 @Html.ValidationSummary(string.Empty, new { id = "valSummarySignUpInCart" })
 
@@ -44,13 +66,26 @@
                             </div>
                         </div>
                         <div id="wrapReset">
+
                             <div id="LoginPart">
                                 @Html.ValidationSummary("There were 1 or more errors:", new { id = "loginErrorSummary" })
                                 <h3>Login to existing account?</h3>
                                 <div>
                                     <label>Email:</label> <input id="Email1" name="Email1" value="" type="text" class="input-large"> <br>
                                     <label>Password:</label> <input id="Password1" name="Password1" type="password" class="input-large"><br>
-                                    <div><b>Note: </b>Due to a website upgrade with enhanced security, accounts<br /> created prior to 5/18/2015 require a password reset (button above). </div>
+                                    @{
+    if (globalConfig.Tenant == "CUWebinars")
+    {
+        <div><b>Note: </b>Due to a website upgrade with enhanced security, accounts<br /> created prior to 5/18/2015 require a password reset (button above). </div>
+
+    }
+    if (globalConfig.Tenant == "BankWebinars")
+    {
+
+        <div><b>Note: </b>We've found an existing account for this email address from our legacy website. Accessing our updated site requires that you reset your password. (button above). </div>
+    }
+
+                                    }
                                 </div>
                                 <div id="LogintoexistingaccountBTN"></div>
                             </div>
@@ -118,11 +153,11 @@
                             <div id="wrapTimeZone">
                                 <label for="TimeZone" style="display: inline-block">Time Zone:</label>
                                 <select style="width: 120px" id="TimeZone" name="TimeZone">
-                                    <option value="-4">Caribbean</option>
                                     <option value="-5">Eastern</option>
                                     <option value="-6">Central</option>
                                     <option value="-7">Mountain</option>
                                     <option value="-8">Pacific</option>
+                                    <option value="-4">Caribbean</option>
                                     <option value="-9">Alaskan</option>
                                     <option value="-10">Hawaiian</option>
                                 </select>
@@ -222,4 +257,26 @@
 
 <div id="updateOrderWithUserIdWrapper">
     @Html.Partial("Partials/_UpdateOrderWithUserId")
+</div>
+
+<div id="modalUserHasAccount" class="modal hide">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Express Checkout</h3>
+    </div>
+    <div id="UserHasAccount" class="modal-body">
+        <p>
+            Want to avoid the hassle of logging in just to place an order? Since we already have record of the
+            email address you've entered, you have the option to click the <i>Express Me!</i> button below to
+            to confirm your registration details. We'll process the order and send a confirmation with complete
+            details within the next few hours. If you desire instant access to your account here on our new site you'll need
+            to step thru the Password Reset process here or login to your preexisting account at http://legacy.bankwebinars.com.
+        </p>
+
+
+        <div id="instInfo">
+            <p><input type="button" onclick="javascript: openECWindow();" class=" btn btn-primary" name="ExpressMe" id="ExpressMe" value="Yes, Express Me!" /></p>
+            <p><input type="button" onclick="javascript: self.close();" class="btn btn-warning" name="ResetMe" id="ResetMe" value="Continue to Password Reset" /></p>
+        </div>
+    </div>
 </div>
