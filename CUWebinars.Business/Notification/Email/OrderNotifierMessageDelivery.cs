@@ -3,6 +3,7 @@ using CUWebinars.Business.Notification.ViewModel;
 using Ninject.Extensions.Logging;
 using System;
 using System.Configuration;
+using System.Net.Configuration;
 using System.Net.Mail;
 using CUWebinars.Business.Constants;
 
@@ -54,7 +55,8 @@ namespace CUWebinars.Business.Notification.Email
 
             if (string.IsNullOrWhiteSpace(notificationMessage.From))
             {
-                notificationMessage.From = ConfigurationManager.AppSettings["smtp.userName"];
+                var smtp = ConfigurationManager.GetSection("system.net/mailSettings/smtp") as SmtpSection;
+                notificationMessage.From = smtp.From;
             }
 
             using (var smtp = new SmtpClient())

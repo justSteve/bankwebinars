@@ -152,6 +152,7 @@ var RegistrationInCart;
 
             if (!timeZoneInput.val())
                 timeZoneInput.val('3'); // Central = 3
+
         };
 
         StateManager.prototype.ensureFormValidatorParsed = function () {

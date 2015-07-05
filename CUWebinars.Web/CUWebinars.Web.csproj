@@ -1471,7 +1471,6 @@
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\app\admin\question.ts" />
     <TypeScriptCompile Include="Scripts\app\cart\create-order-new.ts" />
-    <TypeScriptCompile Include="Scripts\app\cart\register-user-in-cart.ts" />
     <TypeScriptCompile Include="Scripts\app\quiz\quiz.ts" />
     <TypeScriptCompile Include="Scripts\app\toastLogger.ts" />
     <TypeScriptCompile Include="Scripts\app\utilities.ts" />
