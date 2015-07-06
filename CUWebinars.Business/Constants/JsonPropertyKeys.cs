@@ -17,5 +17,6 @@ namespace CUWebinars.Business.Constants
 
         public static readonly string PostEventMaterialsWereAccessedKey = "PostEventMaterialsWereAccessed";
         public static readonly string OrderCreatedByImpersonatedUserKey = "OrderCreatedByImpersonatedUser";
+        public static readonly string PayByCC = "PayByCC";
     }
 }

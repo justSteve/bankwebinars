@@ -6,7 +6,12 @@
 }
 
 @{
-    var url = "";
+    var url = ""; 
+    if (@ConfigurationManager.AppSettings["Tenant"] == "CUWebinars")
+    {
+        url = "http://form.jotformpro.com/form/51853723531959?";
+    } 
+
     if (@ConfigurationManager.AppSettings["Tenant"] == "BankWebinars")
     {
         url = "http://form.jotform.us/form/32525522499156?";

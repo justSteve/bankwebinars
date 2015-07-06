@@ -309,7 +309,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             webinarKey = root.SelectSingleNode("//span[contains(@id,'WebinarInfoID')]").InnerHtml;
             webinarKey = webinarKey.Replace("-", "").Trim();
             accessPhone = root.SelectSingleNode("//*[text()[contains(., 'Toll-')]]").InnerHtml;
-            accessPhone = Regex.Split(accessPhone, @"\<br\>")[1].Replace("Toll-free: 1 ", "").Trim().Replace(" ", "-");
+            //accessPhone = Regex.Split(accessPhone, @"\<br\>")[1].Replace("Toll-free: 1 ", "").Trim().Replace(" ", "-");
+            // element at [1] not present starting 7/6/2015
+            accessPhone = Regex.Split(accessPhone, @":")[1].Replace("Toll-free: 1 ", "").Trim().Replace(" ", "-");
 
 
             citrixRegisterUrl = root.SelectSingleNode("//a[contains(@id,'registrationURL')]").InnerHtml;

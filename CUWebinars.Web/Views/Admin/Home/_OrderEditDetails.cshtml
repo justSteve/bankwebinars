@@ -150,10 +150,7 @@
                 </div>
             </div>
         </div>
-        <div class="span4">
-            <h5>Set Carbon Copy Address</h5>
-            @{Html.RenderPartial("Partials/_ShareNotifications", myRow.Order);}
-        </div>
+
     </div>
     <div id="SubmitPanel" style="margin-top: 0;" class="span2">
         <div class="control-group">
@@ -173,6 +170,7 @@
     @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.FlatOff)
     @Html.Hidden("titleInput", myRow.Webinar.Title + " - " + myRow.Webinar.Date.ToShortDateString() + " " + myRow.Webinar.Date.ToShortTimeString())
 }
+
 
 <div id="changeAssignedAffiliate" class="modal hide fade">
     @using (Html.BeginForm("UpdateOrderAffiliate", "Admin", FormMethod.Post, new { id = "frmChangeAffiliate" }))

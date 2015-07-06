@@ -441,7 +441,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                             data: JSON.stringify(payloadForUpdate),
                             headers: headers,
                             beforeSend: function () {
-                                L.clientLogger.log("submitting " + url + " with: ", {
+                                L.clientLogger.info("submitting " + url + " with: ", {
                                     orderId: orderId,
                                     userId: data.UserId
                                 });
@@ -462,11 +462,14 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                 } else {
 
                                     $('#ConfirmRegistrationBillMe').on('click', function (e) {
+                                        L.clientLogger.info("TheSubmitButton is clicked", {orderid: orderid})
                                         completeOrder(userId, orderRowId, webinarId, orderId);
                                     });
 
                                     // The 'TO PAY BY CREDIT CARD' button on 3rd tab
                                     $('#ConfirmRegistrationPayByCC').on('click', function (e) {
+                                        L.clientLogger.info("ConfirmRegistrationPayByCC is clicked", { orderid: orderid })
+
                                         e.preventDefault();
 
                                         var url = '/Cart/PayCC/' + orderId;
@@ -738,6 +741,68 @@ function completeOrder(userId, orderRowId, webinarId, orderId) {
     cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
     var confirmOrderForm = cartStateManager.getConfirmOrderForm();
+
+    confirmOrderForm.on('submit', function (e) {
+
+        e.preventDefault();
+
+        var self = $(this);
+        self.find('input[name="id"]').val(orderRowId);
+
+        var data = $(this).serialize();
+
+        var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
+
+        confirmRegistrationBillMe.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+        confirmRegistrationBillMe.attr('disabled', 'disabled');
+
+        $.ajax({
+            type: 'POST',
+            contentType: RegistrationInCart.Constants.FormPostContentType,
+            cache: false,
+            url: self.attr('action'),
+            dataType: RegistrationInCart.Constants.JsonDataType,
+            data: data,
+            beforeSend: function () {
+                confirmRegistrationBillMe.attr('disabled', 'disabled');
+
+            }
+        }).done(function (result) {
+            if (result.Result === 'Success') {
+                orderRowId = result.OrderRowId;
+
+                $('#orderDetails').empty();
+                $('#orderDetails').append(result.Msg);
+
+                $('#orderStatusLabel').text('Submitted').removeClass('label-warning').addClass('label-success');
+                confirmRegistrationBillMe.after('<span>&nbsp;<span class="label label-success">&nbsp;<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;Transferring you now...</span></span>');
+
+                okToLeave = true;
+
+                var utilities = new Common.Utilities();
+                utilities.goToUrl('/Account/OrderComplete/' + orderId);
+
+            } else {
+
+                L.clientLogger.error("Error #935: ", { result: result && result.Result });
+                confirmRegistrationBillMe.after('<span class="text-error">Error #935. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+            }
+
+            $('#finalLoadingSpinner').remove();
+            confirmRegistrationBillMe.removeAttr('disabled');
+        }).fail(commonFuncs.failCallBack);
+    });
+    confirmOrderForm.submit();
+    confirmOrderForm.off('submit');
+}
+
+function completeOrderByCC(userId, orderRowId, webinarId, orderId) {
+
+    var cartStateManager = new OrderRegistration.StateManager();
+
+    cartStateManager.setConfirmOrderForm($('#confirmOrder'));
+
+    var confirmOrderByCCForm = cartStateManager.getConfirmOrderByCCForm();
 
     confirmOrderForm.on('submit', function (e) {
 

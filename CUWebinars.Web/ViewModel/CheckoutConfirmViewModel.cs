@@ -31,5 +31,16 @@ namespace CUWebinars.Web.ViewModel
         public string UserFullname { get; set; }
         public UserType UserType { get; set; }
 
+        public string T_ordernum { get; set; }
+        public string C_company { get; set; }
+        public string C_fname { get; set; }
+        public string C_lname { get; set; }
+        public string C_address { get; set; }
+        public string C_city { get; set; }
+        public string C_state { get; set; }
+        public string C_zip { get; set; }
+        public string C_email { get; set; }
+        public string C_telephone { get; set; }
+
     }
 }

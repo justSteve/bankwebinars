@@ -86,6 +86,74 @@ $(function () {
 
         });
 
+        cartStateManager.getConfirmOrderByCCForm().on('submit', function(e) {
+            e.preventDefault();
+            alert("hit cc");
+            var self = $(this);
+            self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
+
+            L.clientLogger.info('d-#1a', { 'submitting getConfirmOrderByCCForm': cartStateManager.getOrderRowId() });
+
+            var data = $(this).serialize();
+
+            L.clientLogger.info('d-#2', { 'Serialized Form: ': data });
+
+            var confirmRegistrationPayByCC = $('#ConfirmRegistrationPayByCC');
+
+            confirmRegistrationPayByCC.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+
+            confirmRegistrationPayByCC.attr('disabled', 'disabled');
+
+
+            $.ajax({
+                type: 'POST',
+                contentType: RegistrationInCart.Constants.FormPostContentType,
+                cache: false,
+                url: self.attr('action'),
+                dataType: RegistrationInCart.Constants.JsonDataType,
+                data: data,
+                beforeSend: function () {
+                    confirmRegistrationPayByCC.attr('disabled', 'disabled');
+                }
+            }).done(function (data) {
+                if (data.Result === 'Success') {
+                    L.clientLogger.info('d-#3', { 'OrderRowId': data.OrderRowId });
+                    var orderRowId = data.OrderRowId;
+
+                    console.info('Posted orderRow:' + orderRowId);
+
+                    $('#orderDetails').empty();
+                    $('#orderDetails').append(data.Msg);
+
+                    $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
+
+                    confirmRegistrationPayByCC.after('<span>&nbsp;<span class="label label-success">&nbsp;<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;Transferring you now...</span></span>');
+
+                    okToLeave = true;
+
+                    var utilities = new Common.Utilities();
+                    utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
+
+                } else {
+                    console.error('Failed to post order');
+                    L.clientLogger.error('d-#4a Failed to post order', { 'jsonResponse': data });
+
+                    confirmRegistrationPayByCC.after('<span class="field-validation-error">Invalid Data #554. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                }
+
+                $('#finalLoadingSpinner').remove();
+                confirmRegistrationPayByCC.removeAttr('disabled');
+                $('#signUpSpinner').remove();
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                $('#finalLoadingSpinner').remove();
+                confirmRegistrationPayByCC.removeAttr('disabled');
+                $('#signUpSpinner').remove();
+                confirmRegistrationPayByCC.after('<span class="field-validation-error">Transport error #555. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                L.clientLogger.error('d-#5a', { 'Error': jqXHR.responseText });
+            });
+
+        });
+
 
         var cancelOrderForm = cartStateManager.getCancelOrderForm();
         // CANCEL REGISTRATION BUTTON CLICKED

@@ -188,6 +188,18 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     var checkoutConfirmViewModel = new CheckoutConfirmViewModel
                     {
+                        C_address = billingAddress.StreetAddress,
+                        C_city = order.BillingCity,
+                        C_company = order.Institution,
+                        C_email = order.BillingEmail,
+                        C_fname = order.FirstName,
+                        C_lname = order.LastName,
+                        C_state = billingAddress.State,
+                        C_telephone = billingAddress.Phone,
+                        C_zip = billingAddress.Zip,
+                        T_ordernum = order.idOrder.ToString(),
+
+
                         AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
                         AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
                         {
@@ -552,10 +564,10 @@ namespace CUWebinars.Web.Core.Orchestrators
                 var user = Request.RequestContext.HttpContext.User as ClaimsPrincipal;
                 beingImpersonatedClaim = user.Claims.SingleOrDefault(c => c.Type == ClaimTypes.BeingImpersonated);
             }
-            
+
             var webinar = _webinarManagementService.GetWebinar(formModel.idWebinar);
 
-            if(webinar == null)
+            if (webinar == null)
             {
                 _logger.Error(string.Format("Null value for Webinar {0}", formModel.idWebinar));
                 throw new NullReferenceException(string.Format("Null value for Webinar with id {0}", formModel.idWebinar));
@@ -570,7 +582,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             // At this point, user may not be registered. So, when creating the Order, if user 
             // does not exist, a dummy user with an email of notauthenticated@cuwebinars.com will be created.
-            WebUser webUser = formModel.SelectedWebUser > 0 ? 
+            WebUser webUser = formModel.SelectedWebUser > 0 ?
                 _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.SelectedWebUser) : // if logged in as admin or affiliate
                 _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.idUser);
 
@@ -591,9 +603,9 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             if (ReferenceEquals(null, webUser))
             {
-                if(!_stateService.HasValue(WebUiConstants.SessionId))
+                if (!_stateService.HasValue(WebUiConstants.SessionId))
                     _logger.Info("Session id is not in session.");
-                if(!_stateService.HasValue(WebUiConstants.SessionId))
+                if (!_stateService.HasValue(WebUiConstants.SessionId))
                     _logger.Info("AValidInstitution is not in session.");
 
                 webUser = _membershipService.CreateWebUser(
@@ -620,11 +632,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (!ReferenceEquals(createdByImpersonatedClaim, null))
             {
                 JProperty createdByImpersonatedUserMsg = new JProperty(
-                    JsonPropertyKeys.OrderCreatedByImpersonatedUserKey, 
+                    JsonPropertyKeys.OrderCreatedByImpersonatedUserKey,
                     createdByImpersonatedClaim.Value
                     );
 
-                newOrder.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrder.AdminComments,createdByImpersonatedUserMsg);
+                newOrder.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrder.AdminComments, createdByImpersonatedUserMsg);
             }
 
             newOrder = _orderManagementService.SaveOrderChanges(newOrder, string.Empty, string.Empty);
@@ -664,11 +676,16 @@ namespace CUWebinars.Web.Core.Orchestrators
             };
 
             order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
-            
+
             if (userCreatedInCart.HasValue)
+            {
                 _orderManagementService.FireOrderSubmittedEvent(order, userCreatedInCart.Value, url: Request.Url);
+                _orderManagementService.FireOrderSynchEvent(order, userCreatedInCart.Value, url: Request.Url);
+            }
             else
+            {
                 _orderManagementService.FireOrderSubmittedEvent(order, url: Request.Url);
+            }
         }
 
         public void UpdateOrderWithUserId(int orderId, int userId)
@@ -712,24 +729,39 @@ namespace CUWebinars.Web.Core.Orchestrators
         public Order LoadOrder(int id)
         {
             return _orderManagementService.GetOrderById(id);
-        
+
         }
 
         public void SetOrderPaidByCC(int qOrder, string s, string formFields)
         {
             {
                 Order order = LoadOrder(qOrder);
+                
+                if (!ReferenceEquals(null, order))
+                {
+                    order.PaymentType = 2;
 
-                //order.PaymentType = (PaymentType)2;
+                    //order.AdminComments = order.StoreComments + "\r\nCredit Card Order Approved: " + txApprovalCode.ToString();
 
+                    string buildMessage = "PayCC: " + order.idOrder + " QueryString: " + formFields;
+                    _logger.Info(buildMessage);
 
-                //order.AdminComments = order.StoreComments + "\r\nCredit Card Order Approved: " + txApprovalCode.ToString();
+                    order.OrderStatus = OrderStatus.Paid;
+                    JObject existingJObject = null;
 
-                string buildMessage = "Step2_PayCC: " + order.idOrder + " QueryString: " + formFields;
-                //Logger.Instance.LogMessage(buildMessage);
+                    
 
-                order.OrderStatus = OrderStatus.Paid;
-                _orderManagementService.SaveChanges();
+                    var newJson =
+                        new JProperty(
+                            string.Concat("PayByCC-",
+                                TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                            new JObject(new JProperty("PayByCC", buildMessage))
+                            );
+                    order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, newJson);
+
+                    _orderManagementService.SaveChanges();
+                }
+
             }
         }
 

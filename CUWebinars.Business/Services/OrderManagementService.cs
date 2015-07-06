@@ -630,6 +630,60 @@ namespace CUWebinars.Business.Services
             throw new NotImplementedException();
         }
 
+        public void FireOrderSynchEvent(Order order, bool userCreatedInCart = false, bool resending = false, Uri url = null)
+        {
+            string addPasswordUrl = string.Empty;
+
+            var orderSynchMessage = new OrderSynchMessage
+            {
+                AddPasswordUrl = string.Empty,
+                ConfirmChangeEmailUrl = string.Empty,
+                Details = order.NotificationStorage,
+                idOrder = order.idOrder,
+                Order = order,
+                OrderGenesis =
+                    userCreatedInCart ? OrderGenesis.CreatedViaCartByNewUser : OrderGenesis.CreatedViaCartByExistingUser,
+                UserCreatedInCart = userCreatedInCart,
+                UserCreatedOnImport = false
+            };
+
+            if (!ReferenceEquals(null, url))
+            {
+                var baseUri = new Uri(string.Concat(url.Scheme, @"://", url.Authority), UriKind.Absolute);
+                addPasswordUrl = new Uri(
+                    baseUri,
+                    string.Concat(@"ACC/APWD/", order.WebUser.email)
+                    ).ToString();
+            }
+
+            AddEvent(new OrderSynchEvent<OrderSynchMessage>
+            {
+                Details = order.NotificationStorage,
+                EventObject = orderSynchMessage,
+                RelativePath = addPasswordUrl,
+                ResendEvent = resending
+            });
+
+            foreach (var evt in GetEvents().OfType<OrderSynchEvent<OrderSynchMessage>>())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            //int rowsUpdated = _orderRepository.SaveChanges();
+
+            Clear(); // need to clear at this point, otherwise the OrderSubmittedEvent will be fired again when 
+
+            //if (order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count != 0)
+            //{
+            //    foreach (var addLoc in order.OrderRows
+            //        .Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
+            //    {
+            //        FireOrderSubmittedAdditionalLocationEvent(order, addLoc.Email, resending);
+            //    }
+            //}
+
+        }
+
         public void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, bool resending = false,
             Uri url = null)
         {
