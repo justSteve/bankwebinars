@@ -45,10 +45,10 @@ var OrderRegistration;
         StateManager.prototype.getCheckoutInProcess = function () {
             return this.checkoutInProcess;
         };
-        StateManager.prototype.getConfirmOrderByCCForm = function () {
-            return this.confirmOrderForm;
-        };
 
+        //getConfirmOrderByCCForm(): JQuery {
+        //    return this.confirmOrderForm;
+        //}
         StateManager.prototype.getConfirmOrderForm = function () {
             return this.confirmOrderForm;
         };

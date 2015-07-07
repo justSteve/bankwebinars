@@ -131,8 +131,8 @@ namespace CUWebinars.Web.Controllers
                     return Json(new
                     {
                         Result = WebUiConstants.Success,
-                        OrderRowID = id.Value,
-                        Msg = string.Format("<p>Your Order ID is {0}. Please check your email for connection information for the webinar.</p>", id.Value)
+                        OrderRowID = model.Order.idOrder,
+                        Msg = string.Format("Your registration is confirmed. Complete details will be emailed to {0}.", model.Order.BillingEmail)
                     }, JsonRequestBehavior.AllowGet);
                 }
                 catch (Exception exception)
@@ -523,14 +523,13 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
-                    var order =  _cartControllerOrchestrator.LoadOrder(qOrder);
-                    _cartControllerOrchestrator.SetOrderPaidByCC(qOrder, Request.QueryString["Approval_Code"], formFields);
+                    return RedirectToAction("ConfirmOrder", new { referred = formFields, ID = qOrder });
 
-                    //if (order.IsEverythingPaid)
-                    //{
-                    //    Session["IsOrderPaid"] = true;
-                    //}
-                    return View("~/Views/Cart/PayCC_Approved.cshtml", order);
+                    //var order =  _cartControllerOrchestrator.LoadOrder(qOrder);
+                    //_cartControllerOrchestrator.SetOrderPaidByCC(qOrder, Request.QueryString["Approval_Code"], formFields);
+
+                    
+                    //return View("~/Views/Cart/PayCC_Approved.cshtml", order);
 
                 }
                 catch (Exception ex)

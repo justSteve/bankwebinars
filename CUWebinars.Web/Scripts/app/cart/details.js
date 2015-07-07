@@ -33,10 +33,7 @@ $(function () {
 
             var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
 
-            confirmRegistrationBillMe.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-
-            confirmRegistrationBillMe.attr('disabled', 'disabled');
-
+            
             $.ajax({
                 type: 'POST',
                 contentType: RegistrationInCart.Constants.FormPostContentType,
@@ -45,26 +42,25 @@ $(function () {
                 dataType: RegistrationInCart.Constants.JsonDataType,
                 data: data,
                 beforeSend: function() {
+
+                    confirmRegistrationBillMe.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
                     confirmRegistrationBillMe.attr('disabled', 'disabled');
                 }
             }).done(function(data) {
                 if (data.Result === 'Success') {
-                    L.clientLogger.info('d-#3', { 'OrderRowId': data.OrderRowId });
-                    var orderRowId = data.OrderRowId;
-
-                    console.info('Posted orderRow:' + orderRowId);
-
+                    L.clientLogger.info('d-#3', { 'OrderId': data.OrderRowID });
+                    
                     $('#orderDetails').empty();
                     $('#orderDetails').append(data.Msg);
 
                     $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
 
-                    confirmRegistrationBillMe.after('<span>&nbsp;<span class="label label-success">&nbsp;<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;Transferring you now...</span></span>');
+                    confirmRegistrationBillMe.after('<span>&nbsp;<span class="label label-success">&nbsp;<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;Order Confirmed!</span></span>');
 
-                    okToLeave = false;
-
+                    okToLeave = true;
                     var utilities = new Common.Utilities();
-                    utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
+                    utilities.goToUrl('/Account/OrderComplete/' + data.OrderRowID);
+
 
                 } else {
                     console.error('Failed to post order');
@@ -86,73 +82,73 @@ $(function () {
 
         });
 
-        cartStateManager.getConfirmOrderByCCForm().on('submit', function(e) {
-            e.preventDefault();
-            alert("hit cc");
-            var self = $(this);
-            self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
+        //cartStateManager.getConfirmOrderByCCForm().on('submit', function(e) {
+        //    e.preventDefault();
+        //    alert("hit cc");
+        //    var self = $(this);
+        //    self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
 
-            L.clientLogger.info('d-#1a', { 'submitting getConfirmOrderByCCForm': cartStateManager.getOrderRowId() });
+        //    L.clientLogger.info('d-#1a', { 'submitting getConfirmOrderByCCForm': cartStateManager.getOrderRowId() });
 
-            var data = $(this).serialize();
+        //    var data = $(this).serialize();
 
-            L.clientLogger.info('d-#2', { 'Serialized Form: ': data });
+        //    L.clientLogger.info('d-#2', { 'Serialized Form: ': data });
 
-            var confirmRegistrationPayByCC = $('#ConfirmRegistrationPayByCC');
+        //    var confirmRegistrationPayByCC = $('#ConfirmRegistrationPayByCC');
 
-            confirmRegistrationPayByCC.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+        //    confirmRegistrationPayByCC.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
 
-            confirmRegistrationPayByCC.attr('disabled', 'disabled');
+        //    confirmRegistrationPayByCC.attr('disabled', 'disabled');
 
 
-            $.ajax({
-                type: 'POST',
-                contentType: RegistrationInCart.Constants.FormPostContentType,
-                cache: false,
-                url: self.attr('action'),
-                dataType: RegistrationInCart.Constants.JsonDataType,
-                data: data,
-                beforeSend: function () {
-                    confirmRegistrationPayByCC.attr('disabled', 'disabled');
-                }
-            }).done(function (data) {
-                if (data.Result === 'Success') {
-                    L.clientLogger.info('d-#3', { 'OrderRowId': data.OrderRowId });
-                    var orderRowId = data.OrderRowId;
+        //    $.ajax({
+        //        type: 'POST',
+        //        contentType: RegistrationInCart.Constants.FormPostContentType,
+        //        cache: false,
+        //        url: self.attr('action'),
+        //        dataType: RegistrationInCart.Constants.JsonDataType,
+        //        data: data,
+        //        beforeSend: function () {
+        //            confirmRegistrationPayByCC.attr('disabled', 'disabled');
+        //        }
+        //    }).done(function (data) {
+        //        if (data.Result === 'Success') {
+        //            L.clientLogger.info('d-#3', { 'OrderRowId': data.OrderRowId });
+        //            var orderRowId = data.OrderRowId;
 
-                    console.info('Posted orderRow:' + orderRowId);
+        //            console.info('Posted orderRow:' + orderRowId);
 
-                    $('#orderDetails').empty();
-                    $('#orderDetails').append(data.Msg);
+        //            $('#orderDetails').empty();
+        //            $('#orderDetails').append(data.Msg);
 
-                    $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
+        //            $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
 
-                    confirmRegistrationPayByCC.after('<span>&nbsp;<span class="label label-success">&nbsp;<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;Transferring you now...</span></span>');
+        //            confirmRegistrationPayByCC.after('<span>&nbsp;<span class="label label-success">&nbsp;<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;Transferring you now...</span></span>');
 
-                    okToLeave = true;
+        //            okToLeave = true;
 
-                    var utilities = new Common.Utilities();
-                    utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
+        //            var utilities = new Common.Utilities();
+        //            utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
 
-                } else {
-                    console.error('Failed to post order');
-                    L.clientLogger.error('d-#4a Failed to post order', { 'jsonResponse': data });
+        //        } else {
+        //            console.error('Failed to post order');
+        //            L.clientLogger.error('d-#4a Failed to post order', { 'jsonResponse': data });
 
-                    confirmRegistrationPayByCC.after('<span class="field-validation-error">Invalid Data #554. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
-                }
+        //            confirmRegistrationPayByCC.after('<span class="field-validation-error">Invalid Data #554. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+        //        }
 
-                $('#finalLoadingSpinner').remove();
-                confirmRegistrationPayByCC.removeAttr('disabled');
-                $('#signUpSpinner').remove();
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                $('#finalLoadingSpinner').remove();
-                confirmRegistrationPayByCC.removeAttr('disabled');
-                $('#signUpSpinner').remove();
-                confirmRegistrationPayByCC.after('<span class="field-validation-error">Transport error #555. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
-                L.clientLogger.error('d-#5a', { 'Error': jqXHR.responseText });
-            });
+        //        $('#finalLoadingSpinner').remove();
+        //        confirmRegistrationPayByCC.removeAttr('disabled');
+        //        $('#signUpSpinner').remove();
+        //    }).fail(function (jqXHR, textStatus, errorThrown) {
+        //        $('#finalLoadingSpinner').remove();
+        //        confirmRegistrationPayByCC.removeAttr('disabled');
+        //        $('#signUpSpinner').remove();
+        //        confirmRegistrationPayByCC.after('<span class="field-validation-error">Transport error #555. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+        //        L.clientLogger.error('d-#5a', { 'Error': jqXHR.responseText });
+        //    });
 
-        });
+        //});
 
 
         var cancelOrderForm = cartStateManager.getCancelOrderForm();
@@ -275,6 +271,8 @@ $(function () {
 
 //The BIG GREEN 'Bill Me' button on 3rd tab
         $('#ConfirmRegistrationBillMe').on('click', function(e) {
+
+            L.clientLogger.info("BigGreenBillMe from Details", {orderid: cartStateManager.getOrderId()});
             e.preventDefault();
             var confirmOrderForm = $('#confirmOrder');
             confirmOrderForm.submit();

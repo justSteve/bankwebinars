@@ -1,0 +1,59 @@
+﻿@using CUWebinars.Web.Core
+@model CheckoutConfirmViewModel
+@{
+
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+
+    //Layout = "/Views/Shared/_Layout_PayCC.cshtml";
+
+
+}
+
+<div id="PayByCCModal" class="modal hide fade">
+
+    <input type="hidden" name="id" />
+    <input type="hidden" id="Step2_BillMeFormReferred" name="referred" value="" />
+    <div class="modal-header">
+        <h3 id="confirmCaption"></h3>
+    </div>
+    <div id="orderDetails" class="modal-body">
+        <div>
+            <form method="POST" action="https://www.sagepayments.net/eftcart/forms/express.asp">
+                <input type="hidden" name="M_id" value="481584571755" />
+                <input type="hidden" name="T_amt" value=totalPrice />
+                <input type="hidden" name="T_shipping" value="0" />
+                <input type="hidden" name="T_tax" value="0" />
+                <input type="hidden" name="T_ordernum" value="@Model.T_ordernum" />
+                <input type="hidden" name="C_company" value="@Model.C_company" />
+                <input type="hidden" name="C_fname" value="@Model.C_fname" />
+                <input type="hidden" name="C_lname" value="@Model.C_lname" />
+                <input type="hidden" name="C_address" value="@Model.C_address" />
+                <input type="hidden" name="C_city" value="@Model.C_city" />
+                <input type="hidden" name="C_state" value="@Model.C_state" />
+                <input type="hidden" name="C_zip" value="@Model.C_zip" />
+                <input type="hidden" name="C_email" value="@Model.C_email" />
+                <input type="hidden" name="C_telephone" value="@Model.C_telephone" />
+                <input type="hidden" name="C_memo" value=titleForCC />
+
+                <div class="legendImitator">
+                    Credit Card Processing Redirect
+                </div>
+
+                <div style="margin-bottom:10px;">
+                    Redirecting to our credit card processor - SagePayment.net - for entry of credit card information.
+                    The result of that transaction will display here when completed.
+                </div>
+                <div>
+                    <i>Registration ID: <b>BW-@Model.T_ordernum</b></i><br />
+                </div>
+
+                
+                    <div class="pull-right">
+                        <input class="btn btn-success" type="submit" value="Continue" />
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                    </div>
+            </form>
+        </div>
+
+    </div>
+</div>

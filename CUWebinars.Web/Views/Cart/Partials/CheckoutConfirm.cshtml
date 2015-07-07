@@ -80,7 +80,7 @@
                         </div>
                         <div style="font-size: x-small; text-align: center;">
                             <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button><br />
-                            <button class="btn btn-success" id="ShowPayByCCModal">To pay by credit card call 800-831-0678 ext. 3</button><br />
+                            <button data-toggle="modal" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />
                             <a class="btn" id="Canceller">Cancel Registration</a><br />
                             Sales tax may be added to orders in Wisconsin or Illinois.
                         </div>
@@ -118,9 +118,7 @@
                     <div id="showCartPrice">@{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }</div>
                     @if (Model.OrderStatus != OrderStatus.Paid)
                     {
-                        <span style="font-size: small; text-align: center;">
-                            We typically send an invoice a couple days following the event. If you would prefer to pay now by Credit Card please call Customer Service at 800-831-0678 ext. 703.
-                        </span>
+                        
                         @*<button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>*@
                         <br />
                     }
@@ -152,11 +150,12 @@
 }
 
 @{
+    Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
     
+    Html.RenderPartial("~/Views/Cart/Partials/_PayByCCModal.cshtml");
     Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml");
     Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
     //Html.RenderPartial("~/Views/Cart/Partials/_DisplayAppliedDiscount.cshtml", Model.DiscountDetailsModel);
-
 }
 
 

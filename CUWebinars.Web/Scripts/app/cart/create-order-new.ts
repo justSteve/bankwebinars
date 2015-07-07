@@ -58,9 +58,9 @@ module OrderRegistration {
         getCheckoutInProcess(): boolean {
             return this.checkoutInProcess;
         }
-        getConfirmOrderByCCForm(): JQuery {
-            return this.confirmOrderForm;
-        }
+        //getConfirmOrderByCCForm(): JQuery {
+        //    return this.confirmOrderForm;
+        //}
 
         getConfirmOrderForm(): JQuery {
             return this.confirmOrderForm;

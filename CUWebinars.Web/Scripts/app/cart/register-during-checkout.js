@@ -462,7 +462,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                 } else {
 
                                     $('#ConfirmRegistrationBillMe').on('click', function (e) {
-                                        L.clientLogger.info("TheSubmitButton is clicked", {orderid: orderid})
+                                        L.clientLogger.info("BigGreenBillMe from register-user-in-cart", { orderid: orderid});
                                         completeOrder(userId, orderRowId, webinarId, orderId);
                                     });
 
