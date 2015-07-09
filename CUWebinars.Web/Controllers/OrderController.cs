@@ -16,6 +16,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
+using CUWebinars.Business.Core;
 
 namespace CUWebinars.Web.Controllers
 {
@@ -156,6 +157,24 @@ namespace CUWebinars.Web.Controllers
 
                 idOfLastOrder = _orderControllerOrchestrator.CreateNewOrder(incomingOrderModel, email,
                     orderManagementQueryResult, verificationKey, confirmChangeEmailUrl, userAlreadyExists);
+
+                var newOrder = _orderManagementService.GetOrderById(idOfLastOrder);
+                if (idOfLastOrder == 0)
+                {
+                    newOrder = _orderManagementService.GetOrdersByUserId(orderManagementQueryResult.WebUser.idUser)
+                        .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == incomingOrderModel.idWebinar) != null)
+                        .SingleOrDefault();
+                    ;
+                }
+
+                _logger.Info("ACS Importer heard: " + newOrder.BillingEmail);
+                _orderManagementService.SendOrderToLegacy(newOrder);
+
+                //DataOperations dataop = new DataOperations();
+                //dataop.BuildACSImporter(newOrder);
+
+                newOrder.OrderDate = TtsConfig.UtcNowAsCts;
+                _orderManagementService.SaveChanges();
 
                 _logger.Info(string.Format("CreateOrder|CreateNewOrder: {0}", idOfLastOrder));
 

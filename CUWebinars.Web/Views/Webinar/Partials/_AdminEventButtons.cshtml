@@ -1,4 +1,5 @@
 ﻿@using CUWebinars.Web.Core
+@using Microsoft.Ajax.Utilities
 @model WebinarDetailsViewModel
 
 @functions {
@@ -60,20 +61,27 @@
                             <div class="navbar">
                                 <div class="navbar-inner">
                                     <ul class="nav">
+                                
                                         @*<li>
-                                                <a href="@globalConfig.WMVRepository@Model.Webinar.RecordingUrl">@globalConfig.WMVRepository@Model.Webinar.RecordingUrl </a>
-                                            </li>*@
-                                        @*<li>
-                                                @Html.Partial(@"Partials/_ShippingReport", postEventInfoModel)
-                                            </li>*@
+                @Html.Partial(@"Partials/_ShippingReport", postEventInfoModel)
+            </li>*@
                                         <li>
-                                            @*@Html.Partial(@"Partials/_UpdateRecording")*@
-                                            @Model.Webinar.RecordingUrl
+                                            @{
+                            if (@Model.Webinar.RecordingUrl.IsNullOrWhiteSpace())
+                            {
+                                @Html.Partial(@"Partials/_UpdateRecording")
+                            }
+                            else
+                            {
+                                @Model.Webinar.RecordingUrl
+                            }
+                                            }
                                         </li>
                                         <li>
                                             <a data-toggle="collapse" href="#webinarOrders"> Orders</a>
                                         </li>
                                     </ul>
+
                                 </div>
                             </div>
                             break;

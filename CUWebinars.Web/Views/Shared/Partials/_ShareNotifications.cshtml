@@ -1,25 +1,101 @@
-﻿@model Order
-
-@using (Html.BeginForm("ShareNotifications", "Account", "Post"))
-{
-    @Html.AntiForgeryToken()
-    <input type="hidden" value="@Model.idOrder" name="idOrder"/>
-    <div id="ShareContainer" class="well-large">
-        <section>
-            <div style="font-size: small;">
-                    <input type="email" id="getEmail" placeholder="Email Address" class="span3" name="email" />
-                <input type="submit" class="btn btn-primary" value="Submit" />
-
-                <div style="text-align: center; margin: 3px;">
-                    Want an associate to recieve copies of this event's notifications? Just enter an email and we'll send a copy of any messages sent to the primary email address.
-                </div>
-            </div>
-        </section>
-    </div>
-
-    }
+﻿@using CUWebinars.Business.Constants
+@using CUWebinars.Business.Core.Helpers
+@using Newtonsoft.Json.Linq
+@model Order
+@{
 
 
 
+}
+<script>
+
+    $("#shareInfoForm").on('submit', function (e) {
+        e.preventDefault();
+        var self = $(this);
+
+        var data = $(this).serialize();
+
+        $.ajax({
+            type: 'POST',
+
+            cache: false,
+            url: self.attr('action'),
+            dataType: JSON,
+            data: data,
+            beforeSend: function () {
+            }
+        }).done(function (data) {
+            if (data.Result === 'Success') {
+
+                $("#caption").html('<span>Notifications are CCed to</span>');
+            } else {
 
 
+            }
+
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+
+        });
+
+    });
+</script>
+<input type="hidden" value="@Model.idOrder" name="idOrder" />
+<div id="ShareContainer" style="padding: 12px;" class="well-large">
+    <section>
+        <div style="font-size: small;">
+            @{
+                IList<string> ccEmailAddresses = null;
+                JToken addresses = null;
+                if (!ReferenceEquals(Model.UserComments, null))
+                {
+                    addresses = JObject.Parse(Model.UserComments).GetValue(JsonPropertyKeys.CarbonCopy);
+                }
+
+                if (!ReferenceEquals(null, addresses))
+                {
+
+                    ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(addresses.ToString());
+                    if (!ReferenceEquals(null, ccEmailAddresses))
+                    {
+                        <span>Sharing notifications with @ccEmailAddresses[0].ToString()</span>
+                    }
+                    else
+                    {
+                        using (Html.BeginForm("ShareNotifications", "Account", FormMethod.Post, new {id = "shareInfoForm_" + @Model.idOrder, @class = "form-horizontal"}))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            <span class="input-append">
+                                <input type="email" id="getEmail" placeholder="Email Address" class="span9" name="email" />
+                                <button class="btn btn-primary">Submit</button>
+                            </span>
+                            <div id="caption" style="text-align: center;">
+                                Enter the address to recieve CC of all event notifications.
+                            </div>
+
+                        }
+                    }
+                }
+                else
+                {
+                    using (Html.BeginForm("ShareNotifications", "Account", FormMethod.Post, new { id = "shareInfoForm_" + @Model.idOrder, @class = "form-horizontal" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <span class="input-append">
+                            <input type="email" id="getEmail" placeholder="Email Address" class="span9" name="email" />
+                            <button class="btn btn-primary">Submit</button>
+                        </span>
+                        <div id="caption" style="text-align: center;">
+                            Enter the address to recieve CC of all event notifications.
+                        </div>
+
+                    }
+                }
+
+}
+
+            
+        </div>
+    </section>
+</div>

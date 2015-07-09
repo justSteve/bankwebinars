@@ -93,10 +93,7 @@
             <section class="span3">
                 <aside class="widget">
                     <div style="padding: 10px; margin-left: 20px; width: 200px; " class="well pull-right well-large">
-                        <div style="font-size: smaller; line-height: 1.2; text-align: center; margin-bottom: 10px; margin-top: 10px;">
-                            This event was recorded on <i>@Html.DisplayDate(Model.Webinar.Date)</i> and is available for OnDemand Playback until @Html.DisplayDate(expiresDate)
-                            - @remainingDays.ToString() more days.
-                        </div>
+                        
                         <h4 align="center">Webinar Materials</h4>
                         @{
                             if (Model.AuthorizedToAccessMaterials)
@@ -109,7 +106,10 @@
                                 </div>
                             }
                         }
-
+                        <div style="font-size: smaller; line-height: 1.2; text-align: center; margin-bottom: 10px; margin-top: 10px;">
+                            This event was recorded on <i>@Html.DisplayDate(Model.Webinar.Date)</i> and is available for OnDemand Playback until @Html.DisplayDate(expiresDate)
+                            - @remainingDays.ToString() more days.
+                        </div>
                         @*<div style="text-align: center;" id="quiz">
                                 <hr />
                                 <form method="POST" action="/Account/MyQuiz">

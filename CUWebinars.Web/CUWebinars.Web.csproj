@@ -778,11 +778,9 @@
     <Content Include="Views\Admin\Home\_PasswordResetConfirm.cshtml" />
     <Content Include="Views\Admin\Home\_RegisterPartial.cshtml" />
     <Content Include="Views\Admin\Home\_ResetPasswordPartial.cshtml" />
-    <Content Include="Scripts\app\cart\create-order-new.js.map" />
     <Content Include="Scripts\app\utilities.js.map" />
     <Content Include="Views\Cart\Partials\_ConfirmModal.cshtml" />
     <Content Include="Views\Cart\Partials\_DisplayOptionsInDropDown.cshtml" />
-    <Content Include="Scripts\app\cart\register-user-in-cart.js.map" />
     <Content Include="Scripts\app\register\register-user.js.map" />
     <Content Include="Scripts\jquery-1.11.1.min.map" />
     <Content Include="Views\Cart\Partials\_CancelModal.cshtml" />
@@ -1471,8 +1469,6 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\app\admin\question.ts" />
-    <TypeScriptCompile Include="Scripts\app\cart\create-order-new.ts" />
-    <TypeScriptCompile Include="Scripts\app\cart\register-user-in-cart.ts" />
     <TypeScriptCompile Include="Scripts\app\quiz\quiz.ts" />
     <TypeScriptCompile Include="Scripts\app\toastLogger.ts" />
     <TypeScriptCompile Include="Scripts\app\utilities.ts" />

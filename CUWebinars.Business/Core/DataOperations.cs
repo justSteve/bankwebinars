@@ -268,6 +268,12 @@ namespace CUWebinars.Business.Core
                 SqlDbType = SqlDbType.Int,
                 ParameterName = "@idOption",
                 Value = translatedOptionId
+            };            
+            var idAffParameter = new SqlParameter
+            {
+                SqlDbType = SqlDbType.Int,
+                ParameterName = "@idAffiliate",
+                Value = newOrder.idAffiliate
             };
             var addLocParameter = new SqlParameter
             {
@@ -341,60 +347,114 @@ namespace CUWebinars.Business.Core
                 ParameterName = "@provisionalInstitution",
                 Value = newOrder.Institution
             };
-
-            using (var sqlConnection = new SqlConnection(_connectionString))
-            {
-                int idUser = 0;
-                sqlConnection.Open();
-                using (var getUserID = new SqlCommand("InsertACSUser", sqlConnection))
+                using (var sqlConnection = new SqlConnection(_connectionString))
                 {
-                    getUserID.Parameters.Add(firstNameParameter);
-                    getUserID.Parameters.Add(lastNameParameter);
-                    getUserID.Parameters.Add(phone1Parameter);
-                    getUserID.Parameters.Add(mAddressParameter);
-                    getUserID.Parameters.Add(mCityParameter);
-                    getUserID.Parameters.Add(mZipParameter);
-                    getUserID.Parameters.Add(mStateParameter);
-                    getUserID.Parameters.Add(emailParameter);
-                    getUserID.Parameters.Add(provisionalInstitutionParameter);
-                    try
-                    {
-                        getUserID.Connection = sqlConnection;
-                        getUserID.CommandType = CommandType.StoredProcedure;
+                    int idUser = 0;
+                    sqlConnection.Open();
 
-                        idUser = Convert.ToInt32(getUserID.ExecuteScalar());
-                        @idUserParameter.Value = idUser;
-                        @idUser2Parameter.Value = idUser;
-                    }
-                    catch (Exception ex)
+                    if (newOrder.idAffiliate == 62)
                     {
-                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        using (var getUserID = new SqlCommand("InsertACSUser", sqlConnection))
                         {
-                            errorLogger.CommandText =
-                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() + "',";
-                            errorLogger.CommandText += "'ACSIMPORTER' ,";
-                            errorLogger.CommandText += "9 ,9 ,9 ,'[InsertACSUser]', 9 ,";
-                            errorLogger.CommandText += "'error at InsertACSUser " + ex.Message + "')";
+                            getUserID.Parameters.Add(firstNameParameter);
+                            getUserID.Parameters.Add(lastNameParameter);
+                            getUserID.Parameters.Add(phone1Parameter);
+                            getUserID.Parameters.Add(mAddressParameter);
+                            getUserID.Parameters.Add(mCityParameter);
+                            getUserID.Parameters.Add(mZipParameter);
+                            getUserID.Parameters.Add(mStateParameter);
+                            getUserID.Parameters.Add(emailParameter);
+                            getUserID.Parameters.Add(provisionalInstitutionParameter);
+                            try
+                            {
+                                getUserID.Connection = sqlConnection;
+                                getUserID.CommandType = CommandType.StoredProcedure;
 
-                            errorLogger.ExecuteNonQuery();
+                                idUser = Convert.ToInt32(getUserID.ExecuteScalar());
+                                @idUserParameter.Value = idUser;
+                                @idUser2Parameter.Value = idUser;
+                            }
+                            catch (Exception ex)
+                            {
+                                using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                                {
+                                    errorLogger.CommandText =
+                                        "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                                    errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() +
+                                                               "',";
+                                    errorLogger.CommandText += "'ACSIMPORTER' ,";
+                                    errorLogger.CommandText += "9 ,9 ,9 ,'[InsertACSUser]', 9 ,";
+                                    errorLogger.CommandText += "'error at InsertACSUser " + ex.Message + "')";
 
+                                    errorLogger.ExecuteNonQuery();
+
+                                }
+                            }
+                            using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                            {
+                                errorLogger.CommandText =
+                                    "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                                errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() + "',";
+                                errorLogger.CommandText += "'ACSIMPORTER' ,";
+                                errorLogger.CommandText += "0 ,0 ,0 ,'[InsertACSUser]', 0 ,";
+                                errorLogger.CommandText += "'InsertACSUser returned " + idUser.ToString() + "')";
+
+                                errorLogger.ExecuteNonQuery();
+                            }
+                        }
+                    }else
+                    {
+                        using (var getUserID = new SqlCommand("InsertUser", sqlConnection))
+                        {
+                            getUserID.Parameters.Add(firstNameParameter);
+                            getUserID.Parameters.Add(idAffParameter);
+                            getUserID.Parameters.Add(lastNameParameter);
+                            getUserID.Parameters.Add(phone1Parameter);
+                            getUserID.Parameters.Add(mAddressParameter);
+                            getUserID.Parameters.Add(mCityParameter);
+                            getUserID.Parameters.Add(mZipParameter);
+                            getUserID.Parameters.Add(mStateParameter);
+                            getUserID.Parameters.Add(emailParameter);
+                            getUserID.Parameters.Add(provisionalInstitutionParameter);
+                            try
+                            {
+                                getUserID.Connection = sqlConnection;
+                                getUserID.CommandType = CommandType.StoredProcedure;
+
+                                idUser = Convert.ToInt32(getUserID.ExecuteScalar());
+                                @idUserParameter.Value = idUser;
+                                @idUser2Parameter.Value = idUser;
+                            }
+                            catch (Exception ex)
+                            {
+                                using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                                {
+                                    errorLogger.CommandText =
+                                        "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                                    errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() +
+                                                               "',";
+                                    errorLogger.CommandText += "'ACSIMPORTER' ,";
+                                    errorLogger.CommandText += "9 ,9 ,9 ,'[InsertACSUser]', 9 ,";
+                                    errorLogger.CommandText += "'error at InsertACSUser " + ex.Message + "')";
+
+                                    errorLogger.ExecuteNonQuery();
+
+                                }
+                            }
+                            using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                            {
+                                errorLogger.CommandText =
+                                    "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                                errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() + "',";
+                                errorLogger.CommandText += "'ACSIMPORTER' ,";
+                                errorLogger.CommandText += "0 ,0 ,0 ,'[InsertACSUser]', 0 ,";
+                                errorLogger.CommandText += "'InsertACSUser returned " + idUser.ToString() + "')";
+
+                                errorLogger.ExecuteNonQuery();
+                            }
                         }
                     }
-                    using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                    {
-                        errorLogger.CommandText =
-                            "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                        errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() + "',";
-                        errorLogger.CommandText += "'ACSIMPORTER' ,";
-                        errorLogger.CommandText += "0 ,0 ,0 ,'[InsertACSUser]', 0 ,";
-                        errorLogger.CommandText += "'InsertACSUser returned " + idUser.ToString() + "')";
-
-                        errorLogger.ExecuteNonQuery();
-                    }
-                }
-
-                using (var sendOrder = new SqlCommand("ImportOrderACS", sqlConnection))
+                    using (var sendOrder = new SqlCommand("ImportOrderACS", sqlConnection))
                 {
                     sendOrder.Parameters.Add(idUser2Parameter);
                     sendOrder.Parameters.Add(idWebinarParameter);
@@ -489,10 +549,7 @@ namespace CUWebinars.Business.Core
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 sqlConnection.Open();
-                using (var getPricingsCommand = new SqlCommand())
-                {
 
-                }
                 using (var getPricingsCommand = new SqlCommand())
                 {
                     var webinarIdParameter = new SqlParameter

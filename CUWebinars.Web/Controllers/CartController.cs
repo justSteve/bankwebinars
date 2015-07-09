@@ -128,6 +128,12 @@ namespace CUWebinars.Web.Controllers
 
                     _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
 
+
+                    
+                    //_cartControllerOrchestrator.SendOrderToLegacy(model.Order);
+
+                    _cartControllerOrchestrator.CreatePostEventClaim(model.Order);
+                    
                     return Json(new
                     {
                         Result = WebUiConstants.Success,

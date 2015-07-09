@@ -428,7 +428,7 @@ namespace CUWebinars.Business.Services
                 //  get the most recent
                 int affiliateIdForOrder, mostRecentAffiliateId;
                 affiliateIdForOrder = mostRecentAffiliateId = affiliateIds.First();
-                
+
                 var sb = new StringBuilder();
                 // The history is of more than 1 affiliate
                 if (affiliateIds.Distinct().Count() > 1)
@@ -827,8 +827,6 @@ namespace CUWebinars.Business.Services
         public void FireSendRecordingIsPostedEvent(IList<Order> orders)
         {
 
-
-
             foreach (var order in orders)
             {
                 Double[] i = _webinarRepository.GetCostOfUpgrades(order.OrderRows.Single().idRegType);
@@ -1028,8 +1026,14 @@ namespace CUWebinars.Business.Services
 
         public void FireSendRecordingPostedNotificationEvent(IList<Order> orders)
         {
+            var title = orders[0].OrderRows.SingleOrDefault().Webinar.Title;
+
+            _logger.Info("Begins RecordingPostedNotification for {1} with {0} orders.", orders.Count, title);
+            var x = 0;
             foreach (var order in orders)
             {
+                _logger.Info("RecordingPostedNotification {0} of {1} sent to {2} for {3}.",x, orders.Count, order.BillingEmail, title);
+
                 var postEventPublishModel = new PostEventPublishModel()
                 {
                     Order = order
@@ -1289,11 +1293,11 @@ namespace CUWebinars.Business.Services
         public void GetJoinUrl(OrderRow row)
         {
             Order order = row.Order;
-return;
+            return;
             if (row.Webinar.Status != WebinarStatus.Active && row.Webinar.Status != WebinarStatus.InProgress || row.Webinar.CitrixJoinInfoAvailable())
             {
                 //if not initialized, don't hit Citrix
-                
+
             }
             if (row.CitrixJoinUrl == null && row.RegistrationType.ShowLiveNotifications == "Yes")
             {
@@ -1430,7 +1434,7 @@ return;
                         EventObject = orderSubmittedViewModel,
                         RelativePath = string.Empty
                     });
-                    
+
                     //it appears that the only way an event could be added within this method is a true response in the above If test.
                     // hence this statement can be safely moved up here? [dar] not sure what you mean.
                     foreach (var evt in GetEvents())

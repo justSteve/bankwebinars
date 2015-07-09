@@ -270,7 +270,9 @@ namespace CUWebinars.Web.App_Start
             bundles.Add(new StyleBundle("~/Content/data-tables").Include(
                 "~/Content/DataTables/css/jquery.dataTables.css",
                 "~/Content/DataTables/css/dataTables.bootstrap.css",
+                "~/Content/css/bootstrapOverrides.css", 
                 "~/Content/DataTables/css/dataTables.tableTools.css")
+
                 );
 
             bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(

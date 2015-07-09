@@ -103,8 +103,8 @@ var RegistrationInCart;
         };
 
         StateManager.prototype.checkAndSubmitEmail = function () {
-            this.ensureFormValidatorParsed();
-            if ($('#RegisterFields_Email').valid() == true) {
+            this.ensureFormValidatorParsed();;
+            if ($('#RegisterFields_Email').valid() === true) {
                 //console.log(REG.PageObjects.emailInput().valid());
                 //Rollbar.log("hitr");
                 $('#emailAddress').val($('#checkEmail').val());
@@ -401,6 +401,8 @@ var RegistrationInCart;
             $('#ResetPassEmail').val(email);
             $('#labelEmail').html('<span class="label label-important"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is already on file.</span>');
             $('#wrapEmail').hide('slow');
+            $('#modalUserHasAccount').modal('show');
+            
 
             var showLoginInput = $.Deferred(function () {
                 $('#wrapReset').show('slow');

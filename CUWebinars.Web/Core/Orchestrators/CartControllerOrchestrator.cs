@@ -20,6 +20,7 @@ using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -782,6 +783,59 @@ namespace CUWebinars.Web.Core.Orchestrators
             UpdateOrderPricing(model.Order);
 
             return model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
+        }
+
+        public void SendOrderToLegacy(Order order)
+        {
+            if (_globalConfig.Tenant == "BankWebinars")
+            _orderManagementService.SendOrderToLegacy(order);
+        }
+
+        public void CreatePostEventClaim(Order order)
+        {
+
+            if (!ReferenceEquals(null, order))
+            {
+                var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+
+                if (orderRow.Webinar.Status != WebinarStatus.Recorded) return;
+
+                var onDemandCode = RandomHelpers.GetUniqueCode(5).ToLower();
+                var newExpiryDate = orderRow.Webinar.Date.AddMonths(6).ToShortDateString();
+                var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
+                var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, newExpiryDate);
+                var OnDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, onDemandCode);
+
+                var claimValue = new JObject(
+                    orderIdProperty,
+                    expiryDateProperty,
+                    OnDemandCodeProperty
+                    );
+
+                orderRow.OnDemandCode = onDemandCode;
+                _orderManagementService.SaveChanges();
+
+                var userAccountOfOrderer = _membershipService.GetUserAccountByEmail(
+                    _globalConfig.Tenant,
+                    order.WebUser.email
+                    );
+
+                _membershipService.AddClaim(
+                    userAccountOfOrderer,
+                    ClaimTypes.DisplayPostEventMaterials
+                    , claimValue.ToString(Formatting.None)
+                    );
+
+
+                //_membershipService.UpdateDisplayPostEventMaterialsClaim(
+                //    _globalConfig.Tenant,
+                //    order.BillingEmail,
+                //    DateTime.Parse(newExpiryDate),
+                //    order
+                //    );
+                _logger.Info("Added (at checkout) expiryDate claim for: {0}. Date: {1}", order.idOrder,
+                    DateTime.Parse(newExpiryDate));
+            }
         }
 
         public INotificationMessage GenerateMessagePreview(Order order)

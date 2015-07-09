@@ -111,26 +111,29 @@
                                 <div class="pull-right span4" id="orderSum-@row.idWebinar">
                                     @{ Html.RenderPartial("DisplayTemplates/OrderSumUser", row.Order); }
 
-                                    <h5>Share Event Notifications!</h5>
-                                    @{Html.RenderPartial("Partials/_ShareNotifications", row.Order);}
+                                    <aside class="widget">
+                                        <h5 class="short_headline"><span>Share Connection Info</span></h5>
+                                        @{Html.RenderPartial("Partials/_ShareNotifications", row.Order);}
+                                    </aside>
+
                                 </div>
                                 <div class="span7">
                                     <h4 id="upcoming-@row.idWebinar">@row.Webinar.Title</h4>
 
                                     <b>@row.RegistrationType.OptionLabel</b> - will be presented by @row.Webinar.Presenter.WebUser.FullName @Html.Raw(remainingDays) starting at @Html.DisplayTime(row.Webinar.Date, timeZ, true).
                                     @{
-                                    var additionalLocationsPricing = GetAdditionalLocationsPricing(row.AdditionalLocation, row.idWebinar);
-                                    if (additionalLocationsPricing == null)
-                                    {
-                                        throw new ArgumentNullException("additionalLocationsPricing");
-                                    }
+                                        var additionalLocationsPricing = GetAdditionalLocationsPricing(row.AdditionalLocation, row.idWebinar);
+                                        if (additionalLocationsPricing == null)
+                                        {
+                                            throw new ArgumentNullException("additionalLocationsPricing");
+                                        }
 
-                                    var orderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
-                                    {
-                                        AdditionalLocations = row.AdditionalLocation,
-                                        Addresses = additionalLocationsPricing.Item1,
-                                        OptionsCost = additionalLocationsPricing.Item2
-                                    };
+                                        var orderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
+                                        {
+                                            AdditionalLocations = row.AdditionalLocation,
+                                            Addresses = additionalLocationsPricing.Item1,
+                                            OptionsCost = additionalLocationsPricing.Item2
+                                        };
                                     }
 
                                     @{ Html.RenderPartial("Partials/OrderHasAdditionalLocations", orderHasAdditionalLocationsViewModel); }

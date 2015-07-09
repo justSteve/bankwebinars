@@ -438,19 +438,14 @@ namespace CUWebinars.Web.Core.Orchestrators
                     _logger.Error(string.Format(webinarDetailsViewModel.Webinar.RecordingUrl, " does not exist."));
                     return false;
                 }
-
-                var ordersForWebinar = _orderManagementService.GetOrdersForWebinar(webinar.idWebinar);
-
-                AddClaimForPostEventMaterials(ordersForWebinar);
-
                 webinar.RecordingUrl = webinarDetailsViewModel.Webinar.RecordingUrl;
 
                 webinar.Status = WebinarStatus.Recorded;
 
                 _webinarManagementService.UpdateWebinar(webinar);
 
-                _orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
                 _logger.Info(string.Format("Recording for {0} is saved to {1}", webinar.idWebinar, webinar.RecordingUrl));
+                SendsRecordingIsPostedNotifications(webinarDetailsViewModel, webinar);
                 return true;
 
             }
@@ -461,6 +456,16 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
 
             return false;
+        }
+
+        private void SendsRecordingIsPostedNotifications(WebinarDetailsViewModel webinarDetailsViewModel, Webinar webinar)
+        {
+            var ordersForWebinar = _orderManagementService.GetOrdersForWebinar(webinar.idWebinar);
+
+            AddClaimForPostEventMaterials(ordersForWebinar);
+            
+            _orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
+            
         }
 
         //public string SetEventToRecorded(int webinarId)
@@ -796,7 +801,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (regType.ShowRecordingNotifications.Equals("yes", StringComparison.OrdinalIgnoreCase))
                 return DateTime.Today.AddMonths(6);
 
-            return DateTime.Today.AddDays(5);
+            return DateTime.Today.AddDays(7);
         }
 
         private void AddClaimForPostEventMaterials(IEnumerable<Order> orders)
@@ -832,7 +837,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         userAccountOfOrderer, ClaimTypes.DisplayPostEventMaterials, claimValue.ToString(Formatting.None)
                         );
 
-                    _logger.Info("Claim for onDemand access added for " + order.idOrder + "-" + onDemandCode);
+                    _logger.Info("Claim of OnDemand access added for " + order.idOrder + "-" + onDemandCode);
 
                 }
                 catch (Exception)

@@ -462,13 +462,13 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                 } else {
 
                                     $('#ConfirmRegistrationBillMe').on('click', function (e) {
-                                        L.clientLogger.info("BigGreenBillMe from register-user-in-cart", { orderid: orderid});
                                         completeOrder(userId, orderRowId, webinarId, orderId);
+                                        L.clientLogger.info("BigGreenBillMe from register-user-in-cart", { orderid: orderId });
                                     });
 
                                     // The 'TO PAY BY CREDIT CARD' button on 3rd tab
                                     $('#ConfirmRegistrationPayByCC').on('click', function (e) {
-                                        L.clientLogger.info("ConfirmRegistrationPayByCC is clicked", { orderid: orderid })
+                                        L.clientLogger.info("ConfirmRegistrationPayByCC is clicked", { orderid: orderId });
 
                                         e.preventDefault();
 

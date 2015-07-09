@@ -311,13 +311,17 @@ namespace CUWebinars.Web.Controllers
 
 
         [System.Web.Mvc.AllowAnonymous]
-        [System.Web.Mvc.HttpPost]
-        public ActionResult MyCertificate(int orderID)
+        [System.Web.Mvc.HttpGet]
+        public ActionResult MyCertificate(int orderID, string displayName)
         {
             var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
 
             var currentOrder = _orderManagementService.GetOrderById(orderID);
-            var model = new CertOfCompletionViewModel { CurrentUser = currentUser, Order = currentOrder };
+            if (ReferenceEquals(displayName, null))
+            {
+                displayName = currentUser.FirstName + ' ' + currentUser.LastName;
+            }
+            var model = new CertOfCompletionViewModel { DisplayName = displayName, Order = currentOrder };
 
 
             return View("MyCertificate", model);

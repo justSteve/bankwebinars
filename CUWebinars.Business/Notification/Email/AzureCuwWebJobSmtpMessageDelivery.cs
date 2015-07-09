@@ -24,7 +24,7 @@ namespace CUWebinars.Business.Notification.Email
 
         public void Notify(INotificationMessage notificationMessage)
         {
-            _logger.Info("Sending notification with PersistedName {0}", notificationMessage.PersistedName);
+            //_logger.Info("Sending notification with PersistedName {0}", notificationMessage.PersistedName);
 
             var storageCredentials = new StorageCredentials(_storageAccountName, _storageAccessKey);
             var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
@@ -39,7 +39,7 @@ namespace CUWebinars.Business.Notification.Email
             cloudQueue.EncodeMessage = true;
             cloudQueue.AddMessage(cloudQueueMessage);
 
-            _logger.Info("Notification successfully enqueued AzureCuwWebJobSmtpMessageDelivery: " + notificationMessage.To);
+            _logger.Info(string.Format("WebJobSmtpMsg to: {0}, filename is: {1} ", notificationMessage.To, notificationMessage.PersistedName));
         }
 
         private void EnsureMessage(INotificationMessage message)
@@ -48,7 +48,7 @@ namespace CUWebinars.Business.Notification.Email
             {
                 message.From = string.Empty;
             }
-            
+
             if (ReferenceEquals(null, message.To))
             {
                 throw new Exception("Message had no recipient.");
