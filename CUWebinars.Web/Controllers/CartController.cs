@@ -510,7 +510,7 @@ namespace CUWebinars.Web.Controllers
             if (oResult)
             {
                 var order = _cartControllerOrchestrator.LoadOrder(qOrder);
-                return View("~/Views/Home/PayCC_Declined.cshtml", order);
+                return View("~/Views/Cart/PayCC_Declined.cshtml", order);
 
             }
             _logger.Info("ERROR: PayCC Declined Fell too far: " + formFields);

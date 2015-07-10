@@ -114,7 +114,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 string updatedUserComments = JsonHelpers.AddObjectToJsonArray(
                     order.UserComments,
-                    JsonPropertyKeys.PostEventMaterialsWereAccessedKey, 
+                    JsonPropertyKeys.PostEventMaterialsWereAccessedKey,
                     fieldsToComments
                     );
                 order.UserComments = updatedUserComments;
@@ -156,9 +156,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
             else
             {
-                _logger.Warn("UserComments for OnDemand access failed to save: {0}", order.UserComments);                
+                _logger.Warn("UserComments for OnDemand access failed to save: {0}", order.UserComments);
             }
-            
+
             _orderManagementService.SaveChanges();
 
             _stateService.SetValue(WebUiConstants.AnonUserIdentified, true);
@@ -166,7 +166,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             return
                 new RedirectToRouteResult(
                     new RouteValueDictionary(
-                        new {action = "OnDemand", controller = "Webinar", onDemandCode = identifyModel.OnDemandCode})
+                        new { action = "OnDemand", controller = "Webinar", onDemandCode = identifyModel.OnDemandCode })
                         );
         }
 
@@ -201,7 +201,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 //}
 
                 ProcessAccessPermissionsForMaterials(order, playModel);
-                
+
                 return viewResult;
             }
 
@@ -213,6 +213,54 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
 
             return new RedirectToRouteResult(new RouteValueDictionary(new { action = "Identify", controller = "Webinar", onDemandCode = id.ToString() + "-" + onDemandCode }));
+        }
+
+
+        public ActionResult OnDemandLegacy(int idWebinar, int idUser)
+        {
+
+
+            //var claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)userIdentity;
+
+            //var orders = _orderManagementService.GetOrdersByUserId(idUser);
+
+            //var order = orders.Where(o => o.OrderRows.SingleOrDefault
+            //    (s => s.RowStatus == OrderRowStatus.Active)
+            //        .idWebinar);
+            var webinar = GetWebinar(idWebinar);
+
+            var playModel = new OnDemandPlaybackModel
+            {
+                Presenter = webinar.Presenter,
+                Webinar = webinar,
+                AuthorizedToAccessMaterials = true
+            };
+
+            var viewResult = new ViewResult { ViewName = "OnDemand" };
+            viewResult.ViewData.Model = playModel;
+
+            return viewResult;
+            //if (claimsIdentityOfAuthenticatedUser.IsAuthenticated)
+            //{
+            //    //permits admins to preview onDemand pages
+            //    //if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == ClaimTypes.Admin))
+            //    //{
+            //    //    return new RedirectToRouteResult(new RouteValueDictionary(new { action = "Index", controller = "Admin" }));
+            //    //}
+
+            //    ProcessAccessPermissionsForMaterials(order, playModel);
+
+            //   
+            //}
+
+            //if (_stateService.HasValue(WebUiConstants.AnonUserIdentified) && _stateService.GetValue<bool>(WebUiConstants.AnonUserIdentified))
+            //{
+            //    ProcessAccessPermissionsForMaterials(order, playModel);
+
+            //    return viewResult;
+            //}
+
+            //return new RedirectToRouteResult(new RouteValueDictionary(new { action = "Identify", controller = "Webinar", onDemandCode = id.ToString() + "-" + onDemandCode }));
         }
 
         private string ProcessAccessPermissionsForMaterials(Order order, OnDemandPlaybackModel playModel)
@@ -463,9 +511,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             var ordersForWebinar = _orderManagementService.GetOrdersForWebinar(webinar.idWebinar);
 
             AddClaimForPostEventMaterials(ordersForWebinar);
-            
+
             _orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
-            
+
         }
 
         //public string SetEventToRecorded(int webinarId)
@@ -540,7 +588,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             catch (Exception exception)
             {
                 _logger.ErrorException(
-                    string.Format("UpdateWebinarFiles| UpdateWebinarFiles failed {0}", exception.Message), 
+                    string.Format("UpdateWebinarFiles| UpdateWebinarFiles failed {0}", exception.Message),
                     exception
                     );
                 message = "Update failed. We have logged the error. Please call us at 800-831-0678 ext. 3 to resolve.";

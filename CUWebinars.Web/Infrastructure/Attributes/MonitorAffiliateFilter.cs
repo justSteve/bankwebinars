@@ -52,22 +52,30 @@ namespace CUWebinars.Web.Infrastructure.Attributes
 
         private void ExtractFromHistoricalUsageOfLoggedInUser(ActionExecutingContext filterContext)
         {
-            var userIdentity = filterContext.HttpContext.User.Identity;
-
-            if (userIdentity.IsAuthenticated)
+            if (!ReferenceEquals(filterContext.HttpContext.User, null))
             {
-                var webUser =
-                    _orderManagementService.GetWebUser(
-                        ((ClaimsIdentity)userIdentity).Claims.Single(c => c.Type == ClaimTypes.Email).Value
-                        );
+                var userIdentity = filterContext.HttpContext.User.Identity;
 
-                var affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser);
-
-                // if null returned, just use whatever is stored in Session for CurrentAffiliate. O/w, set that value.
-                if (!ReferenceEquals(null, affiliate))
+                if (userIdentity.IsAuthenticated)
                 {
-                    _stateService.SetValue(WebUiConstants.CurrentAffiliate, affiliate);
+                    var webUser =
+                        _orderManagementService.GetWebUser(
+                            ((ClaimsIdentity) userIdentity).Claims.Single(c => c.Type == ClaimTypes.Email).Value
+                            );
+
+                    var affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser);
+
+                    // if null returned, just use whatever is stored in Session for CurrentAffiliate. O/w, set that value.
+                    if (!ReferenceEquals(null, affiliate))
+                    {
+                        _stateService.SetValue(WebUiConstants.CurrentAffiliate, affiliate);
+                    }
                 }
+            }
+            else
+            {
+                var affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(2988);
+
             }
         }
 

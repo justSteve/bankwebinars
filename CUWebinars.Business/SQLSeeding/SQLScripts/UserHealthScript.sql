@@ -28,13 +28,12 @@
 --/************************************************************************************************************/
 --/* show UserAccounts records which do not have a FullName claim  */
 --/************************************************************************************************************/
---SELECT  *
---FROM    UserAccounts ua
---WHERE   NOT EXISTS ( SELECT *
---                     FROM   UserClaims uc
---                     WHERE  uc.ParentKey = ua.[Key]
---                            AND [Type] = 'http://cuwebinars.com/ws/2014/01/identity/claims/FullName' )
-
+SELECT  *
+FROM    UserAccounts ua
+WHERE   NOT EXISTS ( SELECT *
+                     FROM   UserClaims uc
+                     WHERE  uc.ParentKey = ua.[Key]
+                            AND [Type] = 'http://cuwebinars.com/ws/2014/01/identity/claims/FullName' )
 
 ------/************************************************************************************************************/
 ------/* show UserAccounts records which do not have a WebUser claim */

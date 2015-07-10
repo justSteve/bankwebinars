@@ -28,14 +28,39 @@ namespace CUWebinars.Web.App_Start
                 "OnDemand",
                 url: "o/{onDemandCode}",
                 defaults: new { controller = "Webinar", action = "OnDemand" }
-                //,constraints: new { id = @"\d+" }
+                
             );
             routes.MapRoute(
                 "RedirectLegacy",
-                url: "Webinar/Play/w={idWebinar}&amp;u={idUser}",
+                url: "Webinar/Play",
                 defaults: new { controller = "Webinar", action = "RedirectLegacy" }
-                //,constraints: new { id = @"\d+" }
+                
             );
+
+            routes.MapRoute(
+                "RedirectLegacyHandouts",
+                url: "handouts/{arg1}/{arg2}",
+                defaults: new { controller = "Webinar", action = "RedirectLegacyHandouts" }
+            );
+            routes.MapRoute(
+                "RedirectLegacyHandouts1",
+                url: "handouts/{arg1}",
+                defaults: new { controller = "Webinar", action = "RedirectLegacyHandouts" }
+            );
+
+
+            routes.MapRoute(
+                "RedirectLegacyRecordings",
+                url: "Recordings/{arg1}/{arg2}",
+                defaults: new { controller = "Webinar", action = "RedirectLegacyRecordings" }
+            );
+            routes.MapRoute(
+                "RedirectLegacyRecordings1",
+                url: "Recordings/{arg1}",
+                defaults: new { controller = "Webinar", action = "RedirectLegacyRecordings" }
+            );
+
+
 
             routes.MapRoute(
                 "Quiz",

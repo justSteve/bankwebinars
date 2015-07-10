@@ -89,9 +89,9 @@
 
         rowAmount.Append("<button id='revealOptions' class='btn btn-mini btn-default'> change?</button> " + Model.RegistrationType.OptionLabel + ": <span id='baseCost'>" + Model.PricesAndDiscounts.UnitPrice.ToString("c0") + "</span><br />");
 
-        rowAmount.Append("<button id='revealDiscountInput' class='btn btn-mini btn-default'> add discount?</button> " + GetDiscountedTextSpan() + "<br />");
+        //rowAmount.Append("<button id='revealDiscountInput' class='btn btn-mini btn-default'> add discount?</button> " + GetDiscountedTextSpan() + "<br />");
 
-        rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> edit?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
+        //rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> edit?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
 
         rowAmount.Append("<span id='totalPriceText'>Total Cost: <span id='totalPrice'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "</span></span>");
 

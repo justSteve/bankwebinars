@@ -25,7 +25,7 @@
                     <div id="userDetailsSummed" class="span10 offset2">
                         <p>
                             @Html.Raw(@Model.UserDetails)
-                            <a id="editUserDetails" role="button" class="btn btn-mini"> Edit?</a>
+                            @*<a id="editUserDetails" role="button" class="btn btn-mini"> Edit?</a>*@
                         </p>
 
                     </div>
@@ -42,28 +42,28 @@
                         </div>
                     }
                 </div>
-                <div id="AdjustDiscount" class="row initialHide">
+                @*<div id="AdjustDiscount" class="row initialHide">
                     <div class="offset2 span9 ">
                         <div id="EnterDiscountCode" class="clear pull-right">
                             @Html.TextBoxFor(m => m.CheckoutDiscountCode, new { @class = "input input-medium", placeholder = "Enter Discount Code" })
                             <button class="btn btn-mini btn-primary" role="button" id="SubmitDiscountCode">Apply Code</button>
                         </div>
                     </div>
-                </div>
-                <div id="AdjustAddLoc" class="row initialHide">
+                </div>*@
+                @*<div id="AdjustAddLoc" class="row initialHide">
                     <div class="offset2 span9 ">
                         <div id="additionalLocationsCaption" class="clear pull-right">
                             Additional Locations: <button id="addAnotherAddLoc" class="btn btn-mini">add</button>
                             
                             @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new {id = "AdjustAddLocsForm"} ))
                             {
-                                <div id="additionalLocationsList">@* List of additional location inputs gets copied here. *@
+                                <div id="additionalLocationsList">
                             
                                 </div>
                             }
                         </div>
                     </div>
-                </div>
+                </div>*@
                 <div id="AdjustOrder" class="row initialHide">
                     <div class="offset2 span9 ">
                         <div id="RegTypeChanger" class="clear pull-right">
