@@ -23,12 +23,12 @@ namespace CUWebinars.Web.Models
         public decimal FlatOff { get; set; }
 
         [Required]
-        [Display(Name = "Times Used")]
-        public int UsesCount { get; set; }
+        [Display(Name = "Credits Used")]
+        public decimal CreditsUsed { get; set; }
 
         [Required]
-        [Display(Name = "Uses Remaining")]
-        public int UsesRemain { get; set; }
+        [Display(Name = "Credits Remaining")]
+        public decimal CreditsRemain { get; set; }
 
         [Required]
         [Display(Name = "Date Started")]

@@ -10,7 +10,7 @@
 
     WebUser currentUser = Model.WebUser;
     var EditResult = "<span>&nbsp;</span>";
-    var userSubscription = new CompPersSubscriptionsModel() { Discount = Model.Subscription, UserId = currentUser.idUser };
+    var userSubscription = new DiscountDetailsModel() { Discount = Model.Package, UserId = currentUser.idUser };
     //var userPackage = new DiscountDetailsModel() { Discount = Model.Package, UserId = currentUser.idUser };
     if (TempData["EditResult"] != null && (string)TempData["EditResult"] != "")
     {
@@ -69,7 +69,8 @@
             @if (userSubscription.Discount != null)
             {
 
-                Html.RenderPartial("Partials/Subscription", userSubscription );
+                //Html.RenderPartial("Partials/Subscription", userSubscription );
+                Html.RenderPartial("DisplayTemplates/ShowDiscountSubscription", Model.Subscription );
 
             }
         </div>

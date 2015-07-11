@@ -378,8 +378,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 PercentOff = discountModel.PercentOff,
                 RenewalTerm = discountModel.RenewalTerm,
                 Status = discountModel.Status,
-                UsesCount = discountModel.UsesCount,
-                UsesRemain = discountModel.UsesRemain,
+                CreditsUsed = discountModel.CreditsUsed,
+                CreditsRemain = discountModel.CreditsRemain,
                 //WebUserDiscountXref = 
                 //idDiscount = 
             };
@@ -774,12 +774,23 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             _universalMapper.Map(userDiscount, discountModel);
 
+            discountModel.DateValidFrom = userDiscount.DateValidFrom;
+            discountModel.DateValidTo = userDiscount.DateValidTo;
+            discountModel.RenewalTerm = userDiscount.RenewalTerm;
+            discountModel.Status= userDiscount.Status;
+            discountModel.Notes= userDiscount.Notes;
+            
+
             if (discountModel.TypeOfDiscount == DiscountType.ComplianceSeries)
             {
-                discountModel.DateValidFrom = userDiscount.DateValidFrom;
-                discountModel.DateValidTo = userDiscount.DateValidTo;
+                
+            }
 
-                // ???
+            if (discountModel.TypeOfDiscount == DiscountType.Package)
+            {
+                discountModel.CreditsRemain = userDiscount.CreditsRemain;
+                discountModel.CreditsUsed = userDiscount.CreditsUsed;
+
             }
 
             return discountModel;

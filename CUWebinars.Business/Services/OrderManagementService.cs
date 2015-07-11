@@ -1503,10 +1503,10 @@ namespace CUWebinars.Business.Services
         {
             if (discount.DiscountType != DiscountType.Subscription)
 
-                discount.UsesCount++;
+                discount.CreditsUsed++;
 
-            if (discount.UsesRemain > 0)
-                discount.UsesRemain--;
+            if (discount.CreditsRemain > 0)
+                discount.CreditsRemain--;
 
             _logger.Info("Discount was redeemed for {0}.", discount.DiscountCode);
 
@@ -1514,7 +1514,7 @@ namespace CUWebinars.Business.Services
 
         private void RejectDiscount(OrderRow orderRow)
         {
-            orderRow.Discount.UsesRemain++;
+            orderRow.Discount.CreditsRemain++;
             //according to legacy code but can a condition exist 
             //  a non-valid discount resulted in a decrement.
         }

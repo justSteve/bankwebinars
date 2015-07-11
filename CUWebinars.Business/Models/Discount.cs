@@ -11,8 +11,8 @@ namespace CUWebinars.Business.Models
         public string DiscountCode { get; set; }
         public decimal PercentOff { get; set; }
         public decimal FlatOff { get; set; }
-        public int UsesCount { get; set; }
-        public int UsesRemain { get; set; }
+        public decimal CreditsUsed { get; set; }
+        public decimal CreditsRemain { get; set; }
         public DateTime DateValidFrom { get; set; }
         public DateTime DateValidTo { get; set; }
         public string Status { get; set; }

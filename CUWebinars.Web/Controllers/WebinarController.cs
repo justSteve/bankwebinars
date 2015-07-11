@@ -766,8 +766,8 @@ namespace CUWebinars.Web.Controllers
                                         //PercentOff = discountModel.PercentOff,
                                         //RenewalTerm = discountModel.RenewalTerm,
                                         //Status = discountModel.Status,
-                                        //UsesCount = discountModel.UsesCount,
-                                        //UsesRemain = discountModel.UsesRemain,
+                                        //CreditsUsed = discountModel.CreditsUsed,
+                                        //CreditsRemain = discountModel.CreditsRemain,
                                         ////WebUserDiscountXref = 
                                         ////idDiscount = 
                                     },
