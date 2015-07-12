@@ -302,10 +302,11 @@ namespace CUWebinars.Web.Controllers
             {
                 return RedirectToAction("Index", "Admin");
             }
-
             var discountModel = _accountControllerOrchestrator.BuildDiscountModel();
             var myWebinarsDTO = _accountControllerOrchestrator.BuildMyWebinarsDTO(discountModel, claimsIdentityOfAuthenticatedUser);
 
+
+            ViewBag.idUser = myWebinarsDTO.WebUser.idUser;
             return View("MyWebinars", myWebinarsDTO);
         }
 
@@ -348,6 +349,16 @@ namespace CUWebinars.Web.Controllers
                 Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 throw;
             }
+        }
+
+        [System.Web.Mvc.AllowAnonymous]
+        [System.Web.Mvc.HttpPost]
+        [ValidateAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
+        public ActionResult WPSConfirmation()
+        {
+            return View();
+
         }
 
         [System.Web.Mvc.AllowAnonymous]

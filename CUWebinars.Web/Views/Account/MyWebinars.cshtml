@@ -66,12 +66,17 @@
             }
         </div>
         <div class="tab-pane" id="subscriptions">
-            @if (userSubscription.Discount != null)
+            
+            @if (Model.Subscription != null)
+            {
+                //Html.RenderPartial("Partials/Subscription", userSubscription );
+                Html.RenderPartial("DisplayTemplates/ShowDiscountSubscription", Model.Subscription);
+            }
+            else
             {
 
-                //Html.RenderPartial("Partials/Subscription", userSubscription );
-                Html.RenderPartial("DisplayTemplates/ShowDiscountSubscription", Model.Subscription );
-
+                Html.RenderPartial("DisplayTemplates/ShowDiscountSubscription", Model.Package);
+                
             }
         </div>
         @*<div class="tab-pane" id="account">

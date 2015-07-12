@@ -490,12 +490,19 @@ namespace CUWebinars.Web.Controllers
             return View("~/Views/Cart/PayCC.cshtml", order);
         }
 
-        public void CCPostBack(FormCollection form)
+        public void PostBackCC(FormCollection form)
         {
             string formFields = Request.Form.ToString();
 
 
-            _logger.Info("CCPostBack: " + formFields);
+            _logger.Info("PostBackCC: " + formFields);
+
+        }        
+        
+        public void PostBackWPS(FormCollection form)
+        {
+            string formFields = Request.Form.ToString();
+            _logger.Info("PostBackWPS: " + formFields);
 
         }
 

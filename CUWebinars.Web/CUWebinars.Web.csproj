@@ -948,10 +948,11 @@
     <Content Include="Views\Admin\Partials\_ShowOrdersByUser.cshtml" />
     <Content Include="Views\Admin\Partials\_NotAuthorized.cshtml" />
     <Content Include="Views\Admin\DiscountManagement.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\DiscountGeneral.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\DiscountSubscription.cshtml" />
     <Content Include="Views\Account\OrderCompleteAffiliate.cshtml" />
     <Content Include="Views\Webinar\Partials\_AddNewUser.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\ShowCreditStructure.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\ShowPackagePromo.cshtml" />
+    <Content Include="Views\Cart\Partials\_WPSForm.cshtml" />
     <None Include="Web.BankWebinars31 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

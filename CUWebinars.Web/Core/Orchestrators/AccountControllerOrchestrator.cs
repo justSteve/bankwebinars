@@ -777,21 +777,17 @@ namespace CUWebinars.Web.Core.Orchestrators
             discountModel.DateValidFrom = userDiscount.DateValidFrom;
             discountModel.DateValidTo = userDiscount.DateValidTo;
             discountModel.RenewalTerm = userDiscount.RenewalTerm;
-            discountModel.Status= userDiscount.Status;
-            discountModel.Notes= userDiscount.Notes;
-            
+            discountModel.Status = userDiscount.Status;
+            discountModel.Notes = userDiscount.Notes;
 
-            if (discountModel.TypeOfDiscount == DiscountType.ComplianceSeries)
-            {
-                
-            }
-
-            if (discountModel.TypeOfDiscount == DiscountType.Package)
-            {
-                discountModel.CreditsRemain = userDiscount.CreditsRemain;
-                discountModel.CreditsUsed = userDiscount.CreditsUsed;
-
-            }
+            discountModel.CreditsRemain = userDiscount.CreditsRemain;
+            discountModel.CreditsUsed = userDiscount.CreditsUsed;
+            discountModel.Cost= userDiscount.Cost;
+            discountModel.DateBilled= userDiscount.DateBilled;
+            discountModel.FlatOff = userDiscount.FlatOff;
+            discountModel.PercentOff = userDiscount.PercentOff;
+            discountModel.Status = userDiscount.Status;
+            discountModel.DiscountCode = userDiscount.DiscountCode;
 
             return discountModel;
         }
