@@ -42,14 +42,16 @@
                         </div>
                     }
                 </div>
-                @*<div id="AdjustDiscount" class="row initialHide">
+                <div id="AdjustDiscount" class="row initialHide">
                     <div class="offset2 span9 ">
                         <div id="EnterDiscountCode" class="clear pull-right">
                             @Html.TextBoxFor(m => m.CheckoutDiscountCode, new { @class = "input input-medium", placeholder = "Enter Discount Code" })
                             <button class="btn btn-mini btn-primary" role="button" id="SubmitDiscountCode">Apply Code</button>
+                            <button class="btn btn-mini" role="button" id="closeApplyCode">close</button>
+                            
                         </div>
                     </div>
-                </div>*@
+                </div>
                 @*<div id="AdjustAddLoc" class="row initialHide">
                     <div class="offset2 span9 ">
                         <div id="additionalLocationsCaption" class="clear pull-right">
@@ -119,7 +121,7 @@
                     @if (Model.OrderStatus != OrderStatus.Paid)
                     {
                         
-                        @*<button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>*@
+                        <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>
                         <br />
                     }
                 </div>

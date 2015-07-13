@@ -500,6 +500,10 @@ function setUpEditButtons() {
         e.preventDefault();
         $('#AdjustDiscount').slideToggle();
     });
+    $('#closeApplyCode').on('click', function (e) {
+        e.preventDefault();
+        $('#AdjustDiscount').slideToggle();
+    });
 
     $('#revealAddLocsPanel').on('click', function (e) {
         e.preventDefault();

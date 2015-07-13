@@ -771,7 +771,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             var discountModel = new DiscountModel();
             var currentUser = GetWebUserFromIPrincipal();
             var userDiscount = _orderManagementService.GetDiscountByUser(currentUser);
-
+            if (ReferenceEquals(userDiscount, null))
+                return null;
             _universalMapper.Map(userDiscount, discountModel);
 
             discountModel.DateValidFrom = userDiscount.DateValidFrom;

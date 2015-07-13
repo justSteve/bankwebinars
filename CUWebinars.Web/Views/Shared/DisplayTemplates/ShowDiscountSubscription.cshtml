@@ -71,16 +71,16 @@
                 {
                     <p style="font-size: larger">
                         Your subscription package has been used <b> @Model.CreditsUsed.ToString().Replace(".0", "")</b> times and has
-                        <b>@Model.CreditsRemain.ToString().Replace(".0", "")</b> remaining
+                        <b>@Model.CreditsRemain.ToString().Replace(".0", "")</b> remaining.
                     </p>
                 }
                 @if (Model.CreditsRemain < 2)
                 {
                     <span>
-                        but is about to expire. <button class="btn btn-success">Click here to renew today!</button>
+                       <button class="btn btn-success">Click here to renew today!</button>
                     </span>
                 }
-            </div><text>.</text>
+            </div>
         </div>
 
 

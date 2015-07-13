@@ -24,6 +24,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Web;
+using CUWebinars.Web.Mapping.Mappers;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
 namespace CUWebinars.Web.Core.Orchestrators
@@ -41,6 +42,8 @@ namespace CUWebinars.Web.Core.Orchestrators
         private readonly IFormatter _generalFormatter;
         private readonly IOrderManagementService _orderManagementService;
         private readonly IWebinarManagementService _webinarManagementService;
+        private readonly IUniversalMapper _universalMapper;
+        
         private bool _disposed;
         private GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingletonCreator.UniqueInstance;
 
@@ -51,7 +54,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             ILogger logger,
             HttpRequestBase request,
             IAppHelper appHelper,
-            IFormatter generalFormatter)
+            IFormatter generalFormatter,
+            IUniversalMapper universalMapper)
         {
             Request = request;
             _membershipService = membershipService;
@@ -61,6 +65,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             _orderManagementService = orderManagementService;
             _webinarManagementService = webinarManagementService;
             _stateService = stateService;
+
+            _universalMapper = universalMapper;
         }
 
         public EditUserViewModel BuildEditUserViewModel()
@@ -214,6 +220,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         //AffiliateComments = orderRow.Order.AffiliateComments,
                         //CCUserDetails =
                         //    "None <a href=\"#AddCCModal\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Add?</a> ", // CC user removed at request
+                        DiscountModel = BuildDiscountModel(webUser),
                         DisplayOptionsInDropDownViewModel = BuildDisplayOptionsInDropDownViewModel(orderRow, idOrderRow),
                         DisplayRowPriceViewModel =
                             BuildDisplayRowPriceViewModel(orderRow, idOrderRow,
@@ -279,6 +286,32 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
             _logger.Error("BuildCheckoutConfirmViewModel fell thru to Return Null");
             return null;
+        }
+
+        public DiscountModel BuildDiscountModel(WebUser currentUser)
+        {
+            var discountModel = new DiscountModel();
+            var userDiscount = _orderManagementService.GetDiscountByUser(currentUser);
+            if (ReferenceEquals(userDiscount, null))
+                return null;
+            _universalMapper.Map(userDiscount, discountModel);
+
+            discountModel.DateValidFrom = userDiscount.DateValidFrom;
+            discountModel.DateValidTo = userDiscount.DateValidTo;
+            discountModel.RenewalTerm = userDiscount.RenewalTerm;
+            discountModel.Status = userDiscount.Status;
+            discountModel.Notes = userDiscount.Notes;
+
+            discountModel.CreditsRemain = userDiscount.CreditsRemain;
+            discountModel.CreditsUsed = userDiscount.CreditsUsed;
+            discountModel.Cost = userDiscount.Cost;
+            discountModel.DateBilled = userDiscount.DateBilled;
+            discountModel.FlatOff = userDiscount.FlatOff;
+            discountModel.PercentOff = userDiscount.PercentOff;
+            discountModel.Status = userDiscount.Status;
+            discountModel.DiscountCode = userDiscount.DiscountCode;
+
+            return discountModel;
         }
 
         public CheckoutOptionsViewModel BuildCheckoutOptionsViewModel(
@@ -737,7 +770,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             {
                 Order order = LoadOrder(qOrder);
-                
+
                 if (!ReferenceEquals(null, order))
                 {
                     order.PaymentType = 2;
@@ -750,7 +783,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     order.OrderStatus = OrderStatus.Paid;
                     JObject existingJObject = null;
 
-                    
+
 
                     var newJson =
                         new JProperty(
@@ -788,7 +821,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void SendOrderToLegacy(Order order)
         {
             if (_globalConfig.Tenant == "BankWebinars")
-            _orderManagementService.SendOrderToLegacy(order);
+                _orderManagementService.SendOrderToLegacy(order);
         }
 
         public void CreatePostEventClaim(Order order)
