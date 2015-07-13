@@ -45,7 +45,7 @@ $(function () {
         EQ.editCloneSubmitButton = $('#EditCloneSubmitButton');
         EQ.editCloneSubmitButtonTop = $('#EditCloneSubmitButtonTop');
         EQ.addQuestionButton = $('#AddQuestionButton');
-        EQ.cloneWebinarButton = $('#CloneWebinar');
+        EQ.CloneQuizButton = $('#CloneQuiz');
         EQ.cloneInput = $('#CloneInput');
         EQ.editWebinarButton = $('#EditWebinar');
         EQ.editInput = $('#EditInput');
@@ -55,7 +55,7 @@ $(function () {
         EQ.editCloneSubmitButton.on('click', EQ.submitEditedQuiz);
         EQ.editCloneSubmitButtonTop.on('click', EQ.submitEditedQuiz);
         EQ.addQuestionButton.on('click', EQ.addQuestionClicked);
-        EQ.cloneWebinarButton.on('click', EQ.cloneWebinar);
+        EQ.CloneQuizButton.on('click', EQ.CloneQuiz);
         EQ.editWebinarButton.on('click', EQ.editWebinar);
     };
 
@@ -674,7 +674,7 @@ $(function () {
     };
 
     ns.postAddQuiz = function (btnClickedId, webinarId, questions) {
-
+                alert("hit");
         var payload = {
             Questions: questions,
             SelectedWebinar: webinarId
@@ -688,6 +688,7 @@ $(function () {
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
             beforeSend: function () {
+
                 if (btnClickedId === 'EditCloneSubmitButtonTop') {
                     EQ.editCloneSubmitButtonTop.append('&nbsp;<i id="editQuizSpinner" class="icon-spinner icon-spin"></i>');
                 } else {
@@ -1019,7 +1020,7 @@ $(function () {
         }
     };
 
-    ns.cloneWebinar = function(e) {
+    ns.CloneQuiz = function(e) {
         e.preventDefault();
 
         var payload = {
@@ -1031,7 +1032,7 @@ $(function () {
             type: 'POST',
             contentType: constants.JsonContentType,
             cache: false,
-            url: '/Quiz/CloneWebinar',
+            url: '/Quiz/CloneQuiz',
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
             beforeSend: function () {

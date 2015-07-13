@@ -47,7 +47,7 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [HandleAjaxException]
-        public ActionResult CloneWebinar(int? webinarId, int? quizId)
+        public ActionResult CloneQuiz(int? webinarId, int? quizId)
         {
             if (webinarId.HasValue && quizId.HasValue)
             {
