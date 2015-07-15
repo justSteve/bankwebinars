@@ -731,6 +731,7 @@
     <Content Include="Scripts\app\webinar\identify.js" />
     <Content Include="Content\DataTables\css\dataTables.responsive.scss" />
     <Content Include="Content\DataTables\css\dataTables.jqueryui.scss" />
+    <Content Include="Notification\Templates\AdhocNotification.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars31 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars31 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
@@ -1270,7 +1271,6 @@
     <Content Include="Scripts\app\common.js" />
     <Content Include="Scripts\app\GTW\registrationForm.js" />
     <Content Include="Scripts\app\GTW\utils.js" />
-    <Content Include="Scripts\app\notification-ops\adhoc-notifications.js" />
     <Content Include="Scripts\app\notification-ops\membership-notifications.js" />
     <Content Include="Scripts\app\notification-ops\details-event-webpart.js" />
     <Content Include="Scripts\app\notification-ops\order-event-notifications.js" />

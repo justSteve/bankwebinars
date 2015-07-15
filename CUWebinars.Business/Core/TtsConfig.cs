@@ -30,6 +30,7 @@ namespace CUWebinars.Business.Core
             INotificationDelivery notificationDelivery;
             IOrderConfirmedNotificationDelivery orderConfirmationDelivery;
             IOrderConfirmedForAdditionalLocationDelivery orderConfirmedForAdditionalLocationDelivery;
+            IAdhocNotificationDelivery adhocNotificationDelivery;
 
             // toggle whether to use Azure Webjobs or local code (for local debugiing/development purposes)
             if (useAzureWebjobs)
@@ -49,6 +50,10 @@ namespace CUWebinars.Business.Core
                         new Log4NetLogger(typeof(AzureOrderConfirmedForAdditionalLocationDelivery)),
                         baseUrl
                         );
+                adhocNotificationDelivery = new AzureAdhocNotificationDelivery(
+                    storageAccountName, 
+                    storageAccessKey,
+                    new Log4NetLogger(typeof(AzureAdhocNotificationDelivery)));
             }
             else
             {
@@ -61,6 +66,7 @@ namespace CUWebinars.Business.Core
                     new OrderConfirmedForAdditionalLocationDelivery(
                         new Log4NetLogger(typeof (OrderConfirmedForAdditionalLocationDelivery)), genericFormatter
                         );
+                adhocNotificationDelivery = null; // todo: implement non-azure version 
             }
 
             var notificationOrderHandlerLogger = new Log4NetLogger(typeof(OrderSubmittedHandler));
@@ -75,6 +81,7 @@ namespace CUWebinars.Business.Core
             var emailRecordingPostedHandlerLogger = new Log4NetLogger(typeof(AdminEmailRecordingPostedHandler));
             var sendPerDayPromoHandlerLogger = new Log4NetLogger(typeof(SendPerDayPromoHandler));
             var sendPerWeekPromoHandlerLogger = new Log4NetLogger(typeof(SendPerWeekPromoHandler));
+            var adhocNotificationHandlerLogger = new Log4NetLogger(typeof(AdhocNotificationHandler));
 
 
             config.AddEventHandler(new SendPerDayPromoHandler(genericFormatter, notificationDelivery,sendPerDayPromoHandlerLogger));
@@ -88,6 +95,7 @@ namespace CUWebinars.Business.Core
             config.AddEventHandler(new AdminEmailSendShippedOrderHandler(genericFormatter, emailOrderHandlerLogger, notificationDelivery));
             config.AddEventHandler(new AdminEmailConnectionInfoHandler(genericFormatter, emailConnectionInfoHandlerLogger, notificationDelivery));
             config.AddEventHandler(new AdminEmailRecordingPostedHandler(genericFormatter, emailRecordingPostedHandlerLogger, notificationDelivery));
+            config.AddEventHandler(new AdhocNotificationHandler(adhocNotificationDelivery, adhocNotificationHandlerLogger));
 
             return config;
         }

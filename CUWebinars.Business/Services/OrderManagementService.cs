@@ -262,6 +262,18 @@ namespace CUWebinars.Business.Services
             return _orderRepository.FindOrdersByBillingEmailDomain(email.Trim(), aff);
         }
 
+        public void SendAdhocNotification(string emails, string subject, string body)
+        {
+            var adhocNotificationSubmittedViewModel = new AdhocNotificationMessage
+            {
+                Body = body,
+                Recipients = emails.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries),
+                Subject = subject,
+            };
+
+            FireAdhocNotificationHandler(adhocNotificationSubmittedViewModel);
+        }
+
         public IEnumerable<Order> GetOrdersByLastName(string lastName, int aff)
         {
             return _orderRepository.FindOrdersByLastName(lastName, aff);
@@ -492,6 +504,23 @@ namespace CUWebinars.Business.Services
         public IEnumerable<Order> FindOrdersByUserId(int userId)
         {
             return _orderRepository.GetOrdersByUserId(userId);
+        }
+
+        public void FireAdhocNotificationHandler(AdhocNotificationMessage adhocNotificationMessage)
+        {
+            AddEvent(new AdhocNotificationEvent<AdhocNotificationMessage>
+            {
+                EventObject = adhocNotificationMessage 
+            });
+
+            foreach (var evt in GetEvents().OfType<AdhocNotificationEvent<AdhocNotificationMessage>>())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            Clear();
+
+            //int rowsUpdated = _orderRepository.SaveChanges();
         }
 
         public OrderRow LoadOrderRow(int id)

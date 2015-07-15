@@ -1083,6 +1083,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             var model = new AdhocNotificationViewModel
             {
+                NotificationBody = string.Empty,
                 Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_webinarManagementService)
             };
 
@@ -1095,6 +1096,18 @@ namespace CUWebinars.Web.Controllers.Admin
             var regTypes = EventInvokerHelpers.GetRegTypesForWebinarAsSelectListItems(webinarId, _webinarManagementService);
 
             return Json(regTypes);
+        }
+
+        [System.Web.Mvc.HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SendAdhocNotification(string emails, string subject, string body)
+        {
+            if (ModelState.IsValid)
+            {
+                _orderManagementService.SendAdhocNotification(emails, subject, body);
+            }
+
+            return null;
         }
 
         public PartialViewResult SendReminder()

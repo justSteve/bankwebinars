@@ -213,7 +213,11 @@ $(function () {
                             dataType: constants.JsonDataType,
                             data: JSON.stringify(payload),
                             beforeSend: function () {
-                                // this is where we append a loading image
+                                $('#SubjectInput').remove();
+                                $('#RecipientsInput').remove();
+                                $('#NotificationBody').remove();
+                                $('#SendNotificationButton').remove();
+                                regTypesCheckBoxesDiv.find('br').remove();
                             }
                         }).done(function (emails) {
 
@@ -226,7 +230,46 @@ $(function () {
 
                             regTypesCheckBoxesDiv.append('<br /><input type="Text" id="SubjectInput" class="input-xxlarge" style="margin-top:10px;" placeholder="Enter Subject" />');
                             regTypesCheckBoxesDiv.append('<input type="Text" id="RecipientsInput" style="width:100%;margin-top:10px;clear:left" value="' + recipientsEmailAddresses + '" />');
+                            regTypesCheckBoxesDiv.append('<textarea cols="40" data-val="true" data-val-required="The NotificationBody field is required." id="NotificationBody" name="NotificationBody" rows="2" placeholder="Enter the body of the notification" style="width:100%;margin-top:10px;clear:left"></textarea>');
                             regTypesCheckBoxesDiv.append('<button id="SendNotificationButton" class="btn btn-primary" style="margin-top:10px;">Send Notification</button>');
+
+                            $('#SendNotificationButton').on('click', function(e) {
+
+                                e.preventDefault();
+
+                                var form = $('#AdhocNotificationForm');
+                                var url = form.attr('action');
+                                var payload = {
+                                    emails: $('#RecipientsInput').val(),
+                                    body: $('#NotificationBody').val(),
+                                    subject: $('#SubjectInput').val(),
+                                    __RequestVerificationToken: form.find('input[name="__RequestVerificationToken"]').val()
+                                }
+
+                                $.ajax({
+                                    type: 'POST',
+                                    contentType: constants.FormPostContentType,
+                                    cache: false,
+                                    url: url,
+                                    dataType: constants.JsonDataType,
+                                    data: payload,
+                                    beforeSend: function () {
+
+                                    }
+                                }).done(function (data, textStatus, jqXHR) {
+                                    if (data.Result === 'Success') {
+
+                                    } else {
+
+                                    }
+                                }).fail(function (jqXHR, textStatus, errorThrown) {
+
+                                }).always(function (/* arguments vary if fail or not */) {
+
+                                });
+
+
+                            });
 
                             Rollbar.info({ 'oen-#9': { 'result': emails } });
                         });

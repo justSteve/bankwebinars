@@ -205,6 +205,8 @@
     <Compile Include="Models\TimeLimit.cs" />
     <Compile Include="Models\WebUserDiscountXref.cs" />
     <Compile Include="Notification\Email\AdditionalLocationOrderDetailsMessage.cs" />
+    <Compile Include="Notification\Email\AzureAdhocNotificationDelivery.cs" />
+    <Compile Include="Notification\Email\AdhocNotificationMessage.cs" />
     <Compile Include="Notification\Email\AzureCuwWebJobSmtpMessageDelivery.cs" />
     <Compile Include="Notification\Email\AzureOrderConfirmedForAdditionalLocationDelivery.cs" />
     <Compile Include="Notification\Email\AzureOrderNotifierMessageDelivery.cs" />
@@ -212,6 +214,10 @@
     <Compile Include="Notification\Email\ConfirmOrderMessage.cs" />
     <Compile Include="Notification\Email\OrderConfirmedForAdditionalLocationDelivery.cs" />
     <Compile Include="Notification\Email\OrderNotifierMessageDelivery.cs" />
+    <Compile Include="Notification\Events\AdhocNotificationEvent.cs" />
+    <Compile Include="Notification\Handlers\AdhocNotificationHandler.cs" />
+    <Compile Include="Notification\IAdhocNotificationDelivery.cs" />
+    <Compile Include="Notification\IAdhocNotificationMessage.cs" />
     <Compile Include="Notification\IOrderConfirmedForAdditionalLocationDelivery.cs" />
     <Compile Include="Notification\IAdditionalLocationOrderDetailsMessage.cs" />
     <Compile Include="Notification\IConfirmAdditionalLocationsOrderMessage.cs" />
@@ -270,6 +276,7 @@
     <Compile Include="Notification\INotificationDelivery.cs" />
     <Compile Include="Notification\INotificationMessage.cs" />
     <Compile Include="Notification\TemplateResolver.cs" />
+    <Compile Include="Notification\ViewModel\AdhocNotificationSubmittedViewModel.cs" />
     <Compile Include="Notification\ViewModel\OrderSubmittedAdditionalLocationViewModel.cs" />
     <Compile Include="Notification\ViewModel\OrderSubmittedViewModel.cs" />
     <Compile Include="Notification\ViewModel\PostEventPublishModel.cs" />

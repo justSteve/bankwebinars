@@ -14,7 +14,7 @@ namespace CUWebinars.Business.Models.Mapping
         {
             // Primary Key
             this.HasKey(t => t.Id);
-            this.Property(t => t.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+            this.Property(t => t.Id);
 
 
             // Properties

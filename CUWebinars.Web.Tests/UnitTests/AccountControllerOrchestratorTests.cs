@@ -617,7 +617,7 @@ namespace CUWebinars.Web.Tests.UnitTests
             _stateServiceMock.Setup(i => i.SetValue(DomainConstants.UserCreatedViaNewOrder, true));
             _stateServiceMock.Setup(i => i.GetValue<string>(DomainConstants.VerificationKey)).Returns(verificationKey);
             
-            _membershipServiceMock.Setup(i => i.ChangePasswordFromResetKey(verificationKey, model.NewPassword)).Returns(true);
+            _membershipServiceMock.Setup(i => i.ChangePasswordFromResetKey(_globals.Tenant, verificationKey, model.NewPassword)).Returns(true);
             _membershipServiceMock.Setup(i => i.LogInUser(_webTestsGlobals.Tenant,model.Email, model.NewPassword, true)).Returns(true);
             
             _appHelperMock.Setup(i => i.GetUserAuditInfo()).Returns(string.Format(AuditInfo, request.ServerVariables[TestConstants.HttpCookie], TestConstants.HomeUrlRelative));
@@ -692,7 +692,7 @@ namespace CUWebinars.Web.Tests.UnitTests
             _stateServiceMock.Setup(i => i.SetValue(DomainConstants.UserCreatedViaNewOrder, true)).Verifiable();
             _stateServiceMock.Setup(i => i.GetValue<string>(DomainConstants.VerificationKey)).Returns(verificationKey);
 
-            _membershipServiceMock.Setup(i => i.ChangePasswordFromResetKey(verificationKey, model.NewPassword)).Returns(true);
+            _membershipServiceMock.Setup(i => i.ChangePasswordFromResetKey(_globals.Tenant,verificationKey, model.NewPassword)).Returns(true);
             _membershipServiceMock.Setup(i => i.LogInUser(_webTestsGlobals.Tenant, model.Email, model.NewPassword, true)).Returns(true);
 
             _appHelperMock.Setup(i => i.GetUserAuditInfo()).Returns(string.Format(AuditInfo, request.ServerVariables[TestConstants.HttpCookie], TestConstants.HomeUrlRelative));
@@ -737,7 +737,7 @@ namespace CUWebinars.Web.Tests.UnitTests
             //  but it is actually important that after the notifications are sent, the StateService clears that value.
             _stateServiceMock.Setup(i => i.ClearValue(DomainConstants.UserCreatedViaNewOrder)).Verifiable();
 
-            _membershipServiceMock.Setup(i => i.ChangePasswordFromResetKey(verificationKey, model.NewPassword)).Returns(true);
+            _membershipServiceMock.Setup(i => i.ChangePasswordFromResetKey(_globals.Tenant,verificationKey, model.NewPassword)).Returns(true);
             _membershipServiceMock.Setup(i => i.LogInUser(_webTestsGlobals.Tenant, model.Email, model.NewPassword, true)).Returns(true);
 
             _appHelperMock.Setup(i => i.GetUserAuditInfo()).Returns(string.Format(AuditInfo, request.ServerVariables[TestConstants.HttpCookie], TestConstants.HomeUrlRelative));
