@@ -71,12 +71,12 @@ namespace CUWebinars.Business.Notification.Handlers
                     notificationStorage = JObject.Parse(sendRecordingPostedEvent.Details);
                 }
 
-                JProperty SendShippedOrderMsgProperty = new JProperty(
-                    string.Concat("SendShippedOrderMsg-", DomainConstants.BuildUtcNowAsCts.Ticks),
+                JProperty SendRecordingPostedMsgProperty = new JProperty(
+                    string.Concat("SendRecordingPosted-", DomainConstants.BuildUtcNowAsCts.Ticks),
                     notificationMessage.PersistedName
                     );
 
-                notificationStorage.Add(SendShippedOrderMsgProperty);
+                notificationStorage.Add(SendRecordingPostedMsgProperty);
 
                 if (isAdditionalLocation != null && isAdditionalLocation.Any())
                 {
@@ -96,7 +96,7 @@ namespace CUWebinars.Business.Notification.Handlers
                             "SendRecordingPosted"
                             );
 
-                        _logger.Info("Sending SendRecordingPosted Info: " + additionalLocation.Email);
+                        //_logger.Info("Sending SendRecordingPosted Info: " + additionalLocation.Email);
 
                         persistedNamePrefix = sendRecordingPostedEvent.ResendEvent
                                                 ? "AddLoc_RecordingPosted_ReSend_" + ++count + "_" + orderId

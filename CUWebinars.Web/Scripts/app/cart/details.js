@@ -13,13 +13,13 @@ $(function () {
     signUpFormContainer = $('#SignUpFormContainer'); // The big beige box
 
     // This function gets invoked when the 3rd tab is loaded and an existing user is using the cart
-    checkoutConfirm.initialize = function(userId) {
+    checkoutConfirm.initialize = function (userId) {
         cartStateManager.setCancelOrderForm($('#cancelOrder'));
         cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
         //console.log('initialize hit');
 
-        cartStateManager.getConfirmOrderForm().on('submit', function(e) {
+        cartStateManager.getConfirmOrderForm().on('submit', function (e) {
             e.preventDefault();
 
             var self = $(this);
@@ -33,9 +33,6 @@ $(function () {
 
             var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
 
-            confirmRegistrationBillMe.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-
-            confirmRegistrationBillMe.attr('disabled', 'disabled');
 
             $.ajax({
                 type: 'POST',
@@ -44,27 +41,26 @@ $(function () {
                 url: self.attr('action'),
                 dataType: RegistrationInCart.Constants.JsonDataType,
                 data: data,
-                beforeSend: function() {
+                beforeSend: function () {
+
+                    confirmRegistrationBillMe.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
                     confirmRegistrationBillMe.attr('disabled', 'disabled');
                 }
-            }).done(function(data) {
+            }).done(function (data) {
                 if (data.Result === 'Success') {
-                    L.clientLogger.info('d-#3', { 'OrderRowId': data.OrderRowId });
-                    var orderRowId = data.OrderRowId;
-
-                    console.info('Posted orderRow:' + orderRowId);
+                    L.clientLogger.info('d-#3', { 'OrderId': data.OrderRowID });
 
                     $('#orderDetails').empty();
                     $('#orderDetails').append(data.Msg);
 
                     $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
 
-                    confirmRegistrationBillMe.after('<span>&nbsp;<span class="label label-success">&nbsp;<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;Transferring you now...</span></span>');
+                    confirmRegistrationBillMe.after('<span>&nbsp;<span class="label label-success">&nbsp;<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;Order Confirmed!</span></span>');
 
-                    okToLeave = false;
-
+                    okToLeave = true;
                     var utilities = new Common.Utilities();
-                    utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
+                    utilities.goToUrl('/Account/OrderComplete/' + data.OrderRowID);
+
 
                 } else {
                     console.error('Failed to post order');
@@ -76,7 +72,7 @@ $(function () {
                 $('#finalLoadingSpinner').remove();
                 confirmRegistrationBillMe.removeAttr('disabled');
                 $('#signUpSpinner').remove();
-            }).fail(function(jqXHR, textStatus, errorThrown) {
+            }).fail(function (jqXHR, textStatus, errorThrown) {
                 $('#finalLoadingSpinner').remove();
                 confirmRegistrationBillMe.removeAttr('disabled');
                 $('#signUpSpinner').remove();
@@ -86,10 +82,78 @@ $(function () {
 
         });
 
+        //cartStateManager.getConfirmOrderByCCForm().on('submit', function(e) {
+        //    e.preventDefault();
+        //    alert("hit cc");
+        //    var self = $(this);
+        //    self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
+
+        //    L.clientLogger.info('d-#1a', { 'submitting getConfirmOrderByCCForm': cartStateManager.getOrderRowId() });
+
+        //    var data = $(this).serialize();
+
+        //    L.clientLogger.info('d-#2', { 'Serialized Form: ': data });
+
+        //    var confirmRegistrationPayByCC = $('#ConfirmRegistrationPayByCC');
+
+        //    confirmRegistrationPayByCC.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+
+        //    confirmRegistrationPayByCC.attr('disabled', 'disabled');
+
+
+        //    $.ajax({
+        //        type: 'POST',
+        //        contentType: RegistrationInCart.Constants.FormPostContentType,
+        //        cache: false,
+        //        url: self.attr('action'),
+        //        dataType: RegistrationInCart.Constants.JsonDataType,
+        //        data: data,
+        //        beforeSend: function () {
+        //            confirmRegistrationPayByCC.attr('disabled', 'disabled');
+        //        }
+        //    }).done(function (data) {
+        //        if (data.Result === 'Success') {
+        //            L.clientLogger.info('d-#3', { 'OrderRowId': data.OrderRowId });
+        //            var orderRowId = data.OrderRowId;
+
+        //            console.info('Posted orderRow:' + orderRowId);
+
+        //            $('#orderDetails').empty();
+        //            $('#orderDetails').append(data.Msg);
+
+        //            $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
+
+        //            confirmRegistrationPayByCC.after('<span>&nbsp;<span class="label label-success">&nbsp;<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;Transferring you now...</span></span>');
+
+        //            okToLeave = true;
+
+        //            var utilities = new Common.Utilities();
+        //            utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
+
+        //        } else {
+        //            console.error('Failed to post order');
+        //            L.clientLogger.error('d-#4a Failed to post order', { 'jsonResponse': data });
+
+        //            confirmRegistrationPayByCC.after('<span class="field-validation-error">Invalid Data #554. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+        //        }
+
+        //        $('#finalLoadingSpinner').remove();
+        //        confirmRegistrationPayByCC.removeAttr('disabled');
+        //        $('#signUpSpinner').remove();
+        //    }).fail(function (jqXHR, textStatus, errorThrown) {
+        //        $('#finalLoadingSpinner').remove();
+        //        confirmRegistrationPayByCC.removeAttr('disabled');
+        //        $('#signUpSpinner').remove();
+        //        confirmRegistrationPayByCC.after('<span class="field-validation-error">Transport error #555. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+        //        L.clientLogger.error('d-#5a', { 'Error': jqXHR.responseText });
+        //    });
+
+        //});
+
 
         var cancelOrderForm = cartStateManager.getCancelOrderForm();
         // CANCEL REGISTRATION BUTTON CLICKED
-        cancelOrderForm.on('submit', function(e) {
+        cancelOrderForm.on('submit', function (e) {
 
             console.log('cancelOrderForm submit hit');
 
@@ -101,7 +165,7 @@ $(function () {
 
             var self = $(this);
             // RED BUTTON - DELETE REGISTRATION
-            $('#cancelRegistration').on('click', function(e) {
+            $('#cancelRegistration').on('click', function (e) {
                 e.preventDefault();
 
                 // disable button while operation in progress
@@ -109,7 +173,7 @@ $(function () {
 
                 L.clientLogger.info('d-#6', { 'orderCancellation': 'deleting order at 3rd tab', 'orderId': cartStateManager.getOrderId() });
 
-                $.post(self.attr('action'), data, function(response, status, xhr) {
+                $.post(self.attr('action'), data, function (response, status, xhr) {
 
                     if (status !== 'error') {
                         if (xhr.responseJSON['success']) {
@@ -139,7 +203,7 @@ $(function () {
                 $('#rtn').off('click');
             });
             // BLACK BUTTON - RETURN TO ORDER
-            $('#rtn').on('click', function(e) {
+            $('#rtn').on('click', function (e) {
                 e.preventDefault();
                 $('#CancelModal').modal('hide');
                 $(this).off('click');
@@ -174,12 +238,12 @@ $(function () {
 
     cartStateManager.SetCartState();
 
-    $("[id^='regTypeID_']").on("click", function(oEvent) {
+    $("[id^='regTypeID_']").on("click", function (oEvent) {
         cartStateManager.CheckIfAddLocShouldHide(oEvent.currentTarget.value);
     });
 
     // Click event for the BIG GREEN SignUp button
-    $('#AddToCart').on('click', function() {
+    $('#AddToCart').on('click', function () {
         $(this).prepend('<i id="signUpSpinner" class="icon-spinner icon-spin"></i>').attr('disabled', 'disabled');
         signUpForm.submit();
     });
@@ -202,11 +266,13 @@ $(function () {
         cartStateManager.setOrderId(orderId);
         L.clientLogger.info('d-#12', { 'returnUnfinishedOrder': 'User finishing order: ' + orderId });
 
-// see top of this file
+        // see top of this file
         checkoutConfirm.initialize();
 
-//The BIG GREEN 'Bill Me' button on 3rd tab
-        $('#ConfirmRegistrationBillMe').on('click', function(e) {
+        //The BIG GREEN 'Bill Me' button on 3rd tab
+        $('#ConfirmRegistrationBillMe').on('click', function (e) {
+
+            L.clientLogger.info("BigGreenBillMe from Details", { orderid: cartStateManager.getOrderId() });
             e.preventDefault();
             var confirmOrderForm = $('#confirmOrder');
             confirmOrderForm.submit();
@@ -214,7 +280,7 @@ $(function () {
 
 
         // The 'TO PAY BY CREDIT CARD' button on 3rd tab
-        $('#ConfirmRegistrationPayByCC').on('click', function(e) {
+        $('#ConfirmRegistrationPayByCC').on('click', function (e) {
             e.preventDefault();
 
             var orderId = cartStateManager.getOrderId();
@@ -227,7 +293,7 @@ $(function () {
         });
 
         // The grey CANCEL Registration button on 3rd tab       
-        $('#Canceller').on('click', function(e) {
+        $('#Canceller').on('click', function (e) {
             e.preventDefault();
             var cancelOrderForm = $('#cancelOrder');
             cancelOrderForm.submit();
@@ -236,15 +302,15 @@ $(function () {
         populateAdditionalLocationsOn3rdTab();
         setUpEditButtons();
 
-// Following 3 functions live in the register-during-checkout.js script
-// which will be in memory at this point. So these functions will be hoisted.
+        // Following 3 functions live in the register-during-checkout.js script
+        // which will be in memory at this point. So these functions will be hoisted.
         hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
         hookUpChangeTypeLogic($('#RegType'));
         hookUpEditUserLogic(null, shippingAddressRequired);
     }
 
-/* Submit event for the big green SIGNUP button */
-    signUpForm.on('submit', function(e) {
+    /* Submit event for the big green SIGNUP button */
+    signUpForm.on('submit', function (e) {
         e.preventDefault();
 
         var beigeFormArea = signUpFormContainer.find('div.well');
@@ -264,18 +330,18 @@ $(function () {
         $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
         var loadingSpinner = $('#loadingSpinner');
 
-// If the user IS NOT LOGGED IN - control moves to the register-during-checkout.js script
+        // If the user IS NOT LOGGED IN - control moves to the register-during-checkout.js script
         if (!cartStateManager.getIsUserLoggedIn()) {
 
             L.clientLogger.info('d-#20', { 'anonymousUser': 'Order created for anonymous user. Not yet finalized.' });
 
-            $.post(signUpForm.attr('action'), data, function(response, status, xhr) {
+            $.post(signUpForm.attr('action'), data, function (response, status, xhr) {
                 if (status !== 'error') {
                     if (xhr.responseJSON['success']) {
                         cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
                         cartStateManager.setOrderId(xhr.responseJSON['orderId']);
                         cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
-                        $('#contactInfo').load('/Cart/CheckoutContactDetails', function(response, status, xhr) {
+                        $('#contactInfo').load('/Cart/CheckoutContactDetails', function (response, status, xhr) {
                             if (status !== 'error') {
                                 $('#_CreateUserForm input[name="returnUrl"]').val('/Webinar/Details/' + cartStateManager.getWebinarId());
 
@@ -308,7 +374,7 @@ $(function () {
             }, constants.JsonDataType);
         } else {
             // If the user IS LOGGED IN
-            $.post(signUpForm.attr('action'), data, function(response, status, xhr) {
+            $.post(signUpForm.attr('action'), data, function (response, status, xhr) {
                 if (status !== 'error') {
                     if (xhr.responseJSON['success']) {
 
@@ -318,7 +384,7 @@ $(function () {
 
                         L.clientLogger.info('d-#30', { 'loggedInUser': 'submitting ConfirmOrder' + xhr.responseJSON['orderId'] });
 
-                        $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function(response, status, xhr) {
+                        $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
 
                             if (status === 'error') {
                                 $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
@@ -341,14 +407,14 @@ $(function () {
                                 checkoutConfirm.initialize();
 
                                 // The Bill Me button on 3rd tab
-                                $('#ConfirmRegistrationBillMe').on('click', function(e) {
+                                $('#ConfirmRegistrationBillMe').on('click', function (e) {
                                     e.preventDefault();
                                     var confirmOrderForm = $('#confirmOrder');
                                     confirmOrderForm.submit();
                                 });
 
                                 // The 'To pay by credit card' button on 3rd tab
-                                $('#ConfirmRegistrationPayByCC').on('click', function(e) {
+                                $('#ConfirmRegistrationPayByCC').on('click', function (e) {
                                     e.preventDefault();
 
                                     var orderId = cartStateManager.getOrderId();
@@ -359,7 +425,7 @@ $(function () {
                                 });
 
                                 // The Cancel Registration button on 3rd tab
-                                $('#Canceller').on('click', function(e) {
+                                $('#Canceller').on('click', function (e) {
                                     e.preventDefault();
                                     var cancelOrderForm = $('#cancelOrder');
                                     cancelOrderForm.submit();
@@ -420,7 +486,7 @@ $(function () {
 function isShippindAddressRequired(jQueryObject) {
     //todo: re-enable
     //if ($.trim(jQueryObject.val()).toLowerCase() === 'false')
-        return false;
+    return false;
     //return true;
 }
 
@@ -431,6 +497,10 @@ function setUpEditButtons() {
     });
 
     $('#revealDiscountInput').on('click', function (e) {
+        e.preventDefault();
+        $('#AdjustDiscount').slideToggle();
+    });
+    $('#closeApplyCode').on('click', function (e) {
         e.preventDefault();
         $('#AdjustDiscount').slideToggle();
     });
@@ -467,62 +537,62 @@ function setUpEditButtons() {
             Institution: $('#AdjustUserDetailsPanel_Institution').val()
         };
 
-        L.clientLogger.info( 'd-#17', { 'userDetailEdits': payload } );
+        L.clientLogger.info('d-#17', { 'userDetailEdits': payload });
 
-    $.ajax({
-        type: 'POST',
-        contentType: constants.JsonContentType,
-        cache: false,
-        url: url,
-        dataType: constants.JsonDataType,
-        data: JSON.stringify(payload),
-        headers: headers,
-        beforeSend: function () {
-            $('#editUserResult').remove();
-            self.after('<span id="userDetailsSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: url,
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payload),
+            headers: headers,
+            beforeSend: function () {
+                $('#editUserResult').remove();
+                self.after('<span id="userDetailsSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+            }
+        }).done(function (data) {
+
+            if (data.Result === 'Success') {
+                self.after('<span id="editUserResult">&nbsp;<span class="label label-success"><span> Details updated successfully! </span></span></span>').hide().fadeIn(500);
+                L.clientLogger.info('d-#18', { 'userDetailEditsResult': 'edits succeeded' });
+            }
+
+            $('#userDetailsSpinner').remove();
+        });
+    });
+
+    $('#addAnotherAddLoc').on('click', function (e) {
+
+        e.preventDefault();
+
+        var newId;
+
+        if (numberOfAdditionalLocationsTab3 == 0) {
+
+            additionalLocationsList.after($('<button>',
+            {
+                id: 'applyAdditionalLocationsButton',
+                text: 'apply',
+                'class': 'btn btn-mini btn-primary',
+            }));
+
+            $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
+
+            newId = 0;
+        } else {
+            // first get the last previous email input
+            var lastInput = additionalLocationsList.find('input[type="email"]:last');
+            // get its id
+            var lastInputId = lastInput.attr('id');
+            var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
+            newId = id + 1;
         }
-    }).done(function (data) {
-
-        if (data.Result === 'Success') {
-            self.after('<span id="editUserResult">&nbsp;<span class="label label-success"><span> Details updated successfully! </span></span></span>').hide().fadeIn(500);
-            L.clientLogger.info( 'd-#18', { 'userDetailEditsResult': 'edits succeeded' } );
-    }
-
-        $('#userDetailsSpinner').remove();
-});
-});
-
-$('#addAnotherAddLoc').on('click', function (e) {
-
-    e.preventDefault();
-
-    var newId;
-
-    if (numberOfAdditionalLocationsTab3 == 0) {
-
-        additionalLocationsList.after($('<button>',
-        {
-            id: 'applyAdditionalLocationsButton',
-            text: 'apply',
-            'class': 'btn btn-mini btn-primary',
-        }));
-
-        $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
-
-        newId = 0;
-    } else {
-        // first get the last previous email input
-        var lastInput = additionalLocationsList.find('input[type="email"]:last');
-        // get its id
-        var lastInputId = lastInput.attr('id');
-        var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
-        newId = id + 1;
-    }
-    additionalLocationsList.append('<span id="' + locationsSpanPrefix + newId + '"><input id="AdditionalLocationEmail_' + newId + '" name="AdditionalLocations[' + newId + '].Email" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + newId + '-AdditionLocationEmail-delete"></i></span> <br id="' + newId + breakSuffix + '">');
-    additionalLocationsList.find('i#' + newId + '-AdditionLocationEmail-delete').on('click', deleteAddLocInputTabb3);
-    $('#AdditionalLocationEmail_' + newId).focus();
-    numberOfAdditionalLocationsTab3++;
-});
+        additionalLocationsList.append('<span id="' + locationsSpanPrefix + newId + '"><input id="AdditionalLocationEmail_' + newId + '" name="AdditionalLocations[' + newId + '].Email" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + newId + '-AdditionLocationEmail-delete"></i></span> <br id="' + newId + breakSuffix + '">');
+        additionalLocationsList.find('i#' + newId + '-AdditionLocationEmail-delete').on('click', deleteAddLocInputTabb3);
+        $('#AdditionalLocationEmail_' + newId).focus();
+        numberOfAdditionalLocationsTab3++;
+    });
 }
 
 function populateAdditionalLocationsOn3rdTab() {
@@ -540,31 +610,31 @@ function populateAdditionalLocationsOn3rdTab() {
     numberOfAdditionalLocationsTab3 = locations.filter('span').length;
 
 
-var copyOfLocations = locations.clone();
+    var copyOfLocations = locations.clone();
 
-addLocsOn1stTabContainer.remove();
+    addLocsOn1stTabContainer.remove();
 
-additionalLocationsList = $('#additionalLocationsList');
+    additionalLocationsList = $('#additionalLocationsList');
 
-additionalLocationsList.append('<input id="newOrderRowId" name="newOrderRowId"  type="hidden" value=' + cartStateManager.getOrderRowId() + ' data-val="true" data-val-number="The field newOrderRowId must be a number." data-val-required="The newOrderRowId field is required."/>');
-additionalLocationsList.append(copyOfLocations);
+    additionalLocationsList.append('<input id="newOrderRowId" name="newOrderRowId"  type="hidden" value=' + cartStateManager.getOrderRowId() + ' data-val="true" data-val-number="The field newOrderRowId must be a number." data-val-required="The newOrderRowId field is required."/>');
+    additionalLocationsList.append(copyOfLocations);
 
-if (numberOfAdditionalLocationsTab3 > 0) {
-    additionalLocationsList.after($('<button>',
-    {
-        id: 'applyAdditionalLocationsButton',
-        text: 'apply',
-        'class': 'btn btn-mini btn-primary',
-    }));
+    if (numberOfAdditionalLocationsTab3 > 0) {
+        additionalLocationsList.after($('<button>',
+        {
+            id: 'applyAdditionalLocationsButton',
+            text: 'apply',
+            'class': 'btn btn-mini btn-primary',
+        }));
 
-    $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
+        $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
 
-    var trashCans = additionalLocationsList.find('i');
+        var trashCans = additionalLocationsList.find('i');
 
-    $.each(trashCans, function (idx, i) {
-        $(i).on('click', deleteAddLocInputTabb3);
-    });
-}
+        $.each(trashCans, function (idx, i) {
+            $(i).on('click', deleteAddLocInputTabb3);
+        });
+    }
 }
 
 var deleteAddLocInputTabb3 = function (event) {
@@ -607,37 +677,37 @@ var applyAdditionalLocations = function (e) {
 
     var formData = adjustAddLocsForm.serialize();
 
-    L.clientLogger.info( 'd-#14', { 'applyEditsToAdditionalLocationsTab3': formData } );
+    L.clientLogger.info('d-#14', { 'applyEditsToAdditionalLocationsTab3': formData });
 
-$.ajax({
-    type: 'POST',
-    contentType: RegistrationInCart.Constants.FormPostContentType,
-    cache: false,
-    url: url,
-    dataType: RegistrationInCart.Constants.JsonDataType,
-    data: formData,
-    beforeSend: function () {
-        self.append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
-    }
-}).done(function (data) {
-    if (data.Result === 'Success') {
-        var infoLabel = $('#addLocsText');
+    $.ajax({
+        type: 'POST',
+        contentType: RegistrationInCart.Constants.FormPostContentType,
+        cache: false,
+        url: url,
+        dataType: RegistrationInCart.Constants.JsonDataType,
+        data: formData,
+        beforeSend: function () {
+            self.append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+        }
+    }).done(function (data) {
+        if (data.Result === 'Success') {
+            var infoLabel = $('#addLocsText');
 
-        var priceLabel = $('#totalAdLocsPrice');
-        priceLabel.text('$' + (numberOfAdditionalLocationsTab3 * ADDLOC.price));
+            var priceLabel = $('#totalAdLocsPrice');
+            priceLabel.text('$' + (numberOfAdditionalLocationsTab3 * ADDLOC.price));
 
-        var newText = numberOfAdditionalLocationsTab3 + $.trim(infoLabel.html()).slice(1);
+            var newText = numberOfAdditionalLocationsTab3 + $.trim(infoLabel.html()).slice(1);
 
-        infoLabel.fadeOut(200, function () {
-            infoLabel.html(newText);
-            infoLabel.fadeIn(200);
-        });
+            infoLabel.fadeOut(200, function () {
+                infoLabel.html(newText);
+                infoLabel.fadeIn(200);
+            });
 
-        L.clientLogger.info( 'd-#15', { 'applyEditsToAdditionalLocationsResult': 'edits succeeded' } );
+            L.clientLogger.info('d-#15', { 'applyEditsToAdditionalLocationsResult': 'edits succeeded' });
 
-} else {
-        L.clientLogger.error( 'd-#16', { 'applyEditsToAdditionalLocationsResult': 'edits failed', 'returnObject': data } );
-}
-$('#waitSpinner').remove();
-});
+        } else {
+            L.clientLogger.error('d-#16', { 'applyEditsToAdditionalLocationsResult': 'edits failed', 'returnObject': data });
+        }
+        $('#waitSpinner').remove();
+    });
 };

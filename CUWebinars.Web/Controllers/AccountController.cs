@@ -302,22 +302,27 @@ namespace CUWebinars.Web.Controllers
             {
                 return RedirectToAction("Index", "Admin");
             }
-
             var discountModel = _accountControllerOrchestrator.BuildDiscountModel();
             var myWebinarsDTO = _accountControllerOrchestrator.BuildMyWebinarsDTO(discountModel, claimsIdentityOfAuthenticatedUser);
 
+
+            ViewBag.idUser = myWebinarsDTO.WebUser.idUser;
             return View("MyWebinars", myWebinarsDTO);
         }
 
 
         [System.Web.Mvc.AllowAnonymous]
-        [System.Web.Mvc.HttpPost]
-        public ActionResult MyCertificate(int orderID)
+        [System.Web.Mvc.HttpGet]
+        public ActionResult MyCertificate(int orderID, string displayName)
         {
             var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
 
             var currentOrder = _orderManagementService.GetOrderById(orderID);
-            var model = new CertOfCompletionViewModel { CurrentUser = currentUser, Order = currentOrder };
+            if (ReferenceEquals(displayName, null))
+            {
+                displayName = currentUser.FirstName + ' ' + currentUser.LastName;
+            }
+            var model = new CertOfCompletionViewModel { DisplayName = displayName, Order = currentOrder };
 
 
             return View("MyCertificate", model);
@@ -344,6 +349,16 @@ namespace CUWebinars.Web.Controllers
                 Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 throw;
             }
+        }
+
+        [System.Web.Mvc.AllowAnonymous]
+        [System.Web.Mvc.HttpPost]
+        [ValidateAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
+        public ActionResult WPSConfirmation()
+        {
+            return View();
+
         }
 
         [System.Web.Mvc.AllowAnonymous]
@@ -1524,26 +1539,13 @@ namespace CUWebinars.Web.Controllers
             }
         }
 
-        public ActionResult GetUserDiscount()
-        {
-            if (_stateService.HasValue(WebUiConstants.CurrentUser))
-            {
-                var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
-
-                var userDiscount = _orderManagementService.GetDiscountByUser(currentUser);
-            }
-            return PartialView("_DiscountPartial");
-        }
 
         public ActionResult GetUserMessages()
         {
             return PartialView("_MessagesPartial");
         }
 
-        public ActionResult DiscountInfo()
-        {
-            throw new NotImplementedException();
-        }
+
 
         [ValidateAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]

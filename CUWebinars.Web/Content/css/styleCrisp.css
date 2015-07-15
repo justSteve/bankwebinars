@@ -216,9 +216,7 @@ ins {
 	text-decoration: overline;
 }
 
-del {
-	text-dcoration: strikethrough;
-}
+
 
 strong, dfn {
 	font-weight: bold;
@@ -228,9 +226,6 @@ small, .small {
 	font-size: 75%;
 }
 
-big, .big {
-	font-size: 160%;
-}
 
 dl {
 	margin: 0 5% 2%;

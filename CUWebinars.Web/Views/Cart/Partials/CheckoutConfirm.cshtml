@@ -1,11 +1,5 @@
 ﻿@using CUWebinars.Business.Core
 @model CheckoutConfirmViewModel
-<script language="javascript" type="text/javascript">
-
-    function PayByCC() {
-        alert("Please call us at 800-831-0678 ext. 3 to place your Credit Card payment");
-    }
-</script>
 
 @{
     if (Model.OrderExists)
@@ -31,7 +25,7 @@
                     <div id="userDetailsSummed" class="span10 offset2">
                         <p>
                             @Html.Raw(@Model.UserDetails)
-                            <a id="editUserDetails" role="button" class="btn btn-mini"> Edit?</a>
+                            @*<a id="editUserDetails" role="button" class="btn btn-mini"> Edit?</a>*@
                         </p>
 
                     </div>
@@ -53,23 +47,25 @@
                         <div id="EnterDiscountCode" class="clear pull-right">
                             @Html.TextBoxFor(m => m.CheckoutDiscountCode, new { @class = "input input-medium", placeholder = "Enter Discount Code" })
                             <button class="btn btn-mini btn-primary" role="button" id="SubmitDiscountCode">Apply Code</button>
+                            <button class="btn btn-mini" role="button" id="closeApplyCode">close</button>
+                            
                         </div>
                     </div>
                 </div>
-                <div id="AdjustAddLoc" class="row initialHide">
+                @*<div id="AdjustAddLoc" class="row initialHide">
                     <div class="offset2 span9 ">
                         <div id="additionalLocationsCaption" class="clear pull-right">
                             Additional Locations: <button id="addAnotherAddLoc" class="btn btn-mini">add</button>
                             
                             @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new {id = "AdjustAddLocsForm"} ))
                             {
-                                <div id="additionalLocationsList">@* List of additional location inputs gets copied here. *@
+                                <div id="additionalLocationsList">
                             
                                 </div>
                             }
                         </div>
                     </div>
-                </div>
+                </div>*@
                 <div id="AdjustOrder" class="row initialHide">
                     <div class="offset2 span9 ">
                         <div id="RegTypeChanger" class="clear pull-right">
@@ -86,7 +82,7 @@
                         </div>
                         <div style="font-size: x-small; text-align: center;">
                             <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button><br />
-                            <button class="btn btn-success" id="ConfirmRegistrationPayByCC">To pay by credit card call 800-831-0678 ext. 3</button><br />
+                            @*<button data-toggle="modal" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />*@
                             <a class="btn" id="Canceller">Cancel Registration</a><br />
                             Sales tax may be added to orders in Wisconsin or Illinois.
                         </div>
@@ -124,10 +120,8 @@
                     <div id="showCartPrice">@{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }</div>
                     @if (Model.OrderStatus != OrderStatus.Paid)
                     {
-                        <span style="font-size: small; text-align: center;">
-                            We typically send an invoice a couple days following the event. If you would prefer to pay now by Credit Card please call Customer Service at 800-831-0678 ext. 703.
-                        </span>
-                        @*<button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>*@
+                        
+                        <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>
                         <br />
                     }
                 </div>
@@ -159,10 +153,11 @@
 
 @{
     Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
+    
+    Html.RenderPartial("~/Views/Cart/Partials/_PayByCCModal.cshtml");
     Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml");
     Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
     //Html.RenderPartial("~/Views/Cart/Partials/_DisplayAppliedDiscount.cshtml", Model.DiscountDetailsModel);
-
 }
 
 

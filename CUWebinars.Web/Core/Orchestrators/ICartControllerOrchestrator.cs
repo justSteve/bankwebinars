@@ -41,5 +41,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         Order LoadOrder(int id);
         void SetOrderPaidByCC(int qOrder, string s, string formFields);
         int ProcessModelForConfirmation(WebinarDetailsViewModel model, bool? adminCreatedWebUser);
+        void SendOrderToLegacy(Order order);
+        void CreatePostEventClaim(Order order);
     }
 }

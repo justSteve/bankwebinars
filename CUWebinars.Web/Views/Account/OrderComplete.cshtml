@@ -3,8 +3,9 @@
 @{
     GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
-    var newUserMsg = "<div>An order confirmation email has been dispatched to " + Model.BillingEmail + " and includes " +
-                     "complete details of your registration. </div>";
+    var newUserMsg = "<div class='span7'><p>" +
+                    "An order confirmation email has been dispatched to " + Model.BillingEmail + " and includes " +
+                     "complete details of your registration. </p></div>";
     if (!User.Identity.IsAuthenticated)
     {
         newUserMsg = "<div class='span7'><p>" +

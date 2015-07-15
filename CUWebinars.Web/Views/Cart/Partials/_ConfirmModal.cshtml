@@ -1,7 +1,7 @@
 ﻿@using CUWebinars.Web.Core
 @{
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
-    
+
 }
 <div id="ConfirmModal" class="modal hide fade">
     @using (Html.BeginForm("ConfirmOrder", "Cart", null, FormMethod.Post, new { id = "confirmOrder" }))

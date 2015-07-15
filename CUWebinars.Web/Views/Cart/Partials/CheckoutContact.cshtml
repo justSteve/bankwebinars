@@ -7,6 +7,11 @@
 
 @{
     var url = "";
+    if (@ConfigurationManager.AppSettings["Tenant"] == "CUWebinars")
+    {
+        url = "http://form.jotformpro.com/form/51853723531959?";
+    }
+
     if (@ConfigurationManager.AppSettings["Tenant"] == "BankWebinars")
     {
         url = "http://form.jotform.us/form/32525522499156?";
@@ -77,14 +82,11 @@
     if (globalConfig.Tenant == "CUWebinars")
     {
         <div><b>Note: </b>Due to a website upgrade with enhanced security, accounts<br /> created prior to 5/18/2015 require a password reset (button above). </div>
-
     }
     if (globalConfig.Tenant == "BankWebinars")
     {
-
         <div><b>Note: </b>We've found an existing account for this email address from our legacy website. Accessing our updated site requires that you reset your password. (button above). </div>
     }
-
                                     }
                                 </div>
                                 <div id="LogintoexistingaccountBTN"></div>
@@ -266,17 +268,22 @@
     </div>
     <div id="UserHasAccount" class="modal-body">
         <p>
-            Want to avoid the hassle of logging in just to place an order? Since we already have record of the
-            email address you've entered, you have the option to click the <i>Express Me!</i> button below to
-            to confirm your registration details. We'll process the order and send a confirmation with complete
-            details within the next few hours. If you desire instant access to your account here on our new site you'll need
-            to step thru the Password Reset process here or login to your preexisting account at http://legacy.bankwebinars.com.
+            Use our express checkout feature to register and bypass logging into your account.
+            Try our <i>Express Me!</i> button. If you need instant access to your account you can
+            login here or use the Reset Password button.
+            @if (globalConfig.Tenant == "BankWebinars")
+            {
+                <span>
+                    You also have the option login to your original
+                    account at http://legacy.bankwebinars.com.
+                </span>
+            }
         </p>
 
 
         <div id="instInfo">
             <p><input type="button" onclick="javascript: openECWindow();" class=" btn btn-primary" name="ExpressMe" id="ExpressMe" value="Yes, Express Me!" /></p>
-            <p><input type="button" onclick="javascript: self.close();" class="btn btn-warning" name="ResetMe" id="ResetMe" value="Continue to Password Reset" /></p>
+            <p><input type="button" data-dismiss="modal" class="btn btn-success" name="ResetMe" id="ResetMe" value="Continue to Login" /></p>
         </div>
     </div>
 </div>

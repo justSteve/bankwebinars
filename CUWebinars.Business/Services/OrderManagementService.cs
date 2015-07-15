@@ -440,7 +440,7 @@ namespace CUWebinars.Business.Services
                 //  get the most recent
                 int affiliateIdForOrder, mostRecentAffiliateId;
                 affiliateIdForOrder = mostRecentAffiliateId = affiliateIds.First();
-                
+
                 var sb = new StringBuilder();
                 // The history is of more than 1 affiliate
                 if (affiliateIds.Distinct().Count() > 1)
@@ -659,6 +659,60 @@ namespace CUWebinars.Business.Services
             throw new NotImplementedException();
         }
 
+        public void FireOrderSynchEvent(Order order, bool userCreatedInCart = false, bool resending = false, Uri url = null)
+        {
+            string addPasswordUrl = string.Empty;
+
+            var orderSynchMessage = new OrderSynchMessage
+            {
+                AddPasswordUrl = string.Empty,
+                ConfirmChangeEmailUrl = string.Empty,
+                Details = order.NotificationStorage,
+                idOrder = order.idOrder,
+                Order = order,
+                OrderGenesis =
+                    userCreatedInCart ? OrderGenesis.CreatedViaCartByNewUser : OrderGenesis.CreatedViaCartByExistingUser,
+                UserCreatedInCart = userCreatedInCart,
+                UserCreatedOnImport = false
+            };
+
+            if (!ReferenceEquals(null, url))
+            {
+                var baseUri = new Uri(string.Concat(url.Scheme, @"://", url.Authority), UriKind.Absolute);
+                addPasswordUrl = new Uri(
+                    baseUri,
+                    string.Concat(@"ACC/APWD/", order.WebUser.email)
+                    ).ToString();
+            }
+
+            AddEvent(new OrderSynchEvent<OrderSynchMessage>
+            {
+                Details = order.NotificationStorage,
+                EventObject = orderSynchMessage,
+                RelativePath = addPasswordUrl,
+                ResendEvent = resending
+            });
+
+            foreach (var evt in GetEvents().OfType<OrderSynchEvent<OrderSynchMessage>>())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            //int rowsUpdated = _orderRepository.SaveChanges();
+
+            Clear(); // need to clear at this point, otherwise the OrderSubmittedEvent will be fired again when 
+
+            //if (order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count != 0)
+            //{
+            //    foreach (var addLoc in order.OrderRows
+            //        .Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
+            //    {
+            //        FireOrderSubmittedAdditionalLocationEvent(order, addLoc.Email, resending);
+            //    }
+            //}
+
+        }
+
         public void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, bool resending = false,
             Uri url = null)
         {
@@ -801,8 +855,6 @@ namespace CUWebinars.Business.Services
 
         public void FireSendRecordingIsPostedEvent(IList<Order> orders)
         {
-
-
 
             foreach (var order in orders)
             {
@@ -1003,8 +1055,14 @@ namespace CUWebinars.Business.Services
 
         public void FireSendRecordingPostedNotificationEvent(IList<Order> orders)
         {
+            var title = orders[0].OrderRows.SingleOrDefault().Webinar.Title;
+
+            _logger.Info("Begins RecordingPostedNotification for {1} with {0} orders.", orders.Count, title);
+            var x = 0;
             foreach (var order in orders)
             {
+                _logger.Info("RecordingPostedNotification {0} of {1} sent to {2} for {3}.",x, orders.Count, order.BillingEmail, title);
+
                 var postEventPublishModel = new PostEventPublishModel()
                 {
                     Order = order
@@ -1264,11 +1322,11 @@ namespace CUWebinars.Business.Services
         public void GetJoinUrl(OrderRow row)
         {
             Order order = row.Order;
-return;
+            return;
             if (row.Webinar.Status != WebinarStatus.Active && row.Webinar.Status != WebinarStatus.InProgress || row.Webinar.CitrixJoinInfoAvailable())
             {
                 //if not initialized, don't hit Citrix
-                
+
             }
             if (row.CitrixJoinUrl == null && row.RegistrationType.ShowLiveNotifications == "Yes")
             {
@@ -1405,7 +1463,7 @@ return;
                         EventObject = orderSubmittedViewModel,
                         RelativePath = string.Empty
                     });
-                    
+
                     //it appears that the only way an event could be added within this method is a true response in the above If test.
                     // hence this statement can be safely moved up here? [dar] not sure what you mean.
                     foreach (var evt in GetEvents())
@@ -1474,10 +1532,10 @@ return;
         {
             if (discount.DiscountType != DiscountType.Subscription)
 
-                discount.UsesCount++;
+                discount.CreditsUsed++;
 
-            if (discount.UsesRemain > 0)
-                discount.UsesRemain--;
+            if (discount.CreditsRemain > 0)
+                discount.CreditsRemain--;
 
             _logger.Info("Discount was redeemed for {0}.", discount.DiscountCode);
 
@@ -1485,7 +1543,7 @@ return;
 
         private void RejectDiscount(OrderRow orderRow)
         {
-            orderRow.Discount.UsesRemain++;
+            orderRow.Discount.CreditsRemain++;
             //according to legacy code but can a condition exist 
             //  a non-valid discount resulted in a decrement.
         }

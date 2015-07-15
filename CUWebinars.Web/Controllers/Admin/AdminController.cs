@@ -1047,6 +1047,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             //TODO: orders that have been migrated are going to have the OrderGenisis over-written by FireOrderSubmittedEvent
             _orderManagementService.FireOrderSubmittedEvent(order, resending: true);
+
             return Json(new { Result = WebUiConstants.Success });
         }
 
@@ -2134,21 +2135,6 @@ namespace CUWebinars.Web.Controllers.Admin
             return null;
         }
 
-        public ActionResult GetDiscountForUser()
-        {
-            throw new NotImplementedException();
-        }
-
-        public ActionResult DiscountManagement()
-        {
-
-            var model = new DiscountPackageViewModel();
-            {
-
-            };
-
-            return View(model);
-        }
     }
 
     public class MembershipRebootConfigInert

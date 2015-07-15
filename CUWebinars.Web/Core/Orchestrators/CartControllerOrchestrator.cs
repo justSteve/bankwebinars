@@ -20,9 +20,11 @@ using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Web;
+using CUWebinars.Web.Mapping.Mappers;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
 namespace CUWebinars.Web.Core.Orchestrators
@@ -40,6 +42,8 @@ namespace CUWebinars.Web.Core.Orchestrators
         private readonly IFormatter _generalFormatter;
         private readonly IOrderManagementService _orderManagementService;
         private readonly IWebinarManagementService _webinarManagementService;
+        private readonly IUniversalMapper _universalMapper;
+        
         private bool _disposed;
         private GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingletonCreator.UniqueInstance;
 
@@ -50,7 +54,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             ILogger logger,
             HttpRequestBase request,
             IAppHelper appHelper,
-            IFormatter generalFormatter)
+            IFormatter generalFormatter,
+            IUniversalMapper universalMapper)
         {
             Request = request;
             _membershipService = membershipService;
@@ -60,6 +65,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             _orderManagementService = orderManagementService;
             _webinarManagementService = webinarManagementService;
             _stateService = stateService;
+
+            _universalMapper = universalMapper;
         }
 
         public EditUserViewModel BuildEditUserViewModel()
@@ -188,6 +195,18 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     var checkoutConfirmViewModel = new CheckoutConfirmViewModel
                     {
+                        C_address = billingAddress.StreetAddress,
+                        C_city = order.BillingCity,
+                        C_company = order.Institution,
+                        C_email = order.BillingEmail,
+                        C_fname = order.FirstName,
+                        C_lname = order.LastName,
+                        C_state = billingAddress.State,
+                        C_telephone = billingAddress.Phone,
+                        C_zip = billingAddress.Zip,
+                        T_ordernum = order.idOrder.ToString(),
+
+
                         AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
                         AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
                         {
@@ -201,6 +220,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         //AffiliateComments = orderRow.Order.AffiliateComments,
                         //CCUserDetails =
                         //    "None <a href=\"#AddCCModal\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Add?</a> ", // CC user removed at request
+                        DiscountModel = BuildDiscountModel(webUser),
                         DisplayOptionsInDropDownViewModel = BuildDisplayOptionsInDropDownViewModel(orderRow, idOrderRow),
                         DisplayRowPriceViewModel =
                             BuildDisplayRowPriceViewModel(orderRow, idOrderRow,
@@ -266,6 +286,32 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
             _logger.Error("BuildCheckoutConfirmViewModel fell thru to Return Null");
             return null;
+        }
+
+        public DiscountModel BuildDiscountModel(WebUser currentUser)
+        {
+            var discountModel = new DiscountModel();
+            var userDiscount = _orderManagementService.GetDiscountByUser(currentUser);
+            if (ReferenceEquals(userDiscount, null))
+                return null;
+            _universalMapper.Map(userDiscount, discountModel);
+
+            discountModel.DateValidFrom = userDiscount.DateValidFrom;
+            discountModel.DateValidTo = userDiscount.DateValidTo;
+            discountModel.RenewalTerm = userDiscount.RenewalTerm;
+            discountModel.Status = userDiscount.Status;
+            discountModel.Notes = userDiscount.Notes;
+
+            discountModel.CreditsRemain = userDiscount.CreditsRemain;
+            discountModel.CreditsUsed = userDiscount.CreditsUsed;
+            discountModel.Cost = userDiscount.Cost;
+            discountModel.DateBilled = userDiscount.DateBilled;
+            discountModel.FlatOff = userDiscount.FlatOff;
+            discountModel.PercentOff = userDiscount.PercentOff;
+            discountModel.Status = userDiscount.Status;
+            discountModel.DiscountCode = userDiscount.DiscountCode;
+
+            return discountModel;
         }
 
         public CheckoutOptionsViewModel BuildCheckoutOptionsViewModel(
@@ -552,10 +598,10 @@ namespace CUWebinars.Web.Core.Orchestrators
                 var user = Request.RequestContext.HttpContext.User as ClaimsPrincipal;
                 beingImpersonatedClaim = user.Claims.SingleOrDefault(c => c.Type == ClaimTypes.BeingImpersonated);
             }
-            
+
             var webinar = _webinarManagementService.GetWebinar(formModel.idWebinar);
 
-            if(webinar == null)
+            if (webinar == null)
             {
                 _logger.Error(string.Format("Null value for Webinar {0}", formModel.idWebinar));
                 throw new NullReferenceException(string.Format("Null value for Webinar with id {0}", formModel.idWebinar));
@@ -570,7 +616,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             // At this point, user may not be registered. So, when creating the Order, if user 
             // does not exist, a dummy user with an email of notauthenticated@cuwebinars.com will be created.
-            WebUser webUser = formModel.SelectedWebUser > 0 ? 
+            WebUser webUser = formModel.SelectedWebUser > 0 ?
                 _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.SelectedWebUser) : // if logged in as admin or affiliate
                 _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.idUser);
 
@@ -591,9 +637,9 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             if (ReferenceEquals(null, webUser))
             {
-                if(!_stateService.HasValue(WebUiConstants.SessionId))
+                if (!_stateService.HasValue(WebUiConstants.SessionId))
                     _logger.Info("Session id is not in session.");
-                if(!_stateService.HasValue(WebUiConstants.SessionId))
+                if (!_stateService.HasValue(WebUiConstants.SessionId))
                     _logger.Info("AValidInstitution is not in session.");
 
                 webUser = _membershipService.CreateWebUser(
@@ -620,11 +666,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (!ReferenceEquals(createdByImpersonatedClaim, null))
             {
                 JProperty createdByImpersonatedUserMsg = new JProperty(
-                    JsonPropertyKeys.OrderCreatedByImpersonatedUserKey, 
+                    JsonPropertyKeys.OrderCreatedByImpersonatedUserKey,
                     createdByImpersonatedClaim.Value
                     );
 
-                newOrder.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrder.AdminComments,createdByImpersonatedUserMsg);
+                newOrder.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrder.AdminComments, createdByImpersonatedUserMsg);
             }
 
             newOrder = _orderManagementService.SaveOrderChanges(newOrder, string.Empty, string.Empty);
@@ -664,11 +710,16 @@ namespace CUWebinars.Web.Core.Orchestrators
             };
 
             order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
-            
+
             if (userCreatedInCart.HasValue)
+            {
                 _orderManagementService.FireOrderSubmittedEvent(order, userCreatedInCart.Value, url: Request.Url);
+                //_orderManagementService.FireOrderSynchEvent(order, userCreatedInCart.Value, url: Request.Url);
+            }
             else
+            {
                 _orderManagementService.FireOrderSubmittedEvent(order, url: Request.Url);
+            }
         }
 
         public void UpdateOrderWithUserId(int orderId, int userId)
@@ -712,7 +763,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         public Order LoadOrder(int id)
         {
             return _orderManagementService.GetOrderById(id);
-        
+
         }
 
         public void SetOrderPaidByCC(int qOrder, string s, string formFields)
@@ -720,16 +771,31 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 Order order = LoadOrder(qOrder);
 
-                //order.PaymentType = (PaymentType)2;
+                if (!ReferenceEquals(null, order))
+                {
+                    order.PaymentType = 2;
+
+                    //order.AdminComments = order.StoreComments + "\r\nCredit Card Order Approved: " + txApprovalCode.ToString();
+
+                    string buildMessage = "PayCC: " + order.idOrder + " QueryString: " + formFields;
+                    _logger.Info(buildMessage);
+
+                    order.OrderStatus = OrderStatus.Paid;
+                    JObject existingJObject = null;
 
 
-                //order.AdminComments = order.StoreComments + "\r\nCredit Card Order Approved: " + txApprovalCode.ToString();
 
-                string buildMessage = "Step2_PayCC: " + order.idOrder + " QueryString: " + formFields;
-                //Logger.Instance.LogMessage(buildMessage);
+                    var newJson =
+                        new JProperty(
+                            string.Concat("PayByCC-",
+                                TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                            new JObject(new JProperty("PayByCC", buildMessage))
+                            );
+                    order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, newJson);
 
-                order.OrderStatus = OrderStatus.Paid;
-                _orderManagementService.SaveChanges();
+                    _orderManagementService.SaveChanges();
+                }
+
             }
         }
 
@@ -750,6 +816,59 @@ namespace CUWebinars.Web.Core.Orchestrators
             UpdateOrderPricing(model.Order);
 
             return model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
+        }
+
+        public void SendOrderToLegacy(Order order)
+        {
+            if (_globalConfig.Tenant == "BankWebinars")
+                _orderManagementService.SendOrderToLegacy(order);
+        }
+
+        public void CreatePostEventClaim(Order order)
+        {
+
+            if (!ReferenceEquals(null, order))
+            {
+                var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+
+                if (orderRow.Webinar.Status != WebinarStatus.Recorded) return;
+
+                var onDemandCode = RandomHelpers.GetUniqueCode(5).ToLower();
+                var newExpiryDate = orderRow.Webinar.Date.AddMonths(6).ToShortDateString();
+                var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
+                var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, newExpiryDate);
+                var OnDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, onDemandCode);
+
+                var claimValue = new JObject(
+                    orderIdProperty,
+                    expiryDateProperty,
+                    OnDemandCodeProperty
+                    );
+
+                orderRow.OnDemandCode = onDemandCode;
+                _orderManagementService.SaveChanges();
+
+                var userAccountOfOrderer = _membershipService.GetUserAccountByEmail(
+                    _globalConfig.Tenant,
+                    order.WebUser.email
+                    );
+
+                _membershipService.AddClaim(
+                    userAccountOfOrderer,
+                    ClaimTypes.DisplayPostEventMaterials
+                    , claimValue.ToString(Formatting.None)
+                    );
+
+
+                //_membershipService.UpdateDisplayPostEventMaterialsClaim(
+                //    _globalConfig.Tenant,
+                //    order.BillingEmail,
+                //    DateTime.Parse(newExpiryDate),
+                //    order
+                //    );
+                _logger.Info("Added (at checkout) expiryDate claim for: {0}. Date: {1}", order.idOrder,
+                    DateTime.Parse(newExpiryDate));
+            }
         }
 
         public INotificationMessage GenerateMessagePreview(Order order)

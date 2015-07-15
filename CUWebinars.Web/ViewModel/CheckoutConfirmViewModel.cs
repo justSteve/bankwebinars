@@ -26,10 +26,22 @@ namespace CUWebinars.Web.ViewModel
         public string OptionLabel { get; set; }
         public ShippingDetailsModel ShippingDetailsModel { get; set; }
         public DiscountDetailsModel DiscountDetailsModel { get; set; }
+        public DiscountModel DiscountModel { get; set; }
         public string UserComments { get; set; }
         public string UserDetails { get; set; }
         public string UserFullname { get; set; }
         public UserType UserType { get; set; }
+
+        public string T_ordernum { get; set; }
+        public string C_company { get; set; }
+        public string C_fname { get; set; }
+        public string C_lname { get; set; }
+        public string C_address { get; set; }
+        public string C_city { get; set; }
+        public string C_state { get; set; }
+        public string C_zip { get; set; }
+        public string C_email { get; set; }
+        public string C_telephone { get; set; }
 
     }
 }

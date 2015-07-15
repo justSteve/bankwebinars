@@ -7,7 +7,7 @@ OCA.shippingAddressRequired = {};
 OCA.checkoutConfirm = {};
 OCA.searchBy = '';
 OCA.showSetAssignedAffiliate = $('#showSetAssignedAffiliate');
-OCA.okToLeave = false;
+OCA.okToLeave = true;
 
 OCA.initializeFunctions = function () {
 

@@ -128,11 +128,17 @@ namespace CUWebinars.Web.Controllers
 
                     _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
 
+
+                    
+                    //_cartControllerOrchestrator.SendOrderToLegacy(model.Order);
+
+                    _cartControllerOrchestrator.CreatePostEventClaim(model.Order);
+                    
                     return Json(new
                     {
                         Result = WebUiConstants.Success,
-                        OrderRowID = id.Value,
-                        Msg = string.Format("<p>Your Order ID is {0}. Please check your email for connection information for the webinar.</p>", id.Value)
+                        OrderRowID = model.Order.idOrder,
+                        Msg = string.Format("Your registration is confirmed. Complete details will be emailed to {0}.", model.Order.BillingEmail)
                     }, JsonRequestBehavior.AllowGet);
                 }
                 catch (Exception exception)
@@ -211,6 +217,7 @@ namespace CUWebinars.Web.Controllers
         public ActionResult CheckoutConfirm(int? ID = null)
         {
             var model = _cartControllerOrchestrator.BuildCheckoutConfirmViewModel(ID);
+            
             return PartialView("Partials/CheckoutConfirm", model);
         }
         public ActionResult CheckoutConfirmForAffiliate(int? ID = null)
@@ -416,9 +423,7 @@ namespace CUWebinars.Web.Controllers
                     var regType = _cartControllerOrchestrator.GetRegTypeById(idRegType.Value);
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(idOrderRow);
                     model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType = regType;
-
-
-
+                    
                     var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
 
                     return
@@ -484,12 +489,19 @@ namespace CUWebinars.Web.Controllers
             return View("~/Views/Cart/PayCC.cshtml", order);
         }
 
-        public void CCPostBack(FormCollection form)
+        public void PostBackCC(FormCollection form)
         {
             string formFields = Request.Form.ToString();
 
 
-            _logger.Info("CCPostBack: " + formFields);
+            _logger.Info("PostBackCC: " + formFields);
+
+        }        
+        
+        public void PostBackWPS(FormCollection form)
+        {
+            string formFields = Request.Form.ToString();
+            _logger.Info("PostBackWPS: " + formFields);
 
         }
 
@@ -504,7 +516,7 @@ namespace CUWebinars.Web.Controllers
             if (oResult)
             {
                 var order = _cartControllerOrchestrator.LoadOrder(qOrder);
-                return View("~/Views/Home/PayCC_Declined.cshtml", order);
+                return View("~/Views/Cart/PayCC_Declined.cshtml", order);
 
             }
             _logger.Info("ERROR: PayCC Declined Fell too far: " + formFields);
@@ -523,14 +535,13 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
-                    var order =  _cartControllerOrchestrator.LoadOrder(qOrder);
-                    _cartControllerOrchestrator.SetOrderPaidByCC(qOrder, Request.QueryString["Approval_Code"], formFields);
+                    return RedirectToAction("ConfirmOrder", new { referred = formFields, ID = qOrder });
 
-                    //if (order.IsEverythingPaid)
-                    //{
-                    //    Session["IsOrderPaid"] = true;
-                    //}
-                    return View("~/Views/Cart/PayCC_Approved.cshtml", order);
+                    //var order =  _cartControllerOrchestrator.LoadOrder(qOrder);
+                    //_cartControllerOrchestrator.SetOrderPaidByCC(qOrder, Request.QueryString["Approval_Code"], formFields);
+
+                    
+                    //return View("~/Views/Cart/PayCC_Approved.cshtml", order);
 
                 }
                 catch (Exception ex)

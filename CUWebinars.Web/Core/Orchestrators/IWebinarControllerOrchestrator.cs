@@ -27,5 +27,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         bool UpdateWebinarFiles(WebinarFilesEditModel webinarFilesEditModel, out string message);
         void UpdateWebinarFromViewInput(WebinarEditModel webinarEditModel);
         bool UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel, out string message);
+        ActionResult OnDemandLegacy(int idWebinar, int idUser);
     }
 }

@@ -378,8 +378,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 PercentOff = discountModel.PercentOff,
                 RenewalTerm = discountModel.RenewalTerm,
                 Status = discountModel.Status,
-                UsesCount = discountModel.UsesCount,
-                UsesRemain = discountModel.UsesRemain,
+                CreditsUsed = discountModel.CreditsUsed,
+                CreditsRemain = discountModel.CreditsRemain,
                 //WebUserDiscountXref = 
                 //idDiscount = 
             };
@@ -771,16 +771,24 @@ namespace CUWebinars.Web.Core.Orchestrators
             var discountModel = new DiscountModel();
             var currentUser = GetWebUserFromIPrincipal();
             var userDiscount = _orderManagementService.GetDiscountByUser(currentUser);
-
+            if (ReferenceEquals(userDiscount, null))
+                return null;
             _universalMapper.Map(userDiscount, discountModel);
 
-            if (discountModel.TypeOfDiscount == DiscountType.ComplianceSeries)
-            {
-                discountModel.DateValidFrom = userDiscount.DateValidFrom;
-                discountModel.DateValidTo = userDiscount.DateValidTo;
+            discountModel.DateValidFrom = userDiscount.DateValidFrom;
+            discountModel.DateValidTo = userDiscount.DateValidTo;
+            discountModel.RenewalTerm = userDiscount.RenewalTerm;
+            discountModel.Status = userDiscount.Status;
+            discountModel.Notes = userDiscount.Notes;
 
-                // ???
-            }
+            discountModel.CreditsRemain = userDiscount.CreditsRemain;
+            discountModel.CreditsUsed = userDiscount.CreditsUsed;
+            discountModel.Cost= userDiscount.Cost;
+            discountModel.DateBilled= userDiscount.DateBilled;
+            discountModel.FlatOff = userDiscount.FlatOff;
+            discountModel.PercentOff = userDiscount.PercentOff;
+            discountModel.Status = userDiscount.Status;
+            discountModel.DiscountCode = userDiscount.DiscountCode;
 
             return discountModel;
         }

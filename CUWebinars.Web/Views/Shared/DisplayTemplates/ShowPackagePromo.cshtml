@@ -1,4 +1,4 @@
-﻿@model DiscountModel
+﻿@using System.Configuration
 
 <style>
     .form-horizontal .control-group {
@@ -20,74 +20,32 @@
         padding: 5px;
     }
 </style>
+@{
+    var url = "";
+    if (@ConfigurationManager.AppSettings["Tenant"] == "BankWebinars")
+    {
+        url = "http://form.jotformpro.com/form/50827231711953?feedback=";
+    }
+    if (@ConfigurationManager.AppSettings["Tenant"] == "CUWebinars")
+    {
+        url = "http://form.jotform.us/form/51606487629162?feedback=";
 
-@Html.HiddenFor(model => model.DiscountCode)
+    }
 
-
-
-@if (Model.DiscountCode.StartsWith("CP"))
-{
-    <div class="row-fluid">
-        <div class="span4 ">
-            Your annual Compliance Perspectives subscription will
-            renew on @Model.DateValidTo.ToShortDateString() for
-            a @Model.RenewalTerm month term totaling $@Model.Cost.ToString().Replace(".00", "")<text>.</text>
-        </div>
-
-
-        <div class="span4 offset1 ">
-            Combine your Compliance Perspectives registration
-            with a 6 or 12 month subscription package for the ultimate in
-            regulatory training coverage.
-
-
-            <table align="center" style="border: black; margin-top: 6px;">
-                <tr style="background-color: lightcyan">
-                    <td>Add 6 Month Unlimited</td>
-                    <td>$5,800</td>
-                </tr>
-                <tr style="background-color: lightblue">
-                    <td>Add 12 Month Unlimited</td>
-
-                    <td>$9,775</td>
-                </tr>
-            </table>
-
-            <div style="margin-top: 6px;">
-                <a class="btn btn-success pull-right" href="javascript:void( window.open('http://form.jotformpro.com/form/51916745818971', 'blank','scrollbars=yes,toolbar=no,width=700,height=500'))">Order Today!</a>
-            </div>
-
-        </div>
-    </div>
 }
 
-@if (Model.DiscountCode.StartsWith("BZ"))
-{
-    <div class="row-fluid">
-        <div class="span4 offset1">
-            <div>
-
-                @if (Model.CreditsRemain > 0)
-                {
-                    <p style="font-size: larger">
-                        Your subscription package has been used <b> @Model.CreditsUsed.ToString().Replace(".0", "")</b> times and has
-                        <b>@Model.CreditsRemain.ToString().Replace(".0", "")</b> remaining.
-                    </p>
-                }
-                @if (Model.CreditsRemain < 2)
-                {
-                    <span>
-                       <button class="btn btn-success">Click here to renew today!</button>
-                    </span>
-                }
-            </div>
-        </div>
+<script language="javascript" type="text/javascript">
+    function openCOWindow() {
+        window.open('@url' + $("#getFeedback").val(), 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');
+    }
+</script>
 
 
-    </div>
-}
-else
-{
+
+
+
+
+<div class="row-fluid">
     <section>
         <p style="font-size: large;">
             We couldn't find an active subscription but are happy to doublecheck. <br />Or perhaps you'd like more info about our packages and subscriptions? Just let us know!
@@ -166,6 +124,4 @@ else
             <li>Premier Package - 1.5 Credit</li>
         </ul>
     </div>
-
-}
-
+</div> 

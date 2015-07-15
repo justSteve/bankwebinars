@@ -779,10 +779,9 @@
     <Content Include="Views\Admin\Home\_PasswordResetConfirm.cshtml" />
     <Content Include="Views\Admin\Home\_RegisterPartial.cshtml" />
     <Content Include="Views\Admin\Home\_ResetPasswordPartial.cshtml" />
-    <Content Include="Scripts\app\cart\create-order-new.js.map" />
     <Content Include="Scripts\app\utilities.js.map" />
+    <Content Include="Views\Cart\Partials\_ConfirmModal.cshtml" />
     <Content Include="Views\Cart\Partials\_DisplayOptionsInDropDown.cshtml" />
-    <Content Include="Scripts\app\cart\register-user-in-cart.js.map" />
     <Content Include="Scripts\app\register\register-user.js.map" />
     <Content Include="Scripts\jquery-1.11.1.min.map" />
     <Content Include="Views\Cart\Partials\_CancelModal.cshtml" />
@@ -791,6 +790,7 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="Views\Cart\Partials\_LogsModal.cshtml" />
+    <Content Include="Views\Cart\Partials\_PayByCCModal.cshtml" />
     <Content Include="Views\Cart\Partials\_UserDetailsModal.cshtml" />
     <Content Include="Views\Home\robots.txt" />
     <Content Include="Views\Shared\DisplayTemplates\ShowDiscountSubscription.cshtml">
@@ -881,7 +881,6 @@
     <Content Include="Views\Cart\Partials\_UpdateOrderWithUserId.cshtml" />
     <Content Include="Scripts\underscore.min.map" />
     <Content Include="Views\Home\PrivacyStatement.cshtml" />
-    <Content Include="Views\Cart\Partials\_ConfirmModal.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\ShippingDetails.cshtml" />
     <Content Include="Views\Account\ThankYouConfirmed.cshtml" />
     <Content Include="Views\Account\EditUser.cshtml" />
@@ -950,10 +949,11 @@
     <Content Include="Views\Admin\Partials\_ShowOrdersByUser.cshtml" />
     <Content Include="Views\Admin\Partials\_NotAuthorized.cshtml" />
     <Content Include="Views\Admin\DiscountManagement.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\DiscountGeneral.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\DiscountSubscription.cshtml" />
     <Content Include="Views\Account\OrderCompleteAffiliate.cshtml" />
     <Content Include="Views\Webinar\Partials\_AddNewUser.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\ShowCreditStructure.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\ShowPackagePromo.cshtml" />
+    <Content Include="Views\Cart\Partials\_WPSForm.cshtml" />
     <None Include="Web.BankWebinars31 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1470,7 +1470,6 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\app\admin\question.ts" />
-    <TypeScriptCompile Include="Scripts\app\cart\create-order-new.ts" />
     <TypeScriptCompile Include="Scripts\app\quiz\quiz.ts" />
     <TypeScriptCompile Include="Scripts\app\toastLogger.ts" />
     <TypeScriptCompile Include="Scripts\app\utilities.ts" />
@@ -1527,7 +1526,8 @@
     <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).dll"
+    <PostBuildEvent>copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\TTSWebJobs\CUWebinars.Azure.OrderSynch\ThirdPartyAssemblies\$(ProjectName).dll"
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).dll"
 copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).dll"
 copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AddLocConfirm\ThirdPartyAssemblies\$(ProjectName).dll"
 copy /Y "$(ProjectDir)Notification\Templates\OrderSubmitted.cshtml" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\CUWebinars.Azure.OrderConfirmNotifier\Notifications\Templates\OrderSubmitted.cshtml"

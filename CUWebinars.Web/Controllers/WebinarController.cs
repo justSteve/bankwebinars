@@ -284,6 +284,44 @@ namespace CUWebinars.Web.Controllers
             return View(current);
         }
 
+        public ActionResult RedirectLegacyHandouts()
+        {
+            if (!ReferenceEquals(RouteData.Values["arg2"], null))
+            {
+                return
+                    Redirect("http://legacy.bankwebinars.com/handouts/" + RouteData.Values["arg1"] + "/" +
+                             RouteData.Values["arg2"]);
+            }
+        else
+            {
+                return
+                    Redirect("http://legacy.bankwebinars.com/handouts/" + RouteData.Values["arg1"]);
+            }
+        }
+
+        public ActionResult RedirectLegacyRecordings()
+        {
+            if (!ReferenceEquals(RouteData.Values["arg2"], null))
+            {
+                return
+                    Redirect("http://legacy.bankwebinars.com/Recordings/" + RouteData.Values["arg1"] + "/" +
+                             RouteData.Values["arg2"]);
+            }
+            else
+            {
+                return
+                    Redirect("http://legacy.bankwebinars.com/Recordings/" + RouteData.Values["arg1"]);
+            }
+        }
+
+
+        public ActionResult RedirectLegacy(int? w, int? u)
+        {
+            
+            return _webinarControllerOrchestrator.OnDemandLegacy(w.Value, u.Value);
+            //return View(webinar);
+        }
+
         public ActionResult Index()
         {
             var webinars = _webinarManagementService.GetAllActive();
@@ -344,7 +382,7 @@ namespace CUWebinars.Web.Controllers
 
             if (eventsToShow == "recorded")
             {
-                webinars = _webinarManagementService.GetRecordedWebinars().OrderBy(w => w.Date);
+                webinars = _webinarManagementService.GetRecordedWebinars().OrderByDescending(w => w.Date);
                 ViewBag.Title = "All Recorded Events for " + _globalConfig.Tenant;
             }
 
@@ -455,7 +493,7 @@ namespace CUWebinars.Web.Controllers
             var data = new WebinarsSearchDTOAssembler(webinarsBrowserRequest.EchoId).Entity2DTO(searchResult);
             return Json(data, JsonRequestBehavior.AllowGet);
         }
-
+        
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult OnDemand(string onDemandCode)
         {
@@ -728,8 +766,8 @@ namespace CUWebinars.Web.Controllers
                                         //PercentOff = discountModel.PercentOff,
                                         //RenewalTerm = discountModel.RenewalTerm,
                                         //Status = discountModel.Status,
-                                        //UsesCount = discountModel.UsesCount,
-                                        //UsesRemain = discountModel.UsesRemain,
+                                        //CreditsUsed = discountModel.CreditsUsed,
+                                        //CreditsRemain = discountModel.CreditsRemain,
                                         ////WebUserDiscountXref = 
                                         ////idDiscount = 
                                     },
