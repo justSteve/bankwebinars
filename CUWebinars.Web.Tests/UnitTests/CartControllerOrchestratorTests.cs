@@ -8,6 +8,7 @@ using CUWebinars.Tests.Common;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.Tests.Infrastructure;
 using CUWebinars.Web.ViewModel;
@@ -28,6 +29,7 @@ namespace CUWebinars.Web.Tests.UnitTests
         private Mock<ILogger> _loggerMock = new Mock<ILogger>();
         private Mock<IStateService> _stateServiceMock = new Mock<IStateService>();
         private Mock<IFormatter> _formatterMock = new Mock<IFormatter>();
+        private Mock<IUniversalMapper> _universalMapperMock = new Mock<IUniversalMapper>();
 
         private GlobalConfig _globals = GlobalConfig.GlobalConfigSingleton;
         private WebTestsGlobalConfig _webTestsGlobals = WebTestsGlobalConfig.WebTestsGlobalConfigSingleton;
@@ -45,7 +47,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _loggerMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object,
-                _formatterMock.Object
+                _formatterMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -78,7 +81,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _loggerMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object,
-                _formatterMock.Object
+                _formatterMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -113,7 +117,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _loggerMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object,
-                _formatterMock.Object
+                _formatterMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -151,7 +156,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _loggerMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object,
-                _formatterMock.Object
+                _formatterMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -182,7 +188,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _loggerMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object,
-                _formatterMock.Object);
+                _formatterMock.Object,
+                _universalMapperMock.Object);
 
             //  Act
             var buildDisplayOptionsInDropDownViewModel = _cartControllerOrchestrator.BuildDisplayOptionsInDropDownViewModel(orderRow, idOrderRow);
@@ -212,7 +219,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _loggerMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object,
-                _formatterMock.Object
+                _formatterMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -243,7 +251,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _loggerMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object,
-                _formatterMock.Object
+                _formatterMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -292,7 +301,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _loggerMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object,
-                _formatterMock.Object
+                _formatterMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -342,7 +352,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _loggerMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object,
-                _formatterMock.Object
+                _formatterMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -394,7 +405,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _loggerMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object,
-                _formatterMock.Object
+                _formatterMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -448,7 +460,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _loggerMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object,
-                _formatterMock.Object
+                _formatterMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -503,7 +516,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _loggerMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object,
-                _formatterMock.Object
+                _formatterMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act

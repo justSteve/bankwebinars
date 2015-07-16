@@ -877,7 +877,7 @@ function cancelOrder(orderId, webinarId) {
 
         $.post(cancelOrderForm.attr('action'), data, function (response, status, xhr) {
             if (response.success) {
-
+                okToLeave = true;
                 var utilities = new Common.Utilities();
                 utilities.goToUrl('/webinar/details/' + webinarId);
 

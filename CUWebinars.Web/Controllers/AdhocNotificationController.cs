@@ -33,6 +33,7 @@ namespace CUWebinars.Web.Controllers
 
             var viewmodel = new AdhocNotificationViewModel
             {
+                NotificationBody = string.Empty,
                 Webinars = webinars
             };
 

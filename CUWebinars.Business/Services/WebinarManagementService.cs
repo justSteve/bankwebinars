@@ -103,22 +103,28 @@ namespace CUWebinars.Business.Services
 
                 // This loop is an edge case. true and false will be very common answers. Rather than storing them over and over again,
                 // this loop will re-use the already stored answers for true and false, which complies with the quiz schema.
+
+                var optionsToDelete = new List<Option>();
+
                 foreach (var option in options)
                 {
                     if (option.Text.Equals("true", StringComparison.OrdinalIgnoreCase) ||
                         option.Text.Equals("false", StringComparison.OrdinalIgnoreCase))
                     {
                         var storedOption = _quizRepository.Context.Option.Single(o => o.Id == option.Id);
+                        
                         foreach (var questionWithOption in question.QuestionWithOptions)
                         {
                             if (questionWithOption.Option.Id == storedOption.Id)
                             {
-                                questionWithOption.Option = storedOption;
+                                optionsToDelete.Add(option);
+                                questionWithOption.idOption = storedOption.Id;
                             }
                         }
                     }
                 }
-                
+
+                _quizRepository.Context.Option.RemoveRange(optionsToDelete);
                 _quizRepository.SaveChanges();
             }
 

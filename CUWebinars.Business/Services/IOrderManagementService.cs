@@ -3,6 +3,7 @@ using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using System;
 using System.Collections.Generic;
+using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.ViewModel;
 
 namespace CUWebinars.Business.Services
@@ -30,6 +31,7 @@ namespace CUWebinars.Business.Services
         Affiliate DetermineAffiliateByAlternativeMeans(int idUser);
         void DispatchDummyOrder();
         IEnumerable<Order> FindOrdersByUserId(int userId);
+        void FireAdhocNotificationHandler(AdhocNotificationMessage adhocNotificationMessage);
         void FireAdminEmailConnectionInfoHandler(Order order, IEnumerable<string> recipients);
         void FireAdminEmailSendShippedOrderEvent(Order order, IEnumerable<string> recipients, bool resending = false);
         void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, bool resending = false, Uri url = null);
@@ -106,5 +108,6 @@ namespace CUWebinars.Business.Services
         void SetUserStatusToUnChanged(WebUser user);
         void SetAffiliateStatusToUnChanged(Affiliate affiliate);
         IEnumerable<Order> GetOrdersByEmailDomain(string email, int aff);
+        void SendAdhocNotification(string emails, string subject, string body);
     }
 }

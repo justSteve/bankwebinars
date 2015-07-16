@@ -3,9 +3,10 @@
 <div style="width: 1100px; margin: 30px auto">
     <h2>Ad-hoc Notifications</h2>
 
-    @using (Html.BeginForm("Index", "AdhocNotification", FormMethod.Post, new { id = "AdhocNotificationForm", @class = "form-horizontal " }))
+    @using (Html.BeginForm("SendAdhocNotification", "Admin", FormMethod.Post, new { id = "AdhocNotificationForm", @class = "form-horizontal " }))
     {
-
+        @Html.AntiForgeryToken()
+        
         <div class="control-group">
             <label class="control-label" for="inputEmail">Webinars</label>
             <div class="controls">
@@ -15,7 +16,7 @@
         <div id="RegTypesCheckBoxes" class="control-group">
             <label class="control-label" for="inputEmail">Reg Types</label>
             <div class="controls">
-                @*@Html.DropDownListFor(m => m.SelectedWebinarId, new SelectList(Model.Webinars, "Value", "Text"), "Choose an Upcoming Webinar", new {@class = "input-xlarge"})*@
+                
             </div>
         </div>
 
