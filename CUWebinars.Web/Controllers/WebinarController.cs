@@ -1423,7 +1423,7 @@ namespace CUWebinars.Web.Controllers
             var clickToJoinViewModel = new ClickToJoinViewModel
             {
                 JoinCode = joinCode,
-                RedirectLinkText = @"http://" + _globalConfig.Tenant + ".com/" + joinCode,
+                RedirectLinkText = @"http://" + _globalConfig.TenantURL +"/" + joinCode,
                 Webinar = webinar
             };
 

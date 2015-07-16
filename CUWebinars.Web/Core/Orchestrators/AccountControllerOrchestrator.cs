@@ -83,9 +83,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     adminUserEmail = beingImpersonatedClaim.Value.Trim();
 
-                    _membershipService.RemoveClaim(_globals.Tenant, 
+                    _membershipService.RemoveClaim(_globals.Tenant,
                         user.Claims.Single(c => c.Type == System.IdentityModel.Claims.ClaimTypes.Email).Value, // email address
-                        ClaimTypes.BeingImpersonated, 
+                        ClaimTypes.BeingImpersonated,
                         beingImpersonatedClaim.Value
                         );
                 }
@@ -452,7 +452,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     userAccountExists = true;
                 }
             }
-            
+
             // if it did not exist after 2 attempts, just log it. and move on.
             if (ReferenceEquals(null, userAccount))
             {
@@ -484,15 +484,19 @@ namespace CUWebinars.Web.Core.Orchestrators
                         .Select(c => c.Value);
             }
 
-            if (discountModel.TypeOfDiscount == DiscountType.ComplianceSeries)
+            if (!ReferenceEquals(discountModel, null) &&
+                (
+                discountModel.TypeOfDiscount == DiscountType.ComplianceSeries
+                || discountModel.TypeOfDiscount == DiscountType.Package
+                || discountModel.TypeOfDiscount == DiscountType.Subscription))
             {
                 model.Subscription = discountModel;
             }
 
-            if (discountModel.TypeOfDiscount == DiscountType.Package)
-            {
-                model.Package = discountModel;
-            }
+            //if (discountModel.TypeOfDiscount == DiscountType.Package)
+            //{
+            //    model.Package = discountModel;
+            //}
 
             model.Scheduled = _orderManagementService.SelectOrdersWithScheduledWebinars(currentUser.idUser);
 
@@ -783,8 +787,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             discountModel.CreditsRemain = userDiscount.CreditsRemain;
             discountModel.CreditsUsed = userDiscount.CreditsUsed;
-            discountModel.Cost= userDiscount.Cost;
-            discountModel.DateBilled= userDiscount.DateBilled;
+            discountModel.Cost = userDiscount.Cost;
+            discountModel.DateBilled = userDiscount.DateBilled;
             discountModel.FlatOff = userDiscount.FlatOff;
             discountModel.PercentOff = userDiscount.PercentOff;
             discountModel.Status = userDiscount.Status;
@@ -926,9 +930,9 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 var registerFieldsDto = new RegisterFieldsDTO
                 {
-                    BaseUrl =  string.Format(@"{0}://{1}{2}/", _request.Url.Scheme, _request.Url.Authority, _request.ApplicationPath.TrimEnd('/')),
+                    BaseUrl = string.Format(@"{0}://{1}{2}/", _request.Url.Scheme, _request.Url.Authority, _request.ApplicationPath.TrimEnd('/')),
                     Email = email,
-                    FirstName= string.Empty,
+                    FirstName = string.Empty,
                     LastName = string.Empty,
                     Password = password
                 };
@@ -1170,9 +1174,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                     Thread.Sleep(500);
 
                     // Every 20 seconds, log the fact that the flow has been stuck here for the then current duration.
-                    if (retries%40 == 0 && retries > 0)
+                    if (retries % 40 == 0 && retries > 0)
                     {
-                        _logger.Info(string.Format("UserAccount returning null after {0} seconds.", retries/2));
+                        _logger.Info(string.Format("UserAccount returning null after {0} seconds.", retries / 2));
                     }
                 }
                 else
@@ -1354,7 +1358,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             // The following Claim is added so the system knows that the User is yet to pro-actively verify its account.
             // Note: this is a CUW/BW construct of Verified, as distinct from the MR idea of Verified (which is dealt with below)
             _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.CartRegistration);
-            
+
             Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey), "There's no reason session should not have a value for the VerificationKey at this point ");
 
             var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
@@ -1363,7 +1367,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             _membershipService.VerifyEmailFromKey(
                 verificationKey,
-                password 
+                password
                 ); // verify the user to unlock functionality like PasswordReset
 
 

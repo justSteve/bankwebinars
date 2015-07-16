@@ -62,7 +62,6 @@
     }
 }
 @{
-
     WebUser currentUser = Model.WebUser;
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
@@ -98,6 +97,7 @@
                     var row = scheduled.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
                     var showDuration = Convert.ToInt32(row.Webinar.Duration);
                     var upgradeCaption = "<a href=\"javascript:upgrade(" + row.Order.idOrder + "); \" id=\"upgrade\" class=\"btn btn-mini btn-success\">Upgrade?</a>";
+                    var builtURL = "http:\\" + globalConfig.TenantURL + "-j-" + row.TtsJoinUrl;
 
                     TimeSpan calcDays = row.Webinar.Date - DateTime.UtcNow;
                     var numDays = Convert.ToInt32(calcDays.TotalDays);
@@ -150,11 +150,16 @@
                                                     <td valign="top">Click-To-Join:</td>
                                                     @if (row.Webinar.Status == WebinarStatus.InProgress)
                                                     {
-                                                        <td><a href="@row.TtsJoinUrl" target="_JoinWebinar">Join the webinar.</a></td>
+                                                        <td>
+                                                            <a href="@Url.Action("ClickToJoin", "Webinar", new { @joinCode = row.TtsJoinUrl })"> Link</a>
+                                                        </td>
                                                     }
                                                     else
                                                     {
-                                                        <td><a href="@row.TtsJoinUrl" target="_JoinWebinar">This link will be enabled 15-20 minutes prior to the start of the event.</a></td>
+                                                        <td>
+                                                            <a href="@Url.Action("ClickToJoin", "Webinar", new { @joinCode = row.TtsJoinUrl })"> Link</a>
+                                                            @*@Html.ActionLink("Link to page", "ClickToJoin", "Webinar", new { @joinCode = "2" })*@
+                                                        </td>
                                                     }
                                                 </tr>
                                                 <tr>

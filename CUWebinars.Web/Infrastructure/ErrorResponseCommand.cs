@@ -23,34 +23,43 @@ namespace CUWebinars.Web.Infrastructure
                 if (originalRouteData != null)
                 {
 
+                    string controllerNameOfOriginalRequest = GetRoutePart(WebUiConstants.Controller, originalRouteData);
 
-                    string controllerNameOfOriginalRequest = GetRoutePart(WebUiConstants.Controller,
-                        originalRouteData
-                        );
-
-                    logger.Error(string.Format("Controller of Original Request: {0}", controllerNameOfOriginalRequest));
+                    //logger.Error(string.Format("Controller of Original Request: {0}", controllerNameOfOriginalRequest));
 
                     string actionNameOfOriginalRequest = GetRoutePart(WebUiConstants.Action,
                         originalRouteData
                         );
 
-                    logger.Error(string.Format("Action of Original Request: {0}", actionNameOfOriginalRequest));
-                    
-                    Elmah.ErrorSignal.FromCurrentContext().Raise(new Exception(string.Format("error in: {1} | {0} ", actionNameOfOriginalRequest, controllerNameOfOriginalRequest)));
+                    logger.Error(string.Format("ErrorResponseCMD logs Controller: {0} | Action: {1}, Context: {2} "
+                        , controllerNameOfOriginalRequest
+                        , actionNameOfOriginalRequest
+                        , new HttpContextWrapper(errorResponse.HttpContext)));
 
-                    errorResponse.Controller.ViewData.Model = new HandleErrorInfo(errorResponse.ExceptionInstance,
-                        controllerNameOfOriginalRequest,
-                        actionNameOfOriginalRequest
-                        );
+                    //Elmah.ErrorSignal.FromCurrentContext().Raise(new Exception(string.Format("error in: {1} | {0} ", actionNameOfOriginalRequest, controllerNameOfOriginalRequest)));
+                    if (!ReferenceEquals(actionNameOfOriginalRequest, null))
+                    {
+                        errorResponse.Controller.ViewData.Model = new HandleErrorInfo(errorResponse.ExceptionInstance,
+                            controllerNameOfOriginalRequest,
+                            actionNameOfOriginalRequest
+                            );
+                    }
+                    else
+                    {
+                        Elmah.ErrorSignal.FromCurrentContext().Raise(new Exception(string.Format("ErrorResponseCommand finds Null Controller {1} | {0} ", actionNameOfOriginalRequest, controllerNameOfOriginalRequest)));
+                    }
                 }
+                //Elmah.ErrorSignal.FromCurrentContext().Raise(new Exception(string.Format("ErrorResponseCommand finds Null Controller {1} | {0} ", actionNameOfOriginalRequest, controllerNameOfOriginalRequest)));
+                    
             }
 
             // Re-route execution to the relevant StaticContentController's Action method based on status code.
-            ((IController)errorResponse.Controller).Execute(
-                new System.Web.Routing.RequestContext(
-                    new HttpContextWrapper(errorResponse.HttpContext),
-                    errorResponse.NewrouteData
-                    ));
+            if (!ReferenceEquals(errorResponse.Controller, null))
+                ((IController)errorResponse.Controller).Execute(
+                    new System.Web.Routing.RequestContext(
+                        new HttpContextWrapper(errorResponse.HttpContext),
+                        errorResponse.NewrouteData
+                        ));
 
         }
 

@@ -15,6 +15,7 @@ namespace CUWebinars.Web.Services
 
         public void SetValue<T>(string key, T value)
         {
+            if (!ReferenceEquals(this.SessionState, null))
             this.SessionState.Add(key, value);
         }
 
