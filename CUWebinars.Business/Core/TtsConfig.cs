@@ -53,7 +53,8 @@ namespace CUWebinars.Business.Core
                 adhocNotificationDelivery = new AzureAdhocNotificationDelivery(
                     storageAccountName, 
                     storageAccessKey,
-                    new Log4NetLogger(typeof(AzureAdhocNotificationDelivery)));
+                    new Log4NetLogger(typeof(AzureAdhocNotificationDelivery)),
+                    baseUrl);
             }
             else
             {
