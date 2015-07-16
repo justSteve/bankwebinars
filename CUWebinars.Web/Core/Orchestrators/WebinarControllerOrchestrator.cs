@@ -464,7 +464,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             var webinars = _webinarManagementService.GetWebinarByPresenterLastName(searchTerm);
             var webinarsByTopic = _webinarManagementService.GetWebinarByDescription(searchTerm);
-            var unionOfResultSets = webinars.Union(webinarsByTopic);
+            var unionOfResultSets = webinars.Union(webinarsByTopic).Where(w => w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress || w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Scheduled);
             return unionOfResultSets;
         }
 

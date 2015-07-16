@@ -953,6 +953,7 @@
     <Content Include="Views\Shared\DisplayTemplates\ShowCreditStructure.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\ShowPackagePromo.cshtml" />
     <Content Include="Views\Cart\Partials\_WPSForm.cshtml" />
+    <Content Include="Views\Account\Partials\Archived.cshtml" />
     <None Include="Web.BankWebinars31 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

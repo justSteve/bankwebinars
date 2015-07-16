@@ -17,7 +17,7 @@
     table td {
         border: thin solid;
         border-spacing: 1px;
-        padding: 5px;
+        padding: 3px;
     }
 </style>
 
@@ -61,12 +61,15 @@
     </div>
 }
 
-@if (Model.DiscountCode.StartsWith("BZ"))
+@if (Model.DiscountCode.StartsWith("BZ") ||
+Model.DiscountCode.StartsWith("SL") ||
+Model.DiscountCode.StartsWith("GD") ||
+Model.DiscountCode.StartsWith("PL")
+    )
 {
     <div class="row-fluid">
         <div class="span4 offset1">
             <div>
-
                 @if (Model.CreditsRemain > 0)
                 {
                     <p style="font-size: larger">
@@ -74,98 +77,35 @@
                         <b>@Model.CreditsRemain.ToString().Replace(".0", "")</b> remaining.
                     </p>
                 }
-                @if (Model.CreditsRemain < 2)
-                {
-                    <span>
-                       <button class="btn btn-success">Click here to renew today!</button>
-                    </span>
-                }
+                <div style="margin-top: 6px;">
+                    <a class="btn btn-success pull-right" href="javascript:void( window.open('http://form.jotformpro.com/form/51916745818971', 'blank','scrollbars=yes,toolbar=no,width=700,height=500'))">Click here to add more credits!</a>
+                </div>
+            </div>s
+        </div>
+
+        <div class="span4 offset1 ">
+            Combine your Webinar Subscription Package
+            with a 6 or 12 month Compliance Perspectives subscription
+            package for the ultimate in regulatory training coverage.
+
+            <table align="center" style="border: black; margin-top: 6px;">
+                <tr style="background-color: lightcyan">
+                    <td>Add 6 Months</td>
+                    <td>$954</td>
+                </tr>
+                <tr style="background-color: lightblue">
+                    <td>Add 12 Months</td>
+
+                    <td>$1,749</td>
+                </tr>
+            </table>
+
+            <div style="margin: 10px;">
+                <p>
+                    <a class="btn btn-success pull-right" href="javascript:void( window.open('http://form.jotformpro.com/form/51955606623964', 'blank','scrollbars=yes,toolbar=no,width=700,height=500'))">Order Today!</a>
+                </p>
             </div>
+
         </div>
-
-
     </div>
 }
-else
-{
-    <section>
-        <p style="font-size: large;">
-            We couldn't find an active subscription but are happy to doublecheck. <br />Or perhaps you'd like more info about our packages and subscriptions? Just let us know!
-            <br />
-
-            <span class="input-append">
-                <input type="text" id="getFeedback" placeholder="Your message here." class="span6" name="Comment" />
-                <button onclick="javascript: openCOWindow();" class="btn btn-primary">Send Feedback!</button>
-            </span>
-        </p>
-    </section>
-
-    <div class="span4 ">
-
-        <table align="center" style="border: black; margin-top: 6px;">
-            <tr style="color: white; background-color: black">
-                <td>Memebership Level</td>
-                <td># of Credits</td>
-                <td>Price</td>
-            </tr>
-            <tr style="background-color: lightcyan">
-                <td>Bronze</td>
-                <td>5</td>
-                <td>$1,125</td>
-            </tr>
-            <tr style="background-color: lightblue">
-                <td>Silver</td>
-                <td>10</td>
-                <td>$2,100</td>
-            </tr>
-            <tr style="background-color: lightcyan">
-                <td>Gold</td>
-                <td>15</td>
-                <td>$2,850</td>
-            </tr>
-            <tr style="background-color: lightblue">
-                <td>Platium</td>
-                <td>20</td>
-                <td>$3,500</td>
-            </tr>
-            <tr style="background-color: lightcyan">
-                <td>6 Month Unlimited</td>
-                <td>-</td>
-                <td>$4,950</td>
-            </tr>
-            <tr style="background-color: lightblue">
-                <td>12 Month Unlimited</td>
-                <td>-</td>
-                <td>$8,250</td>
-            </tr>
-            <tr style="background-color: lightcyan">
-                <td>6 Month Unlimited w/<br />Compliance Perspectives</td>
-                <td></td>
-                <td>$5,800</td>
-            </tr>
-            <tr style="background-color: lightblue">
-                <td>12 Month Unlimited w/<br />Compliance Perspectives</td>
-                <td></td>
-                <td>$9,775</td>
-            </tr>
-        </table>
-
-        <div style="margin-top: 6px;">
-            <a class="btn btn-success pull-right" href="javascript:void( window.open('http://form.jotformpro.com/form/51916745818971', 'blank','scrollbars=yes,toolbar=no,width=700,height=500'))">Order Today!</a>
-        </div>
-
-
-
-    </div>
-    <div class="span3" style="font-size: smaller;">
-        <h5 class="short_headline">Credit Structure</h5>
-        <ul>
-            <li>Live or OnDemand - 1 Credit</li>
-            <li>CD ROM and Handouts - 1.25 Credits</li>
-            <li>Live PLUS OnDemand - 1.25 Credits</li>
-            <li>Premier Package - 1.5 Credit</li>
-        </ul>
-    </div>
-
-}
-

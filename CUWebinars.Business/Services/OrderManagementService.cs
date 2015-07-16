@@ -917,6 +917,49 @@ namespace CUWebinars.Business.Services
             sb.Append("        </span>");
             sb.Append("    </td>");
             sb.Append("</tr>");
+            if (!ReferenceEquals(myRow.Discount, null))
+            {
+                decimal amountToReduce;
+                sb.Append("<tr>");
+                if (!ReferenceEquals(myRow.Discount.FlatOff, null))
+                {
+                    amountToReduce = Convert.ToDecimal(myRow.Order.Total) - (myRow.Discount.FlatOff);
+                    sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                    sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                    sb.Append("            Amt. of Discount:");
+                    sb.Append("        </span>");
+                    sb.Append("    </td>");
+                    sb.Append("    <td width='350px' style='text-align: left; color: red; background-color: #B4D1EC; padding-left: 6px;'>");
+                    sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                    sb.Append("            <b>$");
+                    sb.Append(amountToReduce.ToString().Replace(".00", ""));
+                    sb.Append("            </b>");
+                    sb.Append("        </span>");
+                    sb.Append("    </td>");
+                }
+                if (!ReferenceEquals(myRow.Discount.PercentOff, null))
+                {
+                    amountToReduce = (myRow.Discount.PercentOff * 100) / Convert.ToDecimal(myRow.Order.Total);
+
+                    sb.Append(
+                        "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                    sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                    sb.Append("            Amt. of Discount:");
+                    sb.Append("        </span>");
+                    sb.Append("    </td>");
+                    sb.Append(
+                        "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                    sb.Append(
+                        "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                    sb.Append("            <b>$");
+                    sb.Append(amountToReduce.ToString().Replace(".00", ""));
+                    sb.Append("            </b>");
+                    sb.Append("        </span>");
+                    sb.Append("    </td>");
+                }
+                sb.Append("</tr>");
+            }
+
             sb.Append("<tr>");
             sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
             sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
@@ -1032,7 +1075,7 @@ namespace CUWebinars.Business.Services
             var x = 0;
             foreach (var order in orders)
             {
-                _logger.Info("RecordingPostedNotification {0} of {1} sent to {2} for {3}.",x, orders.Count, order.BillingEmail, title);
+                _logger.Info("RecordingPostedNotification {0} of {1} sent to {2} for {3}.", x, orders.Count, order.BillingEmail, title);
 
                 var postEventPublishModel = new PostEventPublishModel()
                 {
