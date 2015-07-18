@@ -61,7 +61,7 @@ namespace CUWebinars.Web.Controllers
         }
 
         [HttpPost]
-        [ValidateJsonAntiForgeryToken(Order = 0)]
+        //[ValidateJsonAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
         public ActionResult ApplyDiscountCode(string code, int orderRowId)
         {

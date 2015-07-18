@@ -8,6 +8,8 @@
     Layout = "/Views/Shared/_LayoutPublic.cshtml";
 
 
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+
     WebUser currentUser = Model.WebUser;
     var EditResult = "<span>&nbsp;</span>";
     var userSubscription = new DiscountDetailsModel() { Discount = Model.Package, UserId = currentUser.idUser };
@@ -43,173 +45,180 @@
         <li class="@activeScheduled"><a href="#upcoming1" data-toggle="tab">Upcoming Events</a></li>
         <li class="@activeRec"><a href="#recorded1" data-toggle="tab">Recorded Events</a></li>
         <li><a href="#archived" data-toggle="tab">Expired</a></li>
-        <li><a href="#subscriptions" data-toggle="tab">Subscriptions & Discounts</a></li>
-        @*<li><a href="#account" data-toggle="tab">Edit Account Profile</a></li>*@
+        @if (_globalConfig.Tenant == "BankWebinars")
+        {
+            <li><a href="#subscriptions" data-toggle="tab">Subscriptions & Discounts</a></li>
+        }
+            @*<li><a href="#account" data-toggle="tab">Edit Account Profile</a></li>*@
 
-    </ul>
+        </ul>
 
 
-    <div class="tab-content" id="mywebinars">
-        <div class="tab-pane @activeScheduled" id="upcoming1">
-            @if (Model.Scheduled.Count > 0)
+        <div class="tab-content" id="mywebinars">
+            <div class="tab-pane @activeScheduled" id="upcoming1">
+                @if (Model.Scheduled.Count > 0)
             {
                 Html.RenderPartial("Partials/upcoming");
             }
             else
             {
-                <div>No orders for an upcoming event were found.</div>
+                    <div>No orders for an upcoming event were found.</div>
             }
-        </div>
-        <div class="tab-pane @activeRec" id="recorded1">
-            @if (Model.Recorded.Count > 0)
+            </div>
+            <div class="tab-pane @activeRec" id="recorded1">
+                @if (Model.Recorded.Count > 0)
             {
                 Html.RenderPartial("Partials/Recorded");
             }
-        </div>
-        <div class="tab-pane @activeRec" id="archived">
-            @if (Model.Recorded.Count > 0)
+            </div>
+            <div class="tab-pane @activeRec" id="archived">
+                @if (Model.Recorded.Count > 0)
             {
                 Html.RenderPartial("Partials/Archived");
             }
-        </div>
-        <div class="tab-pane" id="subscriptions">
+            </div>
+            @if (_globalConfig.Tenant == "BankWebinars")
+        {
+                <div class="tab-pane" id="subscriptions">
 
-            @if (!ReferenceEquals(Model.Subscription, null))
-            {
-                //Html.RenderPartial("Partials/Subscription", userSubscription );
-                Html.RenderPartial("DisplayTemplates/ShowDiscountSubscription", Model.Subscription);
-            }
-            else
-            {
-                <style>
-                    table td {
-                        border: thin solid;
-                        border-spacing: 1px;
-                        padding: 3px;
-                    }
-                </style>
-                <div class="row-fluid">
-                    <div class="span4">
-                        <section>
-                            <p>
-                                We couldn't find an active subscription but are happy to doublecheck. Or perhaps you'd like more info about our packages and subscriptions? Just let us know!
-                            </p>
-                            <p class="pull-right">
-                                <span class="input-append">
-                                    <input type="text" id="getFeedback" placeholder="Your message here." class="span6" name="Comment" />
-                                    <button onclick="javascript: openCOWindow();" class="btn btn-primary">Send Feedback!</button>
-                                </span>
-                            </p>
-                        </section>
-                    </div>
-                    <div style="margin-top: 6px;">
-                        <a class="btn btn-success pull-right" href="javascript:void( window.open('http://form.jotformpro.com/form/51916745818971', 'blank','scrollbars=yes,toolbar=no,width=700,height=500'))">Order Today!</a>
-                    </div>
-                    <div class="span5 ">
-                        <table width="80%" align="center" style="border: black; margin-top: 6px;">
-                            <tr style="color: white; background-color: black">
-                                <td>Memebership Level</td>
-                                <td># of Credits</td>
-                                <td>Price</td>
-                            </tr>
-                            <tr style="background-color: lightcyan">
-                                <td>Bronze</td>
-                                <td>5</td>
-                                <td>$1,125</td>
-                            </tr>
-                            <tr style="background-color: lightblue">
-                                <td>Silver</td>
-                                <td>10</td>
-                                <td>$2,100</td>
-                            </tr>
-                            <tr style="background-color: lightcyan">
-                                <td>Gold</td>
-                                <td>15</td>
-                                <td>$2,850</td>
-                            </tr>
-                            <tr style="background-color: lightblue">
-                                <td>Platium</td>
-                                <td>20</td>
-                                <td>$3,500</td>
-                            </tr>
-                            <tr style="background-color: lightcyan">
-                                <td>6 Month Unlimited</td>
-                                <td>-</td>
-                                <td>$4,950</td>
-                            </tr>
-                            <tr style="background-color: lightblue">
-                                <td>12 Month Unlimited</td>
-                                <td>-</td>
-                                <td>$8,250</td>
-                            </tr>
-                            <tr style="background-color: lightcyan">
-                                <td>6 Month Unlimited w/<br />Compliance Perspectives</td>
-                                <td></td>
-                                <td>$5,800</td>
-                            </tr>
-                            <tr style="background-color: lightblue">
-                                <td>12 Month Unlimited w/<br />Compliance Perspectives</td>
-                                <td></td>
-                                <td>$9,775</td>
-                            </tr>
-                        </table>
-
-
-
-
-
-                    </div>
-                    <div class="span3" style="font-size: smaller;">
-                        <h5 class="short_headline">Credit Structure</h5>
-                        <ul>
-                            <li>Live or OnDemand - 1 Credit</li>
-                            <li>CD ROM and Handouts - 1.25 Credits</li>
-                            <li>Live PLUS OnDemand - 1.25 Credits</li>
-                            <li>Premier Package - 1.5 Credit</li>
-                        </ul>
-                    </div>
+                    @if (!ReferenceEquals(Model.Subscription, null))
+                {
+                    //Html.RenderPartial("Partials/Subscription", userSubscription );
+                    Html.RenderPartial("DisplayTemplates/ShowDiscountSubscription", Model.Subscription);
+                }
+                else
+                {
+                        <style>
+                            table td {
+                                border: thin solid;
+                                border-spacing: 1px;
+                                padding: 3px;
+                            }
+                        </style>
+                        <div class="row-fluid">
+                            <div class="span4">
+                                <section>
+                                    <p>
+                                        We couldn't find an active subscription but are happy to doublecheck. Or perhaps you'd like more info about our packages and subscriptions? Just let us know!
+                                    </p>
+                                    <p class="pull-right">
+                                        <span class="input-append">
+                                            <input type="text" id="getFeedback" placeholder="Your message here." class="span6" name="Comment" />
+                                            <button onclick="javascript: openCOWindow();" class="btn btn-primary">Send Feedback!</button>
+                                        </span>
+                                    </p>
+                                </section>
+                            </div>
+                            <div style="margin-top: 6px;">
+                                <a class="btn btn-success pull-right" href="javascript:void( window.open('http://form.jotformpro.com/form/51916745818971', 'blank','scrollbars=yes,toolbar=no,width=700,height=500'))">Order Today!</a>
+                            </div>
+                            <div class="span5 ">
+                                <table width="80%" align="center" style="border: black; margin-top: 6px;">
+                                    <tr style="color: white; background-color: black">
+                                        <td>Memebership Level</td>
+                                        <td># of Credits</td>
+                                        <td>Price</td>
+                                    </tr>
+                                    <tr style="background-color: lightcyan">
+                                        <td>Bronze</td>
+                                        <td>5</td>
+                                        <td>$1,125</td>
+                                    </tr>
+                                    <tr style="background-color: lightblue">
+                                        <td>Silver</td>
+                                        <td>10</td>
+                                        <td>$2,100</td>
+                                    </tr>
+                                    <tr style="background-color: lightcyan">
+                                        <td>Gold</td>
+                                        <td>15</td>
+                                        <td>$2,850</td>
+                                    </tr>
+                                    <tr style="background-color: lightblue">
+                                        <td>Platium</td>
+                                        <td>20</td>
+                                        <td>$3,500</td>
+                                    </tr>
+                                    <tr style="background-color: lightcyan">
+                                        <td>6 Month Unlimited</td>
+                                        <td>-</td>
+                                        <td>$4,950</td>
+                                    </tr>
+                                    <tr style="background-color: lightblue">
+                                        <td>12 Month Unlimited</td>
+                                        <td>-</td>
+                                        <td>$8,250</td>
+                                    </tr>
+                                    <tr style="background-color: lightcyan">
+                                        <td>6 Month Unlimited w/<br />Compliance Perspectives</td>
+                                        <td></td>
+                                        <td>$5,800</td>
+                                    </tr>
+                                    <tr style="background-color: lightblue">
+                                        <td>12 Month Unlimited w/<br />Compliance Perspectives</td>
+                                        <td></td>
+                                        <td>$9,775</td>
+                                    </tr>
+                                </table>
 
 
+
+
+
+                            </div>
+                            <div class="span3" style="font-size: smaller;">
+                                <h5 class="short_headline">Credit Structure</h5>
+                                <ul>
+                                    <li>Live or OnDemand - 1 Credit</li>
+                                    <li>CD ROM and Handouts - 1.25 Credits</li>
+                                    <li>Live PLUS OnDemand - 1.25 Credits</li>
+                                    <li>Premier Package - 1.5 Credit</li>
+                                </ul>
+                            </div>
+
+
+                        </div>
+                }
                 </div>
-            }
+        }
+                @*<div class="tab-pane" id="account">
+
+                    </div>*@
+
+                @*<div class="row-fluid">
+                        @{Html.RenderPartial("Partials/Messages");}
+                    </div>*@
+                <br />
+
+            </div>
+
+            @*@{Html.RenderPartial("Partials/Archived");}*@
+            @*<div class="modalOverlay" id="modalOverlay2">
+                    <p align="center">
+                        Simply list the required names in this box - one name per line. Type the names directly
+                        or prepare the list elsewhere and paste it here. When you click the 'Generate' button
+                        return a list of links that you can distribute to each attendee.</p>
+                    <form action="/Admin/registrations/CertificateOfCompletionList" id="frmCOCList" method="post">
+                    <input type="hidden" name="id" id="txtWebinarIDList" />
+                    <textarea cols="30" rows="8" name="displayNames">One name per line please.</textarea><p
+                        align="center">
+                        <input type="submit" value="Generate Certificates" /></p>
+                    </form>
+                </div>
+                <div class="modalOverlay" id="modalOverlay">
+                    <p align="center">
+                        <form action="/Admin/registrations/CertificateOfCompletion" id="frmCOC" method="post">
+                        <input type="hidden" name="id" id="txtWebinarID" />
+                        Name to Be Displayed:
+                        <input type="text" name="displayName" value="@PageData["thisUser"].FirstName  @PageData["thisUser"].LastName "  /><br />
+                        <br />
+                        <input type="submit" value="Generate Certificate" />
+                        </form>
+                    </p>
+                    <p align="center">
+                        <br />
+                        <br />
+                        Need to produce certificates for other attendees? <a href="javascript:ListOfNames();">
+                            Click here.</a></p>
+                </div>*@
         </div>
-        @*<div class="tab-pane" id="account">
-
-            </div>*@
-
-        @*<div class="row-fluid">
-                @{Html.RenderPartial("Partials/Messages");}
-            </div>*@
-        <br />
-    </div>
-
-    @*@{Html.RenderPartial("Partials/Archived");}*@
-    @*<div class="modalOverlay" id="modalOverlay2">
-            <p align="center">
-                Simply list the required names in this box - one name per line. Type the names directly
-                or prepare the list elsewhere and paste it here. When you click the 'Generate' button
-                return a list of links that you can distribute to each attendee.</p>
-            <form action="/Admin/registrations/CertificateOfCompletionList" id="frmCOCList" method="post">
-            <input type="hidden" name="id" id="txtWebinarIDList" />
-            <textarea cols="30" rows="8" name="displayNames">One name per line please.</textarea><p
-                align="center">
-                <input type="submit" value="Generate Certificates" /></p>
-            </form>
-        </div>
-        <div class="modalOverlay" id="modalOverlay">
-            <p align="center">
-                <form action="/Admin/registrations/CertificateOfCompletion" id="frmCOC" method="post">
-                <input type="hidden" name="id" id="txtWebinarID" />
-                Name to Be Displayed:
-                <input type="text" name="displayName" value="@PageData["thisUser"].FirstName  @PageData["thisUser"].LastName "  /><br />
-                <br />
-                <input type="submit" value="Generate Certificate" />
-                </form>
-            </p>
-            <p align="center">
-                <br />
-                <br />
-                Need to produce certificates for other attendees? <a href="javascript:ListOfNames();">
-                    Click here.</a></p>
-        </div>*@
-</div>

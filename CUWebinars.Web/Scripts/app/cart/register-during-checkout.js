@@ -1155,6 +1155,9 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
         if (registerDuringCheckout.totalPrice < 1) {
             return;
         }
+        var token = $(this).find('input[name=__RequestVerificationToken]').val();
+        var headers = {};
+        headers['__RequestVerificationToken'] = token;
 
         var url = '/cart/ApplyDiscountCode';
         var payload = { code: $('#CheckoutDiscountCode').val(), orderRowId: orderRowId };
@@ -1168,6 +1171,7 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
             url: url,
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
+            headers: headers,
             beforeSend: function () {
                 $(self).prepend('<i id="discountSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
                 $(self).attr('disabled', 'disabled');

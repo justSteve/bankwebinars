@@ -848,7 +848,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             if (regType.ShowRecordingNotifications.Equals("yes", StringComparison.OrdinalIgnoreCase))
                 return DateTime.Today.AddMonths(6);
-
+            //Update to pull LivePlusFive value from Webinar table.
             return DateTime.Today.AddDays(7);
         }
 

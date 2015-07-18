@@ -1358,7 +1358,7 @@ namespace CUWebinars.Business.Services
 
             if (regType.ShowRecordingNotifications.Equals("yes", StringComparison.OrdinalIgnoreCase))
                 return DateTime.Today.AddMonths(6).ToShortDateString();
-
+            //update to pull LivePlusFive value from database
             return DateTime.Today.AddDays(5).ToShortDateString();
         }
 
