@@ -660,7 +660,7 @@ $(function () {
                 }
                 $('#spinnerLabel').remove();
             }).fail(function () {
-
+                $('#spinnerLabel').remove();
             }).always(function () {
                 //$('#loadingSpinner').remove();
             });

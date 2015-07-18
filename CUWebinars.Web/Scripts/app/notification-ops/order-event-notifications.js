@@ -237,6 +237,8 @@ $(function () {
 
                                 e.preventDefault();
 
+                                var self = this;
+
                                 var form = $('#AdhocNotificationForm');
                                 var url = form.attr('action');
                                 var payload = {
@@ -254,7 +256,7 @@ $(function () {
                                     dataType: constants.JsonDataType,
                                     data: payload,
                                     beforeSend: function () {
-
+                                        $(self).append('<span id="sendNotifnSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
                                     }
                                 }).done(function (data, textStatus, jqXHR) {
                                     if (data.Result === 'Success') {
@@ -262,8 +264,9 @@ $(function () {
                                     } else {
 
                                     }
+                                    $('#sendNotifnSpinner').remove();
                                 }).fail(function (jqXHR, textStatus, errorThrown) {
-
+                                    $('#sendNotifnSpinner').remove();
                                 }).always(function (/* arguments vary if fail or not */) {
 
                                 });
