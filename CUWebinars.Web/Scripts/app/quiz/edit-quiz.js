@@ -45,7 +45,7 @@ $(function () {
         EQ.editCloneSubmitButton = $('#EditCloneSubmitButton');
         EQ.editCloneSubmitButtonTop = $('#EditCloneSubmitButtonTop');
         EQ.addQuestionButton = $('#AddQuestionButton');
-        EQ.CloneQuizButton = $('#CloneQuiz');
+        EQ.CloneQuizButton = $('#CloneWebinar');
         EQ.cloneInput = $('#CloneInput');
         EQ.editWebinarButton = $('#EditWebinar');
         EQ.editInput = $('#EditInput');
@@ -973,9 +973,9 @@ $(function () {
                 var optionText = $.trim($(commonIdPrefix + '-optionInput').val());
 
                 var optionId;
-                if (optionText === 'true') {
+                if ($.trim(optionText).toLowerCase() === 'true') {
                     optionId = 1;
-                } else if (optionText === 'false') {
+                } else if ($.trim(optionText).toLowerCase() === 'false') {
                     optionId = 2;
                 }
 
