@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
@@ -143,15 +144,28 @@ namespace CUWebinars.Business.Repository
 
                 foreach (var questionWithOption in quizWithQuestion.Question.QuestionWithOptions)
                 {
-                    questionWithOptions.Add(new QuestionWithOption
+                    if (questionWithOption.Option.Text.Equals("true", StringComparison.OrdinalIgnoreCase) ||
+                        questionWithOption.Option.Text.Equals("false", StringComparison.OrdinalIgnoreCase))
                     {
-                        CorrectAnswer = questionWithOption.CorrectAnswer,
-                        Letter = questionWithOption.Letter,
-                        Option = new Option
+                        questionWithOptions.Add(new QuestionWithOption
                         {
-                         Text = questionWithOption.Option.Text   
-                        }
-                    });
+                            CorrectAnswer = questionWithOption.CorrectAnswer,
+                            Letter = questionWithOption.Letter,
+                            Option = questionWithOption.Option
+                        });
+                    }
+                    else
+                    {
+                        questionWithOptions.Add(new QuestionWithOption
+                        {
+                            CorrectAnswer = questionWithOption.CorrectAnswer,
+                            Letter = questionWithOption.Letter,
+                            Option = new Option
+                            {
+                                Text = questionWithOption.Option.Text
+                            }
+                        });
+                    }
                 }
 
                 newQuiz.QuizWithQuestions.Add(new QuizWithQuestion

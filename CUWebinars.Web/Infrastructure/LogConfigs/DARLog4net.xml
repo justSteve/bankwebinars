@@ -3,8 +3,8 @@
   <appender name="AdoNetAppender" type="log4net.Appender.AdoNetAppender">
     <bufferSize value="1" />
     <connectionType value="System.Data.SqlClient.SqlConnection, System.Data,  Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-    <connectionString value="Data Source=WINDOWS8DEVRIG;Initial Catalog=BankWebinars;Integrated Security=True;MultipleActiveResultSets=True" />
-    <commandText value="INSERT INTO BWLog ([Date],[Level],[Message],[Exception], [Logger]) VALUES (@log_date, @log_level, @message, @exception, @logger)" />
+    <connectionString value="Data Source=WINDOWS8DEVRIG;Initial Catalog=cuwebinars33;Integrated Security=True;MultipleActiveResultSets=True" />
+    <commandText value="INSERT INTO Logger ([Date],[Level],[Message],[Exception], [Logger]) VALUES (@log_date, @log_level, @message, @exception, @logger)" />
 <!--    <commandText value="INSERT INTO CULog ([Date],[Level],[Message],[Exception], [Logger]) VALUES (@log_date, @log_level, @message, @exception, @logger)" />-->
     <parameter>
       <parameterName value="@log_date" />

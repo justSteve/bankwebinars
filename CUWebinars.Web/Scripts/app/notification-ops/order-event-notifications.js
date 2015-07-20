@@ -257,10 +257,11 @@ $(function () {
                                     data: payload,
                                     beforeSend: function () {
                                         $(self).append('<span id="sendNotifnSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+                                        $('#postFeedbackLabel').remove();
                                     }
                                 }).done(function (data, textStatus, jqXHR) {
                                     if (data.Result === 'Success') {
-
+                                        $(self).after('<span id="postFeedbackLabel">&nbsp;<span class="label label-success">&nbsp;Operation succeeded</span></span>');
                                     } else {
 
                                     }
