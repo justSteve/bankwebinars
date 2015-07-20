@@ -507,6 +507,7 @@ function setUpEditButtons() {
 
     $('#revealAddLocsPanel').on('click', function (e) {
         e.preventDefault();
+        //div located at line 55 of CheckoutConfirm
         $('#AdjustAddLoc').slideToggle();
     });
     $('#editUserDetails').on('click', function (e) {

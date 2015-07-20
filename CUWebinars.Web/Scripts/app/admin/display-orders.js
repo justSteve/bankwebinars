@@ -32,7 +32,8 @@ $(function () {
     ns.wireUpDataTable = function() {
 
         DO.ordersTable.dataTable({
-            'dom': 'T<"clear">lfrtip',
+            "dom": '<ilf<t>ip>',
+            //'dom': 'T<"clear">lfrtip',
             'tableTools': {
                 'sSwfPath': '/Content/DataTables/swf/copy_csv_xls_pdf.swf'
             },

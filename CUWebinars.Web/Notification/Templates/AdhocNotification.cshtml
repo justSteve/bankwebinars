@@ -1,13 +1,13 @@
-﻿@model CUWebinars.Web.ViewModel.AdhocNotificationViewModel
+﻿@model CUWebinars.Business.Notification.ViewModel.AdhocNotificationSubmittedViewModel
 
 <title>
-    Adhoc Notification
+    @Model.Subject
 </title>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Adhoc Notification</title>
+        <title>@Model.Subject</title>
         <style type="text/css">
             .auto-style1 {
                 height: 10px;
@@ -23,11 +23,10 @@
             <tbody>
                 <tr>
                     <td>
-                        @Model.NotificationBody
+                        @Model.Body
                     </td>
                 </tr>
             </tbody>
         </table>
     </body>
-}
 </html>

@@ -6,15 +6,25 @@
     var myRow = Model.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
     NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
     nfi.CurrencyDecimalDigits = 0;
+    var additionalLocs = "";
 
 }
 @*<script language="javascript">Rollbar.info("Shows OrderSum to @globalConfig.TenantPrefix@myRow.idOrder ")</script>*@
-<div id="odrSum-@Model.idOrder" style="width: 250px;">
+<div id="odrSum-@Model.idOrder" style="width: 450px;">
 
     <div style="font-size: small; " class="well well-small">
         <i>Order ID:</i> @globalConfig.TenantPrefix@Model.idOrder<br />
         <i>Date Ordered:</i> @Model.OrderDate.ToShortDateString()<br />
         <i>Type of Attendance:</i> @myRow.RegistrationType.OptionLabel<br />
+        @if (!ReferenceEquals(myRow.AdditionalLocation, null))
+        {
+            <i>Additional Locations:</i>
+            foreach (var addy in myRow.AdditionalLocation)
+            {
+                @addy.Email <br>
+            }
+        }
+
         @if (myRow.ShipmentDate.HasValue)
         {
             <text>This order shipped on:<b>@Html.DisplayDate(myRow.ShipmentDate.Value)</b></text>

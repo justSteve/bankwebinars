@@ -8,6 +8,7 @@ namespace CUWebinars.Web.ViewModel
     {
         public Discount Discount { get; set; }
         public int NumberOfAdditionalLocations { get; set; }
+        public string AddressesForAdditionalLocations { get; set; }
         public OrderStatus OrderStatus { get; set; }
         public double Price { get; set; }
         public PricesAndDiscounts PricesAndDiscounts { get; set; }

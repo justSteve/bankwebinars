@@ -33,9 +33,13 @@
         additionalLocsPriceElement.GenerateId("totalAdLocsPrice");
         additionalLocsPriceElement.SetInnerText(Model.PricesAndDiscounts.TotalCostOfOptions.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, ""));
 
-        if (Model.NumberOfAdditionalLocations == 1)
+        if (Model.NumberOfAdditionalLocations == 0)
         {
-            outerSpan.InnerHtml = string.Concat("One Additional Location: ", additionalLocsPriceElement.ToString(TagRenderMode.Normal));    
+            outerSpan.InnerHtml = "";
+        }
+        else if (Model.NumberOfAdditionalLocations == 1)
+        {
+            outerSpan.InnerHtml = string.Concat("One Additional Location: ",  additionalLocsPriceElement.ToString(TagRenderMode.Normal),"<br>",Model.AddressesForAdditionalLocations);    
         }
         else
         {
@@ -93,8 +97,16 @@
         {
             rowAmount.Append("<button id='revealDiscountInput' class='btn btn-mini btn-default'> add discount?</button> " + GetDiscountedTextSpan() + "<br />");
         }
-        rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> edit?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
-
+        
+        //if (Model.NumberOfAdditionalLocations == 0)
+        //{
+        //    rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> add?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
+        //}        
+        if (Model.NumberOfAdditionalLocations > 0)
+        {
+            rowAmount.Append( GetAdditionalLocationsTextSpan() + "<br>");
+            //rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> edit?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
+        }
         rowAmount.Append("<span id='totalPriceText'>Total Cost: <span id='totalPrice'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "</span></span>");
 
         <div id="billingDetails" class="well" style="text-align: right;">

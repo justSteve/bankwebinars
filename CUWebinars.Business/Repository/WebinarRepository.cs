@@ -59,7 +59,8 @@ namespace CUWebinars.Business.Repository
                 .Where(w => w.Presenter.WebUser.LastName.ToLower().Contains(lastName.ToLower())
                     && (w.Status == WebinarStatus.Active
                     || w.Status == WebinarStatus.InProgress
-                    || w.Status == WebinarStatus.Recorded)
+                    || w.Status == WebinarStatus.Recorded
+                    || w.Status == WebinarStatus.Scheduled)
                     );
         }
 

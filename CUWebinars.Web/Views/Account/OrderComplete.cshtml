@@ -3,6 +3,7 @@
 @{
     GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
+    var myRow = Model.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
     var newUserMsg = "<div class='span7'><p>" +
                     "An order confirmation email has been dispatched to " + Model.BillingEmail + " and includes " +
                      "complete details of your registration. </p></div>";
@@ -19,7 +20,7 @@
 <div id="LogInContainer" class="container">
     <div id="reset">
 
-        <div class="legendImitator">Order Submitted</div>
+        <div class="legendImitator">Order for @myRow.Webinar.Title  Submitted</div>
 
         <div class="text-success"> <b>Thank you for your order!</b></div>
 

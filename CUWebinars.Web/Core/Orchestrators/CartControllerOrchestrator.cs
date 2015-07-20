@@ -43,7 +43,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         private readonly IOrderManagementService _orderManagementService;
         private readonly IWebinarManagementService _webinarManagementService;
         private readonly IUniversalMapper _universalMapper;
-        
+
         private bool _disposed;
         private GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingletonCreator.UniqueInstance;
 
@@ -458,10 +458,22 @@ namespace CUWebinars.Web.Core.Orchestrators
                         }
                     }
 
+                    string addressesForAdditionalLocations = "";
+                    if (orderRow.AdditionalLocation.Count > 0)
+                    {
+                        foreach (var addy in orderRow.AdditionalLocation)
+                        {
+                            addressesForAdditionalLocations += addy.Email + "<br>";
+                        }
+                    }
+
+                    addressesForAdditionalLocations.Remove(addressesForAdditionalLocations.IndexOf('<'));
+
                     var displayRowPriceViewModel = new DisplayRowPriceViewModel
                     {
                         Discount = orderRow.Discount,
                         NumberOfAdditionalLocations = orderRow.AdditionalLocation.Count(),
+                        AddressesForAdditionalLocations = addressesForAdditionalLocations,
                         OrderStatus = orderRow.Order.OrderStatus,
                         Price = orderRow.RegistrationType.Price,
                         PricesAndDiscounts =

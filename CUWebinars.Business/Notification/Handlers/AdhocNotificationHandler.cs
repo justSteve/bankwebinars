@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Notification.Email;
+﻿using CUWebinars.Business.Constants;
+using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
 using CUWebinars.NotificationSystem.Event;
 using Ninject.Extensions.Logging;
@@ -24,6 +25,12 @@ namespace CUWebinars.Business.Notification.Handlers
         {
             try
             {
+                adhocNotificationEvent.EventObject.PersistedName = string.Format("{0}_{1}{2}",
+                    "AdhocNotification_",
+                    DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat),
+                    ".htm"
+                    );
+
                 _notificationDelivery.Notify(adhocNotificationEvent.EventObject);
             }
             catch (Exception exception)

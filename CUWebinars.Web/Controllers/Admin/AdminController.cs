@@ -1105,10 +1105,19 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             if (ModelState.IsValid)
             {
-                _orderManagementService.SendAdhocNotification(emails, subject, body);
+                try
+                {
+                    _orderManagementService.SendAdhocNotification(emails, subject, body);
+                    return Json(new {Result = WebUiConstants.Success});
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException("SendAdhocNotification action", exception);
+                }
+
             }
 
-            return null;
+            return this.ModelStateJson(ModelState);
         }
 
         public PartialViewResult SendReminder()

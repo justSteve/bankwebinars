@@ -33,7 +33,8 @@ $(function () {
     ns1.wireUpDataTable = function () {
 
         DOBU.ordersTable.dataTable({
-            "dom": 'T<"clear">lfrtip',
+            "dom": '<lif<t>ip>',
+            //"dom": 'T<"clear">lfrtip',
             'tableTools': {
                 'sSwfPath': '/Content/DataTables/swf/copy_csv_xls_pdf.swf'
             },

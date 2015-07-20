@@ -660,7 +660,7 @@ $(function () {
                 }
                 $('#spinnerLabel').remove();
             }).fail(function () {
-
+                $('#spinnerLabel').remove();
             }).always(function () {
                 //$('#loadingSpinner').remove();
             });
@@ -673,7 +673,7 @@ $(function () {
     ns.getOrder = function (e) {
 
         e.preventDefault();
-
+           //TODO: update controller action to permit email submission
         ns.idOrder = ns.orderIdInput.val();
 
         // loading spinner
@@ -682,7 +682,7 @@ $(function () {
             $('#errorDiv').remove();
 
         $('#orderRelatedFields').load('/Admin/GetOrderDetails/' + ns.idOrder, function (response, status, xhr) {
-
+ 
             if (status === 'error') {
                 $(this).html('<div id="errorDiv" class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance. <br />' + (xhr.statusText === 'Internal Server Error' ? '' : xhr.statusText) + '</div>');
             } else {
