@@ -14,20 +14,19 @@ namespace CUWebinars.Business.Core.Helpers
             _regTypeRepository = regTypeRepository;
         }
 
-        public DateTime GetPostEventMaterialsAccessExpiry(Order order)
-        {
-            if (order == null) throw new ArgumentNullException("order");
+        //public DateTime GetPostEventMaterialsAccessExpiry(Order order)
+        //{
+        //    if (order == null) throw new ArgumentNullException("order");
 
-            var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-            // let exception be thrown if there is not a single 
+        //    var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+        //    // let exception be thrown if there is not a single 
 
-            var regType = _regTypeRepository.FindRegType(orderRow.idRegType);
+        //    var regType = _regTypeRepository.FindRegType(orderRow.idRegType);
 
-            if (regType.ShowRecordingNotifications.Equals("yes", StringComparison.OrdinalIgnoreCase))
-                return DateTime.Today.AddMonths(6);
+        //    if (regType.ShowRecordingNotifications.Equals("yes", StringComparison.OrdinalIgnoreCase))
+        //        return DateTime.Today.AddMonths(6);
 
-            return DateTime.Today.AddDays(5);
-
-        }
+        //    return DateTime.Today.AddDays(5);
+        //}
     }
 }

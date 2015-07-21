@@ -844,12 +844,18 @@ namespace CUWebinars.Web.Core.Orchestrators
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             // let exception be thrown if there is not a single 
 
+
+            var LivePlusFiveValue = orderRow.Webinar.LivePlusFiveValue;
+            if (ReferenceEquals(LivePlusFiveValue, null))
+                LivePlusFiveValue = 7;
+
+
             var regType = _orderManagementService.GetRegTypeOfOrderRow(orderRow.idRegType);
 
             if (regType.ShowRecordingNotifications.Equals("yes", StringComparison.OrdinalIgnoreCase))
                 return DateTime.Today.AddMonths(6);
             //Update to pull LivePlusFive value from Webinar table.
-            return DateTime.Today.AddDays(7);
+            return DateTime.Today.AddDays(LivePlusFiveValue);
         }
 
         private void AddClaimForPostEventMaterials(IEnumerable<Order> orders)

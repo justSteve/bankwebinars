@@ -73,14 +73,22 @@ namespace CUWebinars.Web.Controllers
 
                 _cartControllerOrchestrator.UpdateOrderPricing(row.Order);
 
-                var amountToDiscount = _cartControllerOrchestrator.GetDiscountAmountAsPercentageOrDollarAmount(myDiscount);
+                if (!ReferenceEquals(myDiscount, null))
+                {
+                    var amountToDiscount =
+                        _cartControllerOrchestrator.GetDiscountAmountAsPercentageOrDollarAmount(myDiscount);
+                
+                return Json(new { Result = amountToDiscount });}
+                else
+                {
+                    
+                return Json(new { Result = 0 });
+                }
 
-
-                return Json(new { Result = amountToDiscount });
             }
             catch (Exception exception)
             {
-                ModelState.AddModelError(string.Empty, "The operation failed.");
+                ModelState.AddModelError(string.Empty, "Code Not Found.");
                 _logger.ErrorException("ApplyDiscountCode|ApplyDiscountCode failed ", exception);
                 return this.ModelStateJson(ModelState);
             }

@@ -1350,16 +1350,22 @@ namespace CUWebinars.Business.Services
         public String GetPostEventMaterialsAccessExpiry(Order order)
         {
             if (order == null) throw new ArgumentNullException("order");
+            
 
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             // let exception be thrown if there is not a single 
+
+            var LivePlusFiveValue = orderRow.Webinar.LivePlusFiveValue;
+            if (ReferenceEquals(LivePlusFiveValue, null))
+            LivePlusFiveValue = 7;
+
 
             var regType = GetRegTypeOfOrderRow(orderRow.idRegType);
 
             if (regType.ShowRecordingNotifications.Equals("yes", StringComparison.OrdinalIgnoreCase))
                 return DateTime.Today.AddMonths(6).ToShortDateString();
             //update to pull LivePlusFive value from database
-            return DateTime.Today.AddDays(5).ToShortDateString();
+            return DateTime.Today.AddDays(LivePlusFiveValue).ToShortDateString();
         }
 
         public void GetJoinUrl(OrderRow row)
@@ -1437,7 +1443,7 @@ namespace CUWebinars.Business.Services
             if (!ReferenceEquals(null, thisDiscount))
             {
                 row.Discount = thisDiscount;
-                RedeemDiscount(thisDiscount);
+                RedeemDiscount(thisDiscount, row);
             }
 
             return thisDiscount;
@@ -1556,7 +1562,7 @@ namespace CUWebinars.Business.Services
             //
             if (row.Discount != null)
             {
-                RedeemDiscount(row.Discount);
+                RedeemDiscount(row.Discount, row);
                 _logger.Info("Redeemed Discount On Order: " + order.idOrder);
             }
             else
@@ -1571,15 +1577,39 @@ namespace CUWebinars.Business.Services
         }
 
 
-        private void RedeemDiscount(Discount discount)
+        private void RedeemDiscount(Discount discount, OrderRow row)
         {
             if (discount.DiscountType != DiscountType.Subscription)
 
                 discount.CreditsUsed++;
-
+//Live or OnDemand - 1 Credit
+//CD ROM and Handouts - 1.25 Credits
+//Live PLUS OnDemand - 1.25 Credits
+//Premier Package - 1.5 Credits
             if (discount.CreditsRemain > 0)
-                discount.CreditsRemain--;
+            {
+                if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Five"))
+                {
+                    discount.CreditsRemain = discount.CreditsRemain - 1;
+                }
+                if (row.RegistrationType.OptionLabel == ("OnDemand Recording Only"))
+                {
+                    discount.CreditsRemain = discount.CreditsRemain - 1.25M;
+                }
+                if (row.RegistrationType.OptionLabel == ("CD-ROM and Hardcopy Handouts"))
+                {
+                    discount.CreditsRemain = discount.CreditsRemain - 1.25M;
+                }
+                if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Six"))
+                {
+                    discount.CreditsRemain = discount.CreditsRemain - 1.25M;
+                }
+                if (row.RegistrationType.OptionLabel == ("Premier Package"))
+                {
+                    discount.CreditsRemain = discount.CreditsRemain - 1.5M;
+                }
 
+            }
             _logger.Info("Discount was redeemed for {0}.", discount.DiscountCode);
 
         }

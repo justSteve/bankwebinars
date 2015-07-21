@@ -57,10 +57,10 @@ namespace CUWebinars.Business.Repository
             return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
                 .Include(w => w.Presenter.WebUser)
                 .Where(w => w.Presenter.WebUser.LastName.ToLower().Contains(lastName.ToLower())
-                    && (w.Status == WebinarStatus.Active
-                    || w.Status == WebinarStatus.InProgress
-                    || w.Status == WebinarStatus.Recorded
-                    || w.Status == WebinarStatus.Scheduled)
+                    && w.Status != WebinarStatus.Archived
+                    //|| w.Status == WebinarStatus.InProgress
+                    //|| w.Status == WebinarStatus.Recorded
+                    //|| w.Status == WebinarStatus.Scheduled)
                     );
         }
 

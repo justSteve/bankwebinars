@@ -8,6 +8,7 @@
     nfi.CurrencyDecimalDigits = 0;
     var additionalLocs = "";
 
+
 }
 @*<script language="javascript">Rollbar.info("Shows OrderSum to @globalConfig.TenantPrefix@myRow.idOrder ")</script>*@
 <div id="odrSum-@Model.idOrder" style="width: 450px;">
@@ -16,7 +17,7 @@
         <i>Order ID:</i> @globalConfig.TenantPrefix@Model.idOrder<br />
         <i>Date Ordered:</i> @Model.OrderDate.ToShortDateString()<br />
         <i>Type of Attendance:</i> @myRow.RegistrationType.OptionLabel<br />
-        @if (!ReferenceEquals(myRow.AdditionalLocation, null))
+        @if (!ReferenceEquals(myRow.AdditionalLocation, null) && myRow.AdditionalLocation.Count > 0)
         {
             <i>Additional Locations:</i>
             foreach (var addy in myRow.AdditionalLocation)
@@ -24,7 +25,18 @@
                 @addy.Email <br>
             }
         }
-
+        @if (!ReferenceEquals(myRow.Discount, null) && myRow.Discount.PercentOff > 0)
+        {
+            decimal amtToReduce = myRow.UnitPrice / (myRow.Discount.PercentOff) * 100;
+            <i>Amt. of Discount:</i>
+            <span style="color: red;">$@amtToReduce.ToString().Replace(".00", "")</span><br />
+        }
+        @if (!ReferenceEquals(myRow.Discount, null) && myRow.Discount.FlatOff > 0)
+        {
+            decimal amtToReduce = Convert.ToDecimal(myRow.Order.Total) - myRow.UnitPrice;
+            <i>Amt. of Discount:</i>
+            <span style="color: red;">@amtToReduce.ToString().Replace(".00", "")</span><br />
+        }
         @if (myRow.ShipmentDate.HasValue)
         {
             <text>This order shipped on:<b>@Html.DisplayDate(myRow.ShipmentDate.Value)</b></text>

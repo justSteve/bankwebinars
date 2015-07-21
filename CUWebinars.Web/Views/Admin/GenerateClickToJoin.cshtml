@@ -14,7 +14,7 @@
         @Html.AntiForgeryToken()
 
         <div class="row">
-            <div class="text text-info" style="margin-left: 30px;">Please enter either an Order Id <strong>OR </strong>the email address of the caller plus the Webinarid</div><br/>
+            <div class="text text-info" style="margin-left: 30px;">Please enter either an Order Id <strong>OR </strong>the email address of the caller plus the Webinarid</div><br />
             <div class="control-group">
                 @Html.LabelFor(m => m.OrderId, new { @class = "control-label" })
                 <div class="controls">
@@ -23,14 +23,11 @@
             </div>
         </div>
         <div class=" row">
-            <div class="control-group">
-                <div class="controls">&nbsp;</div>
-                <div class="control-group">
-                    <div class="controls">
-                        OR
-                    </div>
-                </div>
+
+            <div class="controls">
+                OR
             </div>
+
         </div>
         <div class="row">
             <div class="control-group">
@@ -48,12 +45,13 @@
                 </div>
             </div>
         </div>
-        <div class =" row">
+        <div class=" row">
             <div class="control-group">
-                <div class="controls">&nbsp;</div>
                 <div class="control-group">
                     <div class="controls">
-                        <button id="genClickToJoinCodeButton" class="btn">Generate Code</button> <span id="accessCode" class="text text-info"></span>
+                        <button id="genClickToJoinCodeButton" class="btn">Generate Code</button>
+
+                        <h2 id="accessCode" class="text text-info"></h2>
                     </div>
                 </div>
             </div>

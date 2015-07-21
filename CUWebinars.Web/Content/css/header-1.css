@@ -274,8 +274,8 @@ body.tall-logo nav.user {
             border: none;
             color: #d8dfe5;
             display: block;
-            height: 95px;
-            line-height: 95px;
+            /*height: 95px;*/
+            line-height: 90px;
             margin: 0 !important;
             padding: 0 12px;
             text-decoration: none;

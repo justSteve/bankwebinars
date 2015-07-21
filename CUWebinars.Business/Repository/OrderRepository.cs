@@ -548,7 +548,7 @@ namespace CUWebinars.Business.Repository
         public Discount FindDiscountByCode(string discount)
         {
             return ((TTSWebinarsContext)db).Discounts.SingleOrDefault
-                (d => d.DiscountCode == discount);
+                (d => d.DiscountCode.EndsWith(discount));
 
         }
 

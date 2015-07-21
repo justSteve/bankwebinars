@@ -31,10 +31,9 @@ namespace CUWebinars.Web.Infrastructure
                         originalRouteData
                         );
 
-                    logger.Error(string.Format("ErrorResponseCMD logs Controller: {0} | Action: {1}, Context: {2} "
+                    logger.Error(string.Format("ErrorResponseCMD logs Controller: {0} | Action: {1}"
                         , controllerNameOfOriginalRequest
-                        , actionNameOfOriginalRequest
-                        , new HttpContextWrapper(errorResponse.HttpContext)));
+                        , actionNameOfOriginalRequest));
 
                     //Elmah.ErrorSignal.FromCurrentContext().Raise(new Exception(string.Format("error in: {1} | {0} ", actionNameOfOriginalRequest, controllerNameOfOriginalRequest)));
                     if (!ReferenceEquals(actionNameOfOriginalRequest, null))

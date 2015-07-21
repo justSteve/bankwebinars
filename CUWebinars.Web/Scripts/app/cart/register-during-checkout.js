@@ -249,11 +249,11 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
                 // successful request; do something with the data
                 if (data.success === 'foundExisting') {
-                    L.clientLogger.info('Existing user came anon: ' , { email: email });
+                    L.clientLogger.info('Existing user came anon: ', { email: email });
                     regUserStateManager.resetPasswordOrLoginView(email, webinarId);
                 } else if (data.success === 'foundInstitution') {
                     regUserStateManager.foundInstitutionView(data, email);
-                    L.clientLogger.info('foundInstitution for user: ' , { email: email});
+                    L.clientLogger.info('foundInstitution for user: ', { email: email });
                     if (data.createUser === "true") {
                         createUserAccount(email);
                     }
@@ -264,7 +264,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                     }
                 } else if (data.error === 'Fail') {
 
-                    L.clientLogger.info("goToAddressFields 319", {data: data});
+                    L.clientLogger.info("goToAddressFields 319", { data: data });
                     $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #319. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 } else if (data.error === 'Uncaught Ajax Error') {
                     L.clientLogger.error("Uncaught Ajax Error 343", { result: data || "data was falsey", payload: payload });
@@ -649,12 +649,13 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                     if (data.data.hasOwnProperty(error)) {
                         errorsList.append('<li>' + data.data[error] + '</li>');
                         if (data.data[error].toString().indexOf("password") < 1) {
-                            L.clientLogger.error("Login error with something besides Invalid Password. " , { data: data.data[error] })};
-                        } else {
-                            L.clientLogger.info("Invalid Password. " , { data: data.data[error] });
-                        }
+                            L.clientLogger.error("Login error with something besides Invalid Password. ", { data: data.data[error] })
+                        };
+                    } else {
+                        L.clientLogger.info("Invalid Password. ", { data: data.data[error] });
                     }
-                };
+                }
+            };
             labelEmail.remove();
 
         }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -1177,6 +1178,10 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
                 $(self).attr('disabled', 'disabled');
             }
         }).done(function (data) {
+
+            if (data.Result == 0) {
+                alert("The discount code " + $('#CheckoutDiscountCode').val() + " was not found. Try again or call 800-831-0678 ext. 703 for assistance.")
+            }
 
             if (data.Result.indexOf('%') !== -1) {
                 var amount2Discount = data.Result.replace(".00%", "") / 100;

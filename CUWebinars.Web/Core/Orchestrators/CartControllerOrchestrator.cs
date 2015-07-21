@@ -465,9 +465,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                         {
                             addressesForAdditionalLocations += addy.Email + "<br>";
                         }
-                    }
 
-                    addressesForAdditionalLocations.Remove(addressesForAdditionalLocations.IndexOf('<'));
+                        addressesForAdditionalLocations.Remove(addressesForAdditionalLocations.IndexOf('<'));
+                    }
 
                     var displayRowPriceViewModel = new DisplayRowPriceViewModel
                     {
