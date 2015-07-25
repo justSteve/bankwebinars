@@ -378,7 +378,7 @@ $(function () {
                     modalFormOptionsOnPageLoad = {
                         keyboard: true,
                         backdrop: 'static',
-                        show: true,
+                        show: true
                     };
                 
                 $.get(url, function (data) {
@@ -590,7 +590,7 @@ $(function () {
                     modalFormOptionsOnPageLoad = {
                         keyboard: true,
                         backdrop: 'static',
-                        show: true,
+                        show: true
                     };
 
                 $.get(url, function (data) {
@@ -747,7 +747,7 @@ $(function () {
                     modalFormOptionsOnPageLoad = {
                         keyboard: true,
                         backdrop: 'static',
-                        show: true,
+                        show: true
                     };
 
                 $.get(url, function (data) {

@@ -16,7 +16,7 @@ $(function() {
     var modalFormOptionsOnPageLoad = {
         keyboard: true,
         backdrop: 'static',
-        show: true,
+        show: true
     };
 
     UCI.updateConnectionInfoModalButton.on('click', function (e) {

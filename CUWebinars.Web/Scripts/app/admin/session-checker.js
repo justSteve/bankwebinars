@@ -24,12 +24,12 @@ $(function () {
             contentType: constants.FormPostContentType,
             cache: false,
             url: '/Home/SessionIsActive',
-            dataType: constants.JsonDataType,
+            dataType: constants.JsonDataType
         }).done(function (data, textStatus, jqXHR) {
 
             // if Success, session is still alive. If Fail, it is expired.
             if(data.Result === 'Success') {
-                ;
+                var a = 1;
             } else if (data.Result === 'Fail') {
 
                 SC.loginBtn.fadeOut(200, function() {

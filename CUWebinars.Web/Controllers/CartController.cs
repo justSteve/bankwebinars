@@ -16,7 +16,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text;
+using System.Web;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 
 namespace CUWebinars.Web.Controllers
 {
@@ -77,12 +80,13 @@ namespace CUWebinars.Web.Controllers
                 {
                     var amountToDiscount =
                         _cartControllerOrchestrator.GetDiscountAmountAsPercentageOrDollarAmount(myDiscount);
-                
-                return Json(new { Result = amountToDiscount });}
+
+                    return Json(new { Result = amountToDiscount });
+                }
                 else
                 {
-                    
-                return Json(new { Result = 0 });
+
+                    return Json(new { Result = 0 });
                 }
 
             }
@@ -137,11 +141,11 @@ namespace CUWebinars.Web.Controllers
                     _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
 
 
-                    
+
                     //_cartControllerOrchestrator.SendOrderToLegacy(model.Order);
 
                     _cartControllerOrchestrator.CreatePostEventClaim(model.Order);
-                    
+
                     return Json(new
                     {
                         Result = WebUiConstants.Success,
@@ -225,7 +229,7 @@ namespace CUWebinars.Web.Controllers
         public ActionResult CheckoutConfirm(int? ID = null)
         {
             var model = _cartControllerOrchestrator.BuildCheckoutConfirmViewModel(ID);
-            
+
             return PartialView("Partials/CheckoutConfirm", model);
         }
         public ActionResult CheckoutConfirmForAffiliate(int? ID = null)
@@ -284,7 +288,7 @@ namespace CUWebinars.Web.Controllers
                         _logger.ErrorException(string.Format("Signup2 | {0}", _appHelper.GetUserAuditInfo()), exception);
                         return Json(new
                         {
-                            Result = WebUiConstants.Fail, 
+                            Result = WebUiConstants.Fail,
                             Msg = exception.Message
                         }, JsonRequestBehavior.AllowGet);
                     }
@@ -431,7 +435,7 @@ namespace CUWebinars.Web.Controllers
                     var regType = _cartControllerOrchestrator.GetRegTypeById(idRegType.Value);
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(idOrderRow);
                     model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType = regType;
-                    
+
                     var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
 
                     return
@@ -480,7 +484,7 @@ namespace CUWebinars.Web.Controllers
 
             return View();
         }
-        
+
         public ActionResult PayCC(int id)
         {
             var order = _cartControllerOrchestrator.LoadOrder(id);
@@ -504,8 +508,26 @@ namespace CUWebinars.Web.Controllers
 
             _logger.Info("PostBackCC: " + formFields);
 
-        }        
-        
+        }
+
+        public void ExpressCheckout(JotFormWebHook form)
+        {
+            string formFields = Request.Form.ToString();
+            var sb = new StringBuilder();
+            sb.Append("formid" + form.FormId);
+            sb.Append("pretty" + form.Pretty);
+            sb.Append("RawRequest" + form.RawRequest);
+
+
+
+            ExpressCheckoutModel deserializedExChk = JsonConvert.DeserializeObject<ExpressCheckoutModel>(form.RawRequest);
+
+
+
+            _logger.Info("expresscheckout: " + deserializedExChk);
+
+        }
+
         public void PostBackWPS(FormCollection form)
         {
             string formFields = Request.Form.ToString();
@@ -548,14 +570,14 @@ namespace CUWebinars.Web.Controllers
                     //var order =  _cartControllerOrchestrator.LoadOrder(qOrder);
                     //_cartControllerOrchestrator.SetOrderPaidByCC(qOrder, Request.QueryString["Approval_Code"], formFields);
 
-                    
+
                     //return View("~/Views/Cart/PayCC_Approved.cshtml", order);
 
                 }
                 catch (Exception ex)
                 {
                     _logger.Error("ERROR: PayCC Approval exception", ex);
-                    
+
                     return View();
                 }
             }

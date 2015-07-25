@@ -681,7 +681,7 @@ namespace CUWebinars.Business.Services
                 var baseUri = new Uri(string.Concat(url.Scheme, @"://", url.Authority), UriKind.Absolute);
                 addPasswordUrl = new Uri(
                     baseUri,
-                    string.Concat(@"ACC/APWD/", order.WebUser.email)
+                    string.Concat(@"acc/apwd/", order.WebUser.email)
                     ).ToString();
             }
 
@@ -736,7 +736,7 @@ namespace CUWebinars.Business.Services
                 var baseUri = new Uri(string.Concat(url.Scheme, @"://", url.Authority), UriKind.Absolute);
                 addPasswordUrl = new Uri(
                     baseUri,
-                    string.Concat(@"ACC/APWD/", order.WebUser.email)
+                    string.Concat(@"acc/apwd/", order.WebUser.email)
                     ).ToString();
             }
 
@@ -757,7 +757,8 @@ namespace CUWebinars.Business.Services
 
             Clear(); // need to clear at this point, otherwise the OrderSubmittedEvent will be fired again when 
 
-            if (order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count != 0)
+            if (!ReferenceEquals(order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation, null) 
+                && order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count != 0)
             {
                 foreach (var addLoc in order.OrderRows
                     .Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)

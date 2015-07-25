@@ -101,7 +101,7 @@ function wireUpHandlersForModal() {
             {
                 id: 'sumbitAdditionalLocationsButton',
                 text: 'Submit',
-                'class': 'btn btn-primary',
+                'class': 'btn btn-primary'
             }));
 
             $('#sumbitAdditionalLocationsButton').on('click', function() {
@@ -146,7 +146,7 @@ function wireUpHandlersForModal() {
         {
             id: 'sumbitAdditionalLocationsButton',
             text: 'Submit',
-            'class': 'btn btn-primary',
+            'class': 'btn btn-primary'
         }));
 
         $('#sumbitAdditionalLocationsButton').on('click', function() {

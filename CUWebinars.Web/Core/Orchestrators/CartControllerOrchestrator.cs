@@ -726,7 +726,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (userCreatedInCart.HasValue)
             {
                 _orderManagementService.FireOrderSubmittedEvent(order, userCreatedInCart.Value, url: Request.Url);
-                //_orderManagementService.FireOrderSynchEvent(order, userCreatedInCart.Value, url: Request.Url);
+                _orderManagementService.FireOrderSynchEvent(order, userCreatedInCart.Value, url: Request.Url);
             }
             else
             {

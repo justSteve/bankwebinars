@@ -66,6 +66,7 @@ namespace CUWebinars.Web.Controllers
         public ActionResult Index()
         {
             ViewBag.PageStyleType = "index-flex-dark";
+
             var lWebinars = _webinarRepository.GetUpcoming().OrderByDescending(w => w.Date).Take(15).ToList();
             return View(lWebinars);
         }
@@ -83,7 +84,7 @@ namespace CUWebinars.Web.Controllers
         {
             if (Request.IsAuthenticated)
             {
-                return Json(new {Result = WebUiConstants.Success});
+                return Json(new { Result = WebUiConstants.Success });
             }
 
             return Json(new { Result = WebUiConstants.Fail });
@@ -109,7 +110,7 @@ namespace CUWebinars.Web.Controllers
 
         //    return View();
         //}
-        
+
 
 
         protected override void Dispose(bool disposing)

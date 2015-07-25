@@ -379,7 +379,7 @@ namespace CUWebinars.Business.AccountService
         {
             var userAccount = GetUserAccountByEmail(tenant, email);
 
-            if(string.IsNullOrWhiteSpace(claimValue))
+            if (string.IsNullOrWhiteSpace(claimValue))
                 _userAccountService.RemoveClaim(userAccount.ID, claim);
             else
                 _userAccountService.RemoveClaim(userAccount.ID, claim, claimValue);
@@ -427,6 +427,28 @@ namespace CUWebinars.Business.AccountService
             return _postEventMaterialsAccessClaimValidator.Validate(new Tuple<string, string>(claimType, claimValue));
         }
 
+        public WebUser CreateExpressCheckoutUser(string email, string firstName, string lastName, string phone, string institution, string title)
+        {
+            _logger.Info("CreateExpressCheckoutUser: {0}", email);
+            var webUser = new WebUser
+            {
+                idUser = _refDataRepository.GetMaxWebUserId() + 1,
+                AcctStatus = DomainConstants.New,
+                UserType = UserType.Customer,
+                DateCreated = DomainConstants.BuildUtcNowAsCts,
+                FirstName = firstName,
+                LastName = lastName,
+                idUserInstitution = 8,
+                email = email,
+                timeZone = USTimeZone.Central,
+                generalComments = "Origin: CreateBareUserFromEmail"
+            };
+
+            _webUserRepository.Add(webUser);
+
+            return webUser;
+        }
+
         public void AddAccountTypeNotVerifiedClaim(UserAccount userAccount, string accountType)
         {
             _logger.Info("AddAccountTypeNotVerifiedClaim: {0}", userAccount.Email);
@@ -453,12 +475,12 @@ namespace CUWebinars.Business.AccountService
             {
                 //Should we clear UserNotVerified claims here?
                 //var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
-                
+
                 var userAccount = _userAccountService.GetByVerificationKey(key);
 
                 //dataOperations.SetFieldsConsistantWithVerifiedUser(userAccount);
                 RemoveClaim(tenant, userAccount.Email, ClaimTypes.HasNotVerified);
-                
+
                 return _userAccountService.ChangePasswordFromResetKey(key, newPassword);
             }
             catch (Exception exception)
@@ -472,11 +494,11 @@ namespace CUWebinars.Business.AccountService
         {
             if (tenant == null) throw new ArgumentNullException("tenant");
             if (key == null) throw new ArgumentNullException("key");
-            
+
             var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
 
             var email = dataOperations.GetUserEmailByVerificationKey(tenant, key);
-            
+
             return _userAccountService.GetByEmail(tenant, email);
         }
 

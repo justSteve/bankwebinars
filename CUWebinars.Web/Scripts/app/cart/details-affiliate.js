@@ -65,7 +65,7 @@ OCA.initializeFunctions = function () {
             cache: false,
             url: url,
             dataType: constants.JsonDataType,
-            data: JSON.stringify(payLoad),
+            data: JSON.stringify(payLoad)
         }).done(function (data) {
 
             if (data) {
@@ -144,12 +144,18 @@ OCA.initializeFunctions = function () {
 
                 if (data.Result === 'Success') {
                     self.after('<span id="editUserResult">&nbsp;<span class="label label-success"><span> Details updated successfully! </span></span></span>').hide().fadeIn(500);
+                } else {
+                    Rollbar.error({ 'editUserResult Failure: ': { data: xhr.data } });
+
+                    self.after('<span id="editUserResult">&nbsp;<span class="label label-warning"><span> There was a problem with that edit. Try again or </span></span></span>').hide().fadeIn(500);
                 }
 
                 $('#userDetailsSpinner').remove();
 
-            }).always(function (data) {
             });
+            //    .always(function (data) {
+            //    var unused = data;
+            //});
         });
 
         $('#addAnotherAddLoc').on('click', function (e) {
@@ -164,7 +170,7 @@ OCA.initializeFunctions = function () {
                 {
                     id: 'applyAdditionalLocationsButton',
                     text: 'apply',
-                    'class': 'btn btn-mini btn-primary',
+                    'class': 'btn btn-mini btn-primary'
                 }));
 
                 $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
@@ -210,7 +216,7 @@ OCA.initializeFunctions = function () {
             {
                 id: 'applyAdditionalLocationsButton',
                 text: 'apply',
-                'class': 'btn btn-mini btn-primary',
+                'class': 'btn btn-mini btn-primary'
             }));
 
             $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
@@ -441,15 +447,16 @@ OCA.initializeFunctions = function () {
                             console.log('/webinar/details/' + OCA.cartStateManager.getWebinarId());
                             utilities.goToUrl('/webinar/details/' + OCA.cartStateManager.getWebinarId());
                         } else {
-                            
-                            Rollbar.error( 'Cancel Order Failure: ', { data: xhr && xhr.data });
+
+                            Rollbar.error('Cancel Order Failure: ', { data: xhr && xhr.data });
 
                             confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                             $('#CancelModal').modal('hide');
                         }
 
                         // enable button again upon ending operation.
-                        //$('#cancelRegistration').removeAttr('disabled');  // [dar] NO. On staging, redirect is slow and button enabled again. User could have clicked it again.
+                        //$('#cancelRegistration').removeAttr('disabled');  
+                        // [dar] NO. On staging, redirect is slow and button enabled again. User could have clicked it again.
                     } else {
                         Rollbar.error({ 'Cancel Order Failure: ': { data: xhr.data } });
 
@@ -876,7 +883,7 @@ OCA.wireUpHandlers = function () {
         OCA.webUserIdInput.val(webUser.id);
     };
 
-    OCA.displayNewUserModal = function(e) {
+    OCA.displayNewUserModal = function (e) {
 
         e.preventDefault();
 
@@ -888,11 +895,11 @@ OCA.wireUpHandlers = function () {
             show: true
         };
 
-        $('#addNewUserModal > div.modal-body').load('/Account/GetAddUserFieldsForModal', function(data) {
+        $('#addNewUserModal > div.modal-body').load('/Account/GetAddUserFieldsForModal', function (data) {
 
             $('#addNewUserModal').modal(modalFormOptions);
 
-            $('#confirmCreateUserButton').on('click', function(e) {
+            $('#confirmCreateUserButton').on('click', function (e) {
 
                 e.preventDefault();
 
@@ -921,12 +928,12 @@ OCA.wireUpHandlers = function () {
                     url: url,
                     dataType: constants.JsonDataType,
                     data: data,
-                    beforeSend: function() {
+                    beforeSend: function () {
                         $(self).attr('disabled', 'disabled').after('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
                         //Rollbar.info("addPasswordForm Sent");
 
                     }
-                }).done(function(data, textStatus, jqXHR) {
+                }).done(function (data, textStatus, jqXHR) {
                     $('#loadingSpinner').remove();
                     OCA.createNewUserButton.removeAttr('disabled');
 
@@ -960,7 +967,7 @@ OCA.wireUpHandlers = function () {
     OCA.createNewUserButton.on('click', OCA.displayNewUserModal);
 
     OCA.displaySetAffiliateModal = function (link) {
-        
+
         // permits Admin to choose which affiliate will be credited with order
 
         var modalFormOptions = {
@@ -1004,11 +1011,11 @@ OCA.wireUpHandlers = function () {
                     }
                 }).done(function (data) {
 
-                    if(data.Result === 'Success') {
+                    if (data.Result === 'Success') {
                         $('#setAssignedAffiliate').find('div[class="modal-footer"]').prepend('<span id="resultLabel" class="label label-success"><span>&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Affiliate updated successfully</span>&nbsp;</span>');
                         $(self).removeAttr('disabled');
                         $('#changeAffSpinner').remove();
-                        
+
                         $('#showSetAssignedAffiliate').text('Selected Affiliate: ' + $('#SelectedAffiliate :selected').text());
                     }
                 });
@@ -1044,20 +1051,20 @@ $(function () {
     OCA.wireUpHandlers();
 
     $(window).on('beforeunload', function (e) {
-        
+
         //  taken from this SO answer http://stackoverflow.com/a/7317311/540156
         if (OCA.okToLeave) {
             return undefined;
         }
 
-        L.clientLogger.info('da-#1', { 'User error': 'User attempted to abandoned order', OrderId: OCA.cartStateManager.getOrderId() || 'No order id available yet'});
+        L.clientLogger.info('da-#1', { 'User error': 'User attempted to abandoned order', OrderId: OCA.cartStateManager.getOrderId() || 'No order id available yet' });
 
         var confirmationMessage = 'It looks like you have been creating an order.\r\n';
         OCA.cartStateManager.getOrderId() && (confirmationMessage += 'OrderId: ' + OCA.cartStateManager.getOrderId() + '.\r\n');
         confirmationMessage += 'If you leave before completing the order, your changes will be lost.\r\n';
         confirmationMessage += 'Are you sure you want to abandon this order?';
-        
-        return confirmationMessage; 
+
+        return confirmationMessage;
     });
 });
 
@@ -1114,13 +1121,13 @@ function modalShown(e) {
                 formProcessor.lightUpValidationSummary('userDetailsValSummary', data);
             } else {
                 Rollbar.error('#348 userDetailsFormUrl Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
-                
+
                 $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>[Connection Error #348] Please call us at 800-831-0678 ext. 3 to resolve.</span>');
             }
         }).fail(function (data) {
 
             Rollbar.error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData, { data: data });
-            
+
             $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Connection Error #048] Please call us at 800-831-0678 ext. 3 to resolve.</span>');
         });
     });

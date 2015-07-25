@@ -587,7 +587,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                 url: url,
                                 dataType: constants.JsonDataType,
                                 data: JSON.stringify(payloadForUpdate),
-                                headers: headers,
+                                headers: headers
                             }).done(function (data) {
 
                                 if (data.Result === 'Success') {
@@ -1058,7 +1058,7 @@ function hookUpChangeTypeLogic(dropDown) {
                         cache: false,
                         url: url,
                         dataType: constants.JsonDataType,
-                        data: JSON.stringify(payLoad),
+                        data: JSON.stringify(payLoad)
                     }).done(function (data) {
 
                         if (data.Result === 'Success') {
@@ -1120,7 +1120,7 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
         cache: false,
         url: url,
         dataType: constants.JsonDataType,
-        data: JSON.stringify(payLoad),
+        data: JSON.stringify(payLoad)
     }).done(function (data) {
 
         if (data) {
@@ -1214,7 +1214,7 @@ function showModalForShippingAddressDetails() {
         modalFormOptionsOnPageLoad = {
             keyboard: true,
             backdrop: 'static',
-            show: true,
+            show: true
         };
 
     modalShippingDetails.on('shown', function (e) {

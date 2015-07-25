@@ -309,7 +309,7 @@ $(function () {
                     cache: false,
                     url: url,
                     dataType: constants.JsonDataType,
-                    data: JSON.stringify(payLoad),
+                    data: JSON.stringify(payLoad)
                 }).done(function (data) {
 
                     if (data.Result === 'Success') {
@@ -345,7 +345,7 @@ $(function () {
             cache: false,
             url: url,
             dataType: constants.JsonDataType,
-            data: JSON.stringify(payLoad),
+            data: JSON.stringify(payLoad)
         }).done(function (data) {
 
             if (data) {

@@ -13,7 +13,7 @@ function initSearchBrowser(tableId, options) {
             { "sWidth": "5%" },
             { "sWidth": "65%", "bSortable": false },
             {
-                "sWidth": "5%", "bVisible": false,
+                "sWidth": "5%", "bVisible": false
                 //"fnRender": function (obj) {
                 //    var html = obj.aData[obj.IdataColumn];
                 //    //presenters.push[obj.aData[obj.IdataColumn]]

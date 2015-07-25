@@ -11,10 +11,21 @@ namespace CUWebinars.Web.App_Start
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
+                "PostBackWPS",
+                url: "PostBackWPS",
+                defaults: new { controller = "Cart", action = "PostBackWPS", id = 0 }
+            );
+            routes.MapRoute(
+                "expresscheckout",
+                url: "expresscheckout",
+                defaults: new { controller = "Admin", action = "ExpressCheckout", id = 0 }
+            );
+
+            routes.MapRoute(
                 "EditWebinar",
                 url: "{id}/editWebinar",
                 defaults: new { controller = "Webinar", action = "EditWebinarFromDetails", id = 0 },
-                constraints: new { id = @"\d+"}
+                constraints: new { id = @"\d+" }
             );
 
             routes.MapRoute(
@@ -28,13 +39,13 @@ namespace CUWebinars.Web.App_Start
                 "OnDemand",
                 url: "o/{onDemandCode}",
                 defaults: new { controller = "Webinar", action = "OnDemand" }
-                
+
             );
             routes.MapRoute(
                 "RedirectLegacy",
                 url: "Webinar/Play",
                 defaults: new { controller = "Webinar", action = "RedirectLegacy" }
-                
+
             );
 
             routes.MapRoute(
@@ -80,14 +91,14 @@ namespace CUWebinars.Web.App_Start
                 defaults: new { controller = "Admin", action = "ManageOrderFromDetails", id = 0 },
                 constraints: new { id = @"^[1-9][0-9]*$" }
             );
-            
+
             routes.MapRoute(
                 "WebinarDetails",
                 url: "{id}/{seoUrl}",
                 defaults: new { controller = "Webinar", action = "Details", id = 0 },
                 constraints: new { id = @"\d+" }
             );
-            
+
             routes.MapRoute(
                 "AddPasswordFromUserEmail",
                 url: "acc/apwd/{email}",
@@ -106,12 +117,12 @@ namespace CUWebinars.Web.App_Start
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
-            
+
             routes.MapRoute(
                 name: "WebinarPlusWebUser",
                 url: "{controller}/{action}/{webinarId}/{webUserId}",
                 defaults: new { controller = "Cart", action = "GetAdditionalLocationByOrderId" },
-                constraints: new {webinarId = @"\d+"}
+                constraints: new { webinarId = @"\d+" }
             );
 
             routes.MapRoute(

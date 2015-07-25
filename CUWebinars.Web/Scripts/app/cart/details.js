@@ -575,7 +575,7 @@ function setUpEditButtons() {
             {
                 id: 'applyAdditionalLocationsButton',
                 text: 'apply',
-                'class': 'btn btn-mini btn-primary',
+                'class': 'btn btn-mini btn-primary'
             }));
 
             $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
@@ -625,7 +625,7 @@ function populateAdditionalLocationsOn3rdTab() {
         {
             id: 'applyAdditionalLocationsButton',
             text: 'apply',
-            'class': 'btn btn-mini btn-primary',
+            'class': 'btn btn-mini btn-primary'
         }));
 
         $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);

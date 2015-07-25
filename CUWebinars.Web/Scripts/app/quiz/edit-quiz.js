@@ -144,7 +144,7 @@ $(function () {
     ns.getQuestions = function () {
 
         var payload = {
-            webinarId: EQ.webinarId.val(),
+            webinarId: EQ.webinarId.val()
         };
 
         $.ajax({

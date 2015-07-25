@@ -84,7 +84,7 @@ namespace CUWebinars.Business.AccountService
             string title
             );
         void UpdateUserDetails(WebUser webUser);
-        string GetDisplayPostEventMaterialsClaimValue(string tenant, string email, int idOrder,  string onDemandCode);
+        string GetDisplayPostEventMaterialsClaimValue(string tenant, string email, int idOrder, string onDemandCode);
         //string GetDisplayPostEventMaterialsClaimValue(UserAccount userAccount);
         UserAccount VerifyEmailFromKey(string key, string password);
         bool VerifyUserByEmail(string tenant, string email);
@@ -97,5 +97,6 @@ namespace CUWebinars.Business.AccountService
         string FindDisplayPostEventMaterialsClaimValue(Order order);
         UserAccount GetUserAccountByVerificationKey(string key);
         ValidationResult ValidatePostEventMaterialsAccessClaimValue(string claimValue, string claimType);
+        WebUser CreateExpressCheckoutUser(string email, string firstName, string lastName, string phone, string institution, string title);
     }
 }

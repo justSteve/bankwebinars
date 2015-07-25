@@ -9,7 +9,7 @@ $(function () {
     var modalFormOptionsOnPageLoad = {
         keyboard: true,
         backdrop: 'static',
-        show: true,
+        show: true
     };
 
     updateWebinarRecordingModalButton.on('click', function (e) {

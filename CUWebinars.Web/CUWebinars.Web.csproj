@@ -469,8 +469,10 @@
     <Compile Include="Models\EditQuizEditModel.cs" />
     <Compile Include="Models\EditUserInfoModel.cs" />
     <Compile Include="Models\EditUserModel.cs" />
+    <Compile Include="Models\ExpressCheckoutModel.cs" />
     <Compile Include="Models\IdentifyModel.cs" />
     <Compile Include="Models\ImportOrderModel.cs" />
+    <Compile Include="Models\JotFormWebHook.cs" />
     <Compile Include="Models\JsonModels\OnDemandClaim.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -484,6 +486,9 @@
     <Compile Include="Models\MigrateOrderModel.cs" />
     <Compile Include="Models\OnDemandPlaybackModel.cs" />
     <Compile Include="Models\PostEventInfoModel.cs" />
+    <Compile Include="Models\Q14Address14.cs" />
+    <Compile Include="Models\Q4Name.cs" />
+    <Compile Include="Models\Q6PhoneNumber6.cs" />
     <Compile Include="Models\QuizModel.cs" />
     <Compile Include="Models\RegisterFieldsDTO.cs" />
     <Compile Include="Models\ShippingDetailsModel.cs" />
@@ -637,8 +642,6 @@
     <Compile Include="Models\EditNameTitleModel.cs" />
     <Compile Include="Models\EditShippingAddressModel.cs" />
     <Compile Include="Models\ImportOrderResponse.cs" />
-    <Compile Include="Models\JotFormModel.cs" />
-    <Compile Include="Models\JotFormOrderModel.cs" />
     <Compile Include="ViewModel\CertOfCompletionViewModel.cs" />
     <Content Include="Content\css\BootstrapTemplates\font-awesome\font-awesome-ie7.css" />
     <Content Include="Content\css\BootstrapTemplates\font-awesome\font-awesome.css" />

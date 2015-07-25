@@ -26,7 +26,7 @@ function initDiscountReport(tableId, options) {
             {
                 "sWidth": "30%", "bSortable": false
             }
-        ],
+        ]
 
     };
 
