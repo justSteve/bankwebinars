@@ -26,7 +26,7 @@ namespace CUWebinars.Business.Repository
 
         public void AddAdditionalLocationsLookupPrice(AdditionalLocationsLookupPrice additionalLocationsLookupPrice)
         {
-            ((TTSWebinarsContext) db).AdditionalLocationsLookupPrices.Add(additionalLocationsLookupPrice);
+            ((TTSWebinarsContext)db).AdditionalLocationsLookupPrices.Add(additionalLocationsLookupPrice);
         }
 
         public void Delete(Webinar webinar)
@@ -54,13 +54,24 @@ namespace CUWebinars.Business.Repository
 
         public IEnumerable<Webinar> FindByPresenterLastName(string lastName)
         {
+            //var webinars = ((TTSWebinarsContext)db).Webinars
+            //    .Where(w => w.Status != WebinarStatus.Archived
+            //        && w.Status != WebinarStatus.Deleted
+            //        && w.Status != WebinarStatus.Pending)
+            //    .Include(w => w.Presenter)
+            //    .Where(w => w.Presenter.WebUser.LastName.ToLower().Contains((lastName.ToLower())))
+            //    .Include(t => t.WebinarTopicXrefs.Select(wtx => wtx.Topic))
+            //;
+            //return webinars;
             return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
                 .Include(w => w.Presenter.WebUser)
                 .Where(w => w.Presenter.WebUser.LastName.ToLower().Contains(lastName.ToLower())
                     && w.Status != WebinarStatus.Archived
-                    //|| w.Status == WebinarStatus.InProgress
-                    //|| w.Status == WebinarStatus.Recorded
-                    //|| w.Status == WebinarStatus.Scheduled)
+                    && w.Status != WebinarStatus.Pending
+                    && w.Status != WebinarStatus.Deleted
+                //|| w.Status == WebinarStatus.InProgress
+                //|| w.Status == WebinarStatus.Recorded
+                //|| w.Status == WebinarStatus.Scheduled)
                     );
         }
 
@@ -71,16 +82,17 @@ namespace CUWebinars.Business.Repository
             // 1st get all topics with the topicDescription
             var topicsOfSearch = stronglyTypedContext.Topics
                 .Include(t => t.WebinarTopicXrefs.Select(wtx => wtx.Webinar))
-                .Where(t => t.topicDesc.ToLower().Contains(searchTerm.ToLower()));
+                .Where(t => t.topicDesc.ToLower().Contains(searchTerm.ToLower())
+                );
 
             // project that into a list of webinars
             var searchTopics = topicsOfSearch.SelectMany(t => t.WebinarTopicXrefs)
                 .Select(w => w.Webinar)
                 .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
                 .Include(w => w.Presenter.WebUser)
-                .Where(w => w.Status == WebinarStatus.Active
-                    || w.Status == WebinarStatus.InProgress
-                    || w.Status == WebinarStatus.Recorded
+                .Where(w => w.Status != WebinarStatus.Archived
+                    && w.Status != WebinarStatus.Deleted
+                    && w.Status != WebinarStatus.Pending
                     );
 
 
@@ -91,9 +103,9 @@ namespace CUWebinars.Business.Repository
                         || w.Title.ToLower().Contains(searchTerm)
                     || w.WhoAttend.ToLower().Contains(searchTerm)
                     || w.LearnBody.ToLower().Contains(searchTerm)
-                    && (w.Status == WebinarStatus.Active
-                    || w.Status == WebinarStatus.InProgress
-                    || w.Status == WebinarStatus.Recorded)
+                    && w.Status != WebinarStatus.Archived
+                    && w.Status != WebinarStatus.Deleted
+                    && w.Status != WebinarStatus.Pending
 
                     );
 
@@ -103,7 +115,7 @@ namespace CUWebinars.Business.Repository
 
         public IQueryable<AdditionalLocationsLookupPrice> GetAdditionalLocationsLookupPricesForWebinar(int idWebinar)
         {
-            return ((TTSWebinarsContext) db).AdditionalLocationsLookupPrices.Where(a => a.idWebinar == idWebinar);
+            return ((TTSWebinarsContext)db).AdditionalLocationsLookupPrices.Where(a => a.idWebinar == idWebinar);
         }
 
         public IQueryable<Webinar> GetUpcoming()
@@ -126,16 +138,16 @@ namespace CUWebinars.Business.Repository
 
         public RegTypesGroupsXref GetRegTypesGroupsXref(int idRegTypesGroupsXref, int idWebinar)
         {
-            return ((TTSWebinarsContext) db).RegTypesGroupsXrefs.SingleOrDefault(r => r.idRegTypeGroup == idRegTypesGroupsXref && r.idWebinar == idWebinar);
+            return ((TTSWebinarsContext)db).RegTypesGroupsXrefs.SingleOrDefault(r => r.idRegTypeGroup == idRegTypesGroupsXref && r.idWebinar == idWebinar);
         }
         public WebinarTopicXref GetWebinarTopicXref(int idTopic, int idWebinar)
         {
-            return ((TTSWebinarsContext) db).WebinarTopicXrefs.SingleOrDefault(r => r.idTopic == idTopic && r.idWebinar == idWebinar);
+            return ((TTSWebinarsContext)db).WebinarTopicXrefs.SingleOrDefault(r => r.idTopic == idTopic && r.idWebinar == idWebinar);
         }
 
         public IQueryable<RegTypesGroup> GetUpcomingRegTypesForWebinars()
         {
-            return ((TTSWebinarsContext) db).RegTypesGroups.Where(
+            return ((TTSWebinarsContext)db).RegTypesGroups.Where(
                     r => r.RegTypeGroupDesc.ToLower().Contains("15") && !r.RegTypeGroupDesc.ToLower().Contains("post")
                     );
         }
@@ -180,14 +192,14 @@ namespace CUWebinars.Business.Repository
             var dataOperations = new MigrationOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString, ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
 
             dataOperations.CopyLegacyWebinars();
-                        
+
         }
 
         public int GetRegTypeByACS(string registrationType, int idWebinar)
         {
             //first step is to convert ACS lables to TTS version
             var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LoggerConnection"].ConnectionString);
-            
+
             var retVal = GetRegTypeByLableAndWebinar(dataOperations.FindRegTypeForACS(registrationType), idWebinar);
             return retVal;
         }
@@ -202,7 +214,7 @@ namespace CUWebinars.Business.Repository
 
         public Webinar GetWebinarByJoinCode(string joinCode)
         {
-            var orderRow = ((TTSWebinarsContext) db).OrderRows.SingleOrDefault(or => or.TtsJoinUrl == joinCode);
+            var orderRow = ((TTSWebinarsContext)db).OrderRows.SingleOrDefault(or => or.TtsJoinUrl == joinCode);
 
             if (!ReferenceEquals(null, orderRow))
             {
@@ -226,7 +238,7 @@ namespace CUWebinars.Business.Repository
 
         public IQueryable<Topic> GetAllTopics()
         {
-            return ((TTSWebinarsContext) db).Topics;
+            return ((TTSWebinarsContext)db).Topics;
         }
 
 

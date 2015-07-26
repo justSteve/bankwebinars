@@ -29,39 +29,42 @@
                 @{
                     foreach (var webinar in webinars)
                     {
-                        var numDaysLeft = (webinar.Date.AddMonths(6) - DateTime.Now).Days;
-                        var showDateValue = DateTimeHelper.FormatDate(webinar.Date) + " - " +
-                                            DateTimeHelper.FormatTime(webinar.Date) + " Central Time Zone";
-                        if (webinar.Status == WebinarStatus.Recorded)
+                        if (webinar.Status != WebinarStatus.Deleted && webinar.Status != WebinarStatus.Pending && webinar.Status != WebinarStatus.Archived)
                         {
-                            showDateValue = "This OnDemand Webinar has " + numDaysLeft + " days of access remaining.";
-                            //if (numDaysLeft > 45)
-                            //{
-                            //    showDateValue = "About " + Convert.ToInt32(numDaysLeft / (365.25 / 12)) + " months of access remain.";
-                            //}
-                        }
-                        var allTopics = webinar.WebinarTopicXrefs
-                            .Select(webinarTopic => webinarTopic.Topic.topicDesc)
-                            .Aggregate((s1, s2) => s1 + ", " + s2);
+                            var numDaysLeft = (webinar.Date.AddMonths(6) - DateTime.Now).Days;
+                            var showDateValue = DateTimeHelper.FormatDate(webinar.Date) + " - " +
+                                                DateTimeHelper.FormatTime(webinar.Date) + " Central Time Zone";
+                            if (webinar.Status == WebinarStatus.Recorded && webinar.idWebinar != 842)
+                            {
+                                showDateValue += "<br><i>This OnDemand Webinar has <b>" + numDaysLeft + "</b> days of access remaining.</i>";
+                                //if (numDaysLeft > 45)
+                                //{
+                                //    showDateValue = "About " + Convert.ToInt32(numDaysLeft / (365.25 / 12)) + " months of access remain.";
+                                //}
+                            }
+                            var allTopics = webinar.WebinarTopicXrefs
+                                .Select(webinarTopic => webinarTopic.Topic.topicDesc)
+                                .Aggregate((s1, s2) => s1 + ", " + s2);
 
-                        string title = "<a href='/Webinar/Details/" +
-                                                 webinar.idWebinar + "' target='_blank'>" + webinar.Title + "</a>";
-                        var desc = webinar.Description.Length > 200
-                            ? webinar.Description.Substring(0, 200) + "... <a class=\"btn  btn-primary btn-small\" href='/Webinar/Details/" + webinar.idWebinar + "'>More →</a></p>"
-                            : webinar.Description;
+                            string title = "<a href='/Webinar/Details/" +
+                                           webinar.idWebinar + "' target='_blank'>" + webinar.Title + "</a>";
+                            var desc = webinar.Description.Length > 200
+                                ? webinar.Description.Substring(0, 200) + "... <a class=\"btn  btn-primary btn-small\" href='/Webinar/Details/" + webinar.idWebinar + "'>More →</a></p>"
+                                : webinar.Description;
 
-                        var relatedTopics = "Related Topics: <b><i>" + string.Join(", ", allTopics) + "</i></b>";
-                        <div class="wTitle clearfix">
-                            <h3>@Html.Raw(title)</h3>
-                            <div id="eventBody" style="width: 90%; margin-left: auto; margin-right: auto;">
-                                <p>
-                                    Presented by <img class="alignleft" src="@webinar.Presenter.PhotoThumb" alt="Photo of @webinar.Presenter.WebUser.FullName" /> @webinar.Presenter.WebUser.FullName <br />
-                                    <i>@Html.Raw(showDateValue)</i>
-                                </p>
-                                <span style="margin-right: 20%;">@Html.Raw(desc)</span>
-                                <p>@Html.Raw(relatedTopics)</p>
+                            var relatedTopics = "Related Topics: <b><i>" + string.Join(", ", allTopics) + "</i></b>";
+                            <div class="wTitle clearfix">
+                                <h3>@Html.Raw(title)</h3>
+                                <div id="eventBody" style="width: 90%; margin-left: auto; margin-right: auto;">
+                                    <p>
+                                        Presented by <img class="alignleft" src="@webinar.Presenter.PhotoThumb" alt="Photo of @webinar.Presenter.WebUser.FullName"/> @webinar.Presenter.WebUser.FullName <br/>
+                                        <i>@Html.Raw(showDateValue)</i>
+                                    </p>
+                                    <span style="margin-right: 20%;">@Html.Raw(desc)</span>
+                                    <p>@Html.Raw(relatedTopics)</p>
+                                </div>
                             </div>
-                        </div>
+                        }
                     }
                 }
 

@@ -463,9 +463,14 @@ namespace CUWebinars.Web.Core.Orchestrators
         public IEnumerable<Webinar> SearchWebinars(string searchTerm)
         {
             var webinars = _webinarManagementService.GetWebinarByPresenterLastName(searchTerm);
+            if (!ReferenceEquals(webinars, null) && webinars.Count()> 0)
+            {
+                return webinars;
+            }
             var webinarsByTopic = _webinarManagementService.GetWebinarByDescription(searchTerm);
-            var unionOfResultSets = webinars.Union(webinarsByTopic).Where(w => w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress || w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Scheduled);
-            return unionOfResultSets;
+            //var unionOfResultSets = webinars.Union(webinarsByTopic).Where(w => w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress || w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Scheduled);
+            //return unionOfResultSets;
+            return webinarsByTopic;
         }
 
         public bool UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel, out string message)
