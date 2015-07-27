@@ -440,6 +440,7 @@
     <Compile Include="Infrastructure\Auth\GetOrdersByLastNameFeatureAuthorizationProcessor.cs" />
     <Compile Include="Infrastructure\Auth\IAuthorizationProcessor.cs" />
     <Compile Include="Infrastructure\Auth\ImpersonateFeatureAuthorizationProcessor.cs" />
+    <Compile Include="CsvLogging.cs" />
     <Compile Include="Infrastructure\ErrorResponse.cs" />
     <Compile Include="Infrastructure\ErrorResponseCommand.cs" />
     <Compile Include="Infrastructure\HeadOnlyWebClient.cs">
