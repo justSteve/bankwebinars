@@ -14,6 +14,7 @@ namespace CUWebinars.Business.Repository
         Webinar FindById(int id);
         Webinar FindByIdLoaded(int id);
         IEnumerable<Webinar> FindByPresenterLastName(string lastName);
+        IEnumerable<Webinar> FindByPresenterFullName(string searchTerm);
         IEnumerable<Webinar> FindByDescription(string topicDescription);
         IQueryable<AdditionalLocationsLookupPrice> GetAdditionalLocationsLookupPricesForWebinar(int idWebinar);
         IQueryable<Webinar> GetUpcoming();

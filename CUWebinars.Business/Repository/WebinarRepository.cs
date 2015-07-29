@@ -54,25 +54,25 @@ namespace CUWebinars.Business.Repository
 
         public IEnumerable<Webinar> FindByPresenterLastName(string lastName)
         {
-            //var webinars = ((TTSWebinarsContext)db).Webinars
-            //    .Where(w => w.Status != WebinarStatus.Archived
-            //        && w.Status != WebinarStatus.Deleted
-            //        && w.Status != WebinarStatus.Pending)
-            //    .Include(w => w.Presenter)
-            //    .Where(w => w.Presenter.WebUser.LastName.ToLower().Contains((lastName.ToLower())))
-            //    .Include(t => t.WebinarTopicXrefs.Select(wtx => wtx.Topic))
-            //;
-            //return webinars;
             return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
                 .Include(w => w.Presenter.WebUser)
                 .Where(w => w.Presenter.WebUser.LastName.ToLower().Contains(lastName.ToLower())
                     && w.Status != WebinarStatus.Archived
                     && w.Status != WebinarStatus.Pending
                     && w.Status != WebinarStatus.Deleted
-                //|| w.Status == WebinarStatus.InProgress
-                //|| w.Status == WebinarStatus.Recorded
-                //|| w.Status == WebinarStatus.Scheduled)
                     );
+        }
+
+        public IEnumerable<Webinar> FindByPresenterFullName(string searchTerm)
+        {
+            return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
+                    .Include(w => w.Presenter.WebUser)
+                    .Where(w => w.Presenter.WebUser.FirstName.ToLower().StartsWith(searchTerm.ToLower())
+                        && w.Presenter.WebUser.LastName.ToLower().EndsWith(searchTerm.ToLower())
+                        && w.Status != WebinarStatus.Archived
+                        && w.Status != WebinarStatus.Pending
+                        && w.Status != WebinarStatus.Deleted
+        );
         }
 
         public IEnumerable<Webinar> FindByDescription(string searchTerm)
