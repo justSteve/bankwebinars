@@ -53,6 +53,7 @@ namespace CUWebinars.Business.Services
         IDictionary<RegType, bool> GetOptionsByWebinarId(int id, bool detached);
         IDictionary<RegType, bool> GetAllPossibleOptionsByWebinarId(int idWebinar, bool detached);
         IEnumerable<Order> GetOrdersByEmail(string email, int aff);
+        Order FindExpressCheckoutOrder(string email, int idWebinar);
         IEnumerable<Order> GetOrdersByLastName(string lastName, int aff);
         Order GetOrderById(int id);
         Order GetOrderByIdThin(int id);

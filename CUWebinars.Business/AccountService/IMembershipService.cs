@@ -97,6 +97,6 @@ namespace CUWebinars.Business.AccountService
         string FindDisplayPostEventMaterialsClaimValue(Order order);
         UserAccount GetUserAccountByVerificationKey(string key);
         ValidationResult ValidatePostEventMaterialsAccessClaimValue(string claimValue, string claimType);
-        WebUser CreateExpressCheckoutUser(string email, string firstName, string lastName, string phone, string institution, string title);
+        WebUser CreateExpressCheckoutUser(string tenant, string email, string firstName, string lastName, string phone, string institution, string title);
     }
 }

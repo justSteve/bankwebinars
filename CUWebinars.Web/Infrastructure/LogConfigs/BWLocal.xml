@@ -68,6 +68,8 @@
     </parameter>
   </appender>
   <root>
+
+    <appender-ref ref="AdoNetAppender" />
     <appender-ref ref="CsvFileAppender" />
     <appender-ref ref="FileAppender" />
   </root>

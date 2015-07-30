@@ -42,13 +42,13 @@ namespace CUWebinars.Business.Repository
 
             newOrder = AssignWebUserToOrder(webUser, newOrder);
 
-            newOrder.OrderRows = new List<OrderRow> {orderRow};
+            newOrder.OrderRows = new List<OrderRow> { orderRow };
 
             if (webUser.idSubscriptionDiscount != null && webUser.idSubscriptionDiscount > 0)
             {
                 orderRow.Discount = GetUserDiscount(webUser.idUser);
             }
-            
+
             var validationResult = _orderValidator.Validate(newOrder);
 
             if (validationResult.IsValid)
@@ -65,7 +65,7 @@ namespace CUWebinars.Business.Repository
                     //instead of throwing error - passback the pre-existing order id
                     return FindOrderForUserByWebinarID(newOrder.idUser, webinar.idWebinar);
                 }
-                
+
                 throw new Exception(ErrorMessageConstants.ExistingNonCancelledOrderMessage);
             }
 
@@ -86,15 +86,15 @@ namespace CUWebinars.Business.Repository
             newOrder = AssignWebUserToOrder(webUser, newOrder);
 
             // reconcile orderRow with order relationship
-            ((TTSWebinarsContext) db).OrderRows.Add(orderRow);
+            ((TTSWebinarsContext)db).OrderRows.Add(orderRow);
             orderRow.Order = newOrder;
-            newOrder.OrderRows = new List<OrderRow> {orderRow};
+            newOrder.OrderRows = new List<OrderRow> { orderRow };
 
             //if (webUser.idSubscriptionDiscount != null && webUser.idSubscriptionDiscount > 0)
             //{
             //    orderRow.Discount = GetUserDiscount(webUser.idUser);
             //}
-            
+
 
             Add(newOrder);
 
@@ -223,7 +223,7 @@ namespace CUWebinars.Business.Repository
             if (idAffiliate > 0)
             {
                 return items.Include(o => o.WebUser).Where(o => o.LastName.ToLower().StartsWith(lastName)
-                   && o.idAffiliate == idAffiliate 
+                   && o.idAffiliate == idAffiliate
                     );
             }
             return items.Include(o => o.WebUser).Where(o => o.LastName.ToLower().StartsWith(lastName));
@@ -242,7 +242,7 @@ namespace CUWebinars.Business.Repository
         public Order FindOrderForUserByWebinarID(int userId, int idWebinar)
         {
 
-            var userOrder = FindOrdersByUserIdWithOrderRows(userId)    
+            var userOrder = FindOrdersByUserIdWithOrderRows(userId)
                 .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == idWebinar) != null).SingleOrDefault();
 
 
@@ -259,21 +259,21 @@ namespace CUWebinars.Business.Repository
         public Object SearchOrders(int affiliateId, IList<int> excludeUserIDs, int skip, int take, string search)
         {
             var orders = items.Where(order => order.idAffiliate == affiliateId);
-                
+
             int searchUserID;
             if (search != string.Empty)
-            if (Int32.TryParse(search, out searchUserID))
-            {
-                orders = orders.Where(o => o.idUser == searchUserID);
-            }
-            else
-            {
-                 orders = orders.Where(o => o.FirstName.ToString().Contains(search)||
-                     o.LastName.ToString().Contains(search)||
-                     o.BillingEmail.ToString().Contains(search)||
-                     o.Institution.ToString().Contains(search)
-                     );
-            }
+                if (Int32.TryParse(search, out searchUserID))
+                {
+                    orders = orders.Where(o => o.idUser == searchUserID);
+                }
+                else
+                {
+                    orders = orders.Where(o => o.FirstName.ToString().Contains(search) ||
+                        o.LastName.ToString().Contains(search) ||
+                        o.BillingEmail.ToString().Contains(search) ||
+                        o.Institution.ToString().Contains(search)
+                        );
+                }
 
             int pagesToSkip = 0;
             if (take != 0)
@@ -286,7 +286,7 @@ namespace CUWebinars.Business.Repository
 
             int totalRecordsCount = items.Count(o => o.idAffiliate == affiliateId);
 
-            return new 
+            return new
             {
                 FoundCount = foundRecordsCount,
                 TotalCount = totalRecordsCount,
@@ -303,6 +303,15 @@ namespace CUWebinars.Business.Repository
                 context.OrderRows.Attach(newOrderRow);
 
             context.Entry(newOrderRow).Reference(or => or.Webinar).Load();
+        }
+
+        public Order FindExpressCheckoutOrder(string email, int idWebinar)
+        {
+            return items
+                .Include(o => o.WebUser)
+                .Include(o => o.OrderRows)
+                .FirstOrDefault(order => order.BillingEmail == email 
+                    && order.OrderRows.FirstOrDefault().idWebinar == idWebinar);
         }
 
 
@@ -488,6 +497,7 @@ namespace CUWebinars.Business.Repository
                 {
                     case DomainConstants.OriginMigrated:
                     case DomainConstants.OriginImported:
+                    case DomainConstants.OriginExpress:
                         return order;
                 }
             }
@@ -589,7 +599,7 @@ namespace CUWebinars.Business.Repository
             dataOperations.SendOrderToLegacy(newOrder);
         }
 
-        
+
         public virtual IList<Order> SelectOrdersWithRecordedWebinars(int idUser)
         {
             var orders = items

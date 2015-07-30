@@ -9,7 +9,7 @@
     var url = "";
     if (@ConfigurationManager.AppSettings["Tenant"] == "CUWebinars")
     {
-        url = "http://form.jotformpro.com/form/51853723531959?";
+        url = "http://form.jotformpro.com/form/52098289485976";
     }
 
     if (@ConfigurationManager.AppSettings["Tenant"] == "BankWebinars")
@@ -19,9 +19,10 @@
 }
 
 <script language="javascript" type="text/javascript">
-
+    var idWebinar = cartStateManager.getWebinarId();
+    
     function openECWindow() {
-        window.open('@url' + 'webinarTitle=' + pagetitle + '&email5=' + $('#Email1').val() + '&webinarid=' + cartStateManager.getWebinarId() + '', 'scrollbars=yes,toolbar=no,width=700,height=500');
+        window.open('@url' + 'affiliateid15=19&webinarTitle=' + pagetitle + '&email5=' + $('#Email1').val() + '&webinarid=' + idWebinar + '', 'scrollbars=yes,toolbar=no,width=700,height=500');
         okToLeave = true;
         location.reload(true);
     }
@@ -274,7 +275,7 @@
             @if (globalConfig.Tenant == "BankWebinars")
             {
                 <span>
-                    You also have the option login to your original
+                    Or login to your original
                     account at http://legacy.bankwebinars.com.
                 </span>
             }

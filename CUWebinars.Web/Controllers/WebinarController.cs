@@ -422,53 +422,6 @@ namespace CUWebinars.Web.Controllers
 
 
 
-        public PartialViewResult SendRecordingPosted()
-        {
-
-            //is this depricated?
-            throw new NotImplementedException();
-            //var model = _webinarControllerOrchestrator.BuildAdhocNotificationViewModel(WebinarType.Recorded);
-
-            //return PartialView(@"Partials/_SendRecordingPosted", model);
-        }
-
-
-        [System.Web.Mvc.HttpPost]
-        public JsonResult SendRecordingPosted(int webinarId)
-        {
-            //is this depricated?
-            throw new NotImplementedException();
-            //try
-            //{
-            //    String setEventToRecorded = _webinarControllerOrchestrator.SetEventToRecorded(webinarId);
-            //}
-            //catch (Exception)
-            //{
-
-            //    throw;
-            //}
-            //try
-            //{
-
-            //    var orders = _orderManagementService.GetOrdersForRecordedNotifications(webinarId);
-
-            //    if (orders.Any())
-            //    {
-            //        _orderManagementService.FireSendRecordingIsPostedEvent(orders);
-
-            //        return Json(new { Result = WebUiConstants.Success });
-            //    }
-
-            //    return Json(new { Result = WebUiConstants.NoOrdersForWebinar });
-            //}
-            //catch (Exception exception)
-            //{
-            //    _logger.Error(string.Format("SendRecordingPosted Action: {0}", exception.Message), exception);
-            //}
-            //return Json(new { Result = WebUiConstants.Fail });
-        }
-
-
         public ActionResult SearchByTopic(
             [Core.DataTables.WebinarsBrowserRequestModelBinder] WebinarsBrowserRequestModel webinarsBrowserRequest)
         {
@@ -517,18 +470,34 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Identify(string onDemandCode)
         {
-            var model = new IdentifyModel
+            int _id;
+            var isNum = Int32.TryParse(onDemandCode.Split('-')[0], out _id);
+            string hasVal = null;
+            if (onDemandCode.Split('-').Length > 1)
             {
-                Email = string.Empty,
-                OnDemandCode = onDemandCode,
-                FullName = string.Empty,
-                SignInModel = new SignInModel
-                {
-                    ReturnUrl = "o/" + onDemandCode
-                }
-            };
+                hasVal = onDemandCode.Split('-')[1];
+            }
+            var order = _orderManagementService.GetOrderById(_id);
 
-            return View(model);
+            if (order != null && hasVal != null)
+            {
+                var model = new IdentifyModel
+                {
+                    Email = string.Empty,
+                    OnDemandCode = onDemandCode,
+                    FullName = string.Empty,
+                    Institution = order.Institution,
+                    idOrder = order.idOrder,
+                    SignInModel = new SignInModel
+                    {
+                        ReturnUrl = "o/" + onDemandCode
+                    }
+                };
+
+                return View(model);
+            }
+            _logger.Fatal("Unfound idOrder from demandcode: " + onDemandCode);
+            return View();
         }
 
         [HttpPost]

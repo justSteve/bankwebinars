@@ -257,6 +257,12 @@ namespace CUWebinars.Business.Services
         {
             return _orderRepository.FindOrdersByBillingEmail(email.Trim(), aff);
         }
+
+        public Order FindExpressCheckoutOrder(string email, int idWebinar)
+        {
+            return _orderRepository.FindExpressCheckoutOrder(email.Trim(), idWebinar);
+        }
+
         public IEnumerable<Order> GetOrdersByEmailDomain(string email, int aff)
         {
             return _orderRepository.FindOrdersByBillingEmailDomain(email.Trim(), aff);

@@ -1,65 +1,20 @@
-﻿@model IdentifyModel
+﻿@using CUWebinars.Web.Core
+@model IdentifyModel
 
 @{
-    ViewBag.Title = "Identify";
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+    ViewBag.Title = "Access to OnDemand Content";
 }
 
-<div>
-    <div class="legendImitator">Please Sign In</div>
+<div class="container">
+    <div class="legendImitator">Please provide your name and email</div>
+    <p>Access to this page is governed by terms bound to order number @globalConfig.TenantPrefix@Model.idOrder<text>.</text><br/>
+        By entering, you affirm that you are associated with <b>@Model.Institution</b>.
+    </p>
 
-    @*<div style="margin-bottom: 20px;">If you are an existing user, please log in to proceed with accessing the On Demand Webinar:</div>
-
-    @using (Html.BeginForm("SignIn", "Account", FormMethod.Post, new { name = "frmSignIn", id = "frmSignIn", @class = "form-horizontal" }))
-    {
-        @Html.AntiForgeryToken()
-        @Html.ValidationSummary("Please address the following login errors: ", new { id = "LoginValSummary" })
-
-        <div class="row">
-            <div class="control-group span4">
-                <div class="control-label">
-
-                    @Html.LabelFor(m => m.SignInModel.Email)
-                </div>
-                <div class="controls">
-
-                    <input type="email" name="Email" data-val="true" data-val-required="The Email field is required." />
-                    @Html.ValidationMessageFor(m => m.SignInModel.Email)
-                </div>
-            </div>
-            </div>
-        <div class="row">
-            <div class="control-group span4">
-                <div class="control-label">
-                    @Html.LabelFor(m => m.SignInModel.Password)
-                </div>
-                <div class="controls">
-
-                    <input type="password" name="Password" data-val="true" data-val-required="The Password field is required." /> 
-                    @Html.ValidationMessageFor(m => m.SignInModel.Password)
-                </div>
-            </div>
-        </div>
-        <div class="row">
-                <div class="control-group span4">
-                    <div class="control-label">
-                        <input name="ReturnUrl" type="hidden" value="@Model.SignInModel.ReturnUrl" />
-                    </div>
-                    <div class="controls">
-                        <label class="checkbox inline">
-                            <input id="RememberMe" class="check-box" type="checkbox" checked="checked" value="true" name="RememberMe" />Remember Me
-                        </label>
-                    <br />
-                        <input id="SignInButton" name="SignInButton" class='btn' type="submit" value="Log in" />
-
-                        <div id="loginMsgLabelWrap" style="display: inline-block"></div>
-                    </div>
-                </div>
-            </div>
-    }*@
-
-    
     @using (Html.BeginForm("Identify", "Webinar", FormMethod.Post, new { id = "IdentifyDetailsForm", @class = "form-horizontal" }))
             {
+
         @Html.ValidationSummary("Please address the following issues in the form below:", new { id = "valSummaryIdentifyDetailsForm" })
                 @Html.AntiForgeryToken()
 

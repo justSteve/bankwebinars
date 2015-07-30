@@ -1,11 +1,12 @@
 ﻿@using System.Linq
+@using CUWebinars.Web.Core
 
 
 
 @model IEnumerable<Webinar>
 
 @{
-    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     var webinars = Model;
     var rowsData = new List<object>();
     //foreach (var entry in webinars)

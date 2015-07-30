@@ -427,7 +427,7 @@ namespace CUWebinars.Business.AccountService
             return _postEventMaterialsAccessClaimValidator.Validate(new Tuple<string, string>(claimType, claimValue));
         }
 
-        public WebUser CreateExpressCheckoutUser(string email, string firstName, string lastName, string phone, string institution, string title)
+        public WebUser CreateExpressCheckoutUser(string tenant,string email, string firstName, string lastName, string phone, string institution, string title)
         {
             _logger.Info("CreateExpressCheckoutUser: {0}", email);
             var webUser = new WebUser
@@ -441,10 +441,12 @@ namespace CUWebinars.Business.AccountService
                 idUserInstitution = 8,
                 email = email,
                 timeZone = USTimeZone.Central,
-                generalComments = "Origin: CreateBareUserFromEmail"
+                generalComments = "Origin: CreatedAtExpressCheckout"
             };
 
             _webUserRepository.Add(webUser);
+
+            CreateUserFromCart(tenant, RandomHelpers.GetUniqueCode(8), email);
 
             return webUser;
         }

@@ -19,6 +19,7 @@ namespace CUWebinars.Business.Constants
         public const string LoggerConnectionStringName = "LoggerConnection";
         public const string New = "N";
         public const string OriginImported = "Imported";
+        public const string OriginExpress = "Express";
         public const string OriginMigrated = "Migrator";
         public const string RazorExtension = ".cshtml";
         public const string RegistrantKey = "registrantKey";
@@ -52,5 +53,6 @@ namespace CUWebinars.Business.Constants
 
         public const string CreationModeImported = "imported";
         public const string CreationModeMigrated = "migrated";
+        public const string CreationModeExpress = "express";
     }
 }

@@ -45,5 +45,6 @@ namespace CUWebinars.Business.Repository
         IList<int> FindUserIdsByPartialId(int value);
         object SearchOrders(int affiliateId, IList<int> excludeUserIDs, int skip, int take, string search);
         void LoadWebinarIntoOrderRow(OrderRow newOrderRow);
+        Order FindExpressCheckoutOrder(string trim, int idWebinar);
     }
 }
