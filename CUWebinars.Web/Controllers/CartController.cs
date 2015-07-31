@@ -74,10 +74,15 @@ namespace CUWebinars.Web.Controllers
 
                 var myDiscount = _cartControllerOrchestrator.ApplyDiscountCode(code, row);
 
-                _cartControllerOrchestrator.UpdateOrderPricing(row.Order);
 
                 if (!ReferenceEquals(myDiscount, null))
                 {
+                    if (myDiscount.CreditsRemain == 0)
+                    {
+                        return Json(new { Result = -1 });
+                    }
+                    _cartControllerOrchestrator.UpdateOrderPricing(row.Order);
+
                     var amountToDiscount =
                         _cartControllerOrchestrator.GetDiscountAmountAsPercentageOrDollarAmount(myDiscount);
 

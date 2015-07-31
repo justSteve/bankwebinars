@@ -20,7 +20,7 @@
             @foreach (var recorded in Model.Recorded)
             {
                 var row = recorded.Value.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-
+            
                 var onDemandClaim = new OnDemandClaim();
                 if (Model.MyClaims != null)
                 {
@@ -39,7 +39,7 @@
                 var onDemandClaimString = onDemandClaim.OrderId.ToString() + "-" + onDemandClaim.OnDemandCode;
                 var expiresDate = row.Webinar.Date.AddMonths(6);
                 var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
-                var accessPhrase = "is no longer accessible ";
+                var accessPhrase = " is no longer accessible ";
 
                 //if (row.RegistrationType.ShowRecordingNotifications == "No")
                 //{

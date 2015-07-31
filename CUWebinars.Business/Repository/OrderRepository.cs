@@ -60,7 +60,7 @@ namespace CUWebinars.Business.Repository
 
             if (validationResult.Errors.FirstOrDefault().ErrorMessage.Contains("already has"))
             {
-                if (origin == "Imported" || origin == "Migrated")
+                if (origin == "Imported" || origin == "Migrator")
                 {
                     //instead of throwing error - passback the pre-existing order id
                     return FindOrderForUserByWebinarID(newOrder.idUser, webinar.idWebinar);

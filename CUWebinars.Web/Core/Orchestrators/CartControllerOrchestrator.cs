@@ -911,7 +911,15 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public Discount ApplyDiscountCode(string code, OrderRow row)
         {
-            return _orderManagementService.ApplyDiscountCode(code, row);
+            var discount = _orderManagementService.ApplyDiscountCode(code, row);
+
+            if (!ReferenceEquals(discount, null))
+            {
+                _orderManagementService.SaveChanges();
+            }
+            return discount;
+
+            
         }
 
         public void RemoveAdditionalLocationsFromOrder(int idOrderRow)

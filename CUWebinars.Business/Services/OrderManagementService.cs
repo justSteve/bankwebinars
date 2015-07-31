@@ -1589,10 +1589,7 @@ namespace CUWebinars.Business.Services
             if (discount.DiscountType != DiscountType.Subscription)
 
                 discount.CreditsUsed++;
-//Live or OnDemand - 1 Credit
-//CD ROM and Handouts - 1.25 Credits
-//Live PLUS OnDemand - 1.25 Credits
-//Premier Package - 1.5 Credits
+
             if (discount.CreditsRemain > 0)
             {
                 if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Five"))

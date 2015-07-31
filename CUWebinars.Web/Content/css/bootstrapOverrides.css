@@ -42,3 +42,9 @@ table.dataTable thead .sorting_desc { background: url('https://ttsimages.blob.co
 
 table.dataTable thead .sorting_asc_disabled { background: url('https://ttsimages.blob.core.windows.net/images/sort_asc_disabled.png') no-repeat center right; }
 table.dataTable thead .sorting_desc_disabled { background: url('https://ttsimages.blob.core.windows.net/images/sort_desc_disabled.png') no-repeat center right; }
+
+
+.DisplayDiscount {
+    font-size: x-small;
+    color: red;
+}

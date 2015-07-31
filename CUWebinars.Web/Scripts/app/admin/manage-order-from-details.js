@@ -23,7 +23,7 @@ $(function () {
         },
 
         highlighter: function (listedUser) {
-            
+
             // if integer, return it as we are dealing with an orderID
             if (_.isFinite(listedUser)) {
                 return listedUser;
@@ -552,15 +552,17 @@ $(function () {
                 $(self).attr('disabled', 'disabled');
             }
         }).done(function (data) {
-
-            if (data.Result.indexOf('%') !== -1) {
-                var amount2Discount = data.Result.replace('.00%', '') / 100;
-                ns.totalDiscount = ns.totalPriceSansDiscount * amount2Discount;
+            if (data.Result == -1) {
+                ns.totalDiscount = 'no credits';
             } else {
-                ns.totalDiscount = data.Result;
-            }
-
+                if (data.Result.indexOf('%') !== -1) {
+                    var amount2Discount = data.Result.replace('.00%', '') / 100;
+                    ns.totalDiscount = ns.totalPriceSansDiscount * amount2Discount;
+                } else {
+                    ns.totalDiscount = data.Result;
+                }
             ns.adjustTotalPrice();
+            }
             ns.totalDiscountInput.val(ns.totalDiscount);
 
             $('#discountSpinner').remove();
@@ -673,7 +675,7 @@ $(function () {
     ns.getOrder = function (e) {
 
         e.preventDefault();
-           //TODO: update controller action to permit email submission
+        //TODO: update controller action to permit email submission
         ns.idOrder = ns.orderIdInput.val();
 
         // loading spinner
@@ -682,7 +684,7 @@ $(function () {
             $('#errorDiv').remove();
 
         $('#orderRelatedFields').load('/Admin/GetOrderDetails/' + ns.idOrder, function (response, status, xhr) {
- 
+
             if (status === 'error') {
                 $(this).html('<div id="errorDiv" class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance. <br />' + (xhr.statusText === 'Internal Server Error' ? '' : xhr.statusText) + '</div>');
             } else {
@@ -931,7 +933,7 @@ $(function () {
 
     };
 
-    ns.add6MonthsButtonClick = function(e) {
+    ns.add6MonthsButtonClick = function (e) {
 
         e.preventDefault();
 
@@ -941,7 +943,7 @@ $(function () {
         $('#frmExtendPostEventAccess').find('input[name="newExpiryDate"]').val(ns.convertDateToStringUSFormat(dateVal));
     };
 
-    ns.add5DaysButtonClick = function(e) {
+    ns.add5DaysButtonClick = function (e) {
 
         e.preventDefault();
 
@@ -951,7 +953,7 @@ $(function () {
         $('#frmExtendPostEventAccess').find('input[name="newExpiryDate"]').val(ns.convertDateToStringUSFormat(dateVal));
     };
 
-    ns.adInfinitumButtonClick = function(e) {
+    ns.adInfinitumButtonClick = function (e) {
 
         e.preventDefault();
 
@@ -961,7 +963,7 @@ $(function () {
         $('#frmExtendPostEventAccess').find('input[name="newExpiryDate"]').val(ns.convertDateToStringUSFormat(dateVal));
     };
 
-    ns.convertDateToStringUSFormat = function(dateVal) {
+    ns.convertDateToStringUSFormat = function (dateVal) {
         var yyyy = dateVal.getFullYear().toString();
         var mm = (dateVal.getMonth() + 1).toString();
         var dd = dateVal.getDate().toString();

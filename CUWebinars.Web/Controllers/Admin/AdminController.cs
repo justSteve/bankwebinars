@@ -666,7 +666,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 _orderManagementService.FireOrderSubmittedEvent(expressOrder, true);
 
 
-                RedirectToAction("OrderComplete", "Account", new {id = expressOrder.idOrder});
+                RedirectToAction("OrderComplete", "Account", new { id = expressOrder.idOrder });
             }
             else
             {
@@ -2005,10 +2005,11 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
 
-        public ActionResult DisplayOrders()
-        {
-            return View("DisplayOrders", 1720); // hard coded value. It's a webinar id
-        }
+        //public ActionResult DisplayOrders()
+        //{
+        //    return View("DisplayOrders", 1720); // hard coded value. It's a webinar id
+        //}
+
         [HandleAjaxException]
         [HttpPost]
         public ActionResult GetOrdersByUser(string email)
@@ -2023,7 +2024,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
         [HandleAjaxException]
         [HttpPost]
-
         [AllowAnonymous]
         public ActionResult GetGridData(int? webinarId, int? affiliateId)
         {
@@ -2050,16 +2050,27 @@ namespace CUWebinars.Web.Controllers.Admin
             foreach (var order in orders)
             {
                 var orderRow = order.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
+                int orderToEdit = order.idOrderLegacy;
+                if (orderToEdit == 0) orderToEdit = order.idOrder;
 
-                var orderColumn = order.idOrderLegacy.ToString() + ", " + order.Origin;
+                var orderColumn = orderToEdit.ToString() + ", " + order.Origin;
                 var userColumn = "<a href='/account/edituser/" + order.idUser + "' target='_new' />" + order.LastName + ", " + order.FirstName + "</a>";
                 var institutionColumn = order.Institution;
-                var billingColumn = orderRow.RegistrationType.OptionLabel.Replace(" and Hardcopy Handouts", "").Replace("Plus Five", "Only") + "<br>Total: " + order.Total.ToString().Replace(".00", "");
+                var showDiscount = "";
+                if (!ReferenceEquals(orderRow.Discount, null) && orderRow.Discount.FlatOff > 0)
+                {
+                    showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: $" + orderRow.Discount.FlatOff.ToString().Replace(".00", "") + "</span>";
+                }
+                else if ((!ReferenceEquals(orderRow.Discount, null) && orderRow.Discount.PercentOff > 0))
+                {
+                    showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: " + orderRow.Discount.PercentOff.ToString() + "%</span>";
+                }
+                var billingColumn = orderRow.RegistrationType.OptionLabel.Replace(" and Hardcopy Handouts", "").Replace("Plus Five", "Only") + showDiscount + "<br>Total: $" + order.Total.ToString().Replace(".00", "");
 
                 var resendMsg = "Resend Confirmation";
                 if (orderRow.Webinar.Status == WebinarStatus.Active)
                 {
-                    resendMsg = "Resend Connection Info";
+                    resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
                 }
 
                 responsePayloadInner = new Dictionary<string, string>();
@@ -2073,7 +2084,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 responsePayloadInner.Add("AffiliateColumn", order.Affiliate.ttsDomain);
 
                 responsePayloadInner.Add("OrderDateColumn", order.OrderDate.ToShortDateString());
-                responsePayloadInner.Add("StatusColumn", "<a href='/Admin/manageOrder/" + order.idOrderLegacy + "' target='_new' />" + order.OrderStatus.ToString() + "</a><br/>" + resendMsg);
+                responsePayloadInner.Add("StatusColumn", "<a href='/Admin/manageOrder/" + orderToEdit + "' target='_new' />" + order.OrderStatus.ToString() + "</a><br/>" + resendMsg);
 
                 responsePayload.Add(responsePayloadInner);
             }

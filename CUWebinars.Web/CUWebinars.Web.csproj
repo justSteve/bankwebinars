@@ -945,7 +945,7 @@
     <Content Include="Views\Quiz\Index.cshtml" />
     <Content Include="Views\Quiz\Identify.cshtml" />
     <Content Include="Views\Quiz\EditQuizFromDetails.cshtml" />
-    <Content Include="Views\Admin\DisplayOrders.cshtml" />
+    <Content Include="Views\Admin\DisplayOrdersDEL.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\CompPersSubscriptionEditor.cshtml" />
     <Content Include="Views\StaticContent\IncorrectPassword.cshtml" />
     <Content Include="Views\Shared\Partials\_404Feedback.cshtml" />
