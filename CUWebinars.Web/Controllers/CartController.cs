@@ -128,7 +128,6 @@ namespace CUWebinars.Web.Controllers
                 {
                     _logger.Info("Confirming Order for OrderRow with Id {0}", id.Value);
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
-                    _logger.Info("WebinarDetailsViewModel{0}built successully", model == null ? " NOT " : " ");
 
                     model.Order.OrderStatus = OrderStatus.Submitted;
 
@@ -141,13 +140,10 @@ namespace CUWebinars.Web.Controllers
                     {
                         _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: true);
                     }
-
-
+                    
                     _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
 
-
-
-                    //_cartControllerOrchestrator.SendOrderToLegacy(model.Order);
+                    _cartControllerOrchestrator.SendOrderToLegacy(model.Order);
 
                     _cartControllerOrchestrator.CreatePostEventClaim(model.Order);
 

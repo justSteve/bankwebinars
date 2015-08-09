@@ -233,7 +233,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return PartialView("~/Views/Admin/Partials/_AffiliatesChooser.cshtml", affiliatesChooserModel);
         }
 
-        public ActionResult UpdateOrderAffiliate(int? idAffiliate, int? idOrder)
+        public ActionResult SetAffiliateAssignedToOrder(int? idAffiliate, int? idOrder)
         {
             var order = _orderManagementService.GetOrderByIdThin(idOrder.Value);
             order.idAffiliate = idAffiliate.Value;
@@ -416,9 +416,7 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
         [System.Web.Mvc.HttpPost]
-        [ValidateJsonAntiForgeryToken(Order = 0)]
-        [HandleAjaxException(Order = 1)]
-
+        [HandleAjaxException]
         public ActionResult SetUserAssignedToOrder(int orderID, string migrateOrder, int targetUserID)
         {
             try
@@ -664,8 +662,10 @@ namespace CUWebinars.Web.Controllers.Admin
                 expressOrder.AdminComments = forComment.ToString();
                 _orderManagementService.SaveChanges();
                 _orderManagementService.FireOrderSubmittedEvent(expressOrder, true);
-
-
+                if (_globalConfig.Tenant == "BankWebinars")
+                {
+                    _orderManagementService.SendOrderToLegacy(expressOrder);
+                }
                 RedirectToAction("OrderComplete", "Account", new { id = expressOrder.idOrder });
             }
             else
@@ -1126,18 +1126,18 @@ namespace CUWebinars.Web.Controllers.Admin
 
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active); // perf bump by assigning to local variable
 
-            //if (string.IsNullOrEmpty(orderRow.CitrixJoinUrl) && orderRow.Webinar.CitrixJoinInfoAvailable())
-            //{
-            //    _orderManagementService.GenerateRegistrantKey(order);
+            if (string.IsNullOrEmpty(orderRow.CitrixJoinUrl) && orderRow.Webinar.CitrixJoinInfoAvailable())
+            {
+                _orderManagementService.GenerateRegistrantKey(order);
 
-            //    if (orderRow.AdditionalLocation.Any())
-            //    {
-            //        foreach (var additionalLocation in orderRow.AdditionalLocation)
-            //        {
-            //            _orderManagementService.GenerateRegistrantKey(order, additionalLocation);
-            //        }
-            //    }
-            //}
+                if (orderRow.AdditionalLocation.Any())
+                {
+                    foreach (var additionalLocation in orderRow.AdditionalLocation)
+                    {
+                        _orderManagementService.GenerateRegistrantKey(order, additionalLocation);
+                    }
+                }
+            }
 
             //TODO: orders that have been migrated are going to have the OrderGenisis over-written by FireOrderSubmittedEvent
             _orderManagementService.FireOrderSubmittedEvent(order, resending: true);
@@ -1166,8 +1166,6 @@ namespace CUWebinars.Web.Controllers.Admin
             }
 
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active); // perf bump by assigning to local variable
-
-
 
             _orderManagementService.FireSendConnectionInfoNotificationEvent(new[] { order }, resending: true);
 
@@ -2053,7 +2051,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 int orderToEdit = order.idOrderLegacy;
                 if (orderToEdit == 0) orderToEdit = order.idOrder;
 
-                var orderColumn = orderToEdit.ToString() + ", " + order.Origin;
+                var orderColumn = orderToEdit.ToString() + ", " + orderRow.TtsJoinUrl;
                 var userColumn = "<a href='/account/edituser/" + order.idUser + "' target='_new' />" + order.LastName + ", " + order.FirstName + "</a>";
                 var institutionColumn = order.Institution;
                 var showDiscount = "";

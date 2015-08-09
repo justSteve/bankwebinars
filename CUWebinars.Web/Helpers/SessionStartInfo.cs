@@ -11,5 +11,6 @@ namespace CUWebinars.Web.Helpers
        public string UserAgent { get; set; }
        public string UserCookie { get; set; }
 
+
     }
 }

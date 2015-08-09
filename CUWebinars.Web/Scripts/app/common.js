@@ -1,10 +1,4 @@
-﻿//$(function () {
-    
-//    //$(".control-label").append(":&nbsp;");
-//});
-
-
-
+﻿
 var shsGlobal = new Globals();
 
 function Globals() {

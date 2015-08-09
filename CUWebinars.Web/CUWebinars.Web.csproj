@@ -208,7 +208,7 @@
     <Reference Include="Microsoft.WindowsAzure.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.WindowsAzure.ConfigurationManager.2.0.3\lib\net40\Microsoft.WindowsAzure.Configuration.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Diagnostics, Version=2.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.WindowsAzure.Diagnostics, Version=2.6.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.WindowsAzure.Jobs">
       <HintPath>..\packages\Microsoft.WindowsAzure.Jobs.0.2.0-alpha2\lib\net45\Microsoft.WindowsAzure.Jobs.dll</HintPath>
     </Reference>
@@ -512,6 +512,7 @@
     <Compile Include="ViewModel\OrderSumUserViewModel.cs" />
     <Compile Include="ViewModel\QuizViewModel.cs" />
     <Compile Include="ViewModel\RegistrationSummaryViewModel.cs" />
+    <Compile Include="ViewModel\ShareNotisViewModel.cs" />
     <Compile Include="ViewModel\ShowOrdersViewModel.cs" />
     <Compile Include="ViewModel\WebinarEditModel.cs" />
     <Compile Include="ViewModel\WebinarFileViewModel.cs" />
@@ -708,6 +709,7 @@
     <Content Include="Scripts\app\admin\session-checker.js" />
     <Content Include="Scripts\app\admin\display-orders.js" />
     <Content Include="Scripts\app\client-logger.js" />
+    <Content Include="Scripts\app\mywebinars\share-notis.js" />
     <Content Include="Scripts\app\quiz\edit-quiz.js" />
     <Content Include="robots.txt" />
     <Content Include="Scripts\app\quiz\do-quiz.js" />
@@ -738,6 +740,11 @@
     <Content Include="Notification\Templates\AdhocNotification.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars31 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars31 - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\CUWebinars33 - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\CUWebinars33 - Web Deploy.pubxml" />
+    <Content Include="Scripts\cleditor\jquery.cleditor.min.js.map">
+      <DependentUpon>jquery.cleditor.min.js</DependentUpon>
+    </Content>
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\app\webinar\manage-webinar-from-details.js" />
     <Content Include="Scripts\bootstrap-filestyle.min.js" />
@@ -962,6 +969,7 @@
     <Content Include="Views\Account\ExpressCheckout.cshtml" />
     <None Include="Web.BankWebinars31 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </None>
     <None Include="Web.CUWebinars33 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>

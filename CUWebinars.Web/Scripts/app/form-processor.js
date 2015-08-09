@@ -35,7 +35,7 @@
         for (var error in data.data) {
             if (data.data.hasOwnProperty(error)) {
                 errorsList.append('<li>' + data.data[error] + '</li>');
-                console.log(data.data[error]);
+                //console.log(data.data[error]);
             }
         }
     };

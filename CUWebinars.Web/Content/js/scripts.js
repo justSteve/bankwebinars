@@ -77,7 +77,7 @@ if (document.documentElement.clientWidth > 767) { //if client width is greater t
         orientation: 'h',
         contentsource: "markup",
         showhidedelay: { showdelay: 300, hidedelay: 100 } //set delay in milliseconds before sub menus appear and disappear, respectively
-    })
+    });
 
 } // end if 
 
@@ -286,14 +286,14 @@ $(document).ready(function ($) {
 /*================================================================*/
 /*	ADD ACTIVE CLASS TO MENU - DEMO only you can remove this if you want, your CMS should be set up so that the active class is added via php
 /*================================================================*/
-$(document).ready(function () {
-    var path = location.pathname.substring(1);
-    if (path)
-        //	$('#main_menu li a[href$="' + path + '"]').parents('li').addClass('active');
-        $('#main_menu li a[href$="' + path + '"]').parents('li').last().addClass('active');
-    $('#main_menu li a[href$="' + path + '"]').parents('li').first().addClass('active');
-    $('#main_menu li a[href$="' + path + '"]').parent('li').addClass('active');
-});
+//$(document).ready(function () {
+//    var path = location.pathname.substring(1);
+//    if (path)
+//        $('#main_menu li a[href$="' + path + '"]').parents('li').addClass('active');
+//        $('#main_menu li a[href$="' + path + '"]').parents('li').last().addClass('active');
+//    $('#main_menu li a[href$="' + path + '"]').parents('li').first().addClass('active');
+//    $('#main_menu li a[href$="' + path + '"]').parent('li').addClass('active');
+//});
 
 $(document).ready(function () {
     var path = location.pathname.substring(1);

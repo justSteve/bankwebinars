@@ -436,16 +436,12 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 case "scheduled to active":
                     sb.Append("[{STATECHANGE : scheduled to active," + System.Environment.NewLine);
-                    sb.Append("       CitrixRegisterUrl   : " + webinar.CitrixRegisterUrl + "," +
-                              System.Environment.NewLine);
+                    sb.Append("       CitrixRegisterUrl   : " + webinar.CitrixRegisterUrl + "," + System.Environment.NewLine);
                     sb.Append("       WebinarKey          : " + webinar.WebinarKey + "," + System.Environment.NewLine);
                     sb.Append("       AccessPhone         : " + webinar.AccessPhone + "," + System.Environment.NewLine);
-                    sb.Append("       AccessCodeAttendee  : " + webinar.AccessCodeAttendee + "," +
-                              System.Environment.NewLine);
-                    sb.Append("       AccessCodePresenter : " + webinar.AccessCodePresenter + "," +
-                              System.Environment.NewLine);
-                    sb.Append("       AccessCodeOrganizer : " + webinar.AccessCodeOrganizer + "}]" +
-                              System.Environment.NewLine);
+                    sb.Append("       AccessCodeAttendee  : " + webinar.AccessCodeAttendee + "," + System.Environment.NewLine);
+                    sb.Append("       AccessCodePresenter : " + webinar.AccessCodePresenter + "," + System.Environment.NewLine);
+                    sb.Append("       AccessCodeOrganizer : " + webinar.AccessCodeOrganizer + "}]" + System.Environment.NewLine);
 
 
                     break;
@@ -463,13 +459,13 @@ namespace CUWebinars.Web.Core.Orchestrators
         public IEnumerable<Webinar> SearchWebinars(string searchTerm)
         {
             var webinars = _webinarManagementService.GetWebinarByPresenterLastName(searchTerm);
-            if (!ReferenceEquals(webinars, null) && webinars.Count()> 0)
+            if (!ReferenceEquals(webinars, null) && webinars.Count() > 0)
             {
                 return webinars;
             }
-            
+
             webinars = _webinarManagementService.GetWebinarByPresenterFullName(searchTerm);
-            if (!ReferenceEquals(webinars, null) && webinars.Count()> 0)
+            if (!ReferenceEquals(webinars, null) && webinars.Count() > 0)
             {
                 return webinars;
             }

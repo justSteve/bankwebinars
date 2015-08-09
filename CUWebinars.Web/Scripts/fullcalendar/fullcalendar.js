@@ -5158,7 +5158,7 @@ function DayEventRenderer() {
 	function renderTempDayEvent(event, adjustRow, adjustTop) {
 
 		// actually render the event. `true` for appending element to container.
-		// Recieve the intermediate "segment" data structures.
+		// receive the intermediate "segment" data structures.
 		var segments = _renderDayEvents(
 			[ event ],
 			true, // append event elements

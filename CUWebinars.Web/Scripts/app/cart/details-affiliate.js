@@ -418,7 +418,7 @@ OCA.initializeFunctions = function () {
 
         cancelOrderForm.on('submit', function (e) {
 
-            console.log('cancelOrderForm submit hit');
+            //console.log('cancelOrderForm submit hit');
             //Rollbar.info('Submitting cancelOrderForm');
             e.preventDefault();
             e.stopImmediatePropagation();
@@ -444,7 +444,7 @@ OCA.initializeFunctions = function () {
                             OCA.okToLeave = true;
 
                             var utilities = new Common.Utilities();
-                            console.log('/webinar/details/' + OCA.cartStateManager.getWebinarId());
+                            //console.log('/webinar/details/' + OCA.cartStateManager.getWebinarId());
                             utilities.goToUrl('/webinar/details/' + OCA.cartStateManager.getWebinarId());
                         } else {
 

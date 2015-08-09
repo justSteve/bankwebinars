@@ -7,38 +7,10 @@
 
 
 }
-<script>
-
-    $("#shareInfoForm").on('submit', function (e) {
-        e.preventDefault();
-        var self = $(this);
-
-        var data = $(this).serialize();
-
-        $.ajax({
-            type: 'POST',
-
-            cache: false,
-            url: self.attr('action'),
-            dataType: JSON,
-            data: data,
-            beforeSend: function () {
-            }
-        }).done(function (data) {
-            if (data.Result === 'Success') {
-
-                $("#caption").html('<span>Notifications are CCed to</span>');
-            } else {
+<script language="javascript" src="~\Scripts/app/mywebinars/share-notis.js" type="text/javascript"></script>
 
 
-            }
 
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-
-        });
-
-    });
-</script>
 <input type="hidden" value="@Model.idOrder" name="idOrder" />
 <div id="ShareContainer" style="padding: 12px;" class="well-large">
     <section>
@@ -53,49 +25,41 @@
 
                 if (!ReferenceEquals(null, addresses))
                 {
-
                     ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(addresses.ToString());
                     if (!ReferenceEquals(null, ccEmailAddresses))
                     {
-                        <span>Sharing notifications with @ccEmailAddresses[0].ToString()</span>
+                <span>You are currently sharing this order's notifications with @ccEmailAddresses[0].ToString()</span>
                     }
                     else
                     {
-                        using (Html.BeginForm("ShareNotifications", "Account", FormMethod.Post, new {id = "shareInfoForm_" + @Model.idOrder, @class = "form-horizontal"}))
+                        using (Html.BeginForm("ShareNotifications", "Account", FormMethod.Post, new { id = "shareInfoForm_" + Model.idOrder, @class = "form-horizontal" }))
                         {
-                            @Html.AntiForgeryToken()
-
-                            <span class="input-append">
-                                <input type="email" id="getEmail" placeholder="Email Address" class="span9" name="email" />
-                                <button class="btn btn-primary">Submit</button>
-                            </span>
-                            <div id="caption" style="text-align: center;">
-                                Enter the address to recieve CC of all event notifications.
-                            </div>
-
+                <span class="input-append">
+                    <input type="text" id="addresses_@Model.idOrder" placeholder="Email Address" class="span9" name="addresses" />
+                    <input type="hidden" value="@Model.idOrder" name="idOrder" />
+                    <button id="submitThis_@Model.idOrder" class="submitThis btn btn-primary">Submit</button>
+                </span>
+                <div id="caption1" style="text-align: center;">
+                    Enter one or more addresses that will receive a copy of all notifications on this order.
+                </div>
                         }
                     }
                 }
                 else
                 {
-                    using (Html.BeginForm("ShareNotifications", "Account", FormMethod.Post, new { id = "shareInfoForm_" + @Model.idOrder, @class = "form-horizontal" }))
+                    using (Html.BeginForm("ShareNotifications", "Account", FormMethod.Post, new { id = "shareInfoForm_"+Model.idOrder, @class = "form-horizontal" }))
                     {
-                        @Html.AntiForgeryToken()
-
-                        <span class="input-append">
-                            <input type="email" id="getEmail" placeholder="Email Address" class="span9" name="email" />
-                            <button class="btn btn-primary">Submit</button>
-                        </span>
-                        <div id="caption" style="text-align: center;">
-                            Enter the address to recieve CC of all event notifications.
-                        </div>
-
+                <span class="input-append">
+                    <input type="text" id="getEmail" placeholder="Email Address" class="span9" name="addresses" />
+                    <input type="hidden" value="@Model.idOrder" name="idOrder" />
+                    <button id="submitThis_@Model.idOrder" class="submitThis btn btn-primary">Send</button>
+                </span>
+                <div id="caption" style="text-align: center;">
+                    Enter one or more addresses that will receive a copy of all notifications on this order.
+                </div>
                     }
                 }
-
-}
-
-            
+            }
         </div>
     </section>
 </div>

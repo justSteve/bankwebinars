@@ -493,17 +493,16 @@ namespace CUWebinars.Web.Controllers
             return PartialView("Partials/_EditNameTitle", model);
         }
 
-        [System.Web.Mvc.HttpPost]
-        public ActionResult ShareNotifications(FormCollection shareNotis)
+        //[System.Web.Mvc.HttpPost]
+        //[HandleAjaxException]
+        public JsonResult ShareNotifications(ShareNotisViewModel shareNotis)
         {
-            int idOrder = Convert.ToInt32(shareNotis["idOrder"]);
-            string addresses = shareNotis["email"];
+            var order = _orderManagementService.GetOrderById(shareNotis.idOrder);
 
-            var order = _orderManagementService.GetOrderById(idOrder);
             try
             {
                 //following copies pattern found at WebinarController | Identify
-                var newJson = new JProperty(string.Concat(JsonPropertyKeys.CarbonCopy), addresses);
+                var newJson = new JProperty(string.Concat(JsonPropertyKeys.CarbonCopy), shareNotis.addresses);
                 order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, newJson);
 
                 _orderManagementService.SaveChanges();

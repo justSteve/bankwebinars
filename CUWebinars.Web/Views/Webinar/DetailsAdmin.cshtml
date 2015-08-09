@@ -187,7 +187,7 @@
             @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
 
             <div id="setAssignedAffiliate" class="modal hide fade">
-                @using (Html.BeginForm("UpdateOrderAffiliate", "Admin", FormMethod.Post, new { id = "frmChangeAffiliate" }))
+                @using (Html.BeginForm("SetAffiliateAssignedToOrder", "Admin", FormMethod.Post, new { id = "frmChangeAffiliate" }))
                 {
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

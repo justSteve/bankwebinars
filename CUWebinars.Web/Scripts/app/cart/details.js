@@ -155,7 +155,7 @@ $(function () {
         // CANCEL REGISTRATION BUTTON CLICKED
         cancelOrderForm.on('submit', function (e) {
 
-            console.log('cancelOrderForm submit hit');
+            //console.log('cancelOrderForm submit hit');
 
             e.preventDefault();
             e.stopImmediatePropagation();

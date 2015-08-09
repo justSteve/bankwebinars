@@ -649,7 +649,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                     if (data.data.hasOwnProperty(error)) {
                         errorsList.append('<li>' + data.data[error] + '</li>');
                         if (data.data[error].toString().indexOf("password") < 1) {
-                            L.clientLogger.error("Login error with something besides Invalid Password. ", { data: data.data[error] })
+                            L.clientLogger.error("Login error with something besides Invalid Password. ", { data: data.data[error] });
                         };
                     } else {
                         L.clientLogger.info("Invalid Password. ", { data: data.data[error] });
@@ -1180,7 +1180,7 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
         }).done(function (data) {
 
             if (data.Result == 0) {
-                alert("The discount code " + $('#CheckoutDiscountCode').val() + " was not found. Try again or call 800-831-0678 ext. 703 for assistance.")
+                alert("The discount code " + $('#CheckoutDiscountCode').val() + " was not found. Try again or call 800-831-0678 ext. 703 for assistance.");
             }
 
             if (data.Result.indexOf('%') !== -1) {

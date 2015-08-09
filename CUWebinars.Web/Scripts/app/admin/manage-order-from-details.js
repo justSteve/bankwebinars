@@ -281,7 +281,7 @@ $(function () {
                 errorsList.empty();
                 errorsList.append('<li style="display:none"></li>');
 
-                ns.regTypesList.after('<span id="regTypeSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>')
+                ns.regTypesList.after('<span id="regTypeSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
             }
         }).done(function (data) {
             //console.log('done CheckIfAddLocShouldHide');
@@ -727,6 +727,7 @@ $(function () {
 
                 var self = this;
 
+
                 var payload = {
                     idAffiliate: $('#SelectedAffiliate').val(),
                     idOrder: $('#Id').val()
@@ -746,8 +747,13 @@ $(function () {
                         $(self).attr('disabled', 'disabled');
                     }
                 }).done(function (data) {
+                    if (data.Result === "Success") {
+                        
+                        $('#cancelChangeAffiliate').addClass("btn-success").text("Update Successful");
+                        $('#submitChangeAffilate').hide();
 
                     var oi = data.Result;
+                    }
 
                     $(self).removeAttr('disabled');
                     $('#changeAffSpinner').remove();

@@ -36,7 +36,7 @@ function setLocationEvents(country, state, city){
             onComplete:function(t){
                 load.remove();
                 var states = t.responseText? t.responseText.evalJSON().states : t.states;
-                console.log(states);
+                //console.log(states);
                 
                 if(t.success === false){
                     return;
@@ -104,7 +104,7 @@ function setLocationEvents(country, state, city){
                 load.remove();
                 
                 var cities = (t.responseText)? t.responseText.evalJSON().cities : t.cities;
-                console.log(t, cities);
+                //console.log(t, cities);
                 if(t.success === false){
                     return;
                 }
