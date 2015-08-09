@@ -1,17 +1,17 @@
 ﻿
 $(document).ready(function () {
 
-    isValidEmailAddress = function (emailAddress) {
-        var pattern = new RegExp('\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b');
-        return pattern.test(emailAddress);
+    isValidEmailAddress = function (email) {
+        var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+        return re.test(email);
     };
 
-    $('button[id^="submitThis"]').click( function (e) {
+    $('button[id^="submitThis"]').click(function (e) {
 
         var self = $(this);
-        
-            e.stopPropagation();
-    
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
         var payload = {
             addresses: $(this).siblings(".span9").val(),
             idOrder: this.id.split('_')[1]
@@ -21,33 +21,40 @@ $(document).ready(function () {
             return;
         } else {
             $.ajax({
-                    type: 'POST',
+                type: 'POST',
 
-                    contentType: constants.FormPostContentType,
-                    cache: false,
-                    url: '/Account/ShareNotifications',
-                    dataType: JSON,
-                    data: payload,
-                    beforeSend: function() {
+                contentType: constants.JsonContentType,
+                cache: false,
+                url: '/Account/ShareNotifications',
+                dataType: constants.JsonDataType,
+                data: JSON.stringify(payload),
+                beforeSend: function () {
 
-                        $(self).append('<span id="addSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
-                        $(self).attr('disabled', 'disabled');
-                    }
-                })
-                .done(function(result) {
-                    if (result.Result === 'Success') {
-                        var a = 2;
-                        //$(self).find('span').remove();
+                    $(self).append('<span id="addSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+                    $(self).attr('disabled', 'disabled');
+                }
+            })
+                .done(function (data) {
+                    if (data) {
 
-                        //$(self["#caption"]).html('<span>Notifications will be CCed to ' + payload.addresses + '</span>');
+                        alert("Submission was successful. " + payload.addresses + " will receive future notifications on this order.");
+                        $(self).find('addSpinner').remove();
+
+                        $(self["#caption"]).html('<span>Notifications will be CCed to ' + payload.addresses + '</span>');
                     } else {
                         alert("serverFail");
                         //$(self["#caption"]).html('<span>Notifications are CCed to</span>');
                     }
                 })
-                .fail(function(jqXHR, textStatus, errorThrown) {
+                .fail(function (jqXHR, textStatus, errorThrown) {
                     var a = 1;
 
+                })
+                .always(function (result) {
+
+                    $(self).find('span').remove();
+
+                   
                 });
         }
     });
