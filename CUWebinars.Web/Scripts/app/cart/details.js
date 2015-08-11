@@ -5,9 +5,47 @@ discount = '';
 checkoutConfirm = {};
 okToLeave = true;
 pagetitle = $("h1:first").text();
+function getInternetExplorerVersion()
+    // Returns the version of Internet Explorer or a -1
+    // (indicating the use of another browser).
+{
+    var rv = -1; // Return value assumes failure.
+    if (navigator.appName == 'Microsoft Internet Explorer') {
+        var ua = navigator.userAgent;
+        var re = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+        if (re.exec(ua) != null)
+            rv = parseFloat(RegExp.$1);
+    }
+    return rv;
+}
+var ieVer = "";
 
+function checkVersion() {
+
+    var ver = getInternetExplorerVersion();
+
+    if (ver > -1) {
+        if (ver >= 9.0)
+            ieVer = "";
+        else
+            ieVer = "preIE10";
+    }
+}
+
+function earlyIEExpress(idWebinar) {
+    window.location="/cart/ExpressCheckout4IE1";
+}
 
 $(function () {
+    checkVersion();
+
+    if (ieVer === "preIE10") {
+
+        $("#iePre10").show();
+    }
+
+        $("#iePre10").show();
+
 
     signUpForm = $('#SignUpForm');
     signUpFormContainer = $('#SignUpFormContainer'); // The big beige box
@@ -61,9 +99,8 @@ $(function () {
                     var utilities = new Common.Utilities();
                     utilities.goToUrl('/Account/OrderComplete/' + data.OrderRowID);
 
-
                 } else {
-                    console.error('Failed to post order');
+                    //console.error('Failed to post order');
                     L.clientLogger.error('d-#4 Failed to post order', { 'jsonResponse': data });
 
                     confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data #554. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');

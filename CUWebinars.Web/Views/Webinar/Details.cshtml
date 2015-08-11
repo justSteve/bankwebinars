@@ -22,8 +22,23 @@
             };
         </script>
     }
+    var url = "";
+    if (globalConfig.Tenant == "BankWebinars")
+    {
+        url = "http://form.jotformpro.com/form/50827231711953?feedback=";
+    }
+    if (globalConfig.Tenant == "CUWebinars")
+    {
+        url = "http://form.jotform.us/form/51606487629162?feedback=";
+    }
 }
-
+<style>
+    .warnIE {
+        background-color: lightgoldenrodyellow;
+        padding: 8px;
+        text-align: center;
+    }
+</style>
 <script type="text/javascript">
     var checkoutInProcess = @(Model.CheckoutInProcess ? "true" : "false");
     var isUserLoggedIn = @(@Model.UserIsLoggedIn ? "true" : "false");
@@ -85,8 +100,17 @@
                 @Html.Raw(Model.Webinar.WhoAttend)
                 <hr />
             </div>
+            <div class="warnIE" style="display: none;" id="iePre10">
+                <p>
+                    <b>Please note:</b> This site employs features that may cause unexpected behavior in certain versions of Internet Explorer. If you experience a problem, try refreshing your screen. If this doesn't solve the problem, click on this link.
+                    <br /><button id="warnIE" onclick="earlyIEExpress('@Model.Webinar.idWebinar');" class="btn btn-mini btn-success">Express Checkout!</button>
+
+                </p>
+                <p>You may contact us by using the Online Chat button below, calling 800-831-0678 ext 707 or emailing Support@ttsTrain.com.  </p>
+            </div>
             @{
-                if (Model.Webinar.Status != WebinarStatus.Archived
+                if (
+                    Model.Webinar.Status != WebinarStatus.Archived
                     && Model.Webinar.Status != WebinarStatus.Deleted
                     && Model.Webinar.Status != WebinarStatus.Pending
                     )
@@ -206,4 +230,3 @@
     </div>
 
 </div> <!-- closes main-content -->
-

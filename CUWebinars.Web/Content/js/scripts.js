@@ -1,5 +1,11 @@
 
 /*================================================================*/
+/*	Added by TTS to accomodate early versions of IE
+/*================================================================*/
+//https://msdn.microsoft.com/en-us/library/ms537509%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396
+
+
+/*================================================================*/
 /*	REFRESH IF WINDOW IS UNDER OR OVER 747 PX WIDE (removed 20px for scroll bar, that's why)
 /*================================================================*/
 var ww = $(window).width();
@@ -112,7 +118,7 @@ if (document.documentElement.clientWidth < 767) { //if client width is less than
 $(document).ready(function () {
 
     $('.mobile_nav a').click(function () {
-        
+
         //$('#main_menu').slideToggle(400);
         $('#main_menu').show();
         $(this).toggleClass('active'); return false;
@@ -239,7 +245,7 @@ $(document).ready(function () {
     //		} 
     //	 return false;
     //  });
-    
+
 
     $('.s-accordion li.s-wrap div.s-content').hide();
     $('.s-accordion li.s-wrap .trigger a').click(function () {

@@ -511,6 +511,13 @@ namespace CUWebinars.Web.Controllers
 
         }
 
+        public ActionResult ExpressCheckout4IE1()
+        {
+
+            return View();
+
+        }
+
         public void ExpressCheckout(JotFormWebHook form)
         {
             string formFields = Request.Form.ToString();

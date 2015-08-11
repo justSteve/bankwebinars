@@ -476,3 +476,7 @@ h3.form-header {
 	clear:left;
 	width:auto;
 }
+
+/*.form-line[data-type=control_text] {
+	overflow: hidden;
+}*/

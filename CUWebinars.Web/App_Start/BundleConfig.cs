@@ -41,6 +41,15 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/cart/add-additional-locations.js"
                 ));
 
+            bundles.Add(new ScriptBundle("~/bundles/jotForm").Include(
+                "~/Scripts/calendarview.js",
+                "~/Scripts/location.js",
+                "~/Scripts/prototype.js",
+                "~/Scripts/protoplus.js",
+                "~/Scripts/protoplus-ui-form.js",
+                "~/Scripts/jotform.js"
+                ));
+
             bundles.Add(new ScriptBundle("~/bundles/add-password").Include(
                 "~/Scripts/app/cart/add-password.js"
                 ));
@@ -249,6 +258,10 @@ namespace CUWebinars.Web.App_Start
                 "~/Content/css/font-awesome.css")
                 );
 
+            bundles.Add(new StyleBundle("~/Content/jotForm").Include(
+                "~/Content/css/form.css",
+                "~/Content/css/nova.css")
+                );
 
             bundles.Add(new StyleBundle("~/Content/common-styles").Include(
                 "~/Content/toastr.css",

@@ -742,6 +742,7 @@
     <None Include="Properties\PublishProfiles\BankWebinars31 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars33 - Web Deploy.pubxml" />
+    <Content Include="Scripts\calendarview.js" />
     <Content Include="Scripts\cleditor\jquery.cleditor.min.js.map">
       <DependentUpon>jquery.cleditor.min.js</DependentUpon>
     </Content>
@@ -771,6 +772,7 @@
     <Content Include="Scripts\DataTables\dataTables.tableTools.min.js" />
     <Content Include="Scripts\DataTables\jquery.dataTables.js" />
     <Content Include="Scripts\DataTables\jquery.dataTables.min.js" />
+    <Content Include="Scripts\jotform.js" />
     <Content Include="Scripts\jquery-1.11.1.js" />
     <Content Include="Scripts\jquery-1.11.1.min.js" />
     <Content Include="Scripts\jquery-ui-1.11.1.js" />
@@ -778,6 +780,10 @@
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\location.js" />
+    <Content Include="Scripts\protoplus-ui-form.js" />
+    <Content Include="Scripts\protoplus.js" />
+    <Content Include="Scripts\prototype.js" />
     <Content Include="Scripts\purl.js" />
     <Content Include="Scripts\toastr.js" />
     <Content Include="Scripts\toastr.min.js" />
@@ -967,6 +973,9 @@
     <Content Include="Views\Cart\Partials\_WPSForm.cshtml" />
     <Content Include="Views\Account\Partials\Archived.cshtml" />
     <Content Include="Views\Account\ExpressCheckout.cshtml" />
+    <Content Include="Views\Cart\ExpressCheckout4IE1.cshtml" />
+    <Content Include="Views\Shared\_LayoutJotForm.cshtml" />
+    <Content Include="Views\Cart\ExpressCheckout4IE1CU.cshtml" />
     <None Include="Web.BankWebinars31 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>

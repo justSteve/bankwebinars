@@ -10,7 +10,7 @@
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
     var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
-        string currentUserAffiliateFullName = string.Empty;
+    string currentUserAffiliateFullName = string.Empty;
     if (currentAffiliate != null)
     {
         currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
@@ -29,7 +29,7 @@
     }
 
 
-    
+
     var firstPage = stateService.GetValue<string>("FirstPage");
     var sessionID = stateService.GetValue<string>(WebUiConstants.SessionId);
     var affiliateSessionSource = stateService.GetValue<string>("AffiliateSessionSource");
@@ -59,8 +59,8 @@
 
         window.$zopim || (function (d, s) {
             var z = window.$zopim = function (c) {
-                    z._.push(c);
-                },
+                z._.push(c);
+            },
                 $ = z.s = d.createElement(s),
                 e = d.getElementsByTagName(s)[0];
 
@@ -150,12 +150,12 @@
 
     }
     @Scripts.Render("~/bundles/modernizr")
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/CommonModules")
-    @Scripts.Render("~/bundles/myApp")
-    @Scripts.Render("~/bundles/app-processing-manage")
-    @Styles.Render("~/Content/CrispCSS")
-    @Styles.Render("~/Content/common-styles")
+    @Scripts.Render("~/bundles/jotForm")
+    @*@Scripts.Render("~/bundles/CommonModules")
+        @Scripts.Render("~/bundles/myApp")
+        @Scripts.Render("~/bundles/app-processing-manage")*@
+    @Styles.Render("~/Content/jotForm")
+    @*@Styles.Render("~/Content/CrispCSS")*@
 
     <!-- Icons ================ -->
     <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
@@ -191,6 +191,15 @@
             padding-top: 20px;
             padding-bottom: 0px;
         }
+
+        .header {
+            background: #4c5966 none repeat scroll 0 0;
+            clear: both;
+            margin: 0 auto 3%;
+            padding: 0;
+            position: relative;
+            z-index: 999;
+        }
     </style>
     <script>
         window.$zopim(function () {
@@ -215,18 +224,17 @@
 </head>
 <body class="@PageStyleType">
     <!-- begin accesibility skip to nav skip content -->
-    <ul class="visuallyhidden" id="top">
+    @*<ul class="visuallyhidden" id="top">
         <li><a href="#nav" title="Skip to navigation" accesskey="n">Skip to navigation</a></li>
         <li><a href="#page" title="Skip to content" accesskey="c">Skip to content</a></li>
-    </ul>
+    </ul>*@
     <!-- end /.visuallyhidden accesibility-->
     <!-- mobile navigation trigger-->
-    <h5 class="mobile_nav">
+    @*<h5 class="mobile_nav">
         <a href="javascript:void(0)"><span>&nbsp;</span></a>
-    </h5>
+    </h5>*@
     <!--end mobile navigation trigger-->
-    <section class="container preheader">
-        <!--this is the login for the user-->
+    @*<section class="container preheader">
         <div id="loginContainer">
             @Html.Partial("_LoginPartial")
         </div>
@@ -247,61 +255,60 @@
                 <input id="search-box" name="searchTerm" type="text" placeholder="Search for?">
             </form>
         </div>
-
-    </section>
+    </section>*@
     <!-- begin .header-->
     <header class="header  clearfix" style="margin-bottom: 0px; padding-bottom: 0; ">
         <div class="container">
             <div class="row-fluid">
                 <!-- begin #logo-->
-                <a href="/">
-                    <div id="logo" class="span3" style='background: url("@currentAffiliate.Logo") no-repeat scroll 0 0 rgba(0, 0, 0, 0)'></div>
+                <a  href="/">
+                    <img style="margin-left: 200px;" src="@currentAffiliate.Logo">
                 </a>
                 <!-- end #logo -->
                 <!-- begin #main_menu -->
-                <nav id="main_menu" class="span8">
-                    <ul class="primary_menu">
-                        <li class="parent"><a href="/webinar/calendar">calendar</a></li>
-                        <li class="parent">
-                            <a href="javascript:void(0)">topics<i></i></a>
-                            <ul>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/15">Compliance</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/26">Risk Management</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/16">IRA</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/17">Customer Service</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/19">Operations</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/18">Security</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/20">Auditing</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/21">Sales</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/22">Lending</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/23">Human Resources</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/27">Teller</a></li>
-                            </ul>
-                        </li>
-                        <li class="parent">
-                            <a href="javascript:void(0)">Upcoming Webinars<i></i></a>
+                @*<nav id="main_menu" class="span8">
+                        <ul class="primary_menu">
+                            <li class="parent"><a href="/webinar/calendar">calendar</a></li>
+                            <li class="parent">
+                                <a href="javascript:void(0)">topics<i></i></a>
+                                <ul>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/15">Compliance</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/26">Risk Management</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/16">IRA</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/17">Customer Service</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/19">Operations</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/18">Security</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/20">Auditing</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/21">Sales</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/22">Lending</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/23">Human Resources</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/27">Teller</a></li>
+                                </ul>
+                            </li>
+                            <li class="parent">
+                                <a href="javascript:void(0)">Upcoming Webinars<i></i></a>
 
-                            <ul>@Html.Action("UpComingWebinarMenu", "Navigation")</ul>
-                        </li>
-                        <li class="parent">
-                            <a href="javascript:void(0)">OnDemand Webinars<i></i></a>
-                            <ul>@Html.Action("GetRecordedWebinarMenu", "Navigation")</ul>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0)">About Us<i></i></a>
-                            <ul>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/WhatIsAWebinar">What Is A Webinar?</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/CommonQuestions">Commonly Asked Questions</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/DetailedConnectionInstructions">Connecting to Your Webinar</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/contactus">Contact Us</a></li>
-                            </ul>
-                        </li>
-                        @if (Request.IsAuthenticated)
-                        {
-                            <li><a href="/Account/MyWebinars">My Webinars</a></li>
-                        }
-                    </ul>
-                </nav>
+                                <ul>@Html.Action("UpComingWebinarMenu", "Navigation")</ul>
+                            </li>
+                            <li class="parent">
+                                <a href="javascript:void(0)">OnDemand Webinars<i></i></a>
+                                <ul>@Html.Action("GetRecordedWebinarMenu", "Navigation")</ul>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">About Us<i></i></a>
+                                <ul>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/WhatIsAWebinar">What Is A Webinar?</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/CommonQuestions">Commonly Asked Questions</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/DetailedConnectionInstructions">Connecting to Your Webinar</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/contactus">Contact Us</a></li>
+                                </ul>
+                            </li>
+                            @if (Request.IsAuthenticated)
+                            {
+                                <li><a href="/Account/MyWebinars">My Webinars</a></li>
+                            }
+                        </ul>
+                    </nav>*@
                 <!-- close / #main_menu -->
             </div>
         </div>
@@ -380,17 +387,17 @@
     </div>
 
 
-    @Scripts.Render("~/bundles/jqueryui")
-    @Scripts.Render("~/bundles/CrispApp")
+    @*@Scripts.Render("~/bundles/jqueryui")
+        @Scripts.Render("~/bundles/CrispApp")*@
 
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $("#search-box").hide();
-            $("#search-wrapper").mouseover(function () {
-                $("#search-box").show();
+    @*<script type="text/javascript">
+            $(document).ready(function () {
+                $("#search-box").hide();
+                $("#search-wrapper").mouseover(function () {
+                    $("#search-box").show();
+                });
             });
-        });
-    </script>
+        </script>*@
     @RenderSection("scripts", required: false)
 
 </body>
