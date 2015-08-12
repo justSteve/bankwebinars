@@ -32,9 +32,6 @@ function checkVersion() {
     }
 }
 
-function earlyIEExpress(idWebinar) {
-    window.location="/cart/ExpressCheckout4IE1";
-}
 
 $(function () {
     checkVersion();

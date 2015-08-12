@@ -511,9 +511,16 @@ namespace CUWebinars.Web.Controllers
 
         }
 
+        public ActionResult ExpressCheckout4IE1CU()
+        {
+            
+            return View();
+
+        }
+
         public ActionResult ExpressCheckout4IE1()
         {
-
+            
             return View();
 
         }

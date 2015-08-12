@@ -244,7 +244,7 @@ namespace CUWebinars.Business.Core
             var addLocCount = 0;
             var orderid = "0";
             int translatedOptionId = getLegacyOptionID(myRow.RegistrationType.idRegType);
-            
+
             if (myRow.AdditionalLocation != null)
             {
                 addLocCount = myRow.AdditionalLocation.Count;
@@ -263,90 +263,22 @@ namespace CUWebinars.Business.Core
                 Value = myRow.idWebinar
             };
             var idDiscountParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idDiscount" };
-            var idOptionParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.Int,
-                ParameterName = "@idOption",
-                Value = translatedOptionId
-            };
-            var idAffParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.Int,
-                ParameterName = "@idAffiliate",
-                Value = newOrder.idAffiliate
-            };
-            var addLocParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@addLoc",
-                Value = addLoc
-            };
-            var addLocCountParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@addLocCount",
-                Value = addLocCount
-            };
-            var firstNameParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@firstName",
-                Value = newOrder.FirstName
-            };
-            var lastNameParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@lastName",
-                Value = newOrder.LastName
-            };
-            var phone1Parameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@phone1",
-                Value = newOrder.BillingPhone
-            };
-            var mAddressParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@mAddress",
-                Value = newOrder.BillingAddress
-            };
-            var mCityParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@mCity",
-                Value = newOrder.BillingCity
-            };
-            var mZipParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@mZip",
-                Value = newOrder.BillingZip
-            };
-            var mStateParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@mState",
-                Value = newOrder.BillingState
-            };
-            var emailParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@email",
-                Value = newOrder.BillingEmail
-            };
-            var generalCommentsParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@generalComments",
-                Value = "ImporterV2 " + newOrder.AffiliateComments
-            };
-            var provisionalInstitutionParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@provisionalInstitution",
-                Value = newOrder.Institution
-            };
+            var idOptionParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idOption", Value = translatedOptionId };
+
+            var idAffParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idAffiliate", Value = newOrder.idAffiliate };
+            var addLocParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@addLoc", Value = addLoc };
+            var addLocCountParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@addLocCount", Value = addLocCount };
+            var firstNameParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@firstName", Value = newOrder.FirstName };
+            var lastNameParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@lastName", Value = newOrder.LastName };
+            var phone1Parameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@phone1", Value = newOrder.BillingPhone };
+            var mAddressParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@mAddress", Value = newOrder.BillingAddress };
+            var mCityParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@mCity", Value = newOrder.BillingCity };
+            var mZipParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@mZip", Value = newOrder.BillingZip };
+            var mStateParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@mState", Value = newOrder.BillingState };
+            var emailParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@email", Value = newOrder.BillingEmail };
+            var generalCommentsParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@generalComments", Value = "ImporterV2 " + newOrder.AffiliateComments };
+            var provisionalInstitutionParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@provisionalInstitution", Value = newOrder.Institution };
+
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 int idUser = 0;

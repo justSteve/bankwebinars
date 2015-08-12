@@ -233,6 +233,7 @@ namespace CUWebinars.Business.AccountService
             string email
             )
         {
+            _logger.Info("Creating User from cart: " + email);
             var account = _userAccountService.CreateAccount(tenant, string.Empty, password, email);
             _userAccountService.AddClaim(account.ID, System.Security.Claims.ClaimTypes.Role, "WebUser");
 
