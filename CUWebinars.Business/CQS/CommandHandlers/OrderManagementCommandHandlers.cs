@@ -86,52 +86,17 @@ namespace CUWebinars.Business.CQS.CommandHandlers
         {
             if (command == null) throw new ArgumentNullException("command");
             IList<AdditionalLocation> additionalLocations = new List<AdditionalLocation>();
-            //CUWEBINARS VS BANKWEBINARS
 
-            //         for idRegType mapping from legacy to new
-            //200	Live Plus Five	Live_Session_Only_1Hr_165_97
-            //201	OnDemand Recording Only	OnDemand_Recording_Only_1Hr_185_201
-            //202	CD-ROM and Hardcopy Handouts	Live_Plus_OnDemand_Weblinks_1Hr_235_202
-            //203	Live Plus Six	CD-ROM_and_Hardcopy_Handouts_1Hr_215_203
-            //204	Premier Package	Premier_Package_1Hr_265_204
-            //205	Live Plus Five	Live_Session_Only_2Hr_265_205
-            //206	OnDemand Recording Only	On-Demand_Recording_Only_2Hr_295_206
-            //207	Live Plus Six	Live_Plus_OnDemand_Weblinks_2Hr_365_207
-            //208	CD-ROM and Hardcopy Handouts	CD-ROM_and_Hardcopy_Handouts_2Hr_325_208
-            //209	Premier Package	Premier_Package_2Hr_395_209
 
             if (command.OrderDate > Convert.ToDateTime("01-01-2015") && command.RegistrationType < 200)
             {
                 try
                 {
                     int idRegType = Convert.ToInt32(command.RegistrationType);
-                    switch (idRegType)
-                    {
-                        case 1: { idRegType = 205; break; }
-                            ;
-                        case 16: { idRegType = 206; break; }
-                            ;
-                        case 3: { idRegType = 207; break; }
-                            ;
-                        case 17: { idRegType = 208; break; }
-                            ;
-                        case 18: { idRegType = 209; break; }
-                            ;
-                        ////1hr
-                        case 27: { idRegType = 200; break; }
-                            ;
-                        case 32: { idRegType = 201; break; }
-                            ;
-                        case 35: { idRegType = 202; break; }
-                            ;
-                        case 33: { idRegType = 203; break; }
-                            ;
-                        case 36: { idRegType = 204; break; }
-                        //    ;
-                        //default: { idRegType = 0; break; }
-                    }
+                                var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
+                    
+                    command.RegistrationType = dataOperations.getLegacyOptionID(idRegType);
 
-                    command.RegistrationType = idRegType;
                 }
                 catch (Exception)
                 {
@@ -150,11 +115,12 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
                 foreach (var additionalLocationEmail in addLocs)
                 {
-                    additionalLocations.Add(_orderManagementService.CreateAdditionalLocation(
-                        additionalLocationEmail,
-                        addLocPrice,
-                        command.Name) // field for FullName
-                        );
+                    if (string.IsNullOrEmpty(additionalLocationEmail) != true)
+                        additionalLocations.Add(_orderManagementService.CreateAdditionalLocation(
+                            additionalLocationEmail,
+                            addLocPrice,
+                            command.Name) // field for FullName
+                            );
                 }
             }
 

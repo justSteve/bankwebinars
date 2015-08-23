@@ -246,7 +246,7 @@ namespace CUWebinars.Web.Controllers
                 idOfLastOrder = _orderControllerOrchestrator.MigrateOrder(migratedOrder, email,
                     migratorQueryResult, verificationKey, confirmChangeEmailUrl);
 
-                _logger.Info(string.Format("MigrateOrder|CreteNewOrder: {0}", idOfLastOrder));
+                _logger.Info(string.Format("MigrateOrder|CreateNewOrder: {0}", idOfLastOrder));
 
                 return Json(new { Result = idOfLastOrder.ToString() }, JsonRequestBehavior.AllowGet);
             }

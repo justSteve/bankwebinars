@@ -884,6 +884,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
         }
 
+        public Webinar LoadWebinar(int idWebinar)
+        {
+            return _webinarManagementService.GetWebinar(idWebinar);
+        }
+
         public INotificationMessage GenerateMessagePreview(Order order)
         {
             var orderSubmittedViewModel = new OrderSubmittedViewModel

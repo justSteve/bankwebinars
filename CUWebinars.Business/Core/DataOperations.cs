@@ -36,7 +36,8 @@ namespace CUWebinars.Business.Core
 
                     getLegacyWebinars.Connection = sqlConnection;
                     getLegacyWebinars.CommandType = CommandType.Text;
-                    getLegacyWebinars.CommandText = "SELECT ttsLable from ACSImporter where acsLable = '" + regTypeLable + "'";
+                    getLegacyWebinars.CommandText = "SELECT ttsLable from ACSImporter where acsLable = '" + regTypeLable +
+                                                    "'";
 
                     try
                     {
@@ -56,7 +57,8 @@ namespace CUWebinars.Business.Core
                     }
                     catch (Exception ex)
                     {
-                        _logger.Warn("Unknown Registration Type: " + getLegacyWebinars.CommandText + " Exception.Message: " + ex.Message);
+                        _logger.Warn("Unknown Registration Type: " + getLegacyWebinars.CommandText +
+                                     " Exception.Message: " + ex.Message);
                     }
 
                     return returnLable;
@@ -92,7 +94,11 @@ namespace CUWebinars.Business.Core
                     {
                         while (reader.Read())
                         {
-                            pricingInformation.Add(new AdditionalLocationsPricing { LookupPriceId = reader.GetInt32(0), Price = reader.GetDecimal(1) });
+                            pricingInformation.Add(new AdditionalLocationsPricing
+                            {
+                                LookupPriceId = reader.GetInt32(0),
+                                Price = reader.GetDecimal(1)
+                            });
                         }
                     }
 
@@ -243,7 +249,16 @@ namespace CUWebinars.Business.Core
             var addLoc = "";
             var addLocCount = 0;
             var orderid = "0";
-            int translatedOptionId = getLegacyOptionID(myRow.RegistrationType.idRegType);
+            int translatedOptionId = 0;
+            if (myRow.RegistrationType != null)
+            {
+                translatedOptionId = getLegacyOptionID(myRow.RegistrationType.idRegType);
+            }
+            else
+            {
+                translatedOptionId = getLegacyOptionID(myRow.idRegType);
+            }
+            //int translatedOptionId = getLegacyOptionID(myRow.RegistrationType.idRegType);
 
             if (myRow.AdditionalLocation != null)
             {
@@ -263,21 +278,91 @@ namespace CUWebinars.Business.Core
                 Value = myRow.idWebinar
             };
             var idDiscountParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idDiscount" };
-            var idOptionParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idOption", Value = translatedOptionId };
+            var idOptionParameter = new SqlParameter
+            {
+                SqlDbType = SqlDbType.Int,
+                ParameterName = "@idOption",
+                Value = translatedOptionId
+            };
 
-            var idAffParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idAffiliate", Value = newOrder.idAffiliate };
-            var addLocParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@addLoc", Value = addLoc };
-            var addLocCountParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@addLocCount", Value = addLocCount };
-            var firstNameParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@firstName", Value = newOrder.FirstName };
-            var lastNameParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@lastName", Value = newOrder.LastName };
-            var phone1Parameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@phone1", Value = newOrder.BillingPhone };
-            var mAddressParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@mAddress", Value = newOrder.BillingAddress };
-            var mCityParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@mCity", Value = newOrder.BillingCity };
-            var mZipParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@mZip", Value = newOrder.BillingZip };
-            var mStateParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@mState", Value = newOrder.BillingState };
-            var emailParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@email", Value = newOrder.BillingEmail };
-            var generalCommentsParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@generalComments", Value = "ImporterV2 " + newOrder.AffiliateComments };
-            var provisionalInstitutionParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@provisionalInstitution", Value = newOrder.Institution };
+            var idAffParameter = new SqlParameter
+            {
+                SqlDbType = SqlDbType.Int,
+                ParameterName = "@idAffiliate",
+                Value = newOrder.idAffiliate
+            };
+            var addLocParameter = new SqlParameter
+            {
+                SqlDbType = SqlDbType.NVarChar,
+                ParameterName = "@addLoc",
+                Value = addLoc
+            };
+            var addLocCountParameter = new SqlParameter
+            {
+                SqlDbType = SqlDbType.NVarChar,
+                ParameterName = "@addLocCount",
+                Value = addLocCount
+            };
+            var firstNameParameter = new SqlParameter
+            {
+                SqlDbType = SqlDbType.NVarChar,
+                ParameterName = "@firstName",
+                Value = newOrder.FirstName
+            };
+            var lastNameParameter = new SqlParameter
+            {
+                SqlDbType = SqlDbType.NVarChar,
+                ParameterName = "@lastName",
+                Value = newOrder.LastName
+            };
+            var phone1Parameter = new SqlParameter
+            {
+                SqlDbType = SqlDbType.NVarChar,
+                ParameterName = "@phone1",
+                Value = newOrder.BillingPhone
+            };
+            var mAddressParameter = new SqlParameter
+            {
+                SqlDbType = SqlDbType.NVarChar,
+                ParameterName = "@mAddress",
+                Value = newOrder.BillingAddress
+            };
+            var mCityParameter = new SqlParameter
+            {
+                SqlDbType = SqlDbType.NVarChar,
+                ParameterName = "@mCity",
+                Value = newOrder.BillingCity
+            };
+            var mZipParameter = new SqlParameter
+            {
+                SqlDbType = SqlDbType.NVarChar,
+                ParameterName = "@mZip",
+                Value = newOrder.BillingZip
+            };
+            var mStateParameter = new SqlParameter
+            {
+                SqlDbType = SqlDbType.NVarChar,
+                ParameterName = "@mState",
+                Value = newOrder.BillingState
+            };
+            var emailParameter = new SqlParameter
+            {
+                SqlDbType = SqlDbType.NVarChar,
+                ParameterName = "@email",
+                Value = newOrder.BillingEmail
+            };
+            var generalCommentsParameter = new SqlParameter
+            {
+                SqlDbType = SqlDbType.NVarChar,
+                ParameterName = "@generalComments",
+                Value = "ImporterV2 " + newOrder.AffiliateComments
+            };
+            var provisionalInstitutionParameter = new SqlParameter
+            {
+                SqlDbType = SqlDbType.NVarChar,
+                ParameterName = "@provisionalInstitution",
+                Value = newOrder.Institution
+            };
 
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
@@ -456,57 +541,122 @@ namespace CUWebinars.Business.Core
             return orderid;
         }
 
-        private int getLegacyOptionID(int idRegType)
+        public int getLegacyOptionID(int idRegType)
         {
             switch (idRegType)
             {
-                case 205:
-                    return 1;
+                case 200: return 27;
+                //Live Plus Five (days) ;
+                //PreEvent_1Hr_2013 id=29;
+                case 201: return 32;
+                //OnDemand Recording Only ;
+                //PreEvent_1Hr_2013 id=29;
+                case 203: return 33;
+                //Live Plus Six (months) ;
+                //PreEvent_1Hr_2013 id=29;
+                case 202: return 35;
+                //CD-ROM and Hardcopy Handouts ;
+                //PreEvent_1Hr_2013 id=29;
+                case 204: return 36;
+                //Premier Package ;
+                //PreEvent_1Hr_2013 id=29;
 
-                case 206:
-                    return 16;
+                //2hr;
+                ////;
+                case 205: return 1;
+                //Live Plus Five (days) ;
+                //PreEvent_2Hr_2013 id=27;
+                case 206: return 16;
+                //OnDemand Recording Only ;
+                //PreEvent_2Hr_2013 id=27;
+                case 208: return 17;
+                //CD-ROM and Hardcopy Handouts ;
+                //PreEvent_2Hr_2013 id=27;
+                case 209: return 18;
+                //Premier Package ;
+                //PreEvent_2Hr_2013 id=27;
+                case 207: return 3;
+                //Live Plus Six (months) ;
+                //PreEvent_2Hr_2013 id=27;
+                //2part;
+                ////;
+                case 249: return 85;
+                //Live Plus Five (days) ;
+                //PreEvent_2PartSeries_2014 id=34;
+                case 250: return 86;
+                //OnDemand Recording Only ;
+                //PreEvent_2PartSeries_2014 id=34;
+                case 253: return 87;
+                //CD-ROM and Hardcopy Handouts ;
+                //PreEvent_2PartSeries_2014 id=34;
+                case 251: return 88;
+                //Live Plus Six ;
+                //PreEvent_2PartSeries_2014 id=34;
+                case 252: return 89;
+                //Premier Package ;
+                //PreEvent_2PartSeries_2014 id=34;
 
-                case 207:
-                    return 3;
+                ////;
+                //3part;
+                ////;
+                case 210: return 48;
+                //Live Plus Five (days) - 3 Part Series ;
+                //PreEvent_Series3 id=26;
+                case 211: return 49;
+                //On-Demand Recording Only ;
+                //PreEvent_Series3 id=26;
+                case 213: return 50;
+                //CD-ROM and Hardcopy Handouts ;
+                //PreEvent_Series3 id=26;
+                case 214: return 51;
+                //Premium Package - Series ;
+                //PreEvent_Series3 id=26;
+                case 212: return 91;
+                //Live Plus Six (months) ;
+                //PreEvent_Series3 id=26    ;
 
-                case 208:
-                    return 17;
+                ////;
+                //4part;
+                ////;
+                case 216: return 39;
+                //Live Only - 4 Part Series ;
+                //PreEvent_4PartSeries_899 id=23;
+                case 217: return 40;
+                //6-Month OnDemand Weblink - Series ;
+                //PreEvent_4PartSeries_899 id=23;
+                case 219: return 41;
+                //CD-ROM and Hardcopy Handouts - Series ;
+                //PreEvent_4PartSeries_899 id=23;
+                case 220: return 42;
+                //Premium Package - Series ;
+                //PreEvent_4PartSeries_899 id=23;
+                case 218: return 71;
+                //Live plus OnDemand Weblinks ;
+                //PreEvent_4PartSeries_899 id=23;
 
-                case 209:
-                    return 18;
-
-                case 200:
-                    return 27;
-
-                case 201:
-                    return 32;
-
-                case 203:
-                    return 33;
-
-                case 202:
-                    return 35;
-
-                case 204:
-                    return 36;
-
-                case 221:
-                    return 79;
-
-                case 222:
-                    return 80;
-
-                case 224:
-                    return 81;
-
-                case 223:
-                    return 82;
-
-                case 225:
-                    return 83;
-
+                ////;
+                //5part;
+                ////;
+                case 221: return 79;
+                //Live Plus Five (days) ;
+                //PreEvent_5PartSeries_2014 id=32;
+                case 222: return 80;
+                //OnDemand Recording Only ;
+                //PreEvent_5PartSeries_2014 id=32;
+                case 224: return 81;
+                //CD-ROM and Hardcopy Handouts ;
+                //PreEvent_5PartSeries_2014 id=32;
+                case 223: return 82;
+                //Live Plus Six ;
+                //PreEvent_5PartSeries_2014 id=32;
+                case 225: return 83;
+                //Premier Package ;
+                //PreEvent_5PartSeries_2014 id=32;
                 default:
-                    return 0;
+                    _logger.Fatal("Invalid Regtype detected at getLegacyOptionID!! {0}", idRegType);
+                    return 99000 + idRegType;
+
+
 
             }
         }
@@ -525,6 +675,7 @@ namespace CUWebinars.Business.Core
                         ParameterName = "@idRegType",
                         Value = idRegType
                     };
+                    
 
                     getPricingsCommand.Connection = sqlConnection;
                     getPricingsCommand.CommandType = CommandType.Text;

@@ -5,7 +5,21 @@
 
 @{
     ViewBag.Title = Model.Webinar.Title + " - Presented by: " + Model.Webinar.Presenter.WebUser.FullName;
+    IStateService stateService = new StateService();
 
+        var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+    string currentUserAffiliateFullName = string.Empty;
+    if (currentAffiliate != null)
+    {
+        currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
+        ViewBag.currentAffiliateId = currentAffiliate.idUserAff;
+    
+    }
+    else
+    {
+        CUWebinars.Business.Core.Tracing.Tracer.Warning("CurrentAffiliate should always have a value. Session | {0}", new AppHelper(Request).GetUserAuditInfo());
+        Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
+    }
 
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
@@ -103,7 +117,7 @@
             <div class="warnIE" style="display: none;" id="iePre10">
                 <p>
                     <b>Please note:</b> This site employs features that may cause unexpected behavior in certain versions of Internet Explorer. If you experience a problem, try refreshing your screen. If this doesn't solve the problem, click on this link.
-                    <br /><button id="warnIE" onclick="earlyIEExpress('@Model.Webinar.idWebinar');" class="btn btn-mini btn-success">Express Checkout!</button>
+                    <br /><a id="warnIE" class="btn btn-mini btn-success" href="/cart/ExpressCheckout4IE1?idWebinar=@Model.Webinar.idWebinar&idAffiliate=@ViewBag.currentAffiliateId">Express Checkout</a>
 
                 </p>
                 <p>You may contact us by using the Online Chat button below, calling 800-831-0678 ext 707 or emailing Support@ttsTrain.com.  </p>

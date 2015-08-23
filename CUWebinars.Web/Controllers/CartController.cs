@@ -511,17 +511,35 @@ namespace CUWebinars.Web.Controllers
 
         }
 
-        public ActionResult ExpressCheckout4IE1CU()
+        public ActionResult ExpressCheckout4IE1CU(int idWebinar, int idAffiliate)
         {
-            
-            return View();
+
+            var webinar = _cartControllerOrchestrator.LoadWebinar(idWebinar);
+
+            var model = new ExpressCheckoutModel
+            {
+                q11_webinarid = idWebinar,
+                q15_affiliateid15 = idAffiliate,
+                q12_webinarTitle = webinar.Title
+            };
+
+            return View(model);
 
         }
 
-        public ActionResult ExpressCheckout4IE1()
+        public ActionResult ExpressCheckout4IE1(int idWebinar, int idAffiliate)
         {
-            
-            return View();
+
+            var webinar = _cartControllerOrchestrator.LoadWebinar(idWebinar);
+
+            var model = new ExpressCheckoutModel
+            {
+                q11_webinarid = idWebinar,
+                q15_affiliateid15 = idAffiliate,
+                q12_webinarTitle = webinar.Title
+            };
+
+            return View(model);
 
         }
 
@@ -535,10 +553,10 @@ namespace CUWebinars.Web.Controllers
 
 
 
-            ExpressCheckoutModel deserializedExChk = JsonConvert.DeserializeObject<ExpressCheckoutModel>(form.RawRequest);
+            ExpressCheckoutModel deserializedExChk 
+                = JsonConvert.DeserializeObject<ExpressCheckoutModel>(form.RawRequest);
 
-
-
+            
             _logger.Info("expresscheckout: " + deserializedExChk);
 
         }

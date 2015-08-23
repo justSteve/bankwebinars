@@ -41,8 +41,6 @@ $(function () {
         $("#iePre10").show();
     }
 
-        $("#iePre10").show();
-
 
     signUpForm = $('#SignUpForm');
     signUpFormContainer = $('#SignUpFormContainer'); // The big beige box

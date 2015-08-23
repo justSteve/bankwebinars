@@ -10,9 +10,9 @@
         type: 'POST',
         data: data,
         dataType: constants.JsonDataType,
-        contentType:constants.FormPostContentType,
+        contentType: constants.FormPostContentType,
         //headers: headers,
-        beforeSend: function(xhr) {
+        beforeSend: function (xhr) {
 
             var valSummary = $('#LoginValSummary');
             valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
@@ -32,7 +32,7 @@
     }).fail(function (data) {
         var oi = data;
     }).always(function (data) {
-
+        var oi = data;
     });
 
 });

@@ -12,6 +12,7 @@ namespace CUWebinars.Web.Models
         public Q6PhoneNumber6 q6_phoneNumber6 { get; set; }
         public Q14Address14 q14_address14 { get; set; }
         public int q11_webinarid { get; set; }
+        public int q15_affiliateid15 { get; set; }
         public string event_id { get; set; }
     }
 }

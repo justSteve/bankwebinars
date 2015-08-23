@@ -1485,10 +1485,7 @@ namespace CUWebinars.Business.Services
                 // the notification confirming registration for this webinar.  
                 bool linkToVerifyAccount = !string.IsNullOrWhiteSpace(confirmChangeEmailLink);
 
-
-                _logger.Info("SaveOrderChanges: {0}", currentOrder.idOrder);
-
-
+                
                 //this is just a smoke test, right? currentOrder.Webuser should never be null at this point. 
                 _logger.Info("currentOrder.WebUser ({1}) is{0}null", currentOrder.WebUser == null ? " " : " not ", currentOrder.WebUser.email);
 
@@ -1539,7 +1536,7 @@ namespace CUWebinars.Business.Services
                 _logger.ErrorException(string.Format("SaveOrderChanges method: {0}", exception.Message), exception);
             }
             //not seeing anyway the 'return null' could be hit but resharper is not flagging it as unreachable.
-            _logger.Error(string.Format("SaveOrderChanges method fell all the way thru "));
+            _logger.Error(string.Format("SaveOrderChanges method fell all the way thru processing {0}", currentOrder.BillingEmail));
             return null;
         }
 
