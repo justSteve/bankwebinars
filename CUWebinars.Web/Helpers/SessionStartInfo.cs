@@ -10,7 +10,9 @@ namespace CUWebinars.Web.Helpers
        public string RemoteUser { get; set; }
        public string UserAgent { get; set; }
        public string UserCookie { get; set; }
-
+       public string FirstPage { get; set; }
+       public string SessionID { get; set; }
+       public string AffiliateSessionSource { get; set; }
 
     }
 }

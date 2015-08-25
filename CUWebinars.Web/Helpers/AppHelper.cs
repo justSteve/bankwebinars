@@ -12,6 +12,7 @@ using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
+using CUWebinars.Web.Services;
 using Glimpse.Core.Tab;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -21,14 +22,17 @@ namespace CUWebinars.Web.Helpers
 {
     public class AppHelper : IAppHelper
     {
+        private readonly IStateService _stateService;
+
         private readonly HttpRequestBase _request;
         private readonly IAffiliateManagementService _affiliateManagementService;
 
-        public AppHelper(HttpRequestBase request)
+        public AppHelper(HttpRequestBase request, IStateService stateService)
         {
             _request = request;
-            //_affiliateManagementService = affiliateManagementService;
+            _stateService = stateService;
         }
+
         public static IEnumerable<int> StringToIntList(string str)
         {
             if (String.IsNullOrEmpty(str))
@@ -69,11 +73,26 @@ namespace CUWebinars.Web.Helpers
 
                     while (msgReader.Read())
                     {
-                        var city = msgReader.GetString(0);
-                        var state = msgReader.GetString(1);
-                        var zip = msgReader.GetString(2);
-
-                        cityStateFromZip = string.Concat(city, ",", state, ",", zip);
+                        var city = "";
+                        if (!msgReader.IsDBNull(0))
+                        {
+                            city = msgReader.GetString(0);
+                        }
+                        var state = "";
+                        if (!msgReader.IsDBNull(1))
+                        {
+                            state = msgReader.GetString(1);
+                        }
+                        var timezone = "";
+                        if (!msgReader.IsDBNull(2))
+                        {
+                            timezone = msgReader.GetString(2);
+                        }
+                        else
+                        {
+                            timezone = "-6";
+                        }
+                        cityStateFromZip = string.Concat(city, ",", state, ",", timezone);
                     }
 
                     return cityStateFromZip;
@@ -163,13 +182,17 @@ namespace CUWebinars.Web.Helpers
         public SessionStartInfo GetSessionStartInfo()
         {
             HttpRequest request = HttpContext.Current.Request;
+            
             var info = new SessionStartInfo
             {
                 RemoteAddress = _request.ServerVariables["REMOTE_ADDR"],
                 RemoteHost = _request.ServerVariables["REMOTE_HOST"],
                 RemoteUser = _request.ServerVariables["REMOTE_USER"],
                 UserAgent = _request.ServerVariables["HTTP_USER_AGENT"],
-                UserCookie = _request.ServerVariables["HTTP_COOKIE"]
+                UserCookie = _request.ServerVariables["HTTP_COOKIE"],
+                FirstPage = _stateService.GetValue<string>("FirstPage"),
+                SessionID = _stateService.GetValue<string>(WebUiConstants.SessionId),
+                AffiliateSessionSource =  _stateService.GetValue<string>("AffiliateSessionSource")
             };
 
             return info;
@@ -189,66 +212,18 @@ namespace CUWebinars.Web.Helpers
         }
 
 
-        private const string AUDIT_XML_TEMPLATE =
-            "<AuditInfo>" +
-            "<RemoteAddress>#REMOTE_ADDR#</RemoteAddress>" +
-            "<RemoteHost>#REMOTE_HOST#</RemoteHost>" +
-            "<RemoteUser>#REMOTE_USER#</RemoteUser>" +
-            "<UserAgent>#HTTP_USER_AGENT#</UserAgent>" +
-            "<Cookie>#HTTP_COOKIE#</Cookie>" +
-            "</AuditInfo>";
-
-        private const string AUDIT_JSON_TEMPLATE =
-            "{\"AuditInfo\": {" +
-            "\"RemoteAddress\":\"#REMOTE_ADDR#\"," +
-            "\"RemoteHost\":\"#REMOTE_HOST#\"," +
-            "\"RemoteUser\":\"#REMOTE_USER#\"," +
-            "\"UserAgent\":\"#HTTP_USER_AGENT#\"," +
-            "\"Cookie\":\"#HTTP_COOKIE#\"}}";
-
-        //public string GetUserAuditInfo()
-        //{
-        //    string remoteAddres = SecurityElement.Escape(_request.ServerVariables["REMOTE_ADDR"]);
-        //    string remoteHost = SecurityElement.Escape(_request.ServerVariables["REMOTE_HOST"]);
-        //    string remoteUser = SecurityElement.Escape(_request.ServerVariables["REMOTE_USER"]);
-        //    string userAgent = SecurityElement.Escape(_request.ServerVariables["HTTP_USER_AGENT"]);
-        //    string userCookie = SecurityElement.Escape(_request.ServerVariables["HTTP_COOKIE"]);
-
-        //    var auditXML = new StringBuilder(AUDIT_XML_TEMPLATE);
-        //    auditXML.Replace("#REMOTE_ADDR#", remoteAddres);
-        //    auditXML.Replace("#REMOTE_HOST#", remoteHost);
-        //    auditXML.Replace("#REMOTE_USER#", remoteUser);
-        //    auditXML.Replace("#HTTP_USER_AGENT#", userAgent);
-        //    auditXML.Replace("#HTTP_COOKIE#", userCookie);
-        //    return auditXML.ToString();
-        //}
-
-        public string GetUserAuditInfoOriginal()
-        {
-            string remoteAddres = SecurityElement.Escape(_request.ServerVariables["REMOTE_ADDR"]);
-            string remoteHost = SecurityElement.Escape(_request.ServerVariables["REMOTE_HOST"]);
-            string remoteUser = SecurityElement.Escape(_request.ServerVariables["REMOTE_USER"]);
-            string userAgent = SecurityElement.Escape(_request.ServerVariables["HTTP_USER_AGENT"]);
-            string userCookie = SecurityElement.Escape(_request.ServerVariables["HTTP_COOKIE"]);
-
-            var auditJson = new StringBuilder(AUDIT_JSON_TEMPLATE);
-            auditJson.Replace("#REMOTE_ADDR#", remoteAddres.Replace("\"", "'"));
-            auditJson.Replace("#REMOTE_HOST#", remoteHost.Replace("\"", "'"));
-            auditJson.Replace("#REMOTE_USER#", remoteUser.Replace("\"", "'"));
-            auditJson.Replace("#HTTP_USER_AGENT#", userAgent.Replace("\"", "'"));
-            auditJson.Replace("#HTTP_COOKIE#", userCookie.Replace("\"", "'"));
-            return auditJson.ToString();
-        }
-
         public string GetUserAuditInfo()
         {
-            IDictionary<string,string> auditInfoDictionary = new Dictionary<string, string>();
-
+            IDictionary<string, string> auditInfoDictionary = new Dictionary<string, string>();
+            
             auditInfoDictionary.Add("RemoteAddress", SecurityElement.Escape(_request.ServerVariables["REMOTE_ADDR"]));
             auditInfoDictionary.Add("RemoteHost", SecurityElement.Escape(_request.ServerVariables["REMOTE_HOST"]));
             auditInfoDictionary.Add("RemoteUser", SecurityElement.Escape(_request.ServerVariables["REMOTE_USER"]));
             auditInfoDictionary.Add("UserAgent", SecurityElement.Escape(_request.ServerVariables["HTTP_USER_AGENT"]));
             auditInfoDictionary.Add("Cookie", SecurityElement.Escape(_request.ServerVariables["HTTP_COOKIE"]));
+            auditInfoDictionary.Add("FirstPage", SecurityElement.Escape(_stateService.GetValue<string>("FirstPage")));
+            auditInfoDictionary.Add("SessionID", SecurityElement.Escape(_stateService.GetValue<string>("SessionID")));
+            auditInfoDictionary.Add("AffiliateSessionSource", SecurityElement.Escape(_stateService.GetValue<string>("AffiliateSessionSource")));
 
             var auditObjectInner = JsonHelpers.CreateJsonObjectFromDictionary(auditInfoDictionary);
 

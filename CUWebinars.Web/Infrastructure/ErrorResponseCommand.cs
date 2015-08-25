@@ -54,12 +54,12 @@ namespace CUWebinars.Web.Infrastructure
 
             // Re-route execution to the relevant StaticContentController's Action method based on status code.
             if (!ReferenceEquals(errorResponse.Controller, null))
-                ((IController)errorResponse.Controller).Execute(
-                    new System.Web.Routing.RequestContext(
-                        new HttpContextWrapper(errorResponse.HttpContext),
-                        errorResponse.NewrouteData
-                        ));
-
+                if (errorResponse.NewrouteData != null)
+                    ((IController)errorResponse.Controller).Execute(
+                        new System.Web.Routing.RequestContext(
+                            new HttpContextWrapper(errorResponse.HttpContext),
+                            errorResponse.NewrouteData
+                            ));
         }
 
         private string GetRoutePart(string routePart, System.Web.Routing.RouteData routeData)

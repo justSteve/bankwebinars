@@ -15,11 +15,11 @@
     {
         currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
         ViewBag.currentAffiliateId = currentAffiliate.idUserAff;
-    
+
     }
     else
     {
-        CUWebinars.Business.Core.Tracing.Tracer.Warning("CurrentAffiliate should always have a value. Session | {0}", new AppHelper(Request).GetUserAuditInfo());
+        CUWebinars.Business.Core.Tracing.Tracer.Warning("CurrentAffiliate should always have a value. Session | {0}", new AppHelper(Request, stateService).GetUserAuditInfo());
         Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
     }
 
@@ -30,18 +30,10 @@
         footSocial = currentAffiliate.WebFooter.Split('~')[1];
     }
 
-
-
     var firstPage = stateService.GetValue<string>("FirstPage");
     var sessionID = stateService.GetValue<string>(WebUiConstants.SessionId);
     var affiliateSessionSource = stateService.GetValue<string>("AffiliateSessionSource");
 
-    <script type="text/javascript">
-        var firstPage = "@firstPage";
-        var sessionID = "@sessionID";
-        var affiliateSessionSource = "@affiliateSessionSource";
-        var currentAffiliate = "@currentAffiliate.idUserAff";
-    </script>
 }
 <!doctype html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en" dir="ltr"> <![endif]-->
@@ -55,6 +47,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <script type="text/javascript">
+        var firstPage = "@firstPage";
+        var sessionID = "@sessionID";
+        var affiliateSessionSource = "@affiliateSessionSource";
+        var currentAffiliate = "@currentAffiliate.idUserAff";
+    </script>
 
     <!--Start of Zopim Live Chat Script-->
     <script type="text/javascript">
@@ -121,8 +119,6 @@
         }
         if (globalConfig.Tenant == DomainConstants.BankWebinars)
         {
-
-            //
             <script>
 
                 function earlyIEExpress(idWebinar) {
@@ -181,16 +177,6 @@
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://ttsmedia.ttstrain.com/images/BankWebinars/apple-touch-icon-144x144-precomposed.png" />
 
     <link rel="shortcut icon" href="http://ttsmedia.ttstrain.com/images/BankWebinars/favicon.ico" />
-    <!-- Open Graph for facebook
-        http://graph.facebook.com/[UserName] replace [UserName]
-        with yours and get your fb:admis content information where the XXXX goes.
-        ================================================== -->
-    <meta property="og:title" content="" />
-    <meta property="og:type" content="" />
-    <meta property="og:url" content="" />
-    <meta property="og:image" content="" />
-    <meta property="og:site_name" content="" />
-    <meta property="og:locale" content="en_us" />
     <meta property="og:description" content="@GlobalConfig.GlobalConfigSingleton.Tenant is Webinars for the financial industry." />
 
     @RenderSection("Styles", required: false)

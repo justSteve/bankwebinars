@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -14,6 +15,13 @@ namespace CUWebinars.Web.Helpers
 {
     public static class HtmlHelpers
     {
+        public static string SafeGetString(this SqlDataReader reader, int colIndex)
+        {
+            if (!reader.IsDBNull(colIndex))
+                return reader.GetString(colIndex);
+            else
+                return string.Empty;
+        }
         public static string ToQueryString(this IDictionary<string, string> dict)
         {
             if (dict.Count == 0) return string.Empty;
