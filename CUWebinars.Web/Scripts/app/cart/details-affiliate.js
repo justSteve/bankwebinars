@@ -297,7 +297,7 @@ OCA.initializeFunctions = function () {
 
     };
 
-    OCA.isShippindAddressRequired = function (jQueryObject) {
+    OCA.isShippingAddressRequired = function (jQueryObject) {
         if ($.trim(jQueryObject.val()).toLowerCase() === 'false')
             return false;
         return true;
@@ -548,9 +548,9 @@ OCA.wireUpHandlers = function () {
         $('#loginEmail').val($('#Email1').val());
         $('#loginPassword').val($('#Password1').val());
 
-        //  value converted to a Boolean in isShippindAddressRequired function
+        //  value converted to a Boolean in isShippingAddressRequired function
         //  value comes from a hidden input in the radio btn list next to the relevant radio button (previous-sibling)
-        OCA.shippingAddressRequired = OCA.isShippindAddressRequired($('#RegistrationType > dl dt input:checked').prev());
+        OCA.shippingAddressRequired = OCA.isShippingAddressRequired($('#RegistrationType > dl dt input:checked').prev());
 
         var data = OCA.signUpForm.serialize();
 

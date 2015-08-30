@@ -186,10 +186,11 @@ namespace CUWebinars.Business.Repository
             }
         }
 
-        public Order FindOrderByIdWithOrderRows(int id)
+        public Order GetOrderById(int id)
         {
             var item = items
                 .Include(o => o.WebUser)
+                .Include(o => o.WebUser.Addresses)
                 .Include(o => o.Affiliate)
                 .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
                 .Include(o => o.OrderRows.Select(or => or.Webinar.Presenter.WebUser))
@@ -572,7 +573,7 @@ namespace CUWebinars.Business.Repository
             return myDiscount;
         }
 
-        public Order GetOrderById(int idOrder)
+        public Order GetOrderByIdThin(int idOrder)
         {
             return items.SingleOrDefault(o => o.idOrder == idOrder);
         }

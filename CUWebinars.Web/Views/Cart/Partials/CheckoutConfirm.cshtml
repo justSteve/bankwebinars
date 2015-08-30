@@ -31,7 +31,7 @@
                     </div>
                 </div>
                 <div id="AdjustUserDetails" class="row initialHide">
-                    @using(Html.BeginForm("adjustuserdetails", "cart", FormMethod.Post, new { id = "UserDetailsAdjustForm", @class = "form form-horizontal" }))
+                    @using (Html.BeginForm("adjustuserdetails", "cart", FormMethod.Post, new { id = "UserDetailsAdjustForm", @class = "form form-horizontal" }))
                     {
                         @Html.AntiForgeryToken()
                         @Html.EditorFor(m => m.AdjustUserDetailsPanel)
@@ -48,7 +48,7 @@
                             @Html.TextBoxFor(m => m.CheckoutDiscountCode, new { @class = "input input-medium", placeholder = "Enter Discount Code" })
                             <button class="btn btn-mini btn-primary" role="button" id="SubmitDiscountCode">Apply Code</button>
                             <button class="btn btn-mini" role="button" id="closeApplyCode">close</button>
-                            
+
                         </div>
                     </div>
                 </div>
@@ -56,11 +56,11 @@
                     <div class="offset2 span9 ">
                         <div id="additionalLocationsCaption" class="clear pull-right">
                             Additional Locations: <button id="addAnotherAddLoc" class="btn btn-mini">add</button>
-                            
-                            @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new {id = "AdjustAddLocsForm"} ))
+
+                            @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new { id = "AdjustAddLocsForm" }))
                             {
                                 <div id="additionalLocationsList">
-                            
+
                                 </div>
                             }
                         </div>
@@ -70,7 +70,7 @@
                     <div class="offset2 span9 ">
                         <div id="RegTypeChanger" class="clear pull-right">
                             @{
-                                Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel);
+                Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel);
                             }
                         </div>
                     </div>
@@ -82,8 +82,17 @@
                         </div>
                         <div style="font-size: x-small; text-align: center;">
                             <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button><br />
-                            @*<button data-toggle="modal" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />*@
-                            <span>Call 800-831-0678 to pay by credit card</span>
+                            @{
+                if (Model.Order.BillingEmail == "user@ttstrain.com")
+                {
+                    <button data-toggle="modal" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button>
+                                <br />
+                }
+                else
+                {
+                    <span>Call 800-831-0678 to pay by credit card</span>
+                }
+                            }
                             <a class="btn" id="Canceller">Cancel Registration</a><br />
                             Sales tax may be added to orders in Wisconsin or Illinois.
                         </div>
@@ -121,7 +130,7 @@
                     <div id="showCartPrice">@{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }</div>
                     @if (Model.OrderStatus != OrderStatus.Paid)
                     {
-                        
+
                         <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>
                         <br />
                     }
@@ -154,8 +163,8 @@
 
 @{
     Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
-    
-    Html.RenderPartial("~/Views/Cart/Partials/_PayByCCModal.cshtml");
+
+    Html.RenderPartial("~/Views/Cart/Partials/_PayByCCModal.cshtml", Model);
     Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml");
     Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
     //Html.RenderPartial("~/Views/Cart/Partials/_DisplayAppliedDiscount.cshtml", Model.DiscountDetailsModel);

@@ -350,9 +350,9 @@ $(function () {
         $('#loginEmail').val($('#Email1').val());
         $('#loginPassword').val($('#Password1').val());
 
-        //  value converted to a Boolean in isShippindAddressRequired function
+        //  value converted to a Boolean in isShippingAddressRequired function
         //  value comes from a hidden input in the radio btn list next to the relevant radio button (previous-sibling)
-        shippingAddressRequired = isShippindAddressRequired($('#RegistrationType > dl dt input:checked').prev());
+        shippingAddressRequired = isShippingAddressRequired($('#RegistrationType > dl dt input:checked').prev());
 
         var data = signUpForm.serialize();
 
@@ -416,7 +416,7 @@ $(function () {
 
                         L.clientLogger.info('d-#30', { 'loggedInUser': 'submitting ConfirmOrder' + xhr.responseJSON['orderId'] });
 
-                        $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
+                        $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderId(), function (response, status, xhr) {
 
                             if (status === 'error') {
                                 $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
@@ -515,7 +515,7 @@ $(function () {
     });
 });
 
-function isShippindAddressRequired(jQueryObject) {
+function isShippingAddressRequired(jQueryObject) {
     //todo: re-enable
     //if ($.trim(jQueryObject.val()).toLowerCase() === 'false')
     return false;

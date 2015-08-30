@@ -51,6 +51,7 @@
         return outerSpan.ToString(TagRenderMode.Normal);
     }
 
+
     private string GetStatusLabel(OrderStatus orderStatus)
     {
         var statusLabelSpan = new TagBuilder("span");
@@ -107,6 +108,10 @@
             rowAmount.Append( GetAdditionalLocationsTextSpan() + "<br>");
             //rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> edit?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
         }
+        if (Model.PricesAndDiscounts.TaxAmount > 0)
+        {
+            rowAmount.Append("<span id='subTotal'>"+Model.RowPrice.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") +"</span> <span id='tax'><br>Tax: <span id='taxAmt'>" + Model.PricesAndDiscounts.TaxAmount.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "<br></span></span>");
+        } 
         rowAmount.Append("<span id='totalPriceText'>Total Cost: <span id='totalPrice'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "</span></span>");
 
         <div id="billingDetails" class="well" style="text-align: right;">

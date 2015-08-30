@@ -103,7 +103,7 @@ var RegistrationInCart;
         };
 
         StateManager.prototype.checkAndSubmitEmail = function () {
-            this.ensureFormValidatorParsed();;
+            this.ensureFormValidatorParsed();
             if ($('#RegisterFields_Email').valid() === true) {
                 //console.log(REG.PageObjects.emailInput().valid());
                 //Rollbar.log("hitr");
@@ -127,7 +127,7 @@ var RegistrationInCart;
             if (this.inputAction === InputAction.EnterKeyPress)
                 this.inputAction = InputAction.None;
 
-            if ($('#RegisterFields_Email').valid() == true) {
+            if ($('#RegisterFields_Email').valid() === true) {
                 $('#collapseBilling').parent().show();
 
                 var showBillingInputs = $.Deferred(function () {
@@ -138,7 +138,7 @@ var RegistrationInCart;
                     $('#FullName').focus();
                 });
 
-                if (this.isShippindAddressRequired)
+                if (this.isShippingAddressRequired)
                     $('#collapseShipping').parent().show();
 
                 $('#collapseEmail').collapse('toggle');
@@ -164,13 +164,13 @@ var RegistrationInCart;
         StateManager.prototype.enterBillingPane = function (data) {
             $('#collapseBilling').parent().show();
 
-            if (this.isShippindAddressRequired)
+            if (this.isShippingAddressRequired)
                 $('#collapseShipping').parent().show();
 
-            $('#collapseEmail').collapse('toggle');
+            $('#collapseEmail').collapse('hide');
 
             var showBillingInputs = $.Deferred(function () {
-                $('#collapseBilling').collapse('toggle');
+                $('#collapseBilling').collapse('show');
             });
 
             $.when(showBillingInputs.resolve()).then(function () {
@@ -401,8 +401,6 @@ var RegistrationInCart;
             $('#ResetPassEmail').val(email);
             $('#labelEmail').html('<span class="label label-important"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is already on file.</span>');
             $('#wrapEmail').hide('slow');
-            $('#modalUserHasAccount').modal('show');
-            
 
             var showLoginInput = $.Deferred(function () {
                 $('#wrapReset').show('slow');
@@ -427,8 +425,8 @@ var RegistrationInCart;
             this.inputAction = incomingInputAction;
         };
 
-        StateManager.prototype.setIsShippindAddressRequired = function (isShippindAddressRequired) {
-            this.isShippindAddressRequired = isShippindAddressRequired;
+        StateManager.prototype.setisShippingAddressRequired = function (isShippingAddressRequired) {
+            this.isShippingAddressRequired = isShippingAddressRequired;
         };
 
         StateManager.prototype.setShippingToBilling = function () {

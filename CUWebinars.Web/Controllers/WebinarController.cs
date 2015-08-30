@@ -904,7 +904,7 @@ namespace CUWebinars.Web.Controllers
                         Discount = row.Discount,
                         NumberOfAdditionalLocations = row.AdditionalLocation.Count(),
                         OrderStatus = row.Order.OrderStatus,
-                        Price = row.RegistrationType.Price,
+                        Price = Convert.ToDecimal(row.RegistrationType.Price),
                         PricesAndDiscounts =
                             _orderManagementService.CalculateOrderCost(row.Order, additionalLocationsPricing.Item2),
                         RowPrice = row.RowPrice,

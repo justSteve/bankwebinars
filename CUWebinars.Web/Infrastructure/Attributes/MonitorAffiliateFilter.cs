@@ -131,7 +131,7 @@ namespace CUWebinars.Web.Infrastructure.Attributes
                 catch (Exception exception)
                 {
                     ILog logger = LogManager.GetLogger(typeof(MonitorAffiliateFilter));
-                    logger.ErrorFormat("ERROR: failed to load idAff code: {0}", HttpContext.Current.Request.Url.ToString().Contains("idaff="));
+                    logger.ErrorFormat("ERROR: failed to load idAff code: {0}", HttpContext.Current.Request.Url);
                     logger.Error(exception.Message);
                     _stateService.SetValue(
                         WebUiConstants.CurrentAffiliate,

@@ -17,7 +17,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
     regUserStateManager = new RegistrationInCart.StateManager();
     regUserStateManager.initializeState();
     regUserStateManager.setAction(RegistrationInCart.Action.CheckEmail); // starting off with CheckEmail action.
-    regUserStateManager.setIsShippindAddressRequired(addressOptions['shippingAddressRequired']);
+    regUserStateManager.setisShippingAddressRequired(addressOptions['shippingAddressRequired']);
 
     $('#RegisterFields_Email').bind('change keyup', function () {
         regUserStateManager.ensureFormValidatorParsed();
@@ -292,7 +292,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
         var jsonUrl = '/Account/CheckZip';
         var zipCode = $('#ZipChecker').val();
 
-        if (zipCode.length == 0) {
+        if (zipCode.length === 0) {
             $('#RegisterFields_Zip').focus();
         } else {
             $.ajax({
@@ -310,11 +310,13 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 // successful request; do something with the data
                 L.clientLogger.info('Zipcode check result', { 'data': data || 'data was falsey' });
                 regUserStateManager.zipCodeVerified(data, zipCode);
-            }).fail(commonFuncs.failCallBack)
-                .always(function () {
-                    regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
-                    L.clientLogger.info('Zipcode checked', { 'zipCode': zipCode });
-                });
+            }).fail(function () {
+                alert('Error condition detected. Please visit us in our online chat application (lower right corner of this window) and reference error #777 for immediate assistance.');
+                L.clientLogger.info('Zipcode check failed', { 'zipCode': zipCode });
+            }).always(function () {
+                regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
+                L.clientLogger.info('Zipcode checked', { 'zipCode': zipCode });
+            });
         }
         return false;
     });
@@ -452,10 +454,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                             // Upon return, load the 3rd tab. And once loaded, 
                             //create the MR UserAccount (but don't log the user in). 
 
-                            $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
+                            $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderId(), function (response, status, xhr) {
 
                                 if (status == 'error') {
-                                    L.clientLogger.error("Error at /cart/checkoutConfirm/", { rowid: cartStateManager.getOrderRowId() });
+                                    L.clientLogger.error("Error at /cart/checkoutConfirm/", { rowid: cartStateManager.getOrderId() });
                                     $(this).html('<div class="text-error">There has been error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
                                     $('#loadingSpinner').remove();
                                     $('#confirmationTab a').tab('show');
@@ -594,7 +596,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
                                     $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
 
-                                    $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
+                                    $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderId(), function (response, status, xhr) {
 
                                         if (status == 'error') {
                                             L.clientLogger.error("Connection Error #106.", { 'data': data || 'data was falsey' });

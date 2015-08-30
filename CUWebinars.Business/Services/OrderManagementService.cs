@@ -335,13 +335,13 @@ namespace CUWebinars.Business.Services
 
         public Order GetOrderById(int id)
         {
-            var order = _orderRepository.FindOrderByIdWithOrderRows(id);
+            var order = _orderRepository.GetOrderById(id);
             return order;
         }
 
         public Order GetOrderByIdThin(int id)
         {
-            return _orderRepository.GetOrderById(id);
+            return _orderRepository.GetOrderByIdThin(id);
         }
 
         public IEnumerable<int> GetOrderIdsByPartialId(int id)
@@ -516,7 +516,7 @@ namespace CUWebinars.Business.Services
         {
             AddEvent(new AdhocNotificationEvent<AdhocNotificationMessage>
             {
-                EventObject = adhocNotificationMessage 
+                EventObject = adhocNotificationMessage
             });
 
             foreach (var evt in GetEvents().OfType<AdhocNotificationEvent<AdhocNotificationMessage>>())
@@ -628,10 +628,21 @@ namespace CUWebinars.Business.Services
             pricesAndDiscounts.TotalDiscount = discountTotal;
             pricesAndDiscounts.TotalCostOfOptions = totalOptionsPrice;
 
+            pricesAndDiscounts.TaxAmount = 0;
+
+            if (order.BillingState == "WI"
+                && !row.RegistrationType.OptionLabel.StartsWith("Live Plus Five")
+                && row.RowPrice > 0
+                )
+            {
+                pricesAndDiscounts.TaxAmount = Convert.ToDecimal(Convert.ToInt32(row.RowPrice) * .055);
+            }
+
             //Calculate order total
-            order.Total = row.RowPrice;
+            order.Total = row.RowPrice + pricesAndDiscounts.TaxAmount;
             pricesAndDiscounts.Discount = row.Discount;
             pricesAndDiscounts.TotalOrderPrice = order.Total;
+
 
             return pricesAndDiscounts;
         }
@@ -763,7 +774,7 @@ namespace CUWebinars.Business.Services
 
             Clear(); // need to clear at this point, otherwise the OrderSubmittedEvent will be fired again when 
 
-            if (!ReferenceEquals(order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation, null) 
+            if (!ReferenceEquals(order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation, null)
                 && order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count != 0)
             {
                 foreach (var addLoc in order.OrderRows
@@ -1357,14 +1368,14 @@ namespace CUWebinars.Business.Services
         public String GetPostEventMaterialsAccessExpiry(Order order)
         {
             if (order == null) throw new ArgumentNullException("order");
-            
+
 
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             // let exception be thrown if there is not a single 
 
             var LivePlusFiveValue = orderRow.Webinar.LivePlusFiveValue;
             if (ReferenceEquals(LivePlusFiveValue, null))
-            LivePlusFiveValue = 7;
+                LivePlusFiveValue = 7;
 
 
             var regType = GetRegTypeOfOrderRow(orderRow.idRegType);
@@ -1485,7 +1496,7 @@ namespace CUWebinars.Business.Services
                 // the notification confirming registration for this webinar.  
                 bool linkToVerifyAccount = !string.IsNullOrWhiteSpace(confirmChangeEmailLink);
 
-                
+
                 //this is just a smoke test, right? currentOrder.Webuser should never be null at this point. 
                 _logger.Info("currentOrder.WebUser ({1}) is{0}null", currentOrder.WebUser == null ? " " : " not ", currentOrder.WebUser.email);
 

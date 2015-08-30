@@ -13,5 +13,6 @@ namespace CUWebinars.Business.Core
         //renamed to help
         public decimal TotalCostOfOptions { get; set; }
         public decimal TotalOrderPrice { get; set; }
+        public decimal TaxAmount { get; set; }
     }
 }

@@ -1,59 +1,110 @@
 ﻿@using CUWebinars.Web.Core
 @model CheckoutConfirmViewModel
+@functions {
+    private const string CurrencyFormatToken = "c";
+    private const string DotAndTwoDecimals = ".00";
+
+
+}
 @{
 
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
     //Layout = "/Views/Shared/_Layout_PayCC.cshtml";
 
+    var order = Model.Order;
 
+    var myRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+    var regTypeDesc = myRow.RegistrationType.OptionLabel;
+
+    var title = myRow.Webinar.Title;
+    title = title.Replace("%", "");
+    title = title.Replace("&", "");
+    title = title.Replace("#", "");
+    title = title.Replace("[", "");
+    title = title.Replace("]", "");
+    title = title.Replace("<", "");
+    title = title.Replace(">", "");
+    title = title.Replace("\"", "");
+    title = title.Replace("\\", "");
+    title = title.Replace("'", "");
+    title = title.Replace("/", "");
+
+    if (myRow.AdditionalLocation.Count > 0)
+    {
+        if (myRow.AdditionalLocation.Count == 1)
+        {
+            regTypeDesc += " Includes 1 Additional Location";
+        }
+        else
+        {
+            regTypeDesc += " Includes " + myRow.AdditionalLocation.Count + " Addition Locations.";
+        }
+    }
 }
-
 <div id="PayByCCModal" class="modal hide fade">
+    <form method="POST" action="https://esplusqa.moneris.com/DPHPP/index.php">
 
-    <input type="hidden" name="id" />
-    <input type="hidden" id="Step2_BillMeFormReferred" name="referred" value="" />
-    <div class="modal-header">
-        <h3 id="confirmCaption"></h3>
-    </div>
-    <div id="orderDetails" class="modal-body">
-        <div>
-            <form method="POST" action="https://www.sagepayments.net/eftcart/forms/express.asp">
-                <input type="hidden" name="M_id" value="481584571755" />
-                <input type="hidden" name="T_amt" value=totalPrice />
-                <input type="hidden" name="T_shipping" value="0" />
-                <input type="hidden" name="T_tax" value="0" />
-                <input type="hidden" name="T_ordernum" value="@Model.T_ordernum" />
-                <input type="hidden" name="C_company" value="@Model.C_company" />
-                <input type="hidden" name="C_fname" value="@Model.C_fname" />
-                <input type="hidden" name="C_lname" value="@Model.C_lname" />
-                <input type="hidden" name="C_address" value="@Model.C_address" />
-                <input type="hidden" name="C_city" value="@Model.C_city" />
-                <input type="hidden" name="C_state" value="@Model.C_state" />
-                <input type="hidden" name="C_zip" value="@Model.C_zip" />
-                <input type="hidden" name="C_email" value="@Model.C_email" />
-                <input type="hidden" name="C_telephone" value="@Model.C_telephone" />
-                <input type="hidden" name="C_memo" value=titleForCC />
+        <input type="hidden" name="id" />
+        <input type="hidden" id="Step2_BillMeFormReferred" name="referred" value="" />
+        <div class="modal-header">
+            <h3 id="confirmCaption"></h3>
+        </div>
+        <div id="orderDetails" class="modal-body">
+            <div>
+                <input type="hidden" name="hpp_id" value="AY3NBqa002">
+                <input type="hidden" name="hpp_key" value="hpHF7B3ETD9C">
+                @*<input type="hidden" name="amount" value="@Math.Round(Model.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice, 2)">*@
+                <input type="hidden" name="amount" value="9.00">
+
+                <input type="hidden" name="li_id1" value="@order.idOrder">
+                <input type="hidden" name="li_description1" value="@title - @regTypeDesc">
+                <input type="hidden" name="li_quantity1" value="1">
+                <input type="hidden" name="li_price1" value="@Math.Round(myRow.RowPrice, 2)">
+                <input type="hidden" name="li_taxes" value="@Math.Round(Model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount,2)">
+                <input type="hidden" name="li_taxamount" value="@Math.Round(Model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount, 2)">
+                <input type="hidden" name="li_invoice" value="@globalConfig.TenantPrefix@order.idOrder">
+                <input type="hidden" name="cust_id" value="Customer ID: @order.idUser">
+                <input type="hidden" name="order_no" value="@globalConfig.TenantPrefix@order.idOrder">
+                <input type="hidden" name="client_email" value="@order.BillingEmail">
+                <input type="hidden" name="note" value="Thank you! Watch your email for complete details.">
+
+                <input type="hidden" name="od_bill_firstname" value="@order.FirstName">
+                <input type="hidden" name="od_bill_lastname" value="@order.LastName">
+                <input type="hidden" name="od_bill_company" value="@order.Institution">
+                <input type="hidden" name="od_bill_address" value="@order.BillingAddress">
+                <input type="hidden" name="od_bill_city" value="@order.BillingCity">
+                <input type="hidden" name="od_bill_state" value="@order.BillingState">
+                <input type="hidden" name="od_bill_zipcode" value="@order.BillingZip">
+
+                <input type="hidden" name="od_bill_phone" value="@order.BillingPhone">
+
+                <input type="hidden" name="od_ship_firstname" value="@order.ShippingFirstName">
+                <input type="hidden" name="od_ship_lastname" value="@order.ShippingLastName">
+                <input type="hidden" name="od_ship_company" value="@order.Institution">
+                <input type="hidden" name="od_ship_address" value="@order.ShippingAddress">
+                <input type="hidden" name="od_ship_city" value="@order.ShippingCity">
+                <input type="hidden" name="od_ship_state" value="@order.ShippingState">
+                <input type="hidden" name="od_ship_zipcode" value="@order.ShippingZip">
+
+                <input type="hidden" name="od_ship_phone" value="@order.ShippingPhone">
+
 
                 <div class="legendImitator">
                     Credit Card Processing Redirect
                 </div>
 
                 <div style="margin-bottom:10px;">
-                    Redirecting to our credit card processor - SagePayment.net - for entry of credit card information.
-                    The result of that transaction will display here when completed.
-                </div>
-                <div>
-                    <i>Registration ID: <b>BW-@Model.T_ordernum</b></i><br />
+                    We will now redirect your browser to our credit card processor - https://esplusqa.moneris.com - for entry of credit card information.
                 </div>
 
-                
-                    <div class="pull-right">
-                        <input class="btn btn-success" type="submit" value="Continue" />
-                        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-                    </div>
-            </form>
+
+                <div class="pull-right">
+                    <input class="btn btn-success" type="submit" value="Continue" />
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                </div>
+            </div>
+
         </div>
-
-    </div>
+    </form>
 </div>

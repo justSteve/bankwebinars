@@ -485,6 +485,7 @@
     </Compile>
     <Compile Include="Models\ManageOrderEditModel.cs" />
     <Compile Include="Models\MigrateOrderModel.cs" />
+    <Compile Include="Models\MonerisResponse.cs" />
     <Compile Include="Models\OnDemandPlaybackModel.cs" />
     <Compile Include="Models\PostEventInfoModel.cs" />
     <Compile Include="Models\Q14Address14.cs" />
@@ -738,9 +739,10 @@
     <Content Include="Content\DataTables\css\dataTables.responsive.scss" />
     <Content Include="Content\DataTables\css\dataTables.jqueryui.scss" />
     <Content Include="Notification\Templates\AdhocNotification.cshtml" />
-    <None Include="Properties\PublishProfiles\BankWebinars31 - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\BankWebinars31 - Web Deploy.pubxml" />
-    <None Include="Properties\PublishProfiles\BankWebinars33.pubxml" />
+    <None Include="Properties\PublishProfiles\BankWebinars33 - FTP %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars33 - Web Deploy.pubxml" />
     <Content Include="Scripts\calendarview.js" />
@@ -791,6 +793,9 @@
     <Content Include="Scripts\underscore.js" />
     <Content Include="Scripts\underscore.min.js" />
     <Content Include="Scripts\vendor\json2.js" />
+    <Content Include="Views\Account\OrderDidNotComplete.cshtml">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="Views\Admin\Home\_ImportOrder.cshtml" />
     <Content Include="Views\Admin\Home\_LogInAsUser.cshtml" />
     <Content Include="Views\Admin\Home\_ManualPasswordReset.cshtml" />
@@ -935,7 +940,6 @@
     <Content Include="Views\Shared\DisplayTemplates\OrderSumUser.cshtml" />
     <Content Include="Views\Webinar\Partials\_CloneWebinar.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\EditUser.cshtml" />
-    <Content Include="Views\Cart\PayCC.cshtml" />
     <Content Include="Views\Cart\PayCC_Approved.cshtml" />
     <Content Include="Views\Cart\PayCC_Declined.cshtml" />
     <Content Include="Views\Shared\Partials\_OrderSumUser.cshtml" />
@@ -977,6 +981,7 @@
     <Content Include="Views\Cart\ExpressCheckout4IE1.cshtml" />
     <Content Include="Views\Shared\_LayoutJotForm.cshtml" />
     <Content Include="Views\Cart\ExpressCheckout4IE1CU.cshtml" />
+    <Content Include="Views\Cart\PostBackMoneris.cshtml" />
     <None Include="Web.BankWebinars31 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
@@ -1497,6 +1502,8 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\app\admin\question.ts" />
+    <TypeScriptCompile Include="Scripts\app\cart\create-order-new.ts" />
+    <TypeScriptCompile Include="Scripts\app\cart\register-user-in-cart.ts" />
     <TypeScriptCompile Include="Scripts\app\quiz\quiz.ts" />
     <TypeScriptCompile Include="Scripts\app\toastLogger.ts" />
     <TypeScriptCompile Include="Scripts\app\utilities.ts" />

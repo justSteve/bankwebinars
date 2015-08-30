@@ -10,7 +10,8 @@ namespace CUWebinars.Web.ViewModel
         public int NumberOfAdditionalLocations { get; set; }
         public string AddressesForAdditionalLocations { get; set; }
         public OrderStatus OrderStatus { get; set; }
-        public double Price { get; set; }
+        public decimal Price { get; set; }
+        public decimal Tax { get; set; }
         public PricesAndDiscounts PricesAndDiscounts { get; set; }
         public RegType  RegistrationType { get; set; }
         public decimal RowPrice { get; set; }

@@ -7,7 +7,7 @@
     ViewBag.Title = Model.Webinar.Title + " - Presented by: " + Model.Webinar.Presenter.WebUser.FullName;
     IStateService stateService = new StateService();
 
-        var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+    var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
     string currentUserAffiliateFullName = string.Empty;
     if (currentAffiliate != null)
     {

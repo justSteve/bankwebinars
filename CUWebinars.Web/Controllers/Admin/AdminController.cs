@@ -697,10 +697,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 newOrderRow.Order.Origin = "ExpressCheckout";
 
-                JProperty createdByExpressCheckout = new JProperty(
-        JsonPropertyKeys.OrderCreatedByExpressCheckoutKey,
-        ""
-        );
+                JProperty createdByExpressCheckout = new JProperty(JsonPropertyKeys.OrderCreatedByExpressCheckoutKey, "");
 
                 newOrderRow.Order.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrderRow.Order.AdminComments, createdByExpressCheckout);
 
@@ -975,7 +972,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     Discount = orderRow.Discount,
                     NumberOfAdditionalLocations = additionalLocationsCount,
                     OrderStatus = order.OrderStatus,
-                    Price = orderRow.RegistrationType.Price,
+                    Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
                     PricesAndDiscounts =
                         _orderManagementService.CalculateOrderCost(order, additionalLocationsPricing.Item2),
                     RegistrationType = orderRow.RegistrationType,

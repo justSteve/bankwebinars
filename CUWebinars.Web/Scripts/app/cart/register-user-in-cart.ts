@@ -57,7 +57,7 @@ module RegistrationInCart {
 
     export class StateManager {
         private action: Action;
-        private isShippindAddressRequired: boolean;
+        private isShippingAddressRequired: boolean;
         private inputAction: InputAction;
         private disregardInstitutionDomain: boolean = false;
         private formParsedByValidator: boolean = false;
@@ -79,7 +79,7 @@ module RegistrationInCart {
             $('#collapseShipping').parent().hide();
 
             $('#wrapZip').hide();
-            
+
             $('#wrapReset').hide();
 
             $('#nonUSAddress').hide();
@@ -95,7 +95,7 @@ module RegistrationInCart {
 
         checkAndSubmitEmail(): boolean {
             this.ensureFormValidatorParsed();
-            if ($('#RegisterFields_Email').valid() == true) {
+            if ($('#RegisterFields_Email').valid() === true) {
                 //console.log(REG.PageObjects.emailInput().valid());
                 //Rollbar.log("hitr");
                 $('#emailAddress').val($('#checkEmail').val());
@@ -110,7 +110,7 @@ module RegistrationInCart {
         checkAndSubmitZip(): void {
             $('#TheSubmitButton').prop('value', this.nextButtonText);
             //console.log('checkAndSubmitZip');
-            
+
             $('#checkZip').submit();
         }
 
@@ -119,7 +119,7 @@ module RegistrationInCart {
             if (this.inputAction === InputAction.EnterKeyPress)
                 this.inputAction = InputAction.None;
 
-            if ($('#RegisterFields_Email').valid() == true) {
+            if ($('#RegisterFields_Email').valid() === true) {
                 $('#collapseBilling').parent().show();
 
                 var showBillingInputs = $.Deferred(function () {
@@ -127,11 +127,11 @@ module RegistrationInCart {
                 });
 
                 $.when(showBillingInputs.resolve()).then(function () {
-            
+
                     $('#FullName').focus();
                 });
 
-                if (this.isShippindAddressRequired)
+                if (this.isShippingAddressRequired)
                     $('#collapseShipping').parent().show();
 
                 $('#collapseEmail').collapse('toggle');
@@ -142,7 +142,7 @@ module RegistrationInCart {
             // TODO Check this in FireFox. #TimeZone seems to be init because drpdwn is blank.
             //  set TimeZone to Central time if there is none.
             var timeZoneInput = $('#TimeZone');
-            
+
             if (!timeZoneInput.val())
                 timeZoneInput.val('3'); // Central = 3
 
@@ -158,13 +158,13 @@ module RegistrationInCart {
         enterBillingPane(data: any): void {
             $('#collapseBilling').parent().show();
 
-            if (this.isShippindAddressRequired)
+            if (this.isShippingAddressRequired)
                 $('#collapseShipping').parent().show();
 
-            $('#collapseEmail').collapse('toggle');
+            $('#collapseEmail').collapse('hide');
 
             var showBillingInputs = $.Deferred(function () {
-                $('#collapseBilling').collapse('toggle');
+                $('#collapseBilling').collapse('show');
             });
 
             $.when(showBillingInputs.resolve()).then(function () {
@@ -215,7 +215,7 @@ module RegistrationInCart {
                 this.inputAction = InputAction.None;
             ////console.log("call foundInstitutionView: " + email);
             $('#modalInstitution').modal('show');
-            
+
             $('#RegisterFields_Institution').val(data.Institution);
             $('#RegisterFields_ShippingAddress_StreetAddress').val(data.Address);
             $('#RegisterFields_ShippingAddress_City').val(data.City);
@@ -271,7 +271,7 @@ module RegistrationInCart {
         goToAddressFields(email: string): void {
             ////console.log("call newPasswordView: " + email);
 
-            if(email)
+            if (email)
                 $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;Recorded: ' + $('#RegisterFields_Email').val() + '.</span>');
 
             if (this.zipCheckRequired) {
@@ -279,11 +279,11 @@ module RegistrationInCart {
 
                 $('#wrapEmail').hide('fast');
 
-                var showGetZipInput = $.Deferred(function() {
+                var showGetZipInput = $.Deferred(function () {
                     $('#wrapZip').show('slow');
                 });
 
-                $.when(showGetZipInput.resolve()).then(function() {
+                $.when(showGetZipInput.resolve()).then(function () {
                     $('#getZip').focus();
                 });
 
@@ -301,7 +301,7 @@ module RegistrationInCart {
                 if (this.inputAction === InputAction.EnterKeyPress)
                     this.inputAction = InputAction.None;
 
-                $('#TheSubmitButton').on('mouseenter', function() {
+                $('#TheSubmitButton').on('mouseenter', function () {
                     if ($(this.sameAsBillingCheckedFilter).val()) {
                         $('#SetShippingToBilling');
                     }
@@ -329,7 +329,7 @@ module RegistrationInCart {
             $.when(showEmailInput.resolve()).then(function () {
                 $('#RegisterFields_Email').focus();
             });
-            
+
             $('#labelEmail').html('<span class="label label-info">&nbsp;&nbsp;Proceed or enter a different email address.</span>');
 
             //  Clear the billing and shipping addresses
@@ -421,8 +421,8 @@ module RegistrationInCart {
             this.inputAction = incomingInputAction;
         }
 
-        setIsShippindAddressRequired(isShippindAddressRequired: boolean): void {
-            this.isShippindAddressRequired = isShippindAddressRequired;
+        setisShippingAddressRequired(isShippingAddressRequired: boolean): void {
+            this.isShippingAddressRequired = isShippingAddressRequired;
         }
 
         setShippingToBilling(): void {

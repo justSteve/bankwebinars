@@ -1,7 +1,11 @@
-﻿using System.Configuration;
-using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Web.Mvc;
 using CUWebinars.Business.Constants;
-using CUWebinars.Business.Core;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
@@ -11,15 +15,10 @@ using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
-using Ninject.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Web;
-using System.Web.Mvc;
+using Elmah;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Web.Controllers
 {
@@ -117,7 +116,7 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         [ValidateAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
         public ActionResult ConfirmOrder(string referred, int? id = null)
@@ -140,7 +139,7 @@ namespace CUWebinars.Web.Controllers
                     {
                         _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: true);
                     }
-                    
+
                     _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
 
                     _cartControllerOrchestrator.SendOrderToLegacy(model.Order);
@@ -158,7 +157,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     ModelState.AddModelError(string.Empty, "There was a problem at the server. Please contact the administrator.");
                     _logger.ErrorException("ConfirmOrder|ConfirmOrder failed ", exception);
-                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
                 }
             }
 
@@ -169,7 +168,7 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         public ActionResult ConfirmOrderForAffiliate(string referred, int? id = null, bool? adminCreatedWebUser = null)
         {
             if (ModelState.IsValid)
@@ -190,14 +189,14 @@ namespace CUWebinars.Web.Controllers
                 {
                     ModelState.AddModelError(string.Empty, "There was a problem at the server. Please contact the administrator.");
                     _logger.ErrorException("ConfirmOrder|ConfirmOrder failed ", exception);
-                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
                 }
             }
 
             return this.ModelStateJson(ModelState);
         }
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         public ActionResult CancelOrder(int? id = null)
         {
             if (id.HasValue)
@@ -221,12 +220,12 @@ namespace CUWebinars.Web.Controllers
             var model = _cartControllerOrchestrator.BuildCheckoutOptionsViewModel(null, idWebinar, idOrderRow, idOrder);
             return PartialView("Partials/CheckoutOptions", model);
         }
-
-        public ActionResult CheckoutContact(int ID)
-        {
-            var model = _cartControllerOrchestrator.BuildCheckoutConfirmViewModel(ID);
-            return PartialView("Partials/CheckoutContact", model);
-        }
+        //Following seems depricated -- safe to remove ?
+        //public ActionResult CheckoutContact(int ID)
+        //{
+        //    var model = _cartControllerOrchestrator.BuildCheckoutConfirmViewModel(ID);
+        //    return PartialView("Partials/CheckoutContact", model);
+        //}
         public ActionResult CheckoutConfirm(int? ID = null)
         {
             var model = _cartControllerOrchestrator.BuildCheckoutConfirmViewModel(ID);
@@ -256,7 +255,7 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         public ActionResult Signup2(CheckoutOptionsViewModel formModel)
         {
             if (ModelState.IsValid)
@@ -301,7 +300,7 @@ namespace CUWebinars.Web.Controllers
 
                     _logger.FatalException("Signup2 order died. ", exception);
 
-                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
                 }
 
             }
@@ -337,7 +336,7 @@ namespace CUWebinars.Web.Controllers
                         "There has been an error at the server which has been logged.");
                     _logger.FatalException("Signup2 order excepted: ", exception);
 
-                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
                 }
             }
             return this.ModelStateJson(ModelState);
@@ -416,7 +415,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     _logger.ErrorException("RemoveAdditionalLocationsFromOrder|Session=" + _appHelper.GetUserAuditInfo(), exception);
-                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
                 }
 
                 return Json(new { Result = WebUiConstants.Success });
@@ -453,7 +452,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     _logger.ErrorException(
                         String.Format("UpdateOrderDetails failed on {0} with {1} Session={2}", idRegType, exception.Message, _appHelper.GetUserAuditInfo()), exception);
-                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
                 }
 
                 return Json(new { Result = WebUiConstants.Success });
@@ -462,7 +461,7 @@ namespace CUWebinars.Web.Controllers
         }
 
         //[Authorize(Roles = AppRoles.Admin)]
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         public ActionResult SetOrderStatus(int orderRowID, OrderStatus status)
         {
             if (ModelState.IsValid)
@@ -486,30 +485,7 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
-        public ActionResult PayCC(int id)
-        {
-            var order = _cartControllerOrchestrator.LoadOrder(id);
 
-            string formFields = Request.QueryString.ToString();
-            _logger.Info("PayCC on OrderId: {0}", id);
-
-            if (Request["referred"] != null && WebUtility.HtmlDecode(Request["referred"]) != "How did you hear about this webinar?")
-            {
-                order.Origin = Request["referred"] + Environment.NewLine + order.Origin;
-                _logger.Info("PayCC Declined: " + formFields);
-                //ViewData["referred"] = Request["referred"];
-            }
-            return View("~/Views/Cart/PayCC.cshtml", order);
-        }
-
-        public void PostBackCC(FormCollection form)
-        {
-            string formFields = Request.Form.ToString();
-
-
-            _logger.Info("PostBackCC: " + formFields);
-
-        }
 
         public ActionResult ExpressCheckout4IE1CU(int idWebinar, int idAffiliate)
         {
@@ -553,13 +529,73 @@ namespace CUWebinars.Web.Controllers
 
 
 
-            ExpressCheckoutModel deserializedExChk 
+            ExpressCheckoutModel deserializedExChk
                 = JsonConvert.DeserializeObject<ExpressCheckoutModel>(form.RawRequest);
 
-            
+
             _logger.Info("expresscheckout: " + deserializedExChk);
 
         }
+
+        [HttpPost]
+        public ActionResult PostBackMoneris(MonerisResponse form)
+        {
+            var order = _cartControllerOrchestrator.LoadOrder(Convert.ToInt32(form.order_no.Split('-')[1]));
+            JProperty monerisResponse = new JProperty(JsonPropertyKeys.MonerisResponse, JsonConvert.SerializeObject(form));
+
+            order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, monerisResponse);
+
+            _cartControllerOrchestrator.UpdateOrderPricing(order);
+
+            if (form.message.StartsWith("APPROVED"))
+            {
+                try
+                {
+                    _logger.Info("Confirming Moneris submission with Id {0}", order.idOrder);
+
+
+                    order.OrderStatus = OrderStatus.Paid;
+
+                    _cartControllerOrchestrator.SendOrderToLegacy(order);
+
+                    _cartControllerOrchestrator.CreatePostEventClaim(order);
+
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
+                    }
+                    else
+                    {
+                        _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: true);
+                    }
+
+                    return RedirectToAction("OrderComplete", "Account", new { id = order.idOrder, message = form.message });
+                }
+                catch (Exception exception)
+                {
+                    ModelState.AddModelError(string.Empty,
+                        "There was a problem at the server. Please contact the administrator.");
+                    _logger.ErrorException("ConfirmOrder|ConfirmOrder failed ", exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
+                }
+
+                _logger.Error("ConfirmOrder Action | Id parameter was null");
+                _logger.Error(string.Format("ConfirmOrder Action | {0}", _appHelper.GetUserAuditInfo()));
+            }
+            else
+            {
+                _logger.Info("Moneris declined with msg {0}", form.message);
+                return Json(new
+                {
+                    Result = WebUiConstants.Fail,
+                    OrderRowID = order.idOrder,
+                    Msg = string.Format("Your credit card transaction did not complete successfully. Our processor replied with this message: {0}", form.message)
+                }, JsonRequestBehavior.AllowGet);
+                //return RedirectToAction("OrderDidNotComplete", "Account", new { id = order.idOrder, message = form.message });
+            }
+            return this.ModelStateJson(ModelState);
+        }
+
 
         public void PostBackWPS(FormCollection form)
         {
@@ -644,4 +680,5 @@ namespace CUWebinars.Web.Controllers
             }
         }
     }
+
 }

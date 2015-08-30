@@ -1,7 +1,17 @@
-﻿using System.Web.Configuration;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Data.Entity.Validation;
+using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Web.Http;
+using System.Web.Mvc;
+using System.Web.Security;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
-using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Exceptions;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
@@ -16,23 +26,10 @@ using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
-using Newtonsoft.Json;
+using Elmah;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Data.Entity.Validation;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Web.Http;
-using System.Web.Mvc;
-using System.Web.Security;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
-
 
 namespace CUWebinars.Web.Infrastructure
 {
@@ -81,48 +78,6 @@ namespace CUWebinars.Web.Controllers
             _stateService = stateService;
             _appHelper = appHelper;
             _universalMapper = universalMapper;
-        }
-
-        public ActionResult COC(int idWebinar, string displayName)
-        {
-            //if (User.Identity.IsAuthenticated)
-            //{
-
-            //}
-            //OrderRow row = orderManagementService.LoadOrderRow(id);
-            ViewBag.Webinar = idWebinar;
-            ViewBag.displayName = displayName;
-            //Logger.Info("COC executed: " + id + " by " + membershipService.;
-
-            return View("~/Views/home/coc.cshtml");
-        }
-
-
-        public ActionResult CertificateOfCompletionList(int id, string displayNames)
-        {
-            string[] listNames = displayNames.Split(Environment.NewLine.ToCharArray());
-
-            string listing = listNames.Where(s => s != "")
-                .Aggregate("",
-                    (current, s) =>
-                        current +
-                        ("<p>http://www.@Tenant.com/Home/COC/?idUser=" + id + "&displayName=" + s.Replace(' ', '+') +
-                         "</p>"));
-
-            //foreach (string s in listNames)
-            //{
-            //    if (s != "")
-            //    {
-            //        listing += ("<p>http://www.@Tenant.com/Home/COC/?idUser=" + id + "&displayName=" +
-            //                    s.Replace(' ', '+') + "</p>");
-            //    }
-            //}
-
-            ViewData["listing"] = listing;
-            //Logger.Instance.LogMessage("COC List executed: " + id + " by " +
-            //                           UserFacade.Instance.GetCurrentUser().FullName);
-
-            return View("~/Views/home/coc.cshtml");
         }
 
 
@@ -271,6 +226,19 @@ namespace CUWebinars.Web.Controllers
 
 
         [System.Web.Mvc.AllowAnonymous]
+        public ActionResult OrderDidNotComplete(int? id, string message)
+        {
+            // id is the Order's id.
+            if (id.HasValue)
+            {
+                ViewBag.Message = message;
+                var order = _accountControllerOrchestrator.GetOrderById(id.Value);
+                return View(order);
+            }
+            return View();
+        }
+
+        [System.Web.Mvc.AllowAnonymous]
         public ActionResult OrderComplete(int? id)
         {
             // id is the Order's id.
@@ -346,7 +314,7 @@ namespace CUWebinars.Web.Controllers
                     exception.Message,
                     _appHelper.GetUserAuditInfo()
                     );
-                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                ErrorSignal.FromCurrentContext().Raise(exception);
                 throw;
             }
         }
@@ -389,7 +357,7 @@ namespace CUWebinars.Web.Controllers
                     _appHelper.GetUserAuditInfo()
                     );
                 ModelState.AddModelError(string.Empty, exception.Message);
-                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                ErrorSignal.FromCurrentContext().Raise(exception);
             }
 
             return this.ModelStateJson(ModelState);
@@ -409,7 +377,7 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 _logger.ErrorException("In EditBillingAddress Action", exception);
-                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                ErrorSignal.FromCurrentContext().Raise(exception);
                 throw;
             }
 
@@ -434,7 +402,7 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 _logger.ErrorException("In EditShippingAddress Action", exception);
-                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                ErrorSignal.FromCurrentContext().Raise(exception);
                 throw;
             }
 
@@ -460,7 +428,7 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 _logger.ErrorException("In EditInstitution Action", exception);
-                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                ErrorSignal.FromCurrentContext().Raise(exception);
 
                 throw;
             }
@@ -487,7 +455,7 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 _logger.ErrorException("In EditNameTitle Action", exception);
-                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                ErrorSignal.FromCurrentContext().Raise(exception);
                 throw;
             }
             return PartialView("Partials/_EditNameTitle", model);
@@ -619,7 +587,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     _logger.ErrorException("In EditUser Action: ", exception);
-                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
                     throw;
                 }
             }
@@ -659,7 +627,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     _logger.ErrorException("In EditContactInfo Action", exception);
-                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
                     throw;
                 }
             }
@@ -682,7 +650,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     _logger.ErrorException("In Manage Action", exception);
-                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
                     throw;
                 }
             }
@@ -776,7 +744,7 @@ namespace CUWebinars.Web.Controllers
                     _logger.ErrorException(
                         string.Format("Account.SignIn Failed. {0} | {1} Session= {2}", model.Email, model.Password,
                             _appHelper.GetUserAuditInfo()), exception);
-                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
 
                     ModelState.AddModelError(
                         string.Empty,
@@ -813,7 +781,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     _logger.ErrorException("In SignInFromCart Action", exception);
-                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
                 }
 
                 // If we got this far, something failed, redisplay form
@@ -987,7 +955,7 @@ namespace CUWebinars.Web.Controllers
                             _logger.Error("_accountControllerOrchestrator.ChangePasswordFromResetKey {0} tossed error to: ", model.Key);
                             ModelState.AddModelError(string.Empty,
                                 "We've logged an error. Please attempt the password reset procedure again. In case of persisant failures contact us at support@ttstrain.com - or, for immediate assistance contact us at 800-831-0678 ext. 707.");
-                            Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                            ErrorSignal.FromCurrentContext().Raise(exception);
 
                         }
                     }
@@ -1027,7 +995,7 @@ namespace CUWebinars.Web.Controllers
                         string.Format("Account.LogOff at Unauthenticated User. Session={0}",
                             _appHelper.GetUserAuditInfo()), exception);
 
-                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
                 }
             }
 
@@ -1070,7 +1038,7 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 _logger.ErrorException("In CheckZip Action", exception);
-                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                ErrorSignal.FromCurrentContext().Raise(exception);
                 throw;
             }
 
@@ -1245,7 +1213,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     ModelState.AddModelError(string.Empty, "Please call us at 800-831-0678 ext. 3 to resolve.");
-                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
                     _logger.FatalException(string.Format("Account.Register Catch block | Session= {0}", _appHelper.GetUserAuditInfo()), exception);
                 }
 

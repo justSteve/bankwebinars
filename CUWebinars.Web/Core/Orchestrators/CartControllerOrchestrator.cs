@@ -142,17 +142,17 @@ namespace CUWebinars.Web.Core.Orchestrators
             return null;
         }
 
-        public CheckoutConfirmViewModel BuildCheckoutConfirmViewModel(int? idOrderRow)
+        public CheckoutConfirmViewModel BuildCheckoutConfirmViewModel(int? idOrder)
         {
-            if (idOrderRow.HasValue && idOrderRow.Value > 0)
+            if (idOrder.HasValue && idOrder.Value > 0)
             {
                 try
                 {
-                    _logger.Info("BuildCheckoutConfirmViewModel idOrderRow: " + idOrderRow.Value);
-                    var orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
-                    var order = orderRow.Order;
+                    _logger.Info("BuildCheckoutConfirmViewModel idOrder: " + idOrder.Value);
+                    var order = _orderManagementService.GetOrderById(idOrder.Value);
+                    //var order = orderRow.Order;
                     _logger.Info("BuildCheckoutConfirmViewModel idOrder: " + order.idOrder);
-                    var webUser = orderRow.Order.WebUser;
+                    var webUser = order.WebUser;
                     var userFullName = string.Concat(webUser.FirstName, " ", webUser.LastName);
 
                     var addresses = webUser.Addresses.ToArray();
@@ -189,24 +189,14 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                         order.AdminComments = existingJObject.ToString(Formatting.None);
                     }
+                    OrderRow orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
                     // This ViewModel is built here because it is re-used.
                     var orderHasAdditionalLocationsViewModel =
-                        BuildOrderHasAdditionalLocationsViewModel(orderRow, idOrderRow);
+                        BuildOrderHasAdditionalLocationsViewModel(orderRow, idOrder);
 
                     var checkoutConfirmViewModel = new CheckoutConfirmViewModel
                     {
-                        C_address = billingAddress.StreetAddress,
-                        C_city = order.BillingCity,
-                        C_company = order.Institution,
-                        C_email = order.BillingEmail,
-                        C_fname = order.FirstName,
-                        C_lname = order.LastName,
-                        C_state = billingAddress.State,
-                        C_telephone = billingAddress.Phone,
-                        C_zip = billingAddress.Zip,
-                        T_ordernum = order.idOrder.ToString(),
-
-
+                        Order = order,
                         AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
                         AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
                         {
@@ -214,18 +204,18 @@ namespace CUWebinars.Web.Core.Orchestrators
                             FirstName = webUser.FirstName,
                             idUser = webUser.idUser,
                             LastName = webUser.LastName,
-                            Institution = orderRow.Order.Institution
+                            Institution = order.Institution
                         },
                         AdminComments = order.AdminComments,
-                        //AffiliateComments = orderRow.Order.AffiliateComments,
+                        //AffiliateComments = order.AffiliateComments,
                         //CCUserDetails =
                         //    "None <a href=\"#AddCCModal\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Add?</a> ", // CC user removed at request
                         DiscountModel = BuildDiscountModel(webUser),
-                        DisplayOptionsInDropDownViewModel = BuildDisplayOptionsInDropDownViewModel(orderRow, idOrderRow),
+                        DisplayOptionsInDropDownViewModel = BuildDisplayOptionsInDropDownViewModel(orderRow, idOrder),
                         DisplayRowPriceViewModel =
-                            BuildDisplayRowPriceViewModel(orderRow, idOrderRow,
+                            BuildDisplayRowPriceViewModel(orderRow, idOrder,
                                 orderHasAdditionalLocationsViewModel.OptionsCost),
-                        idUser = orderRow.Order.WebUser.idUser,
+                        idUser = order.WebUser.idUser,
                         ShippingDetailsModel = new ShippingDetailsModel()
                         {
                             UserId = webUser.idUser,
@@ -248,12 +238,12 @@ namespace CUWebinars.Web.Core.Orchestrators
                         OrderHasAdditionalLocationsViewModel = orderHasAdditionalLocationsViewModel,
                         OrderRowExists = true,
                         OrderRowHasId = true,
-                        OrderStatus = orderRow.Order.OrderStatus,
-                        Origin = orderRow.Order.Origin,
-                        UserComments = orderRow.Order.UserComments,
+                        OrderStatus = order.OrderStatus,
+                        Origin = order.Origin,
+                        UserComments = order.UserComments,
                         UserFullname = userFullName,
                         UserDetails = string.Concat("<span id='userFullnameLabel'>", userFullName,
-                            "</span> - <span id='userInstitutionLabel'>", orderRow.Order.Institution, "</span><br>",
+                            "</span> - <span id='userInstitutionLabel'>", order.Institution, "</span><br>",
                             "<span id='userEmailLabel'>", webUser.email, "</span>"),
 
                         UserType = webUser.UserType
@@ -261,7 +251,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     if (checkoutConfirmViewModel.OrderRowExists)
                     {
-                        if (orderRow.idOrderRow > 0)
+                        if (orderRow.idOrder > 0)
                             checkoutConfirmViewModel.OrderRowHasId = true;
 
                         if (checkoutConfirmViewModel.OrderRowHasId)
@@ -271,7 +261,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     if (Request["referred"] != null &&
                         WebUtility.HtmlDecode(Request["referred"]) != "How did you hear about this webinar?")
                     {
-                        orderRow.Order.Origin = Request["referred"] + Environment.NewLine + orderRow.Order.Origin;
+                        order.Origin = Request["referred"] + Environment.NewLine + order.Origin;
                         //ViewData["referred"] = Request["referred"];
                     }
 
@@ -475,12 +465,14 @@ namespace CUWebinars.Web.Core.Orchestrators
                         NumberOfAdditionalLocations = orderRow.AdditionalLocation.Count(),
                         AddressesForAdditionalLocations = addressesForAdditionalLocations,
                         OrderStatus = orderRow.Order.OrderStatus,
-                        Price = orderRow.RegistrationType.Price,
+                        Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
                         PricesAndDiscounts =
                             _orderManagementService.CalculateOrderCost(orderRow.Order, optionsCost.Value),
                         RowPrice = orderRow.RowPrice,
                         RegistrationType = orderRow.RegistrationType
                     };
+
+
 
                     _logger.Info("Returning BuildDisplayRowPriceViewModel price for " + orderRow.Order.idOrder);
 

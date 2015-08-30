@@ -20,6 +20,11 @@ namespace CUWebinars.Web.App_Start
                 url: "expresscheckout",
                 defaults: new { controller = "Admin", action = "ExpressCheckout", id = 0 }
             );
+            routes.MapRoute(
+                "ccpostback",
+                url: "ccpostback",
+                defaults: new { controller = "Cart", action = "PostBackMoneris", id = 0 }
+            );
 
             routes.MapRoute(
                 "EditWebinar",

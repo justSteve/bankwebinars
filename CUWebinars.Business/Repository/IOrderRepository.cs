@@ -16,7 +16,7 @@ namespace CUWebinars.Business.Repository
         Order CreateOrder(int affiliateId, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null);
         OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, RegType registrationType);
         void DeleteOrder(int orderId);
-        Order FindOrderByIdWithOrderRows(int id);
+        Order GetOrderById(int id);
         Order FindById(int id);
         IQueryable<Order> FindOrdersByBillingEmail(string email, int aff);
         IQueryable<Order> FindOrdersByBillingEmailDomain(string email, int aff);
@@ -38,7 +38,7 @@ namespace CUWebinars.Business.Repository
         Discount FindDiscountById(int id);
         Discount FindDiscountByCode(string discountCode);
         Discount FindDiscountByUser(WebUser currentUser);
-        Order GetOrderById(int idOrder);
+        Order GetOrderByIdThin(int idOrder);
         int GetNumberOfOrdersPerWebinar(int id);
         void RemoveAndDeleteAdditionalLocation(AdditionalLocation deletedAdditionalLocation);
         void SendOrderToLegacy(Order newOrder);
