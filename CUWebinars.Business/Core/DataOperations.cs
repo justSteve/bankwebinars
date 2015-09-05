@@ -2,11 +2,16 @@
 using CUWebinars.Business.Models;
 using Ninject.Extensions.Logging;
 using System;
+
+using System.Web;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
 using CUWebinars.Business.Constants;
 
 namespace CUWebinars.Business.Core
@@ -242,9 +247,138 @@ namespace CUWebinars.Business.Core
             }
         }
 
-        public
-            string SendOrderToLegacy(Order newOrder)
+        public string SendOrderToLegacy(Order order)
         {
+            var myRow = order.OrderRows.FirstOrDefault();
+            var addLoc = "";
+            var addLocCount = 0;
+            var orderid = "0";
+            int translatedOptionId = 0;
+            if (myRow.RegistrationType != null)
+            {
+                translatedOptionId = getLegacyOptionID(myRow.RegistrationType.idRegType);
+            }
+            else
+            {
+                translatedOptionId = getLegacyOptionID(myRow.idRegType);
+            }
+            //int translatedOptionId = getLegacyOptionID(myRow.RegistrationType.idRegType);
+
+            if (myRow.AdditionalLocation != null)
+            {
+                addLocCount = myRow.AdditionalLocation.Count;
+                foreach (var loc in myRow.AdditionalLocation)
+                {
+                    addLoc += loc.Email + ",";
+                }
+            }
+
+
+            int AffiliateID = order.idAffiliate;
+            int WebinarID = 0;
+            //int idRegType = _webinarManagementService.GetRegTypeByACS(dic["DeliveryType"], Convert.ToInt32(dic["BankWebID"]));
+            int idRegType = 0;
+            var FirstName = order.FirstName;
+            var LastName = order.LastName;
+            var Title = order.WebUser.Title;
+            var Institution = order.Institution;
+            var Email = order.BillingEmail;
+            var Phone = order.BillingPhone;
+            var Address = order.BillingAddress;
+            var Address2 = order.BillingAddress2;
+            var City = order.BillingCity;
+            var State = order.BillingState;
+            var Zip = order.BillingZip;
+            var DiscountCode = "";
+            var AdditionalLocations = "";
+            var shippingFirstName = order.FirstName;
+            var shippingLastName = order.LastName;
+            var shippingPhone = order.ShippingPhone;
+            var shippingAddress = order.ShippingAddress;
+            var shippingCity = order.ShippingCity;
+            var shippingState = order.ShippingState;
+            var shippingZip = order.ShippingZip;
+            var AffiliateComments = "V3Migrator";
+            var OrderDate = order.OrderDate;
+            var DeliveryType = translatedOptionId;
+
+
+            WebinarID = myRow.idWebinar;
+
+            var PostForm = MigrateOrderModelQueryString(DeliveryType, AffiliateID, FirstName, LastName, Phone,
+                Address, Address2, City, Zip, State, shippingFirstName, shippingLastName, shippingPhone,
+                shippingAddress, shippingCity, shippingState, shippingZip, Email, Title, Institution, idRegType,
+                WebinarID, AdditionalLocations, Convert.ToDateTime(OrderDate), DiscountCode);
+
+
+            //string submitImporter = "http://localhost:51405/home/migrateorder";
+            string submitImporter = "http://acsimporter.bankwebinars.com/home/migrateorder";
+
+            //logger.Info("ACS Importer hears: " + Email + " idWebinar: " + WebinarID);
+
+
+            //Elmah.ErrorSignal.FromCurrentContext().Raise(new Exception("non-error logger"));
+
+            WebRequest req = WebRequest.Create(submitImporter);
+
+            byte[] send = Encoding.Default.GetBytes(PostForm);
+            req.Method = "POST";
+            req.ContentType = "application/x-www-form-urlencoded";
+            req.ContentLength = send.Length;
+
+            Stream sout = req.GetRequestStream();
+            sout.Write(send, 0, send.Length);
+            sout.Flush();
+            sout.Close();
+
+            WebResponse res = req.GetResponse();
+            StreamReader sr = new StreamReader(res.GetResponseStream());
+            string returnvalue = sr.ReadToEnd();
+
+            // Display the content.
+            return returnvalue;
+
+        }
+
+        private string MigrateOrderModelQueryString(int deliveryType, int affiliateId, string firstName, string lastName, string phone, string address1, string address2, string city, string zip, string state, string shippingFirstName, string shippingLastName, string shippingPhone, string shippingAddress, string shippingCity, string shippingState, string shippingZip, string email, string title, string institution, int idRegType, int webinarId, string additionalLocations, DateTime orderDate, string discountCode)
+        {
+            var PostForm = "";
+
+            PostForm = "affiliateId=" + affiliateId + "&BillingAddress.AddressType=Billing";
+            PostForm += "&BillingAddress.Name=" + HttpUtility.UrlEncode(firstName + " " + lastName);
+            PostForm += "&Source=V3Migrator?Version=3";
+            PostForm += "&phone=" + HttpUtility.UrlEncode(phone);
+            PostForm += "&address1=" + HttpUtility.UrlEncode(address1);
+            PostForm += "&address2=" + HttpUtility.UrlEncode(address2);
+            PostForm += "&city=" + HttpUtility.UrlEncode(city);
+            PostForm += "&zip=" + HttpUtility.UrlEncode(zip);
+            PostForm += "&state=" + HttpUtility.UrlEncode(state);
+            PostForm += "&ShippingFirstName=" + HttpUtility.UrlEncode(shippingFirstName);
+            PostForm += "&ShippingLastName=" + HttpUtility.UrlEncode(HttpUtility.UrlEncode(shippingLastName));
+            PostForm += "&ShippingPhone=" + HttpUtility.UrlEncode(shippingPhone);
+            PostForm += "&ShippingAddress=" + HttpUtility.UrlEncode(shippingAddress);
+            PostForm += "&ShippingCity=" + HttpUtility.UrlEncode(shippingCity);
+            PostForm += "&ShippingState=" + HttpUtility.UrlEncode(shippingState);
+            PostForm += "&ShippingZip=" + HttpUtility.UrlEncode(shippingZip);
+            PostForm += "&email=" + HttpUtility.UrlEncode(email);
+            PostForm += "&title=" + HttpUtility.UrlEncode(title);
+            PostForm += "&institution=" + HttpUtility.UrlEncode(institution);
+            PostForm += "&firstName=" + HttpUtility.UrlEncode(firstName);
+            PostForm += "&lastName=" + HttpUtility.UrlEncode(lastName);
+            PostForm += "&deliveryType=" + deliveryType;
+            PostForm += "&webinarId=" + webinarId;
+            PostForm += "&orderDate=" + HttpUtility.UrlEncode(orderDate.ToString());
+            PostForm += "&discountCode=" + HttpUtility.UrlEncode(discountCode);
+            PostForm += "&AdditionalLocationsString=" + HttpUtility.UrlEncode(additionalLocations);
+
+            return PostForm;
+
+        }
+
+        public
+            string SendOrderToLegacyForSQL(Order newOrder)
+        {
+            //attempting to deprecate this
             var myRow = newOrder.OrderRows.FirstOrDefault();
             var addLoc = "";
             var addLocCount = 0;
@@ -504,7 +638,7 @@ namespace CUWebinars.Business.Core
                 }
                 else
                 {
-                    using (var sendOrder = new SqlCommand("ImportOrder", sqlConnection))
+                    using (var sendOrder = new SqlCommand("MigrateOrder", sqlConnection))
                     {
                         sendOrder.Parameters.Add(idUser2Parameter);
                         sendOrder.Parameters.Add(idWebinarParameter);
@@ -525,8 +659,8 @@ namespace CUWebinars.Business.Core
                                 "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
                             errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() + "',";
                             errorLogger.CommandText += "'CartSynch' ,";
-                            errorLogger.CommandText += "0 ,0 ,0 ,'[CartSynch]', 0 ,";
-                            errorLogger.CommandText += "'importOrder returned " + orderid.ToString() + "')";
+                            errorLogger.CommandText += "0 ,0 ,0 ,'[MigrateOrder]', 0 ,";
+                            errorLogger.CommandText += "'MigrateOrder returned " + orderid.ToString() + "')";
 
                             errorLogger.ExecuteNonQuery();
                         }
@@ -675,7 +809,7 @@ namespace CUWebinars.Business.Core
                         ParameterName = "@idRegType",
                         Value = idRegType
                     };
-                    
+
 
                     getPricingsCommand.Connection = sqlConnection;
                     getPricingsCommand.CommandType = CommandType.Text;

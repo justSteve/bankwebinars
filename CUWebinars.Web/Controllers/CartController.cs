@@ -540,7 +540,13 @@ namespace CUWebinars.Web.Controllers
         [HttpPost]
         public ActionResult PostBackMoneris(MonerisResponse form)
         {
+            string formFields = Request.Form.ToString();
+            _logger.Info("PostBackMoneris: " + formFields);
+
             var order = _cartControllerOrchestrator.LoadOrder(Convert.ToInt32(form.order_no.Split('-')[1]));
+            
+            if (order == null) throw new ArgumentNullException("order");
+            
             JProperty monerisResponse = new JProperty(JsonPropertyKeys.MonerisResponse, JsonConvert.SerializeObject(form));
 
             order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, monerisResponse);
@@ -556,6 +562,7 @@ namespace CUWebinars.Web.Controllers
 
                     order.OrderStatus = OrderStatus.Paid;
 
+                    
                     _cartControllerOrchestrator.SendOrderToLegacy(order);
 
                     _cartControllerOrchestrator.CreatePostEventClaim(order);
