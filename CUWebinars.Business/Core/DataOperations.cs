@@ -314,11 +314,7 @@ namespace CUWebinars.Business.Core
             //string submitImporter = "http://localhost:51405/home/migrateorder";
             string submitImporter = "http://acsimporter.bankwebinars.com/home/migrateorder";
 
-            //logger.Info("ACS Importer hears: " + Email + " idWebinar: " + WebinarID);
-
-
-            //Elmah.ErrorSignal.FromCurrentContext().Raise(new Exception("non-error logger"));
-
+            
             WebRequest req = WebRequest.Create(submitImporter);
 
             byte[] send = Encoding.Default.GetBytes(PostForm);

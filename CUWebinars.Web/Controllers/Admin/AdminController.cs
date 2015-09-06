@@ -662,10 +662,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 expressOrder.AdminComments = forComment.ToString();
                 _orderManagementService.SaveChanges();
                 _orderManagementService.FireOrderSubmittedEvent(expressOrder, true);
-                if (_globalConfig.Tenant == "BankWebinars")
-                {
-                    _orderManagementService.SendOrderToLegacy(expressOrder);
-                }
+
                 RedirectToAction("OrderComplete", "Account", new { id = expressOrder.idOrder });
             }
             else
@@ -754,10 +751,8 @@ namespace CUWebinars.Web.Controllers.Admin
                 expressOrder.AdminComments = forComment.ToString();
                 _orderManagementService.SaveChanges();
                 _orderManagementService.FireOrderSubmittedEvent(expressOrder, true);
-                if (_globalConfig.Tenant == "BankWebinars")
-                {
-                    _orderManagementService.SendOrderToLegacy(expressOrder);
-                }
+
+
                 RedirectToAction("OrderComplete", "Account", new { id = expressOrder.idOrder });
             }
             else

@@ -823,11 +823,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             return model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
         }
 
-        public void SendOrderToLegacy(Order order)
-        {
-            if (_globalConfig.Tenant == "BankWebinars")
-                _orderManagementService.SendOrderToLegacy(order);
-        }
+
 
         public void CreatePostEventClaim(Order order)
         {

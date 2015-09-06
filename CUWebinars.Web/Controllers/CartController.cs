@@ -142,7 +142,6 @@ namespace CUWebinars.Web.Controllers
 
                     _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
 
-                    _cartControllerOrchestrator.SendOrderToLegacy(model.Order);
 
                     _cartControllerOrchestrator.CreatePostEventClaim(model.Order);
 
@@ -563,8 +562,6 @@ namespace CUWebinars.Web.Controllers
                     order.OrderStatus = OrderStatus.Paid;
 
                     
-                    _cartControllerOrchestrator.SendOrderToLegacy(order);
-
                     _cartControllerOrchestrator.CreatePostEventClaim(order);
 
                     if (User.Identity.IsAuthenticated)
