@@ -13,9 +13,9 @@
             <div class="navbar-inner">
                 <a class="brand" href="#">Accounts</a>
                 <ul class="nav">
-                    <li><a id="ImpersonateUserButton">Impersonate User</a></li>
-                    <li><a id="ResetPasswordButton">Reset Password</a></li>
-                    <li><a id="GetManualResetPasswordFieldsButton">Manually Reset Password</a></li>
+                    <li><a id="ImpersonateUserButton">Impersonate User</a></li> @*url = '/Admin/LogInAsUser';*@
+                    <li><a id="ResetPasswordButton">Reset Password</a></li> @*url: '/Admin/ResetPassword',*@
+                    <li><a id="GetManualResetPasswordFieldsButton">Manually Reset Password</a></li> @*url: '/Admin/ManualPasswordReset',*@
                     @*<li><a id="AssignDiscountHtmlButton" href="@Url.Content("~/Admin/DiscountManagement")">Discounts</a></li>*@
                     <li><a id="AssignClaimHtmlButton" href="@Url.Content("~/Admin/ClaimsManagement")">Assign Claims</a></li>
                     <li><a id="BatchPwdResetHtmlButton">Batch Pwd Reset</a></li>

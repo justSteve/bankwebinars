@@ -299,6 +299,7 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.AllowAnonymous]
         public ActionResult Confirmed(string email, string password)
         {
+            _logger.Info("Account.Confirmed: " + email);
             try
             {
                 var changeEmailFromKeyInputModel = _accountControllerOrchestrator.ConfirmUser(email, password);

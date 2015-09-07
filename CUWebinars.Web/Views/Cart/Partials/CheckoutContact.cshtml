@@ -20,7 +20,7 @@
 
 <script language="javascript" type="text/javascript">
     var idWebinar = cartStateManager.getWebinarId();
-    
+
     function openECWindow() {
         window.open('@url' + 'affiliateid15=19&webinarTitle=' + pagetitle + '&email5=' + $('#Email1').val() + '&webinarid=' + idWebinar + '', 'scrollbars=yes,toolbar=no,width=700,height=500');
         okToLeave = true;
@@ -75,27 +75,27 @@
 
                             <div id="LoginPart">
                                 @Html.ValidationSummary("There were 1 or more errors:", new { id = "loginErrorSummary" })
-                                <h3>Login to existing account?</h3>
+                                <h3>Login to existing account.</h3>
                                 <div>
                                     <label>Email:</label> <input id="Email1" name="Email1" value="" type="text" class="input-large"> <br>
                                     <label>Password:</label> <input id="Password1" name="Password1" type="password" class="input-large"><br>
-                                    @{
-    if (globalConfig.Tenant == "CUWebinars")
-    {
-        <div><b>Note: </b>Due to a website upgrade with enhanced security, accounts<br /> created prior to 5/18/2015 require a password reset (button above). </div>
-    }
-    if (globalConfig.Tenant == "BankWebinars")
-    {
-        <div><b>Note: </b>We've found an existing account for this email address from our legacy website. Accessing our updated site requires that you reset your password. (button above). </div>
-    }
-                                    }
+                                    @*@{
+                                        if (globalConfig.Tenant == "CUWebinars")
+                                        {
+                                            <div><b>Note: </b>Due to a website upgrade with enhanced security, accounts<br /> created prior to 5/18/2015 require a password reset (button above). </div>
+                                        }
+                                        if (globalConfig.Tenant == "BankWebinars")
+                                        {
+                                            <div><b>Note: </b>We've found an existing account for this email address from our legacy website. Accessing our updated site requires that you reset your password. (button above). </div>
+                                        }
+                                                                        }*@
                                 </div>
-                                <div id="LogintoexistingaccountBTN"></div>
+                                <div id="LoginToExistingAccountBTN"></div>
                             </div>
-                            <div id="resetPart">
+                            <div style="padding-top: 10px;" id="resetPart">
                                 <h3>Or...</h3>
                                 We can email you a link that will reset your password.
-                                <p><input id="EdgeCaseResetPasswordButton" type="button" class="btn btn-danger" name="resetPass" value="Reset Password" /></p>
+                                <p><input id="EdgeCaseResetPasswordButton" type="button" class="btn btn-mini btn-danger" name="resetPass" value="Reset Password" /></p>
                             </div>
                         </div>
                     </div>
@@ -224,7 +224,7 @@
                 </div>
             </div>
 
-            <div class="form-inline">
+            <div id="TheSubmitButtonWrapper" class="form-inline">
                 <div class="btn-group span2">&nbsp;</div>
                 <div class="btn-group span2">
                     <input id="TheSubmitButton" type="button" value="Register" name="TheSubmit" class="btn btn-default" />
@@ -241,7 +241,9 @@
             <h3>Insitution Information</h3>
         </div>
         <div id="UserInstitutionBody" class="modal-body">
-            <h5>Is this your institution?</h5>        <div id="ShowInstitution">placeholder for ajax response</div>
+            <h5>Is this your institution?</h5>
+
+            <div id="ShowInstitution">placeholder for ajax response</div>
 
             <div id="instInfo">
                 <p><input type="button" class="btn btn-primary" name="YesUseAddress" id="YesUseAddress" value="Yes, use this address." /></p>

@@ -15,5 +15,6 @@ namespace CUWebinars.Business.Constants
         public static readonly string CUMigratorPasswordReset = "http://ttstrain.com/ws/2014/01/identity/claims/CUMigratorPasswordReset";
         public static readonly string BWMigratorPasswordReset = "http://ttstrain.com/ws/2014/01/identity/claims/BWMigratorPasswordReset";
         public static readonly string ShouldSeeCopyOfConnectionInfo = "http://ttstrain.com/ws/2014/01/identity/claims/ShouldSeeCopyOfConnectionInfo";
+        
     }
 }

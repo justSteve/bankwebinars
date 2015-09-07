@@ -122,7 +122,7 @@ namespace CUWebinars.Web.Controllers
             {
                 var email = incomingOrderModel.Email.Trim();
 
-                _logger.Info("Begin import: " + email);
+                _logger.Info("CreateOrder2 Begin import: " + email);
 
                 var orderManagementQueryResult = _orderControllerOrchestrator.GetPreparatoryData(incomingOrderModel, email);
 
@@ -169,9 +169,6 @@ namespace CUWebinars.Web.Controllers
 
                 _logger.Info("ACS Importer heard: " + newOrder.BillingEmail);
                 _orderManagementService.SendOrderToLegacy(newOrder);
-
-                //DataOperations dataop = new DataOperations();
-                //dataop.BuildACSImporter(newOrder);
 
                 newOrder.OrderDate = TtsConfig.UtcNowAsCts;
                 _orderManagementService.SaveChanges();
@@ -387,8 +384,6 @@ namespace CUWebinars.Web.Controllers
                     _logger.Info("ACS Importer heard: " + newOrder.BillingEmail);
                     _orderManagementService.SendOrderToLegacy(newOrder);
 
-                    //DataOperations dataop = new DataOperations();
-                    //dataop.BuildACSImporter(newOrder);
 
                     newOrder.OrderDate = importedOrder.OrderDate;
                     _orderManagementService.SaveChanges();

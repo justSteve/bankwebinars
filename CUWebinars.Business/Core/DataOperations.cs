@@ -11,6 +11,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Text;
 using CUWebinars.Business.Constants;
 
@@ -883,6 +884,35 @@ namespace CUWebinars.Business.Core
             }
 
 
+        }
+
+        public void RemoveImpersonatedClaimsByCurrentAdmin(string adminUserEmail)
+        {
+            int numRows = 0;
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var sqlCmd = new SqlCommand())
+                {
+                    var adminEmail = new SqlParameter
+                    {
+                        DbType = DbType.String,
+                        ParameterName = "@AdminEmail",
+                        Value = adminUserEmail
+                    };
+
+                    sqlCmd.Connection = sqlConnection;
+                    sqlCmd.CommandType = CommandType.Text;
+                    sqlCmd.Parameters.Add(adminEmail);
+                    sqlCmd.CommandText =
+                        "DELETE FROM dbo.UserClaims WHERE Type = 'http://ttstrain.com/ws/2014/01/identity/claims/BeingImpersonated' AND Value = @adminEmail;";
+
+                    numRows = sqlCmd.ExecuteNonQuery();
+                }
+            }
+            
         }
     }
 }

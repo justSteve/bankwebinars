@@ -392,6 +392,7 @@ module RegistrationInCart {
         }
 
         resetPasswordOrLoginView(email: JQuery, webinarId: number): void {
+            //fires when existing user is detected entering 'signup'.
             //console.log("call resetPasswordOrLoginView: " + email);
             $('#Email1').val(email);
             $('#ResetPassEmail').val(email);
@@ -403,11 +404,13 @@ module RegistrationInCart {
             });
 
             $.when(showLoginInput.resolve()).then(function () {
-                $('#Email1').focus();
+                $('#Password1').focus();
             });
 
             this.action = Action.SubmitLogin;
             $('#TheSubmitButton').prop('value', 'Log In');
+            var TheSubmitButtonWrapper = $('#TheSubmitButtonWrapper').contents();
+            $('#LoginToExistingAccountBTN').append(TheSubmitButtonWrapper);
 
             if (this.inputAction === InputAction.EnterKeyPress)
                 this.inputAction = InputAction.None;

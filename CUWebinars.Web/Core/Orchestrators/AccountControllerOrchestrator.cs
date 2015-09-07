@@ -1250,11 +1250,11 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             if (hasAlreadyVerifiedAccount)
             {
-                changeEmailFromKeyInputModel.ScreenMessage = "You've already verified your account with us. Thank you.";
+                changeEmailFromKeyInputModel.ScreenMessage = "This account is now verified. Thank you.";
                 return changeEmailFromKeyInputModel;
             }
 
-            if (userAccount.HasClaim(ClaimTypes.HasNotVerified, ClaimValues.ManualRegistration))
+            if (userAccount.HasClaim(ClaimTypes.HasNotVerified))
             {
                 changeEmailFromKeyInputModel.ScreenMessage = "Thank you for verifying your account with us.";
 

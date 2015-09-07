@@ -630,6 +630,10 @@ namespace CUWebinars.Web.Controllers.Admin
             sb.Append("pretty " + form.Pretty);
             sb.Append("RawRequest " + HttpUtility.HtmlDecode(form.RawRequest));
 
+            if (form.FormId == "52205870745961")
+            {
+                RedirectToAction("ExpressCheckout4IE", "Admin", routeValues: new { form });
+            }
 
             ExpressCheckoutModel deserializedExChk = JsonConvert.DeserializeObject<ExpressCheckoutModel>(form.RawRequest);
 
@@ -710,37 +714,33 @@ namespace CUWebinars.Web.Controllers.Admin
 
         [System.Web.Mvc.HttpPost]
         [AllowAnonymous]
-        public void ExpressCheckout4IE(JotFormWebHook form)
+        public ActionResult ExpressCheckout4IE(ExpressCheckoutModel form)
         {
             string formFields = Request.Form.ToString();
-            _logger.Info("all fields: " + formFields.ToString());
+            _logger.Info("all fields submitted to ExpressCheckout4IE: " + formFields.ToString());
             var sb = new StringBuilder();
-            sb.Append("formid " + form.FormId);
-            sb.Append("pretty " + form.Pretty);
-            sb.Append("RawRequest " + HttpUtility.HtmlDecode(form.RawRequest));
 
-
-            ExpressCheckoutModel deserializedExChk = JsonConvert.DeserializeObject<ExpressCheckoutModel>(form.RawRequest);
-
-            var user = _membershipService.GetUserByEmail(deserializedExChk.q5_email5);
+            var user = _membershipService.GetUserByEmail(form.q5_email5);
 
             if (ReferenceEquals(null, user))
             {
-                user = _membershipService.CreateExpressCheckoutUser(_globalConfig.Tenant, deserializedExChk.q5_email5
-                    , deserializedExChk.q4_name.first
-                    , deserializedExChk.q4_name.last
-                    , deserializedExChk.q6_phoneNumber6.area + deserializedExChk.q6_phoneNumber6.phone
-                    , deserializedExChk.q8_institution
-                    , deserializedExChk.q9_title);
+                _logger.Info("express_checkout user must be created: " + user.email);
+                user = _membershipService.CreateExpressCheckoutUser(_globalConfig.Tenant, form.q5_email5
+                    , form.q4_name.first
+                    , form.q4_name.last
+                    , form.q6_phoneNumber6.area + form.q6_phoneNumber6.phone
+                    , form.q8_institution
+                    , form.q9_title);
                 _orderManagementService.SaveChanges();
             }
 
 
-            Order expressOrder = _orderManagementService.FindExpressCheckoutOrder(deserializedExChk.q5_email5,
-                deserializedExChk.q11_webinarid);
+            Order expressOrder = _orderManagementService.FindExpressCheckoutOrder(form.q5_email5,
+                form.q11_webinarid);
 
             if (!ReferenceEquals(expressOrder, null))
             {
+                _logger.Info("ExpressCheckout4IE postback found order: " + expressOrder.idOrder);
                 _orderManagementService.AssignWebUserToOrder(user, expressOrder);
                 var forComment = new JProperty(
                     string.Concat("ExpressCheckout-", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
@@ -753,16 +753,16 @@ namespace CUWebinars.Web.Controllers.Admin
                 _orderManagementService.FireOrderSubmittedEvent(expressOrder, true);
 
 
-                RedirectToAction("OrderComplete", "Account", new { id = expressOrder.idOrder });
+                return RedirectToAction("OrderComplete", "Account", new { id = form.q5_email5 });
             }
             else
             {
+                _logger.Info("ExpressCheckout4ID postback did NOT find order: " + expressOrder.idOrder);
 
-
-                var idRegType = _webinarManagementService.GetRegTypeByLableAndWebinar(deserializedExChk.q10_registrationType, deserializedExChk.q11_webinarid);
+                var idRegType = _webinarManagementService.GetRegTypeByLableAndWebinar(form.q10_registrationType, form.q11_webinarid);
                 var newOrderRow = _orderManagementService.CreateOrderRow(null, null, idRegType);
 
-                newOrderRow.idWebinar = deserializedExChk.q11_webinarid;
+                newOrderRow.idWebinar = form.q11_webinarid;
 
                 newOrderRow.idRegType = idRegType;
                 _orderManagementService.LoadWebinarIntoOrderRow(newOrderRow);
@@ -785,18 +785,19 @@ namespace CUWebinars.Web.Controllers.Admin
                 newOrderRow.Order.Origin = "ExpressCheckout";
 
                 JProperty createdByExpressCheckout = new JProperty(
-        JsonPropertyKeys.OrderCreatedByExpressCheckoutKey,
-        ""
-        );
+                    JsonPropertyKeys.OrderCreatedByExpressCheckoutKey,
+                    ""
+                    );
 
                 newOrderRow.Order.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrderRow.Order.AdminComments, createdByExpressCheckout);
 
                 _orderManagementService.SaveChanges();
-                //newOrderRow.Order.AdminComments = 
-                _logger.Info("ExpressCheckout: " + deserializedExChk);
-                //return Json(new { Result = WebUiConstants.Success, Code = newOrderRow.TtsJoinUrl });
+
+                _logger.Info("ExpressCheckout: " + form);
+
                 _orderManagementService.FireOrderSubmittedEvent(newOrderRow.Order, true);
-                //return RedirectToAction("OrderComplete", "Account", new {id = newOrderRow.idOrder});
+
+                return RedirectToAction("OrderComplete", "Account", new { id = expressOrder.idOrder });
             }
 
         }
@@ -1518,12 +1519,7 @@ namespace CUWebinars.Web.Controllers.Admin
                   .Select(x => new { key = x.Replace(@"cb_", ""), value = Request.Params[x] })
                   .ToDictionary(x => int.Parse(x.key), x => x.value);
 
-            //if (UserFacade.Instance.GetCurrentUser().UserType == UserType.Affiliate)
-            //{
-            //    includedAffiliates.Clear();
-            //    includedAffiliates.Add(UserFacade.Instance.GetCurrentUser().ID, "on");
 
-            //}
             int i = model.Webinar.idWebinar;
             model.SendDate = Convert.ToDateTime(model.SendDate);
 
@@ -1696,6 +1692,8 @@ namespace CUWebinars.Web.Controllers.Admin
                     adminUser.Claims.Single(c => c.Type == System.IdentityModel.Claims.ClaimTypes.Email).Value;
                 var impersonatedUserAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, model.Email);
 
+                
+
                 if (ReferenceEquals(null, impersonatedUserAccount))
                 {
                     var nullReferenceException =
@@ -1705,6 +1703,10 @@ namespace CUWebinars.Web.Controllers.Admin
                     ModelState.AddModelError(string.Empty, nullReferenceException);
                     return View("", "", "");
                 }
+                var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
+            
+                dataOperations.RemoveImpersonatedClaimsByCurrentAdmin(adminUserEmail);
+            
 
                 _membershipService.AddClaim(impersonatedUserAccount, Business.Constants.ClaimTypes.BeingImpersonated, adminUserEmail);
                 _membershipService.LogOutUser();
@@ -1757,6 +1759,21 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 try
                 {
+                    var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, model.Email);
+                    if (userAccount.HasClaim(Business.Constants.ClaimTypes.HasNotVerified))
+                    {
+                        _membershipService.RemoveClaim(_globalConfig.Tenant, model.Email, Business.Constants.ClaimTypes.HasNotVerified, ClaimValues.ManualRegistration);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    _logger.Error("ManualPasswordReset did not find existing account: {0}", _appHelper.GetUserAuditInfo());
+                    _logger.Error("ManualPasswordReset did not find existing account: {0}", exception.Message);
+                }
+
+                try
+                {
+
                     _membershipService.CleanUser(_globalConfig.Tenant, model.Email, model.NewPassword);
                     _logger.Info("Manual Password Reset for {0} by: {1}. ", model.Email, _appHelper.GetUserAuditInfo());
                     return Json(new { Result = WebUiConstants.Success });

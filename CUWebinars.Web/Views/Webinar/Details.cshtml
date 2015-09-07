@@ -4,6 +4,7 @@
 @model WebinarDetailsViewModel
 
 @{
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     ViewBag.Title = Model.Webinar.Title + " - Presented by: " + Model.Webinar.Presenter.WebUser.FullName;
     IStateService stateService = new StateService();
 
@@ -21,9 +22,7 @@
         Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
     }
 
-    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
-
-
+    
     if (Model.UserOwnsThisEvent > 0)
     {
         <script type="text/javascript">
