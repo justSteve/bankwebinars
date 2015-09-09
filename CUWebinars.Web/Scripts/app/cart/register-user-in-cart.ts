@@ -405,6 +405,7 @@ module RegistrationInCart {
 
             $.when(showLoginInput.resolve()).then(function () {
                 $('#Password1').focus();
+                $('#modalShowExpressCheckout').modal('toggle');
             });
 
             this.action = Action.SubmitLogin;

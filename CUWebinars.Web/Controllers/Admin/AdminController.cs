@@ -619,64 +619,59 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         [AllowAnonymous]
-        public void ExpressCheckout(JotFormWebHook form)
+        public void ExpressCheckout(JotFormWebHook postback)
         {
             string formFields = Request.Form.ToString();
-            _logger.Info("all fields: " + formFields.ToString());
-            var sb = new StringBuilder();
-            sb.Append("formid " + form.FormId);
-            sb.Append("pretty " + form.Pretty);
-            sb.Append("RawRequest " + HttpUtility.HtmlDecode(form.RawRequest));
+            _logger.Info("all fields submitted to ExpressCheckout: " + formFields.ToString());
 
-            if (form.FormId == "52205870745961")
-            {
-                RedirectToAction("ExpressCheckout4IE", "Admin", routeValues: new { form });
-            }
+            ExpressCheckoutModel form
+                = JsonConvert.DeserializeObject<ExpressCheckoutModel>(postback.RawRequest);
 
-            ExpressCheckoutModel deserializedExChk = JsonConvert.DeserializeObject<ExpressCheckoutModel>(form.RawRequest);
 
-            var user = _membershipService.GetUserByEmail(deserializedExChk.q5_email5);
+            var user = _membershipService.GetUserByEmail(form.q5_email5);
 
             if (ReferenceEquals(null, user))
             {
-                user = _membershipService.CreateExpressCheckoutUser(_globalConfig.Tenant, deserializedExChk.q5_email5
-                    , deserializedExChk.q4_name.first
-                    , deserializedExChk.q4_name.last
-                    , deserializedExChk.q6_phoneNumber6.area + deserializedExChk.q6_phoneNumber6.phone
-                    , deserializedExChk.q8_institution
-                    , deserializedExChk.q9_title);
+                _logger.Info("express_checkout user must be created: " + user.email);
+                user = _membershipService.CreateExpressCheckoutUser(_globalConfig.Tenant, form.q5_email5
+                    , form.q4_name.first
+                    , form.q4_name.last
+                    , form.q6_phoneNumber6.area + form.q6_phoneNumber6.phone
+                    , form.q8_institution
+                    , form.q9_title);
                 _orderManagementService.SaveChanges();
             }
 
 
-            Order expressOrder = _orderManagementService.FindExpressCheckoutOrder(deserializedExChk.q5_email5,
-                deserializedExChk.q11_webinarid);
+            Order expressOrder = _orderManagementService.FindExpressCheckoutOrder(form.q5_email5,
+                form.q11_webinarid);
 
             if (!ReferenceEquals(expressOrder, null))
             {
+                _logger.Info("ExpressCheckout webhook {0} found order: {1}", postback.FormId, expressOrder.idOrder);
                 _orderManagementService.AssignWebUserToOrder(user, expressOrder);
                 var forComment = new JProperty(
                     string.Concat("ExpressCheckout-", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
                         new JObject(new JProperty("ExpressCheckoutComments", expressOrder.AdminComments))
                     );
-                expressOrder.OrderStatus = OrderStatus.Billed;
+                expressOrder.OrderStatus = OrderStatus.Submitted;
                 expressOrder.Origin = "ExpressCheckout";
                 expressOrder.AdminComments = forComment.ToString();
                 _orderManagementService.SaveChanges();
                 _orderManagementService.FireOrderSubmittedEvent(expressOrder, true);
 
-                RedirectToAction("OrderComplete", "Account", new { id = expressOrder.idOrder });
+                //return RedirectToAction("OrderComplete", "Account", new { id = form.q5_email5 });
             }
             else
             {
+                _logger.Warn("ExpressCheckout webhook {0} order NOT FOUND.", postback.FormId);
 
-
-                var idRegType = _webinarManagementService.GetRegTypeByLableAndWebinar(deserializedExChk.q10_registrationType, deserializedExChk.q11_webinarid);
+                var idRegType = _webinarManagementService.GetRegTypeByLableAndWebinar(form.q10_registrationType, form.q11_webinarid);
                 var newOrderRow = _orderManagementService.CreateOrderRow(null, null, idRegType);
 
-                newOrderRow.idWebinar = deserializedExChk.q11_webinarid;
+                newOrderRow.idWebinar = form.q11_webinarid;
 
                 newOrderRow.idRegType = idRegType;
                 _orderManagementService.LoadWebinarIntoOrderRow(newOrderRow);
@@ -684,8 +679,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
                 _orderManagementService.SetUserStatusToUnChanged(user);
-                //_orderManagementService.SetAffiliateStatusToUnChanged(affiliate);
-
 
                 _orderManagementService.CreateNewOrder(
                     affiliate.idUserAff,
@@ -698,16 +691,20 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 newOrderRow.Order.Origin = "ExpressCheckout";
 
-                JProperty createdByExpressCheckout = new JProperty(JsonPropertyKeys.OrderCreatedByExpressCheckoutKey, "");
+                JProperty createdByExpressCheckout = new JProperty(
+                    JsonPropertyKeys.OrderCreatedByExpressCheckoutKey,
+                    ""
+                    );
 
                 newOrderRow.Order.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrderRow.Order.AdminComments, createdByExpressCheckout);
 
                 _orderManagementService.SaveChanges();
-                //newOrderRow.Order.AdminComments = 
-                _logger.Info("ExpressCheckout: " + deserializedExChk);
-                //return Json(new { Result = WebUiConstants.Success, Code = newOrderRow.TtsJoinUrl });
+
+                _logger.Info("ExpressCheckout: " + form);
+
                 _orderManagementService.FireOrderSubmittedEvent(newOrderRow.Order, true);
-                //return RedirectToAction("OrderComplete", "Account", new {id = newOrderRow.idOrder});
+
+                //return RedirectToAction("OrderComplete", "Account", new { id = expressOrder.idOrder });
             }
 
         }
@@ -752,12 +749,11 @@ namespace CUWebinars.Web.Controllers.Admin
                 _orderManagementService.SaveChanges();
                 _orderManagementService.FireOrderSubmittedEvent(expressOrder, true);
 
-
                 return RedirectToAction("OrderComplete", "Account", new { id = form.q5_email5 });
             }
             else
             {
-                _logger.Info("ExpressCheckout4ID postback did NOT find order: " + expressOrder.idOrder);
+                _logger.Info("ExpressCheckout4IE postback did NOT find order: " + expressOrder.idOrder);
 
                 var idRegType = _webinarManagementService.GetRegTypeByLableAndWebinar(form.q10_registrationType, form.q11_webinarid);
                 var newOrderRow = _orderManagementService.CreateOrderRow(null, null, idRegType);
@@ -770,8 +766,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
                 _orderManagementService.SetUserStatusToUnChanged(user);
-                //_orderManagementService.SetAffiliateStatusToUnChanged(affiliate);
-
 
                 _orderManagementService.CreateNewOrder(
                     affiliate.idUserAff,
@@ -1692,7 +1686,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     adminUser.Claims.Single(c => c.Type == System.IdentityModel.Claims.ClaimTypes.Email).Value;
                 var impersonatedUserAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, model.Email);
 
-                
+
 
                 if (ReferenceEquals(null, impersonatedUserAccount))
                 {
@@ -1704,9 +1698,9 @@ namespace CUWebinars.Web.Controllers.Admin
                     return View("", "", "");
                 }
                 var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
-            
+
                 dataOperations.RemoveImpersonatedClaimsByCurrentAdmin(adminUserEmail);
-            
+
 
                 _membershipService.AddClaim(impersonatedUserAccount, Business.Constants.ClaimTypes.BeingImpersonated, adminUserEmail);
                 _membershipService.LogOutUser();

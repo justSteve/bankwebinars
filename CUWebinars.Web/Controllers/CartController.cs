@@ -486,15 +486,20 @@ namespace CUWebinars.Web.Controllers
 
 
 
-        public ActionResult ExpressCheckout4IE1CU(int idWebinar, int idAffiliate)
+        public ActionResult ExpressCheckout4IE1CU(int idWebinar, int? idAffiliate)
         {
 
             var webinar = _cartControllerOrchestrator.LoadWebinar(idWebinar);
+            var _idAffiliate = 19;
+            if (!ReferenceEquals(idAffiliate, null))
+            {
+                _idAffiliate = idAffiliate.Value;
+            }
 
             var model = new ExpressCheckoutModel
             {
                 q11_webinarid = idWebinar,
-                q15_affiliateid15 = idAffiliate,
+                q15_affiliateid15 = _idAffiliate,
                 q12_webinarTitle = webinar.Title
             };
 
@@ -502,15 +507,20 @@ namespace CUWebinars.Web.Controllers
 
         }
 
-        public ActionResult ExpressCheckout4IE1(int idWebinar, int idAffiliate)
+        public ActionResult ExpressCheckout4IE1(int idWebinar, int? idAffiliate)
         {
 
             var webinar = _cartControllerOrchestrator.LoadWebinar(idWebinar);
+            var _idAffiliate = 19;
+            if (!ReferenceEquals(idAffiliate, null))
+            {
+                _idAffiliate = idAffiliate.Value;
+            }
 
             var model = new ExpressCheckoutModel
             {
                 q11_webinarid = idWebinar,
-                q15_affiliateid15 = idAffiliate,
+                q15_affiliateid15 = _idAffiliate,
                 q12_webinarTitle = webinar.Title
             };
 
@@ -518,21 +528,14 @@ namespace CUWebinars.Web.Controllers
 
         }
 
-        public void ExpressCheckout(JotFormWebHook form)
+        public ActionResult ThankYou(FormCollection form)
         {
+
             string formFields = Request.Form.ToString();
-            var sb = new StringBuilder();
-            sb.Append("formid" + form.FormId);
-            sb.Append("pretty" + form.Pretty);
-            sb.Append("RawRequest" + form.RawRequest);
+            _logger.Info("ThankYou postback: " + formFields);
 
+            return View();
 
-
-            ExpressCheckoutModel deserializedExChk
-                = JsonConvert.DeserializeObject<ExpressCheckoutModel>(form.RawRequest);
-
-
-            _logger.Info("expresscheckout: " + deserializedExChk);
 
         }
 

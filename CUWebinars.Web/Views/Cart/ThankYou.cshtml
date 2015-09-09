@@ -1,0 +1,42 @@
+﻿@using CUWebinars.Web.Core
+@*@model Order*@
+
+@{
+    ViewBag.Title = "ThankYou";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+
+    //var myRow = Model.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+    //var newUserMsg = "<div class='span7'><p>" +
+    //                 "An order confirmation email has been dispatched to " + Model.BillingEmail + " and includes " +
+    //                 "complete details of your registration. </p></div>";
+    //if (!User.Identity.IsAuthenticated)
+    //{
+    //    newUserMsg = "<div class='span7'><p>" +
+    //                 "An order confirmation email has been dispatched to " + Model.BillingEmail + " and includes " +
+    //                 "a link that will confirm your identity and activate this account. You will not be able " +
+    //                 "to log into our website until visiting the link provided in that email. </p>" +
+    //                 "<p>If you do not see our message in a timely fashion (and after checking your spam folder " +
+    //                 "for a message from " + _globalConfig.TenantEmail + ") please contact Customer Service at 800-831-0678 ext. 703.</p></div>";
+    //}
+
+    <div id="LogInContainer" class="container">
+        <div id="reset">
+
+            <div class="legendImitator">
+                <b>Thank you for your order!</b>
+            </div>
+            <div id="OrderSummaryContainer">
+                You order has been recorded. Please check your email for complete details!
+            </div>
+
+            <div id="FeedbackContainer" class="span6">
+                <section>
+                    <h4>Feedback</h4>
+                    @{ Html.RenderPartial("Partials/_CheckoutFeedback"); }
+                </section>
+            </div>
+        </div>
+    </div>
+}

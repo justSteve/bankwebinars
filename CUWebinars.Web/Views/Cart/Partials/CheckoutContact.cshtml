@@ -9,12 +9,12 @@
     var url = "";
     if (@ConfigurationManager.AppSettings["Tenant"] == "CUWebinars")
     {
-        url = "http://form.jotformpro.com/form/52098289485976";
+        url = "/cart/ExpressCheckout4IE1CU";
     }
 
     if (@ConfigurationManager.AppSettings["Tenant"] == "BankWebinars")
     {
-        url = "http://form.jotform.us/form/32525522499156?";
+        url = "/cart/ExpressCheckout4IE1";
     }
 }
 
@@ -22,9 +22,10 @@
     var idWebinar = cartStateManager.getWebinarId();
 
     function openECWindow() {
-        window.open('@url' + 'affiliateid15=19&webinarTitle=' + pagetitle + '&email5=' + $('#Email1').val() + '&webinarid=' + idWebinar + '', 'scrollbars=yes,toolbar=no,width=700,height=500');
-        okToLeave = true;
-        location.reload(true);
+        window.location.href = "@url?idWebinar=" + idWebinar + "&idAffiliate=19";
+        //window.open('@url' + 'affiliateid15=19&webinarTitle=' + pagetitle + '&email5=' + $('#Email1').val() + '&webinarid=' + idWebinar + '',"_blank", 'scrollbars=yes,toolbar=no,width=700,height=500');
+        //okToLeave = true;
+        //location.reload(true);
     }
 </script>
 
@@ -264,16 +265,15 @@
     @Html.Partial("Partials/_UpdateOrderWithUserId")
 </div>
 
-<div id="modalUserHasAccount" class="modal hide">
+<div id="modalShowExpressCheckout" class="modal hide">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h3>Express Checkout</h3>
     </div>
     <div id="UserHasAccount" class="modal-body">
         <p>
-            Use our express checkout feature to register and bypass logging into your account.
-            Try our <i>Express Me!</i> button. If you need instant access to your account you can
-            login here or use the Reset Password button.
+            Try our <i>Express Me!</i> button when all you want to do is place an order without logging in.
+            If you need instant access to your account you can login here or use the Reset Password button.
             @if (globalConfig.Tenant == "BankWebinars")
             {
                 <span>

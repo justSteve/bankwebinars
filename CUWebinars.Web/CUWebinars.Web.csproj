@@ -981,6 +981,7 @@
     <Content Include="Views\Cart\ExpressCheckout4IE1.cshtml" />
     <Content Include="Views\Shared\_LayoutJotForm.cshtml" />
     <Content Include="Views\Cart\ExpressCheckout4IE1CU.cshtml" />
+    <Content Include="Views\Cart\ThankYou.cshtml" />
     <None Include="Web.BankWebinars31 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
