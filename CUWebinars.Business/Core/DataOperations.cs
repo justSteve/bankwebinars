@@ -2,9 +2,10 @@
 using CUWebinars.Business.Models;
 using Ninject.Extensions.Logging;
 using System;
-
+using System.Collections;
 using System.Web;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
@@ -22,6 +23,8 @@ namespace CUWebinars.Business.Core
         private readonly string _connectionString;
 
         private readonly ILogger _logger;
+
+        private readonly TtsConfiguration _ttsConfig;
 
         public DataOperations(string connectionString)
         {
@@ -248,7 +251,7 @@ namespace CUWebinars.Business.Core
             }
         }
 
-        public string SendOrderToLegacy(Order order)
+        public void SendOrderToLegacy(Order order)
         {
             var myRow = order.OrderRows.FirstOrDefault();
             var addLoc = "";
@@ -315,7 +318,7 @@ namespace CUWebinars.Business.Core
             //string submitImporter = "http://localhost:51405/home/migrateorder";
             string submitImporter = "http://acsimporter.bankwebinars.com/home/migrateorder";
 
-            
+
             WebRequest req = WebRequest.Create(submitImporter);
 
             byte[] send = Encoding.Default.GetBytes(PostForm);
@@ -328,12 +331,12 @@ namespace CUWebinars.Business.Core
             sout.Flush();
             sout.Close();
 
-            WebResponse res = req.GetResponse();
-            StreamReader sr = new StreamReader(res.GetResponseStream());
-            string returnvalue = sr.ReadToEnd();
+            //WebResponse res = req.GetResponse();
+            //StreamReader sr = new StreamReader(res.GetResponseStream());
+            //string returnvalue = sr.ReadToEnd();
 
             // Display the content.
-            return returnvalue;
+            //return returnvalue;
 
         }
 
@@ -912,7 +915,162 @@ namespace CUWebinars.Business.Core
                     numRows = sqlCmd.ExecuteNonQuery();
                 }
             }
-            
+
+        }
+
+        public OrderRow GetLegacyOrder(Order order)
+        {
+            var idWebinarParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idWebinar", Value = order.OrderRows.FirstOrDefault().idWebinar };
+            var emailParameter = new SqlParameter { SqlDbType = SqlDbType.VarChar, Size = 200, ParameterName = "@email", Value = order.BillingEmail };
+
+            OrderRow lOrder = new OrderRow();
+            lOrder.idOrder = 0;
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+
+                sqlConnection.Open();
+
+                using (var getOrder = new SqlCommand("GetLegacyOrderForV3", sqlConnection))
+                {
+                    getOrder.Parameters.Add(idWebinarParameter);
+                    getOrder.Parameters.Add(emailParameter);
+
+                    try
+                    {
+                        getOrder.Connection = sqlConnection;
+                        getOrder.CommandType = CommandType.StoredProcedure;
+
+                        using (var reader = getOrder.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                lOrder.idOrder = Convert.ToInt32(reader.GetInt32(0));
+                                lOrder.idRegType = Convert.ToInt32(reader.GetInt32(1));
+                                //lOrder.RowStatus = (OrderRowStatus)Convert.ToInt32(reader.GetInt32(2));
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() +
+                                                       "',";
+                            errorLogger.CommandText += "'GETLEGACYORDER' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'[GETLEGACYORDER]', 9 ,";
+                            errorLogger.CommandText += "'error at GETLEGACYORDER " + ex.Message + "')";
+
+                            errorLogger.ExecuteNonQuery();
+
+                        }
+                    }
+                }
+                return lOrder;
+            }
+        }
+
+        public ListDictionary ImportLegacyOrders(int? webinarId)
+        {
+            var idWebinarParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idWebinar", Value = webinarId };
+            //var emailParameter = new SqlParameter { SqlDbType = SqlDbType.VarChar, Size = 200, ParameterName = "@email", Value = order.BillingEmail };
+            //var defaultConnection =
+            //    "Data Source=tcp:nt2j4x3hvq.database.windows.net,1433;Initial Catalog=BankWebinars33_db;User Id=TTSOp@kmow9uloz6;Password=HXm88WIX;MultipleActiveResultSets=True;";
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+
+                sqlConnection.Open();
+
+                using (var getOrder = new SqlCommand("ImportLegacyOrders", sqlConnection))
+                {
+                    getOrder.Parameters.Add(idWebinarParameter);
+
+                    ListDictionary orders = new ListDictionary();
+
+                    try
+                    {
+                        getOrder.Connection = sqlConnection;
+                        getOrder.CommandType = CommandType.StoredProcedure;
+
+                        using (var reader = getOrder.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var idOrder = Convert.ToInt32(reader.GetInt32(0));
+                                var email = reader.GetString(1);
+                                orders.Add(email, idOrder);
+                            }
+                        }
+
+                        return orders;
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() +
+                                                       "',";
+                            errorLogger.CommandText += "'ImportLegacyOrders' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'[ImportLegacyOrders]', 9 ,";
+                            errorLogger.CommandText += "'error at ImportLegacyOrders " + ex.Message + "')";
+
+                            errorLogger.ExecuteNonQuery();
+
+                        }
+                        return null;
+                    }
+                }
+            }
+        }
+
+        public void ImportLegacyOrder(int value)
+        {
+            var idOrderParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idOrder", Value = value };
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var getOrder = new SqlCommand("MigrateLegacyOrderToV3", sqlConnection))
+                {
+                    getOrder.Parameters.Add(idOrderParameter);
+
+                    try
+                    {
+                        using (var reader = getOrder.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var idOrder = Convert.ToInt32(reader.GetInt32(0));
+                                var email = reader.GetString(1);
+                            }
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() +
+                                                       "',";
+                            errorLogger.CommandText += "'MigrateLegacyOrderToV3' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'[MigrateLegacyOrderToV3]', 9 ,";
+                            errorLogger.CommandText += "'error at MigrateLegacyOrderToV3 " + ex.Message + "')";
+
+                            errorLogger.ExecuteNonQuery();
+
+                        }
+                    }
+                }
+            }
+
         }
     }
 }

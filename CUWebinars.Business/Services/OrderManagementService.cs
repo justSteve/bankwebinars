@@ -14,13 +14,16 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Text;
+using System.Web.UI.WebControls;
 using IEvent = CUWebinars.NotificationSystem.Event.IEvent;
 using IEventSource = CUWebinars.NotificationSystem.Event.IEventSource;
 
@@ -278,6 +281,39 @@ namespace CUWebinars.Business.Services
             };
 
             FireAdhocNotificationHandler(adhocNotificationSubmittedViewModel);
+        }
+
+        public OrderRow CheckLegacyOrder(Order order)
+        {
+            var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
+            return dataOperations.GetLegacyOrder(order);
+            
+        }
+
+        public void CheckForLegacyOrders(int webinarId)
+        {
+            var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
+            var orders = dataOperations.ImportLegacyOrders(webinarId);
+            var v3orders = GetOrdersForWebinar(webinarId);
+            foreach (DictionaryEntry order in orders)
+            {
+                foreach (var v3Order in v3orders)
+                {
+                    if (v3Order.BillingEmail == order.Key.ToString())
+                    {
+                        break;
+                    }
+                    ImportLegacyOrder(Convert.ToInt32(order.Value));
+                }
+            }
+
+            
+        }
+
+        private void ImportLegacyOrder(int value)
+        {
+            var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
+             dataOperations.ImportLegacyOrder(value);
         }
 
         public IEnumerable<Order> GetOrdersByLastName(string lastName, int aff)

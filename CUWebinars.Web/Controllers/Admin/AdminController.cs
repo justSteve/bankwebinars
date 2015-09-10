@@ -2125,6 +2125,8 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
             {
+               _orderManagementService.CheckForLegacyOrders(webinarId.Value);
+                
                 int totalNumberOrders;
 
                 return Json(new
@@ -2145,6 +2147,14 @@ namespace CUWebinars.Web.Controllers.Admin
 
             foreach (var order in orders)
             {
+                OrderRow checkLegacyOrder = _orderManagementService.CheckLegacyOrder(order);
+
+                if (checkLegacyOrder.idOrder == 0)
+                {
+                    _orderManagementService.SendOrderToLegacy(order);
+                }
+
+                
                 var orderRow = order.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
                 int orderToEdit = order.idOrderLegacy;
                 if (orderToEdit == 0) orderToEdit = order.idOrder;

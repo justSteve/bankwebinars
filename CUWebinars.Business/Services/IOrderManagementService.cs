@@ -110,5 +110,7 @@ namespace CUWebinars.Business.Services
         void SetAffiliateStatusToUnChanged(Affiliate affiliate);
         IEnumerable<Order> GetOrdersByEmailDomain(string email, int aff);
         void SendAdhocNotification(string emails, string subject, string body);
+        OrderRow CheckLegacyOrder(Order order);
+        void CheckForLegacyOrders(int webinarId);
     }
 }
