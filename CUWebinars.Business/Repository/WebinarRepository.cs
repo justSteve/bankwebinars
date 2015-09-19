@@ -306,21 +306,25 @@ namespace CUWebinars.Business.Repository
             IList<Order> orders2Send = new List<Order>();
             foreach (var order in orders)
             {
-                var row = order.OrderRows.SingleOrDefault();
+                var row = order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active);
                 if (row == null)
                 {
 
                     continue;
                 }
-                if (((TTSWebinarsContext)db).RegTypes.Find(row.RegistrationType).ShowLiveNotifications == "No"
-                    //&& Order.OrderStatus == OrderStatus.Abandoned
-                    //|| row.Status == OrderStatus.InProcess
-                    //|| row.Status == OrderStatus.Canceled
-                    )
+                if (((TTSWebinarsContext)db).RegTypes.Find(row.RegistrationType)
+                    .ShowLiveNotifications == "No")
                 {
                     continue;
                 }
-                orders2Send.Add(order);
+                if (order.OrderStatus != OrderStatus.Abandoned
+                    && order.OrderStatus != OrderStatus.AwaitingVerification
+                    && order.OrderStatus != OrderStatus.Canceled
+                    && order.OrderStatus != OrderStatus.InProcess
+                    && order.OrderStatus != OrderStatus.Unknown)
+                {
+                    orders2Send.Add(order);
+                }
             }
             return orders2Send;
             //return (from order in orders let row = order.OrderRows.SingleOrDefault()

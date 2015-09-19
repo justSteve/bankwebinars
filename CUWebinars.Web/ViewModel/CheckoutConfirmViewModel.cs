@@ -32,7 +32,7 @@ namespace CUWebinars.Web.ViewModel
         public string UserFullname { get; set; }
         public UserType UserType { get; set; }
 
-        public Order Order { get; set; }
+        //public Order Order { get; set; }
 
     }
 }

@@ -1,5 +1,5 @@
 ﻿@using CUWebinars.Web.Core
-@model CheckoutConfirmViewModel
+@model Order
 @functions {
     private const string CurrencyFormatToken = "c";
     private const string DotAndTwoDecimals = ".00";
@@ -12,7 +12,7 @@
 
     //Layout = "/Views/Shared/_Layout_PayCC.cshtml";
 
-    var order = Model.Order;
+    var order = Model;
 
     var myRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
     var regTypeDesc = myRow.RegistrationType.OptionLabel;
@@ -55,19 +55,19 @@
                 <input type="hidden" name="hpp_id" value="AY3NBqa002">
                 <input type="hidden" name="hpp_key" value="hpHF7B3ETD9C">
                 @*<input type="hidden" name="amount" value="@Math.Round(Model.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice, 2)">*@
-                <input type="hidden" name="amount" value="9.00">
+                <input type="hidden" name="amount" value="9.01">
 
                 <input type="hidden" name="li_id1" value="@order.idOrder">
                 <input type="hidden" name="li_description1" value="@title - @regTypeDesc">
                 <input type="hidden" name="li_quantity1" value="1">
                 <input type="hidden" name="li_price1" value="@Math.Round(myRow.RowPrice, 2)">
-                <input type="hidden" name="li_taxes" value="@Math.Round(Model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount,2)">
-                <input type="hidden" name="li_taxamount" value="@Math.Round(Model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount, 2)">
+                <input type="hidden" name="li_taxes" value="@Math.Round(ViewBag.TaxAmount,2)">
+                <input type="hidden" name="li_taxamount" value="@Math.Round(ViewBag.TaxAmount, 2)">
                 <input type="hidden" name="li_invoice" value="@globalConfig.TenantPrefix@order.idOrder">
                 <input type="hidden" name="cust_id" value="Customer ID: @order.idUser">
                 <input type="hidden" name="order_no" value="@globalConfig.TenantPrefix@order.idOrder">
                 <input type="hidden" name="client_email" value="@order.BillingEmail">
-                <input type="hidden" name="note" value="Thank you! Watch your email for complete details.">
+                <input type="hidden" name="note" value="@globalConfig.Tenant thanks you! Watch your email for complete details.">
 
                 <input type="hidden" name="od_bill_firstname" value="@order.FirstName">
                 <input type="hidden" name="od_bill_lastname" value="@order.LastName">

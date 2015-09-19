@@ -34,15 +34,18 @@
                 alert("Please call us at 800-831-0678 ext. 3 and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder");
             };
         </script>
-    }
+    } 
+    var ExpressCheckoutURL = "ExpressCheckout4IE1";
     var url = "";
     if (globalConfig.Tenant == "BankWebinars")
     {
         url = "http://form.jotformpro.com/form/50827231711953?feedback=";
+
     }
     if (globalConfig.Tenant == "CUWebinars")
     {
-        url = "http://form.jotform.us/form/51606487629162?feedback=";
+        url = "http://form.jotform.us/form/51606487629162?feedback="; 
+        ExpressCheckoutURL = "ExpressCheckout4IE1CU";
     }
 }
 <style>
@@ -116,7 +119,7 @@
             <div class="warnIE" style="display: none;" id="iePre10">
                 <p>
                     <b>Please note:</b> This site employs features that may cause unexpected behavior in certain versions of Internet Explorer. If you experience a problem, try refreshing your screen. If this doesn't solve the problem, click on this link.
-                    <br /><a id="warnIE" class="btn btn-mini btn-success" href="/cart/ExpressCheckout4IE1?idWebinar=@Model.Webinar.idWebinar&idAffiliate=@ViewBag.currentAffiliateId">Express Checkout</a>
+                    <br /><a id="warnIE" class="btn btn-mini btn-success" href="/cart/@ExpressCheckoutURL?idWebinar=@Model.Webinar.idWebinar&idAffiliate=@ViewBag.currentAffiliateId">Express Checkout</a>
 
                 </p>
                 <p>You may contact us by using the Online Chat button below, calling 800-831-0678 ext 707 or emailing Support@ttsTrain.com.  </p>

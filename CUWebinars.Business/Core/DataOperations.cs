@@ -679,6 +679,15 @@ namespace CUWebinars.Business.Core
         {
             switch (idRegType)
             {
+                case 4:
+                    return 119;
+                    //trial CP
+                case 5:
+                    return 120;
+                    //6month
+                case 38:
+                    return 118;
+                    //12month
                 case 200: return 27;
                 //Live Plus Five (days) ;
                 //PreEvent_1Hr_2013 id=29;
@@ -788,7 +797,7 @@ namespace CUWebinars.Business.Core
                 //PreEvent_5PartSeries_2014 id=32;
                 default:
                     _logger.Fatal("Invalid Regtype detected at getLegacyOptionID!! {0}", idRegType);
-                    return 99000 + idRegType;
+                    return idRegType;
 
 
 
@@ -1001,7 +1010,14 @@ namespace CUWebinars.Business.Core
                             {
                                 var idOrder = Convert.ToInt32(reader.GetInt32(0));
                                 var email = reader.GetString(1);
-                                orders.Add(email, idOrder);
+                                try
+                                {
+                                    orders.Add(email, idOrder);
+                                }
+                                catch
+                                {
+                                    _logger.Info("Value added for key =" + idOrder);
+                                }
                             }
                         }
 
@@ -1046,8 +1062,9 @@ namespace CUWebinars.Business.Core
                         {
                             while (reader.Read())
                             {
-                                var idOrder = Convert.ToInt32(reader.GetInt32(0));
-                                var email = reader.GetString(1);
+                                //todo: map fields to post form as per OrderMigrator
+                                var idAffiliate = reader.GetInt32(0);
+                                var idWebinar = reader.GetInt32(1);
                             }
                         }
 
@@ -1062,7 +1079,7 @@ namespace CUWebinars.Business.Core
                                                        "',";
                             errorLogger.CommandText += "'MigrateLegacyOrderToV3' ,";
                             errorLogger.CommandText += "9 ,9 ,9 ,'[MigrateLegacyOrderToV3]', 9 ,";
-                            errorLogger.CommandText += "'error at MigrateLegacyOrderToV3 " + ex.Message + "')";
+                            errorLogger.CommandText += "'error at MigrateLegacyOrderToV3 " + ex.Message.Replace("'","|") + ". Value passed was: "+value+"')";
 
                             errorLogger.ExecuteNonQuery();
 

@@ -98,10 +98,10 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                     command.RegistrationType = dataOperations.getLegacyOptionID(idRegType);
 
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-
-                    throw;
+                    
+                    throw new Exception();
                 }
 
             }

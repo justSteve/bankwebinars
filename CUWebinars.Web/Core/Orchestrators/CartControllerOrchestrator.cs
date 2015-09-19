@@ -148,7 +148,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 try
                 {
-                    _logger.Info("BuildCheckoutConfirmViewModel idOrder: " + idOrder.Value);
                     var order = _orderManagementService.GetOrderById(idOrder.Value);
                     //var order = orderRow.Order;
                     _logger.Info("BuildCheckoutConfirmViewModel idOrder: " + order.idOrder);
@@ -196,7 +195,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     var checkoutConfirmViewModel = new CheckoutConfirmViewModel
                     {
-                        Order = order,
+                        //Order = order,
                         AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
                         AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
                         {
@@ -875,6 +874,17 @@ namespace CUWebinars.Web.Core.Orchestrators
         public Webinar LoadWebinar(int idWebinar)
         {
             return _webinarManagementService.GetWebinar(idWebinar);
+        }
+
+        public Boolean UserHasPriorOrders(WebUser webUser)
+        {
+            var orders = _orderManagementService.GetOrdersByUserId(webUser.idUser);
+
+            if (orders == null)
+            {
+                return false;
+            }
+            return true;
         }
 
         public INotificationMessage GenerateMessagePreview(Order order)

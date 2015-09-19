@@ -6,17 +6,7 @@
     {
         <div id="AdditionalLocationContainer">
             <h5>Additional Locations</h5>
-            <div>
-                <blockquote style="margin-bottom: 0;">Want your branches to participate? Facilities within your organization will be able to participate without the travel costs of coming to one location.</blockquote>
-                <div style="padding-left: 50px;">
-                    <span>
-                        <b>Each additional location adds @Model.Price.ToString("c").Replace(".00", "") to your registration.</b>
-                        <br /><a href="#AdditionalLocationsModal" role="button" class="btn" data-toggle="modal" id="AddLocationsButton">Add?</a>
-                    </span>
-                    <div id="collectAdditionalLocations"></div> @*This is where the inputs for each Additional Location will be dynamically created by the Modal dialog.*@
-                </div>
 
-            </div>
             @{ Html.Partial("Partials/_AdditionalLocationsModal"); }
             @if (Model.Webinar.Title.Contains("Compliance Perspectives"))
             {
@@ -24,9 +14,7 @@
                     <p>Additional locations are not included in the trial subscription.</p>
                 </div>
                 <div id="first3" style="padding-left: 50px;">
-                    Subscribers to the <b>Compliance Perspectives Series</b> receive the first three locations
-                    <br />
-                    at no additional charge ($150 per connection after those first three):
+                    Subscribers to the <b>Compliance Perspectives Series</b> receive the first three locations at no additional charge ($50 per connection after those first three):
                     <br />
                     <div style="padding-left: 50px;">
                         <input type="text" name="Email_0" id="Email_0" value="Email for Additional Location" class="{email: true}" /><br />
@@ -40,22 +28,27 @@
             }
             else
             {
-                if (Model.OrderExists)
-                {
-                    Html.HiddenFor(m => m.WebUser.idUser);
-                }
-                 else
-                 {
-                    @Html.Hidden("WebUser.idUser", 0, new { id="WebUser_idUser"})
-                 }
-                @Html.HiddenFor(m => m.Webinar.idWebinar)
+                <div>
+                    <blockquote style="margin-bottom: 0;">Want your branches to participate? Facilities within your organization will be able to participate without the travel costs of coming to one location.</blockquote>
+                    <div style="padding-left: 50px;">
+                        <span>
+                            <b>Each additional location adds @Model.Price.ToString("c").Replace(".00", "") to your registration.</b>
+                            <br /><a href="#AdditionalLocationsModal" role="button" class="btn" data-toggle="modal" id="AddLocationsButton">Add?</a>
+                        </span>
+                        <div id="collectAdditionalLocations"></div> @*This is where the inputs for each Additional Location will be dynamically created by the Modal dialog.*@
+                    </div>
 
-                //if (Model.OrderExists)
-                //{
-                //    //Html.HiddenFor(m => m.Order.idOrder);
-                //}
-                @*@Html.DisplayFor(m => m.AdditionalLocation)*@
+                </div>
             }
+            @if (Model.OrderExists)
+            {
+                Html.HiddenFor(m => m.WebUser.idUser);
+            }
+            else
+            {
+                @Html.Hidden("WebUser.idUser", 0, new { id = "WebUser_idUser" })
+            }
+            @Html.HiddenFor(m => m.Webinar.idWebinar)
         </div>
     }
 }

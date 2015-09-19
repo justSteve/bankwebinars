@@ -287,7 +287,7 @@ namespace CUWebinars.Business.Services
         {
             var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
             return dataOperations.GetLegacyOrder(order);
-            
+
         }
 
         public void CheckForLegacyOrders(int webinarId)
@@ -307,13 +307,13 @@ namespace CUWebinars.Business.Services
                 }
             }
 
-            
+
         }
 
         private void ImportLegacyOrder(int value)
         {
             var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
-             dataOperations.ImportLegacyOrder(value);
+            dataOperations.ImportLegacyOrder(value);
         }
 
         public IEnumerable<Order> GetOrdersByLastName(string lastName, int aff)
@@ -637,7 +637,17 @@ namespace CUWebinars.Business.Services
             //Calculate row price before discount
             if (row.AdditionalLocation != null)
             {
-                totalOptionsPrice = row.AdditionalLocation.Count * optionsCost; // cost * number of additional locations
+                if (order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active).Webinar.Title.Contains("Compliance Perspectives"))
+                {
+                    if (row.AdditionalLocation.Count > 3)
+                    {
+                        totalOptionsPrice = row.AdditionalLocation.Count - 3 * optionsCost; // cost * number of additional locations
+                    }
+                }
+                else
+                {
+                    totalOptionsPrice = row.AdditionalLocation.Count * optionsCost; // cost * number of additional locations
+                }
             }
 
             row.RowPrice = row.UnitPrice + totalOptionsPrice;

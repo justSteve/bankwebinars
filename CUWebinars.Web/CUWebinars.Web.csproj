@@ -940,8 +940,6 @@
     <Content Include="Views\Shared\DisplayTemplates\OrderSumUser.cshtml" />
     <Content Include="Views\Webinar\Partials\_CloneWebinar.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\EditUser.cshtml" />
-    <Content Include="Views\Cart\PayCC_Approved.cshtml" />
-    <Content Include="Views\Cart\PayCC_Declined.cshtml" />
     <Content Include="Views\Shared\Partials\_OrderSumUser.cshtml" />
     <Content Include="Views\Shared\Partials\_CheckoutFeedback.cshtml" />
     <Content Include="Views\Webinar\EditWebinarFromDetails.cshtml" />

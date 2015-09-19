@@ -28,6 +28,7 @@ namespace CUWebinars.Web.Controllers
         private IOrderManagementService _orderManagementService;
         private IWebinarManagementService _webinarManagementService;
         private readonly IAppHelper _appHelper;
+        private readonly GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
         public string MyGuid = Guid.NewGuid().ToString();
         private bool _disposed;
@@ -168,8 +169,10 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 _logger.Info("ACS Importer heard: " + newOrder.BillingEmail);
-                _orderManagementService.SendOrderToLegacy(newOrder);
-
+                //if (_globalConfig.Tenant == "BankWebinars")
+                //{
+                //    _orderManagementService.SendOrderToLegacy(newOrder);
+                //}
                 newOrder.OrderDate = TtsConfig.UtcNowAsCts;
                 _orderManagementService.SaveChanges();
 
@@ -382,8 +385,10 @@ namespace CUWebinars.Web.Controllers
                     }
 
                     _logger.Info("ACS Importer heard: " + newOrder.BillingEmail);
-                    _orderManagementService.SendOrderToLegacy(newOrder);
-
+                    //if (_globalConfig.Tenant == "BankWebinars")
+                    //{
+                    //    _orderManagementService.SendOrderToLegacy(newOrder);
+                    //}
 
                     newOrder.OrderDate = importedOrder.OrderDate;
                     _orderManagementService.SaveChanges();

@@ -595,6 +595,7 @@ namespace CUWebinars.Business.Repository
 
         public void SendOrderToLegacy(Order newOrder)
         {
+
             var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
 
             dataOperations.SendOrderToLegacy(newOrder);

@@ -1,6 +1,15 @@
 ﻿@using CUWebinars.Business.Core
 @model CheckoutConfirmViewModel
+<script language="javascript" type="text/javascript">
 
+    //$(document).ready(function() {
+    //    //<button data-toggle="modal" data-target="#PayByCCModal" class="btn btn-success" id=
+    //    $("#ShowPayByCCModal").click(function() {
+    //        $('#PayByCCModal').modal('show');
+    //    });
+
+    //});
+</script>
 @{
     if (Model.OrderExists)
     {
@@ -9,13 +18,6 @@
         var orderID = 0;
         if (Model.OrderRowExists && Model.OrderRowHasId)
         {
-            @*<script language="javascript" type="text/javascript">
-                    function payByCC(id) {
-                       window.showModalDialog("/home/PayCC/"+id, null, "dialogwidth: 900px; dialogheight: 370px; center: yes; resizable: yes");
-                        $('#step2_Submit2Sage' + id).submit();
-                        window.location.reload();
-                    }
-                </script>*@
             if (Model.OrderStatus == OrderStatus.InProcess)
             {
                 <b>Please review this order summary and and choose billing method.</b>
@@ -82,20 +84,21 @@
                         </div>
                         <div style="font-size: x-small; text-align: center;">
                             <span><button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button></span> &nbsp; &nbsp; &nbsp;
-                                                        @{
-                if (Model.Order.BillingEmail != null && Model.Order.BillingEmail == "user@ttstrain.com")
+                            @{
+                if (User.Identity.Name == "user@ttstrain.com")
                 {
-                        <span>
-                            <button data-toggle="modal" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button>
-                        </span><br />
+                    <span>
+                        <button data-toggle="modal" role="button" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button>
+                    </span><br />
                 }
                 else
                 {
                     <span>Call 800-831-0678 to pay by credit card</span>
                 }
-                                                        }
+                            }
                         </div>
-                        <div class="pull-right"><a id="Canceller">[Cancel Checkout]</a><br />
+                        <div class="pull-right">
+                            <a id="Canceller">[Cancel Checkout]</a><br />
                             @*Sales tax may be added to orders in Wisconsin or Illinois.*@
                         </div>
                     </div>
@@ -133,8 +136,8 @@
                     @if (Model.OrderStatus != OrderStatus.Paid)
                     {
 
-                        <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>
-                        <br />
+                    <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>
+                    <br />
                     }
                 </div>
                 <div class="row">
@@ -165,8 +168,10 @@
 
 @{
     Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
-
-    Html.RenderPartial("~/Views/Cart/Partials/_PayByCCModal.cshtml", Model);
+    if (ViewBag.Order != null)
+    {
+        Html.RenderPartial("~/Views/Cart/Partials/_PayByCCModal.cshtml", (Order)ViewBag.Order);
+    }
     Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml");
     Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
     //Html.RenderPartial("~/Views/Cart/Partials/_DisplayAppliedDiscount.cshtml", Model.DiscountDetailsModel);

@@ -20,7 +20,26 @@ namespace CUWebinars.Business.Core.Helpers
             }
             else
             {
-                jObject = JObject.Parse(existingJson.Trim());
+                JObject objectToValidate;
+                try
+                {
+                    //http://stackoverflow.com/questions/29830198/newtonsoft-jobject-parse-throws-base-exception-how-to-handle
+                    objectToValidate = JObject.Parse(existingJson);
+                }
+                catch (Exception e)
+                {
+                    if (e.GetType().IsSubclassOf(typeof(Exception)))
+                        throw;
+
+                    //Handle the case when e is the base Exception
+                    objectToValidate = JObject.FromObject(new
+                    {
+                        existing = existingJson,
+                        exceptionMsg = e.Message,
+                        exceptionStack = e.StackTrace
+                    });
+                }
+                jObject = JObject.Parse(objectToValidate.ToString());
                 jObject.Add(newJson);
             }
 

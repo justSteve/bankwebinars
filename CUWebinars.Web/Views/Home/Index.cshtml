@@ -15,7 +15,7 @@
 
 <div class="content-slider-wrapper clearfix dark">
     <!--add "dark" class for light colored backgrounds -->
-    <div class="flexslider loading content-slider">
+    <div id="FlexSlider" class="flexslider loading content-slider">
         <ul class="slides">
             <!--begin slide content inside each li tag-->
             <li>
@@ -28,13 +28,33 @@
                     <h2 align="center">Welcome!</h2>
                     <div style="margin-left: 50px;">
 
-                        <p>Welcome to the new @globalConfig.Tenant website.  If you are a first time visitor, welcome.  If you have visited us before, welcome back.  We hope you find what you want and that the ordering process is efficient.  Be sure and let us know if you have any comments by using the Help & Feedback link below. </p>
+                        <p>Welcome to the new @globalConfig.Tenant website. If you are a first time visitor, welcome. If you have visited us before, welcome back. We hope you find what you want and that the ordering process is efficient. Be sure and let us know if you have any comments by using the Help & Feedback link below. </p>
 
                     </div>
 
                     @*<p class="more"><a class="btn btn-primary" href="~/Content/template/portfolio-single.html">Details &rarr;</a></p>*@
                 </div>
             </li>
+            @if (globalConfig.Tenant == "BankWebinars")
+            {
+                <li>
+                    <div class="img">
+                        <div>
+                            <img alt="" src="http://ttsmedia.ttstrain.com/images/menu/L/Auditing.jpg">
+                        </div>
+                    </div>
+                    <div class="caption">
+                        <h2 align="center">New Benefit!</h2>
+                        <div style="margin-left: 50px;">
+
+                            <p>We are pleased to announce a new benefit available exclusively to Annual Compliance Perspectives subscribers - 25% off a Featured Compliance Webinar of the Month! Each month we will highlight a different event that will be sure to help you and your institution stay on top of the ever changing compliance landscape. </p>
+
+                        </div>
+
+                        @*<p class="more"><a class="btn btn-primary" href="~/Content/template/portfolio-single.html">Details &rarr;</a></p>*@
+                    </div>
+                </li>
+            }
             <li>
                 <div class="img">
                     @*<div><img alt="" src="http://ttsmedia.ttstrain.com/images/menu/L/Compliance.jpg"></div>*@
@@ -137,8 +157,8 @@
 <script language="javascript" type="text/javascript">
     $(window).load(function () {
 
-        $('.flexslider.content-slider').flexslider({
-            slideshow: false,
+        $('#FlexSlider').flexslider({
+            slideshow: true,
             animation: "fade",
             pauseOnAction: true,
             pauseOnHover: true,

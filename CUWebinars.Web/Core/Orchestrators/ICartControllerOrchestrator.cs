@@ -44,5 +44,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         //void SendOrderToLegacy(Order order);
         void CreatePostEventClaim(Order order);
         Webinar LoadWebinar(int idWebinar);
+        bool UserHasPriorOrders(WebUser webUser);
     }
 }
