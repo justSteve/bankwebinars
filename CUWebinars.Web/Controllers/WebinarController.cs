@@ -6,7 +6,6 @@ using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
-using CUWebinars.Web.Core.Browsers.Webinars;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
@@ -422,30 +421,30 @@ namespace CUWebinars.Web.Controllers
 
 
 
-        public ActionResult SearchByTopic(
-            [Core.DataTables.WebinarsBrowserRequestModelBinder] WebinarsBrowserRequestModel webinarsBrowserRequest)
-        {
+        //public ActionResult SearchByTopic(
+        //    [Core.DataTables.WebinarsBrowserRequestModelBinder] WebinarsBrowserRequestModel webinarsBrowserRequest)
+        //{
 
-            var webinars =
-                _webinarManagementService.GetByTopic(
-                    Convert.ToInt32(webinarsBrowserRequest.Search.Replace("TopicID=", "")));
-            var wList = new List<WebinarsBrowserSearchResultEntryDTO>();
-            foreach (var webinar in webinars)
-            {
-                var item = new WebinarsBrowserSearchResultEntryDTO();
-                item.Webinar = webinar;
-                item.RegistrationsCount = 0;
-                wList.Add(item);
-            }
+        //    var webinars =
+        //        _webinarManagementService.GetByTopic(
+        //            Convert.ToInt32(webinarsBrowserRequest.Search.Replace("TopicID=", "")));
+        //    var wList = new List<WebinarsBrowserSearchResultEntryDTO>();
+        //    foreach (var webinar in webinars)
+        //    {
+        //        var item = new WebinarsBrowserSearchResultEntryDTO();
+        //        item.Webinar = webinar;
+        //        item.RegistrationsCount = 0;
+        //        wList.Add(item);
+        //    }
 
-            WebinarsBrowserSearchResultDTO searchResult = new WebinarsBrowserSearchResultDTO();
-            searchResult.Entries = wList;
-            searchResult.FoundCount = 2;
-            searchResult.TotalCount = webinars.Count();
+        //    WebinarsBrowserSearchResultDTO searchResult = new WebinarsBrowserSearchResultDTO();
+        //    searchResult.Entries = wList;
+        //    searchResult.FoundCount = 2;
+        //    searchResult.TotalCount = webinars.Count();
 
-            var data = new WebinarsSearchDTOAssembler(webinarsBrowserRequest.EchoId).Entity2DTO(searchResult);
-            return Json(data, JsonRequestBehavior.AllowGet);
-        }
+        //    var data = new WebinarsSearchDTOAssembler(webinarsBrowserRequest.EchoId).Entity2DTO(searchResult);
+        //    return Json(data, JsonRequestBehavior.AllowGet);
+        //}
         
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult OnDemand(string onDemandCode)

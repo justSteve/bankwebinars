@@ -1,34 +1,7 @@
-﻿using System.Configuration;
-using BrockAllen.MembershipReboot.Ef;
-using BrockAllen.MembershipReboot.WebHost;
-using CUWebinars.Business.AccountService;
-using CUWebinars.Business.Constants;
-using CUWebinars.Business.Core;
-using CUWebinars.Business.Core.Extensions;
-using CUWebinars.Business.Core.Helpers;
-using CUWebinars.Business.Models;
-using CUWebinars.Business.Notification;
-using CUWebinars.Business.Notification.Formatters;
-using CUWebinars.Business.Notification.ViewModel;
-using CUWebinars.Business.Services;
-using CUWebinars.Web.App_Start;
-using CUWebinars.Web.Core;
-using CUWebinars.Web.Helpers;
-using CUWebinars.Web.Infrastructure;
-using CUWebinars.Web.Infrastructure.Attributes;
-using CUWebinars.Web.Infrastructure.Extensions;
-using CUWebinars.Web.Membership.Email;
-using CUWebinars.Web.Models;
-using CUWebinars.Web.Services;
-using CUWebinars.Web.ViewModel;
-using DataTables.Mvc;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Ninject.Extensions.Logging;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.IO;
@@ -41,9 +14,31 @@ using System.Web;
 using System.Web.Mvc;
 using System.Xml;
 using BrockAllen.MembershipReboot;
+using BrockAllen.MembershipReboot.Ef;
+using BrockAllen.MembershipReboot.WebHost;
+using CUWebinars.Business.AccountService;
+using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core;
+using CUWebinars.Business.Core.Extensions;
 using CUWebinars.Business.Core.Helpers;
-using Microsoft.AspNet.Identity;
-using Ninject.Extensions.Logging.Log4net.Infrastructure;
+using CUWebinars.Business.Models;
+using CUWebinars.Business.Notification;
+using CUWebinars.Business.Notification.Formatters;
+using CUWebinars.Business.Notification.ViewModel;
+using CUWebinars.Business.Repository;
+using CUWebinars.Business.Services;
+using CUWebinars.Web.Core;
+using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Infrastructure.Attributes;
+using CUWebinars.Web.Infrastructure.Extensions;
+using CUWebinars.Web.Membership.Email;
+using CUWebinars.Web.Models;
+using CUWebinars.Web.Services;
+using CUWebinars.Web.ViewModel;
+using Elmah;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Ninject.Extensions.Logging;
 using Thinktecture.IdentityModel.Authorization;
 using Thinktecture.IdentityModel.Authorization.Mvc;
 using ClaimTypes = System.Security.Claims.ClaimTypes;
@@ -239,8 +234,8 @@ namespace CUWebinars.Web.Controllers.Admin
             order.idAffiliate = idAffiliate.Value;
             //_orderManagementService.SaveChanges();
 
-            var originalAffiliate = new CUWebinars.Business.Repository.AffiliateRepository().FindByIdWithIncluding(order.idAffiliate);
-            var newAffiliate = new CUWebinars.Business.Repository.AffiliateRepository().FindByIdWithIncluding(idAffiliate.Value);
+            var originalAffiliate = new AffiliateRepository().FindByIdWithIncluding(order.idAffiliate);
+            var newAffiliate = new AffiliateRepository().FindByIdWithIncluding(idAffiliate.Value);
             //            var orderUser = _membershipService.GetUserByEmail(order.BillingEmail);
 
             string buildMessage = "<div class=\"affiliateChanged\">Affiliate changed for order " + order.idOrder + " from " + originalAffiliate.ttsDomain + " to " +
@@ -294,7 +289,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return View();
         }
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         [ValidateAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
         public ActionResult ManageOrder(ManageOrderEditModel model)
@@ -400,7 +395,7 @@ namespace CUWebinars.Web.Controllers.Admin
             }
         }
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         public ActionResult Delete(int idOrder)
         {
 
@@ -408,14 +403,14 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         public ActionResult UnDelete(int idOrder)
         {
 
             return null;
         }
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         [HandleAjaxException]
         public ActionResult SetUserAssignedToOrder(int orderID, string migrateOrder, int targetUserID)
         {
@@ -535,7 +530,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return View(model);
         }
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         [ValidateJsonAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
 
@@ -709,7 +704,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
         }
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         [AllowAnonymous]
         public ActionResult ExpressCheckout4IE(ExpressCheckoutModel form)
         {
@@ -1196,7 +1191,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return PartialView("~/Views/Admin/Home/_resendOrderConfirmation.cshtml", model);
         }
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         public ActionResult ResendOrderConfirmation(int orderId)
         {
             var order = _orderManagementService.GetOrderById(orderId);
@@ -1237,7 +1232,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return PartialView("~/Views/Admin/Home/_resendConnectionInfo.cshtml", model);
         }
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         public ActionResult ResendConnectionInfo(int orderId)
         {
             var order = _orderManagementService.GetOrderById(orderId);
@@ -1265,7 +1260,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return PartialView("~/Views/Admin/Home/_adHocNotification.cshtml", model);
         }
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         public ActionResult SendAdhocEvent(int webinarId)
         {
             var regTypes = EventInvokerHelpers.GetRegTypesForWebinarAsSelectListItems(webinarId, _webinarManagementService);
@@ -1273,7 +1268,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(regTypes);
         }
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult SendAdhocNotification(string emails, string subject, string body)
         {
@@ -1304,7 +1299,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return PartialView("~/Views/Admin/Home/_SendReminder.cshtml", model);
         }
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         public JsonResult SendReminder(int webinarId)
         {
             var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
@@ -1329,7 +1324,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return PartialView("~/Views/Admin/Home/_SendConnectionInfo.cshtml", model);
         }
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         public JsonResult SendConnectionInfo(int webinarId)
         {
             //_logger.Info("Begins SendConnectionInfo");
@@ -1433,7 +1428,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return PartialView("~/Views/Admin/Home/_SendShippedOrder.cshtml", model);
         }
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         public JsonResult SendShippedOrder(int orderId)
         {
             var order = _orderManagementService.GetOrderById(orderId);
@@ -1523,7 +1518,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 if (aff.Value != "on") break;
 
                 model.TimeZone = USTimeZone.Central; // UserFacade.Instance.Load(aff.Key).TimeZone;
-                model.Affiliate = new CUWebinars.Business.Repository.AffiliateRepository().FindByIdWithIncluding(Convert.ToInt32(aff.Key));
+                model.Affiliate = new AffiliateRepository().FindByIdWithIncluding(Convert.ToInt32(aff.Key));
                 model.Webinar = _webinarManagementService.GetWebinar(i);
                 model.From = model.Affiliate.ContactEmail;
                 model.Affiliates = new List<Affiliate>();
@@ -1636,7 +1631,7 @@ namespace CUWebinars.Web.Controllers.Admin
             model.Webinars = _webinarManagementService.GetUpcomingWebinars().ToList();
             model.Webinar = _webinarManagementService.GetWebinar(id);
             model.TimeZone = USTimeZone.Eastern;
-            model.Affiliates = new CUWebinars.Business.Repository.AffiliateRepository().GetAffiliatesByPromoType("Daily").ToList();
+            model.Affiliates = new AffiliateRepository().GetAffiliatesByPromoType("Daily").ToList();
 
             return View(model);
 
@@ -1653,7 +1648,7 @@ namespace CUWebinars.Web.Controllers.Admin
             model.Webinars = _webinarManagementService.GetUpcomingWebinars().ToList();
             model.Webinar = _webinarManagementService.GetWebinar(id);
             model.TimeZone = USTimeZone.Eastern;
-            model.Affiliates = new CUWebinars.Business.Repository.AffiliateRepository().GetAffiliatesByPromoType("Daily").ToList();
+            model.Affiliates = new AffiliateRepository().GetAffiliatesByPromoType("Daily").ToList();
             //model.Affiliates = AffiliateFacade.Instance.FindNonDailyPromoSubscribers();
 
             return View(model);
@@ -1675,7 +1670,7 @@ namespace CUWebinars.Web.Controllers.Admin
             }
         }
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult LogInAsUser(LogInAsOtherUserViewModel model)
         {
@@ -1734,7 +1729,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
         }
 
-        [System.Web.Mvc.HttpGet]
+        [HttpGet]
         public ActionResult SynchWebinars()
         {
 
@@ -1744,7 +1739,7 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         [ValidateAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
         public ActionResult ManualPasswordReset(ManualPasswordResetViewModel model)
@@ -1791,7 +1786,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return this.ModelStateJson(ModelState);
         }
 
-        [System.Web.Mvc.AllowAnonymous]
+        [AllowAnonymous]
         public PartialViewResult PasswordResetOperation()
         {
             var resetPasswordModel = new ResetPasswordModel
@@ -1803,8 +1798,8 @@ namespace CUWebinars.Web.Controllers.Admin
             return PartialView("~/Views/Admin/Home/_ResetPasswordPartial.cshtml", resetPasswordModel);
         }
 
-        [System.Web.Mvc.HttpPost]
-        [System.Web.Mvc.AllowAnonymous]
+        [HttpPost]
+        [AllowAnonymous]
         public JsonResult ResetPassword(string email)
         {
             var globals = GlobalConfig.GlobalConfigSingleton;
@@ -1826,7 +1821,7 @@ namespace CUWebinars.Web.Controllers.Admin
             catch (Exception exception)
             {
                 _logger.ErrorException("ResetPassword exception on: " + email, exception);
-                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                ErrorSignal.FromCurrentContext().Raise(exception);
             }
 
             return Json(new { Result = WebUiConstants.Fail });
@@ -1850,7 +1845,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(new { Result = WebUiConstants.Success });
         }
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         //[ValidateAntiForgeryToken]
         public ActionResult EmailOrder(int? id, string emails)
         {
@@ -1878,7 +1873,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     ModelState.AddModelError(string.Empty, "There was a problem at the server. Please contact the administrator.");
                     _logger.ErrorException("ConfirmOrder|ConfirmOrder failed ", exception);
-                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
                 }
                 return this.ModelStateJson(ModelState);
             }
@@ -1890,7 +1885,7 @@ namespace CUWebinars.Web.Controllers.Admin
             });
         }
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         //[ValidateAntiForgeryToken]
         public ActionResult EmailOrderConnectionInfo(int? id, string emails)
         {
@@ -1921,7 +1916,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     ModelState.AddModelError(string.Empty, "There was a problem at the server. Please contact the administrator.");
                     _logger.ErrorException("ConfirmOrder|ConfirmOrder failed ", exception);
-                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
                 }
                 return this.ModelStateJson(ModelState);
             }
@@ -1933,7 +1928,7 @@ namespace CUWebinars.Web.Controllers.Admin
             });
         }
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         public ActionResult EmailRecordingPosted(int? id, string emails)
         {
             if (id.HasValue)
@@ -1962,7 +1957,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     ModelState.AddModelError(string.Empty, "There was a problem at the server. Please contact the administrator.");
                     _logger.ErrorException("ConfirmOrder|ConfirmOrder failed ", exception);
-                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
                 }
                 return this.ModelStateJson(ModelState);
             }
@@ -2016,7 +2011,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return this.ModelStateJson(ModelState);
         }
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         public JsonResult FirePasswordResetEvent(ChangePasswordFromResetKeyInputModel model, string verificationKey)
         {
             if (_membershipService.ChangePasswordFromResetKey(_globalConfig.Tenant, verificationKey, model.Password))
@@ -2125,7 +2120,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
             {
-               //_orderManagementService.CheckForLegacyOrders(webinarId.Value);
+               _orderManagementService.CheckForLegacyOrders(webinarId.Value);
                 
                 int totalNumberOrders;
 
