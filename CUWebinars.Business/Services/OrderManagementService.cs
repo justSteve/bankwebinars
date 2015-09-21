@@ -24,6 +24,7 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Text;
 using System.Web.UI.WebControls;
+using CUWebinars.Business.Core.Helpers;
 using IEvent = CUWebinars.NotificationSystem.Event.IEvent;
 using IEventSource = CUWebinars.NotificationSystem.Event.IEventSource;
 
@@ -72,9 +73,9 @@ namespace CUWebinars.Business.Services
             _orderRepository.AddAdditionalLocation(addedAdditionalLocation);
         }
 
-        public Order AssignAffiliateToOrder(Affiliate affiliate, Order order)
+        public Order AssignAffiliateToOrder(int affiliateId, Order order)
         {
-            return _orderRepository.AssignAffiliate(affiliate, order);
+            return _orderRepository.AssignAffiliate(affiliateId, order);
         }
 
         public Order AssignWebUserToOrder(WebUser webUser, Order order)
@@ -293,20 +294,127 @@ namespace CUWebinars.Business.Services
         public void CheckForLegacyOrders(int webinarId)
         {
             var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
-            var orders = dataOperations.ImportLegacyOrders(webinarId);
-            var v3orders = GetOrdersForWebinar(webinarId);
-            foreach (DictionaryEntry order in orders)
+            IList<Order> lOrders = dataOperations.GetLegacyOrdersByWebinar(webinarId);
+            IList<Order> v3Orders = GetV3OrdersByWebinar(webinarId);
+
+
+            List<string> legacyEmails = lOrders.Select(order => order.BillingEmail).ToList();
+            List<string> v3Emails = v3Orders.Select(v3Order => v3Order.BillingEmail).ToList();
+            //if (v3Order.BillingEmail == order.BillingEmail)
+            //{
+            //    //if (
+            //    //    v3Order.OrderRows.FirstOrDefault(o => o.RowStatus != OrderRowStatus.Active).RegistrationType ==
+            //    //    order.OrderRows.FirstOrDefault().RegistrationType)
+            //    //{
+            //    //    v3Order.OrderRows.FirstOrDefault().RegistrationType = order.OrderRows.FirstOrDefault().RegistrationType;
+            //    //    JProperty v3OrderUpdatedByLegacyRegType = new JProperty(JsonPropertyKeys.V3OrderUpdatedByLegacyRegType, "OriginalValue: 0, UpdatedValue: 1");
+
+            //    //    order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, v3OrderUpdatedByLegacyRegType);
+
+            //    //    CalculateOrderCost(order, 0);
+            //    //    SaveChanges();
+            //    //}
+            //}
+            //
+
+
+
+
+            // find orders in legacy not in v3
+            var missingFromV3 = legacyEmails.Except(v3Emails);
+
+            // find orders in v3Emails not in Legacy
+            var missingFromLegacy = v3Emails.Except(legacyEmails);
+
+            foreach (var orderEmail in missingFromLegacy)
             {
-                foreach (var v3Order in v3orders)
-                {
-                    if (v3Order.BillingEmail == order.Key.ToString())
-                    {
-                        break;
-                    }
-                    ImportLegacyOrder(Convert.ToInt32(order.Value));
-                }
+                //var order = v3Emails.SingleOrDefault(o => o.BillingEmail == orderEmail);
+            }
+            foreach (var orderEmail in missingFromV3)
+            {
+                var order = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
+
+                ConvertLegacyOrder(order);
             }
 
+            // find common numbers in both arrays
+            var commonEmails = legacyEmails.Intersect(v3Emails);
+
+
+
+        }
+
+        private void ConvertLegacyOrder(Order order)
+        {
+            if (order == null) return;
+
+            var myRow = order.OrderRows.SingleOrDefault();
+            string myDiscount = "";
+            if (myRow.Discount != null)
+            {
+                 myDiscount = myRow.Discount.DiscountCode;
+            }
+
+            var PostForm = "";
+
+            PostForm = "idAffiliate=" + order.idAffiliate + "&BillingAddress.AddressType=Billing";
+
+
+            PostForm += "&BillingAddress.Name=" + order.FirstName + " " + order.LastName;
+            PostForm += "&BillingAddress.Phone=" + order.BillingPhone;
+            PostForm += "&BillingAddress.StreetAddress=" + order.BillingAddress;
+            PostForm += "&BillingAddress.StreetAddress2=" + order.BillingAddress2;
+            PostForm += "&BillingAddress.City=" + order.BillingCity;
+            PostForm += "&BillingAddress.Zip=" + order.BillingZip;
+            PostForm += "&BillingAddress.State=" + order.BillingState;
+            PostForm += "&BillingAddress.Country=" + "US";
+            PostForm += "&ShippingAddress.AddressType=Shipping";
+            PostForm += "&ShippingAddress.Name=" + order.ShippingFirstName + " " + order.ShippingLastName;
+            PostForm += "&ShippingAddress.Phone=" + order.ShippingPhone;
+            PostForm += "&ShippingAddress.StreetAddress=" + order.ShippingAddress;
+            PostForm += "&ShippingAddress.StreetAddress2=" + "";
+            PostForm += "&ShippingAddress.City=" + order.ShippingCity;
+            PostForm += "&ShippingAddress.State=" + order.ShippingState;
+            PostForm += "&ShippingAddress.Zip=" + order.ShippingZip;
+            PostForm += "&ShippingAddress.Country=" + "US";
+            PostForm += "&Email=" + order.BillingEmail;
+            PostForm += "&Title=" + "";
+            PostForm += "&Institution=" + order.Institution;
+            PostForm += "&FirstName=" + order.FirstName;
+            PostForm += "&LastName=" + order.LastName;
+            PostForm += "&idRegType=" + myRow.idRegType;
+            PostForm += "&idWebinar=" + myRow.idWebinar;
+            PostForm += "&AdditionalLocationsString=" + myRow.AdditionalLocation;
+            PostForm += "&idOrderLegacy=" + order.idOrderLegacy;
+            PostForm += "&OrderDate=" + order.OrderDate;
+            PostForm += "&ShippingDate=" + "";
+            PostForm += "&DiscountCode=" + myDiscount;
+            PostForm += "&Status=2&Total=0";
+
+            var submitImporter = "http://v3.bankwebinars.com/order/MigrateOrder/";
+
+            //submitImporter = "http://localhost:3538/order/MigrateOrder/"
+    
+            WebRequest req = WebRequest.Create(submitImporter);
+
+            byte[] send = Encoding.Default.GetBytes(PostForm);
+            req.Method = "POST";
+            req.ContentType = "application/x-www-form-urlencoded";
+            req.ContentLength = send.Length;
+
+            Stream sout = req.GetRequestStream();
+            sout.Write(send, 0, send.Length);
+            sout.Flush();
+            sout.Close();
+
+            WebResponse res = req.GetResponse();
+            StreamReader sr = new StreamReader(res.GetResponseStream());
+            string returnvalue = sr.ReadToEnd();
+
+            // Display the content.
+            //return returnvalue;
+            
+            ;
 
         }
 
@@ -1699,7 +1807,7 @@ namespace CUWebinars.Business.Services
             return discount;
         }
 
-        public IList<Order> GetOrdersForWebinar(int idWebinar)
+        public IList<Order> GetV3OrdersByWebinar(int idWebinar)
         {
             return _webinarRepository.GetOrdersByWebinar(idWebinar).ToList();
         }

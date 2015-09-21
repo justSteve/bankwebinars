@@ -9,6 +9,78 @@ OCA.searchBy = '';
 OCA.showSetAssignedAffiliate = $('#showSetAssignedAffiliate');
 OCA.okToLeave = true;
 
+
+function timeSince(date) {
+
+    var seconds = Math.floor((new Date() - date) / 1000);
+
+    var interval = Math.floor(seconds / 31536000);
+
+    if (interval > 1) {
+        return interval + " years";
+    }
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) {
+        return interval + " months";
+    }
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) {
+        return interval + " days";
+    }
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) {
+        return interval + " hours";
+    }
+    interval = Math.floor(seconds / 60);
+    if (interval > 1) {
+        return interval + " minutes";
+    }
+    return Math.floor(seconds) + " seconds";
+}
+
+
+
+$('#submitSynchOrders').on("click", function () {
+
+    var self = this;
+
+    var payload = { webinarId: currentWebinarId, affiliateId: currentAffiliateId };
+
+    var d = new Date();
+
+    $.ajax({
+        type: 'POST',
+        contentType: constants.JsonContentType,
+        cache: false,
+        url: '/Admin/SynchOrders',
+        dataType: constants.JsonDataType,
+        data: JSON.stringify(payload),
+        beforeSend: function () {
+            $(self).html('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Synching...</span></span>');
+
+        }
+    }).done(function (result) {
+
+        if (result.Success === 'Success') {
+            $('#spinnerLabel').remove();
+            $(self).html('<span id="spinnerLabel" class="label label-info" style="margin-left:5px">' +
+                '<span>&nbsp;&nbsp;Last Synch: ' + timeSince(d) + '...</span></span>');
+
+        } else if (result.Result === 'Fail') {
+            $(self).html('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Synching...</span></span>');
+
+        }
+
+
+
+    }).fail(function () {
+        var a = 1;
+    }).always(function () {
+        $('#loadingSpinner').remove();
+    });
+});
+
+
 OCA.initializeFunctions = function () {
 
     OCA.hookUpChangeTypeLogic = function (dropDown) {
@@ -504,7 +576,7 @@ OCA.initializeState = function () {
 
     OCA.cartStateManager = new OrderRegistration.StateManager();
 
-    OCA.cartStateManager.setWebinarId(webinarId); // webinarId is set in a script tab in razor view DetailsAffiliate.cshtml
+    OCA.cartStateManager.setWebinarId(currentWebinarId); // webinarId is set in a script tab in razor view DetailsAffiliate.cshtml
     OCA.cartStateManager.setOrderRowId(orderRowId); // orderRowId is set in the razor view DetailsAffiliate.cshtml
     OCA.cartStateManager.setIsUserLoggedIn(isUserLoggedIn); // isUserLogged is set in a script tab in razor view DetailsAffiliate.cshtml
     OCA.cartStateManager.setCheckoutInProcess(checkoutInProcess); // checkoutInProcess is set in a script tab in razor view DetailsAffiliate.cshtml
@@ -627,36 +699,6 @@ OCA.wireUpHandlers = function () {
         }
         return false;
     });
-
-    //var searchPeople = _.debounce(function( query, process ){
-
-    //    OCA.foundUsersList.hide();
-
-    //    var searchTerm = OCA.lastNameInput.val();
-
-    //    $.ajax({
-    //        type: 'GET',
-    //        contentType: constants.FormPostContentType,
-    //        cache: false,
-    //        url: '/Cart/SearchWebUsers',
-    //        dataType: constants.JsonDataType,
-    //        data: { lastName: searchTerm },
-    //        beforeSend: function () {
-    //            OCA.users = null; // dereference whatever is currently in 'users'. 
-
-    //            // this is where we append a loading image
-    //            //$('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Email...</span>');
-    //        }
-    //    }).done(function (data) {
-    //        OCA.users = data.people;
-
-    //        var results = _.map(OCA.users, function (user) {
-    //            return user.id;
-    //        });
-    //        process(results);
-    //    });
-
-    //    }, 500);
 
     var searchPeople = _.debounce(function (query, process) {
 

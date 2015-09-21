@@ -9,7 +9,7 @@ namespace CUWebinars.Business.Repository
     {
         void AddAdditionalLocation(AdditionalLocation addedAdditionalLocation);
         Order AttachItem(Order item);
-        Order AssignAffiliate(Affiliate affiliate, Order order);
+        Order AssignAffiliate(int affiliateId, Order order);
         Order AssignWebUserToOrder(WebUser webUser, Order order);
         AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullName);
         Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null);

@@ -15,6 +15,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core.Extensions;
 
 namespace CUWebinars.Business.Core
 {
@@ -681,13 +682,13 @@ namespace CUWebinars.Business.Core
             {
                 case 4:
                     return 119;
-                    //trial CP
+                //trial CP
                 case 5:
                     return 120;
-                    //6month
+                //6month
                 case 38:
                     return 118;
-                    //12month
+                //12month
                 case 200: return 27;
                 //Live Plus Five (days) ;
                 //PreEvent_1Hr_2013 id=29;
@@ -981,7 +982,7 @@ namespace CUWebinars.Business.Core
             }
         }
 
-        public ListDictionary ImportLegacyOrders(int? webinarId)
+        public List<Order> GetLegacyOrdersByWebinar(int? webinarId)
         {
             var idWebinarParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idWebinar", Value = webinarId };
             //var emailParameter = new SqlParameter { SqlDbType = SqlDbType.VarChar, Size = 200, ParameterName = "@email", Value = order.BillingEmail };
@@ -993,11 +994,11 @@ namespace CUWebinars.Business.Core
 
                 sqlConnection.Open();
 
-                using (var getOrder = new SqlCommand("ImportLegacyOrders", sqlConnection))
+                using (var getOrder = new SqlCommand("GetLegacyOrders", sqlConnection))
                 {
                     getOrder.Parameters.Add(idWebinarParameter);
 
-                    ListDictionary orders = new ListDictionary();
+                    List<Order> orders = new List<Order>();
 
                     try
                     {
@@ -1008,15 +1009,66 @@ namespace CUWebinars.Business.Core
                         {
                             while (reader.Read())
                             {
-                                var idOrder = Convert.ToInt32(reader.GetInt32(0));
-                                var email = reader.GetString(1);
                                 try
                                 {
-                                    orders.Add(email, idOrder);
+                                    Order newOrder = new Order { OrderRows = new List<OrderRow>() };
+                                    newOrder.OrderRows.Add(new OrderRow());
+                                    var newOrderRow = newOrder.OrderRows.FirstOrDefault();
+                                    newOrder.idAffiliate = reader.GetInt32(0);
+                                    newOrderRow.idWebinar = reader.GetInt32(1);
+                                    newOrderRow.idRegType = reader.GetInt32(2);
+                                    newOrder.FirstName = reader.GetString(3);
+                                    newOrder.LastName = reader.GetString(4);
+                                    //skips title reader(5)
+                                    newOrder.Institution = reader.GetString(6);
+                                    newOrder.BillingEmail = reader.GetString(7);
+                                    newOrder.BillingPhone = reader.GetString(8);
+                                    newOrder.BillingAddress = reader.GetString(9);
+                                    newOrder.BillingAddress2 = reader.GetString(10);
+                                    newOrder.BillingCity = reader.GetString(11);
+                                    newOrder.BillingState = reader.GetString(12);
+                                    newOrder.BillingZip = reader.GetString(13);
+                                    if (!String.IsNullOrEmpty(reader[14].ToString()))
+                                    {
+                                        newOrderRow.Discount = new Discount { DiscountCode = reader.GetString(14) };
+                                    }
+                                    if (!String.IsNullOrEmpty(reader[15].ToString()))
+                                    {
+                                        var addLoc = reader.GetString(15).Split(',');
+
+                                        IList<AdditionalLocation> addLocations = new List<AdditionalLocation>();
+                                        foreach (var loc in addLoc)
+                                        {
+                                            CUWebinars.Business.Models.AdditionalLocation additional = new AdditionalLocation { Email = loc };
+                                            CollectionExtensions.AddRange(addLocations, newOrderRow.AdditionalLocation);
+                                            addLocations.Add(additional);
+                                        }
+                                    }
+
+
+                                    newOrder.ShippingFirstName = reader.GetString(16);
+                                    newOrder.ShippingLastName = reader.GetString(17);
+                                    newOrder.ShippingPhone = reader.GetString(18);
+                                    newOrder.ShippingAddress = reader.GetString(19);
+                                    newOrder.ShippingCity = reader.GetString(20);
+                                    newOrder.ShippingState = reader.GetString(21);
+                                    newOrder.ShippingZip = reader.GetString(22);
+                                    //skips total 23 & shipdate 24
+                                    newOrder.AdminComments = reader.GetString(25);
+                                    newOrder.idOrderLegacy = reader.GetInt32(26);
+                                    newOrder.OrderDate = reader.GetDateTime(27);
+
+                                    newOrder.Origin = "OrderSynch";
+                                    newOrder.OrderStatus = OrderStatus.Submitted;
+
+                                    //newOrderRow.Order = newOrder;
+
+                                    newOrderRow.RowStatus = OrderRowStatus.Active;
+                                    orders.Add(newOrder);
                                 }
-                                catch
+                                catch (Exception ex)
                                 {
-                                    _logger.Info("Value added for key =" + idOrder);
+                                    _logger.Error("GetLegacyOrders hit error on: " + reader.GetString(7) + " msg: " + ex.Message);
                                 }
                             }
                         }
@@ -1029,11 +1081,11 @@ namespace CUWebinars.Business.Core
                         {
                             errorLogger.CommandText =
                                 "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() +
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts +
                                                        "',";
-                            errorLogger.CommandText += "'ImportLegacyOrders' ,";
-                            errorLogger.CommandText += "9 ,9 ,9 ,'[ImportLegacyOrders]', 9 ,";
-                            errorLogger.CommandText += "'error at ImportLegacyOrders " + ex.Message + "')";
+                            errorLogger.CommandText += "'GetLegacyOrders' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'[GetLegacyOrders]', 9 ,";
+                            errorLogger.CommandText += "'error at GetLegacyOrders " + ex.Message + "')";
 
                             errorLogger.ExecuteNonQuery();
 
@@ -1079,7 +1131,7 @@ namespace CUWebinars.Business.Core
                                                        "',";
                             errorLogger.CommandText += "'MigrateLegacyOrderToV3' ,";
                             errorLogger.CommandText += "9 ,9 ,9 ,'[MigrateLegacyOrderToV3]', 9 ,";
-                            errorLogger.CommandText += "'error at MigrateLegacyOrderToV3 " + ex.Message.Replace("'","|") + ". Value passed was: "+value+"')";
+                            errorLogger.CommandText += "'error at MigrateLegacyOrderToV3 " + ex.Message.Replace("'", "|") + ". Value passed was: " + value + "')";
 
                             errorLogger.ExecuteNonQuery();
 

@@ -423,9 +423,11 @@ namespace CUWebinars.Business.Repository
         /// <param name="affiliate"></param>
         /// <param name="order"></param>
         /// <returns></returns>
-        public Order AssignAffiliate(Affiliate affiliate, Order order)
+        public Order AssignAffiliate(int affiliateId, Order order)
         {
-            order.idAffiliate = affiliate.idUserAff;
+            //original was changed to accomodate migration of legacy orders
+            //order.idAffiliate = affiliate.idUserAff;
+            order.idAffiliate = affiliateId;
             if (db.SaveChanges() > 0)
             {
                 db.Entry(order).Reference(o => o.Affiliate).Load();

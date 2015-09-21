@@ -515,7 +515,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         private void SendsRecordingIsPostedNotifications(WebinarDetailsViewModel webinarDetailsViewModel, Webinar webinar)
         {
-            var ordersForWebinar = _orderManagementService.GetOrdersForWebinar(webinar.idWebinar);
+            var ordersForWebinar = _orderManagementService.GetV3OrdersByWebinar(webinar.idWebinar);
 
             AddClaimForPostEventMaterials(ordersForWebinar);
 

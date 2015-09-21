@@ -2095,12 +2095,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(new { Result = WebUiConstants.Success });
         }
 
-
-        //public ActionResult DisplayOrders()
-        //{
-        //    return View("DisplayOrders", 1720); // hard coded value. It's a webinar id
-        //}
-
+        
         [HandleAjaxException]
         [HttpPost]
         public ActionResult GetOrdersByUser(string email)
@@ -2113,6 +2108,19 @@ namespace CUWebinars.Web.Controllers.Admin
             });
         }
 
+        [HttpPost]
+        [HandleAjaxException]
+        [AllowAnonymous]
+        public ActionResult SynchOrders(int? webinarId, int? idAffiliate)
+        {
+            
+            _orderManagementService.CheckForLegacyOrders(webinarId.Value);
+            return Json(new
+            {
+                data = webinarId, affiliate = idAffiliate, Success = "Success"
+            });
+        }
+
         [HandleAjaxException]
         [HttpPost]
         [AllowAnonymous]
@@ -2120,7 +2128,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
             {
-               _orderManagementService.CheckForLegacyOrders(webinarId.Value);
+               //
                 
                 int totalNumberOrders;
 

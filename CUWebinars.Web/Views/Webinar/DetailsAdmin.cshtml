@@ -21,12 +21,19 @@
             };
         </script>
     }
+    IStateService stateService = new StateService();
+
+    
+    var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff;
+
 }
+
 
 <script type="text/javascript">
     var checkoutInProcess = @(Model.CheckoutInProcess ? "true" : "false");
     var isUserLoggedIn = @(@Model.UserIsLoggedIn ? "true" : "false");
-    var webinarId = @(@Model.Webinar.idWebinar);
+    var currentWebinarId = @(@Model.Webinar.idWebinar);
+    var currentAffiliateId = @currentAffiliate;
     var notificationsTesting = @(GlobalConfig.GlobalConfigSingleton.NotificationsTesting ? "true" : "false");
     var orderRowId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow : 0);
     var orderId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.idOrder : 0);
@@ -214,12 +221,10 @@
                     <div id="InputFormFields" style="margin-top: 20px;"></div>
                 </aside>*@
             <!-- Close ics file widget -->
-            <!--close aside .widget -->
-            <aside class="widget">
-                <h5 class="short_headline"><button id="submitSynchOrders" class="btn btn-primary">Synch Orders</button></h5>
-                @*@{Html.RenderPartial("Partials/_SendPromoToAffiliates");}*@
-            </aside>
-            <!--close aside .widget -->
+            @if (globalConfig.Tenant == "BankWebinars")
+            {
+                <button id="submitSynchOrders" role="button" class="btn btn-primary">Synch Orders</button>
+            }
             @*<aside class="widget">
                     <h5 class="short_headline"><span>Search</span></h5>
                     <form class="searchform" method="get">
