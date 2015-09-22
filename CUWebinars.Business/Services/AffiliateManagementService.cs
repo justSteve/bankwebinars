@@ -67,7 +67,7 @@ namespace CUWebinars.Business.Services
 
         public Affiliate FindById(int id)
         {
-            throw new NotImplementedException();
+            return _affiliateRepository.LoadById(id);
         }
 
         public Affiliate LoadByTTSDomain(string ttsDomain)

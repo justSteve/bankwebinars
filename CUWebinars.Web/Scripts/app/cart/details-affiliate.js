@@ -63,11 +63,11 @@ $('#submitSynchOrders').on("click", function () {
 
         if (result.Success === 'Success') {
             $('#spinnerLabel').remove();
-            $(self).html('<span id="spinnerLabel" class="label label-info" style="margin-left:5px">' +
-                '<span>&nbsp;&nbsp;Last Synch: ' + timeSince(d) + '...</span></span>');
+            $(self).html('<span>&nbsp;&nbsp;Synch Succeeded</span>');
 
         } else if (result.Result === 'Fail') {
-            $(self).html('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Synching...</span></span>');
+            $('#spinnerLabel').remove();
+            $(self).html('<span>&nbsp;&nbsp;Synch Failed</span>');
 
         }
 

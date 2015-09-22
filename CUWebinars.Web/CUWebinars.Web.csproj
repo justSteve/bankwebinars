@@ -512,6 +512,7 @@
     <Compile Include="ViewModel\RegistrationSummaryViewModel.cs" />
     <Compile Include="ViewModel\ShareNotisViewModel.cs" />
     <Compile Include="ViewModel\ShowOrdersViewModel.cs" />
+    <Compile Include="ViewModel\UserDetailsViewModel.cs" />
     <Compile Include="ViewModel\WebinarEditModel.cs" />
     <Compile Include="ViewModel\WebinarFileViewModel.cs" />
     <Content Include="Content\claims-mment.css" />
@@ -704,6 +705,7 @@
     </Content>
     <Content Include="Scripts\app\admin\discounts-management.js" />
     <Content Include="Scripts\app\admin\display-orders-by-user.js" />
+    <Content Include="Scripts\app\admin\display-users.js" />
     <Content Include="Scripts\app\admin\session-checker.js" />
     <Content Include="Scripts\app\admin\display-orders.js" />
     <Content Include="Scripts\app\client-logger.js" />
@@ -962,10 +964,7 @@
     <Content Include="Views\Shared\_LayoutJotForm.cshtml" />
     <Content Include="Views\Cart\ExpressCheckout4IE1CU.cshtml" />
     <Content Include="Views\Cart\ThankYou.cshtml" />
-    <None Include="Web.BankWebinars31 - Web Deploy.config">
-      <DependentUpon>Web.config</DependentUpon>
-      <SubType>Designer</SubType>
-    </None>
+    <Content Include="Views\Admin\Partials\_ShowUsers.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

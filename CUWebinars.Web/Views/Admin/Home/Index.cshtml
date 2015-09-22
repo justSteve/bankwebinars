@@ -1,7 +1,27 @@
-﻿@model CUWebinars.Web.Models.AdminDTO
+﻿@using CUWebinars.Web.Core
+@model CUWebinars.Web.Models.AdminDTO
 
 @{
     ViewBag.Title = "Admin Functions";
+    Layout = "/Views/Shared/_LayoutAdmin.cshtml";
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+
+    @section scripts{
+        <script src="@Url.Content("~/Scripts/app/notification-ops/order-event-notifications.js")"></script>
+        <script src="@Url.Content("~/Scripts/app/notification-ops/membership-notifications.js")"></script>
+        <script src="@Url.Content("~/Scripts/app/toastLogger.js")"></script>
+        @Scripts.Render("~/bundles/toastr")
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/bundles/manage-webinar-files")
+        @Scripts.Render("~/bundles/dataTables")
+        @Scripts.Render("~/bundles/display-orders")
+        @Scripts.Render("~/bundles/admin-notifications")
+    }
+
+    @Styles.Render("~/Content/create-order-details")
+    @Styles.Render("~/Content/data-tables")
+    @Styles.Render("~/Content/notifications-ops-styles")
+
 }
 
 <section>
@@ -16,7 +36,7 @@
                     <li><a id="ImpersonateUserButton">Impersonate User</a></li> @*url = '/Admin/LogInAsUser';*@
                     <li><a id="ResetPasswordButton">Reset Password</a></li> @*url: '/Admin/ResetPassword',*@
                     <li><a id="GetManualResetPasswordFieldsButton">Manually Reset Password</a></li> @*url: '/Admin/ManualPasswordReset',*@
-                    @*<li><a id="AssignDiscountHtmlButton" href="@Url.Content("~/Admin/DiscountManagement")">Discounts</a></li>*@
+                    <li><a data-toggle="collapse" href="#users"> Users</a></li>
                     <li><a id="AssignClaimHtmlButton" href="@Url.Content("~/Admin/ClaimsManagement")">Assign Claims</a></li>
                     <li><a id="BatchPwdResetHtmlButton">Batch Pwd Reset</a></li>
                 </ul>
@@ -45,16 +65,12 @@
         <div class="row">
             <div id="InputFormFields" class="paddTop10"></div>
         </div>
+        <div id="users" class="collapse">
 
+            @Html.Partial("~/Views/Admin/Partials/_ShowUsers.cshtml", Model.UserDetailsViewModel);
+
+        </div>
     </div>
 
 
 </section>
-
-@section scripts {
-    <script src="@Url.Content("~/Scripts/app/notification-ops/order-event-notifications.js")"></script>
-    <script src="@Url.Content("~/Scripts/app/notification-ops/membership-notifications.js")"></script>
-    <script src="@Url.Content("~/Scripts/app/toastLogger.js")"></script>
-    @Scripts.Render("~/bundles/toastr")
-}
-@Styles.Render("~/Content/notifications-ops-styles")

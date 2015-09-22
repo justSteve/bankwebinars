@@ -62,15 +62,8 @@ namespace CUWebinars.Web.Controllers.Admin
         private readonly IWebinarManagementService _webinarManagementService;
         private readonly IStateService _stateService;
         private readonly GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+        private readonly IAffiliateManagementService _affiliateManagementService;
         //private bool _disposed;
-
-        //
-        // GET: /Admin/
-        public ActionResult Index()
-        {
-            return View("~/Views/Admin/Home/Index.cshtml");
-        }
-
         //
         // GET: /Admin/
         public AdminController(
@@ -80,7 +73,8 @@ namespace CUWebinars.Web.Controllers.Admin
             IWebinarManagementService webinarManagementService,
             IOrderManagementService orderManagementService,
             IDataTablesService dataTablesService,
-            IAppHelper appHelper)
+            IAppHelper appHelper,
+            IAffiliateManagementService affiliateManagementService)
         {
             _membershipService = membershipService;
             _logger = logger;
@@ -89,7 +83,28 @@ namespace CUWebinars.Web.Controllers.Admin
             _orderManagementService = orderManagementService;
             _dataTablesService = dataTablesService;
             _appHelper = appHelper;
+            _affiliateManagementService = affiliateManagementService;
         }
+
+        //
+        // GET: /Admin/
+        public ActionResult Index()
+        {
+            var aff = _affiliateManagementService.FindById(19);
+            var model = new AdminDTO
+            {
+                UserDetailsViewModel = new UserDetailsViewModel()
+                {
+                    Affiliate = aff,
+                    UserIsAdmin = true
+                }
+            }
+            ;
+
+
+            return View("~/Views/Admin/Home/Index.cshtml", model);
+        }
+
 
         public ActionResult AddQuiz()
         {
@@ -2095,7 +2110,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(new { Result = WebUiConstants.Success });
         }
 
-        
+
         [HandleAjaxException]
         [HttpPost]
         public ActionResult GetOrdersByUser(string email)
@@ -2113,11 +2128,13 @@ namespace CUWebinars.Web.Controllers.Admin
         [AllowAnonymous]
         public ActionResult SynchOrders(int? webinarId, int? idAffiliate)
         {
-            
+
             _orderManagementService.CheckForLegacyOrders(webinarId.Value);
             return Json(new
             {
-                data = webinarId, affiliate = idAffiliate, Success = "Success"
+                data = webinarId,
+                affiliate = idAffiliate,
+                Success = "Success"
             });
         }
 
@@ -2128,8 +2145,8 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
             {
-               //
-                
+                //
+
                 int totalNumberOrders;
 
                 return Json(new
@@ -2139,6 +2156,28 @@ namespace CUWebinars.Web.Controllers.Admin
             }
 
             return Json(new { NotAuthorized = true });
+        }
+        [HandleAjaxException]
+        [HttpPost]
+        [AllowAnonymous]
+        public ActionResult GetGridUserData(int? affiliateId)
+        {
+            var aff = _affiliateManagementService.LoadByTTSDomain("bankwebinars");
+
+            if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
+            {
+                //
+
+                int totalNumberUsers;
+
+                return Json(new
+                {
+                    data = BuildDisplayUsersViewModel(affiliateId, out totalNumberUsers)
+                });
+            }
+
+            return Json(new { NotAuthorized = true });
+
         }
 
         private IList<IDictionary<string, string>> BuildDisplayOrdersViewModel(int webinarId, int? affiliateId, out int totalNumberOrders)
@@ -2196,6 +2235,65 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 responsePayloadInner.Add("OrderDateColumn", order.OrderDate.ToShortDateString());
                 responsePayloadInner.Add("StatusColumn", "<a href='/Admin/manageOrder/" + orderToEdit + "' target='_new' />" + order.OrderStatus.ToString() + "</a><br/>" + resendMsg);
+
+                responsePayload.Add(responsePayloadInner);
+            }
+
+            return responsePayload;
+        }
+
+        private IList<IDictionary<string, string>> BuildDisplayUsersViewModel(int? affiliateId, out int totalNumberUsers)
+        {
+            var users = _dataTablesService.GetWebUsers(affiliateId ?? 19, out totalNumberUsers);
+
+            IList<IDictionary<string, string>> responsePayload = new List<IDictionary<string, string>>();
+            IDictionary<string, string> responsePayloadInner = new Dictionary<string, string>();
+
+            foreach (var user in users)
+            {
+                if (_globalConfig.Tenant == "BankWebinars")
+                {
+                    //OrderRow checkLegacyOrder = _orderManagementService.CheckLegacyOrder(order);
+
+                    //if (checkLegacyOrder.idOrder == 0)
+                    //{
+                    //    _orderManagementService.SendOrderToLegacy(order);
+                    //}
+                }
+
+
+                var orderColumn = user.email;
+                var userColumn = "<a href='/account/edituser/" + user.idUser + "' target='_new' />" + user.LastName + ", " + user.FirstName + "</a>";
+                var institutionColumn = "user.Institution.InstitutionName";
+                var showDiscount = "";
+                //if (!ReferenceEquals(orderRow.Discount, null) && orderRow.Discount.FlatOff > 0)
+                //{
+                //    showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: $" + orderRow.Discount.FlatOff.ToString().Replace(".00", "") + "</span>";
+                //}
+                //else if ((!ReferenceEquals(orderRow.Discount, null) && orderRow.Discount.PercentOff > 0))
+                //{
+                //    showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: " + orderRow.Discount.PercentOff.ToString() + "%</span>";
+                //}
+                var billingColumn = "";
+
+                //var resendMsg = "Resend Confirmation";
+                //if (orderRow.Webinar.Status == WebinarStatus.Active)
+                //{
+                //    resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
+                //}
+
+                responsePayloadInner = new Dictionary<string, string>();
+
+                responsePayloadInner.Add("OrderId", orderColumn);
+                responsePayloadInner.Add("OrderColumn", orderColumn);
+                responsePayloadInner.Add("UserColumn", userColumn);
+                responsePayloadInner.Add("InstitutionColumn", institutionColumn);
+                responsePayloadInner.Add("BillingColumn", billingColumn);
+
+                //responsePayloadInner.Add("AffiliateColumn", order.Affiliate.ttsDomain);
+
+                responsePayloadInner.Add("OrderDateColumn", user.DateCreated.ToShortDateString());
+                responsePayloadInner.Add("StatusColumn", "");
 
                 responsePayload.Add(responsePayloadInner);
             }

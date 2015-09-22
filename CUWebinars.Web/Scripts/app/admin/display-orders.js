@@ -74,7 +74,7 @@ $(function () {
     };
 
     ns.wireUpDataTable = function() {
-
+        
         DO.ordersTable.dataTable({
             "dom": '<ilf<t>ip>',
             //'dom': 'T<"clear">lfrtip',

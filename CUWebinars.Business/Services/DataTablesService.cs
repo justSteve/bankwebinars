@@ -27,7 +27,7 @@ namespace CUWebinars.Business.Services
             if (idAffliate != 19)
             {
                 theseOrders = _context.Orders
-                    
+
                     .Include(o => o.WebUser)
                     .Include(o => o.Affiliate)
                     .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
@@ -94,10 +94,32 @@ namespace CUWebinars.Business.Services
         {
             totalNumberOrders = _context.Orders.Count();
 
-            var filteredResult =_context.Orders.Where(o => o.idOrder.ToString().ToLower().Contains(orderIdFragment));
+            var filteredResult = _context.Orders.Where(o => o.idOrder.ToString().ToLower().Contains(orderIdFragment));
             totalFilteredOrders = filteredResult.Count();
 
             return filteredResult.OrderByDescending(order => order.idOrder).Skip(start).Take(length); ;
+        }
+
+        public IEnumerable<WebUser> GetWebUsers(int idAffliate, out int totalNumberUsers)
+        {
+            IList<WebUser> theseUsers;
+
+            if (idAffliate != 19)
+            {
+                theseUsers = _context.WebUsers
+                    .Include(u => u.Institution)
+                    .Include(u => u.Orders)
+                    .Include(u => u.Addresses)
+                    .ToList();
+            }
+            else
+            {
+                theseUsers = _context.WebUsers.ToList();
+            }
+
+            totalNumberUsers = theseUsers.Count;
+
+            return theseUsers;
         }
     }
 }

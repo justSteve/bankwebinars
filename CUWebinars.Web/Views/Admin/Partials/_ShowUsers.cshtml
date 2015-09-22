@@ -1,0 +1,51 @@
+﻿@model UserDetailsViewModel
+
+@{
+    ViewBag.Title = "Users";
+
+    if (Model.Affiliate != null && !Model.UserIsAdmin)
+    {
+
+
+    }
+    <script type="text/javascript">
+        if (DISPLAYUSERS === null || typeof DISPLAYUSERS === 'undefined') {
+            var DISPLAYUSERS = {};
+        }
+        var DU = DISPLAYUSERS;
+        DU.affiliateId = @Model.Affiliate.idUserAff;
+
+    </script>
+    var showAffColumn = Model.UserIsAdmin ? "true" : "false";
+    //\Scripts\app\admin\display-users.js
+    // AdminController/BuildDISPLAYUSERSViewModel
+
+    <table data-aff="@showAffColumn" id="usersTable" class="table table-striped table-bordered dataTable no-footer" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Order</th>
+                <th>User</th>
+                <th>Institution</th>
+                <th>Billing</th>
+                @*<th>Affiliate</th>*@
+                <th>OrderDate</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tfoot>
+            <tr>
+                <th>Order</th>
+                <th>User</th>
+                <th>Institution</th>
+                <th>Billing</th>
+                @*<th>Affiliate</th>*@
+                <th>OrderDate</th>
+                <th>Status</th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div id="webinarIdDiv" class="initialHide">@Model.UserIsAdmin</div>
+}
+

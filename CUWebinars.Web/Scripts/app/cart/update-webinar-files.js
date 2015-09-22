@@ -165,7 +165,7 @@ $(function() {
         return '<div id="fileDetails_' + id + '" class="webinarFileDetails">' +
             '<i class="icon-trash icon-white pull-right" style="cursor: pointer" id="' + id + '-Filedetails-delete"></i>' +
             '<input type="hidden" name="WebinarFiles[' + id.substring(0, 1) + '].idWebinarFile" value="' + id + '" />' +
-            '<input type="hidden" name="WebinarFiles[' + id.substring(0, 1) + '].idWebinar" value="' + webinarId + '" />' +
+            '<input type="hidden" name="WebinarFiles[' + id.substring(0, 1) + '].idWebinar" value="' + currentWebinarId + '" />' +
             '<div id="fileLocationDiv_' + id + '"><span class="control-label">File Name</span>' +
             '<input type="text" class="form-control" name="WebinarFiles[' + id.substring(0, 1) + '].fileLocation" />' +
             '<i class="icon-book icon-white"></i></div>' +

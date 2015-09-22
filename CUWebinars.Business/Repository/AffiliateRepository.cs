@@ -74,5 +74,10 @@ namespace CUWebinars.Business.Repository
         {
             db.Entry(affiliate).State = EntityState.Unchanged;
         }
+
+        public Affiliate LoadById(int id)
+        {
+            return items.Single(a => a.idUserAff== id);
+        }
     }
 }
