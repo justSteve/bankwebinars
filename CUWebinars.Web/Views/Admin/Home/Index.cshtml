@@ -7,15 +7,16 @@
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
     @section scripts{
-        <script src="@Url.Content("~/Scripts/app/notification-ops/order-event-notifications.js")"></script>
-        <script src="@Url.Content("~/Scripts/app/notification-ops/membership-notifications.js")"></script>
-        <script src="@Url.Content("~/Scripts/app/toastLogger.js")"></script>
+
         @Scripts.Render("~/bundles/toastr")
         @Scripts.Render("~/bundles/jqueryval")
         @Scripts.Render("~/bundles/manage-webinar-files")
         @Scripts.Render("~/bundles/dataTables")
         @Scripts.Render("~/bundles/display-orders")
         @Scripts.Render("~/bundles/admin-notifications")
+        <script src="@Url.Content("~/Scripts/app/notification-ops/order-event-notifications.js")"></script>
+        <script src="@Url.Content("~/Scripts/app/notification-ops/membership-notifications.js")"></script>
+        <script src="@Url.Content("~/Scripts/app/toastLogger.js")"></script>
     }
 
     @Styles.Render("~/Content/create-order-details")
@@ -67,9 +68,9 @@
         </div>
         <div id="users" class="collapse">
 
-            @Html.Partial("~/Views/Admin/Partials/_ShowUsers.cshtml", Model.UserDetailsViewModel);
+                @Html.Partial("~/Views/Admin/Partials/_ShowUsers.cshtml", Model.UserDetailsViewModel);
 
-        </div>
+            </div>
     </div>
 
 

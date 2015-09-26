@@ -45,6 +45,8 @@ using ClaimTypes = System.Security.Claims.ClaimTypes;
 using DateTimeHelper = CUWebinars.Web.Helpers.DateTimeHelper;
 using Formatting = Newtonsoft.Json.Formatting;
 
+
+
 namespace CUWebinars.Web.Controllers.Admin
 {
 
@@ -2160,20 +2162,42 @@ namespace CUWebinars.Web.Controllers.Admin
         [HandleAjaxException]
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult GetGridUserData(int? affiliateId)
+        
+        public JsonResult GetGridUserData(DTParameters param)
         {
             var aff = _affiliateManagementService.LoadByTTSDomain("bankwebinars");
 
             if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
             {
                 //
-
-                int totalNumberUsers;
-
-                return Json(new
+                try
                 {
-                    data = BuildDisplayUsersViewModel(affiliateId, out totalNumberUsers)
-                });
+                    var dtsource = new List<WebUser>();
+
+
+                    List<String> columnSearch = new List<string>();
+
+                    foreach (var col in param.Columns)
+                    {
+                        columnSearch.Add(col.Search.Value);
+                    }
+
+                    List<WebUser> data = new DTResultSetUsers().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtsource, columnSearch);
+                    int count = new DTResultSetUsers().Count(param.Search.Value, dtsource, columnSearch);
+                    //DTResultSetUsers<WebUser> result = new DTResultSetUsers<WebUser>
+                    //{
+                    //    draw = param.Draw,
+                    //    data = data,
+                    //    recordsFiltered = count,
+                    //    recordsTotal = count
+                    //};
+                    //return Json(result);
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { error = ex.Message });
+                }
             }
 
             return Json(new { NotAuthorized = true });

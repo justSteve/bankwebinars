@@ -23,7 +23,7 @@
     }
     IStateService stateService = new StateService();
 
-    
+
     var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff;
 
 }
@@ -51,7 +51,16 @@
 
 @Styles.Render("~/Content/create-order-details")
 @Styles.Render("~/Content/data-tables")
+<style>
+    td.details-control {
+        background: url('~/Content/DataTables/images/details_open.png') no-repeat center center;
+        cursor: pointer;
+    }
 
+    tr.shown td.details-control {
+        background: url('~/Content/DataTables/images/details_close.png') no-repeat center center;
+    }
+</style>
 <div class="hero-unit">
     <div id="webinarTitle" class="container">
         <div class="pull-right">

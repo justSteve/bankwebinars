@@ -691,70 +691,70 @@ namespace CUWebinars.Business.Core
                 //12month
                 case 200: return 27;
                 //Live Plus Five (days) ;
-                //PreEvent_1Hr_2013 id=29;
+                //PreEvent_1Hr_2013;
                 case 201: return 32;
                 //OnDemand Recording Only ;
-                //PreEvent_1Hr_2013 id=29;
+                //PreEvent_1Hr_2013;
                 case 203: return 33;
                 //Live Plus Six (months) ;
-                //PreEvent_1Hr_2013 id=29;
+                //PreEvent_1Hr_2013;
                 case 202: return 35;
                 //CD-ROM and Hardcopy Handouts ;
-                //PreEvent_1Hr_2013 id=29;
+                //PreEvent_1Hr_2013;
                 case 204: return 36;
                 //Premier Package ;
-                //PreEvent_1Hr_2013 id=29;
+                //PreEvent_1Hr_2013;
 
                 //2hr;
                 ////;
                 case 205: return 1;
                 //Live Plus Five (days) ;
-                //PreEvent_2Hr_2013 id=27;
+                //PreEvent_2Hr_2013
                 case 206: return 16;
                 //OnDemand Recording Only ;
-                //PreEvent_2Hr_2013 id=27;
+                //PreEvent_2Hr_2013
                 case 208: return 17;
                 //CD-ROM and Hardcopy Handouts ;
-                //PreEvent_2Hr_2013 id=27;
+                //PreEvent_2Hr_2013
                 case 209: return 18;
                 //Premier Package ;
-                //PreEvent_2Hr_2013 id=27;
+                //PreEvent_2Hr_2013
                 case 207: return 3;
                 //Live Plus Six (months) ;
-                //PreEvent_2Hr_2013 id=27;
+                //PreEvent_2Hr_2013
                 //2part;
                 ////;
                 case 249: return 85;
                 //Live Plus Five (days) ;
-                //PreEvent_2PartSeries_2014 id=34;
+                //PreEvent_2PartSeries_2014;
                 case 250: return 86;
                 //OnDemand Recording Only ;
-                //PreEvent_2PartSeries_2014 id=34;
+                //PreEvent_2PartSeries_2014;
                 case 253: return 87;
                 //CD-ROM and Hardcopy Handouts ;
-                //PreEvent_2PartSeries_2014 id=34;
+                //PreEvent_2PartSeries_2014;
                 case 251: return 88;
                 //Live Plus Six ;
-                //PreEvent_2PartSeries_2014 id=34;
+                //PreEvent_2PartSeries_2014;
                 case 252: return 89;
                 //Premier Package ;
-                //PreEvent_2PartSeries_2014 id=34;
+                //PreEvent_2PartSeries_2014;
 
                 ////;
                 //3part;
                 ////;
                 case 210: return 48;
                 //Live Plus Five (days) - 3 Part Series ;
-                //PreEvent_Series3 id=26;
+                //PreEvent_Series3
                 case 211: return 49;
                 //On-Demand Recording Only ;
-                //PreEvent_Series3 id=26;
+                //PreEvent_Series3
                 case 213: return 50;
                 //CD-ROM and Hardcopy Handouts ;
-                //PreEvent_Series3 id=26;
+                //PreEvent_Series3
                 case 214: return 51;
                 //Premium Package - Series ;
-                //PreEvent_Series3 id=26;
+                //PreEvent_Series3
                 case 212: return 91;
                 //Live Plus Six (months) ;
                 //PreEvent_Series3 id=26    ;
@@ -764,38 +764,38 @@ namespace CUWebinars.Business.Core
                 ////;
                 case 216: return 39;
                 //Live Only - 4 Part Series ;
-                //PreEvent_4PartSeries_899 id=23;
+                //PreEvent_4PartSeries_899
                 case 217: return 40;
                 //6-Month OnDemand Weblink - Series ;
-                //PreEvent_4PartSeries_899 id=23;
+                //PreEvent_4PartSeries_899
                 case 219: return 41;
                 //CD-ROM and Hardcopy Handouts - Series ;
-                //PreEvent_4PartSeries_899 id=23;
+                //PreEvent_4PartSeries_899
                 case 220: return 42;
                 //Premium Package - Series ;
-                //PreEvent_4PartSeries_899 id=23;
+                //PreEvent_4PartSeries_899
                 case 218: return 71;
                 //Live plus OnDemand Weblinks ;
-                //PreEvent_4PartSeries_899 id=23;
+                //PreEvent_4PartSeries_899
 
                 ////;
                 //5part;
                 ////;
                 case 221: return 79;
                 //Live Plus Five (days) ;
-                //PreEvent_5PartSeries_2014 id=32;
+                //PreEvent_5PartSeries_2014
                 case 222: return 80;
                 //OnDemand Recording Only ;
-                //PreEvent_5PartSeries_2014 id=32;
+                //PreEvent_5PartSeries_2014
                 case 224: return 81;
                 //CD-ROM and Hardcopy Handouts ;
-                //PreEvent_5PartSeries_2014 id=32;
+                //PreEvent_5PartSeries_2014
                 case 223: return 82;
                 //Live Plus Six ;
-                //PreEvent_5PartSeries_2014 id=32;
+                //PreEvent_5PartSeries_2014
                 case 225: return 83;
                 //Premier Package ;
-                //PreEvent_5PartSeries_2014 id=32;
+                //PreEvent_5PartSeries_2014
                 default:
                     _logger.Fatal("Invalid Regtype detected at getLegacyOptionID!! {0}", idRegType);
                     return idRegType;

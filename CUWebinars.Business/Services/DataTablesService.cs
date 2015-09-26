@@ -110,11 +110,15 @@ namespace CUWebinars.Business.Services
                     .Include(u => u.Institution)
                     .Include(u => u.Orders)
                     .Include(u => u.Addresses)
-                    .ToList();
+                    .Take(200).ToList();
             }
             else
             {
-                theseUsers = _context.WebUsers.ToList();
+                theseUsers = _context.WebUsers.Where(u => u.idUser > 37000).Include(u => u.Institution)
+                    .Include(u => u.Orders)
+                    .Include(u => u.Addresses)
+                    .Take(200)
+                    .ToList();
             }
 
             totalNumberUsers = theseUsers.Count;

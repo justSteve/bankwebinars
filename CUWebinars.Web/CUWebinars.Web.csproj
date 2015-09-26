@@ -417,6 +417,8 @@
     <Compile Include="Controllers\QuizController.cs" />
     <Compile Include="Controllers\StaticContentController.cs" />
     <Compile Include="Core\ConstantType.cs" />
+    <Compile Include="Core\DataTableService.cs" />
+    <Compile Include="Core\DTResultSetUsers.cs" />
     <Compile Include="Core\Orchestrators\IQuizControllerOrchestrator.cs" />
     <Compile Include="Core\Orchestrators\IWebinarControllerOrchestrator.cs" />
     <Compile Include="Core\Orchestrators\QuizControllerOrchestrator.cs" />
@@ -751,29 +753,6 @@
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\app\webinar\manage-webinar-from-details.js" />
     <Content Include="Scripts\bootstrap-filestyle.min.js" />
-    <Content Include="Scripts\DataTables\dataTables.autoFill.js" />
-    <Content Include="Scripts\DataTables\dataTables.autoFill.min.js" />
-    <Content Include="Scripts\DataTables\dataTables.bootstrap.js" />
-    <Content Include="Scripts\DataTables\dataTables.colReorder.js" />
-    <Content Include="Scripts\DataTables\dataTables.colReorder.min.js" />
-    <Content Include="Scripts\DataTables\dataTables.colVis.js" />
-    <Content Include="Scripts\DataTables\dataTables.colVis.min.js" />
-    <Content Include="Scripts\DataTables\dataTables.fixedColumns.js" />
-    <Content Include="Scripts\DataTables\dataTables.fixedColumns.min.js" />
-    <Content Include="Scripts\DataTables\dataTables.fixedHeader.js" />
-    <Content Include="Scripts\DataTables\dataTables.fixedHeader.min.js" />
-    <Content Include="Scripts\DataTables\dataTables.foundation.js" />
-    <Content Include="Scripts\DataTables\dataTables.jqueryui.js" />
-    <Content Include="Scripts\DataTables\dataTables.keyTable.js" />
-    <Content Include="Scripts\DataTables\dataTables.keyTable.min.js" />
-    <Content Include="Scripts\DataTables\dataTables.responsive.js" />
-    <Content Include="Scripts\DataTables\dataTables.responsive.min.js" />
-    <Content Include="Scripts\DataTables\dataTables.scroller.js" />
-    <Content Include="Scripts\DataTables\dataTables.scroller.min.js" />
-    <Content Include="Scripts\DataTables\dataTables.tableTools.js" />
-    <Content Include="Scripts\DataTables\dataTables.tableTools.min.js" />
-    <Content Include="Scripts\DataTables\jquery.dataTables.js" />
-    <Content Include="Scripts\DataTables\jquery.dataTables.min.js" />
     <Content Include="Scripts\jotform.js" />
     <Content Include="Scripts\jquery-1.11.1.js" />
     <Content Include="Scripts\jquery-1.11.1.min.js" />
@@ -1463,6 +1442,7 @@
     <Folder Include="Infrastructure\apis\citrix\GTW\" />
     <Folder Include="Notification\Delivery\" />
     <Folder Include="Scripts\app\types\" />
+    <Folder Include="Scripts\DataTables\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
