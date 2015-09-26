@@ -625,7 +625,11 @@ namespace CUWebinars.Web.Controllers.Admin
 
         public ActionResult GenerateClickToJoinForAdHocCaller()
         {
-            var generateClickToJoinViewModel = new GenerateClickToJoinViewModel();
+            var generateClickToJoinViewModel = new GenerateClickToJoinViewModel
+            {
+
+                Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_webinarManagementService)
+            };
 
             return View("GenerateClickToJoin", generateClickToJoinViewModel);
         }
@@ -833,7 +837,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     }
                     var newOrderRow = _orderManagementService.CreateOrderRow(null, null, 1);
 
-                    newOrderRow.idWebinar = generateClickToJoinViewModel.WebinarId.Value;
+                    newOrderRow.idWebinar = generateClickToJoinViewModel.SelectedWebinarId;
                     newOrderRow.idRegType = 1;
                     _orderManagementService.LoadWebinarIntoOrderRow(newOrderRow);
 
@@ -2159,6 +2163,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return Json(new { NotAuthorized = true });
         }
+        
         [HandleAjaxException]
         [HttpPost]
         [AllowAnonymous]
