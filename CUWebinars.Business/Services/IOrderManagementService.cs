@@ -96,7 +96,7 @@ namespace CUWebinars.Business.Services
         Discount GetDiscountById(int discount);
         IList<Order> GetV3OrdersByWebinar(int idWebinar);
         string GetPostEventMaterialsAccessExpiry(Order order);
-        void SendOrderToLegacy(Order newOrder);
+        //void SendOrderToLegacy(Order newOrder);
         WebUser GetWebUserWithAddressAndInstitution(int idUser);
         IEnumerable<int> GetUserIdsByPartialId(int value);
         object SearchRegistrations(int affiliateID, IList<int> excludeUserIDs, int skip, int take, string search);

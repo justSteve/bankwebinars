@@ -229,117 +229,95 @@ namespace CUWebinars.Business.Core
             return numRows == 1;
         }
 
-        public string checkIfSteadfastIsOpen()
-        {
-            var isOpen = "";
-            using (var sqlConnection = new SqlConnection(_connectionString))
-            {
-                sqlConnection.Open();
-                using (var checkIfOpen = new SqlCommand("select * from users where idUser = 19", sqlConnection))
-                {
-                    checkIfOpen.Connection = sqlConnection;
-                    checkIfOpen.CommandType = CommandType.Text;
-                    SqlDataReader reader = checkIfOpen.ExecuteReader();
 
-                    while (reader.Read())
-                    {
-                        isOpen = "isOpen";
-                    }
-                    reader.Close();
-                    return isOpen;
+        //public void SendOrderToLegacy(Order order)
+        //{
+        //    var myRow = order.OrderRows.FirstOrDefault();
+        //    var addLoc = "";
+        //    var addLocCount = 0;
+        //    var orderid = "0";
+        //    int translatedOptionId = 0;
+        //    if (myRow.RegistrationType != null)
+        //    {
+        //        translatedOptionId = getLegacyOptionID(myRow.RegistrationType.idRegType);
+        //    }
+        //    else
+        //    {
+        //        translatedOptionId = getLegacyOptionID(myRow.idRegType);
+        //    }
+        //    //int translatedOptionId = getLegacyOptionID(myRow.RegistrationType.idRegType);
 
-                }
-            }
-        }
-
-        public void SendOrderToLegacy(Order order)
-        {
-            var myRow = order.OrderRows.FirstOrDefault();
-            var addLoc = "";
-            var addLocCount = 0;
-            var orderid = "0";
-            int translatedOptionId = 0;
-            if (myRow.RegistrationType != null)
-            {
-                translatedOptionId = getLegacyOptionID(myRow.RegistrationType.idRegType);
-            }
-            else
-            {
-                translatedOptionId = getLegacyOptionID(myRow.idRegType);
-            }
-            //int translatedOptionId = getLegacyOptionID(myRow.RegistrationType.idRegType);
-
-            if (myRow.AdditionalLocation != null)
-            {
-                addLocCount = myRow.AdditionalLocation.Count;
-                foreach (var loc in myRow.AdditionalLocation)
-                {
-                    addLoc += loc.Email + ",";
-                }
-            }
+        //    if (myRow.AdditionalLocation != null)
+        //    {
+        //        addLocCount = myRow.AdditionalLocation.Count;
+        //        foreach (var loc in myRow.AdditionalLocation)
+        //        {
+        //            addLoc += loc.Email + ",";
+        //        }
+        //    }
 
 
-            int AffiliateID = order.idAffiliate;
-            int WebinarID = 0;
-            //int idRegType = _webinarManagementService.GetRegTypeByACS(dic["DeliveryType"], Convert.ToInt32(dic["BankWebID"]));
-            int idRegType = 0;
-            var FirstName = order.FirstName;
-            var LastName = order.LastName;
-            var Title = order.WebUser.Title;
-            var Institution = order.Institution;
-            var Email = order.BillingEmail;
-            var Phone = order.BillingPhone;
-            var Address = order.BillingAddress;
-            var Address2 = order.BillingAddress2;
-            var City = order.BillingCity;
-            var State = order.BillingState;
-            var Zip = order.BillingZip;
-            var DiscountCode = "";
-            var AdditionalLocations = "";
-            var shippingFirstName = order.FirstName;
-            var shippingLastName = order.LastName;
-            var shippingPhone = order.ShippingPhone;
-            var shippingAddress = order.ShippingAddress;
-            var shippingCity = order.ShippingCity;
-            var shippingState = order.ShippingState;
-            var shippingZip = order.ShippingZip;
-            var AffiliateComments = "V3Migrator";
-            var OrderDate = order.OrderDate;
-            var DeliveryType = translatedOptionId;
+        //    int AffiliateID = order.idAffiliate;
+        //    int WebinarID = 0;
+        //    //int idRegType = _webinarManagementService.GetRegTypeByACS(dic["DeliveryType"], Convert.ToInt32(dic["BankWebID"]));
+        //    int idRegType = 0;
+        //    var FirstName = order.FirstName;
+        //    var LastName = order.LastName;
+        //    var Title = order.WebUser.Title;
+        //    var Institution = order.Institution;
+        //    var Email = order.BillingEmail;
+        //    var Phone = order.BillingPhone;
+        //    var Address = order.BillingAddress;
+        //    var Address2 = order.BillingAddress2;
+        //    var City = order.BillingCity;
+        //    var State = order.BillingState;
+        //    var Zip = order.BillingZip;
+        //    var DiscountCode = "";
+        //    var AdditionalLocations = "";
+        //    var shippingFirstName = order.FirstName;
+        //    var shippingLastName = order.LastName;
+        //    var shippingPhone = order.ShippingPhone;
+        //    var shippingAddress = order.ShippingAddress;
+        //    var shippingCity = order.ShippingCity;
+        //    var shippingState = order.ShippingState;
+        //    var shippingZip = order.ShippingZip;
+        //    var AffiliateComments = "V3Migrator";
+        //    var OrderDate = order.OrderDate;
+        //    var DeliveryType = translatedOptionId;
 
 
-            WebinarID = myRow.idWebinar;
+        //    WebinarID = myRow.idWebinar;
 
-            var PostForm = MigrateOrderModelQueryString(DeliveryType, AffiliateID, FirstName, LastName, Phone,
-                Address, Address2, City, Zip, State, shippingFirstName, shippingLastName, shippingPhone,
-                shippingAddress, shippingCity, shippingState, shippingZip, Email, Title, Institution, idRegType,
-                WebinarID, AdditionalLocations, Convert.ToDateTime(OrderDate), DiscountCode);
-
-
-            //string submitImporter = "http://localhost:51405/home/migrateorder";
-            string submitImporter = "http://acsimporter.bankwebinars.com/home/migrateorder";
+        //    var PostForm = MigrateOrderModelQueryString(DeliveryType, AffiliateID, FirstName, LastName, Phone,
+        //        Address, Address2, City, Zip, State, shippingFirstName, shippingLastName, shippingPhone,
+        //        shippingAddress, shippingCity, shippingState, shippingZip, Email, Title, Institution, idRegType,
+        //        WebinarID, AdditionalLocations, Convert.ToDateTime(OrderDate), DiscountCode);
 
 
-            WebRequest req = WebRequest.Create(submitImporter);
+        //    //string submitImporter = "http://localhost:51405/home/migrateorder";
+        //    string submitImporter = "http://acsimporter.bankwebinars.com/home/migrateorder";
 
-            byte[] send = Encoding.Default.GetBytes(PostForm);
-            req.Method = "POST";
-            req.ContentType = "application/x-www-form-urlencoded";
-            req.ContentLength = send.Length;
 
-            Stream sout = req.GetRequestStream();
-            sout.Write(send, 0, send.Length);
-            sout.Flush();
-            sout.Close();
+        //    WebRequest req = WebRequest.Create(submitImporter);
 
-            //WebResponse res = req.GetResponse();
-            //StreamReader sr = new StreamReader(res.GetResponseStream());
-            //string returnvalue = sr.ReadToEnd();
+        //    byte[] send = Encoding.Default.GetBytes(PostForm);
+        //    req.Method = "POST";
+        //    req.ContentType = "application/x-www-form-urlencoded";
+        //    req.ContentLength = send.Length;
 
-            // Display the content.
-            //return returnvalue;
+        //    Stream sout = req.GetRequestStream();
+        //    sout.Write(send, 0, send.Length);
+        //    sout.Flush();
+        //    sout.Close();
 
-        }
+        //    //WebResponse res = req.GetResponse();
+        //    //StreamReader sr = new StreamReader(res.GetResponseStream());
+        //    //string returnvalue = sr.ReadToEnd();
+
+        //    // Display the content.
+        //    //return returnvalue;
+
+        //}
 
         private string MigrateOrderModelQueryString(int deliveryType, int affiliateId, string firstName, string lastName, string phone, string address1, string address2, string city, string zip, string state, string shippingFirstName, string shippingLastName, string shippingPhone, string shippingAddress, string shippingCity, string shippingState, string shippingZip, string email, string title, string institution, int idRegType, int webinarId, string additionalLocations, DateTime orderDate, string discountCode)
         {
@@ -376,305 +354,6 @@ namespace CUWebinars.Business.Core
 
         }
 
-        public
-            string SendOrderToLegacyForSQL(Order newOrder)
-        {
-            //attempting to deprecate this
-            var myRow = newOrder.OrderRows.FirstOrDefault();
-            var addLoc = "";
-            var addLocCount = 0;
-            var orderid = "0";
-            int translatedOptionId = 0;
-            if (myRow.RegistrationType != null)
-            {
-                translatedOptionId = getLegacyOptionID(myRow.RegistrationType.idRegType);
-            }
-            else
-            {
-                translatedOptionId = getLegacyOptionID(myRow.idRegType);
-            }
-            //int translatedOptionId = getLegacyOptionID(myRow.RegistrationType.idRegType);
-
-            if (myRow.AdditionalLocation != null)
-            {
-                addLocCount = myRow.AdditionalLocation.Count;
-                foreach (var loc in myRow.AdditionalLocation)
-                {
-                    addLoc += loc.Email + ",";
-                }
-            }
-
-            var idUserParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idUser" };
-            var idUser2Parameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idUser" };
-            var idWebinarParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.Int,
-                ParameterName = "@idWebinar",
-                Value = myRow.idWebinar
-            };
-            var idDiscountParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idDiscount" };
-            var idOptionParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.Int,
-                ParameterName = "@idOption",
-                Value = translatedOptionId
-            };
-
-            var idAffParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.Int,
-                ParameterName = "@idAffiliate",
-                Value = newOrder.idAffiliate
-            };
-            var addLocParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@addLoc",
-                Value = addLoc
-            };
-            var addLocCountParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@addLocCount",
-                Value = addLocCount
-            };
-            var firstNameParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@firstName",
-                Value = newOrder.FirstName
-            };
-            var lastNameParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@lastName",
-                Value = newOrder.LastName
-            };
-            var phone1Parameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@phone1",
-                Value = newOrder.BillingPhone
-            };
-            var mAddressParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@mAddress",
-                Value = newOrder.BillingAddress
-            };
-            var mCityParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@mCity",
-                Value = newOrder.BillingCity
-            };
-            var mZipParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@mZip",
-                Value = newOrder.BillingZip
-            };
-            var mStateParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@mState",
-                Value = newOrder.BillingState
-            };
-            var emailParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@email",
-                Value = newOrder.BillingEmail
-            };
-            var generalCommentsParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@generalComments",
-                Value = "ImporterV2 " + newOrder.AffiliateComments
-            };
-            var provisionalInstitutionParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@provisionalInstitution",
-                Value = newOrder.Institution
-            };
-
-            using (var sqlConnection = new SqlConnection(_connectionString))
-            {
-                int idUser = 0;
-                sqlConnection.Open();
-
-                if (newOrder.idAffiliate == 62)
-                {
-                    using (var getUserID = new SqlCommand("InsertACSUser", sqlConnection))
-                    {
-                        getUserID.Parameters.Add(firstNameParameter);
-                        getUserID.Parameters.Add(lastNameParameter);
-                        getUserID.Parameters.Add(phone1Parameter);
-                        getUserID.Parameters.Add(mAddressParameter);
-                        getUserID.Parameters.Add(mCityParameter);
-                        getUserID.Parameters.Add(mZipParameter);
-                        getUserID.Parameters.Add(mStateParameter);
-                        getUserID.Parameters.Add(emailParameter);
-                        getUserID.Parameters.Add(provisionalInstitutionParameter);
-                        try
-                        {
-                            getUserID.Connection = sqlConnection;
-                            getUserID.CommandType = CommandType.StoredProcedure;
-
-                            idUser = Convert.ToInt32(getUserID.ExecuteScalar());
-                            @idUserParameter.Value = idUser;
-                            @idUser2Parameter.Value = idUser;
-                        }
-                        catch (Exception ex)
-                        {
-                            using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                            {
-                                errorLogger.CommandText =
-                                    "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                                errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() +
-                                                           "',";
-                                errorLogger.CommandText += "'ACSIMPORTER' ,";
-                                errorLogger.CommandText += "9 ,9 ,9 ,'[InsertACSUser]', 9 ,";
-                                errorLogger.CommandText += "'error at InsertACSUser " + ex.Message + "')";
-
-                                errorLogger.ExecuteNonQuery();
-
-                            }
-                        }
-                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                        {
-                            errorLogger.CommandText =
-                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() + "',";
-                            errorLogger.CommandText += "'ACSIMPORTER' ,";
-                            errorLogger.CommandText += "0 ,0 ,0 ,'[InsertACSUser]', 0 ,";
-                            errorLogger.CommandText += "'InsertACSUser returned " + idUser.ToString() + "')";
-
-                            errorLogger.ExecuteNonQuery();
-                        }
-                    }
-                }
-                else
-                {
-                    using (var getUserID = new SqlCommand("InsertUser", sqlConnection))
-                    {
-                        getUserID.Parameters.Add(firstNameParameter);
-                        getUserID.Parameters.Add(idAffParameter);
-                        getUserID.Parameters.Add(lastNameParameter);
-                        getUserID.Parameters.Add(phone1Parameter);
-                        getUserID.Parameters.Add(mAddressParameter);
-                        getUserID.Parameters.Add(mCityParameter);
-                        getUserID.Parameters.Add(mZipParameter);
-                        getUserID.Parameters.Add(mStateParameter);
-                        getUserID.Parameters.Add(emailParameter);
-                        getUserID.Parameters.Add(provisionalInstitutionParameter);
-                        try
-                        {
-                            getUserID.Connection = sqlConnection;
-                            getUserID.CommandType = CommandType.StoredProcedure;
-
-                            idUser = Convert.ToInt32(getUserID.ExecuteScalar());
-                            @idUserParameter.Value = idUser;
-                            @idUser2Parameter.Value = idUser;
-                        }
-                        catch (Exception ex)
-                        {
-                            using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                            {
-                                errorLogger.CommandText =
-                                    "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                                errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() +
-                                                           "',";
-                                errorLogger.CommandText += "'CartSynch' ,";
-                                errorLogger.CommandText += "9 ,9 ,9 ,'[InsertUser]', 9 ,";
-                                errorLogger.CommandText += "'error at InsertUser " + ex.Message + "')";
-
-                                errorLogger.ExecuteNonQuery();
-
-                            }
-                        }
-                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                        {
-                            errorLogger.CommandText =
-                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() + "',";
-                            errorLogger.CommandText += "'CartSynch' ,";
-                            errorLogger.CommandText += "0 ,0 ,0 ,'[InsertUser]', 0 ,";
-                            errorLogger.CommandText += "'InsertUser returned " + idUser.ToString() + "')";
-
-                            errorLogger.ExecuteNonQuery();
-                        }
-                    }
-                }
-                if (newOrder.idAffiliate == 62)
-                {
-                    using (var sendOrder = new SqlCommand("ImportOrderACS", sqlConnection))
-                    {
-                        sendOrder.Parameters.Add(idUser2Parameter);
-                        sendOrder.Parameters.Add(idWebinarParameter);
-                        sendOrder.Parameters.Add(idOptionParameter);
-                        sendOrder.Parameters.Add(idDiscountParameter);
-                        sendOrder.Parameters.Add(addLocParameter);
-                        sendOrder.Parameters.Add(addLocCountParameter);
-
-
-                        sendOrder.Connection = sqlConnection;
-                        sendOrder.CommandType = CommandType.StoredProcedure;
-
-                        orderid = sendOrder.ExecuteScalar().ToString();
-
-                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                        {
-                            errorLogger.CommandText =
-                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() + "',";
-                            errorLogger.CommandText += "'ACSIMPORTER' ,";
-                            errorLogger.CommandText += "0 ,0 ,0 ,'[InsertACSUser]', 0 ,";
-                            errorLogger.CommandText += "'importOrder returned " + orderid.ToString() + "')";
-
-                            errorLogger.ExecuteNonQuery();
-                        }
-                    }
-                }
-                else
-                {
-                    using (var sendOrder = new SqlCommand("MigrateOrder", sqlConnection))
-                    {
-                        sendOrder.Parameters.Add(idUser2Parameter);
-                        sendOrder.Parameters.Add(idWebinarParameter);
-                        sendOrder.Parameters.Add(idOptionParameter);
-                        sendOrder.Parameters.Add(idDiscountParameter);
-                        sendOrder.Parameters.Add(addLocParameter);
-                        sendOrder.Parameters.Add(addLocCountParameter);
-
-
-                        sendOrder.Connection = sqlConnection;
-                        sendOrder.CommandType = CommandType.StoredProcedure;
-
-                        orderid = sendOrder.ExecuteScalar().ToString();
-
-                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                        {
-                            errorLogger.CommandText =
-                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() + "',";
-                            errorLogger.CommandText += "'CartSynch' ,";
-                            errorLogger.CommandText += "0 ,0 ,0 ,'[MigrateOrder]', 0 ,";
-                            errorLogger.CommandText += "'MigrateOrder returned " + orderid.ToString() + "')";
-
-                            errorLogger.ExecuteNonQuery();
-                        }
-                    }
-
-                }
-                int number = 0;
-                var result = Int32.TryParse(orderid, out number);
-                if (result) newOrder.idOrderLegacy = number;
-
-            }
-            return orderid;
-        }
 
         public int getLegacyOptionID(int idRegType)
         {
@@ -985,13 +664,9 @@ namespace CUWebinars.Business.Core
         public List<Order> GetLegacyOrdersByWebinar(int? webinarId)
         {
             var idWebinarParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idWebinar", Value = webinarId };
-            //var emailParameter = new SqlParameter { SqlDbType = SqlDbType.VarChar, Size = 200, ParameterName = "@email", Value = order.BillingEmail };
-            //var defaultConnection =
-            //    "Data Source=tcp:nt2j4x3hvq.database.windows.net,1433;Initial Catalog=BankWebinars33_db;User Id=TTSOp@kmow9uloz6;Password=HXm88WIX;MultipleActiveResultSets=True;";
-
+            
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-
                 sqlConnection.Open();
 
                 using (var getOrder = new SqlCommand("GetLegacyOrders", sqlConnection))
@@ -1039,7 +714,7 @@ namespace CUWebinars.Business.Core
                                         IList<AdditionalLocation> addLocations = new List<AdditionalLocation>();
                                         foreach (var loc in addLoc)
                                         {
-                                            CUWebinars.Business.Models.AdditionalLocation additional = new AdditionalLocation { Email = loc };
+                                            AdditionalLocation additional = new AdditionalLocation { Email = loc };
                                             CollectionExtensions.AddRange(addLocations, newOrderRow.AdditionalLocation);
                                             addLocations.Add(additional);
                                         }
@@ -1094,52 +769,6 @@ namespace CUWebinars.Business.Core
                     }
                 }
             }
-        }
-
-        public void ImportLegacyOrder(int value)
-        {
-            var idOrderParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idOrder", Value = value };
-
-            using (var sqlConnection = new SqlConnection(_connectionString))
-            {
-                sqlConnection.Open();
-
-                using (var getOrder = new SqlCommand("MigrateLegacyOrderToV3", sqlConnection))
-                {
-                    getOrder.Parameters.Add(idOrderParameter);
-
-                    try
-                    {
-                        using (var reader = getOrder.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                //todo: map fields to post form as per OrderMigrator
-                                var idAffiliate = reader.GetInt32(0);
-                                var idWebinar = reader.GetInt32(1);
-                            }
-                        }
-
-                    }
-                    catch (Exception ex)
-                    {
-                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                        {
-                            errorLogger.CommandText =
-                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() +
-                                                       "',";
-                            errorLogger.CommandText += "'MigrateLegacyOrderToV3' ,";
-                            errorLogger.CommandText += "9 ,9 ,9 ,'[MigrateLegacyOrderToV3]', 9 ,";
-                            errorLogger.CommandText += "'error at MigrateLegacyOrderToV3 " + ex.Message.Replace("'", "|") + ". Value passed was: " + value + "')";
-
-                            errorLogger.ExecuteNonQuery();
-
-                        }
-                    }
-                }
-            }
-
         }
     }
 }

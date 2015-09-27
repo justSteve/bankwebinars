@@ -328,7 +328,9 @@ namespace CUWebinars.Business.Services
 
             foreach (var orderEmail in missingFromLegacy)
             {
-                //var order = v3Emails.SingleOrDefault(o => o.BillingEmail == orderEmail);
+                var order = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
+
+                MigrateOrderFromV3(order);
             }
             foreach (var orderEmail in missingFromV3)
             {
@@ -341,6 +343,72 @@ namespace CUWebinars.Business.Services
             var commonEmails = legacyEmails.Intersect(v3Emails);
 
 
+
+        }
+
+        private void MigrateOrderFromV3(Order order)
+        {
+            if (order == null) return;
+
+            var myRow = order.OrderRows.SingleOrDefault();
+            string myDiscount = "";
+            if (myRow.Discount != null)
+            {
+                myDiscount = myRow.Discount.DiscountCode;
+            }
+
+            var PostForm = "";
+
+            PostForm = "affiliateId=" + order.idAffiliate;
+            PostForm += "&firstName=" + order.FirstName;
+            PostForm += "&lastName=" + order.LastName;
+            PostForm += "&phone=" + order.BillingPhone;
+            PostForm += "&address1=" + order.BillingAddress;
+            PostForm += "&address2=" + order.BillingAddress2;
+            PostForm += "&city=" + order.BillingCity;
+            PostForm += "&zip=" + order.BillingZip;
+            PostForm += "&state=" + order.BillingState;
+            PostForm += "&shippingFirstName=" + order.ShippingFirstName;
+            PostForm += "&shippingLastname=" + order.ShippingLastName;
+            PostForm += "&shippingPhone=" + order.ShippingPhone;
+            PostForm += "&shippingAddress=" + order.ShippingAddress;
+            PostForm += "&shippingCity=" + order.ShippingCity;
+            PostForm += "&shippingState=" + order.ShippingState;
+            PostForm += "&shippingZip=" + order.ShippingZip;
+            PostForm += "&Email=" + order.BillingEmail;
+            PostForm += "&Title=" + "";
+            PostForm += "&Institution=" + order.Institution;
+            PostForm += "&idRegType=" + myRow.idRegType;
+            PostForm += "&webinarId=" + myRow.idWebinar;
+            PostForm += "&AdditionalLocationsString=" + myRow.AdditionalLocation;
+            PostForm += "&OrderDate=" + order.OrderDate;
+            PostForm += "&DiscountCode=" + myDiscount;
+            PostForm += "&Status=2&Total=0";
+
+            var submitImporter = "http://acsimporter.bankwebinars.com/home/MigrateOrderFromV3/";
+
+            //submitImporter = "http://localhost:51405/home/MigrateOrderFromV3/";
+
+            WebRequest req = WebRequest.Create(submitImporter);
+
+            byte[] send = Encoding.Default.GetBytes(PostForm);
+            req.Method = "POST";
+            req.ContentType = "application/x-www-form-urlencoded";
+            req.ContentLength = send.Length;
+
+            Stream sout = req.GetRequestStream();
+            sout.Write(send, 0, send.Length);
+            sout.Flush();
+            sout.Close();
+
+            WebResponse res = req.GetResponse();
+            StreamReader sr = new StreamReader(res.GetResponseStream());
+            string returnvalue = sr.ReadToEnd();
+
+            // Display the content.
+            //return returnvalue;
+
+            ;
 
         }
 
@@ -418,11 +486,11 @@ namespace CUWebinars.Business.Services
 
         }
 
-        private void ImportLegacyOrder(int value)
-        {
-            var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
-            dataOperations.ImportLegacyOrder(value);
-        }
+        //private void ImportLegacyOrder(int value)
+        //{
+        //    var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
+        //    dataOperations.ImportLegacyOrder(value);
+        //}
 
         public IEnumerable<Order> GetOrdersByLastName(string lastName, int aff)
         {
@@ -1812,11 +1880,11 @@ namespace CUWebinars.Business.Services
             return _webinarRepository.GetOrdersByWebinar(idWebinar).ToList();
         }
 
-        public void SendOrderToLegacy(Order newOrder)
-        {
+        //public void SendOrderToLegacy(Order newOrder)
+        //{
 
-            _orderRepository.SendOrderToLegacy(newOrder);
-        }
+        //    _orderRepository.SendOrderToLegacy(newOrder);
+        //}
 
 
         public WebUser GetWebUserWithAddressAndInstitution(int idUser)

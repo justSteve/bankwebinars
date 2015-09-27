@@ -595,13 +595,13 @@ namespace CUWebinars.Business.Repository
             ((TTSWebinarsContext)db).AdditionalLocation.Remove(deletedAdditionalLocation);
         }
 
-        public void SendOrderToLegacy(Order newOrder)
-        {
+        //public void SendOrderToLegacy(Order newOrder)
+        //{
 
-            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
+        //    var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
 
-            dataOperations.SendOrderToLegacy(newOrder);
-        }
+        //    dataOperations.SendOrderToLegacy(newOrder);
+        //}
 
 
         public virtual IList<Order> SelectOrdersWithRecordedWebinars(int idUser)

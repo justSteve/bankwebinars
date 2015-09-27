@@ -257,7 +257,9 @@ namespace CUWebinars.Business.Repository
                                                                && (o.OrderStatus == OrderStatus.Billed
                                                                    || o.OrderStatus == OrderStatus.Paid
                                                                    || o.OrderStatus == OrderStatus.Submitted))
-                                                                   .Include(o => o.WebUser);
+                                                                   .Include(o => o.Affiliate)
+                                                                   .Include(o => o.WebUser)
+                                                                   .Include(o => o.OrderRows);
         }
 
         public IQueryable<Order> GetAllOrdersByWebinarForUser(int webinarId, int userId)
