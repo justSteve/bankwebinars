@@ -563,24 +563,30 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
-                    _logger.Info("Confirming Moneris submission with Id {0}", order.idOrder);
+                    _logger.Info("Confirming Moneris submission with Id BW-{0}", order.idOrder);
 
                     order.OrderStatus = OrderStatus.Paid;
 
                     _cartControllerOrchestrator.CreatePostEventClaim(order);
                     var userHasPriorOrders = _cartControllerOrchestrator.UserHasPriorOrders(order.WebUser);
 
-                    _cartControllerOrchestrator.FireOrderSubmittedNotification(order,
-                        userCreatedInCart: !userHasPriorOrders);
 
-                    return Json(new { Result = WebUiConstants.Success }, JsonRequestBehavior.AllowGet);
-                    //return RedirectToAction("OrderComplete", "Account", new { id = order.idOrder, message = form.message });
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
+                    }
+                    else
+                    {
+                        _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: true);
+                    }
+
+                    return RedirectToAction("OrderComplete", "Account", new { id = order.idOrder, message = form.message });
                 }
                 catch (Exception exception)
                 {
                     ModelState.AddModelError(string.Empty,
                         "There was a problem at the server. Please contact the administrator.");
-                    _logger.ErrorException("ConfirmOrder|ConfirmOrder failed ", exception);
+                    _logger.ErrorException("MonerisConfirmOrder returned APPROVED but controller failed ", exception);
                     ErrorSignal.FromCurrentContext().Raise(exception);
                 }
 
@@ -607,99 +613,70 @@ namespace CUWebinars.Web.Controllers
         {
             string formFields = Request.Form.ToString();
             _logger.Info("PostBackMoneris: " + formFields);
-            if (form.note.Contains("BankWebinars"))
+
+            var order = _cartControllerOrchestrator.LoadOrder(Convert.ToInt32(form.order_no.Split('-')[1]));
+
+            if (order == null) throw new ArgumentNullException("order");
+
+            JProperty monerisResponse = new JProperty(JsonPropertyKeys.MonerisResponse,
+                JsonConvert.SerializeObject(form));
+
+            order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, monerisResponse);
+
+            _cartControllerOrchestrator.UpdateOrderPricing(order);
+
+            if (form.message.StartsWith("APPROVED"))
             {
-                string submitImporter = "http://v3.bankwebinars.com/cart/PostBackMonerisBW";
-
-                WebRequest req = WebRequest.Create(submitImporter);
-
-                byte[] send = Encoding.Default.GetBytes(formFields);
-                req.Method = "POST";
-                req.ContentType = "application/x-www-form-urlencoded";
-                req.ContentLength = send.Length;
-
-                using (var stream = req.GetRequestStream())
+                try
                 {
-                    stream.Write(send, 0, send.Length);
-                }
-                var response = (HttpWebResponse)req.GetResponse();
+                    _logger.Info("Confirming Moneris submission with Id CU-{0}", order.idOrder);
 
-                var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
 
-                if (responseString.Contains("success") && form.message.StartsWith("APPROVED"))
-                {
-                    return Redirect("http://v3.bankwebinars.com/Account/OrderComplete/" + form.order_no.Split('-')[1]);
+                    order.OrderStatus = OrderStatus.Paid;
+
+
+                    _cartControllerOrchestrator.CreatePostEventClaim(order);
+
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
+                    }
+                    else
+                    {
+                        _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: true);
+                    }
+
+                    return RedirectToAction("OrderComplete", "Account",
+                        new { id = order.idOrder, message = form.message });
                 }
-                else
+                catch (Exception exception)
                 {
-                    return Redirect("http://v3.bankwebinars.com/Account/OrderDidNotComplete/" + form.order_no.Split('-')[1]);
+                    ModelState.AddModelError(string.Empty,
+                        "There was a problem at the server. Please contact the administrator.");
+                    _logger.ErrorException("ConfirmOrder|ConfirmOrder failed ", exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
                 }
+
+                _logger.Error("ConfirmOrder Action | Id parameter was null");
+                _logger.Error(string.Format("ConfirmOrder Action | {0}", _appHelper.GetUserAuditInfo()));
             }
             else
             {
-                var order = _cartControllerOrchestrator.LoadOrder(Convert.ToInt32(form.order_no.Split('-')[1]));
-
-                if (order == null) throw new ArgumentNullException("order");
-
-                JProperty monerisResponse = new JProperty(JsonPropertyKeys.MonerisResponse,
-                    JsonConvert.SerializeObject(form));
-
-                order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, monerisResponse);
-
-                _cartControllerOrchestrator.UpdateOrderPricing(order);
-
-                if (form.message.StartsWith("APPROVED"))
+                _logger.Info("Moneris declined with msg {0}", form.message);
+                return Json(new
                 {
-                    try
-                    {
-                        _logger.Info("Confirming Moneris submission with Id {0}", order.idOrder);
-
-
-                        order.OrderStatus = OrderStatus.Paid;
-
-
-                        _cartControllerOrchestrator.CreatePostEventClaim(order);
-
-                        if (User.Identity.IsAuthenticated)
-                        {
-                            _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
-                        }
-                        else
-                        {
-                            _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: true);
-                        }
-
-                        return RedirectToAction("OrderComplete", "Account",
-                            new { id = order.idOrder, message = form.message });
-                    }
-                    catch (Exception exception)
-                    {
-                        ModelState.AddModelError(string.Empty,
-                            "There was a problem at the server. Please contact the administrator.");
-                        _logger.ErrorException("ConfirmOrder|ConfirmOrder failed ", exception);
-                        ErrorSignal.FromCurrentContext().Raise(exception);
-                    }
-
-                    _logger.Error("ConfirmOrder Action | Id parameter was null");
-                    _logger.Error(string.Format("ConfirmOrder Action | {0}", _appHelper.GetUserAuditInfo()));
-                }
-                else
-                {
-                    _logger.Info("Moneris declined with msg {0}", form.message);
-                    return Json(new
-                    {
-                        Result = WebUiConstants.Fail,
-                        OrderRowID = order.idOrder,
-                        Msg =
-                            string.Format(
-                                "Your credit card transaction did not complete successfully. Our processor replied with this message: {0}",
-                                form.message)
-                    }, JsonRequestBehavior.AllowGet);
-                    //return RedirectToAction("OrderDidNotComplete", "Account", new { id = order.idOrder, message = form.message });
-                }
-                return this.ModelStateJson(ModelState);
+                    Result = WebUiConstants.Fail,
+                    OrderRowID = order.idOrder,
+                    Msg =
+                        string.Format(
+                            "Your credit card transaction did not complete successfully. Our processor replied with this message: {0}",
+                            form.message)
+                }, JsonRequestBehavior.AllowGet);
+                //return RedirectToAction("OrderDidNotComplete", "Account", new { id = order.idOrder, message = form.message });
             }
+            return this.ModelStateJson(ModelState);
         }
+
 
 
         public void PostBackWPS(FormCollection form)

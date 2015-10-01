@@ -42,10 +42,10 @@ namespace CUWebinars.Business.Notification.Handlers
 
         public virtual void Process(SendConnectionInfoEvent<T> sendConnectionInfoEvent)
         {
-            int orderId = sendConnectionInfoEvent.EventObject.idOrder;
+            int orderId = sendConnectionInfoEvent.EventObject.idOrderLegacy;
 
-            _logger.Info("SendConnectionInfoEventmailer is processing " + sendConnectionInfoEvent.EventObject.OrderRows
-                .Single(or => or.RowStatus == OrderRowStatus.Active).idOrder);
+            //_logger.Info("SendConnectionInfoEventMailer is processing " + sendConnectionInfoEvent.EventObject.OrderRows
+            //    .Single(or => or.RowStatus == OrderRowStatus.Active).idOrder);
 
             INotificationMessage notificationMessage = _generalFormatter.Format(sendConnectionInfoEvent.EventObject, "SendConnectionInfo");
 
@@ -105,7 +105,7 @@ namespace CUWebinars.Business.Notification.Handlers
                             "SendConnectionInfo"
                             );
 
-                        _logger.Info("Sending Connection Info: " + additionalLocation.Email);
+                        _logger.Info("SendConnectionInfoEventMailer - webinarId = {0} - AddLocemail =  ", sendConnectionInfoEvent.EventObject.OrderRows.FirstOrDefault().Webinar.idWebinar, additionalLocation.Email);
 
                         persistedNamePrefix = sendConnectionInfoEvent.ResendEvent
                                                 ? "AddLoc_ConnectionInfo_ReSend_" + ++count + "_" + orderId
@@ -150,6 +150,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 notificationMessage.To = sendConnectionInfoEvent.EventObject.BillingEmail;
                 notificationMessage.Addresses = ccEmailAddresses;
                 _notificationDelivery.Notify(notificationMessage);
+                _logger.Info("SendConnectionInfoEventMailer - webinarId = {0} - Email =  ", sendConnectionInfoEvent.EventObject.OrderRows.FirstOrDefault().Webinar.idWebinar, sendConnectionInfoEvent.EventObject.BillingEmail);
             }
             catch (NullReferenceException nullReferenceException)
             {

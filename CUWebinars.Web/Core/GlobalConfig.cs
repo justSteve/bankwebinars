@@ -34,6 +34,8 @@ namespace CUWebinars.Web.Core
         public string TenantDomain { get; private set; }
         public string TenantURL { get; private set; }
         public string TenantLogo { get; private set; }
+        public string TenantMonerisHpp_Id { get; private set; }
+        public string TenantMonerisHpp_Key { get; private set; }
         public string TenantPrefix { get; private set; }
         public string TestEmailAddress { get; private set; }
         public string TestEmailAddress2 { get; private set; }
@@ -70,6 +72,8 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.TenantDomain = ApplicationSettingsSection["TenantDomain"];
                 UniqueInstance.TenantEmail = ApplicationSettingsSection["TenantEmail"];
                 UniqueInstance.TenantLogo = ApplicationSettingsSection["TenantLogo"];
+                UniqueInstance.TenantMonerisHpp_Id = ApplicationSettingsSection["TenantMonerisHpp_Id"];
+                UniqueInstance.TenantMonerisHpp_Key = ApplicationSettingsSection["TenantMonerisHpp_Key"];
                 UniqueInstance.TenantPrefix = ApplicationSettingsSection["TenantPrefix"];
                 UniqueInstance.TenantURL = ApplicationSettingsSection["TenantURL"];
                 UniqueInstance.TestEmailAddress = ApplicationSettingsSection["TestEmailAddress"];

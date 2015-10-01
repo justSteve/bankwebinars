@@ -227,7 +227,6 @@
     <Compile Include="Notification\IAdhocNotificationMessage.cs" />
     <Compile Include="Notification\Email\OrderSynchMessage.cs" />
     <Compile Include="Notification\Events\OrderSynchEvent.cs" />
-    <Compile Include="Notification\Handlers\OrderSynchHandler.cs" />
     <Compile Include="Notification\IOrderConfirmedForAdditionalLocationDelivery.cs" />
     <Compile Include="Notification\IAdditionalLocationOrderDetailsMessage.cs" />
     <Compile Include="Notification\IConfirmAdditionalLocationsOrderMessage.cs" />

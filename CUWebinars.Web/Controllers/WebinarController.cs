@@ -406,10 +406,12 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.HttpPost]
         public JsonResult SendConnectionInfo(int webinarId)
         {
+            _logger.Info("ConnectionInfo Send is started: " + webinarId);
             try
             {
                 _webinarControllerOrchestrator.FireSendConnectionInfoNotificationEvent(webinarId);
 
+                _logger.Info("ConnectionInfo Send is ended: " + webinarId);
                 return Json(new { Result = WebUiConstants.Success });
             }
             catch (Exception exception)

@@ -38,93 +38,91 @@ function timeSince(date) {
     return Math.floor(seconds) + " seconds";
 }
 
-$('#fireConnInfoSender').on('click', function (eventArgs) {
-
-    var payload = { webinarId: $("#webinarIdDiv").data("webinarid") };
-    eventArgs.preventDefault();
-
-    //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-
-    //var logStartOperation = toastLogger.getLogFn('SendConnectionInfo');
-    //logStartOperation("Sending ConnectionInfo", null, true);
-
-    $.ajax({
-        type: 'POST',
-        contentType: constants.JsonContentType,
-        cache: false,
-        url: '/Webinar/SendConnectionInfo',
-        dataType: constants.JsonDataType,
-        data: JSON.stringify(payload),
-        beforeSend: function () {
-            $('#WaitIndicator').show();
-        }
-    }).done(function (result) {
-
-        labelCheckRemove();
-
-        if (result.Result === 'Success') {
-            $('#InputFormFields').append(successScreenMessage);
-        } else if (result.Result === 'No Orders to send for that webinar') {
-            $('#InputFormFields').append(noOrdersScreenMessage);
-        }
-
-    }).fail(function (jqXHR, textStatus, errorThrown) {
-
-        labelCheckRemove();
-
-        $('#InputFormFields').append(failedScreenMessage);
-        Rollbar.error({ 'oen-#23': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
-        Rollbar.error({ 'oen-#24': { 'errorThrown': errorThrown } });
-
-    }).always(function () {
-        //$('#loadingSpinner').remove();
-    });
-});
-
-
-
-$('#submitSynchOrders').on("click", function () {
-
-    var self = this;
-
-    var payload = { webinarId: currentWebinarId, affiliateId: currentAffiliateId };
-
-    var d = new Date();
-
-    $.ajax({
-        type: 'POST',
-        contentType: constants.JsonContentType,
-        cache: false,
-        url: '/Admin/SynchOrders',
-        dataType: constants.JsonDataType,
-        data: JSON.stringify(payload),
-        beforeSend: function () {
-            $(self).html('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Synching...</span></span>');
-
-        }
-    }).done(function (result) {
-
-        if (result.Success === 'Success') {
-            $('#spinnerLabel').remove();
-            $(self).html('<span>&nbsp;&nbsp;Synch Succeeded</span>');
-
-        } else if (result.Result === 'Fail') {
-            $('#spinnerLabel').remove();
-            $(self).html('<span>&nbsp;&nbsp;Synch Failed</span>');
-
-        }
-
-
-
-    }).fail(function () {
-        var a = 1;
-    }).always(function () {
-        $('#loadingSpinner').remove();
-    });
-});
 
 
 OCA.initializeFunctions = function () {
+
+    $('#fireConnInfoSender').on('click', function (eventArgs) {
+
+        var payload = { webinarId: currentWebinarId };
+        eventArgs.preventDefault();
+
+        //var logStartOperation = toastLogger.getLogFn('SendConnectionInfo');
+        //logStartOperation("Sending ConnectionInfo", null, true);
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: '/Webinar/SendConnectionInfo',
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payload),
+            beforeSend: function () {
+
+                $('#fireConnInfoSender').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+
+            }
+        }).done(function (result) {
+
+            labelCheckRemove();
+
+            if (result.Result === 'Success') {
+                $('#InputFormFields').append(successScreenMessage);
+            } else if (result.Result === 'No Orders to send for that webinar') {
+                $('#InputFormFields').append(noOrdersScreenMessage);
+            }
+
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+
+            labelCheckRemove();
+
+            $('#InputFormFields').append(failedScreenMessage);
+            Rollbar.error({ 'oen-#23': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
+            Rollbar.error({ 'oen-#24': { 'errorThrown': errorThrown } });
+
+        }).always(function () {
+            $('#loadingSpinner').remove();
+        });
+    });
+    $('#submitSynchOrders').on("click", function () {
+
+        var self = this;
+
+        var payload = { webinarId: currentWebinarId, affiliateId: currentAffiliateId };
+
+        var d = new Date();
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: '/Admin/SynchOrders',
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payload),
+            beforeSend: function () {
+                $(self).html('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Synching...</span></span>');
+
+            }
+        }).done(function (result) {
+
+            if (result.Success === 'Success') {
+                $('#spinnerLabel').remove();
+                $(self).html('<span>&nbsp;&nbsp;Synch Succeeded</span>');
+
+            } else if (result.Result === 'Fail') {
+                $('#spinnerLabel').remove();
+                $(self).html('<span>&nbsp;&nbsp;Synch Failed</span>');
+
+            }
+
+        }).fail(function () {
+            var a = 1;
+        }).always(function () {
+            $('#loadingSpinner').remove();
+        });
+    });
+
+
 
     OCA.hookUpChangeTypeLogic = function (dropDown) {
 

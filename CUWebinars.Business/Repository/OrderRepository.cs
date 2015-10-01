@@ -368,6 +368,7 @@ namespace CUWebinars.Business.Repository
             var orders = ((TTSWebinarsContext)db).OrderRows
                 .Include(or => or.Order)
                 .Include(row => row.Webinar)
+                .Where(or => or.idWebinar == idWebinar)
                 .Where(or => or.RegistrationType.ShowLiveNotifications == "Yes")
                 .Where(or => or.RowStatus == OrderRowStatus.Active)
                 .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Submitted)

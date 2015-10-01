@@ -838,7 +838,7 @@ namespace CUWebinars.Business.Services
                 AddPasswordUrl = string.Empty,
                 ConfirmChangeEmailUrl = string.Empty,
                 Details = order.NotificationStorage,
-                idOrder = order.idOrder,
+                idOrder = order.idOrderLegacy,
                 Order = order,
                 OrderGenesis =
                     userCreatedInCart ? OrderGenesis.CreatedViaCartByNewUser : OrderGenesis.CreatedViaCartByExistingUser,
@@ -1179,6 +1179,8 @@ namespace CUWebinars.Business.Services
 
         public void FireSendConnectionInfoNotificationEvent(IList<Order> orders, bool resending)
         {
+
+            //see SendConnectionInfoHandler for handling implementation
             foreach (var order in orders)
             {
                 AddEvent(new SendConnectionInfoEvent<Order> { EventObject = order, ResendEvent = resending, Details = order.NotificationStorage });

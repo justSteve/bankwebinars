@@ -11,7 +11,8 @@
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
     //Layout = "/Views/Shared/_Layout_PayCC.cshtml";
-
+    var hpp_id = globalConfig.TenantMonerisHpp_Id;
+    var hpp_key = globalConfig.TenantMonerisHpp_Key;
     var order = Model;
 
     var myRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
@@ -43,7 +44,7 @@
     }
 }
 <div id="PayByCCModal" class="modal hide fade">
-    <form method="POST" action="https://esplusqa.moneris.com/DPHPP/index.php">
+    <form method="POST" action="https://esplus.moneris.com/DPHPP/index.php">
 
         <input type="hidden" name="id" />
         <input type="hidden" id="Step2_BillMeFormReferred" name="referred" value="" />
@@ -52,10 +53,10 @@
         </div>
         <div id="orderDetails" class="modal-body">
             <div>
-                <input type="hidden" name="hpp_id" value="AY3NBqa002">
-                <input type="hidden" name="hpp_key" value="hpHF7B3ETD9C">
-                @*<input type="hidden" name="amount" value="@Math.Round(Model.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice, 2)">*@
-                <input type="hidden" name="amount" value="9.00">
+                <input type="hidden" name="hpp_id" value="@globalConfig.TenantMonerisHpp_Id">
+                <input type="hidden" name="hpp_key" value="@globalConfig.TenantMonerisHpp_Key">
+                <input type="hidden" name="amount" value="@Math.Round(order.Total, 2)">
+                @*<input type="hidden" name="amount" value="9.00">*@
 
                 <input type="hidden" name="li_id1" value="@order.idOrder">
                 <input type="hidden" name="li_description1" value="@title - @regTypeDesc">

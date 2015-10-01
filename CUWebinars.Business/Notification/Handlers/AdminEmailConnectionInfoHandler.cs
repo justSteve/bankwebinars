@@ -34,7 +34,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 notificationMessage.To = adminEmailConnectionInfoEvent.Recipients.First();
 
                 notificationMessage.PersistedName = string.Format("{0}_{1}{2}", 
-                    string.Concat(DomainConstants.AdminEmailedPrefix, NotificationName, "_", adminEmailConnectionInfoEvent.EventObject.idOrder),
+                    string.Concat(DomainConstants.AdminEmailedPrefix, NotificationName, "_", adminEmailConnectionInfoEvent.EventObject.idOrderLegacy),
                     DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat),
                     ".htm"
                     );
@@ -60,7 +60,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 {
                     _logger.ErrorException(
                         string.Format("Event processing failed for adminEmailConnectionInfoEvent - OrderId {0}. ExceptionMessage: {1}",
-                            adminEmailConnectionInfoEvent.EventObject.idOrder,
+                            adminEmailConnectionInfoEvent.EventObject.idOrderLegacy,
                             nullReferenceException.Message)
                         , nullReferenceException);
                 }

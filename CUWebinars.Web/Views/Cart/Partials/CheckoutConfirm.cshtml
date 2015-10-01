@@ -1,15 +1,20 @@
 ﻿@using CUWebinars.Business.Core
 @model CheckoutConfirmViewModel
-<script language="javascript" type="text/javascript">
+@*<script language="javascript" type="text/javascript">
 
-    //$(document).ready(function() {
-    //    //<button data-toggle="modal" data-target="#PayByCCModal" class="btn btn-success" id=
-    //    $("#ShowPayByCCModal").click(function() {
-    //        $('#PayByCCModal').modal('show');
-    //    });
+    $(document).ready(function() {
+       
+        $("#ShowPayByCCModal").click(function() {
+            if (!$('#PayByCCModal').is(':visible')) {
+                
+                alert("hit " + $('#PayByCCModal').is(':visible'));
+                // if modal is not shown/visible then do something
+                $('#PayByCCModal').modal('show');
+            }
+        });
 
-    //});
-</script>
+    });
+</script>*@
 @{
     if (Model.OrderExists)
     {
@@ -85,16 +90,10 @@
                         <div style="font-size: x-small; text-align: center;">
                             <span><button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button></span> &nbsp; &nbsp; &nbsp;
                             @{
-                if (User.Identity.Name == "user@ttstrain.com")
-                {
-                    <span>
-                        <button data-toggle="modal" role="button" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button>
-                    </span><br />
-                }
-                else
-                {
-                    <span>Call 800-831-0678 to pay by credit card</span>
-                }
+                                <span>
+                                    <button data-toggle="modal" role="button" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button>
+                                </span><br />
+                                @*<span>Call 800-831-0678 to pay by credit card</span>*@
                             }
                         </div>
                         <div class="pull-right">
@@ -136,8 +135,8 @@
                     @if (Model.OrderStatus != OrderStatus.Paid)
                     {
 
-                    <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>
-                    <br />
+                        <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>
+                        <br />
                     }
                 </div>
                 <div class="row">
