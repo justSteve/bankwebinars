@@ -2163,6 +2163,25 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return Json(new { NotAuthorized = true });
         }
+              [HandleAjaxException]
+        [HttpPost]
+        [AllowAnonymous]
+        public ActionResult GetGridDataForConnInfo(int? webinarId, int? affiliateId)
+        {
+            if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
+            {
+                //
+
+                int totalNumberOrders;
+
+                return Json(new
+                {
+                    data = BuildConnInfoViewModel(webinarId.Value, affiliateId, out totalNumberOrders)
+                });
+            }
+
+            return Json(new { NotAuthorized = true });
+        }
         
         [HandleAjaxException]
         [HttpPost]
@@ -2255,6 +2274,57 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 responsePayloadInner.Add("OrderDateColumn", order.OrderDate.ToShortDateString());
                 responsePayloadInner.Add("StatusColumn", "<a href='/Admin/manageOrder/" + orderToEdit + "' target='_new' />" + order.OrderStatus.ToString() + "</a><br/>" + resendMsg);
+
+                responsePayload.Add(responsePayloadInner);
+            }
+
+            return responsePayload;
+        }
+
+        private IList<IDictionary<string, string>> BuildConnInfoViewModel(int webinarId, int? affiliateId, out int totalNumberOrders)
+        {
+            
+            var orders = _dataTablesService.GetOrdersByWebinar(webinarId, affiliateId ?? 19, out totalNumberOrders);
+
+            IList<IDictionary<string, string>> responsePayload = new List<IDictionary<string, string>>();
+            IDictionary<string, string> responsePayloadInner = new Dictionary<string, string>();
+
+            foreach (var order in orders.Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted))
+            {
+
+                var orderRow = order.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
+                if (orderRow.RegistrationType.ShowLiveNotifications == "No") continue;
+
+                int orderToEdit = order.idOrderLegacy;
+                if (orderToEdit == 0) orderToEdit = order.idOrder;
+
+                var orderColumn = orderToEdit.ToString() + ", " + orderRow.TtsJoinUrl;
+                var userColumn = "<a href='/account/edituser/" + order.idUser + "' target='_new' />" + order.LastName + ", " + order.FirstName + "</a><br>"+order.BillingEmail;
+                var institutionColumn = order.Institution;
+                var showDiscount = "";
+                if (!ReferenceEquals(orderRow.Discount, null) && orderRow.Discount.FlatOff > 0)
+                {
+                    showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: $" + orderRow.Discount.FlatOff.ToString().Replace(".00", "") + "</span>";
+                }
+                else if ((!ReferenceEquals(orderRow.Discount, null) && orderRow.Discount.PercentOff > 0))
+                {
+                    showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: " + orderRow.Discount.PercentOff.ToString() + "%</span>";
+                }
+                var billingColumn = orderRow.RegistrationType.OptionLabel.Replace(" and Hardcopy Handouts", "").Replace("Plus Five", "Only") + showDiscount + "<br>Total: $" + order.Total.ToString().Replace(".00", "");
+
+                
+                responsePayloadInner = new Dictionary<string, string>();
+
+                responsePayloadInner.Add("OrderId", orderColumn);
+                responsePayloadInner.Add("OrderColumn", orderColumn);
+                responsePayloadInner.Add("UserColumn", userColumn);
+                responsePayloadInner.Add("InstitutionColumn", institutionColumn);
+                responsePayloadInner.Add("BillingColumn", billingColumn);
+
+                responsePayloadInner.Add("AffiliateColumn", order.Affiliate.ttsDomain);
+
+                responsePayloadInner.Add("OrderDateColumn", order.OrderDate.ToShortDateString());
+                responsePayloadInner.Add("StatusColumn", "<a href='/Admin/manageOrder/" + orderToEdit + "' target='_new' />" + order.OrderStatus.ToString() + "</a>");
 
                 responsePayload.Add(responsePayloadInner);
             }

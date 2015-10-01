@@ -14,6 +14,7 @@ $(function () {
     DO.primeDomVariables();
     DO.wireUpHandlers();
     DO.wireUpDataTable();
+    DO.wireUpConnInfoDataTable();
 
 });
 
@@ -22,6 +23,7 @@ $(function () {
 
     ns.primeDomVariables = function() {
         DO.ordersTable = $('#ordersTable');
+        DO.connInfoTable = $('#connInfoTable');
         DO.webinarIdDiv = $('#webinarIdDiv');
     };
 
@@ -83,6 +85,36 @@ $(function () {
             },
             'ajax': {
                 'url': '/admin/GetGridData',
+                'data': {
+                    'webinarId': parseInt(DO.webinarIdDiv.text()),
+                    'affiliateId': DO.affiliateId
+                },
+                'type': 'POST'
+            },
+            'columns': [
+                { 'data': 'OrderColumn' },
+                { 'data': 'UserColumn' },
+                { 'data': 'InstitutionColumn' },
+                { 'data': 'BillingColumn' },
+                {
+                    'data': 'AffiliateColumn',
+                    'visible': aff
+                },
+                { 'data': 'OrderDateColumn' },
+                { 'data': 'StatusColumn' }
+            ]
+        });
+    };
+    ns.wireUpConnInfoDataTable = function() {
+        
+        DO.connInfoTable.dataTable({
+            "dom": '<ilf<t>ip>',
+            //'dom': 'T<"clear">lfrtip',
+            'tableTools': {
+                'sSwfPath': '/Content/DataTables/swf/copy_csv_xls_pdf.swf'
+            },
+            'ajax': {
+                'url': '/admin/GetGridDataForConnInfo',
                 'data': {
                     'webinarId': parseInt(DO.webinarIdDiv.text()),
                     'affiliateId': DO.affiliateId

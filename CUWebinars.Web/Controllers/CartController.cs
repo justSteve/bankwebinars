@@ -711,55 +711,6 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        public ActionResult PayCC_Declined()
-        {
-            string formFields = Request.QueryString.ToString();
-            _logger.Info("PayCC Declined: " + formFields);
-            int qOrder;
-            bool oResult = Int32.TryParse(Request.QueryString["T_ordernum"], out qOrder);
-
-            if (oResult)
-            {
-                var order = _cartControllerOrchestrator.LoadOrder(qOrder);
-                return View("~/Views/Cart/PayCC_Declined.cshtml", order);
-
-            }
-            _logger.Info("ERROR: PayCC Declined Fell too far: " + formFields);
-            return View();
-        }
-
-
-        public ActionResult PayCC_Approved()
-        {
-            string formFields = Request.QueryString.ToString();
-            _logger.Info("PayCC_Approved: " + formFields);
-            int qOrder;
-            bool oResult = Int32.TryParse(Request.QueryString["T_ordernum"], out qOrder);
-
-            if (oResult)
-            {
-                try
-                {
-                    return RedirectToAction("ConfirmOrder", new { referred = formFields, ID = qOrder });
-
-                    //var order =  _cartControllerOrchestrator.LoadOrder(qOrder);
-                    //_cartControllerOrchestrator.SetOrderPaidByCC(qOrder, Request.QueryString["Approval_Code"], formFields);
-
-
-                    //return View("~/Views/Cart/PayCC_Approved.cshtml", order);
-
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error("ERROR: PayCC Approval exception", ex);
-
-                    return View();
-                }
-            }
-            _logger.Info("ERROR: PayCC Approved fell too far: " + formFields);
-            return View();
-        }
-
         [HttpPost]
         public ActionResult UpdateAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations, int? newOrderRowId)
         {

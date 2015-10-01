@@ -1,0 +1,49 @@
+﻿@model ShowOrdersViewModel
+
+@{
+    ViewBag.Title = "Orders";
+
+    if (Model.Affiliate != null && !Model.UserIsAdmin)
+    {
+        <script type="text/javascript">
+            if (SENDCONNINFO === null || typeof SENDCONNINFO === 'undefined') {var SENDCONNINFO = {};}var DO = SENDCONNINFO;DO.affiliateId = @Model.Affiliate.idUserAff;
+
+        </script>
+    }
+
+    var showAffColumn = Model.UserIsAdmin ? "true" : "false";
+    //\Scripts\app\admin\display-orders.js
+    // AdminController/BuildConnInfoViewModel
+
+    <table data-aff="@showAffColumn" id="connInfoTable" class="table table-striped table-bordered dataTable no-footer" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Order</th>
+                <th>User</th>
+                <th>Institution</th>
+                <th>Billing</th>
+                <th>Affiliate</th>
+                <th>OrderDate</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tfoot>
+            <tr>
+                <th>Order</th>
+                <th>User</th>
+                <th>Institution</th>
+                <th>Billing</th>
+                <th>Affiliate</th>
+                <th>OrderDate</th>
+                <th>Status</th>
+            </tr>
+        </tfoot>
+    </table>
+    <div>
+        <button id="fireConnInfoSender" role="button" class="btn btn-danger">Fire Connection Info Sender</button>
+    </div>
+    <div><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>
+    <div id="webinarIdDiv" data-webinarid="@Model.Webinar.idWebinar" class="initialHide">@Model.Webinar.idWebinar</div>
+}
+

@@ -38,6 +38,49 @@ function timeSince(date) {
     return Math.floor(seconds) + " seconds";
 }
 
+$('#fireConnInfoSender').on('click', function (eventArgs) {
+
+    var payload = { webinarId: $("#webinarIdDiv").data("webinarid") };
+    eventArgs.preventDefault();
+
+    //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+
+    //var logStartOperation = toastLogger.getLogFn('SendConnectionInfo');
+    //logStartOperation("Sending ConnectionInfo", null, true);
+
+    $.ajax({
+        type: 'POST',
+        contentType: constants.JsonContentType,
+        cache: false,
+        url: '/Webinar/SendConnectionInfo',
+        dataType: constants.JsonDataType,
+        data: JSON.stringify(payload),
+        beforeSend: function () {
+            $('#WaitIndicator').show();
+        }
+    }).done(function (result) {
+
+        labelCheckRemove();
+
+        if (result.Result === 'Success') {
+            $('#InputFormFields').append(successScreenMessage);
+        } else if (result.Result === 'No Orders to send for that webinar') {
+            $('#InputFormFields').append(noOrdersScreenMessage);
+        }
+
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+
+        labelCheckRemove();
+
+        $('#InputFormFields').append(failedScreenMessage);
+        Rollbar.error({ 'oen-#23': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
+        Rollbar.error({ 'oen-#24': { 'errorThrown': errorThrown } });
+
+    }).always(function () {
+        //$('#loadingSpinner').remove();
+    });
+});
+
 
 
 $('#submitSynchOrders').on("click", function () {

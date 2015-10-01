@@ -985,6 +985,7 @@
     <Content Include="Views\Cart\ExpressCheckout4IE1CU.cshtml" />
     <Content Include="Views\Cart\ThankYou.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowUsers.cshtml" />
+    <Content Include="Views\Admin\Partials\_ShowSendConnectionInfo.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
