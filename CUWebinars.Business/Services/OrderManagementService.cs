@@ -291,7 +291,7 @@ namespace CUWebinars.Business.Services
 
         }
 
-        public void CheckForLegacyOrders(int webinarId)
+        public void SynchOrders(int webinarId)
         {
             var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
             IList<Order> lOrders = dataOperations.GetLegacyOrdersByWebinar(webinarId);
@@ -300,24 +300,6 @@ namespace CUWebinars.Business.Services
 
             List<string> legacyEmails = lOrders.Select(order => order.BillingEmail).ToList();
             List<string> v3Emails = v3Orders.Select(v3Order => v3Order.BillingEmail).ToList();
-            //if (v3Order.BillingEmail == order.BillingEmail)
-            //{
-            //    //if (
-            //    //    v3Order.OrderRows.FirstOrDefault(o => o.RowStatus != OrderRowStatus.Active).RegistrationType ==
-            //    //    order.OrderRows.FirstOrDefault().RegistrationType)
-            //    //{
-            //    //    v3Order.OrderRows.FirstOrDefault().RegistrationType = order.OrderRows.FirstOrDefault().RegistrationType;
-            //    //    JProperty v3OrderUpdatedByLegacyRegType = new JProperty(JsonPropertyKeys.V3OrderUpdatedByLegacyRegType, "OriginalValue: 0, UpdatedValue: 1");
-
-            //    //    order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, v3OrderUpdatedByLegacyRegType);
-
-            //    //    CalculateOrderCost(order, 0);
-            //    //    SaveChanges();
-            //    //}
-            //}
-            //
-
-
 
 
             // find orders in legacy not in v3
@@ -326,171 +308,65 @@ namespace CUWebinars.Business.Services
             // find orders in v3Emails not in Legacy
             var missingFromLegacy = v3Emails.Except(legacyEmails);
 
-            foreach (var orderEmail in missingFromLegacy)
-            {
-                var order = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
-
-                MigrateOrderFromV3(order);
-            }
-            foreach (var orderEmail in missingFromV3)
-            {
-                var order = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
-
-                ConvertLegacyOrder(order);
-            }
-
             // find common numbers in both arrays
             var commonEmails = legacyEmails.Intersect(v3Emails);
 
 
+            foreach (var orderEmail in missingFromLegacy)
+            {
+                var order = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
 
+                try
+                {
+                    _orderRepository.MigrateOrderFromV3(order);
+                    _logger.Info("Migrated to legacy: " + orderEmail);
+                }
+                catch (Exception ex)
+                {
+                    _logger.ErrorException("SynchOrder to Legacy Failed: " + orderEmail, ex);
+                }
+            }
+            foreach (var orderEmail in missingFromV3)
+            {
+                var order = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
+                try
+                {
+                    _orderRepository.ConvertLegacyOrder(order);
+                    _logger.Info("Migrated to V3: " + orderEmail);
+                }
+                catch (Exception ex)
+                {
+                    _logger.ErrorException("Migrate to V3 failed: " + orderEmail, ex);
+                }
+
+            }
+
+            foreach (var orderEmail in commonEmails)
+            {
+                var lOrder = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
+                var vOrder = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
+                try
+                {
+                    _logger.Info("SynchOrder checks: " + orderEmail);
+                    if (lOrder.Total != vOrder.Total)
+                    {
+                        _logger.Info("SynchOrder find non-equal total: " + orderEmail);
+                        _orderRepository.ReimportLegacyOrder(lOrder, vOrder);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.ErrorException("SynchOrder checks common orders to V3 failed: " + orderEmail, ex);
+                }
+            }
         }
 
         private void MigrateOrderFromV3(Order order)
         {
-            if (order == null) return;
-
-            var myRow = order.OrderRows.SingleOrDefault();
-            string myDiscount = "";
-            if (myRow.Discount != null)
-            {
-                myDiscount = myRow.Discount.DiscountCode;
-            }
-
-            var PostForm = "";
-
-            PostForm = "affiliateId=" + order.idAffiliate;
-            PostForm += "&firstName=" + order.FirstName;
-            PostForm += "&lastName=" + order.LastName;
-            PostForm += "&phone=" + order.BillingPhone;
-            PostForm += "&address1=" + order.BillingAddress;
-            PostForm += "&address2=" + order.BillingAddress2;
-            PostForm += "&city=" + order.BillingCity;
-            PostForm += "&zip=" + order.BillingZip;
-            PostForm += "&state=" + order.BillingState;
-            PostForm += "&shippingFirstName=" + order.ShippingFirstName;
-            PostForm += "&shippingLastname=" + order.ShippingLastName;
-            PostForm += "&shippingPhone=" + order.ShippingPhone;
-            PostForm += "&shippingAddress=" + order.ShippingAddress;
-            PostForm += "&shippingCity=" + order.ShippingCity;
-            PostForm += "&shippingState=" + order.ShippingState;
-            PostForm += "&shippingZip=" + order.ShippingZip;
-            PostForm += "&Email=" + order.BillingEmail;
-            PostForm += "&Title=" + "";
-            PostForm += "&Institution=" + order.Institution;
-            PostForm += "&idRegType=" + myRow.idRegType;
-            PostForm += "&webinarId=" + myRow.idWebinar;
-            PostForm += "&AdditionalLocationsString=" + myRow.AdditionalLocation;
-            PostForm += "&OrderDate=" + order.OrderDate;
-            PostForm += "&DiscountCode=" + myDiscount;
-            PostForm += "&Status=2&Total=0";
-
-            var submitImporter = "http://acsimporter.bankwebinars.com/home/MigrateOrderFromV3/";
-
-            //submitImporter = "http://localhost:51405/home/MigrateOrderFromV3/";
-
-            WebRequest req = WebRequest.Create(submitImporter);
-
-            byte[] send = Encoding.Default.GetBytes(PostForm);
-            req.Method = "POST";
-            req.ContentType = "application/x-www-form-urlencoded";
-            req.ContentLength = send.Length;
-
-            Stream sout = req.GetRequestStream();
-            sout.Write(send, 0, send.Length);
-            sout.Flush();
-            sout.Close();
-
-            WebResponse res = req.GetResponse();
-            StreamReader sr = new StreamReader(res.GetResponseStream());
-            string returnvalue = sr.ReadToEnd();
-
-            // Display the content.
-            //return returnvalue;
-
-            ;
 
         }
 
-        private void ConvertLegacyOrder(Order order)
-        {
-            if (order == null) return;
 
-            var myRow = order.OrderRows.SingleOrDefault();
-            string myDiscount = "";
-            if (myRow.Discount != null)
-            {
-                 myDiscount = myRow.Discount.DiscountCode;
-            }
-
-            var PostForm = "";
-
-            PostForm = "idAffiliate=" + order.idAffiliate + "&BillingAddress.AddressType=Billing";
-
-
-            PostForm += "&BillingAddress.Name=" + order.FirstName + " " + order.LastName;
-            PostForm += "&BillingAddress.Phone=" + order.BillingPhone;
-            PostForm += "&BillingAddress.StreetAddress=" + order.BillingAddress;
-            PostForm += "&BillingAddress.StreetAddress2=" + order.BillingAddress2;
-            PostForm += "&BillingAddress.City=" + order.BillingCity;
-            PostForm += "&BillingAddress.Zip=" + order.BillingZip;
-            PostForm += "&BillingAddress.State=" + order.BillingState;
-            PostForm += "&BillingAddress.Country=" + "US";
-            PostForm += "&ShippingAddress.AddressType=Shipping";
-            PostForm += "&ShippingAddress.Name=" + order.ShippingFirstName + " " + order.ShippingLastName;
-            PostForm += "&ShippingAddress.Phone=" + order.ShippingPhone;
-            PostForm += "&ShippingAddress.StreetAddress=" + order.ShippingAddress;
-            PostForm += "&ShippingAddress.StreetAddress2=" + "";
-            PostForm += "&ShippingAddress.City=" + order.ShippingCity;
-            PostForm += "&ShippingAddress.State=" + order.ShippingState;
-            PostForm += "&ShippingAddress.Zip=" + order.ShippingZip;
-            PostForm += "&ShippingAddress.Country=" + "US";
-            PostForm += "&Email=" + order.BillingEmail;
-            PostForm += "&Title=" + "";
-            PostForm += "&Institution=" + order.Institution;
-            PostForm += "&FirstName=" + order.FirstName;
-            PostForm += "&LastName=" + order.LastName;
-            PostForm += "&idRegType=" + myRow.idRegType;
-            PostForm += "&idWebinar=" + myRow.idWebinar;
-            PostForm += "&AdditionalLocationsString=" + myRow.AdditionalLocation;
-            PostForm += "&idOrderLegacy=" + order.idOrderLegacy;
-            PostForm += "&OrderDate=" + order.OrderDate;
-            PostForm += "&ShippingDate=" + "";
-            PostForm += "&DiscountCode=" + myDiscount;
-            PostForm += "&Status=2&Total=0";
-
-            var submitImporter = "http://v3.bankwebinars.com/order/MigrateOrder/";
-
-            //submitImporter = "http://localhost:3538/order/MigrateOrder/"
-    
-            WebRequest req = WebRequest.Create(submitImporter);
-
-            byte[] send = Encoding.Default.GetBytes(PostForm);
-            req.Method = "POST";
-            req.ContentType = "application/x-www-form-urlencoded";
-            req.ContentLength = send.Length;
-
-            Stream sout = req.GetRequestStream();
-            sout.Write(send, 0, send.Length);
-            sout.Flush();
-            sout.Close();
-
-            WebResponse res = req.GetResponse();
-            StreamReader sr = new StreamReader(res.GetResponseStream());
-            string returnvalue = sr.ReadToEnd();
-
-            // Display the content.
-            //return returnvalue;
-            
-            ;
-
-        }
-
-        //private void ImportLegacyOrder(int value)
-        //{
-        //    var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
-        //    dataOperations.ImportLegacyOrder(value);
-        //}
 
         public IEnumerable<Order> GetOrdersByLastName(string lastName, int aff)
         {
@@ -613,7 +489,7 @@ namespace CUWebinars.Business.Services
             catch (Exception exception)
             {
                 _logger.ErrorException("GetOrdersByUserId = " + id, exception);
-                throw;
+                return null;
             }
         }
 
@@ -1802,10 +1678,6 @@ namespace CUWebinars.Business.Services
                 RedeemDiscount(row.Discount, row);
                 _logger.Info("Redeemed Discount On Order: " + order.idOrder);
             }
-            else
-            {
-                //_logger.Error("ERROR: Rejected Discount On Order: " + order.idOrder);
-            }
         }
         public virtual bool IsDiscountCodeValid(string discountCode)
         {
@@ -1817,34 +1689,40 @@ namespace CUWebinars.Business.Services
         private void RedeemDiscount(Discount discount, OrderRow row)
         {
             if (discount.DiscountType != DiscountType.Subscription)
-
-                discount.CreditsUsed++;
-
-            if (discount.CreditsRemain > 0)
             {
-                if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Five"))
+                if (discount.CreditsRemain > 0)
                 {
-                    discount.CreditsRemain = discount.CreditsRemain - 1;
-                }
-                if (row.RegistrationType.OptionLabel == ("OnDemand Recording Only"))
-                {
-                    discount.CreditsRemain = discount.CreditsRemain - 1.25M;
-                }
-                if (row.RegistrationType.OptionLabel == ("CD-ROM and Hardcopy Handouts"))
-                {
-                    discount.CreditsRemain = discount.CreditsRemain - 1.25M;
-                }
-                if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Six"))
-                {
-                    discount.CreditsRemain = discount.CreditsRemain - 1.25M;
-                }
-                if (row.RegistrationType.OptionLabel == ("Premier Package"))
-                {
-                    discount.CreditsRemain = discount.CreditsRemain - 1.5M;
-                }
 
+                    discount.CreditsUsed++;
+                    if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Five"))
+                    {
+                        discount.CreditsRemain = discount.CreditsRemain - 1;
+                    }
+                    if (row.RegistrationType.OptionLabel == ("OnDemand Recording Only"))
+                    {
+                        discount.CreditsRemain = discount.CreditsRemain - 1.25M;
+                    }
+                    if (row.RegistrationType.OptionLabel == ("CD-ROM and Hardcopy Handouts"))
+                    {
+                        discount.CreditsRemain = discount.CreditsRemain - 1.25M;
+                    }
+                    if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Six"))
+                    {
+                        discount.CreditsRemain = discount.CreditsRemain - 1.25M;
+                    }
+                    if (row.RegistrationType.OptionLabel == ("Premier Package"))
+                    {
+                        discount.CreditsRemain = discount.CreditsRemain - 1.5M;
+                    }
+
+                    _logger.Info("DiscountCode {0} was applied to {1}. {2} credits remain.", discount.DiscountCode,
+                        row.idOrder, discount.CreditsRemain);
+                }
             }
-            _logger.Info("Discount was redeemed for {0}.", discount.DiscountCode);
+            else
+            {
+                _logger.Warn("DiscountCode {0} was a Subscription");
+            }
 
         }
 
@@ -1854,11 +1732,6 @@ namespace CUWebinars.Business.Services
             //according to legacy code but can a condition exist 
             //  a non-valid discount resulted in a decrement.
         }
-
-        //public void AddOrderRow(Order currentOrder, OrderRow orderRow)
-        //{
-        //    throw new NotImplementedException();
-        //}
 
         public Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null)
         {
@@ -1879,12 +1752,6 @@ namespace CUWebinars.Business.Services
         {
             return _webinarRepository.GetOrdersByWebinar(idWebinar).ToList();
         }
-
-        //public void SendOrderToLegacy(Order newOrder)
-        //{
-
-        //    _orderRepository.SendOrderToLegacy(newOrder);
-        //}
 
 
         public WebUser GetWebUserWithAddressAndInstitution(int idUser)

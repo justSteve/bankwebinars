@@ -704,6 +704,7 @@ namespace CUWebinars.Web.Controllers
 
         public void PostBackWPS(FormCollection form)
         {
+            //wps = webinar package subscription
             string formFields = Request.Form.ToString();
             _logger.Info("PostBackWPS: " + formFields);
 

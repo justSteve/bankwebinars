@@ -169,10 +169,7 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 _logger.Info("ACS Importer heard: " + newOrder.BillingEmail);
-                //if (_globalConfig.Tenant == "BankWebinars")
-                //{
-                //    _orderManagementService.SendOrderToLegacy(newOrder);
-                //}
+
                 newOrder.OrderDate = TtsConfig.UtcNowAsCts;
                 _orderManagementService.SaveChanges();
 
@@ -385,10 +382,7 @@ namespace CUWebinars.Web.Controllers
                     }
 
                     _logger.Info("ACS Importer heard: " + newOrder.BillingEmail);
-                    //if (_globalConfig.Tenant == "BankWebinars")
-                    //{
-                    //    _orderManagementService.SendOrderToLegacy(newOrder);
-                    //}
+
 
                     newOrder.OrderDate = importedOrder.OrderDate;
                     _orderManagementService.SaveChanges();

@@ -77,6 +77,12 @@ Model.DiscountCode.StartsWith("PL")
                         <b>@Model.CreditsRemain.ToString().Replace(".0", "")</b> remaining.
                     </p>
                 }
+                else
+                {
+                    <p style="font-size: larger; color: red;">
+                        Your subscription package has expired. It has been used <b> @Model.CreditsUsed.ToString().Replace(".0", "")</b> times.
+                    </p>
+                }
                 <div style="margin-top: 6px;">
                     <a class="btn btn-success pull-right" href="javascript:void( window.open('http://form.jotformpro.com/form/51916745818971', 'blank','scrollbars=yes,toolbar=no,width=700,height=500'))">Click here to add more credits!</a>
                 </div>

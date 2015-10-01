@@ -14,7 +14,9 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
 using FluentValidation.Results;
 
 namespace CUWebinars.Business.Repository
@@ -311,8 +313,29 @@ namespace CUWebinars.Business.Repository
             return items
                 .Include(o => o.WebUser)
                 .Include(o => o.OrderRows)
-                .FirstOrDefault(order => order.BillingEmail == email 
+                .FirstOrDefault(order => order.BillingEmail == email
                     && order.OrderRows.FirstOrDefault().idWebinar == idWebinar);
+        }
+
+        public void ConvertLegacyOrder(Order order)
+        {
+            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
+            dataOperations.MigrateOrderFromLegacy(order);
+
+
+        }
+
+        public void MigrateOrderFromV3(Order order)
+        {
+
+            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
+            dataOperations.MigrateOrderFromV3(order);
+        }
+
+        public void ReimportLegacyOrder(Order lOrder, Order vOrder)
+        {
+            var a = "";
+
         }
 
 
@@ -598,9 +621,6 @@ namespace CUWebinars.Business.Repository
         //public void SendOrderToLegacy(Order newOrder)
         //{
 
-        //    var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
-
-        //    dataOperations.SendOrderToLegacy(newOrder);
         //}
 
 

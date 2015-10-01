@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -646,7 +647,7 @@ namespace CUWebinars.Business.Core
                         {
                             errorLogger.CommandText =
                                 "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortDateString() +
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToString() +
                                                        "',";
                             errorLogger.CommandText += "'GETLEGACYORDER' ,";
                             errorLogger.CommandText += "9 ,9 ,9 ,'[GETLEGACYORDER]', 9 ,";
@@ -664,7 +665,7 @@ namespace CUWebinars.Business.Core
         public List<Order> GetLegacyOrdersByWebinar(int? webinarId)
         {
             var idWebinarParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idWebinar", Value = webinarId };
-            
+
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 sqlConnection.Open();
@@ -710,13 +711,22 @@ namespace CUWebinars.Business.Core
                                     if (!String.IsNullOrEmpty(reader[15].ToString()))
                                     {
                                         var addLoc = reader.GetString(15).Split(',');
-
-                                        IList<AdditionalLocation> addLocations = new List<AdditionalLocation>();
-                                        foreach (var loc in addLoc)
+                                        newOrderRow.AdditionalLocation = new List<AdditionalLocation>();
+                                        if (addLoc.Count() == 1)
                                         {
-                                            AdditionalLocation additional = new AdditionalLocation { Email = loc };
-                                            CollectionExtensions.AddRange(addLocations, newOrderRow.AdditionalLocation);
-                                            addLocations.Add(additional);
+                                            AdditionalLocation additional = new AdditionalLocation { Email = reader.GetString(15) };
+                                            
+                                        newOrderRow.AdditionalLocation.Add(additional);
+                                            //addLocations.Add(additional);
+                                        }
+                                        else
+                                        {
+                                            foreach (var loc in addLoc)
+                                            {
+                                                AdditionalLocation additional = new AdditionalLocation { Email = loc };
+                                                newOrderRow.AdditionalLocation.Add(additional);
+
+                                            }
                                         }
                                     }
 
@@ -728,7 +738,8 @@ namespace CUWebinars.Business.Core
                                     newOrder.ShippingCity = reader.GetString(20);
                                     newOrder.ShippingState = reader.GetString(21);
                                     newOrder.ShippingZip = reader.GetString(22);
-                                    //skips total 23 & shipdate 24
+                                    newOrder.Total = reader.GetDecimal(23);
+                                    //skips shipdate 24
                                     newOrder.AdminComments = reader.GetString(25);
                                     newOrder.idOrderLegacy = reader.GetInt32(26);
                                     newOrder.OrderDate = reader.GetDateTime(27);
@@ -769,6 +780,203 @@ namespace CUWebinars.Business.Core
                     }
                 }
             }
+        }
+
+        public void MigrateOrderFromV3(Order order)
+        {
+            if (order == null) return;
+
+            var myRow = order.OrderRows.SingleOrDefault();
+            string myDiscount = "";
+            if (myRow.Discount != null)
+            {
+                myDiscount = myRow.Discount.DiscountCode;
+            }
+
+            var PostForm = "";
+
+            PostForm = "affiliateId=" + order.idAffiliate;
+            PostForm += "&firstName=" + order.FirstName;
+            PostForm += "&lastName=" + order.LastName;
+            PostForm += "&phone=" + order.BillingPhone;
+            PostForm += "&address1=" + order.BillingAddress;
+            PostForm += "&address2=" + order.BillingAddress2;
+            PostForm += "&city=" + order.BillingCity;
+            PostForm += "&zip=" + order.BillingZip;
+            PostForm += "&state=" + order.BillingState;
+            PostForm += "&shippingFirstName=" + order.ShippingFirstName;
+            PostForm += "&shippingLastname=" + order.ShippingLastName;
+            PostForm += "&shippingPhone=" + order.ShippingPhone;
+            PostForm += "&shippingAddress=" + order.ShippingAddress;
+            PostForm += "&shippingCity=" + order.ShippingCity;
+            PostForm += "&shippingState=" + order.ShippingState;
+            PostForm += "&shippingZip=" + order.ShippingZip;
+            PostForm += "&Email=" + order.BillingEmail;
+            PostForm += "&Title=" + "";
+            PostForm += "&Institution=" + order.Institution;
+            PostForm += "&idRegType=" + myRow.idRegType;
+            PostForm += "&webinarId=" + myRow.idWebinar;
+            PostForm += "&AdditionalLocationsString=" + myRow.AdditionalLocation;
+            PostForm += "&OrderDate=" + order.OrderDate;
+            PostForm += "&DiscountCode=" + myDiscount;
+            PostForm += "&Status=2&Total=0";
+
+            var submitImporter = "http://acsimporter.bankwebinars.com/home/MigrateOrderFromV3/";
+            if (Debugger.IsAttached)
+            {
+
+                submitImporter = "http://localhost:51405/home/MigrateOrderFromV3/";
+            }
+
+            WebRequest req = WebRequest.Create(submitImporter);
+
+            byte[] send = Encoding.Default.GetBytes(PostForm);
+            req.Method = "POST";
+            req.ContentType = "application/x-www-form-urlencoded";
+            req.ContentLength = send.Length;
+
+            Stream sout = req.GetRequestStream();
+            sout.Write(send, 0, send.Length);
+            sout.Flush();
+            sout.Close();
+
+            WebResponse res = req.GetResponse();
+            StreamReader sr = new StreamReader(res.GetResponseStream());
+            string returnvalue = sr.ReadToEnd();
+
+            // Display the content.
+            //return returnvalue;
+            ;
+            SynchOrderIds(Convert.ToInt32(returnvalue.Split(':')[1].Replace("\"", "").Replace("}", "")), order.idOrder);
+
+        }
+
+        private void SynchOrderIds(int legacyOrderId, int v3OrderId)
+        {
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+                var v3idOrderParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idOrderV3", Value = v3OrderId };
+                var idOrderParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idOrder", Value = legacyOrderId };
+
+                using (var synchOrderIds = new SqlCommand("SynchOrderIds", sqlConnection))
+                {
+                    synchOrderIds.Parameters.Add(v3idOrderParameter);
+                    synchOrderIds.Parameters.Add(idOrderParameter);
+
+                    try
+                    {
+                        synchOrderIds.Connection = sqlConnection;
+                        synchOrderIds.CommandType = CommandType.StoredProcedure;
+
+                        synchOrderIds.ExecuteNonQuery();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts +
+                                                       "',";
+                            errorLogger.CommandText += "'SynchOrderIds' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'[SynchOrderIds]', 9 ,";
+                            errorLogger.CommandText += "'error at SynchOrderIds " + ex.Message + "')";
+
+                            errorLogger.ExecuteNonQuery();
+
+                        }
+                    }
+                }
+
+            }
+        }
+
+        public void MigrateOrderFromLegacy(Order order)
+        {
+            if (order == null) return;
+
+            var myRow = order.OrderRows.SingleOrDefault();
+            string myDiscount = "";
+            if (myRow.Discount != null)
+            {
+                myDiscount = myRow.Discount.DiscountCode;
+            }
+            var addLocs = "";
+
+
+            if (myRow.AdditionalLocation != null && myRow.AdditionalLocation.Count > 0)
+            {
+                foreach (var additionalLocation in myRow.AdditionalLocation)
+                {
+                    addLocs += additionalLocation.Email + ",";
+                }
+            }
+
+            var PostForm = "";
+
+            PostForm = "idAffiliate=" + order.idAffiliate + "&BillingAddress.AddressType=Billing";
+
+
+            PostForm += "&BillingAddress.Name=" + order.FirstName + " " + order.LastName;
+            PostForm += "&BillingAddress.Phone=" + order.BillingPhone;
+            PostForm += "&BillingAddress.StreetAddress=" + order.BillingAddress;
+            PostForm += "&BillingAddress.StreetAddress2=" + order.BillingAddress2;
+            PostForm += "&BillingAddress.City=" + order.BillingCity;
+            PostForm += "&BillingAddress.Zip=" + order.BillingZip;
+            PostForm += "&BillingAddress.State=" + order.BillingState;
+            PostForm += "&BillingAddress.Country=" + "US";
+            PostForm += "&ShippingAddress.AddressType=Shipping";
+            PostForm += "&ShippingAddress.Name=" + order.ShippingFirstName + " " + order.ShippingLastName;
+            PostForm += "&ShippingAddress.Phone=" + order.ShippingPhone;
+            PostForm += "&ShippingAddress.StreetAddress=" + order.ShippingAddress;
+            PostForm += "&ShippingAddress.StreetAddress2=" + "";
+            PostForm += "&ShippingAddress.City=" + order.ShippingCity;
+            PostForm += "&ShippingAddress.State=" + order.ShippingState;
+            PostForm += "&ShippingAddress.Zip=" + order.ShippingZip;
+            PostForm += "&ShippingAddress.Country=" + "US";
+            PostForm += "&Email=" + order.BillingEmail;
+            PostForm += "&Title=" + "";
+            PostForm += "&Institution=" + order.Institution;
+            PostForm += "&FirstName=" + order.FirstName;
+            PostForm += "&LastName=" + order.LastName;
+            PostForm += "&idRegType=" + myRow.idRegType;
+            PostForm += "&idWebinar=" + myRow.idWebinar;
+            PostForm += "&AdditionalLocationsString=" + addLocs.TrimEnd(' ',','); 
+            PostForm += "&idOrderLegacy=" + order.idOrderLegacy;
+            PostForm += "&OrderDate=" + order.OrderDate;
+            PostForm += "&ShippingDate=" + "";
+            PostForm += "&DiscountCode=" + myDiscount;
+            PostForm += "&Status=2&Total=0";
+
+            var submitImporter = "http://v3.bankwebinars.com/order/MigrateOrder/";
+            if (Debugger.IsAttached)
+            {
+                submitImporter = "http://localhost:3538/order/MigrateOrder/";
+            }
+            WebRequest req = WebRequest.Create(submitImporter);
+
+            byte[] send = Encoding.Default.GetBytes(PostForm);
+            req.Method = "POST";
+            req.ContentType = "application/x-www-form-urlencoded";
+            req.ContentLength = send.Length;
+
+            Stream sout = req.GetRequestStream();
+            sout.Write(send, 0, send.Length);
+            sout.Flush();
+            sout.Close();
+
+            WebResponse res = req.GetResponse();
+            StreamReader sr = new StreamReader(res.GetResponseStream());
+            string returnvalue = sr.ReadToEnd();
+
+            // Display the content.
+            //return returnvalue;
+
+            SynchOrderIds(order.idOrderLegacy, Convert.ToInt32(returnvalue.Split(':')[1].Replace("\"", "").Replace("}", "")));
+            ;
+
         }
     }
 }

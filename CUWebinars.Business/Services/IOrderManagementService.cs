@@ -111,6 +111,6 @@ namespace CUWebinars.Business.Services
         IEnumerable<Order> GetOrdersByEmailDomain(string email, int aff);
         void SendAdhocNotification(string emails, string subject, string body);
         OrderRow CheckLegacyOrder(Order order);
-        void CheckForLegacyOrders(int webinarId);
+        void SynchOrders(int webinarId);
     }
 }

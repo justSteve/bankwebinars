@@ -2135,7 +2135,7 @@ namespace CUWebinars.Web.Controllers.Admin
         public ActionResult SynchOrders(int? webinarId, int? idAffiliate)
         {
 
-            _orderManagementService.CheckForLegacyOrders(webinarId.Value);
+             _orderManagementService.SynchOrders(webinarId.Value);
             return Json(new
             {
                 data = webinarId,
@@ -2218,22 +2218,13 @@ namespace CUWebinars.Web.Controllers.Admin
 
             foreach (var order in orders)
             {
-                if (_globalConfig.Tenant == "BankWebinars")
-                {
-                    //OrderRow checkLegacyOrder = _orderManagementService.CheckLegacyOrder(order);
-
-                    //if (checkLegacyOrder.idOrder == 0)
-                    //{
-                    //    _orderManagementService.SendOrderToLegacy(order);
-                    //}
-                }
 
                 var orderRow = order.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
                 int orderToEdit = order.idOrderLegacy;
                 if (orderToEdit == 0) orderToEdit = order.idOrder;
 
                 var orderColumn = orderToEdit.ToString() + ", " + orderRow.TtsJoinUrl;
-                var userColumn = "<a href='/account/edituser/" + order.idUser + "' target='_new' />" + order.LastName + ", " + order.FirstName + "</a>";
+                var userColumn = "<a href='/account/edituser/" + order.idUser + "' target='_new' />" + order.LastName + ", " + order.FirstName + "</a><br>"+order.BillingEmail;
                 var institutionColumn = order.Institution;
                 var showDiscount = "";
                 if (!ReferenceEquals(orderRow.Discount, null) && orderRow.Discount.FlatOff > 0)
@@ -2280,16 +2271,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
             foreach (var user in users)
             {
-                if (_globalConfig.Tenant == "BankWebinars")
-                {
-                    //OrderRow checkLegacyOrder = _orderManagementService.CheckLegacyOrder(order);
-
-                    //if (checkLegacyOrder.idOrder == 0)
-                    //{
-                    //    _orderManagementService.SendOrderToLegacy(order);
-                    //}
-                }
-
 
                 var orderColumn = user.email;
                 var userColumn = "<a href='/account/edituser/" + user.idUser + "' target='_new' />" + user.LastName + ", " + user.FirstName + "</a>";

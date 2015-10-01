@@ -41,10 +41,13 @@ namespace CUWebinars.Business.Repository
         Order GetOrderByIdThin(int idOrder);
         int GetNumberOfOrdersPerWebinar(int id);
         void RemoveAndDeleteAdditionalLocation(AdditionalLocation deletedAdditionalLocation);
-        //void SendOrderToLegacy(Order newOrder);
+        
         IList<int> FindUserIdsByPartialId(int value);
         object SearchOrders(int affiliateId, IList<int> excludeUserIDs, int skip, int take, string search);
         void LoadWebinarIntoOrderRow(OrderRow newOrderRow);
         Order FindExpressCheckoutOrder(string trim, int idWebinar);
+        void ConvertLegacyOrder(Order order);
+        void MigrateOrderFromV3(Order order);
+        void ReimportLegacyOrder(Order lOrder, Order vOrder);
     }
 }

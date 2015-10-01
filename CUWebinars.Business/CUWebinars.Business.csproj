@@ -101,6 +101,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\RazorEngine.3.6.3\lib\net45\RazorEngine.dll</HintPath>
     </Reference>
+    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.105.2.3\lib\net451\RestSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
@@ -214,6 +218,7 @@
     <Compile Include="Notification\Email\AzureOrderNotifierMessageDelivery.cs" />
     <Compile Include="Notification\Email\ConfirmAdditionalLocationsOrderMessage.cs" />
     <Compile Include="Notification\Email\ConfirmOrderMessage.cs" />
+    <Compile Include="Notification\Email\MailGunDelivery.cs" />
     <Compile Include="Notification\Email\OrderConfirmedForAdditionalLocationDelivery.cs" />
     <Compile Include="Notification\Email\OrderNotifierMessageDelivery.cs" />
     <Compile Include="Notification\Events\AdhocNotificationEvent.cs" />

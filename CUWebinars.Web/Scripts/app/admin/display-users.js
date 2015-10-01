@@ -19,15 +19,15 @@ $(function () {
         $(this).html('<input type="text" />');
     });
 
-    oTable.columns().every(function () {
-        var that = this;
+    //DU.usersTable.dataTable.columns().every(function () {
+    //    var that = this;
 
-        $('input', this.footer()).on('keyup change', function () {
-            that
-                .search(this.value)
-                .draw();
-        });
-    });
+    //    $('input', this.footer()).on('keyup change', function () {
+    //        that
+    //            .search(this.value)
+    //            .draw();
+    //    });
+    //});
 
 
 });
@@ -83,11 +83,9 @@ $(function () {
                 "order": [0, "asc"]
 
             });
-
-
-
-
         };
+
+
         $('#getHtmlSpinner').remove();
 
         $('.dataTable').on("click", ".ResendConnectionInfoButton", function () {
