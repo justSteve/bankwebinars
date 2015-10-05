@@ -54,7 +54,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             var migrateOrderCommand = new MigrateOrderCommand()
             {
                 Affiliate = migratorQueryResult.Affiliate,
-                AffiliateComments = migrateOrderModel.AffiliateComments,
+                AffiliateComments = migrateOrderModel.AdminComments,
                 BillingAddress = migrateOrderModel.BillingAddress,
                 ConfirmChangeEmailUrl = confirmChangeEmailUrl,
                 Email = email,

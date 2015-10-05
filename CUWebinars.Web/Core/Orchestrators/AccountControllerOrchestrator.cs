@@ -301,7 +301,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void UpdateUserDetails(ManageModel model)
         {
             var updateFields = model.RegisterFields;
-
+            WebUser existingUser = GetWebUserByEmail(model.RegisterFields.Email);
             var billingAddressFields = updateFields.BillingAddress;
             var shippingAddressFields = updateFields.ShippingAddress;
 
@@ -333,9 +333,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             _membershipService.UpdateUserDetails(_globals.Tenant,
                 updateFields.FirstName.Trim(),
-                updateFields.LastName.Trim(),
-                //updateFields.Password,
-                updateFields.Email.Trim(),
+                updateFields.LastName.Trim(), model.RegisterFields.Email,
                 updateFields.Institution,
                 billingAddress,
                 shippingAddress,
@@ -422,7 +420,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             _membershipService.UpdateUserDetails(_globals.Tenant,
                 updateFields.FirstName.Trim(),
-                updateFields.LastName.Trim(),
+                updateFields.LastName.Trim(), 
                 updateFields.Email.Trim(),
                 updateFields.Institution,
                 billingAddress,
@@ -1373,6 +1371,15 @@ namespace CUWebinars.Web.Core.Orchestrators
 
 
             return webUser.idUser;
+        }
+
+        public Address BuildPlaceHolderAddressBilling(string email)
+        {
+            return _membershipService.BuildPlaceHolderAddressBilling(email);
+        }
+        public Address BuildPlaceHolderAddressShipping(string email)
+        {
+            return _membershipService.BuildPlaceHolderAddressShipping(email);
         }
 
         public void Dispose()

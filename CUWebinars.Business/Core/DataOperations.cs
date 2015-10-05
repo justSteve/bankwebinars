@@ -320,40 +320,40 @@ namespace CUWebinars.Business.Core
 
         //}
 
-        private string MigrateOrderModelQueryString(int deliveryType, int affiliateId, string firstName, string lastName, string phone, string address1, string address2, string city, string zip, string state, string shippingFirstName, string shippingLastName, string shippingPhone, string shippingAddress, string shippingCity, string shippingState, string shippingZip, string email, string title, string institution, int idRegType, int webinarId, string additionalLocations, DateTime orderDate, string discountCode)
-        {
-            var PostForm = "";
+        //private string MigrateOrderModelQueryString(int deliveryType, int affiliateId, string firstName, string lastName, string phone, string address1, string address2, string city, string zip, string state, string shippingFirstName, string shippingLastName, string shippingPhone, string shippingAddress, string shippingCity, string shippingState, string shippingZip, string email, string title, string institution, int idRegType, int webinarId, string additionalLocations, DateTime orderDate, string discountCode)
+        //{
+        //    var PostForm = "";
 
-            PostForm = "affiliateId=" + affiliateId + "&BillingAddress.AddressType=Billing";
-            PostForm += "&BillingAddress.Name=" + HttpUtility.UrlEncode(firstName + " " + lastName);
-            PostForm += "&Source=V3Migrator?Version=3";
-            PostForm += "&phone=" + HttpUtility.UrlEncode(phone);
-            PostForm += "&address1=" + HttpUtility.UrlEncode(address1);
-            PostForm += "&address2=" + HttpUtility.UrlEncode(address2);
-            PostForm += "&city=" + HttpUtility.UrlEncode(city);
-            PostForm += "&zip=" + HttpUtility.UrlEncode(zip);
-            PostForm += "&state=" + HttpUtility.UrlEncode(state);
-            PostForm += "&ShippingFirstName=" + HttpUtility.UrlEncode(shippingFirstName);
-            PostForm += "&ShippingLastName=" + HttpUtility.UrlEncode(HttpUtility.UrlEncode(shippingLastName));
-            PostForm += "&ShippingPhone=" + HttpUtility.UrlEncode(shippingPhone);
-            PostForm += "&ShippingAddress=" + HttpUtility.UrlEncode(shippingAddress);
-            PostForm += "&ShippingCity=" + HttpUtility.UrlEncode(shippingCity);
-            PostForm += "&ShippingState=" + HttpUtility.UrlEncode(shippingState);
-            PostForm += "&ShippingZip=" + HttpUtility.UrlEncode(shippingZip);
-            PostForm += "&email=" + HttpUtility.UrlEncode(email);
-            PostForm += "&title=" + HttpUtility.UrlEncode(title);
-            PostForm += "&institution=" + HttpUtility.UrlEncode(institution);
-            PostForm += "&firstName=" + HttpUtility.UrlEncode(firstName);
-            PostForm += "&lastName=" + HttpUtility.UrlEncode(lastName);
-            PostForm += "&deliveryType=" + deliveryType;
-            PostForm += "&webinarId=" + webinarId;
-            PostForm += "&orderDate=" + HttpUtility.UrlEncode(orderDate.ToString());
-            PostForm += "&discountCode=" + HttpUtility.UrlEncode(discountCode);
-            PostForm += "&AdditionalLocationsString=" + HttpUtility.UrlEncode(additionalLocations);
+        //    PostForm = "affiliateId=" + affiliateId + "&BillingAddress.AddressType=Billing";
+        //    PostForm += "&BillingAddress.Name=" + HttpUtility.UrlEncode(firstName + " " + lastName);
+        //    PostForm += "&Source=V3Migrator?Version=3";
+        //    PostForm += "&phone=" + HttpUtility.UrlEncode(phone);
+        //    PostForm += "&address1=" + HttpUtility.UrlEncode(address1);
+        //    PostForm += "&address2=" + HttpUtility.UrlEncode(address2);
+        //    PostForm += "&city=" + HttpUtility.UrlEncode(city);
+        //    PostForm += "&zip=" + HttpUtility.UrlEncode(zip);
+        //    PostForm += "&state=" + HttpUtility.UrlEncode(state);
+        //    PostForm += "&ShippingFirstName=" + HttpUtility.UrlEncode(shippingFirstName);
+        //    PostForm += "&ShippingLastName=" + HttpUtility.UrlEncode(HttpUtility.UrlEncode(shippingLastName));
+        //    PostForm += "&ShippingPhone=" + HttpUtility.UrlEncode(shippingPhone);
+        //    PostForm += "&ShippingAddress=" + HttpUtility.UrlEncode(shippingAddress);
+        //    PostForm += "&ShippingCity=" + HttpUtility.UrlEncode(shippingCity);
+        //    PostForm += "&ShippingState=" + HttpUtility.UrlEncode(shippingState);
+        //    PostForm += "&ShippingZip=" + HttpUtility.UrlEncode(shippingZip);
+        //    PostForm += "&email=" + HttpUtility.UrlEncode(email);
+        //    PostForm += "&title=" + HttpUtility.UrlEncode(title);
+        //    PostForm += "&institution=" + HttpUtility.UrlEncode(institution);
+        //    PostForm += "&firstName=" + HttpUtility.UrlEncode(firstName);
+        //    PostForm += "&lastName=" + HttpUtility.UrlEncode(lastName);
+        //    PostForm += "&deliveryType=" + deliveryType;
+        //    PostForm += "&webinarId=" + webinarId;
+        //    PostForm += "&orderDate=" + HttpUtility.UrlEncode(orderDate.ToString());
+        //    PostForm += "&discountCode=" + HttpUtility.UrlEncode(discountCode);
+        //    PostForm += "&AdditionalLocationsString=" + HttpUtility.UrlEncode(additionalLocations);
 
-            return PostForm;
+        //    return PostForm;
 
-        }
+        //}
 
 
         public int getLegacyOptionID(int idRegType)
@@ -715,8 +715,8 @@ namespace CUWebinars.Business.Core
                                         if (addLoc.Count() == 1)
                                         {
                                             AdditionalLocation additional = new AdditionalLocation { Email = reader.GetString(15) };
-                                            
-                                        newOrderRow.AdditionalLocation.Add(additional);
+
+                                            newOrderRow.AdditionalLocation.Add(additional);
                                             //addLocations.Add(additional);
                                         }
                                         else
@@ -745,9 +745,11 @@ namespace CUWebinars.Business.Core
                                     newOrder.OrderDate = reader.GetDateTime(27);
 
                                     newOrder.Origin = "OrderSynch";
-                                    newOrder.OrderStatus = OrderStatus.Submitted;
+                                    int mkStatus = Convert.ToInt32( reader[28]);
 
-                                    //newOrderRow.Order = newOrder;
+                                    var setStatus = SetOrderStatus(mkStatus);
+
+                                    newOrder.OrderStatus = setStatus;
 
                                     newOrderRow.RowStatus = OrderRowStatus.Active;
                                     orders.Add(newOrder);
@@ -780,6 +782,48 @@ namespace CUWebinars.Business.Core
                     }
                 }
             }
+        }
+
+        private static OrderStatus SetOrderStatus(int mkStatus)
+        {
+            OrderStatus setStatus = OrderStatus.Abandoned;
+            // Error = 0, 
+            //InProcess = 1,
+            //Submitted = 2,
+            //Billed = 3,
+            //Paid = 4,
+            //Abandoned = 5,
+            //Canceled = 6,
+            //AwaitingVerification = 7,
+            //Unknown = 255
+            switch (mkStatus)
+            {
+                case 1:
+                    setStatus = OrderStatus.InProcess;
+                    break;
+                case 0:
+                    setStatus = OrderStatus.Error;
+                    break;
+                case 2:
+                    setStatus = OrderStatus.Submitted;
+                    break;
+                case 3:
+                    setStatus = OrderStatus.Billed;
+                    break;
+                case 4:
+                    setStatus = OrderStatus.Paid;
+                    break;
+                case 5:
+                    setStatus = OrderStatus.Abandoned;
+                    break;
+                case 6:
+                    setStatus = OrderStatus.Canceled;
+                    break;
+                case 7:
+                    setStatus = OrderStatus.AwaitingVerification;
+                    break;
+            }
+            return setStatus;
         }
 
         public void MigrateOrderFromV3(Order order)
@@ -819,7 +863,8 @@ namespace CUWebinars.Business.Core
             PostForm += "&AdditionalLocationsString=" + myRow.AdditionalLocation;
             PostForm += "&OrderDate=" + order.OrderDate;
             PostForm += "&DiscountCode=" + myDiscount;
-            PostForm += "&Status=2&Total=0";
+            PostForm += "&Status="+order.OrderStatus+"&Total="+order.Total;
+            PostForm += "&AdminComments="+order.AdminComments;
 
             var submitImporter = "http://acsimporter.bankwebinars.com/home/MigrateOrderFromV3/";
             if (Debugger.IsAttached)
@@ -948,7 +993,8 @@ namespace CUWebinars.Business.Core
             PostForm += "&OrderDate=" + order.OrderDate;
             PostForm += "&ShippingDate=" + "";
             PostForm += "&DiscountCode=" + myDiscount;
-            PostForm += "&Status=2&Total=0";
+            PostForm += "&Status="+order.OrderStatus+"&Total=" + order.Total;
+            PostForm += "&AdminComments="+order.AdminComments;
 
             var submitImporter = "http://v3.bankwebinars.com/order/MigrateOrder/";
             if (Debugger.IsAttached)

@@ -53,5 +53,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         // ReSharper disable once InconsistentNaming
         MyWebinarsDTO BuildMyWebinarsDTO(DiscountModel discountModel, ClaimsIdentity claimsIdentityOfAuthenticatedUser);
         int CreateUserForAdmin(EditUserModel editUserModel);
+        Address BuildPlaceHolderAddressBilling(string email);
+        Address BuildPlaceHolderAddressShipping(string email);
     }
 }

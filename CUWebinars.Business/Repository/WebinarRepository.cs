@@ -329,12 +329,6 @@ namespace CUWebinars.Business.Repository
                 }
             }
             return orders2Send;
-            //return (from order in orders let row = order.OrderRows.SingleOrDefault()
-            //        where row != null 
-            //        where (((TTSWebinarsContext)db).Options.Find((int) row.RegistrationType).ShowLiveNotifications != "No" 
-            //        || row.Status != OrderStatus.Abandoned) 
-            //        && row.Status != OrderStatus.InProcess 
-            //        && row.Status != OrderStatus.Canceled select order).ToList();
         }
 
         public void Update(Webinar webinar)

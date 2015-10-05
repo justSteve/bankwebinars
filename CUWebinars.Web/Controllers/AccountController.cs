@@ -526,51 +526,70 @@ namespace CUWebinars.Web.Controllers
 
         private EditUserInfoModel BuildEditUserInfoModel(WebUser user, string returnUrl)
         {
-            var addresses = user.Addresses.ToArray();
-            var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
-            var shippingAddress = addresses.First(a => a.AddressType == WebUiConstants.ShippingAddress);
-
-            var editModel = new EditUserInfoModel
+            if (user == null)
             {
-                EditFields = new EditUserModel
+                throw new NullReferenceException();
+            }
+            var addresses = user.Addresses.ToArray();
+            Address billingAddress = new Address();
+            Address shippingAddress = new Address();
+            if (user.Addresses != null)
+            {
+                billingAddress = addresses.FirstOrDefault(a => a.AddressType == WebUiConstants.BillingAddress);
+                shippingAddress = addresses.FirstOrDefault(a => a.AddressType == WebUiConstants.ShippingAddress);
+            }
+            if (billingAddress == null)
+            {
+                billingAddress = _accountControllerOrchestrator.BuildPlaceHolderAddressBilling(user.email);
+            }
+            if (shippingAddress == null)
+            {
+                shippingAddress = _accountControllerOrchestrator.BuildPlaceHolderAddressShipping(user.email);
+                shippingAddress.Name = user.FirstName + ' ' + user.LastName;
+
+            }
+            var editModel = new EditUserInfoModel
                 {
-                    BillingAddress = new AddressModel
+                    EditFields = new EditUserModel
                     {
-                        Name = user.FirstName + ' ' + user.LastName,
-                        City = billingAddress.City,
-                        Country = billingAddress.Country,
-                        StreetAddress = billingAddress.StreetAddress,
-                        StreetAddress2 = billingAddress.StreetAddress2,
-                        State = billingAddress.State,
-                        Zip = billingAddress.Zip,
-                        Phone = billingAddress.Phone,
-                        TypeOfAddress = AddressType.Billing
+                        BillingAddress = new AddressModel
+                        {
+                            Name = user.FirstName + ' ' + user.LastName,
+                            City = billingAddress.City,
+                            Country = billingAddress.Country,
+                            StreetAddress = billingAddress.StreetAddress,
+                            StreetAddress2 = billingAddress.StreetAddress2,
+                            State = billingAddress.State,
+                            Zip = billingAddress.Zip,
+                            Phone = billingAddress.Phone,
+                            TypeOfAddress = AddressType.Billing
+                        },
+                        ShippingAddress = new AddressModel
+                        {
+                            City = shippingAddress.City,
+                            Country = shippingAddress.Country,
+                            StreetAddress = shippingAddress.StreetAddress,
+                            StreetAddress2 = shippingAddress.StreetAddress2,
+                            State = shippingAddress.State,
+                            Zip = shippingAddress.Zip,
+                            Phone = shippingAddress.Phone,
+                            Name = shippingAddress.Name,
+                            TypeOfAddress = AddressType.Shipping
+                        },
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Institution = user.Institution.InstitutionName,
+                        Email = user.email,
+                        Title = user.Title,
+                        AccountDetailsTitle = WebUiConstants.ManageUser
                     },
-                    ShippingAddress = new AddressModel
-                    {
-                        City = shippingAddress.City,
-                        Country = shippingAddress.Country,
-                        StreetAddress = shippingAddress.StreetAddress,
-                        StreetAddress2 = shippingAddress.StreetAddress2,
-                        State = shippingAddress.State,
-                        Zip = shippingAddress.Zip,
-                        Phone = shippingAddress.Phone,
-                        Name = shippingAddress.Name,
-                        TypeOfAddress = AddressType.Shipping
-                    },
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Institution = user.Institution.InstitutionName,
-                    Email = user.email,
-                    Title = user.Title,
-                    AccountDetailsTitle = WebUiConstants.ManageUser
-                },
-                LoggedInUser = (ClaimsIdentity)User.Identity,
-                ReturlUrl = returnUrl,
-                StatusMessage = string.Empty
-            };
+                    LoggedInUser = (ClaimsIdentity)User.Identity,
+                    ReturlUrl = returnUrl,
+                    StatusMessage = string.Empty
+                };
             return editModel;
         }
+
 
         [System.Web.Mvc.HttpPost, System.Web.Mvc.AllowAnonymous]
         [ValidateAntiForgeryToken(Order = 0)]
@@ -947,7 +966,7 @@ namespace CUWebinars.Web.Controllers
                             if (_accountControllerOrchestrator.ChangePasswordFromResetKey(model.Key, model.Password))
                             {
                                 model.ChangePasswordSucceeded = true;
-                                
+
                                 return Json(new { Result = "Success" });
                             }
                         }

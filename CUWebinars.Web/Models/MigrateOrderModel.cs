@@ -8,7 +8,7 @@ namespace CUWebinars.Web.Models
     {
         public string AdditionalLocationsString { get; set; }
 
-        public string AffiliateComments { get; set; }
+        public string AdminComments { get; set; }
         public Address BillingAddress { get; set; }
         public string Email { get; set; }
         public string FirstName { get; set; }

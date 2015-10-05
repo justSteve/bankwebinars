@@ -25,5 +25,7 @@ namespace CUWebinars.Business.Repository
         DbContext DbContext { get; }
         WebUser GetWebUserByIdLoadedWithAddressesAndInstitution(int idUser);
         void SetUserStatusToUnChanged(WebUser user);
+        WebUser BuildPlaceHolderUser(string orderEmail);
+        WebUser GetWebUserByEmailDomain(string orderEmail);
     }
 }

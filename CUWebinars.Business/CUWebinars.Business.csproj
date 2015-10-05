@@ -373,7 +373,6 @@
     <Compile Include="Repository\TTSWebinarsRepository.cs" />
     <Compile Include="Repository\WebUserRepository.cs" />
     <Compile Include="Services\IWebinarManagementService.cs" />
-    <Compile Include="Services\lgOrders.cs" />
     <Compile Include="Services\OrderManagementService.cs" />
     <Compile Include="Core\TtsConfiguration.cs" />
     <Compile Include="Core\TtsConfig.cs" />

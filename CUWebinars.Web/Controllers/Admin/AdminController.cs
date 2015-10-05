@@ -337,8 +337,13 @@ namespace CUWebinars.Web.Controllers.Admin
                     return RedirectToAction("ManageOrder");
 
                 var model = BuildManageOrderEditModel(id.Value);
-                var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, _orderManagementService.GetOrderById(id.Value).WebUser.email);
-                if (userAccount == null) throw new NullReferenceException(string.Format("UserAccount does not exist in system for OrderId {0}", id.Value));
+                var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, _orderManagementService.GetOrderById(id.Value).BillingEmail);
+                if (userAccount == null)
+                {
+                    RedirectToAction("CreateUserAccountFromCart", "Account",
+                        new {email = model.Order.BillingEmail});
+                } 
+                  
 
                 model.PostEventAccessExpires = _membershipService.GetPostEventAccessExpireyDate(userAccount, id.Value);
                 return View(model);

@@ -315,7 +315,37 @@ namespace CUWebinars.Business.Services
             foreach (var orderEmail in missingFromLegacy)
             {
                 var order = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
+                if (order != null && order.WebUser.email.EndsWith("notauthenticated.com"))
+                {
+                    var user = _webUserRepository.GetWebUserByEmail(orderEmail);
+                    if (user == null)
+                    {
+                        user = _webUserRepository.BuildPlaceHolderUser(orderEmail);
+                        order.WebUser = user;
+                    }
+                    else
+                    {
+                        order.WebUser = user;
+                    }
+                    order.FirstName = user.FirstName;
+                    order.LastName = user.LastName;
+                    order.BillingAddress = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").StreetAddress;
+                    order.BillingAddress2 = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").StreetAddress2;
+                    order.BillingCity = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").City;
+                    order.BillingState = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").State;
+                    order.BillingZip = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").Zip;
+                    order.BillingPhone = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").Phone;
 
+                    order.ShippingAddress = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").StreetAddress;
+                    order.ShippingAddress2 = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").StreetAddress2;
+                    order.ShippingCity = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").City;
+                    order.ShippingState = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").State;
+                    order.ShippingZip = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").Zip;
+                    order.ShippingPhone = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").Phone;
+
+                    SaveOrderChanges(order, "", "", OrderGenesis.CreatedViaCartByExistingUser);
+
+                }
                 try
                 {
                     _orderRepository.MigrateOrderFromV3(order);

@@ -428,7 +428,7 @@ namespace CUWebinars.Business.AccountService
             return _postEventMaterialsAccessClaimValidator.Validate(new Tuple<string, string>(claimType, claimValue));
         }
 
-        public WebUser CreateExpressCheckoutUser(string tenant,string email, string firstName, string lastName, string phone, string institution, string title)
+        public WebUser CreateExpressCheckoutUser(string tenant, string email, string firstName, string lastName, string phone, string institution, string title)
         {
             _logger.Info("CreateExpressCheckoutUser: {0}", email);
             var webUser = new WebUser
@@ -452,6 +452,87 @@ namespace CUWebinars.Business.AccountService
             return webUser;
         }
 
+        public Address BuildPlaceHolderAddressBilling(string email)
+        {
+            var starterUser = _webUserRepository.GetWebUserByEmailDomain(email);
+            if (starterUser != null && starterUser.Addresses.SingleOrDefault(a => a.AddressType == "Billing") != null)
+            {
+                Address addBilling = new Address { AddressType = "Billing" };
+
+                var bill = starterUser.Addresses.SingleOrDefault(a => a.AddressType == "Billing");
+
+                addBilling.City = bill.City;
+                addBilling.Country = bill.Country;
+                addBilling.Name = bill.Name;
+                addBilling.Phone = bill.Phone;
+                addBilling.State = bill.State;
+                addBilling.StreetAddress = bill.StreetAddress;
+                addBilling.StreetAddress2 = bill.StreetAddress2;
+                addBilling.Zip = bill.Zip;
+
+                return addBilling;
+            }
+            else
+            {
+                starterUser = _webUserRepository.GetWebUserByEmail("placeholder@ttstrain.com");
+
+                Address addressBilling = new Address { AddressType = "Billing" };
+
+                var billing = starterUser.Addresses.SingleOrDefault(a => a.AddressType == "Billing");
+
+                addressBilling.City = billing.City;
+                addressBilling.Country = billing.Country;
+                addressBilling.Name = billing.Name;
+                addressBilling.Phone = billing.Phone;
+                addressBilling.State = billing.State;
+                addressBilling.StreetAddress = billing.StreetAddress;
+                addressBilling.StreetAddress2 = billing.StreetAddress2;
+                addressBilling.Zip = billing.Zip;
+
+                return addressBilling;
+            }
+        }
+
+        public Address BuildPlaceHolderAddressShipping(string email)
+        {
+            var starterUser = _webUserRepository.GetWebUserByEmailDomain(email);
+            if (starterUser != null && starterUser.Addresses.SingleOrDefault(a => a.AddressType == "Shipping") != null)
+            {
+                Address addShipping = new Address { AddressType = "Shipping" };
+
+                var bill = starterUser.Addresses.SingleOrDefault(a => a.AddressType == "Shipping");
+
+                addShipping.City = bill.City;
+                addShipping.Country = bill.Country;
+                addShipping.Name = bill.Name;
+                addShipping.Phone = bill.Phone;
+                addShipping.State = bill.State;
+                addShipping.StreetAddress = bill.StreetAddress;
+                addShipping.StreetAddress2 = bill.StreetAddress2;
+                addShipping.Zip = bill.Zip;
+
+                return addShipping;
+            }
+            else
+            {
+                starterUser = _webUserRepository.GetWebUserByEmail("placeholder@ttstrain.com");
+
+                Address addressShipping = new Address { AddressType = "Shipping" };
+
+                var ship = starterUser.Addresses.SingleOrDefault(a => a.AddressType == "Shipping");
+
+                addressShipping.City = ship.City;
+                addressShipping.Country = ship.Country;
+                addressShipping.Name = ship.Name;
+                addressShipping.Phone = ship.Phone;
+                addressShipping.State = ship.State;
+                addressShipping.StreetAddress = ship.StreetAddress;
+                addressShipping.StreetAddress2 = ship.StreetAddress2;
+                addressShipping.Zip = ship.Zip;
+
+                return addressShipping;
+            }
+        }
         public void AddAccountTypeNotVerifiedClaim(UserAccount userAccount, string accountType)
         {
             _logger.Info("AddAccountTypeNotVerifiedClaim: {0}", userAccount.Email);
@@ -513,7 +594,7 @@ namespace CUWebinars.Business.AccountService
 
                 var auditChanges = new StringBuilder();
 
-                auditChanges.Append("Record edited on " + DomainConstants.BuildUtcNowAsCts.ToShortDateString() + " " + DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + Environment.NewLine);
+                auditChanges.Append("Record edited on " + DomainConstants.BuildUtcNowAsCts + Environment.NewLine);
 
                 _webUserRepository.Update(webUser);
             }
@@ -695,7 +776,6 @@ namespace CUWebinars.Business.AccountService
                 _logger.ErrorException("UpdateUserDetails", exception);
             }
         }
-
         public void UpdateUserDetails(WebUser webUser)
         {
             _webUserRepository.Update(webUser);
@@ -846,7 +926,12 @@ namespace CUWebinars.Business.AccountService
                 timeZone = USTimeZone.Central,
                 generalComments = "Origin: CreateBareUserFromEmail"
             };
-
+            webUser.Addresses = new List<Address>();
+            Address billing = BuildPlaceHolderAddressBilling(email);
+            Address shipping = BuildPlaceHolderAddressShipping(email);
+            
+            webUser.Addresses.Add(billing);
+            webUser.Addresses.Add(shipping);
             _webUserRepository.Add(webUser);
 
             return webUser;
