@@ -14,6 +14,7 @@ namespace CUWebinars.Web.Models
         public string FirstName { get; set; }
         public int  idAffiliate { get; set; }
         public int idRegType { get; set; }
+        public int LegacyRegType { get; set; }
         public int idWebinar { get; set; }
         public int idOrderLegacy { get; set; }
         //public int idUserLegacy { get; set; }

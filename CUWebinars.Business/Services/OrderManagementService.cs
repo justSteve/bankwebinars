@@ -293,6 +293,7 @@ namespace CUWebinars.Business.Services
 
         public void SynchOrders(int webinarId)
         {
+            _logger.Info("SynchOrders begins on: " + webinarId);
             var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
             IList<Order> lOrders = dataOperations.GetLegacyOrdersByWebinar(webinarId);
             IList<Order> v3Orders = GetV3OrdersByWebinar(webinarId);
@@ -303,15 +304,16 @@ namespace CUWebinars.Business.Services
 
 
             // find orders in legacy not in v3
-            var missingFromV3 = legacyEmails.Except(v3Emails);
+            var missingFromV3 = legacyEmails.Except(v3Emails).ToList();
 
             // find orders in v3Emails not in Legacy
-            var missingFromLegacy = v3Emails.Except(legacyEmails);
+            var missingFromLegacy = v3Emails.Except(legacyEmails).ToList();
 
             // find common numbers in both arrays
-            var commonEmails = legacyEmails.Intersect(v3Emails);
+            var commonEmails = legacyEmails.Intersect(v3Emails).ToList();
 
-
+            _logger.Info("SynchOrders found {0} missingFromV3, {1} missingFromLegacy, and {2} already synched. ", missingFromV3.Count(), missingFromLegacy.Count(), commonEmails.Count());
+            var i = 1;
             foreach (var orderEmail in missingFromLegacy)
             {
                 var order = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
@@ -342,47 +344,69 @@ namespace CUWebinars.Business.Services
                     order.ShippingState = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").State;
                     order.ShippingZip = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").Zip;
                     order.ShippingPhone = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").Phone;
+                    try
+                    {
+                        SaveOrderChanges(order, "", "", OrderGenesis.CreatedViaCartByExistingUser);
+                        _logger.Info("SynchOrder added missing address for: ", orderEmail);
 
-                    SaveOrderChanges(order, "", "", OrderGenesis.CreatedViaCartByExistingUser);
+                    }
+                    catch (Exception ex)
+                    {
+
+                        _logger.FatalException("SynchOrder failed to add address for " + orderEmail, ex);
+                    }
 
                 }
                 try
                 {
                     _orderRepository.MigrateOrderFromV3(order);
-                    _logger.Info("Migrated to legacy: " + orderEmail);
+                    _logger.Info("SynchOrder MigrateToLegacy {0} of {1} ", i, missingFromV3.Count(), orderEmail);
+                    i++;
                 }
                 catch (Exception ex)
                 {
                     _logger.ErrorException("SynchOrder to Legacy Failed: " + orderEmail, ex);
                 }
             }
+            i = 1;
             foreach (var orderEmail in missingFromV3)
             {
                 var order = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
                 try
                 {
                     _orderRepository.ConvertLegacyOrder(order);
-                    _logger.Info("Migrated to V3: " + orderEmail);
+                    _logger.Info("SynchOrder MigrateToV3 {0} of {1} ", i, missingFromLegacy.Count(), orderEmail);
+                    i++;
                 }
                 catch (Exception ex)
                 {
-                    _logger.ErrorException("Migrate to V3 failed: " + orderEmail, ex);
+                    _logger.ErrorException("SynchOrder Migrate to V3 failed: " + orderEmail, ex);
                 }
 
             }
 
+            i = 1;
             foreach (var orderEmail in commonEmails)
             {
                 var lOrder = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
                 var vOrder = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
                 try
                 {
-                    _logger.Info("SynchOrder checks: " + orderEmail);
+                    _logger.Info("SynchOrder CommonToBoth {0} of {1} ", i, commonEmails.Count(), orderEmail);
+                    
                     if (lOrder.Total != vOrder.Total)
                     {
-                        _logger.Info("SynchOrder find non-equal total: " + orderEmail);
+                        _logger.Info("SynchOrder Legacy Total = {0} vs. V3 Total = {1} on {2} ", lOrder.Total, vOrder.Total, orderEmail);
                         _orderRepository.ReimportLegacyOrder(lOrder, vOrder);
                     }
+
+                    if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType != vOrder.Total)
+                    {
+                        _logger.Info("SynchOrder Legacy RegType = {0} vs. V3 RegType = {1} on {2} ", lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, orderEmail);
+                        _orderRepository.ReimportLegacyOrder(lOrder, vOrder);
+                    }
+                    
+                    i++;
                 }
                 catch (Exception ex)
                 {

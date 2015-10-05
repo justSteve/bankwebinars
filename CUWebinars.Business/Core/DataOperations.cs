@@ -748,7 +748,7 @@ namespace CUWebinars.Business.Core
                                     int mkStatus = Convert.ToInt32( reader[28]);
 
                                     var setStatus = SetOrderStatus(mkStatus);
-
+                                    newOrder.UserComments = reader.GetInt32(29).ToString();
                                     newOrder.OrderStatus = setStatus;
 
                                     newOrderRow.RowStatus = OrderRowStatus.Active;
