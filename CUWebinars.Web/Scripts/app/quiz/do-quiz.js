@@ -204,7 +204,7 @@ $(function () {
         if (DQ.currentQuestionNr + 1 === DQ.questionCount) {
             $(this).attr('disabled', 'disabled');
             DQ.submitButton.fadeIn(800, function () { $(this).removeClass('initialHide'); });
-            DQ.retakeButton.fadeIn(800, function () { $(this).removeClass('initialHide'); });
+            //DQ.retakeButton.fadeIn(800, function () { $(this).removeClass('initialHide'); });
         } else {
             DQ.dealWithDisabled($(this));
         }
@@ -349,7 +349,7 @@ $(function () {
 
         e.preventDefault();
 
-        DQ.utilities.goToUrl(''); // go home
+        DQ.utilities.goToUrl('/Quiz/QuizDone'); // go home
     };
 
 })(DQ);

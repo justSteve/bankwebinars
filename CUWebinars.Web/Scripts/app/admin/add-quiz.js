@@ -94,7 +94,6 @@ $(function () {
     ns.addNewQuiz = function (e) {
 
         e.preventDefault();
-
         var url = $('#AddQuizForm').attr('action');
 
         var webinar = AQ.selectedWebinar.val();
@@ -126,7 +125,7 @@ $(function () {
                 AQ.newQuestionTextDiv.hide();
                 AQ.addNextQuizButton.show();
             } else if (!data.isSuccessful) {
-
+                alert("problem creating Quiz.");
             } else {
 
             }

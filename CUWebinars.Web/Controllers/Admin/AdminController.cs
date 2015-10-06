@@ -108,34 +108,37 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
 
-        public ActionResult AddQuiz()
-        {
-            var addQuizEditModel = new AddQuizEditModel();
-            return View(addQuizEditModel);
-        }
+        //public ActionResult AddQuiz()
+        //{
+        //    var addQuizEditModel = new AddQuizEditModel
+        //    {
+        //        Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_webinarManagementService)
+        //    };
+        //    return View(addQuizEditModel);
+        //}
 
-        [HttpPost]
-        public ActionResult AddQuiz(AddQuizEditModel addQuizEditModel)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _webinarManagementService.AddQuiz(addQuizEditModel.SelectedWebinar, addQuizEditModel.Questions);
+        //[HttpPost]
+        //public ActionResult AddQuiz(AddQuizEditModel addQuizEditModel)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            _webinarManagementService.AddQuiz(addQuizEditModel.SelectedWebinar, addQuizEditModel.Questions);
 
-                    return Json(new { Result = WebUiConstants.Success });
-                }
-                catch (Exception exception)
-                {
-                    _logger.ErrorException(string.Format("AddQuiz. Session | {0}",
-                        _appHelper.GetUserAuditInfo()),
-                        exception);
+        //            return Json(new { Result = WebUiConstants.Success });
+        //        }
+        //        catch (Exception exception)
+        //        {
+        //            _logger.ErrorException(string.Format("AddQuiz. Session | {0}",
+        //                _appHelper.GetUserAuditInfo()),
+        //                exception);
 
-                    return Json(new { Result = WebUiConstants.Fail });
-                }
-            }
-            return this.ModelStateJson(ModelState);
-        }
+        //            return Json(new { Result = WebUiConstants.Fail });
+        //        }
+        //    }
+        //    return this.ModelStateJson(ModelState);
+        //}
 
         public PartialViewResult BatchPasswordReset()
         {
@@ -2081,25 +2084,6 @@ namespace CUWebinars.Web.Controllers.Admin
             ViewBag.Payload = importOrderViaDashboardViewModel;
 
             return PartialView("~/Views/Admin/Home/_ImportOrder.cshtml", importOrderViaDashboardViewModel);
-        }
-
-        public JsonResult ReadCsvAndReturnJson()
-        {
-            IList<IncomingOrderModel> incomingOrderModels = null;
-
-            using (var fileStream =
-                    System.IO.File.OpenRead(
-                    Path.Combine(HttpRuntime.AppDomainAppPath, @"App_Data/Orders", "SampleData.csv"))
-                //Path.Combine(HttpRuntime.AppDomainAppPath, @"App_Data/Orders", "OrderEntry.csv"))
-                //Path.Combine(HttpRuntime.AppDomainAppPath, @"App_Data/Orders", "newCUOrders.csv"))
-                    )
-            {
-                incomingOrderModels = CsvParseOps.ParseCsvForIncomingOrderModel(fileStream);
-            }
-
-            var returnPayload = JsonConvert.SerializeObject(incomingOrderModels);
-
-            return Json(returnPayload, JsonRequestBehavior.AllowGet);
         }
 
         [ValidateJsonAntiForgeryToken(Order = 0)]

@@ -7,6 +7,7 @@ using CUWebinars.Web.Models;
 using System.Linq;
 using System.Security.Claims;
 using System.Web.Mvc;
+using CUWebinars.Web.Services;
 using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Web.Controllers
@@ -16,34 +17,36 @@ namespace CUWebinars.Web.Controllers
         private readonly IQuizControllerOrchestrator _quizControllerOrchestrator;
         private readonly ILogger _logger;
         private readonly IAppHelper _appHelper;
+        private readonly IStateService _stateService;
 
-        public QuizController(IQuizControllerOrchestrator quizControllerOrchestrator, ILogger logger, IAppHelper appHelper)
+        public QuizController(IQuizControllerOrchestrator quizControllerOrchestrator, ILogger logger, IAppHelper appHelper, IStateService stateService)
         {
             _quizControllerOrchestrator = quizControllerOrchestrator;
             _logger = logger;
             _appHelper = appHelper;
+            _stateService = stateService;
         }
 
-        [System.Web.Mvc.HttpPost]
-        [HandleAjaxException]
-        public ActionResult AddQuiz(AddQuizEditModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _quizControllerOrchestrator.AddQuiz(model);
+        //[System.Web.Mvc.HttpPost]
+        //[HandleAjaxException]
+        //public ActionResult AddQuiz(AddQuizEditModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            _quizControllerOrchestrator.AddQuiz(model);
 
-                    return Json(new {Result = WebUiConstants.Success, WebinarId = model.SelectedWebinar });
-                }
-                catch (Exception exception)
-                {
-                    _logger.ErrorException(string.Format("EditQuiz | Session details: {0}", _appHelper.GetUserAuditInfo()), exception);
-                }
-            }
+        //            return Json(new {Result = WebUiConstants.Success, WebinarId = model.SelectedWebinar });
+        //        }
+        //        catch (Exception exception)
+        //        {
+        //            _logger.ErrorException(string.Format("EditQuiz | Session details: {0}", _appHelper.GetUserAuditInfo()), exception);
+        //        }
+        //    }
 
-            return this.ModelStateJson(ModelState);
-        }
+        //    return this.ModelStateJson(ModelState);
+        //}
 
         [System.Web.Mvc.HttpPost]
         [HandleAjaxException]
@@ -123,11 +126,12 @@ namespace CUWebinars.Web.Controllers
         }
 
         [System.Web.Mvc.HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public ActionResult Identify(IdentifyModel identifyModel)
         {
             if (ModelState.IsValid)
             {
+                TempData.Remove(WebUiConstants.AnonUserEmail);
                 TempData.Add(WebUiConstants.AnonUserEmail, identifyModel.Email);
                 return _quizControllerOrchestrator.Identify(identifyModel);
             }

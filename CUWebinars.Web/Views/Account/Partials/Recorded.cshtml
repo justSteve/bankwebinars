@@ -7,9 +7,11 @@
 
 @{
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
-    
+
     var nfi = new CultureInfo("en-US", false).NumberFormat;
     nfi.CurrencyDecimalDigits = 0;
+
+    WebUser currentUser = Model.WebUser;
 }
 <div class="container">
     <!--begin main content-->
@@ -34,8 +36,11 @@
                         }
                     }
                 }
-
-                var onDemandClaimString = onDemandClaim.OrderId.ToString() + "-" + onDemandClaim.OnDemandCode;
+                var onDemandClaimString = "";
+                if (onDemandClaim.OnDemandCode != null)
+                {
+                    onDemandClaimString = onDemandClaim.OrderId.ToString() + "-" + onDemandClaim.OnDemandCode;
+                }
                 var expiresDate = row.Webinar.Date.AddMonths(6);
                 var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
                 var accessPhrase = "will be accessible ";
@@ -97,14 +102,21 @@
 
                                     </div>
                                     <div class="span6">
-                                        <p>
-                                            Need to share this event with a co-worker? Provide them this URL:<br /> <tt><strong>http://@globalConfig.TenantURL/o/@onDemandClaimString</strong></tt>
-                                        </p>
-                                        @*<p>@{
-                                                var urlSuffix = recorded.Value.idOrder + "-" + @recorded.Key;
-                                               <text>A post -event assesment is available:<br /> <tt><strong> http: //beta.bankwebinars.com/quiz/index/@urlSuffix</strong></tt></text>
-                                           }
-                                        </p>*@
+                                        @if (String.IsNullOrWhiteSpace(onDemandClaimString))
+                                        {
+                                            <p>
+                                                Need to share this event with a co-worker? Provide them this URL:<br /> <tt><strong>http://@globalConfig.TenantURL/o/@onDemandClaimString</strong></tt>
+                                            </p>
+                                        }
+                                        @if (currentUser.email.EndsWith("ttstrain.com") && !String.IsNullOrWhiteSpace(recorded.Key))
+                                        {
+                                            <p>
+                                                @{
+                                            var urlSuffix = recorded.Value.idOrder + "-" + recorded.Key;
+                                            <text>A post-event assesment for this event is available. Pass this URL to any co-workers<br /> <tt><strong> http://beta.bankwebinars.com/quiz/index/@urlSuffix</strong></tt></text>
+                                                }
+                                            </p>
+                                        }
                                     </div>
                                 }
                                 else

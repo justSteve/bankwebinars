@@ -738,10 +738,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             return true;
         }
 
-        public AddQuizEditModel BuildAddQuizEditModel()
-        {
-            throw new NotImplementedException();
-        }
+        //public AddQuizEditModel BuildAddQuizEditModel()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public EditBillingAddressModel BuildBillingAddressModel()
         {

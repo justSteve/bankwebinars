@@ -12,7 +12,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         ActionResult ShowQuizLandingView(int idOrder, string quizCode, string quizCodeWithOrderId, IIdentity userIdentity, string email = null);
         ContentResult ScoreQuizAndPersistResults(UserQuizEditModel userQuizEditModel);
         void ProcessEditModel(EditQuizEditModel model);
-        void AddQuiz(AddQuizEditModel model);
+        //void AddQuiz(AddQuizEditModel model);
         int? CloneQuizForWebinar(int webinarId, int existingQuizId);
         int GetQuizIdByWebinarId(int idWebinar);
     }

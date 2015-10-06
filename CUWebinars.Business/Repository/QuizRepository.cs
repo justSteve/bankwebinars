@@ -27,20 +27,20 @@ namespace CUWebinars.Business.Repository
             ((TTSWebinarsContext) db).Question.Add(question);
         }
 
-        public void AddQuiz(Quiz quiz)
-        {
-            items.Add(quiz);
-        }
+        //public void AddQuiz(Quiz quiz)
+        //{
+        //    items.Add(quiz);
+        //}
 
         public void AddQuestionWithOption(QuestionWithOption questionWithOption)
         {
             ((TTSWebinarsContext) db).QuestionWithOption.Add(questionWithOption);
         }
 
-        public void AddQuizWithQuestion(QuizWithQuestion quizWithQuestion)
-        {
-            ((TTSWebinarsContext) db).QuizWithQuestion.Add(quizWithQuestion);
-        }
+        //public void AddQuizWithQuestion(QuizWithQuestion quizWithQuestion)
+        //{
+        //    ((TTSWebinarsContext) db).QuizWithQuestion.Add(quizWithQuestion);
+        //}
 
         public void SaveChanges()
         {

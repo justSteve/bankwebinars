@@ -172,34 +172,6 @@ namespace CUWebinars.Business.Services
             _webinarRepository.MarkForDeletion(webinarTopicXRef);
         }
 
-        public void AddQuiz(int selectedWebinar, IEnumerable<Question> questions)
-        {
-            var quiz = _quizRepository.GetQuizByWebinarId(selectedWebinar);
-
-            if (!ReferenceEquals(null, quiz))
-                throw new InvalidOperationException(string.Format("Webinar with id {0} already has a quiz.", selectedWebinar));
-
-            quiz = new Quiz
-            {
-                idWebinar = selectedWebinar,
-                QuizCode =  RandomHelpers.GetUniqueCode(6)
-            };
-            _quizRepository.AddQuiz(quiz);
-
-            _quizRepository.SaveChanges();
-
-            foreach (var question in questions)
-            {
-                _quizRepository.AddQuestion(question);
-
-                // new quiz was given an id < 0 at the client.
-                question.QuizWithQuestions.Single(qwq => qwq.idQuiz < 0).idQuiz = quiz.Id;
-            }
-
-            _quizRepository.SaveChanges();
-
-        }
-
         public Quiz GetQuizByCode(string quizCode)
         {
             return _quizRepository.GetQuizByCode(quizCode);

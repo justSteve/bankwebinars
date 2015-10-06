@@ -293,7 +293,7 @@ namespace CUWebinars.Business.Services
 
         public void SynchOrders(int webinarId)
         {
-            _logger.Info("SynchOrders begins on: " + webinarId);
+            _logger.Info("SynchOrders begins for: " + webinarId);
             var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
             IList<Order> lOrders = dataOperations.GetLegacyOrdersByWebinar(webinarId);
             IList<Order> v3Orders = GetV3OrdersByWebinar(webinarId);
@@ -360,7 +360,7 @@ namespace CUWebinars.Business.Services
                 try
                 {
                     _orderRepository.MigrateOrderFromV3(order);
-                    _logger.Info("SynchOrder MigrateToLegacy {0} of {1} ", i, missingFromV3.Count(), orderEmail);
+                    _logger.Info("SynchOrder MigrateToLegacy {0} of {1} - {2}", i, missingFromLegacy.Count(), orderEmail);
                     i++;
                 }
                 catch (Exception ex)
@@ -375,7 +375,7 @@ namespace CUWebinars.Business.Services
                 try
                 {
                     _orderRepository.ConvertLegacyOrder(order);
-                    _logger.Info("SynchOrder MigrateToV3 {0} of {1} ", i, missingFromLegacy.Count(), orderEmail);
+                    _logger.Info("SynchOrder MigrateToV3 {0} of {1} - {2}", i, missingFromV3.Count(), orderEmail);
                     i++;
                 }
                 catch (Exception ex)
@@ -392,20 +392,21 @@ namespace CUWebinars.Business.Services
                 var vOrder = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
                 try
                 {
-                    _logger.Info("SynchOrder CommonToBoth {0} of {1} ", i, commonEmails.Count(), orderEmail);
-                    
+                    _logger.Info("SynchOrder CommonToBoth {0} of {1} - {2} ", i, commonEmails.Count(), orderEmail);
+
                     if (lOrder.Total != vOrder.Total)
                     {
                         _logger.Info("SynchOrder Legacy Total = {0} vs. V3 Total = {1} on {2} ", lOrder.Total, vOrder.Total, orderEmail);
-                        _orderRepository.ReimportLegacyOrder(lOrder, vOrder);
+                        
                     }
 
-                    if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType != vOrder.Total)
+                    if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType != vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType)
                     {
-                        _logger.Info("SynchOrder Legacy RegType = {0} vs. V3 RegType = {1} on {2} ", lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, orderEmail);
-                        _orderRepository.ReimportLegacyOrder(lOrder, vOrder);
+                        _logger.Info("SynchOrder adjusted RegType from V3 RegType = {1} to Legacy = {0} on {2} ", lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, orderEmail);
+                        vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType;
+                        SaveOrderChanges(vOrder, "", "", OrderGenesis.CreatedViaCartByExistingUser);
                     }
-                    
+
                     i++;
                 }
                 catch (Exception ex)
@@ -413,13 +414,9 @@ namespace CUWebinars.Business.Services
                     _logger.ErrorException("SynchOrder checks common orders to V3 failed: " + orderEmail, ex);
                 }
             }
+
+            _logger.Info("SynchOrders ends for: " + webinarId);
         }
-
-        private void MigrateOrderFromV3(Order order)
-        {
-
-        }
-
 
 
         public IEnumerable<Order> GetOrdersByLastName(string lastName, int aff)
@@ -738,57 +735,70 @@ namespace CUWebinars.Business.Services
             var row = order.OrderRows.SingleOrDefault(orderRow => orderRow.RowStatus == OrderRowStatus.Active);
 
             Debug.Assert(row != null, "OrderRow object should always have a value here.");
-            row.UnitPrice = (decimal)row.RegistrationType.Price;
-
-            //Calculate row price before discount
-            if (row.AdditionalLocation != null)
+            if (row.RegistrationType != null)
             {
-                if (order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active).Webinar.Title.Contains("Compliance Perspectives"))
+                //TODO: Figure out why Order that are retrieved via the SynchOrders method have
+                //a null reference for RegistrationType
+                row.UnitPrice = (decimal) row.RegistrationType.Price;
+            }
+            else
+            {
+                var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+
+                var regTypePricing = dataOperations.GetCostOfRegtype(row.idRegType);
+                row.UnitPrice = regTypePricing;
+                
+            }
+            //Calculate row price before discount
+                if (row.AdditionalLocation != null)
                 {
-                    if (row.AdditionalLocation.Count > 3)
+                    if (order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active).Webinar.Title.Contains("Compliance Perspectives"))
                     {
-                        totalOptionsPrice = row.AdditionalLocation.Count - 3 * optionsCost; // cost * number of additional locations
+                        if (row.AdditionalLocation.Count > 3)
+                        {
+                            totalOptionsPrice = row.AdditionalLocation.Count - 3 * optionsCost; // cost * number of additional locations
+                        }
+                    }
+                    else
+                    {
+                        totalOptionsPrice = row.AdditionalLocation.Count * optionsCost; // cost * number of additional locations
                     }
                 }
-                else
+
+                row.RowPrice = row.UnitPrice + totalOptionsPrice;
+                pricesAndDiscounts.UnitPrice = row.UnitPrice;
+
+                //Calculate discount. 
+                decimal discountTotal = 0;
+
+                if (row.Discount != null && row.Discount.PercentOff != 0.0M)
                 {
-                    totalOptionsPrice = row.AdditionalLocation.Count * optionsCost; // cost * number of additional locations
+                    discountTotal = row.RowPrice * row.Discount.PercentOff / 100;
                 }
-            }
+                else if (row.Discount != null && row.Discount.FlatOff != 0.0M)
+                {
+                    discountTotal = row.Discount.FlatOff;
+                }
 
-            row.RowPrice = row.UnitPrice + totalOptionsPrice;
-            pricesAndDiscounts.UnitPrice = row.UnitPrice;
+                if (discountTotal > row.RowPrice)
+                {
+                    discountTotal = row.RowPrice;
+                }
 
-            //Calculate discount. 
-            decimal discountTotal = 0;
+                row.RowPrice -= discountTotal;
+                pricesAndDiscounts.TotalDiscount = discountTotal;
+                pricesAndDiscounts.TotalCostOfOptions = totalOptionsPrice;
 
-            if (row.Discount != null && row.Discount.PercentOff != 0.0M)
-            {
-                discountTotal = row.RowPrice * row.Discount.PercentOff / 100;
-            }
-            else if (row.Discount != null && row.Discount.FlatOff != 0.0M)
-            {
-                discountTotal = row.Discount.FlatOff;
-            }
+                pricesAndDiscounts.TaxAmount = 0;
 
-            if (discountTotal > row.RowPrice)
-            {
-                discountTotal = row.RowPrice;
-            }
-
-            row.RowPrice -= discountTotal;
-            pricesAndDiscounts.TotalDiscount = discountTotal;
-            pricesAndDiscounts.TotalCostOfOptions = totalOptionsPrice;
-
-            pricesAndDiscounts.TaxAmount = 0;
-
-            if (order.BillingState == "WI"
-                && !row.RegistrationType.OptionLabel.StartsWith("Live Plus Five")
-                && row.RowPrice > 0
-                )
-            {
-                pricesAndDiscounts.TaxAmount = Convert.ToDecimal(Convert.ToInt32(row.RowPrice) * .055);
-            }
+                if (order.BillingState == "WI"
+                    && !row.RegistrationType.OptionLabel.StartsWith("Live Plus Five")
+                    && row.RowPrice > 0
+                    )
+                {
+                    pricesAndDiscounts.TaxAmount = Convert.ToDecimal(Convert.ToInt32(row.RowPrice) * .055);
+                }
+            
 
             //Calculate order total
             order.Total = row.RowPrice + pricesAndDiscounts.TaxAmount;

@@ -5,6 +5,7 @@ using CUWebinars.Business.Models;
 
 namespace CUWebinars.Web.Models
 {
+
     public class AddQuizEditModel
     {
         public IEnumerable<Question> Questions { get; set; }

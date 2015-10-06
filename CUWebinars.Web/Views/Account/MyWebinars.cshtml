@@ -196,32 +196,4 @@
         </div>
 
         @*@{Html.RenderPartial("Partials/Archived");}*@
-        @*<div class="modalOverlay" id="modalOverlay2">
-                <p align="center">
-                    Simply list the required names in this box - one name per line. Type the names directly
-                    or prepare the list elsewhere and paste it here. When you click the 'Generate' button
-                    return a list of links that you can distribute to each attendee.</p>
-                <form action="/Admin/registrations/CertificateOfCompletionList" id="frmCOCList" method="post">
-                <input type="hidden" name="id" id="txtWebinarIDList" />
-                <textarea cols="30" rows="8" name="displayNames">One name per line please.</textarea><p
-                    align="center">
-                    <input type="submit" value="Generate Certificates" /></p>
-                </form>
-            </div>
-            <div class="modalOverlay" id="modalOverlay">
-                <p align="center">
-                    <form action="/Admin/registrations/CertificateOfCompletion" id="frmCOC" method="post">
-                    <input type="hidden" name="id" id="txtWebinarID" />
-                    Name to Be Displayed:
-                    <input type="text" name="displayName" value="@PageData["thisUser"].FirstName  @PageData["thisUser"].LastName "  /><br />
-                    <br />
-                    <input type="submit" value="Generate Certificate" />
-                    </form>
-                </p>
-                <p align="center">
-                    <br />
-                    <br />
-                    Need to produce certificates for other attendees? <a href="javascript:ListOfNames();">
-                        Click here.</a></p>
-            </div>*@
     </div>

@@ -332,14 +332,6 @@ namespace CUWebinars.Business.Repository
             dataOperations.MigrateOrderFromV3(order);
         }
 
-        public void ReimportLegacyOrder(Order lOrder, Order vOrder)
-        {
-            var a = "";
-
-        }
-
-
-
         public IList<int> FindOrderIdsByPartialId(int userId)
         {
             return items.Include(o => o.WebUser)

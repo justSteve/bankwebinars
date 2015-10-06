@@ -10,6 +10,7 @@ using System.Text;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Security;
+using System.Web.UI;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core.Exceptions;
@@ -270,6 +271,10 @@ namespace CUWebinars.Web.Controllers
             {
                 return RedirectToAction("Index", "Admin");
             }
+            ViewBag.OnDemandClaim = "";
+
+
+
             var discountModel = _accountControllerOrchestrator.BuildDiscountModel();
             var myWebinarsDTO = _accountControllerOrchestrator.BuildMyWebinarsDTO(discountModel, claimsIdentityOfAuthenticatedUser);
 

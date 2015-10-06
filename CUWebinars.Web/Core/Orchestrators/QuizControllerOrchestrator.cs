@@ -30,8 +30,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         private readonly ILogger _logger;
 
-        public QuizControllerOrchestrator(IWebinarManagementService webinarManagementService, 
-            IOrderManagementService orderManagementService, 
+        public QuizControllerOrchestrator(IWebinarManagementService webinarManagementService,
+            IOrderManagementService orderManagementService,
             IMembershipService membershipService,
             IStateService stateService, ILogger logger)
         {
@@ -50,7 +50,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             return GetUserQuizEditModelFromQuiz(quiz);
         }
-        
+
         public UserQuizEditModel BuildUserQuizEditModel(string quizCode, int orderId)
         {
             var quiz = _webinarManagementService.GetQuizByCode(quizCode);
@@ -87,11 +87,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             int score;
 
             ContentResult result = ScoreQuiz(userQuizEditModel, out score);
-            
+
             PersistResultsForQuizAttempt(userQuizEditModel, score);
 
-            //var quizScores = _webinarManagementService.GetQuizScoreForUser(userQuizEditModel.QuizId, userQuizEditModel.Email,
-            //    userQuizEditModel.OrderId);
+            var quizScores = _webinarManagementService.GetQuizScoreForUser(userQuizEditModel.QuizId, userQuizEditModel.Email,
+                userQuizEditModel.OrderId);
 
             return result;
         }
@@ -103,16 +103,16 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             if (!ReferenceEquals(null, model.DeletedQuestions) && model.DeletedQuestions.Any())
             {
-                 noUsersHaveAttemptedQuizYet = _webinarManagementService.RemoveQuestionsFromQuiz(model.DeletedQuestions, quizId);
+                noUsersHaveAttemptedQuizYet = _webinarManagementService.RemoveQuestionsFromQuiz(model.DeletedQuestions, quizId);
                 if (!noUsersHaveAttemptedQuizYet) throw new InvalidOperationException(UserHasAlreadyAchievedAResultForThisQuiz);
             }
-            
+
             if (!ReferenceEquals(null, model.EditedQuestions) && model.EditedQuestions.Any())
             {
                 noUsersHaveAttemptedQuizYet = _webinarManagementService.UpdateQuestions(model.EditedQuestions, quizId);
                 if (!noUsersHaveAttemptedQuizYet) throw new InvalidOperationException(UserHasAlreadyAchievedAResultForThisQuiz);
             }
-            
+
             if (!ReferenceEquals(null, model.NewQuestions) && model.NewQuestions.Any())
             {
                 noUsersHaveAttemptedQuizYet = _webinarManagementService.AddQuestionsToQuiz(model.SelectedWebinar, model.NewQuestions);
@@ -121,10 +121,10 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         }
 
-        public void AddQuiz(AddQuizEditModel model)
-        {
-            _webinarManagementService.AddQuiz(model.SelectedWebinar, model.Questions);
-        }
+        //public void AddQuiz(AddQuizEditModel model)
+        //{
+        //    _webinarManagementService.AddQuiz(model.SelectedWebinar, model.Questions);
+        //}
 
         public int? CloneQuizForWebinar(int webinarId, int existingQuizId)
         {
@@ -235,7 +235,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 Webinar = _webinarManagementService.GetWebinarThin(questionCountAndWebinarId.WebinarId)
             };
 
-            var viewResult = new ViewResult {ViewName = "Index", ViewData = {Model = quizModel}};
+            var viewResult = new ViewResult { ViewName = "Index", ViewData = { Model = quizModel } };
 
             return viewResult;
         }
@@ -243,7 +243,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         public ActionResult Identify(IdentifyModel identifyModel)
         {
 
-            var idOrder = Convert.ToInt32(identifyModel.OnDemandCode.Substring(0, 5));
+            var idOrder = Convert.ToInt32(identifyModel.OnDemandCode.Split('-')[0]);
             // do something with name and email address
             var order = _orderManagementService.GetOrderById(idOrder);
 
@@ -271,7 +271,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 return new RedirectToRouteResult(new RouteValueDictionary(new { action = "Index", controller = "Quiz", quizCode = identifyModel.OnDemandCode }));
             }
-
+            _logger.Fatal(new Exception("idOrder not found:" + idOrder), "Invalid OrderID from: " + identifyModel.OnDemandCode);
             return new ViewResult { ViewName = "Identify", ViewData = { Model = identifyModel } };
         }
 
@@ -292,7 +292,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     quizQuestion.Options.Add(new QuestionOption
                     {
-                        QuestionOptionId = questionWithOptions.Id, 
+                        QuestionOptionId = questionWithOptions.Id,
                         Letter = questionWithOptions.Letter[0],
                         Text = questionWithOptions.Option.Text
                     });
@@ -316,7 +316,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             };
 
             return model;
-           
+
         }
     }
 }

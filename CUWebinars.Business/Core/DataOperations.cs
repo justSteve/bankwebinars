@@ -78,6 +78,35 @@ namespace CUWebinars.Business.Core
             }
         }
 
+        public decimal GetCostOfRegtype(int idRegType)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var getRegTypePriceCommand = new SqlCommand())
+                {
+                    var webinarIdParameter = new SqlParameter
+                    {
+                        SqlDbType = SqlDbType.Int,
+                        ParameterName = "@idRegType",
+                        Value = idRegType
+                    };
+
+                    getRegTypePriceCommand.Connection = sqlConnection;
+                    getRegTypePriceCommand.CommandType = CommandType.Text;
+                    getRegTypePriceCommand.Parameters.Add(webinarIdParameter);
+                    getRegTypePriceCommand.CommandText =
+                        "SELECT Price FROM dbo.RegType WHERE idRegType = " + @idRegType;
+
+
+                    var message = getRegTypePriceCommand.ExecuteScalar();
+                    return Convert.ToDecimal(message);
+                    return Convert.ToDecimal(message);
+                }
+            }
+        }
+
         public IList<AdditionalLocationsPricing> GetAdditionalLocationsPricing(int webinarId)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
@@ -745,7 +774,7 @@ namespace CUWebinars.Business.Core
                                     newOrder.OrderDate = reader.GetDateTime(27);
 
                                     newOrder.Origin = "OrderSynch";
-                                    int mkStatus = Convert.ToInt32( reader[28]);
+                                    int mkStatus = Convert.ToInt32(reader[28]);
 
                                     var setStatus = SetOrderStatus(mkStatus);
                                     newOrder.UserComments = reader.GetInt32(29).ToString();
@@ -863,8 +892,8 @@ namespace CUWebinars.Business.Core
             PostForm += "&AdditionalLocationsString=" + myRow.AdditionalLocation;
             PostForm += "&OrderDate=" + order.OrderDate;
             PostForm += "&DiscountCode=" + myDiscount;
-            PostForm += "&Status="+order.OrderStatus+"&Total="+order.Total;
-            PostForm += "&AdminComments="+order.AdminComments;
+            PostForm += "&Status=" + order.OrderStatus + "&Total=" + order.Total;
+            PostForm += "&AdminComments=" + order.AdminComments;
 
             var submitImporter = "http://acsimporter.bankwebinars.com/home/MigrateOrderFromV3/";
             if (Debugger.IsAttached)
@@ -988,13 +1017,13 @@ namespace CUWebinars.Business.Core
             PostForm += "&LastName=" + order.LastName;
             PostForm += "&idRegType=" + myRow.idRegType;
             PostForm += "&idWebinar=" + myRow.idWebinar;
-            PostForm += "&AdditionalLocationsString=" + addLocs.TrimEnd(' ',','); 
+            PostForm += "&AdditionalLocationsString=" + addLocs.TrimEnd(' ', ',');
             PostForm += "&idOrderLegacy=" + order.idOrderLegacy;
             PostForm += "&OrderDate=" + order.OrderDate;
             PostForm += "&ShippingDate=" + "";
             PostForm += "&DiscountCode=" + myDiscount;
-            PostForm += "&Status="+order.OrderStatus+"&Total=" + order.Total;
-            PostForm += "&AdminComments="+order.AdminComments;
+            PostForm += "&Status=" + order.OrderStatus + "&Total=" + order.Total;
+            PostForm += "&AdminComments=" + order.AdminComments;
 
             var submitImporter = "http://v3.bankwebinars.com/order/MigrateOrder/";
             if (Debugger.IsAttached)
@@ -1024,5 +1053,6 @@ namespace CUWebinars.Business.Core
             ;
 
         }
+
     }
 }

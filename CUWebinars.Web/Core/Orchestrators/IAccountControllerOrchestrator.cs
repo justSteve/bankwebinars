@@ -13,7 +13,7 @@ namespace CUWebinars.Web.Core.Orchestrators
     {
         void AddFullNameClaim(RegisterViewModel model);
         bool AddPasswordForCartCreatedUser(CreateUserConfirmedViewModel model);
-        AddQuizEditModel BuildAddQuizEditModel();
+        //AddQuizEditModel BuildAddQuizEditModel();
         EditBillingAddressModel BuildBillingAddressModel();
         DiscountModel BuildDiscountModel();
 

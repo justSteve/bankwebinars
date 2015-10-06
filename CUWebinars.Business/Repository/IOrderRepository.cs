@@ -48,6 +48,5 @@ namespace CUWebinars.Business.Repository
         Order FindExpressCheckoutOrder(string trim, int idWebinar);
         void ConvertLegacyOrder(Order order);
         void MigrateOrderFromV3(Order order);
-        void ReimportLegacyOrder(Order lOrder, Order vOrder);
     }
 }
