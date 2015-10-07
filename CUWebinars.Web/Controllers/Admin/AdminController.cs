@@ -6,11 +6,13 @@ using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Security.Claims;
 using System.ServiceModel.Syndication;
 using System.Text;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Xml;
 using BrockAllen.MembershipReboot;
@@ -36,15 +38,17 @@ using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Elmah;
+using Microsoft.VisualBasic.ApplicationServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using Thinktecture.IdentityModel.Authorization;
 using Thinktecture.IdentityModel.Authorization.Mvc;
+using WinSCP;
 using ClaimTypes = System.Security.Claims.ClaimTypes;
 using DateTimeHelper = CUWebinars.Web.Helpers.DateTimeHelper;
 using Formatting = Newtonsoft.Json.Formatting;
-
+using WebUser = CUWebinars.Business.Models.WebUser;
 
 
 namespace CUWebinars.Web.Controllers.Admin
@@ -107,6 +111,58 @@ namespace CUWebinars.Web.Controllers.Admin
             return View("~/Views/Admin/Home/Index.cshtml", model);
         }
 
+        public ActionResult GetAppLog()
+        {
+            // Setup session options
+            SessionOptions sessionOptions = new SessionOptions
+            {
+                Protocol = Protocol.Ftp,
+                HostName = "waws-prod-ch1-005.ftp.azurewebsites.windows.net",
+                UserName = "BankWebinars33\\$BankWebinarsOp",
+                Password = "FDcehM4K2WbSuxEplrG2B7uJxqrMbeqJ6MdDm3GLyraYTmzWnmLDQAkllu0t",
+                FtpMode = FtpMode.Passive
+                //PortNumber = 21,
+                //FtpSecure = FtpSecure.Implicit,
+                //SshHostKeyFingerprint = "ssh-rsa 2048 xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx"
+            };
+
+            try
+            {
+
+                using (Session session = new Session())
+                {
+                    // Connect
+                    
+                    session.Open(sessionOptions);
+
+                    // Upload files
+                    TransferOptions transferOptions = new TransferOptions();
+                    transferOptions.TransferMode = TransferMode.Ascii;
+
+                    TransferOperationResult transferResult;
+                    transferResult = session.GetFiles("LogFiles/log4netCSVlocal.log", "D:\\log4net.log",false, transferOptions);
+
+
+                    // Throw on any error
+                    transferResult.Check();
+
+                    // Print results
+                    foreach (TransferEventArgs transfer in transferResult.Transfers)
+                    {
+                        Console.WriteLine("Upload of {0} succeeded", transfer.FileName);
+                    }
+                }
+
+                View();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error: {0}", e);
+                View();
+            }
+
+            return View();
+        }
 
         //public ActionResult AddQuiz()
         //{
@@ -344,9 +400,9 @@ namespace CUWebinars.Web.Controllers.Admin
                 if (userAccount == null)
                 {
                     RedirectToAction("CreateUserAccountFromCart", "Account",
-                        new {email = model.Order.BillingEmail});
-                } 
-                  
+                        new { email = model.Order.BillingEmail });
+                }
+
 
                 model.PostEventAccessExpires = _membershipService.GetPostEventAccessExpireyDate(userAccount, id.Value);
                 return View(model);
@@ -2124,7 +2180,7 @@ namespace CUWebinars.Web.Controllers.Admin
         public ActionResult SynchOrders(int? webinarId, int? idAffiliate)
         {
 
-             _orderManagementService.SynchOrders(webinarId.Value);
+            _orderManagementService.SynchOrders(webinarId.Value);
             return Json(new
             {
                 data = webinarId,
@@ -2152,7 +2208,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return Json(new { NotAuthorized = true });
         }
-              [HandleAjaxException]
+        [HandleAjaxException]
         [HttpPost]
         [AllowAnonymous]
         public ActionResult GetGridDataForConnInfo(int? webinarId, int? affiliateId)
@@ -2171,11 +2227,11 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return Json(new { NotAuthorized = true });
         }
-        
+
         [HandleAjaxException]
         [HttpPost]
         [AllowAnonymous]
-        
+
         public JsonResult GetGridUserData(DTParameters param)
         {
             var aff = _affiliateManagementService.LoadByTTSDomain("bankwebinars");
@@ -2232,7 +2288,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 if (orderToEdit == 0) orderToEdit = order.idOrder;
 
                 var orderColumn = orderToEdit.ToString() + ", " + orderRow.TtsJoinUrl;
-                var userColumn = "<a href='/account/edituser/" + order.idUser + "' target='_new' />" + order.LastName + ", " + order.FirstName + "</a><br>"+order.BillingEmail;
+                var userColumn = "<a href='/account/edituser/" + order.idUser + "' target='_new' />" + order.LastName + ", " + order.FirstName + "</a><br>" + order.BillingEmail;
                 var institutionColumn = order.Institution;
                 var showDiscount = "";
                 if (!ReferenceEquals(orderRow.Discount, null) && orderRow.Discount.FlatOff > 0)
@@ -2245,10 +2301,10 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
                 var billingColumn = orderRow.RegistrationType.OptionLabel.Replace(" and Hardcopy Handouts", "").Replace("Plus Five", "Only") + showDiscount + "<br>Total: $" + order.Total.ToString().Replace(".00", "");
 
-                var resendMsg = "Resend Confirmation";
+                var resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendOrderConfirmationButton btn btn-mini\">Send Confirmation</button>";
                 if (orderRow.Webinar.Status == WebinarStatus.Active)
                 {
-                    resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
+                    resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
                 }
 
                 responsePayloadInner = new Dictionary<string, string>();
@@ -2272,7 +2328,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
         private IList<IDictionary<string, string>> BuildConnInfoViewModel(int webinarId, int? affiliateId, out int totalNumberOrders)
         {
-            
+
             var orders = _dataTablesService.GetOrdersByWebinar(webinarId, affiliateId ?? 19, out totalNumberOrders);
 
             IList<IDictionary<string, string>> responsePayload = new List<IDictionary<string, string>>();
@@ -2288,7 +2344,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 if (orderToEdit == 0) orderToEdit = order.idOrder;
 
                 var orderColumn = orderToEdit.ToString() + ", " + orderRow.TtsJoinUrl;
-                var userColumn = "<a href='/account/edituser/" + order.idUser + "' target='_new' />" + order.LastName + ", " + order.FirstName + "</a><br>"+order.BillingEmail;
+                var userColumn = "<a href='/account/edituser/" + order.idUser + "' target='_new' />" + order.LastName + ", " + order.FirstName + "</a><br>" + order.BillingEmail;
                 var institutionColumn = order.Institution;
                 var showDiscount = "";
                 if (!ReferenceEquals(orderRow.Discount, null) && orderRow.Discount.FlatOff > 0)
@@ -2301,7 +2357,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
                 var billingColumn = orderRow.RegistrationType.OptionLabel.Replace(" and Hardcopy Handouts", "").Replace("Plus Five", "Only") + showDiscount + "<br>Total: $" + order.Total.ToString().Replace(".00", "");
 
-                
+
                 responsePayloadInner = new Dictionary<string, string>();
 
                 responsePayloadInner.Add("OrderId", orderColumn);

@@ -29,17 +29,11 @@ $(function () {
 
     ns.wireUpHandlers = function () {
 
-        $('.dataTable').on("click", ".ResendConnectionInfoButton", function () {
+        $('.dataTable').on("click", ".ResendOrderConfirmationButton", function () {
             
-
             var self = this;
 
             var orderId =  this.getAttribute('data-orderId');
-
-            //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-
-            //var logStartOperation = toastLogger.getLogFn('ResendConnectionInfo');
-            //logStartOperation("Re-sending ConnectionInfo", null, true);
 
             var payload = { orderId: orderId };
 
@@ -47,13 +41,13 @@ $(function () {
                 type: 'POST',
                 contentType: constants.JsonContentType,
                 cache: false,
-                url: '/Admin/ResendConnectionInfo',
+                url: '/Admin/ResendOrderConfirmation',
                 dataType: constants.JsonDataType,
                 data: JSON.stringify(payload),
-                beforeSend: function () {
+                beforeSend: function() {
                     $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
                 }
-            }).done(function (result) {
+            }).done(function(result) {
 
                 if (result.Result === 'Success') {
                     $('#InputFormFields').append(successScreenMessage);
@@ -61,81 +55,123 @@ $(function () {
                     $('#InputFormFields').append(noOrderScreenMessage);
                 }
                 $('#spinnerLabel').remove();
-
-                Rollbar.info({ 'oen-#2': { 'result': result } });
-
-            }).fail(function () {
-
-            }).always(function () {
+            }).fail(function() {
+                alert("Operation Failed. Call Steve!")
+            }).always(function() {
                 //$('#loadingSpinner').remove();
             });
         });
 
 
 
-    };
 
-    ns.wireUpDataTable = function() {
-        
-        DO.ordersTable.dataTable({
-            "dom": '<ilf<t>ip>',
-            //'dom': 'T<"clear">lfrtip',
-            'tableTools': {
-                'sSwfPath': '/Content/DataTables/swf/copy_csv_xls_pdf.swf'
-            },
-            'ajax': {
-                'url': '/admin/GetGridData',
-                'data': {
-                    'webinarId': parseInt(DO.webinarIdDiv.text()),
-                    'affiliateId': DO.affiliateId
-                },
-                'type': 'POST'
-            },
-            'columns': [
-                { 'data': 'OrderColumn' },
-                { 'data': 'UserColumn' },
-                { 'data': 'InstitutionColumn' },
-                { 'data': 'BillingColumn' },
-                {
-                    'data': 'AffiliateColumn',
-                    'visible': aff
-                },
-                { 'data': 'OrderDateColumn' },
-                { 'data': 'StatusColumn' }
-            ]
+    $('.dataTable').on("click", ".ResendConnectionInfoButton", function () {
+            
+
+        var self = this;
+
+        var orderId =  this.getAttribute('data-orderId');
+
+        //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+
+        //var logStartOperation = toastLogger.getLogFn('ResendConnectionInfo');
+        //logStartOperation("Re-sending ConnectionInfo", null, true);
+
+        var payload = { orderId: orderId };
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: '/Admin/ResendConnectionInfo',
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payload),
+            beforeSend: function () {
+                $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
+            }
+        }).done(function (result) {
+
+            if (result.Result === 'Success') {
+                $('#InputFormFields').append(successScreenMessage);
+            } else if (result.Result === 'Fail') {
+                $('#InputFormFields').append(noOrderScreenMessage);
+            }
+            $('#spinnerLabel').remove();
+
+            Rollbar.info({ 'oen-#2': { 'result': result } });
+
+        }).fail(function () {
+
+        }).always(function () {
+            //$('#loadingSpinner').remove();
         });
-    };
-    ns.wireUpConnInfoDataTable = function() {
+    });
+
+
+
+};
+
+ns.wireUpDataTable = function() {
         
-        DO.connInfoTable.dataTable({
-            "dom": '<ilf<t>ip>',
-            //'dom': 'T<"clear">lfrtip',
-            'tableTools': {
-                'sSwfPath': '/Content/DataTables/swf/copy_csv_xls_pdf.swf'
+    DO.ordersTable.dataTable({
+        "dom": '<ilf<t>ip>',
+        //'dom': 'T<"clear">lfrtip',
+        'tableTools': {
+            'sSwfPath': '/Content/DataTables/swf/copy_csv_xls_pdf.swf'
+        },
+        'ajax': {
+            'url': '/admin/GetGridData',
+            'data': {
+                'webinarId': parseInt(DO.webinarIdDiv.text()),
+                'affiliateId': DO.affiliateId
             },
-            'ajax': {
-                'url': '/admin/GetGridDataForConnInfo',
-                'data': {
-                    'webinarId': parseInt(DO.webinarIdDiv.text()),
-                    'affiliateId': DO.affiliateId
-                },
-                'type': 'POST'
+            'type': 'POST'
+        },
+        'columns': [
+            { 'data': 'OrderColumn' },
+            { 'data': 'UserColumn' },
+            { 'data': 'InstitutionColumn' },
+            { 'data': 'BillingColumn' },
+            {
+                'data': 'AffiliateColumn',
+                'visible': aff
             },
-            'columns': [
-                { 'data': 'OrderColumn' },
-                { 'data': 'UserColumn' },
-                { 'data': 'InstitutionColumn' },
-                { 'data': 'BillingColumn' },
-                {
-                    'data': 'AffiliateColumn',
-                    'visible': aff
-                },
-                { 'data': 'OrderDateColumn' },
-                { 'data': 'StatusColumn' }
-            ]
-        });
-    };
-    $('#getHtmlSpinner').remove();
+            { 'data': 'OrderDateColumn' },
+            { 'data': 'StatusColumn' }
+        ]
+    });
+};
+ns.wireUpConnInfoDataTable = function() {
+        
+    DO.connInfoTable.dataTable({
+        "dom": '<ilf<t>ip>',
+        //'dom': 'T<"clear">lfrtip',
+        'tableTools': {
+            'sSwfPath': '/Content/DataTables/swf/copy_csv_xls_pdf.swf'
+        },
+        'ajax': {
+            'url': '/admin/GetGridDataForConnInfo',
+            'data': {
+                'webinarId': parseInt(DO.webinarIdDiv.text()),
+                'affiliateId': DO.affiliateId
+            },
+            'type': 'POST'
+        },
+        'columns': [
+            { 'data': 'OrderColumn' },
+            { 'data': 'UserColumn' },
+            { 'data': 'InstitutionColumn' },
+            { 'data': 'BillingColumn' },
+            {
+                'data': 'AffiliateColumn',
+                'visible': aff
+            },
+            { 'data': 'OrderDateColumn' },
+            { 'data': 'StatusColumn' }
+        ]
+    });
+};
+$('#getHtmlSpinner').remove();
 
 
 })(DO);

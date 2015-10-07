@@ -375,6 +375,10 @@
       <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
     </Reference>
     <Reference Include="WebMatrix.WebData, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="WinSCPnet, Version=1.2.9.5665, Culture=neutral, PublicKeyToken=2271ec4a3c56d0bf, processorArchitecture=MSIL">
+      <HintPath>..\packages\WinSCP.5.7.5\lib\WinSCPnet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.AspNet.Identity.Core">
@@ -744,6 +748,9 @@
     <Content Include="Content\DataTables\css\dataTables.responsive.scss" />
     <Content Include="Content\DataTables\css\dataTables.jqueryui.scss" />
     <Content Include="Notification\Templates\AdhocNotification.cshtml" />
+    <Content Include="WinSCP.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy %282%29.pubxml" />
