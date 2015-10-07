@@ -242,9 +242,14 @@
                     <button id="submitSynchOrders" role="button" class="btn btn-primary">Synch Orders</button>
                 }
             </div>
-            <div>
-                <button data-toggle="collapse" data-target="#sendConnInfoOrders" id="submitSendConnInfo" role="button" class="btn btn-danger">Send Connection Info</button>
-            </div>
+            @{
+                if (Model.Webinar.Status == WebinarStatus.Active)
+                {
+                    <div>
+                        <button data-toggle="collapse" data-target="#sendConnInfoOrders" id="submitSendConnInfo" role="button" class="btn btn-danger">Send Connection Info</button>
+                    </div>
+                }
+            }
             @*<aside class="widget">
                     <h5 class="short_headline"><span>Search</span></h5>
                     <form class="searchform" method="get">

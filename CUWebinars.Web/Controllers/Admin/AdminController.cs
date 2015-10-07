@@ -132,7 +132,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 using (Session session = new Session())
                 {
                     // Connect
-                    
+
                     session.Open(sessionOptions);
 
                     // Upload files
@@ -140,7 +140,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     transferOptions.TransferMode = TransferMode.Ascii;
 
                     TransferOperationResult transferResult;
-                    transferResult = session.GetFiles("LogFiles/log4netCSVlocal.log", "D:\\log4net.log",false, transferOptions);
+                    transferResult = session.GetFiles("LogFiles/log4netCSVlocal.log", "D:\\log4net.log", false, transferOptions);
 
 
                     // Throw on any error
@@ -704,17 +704,18 @@ namespace CUWebinars.Web.Controllers.Admin
         public void ExpressCheckout(JotFormWebHook postback)
         {
             string formFields = Request.Form.ToString();
-            _logger.Info("all fields submitted to ExpressCheckout: " + formFields.ToString());
+            _logger.Info("ExpressPostback all fields submitted to: " + formFields.ToString());
 
             ExpressCheckoutModel form
                 = JsonConvert.DeserializeObject<ExpressCheckoutModel>(postback.RawRequest);
 
 
             var user = _membershipService.GetUserByEmail(form.q5_email5);
-
+            bool userCreatedByCheckout = false;
             if (ReferenceEquals(null, user))
             {
-                _logger.Info("express_checkout user must be created: " + user.email);
+                userCreatedByCheckout = true;
+                _logger.Info("ExpressPostback user must be created: " + user.email);
                 user = _membershipService.CreateExpressCheckoutUser(_globalConfig.Tenant, form.q5_email5
                     , form.q4_name.first
                     , form.q4_name.last
@@ -730,19 +731,26 @@ namespace CUWebinars.Web.Controllers.Admin
 
             if (!ReferenceEquals(expressOrder, null))
             {
-                _logger.Info("ExpressCheckout webhook {0} found order: {1}", postback.FormId, expressOrder.idOrder);
-                _orderManagementService.AssignWebUserToOrder(user, expressOrder);
-                var forComment = new JProperty(
-                    string.Concat("ExpressCheckout-", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
-                        new JObject(new JProperty("ExpressCheckoutComments", expressOrder.AdminComments))
-                    );
-                expressOrder.OrderStatus = OrderStatus.Submitted;
-                expressOrder.Origin = "ExpressCheckout";
-                expressOrder.AdminComments = forComment.ToString();
-                _orderManagementService.SaveChanges();
-                _orderManagementService.FireOrderSubmittedEvent(expressOrder, true);
+                try
+                {
+                    _logger.Info("ExpressPostback webhook {0} found order: {1}", postback.FormId, expressOrder.idOrder);
+                    _orderManagementService.AssignWebUserToOrder(user, expressOrder);
+                    var forComment = new JProperty(
+                        string.Concat("ExpressCheckout-", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                            new JObject(new JProperty("ExpressCheckoutComments", expressOrder.AdminComments))
+                        );
+                    expressOrder.OrderStatus = OrderStatus.Submitted;
+                    expressOrder.Origin = "ExpressCheckout";
+                    expressOrder.AdminComments = forComment.ToString();
+                    _orderManagementService.SaveChanges();
+                    _logger.Info("ExpressPostback to Confirmation Email Handler: ");
+                    _orderManagementService.FireOrderSubmittedEvent(expressOrder, userCreatedByCheckout);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Fatal("ExpressPostback tossed exception: ", ex);
+                }
 
-                //return RedirectToAction("OrderComplete", "Account", new { id = form.q5_email5 });
             }
             else
             {
@@ -780,7 +788,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 _orderManagementService.SaveChanges();
 
-                _logger.Info("ExpressCheckout: " + form);
+                _logger.Info("ExpressCheckout created order: " + form);
 
                 _orderManagementService.FireOrderSubmittedEvent(newOrderRow.Order, true);
 
@@ -794,7 +802,7 @@ namespace CUWebinars.Web.Controllers.Admin
         public ActionResult ExpressCheckout4IE(ExpressCheckoutModel form)
         {
             string formFields = Request.Form.ToString();
-            _logger.Info("all fields submitted to ExpressCheckout4IE: " + formFields.ToString());
+            _logger.Info("ExpressPostback WARNING!!! THIS HIT DEPRICATED METHOD. all fields submitted to ExpressCheckout4IE: " + formFields.ToString());
             var sb = new StringBuilder();
 
             var user = _membershipService.GetUserByEmail(form.q5_email5);
@@ -2174,7 +2182,7 @@ namespace CUWebinars.Web.Controllers.Admin
             });
         }
 
-        [HttpPost]
+
         [HandleAjaxException]
         [AllowAnonymous]
         public ActionResult SynchOrders(int? webinarId, int? idAffiliate)

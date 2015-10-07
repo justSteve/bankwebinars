@@ -48,13 +48,13 @@
                 <a id="OrdersMenuHeader" class="brand" href="#">Orders</a>
                 <ul class="nav">
                     @*<li><a id="SendShippedOrderNotificationButton">Shipped Order Notification</a></li>*@
-                    <li><a id="GetSendConnectionInfoEventHtmlButton">Connection Info Notification</a></li>
+                    @*<li><a id="GetSendConnectionInfoEventHtmlButton">Connection Info Notification</a></li>*@
                     @*<li><a id="GetSendReminderEventHtmlButton">Send Reminder</a></li>*@
                     @*<li><a id="GetSendRecordingPostedEventHtmlButton">Recording Is Posted Notification</a></li>*@
-                    <li><a id="GetResendOrderConfirmationHtmlButton">Confirmation of Registration Resend</a></li>
-                    <li><a id="GetResendConnectionInfoHtmlButton">Connection Info Resend</a></li>
+                    @*<li><a id="GetResendOrderConfirmationHtmlButton">Confirmation of Registration Resend</a></li>
+                        <li><a id="GetResendConnectionInfoHtmlButton">Connection Info Resend</a></li>*@
                     <li><a id="GenerateClickToJoinForAdHocCaller" href="@Url.Content("~/Admin/GenerateClickToJoinForAdHocCaller")">Generate Join Code</a></li>
-                    <li><a id="AddQuizButton" href="@Url.Content("~/Admin/AddQuiz")">Add Quiz</a></li>
+                    @*<li><a id="AddQuizButton" href="@Url.Content("~/Admin/AddQuiz")">Add Quiz</a></li>*@
                     @*<div><button id="GetAdhocEventsHtmlButton" >Ad hoc Notification</button></div>*@
 
                     <li><a id="GetAdhocEventsHtmlButton">Adhoc Notification</a></li>
@@ -68,10 +68,8 @@
             <div id="InputFormFields" class="paddTop10"></div>
         </div>
         <div id="users" class="collapse">
-
-                @Html.Partial("~/Views/Admin/Partials/_ShowUsers.cshtml", Model.UserDetailsViewModel);
-
-            </div>
+            @Html.Partial("~/Views/Admin/Partials/_ShowUsers.cshtml", Model.UserDetailsViewModel);
+        </div>
     </div>
 
 

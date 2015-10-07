@@ -1025,6 +1025,7 @@ namespace CUWebinars.Business.Core
             PostForm += "&Status=" + order.OrderStatus + "&Total=" + order.Total;
             PostForm += "&AdminComments=" + order.AdminComments;
 
+            PostForm = PostForm.Replace("<br>", "");
             var submitImporter = "http://v3.bankwebinars.com/order/MigrateOrder/";
             if (Debugger.IsAttached)
             {
