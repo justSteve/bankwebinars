@@ -397,7 +397,7 @@ namespace CUWebinars.Business.Services
                     if (lOrder.Total != vOrder.Total)
                     {
                         _logger.Info("SynchOrder Legacy Total = {0} vs. V3 Total = {1} on {2} ", lOrder.Total, vOrder.Total, orderEmail);
-                        
+
                     }
 
                     if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType != vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType)
@@ -416,6 +416,11 @@ namespace CUWebinars.Business.Services
             }
 
             _logger.Info("SynchOrders ends for: " + webinarId);
+        }
+
+        public Order FindExpressCheckoutOrderByOrderId(int q11Orderid)
+        {
+           return _orderRepository.FindExpressCheckoutOrderByOrderId(q11Orderid);
         }
 
 
@@ -739,7 +744,7 @@ namespace CUWebinars.Business.Services
             {
                 //TODO: Figure out why Order that are retrieved via the SynchOrders method have
                 //a null reference for RegistrationType
-                row.UnitPrice = (decimal) row.RegistrationType.Price;
+                row.UnitPrice = (decimal)row.RegistrationType.Price;
             }
             else
             {
@@ -747,58 +752,58 @@ namespace CUWebinars.Business.Services
 
                 var regTypePricing = dataOperations.GetCostOfRegtype(row.idRegType);
                 row.UnitPrice = regTypePricing;
-                
+
             }
             //Calculate row price before discount
-                if (row.AdditionalLocation != null)
+            if (row.AdditionalLocation != null)
+            {
+                if (order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active).Webinar.Title.Contains("Compliance Perspectives"))
                 {
-                    if (order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active).Webinar.Title.Contains("Compliance Perspectives"))
+                    if (row.AdditionalLocation.Count > 3)
                     {
-                        if (row.AdditionalLocation.Count > 3)
-                        {
-                            totalOptionsPrice = row.AdditionalLocation.Count - 3 * optionsCost; // cost * number of additional locations
-                        }
-                    }
-                    else
-                    {
-                        totalOptionsPrice = row.AdditionalLocation.Count * optionsCost; // cost * number of additional locations
+                        totalOptionsPrice = row.AdditionalLocation.Count - 3 * optionsCost; // cost * number of additional locations
                     }
                 }
-
-                row.RowPrice = row.UnitPrice + totalOptionsPrice;
-                pricesAndDiscounts.UnitPrice = row.UnitPrice;
-
-                //Calculate discount. 
-                decimal discountTotal = 0;
-
-                if (row.Discount != null && row.Discount.PercentOff != 0.0M)
+                else
                 {
-                    discountTotal = row.RowPrice * row.Discount.PercentOff / 100;
+                    totalOptionsPrice = row.AdditionalLocation.Count * optionsCost; // cost * number of additional locations
                 }
-                else if (row.Discount != null && row.Discount.FlatOff != 0.0M)
-                {
-                    discountTotal = row.Discount.FlatOff;
-                }
+            }
 
-                if (discountTotal > row.RowPrice)
-                {
-                    discountTotal = row.RowPrice;
-                }
+            row.RowPrice = row.UnitPrice + totalOptionsPrice;
+            pricesAndDiscounts.UnitPrice = row.UnitPrice;
 
-                row.RowPrice -= discountTotal;
-                pricesAndDiscounts.TotalDiscount = discountTotal;
-                pricesAndDiscounts.TotalCostOfOptions = totalOptionsPrice;
+            //Calculate discount. 
+            decimal discountTotal = 0;
 
-                pricesAndDiscounts.TaxAmount = 0;
+            if (row.Discount != null && row.Discount.PercentOff != 0.0M)
+            {
+                discountTotal = row.RowPrice * row.Discount.PercentOff / 100;
+            }
+            else if (row.Discount != null && row.Discount.FlatOff != 0.0M)
+            {
+                discountTotal = row.Discount.FlatOff;
+            }
 
-                if (order.BillingState == "WI"
-                    && !row.RegistrationType.OptionLabel.StartsWith("Live Plus Five")
-                    && row.RowPrice > 0
-                    )
-                {
-                    pricesAndDiscounts.TaxAmount = Convert.ToDecimal(Convert.ToInt32(row.RowPrice) * .055);
-                }
-            
+            if (discountTotal > row.RowPrice)
+            {
+                discountTotal = row.RowPrice;
+            }
+
+            row.RowPrice -= discountTotal;
+            pricesAndDiscounts.TotalDiscount = discountTotal;
+            pricesAndDiscounts.TotalCostOfOptions = totalOptionsPrice;
+
+            pricesAndDiscounts.TaxAmount = 0;
+
+            if (order.BillingState == "WI"
+                && !row.RegistrationType.OptionLabel.StartsWith("Live Plus Five")
+                && row.RowPrice > 0
+                )
+            {
+                pricesAndDiscounts.TaxAmount = Convert.ToDecimal(Convert.ToInt32(row.RowPrice) * .055);
+            }
+
 
             //Calculate order total
             order.Total = row.RowPrice + pricesAndDiscounts.TaxAmount;
@@ -896,13 +901,17 @@ namespace CUWebinars.Business.Services
             Uri url = null)
         {
             string addPasswordUrl = string.Empty;
-
+            var idOrderToShow = order.idOrderLegacy;
+            if (order.idOrderLegacy == 0)
+            {
+                idOrderToShow = order.idOrder;
+            }
             var orderSubmittedViewModel = new ConfirmOrderMessage
             {
                 AddPasswordUrl = string.Empty,
                 ConfirmChangeEmailUrl = string.Empty,
                 Details = order.NotificationStorage,
-                idOrder = order.idOrderLegacy,
+                idOrder = idOrderToShow,
                 Order = order,
                 OrderGenesis =
                     userCreatedInCart ? OrderGenesis.CreatedViaCartByNewUser : OrderGenesis.CreatedViaCartByExistingUser,

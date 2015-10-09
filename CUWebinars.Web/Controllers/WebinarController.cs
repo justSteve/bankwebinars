@@ -650,7 +650,7 @@ namespace CUWebinars.Web.Controllers
                         "<div align=\"center\" class=\"label-warning label\">Your order is InProcess and needs to be confirmed or canceled.</div>";
 
                     var additionalLocationsViewModel =
-                        model.RegistrationSummaryViewModel.OrderHasAdditionalLocationsViewModel;
+                        model.RegistrationSummaryViewModel.AdditionalLocationsViewModel;
                     var orderRow = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
                     var order = orderRow.Order;
                     var webUser = orderRow.Order.WebUser;
@@ -762,7 +762,7 @@ namespace CUWebinars.Web.Controllers
                             },
                             OptionLabel = orderRow.RegistrationType.OptionLabel,
                             OrderExists = true,
-                            OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
+                            AdditionalLocationsViewModel = new AdditionalLocationsViewModel
                             {
                                 AdditionalLocations =
                                     model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
@@ -925,10 +925,10 @@ namespace CUWebinars.Web.Controllers
                 model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Price =
                     additionalLocationsPricing.Item2;
 
-                // populate RegistrationSummaryViewModel and OrderHasAdditionalLocationsViewModel
+                // populate RegistrationSummaryViewModel and AdditionalLocationsViewModel
                 model.RegistrationSummaryViewModel = new RegistrationSummaryViewModel
                 {
-                    OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
+                    AdditionalLocationsViewModel = new AdditionalLocationsViewModel
                     {
                         AdditionalLocations = row.AdditionalLocation,
                         Addresses = additionalLocationsPricing.Item1,

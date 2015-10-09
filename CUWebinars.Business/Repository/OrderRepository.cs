@@ -332,6 +332,14 @@ namespace CUWebinars.Business.Repository
             dataOperations.MigrateOrderFromV3(order);
         }
 
+        public Order FindExpressCheckoutOrderByOrderId(int q11Orderid)
+        {
+            return items
+                .Include(o => o.WebUser)
+                .Include(o => o.OrderRows)
+                .FirstOrDefault(order => order.idOrder == q11Orderid);
+        }
+
         public IList<int> FindOrderIdsByPartialId(int userId)
         {
             return items.Include(o => o.WebUser)

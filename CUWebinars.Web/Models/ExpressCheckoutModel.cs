@@ -11,7 +11,8 @@ namespace CUWebinars.Web.Models
         public string q5_email5 { get; set; }
         public Q6PhoneNumber6 q6_phoneNumber6 { get; set; }
         public Q14Address14 q14_address14 { get; set; }
-        public int q11_webinarid { get; set; }
+        public int q18_q_webinarid18 { get; set; }
+        public int q11_orderid { get; set; }
         public int q15_affiliateid15 { get; set; }
         public string event_id { get; set; }
     }

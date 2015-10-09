@@ -819,7 +819,7 @@
     <Content Include="Scripts\toastr.min.js" />
     <Content Include="Scripts\underscore.js" />
     <Content Include="Scripts\underscore.min.js" />
-    <Content Include="Scripts\vendor\json2.js" />
+    <Content Include="Scripts\json2.js" />
     <Content Include="Views\Account\OrderDidNotComplete.cshtml">
       <SubType>Code</SubType>
     </Content>
@@ -909,7 +909,7 @@
     <Compile Include="ViewModel\AdhocNotificationViewModel.cs" />
     <Compile Include="ViewModel\GTWRegistrantViewModel.cs" />
     <Compile Include="ViewModel\ImportOrderViaDashboardViewModel.cs" />
-    <Compile Include="ViewModel\OrderHasAdditionalLocationsViewModel.cs" />
+    <Compile Include="ViewModel\AdditionalLocationsViewModel.cs" />
     <Compile Include="ViewModel\RegisterViewModel.cs" />
     <Compile Include="ViewModel\ResendOrderInformationViewModel.cs" />
     <Compile Include="ViewModel\WebinarDetailsViewModel.cs" />
@@ -992,6 +992,7 @@
     <Content Include="Views\Cart\ThankYou.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowUsers.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowSendConnectionInfo.cshtml" />
+    <Content Include="Views\Cart\ComplianceSchoolCheckout.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1490,6 +1491,7 @@
     <Folder Include="Infrastructure\apis\citrix\GTW\" />
     <Folder Include="Notification\Delivery\" />
     <Folder Include="Scripts\app\types\" />
+    <Folder Include="Scripts\vendor\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

@@ -708,6 +708,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             ExpressCheckoutModel form
                 = JsonConvert.DeserializeObject<ExpressCheckoutModel>(postback.RawRequest);
+            _logger.Info("ExpressPostback deserialized the fields to: " + form.ToString());
 
 
             var user = _membershipService.GetUserByEmail(form.q5_email5);
@@ -724,10 +725,13 @@ namespace CUWebinars.Web.Controllers.Admin
                     , form.q9_title);
                 _orderManagementService.SaveChanges();
             }
-
-
             Order expressOrder = _orderManagementService.FindExpressCheckoutOrder(form.q5_email5,
-                form.q11_webinarid);
+                form.q18_q_webinarid18);
+            
+            if (form.q11_orderid != null && form.q11_orderid > 0)
+            {
+                expressOrder = _orderManagementService.FindExpressCheckoutOrderByOrderId(form.q11_orderid);
+            }
 
             if (!ReferenceEquals(expressOrder, null))
             {
@@ -743,7 +747,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     expressOrder.Origin = "ExpressCheckout";
                     expressOrder.AdminComments = forComment.ToString();
                     _orderManagementService.SaveChanges();
-                    _logger.Info("ExpressPostback to Confirmation Email Handler: ");
+                    _logger.Info("ExpressPostback to Confirmation Email Handler: " + expressOrder.idOrder);
                     _orderManagementService.FireOrderSubmittedEvent(expressOrder, userCreatedByCheckout);
                 }
                 catch (Exception ex)
@@ -756,10 +760,10 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 _logger.Warn("ExpressCheckout webhook {0} order NOT FOUND.", postback.FormId);
 
-                var idRegType = _webinarManagementService.GetRegTypeByLableAndWebinar(form.q10_registrationType, form.q11_webinarid);
+                var idRegType = _webinarManagementService.GetRegTypeByLableAndWebinar(form.q10_registrationType, form.q18_q_webinarid18);
                 var newOrderRow = _orderManagementService.CreateOrderRow(null, null, idRegType);
 
-                newOrderRow.idWebinar = form.q11_webinarid;
+                newOrderRow.idWebinar = form.q18_q_webinarid18;
 
                 newOrderRow.idRegType = idRegType;
                 _orderManagementService.LoadWebinarIntoOrderRow(newOrderRow);
@@ -768,7 +772,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
                 _orderManagementService.SetUserStatusToUnChanged(user);
 
-                _orderManagementService.CreateNewOrder(
+               Order newOrder = _orderManagementService.CreateNewOrder(
                     affiliate.idUserAff,
                     user,
                     newOrderRow.Webinar,
@@ -788,7 +792,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 _orderManagementService.SaveChanges();
 
-                _logger.Info("ExpressCheckout created order: " + form);
+                _logger.Info("ExpressCheckout created order: " + newOrder.idOrder);
 
                 _orderManagementService.FireOrderSubmittedEvent(newOrderRow.Order, true);
 
@@ -821,7 +825,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
             Order expressOrder = _orderManagementService.FindExpressCheckoutOrder(form.q5_email5,
-                form.q11_webinarid);
+                form.q18_q_webinarid18);
 
             if (!ReferenceEquals(expressOrder, null))
             {
@@ -843,10 +847,10 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 _logger.Info("ExpressCheckout4IE postback did NOT find order: " + expressOrder.idOrder);
 
-                var idRegType = _webinarManagementService.GetRegTypeByLableAndWebinar(form.q10_registrationType, form.q11_webinarid);
+                var idRegType = _webinarManagementService.GetRegTypeByLableAndWebinar(form.q10_registrationType, form.q18_q_webinarid18);
                 var newOrderRow = _orderManagementService.CreateOrderRow(null, null, idRegType);
 
-                newOrderRow.idWebinar = form.q11_webinarid;
+                newOrderRow.idWebinar = form.q18_q_webinarid18;
 
                 newOrderRow.idRegType = idRegType;
                 _orderManagementService.LoadWebinarIntoOrderRow(newOrderRow);

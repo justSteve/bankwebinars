@@ -124,10 +124,10 @@ namespace CUWebinars.Web.Controllers
         {
             if (id.HasValue)
             {
+                _logger.Info("Confirming Order for OrderRow with Id {0}", id.Value);
+                var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
                 try
                 {
-                    _logger.Info("Confirming Order for OrderRow with Id {0}", id.Value);
-                    var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
 
                     model.Order.OrderStatus = OrderStatus.Submitted;
 
@@ -224,14 +224,22 @@ namespace CUWebinars.Web.Controllers
         public ActionResult CheckoutConfirm(int? ID = null)
         {
             var model = _cartControllerOrchestrator.BuildCheckoutConfirmViewModel(ID);
+            if (model == null) throw new ArgumentNullException("model");
             try
             {
-                ViewBag.Order = _cartControllerOrchestrator.LoadOrder(ID.Value);
-                ViewBag.TaxAmount = model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount;
+                if (ID != null && ID > 0)
+                {
+                    ViewBag.Order = _cartControllerOrchestrator.LoadOrder(ID.Value);
+                    ViewBag.TaxAmount = model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount;
+                }
+                else
+                {
+                    _logger.Fatal("CheckoutConfirm was passed a null or zero value: ", new Exception("null or zero ID passed to CheckoutConfirm partial"));
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                _logger.Fatal("CheckoutConfirm heard: ", ex);
                 throw;
             }
             return PartialView("Partials/CheckoutConfirm", model);
@@ -503,7 +511,7 @@ namespace CUWebinars.Web.Controllers
 
             var model = new ExpressCheckoutModel
             {
-                q11_webinarid = idWebinar,
+                q18_q_webinarid18 = idWebinar,
                 q15_affiliateid15 = _idAffiliate,
                 q12_webinarTitle = webinar.Title
             };
@@ -524,7 +532,7 @@ namespace CUWebinars.Web.Controllers
 
             var model = new ExpressCheckoutModel
             {
-                q11_webinarid = idWebinar,
+                q18_q_webinarid18 = idWebinar,
                 q15_affiliateid15 = _idAffiliate,
                 q12_webinarTitle = webinar.Title
             };
@@ -533,6 +541,26 @@ namespace CUWebinars.Web.Controllers
 
         }
 
+        public ActionResult ComplianceSchoolCheckout()
+        {
+
+            //var webinar = _cartControllerOrchestrator.LoadWebinar(idWebinar);
+            //var _idAffiliate = 19;
+            //if (!ReferenceEquals(idAffiliate, null))
+            //{
+            //    _idAffiliate = idAffiliate.Value;
+            //}
+
+            //var model = new ExpressCheckoutModel
+            //{
+            //    q18_q_webinarid18 = idWebinar,
+            //    q15_affiliateid15 = _idAffiliate,
+            //    q12_webinarTitle = webinar.Title
+            //};
+
+            return View();
+
+        }
         public ActionResult ThankYou(FormCollection form)
         {
 

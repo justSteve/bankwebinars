@@ -18,7 +18,7 @@ namespace CUWebinars.Web.ViewModel
         public DisplayRowPriceViewModel DisplayRowPriceViewModel { get; set; }
         public int idUser { get; set; }
         public bool OrderExists { get; set; }
-        public OrderHasAdditionalLocationsViewModel OrderHasAdditionalLocationsViewModel { get; set; }
+        public AdditionalLocationsViewModel AdditionalLocationsViewModel { get; set; }
         public bool OrderRowExists { get; set; }
         public bool OrderRowHasId { get; set; }
         public OrderStatus OrderStatus { get; set; }

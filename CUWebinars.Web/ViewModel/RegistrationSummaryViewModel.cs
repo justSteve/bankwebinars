@@ -5,7 +5,7 @@ namespace CUWebinars.Web.ViewModel
 {
     public class RegistrationSummaryViewModel
     {
-        public OrderHasAdditionalLocationsViewModel OrderHasAdditionalLocationsViewModel { get; set; }
+        public AdditionalLocationsViewModel AdditionalLocationsViewModel { get; set; }
         public OrderRow OrderRow { get; set; }
         public string RecordingLink { get; set; }
         public int UserOwnsThisEvent { get; set; }

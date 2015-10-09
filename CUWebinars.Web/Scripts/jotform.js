@@ -712,7 +712,7 @@ var JotForm = {
         if (typeof JSON !== 'object') {
             var script = document.createElement('script');
             script.type = "text/javascript";
-            script.src = "/js/vendor/json2.js";
+            script.src = "json2.js";
             $(document.body).appendChild(script);
         }
     },

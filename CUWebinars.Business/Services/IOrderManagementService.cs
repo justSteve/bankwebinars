@@ -112,5 +112,6 @@ namespace CUWebinars.Business.Services
         void SendAdhocNotification(string emails, string subject, string body);
         OrderRow CheckLegacyOrder(Order order);
         void SynchOrders(int webinarId);
+        Order FindExpressCheckoutOrderByOrderId(int q11Orderid);
     }
 }

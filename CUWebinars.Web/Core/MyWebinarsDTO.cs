@@ -9,7 +9,7 @@ namespace CUWebinars.Web.Core
     public class MyWebinarsDTO
     {
 
-        public OrderHasAdditionalLocationsViewModel OrderHasAdditionalLocationsViewModel { get; set; }
+        public AdditionalLocationsViewModel AdditionalLocationsViewModel { get; set; }
         public IList<Order> Scheduled { get; set; }
         public IDictionary<string, Order> Recorded { get; set; }
         public IList<Order> Archived { get; set; }

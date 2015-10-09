@@ -469,7 +469,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             var model = new MyWebinarsDTO
             {
                 WebUser = currentUser,
-                OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel()
+                AdditionalLocationsViewModel = new AdditionalLocationsViewModel()
                 {
 
                 }
@@ -534,7 +534,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
 
                 WebUser = currentUser,
-                OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel()
+                AdditionalLocationsViewModel = new AdditionalLocationsViewModel()
                 {
 
                 }

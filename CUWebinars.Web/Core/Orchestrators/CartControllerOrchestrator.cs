@@ -144,21 +144,23 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public CheckoutConfirmViewModel BuildCheckoutConfirmViewModel(int? idOrder)
         {
+            _logger.Info("BuildCheckoutConfirmViewModel was passed: " + idOrder);
             if (idOrder.HasValue && idOrder.Value > 0)
             {
-                try
+                var order = _orderManagementService.GetOrderById(idOrder.Value);
+                if (!ReferenceEquals(null, order))
                 {
-                    var order = _orderManagementService.GetOrderById(idOrder.Value);
-                    //var order = orderRow.Order;
-                    _logger.Info("BuildCheckoutConfirmViewModel idOrder: " + order.idOrder);
-                    var webUser = order.WebUser;
-                    var userFullName = string.Concat(webUser.FirstName, " ", webUser.LastName);
-
-                    var addresses = webUser.Addresses.ToArray();
-                    var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
-                    var shippingAddress = addresses.FirstOrDefault(a => a.AddressType == WebUiConstants.ShippingAddress);
-                    if (!ReferenceEquals(null, order))
+                    try
                     {
+                        _logger.Info("BuildCheckoutConfirmViewModel found: " + order.idOrder);
+                        var webUser = order.WebUser;
+                        var userFullName = string.Concat(webUser.FirstName, " ", webUser.LastName);
+
+                        var addresses = webUser.Addresses.ToArray();
+                        var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
+                        var shippingAddress =
+                            addresses.FirstOrDefault(a => a.AddressType == WebUiConstants.ShippingAddress);
+
 
                         JObject existingJObject = null;
 
@@ -172,8 +174,9 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                         var newJson =
                             new JProperty(
-                                string.Concat("LegacyCommentsFromCheckout-", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
-                                    new JObject(new JProperty("LegacyComments", order.AdminComments))
+                                string.Concat("LegacyCommentsFromCheckout-",
+                                    TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                                new JObject(new JProperty("LegacyComments", order.AdminComments))
                                 );
 
                         if (string.IsNullOrWhiteSpace(comments))
@@ -187,91 +190,99 @@ namespace CUWebinars.Web.Core.Orchestrators
                         }
 
                         order.AdminComments = existingJObject.ToString(Formatting.None);
-                    }
-                    OrderRow orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-                    // This ViewModel is built here because it is re-used.
-                    var orderHasAdditionalLocationsViewModel =
-                        BuildOrderHasAdditionalLocationsViewModel(orderRow, idOrder);
 
-                    var checkoutConfirmViewModel = new CheckoutConfirmViewModel
-                    {
-                        //Order = order,
-                        AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
-                        AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
+                        OrderRow orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+                        // This ViewModel is built here because it is re-used.
+                        var additionalLocationsViewModel =
+                            BuildAdditionalLocationsViewModel(orderRow, idOrder);
+                        
+                        var checkoutConfirmViewModel = new CheckoutConfirmViewModel
                         {
-                            Email = webUser.email,
-                            FirstName = webUser.FirstName,
-                            idUser = webUser.idUser,
-                            LastName = webUser.LastName,
-                            Institution = order.Institution
-                        },
-                        AdminComments = order.AdminComments,
-                        //AffiliateComments = order.AffiliateComments,
-                        //CCUserDetails =
-                        //    "None <a href=\"#AddCCModal\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Add?</a> ", // CC user removed at request
-                        DiscountModel = BuildDiscountModel(webUser),
-                        DisplayOptionsInDropDownViewModel = BuildDisplayOptionsInDropDownViewModel(orderRow, idOrder),
-                        DisplayRowPriceViewModel =
-                            BuildDisplayRowPriceViewModel(orderRow, idOrder,
-                                orderHasAdditionalLocationsViewModel.OptionsCost),
-                        idUser = order.WebUser.idUser,
-                        ShippingDetailsModel = new ShippingDetailsModel()
+                            //Order = order,
+                            AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
+                            AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
+                            {
+                                Email = webUser.email,
+                                FirstName = webUser.FirstName,
+                                idUser = webUser.idUser,
+                                LastName = webUser.LastName,
+                                Institution = order.Institution
+                            },
+                            AdminComments = order.AdminComments,
+                            //AffiliateComments = order.AffiliateComments,
+                            //CCUserDetails =
+                            //    "None <a href=\"#AddCCModal\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Add?</a> ", // CC user removed at request
+                            DiscountModel = BuildDiscountModel(webUser),
+                            DisplayOptionsInDropDownViewModel =
+                                BuildDisplayOptionsInDropDownViewModel(orderRow, idOrder),
+                            DisplayRowPriceViewModel =
+                                BuildDisplayRowPriceViewModel(orderRow, idOrder,
+                                    additionalLocationsViewModel.OptionsCost),
+                            idUser = order.WebUser.idUser,
+                            ShippingDetailsModel = new ShippingDetailsModel()
+                            {
+                                UserId = webUser.idUser,
+                                ShippingAddress = shippingAddress == null
+                                    ? new AddressModel()
+                                    : new AddressModel
+                                    {
+                                        City = shippingAddress.City,
+                                        Country = shippingAddress.Country,
+                                        StreetAddress = shippingAddress.StreetAddress,
+                                        StreetAddress2 = shippingAddress.StreetAddress2,
+                                        State = shippingAddress.State,
+                                        Zip = shippingAddress.Zip,
+                                        Phone = shippingAddress.Phone,
+                                        Name = shippingAddress.Name,
+                                        TypeOfAddress = AddressType.Shipping
+                                    }
+                            },
+                            OrderExists = orderRow.Order != null,
+                            AdditionalLocationsViewModel = additionalLocationsViewModel,
+                            OrderRowExists = true,
+                            OrderRowHasId = true,
+                            OrderStatus = order.OrderStatus,
+                            Origin = order.Origin,
+                            UserComments = order.UserComments,
+                            UserFullname = userFullName,
+                            UserDetails = string.Concat("<span id='userFullnameLabel'>", userFullName,
+                                "</span> - <span id='userInstitutionLabel'>", order.Institution, "</span><br>",
+                                "<span id='userEmailLabel'>", webUser.email, "</span>"),
+
+                            UserType = webUser.UserType
+                        };
+                        _logger.Info("BuildCheckoutConfirmViewModel built checkoutConfirmViewModel: " + order.idOrder);
+            
+                        if (checkoutConfirmViewModel.OrderRowExists)
                         {
-                            UserId = webUser.idUser,
-                            ShippingAddress = shippingAddress == null
-                                ? new AddressModel()
-                                : new AddressModel
-                                {
-                                    City = shippingAddress.City,
-                                    Country = shippingAddress.Country,
-                                    StreetAddress = shippingAddress.StreetAddress,
-                                    StreetAddress2 = shippingAddress.StreetAddress2,
-                                    State = shippingAddress.State,
-                                    Zip = shippingAddress.Zip,
-                                    Phone = shippingAddress.Phone,
-                                    Name = shippingAddress.Name,
-                                    TypeOfAddress = AddressType.Shipping
-                                }
-                        },
-                        OrderExists = orderRow.Order != null,
-                        OrderHasAdditionalLocationsViewModel = orderHasAdditionalLocationsViewModel,
-                        OrderRowExists = true,
-                        OrderRowHasId = true,
-                        OrderStatus = order.OrderStatus,
-                        Origin = order.Origin,
-                        UserComments = order.UserComments,
-                        UserFullname = userFullName,
-                        UserDetails = string.Concat("<span id='userFullnameLabel'>", userFullName,
-                            "</span> - <span id='userInstitutionLabel'>", order.Institution, "</span><br>",
-                            "<span id='userEmailLabel'>", webUser.email, "</span>"),
+                            if (orderRow.idOrder > 0)
+                                checkoutConfirmViewModel.OrderRowHasId = true;
 
-                        UserType = webUser.UserType
-                    };
+                            if (checkoutConfirmViewModel.OrderRowHasId)
+                                checkoutConfirmViewModel.OptionLabel = orderRow.RegistrationType.OptionLabel;
+                        }
 
-                    if (checkoutConfirmViewModel.OrderRowExists)
-                    {
-                        if (orderRow.idOrder > 0)
-                            checkoutConfirmViewModel.OrderRowHasId = true;
+                        if (Request["referred"] != null &&
+                            WebUtility.HtmlDecode(Request["referred"]) != "How did you hear about this webinar?")
+                        {
+                            order.Origin = Request["referred"] + Environment.NewLine + order.Origin;
+                            //ViewData["referred"] = Request["referred"];
+                        }
 
-                        if (checkoutConfirmViewModel.OrderRowHasId)
-                            checkoutConfirmViewModel.OptionLabel = orderRow.RegistrationType.OptionLabel;
+                        return checkoutConfirmViewModel;
                     }
-
-                    if (Request["referred"] != null &&
-                        WebUtility.HtmlDecode(Request["referred"]) != "How did you hear about this webinar?")
+                    catch (Exception exception)
                     {
-                        order.Origin = Request["referred"] + Environment.NewLine + order.Origin;
-                        //ViewData["referred"] = Request["referred"];
+                        _logger.ErrorException("BuildCheckOutViewModel", exception);
+                        Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                        throw;
                     }
-
-                    return checkoutConfirmViewModel;
                 }
-                catch (Exception exception)
+                else
                 {
-                    _logger.ErrorException("BuildCheckOutViewModel", exception);
-                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
-                    throw;
+                    _logger.Fatal("Null or 0 order found while confirming order", new Exception("null or zero order "));
                 }
+
             }
             _logger.Error("BuildCheckoutConfirmViewModel fell thru to Return Null");
             return null;
@@ -529,7 +540,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             return null;
         }
 
-        public OrderHasAdditionalLocationsViewModel BuildOrderHasAdditionalLocationsViewModel(
+        public AdditionalLocationsViewModel BuildAdditionalLocationsViewModel(
             OrderRow orderRow,
             int? idOrderRow)
         {
@@ -540,29 +551,29 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 try
                 {
-                    _logger.Info("OrderHasAdditionalLocationsViewModel for: " + orderRow.Order.idOrder);
+                    _logger.Info("AdditionalLocationsViewModel building for: " + orderRow.Order.idOrder);
 
                     var addressesAndOptionsCost =
                         _orderManagementService.GetCostOfAdditionalLocations(orderRow.AdditionalLocation,
                             orderRow.idWebinar);
 
-                    var orderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
+                    var additionalLocationsViewModel = new AdditionalLocationsViewModel
                     {
                         AdditionalLocations = orderRow.AdditionalLocation,
                         Addresses = addressesAndOptionsCost.Item1,
                         OptionsCost = addressesAndOptionsCost.Item2
                     };
 
-                    return orderHasAdditionalLocationsViewModel;
+                    return additionalLocationsViewModel;
                 }
                 catch (Exception exception)
                 {
-                    _logger.ErrorException("BuildOrderHasAdditionalLocationsViewModel", exception);
+                    _logger.ErrorException("BuildAdditionalLocationsViewModel", exception);
                     Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                     throw;
                 }
             }
-            _logger.Error("OrderHasAdditionalLocationsViewModel fell thru too far!");
+            _logger.Error("AdditionalLocationsViewModel fell thru too far!");
             return null;
         }
 
@@ -923,7 +934,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
             return discount;
 
-            
+
         }
 
         public void RemoveAdditionalLocationsFromOrder(int idOrderRow)
