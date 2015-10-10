@@ -65,7 +65,7 @@
         <div id="UserSummaryPanel" class="well span3">
             <div class="control-group">
                 <div class="controls">
-                    @Html.ActionLink("Edit?", "edituser", "account", new { id = @Model.UserId, returnUrl = "/Admin/ManageOrder/" + Model.Id }, new { id = "editUserLink", @class = "btn  btn-mini pull-right" })
+                    @Html.ActionLink("Edit?", "edituserfromorder", "account", new { id = @Model.UserId, email = @Model.Order.BillingEmail, returnUrl = "/Admin/ManageOrder/" + Model.Id }, new { id = "editUserLink", @class = "btn  btn-mini pull-right" })
                     @Html.TextBoxFor(m => m.WebUser.email, new { id = "UserEmail" })
                     @Html.TextBoxFor(m => m.WebUser.FullName, new { id = "FullName" }) @*read-only*@
                     @Html.TextBoxFor(m => m.PhoneNumber, new { id = "Phone" }) @*read-only*@

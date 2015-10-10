@@ -395,14 +395,18 @@ namespace CUWebinars.Web.Controllers.Admin
                 if (id == 0)
                     return RedirectToAction("ManageOrder");
 
-                var model = BuildManageOrderEditModel(id.Value);
                 var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, _orderManagementService.GetOrderById(id.Value).BillingEmail);
+
+                
+
+                var model = BuildManageOrderEditModel(id.Value);
+
                 if (userAccount == null)
                 {
+                    _logger.Info("ManageOrderFromDetails - Creating null user from Email.");
                     RedirectToAction("CreateUserAccountFromCart", "Account",
                         new { email = model.Order.BillingEmail });
                 }
-
 
                 model.PostEventAccessExpires = _membershipService.GetPostEventAccessExpireyDate(userAccount, id.Value);
                 return View(model);
@@ -727,7 +731,7 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             Order expressOrder = _orderManagementService.FindExpressCheckoutOrder(form.q5_email5,
                 form.q18_q_webinarid18);
-            
+
             if (form.q11_orderid != null && form.q11_orderid > 0)
             {
                 expressOrder = _orderManagementService.FindExpressCheckoutOrderByOrderId(form.q11_orderid);
@@ -772,12 +776,12 @@ namespace CUWebinars.Web.Controllers.Admin
                 var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
                 _orderManagementService.SetUserStatusToUnChanged(user);
 
-               Order newOrder = _orderManagementService.CreateNewOrder(
-                    affiliate.idUserAff,
-                    user,
-                    newOrderRow.Webinar,
-                    newOrderRow
-                    );
+                Order newOrder = _orderManagementService.CreateNewOrder(
+                     affiliate.idUserAff,
+                     user,
+                     newOrderRow.Webinar,
+                     newOrderRow
+                     );
 
                 newOrderRow.Order.OrderStatus = OrderStatus.Submitted;
 

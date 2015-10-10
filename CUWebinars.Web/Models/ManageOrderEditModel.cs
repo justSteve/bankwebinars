@@ -28,5 +28,10 @@ namespace CUWebinars.Web.Models
         public int UserId { get; set; }
         public int WebinarId { get; set; }
         public WebUser WebUser { get; set; }
+        public WebUserFromLegacy WebUserLegacy  { get; set; }
+
+        public class WebUserFromLegacy
+        {
+        }
     }
 }

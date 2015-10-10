@@ -314,105 +314,131 @@ namespace CUWebinars.Business.Services
 
             _logger.Info("SynchOrders found {0} missingFromV3, {1} missingFromLegacy, and {2} already synched. ", missingFromV3.Count(), missingFromLegacy.Count(), commonEmails.Count());
             var i = 1;
-            foreach (var orderEmail in missingFromLegacy)
+            try
             {
-                var order = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
-                if (order != null && order.WebUser.email.EndsWith("notauthenticated.com"))
+                foreach (var orderEmail in missingFromLegacy)
                 {
-                    var user = _webUserRepository.GetWebUserByEmail(orderEmail);
-                    if (user == null)
+                    var order = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
+                    if (order != null && order.WebUser.email.EndsWith("notauthenticated.com"))
                     {
-                        user = _webUserRepository.BuildPlaceHolderUser(orderEmail);
-                        order.WebUser = user;
-                    }
-                    else
-                    {
-                        order.WebUser = user;
-                    }
-                    order.FirstName = user.FirstName;
-                    order.LastName = user.LastName;
-                    order.BillingAddress = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").StreetAddress;
-                    order.BillingAddress2 = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").StreetAddress2;
-                    order.BillingCity = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").City;
-                    order.BillingState = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").State;
-                    order.BillingZip = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").Zip;
-                    order.BillingPhone = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").Phone;
+                        var user = _webUserRepository.GetWebUserByEmail(orderEmail);
+                        if (user == null)
+                        {
+                            user = _webUserRepository.BuildPlaceHolderUser(orderEmail);
+                            order.WebUser = user;
+                        }
+                        else
+                        {
+                            order.WebUser = user;
+                        }
+                        order.FirstName = user.FirstName;
+                        order.LastName = user.LastName;
+                        order.BillingAddress = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").StreetAddress;
+                        order.BillingAddress2 = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").StreetAddress2;
+                        order.BillingCity = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").City;
+                        order.BillingState = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").State;
+                        order.BillingZip = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").Zip;
+                        order.BillingPhone = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").Phone;
 
-                    order.ShippingAddress = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").StreetAddress;
-                    order.ShippingAddress2 = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").StreetAddress2;
-                    order.ShippingCity = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").City;
-                    order.ShippingState = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").State;
-                    order.ShippingZip = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").Zip;
-                    order.ShippingPhone = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").Phone;
+                        order.ShippingAddress = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").StreetAddress;
+                        order.ShippingAddress2 = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").StreetAddress2;
+                        order.ShippingCity = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").City;
+                        order.ShippingState = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").State;
+                        order.ShippingZip = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").Zip;
+                        order.ShippingPhone = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").Phone;
+                        try
+                        {
+                            SaveOrderChanges(order, "", "", OrderGenesis.CreatedViaCartByExistingUser);
+                            _logger.Info("SynchOrder added missing address for: ", orderEmail);
+
+                        }
+                        catch (Exception ex)
+                        {
+
+                            _logger.FatalException("SynchOrder failed to add address for " + orderEmail, ex);
+                        }
+
+                    }
                     try
                     {
-                        SaveOrderChanges(order, "", "", OrderGenesis.CreatedViaCartByExistingUser);
-                        _logger.Info("SynchOrder added missing address for: ", orderEmail);
-
+                        _orderRepository.MigrateOrderFromV3(order);
+                        _logger.Info("SynchOrder MigrateToLegacy {0} of {1} - {2}", i, missingFromLegacy.Count(), orderEmail);
+                        i++;
                     }
                     catch (Exception ex)
                     {
-
-                        _logger.FatalException("SynchOrder failed to add address for " + orderEmail, ex);
+                        _logger.ErrorException("SynchOrder to Legacy Failed: " + orderEmail, ex);
                     }
+                }
 
-                }
-                try
-                {
-                    _orderRepository.MigrateOrderFromV3(order);
-                    _logger.Info("SynchOrder MigrateToLegacy {0} of {1} - {2}", i, missingFromLegacy.Count(), orderEmail);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    _logger.ErrorException("SynchOrder to Legacy Failed: " + orderEmail, ex);
-                }
+
             }
-            i = 1;
-            foreach (var orderEmail in missingFromV3)
+            catch (Exception ex)
             {
-                var order = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
-                try
-                {
-                    _orderRepository.ConvertLegacyOrder(order);
-                    _logger.Info("SynchOrder MigrateToV3 {0} of {1} - {2}", i, missingFromV3.Count(), orderEmail);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    _logger.ErrorException("SynchOrder Migrate to V3 failed: " + orderEmail, ex);
-                }
-
+                _logger.ErrorException("missingFromLegacy loop failed. ", ex);
             }
 
             i = 1;
-            foreach (var orderEmail in commonEmails)
+            try
             {
-                var lOrder = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
-                var vOrder = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
-                try
+                foreach (var orderEmail in missingFromV3)
                 {
-                    _logger.Info("SynchOrder CommonToBoth {0} of {1} - {2} ", i, commonEmails.Count(), orderEmail);
-
-                    if (lOrder.Total != vOrder.Total)
+                    var order = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
+                    try
                     {
-                        _logger.Info("SynchOrder Legacy Total = {0} vs. V3 Total = {1} on {2} ", lOrder.Total, vOrder.Total, orderEmail);
-
+                        _orderRepository.ConvertLegacyOrder(order);
+                        _logger.Info("SynchOrder MigrateToV3 {0} of {1} - {2}", i, missingFromV3.Count(), orderEmail);
+                        i++;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.ErrorException("SynchOrder Migrate to V3 failed: " + orderEmail, ex);
                     }
 
-                    if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType != vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType)
-                    {
-                        _logger.Info("SynchOrder adjusted RegType from V3 RegType = {1} to Legacy = {0} on {2} ", lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, orderEmail);
-                        vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType;
-                        SaveOrderChanges(vOrder, "", "", OrderGenesis.CreatedViaCartByExistingUser);
-                    }
+                }
 
-                    i++;
-                }
-                catch (Exception ex)
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorException("missingFromV3 loop failed. ", ex);
+            }
+
+            i = 1;
+            try
+            {
+                foreach (var orderEmail in commonEmails)
                 {
-                    _logger.ErrorException("SynchOrder checks common orders to V3 failed: " + orderEmail, ex);
+                    var lOrder = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
+                    var vOrder = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
+                    try
+                    {
+                        _logger.Info("SynchOrder CommonToBoth {0} of {1} - {2} ", i, commonEmails.Count(), orderEmail);
+
+                        if (lOrder.Total != vOrder.Total)
+                        {
+                            _logger.Info("SynchOrder Legacy Total = {0} vs. V3 Total = {1} on {2} ", lOrder.Total, vOrder.Total, orderEmail);
+                        }
+
+                        if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType != vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType)
+                        {
+                            _logger.Info("SynchOrder adjusted RegType from V3 RegType = {1} to Legacy = {0} on {2} ", lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, orderEmail);
+                            vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType;
+                            SaveOrderChanges(vOrder, "", "", OrderGenesis.CreatedViaCartByExistingUser);
+                        }
+
+                        i++;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.ErrorException("SynchOrder checks common orders to V3 failed: " + orderEmail, ex);
+                    }
                 }
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.ErrorException("CommonToBoth loop failed. ", ex);
             }
 
             _logger.Info("SynchOrders ends for: " + webinarId);
@@ -420,7 +446,7 @@ namespace CUWebinars.Business.Services
 
         public Order FindExpressCheckoutOrderByOrderId(int q11Orderid)
         {
-           return _orderRepository.FindExpressCheckoutOrderByOrderId(q11Orderid);
+            return _orderRepository.FindExpressCheckoutOrderByOrderId(q11Orderid);
         }
 
 

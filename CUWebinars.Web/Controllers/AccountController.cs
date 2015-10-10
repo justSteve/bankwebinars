@@ -10,7 +10,6 @@ using System.Text;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Security;
-using System.Web.UI;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core.Exceptions;
@@ -495,6 +494,42 @@ namespace CUWebinars.Web.Controllers
         public ActionResult EditDiscount(int? id, string returnUrl = null)
         {
             return null;
+        }
+
+        [System.Web.Mvc.HttpGet]
+        public ActionResult EditUserFromOrder(int? id, string email, string returnUrl = null)
+        {
+            Debug.Assert(id != null, "id != null");
+            _logger.Info("EditUserFromOrder:" + id);
+            if (id.Value > 0)
+            {
+                try
+                {
+                    var user = _accountControllerOrchestrator.GetWebUserById(id.Value);
+                    
+                    WebUser editingUser = null;
+
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        editingUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
+                    }
+
+                    _logger.Info(string.Format("{0} is editing {1}", editingUser.email, user.email));
+
+                    if (email != user.email)
+                    {
+                        user = _accountControllerOrchestrator.GetWebUserByEmail(email);
+                    }
+
+                    var editModel = BuildEditUserInfoModel(user, returnUrl);
+                    return View("EditUser", editModel);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Fatal("EditUserFromOrder error on " + id.Value);
+                }
+            }
+            return View("EditUser", null);
         }
 
         [System.Web.Mvc.HttpGet]
