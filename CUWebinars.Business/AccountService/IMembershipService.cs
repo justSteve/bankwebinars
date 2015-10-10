@@ -48,7 +48,9 @@ namespace CUWebinars.Business.AccountService
         UserAccount GetUserAccountByWebUserId(string tenant, int userId);
         WebUser GetUserByEmail(string email);
         WebUser GetUserByEmailLoadedWithOrdersData(string email);
+        WebUser GetUserByEmailFromLegacy(string q5Email5); 
         WebUser GetWebUserById(int userId);
+        WebUser GetWebUserByIdFromLegacy(int userId);
         int? GetWebUserIdByEmail(string email);
         IEnumerable<WebUser> GetWebUsersByLastNameForAffiliate(string lastName, int idAffiliate);
         bool HasPassword(string tenant, string emailAddress);
@@ -57,6 +59,13 @@ namespace CUWebinars.Business.AccountService
         bool LogInAdminUserAsOtherUser(string tenant, string emailAddress, string password, UserAccount account);
         bool LogOutUser();
         Institution ProcessInstitutionForUser(string institutionName,
+            string email,
+            string city,
+            string state,
+            string regIdentifier,
+            string institutionType,
+            string zip);
+        Institution ProcessInstitutionForUserFromLegacy(string institutionName,
             string email,
             string city,
             string state,
@@ -91,5 +100,6 @@ namespace CUWebinars.Business.AccountService
         WebUser CreateExpressCheckoutUser(string tenant, string email, string firstName, string lastName, string phone, string institution, string title);
         Address BuildPlaceHolderAddressBilling(string email);
         Address BuildPlaceHolderAddressShipping(string email);
+        
     }
 }

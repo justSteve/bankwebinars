@@ -399,7 +399,7 @@ namespace CUWebinars.Business.Services
 
         public void SynchToLegacy()
         {
-            _webinarRepository.SynchToLegacy();
+            _webinarRepository.MigrateWebinarsFromLegacy();
         }
 
         public int GetRegTypeByACS(string registrationType, int idWebinar)

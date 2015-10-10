@@ -81,9 +81,19 @@ namespace CUWebinars.Business.AccountService
             return webUser;
         }
 
+        public WebUser GetUserByEmailFromLegacy(string q5Email5)
+        {
+            throw new NotImplementedException();
+        }
+
         public WebUser GetWebUserById(int userId)
         {
             return _webUserRepository.FindByIdLoaded(userId);
+        }
+
+        public WebUser GetWebUserByIdFromLegacy(int userId)
+        {
+            throw new NotImplementedException();
         }
 
         public int? GetWebUserIdByEmail(string email)
@@ -374,6 +384,48 @@ namespace CUWebinars.Business.AccountService
             _institutionRepository.Add(newInstitution);
 
             return newInstitution;
+        }
+
+        public Institution ProcessInstitutionForUserFromLegacy(string institutionName,
+            string email,
+            string city,
+            string state,
+            string regIdentifier,
+            string institutionType,
+            string zip)
+        {
+            List<Institution> institutionsList = null;
+
+            try
+            {
+                var institutions = _institutionRepository.GetByNameAndZipCode(institutionName, zip);
+                institutionsList = institutions.ToList();
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException(string.Format("ProcessInstitutionForUserFromLegacy exception | email:{0}", email), exception);
+            }
+
+            if (institutionsList != null && institutionsList.Count == 1)
+            {
+                return institutionsList.First();
+            }
+
+            var newInstitution = new Institution
+            {
+                InstitutionName = institutionName,
+                City = city,
+                State = state,
+                Zip = zip,
+                RegIdentifier = regIdentifier,
+                InstitutionType = institutionType,
+                domainName = new string(email.SkipWhile(ltr => ltr != '@').Skip(1).ToArray())
+            };
+
+            _institutionRepository.Add(newInstitution);
+
+            return newInstitution;
+
         }
 
         public void RemoveClaim(string tenant, string email, string claim, string claimValue = null)
@@ -929,7 +981,7 @@ namespace CUWebinars.Business.AccountService
             webUser.Addresses = new List<Address>();
             Address billing = BuildPlaceHolderAddressBilling(email);
             Address shipping = BuildPlaceHolderAddressShipping(email);
-            
+
             webUser.Addresses.Add(billing);
             webUser.Addresses.Add(shipping);
             _webUserRepository.Add(webUser);

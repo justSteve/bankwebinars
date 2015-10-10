@@ -716,6 +716,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
             var user = _membershipService.GetUserByEmail(form.q5_email5);
+            var userFromLegacy = _membershipService.GetUserByEmailFromLegacy(form.q5_email5);
             bool userCreatedByCheckout = false;
             if (ReferenceEquals(null, user))
             {

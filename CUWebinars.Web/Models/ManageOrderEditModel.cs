@@ -8,6 +8,7 @@ namespace CUWebinars.Web.Models
 {
     public class ManageOrderEditModel
     {
+        private WebUserFromLegacy _webUserFromLegacy;
         public IEnumerable<AdditionalLocation> AdditionalLocations { get; set; }
         public DisplayOptionsInDropDownViewModel DisplayOptionsInDropDownViewModel { get; set; }
         public decimal CostPerAdditionalLocation { get; set; }
@@ -26,11 +27,22 @@ namespace CUWebinars.Web.Models
         public string PhoneNumber { get; set; }
         public string AffiliateName { get; set; }
         public int UserId { get; set; }
+        public int UserIdLegacy { get; set; }
         public int WebinarId { get; set; }
         public WebUser WebUser { get; set; }
-        public WebUserFromLegacy WebUserLegacy  { get; set; }
 
-        public class WebUserFromLegacy
+        //public WebUserFromLegacy WebUserFromLegacy
+        //{
+        //    get { return _webUserFromLegacy; }
+        //    set { _webUserFromLegacy = value; }
+        //}
+
+        private class WebUserFromLegacy
+        {
+
+        }
+
+        private class WebUserFromLegacyImpl : WebUserFromLegacy
         {
         }
     }

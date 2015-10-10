@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using CUWebinars.Business.Models;
 using ILog = log4net.ILog;
 using LogManager = log4net.LogManager;
 
@@ -63,13 +64,24 @@ namespace CUWebinars.Web.Infrastructure.Attributes
                             ((ClaimsIdentity) userIdentity).Claims.Single(c => c.Type == ClaimTypes.Email).Value
                             );
 
-                    var affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser);
-
-                    // if null returned, just use whatever is stored in Session for CurrentAffiliate. O/w, set that value.
-                    if (!ReferenceEquals(null, affiliate))
+                    Affiliate affiliate = null;
+                    if (webUser != null)
                     {
-                        _stateService.SetValue(WebUiConstants.CurrentAffiliate, affiliate);
+                        affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser);
+
                     }
+                    else
+                    {
+                        //hardwire a valid affiliate ID
+                        affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(19);
+                    }
+
+                        // if null returned, just use whatever is stored in Session for CurrentAffiliate. O/w, set that value.
+                    if (!ReferenceEquals(null, affiliate))
+                        {
+                            _stateService.SetValue(WebUiConstants.CurrentAffiliate, affiliate);
+                        }
+                    
                 }
             }
             else

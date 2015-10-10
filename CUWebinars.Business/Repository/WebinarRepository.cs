@@ -187,11 +187,17 @@ namespace CUWebinars.Business.Repository
             return db.SaveChanges();
         }
 
-        public void SynchToLegacy()
+        public IList<WebUser> MigrateUsersFromLegacy()
         {
             var dataOperations = new MigrationOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString, ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
+            return dataOperations.GetLegacyUsers();
 
-            dataOperations.CopyLegacyWebinars();
+        }
+
+        public IList<Webinar> MigrateWebinarsFromLegacy()
+        {
+            var dataOperations = new MigrationOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString, ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
+            return null;
 
         }
 
