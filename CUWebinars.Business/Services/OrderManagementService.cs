@@ -1464,10 +1464,10 @@ namespace CUWebinars.Business.Services
             return 0;
         }
 
-        public void UpdateOrderByAdmin(Order order)
-        {
-            var updatedOrder = _orderRepository.SaveOrderChanges(order, 0);
-        }
+        //public void UpdateOrderByAdmin(Order order)
+        //{
+        //    var updatedOrder = _orderRepository.SaveOrderChanges(order, 0);
+        //}
 
         public Discount GetDiscountByUser(WebUser currentUser)
         {

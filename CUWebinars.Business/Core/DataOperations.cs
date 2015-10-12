@@ -1055,5 +1055,112 @@ namespace CUWebinars.Business.Core
 
         }
 
+        public WebUser InsertWebUserFromLegacy(string email)
+        {
+            var retValue = false;
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+                var emailParameter = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@Email", Value = email };
+
+                using (var insertWebUser = new SqlCommand("WebUserInsert", sqlConnection))
+                {
+                    insertWebUser.Parameters.Add(emailParameter);
+
+                    try
+                    {
+                        insertWebUser.Connection = sqlConnection;
+                        insertWebUser.CommandType = CommandType.StoredProcedure;
+
+                        var result = insertWebUser.ExecuteScalar();
+                        if (result == null)
+                            retValue = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
+                            errorLogger.CommandText += "'insertWebUser' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'[insertWebUser]', 9 ,";
+                            errorLogger.CommandText += "'error at insertWebUser " + ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+
+                        }
+                    }
+                }
+
+            }
+            return null;
+        }
+        public WebUser GetWebUserFromLegacy(string email)
+        {
+            WebUser returnUser = null;
+            using (var sqlConnection = new SqlConnection(TtsConfig.LegacyConnectionString))
+            {
+                sqlConnection.Open();
+                var emailParameter = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@Email", Value = email };
+
+                using (var findWebUser = new SqlCommand("GetWebUserFromLegacy", sqlConnection))
+                {
+                    findWebUser.Parameters.Add(emailParameter);
+
+                    try
+                    {
+                        findWebUser.Connection = sqlConnection;
+                        findWebUser.CommandType = CommandType.StoredProcedure;
+
+                        using (var reader = findWebUser.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                try
+                                {
+
+                                    returnUser = new WebUser
+                                    {
+                                        idUser = reader.GetInt32(0),
+                                        UserType = UserType.Customer,
+                                        AcctStatus = reader.GetString(2),
+                                        DateCreated = reader.GetDateTime(3),
+                                        FirstName = reader.GetString(4),
+                                        LastName = reader.GetString(5),
+                                        idUserInstitution = reader.GetInt32(6),
+                                        email = reader.GetString(7),
+                                        futureMail = reader.GetString(8),
+                                        idSubscriptionDiscount = reader.GetInt32(9)
+                                    };
+                                }
+                                catch (Exception ex)
+                                {
+                                    _logger.Error("findWebUser hit error on: " + reader.GetString(7) + " msg: " + ex.Message);
+                                }
+                            }
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
+                            errorLogger.CommandText += "'GetWebUserFromLegacy' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'GetWebUserFromLegacy', 9 ,";
+                            errorLogger.CommandText += "'error at GetWebUserFromLegacy " + ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+
+                        }
+                    }
+                }
+
+            }
+            return null;
+        }
     }
 }

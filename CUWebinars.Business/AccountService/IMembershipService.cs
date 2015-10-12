@@ -48,7 +48,7 @@ namespace CUWebinars.Business.AccountService
         UserAccount GetUserAccountByWebUserId(string tenant, int userId);
         WebUser GetUserByEmail(string email);
         WebUser GetUserByEmailLoadedWithOrdersData(string email);
-        WebUser GetUserByEmailFromLegacy(string q5Email5); 
+        WebUser GetUserFromLegacy(string email); 
         WebUser GetWebUserById(int userId);
         WebUser GetWebUserByIdFromLegacy(int userId);
         int? GetWebUserIdByEmail(string email);

@@ -81,9 +81,11 @@ namespace CUWebinars.Business.AccountService
             return webUser;
         }
 
-        public WebUser GetUserByEmailFromLegacy(string q5Email5)
+        WebUser IMembershipService.GetUserFromLegacy(string email)
         {
-            throw new NotImplementedException();
+            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
+            return dataOperations.GetWebUserFromLegacy(email);
+
         }
 
         public WebUser GetWebUserById(int userId)

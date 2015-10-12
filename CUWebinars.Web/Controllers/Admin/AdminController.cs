@@ -365,28 +365,28 @@ namespace CUWebinars.Web.Controllers.Admin
             return View();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken(Order = 0)]
-        [HandleAjaxException(Order = 1)]
-        public ActionResult ManageOrder(ManageOrderEditModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var newOrder = ApplyModelChangesToOrder(model);
-                var oldOrder = model.Order;
+        //[HttpPost]
+        //[ValidateAntiForgeryToken(Order = 0)]
+        //[HandleAjaxException(Order = 1)]
+        //public ActionResult ManageOrder(ManageOrderEditModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var newOrder = ApplyModelChangesToOrder(model);
+        //        var oldOrder = model.Order;
 
-                //var orderchanges = new OrderChanges
-                //{
+        //        //var orderchanges = new OrderChanges
+        //        //{
 
-                //}
+        //        //}
 
-                //model.PostEventAccessExpires = _membershipService.SetPostEventAccessExpireyDate(userAccount, id.Value);
+        //        //model.PostEventAccessExpires = _membershipService.SetPostEventAccessExpireyDate(userAccount, id.Value);
 
-                _orderManagementService.UpdateOrderByAdmin(newOrder);
-            }
+        //        _orderManagementService.UpdateOrderByAdmin(newOrder);
+        //    }
 
-            return Json(new { Result = WebUiConstants.Success });
-        }
+        //    return Json(new { Result = WebUiConstants.Success });
+        //}
 
         public ActionResult ManageOrderFromDetails(int? id)
         {
@@ -394,11 +394,9 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 if (id == 0)
                     return RedirectToAction("ManageOrder");
-
-                var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, _orderManagementService.GetOrderById(id.Value).BillingEmail);
-
                 
-
+                var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, _orderManagementService.GetOrderById(id.Value).BillingEmail);
+                
                 var model = BuildManageOrderEditModel(id.Value);
 
                 if (userAccount == null)
@@ -407,6 +405,13 @@ namespace CUWebinars.Web.Controllers.Admin
                     RedirectToAction("CreateUserAccountFromCart", "Account",
                         new { email = model.Order.BillingEmail });
                 }
+
+                if (model.Order.WebUser.email != model.Order.BillingEmail)
+                {
+                    model.Order.WebUser = _membershipService.GetUserByEmail(model.Order.BillingEmail);
+                    _orderManagementService.SaveChanges();
+                }
+
 
                 model.PostEventAccessExpires = _membershipService.GetPostEventAccessExpireyDate(userAccount, id.Value);
                 return View(model);
@@ -716,7 +721,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
             var user = _membershipService.GetUserByEmail(form.q5_email5);
-            var userFromLegacy = _membershipService.GetUserByEmailFromLegacy(form.q5_email5);
+            var userFromLegacy = _membershipService.GetUserFromLegacy(form.q5_email5);
             bool userCreatedByCheckout = false;
             if (ReferenceEquals(null, user))
             {

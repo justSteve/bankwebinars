@@ -518,6 +518,7 @@ namespace CUWebinars.Web.Controllers
 
                     if (email != user.email)
                     {
+                        _logger.Info("EditUserFromOrder searching for user by email: " + email);
                         user = _accountControllerOrchestrator.GetWebUserByEmail(email);
                     }
 

@@ -1075,7 +1075,13 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public WebUser GetWebUserByEmail(string email)
         {
-            return _membershipService.GetUserByEmail(email);
+            var user = _membershipService.GetUserByEmail(email);
+
+            if (ReferenceEquals(user, null))
+            {
+                user = _membershipService.GetUserFromLegacy(email);
+            }
+            return user;
         }
 
         public int? GetWebUserIdByEmail(string email)
