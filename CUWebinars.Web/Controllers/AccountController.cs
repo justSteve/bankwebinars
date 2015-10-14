@@ -579,15 +579,22 @@ namespace CUWebinars.Web.Controllers
                 billingAddress = addresses.FirstOrDefault(a => a.AddressType == WebUiConstants.BillingAddress);
                 shippingAddress = addresses.FirstOrDefault(a => a.AddressType == WebUiConstants.ShippingAddress);
             }
+            else
+            {
+                user.Addresses = new List<Address>();
+            }
             if (billingAddress == null)
             {
                 billingAddress = _accountControllerOrchestrator.BuildPlaceHolderAddressBilling(user.email);
+                user.Addresses.Add(billingAddress);
+                _membershipService.UpdateUserDetails(user);
             }
             if (shippingAddress == null)
             {
                 shippingAddress = _accountControllerOrchestrator.BuildPlaceHolderAddressShipping(user.email);
+                user.Addresses.Add(shippingAddress);
                 shippingAddress.Name = user.FirstName + ' ' + user.LastName;
-
+                _membershipService.UpdateUserDetails(user);
             }
             var editModel = new EditUserInfoModel
                 {

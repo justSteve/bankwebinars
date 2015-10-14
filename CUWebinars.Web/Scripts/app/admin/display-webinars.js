@@ -1,39 +1,40 @@
 ﻿/// <reference path="../Constants.js" />
 /// <reference path="../utilities.js" />
 
-var aff = $('#ordersTable').data('aff');
+var aff = $('#webinarsSearchTable').data('aff');
 
-if (DISPLAYORDERS === null || typeof DISPLAYORDERS === 'undefined')
-    var DISPLAYORDERS = {}; // create namespace - object to holds all references and methods.
+if (DISPLAYWEBINARS === null || typeof DISPLAYWEBINARS === 'undefined')
+    var DISPLAYWEBINARS = {}; // create namespace - object to holds all references and methods.
 
-var DO = DISPLAYORDERS; // alias for code brevity
+var DW = DISPLAYWEBINARS; // alias for code brevity
 
 // document.ready function
 $(function () {
 
-    DO.primeDomVariables();
-    DO.wireUpHandlers();
-    DO.wireUpDataTable();
-    DO.wireUpConnInfoDataTable();
+    DW.primeDomVariables();
+    DW.wireUpHandlers();
+    DW.wireUpDataTable();
+
+
 
 });
 
 // self-invoking function for creating methods using Module pattern.
-(function(ns) {
+(function (ns) {
 
-    ns.primeDomVariables = function() {
-        DO.ordersTable = $('#ordersTable');
-        DO.connInfoTable = $('#connInfoTable');
-        DO.webinarIdDiv = $('#webinarIdDiv');
+    ns.primeDomVariables = function () {
+        DW.webinarsSearchTable = $('#webinarsSearchTable');
+        //DW.connInfoTable = $('#connInfoTable');
+        DW.searchTerm = $('#searchTerm');
     };
 
     ns.wireUpHandlers = function () {
 
         $('.dataTable').on("click", ".ResendOrderConfirmationButton", function () {
-            
+
             var self = this;
 
-            var orderId =  this.getAttribute('data-orderId');
+            var orderId = this.getAttribute('data-orderId');
 
             var payload = { orderId: orderId };
 
@@ -44,10 +45,10 @@ $(function () {
                 url: '/Admin/ResendOrderConfirmation',
                 dataType: constants.JsonDataType,
                 data: JSON.stringify(payload),
-                beforeSend: function() {
+                beforeSend: function () {
                     $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
                 }
-            }).done(function(result) {
+            }).done(function (result) {
 
                 if (result.Result === 'Success') {
                     $('#InputFormFields').append(successScreenMessage);
@@ -55,9 +56,9 @@ $(function () {
                     $('#InputFormFields').append(noOrderScreenMessage);
                 }
                 $('#spinnerLabel').remove();
-            }).fail(function() {
+            }).fail(function () {
                 alert("Operation Failed. Call Steve!")
-            }).always(function() {
+            }).always(function () {
                 //$('#loadingSpinner').remove();
             });
         });
@@ -66,11 +67,11 @@ $(function () {
 
 
         $('.dataTable').on("click", ".ResendConnectionInfoButton", function () {
-            
+
 
             var self = this;
 
-            var orderId =  this.getAttribute('data-orderId');
+            var orderId = this.getAttribute('data-orderId');
 
             //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
 
@@ -108,74 +109,42 @@ $(function () {
         });
 
 
-
     };
 
-    ns.wireUpDataTable = function() {
-        
-        DO.ordersTable.dataTable({
+    ns.wireUpDataTable = function () {
+
+        DW.webinarsSearchTable.dataTable({
             "dom": '<ilf<t>ip>',
             //'dom': 'T<"clear">lfrtip',
-            'tableTools': {
-                'sSwfPath': '/Content/DataTables/swf/copy_csv_xls_pdf.swf'
-            },
+
             'ajax': {
-                'url': '/admin/GetGridData',
+                'url': '/admin/GetWebinarSearchGridData',
                 'data': {
-                    'webinarId': parseInt(DO.webinarIdDiv.text()),
-                    'affiliateId': DO.affiliateId
+                    'searchTerm': DW.searchTerm.text(),
+                    'affiliateId': DW.affiliateId
                 },
                 'type': 'POST'
             },
-            'columns': [
-                { 'data': 'OrderColumn' },
-                { 'data': 'UserColumn' },
-                { 'data': 'InstitutionColumn' },
-                { 'data': 'BillingColumn' },
+            "columnDefs": [
                 {
-                    'data': 'AffiliateColumn',
-                    'visible': aff
-                },
-                { 'data': 'OrderDateColumn' },
+                    "render": function(data, type, row) {
+                        return data + ' (' + row[1] + ')';
+                    },
+                    "targets": 0
+                }
+            ],
+            'columns': [
+                { 'data': 'WebinarID' },
+                { 'data': 'OrdersColumn' },
+                { 'data': 'PresenterColumn' },
+                { 'data': 'TopicsColumn' },
+                { 'data': 'AddToCartColumn' },
+                { 'data': 'MediaColumn' },
+                { 'data': 'ShareColumn' },
                 { 'data': 'StatusColumn' }
             ]
         });
     };
-    ns.wireUpConnInfoDataTable = function() {
-        
-        DO.connInfoTable.dataTable({
-            "dom": '<ilf<t>ip>',
-            //'dom': 'T<"clear">lfrtip',
-            buttons: [
-              'copy',
-              'excel',
-              'csv',
-              'pdf'
-            ],
-        
-            'ajax': {
-                'url': '/admin/GetGridDataForConnInfo',
-                'data': {
-                    'webinarId': parseInt(DO.webinarIdDiv.text()),
-                    'affiliateId': DO.affiliateId
-                },
-                'type': 'POST'
-            },
-            'columns': [
-                { 'data': 'OrderColumn' },
-                { 'data': 'UserColumn' },
-                { 'data': 'InstitutionColumn' },
-                { 'data': 'BillingColumn' },
-                {
-                    'data': 'AffiliateColumn',
-                    'visible': aff
-                },
-                { 'data': 'OrderDateColumn' },
-                { 'data': 'StatusColumn' }
-            ]
-    });
-};
-$('#getHtmlSpinner').remove();
 
 
-})(DO);
+})(DW);

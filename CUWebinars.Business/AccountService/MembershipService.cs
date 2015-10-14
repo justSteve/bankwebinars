@@ -675,10 +675,17 @@ namespace CUWebinars.Business.AccountService
                 auditChanges.Append("Record edited on " + DomainConstants.BuildUtcNowAsCts.ToShortDateString() + " " + DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + Environment.NewLine);
 
 
-                var billingAddressFromDb = webUser.Addresses.Single(a => a.AddressType == DomainConstants.BillingAddress);
+                var billingAddressFromDb = webUser.Addresses.SingleOrDefault(a => a.AddressType == DomainConstants.BillingAddress);
 
+                if (billingAddressFromDb == null)
+                {
 
-                if (!(firstName.Equals(webUser.FirstName, StringComparison.OrdinalIgnoreCase)))
+                    billingAddressFromDb = billingAddress;
+                    
+                    webUser.Addresses.Add(billingAddressFromDb);
+                }
+                    
+                    if (!(firstName.Equals(webUser.FirstName, StringComparison.OrdinalIgnoreCase)))
                 {
                     auditChanges.Append("firstName from: " + webUser.FirstName + " to: " + firstName + Environment.NewLine);
                 }
@@ -756,13 +763,19 @@ namespace CUWebinars.Business.AccountService
                 billingAddressFromDb.Phone = billingAddress.Phone;
                 billingAddressFromDb.Zip = billingAddress.Zip;
                 billingAddressFromDb.Country = billingAddress.Country;
-
+                _webUserRepository.Update(webUser);
                 //  ** Important ** update this address object before grabbing the next one from the context.
                 //  Doing so is important as the entity.state of the object needs to be either detached or modified, but NOT unchanged. 
                 _webUserRepository.UpdateAddresses(billingAddressFromDb);
 
 
-                var shippingAddressFromDb = webUser.Addresses.Single(a => a.AddressType == DomainConstants.ShippingAddress);
+                var shippingAddressFromDb = webUser.Addresses.SingleOrDefault(a => a.AddressType == DomainConstants.ShippingAddress);
+
+                if (shippingAddressFromDb == null)
+                {
+                    shippingAddressFromDb = shippingAddress;
+                    webUser.Addresses.Add(shippingAddressFromDb);
+                }
 
                 if (!(shippingAddress.Name.Equals(shippingAddressFromDb.Name, StringComparison.OrdinalIgnoreCase)))
                 {
@@ -807,7 +820,7 @@ namespace CUWebinars.Business.AccountService
                 shippingAddressFromDb.Phone = shippingAddress.Phone;
                 shippingAddressFromDb.Zip = shippingAddress.Zip;
                 shippingAddressFromDb.Country = shippingAddress.Country;
-
+                _webUserRepository.Update(webUser);
                 _webUserRepository.UpdateAddresses(shippingAddressFromDb);
 
                 webUser.Addresses.Clear();

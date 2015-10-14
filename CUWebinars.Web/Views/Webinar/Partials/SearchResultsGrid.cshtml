@@ -1,0 +1,40 @@
+﻿@model ShowWebinarsSearchViewModel
+
+@{
+    ViewBag.Title = "Webinars";
+
+    if (Model.Affiliate != null && !Model.UserIsAdmin)
+    {
+        <script type="text/javascript">
+            if (DISPLAYWEBINARS === null || typeof DISPLAYWEBINARS === 'undefined') {
+                var DISPLAYWEBINARS = {};
+            }
+            var DW = DISPLAYWEBINARS;
+            DW.affiliateId = @Model.Affiliate.idUserAff;
+
+        </script>
+    }
+
+    var showAffColumn = Model.UserIsAdmin ? "true" : "false";
+    //\Scripts\app\admin\display-orders.js
+    // AdminController/BuildDISPLAYWEBINARSViewModel
+
+    <table data-aff="@showAffColumn" id="webinarsSearchTable" class="table table-striped table-bordered dataTable no-footer" cellspacing="0" width="100%">
+
+        <thead>
+            <tr>
+                <th>WebinarID</th>
+                <th>OrdersColumn</th>
+                <th>PresenterColumn</th>
+                <th>TopicsColumn</th>
+                <th>AddToCartColumn</th>
+                <th>MediaColumn</th>
+                <th>ShareColumn</th>
+                <th>StatusColumn</th>
+            </tr>
+        </thead>
+
+    </table>
+
+    <div id="searchTerm" class="initialHide">@ViewBag.searchTerm</div>
+}

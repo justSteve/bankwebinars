@@ -1,5 +1,6 @@
 ﻿using CUWebinars.Business.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -9,10 +10,14 @@ namespace CUWebinars.Business.Services
     public class DataTablesService : IDataTablesService
     {
         private readonly TTSWebinarsContext _context;
+        private readonly IWebinarManagementService _webinarManagementService;
+        //private readonly IDataTablesService _dataTablesService;
 
-        public DataTablesService(TTSWebinarsContext context)
+        public DataTablesService(TTSWebinarsContext context, IWebinarManagementService webinarManagementService)
         {
+            _webinarManagementService = webinarManagementService;
             _context = context;
+            //_dataTablesService = dataTablesService;
         }
 
         public IEnumerable<Order> GetAllOrders()
@@ -124,6 +129,16 @@ namespace CUWebinars.Business.Services
             totalNumberUsers = theseUsers.Count;
 
             return theseUsers;
+        }
+
+        public IEnumerable SearchWebinars(string searchTerm, int idAffiliate, out int totalNumberWebinars)
+        {
+            
+            var webinars = _webinarManagementService.GetWebinarByDescription(searchTerm);
+
+            totalNumberWebinars = 10;
+
+            return webinars;
         }
     }
 }

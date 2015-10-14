@@ -394,9 +394,9 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 if (id == 0)
                     return RedirectToAction("ManageOrder");
-                
+
                 var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, _orderManagementService.GetOrderById(id.Value).BillingEmail);
-                
+
                 var model = BuildManageOrderEditModel(id.Value);
 
                 if (userAccount == null)
@@ -2230,6 +2230,26 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return Json(new { NotAuthorized = true });
         }
+
+
+        [HandleAjaxException]
+        [HttpPost]
+        [AllowAnonymous]
+        public ActionResult GetWebinarSearchGridData(string searchTerm, int? affiliateId)
+        {
+            if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
+            {
+                int totalNumberWebinars;
+
+                return Json(new
+                {
+                    data = BuildWebinarsSearchViewModel(searchTerm, affiliateId, out totalNumberWebinars)
+                });
+            }
+
+            return Json(new { NotAuthorized = true });
+        }
+
         [HandleAjaxException]
         [HttpPost]
         [AllowAnonymous]
@@ -2347,6 +2367,83 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return responsePayload;
         }
+
+
+        private IList<IDictionary<string, string>> BuildWebinarsSearchViewModel(string searchTerm, int? affiliateId, out int totalNumberWebinars)
+        {
+            var webinars = _dataTablesService.SearchWebinars(searchTerm, affiliateId ?? 19, out totalNumberWebinars);
+
+            IList<IDictionary<string, string>> responsePayload = new List<IDictionary<string, string>>();
+            IDictionary<string, string> responsePayloadInner = new Dictionary<string, string>();
+
+            foreach (Webinar webinar in webinars)
+            {
+
+                var numDaysLeft = (webinar.Date.AddMonths(6) - DateTime.Now).Days;
+                var showDateValue = DateTimeHelper.FormatDate(webinar.Date) + " - " +
+                                    DateTimeHelper.FormatTime(webinar.Date) + " Central Time Zone";
+                if (webinar.Status == WebinarStatus.Recorded && webinar.idWebinar != 842)
+                {
+                    showDateValue += "<br><i>This OnDemand Webinar has <b>" + numDaysLeft + "</b> days of access remaining.</i>";
+                    //if (numDaysLeft > 45)
+                    //{
+                    //    showDateValue = "About " + Convert.ToInt32(numDaysLeft / (365.25 / 12)) + " months of access remain.";
+                    //}
+                }
+                var allTopics = webinar.WebinarTopicXrefs
+                    .Select(webinarTopic => webinarTopic.Topic.topicDesc)
+                    .Aggregate((s1, s2) => s1 + ", " + s2);
+
+                string title = "<a href='/Webinar/Details/" +
+                               webinar.idWebinar + "' target='_blank'>" + webinar.Title + "</a>";
+                var desc = webinar.Description.Length > 600
+                    ? webinar.Description.Substring(0, 600) + "... <a class=\"btn  btn-primary btn-small\" href='/Webinar/Details/" + webinar.idWebinar + "'>More →</a></p>"
+                    : webinar.Description;
+
+                var relatedTopics = "Related Topics: <b><i>" + string.Join(", ", allTopics) + "</i></b>";
+                var descString = new StringBuilder();
+
+
+                descString.Append("<div class=\"wTitle\">");
+                descString.Append("    <h3>" + title + "</h3>");
+                descString.Append("    <div id=\"eventBody_" + webinar.idWebinar + "\" style=\"width: 90%; margin-left: auto; margin-right: auto;\">");
+                descString.Append("        <p>");
+                descString.Append("            Presented by <img class=\"alignleft\" src=" + webinar.Presenter.PhotoThumb + " alt=\"Photo of " + webinar.Presenter.WebUser.FullName + "/> " + webinar.Presenter.WebUser.FullName + "<br/>");
+                descString.Append("            <i>" + showDateValue + "</i>");
+                descString.Append("        </p>");
+                descString.Append("        <span style=\"margin-right: 20%;\">" + desc + "</span>");
+                descString.Append("        <p>" + relatedTopics + "</p>");
+                descString.Append("    </div>");
+                descString.Append("</div>");
+
+
+                string MediaColumn = desc;
+
+                string webinarColumn = "descString.ToString()";
+                string presenterColumn = webinar.Presenter.WebUser.FullName;
+                string shareColumn = relatedTopics;
+                string addToCartColumn = " ";
+                string topicsColumn = " ";
+                int webinarToEdit = 0;
+                string ordersColumn = " ";
+                responsePayloadInner = new Dictionary<string, string>();
+
+
+                responsePayloadInner.Add("WebinarID", webinarColumn);
+                responsePayloadInner.Add("OrdersColumn", ordersColumn);
+                responsePayloadInner.Add("PresenterColumn", presenterColumn);
+                responsePayloadInner.Add("TopicsColumn", topicsColumn);
+                responsePayloadInner.Add("AddToCartColumn", addToCartColumn);
+                responsePayloadInner.Add("MediaColumn", MediaColumn);
+                responsePayloadInner.Add("ShareColumn", shareColumn);
+                responsePayloadInner.Add("StatusColumn", "<a href='/Admin/manageWebinar" + webinarToEdit + "' target='_new' />");
+
+                responsePayload.Add(responsePayloadInner);
+            }
+
+            return responsePayload;
+        }
+
 
         private IList<IDictionary<string, string>> BuildConnInfoViewModel(int webinarId, int? affiliateId, out int totalNumberOrders)
         {

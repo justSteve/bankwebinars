@@ -461,18 +461,19 @@ namespace CUWebinars.Web.Core.Orchestrators
             var webinars = _webinarManagementService.GetWebinarByPresenterLastName(searchTerm);
             if (!ReferenceEquals(webinars, null) && webinars.Count() > 0)
             {
-                return webinars.OrderByDescending(w => w.Date);
+                return webinars.Where(w => w.Status != WebinarStatus.Deleted && w.Status != WebinarStatus.Pending).OrderByDescending(w => w.Date);
             }
 
             webinars = _webinarManagementService.GetWebinarByPresenterFullName(searchTerm);
             if (!ReferenceEquals(webinars, null) && webinars.Count() > 0)
             {
-                return webinars.OrderByDescending(w => w.Date);
+                return webinars.Where(w => w.Status != WebinarStatus.Deleted && w.Status != WebinarStatus.Pending).OrderByDescending(w => w.Date);
             }
             var webinarsByTopic = _webinarManagementService.GetWebinarByDescription(searchTerm);
             //var unionOfResultSets = webinars.Union(webinarsByTopic).Where(w => w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress || w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Scheduled);
             //return unionOfResultSets;
-            return webinarsByTopic.OrderByDescending(w => w.Date); 
+            return webinarsByTopic.Where(w => w.Status != WebinarStatus.Deleted && w.Status != WebinarStatus.Pending).OrderByDescending(w => w.Date);
+
         }
 
         public bool UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel, out string message)

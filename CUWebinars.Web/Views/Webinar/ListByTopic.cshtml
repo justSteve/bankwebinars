@@ -155,8 +155,8 @@
 
             string title = "<h3><a href='/Webinar/Details/" +
                            webinar.idWebinar + "' target='_blank'>" + webinar.Title + "</a></h3>";
-            var desc = webinar.Description.Length > 200
-                ? webinar.Description.Substring(0, 200) + "... <a class=\"btn  btn-primary btn-small\" href='/Webinar/Details/" + webinar.idWebinar + "'>More →</a></p>"
+            var desc = webinar.Description.Length > 300
+                ? webinar.Description.Substring(0, 300) + "... <a class=\"btn  btn-primary btn-small\" href='/Webinar/Details/" + webinar.idWebinar + "'>More →</a></p>"
                 : webinar.Description;
 
             var relatedTopics = "Related Topics: <b><i>" + string.Join(", ", allTopics) + "</i></b>";
@@ -165,7 +165,7 @@
                 @Html.Raw(title)
                 <div id="eventBody" style="width: 90%; margin-left: auto; margin-right: auto;">
                     <p>
-                        Presented By:<img class="alignleft" src="@webinar.Presenter.PhotoThumb" alt="Photo of @webinar.Presenter.WebUser.FullName"> @webinar.Presenter.WebUser.FullName <br />
+                        Presented By:<img class="pull-right" src="@webinar.Presenter.PhotoThumb" alt="Photo of @webinar.Presenter.WebUser.FullName"> @webinar.Presenter.WebUser.FullName <br />
                         <i>@Html.Raw(showDateValue)</i>
                     </p>
                     @Html.Raw(desc)
