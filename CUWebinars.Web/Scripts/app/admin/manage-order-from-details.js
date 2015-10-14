@@ -637,7 +637,6 @@ $(function () {
             var orderId = fireResendConfirmationDiv.data("orderid");
 
             var self = this;
-            alert(orderId);
             //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
 
             //var logStartOperation = toastLogger.getLogFn('ResendOrderConfirmation');

@@ -409,6 +409,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 if (model.Order.WebUser.email != model.Order.BillingEmail)
                 {
                     model.Order.WebUser = _membershipService.GetUserByEmail(model.Order.BillingEmail);
+                    if (model.Order.WebUser != null)
                     _orderManagementService.SaveChanges();
                 }
 
