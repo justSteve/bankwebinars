@@ -24,6 +24,7 @@ namespace CUWebinars.Business.AccountService
         private readonly IRefDataRepository _refDataRepository;
         private readonly AuthenticationService _samAuthenticationService;
         private readonly UserAccountService _userAccountService;
+
         private readonly IWebUserRepository _webUserRepository;
         private readonly FluentValidation.IValidator<Tuple<string, string>> _postEventMaterialsAccessClaimValidator;
         private readonly IDomainHelper _domainHelper;
@@ -321,6 +322,12 @@ namespace CUWebinars.Business.AccountService
                 {
                     userMustVerify = "User Must Verify";
                     return false;
+                }
+
+                if (!userAccount.HasClaim(ClaimTypes.FullName))
+                {
+                    var user = GetUserByEmail(emailAddress);
+                    AddClaim(userAccount, ClaimTypes.FullName, string.Concat(user.FirstName.Trim(), ' ', user.LastName.Trim()));
                 }
                 _samAuthenticationService.SignIn(userAccount, persistent);
                 return true;
@@ -681,11 +688,11 @@ namespace CUWebinars.Business.AccountService
                 {
 
                     billingAddressFromDb = billingAddress;
-                    
+
                     webUser.Addresses.Add(billingAddressFromDb);
                 }
-                    
-                    if (!(firstName.Equals(webUser.FirstName, StringComparison.OrdinalIgnoreCase)))
+
+                if (!(firstName.Equals(webUser.FirstName, StringComparison.OrdinalIgnoreCase)))
                 {
                     auditChanges.Append("firstName from: " + webUser.FirstName + " to: " + firstName + Environment.NewLine);
                 }

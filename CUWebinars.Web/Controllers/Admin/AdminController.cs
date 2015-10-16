@@ -111,6 +111,45 @@ namespace CUWebinars.Web.Controllers.Admin
             return View("~/Views/Admin/Home/Index.cshtml", model);
         }
 
+        public ActionResult GetAppLog2()
+        {
+            System.Net.ServicePointManager.SetTcpKeepAlive(true, 30000, 20000);
+
+            // Get the object used to communicate with the server.
+
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://waws-prod-ch1-005.ftp.azurewebsites.windows.net/LogFiles/log4netCSVlocal.log");
+
+            request.Method = WebRequestMethods.Ftp.DownloadFile;
+
+
+
+            // This example assumes the FTP site uses anonymous logon.
+
+            request.Credentials = new NetworkCredential("$BankWebinars33", "FDcehM4K2WbSuxEplrG2B7uJxqrMbeqJ6MdDm3GLyraYTmzWnmLDQAkllu0t", "BankWebinars33");
+
+            FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+
+
+
+            Stream responseStream = response.GetResponseStream();
+
+            StreamReader reader = new StreamReader(responseStream);
+
+            Console.WriteLine(reader.ReadToEnd());
+
+
+
+            Console.WriteLine("Download Complete, status {0}", response.StatusDescription);
+
+
+
+            reader.Close();
+
+            response.Close();
+
+
+            return View();
+        }
         public ActionResult GetAppLog()
         {
             // Setup session options
@@ -118,9 +157,10 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 Protocol = Protocol.Ftp,
                 HostName = "waws-prod-ch1-005.ftp.azurewebsites.windows.net",
-                UserName = "BankWebinars33\\$BankWebinarsOp",
+                UserName = "$BankWebinarsOp",
                 Password = "FDcehM4K2WbSuxEplrG2B7uJxqrMbeqJ6MdDm3GLyraYTmzWnmLDQAkllu0t",
                 FtpMode = FtpMode.Passive
+
                 //PortNumber = 21,
                 //FtpSecure = FtpSecure.Implicit,
                 //SshHostKeyFingerprint = "ssh-rsa 2048 xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx"
@@ -132,9 +172,10 @@ namespace CUWebinars.Web.Controllers.Admin
                 using (Session session = new Session())
                 {
                     // Connect
-
+                    session.DebugLogLevel = 1;
+                    session.DebugLogPath = "d:\\log.log";
+                    
                     session.Open(sessionOptions);
-
                     // Upload files
                     TransferOptions transferOptions = new TransferOptions();
                     transferOptions.TransferMode = TransferMode.Ascii;
@@ -410,7 +451,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     model.Order.WebUser = _membershipService.GetUserByEmail(model.Order.BillingEmail);
                     if (model.Order.WebUser != null)
-                    _orderManagementService.SaveChanges();
+                        _orderManagementService.SaveChanges();
                 }
 
 

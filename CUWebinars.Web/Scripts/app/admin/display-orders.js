@@ -126,6 +126,8 @@ $(function () {
                     'affiliateId': DO.affiliateId
                 },
                 'type': 'POST'
+
+
             },
             'columns': [
                 { 'data': 'OrderColumn' },

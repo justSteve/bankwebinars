@@ -264,22 +264,27 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult MyWebinars()
         {
-            ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
-
-            if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == ClaimTypes.Admin))
+            if (User != null && User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Admin");
+                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+
+                if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == ClaimTypes.Admin))
+                {
+                    return RedirectToAction("Index", "Admin");
+                }
+                ViewBag.OnDemandClaim = "";
+
+
+                var discountModel = _accountControllerOrchestrator.BuildDiscountModel();
+                var myWebinarsDTO = _accountControllerOrchestrator.BuildMyWebinarsDTO(discountModel,
+                    claimsIdentityOfAuthenticatedUser);
+
+
+                ViewBag.idUser = myWebinarsDTO.WebUser.idUser;
+                return View("MyWebinars", myWebinarsDTO);
             }
-            ViewBag.OnDemandClaim = "";
 
-
-
-            var discountModel = _accountControllerOrchestrator.BuildDiscountModel();
-            var myWebinarsDTO = _accountControllerOrchestrator.BuildMyWebinarsDTO(discountModel, claimsIdentityOfAuthenticatedUser);
-
-
-            ViewBag.idUser = myWebinarsDTO.WebUser.idUser;
-            return View("MyWebinars", myWebinarsDTO);
+            return RedirectToAction("Login", "Account", new { ReturnURL = "MyWebinars" });
         }
 
 
@@ -506,7 +511,7 @@ namespace CUWebinars.Web.Controllers
                 try
                 {
                     var user = _accountControllerOrchestrator.GetWebUserById(id.Value);
-                    
+
                     WebUser editingUser = null;
 
                     if (User.Identity.IsAuthenticated)
@@ -773,7 +778,7 @@ namespace CUWebinars.Web.Controllers
 
                     if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
                     {
-                        _logger.Info("Account.SignIn. Session={0}, Email: {1}",
+                        _logger.Info("Account.SignIn. Email: {1},  Session={0}",
                             _appHelper.GetUserAuditInfo(),
                             model.Email
                             );

@@ -1098,10 +1098,17 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             var identity = ClaimsPrincipal.Current;
 
-            var userAccount = _membershipService.GetUserAccountByUserId(ClaimsExtensions.GetUserID(identity));
+            if (identity != null)
+            {
+                if (identity.Identity.IsAuthenticated)
+                {
+                    var userAccount = _membershipService.GetUserAccountByUserId(ClaimsExtensions.GetUserID(identity));
 
-            var user = _membershipService.GetUserByEmail(userAccount.Email);
-            return user;
+                    var user = _membershipService.GetUserByEmail(userAccount.Email);
+                    return user;
+                }
+            }
+            return null;
         }
 
         public string GetZipAddress(int zip)
@@ -1262,7 +1269,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 changeEmailFromKeyInputModel.ScreenMessage = "Thank you for verifying your account with us.";
 
-                _membershipService.RemoveClaim(_globals.Tenant, email, ClaimTypes.HasNotVerified, ClaimValues.ManualRegistration);
+                _membershipService.RemoveClaim(_globals.Tenant, email, ClaimTypes.HasNotVerified);
 
                 return changeEmailFromKeyInputModel;
             }
