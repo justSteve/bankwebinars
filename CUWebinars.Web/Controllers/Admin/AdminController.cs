@@ -2337,15 +2337,17 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     List<WebUser> data = new DTResultSetUsers().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtsource, columnSearch);
                     int count = new DTResultSetUsers().Count(param.Search.Value, dtsource, columnSearch);
-                    //DTResultSetUsers<WebUser> result = new DTResultSetUsers<WebUser>
-                    //{
-                    //    draw = param.Draw,
-                    //    data = data,
-                    //    recordsFiltered = count,
-                    //    recordsTotal = count
-                    //};
-                    //return Json(result);
-                    return null;
+
+                    DataTableService<WebUser> result = new DataTableService<WebUser>
+                    {
+                        draw = param.Draw,
+                        data = data,
+                        recordsFiltered = count,
+                        recordsTotal = count
+                    };
+
+                    return Json(result);
+                    
                 }
                 catch (Exception ex)
                 {
