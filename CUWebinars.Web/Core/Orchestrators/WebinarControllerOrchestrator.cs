@@ -483,9 +483,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             try
             {
-                Webinar webinar = _webinarManagementService.GetWebinar(webinarDetailsViewModel.Webinar.idWebinar);
-                webinarId = webinar.idWebinar;
-
+                Webinar webinar = webinarDetailsViewModel.Webinar; //_webinarManagementService.GetWebinar(webinarDetailsViewModel.Webinar.idWebinar);
+                
                 var checkThatNewFilesExist = CheckThatFileExists(webinarDetailsViewModel.Webinar.RecordingUrl);
 
                 if (checkThatNewFilesExist != "OK")
@@ -500,8 +499,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 _webinarManagementService.UpdateWebinar(webinar);
 
-                _logger.Info(string.Format("Recording for {0} is saved to {1}", webinar.idWebinar, webinar.RecordingUrl));
-                SendsRecordingIsPostedNotifications(webinarDetailsViewModel, webinar);
+                _logger.Info(string.Format("Recordings posted for {0} is saved to {1}", webinar.idWebinar + " - " + webinar.Title, webinar.RecordingUrl));
+                SendRecordingIsPostedNotifications(webinarDetailsViewModel, webinar);
                 return true;
 
             }
@@ -514,13 +513,60 @@ namespace CUWebinars.Web.Core.Orchestrators
             return false;
         }
 
-        private void SendsRecordingIsPostedNotifications(WebinarDetailsViewModel webinarDetailsViewModel, Webinar webinar)
+         public bool UpdateWebinarRecordingBatch(int idWebinar, string recordingURL, out string message)
+        {
+            int webinarId = 0;
+            message = string.Empty;
+
+            try
+            {
+                Webinar webinar = _webinarManagementService.GetWebinar(idWebinar); //_webinarManagementService.GetWebinar(webinarDetailsViewModel.Webinar.idWebinar);
+                
+                var checkThatNewFilesExist = CheckThatFileExists(webinar.RecordingUrl);
+
+                if (checkThatNewFilesExist != "OK")
+                {
+                    message = string.Concat(webinar.RecordingUrl, " does not exist.");
+                    _logger.Error(string.Format(webinar.RecordingUrl, " does not exist."));
+                    return false;
+                }
+                webinar.RecordingUrl = webinar.RecordingUrl;
+
+                webinar.Status = WebinarStatus.Recorded;
+
+                _webinarManagementService.UpdateWebinar(webinar);
+
+                _logger.Info(string.Format("Recordings posted for {0} is saved to {1}", webinar.idWebinar + " - " + webinar.Title, webinar.RecordingUrl));
+                SendRecordingIsPostedBatch(idWebinar);
+                return true;
+
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException(string.Format("UpdateWebinarRecording| UpdateWebinarRecording failed {0} on idWebinar: {1}", exception.Message, webinarId), exception);
+                message = string.Format("UpdateWebinarRecording| UpdateWebinarRecording failed {0} on idWebinar: {1}", exception.Message, webinarId);
+            }
+
+            return false;
+        }
+
+        private void SendRecordingIsPostedNotifications(WebinarDetailsViewModel webinarDetailsViewModel, Webinar webinar)
         {
             var ordersForWebinar = _orderManagementService.GetV3OrdersByWebinar(webinar.idWebinar);
 
             AddClaimForPostEventMaterials(ordersForWebinar);
 
             _orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
+
+        }
+
+        public void SendRecordingIsPostedBatch(int idWebinar)
+        {
+            var ordersForWebinar = _orderManagementService.GetV3OrdersByWebinarForPostEventClaims(idWebinar).ToList();
+
+            AddClaimForPostEventMaterials(ordersForWebinar);
+
+            //_orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
 
         }
 
@@ -902,9 +948,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                     _logger.Info("Claim of OnDemand access added for " + order.idOrder + "-" + onDemandCode);
 
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    _logger.Error(string.Format("AddClaimForPostEventMaterials| MR record not found {0}", order.BillingEmail));
+                    _logger.Fatal("AddClaimForPostEventMaterials| MR record not found "+ order.BillingEmail, ex);
                 }
             }
         }

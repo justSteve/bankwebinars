@@ -457,6 +457,11 @@ namespace CUWebinars.Business.Services
             throw new NotImplementedException();
         }
 
+        public IEnumerable<Order> GetV3OrdersByWebinarForPostEventClaims(int idWebinar)
+        {
+            return _webinarRepository.GetOrdersByWebinarForPostEventClaims(idWebinar);
+        }
+
 
         public IEnumerable<Order> GetOrdersByLastName(string lastName, int aff)
         {

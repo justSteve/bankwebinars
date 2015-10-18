@@ -844,7 +844,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 if (orderRow.Webinar.Status != WebinarStatus.Recorded) return;
 
-                var onDemandCode = RandomHelpers.GetUniqueCode(4).ToLower();
+                var onDemandCode = RandomHelpers.GetUniqueCode(5).ToLower();
                 var newExpiryDate = orderRow.Webinar.Date.AddMonths(6).ToShortDateString();
                 var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
                 var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, newExpiryDate);

@@ -2135,7 +2135,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     if (onDemandCode == null)
                     {
-                        onDemandCode = RandomHelpers.GetUniqueCode(4);
+                        onDemandCode = RandomHelpers.GetUniqueCode(5);
                         order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).OnDemandCode = onDemandCode;
                         _orderManagementService.SaveChanges();
                     }

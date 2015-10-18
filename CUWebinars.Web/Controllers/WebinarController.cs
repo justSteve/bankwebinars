@@ -1420,6 +1420,15 @@ namespace CUWebinars.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public ActionResult UpdateWebinarRecordingBatch(int idWebinar, string recordingURL)
+        {
+            var webinar = _webinarManagementService.GetWebinar(idWebinar);
+            webinar.RecordingUrl = recordingURL;
+
+            _webinarControllerOrchestrator.SendRecordingIsPostedBatch(idWebinar);
+            return Content("ok");
+        }
         public ActionResult UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel)
         {
             if (ModelState.IsValid)
