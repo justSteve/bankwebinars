@@ -455,7 +455,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
 
 
-                model.PostEventAccessExpires = _membershipService.GetPostEventAccessExpireyDate(userAccount, id.Value);
+                model.PostEventAccessExpires = _orderManagementService.GetPostEventMaterialsAccessExpiry(model.Order);
                 return View(model);
             }
 
@@ -688,7 +688,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     }
 
                     if (model.NewClaimType.Equals(
-                        Business.Constants.ClaimTypes.DisplayPostEventMaterials, StringComparison.OrdinalIgnoreCase))
+                        Business.Constants.ClaimTypes.PostEventMaterials, StringComparison.OrdinalIgnoreCase))
                     {
                         var result = _membershipService.ValidatePostEventMaterialsAccessClaimValue(
                             model.NewClaimValue,
@@ -1554,7 +1554,7 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.WebUser.email);
 
-                DateTime? expiryDate = _membershipService.GetPostEventAccessExpireyDate(userAccount, order.idOrder);
+                DateTime? expiryDate = _orderManagementService.GetPostEventMaterialsAccessExpiry(order);
 
                 if (expiryDate.HasValue && expiryDate > TtsConfig.UtcNowAsCts)
                 {
@@ -2127,28 +2127,39 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 if (string.IsNullOrWhiteSpace(newExpiryDate)) throw new ValidationException("You need to enter a value.");
 
-                var onDemandCode = RandomHelpers.GetUniqueCode(5);
-
-                var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, orderID.Value);
-                var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, newExpiryDate);
-                var OnDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, onDemandCode);
-
-                var claimValue = new JObject(
-                    orderIdProperty,
-                    expiryDateProperty,
-                    OnDemandCodeProperty
-                    );
-
                 var order = _orderManagementService.GetOrderById(orderID.Value);
+                if (order != null)
+                {
 
-                _membershipService.UpdateDisplayPostEventMaterialsClaim(
-                    _globalConfig.Tenant,
-                    email,
-                    DateTime.Parse(newExpiryDate),
-                    order
-                    );
-                _logger.Info("Added expiryDate claim for: {0}. Date: {1}", orderID.Value, DateTime.Parse(newExpiryDate));
-                return Json(new { Result = WebUiConstants.Success });
+                    var onDemandCode = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).OnDemandCode;
+
+                    if (onDemandCode == null)
+                    {
+                        onDemandCode = RandomHelpers.GetUniqueCode(4);
+                        order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).OnDemandCode = onDemandCode;
+                        _orderManagementService.SaveChanges();
+                    }
+                    var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, orderID.Value);
+                    var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, newExpiryDate);
+                    var OnDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, onDemandCode);
+
+                    var claimValue = new JObject(
+                        orderIdProperty,
+                        expiryDateProperty,
+                        OnDemandCodeProperty
+                        );
+
+
+
+                    _membershipService.UpdatePostEventMaterialsClaim(
+                        _globalConfig.Tenant,
+                        email,
+                        DateTime.Parse(newExpiryDate),
+                        order
+                        );
+                    //_logger.Info("Added expiryDate claim for: {0}. Date: {1}", orderID.Value, DateTime.Parse(newExpiryDate));
+                    return Json(new {Result = WebUiConstants.Success});
+                }
             }
             catch (Exception exception)
             {

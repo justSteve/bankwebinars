@@ -15,7 +15,7 @@ namespace CUWebinars.Business.Validation.Identity
 
         private bool ValueMustConformToStructureForThisClaim(Tuple<string,string> claimAndValue, string claimValue)
         {
-            if (claimAndValue.Item1.Equals(ClaimTypes.DisplayPostEventMaterials, StringComparison.OrdinalIgnoreCase))
+            if (claimAndValue.Item1.Equals(ClaimTypes.PostEventMaterials, StringComparison.OrdinalIgnoreCase))
             {
                 var regex = new Regex(@"^\d+[:]\d{4}[-]\d{1,2}[-]\d{1,2}$");
 

@@ -896,7 +896,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         );
 
                     _membershipService.AddClaim(
-                        userAccountOfOrderer, ClaimTypes.DisplayPostEventMaterials, claimValue.ToString(Formatting.None)
+                        userAccountOfOrderer, ClaimTypes.PostEventMaterials, claimValue.ToString(Formatting.None)
                         );
 
                     _logger.Info("Claim of OnDemand access added for " + order.idOrder + "-" + onDemandCode);

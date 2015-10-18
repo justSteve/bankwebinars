@@ -49,5 +49,6 @@ namespace CUWebinars.Business.Repository
         void ConvertLegacyOrder(Order order);
         void MigrateOrderFromV3(Order order);
         Order FindExpressCheckoutOrderByOrderId(int q11Orderid);
+        void SynchIds(int lOrder, int vOrder);
     }
 }

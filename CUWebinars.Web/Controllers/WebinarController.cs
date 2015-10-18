@@ -618,9 +618,9 @@ namespace CUWebinars.Web.Controllers
                         {
                             var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, checkOrder.WebUser.email);
 
-                            var postEventAccessExpireyDate = _membershipService.GetPostEventAccessExpireyDate(userAccount, checkOrder.idOrder);
+                            var postEventAccessExpireyDate = _orderManagementService.GetPostEventMaterialsAccessExpiry(checkOrder);
 
-                            if (postEventAccessExpireyDate != null && postEventAccessExpireyDate.Value >= DateTime.Today)
+                            if (postEventAccessExpireyDate >= DateTime.Today)
                             {
                                 model.RegistrationSummaryViewModel.DisplayPostEventMaterials = checkOrder.idOrder;
                             };

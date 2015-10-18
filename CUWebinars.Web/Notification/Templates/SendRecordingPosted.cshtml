@@ -50,8 +50,28 @@
     {
         phone = webinar.AccessPhone;
     }
+
+
+    var RegTypeFriendly = row.Single().RegistrationType.OptionLabel;
+
+    switch (row.Single().RegistrationType.OptionLabel)
+    {
+        case "OnDemand Recording Only":
+            RegTypeFriendly = "Recorded";
+            break;
+        case "CD-ROM and Hardcopy Handouts":
+            RegTypeFriendly = "CD-ROM";
+            break;
+        case "Live Plus Five":
+            RegTypeFriendly = "Live";
+            break;
+
+        default:
+            break;
+    }
+
     var HeaderText = "Your Recording is posted!";
-    var BannerText = "Order Number: " + TenantPrefix + Model.Order.idOrderLegacy + "<br />Attendance Type: " + row.Single().RegistrationType.OptionLabel;
+    var BannerText = "Order Number: " + TenantPrefix + Model.Order.idOrderLegacy + "<br />Attendance Type: " + RegTypeFriendly;
 
 
     var infoPhrase = new StringBuilder();

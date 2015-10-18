@@ -481,7 +481,7 @@
     <Compile Include="Models\IdentifyModel.cs" />
     <Compile Include="Models\ImportOrderModel.cs" />
     <Compile Include="Models\JotFormWebHook.cs" />
-    <Compile Include="Models\JsonModels\OnDemandClaim.cs">
+    <Compile Include="Models\JsonModels\PostEventClaim.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Models\JsonModels\OrderChangedComments.cs">

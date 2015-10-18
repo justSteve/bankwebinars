@@ -340,6 +340,14 @@ namespace CUWebinars.Business.Repository
                 .FirstOrDefault(order => order.idOrder == q11Orderid);
         }
 
+        public void SynchIds(int lOrder, int vOrder)
+        {
+            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
+            dataOperations.SynchOrderIds(lOrder, vOrder);
+
+
+        }
+
         public IList<int> FindOrderIdsByPartialId(int userId)
         {
             return items.Include(o => o.WebUser)

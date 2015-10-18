@@ -26,12 +26,12 @@
             {
                 var row = recorded.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
 
-                var onDemandClaim = new OnDemandClaim();
+                var onDemandClaim = new PostEventClaim();
                 if (Model.MyClaims != null)
                 {
                     foreach (var claim in Model.MyClaims)
                     {
-                        var thisClaim = JsonConvert.DeserializeObject<OnDemandClaim>(claim.ToString());
+                        var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.ToString());
                         if (thisClaim.OrderId == row.idOrder)
                         {
                             onDemandClaim.OrderId = row.idOrder;

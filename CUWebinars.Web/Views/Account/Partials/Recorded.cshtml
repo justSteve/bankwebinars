@@ -22,12 +22,12 @@
             {
                 var row = recorded.Value.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
 
-                var onDemandClaim = new OnDemandClaim();
+                var onDemandClaim = new PostEventClaim();
                 if (Model.MyClaims != null)
                 {
                     foreach (var claim in Model.MyClaims)
                     {
-                        var thisClaim = JsonConvert.DeserializeObject<OnDemandClaim>(claim.ToString());
+                        var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.ToString());
                         if (thisClaim.OrderId == row.idOrder)
                         {
                             onDemandClaim.OrderId = row.idOrder;
@@ -41,13 +41,13 @@
                 {
                     onDemandClaimString = onDemandClaim.OrderId.ToString() + "-" + onDemandClaim.OnDemandCode;
                 }
-                var expiresDate = row.Webinar.Date.AddMonths(6);
-                var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
+                //var expiresDate = row.Webinar.Date.AddMonths(6);
+                var remainingDays = Convert.ToInt32((onDemandClaim.ExpiryDate - DateTime.Now).TotalDays);
                 var accessPhrase = "will be accessible ";
 
                 if (row.RegistrationType.ShowRecordingNotifications == "No")
                 {
-                    accessPhrase = "would be accessible (with upgrade) ";
+                    accessPhrase = "would be accessible for 6 months from now ";
                 }
 
                 <div class="container-fluid">
@@ -59,7 +59,7 @@
                             <h4 id="recorded-@row.idWebinar">@row.Webinar.Title</h4>
                             <div>
                                 <p>
-                                    This event was recorded on @Html.DisplayDate(row.Webinar.Date) and @accessPhrase until @Html.DisplayDate(expiresDate)
+                                    This event was recorded on @Html.DisplayDate(row.Webinar.Date) and @accessPhrase until @Html.DisplayDate(onDemandClaim.ExpiryDate)
                                     - @remainingDays more days.
                                 </p>
                             </div>

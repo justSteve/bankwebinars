@@ -413,7 +413,10 @@ namespace CUWebinars.Business.Services
                     try
                     {
                         _logger.Info("SynchOrder CommonToBoth {0} of {1} - {2} ", i, commonEmails.Count(), orderEmail);
-
+                        if (vOrder.idOrder != vOrder.idOrderLegacy)
+                        {
+                            _orderRepository.SynchIds(vOrder.idOrderLegacy, vOrder.idOrder);
+                        }
                         if (lOrder.Total != vOrder.Total)
                         {
                             _logger.Info("SynchOrder Legacy Total = {0} vs. V3 Total = {1} on {2} ", lOrder.Total, vOrder.Total, orderEmail);
@@ -447,6 +450,11 @@ namespace CUWebinars.Business.Services
         public Order FindExpressCheckoutOrderByOrderId(int q11Orderid)
         {
             return _orderRepository.FindExpressCheckoutOrderByOrderId(q11Orderid);
+        }
+
+        public string GetAccessToRecording(Order order)
+        {
+            throw new NotImplementedException();
         }
 
 
@@ -1080,13 +1088,13 @@ namespace CUWebinars.Business.Services
                 Double costCD = i[2];
 
                 string orderSum = OrderSummaryBuilder(order);
-
+                _logger.Info("SendRecordingIsPosted: " + order.idOrder);
                 var postEventPublishModel = new PostEventPublishModel()
                 {
                     Order = order,
                     CostFor6month = (Convert.ToDecimal(cost6) - Convert.ToDecimal(basePrice)).ToString().Replace(".00", ""),
                     CostForCD = (Convert.ToDecimal(costCD) - Convert.ToDecimal(basePrice)).ToString().Replace(".00", ""),
-                    ExpiryDate = GetPostEventMaterialsAccessExpiry(order),
+                    ExpiryDate = GetPostEventMaterialsAccessExpiry(order).ToShortDateString(),
                     OrderSummaryString = orderSum
                 };
                 AddEvent(new SendRecordingPostedEvent<PostEventPublishModel>
@@ -1228,7 +1236,7 @@ namespace CUWebinars.Business.Services
             sb.Append("");
             sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
             sb.Append("            <b>");
-            sb.Append(GetPostEventMaterialsAccessExpiry(order));
+            sb.Append(GetPostEventMaterialsAccessExpiry(order).ToShortDateString());
             sb.Append("            </b>");
             sb.Append("        </span>");
             sb.Append("    </td>");
@@ -1564,25 +1572,33 @@ namespace CUWebinars.Business.Services
         }
 
 
-        public String GetPostEventMaterialsAccessExpiry(Order order)
+        public DateTime GetPostEventMaterialsAccessExpiry(Order order)
         {
             if (order == null) throw new ArgumentNullException("order");
+
+            DateTime expryDate = order.OrderDate.AddMonths(6);
 
 
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             // let exception be thrown if there is not a single 
 
-            var LivePlusFiveValue = orderRow.Webinar.LivePlusFiveValue;
-            if (ReferenceEquals(LivePlusFiveValue, null))
-                LivePlusFiveValue = 7;
+            if (orderRow.Webinar.Date > order.OrderDate)
+                expryDate = orderRow.Webinar.Date.AddMonths(6);
 
 
             var regType = GetRegTypeOfOrderRow(orderRow.idRegType);
 
             if (regType.ShowRecordingNotifications.Equals("yes", StringComparison.OrdinalIgnoreCase))
-                return DateTime.Today.AddMonths(6).ToShortDateString();
+            {
+                return expryDate;
+            }
             //update to pull LivePlusFive value from database
-            return DateTime.Today.AddDays(LivePlusFiveValue).ToShortDateString();
+
+            if (orderRow.Webinar.LivePlusFiveValue == 0)
+            {
+                return orderRow.Webinar.Date.AddDays(7);
+            }
+            return orderRow.Webinar.Date.AddDays(orderRow.Webinar.LivePlusFiveValue);
         }
 
         public void GetJoinUrl(OrderRow row)

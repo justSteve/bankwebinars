@@ -925,7 +925,7 @@ namespace CUWebinars.Business.Core
 
         }
 
-        private void SynchOrderIds(int legacyOrderId, int v3OrderId)
+        public void SynchOrderIds(int legacyOrderId, int v3OrderId)
         {
             using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
             {
