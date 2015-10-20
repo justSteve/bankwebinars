@@ -157,7 +157,7 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 Protocol = Protocol.Ftp,
                 HostName = "waws-prod-ch1-005.ftp.azurewebsites.windows.net",
-                UserName = "$BankWebinarsOp",
+                UserName = "BankWebinars33\\$BankWebinarsOp",
                 Password = "FDcehM4K2WbSuxEplrG2B7uJxqrMbeqJ6MdDm3GLyraYTmzWnmLDQAkllu0t",
                 FtpMode = FtpMode.Passive
 
@@ -768,7 +768,7 @@ namespace CUWebinars.Web.Controllers.Admin
             if (ReferenceEquals(null, user))
             {
                 userCreatedByCheckout = true;
-                _logger.Info("ExpressPostback user must be created: " + user.email);
+                _logger.Info("ExpressPostback user must be created: " + form.q5_email5);
                 user = _membershipService.CreateExpressCheckoutUser(_globalConfig.Tenant, form.q5_email5
                     , form.q4_name.first
                     , form.q4_name.last
@@ -780,7 +780,7 @@ namespace CUWebinars.Web.Controllers.Admin
             Order expressOrder = _orderManagementService.FindExpressCheckoutOrder(form.q5_email5,
                 form.q18_q_webinarid18);
 
-            if (form.q11_orderid != null && form.q11_orderid > 0)
+            if (form.q11_orderid > 0)
             {
                 expressOrder = _orderManagementService.FindExpressCheckoutOrderByOrderId(form.q11_orderid);
             }
@@ -2265,6 +2265,15 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
         [HandleAjaxException]
+        [AllowAnonymous]
+        public ActionResult SynchOrdersBatch(int? webinarId, int? idAffiliate)
+        {
+
+            _orderManagementService.SynchOrders(webinarId.Value);
+            return  Content("Ok");
+        }
+
+        [HandleAjaxException]
         [HttpPost]
         [AllowAnonymous]
         public ActionResult GetGridData(int? webinarId, int? affiliateId)
@@ -2598,6 +2607,27 @@ namespace CUWebinars.Web.Controllers.Admin
             return responsePayload;
         }
 
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult CertificateOfCompletionDS(int id, string displayName, string displayInst)
+        {
+            //if
+            //OrderRow row = OrderFacade.Instance.LoadOrderRow(id);
+            var webinar = _webinarManagementService.GetWebinar(id);
+            ViewData["displayName"] = displayName;
+            ViewData["SessionInfo"] = "The Directors Education Series<br>" + webinar.Title + " - Presented By " +
+                                      webinar.Presenter.WebUser.FullName;
+            ;
+            ViewData["displayInst"] = displayInst;
+
+            return View("COC_DS");
+        }
+
+
+        public ActionResult RedirectToLegacyBlog()
+        {
+            return Redirect("http://Legacy.Bankwebinars.com/Blog");
+        }
+
         private IList<IDictionary<string, string>> BuildDisplayOrdersByUserViewModel(string email, out int totalNumberOrders)
         {
             var orders = _dataTablesService.GetOrdersByUser(email, 19, out totalNumberOrders);
@@ -2681,6 +2711,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return new List<Address> { billingAddress, shippingAddress };
         }
+
 
         private static IEnumerable<SelectListItem> GetClaimTypesFromClass(Type type, ConstantType typeOfConstant)
         {

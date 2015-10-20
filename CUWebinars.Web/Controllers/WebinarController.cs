@@ -298,19 +298,24 @@ namespace CUWebinars.Web.Controllers
             }
         }
 
-        public ActionResult RedirectLegacyRecordings()
+        public ActionResult Recorded(int? idAff)
         {
-            if (!ReferenceEquals(RouteData.Values["arg2"], null))
-            {
-                return
-                    Redirect("http://legacy.bankwebinars.com/Recordings/" + RouteData.Values["arg1"] + "/" +
-                             RouteData.Values["arg2"]);
-            }
-            else
-            {
-                return
-                    Redirect("http://legacy.bankwebinars.com/Recordings/" + RouteData.Values["arg1"]);
-            }
+            return RedirectToAction("AllActive", "Webinar", new { eventsToShow = "recorded", idAff = idAff });
+        }
+
+  
+        public ActionResult Upcoming(int? idAff)
+        {
+            return RedirectToAction("AllActive", "Webinar", new { eventsToShow = "upcoming", idAff = idAff });
+        }
+
+        public ActionResult OnDemandPlayback(int? idWebinar, int? idUser)
+
+        {
+
+            return Redirect("http://legacy.bankwebinars.com/Webinar/OnDemandPlayback?idWebinar="+ idWebinar +"&idUser="+idUser);
+            //_webinarControllerOrchestrator.OnDemandLegacy(idWebinar.Value, idUser.Value);
+            //return View(webinar);
         }
 
 
@@ -367,7 +372,7 @@ namespace CUWebinars.Web.Controllers
             }
         }
 
-        public ActionResult AllActive(string eventsToShow)
+        public ActionResult AllActive(string eventsToShow, int? idAff)
         {
             var webinars = _webinarManagementService.GetAllActive();
             ViewBag.TopicCaption = " ";

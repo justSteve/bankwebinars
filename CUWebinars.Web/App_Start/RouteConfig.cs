@@ -21,10 +21,17 @@ namespace CUWebinars.Web.App_Start
                 defaults: new { controller = "Admin", action = "ExpressCheckout", id = 0 }
             );
             routes.MapRoute(
+                "blog",
+                url: "blog/",
+                defaults: new { controller = "Admin", action = "RedirectToLegacyBlog"}
+            );
+
+            routes.MapRoute(
                 "ccpostback",
                 url: "ccpostback",
                 defaults: new { controller = "Cart", action = "PostBackMoneris", id = 0 }
             );
+
             routes.MapRoute(
                 "ccpostbackbw",
                 url: "ccpostbackbw",
@@ -69,6 +76,33 @@ namespace CUWebinars.Web.App_Start
                 defaults: new { controller = "Webinar", action = "RedirectLegacyHandouts" }
             );
 
+
+            routes.MapRoute(
+                "OnDemandPlaybackLegacy",
+                url: "Webinar/OnDemandPlayback/{args}",
+                defaults: new { controller = "Webinar", action = "RedirectLegacyRecordings" }
+            );
+
+            
+            routes.MapRoute(
+                "DirSeriesCerts",
+                url: "Admin/registrations/CertificateOfCompletionDS",
+                defaults: new { controller = "Admin", action = "CertificateOfCompletionDS" }
+            );
+
+                  
+            routes.MapRoute(
+                "Recorded",
+                url: "Webinar/Recorded",
+                defaults: new { controller = "Webinar", action = "Recorded" }
+            );
+
+                  
+            routes.MapRoute(
+                "Upcoming",
+                url: "Webinar/Upcoming",
+                defaults: new { controller = "Webinar", action = "Upcoming" }
+            );
 
             routes.MapRoute(
                 "RedirectLegacyRecordings",

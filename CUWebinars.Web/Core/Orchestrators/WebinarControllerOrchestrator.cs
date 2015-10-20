@@ -483,7 +483,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             try
             {
-                Webinar webinar = webinarDetailsViewModel.Webinar; //_webinarManagementService.GetWebinar(webinarDetailsViewModel.Webinar.idWebinar);
+                Webinar webinar = _webinarManagementService.GetWebinar(webinarDetailsViewModel.Webinar.idWebinar);
                 
                 var checkThatNewFilesExist = CheckThatFileExists(webinarDetailsViewModel.Webinar.RecordingUrl);
 

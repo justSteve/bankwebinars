@@ -1,0 +1,33 @@
+﻿    @*Inherits="System.Web.Mvc.ViewPage<orderrow>
+    " %>
+
+    <%@ Import Namespace="TTSTrain.Webinars.WebEntry" %>
+    <script runat="server">
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+        }
+    </script>*@
+    @*<asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
+        Certificate of Completion
+    </asp:Content>*@
+        <div style=" width: 860px; height: 612px;">
+            <div id="showName" style="float: none;  text-align: center; width: 860px; ">
+                <img src="/Content/images/CertDS.gif" />
+                <div>
+                    <h2 id="displayName">
+                        @ViewData["displayName"]
+                    </h2>
+                    <h2 id="displayInst">
+                        @ViewData["displayInst"] 
+                    </h2>
+                </div>
+            </div>
+            <div>
+                <p style="text-align: center; width: 860px; ">
+                    @ViewData["SessionInfo"].ToString()
+                </p>
+            </div>
+        </div>
+

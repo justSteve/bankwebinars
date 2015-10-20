@@ -312,10 +312,11 @@ namespace CUWebinars.Business.Services
             // find common numbers in both arrays
             var commonEmails = legacyEmails.Intersect(v3Emails).ToList();
 
-            _logger.Info("SynchOrders found {0} missingFromV3, {1} missingFromLegacy, and {2} already synched. ", missingFromV3.Count(), missingFromLegacy.Count(), commonEmails.Count());
+            _logger.Info("SynchOrders on {3} found {0} missingFromV3, {1} missingFromLegacy, and {2} already synched. ", missingFromV3.Count(), missingFromLegacy.Count(), commonEmails.Count(), webinarId);
             var i = 1;
             try
             {
+                if (missingFromLegacy.Count > 0)
                 foreach (var orderEmail in missingFromLegacy)
                 {
                     var order = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
@@ -375,12 +376,13 @@ namespace CUWebinars.Business.Services
             }
             catch (Exception ex)
             {
-                _logger.ErrorException("missingFromLegacy loop failed. ", ex);
+                _logger.ErrorException("missingFromLegacy loop failed.  i=" + i + " idWebinar=" + webinarId, ex);
             }
 
             i = 1;
             try
             {
+                if (missingFromV3.Count > 0)
                 foreach (var orderEmail in missingFromV3)
                 {
                     var order = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
@@ -400,12 +402,13 @@ namespace CUWebinars.Business.Services
             }
             catch (Exception ex)
             {
-                _logger.ErrorException("missingFromV3 loop failed. ", ex);
+                _logger.ErrorException("missingFromV3 loop failed. i=" + i + " idWebinar=" + webinarId , ex);
             }
 
             i = 1;
             try
             {
+                if (commonEmails.Count > 0)
                 foreach (var orderEmail in commonEmails)
                 {
                     var lOrder = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
@@ -441,7 +444,7 @@ namespace CUWebinars.Business.Services
             catch (Exception ex)
             {
 
-                _logger.ErrorException("CommonToBoth loop failed. ", ex);
+                _logger.ErrorException("CommonToBoth loop failed.  i=" + i + " idWebinar=" + webinarId , ex);
             }
 
             _logger.Info("SynchOrders ends for: " + webinarId);
