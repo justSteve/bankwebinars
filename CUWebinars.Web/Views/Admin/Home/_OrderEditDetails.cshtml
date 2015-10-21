@@ -120,6 +120,13 @@
             </div>
 
         </div>
+        <div id="SubmitPanel" style="margin-top: 0;" class="span2">
+            <div class="control-group">
+                <div class="controls">
+                    <button id="editOrderSubmitButton" class="btn btn-primary">Submit Edited Details</button>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="row">
 
@@ -152,13 +159,7 @@
         </div>
 
     </div>
-    <div id="SubmitPanel" style="margin-top: 0;" class="span2">
-        <div class="control-group">
-            <div class="controls">
-                <button id="editOrderSubmitButton" class="btn btn-primary">Submit Edited Details</button>
-            </div>
-        </div>
-    </div>
+
     @Html.HiddenFor(m => m.CostPerAdditionalLocation)
     @Html.HiddenFor(m => m.Id)
     @Html.HiddenFor(m => m.UserId)

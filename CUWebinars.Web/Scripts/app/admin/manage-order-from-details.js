@@ -206,7 +206,7 @@ $(function () {
     };
 
     ns.submitForm = function (e) {
-
+        
         e.preventDefault();
 
         var emailInputs = ns.wrapperDiv.find('input[type="email"]');

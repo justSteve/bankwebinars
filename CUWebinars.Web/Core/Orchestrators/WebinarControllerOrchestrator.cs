@@ -945,7 +945,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         userAccountOfOrderer, ClaimTypes.PostEventMaterials, claimValue.ToString(Formatting.None)
                         );
 
-                    _logger.Info("Claim of OnDemand access added for " + order.idOrder + "-" + onDemandCode);
+                    _logger.Info("Claim of OnDemand access added for " +  order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar + " - " + order.idOrder + "-" + onDemandCode);
 
                 }
                 catch (Exception ex)
