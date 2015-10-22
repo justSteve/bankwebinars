@@ -65,18 +65,7 @@ namespace CUWebinars.Web.App_Start
 
             );
 
-            routes.MapRoute(
-                "RedirectLegacyHandouts",
-                url: "handouts/{arg1}/{arg2}",
-                defaults: new { controller = "Webinar", action = "RedirectLegacyHandouts" }
-            );
-            routes.MapRoute(
-                "RedirectLegacyHandouts1",
-                url: "handouts/{arg1}",
-                defaults: new { controller = "Webinar", action = "RedirectLegacyHandouts" }
-            );
-
-
+            
             routes.MapRoute(
                 "OnDemandPlaybackLegacy",
                 url: "Webinar/OnDemandPlayback/{args}",
@@ -104,15 +93,17 @@ namespace CUWebinars.Web.App_Start
                 defaults: new { controller = "Webinar", action = "Upcoming" }
             );
 
+
             routes.MapRoute(
                 "RedirectLegacyRecordings",
-                url: "Recordings/{arg1}/{arg2}",
-                defaults: new { controller = "Webinar", action = "RedirectLegacyRecordings" }
+                url: "Recordings/{recordingURL}",
+                defaults: new { controller = "Webinar", action = "RedirectLegacyRecordings"}
             );
+
             routes.MapRoute(
-                "RedirectLegacyRecordings1",
-                url: "Recordings/{arg1}",
-                defaults: new { controller = "Webinar", action = "RedirectLegacyRecordings" }
+                "RedirectLegacyHandouts",
+                url: "handouts/",
+                defaults: new { controller = "Webinar", action = "RedirectLegacyHandouts" }
             );
 
 

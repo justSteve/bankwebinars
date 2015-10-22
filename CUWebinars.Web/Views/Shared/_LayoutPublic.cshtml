@@ -198,17 +198,17 @@
 
     </script>
     @{
-        if (@User.Identity.IsAuthenticated && !HttpContext.Current.IsDebuggingEnabled)
+        if (@User.Identity.IsAuthenticated)
         {
-            if (!Html.IsDebug())
-            {
+            //if (!Html.IsDebug())
+            //{
                 <script>
                     window.$zopim(function () {
                         window.$zopim.livechat.setName("@User.Identity.Name.ToString().Replace("@", "_")");
 
                     });
                 </script>
-            }
+            //}
         }
     }
 </head>

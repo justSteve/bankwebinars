@@ -115,5 +115,7 @@ namespace CUWebinars.Business.Services
         string GetAccessToRecording(Order order);
         IEnumerable<Order> GetV3OrdersByWebinarForPostEventClaims(int idWebinar);
         void UpdateOrderByAdmin(Order newOrder);
+        int SynchExpressCheckoutOrder(Order order);
+        void SynchIds(Order order);
     }
 }

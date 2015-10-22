@@ -174,7 +174,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     // Connect
                     session.DebugLogLevel = 1;
                     session.DebugLogPath = "d:\\log.log";
-                    
+
                     session.Open(sessionOptions);
                     // Upload files
                     TransferOptions transferOptions = new TransferOptions();
@@ -759,16 +759,16 @@ namespace CUWebinars.Web.Controllers.Admin
 
             ExpressCheckoutModel form
                 = JsonConvert.DeserializeObject<ExpressCheckoutModel>(postback.RawRequest);
-            _logger.Info("ExpressPostback deserialized the fields to: " + form.ToString());
+            _logger.Info("ExpressCheckout deserialized the fields to: " + form.ToString());
 
 
             var user = _membershipService.GetUserByEmail(form.q5_email5);
-            var userFromLegacy = _membershipService.GetUserFromLegacy(form.q5_email5);
+            //var userFromLegacy = _membershipService.GetUserFromLegacy(form.q5_email5);
             bool userCreatedByCheckout = false;
             if (ReferenceEquals(null, user))
             {
                 userCreatedByCheckout = true;
-                _logger.Info("ExpressPostback user must be created: " + form.q5_email5);
+                _logger.Info("ExpressCheckout user must be created: " + form.q5_email5);
                 user = _membershipService.CreateExpressCheckoutUser(_globalConfig.Tenant, form.q5_email5
                     , form.q4_name.first
                     , form.q4_name.last
@@ -789,22 +789,45 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 try
                 {
-                    _logger.Info("ExpressPostback webhook {0} found order: {1}", postback.FormId, expressOrder.idOrder);
+                    _logger.Info("ExpressCheckout webhook {0} found order: {1}", postback.FormId, expressOrder.idOrder);
                     _orderManagementService.AssignWebUserToOrder(user, expressOrder);
                     var forComment = new JProperty(
-                        string.Concat("ExpressCheckout-", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
-                            new JObject(new JProperty("ExpressCheckoutComments", expressOrder.AdminComments))
+                        string.Concat("ExpressCheckout-",
+                            TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                        new JObject(new JProperty("ExpressCheckoutComments", expressOrder.AdminComments))
                         );
                     expressOrder.OrderStatus = OrderStatus.Submitted;
                     expressOrder.Origin = "ExpressCheckout";
                     expressOrder.AdminComments = forComment.ToString();
+                    //_orderManagementService.AttachAffiliate(_orderManagementService.GetAffiliateById(expressOrder.idAffiliate));
+
+
                     _orderManagementService.SaveChanges();
-                    _logger.Info("ExpressPostback to Confirmation Email Handler: " + expressOrder.idOrder);
+
+                    try
+                    {
+                        if (_globalConfig.Tenant == "BankWebinars")
+                        {
+                            expressOrder.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(expressOrder);
+
+                            _orderManagementService.SynchIds(expressOrder);
+
+                            _orderManagementService.SaveChanges();
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.WarnException("ExpressCheckout", ex);
+                    }
+
+
+                    _logger.Info("ExpressCheckout to Confirmation Email Handler: " + expressOrder.idOrder);
                     _orderManagementService.FireOrderSubmittedEvent(expressOrder, userCreatedByCheckout);
                 }
                 catch (Exception ex)
                 {
-                    _logger.Fatal("ExpressPostback tossed exception: ", ex);
+                    _logger.Fatal("ExpressCheckout tossed exception: ", ex);
                 }
 
             }
@@ -841,6 +864,14 @@ namespace CUWebinars.Web.Controllers.Admin
                     );
 
                 newOrderRow.Order.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrderRow.Order.AdminComments, createdByExpressCheckout);
+                //_orderManagementService.AttachAffiliate(affiliate);
+
+                _orderManagementService.SaveChanges();
+
+
+                newOrder.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(newOrder);
+
+                _orderManagementService.SynchIds(newOrder);
 
                 _orderManagementService.SaveChanges();
 
@@ -849,93 +880,6 @@ namespace CUWebinars.Web.Controllers.Admin
                 _orderManagementService.FireOrderSubmittedEvent(newOrderRow.Order, true);
 
                 //return RedirectToAction("OrderComplete", "Account", new { id = expressOrder.idOrder });
-            }
-
-        }
-
-        [HttpPost]
-        [AllowAnonymous]
-        public ActionResult ExpressCheckout4IE(ExpressCheckoutModel form)
-        {
-            string formFields = Request.Form.ToString();
-            _logger.Info("ExpressPostback WARNING!!! THIS HIT DEPRICATED METHOD. all fields submitted to ExpressCheckout4IE: " + formFields.ToString());
-            var sb = new StringBuilder();
-
-            var user = _membershipService.GetUserByEmail(form.q5_email5);
-
-            if (ReferenceEquals(null, user))
-            {
-                _logger.Info("express_checkout user must be created: " + user.email);
-                user = _membershipService.CreateExpressCheckoutUser(_globalConfig.Tenant, form.q5_email5
-                    , form.q4_name.first
-                    , form.q4_name.last
-                    , form.q6_phoneNumber6.area + form.q6_phoneNumber6.phone
-                    , form.q8_institution
-                    , form.q9_title);
-                _orderManagementService.SaveChanges();
-            }
-
-
-            Order expressOrder = _orderManagementService.FindExpressCheckoutOrder(form.q5_email5,
-                form.q18_q_webinarid18);
-
-            if (!ReferenceEquals(expressOrder, null))
-            {
-                _logger.Info("ExpressCheckout4IE postback found order: " + expressOrder.idOrder);
-                _orderManagementService.AssignWebUserToOrder(user, expressOrder);
-                var forComment = new JProperty(
-                    string.Concat("ExpressCheckout-", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
-                        new JObject(new JProperty("ExpressCheckoutComments", expressOrder.AdminComments))
-                    );
-                expressOrder.OrderStatus = OrderStatus.Billed;
-                expressOrder.Origin = "ExpressCheckout";
-                expressOrder.AdminComments = forComment.ToString();
-                _orderManagementService.SaveChanges();
-                _orderManagementService.FireOrderSubmittedEvent(expressOrder, true);
-
-                return RedirectToAction("OrderComplete", "Account", new { id = form.q5_email5 });
-            }
-            else
-            {
-                _logger.Info("ExpressCheckout4IE postback did NOT find order: " + expressOrder.idOrder);
-
-                var idRegType = _webinarManagementService.GetRegTypeByLableAndWebinar(form.q10_registrationType, form.q18_q_webinarid18);
-                var newOrderRow = _orderManagementService.CreateOrderRow(null, null, idRegType);
-
-                newOrderRow.idWebinar = form.q18_q_webinarid18;
-
-                newOrderRow.idRegType = idRegType;
-                _orderManagementService.LoadWebinarIntoOrderRow(newOrderRow);
-
-
-                var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
-                _orderManagementService.SetUserStatusToUnChanged(user);
-
-                _orderManagementService.CreateNewOrder(
-                    affiliate.idUserAff,
-                    user,
-                    newOrderRow.Webinar,
-                    newOrderRow
-                    );
-
-                newOrderRow.Order.OrderStatus = OrderStatus.Submitted;
-
-                newOrderRow.Order.Origin = "ExpressCheckout";
-
-                JProperty createdByExpressCheckout = new JProperty(
-                    JsonPropertyKeys.OrderCreatedByExpressCheckoutKey,
-                    ""
-                    );
-
-                newOrderRow.Order.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrderRow.Order.AdminComments, createdByExpressCheckout);
-
-                _orderManagementService.SaveChanges();
-
-                _logger.Info("ExpressCheckout: " + form);
-
-                _orderManagementService.FireOrderSubmittedEvent(newOrderRow.Order, true);
-
-                return RedirectToAction("OrderComplete", "Account", new { id = expressOrder.idOrder });
             }
 
         }
@@ -2158,7 +2102,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         order
                         );
                     //_logger.Info("Added expiryDate claim for: {0}. Date: {1}", orderID.Value, DateTime.Parse(newExpiryDate));
-                    return Json(new {Result = WebUiConstants.Success});
+                    return Json(new { Result = WebUiConstants.Success });
                 }
             }
             catch (Exception exception)
@@ -2270,7 +2214,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
 
             _orderManagementService.SynchOrders(webinarId.Value);
-            return  Content("Ok");
+            return Content("Ok");
         }
 
         [HandleAjaxException]
@@ -2607,6 +2551,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return responsePayload;
         }
 
+        [AllowAnonymous]
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult CertificateOfCompletionDS(int id, string displayName, string displayInst)
         {

@@ -1485,6 +1485,17 @@ namespace CUWebinars.Business.Services
             var updatedOrder = _orderRepository.SaveOrderChanges(order, 0);
         }
 
+        public int SynchExpressCheckoutOrder(Order order)
+        {
+            return _orderRepository.MigrateOrderFromV3(order);
+            ;
+        }
+
+        public void SynchIds(Order order)
+        {
+            _orderRepository.SynchIds(order.idOrderLegacy, order.idOrder);
+        }
+
         public Discount GetDiscountByUser(WebUser currentUser)
         {
             var myDiscount = _orderRepository.FindDiscountByUser(currentUser);

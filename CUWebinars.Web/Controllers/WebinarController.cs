@@ -283,20 +283,6 @@ namespace CUWebinars.Web.Controllers
             return View(current);
         }
 
-        public ActionResult RedirectLegacyHandouts()
-        {
-            if (!ReferenceEquals(RouteData.Values["arg2"], null))
-            {
-                return
-                    Redirect("http://legacy.bankwebinars.com/handouts/" + RouteData.Values["arg1"] + "/" +
-                             RouteData.Values["arg2"]);
-            }
-        else
-            {
-                return
-                    Redirect("http://legacy.bankwebinars.com/handouts/" + RouteData.Values["arg1"]);
-            }
-        }
 
         public ActionResult Recorded(int? idAff)
         {
@@ -324,6 +310,18 @@ namespace CUWebinars.Web.Controllers
             
             return _webinarControllerOrchestrator.OnDemandLegacy(w.Value, u.Value);
             //return View(webinar);
+        }
+        public ActionResult RedirectLegacyRecordings(string recordingURL)
+        {
+
+            return Redirect("http://legacy.bankwebinars.com/recordings/" + recordingURL);
+         
+        }
+        public ActionResult RedirectLegacyHandouts(string handout)
+        {
+
+            return Redirect("http://legacy.bankwebinars.com/handouts/" + handout);
+         
         }
 
         public ActionResult Index()
