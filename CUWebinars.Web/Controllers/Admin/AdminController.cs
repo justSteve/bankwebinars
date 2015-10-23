@@ -437,6 +437,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     return RedirectToAction("ManageOrder");
 
                 var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, _orderManagementService.GetOrderById(id.Value).BillingEmail);
+                var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
 
                 var model = BuildManageOrderEditModel(id.Value);
 
@@ -1025,6 +1026,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             var order = _orderManagementService.GetOrderById(id);
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+            var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
             var additionalLocationsPricing =
                 _orderManagementService.GetCostOfAdditionalLocations(
                     orderRow.AdditionalLocation,
@@ -1039,6 +1041,8 @@ namespace CUWebinars.Web.Controllers.Admin
                 AdditionalLocationsAvailableOnLoad = false, // see below for where this is properly decided.
                 AdditionalLocationsRenderer = GetRenderer(additionalLocations.Select(al => al.Email).ToList()),
                 CostPerAdditionalLocation = additionalLocationsPricing.Item2,
+                ClaimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims },
+
                 DisplayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
                 {
                     Options = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.idWebinar, false),
@@ -1837,6 +1841,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [HandleAjaxException(Order = 1)]
         public ActionResult ManualPasswordReset(ManualPasswordResetViewModel model)
         {
+            model.Email = model.Email.Trim();
             if (ModelState.IsValid)
             {
                 try

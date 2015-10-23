@@ -8,8 +8,8 @@
     {
         var outerSpan = new TagBuilder("span");
         outerSpan.GenerateId("discountedText");
-        
-        if(Model.PricesAndDiscounts.TotalDiscount == 0)
+
+        if (Model.PricesAndDiscounts.TotalDiscount == 0)
             outerSpan.AddCssClass("muted");
 
         var totalDiscountElement = new TagBuilder("span");
@@ -20,13 +20,13 @@
 
         return outerSpan.ToString(TagRenderMode.Normal);
     }
-    
+
     private string GetAdditionalLocationsTextSpan()
     {
         var outerSpan = new TagBuilder("span");
         outerSpan.GenerateId("addLocsText");
-        
-        if(Model.PricesAndDiscounts.TotalCostOfOptions == 0)
+
+        if (Model.PricesAndDiscounts.TotalCostOfOptions == 0)
             outerSpan.AddCssClass("muted");
 
         var additionalLocsPriceElement = new TagBuilder("span");
@@ -39,14 +39,14 @@
         }
         else if (Model.NumberOfAdditionalLocations == 1)
         {
-            outerSpan.InnerHtml = string.Concat("One Additional Location: ",  additionalLocsPriceElement.ToString(TagRenderMode.Normal),"<br>",Model.AddressesForAdditionalLocations);    
+            outerSpan.InnerHtml = string.Concat("One Additional Location: ", additionalLocsPriceElement.ToString(TagRenderMode.Normal), "<br>", Model.AddressesForAdditionalLocations);
         }
         else
         {
             outerSpan.InnerHtml = string.Concat(Model.NumberOfAdditionalLocations, " Additional Locations: ", additionalLocsPriceElement.ToString(TagRenderMode.Normal));
         }
-        
-        
+
+
 
         return outerSpan.ToString(TagRenderMode.Normal);
     }
@@ -55,7 +55,7 @@
     private string GetStatusLabel(OrderStatus orderStatus)
     {
         var statusLabelSpan = new TagBuilder("span");
-        
+
         statusLabelSpan.GenerateId("orderStatusLabel");
         statusLabelSpan.AddCssClass("label");
 
@@ -84,7 +84,7 @@
 
         return statusLabelSpan.ToString(TagRenderMode.Normal);
     }
-        
+
 }
 
 @{
@@ -98,21 +98,21 @@
         {
             rowAmount.Append("<button id='revealDiscountInput' class='btn btn-mini btn-default'> add discount?</button> " + GetDiscountedTextSpan() + "<br />");
         }
-        
+
         //if (Model.NumberOfAdditionalLocations == 0)
         //{
         //    rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> add?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
-        //}        
+        //}
         if (Model.NumberOfAdditionalLocations > 0)
         {
-            rowAmount.Append( GetAdditionalLocationsTextSpan() + "<br>");
+            rowAmount.Append(GetAdditionalLocationsTextSpan() + "<br>");
             //rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> edit?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
         }
         if (Model.PricesAndDiscounts.TaxAmount > 0)
         {
-            rowAmount.Append("<span id='subTotal'>"+Model.RowPrice.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") +"</span> <span id='tax'><br>Tax: <span id='taxAmt'>" + Model.PricesAndDiscounts.TaxAmount.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "<br></span></span>");
-        } 
-        rowAmount.Append("<span id='totalPriceText'>Total Cost: <span id='totalPrice'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "</span></span>");
+            rowAmount.Append("<span id='subTotal'>" + Model.RowPrice.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "</span> <span id='tax'><br>Tax: <span id='taxAmt'>" + Model.PricesAndDiscounts.TaxAmount.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "<br></span></span>");
+        }
+        rowAmount.Append("<span id='totalPriceText'>Total Cost: <span id='totalPrice'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken) + "</span></span>");
 
         <div id="billingDetails" class="well" style="text-align: right;">
             @Html.Raw(rowAmount.ToString())<br />
