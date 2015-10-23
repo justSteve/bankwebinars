@@ -88,8 +88,8 @@
         infoPhrase.Append(row.Single().Webinar.Title + "</i>.</p>");
 
 
-        infoPhrase.Append("<p>Your registration includes access to OnDemand playback for a period of 5 business days." +
-                          "  If you would like to upgrade to 6 months access (adds $" + Model.CostFor6month + ") or a CD-ROM ($" + Model.CostForCD + ")  we'll be happy to adjust your registration. </p>");
+        infoPhrase.Append("<p> Included in your registration are links to all course material for five(5) business days." +
+                          "  You can upgrade your order to gain 6 months OnDemand access (adds $" + Model.CostFor6month + "). Or get the Premier Package by adding a CD-ROM ($" + Model.CostForCD + "). We'll be happy to adjust your registration - just reply to this email! </p>");
     }
     else
     {
@@ -101,7 +101,7 @@
             if (myRow.RegistrationType.ShowLiveNotifications == "Yes")
             {
                 infoPhrase.Append("<p>Your materials will be shipped soon and are typically in your hands within 7-10 business days.");
-                infoPhrase.Append(" Your registration also includes access to OnDemand playback for the next six months.</p>");
+                infoPhrase.Append(" Included in your registration are links to all course material for six months.</p>");
             }
         }
         else
@@ -109,11 +109,11 @@
             infoPhrase.Append("<p>Dear " + Model.Order.FirstName + ",<br /><br />The recording for  <i>" + row.Single().Webinar.Title + "</i> has been posted!</p>");
 
             infoPhrase.Append("<p>Your registration includes access to OnDemand playback for the next six months.");
-            infoPhrase.Append("  If you would like to upgrade to the CD-ROM plus printouts package ($" + Model.CostForCD + " extra) we'll be happy to upgrade your registration.</p>");
+            infoPhrase.Append("  Add the CD-ROM plus printouts for the Premire Package ($" + Model.CostForCD + " extra). We'll be happy to upgrade your registration - just reply to this email!</p>");
         }
     }
 
-    onDemandLink.Append(" <p>This link provides access to the event's materials until " + Model.ExpiryDate + " and may be shared with associates and co-workers within your organization:</p><p><b>http://" + TenantURL + "/o/" + Model.Order.idOrder + "-" + myRow.OnDemandCode + "</b></p>Order Summary:");
+    onDemandLink.Append(" <p>This link to the event's materials is valid until " + Model.ExpiryDate + " and may be shared with associates within your organization:</p><p><b>http://" + TenantURL + "/o/" + Model.Order.idOrder + "-" + myRow.OnDemandCode + "</b></p>Order Summary:");
 
 
     <head>

@@ -893,23 +893,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         private DateTime GetPostEventMaterialsAccessExpiry(Order order)
         {
-            if (order == null) throw new ArgumentNullException("order");
-
-            var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-            // let exception be thrown if there is not a single 
-
-
-            var LivePlusFiveValue = orderRow.Webinar.LivePlusFiveValue;
-            if (ReferenceEquals(LivePlusFiveValue, null))
-                LivePlusFiveValue = 7;
-
-
-            var regType = _orderManagementService.GetRegTypeOfOrderRow(orderRow.idRegType);
-
-            if (regType.ShowRecordingNotifications.Equals("yes", StringComparison.OrdinalIgnoreCase))
-                return DateTime.Today.AddMonths(6);
-            //Update to pull LivePlusFive value from Webinar table.
-            return DateTime.Today.AddDays(LivePlusFiveValue);
+            return _orderManagementService.GetPostEventMaterialsAccessExpiry(order);
         }
 
         private void AddClaimForPostEventMaterials(IEnumerable<Order> orders)
@@ -930,7 +914,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).OnDemandCode = onDemandCode;
 
                     _orderManagementService.SaveChanges();
-
+                    
                     var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
                     var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, expiryDate.ToString(DomainConstants.ClaimDateFormatText));
                     var OnDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, onDemandCode);
@@ -945,7 +929,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         userAccountOfOrderer, ClaimTypes.PostEventMaterials, claimValue.ToString(Formatting.None)
                         );
 
-                    _logger.Info("Claim of OnDemand access added for " +  order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar + " - " + order.idOrder + "-" + onDemandCode);
+                    _logger.Info("AddClaimForPostEventMaterials: " + order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar + " - " + order.idOrder + "-" + onDemandCode);
 
                 }
                 catch (Exception ex)
