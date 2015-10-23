@@ -819,7 +819,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     }
                     catch (Exception ex)
                     {
-                        _logger.WarnException("ExpressCheckout", ex);
+                        _logger.WarnException("ExpressCheckout blows on SynchExpressCheckoutOrder", ex);
                     }
 
 
