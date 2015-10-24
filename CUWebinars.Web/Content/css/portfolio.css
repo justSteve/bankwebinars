@@ -41,7 +41,7 @@
     padding: 15px 0 0 0;
     margin-top: 10px;
     clear: both;
-    background: url(~/Content/images/hr.png) 0 0 repeat-x;
+    background: url(../images/hr.png) 0 0 repeat-x;
 }
 .portfolio-detail .related ul {
     list-style: none;

@@ -277,7 +277,7 @@ hr {
 	border: 0px;
 	clear: both;
 	margin: 30px 0 40px;
-	background: url(~/Content/images/hr.png) repeat-x;
+	background: url(../images/hr.png) repeat-x;
 	height: 3px;
 }
 
@@ -507,7 +507,7 @@ figcaption {
 	clear: both;
 	font-size: 90%;
 	font-style: italic;
-	background: url(~/Content/images/hr.png) 0 100% repeat-x;
+	background: url(../images/hr.png) 0 100% repeat-x;
 }
 
 	figcaption p:last-child {
@@ -801,7 +801,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 	.hero-unit h1,
 	.hero-unit h2 {
 		margin: 0;
-		background: url(~/Content/images/hr.png) 0 100% repeat-x;
+		background: url(../images/hr.png) 0 100% repeat-x;
 		padding-bottom: 20px;
 		font-size: 200%;
 		font-weight: 300;
@@ -934,7 +934,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 		clear: both;
 		font-size: 90%;
 		font-style: italic;
-		background: url(~/Content/images/hr.png) 0 100% repeat-x;
+		background: url(../images/hr.png) 0 100% repeat-x;
 	}
 
 		.image-slider.flexslider .caption.no-border {
