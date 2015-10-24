@@ -41,7 +41,7 @@
     padding: 15px 0 0 0;
     margin-top: 10px;
     clear: both;
-    background: url(http://ttsmedia.ttstrain.com/images/hr.png) 0 0 repeat-x;
+    background: url(~/Content/images/hr.png) 0 0 repeat-x;
 }
 .portfolio-detail .related ul {
     list-style: none;
@@ -79,7 +79,7 @@
     width: 40px;
     height: 40px;
     float: right;
-    background: #d8dfe5 url(http://ttsmedia.ttstrain.com/images/zoom-corner.png) 50% 50% no-repeat;
+    background: #d8dfe5 url(~/Content/images/zoom-corner.png) 50% 50% no-repeat;
 }
 
 /****** slider styles ******/
@@ -97,7 +97,7 @@
 	border: none;
     text-indent: -9999px;
     display: block;
-    background: #758694 url(http://ttsmedia.ttstrain.com/images/sliderarrows.png) -280px 50% no-repeat;
+    background: #758694 url(~/Content/images/sliderarrows.png) -280px 50% no-repeat;
 }
 .portfolio-detail #slider .flex-direction-nav .flex-prev {
 	top: 25px;
@@ -165,7 +165,7 @@
     height: 100%;
     width: 100%;
     display: block;
-    background: url(http://ttsmedia.ttstrain.com/images/video-icon-small.png) center center no-repeat;
+    background: url(~/Content/images/video-icon-small.png) center center no-repeat;
 }
 .portfolio-detail #carousel li.flex-active-slide span { top: -3px }
 .portfolio-detail .video-wrapper {margin:0;}
@@ -183,7 +183,7 @@
     height: 50px;
     text-indent: -9999px;
     display: block;
-    background: #758694 url(http://ttsmedia.ttstrain.com/images/sliderarrows.png) -80px 50% no-repeat;
+    background: #758694 url(~/Content/images/sliderarrows.png) -80px 50% no-repeat;
 }
 .portfolio-detail #slider .flex-direction-nav .flex-prev {
     right: auto;
@@ -219,7 +219,7 @@
 
 
 .portfolio-detail .related {
-		background-image:url(http://ttsmedia.ttstrain.com/images/retina/hr_@2x.png);
+		background-image:url(~/Content/images/retina/hr_@2x.png);
 	    	-moz-background-size:3px 3px; /*w & h of total ORIGINAL 72dpi image*/
              -ie-background-size:3px 3px;
               -o-background-size:3px 3px;
@@ -228,7 +228,7 @@
 }
 
 .portfolio-detail #slider .flex-direction-nav a {
-    background-image:url(http://ttsmedia.ttstrain.com/images/retina/sliderarrows_@2x.png);
+    background-image:url(~/Content/images/retina/sliderarrows_@2x.png);
 			-moz-background-size:360px 100px; 
              -ie-background-size:360px 100px;
               -o-background-size:360px 100px;
@@ -238,7 +238,7 @@
 } 
 
 .portfolio-detail #slider .zoom-image { 
-	background-image: url(http://ttsmedia.ttstrain.com/images/retina/zoom-corner_@2x.png);
+	background-image: url(~/Content/images/retina/zoom-corner_@2x.png);
 	     	-moz-background-size:25px 25px; /*w & h of original 72dpi image */
              -ie-background-size:25px 25px;
               -o-background-size:25px 25px;
@@ -247,7 +247,7 @@
 }
 
 .portfolio-detail #carousel li span {
-	background-image:url(http://ttsmedia.ttstrain.com/images/retina/video-icon-small_@2x.png);
+	background-image:url(~/Content/images/retina/video-icon-small_@2x.png);
             -moz-background-size:30px 30px; 
              -ie-background-size:30px 30px;
               -o-background-size:30px 30px;

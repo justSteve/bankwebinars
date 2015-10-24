@@ -942,7 +942,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         private string CheckThatFileExists(string newFile)
         {
-            var handoutRepo = "http://ttsmedia.ttstrain.com/";
+            var handoutRepo = "~/Content/images/";
 
             HttpWebResponse response = null;
             string uri = handoutRepo + newFile;
