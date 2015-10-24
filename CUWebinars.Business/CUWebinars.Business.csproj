@@ -200,6 +200,7 @@
     <Compile Include="Models\Mapping\QuizWithQuestionMap.cs" />
     <Compile Include="Models\Mapping\TimeLimitMap.cs" />
     <Compile Include="Models\Mapping\WebUserDiscountXrefMap.cs" />
+    <Compile Include="Models\Mapping\WebUserLegacy.cs" />
     <Compile Include="Models\Option.cs" />
     <Compile Include="Models\Question.cs" />
     <Compile Include="Models\QuestionType.cs" />

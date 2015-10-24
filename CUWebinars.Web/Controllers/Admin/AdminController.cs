@@ -455,7 +455,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         _orderManagementService.SaveChanges();
                 }
 
-
+                //shouldn't the claim code be read instead of the calculated formula?
                 model.PostEventAccessExpires = _orderManagementService.GetPostEventMaterialsAccessExpiry(model.Order);
                 return View(model);
             }

@@ -897,6 +897,7 @@ namespace CUWebinars.Business.Core
             PostForm += "&DiscountCode=" + myDiscount;
             PostForm += "&Status=" + order.OrderStatus + "&Total=" + order.Total;
             PostForm += "&AdminComments=" + order.AdminComments;
+            PostForm += "&OrderStatus=" + (int)order.OrderStatus;
 
             var submitImporter = "http://acsimporter.bankwebinars.com/home/MigrateOrderFromV3/";
             if (Debugger.IsAttached)

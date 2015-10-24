@@ -81,23 +81,24 @@ namespace CUWebinars.Web
             //switch ("Dave")
             {
                 case DomainConstants.BankWebinars:
-                    //if (!HttpContext.Current.IsDebuggingEnabled)
-                    //{
+                    if (!Debugger.IsAttached)
+            
+                    {
                         log4net.Config.XmlConfigurator.Configure(
                             new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
-                                //"BWLog4net.xml")));
-                                "BWLocal.xml")));
-                    //}
-                    //else
-                    //{
-                    //    log4net.Config.XmlConfigurator.Configure(
-                    //       new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
-                    //           "BWLocal.xml")));
-                    //}
+                                "BWLog4net.xml")));
+                                //"BWLocal.xml")));
+                    }
+                    else
+                    {
+                        log4net.Config.XmlConfigurator.Configure(
+                           new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
+                               "BWLocal.xml")));
+                    }
                     break;
 
                 case DomainConstants.CUWebinars:
-                    if (!HttpContext.Current.IsDebuggingEnabled)
+                    if (!Debugger.IsAttached)
                     {
                         log4net.Config.XmlConfigurator.Configure(
                             new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
