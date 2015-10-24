@@ -11,13 +11,14 @@
                         select orderRow;
         var thisWebinar = orderRows.Single().Webinar;
         string TenantHead = TtsTemplateHelperObject.Tenant();
+        string TenantUrl = TtsTemplateHelperObject.TenantURL();
     }
-    [@TenantHead] Reminder for @thisWebinar.Title
+    [@TenantHead] Connection Information for @thisWebinar.Title
 </title>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 @{
-    var handoutRepo = "http://ttsmedia.ttstrain.com";
+    var handoutRepo = TenantUrl;
     var row = from orderRow in Model.OrderRows
               where orderRow.RowStatus == OrderRowStatus.Active
               select orderRow;

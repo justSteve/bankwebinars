@@ -7,7 +7,7 @@
   *margin-right: .3em;
   line-height: 14px;
   vertical-align: text-top;
-  background-image: url("http://ttsimages.blob.core.windows.net/images/glyphicons-halflings.png");
+  background-image: url("../images/glyphicons-halflings.png");
   background-position: 14px 14px;
   background-repeat: no-repeat;
 }
@@ -32,16 +32,16 @@
 .dropdown-submenu:focus > a > [class^="icon-"],
 .dropdown-submenu:hover > a > [class*=" icon-"],
 .dropdown-submenu:focus > a > [class*=" icon-"] {
-  background-image: url("http://ttsimages.blob.core.windows.net/images/glyphicons-halflings-white.png");
+  background-image: url("../images/glyphicons-halflings-white.png");
 }
 
 
-table.dataTable thead .sorting { background: url('https://ttsimages.blob.core.windows.net/images/sort_both.png') no-repeat center right; }
-table.dataTable thead .sorting_asc { background: url('https://ttsimages.blob.core.windows.net/images/sort_asc.png') no-repeat center right; }
-table.dataTable thead .sorting_desc { background: url('https://ttsimages.blob.core.windows.net/images/sort_desc.png') no-repeat center right; }
+table.dataTable thead .sorting { background: url('../images/sort_both.png') no-repeat center right; }
+table.dataTable thead .sorting_asc { background: url('../images/sort_asc.png') no-repeat center right; }
+table.dataTable thead .sorting_desc { background: url('../images/sort_desc.png') no-repeat center right; }
 
-table.dataTable thead .sorting_asc_disabled { background: url('https://ttsimages.blob.core.windows.net/images/sort_asc_disabled.png') no-repeat center right; }
-table.dataTable thead .sorting_desc_disabled { background: url('https://ttsimages.blob.core.windows.net/images/sort_desc_disabled.png') no-repeat center right; }
+table.dataTable thead .sorting_asc_disabled { background: url('../images/sort_asc_disabled.png') no-repeat center right; }
+table.dataTable thead .sorting_desc_disabled { background: url('../images/sort_desc_disabled.png') no-repeat center right; }
 
 
 .DisplayDiscount {
