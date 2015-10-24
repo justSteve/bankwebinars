@@ -20,7 +20,7 @@
 .content-slider-wrapper {
     position: relative;
     clear: both;
-    background: url(~/Content/images/70p.png) fixed;
+    background: url(../images/70p.png) fixed;
    
    
     padding: 2% 60px 0 60px;
@@ -92,7 +92,7 @@
     top: 40%;
     width: 40px;
     height: 80px;
-    background:url(~/Content/images/sliderarrows.png) 0 50% no-repeat;
+    background:url(../images/sliderarrows.png) 0 50% no-repeat;
 }
 .content-slider.flexslider .flex-direction-nav a.flex-prev {
     left: 8px;
