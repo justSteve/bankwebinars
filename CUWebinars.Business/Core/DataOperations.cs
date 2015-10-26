@@ -1167,5 +1167,10 @@ namespace CUWebinars.Business.Core
             }
             return null;
         }
+
+        public WebUser GetWebUserLegacyByEmail(string email)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -535,7 +535,8 @@ namespace CUWebinars.Business.AccountService
             }
             else
             {
-                starterUser = _webUserRepository.GetWebUserByEmail("placeholder@ttstrain.com");
+                starterUser = _webUserRepository.GetWebUserLegacyByEmail(email);
+                //starterUser = _webUserRepository.GetWebUserByEmail("placeholder@ttstrain.com");
 
                 Address addressBilling = new Address { AddressType = "Billing" };
 

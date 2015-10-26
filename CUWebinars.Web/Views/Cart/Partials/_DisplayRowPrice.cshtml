@@ -31,7 +31,7 @@
 
         var additionalLocsPriceElement = new TagBuilder("span");
         additionalLocsPriceElement.GenerateId("totalAdLocsPrice");
-        additionalLocsPriceElement.SetInnerText(Model.PricesAndDiscounts.TotalCostOfOptions.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, ""));
+        additionalLocsPriceElement.SetInnerText(Model.PricesAndDiscounts.TotalCostOfOptions.ToString(CurrencyFormatToken));
 
         if (Model.NumberOfAdditionalLocations == 0)
         {
@@ -110,7 +110,7 @@
         }
         if (Model.PricesAndDiscounts.TaxAmount > 0)
         {
-            rowAmount.Append("<span id='subTotal'>" + Model.RowPrice.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "</span> <span id='tax'><br>Tax: <span id='taxAmt'>" + Model.PricesAndDiscounts.TaxAmount.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "<br></span></span>");
+            rowAmount.Append("<span id='subTotal'>" + Model.RowPrice.ToString(CurrencyFormatToken) + "</span> <span id='tax'><br>Tax: <span id='taxAmt'>" + Model.PricesAndDiscounts.TaxAmount.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "<br></span></span>");
         }
         rowAmount.Append("<span id='totalPriceText'>Total Cost: <span id='totalPrice'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken) + "</span></span>");
 
