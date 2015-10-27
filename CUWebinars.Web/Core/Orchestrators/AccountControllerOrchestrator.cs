@@ -475,10 +475,12 @@ namespace CUWebinars.Web.Core.Orchestrators
                 }
             };
 
-            if (claimsIdentityOfAuthenticatedUser.HasClaim(ClaimTypes.DisplayPostEventMaterials))
+            if (claimsIdentityOfAuthenticatedUser.HasClaim(ClaimTypes.PostEventMaterials)
+                || claimsIdentityOfAuthenticatedUser.HasClaim(ClaimTypes.PostEventMaterialsExtended))
             {
                 model.MyClaims =
-                    claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type == ClaimTypes.DisplayPostEventMaterials)
+                    claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type == ClaimTypes.PostEventMaterials
+                    || c.Type == ClaimTypes.PostEventMaterialsExtended)
                         .Select(c => c.Value);
             }
 
@@ -504,8 +506,13 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             foreach (var selectOrdersWithRecordedWebinar in ordersForRecordedWebinars)
             {
+                var myRow =
+                    selectOrdersWithRecordedWebinar.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
                 var quiz =
-                    _webinarManagementService.GetQuizByWebinarId(selectOrdersWithRecordedWebinar.OrderRows.Single().idWebinar);
+                    _webinarManagementService.GetQuizByWebinarId(myRow.idWebinar);
+                //var playbackURL =
+                //    _orderManagementService.GetAccessToRecording(myRow.Order);
+
                 if (!ReferenceEquals(null, quiz))
                 {
                     model.Recorded.Add(new KeyValuePair<string, Order>(quiz.QuizCode, selectOrdersWithRecordedWebinar));
@@ -514,6 +521,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     model.Recorded.Add(new KeyValuePair<string, Order>("na" + selectOrdersWithRecordedWebinar.idOrder, selectOrdersWithRecordedWebinar));
                 }
+                
             }
 
             foreach (var orderRow in model.Scheduled.Select(order => order.OrderRows
@@ -540,10 +548,17 @@ namespace CUWebinars.Web.Core.Orchestrators
                 }
             };
 
-            if (claimsIdentityOfAuthenticatedUser.HasClaim(ClaimTypes.DisplayPostEventMaterials))
+            if (claimsIdentityOfAuthenticatedUser.HasClaim(ClaimTypes.PostEventMaterials))
             {
                 model.MyClaims =
-                    claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type == ClaimTypes.DisplayPostEventMaterials)
+                    claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type == ClaimTypes.PostEventMaterials)
+                        .Select(c => c.Value);
+            }
+
+            if (claimsIdentityOfAuthenticatedUser.HasClaim(ClaimTypes.PostEventMaterialsExtended))
+            {
+                model.MyClaims =
+                    claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type == ClaimTypes.PostEventMaterialsExtended)
                         .Select(c => c.Value);
             }
 

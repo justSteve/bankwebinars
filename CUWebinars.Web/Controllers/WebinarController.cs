@@ -283,34 +283,25 @@ namespace CUWebinars.Web.Controllers
             return View(current);
         }
 
-        public ActionResult RedirectLegacyHandouts()
+
+        public ActionResult Recorded(int? idAff)
         {
-            if (!ReferenceEquals(RouteData.Values["arg2"], null))
-            {
-                return
-                    Redirect("http://legacy.bankwebinars.com/handouts/" + RouteData.Values["arg1"] + "/" +
-                             RouteData.Values["arg2"]);
-            }
-        else
-            {
-                return
-                    Redirect("http://legacy.bankwebinars.com/handouts/" + RouteData.Values["arg1"]);
-            }
+            return RedirectToAction("AllActive", "Webinar", new { eventsToShow = "recorded", idAff = idAff });
         }
 
-        public ActionResult RedirectLegacyRecordings()
+  
+        public ActionResult Upcoming(int? idAff)
         {
-            if (!ReferenceEquals(RouteData.Values["arg2"], null))
-            {
-                return
-                    Redirect("http://legacy.bankwebinars.com/Recordings/" + RouteData.Values["arg1"] + "/" +
-                             RouteData.Values["arg2"]);
-            }
-            else
-            {
-                return
-                    Redirect("http://legacy.bankwebinars.com/Recordings/" + RouteData.Values["arg1"]);
-            }
+            return RedirectToAction("AllActive", "Webinar", new { eventsToShow = "upcoming", idAff = idAff });
+        }
+
+        public ActionResult OnDemandPlayback(int? idWebinar, int? idUser)
+
+        {
+
+            return Redirect("http://legacy.bankwebinars.com/Webinar/OnDemandPlayback?idWebinar="+ idWebinar +"&idUser="+idUser);
+            //_webinarControllerOrchestrator.OnDemandLegacy(idWebinar.Value, idUser.Value);
+            //return View(webinar);
         }
 
 
@@ -319,6 +310,18 @@ namespace CUWebinars.Web.Controllers
             
             return _webinarControllerOrchestrator.OnDemandLegacy(w.Value, u.Value);
             //return View(webinar);
+        }
+        public ActionResult RedirectLegacyRecordings(string recordingURL)
+        {
+
+            return Redirect("http://legacy.bankwebinars.com/recordings/" + recordingURL);
+         
+        }
+        public ActionResult RedirectLegacyHandouts(string handout)
+        {
+
+            return Redirect("http://legacy.bankwebinars.com/handouts/" + handout);
+         
         }
 
         public ActionResult Index()
@@ -367,7 +370,7 @@ namespace CUWebinars.Web.Controllers
             }
         }
 
-        public ActionResult AllActive(string eventsToShow)
+        public ActionResult AllActive(string eventsToShow, int? idAff)
         {
             var webinars = _webinarManagementService.GetAllActive();
             ViewBag.TopicCaption = " ";
@@ -618,9 +621,9 @@ namespace CUWebinars.Web.Controllers
                         {
                             var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, checkOrder.WebUser.email);
 
-                            var postEventAccessExpireyDate = _membershipService.GetPostEventAccessExpireyDate(userAccount, checkOrder.idOrder);
+                            var postEventAccessExpireyDate = _orderManagementService.GetPostEventMaterialsAccessExpiry(checkOrder);
 
-                            if (postEventAccessExpireyDate != null && postEventAccessExpireyDate.Value >= DateTime.Today)
+                            if (postEventAccessExpireyDate >= DateTime.Today)
                             {
                                 model.RegistrationSummaryViewModel.DisplayPostEventMaterials = checkOrder.idOrder;
                             };
@@ -1420,6 +1423,15 @@ namespace CUWebinars.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public ActionResult UpdateWebinarRecordingBatch(int idWebinar, string recordingURL)
+        {
+            var webinar = _webinarManagementService.GetWebinar(idWebinar);
+            webinar.RecordingUrl = recordingURL;
+
+            _webinarControllerOrchestrator.SendRecordingIsPostedBatch(idWebinar);
+            return Content("ok");
+        }
         public ActionResult UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel)
         {
             if (ModelState.IsValid)

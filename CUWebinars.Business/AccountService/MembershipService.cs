@@ -116,11 +116,11 @@ namespace CUWebinars.Business.AccountService
 
         public DateTime? GetPostEventAccessExpireyDate(UserAccount userAccount, int idOrder)
         {
-            if (userAccount == null || !userAccount.HasClaim(ClaimTypes.DisplayPostEventMaterials)) return null;
+            if (userAccount == null || !userAccount.HasClaim(ClaimTypes.PostEventMaterials)) return null;
 
 
             var claimsForOrder = userAccount.Claims.FirstOrDefault(c => c.Value.ToLower().Contains(idOrder.ToString())
-                && c.Type == ClaimTypes.DisplayPostEventMaterials);
+                && c.Type == ClaimTypes.PostEventMaterials);
 
             // extract the date
             if (claimsForOrder == null) return null;
@@ -475,7 +475,7 @@ namespace CUWebinars.Business.AccountService
 
         public void AddClaim(UserAccount userAccount, string claimType, string claimValue)
         {
-            _logger.Info("AddClaim: uA: {0}, cT: {1}, cV: {2}", userAccount.Email, claimType, claimValue);
+            _logger.Info("AddClaim - UserAccount: {0}, ClaimType: {1}, Value: {2}", userAccount.Email, claimType, claimValue);
 
             _userAccountService.AddClaim(
                 userAccount.ID,
@@ -535,7 +535,8 @@ namespace CUWebinars.Business.AccountService
             }
             else
             {
-                starterUser = _webUserRepository.GetWebUserByEmail("placeholder@ttstrain.com");
+                starterUser = _webUserRepository.GetWebUserLegacyByEmail(email);
+                //starterUser = _webUserRepository.GetWebUserByEmail("placeholder@ttstrain.com");
 
                 Address addressBilling = new Address { AddressType = "Billing" };
 
@@ -865,7 +866,7 @@ namespace CUWebinars.Business.AccountService
         {
             if (userAccount == null) throw new ArgumentNullException("userAccount");
 
-            var claim = userAccount.Claims.FirstOrDefault(c => c.Type == ClaimTypes.DisplayPostEventMaterials
+            var claim = userAccount.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PostEventMaterials
                 && c.Value.ToLower().Contains(idOrder.ToString()) && c.Value.Contains(onDemandCode)
                 );
 
@@ -897,17 +898,21 @@ namespace CUWebinars.Business.AccountService
             return USTimeZone.Central;
         }
 
-        public void UpdateDisplayPostEventMaterialsClaim(string tenant, string email, DateTime newDate, Order order)
+        public void UpdatePostEventMaterialsClaim(string tenant, string email, DateTime newDate, Order order)
         {
             var userAccount = _userAccountService.GetByEmail(tenant, email);
-            UpdateDisplayPostEventMaterialsClaim(userAccount, newDate, order);
+            UpdatePostEventMaterialsClaim(userAccount, newDate, order);
         }
 
-        public void UpdateDisplayPostEventMaterialsClaim(UserAccount userAccount, DateTime newDate, Order order)
+        public void UpdatePostEventMaterialsClaim(UserAccount userAccount, DateTime newDate, Order order)
         {
-            _logger.Info("UpdateDisplayPostEventMaterialsClaim: uA: {0}, nD: {1}, oID: {2}", userAccount.Email, newDate, order);
-            var allPostEventMaterialsClaimsForUser = userAccount.Claims.Where(c => c.Type == ClaimTypes.DisplayPostEventMaterials);
-            var claimForOrder = allPostEventMaterialsClaimsForUser.FirstOrDefault(c => c.Value.Contains(order.ToString()));
+            _logger.Info("UpdatePostEventMaterialsClaim Email: {0}, DateToExpire: {1}, idOrder: {2}", userAccount.Email, newDate, order);
+            var allPostEventMaterialsClaimsForUser = userAccount.Claims
+                .Where(c => c.Type == ClaimTypes.PostEventMaterials
+                || c.Type == ClaimTypes.PostEventMaterialsExtended);
+
+            var claimForOrder = allPostEventMaterialsClaimsForUser
+                .FirstOrDefault(c => c.Value.Contains(order.ToString()));
 
             if (!ReferenceEquals(null, claimForOrder))
             {
@@ -915,14 +920,16 @@ namespace CUWebinars.Business.AccountService
                 var dateJProperty = jsonParsedClaim.Property(JsonPropertyKeys.ExpiryDate);
                 dateJProperty.Value = newDate.ToString(DomainConstants.ClaimDateFormatText);
 
-                _userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials,
+                _userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.PostEventMaterials,
                     claimForOrder.Value);
-                _userAccountService.AddClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials,
+
+                _userAccountService.AddClaim(userAccount.ID, ClaimTypes.PostEventMaterialsExtended,
                     jsonParsedClaim.ToString(Formatting.None));
             }
             else
             {
-                var onDemandCode = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).OnDemandCode;
+                var onDemandCode = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
+                    .OnDemandCode;
 
                 var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
                 var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, newDate.ToString(DomainConstants.ClaimDateFormatText));
@@ -934,7 +941,7 @@ namespace CUWebinars.Business.AccountService
                     onDemandCodeProperty
                     );
 
-                _userAccountService.AddClaim(userAccount.ID, ClaimTypes.DisplayPostEventMaterials, claimValue.ToString(Formatting.None));
+                _userAccountService.AddClaim(userAccount.ID, ClaimTypes.PostEventMaterialsExtended, claimValue.ToString(Formatting.None));
             }
         }
 
@@ -1016,7 +1023,7 @@ namespace CUWebinars.Business.AccountService
             if (order == null) throw new ArgumentNullException("order");
             var userAccount = _userAccountService.GetByEmail(order.BillingEmail);
 
-            var claim = userAccount.Claims.FirstOrDefault(c => c.Type == ClaimTypes.DisplayPostEventMaterials
+            var claim = userAccount.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PostEventMaterials
                 && c.Value.Contains(order.idOrder.ToString())
                 );
 

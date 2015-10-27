@@ -792,23 +792,40 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     //order.AdminComments = order.StoreComments + "\r\nCredit Card Order Approved: " + txApprovalCode.ToString();
 
-                    string buildMessage = "PayCC: " + order.idOrder + " QueryString: " + formFields;
+                    string buildMessage = "Moneris SetOrderPaidByCC: " + order.idOrder + " QueryString: " + formFields;
                     _logger.Info(buildMessage);
 
                     order.OrderStatus = OrderStatus.Paid;
                     JObject existingJObject = null;
 
-
-
                     var newJson =
                         new JProperty(
-                            string.Concat("PayByCC-",
-                                TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                            string.Concat("MonerisPayByCC-",
+                                TtsConfig.UtcNowAsCts.ToString()),
                             new JObject(new JProperty("PayByCC", buildMessage))
                             );
                     order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, newJson);
 
                     _orderManagementService.SaveChanges();
+
+                    try
+                    {
+                        if (_globalConfig.Tenant == "BankWebinars")
+                        {
+
+                            order.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(order);
+
+                            _orderManagementService.SynchIds(order);
+
+                            _orderManagementService.SaveChanges();
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.WarnException("ExpressCheckout blows on SynchExpressCheckoutOrder", ex);
+                    }
+
                 }
 
             }
@@ -866,12 +883,12 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 _membershipService.AddClaim(
                     userAccountOfOrderer,
-                    ClaimTypes.DisplayPostEventMaterials
+                    ClaimTypes.PostEventMaterials
                     , claimValue.ToString(Formatting.None)
                     );
 
 
-                //_membershipService.UpdateDisplayPostEventMaterialsClaim(
+                //_membershipService.UpdatePostEventMaterialsClaim(
                 //    _globalConfig.Tenant,
                 //    order.BillingEmail,
                 //    DateTime.Parse(newExpiryDate),

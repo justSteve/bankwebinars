@@ -94,7 +94,7 @@ namespace CUWebinars.Business.Services
         
         Discount GetDiscountById(int discount);
         IList<Order> GetV3OrdersByWebinar(int idWebinar);
-        string GetPostEventMaterialsAccessExpiry(Order order);
+        DateTime GetPostEventMaterialsAccessExpiry(Order order);
         //void SendOrderToLegacy(Order newOrder);
         WebUser GetWebUserWithAddressAndInstitution(int idUser);
         IEnumerable<int> GetUserIdsByPartialId(int value);
@@ -112,5 +112,10 @@ namespace CUWebinars.Business.Services
         OrderRow CheckLegacyOrder(Order order);
         void SynchOrders(int webinarId);
         Order FindExpressCheckoutOrderByOrderId(int q11Orderid);
+        string GetAccessToRecording(Order order);
+        IEnumerable<Order> GetV3OrdersByWebinarForPostEventClaims(int idWebinar);
+        void UpdateOrderByAdmin(Order newOrder);
+        int SynchExpressCheckoutOrder(Order order);
+        void SynchIds(Order order);
     }
 }

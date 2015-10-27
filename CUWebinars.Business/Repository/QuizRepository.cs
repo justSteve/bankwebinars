@@ -135,7 +135,7 @@ namespace CUWebinars.Business.Repository
             {
                 idWebinar = idWebinar,
                 QuizWithQuestions = new List<QuizWithQuestion>(),
-                QuizCode = RandomHelpers.GetUniqueCode(6)
+                QuizCode = RandomHelpers.GetUniqueCode(5)
             };
 
             foreach (var quizWithQuestion in quiz.QuizWithQuestions)

@@ -200,6 +200,7 @@
     <Compile Include="Models\Mapping\QuizWithQuestionMap.cs" />
     <Compile Include="Models\Mapping\TimeLimitMap.cs" />
     <Compile Include="Models\Mapping\WebUserDiscountXrefMap.cs" />
+    <Compile Include="Models\Mapping\WebUserLegacy.cs" />
     <Compile Include="Models\Option.cs" />
     <Compile Include="Models\Question.cs" />
     <Compile Include="Models\QuestionType.cs" />
@@ -210,6 +211,7 @@
     <Compile Include="Models\QuizWithQuestion.cs" />
     <Compile Include="Models\TimeLimit.cs" />
     <Compile Include="Models\WebUserDiscountXref.cs" />
+    <Compile Include="Models\WebUserLegacy.cs" />
     <Compile Include="Notification\Email\AdditionalLocationOrderDetailsMessage.cs" />
     <Compile Include="Notification\Email\AzureAdhocNotificationDelivery.cs" />
     <Compile Include="Notification\Email\AdhocNotificationMessage.cs" />

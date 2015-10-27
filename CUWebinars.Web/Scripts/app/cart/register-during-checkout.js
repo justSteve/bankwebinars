@@ -1133,6 +1133,8 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
 
             var newTotalPrice = registerDuringCheckout.totalPrice - registerDuringCheckout.totalDiscount;
 
+            $("#amount").val(newTotalPrice);
+
             if (newTotalPrice < 0)
                 newTotalPrice = 0;
 

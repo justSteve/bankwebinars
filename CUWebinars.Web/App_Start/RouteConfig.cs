@@ -21,10 +21,17 @@ namespace CUWebinars.Web.App_Start
                 defaults: new { controller = "Admin", action = "ExpressCheckout", id = 0 }
             );
             routes.MapRoute(
+                "blog",
+                url: "blog/",
+                defaults: new { controller = "Admin", action = "RedirectToLegacyBlog"}
+            );
+
+            routes.MapRoute(
                 "ccpostback",
                 url: "ccpostback",
                 defaults: new { controller = "Cart", action = "PostBackMoneris", id = 0 }
             );
+
             routes.MapRoute(
                 "ccpostbackbw",
                 url: "ccpostbackbw",
@@ -58,27 +65,45 @@ namespace CUWebinars.Web.App_Start
 
             );
 
+            
             routes.MapRoute(
-                "RedirectLegacyHandouts",
-                url: "handouts/{arg1}/{arg2}",
-                defaults: new { controller = "Webinar", action = "RedirectLegacyHandouts" }
+                "OnDemandPlaybackLegacy",
+                url: "Webinar/OnDemandPlayback/{args}",
+                defaults: new { controller = "Webinar", action = "RedirectLegacyRecordings" }
             );
+
+            
             routes.MapRoute(
-                "RedirectLegacyHandouts1",
-                url: "handouts/{arg1}",
-                defaults: new { controller = "Webinar", action = "RedirectLegacyHandouts" }
+                "DirSeriesCerts",
+                url: "Admin/registrations/CertificateOfCompletionDS",
+                defaults: new { controller = "Admin", action = "CertificateOfCompletionDS" }
+            );
+
+                  
+            routes.MapRoute(
+                "Recorded",
+                url: "Webinar/Recorded",
+                defaults: new { controller = "Webinar", action = "Recorded" }
+            );
+
+                  
+            routes.MapRoute(
+                "Upcoming",
+                url: "Webinar/Upcoming",
+                defaults: new { controller = "Webinar", action = "Upcoming" }
             );
 
 
             routes.MapRoute(
                 "RedirectLegacyRecordings",
-                url: "Recordings/{arg1}/{arg2}",
-                defaults: new { controller = "Webinar", action = "RedirectLegacyRecordings" }
+                url: "Recordings/{recordingURL}",
+                defaults: new { controller = "Webinar", action = "RedirectLegacyRecordings"}
             );
+
             routes.MapRoute(
-                "RedirectLegacyRecordings1",
-                url: "Recordings/{arg1}",
-                defaults: new { controller = "Webinar", action = "RedirectLegacyRecordings" }
+                "RedirectLegacyHandouts",
+                url: "handouts/",
+                defaults: new { controller = "Webinar", action = "RedirectLegacyHandouts" }
             );
 
 

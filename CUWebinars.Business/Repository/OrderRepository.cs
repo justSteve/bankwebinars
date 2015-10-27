@@ -86,7 +86,7 @@ namespace CUWebinars.Business.Repository
             newOrder.Origin = origin;
 
             newOrder = AssignWebUserToOrder(webUser, newOrder);
-
+            //if (newOrder.Affiliate == null) { }
             // reconcile orderRow with order relationship
             ((TTSWebinarsContext)db).OrderRows.Add(orderRow);
             orderRow.Order = newOrder;
@@ -325,11 +325,11 @@ namespace CUWebinars.Business.Repository
 
         }
 
-        public void MigrateOrderFromV3(Order order)
+        public int MigrateOrderFromV3(Order order)
         {
 
             var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
-            dataOperations.MigrateOrderFromV3(order);
+            return dataOperations.MigrateOrderFromV3(order);
         }
 
         public Order FindExpressCheckoutOrderByOrderId(int q11Orderid)
@@ -338,6 +338,14 @@ namespace CUWebinars.Business.Repository
                 .Include(o => o.WebUser)
                 .Include(o => o.OrderRows)
                 .FirstOrDefault(order => order.idOrder == q11Orderid);
+        }
+
+        public void SynchIds(int lOrder, int vOrder)
+        {
+            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
+            dataOperations.SynchOrderIds(lOrder, vOrder);
+
+
         }
 
         public IList<int> FindOrderIdsByPartialId(int userId)

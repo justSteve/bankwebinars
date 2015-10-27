@@ -50,8 +50,28 @@
     {
         phone = webinar.AccessPhone;
     }
+
+
+    var RegTypeFriendly = row.Single().RegistrationType.OptionLabel;
+
+    switch (row.Single().RegistrationType.OptionLabel)
+    {
+        case "OnDemand Recording Only":
+            RegTypeFriendly = "Recorded";
+            break;
+        case "CD-ROM and Hardcopy Handouts":
+            RegTypeFriendly = "CD-ROM";
+            break;
+        case "Live Plus Five":
+            RegTypeFriendly = "Live";
+            break;
+
+        default:
+            break;
+    }
+
     var HeaderText = "Your Recording is posted!";
-    var BannerText = "Order Number: " + TenantPrefix + Model.Order.idOrderLegacy + "<br />Attendance Type: " + row.Single().RegistrationType.OptionLabel;
+    var BannerText = "Order Number: " + TenantPrefix + Model.Order.idOrderLegacy + "<br />Attendance Type: " + RegTypeFriendly;
 
 
     var infoPhrase = new StringBuilder();
@@ -68,8 +88,8 @@
         infoPhrase.Append(row.Single().Webinar.Title + "</i>.</p>");
 
 
-        infoPhrase.Append("<p>Your registration includes access to OnDemand playback for a period of 5 business days." +
-                          "  If you would like to upgrade to 6 months access (adds $" + Model.CostFor6month + ") or a CD-ROM ($" + Model.CostForCD + ")  we'll be happy to adjust your registration. </p>");
+        infoPhrase.Append("<p> Included in your registration are links to all course material for five(5) business days." +
+                          "  You can upgrade your order to gain 6 months OnDemand access (adds $" + Model.CostFor6month + "). Or get the Premier Package by adding a CD-ROM ($" + Model.CostForCD + "). We'll be happy to adjust your registration - just reply to this email! </p>");
     }
     else
     {
@@ -81,7 +101,7 @@
             if (myRow.RegistrationType.ShowLiveNotifications == "Yes")
             {
                 infoPhrase.Append("<p>Your materials will be shipped soon and are typically in your hands within 7-10 business days.");
-                infoPhrase.Append(" Your registration also includes access to OnDemand playback for the next six months.</p>");
+                infoPhrase.Append(" Included in your registration are links to all course material for six months.</p>");
             }
         }
         else
@@ -89,11 +109,11 @@
             infoPhrase.Append("<p>Dear " + Model.Order.FirstName + ",<br /><br />The recording for  <i>" + row.Single().Webinar.Title + "</i> has been posted!</p>");
 
             infoPhrase.Append("<p>Your registration includes access to OnDemand playback for the next six months.");
-            infoPhrase.Append("  If you would like to upgrade to the CD-ROM plus printouts package ($" + Model.CostForCD + " extra) we'll be happy to upgrade your registration.</p>");
+            infoPhrase.Append("  Add the CD-ROM plus printouts for the Premire Package ($" + Model.CostForCD + " extra). We'll be happy to upgrade your registration - just reply to this email!</p>");
         }
     }
 
-    onDemandLink.Append(" <p>This link provides access to the event's materials until " + Model.ExpiryDate + " and may be shared with associates and co-workers within your organization:</p><p><b>http://" + TenantURL + "/o/" + Model.Order.idOrder + "-" + myRow.OnDemandCode + "</b></p>Order Summary:");
+    onDemandLink.Append(" <p>This link to the event's materials is valid until " + Model.ExpiryDate + " and may be shared with associates within your organization:</p><p><b>http://" + TenantURL + "/o/" + Model.Order.idOrder + "-" + myRow.OnDemandCode + "</b></p>Order Summary:");
 
 
     <head>
@@ -114,19 +134,19 @@
             <tbody>
                 @*<tr style="background-color: #344a58">
                         <td colspan="3">
-                            <img alt="top_shadow.jpg" border="0" height="6" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/top_shadow.jpg" style="width: 100%; height: 6px; display: block;" width="660" />
+                            <img alt="top_shadow.jpg" border="0" height="6" margin="0px 0px 0px 0px" src="~/Content/images/vrLocal/top_shadow.jpg" style="width: 100%; height: 6px; display: block;" width="660" />
                         </td>
                     </tr>*@
                 <tr style="background-color: #344a58">
-                    <td background="http://ttsmedia.ttstrain.com/images/vrLocal/left_shadow.jpg" rowspan="3" valign="top" width="5">
-                        <img alt="left_shadow.jpg" border="0" height="1" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/left_shadow.jpg" style="width: 5px; height: 1px; display: block;" width="5px" />
+                    <td background="~/Content/images/vrLocal/left_shadow.jpg" rowspan="3" valign="top" width="5">
+                        <img alt="left_shadow.jpg" border="0" height="1" margin="0px 0px 0px 0px" src="~/Content/images/vrLocal/left_shadow.jpg" style="width: 5px; height: 1px; display: block;" width="5px" />
                     </td>
                     <td>
                         <table align="center" border="0" cellpadding="0" cellspacing="0" height="115" width="645px">
                             <tbody>
                                 <tr>
                                     <td bgcolor="#01232a" width="364">
-                                        <img alt="http://ttsmedia.ttstrain.com/images/vrLocal/hardware_2_header_1.jpg" border="0" height="36" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/hardware_2_header_1.jpg" style="width: 374px; height: 36px; display: block;" width="374" />
+                                        <img alt="~/Content/images/vrLocal/hardware_2_header_1.jpg" border="0" height="36" margin="0px 0px 0px 0px" src="~/Content/images/vrLocal/hardware_2_header_1.jpg" style="width: 374px; height: 36px; display: block;" width="374" />
                                     </td>
                                     <td align="right" bgcolor="#01232a" style="padding-right: 15px; border-top-color: rgb(52, 74, 88); border-right-color: rgb(52, 74, 88); border-top-width: 1px; border-right-width: 1px; border-top-style: solid; border-right-style: solid;" width="286">
                                         <div style="color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold;">
@@ -147,8 +167,8 @@
                             </tbody>
                         </table>
                     </td>
-                    <td background="http://ttsmedia.ttstrain.com/images/vrLocal/right_shadow.jpg" rowspan="3" valign="top" width="5">
-                        <img alt="right_shadow.jpg" border="0" height="1" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/right_shadow.jpg" style="width: 5px; height: 1px; display: block;" width="5" />
+                    <td background="~/Content/images/vrLocal/right_shadow.jpg" rowspan="3" valign="top" width="5">
+                        <img alt="right_shadow.jpg" border="0" height="1" margin="0px 0px 0px 0px" src="~/Content/images/vrLocal/right_shadow.jpg" style="width: 5px; height: 1px; display: block;" width="5" />
                     </td>
                 </tr>
 
@@ -159,13 +179,13 @@
                             <tbody>
                                 @*<tr style="background-color: #344a58">
                                         <td colspan="2" height="6">
-                                            <img alt="large_box_top.gif" border="0" height="6" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/large_box_top.gif" style="width: 630px; height: 6px; display: block;" />
+                                            <img alt="large_box_top.gif" border="0" height="6" margin="0px 0px 0px 0px" src="~/Content/images/vrLocal/large_box_top.gif" style="width: 630px; height: 6px; display: block;" />
                                         </td>
                                     </tr>*@
 
                                 <tr style="background-color: #000000;">
                                     <td colspan="2">
-                                        <img alt="spacer.gif" height="10" src="http://ttsmedia.ttstrain.com/images/vrLocal/spacer.gif" style="width: 1px; height: 10px; display: block;" width="1" />
+                                        <img alt="spacer.gif" height="10" src="~/Content/images/vrLocal/spacer.gif" style="width: 1px; height: 10px; display: block;" width="1" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -225,7 +245,7 @@
                                 </tr>
                                 <tr style="background-color: #344a58">
                                     <td colspan="2" height="6">
-                                        <img alt="large_box_bottom.gif" border="0" height="6" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/large_box_bottom.gif" style="width: 630px; height: 6px; display: block;" />
+                                        <img alt="large_box_bottom.gif" border="0" height="6" margin="0px 0px 0px 0px" src="~/Content/images/vrLocal/large_box_bottom.gif" style="width: 630px; height: 6px; display: block;" />
                                     </td>
                                 </tr>
 
@@ -239,7 +259,7 @@
                             <tbody>
                                 <tr>
                                     <td align="right" style="padding-top: 10px;">
-                                        <img alt="Phone 800-831-0678" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/NotiFooter.gif" />
+                                        <img alt="Phone 800-831-0678" margin="0px 0px 0px 0px" src="~/Content/images/NotiFooter.gif" />
                                     </td>
                                 </tr>
                             </tbody>
@@ -248,7 +268,7 @@
                 </tr>
                 <tr>
                     <td colspan="3" height="23">
-                        <img alt="hardware_2_footer.jpg" border="0" height="23" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/hardware_2_footer.jpg" style="width: 660px; height: 23px; display: block;" width="660" />
+                        <img alt="hardware_2_footer.jpg" border="0" height="23" margin="0px 0px 0px 0px" src="~/Content/images/vrLocal/hardware_2_footer.jpg" style="width: 660px; height: 23px; display: block;" width="660" />
                     </td>
                 </tr>
             </tbody>

@@ -16,7 +16,7 @@
     <bufferSize value="1" />
     <connectionType value="System.Data.SqlClient.SqlConnection, System.Data,  Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
     <!--http://stackoverflow.com/questions/3192013/adonetappender-stops-working-after-changes-are-made-->
-    <connectionString value="Data Source=tcp:kmow9uloz6.database.windows.net,1433;Initial Catalog=CUWebinars33;User Id=CUOp@kmow9uloz6;Password=EntRisRcDkI3t4u--;MultipleActiveResultSets=True;" />
+    <connectionString value="Server=tcp:nt2j4x3hvq.database.windows.net,1433;Database=cuwebinars33_;User ID=TTSOp@nt2j4x3hvq;Password=HXm88WIX;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;MultipleActiveResultSets=True;" />
     <commandText value="INSERT INTO Logger ([Date],[Level],[Message],[Exception], [Logger]) VALUES (@log_date, @log_level, @message, @exception, @logger)" />
     <parameter>
       <parameterName value="@log_date" />

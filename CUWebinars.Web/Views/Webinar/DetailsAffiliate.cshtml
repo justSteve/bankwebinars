@@ -84,7 +84,7 @@
             <!--close aside widget-->
         </section>
         <div class="span6">
-            @{
+            @*@{
                 if (Model.Webinar.Status != WebinarStatus.Archived
                                                     && Model.Webinar.Status != WebinarStatus.Deleted
                                                     && Model.Webinar.Status != WebinarStatus.Pending)
@@ -132,7 +132,7 @@
 
                     </div> <!-- closes SignUpFormContainer div-->
                 }
-            }
+            }*@
             @Html.Raw(Model.Webinar.DescriptionLong)
             <h2 class="short_headline">
                 <span>

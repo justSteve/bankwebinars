@@ -6,6 +6,7 @@ using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Text;
+using CUWebinars.Business.Core;
 
 namespace CUWebinars.Business.Repository
 {
@@ -68,6 +69,16 @@ namespace CUWebinars.Business.Repository
                 .Include(wu => wu.Institution)
                 .Where(w => w.email == email).SingleOrDefault();
         }
+
+        public WebUser GetWebUserLegacyByEmail(string email)
+        {
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+
+            var getWebUserLegacyByEmail = dataOperations.GetWebUserLegacyByEmail(email);
+            return null;
+
+        }
+
         public WebUser GetWebUserByEmailDomain(string emailDomain)
         {
             return items

@@ -273,6 +273,23 @@ namespace CUWebinars.Business.Repository
             //.Include(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType);
         }
 
+        public IEnumerable<Order> GetOrdersByWebinarForPostEventClaims(int idWebinar)
+        {
+            return ((TTSWebinarsContext) db).Orders
+                .Where(
+                    o =>
+                        o.OrderRows.FirstOrDefault(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar == idWebinar
+                        && o.OrderRows.FirstOrDefault(or => or.RowStatus == OrderRowStatus.Active).RegistrationType.ShowRecordingNotifications == "Yes"
+                        && (o.OrderStatus == OrderStatus.Billed
+                            || o.OrderStatus == OrderStatus.Paid
+                            || o.OrderStatus == OrderStatus.Submitted))
+                            
+                .Include(o => o.Affiliate)
+                .Include(o => o.WebUser)
+                .Include(o => o.OrderRows);
+
+        }
+
         public IQueryable<Order> GetAllOrdersByWebinarForUser(int webinarId, int userId)
         {
             return ((TTSWebinarsContext)db).Orders

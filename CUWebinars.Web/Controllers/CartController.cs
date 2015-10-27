@@ -563,13 +563,10 @@ namespace CUWebinars.Web.Controllers
         }
         public ActionResult ThankYou(FormCollection form)
         {
-
             string formFields = Request.Form.ToString();
             _logger.Info("ThankYou postback: " + formFields);
 
             return View();
-
-
         }
 
         [HttpPost]

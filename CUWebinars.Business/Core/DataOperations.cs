@@ -13,6 +13,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Claims;
 using System.Text;
 using CUWebinars.Business.Constants;
@@ -155,6 +156,8 @@ namespace CUWebinars.Business.Core
 
         public int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar)
         {
+            registrationType = registrationType.Replace(" (days)", "");
+            registrationType = registrationType.Replace(" (months)", "");
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 sqlConnection.Open();
@@ -855,10 +858,10 @@ namespace CUWebinars.Business.Core
             return setStatus;
         }
 
-        public void MigrateOrderFromV3(Order order)
+        public int MigrateOrderFromV3(Order order)
         {
-            if (order == null) return;
-
+            if (order == null) return 0;
+            
             var myRow = order.OrderRows.SingleOrDefault();
             string myDiscount = "";
             if (myRow.Discount != null)
@@ -894,6 +897,7 @@ namespace CUWebinars.Business.Core
             PostForm += "&DiscountCode=" + myDiscount;
             PostForm += "&Status=" + order.OrderStatus + "&Total=" + order.Total;
             PostForm += "&AdminComments=" + order.AdminComments;
+            PostForm += "&OrderStatus=" + (int)order.OrderStatus;
 
             var submitImporter = "http://acsimporter.bankwebinars.com/home/MigrateOrderFromV3/";
             if (Debugger.IsAttached)
@@ -922,10 +926,11 @@ namespace CUWebinars.Business.Core
             //return returnvalue;
             ;
             SynchOrderIds(Convert.ToInt32(returnvalue.Split(':')[1].Replace("\"", "").Replace("}", "")), order.idOrder);
+            return Convert.ToInt32(returnvalue);
 
         }
 
-        private void SynchOrderIds(int legacyOrderId, int v3OrderId)
+        public void SynchOrderIds(int legacyOrderId, int v3OrderId)
         {
             using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
             {
@@ -1161,6 +1166,11 @@ namespace CUWebinars.Business.Core
 
             }
             return null;
+        }
+
+        public WebUser GetWebUserLegacyByEmail(string email)
+        {
+            throw new NotImplementedException();
         }
     }
 }

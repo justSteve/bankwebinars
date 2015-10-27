@@ -120,6 +120,13 @@
             </div>
 
         </div>
+        <div id="SubmitPanel" style="margin-top: 0;" class="span2">
+            <div class="control-group">
+                <div class="controls">
+                    <button id="editOrderSubmitButton" class="btn btn-primary">Submit Edited Details</button>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="row">
 
@@ -152,13 +159,7 @@
         </div>
 
     </div>
-    <div id="SubmitPanel" style="margin-top: 0;" class="span2">
-        <div class="control-group">
-            <div class="controls">
-                <button id="editOrderSubmitButton" class="btn btn-primary">Submit Edited Details</button>
-            </div>
-        </div>
-    </div>
+
     @Html.HiddenFor(m => m.CostPerAdditionalLocation)
     @Html.HiddenFor(m => m.Id)
     @Html.HiddenFor(m => m.UserId)
@@ -230,7 +231,7 @@
             <div class="btn-group">
                 <button id="Add6MonthsButton" class="btn btn-mini">Add 6 months</button>
                 <button id="Add5DaysButton" class="btn btn-mini">Add 5 days</button>
-                <button id="AdInfinitumButton" class="btn btn-mini">Ad Infinitum</button>
+                <button id="AdInfinitumButton" class="btn btn-mini">Custom</button>
             </div>
         </div>
         <div class="modal-footer">

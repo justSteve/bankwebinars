@@ -234,7 +234,7 @@ namespace CUWebinars.Web.Controllers
                     catch (Exception exception)
                     {
                         _logger.ErrorException(
-                            string.Format("MigrateOrder|CreateUser failed: {0}", exception.Message), exception);
+                            string.Format("MigrateOrder|CreateUser failed: {0}", email), exception);
                         Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                         throw;
                     }
