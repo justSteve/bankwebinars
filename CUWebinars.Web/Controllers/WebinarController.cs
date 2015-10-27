@@ -33,6 +33,7 @@ using Thinktecture.IdentityModel.Authorization;
 using WebGrease.Css.Extensions;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 using DateTimeHelper = CUWebinars.Web.Helpers.DateTimeHelper;
+using PostEventClaim = CUWebinars.Business.Services.PostEventClaim;
 
 
 namespace CUWebinars.Web.Controllers
@@ -289,17 +290,16 @@ namespace CUWebinars.Web.Controllers
             return RedirectToAction("AllActive", "Webinar", new { eventsToShow = "recorded", idAff = idAff });
         }
 
-  
+
         public ActionResult Upcoming(int? idAff)
         {
             return RedirectToAction("AllActive", "Webinar", new { eventsToShow = "upcoming", idAff = idAff });
         }
 
         public ActionResult OnDemandPlayback(int? idWebinar, int? idUser)
-
         {
 
-            return Redirect("http://legacy.bankwebinars.com/Webinar/OnDemandPlayback?idWebinar="+ idWebinar +"&idUser="+idUser);
+            return Redirect("http://legacy.bankwebinars.com/Webinar/OnDemandPlayback?idWebinar=" + idWebinar + "&idUser=" + idUser);
             //_webinarControllerOrchestrator.OnDemandLegacy(idWebinar.Value, idUser.Value);
             //return View(webinar);
         }
@@ -307,7 +307,7 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult RedirectLegacy(int? w, int? u)
         {
-            
+
             return _webinarControllerOrchestrator.OnDemandLegacy(w.Value, u.Value);
             //return View(webinar);
         }
@@ -315,13 +315,13 @@ namespace CUWebinars.Web.Controllers
         {
 
             return Redirect("http://legacy.bankwebinars.com/recordings/" + recordingURL);
-         
+
         }
         public ActionResult RedirectLegacyHandouts(string handout)
         {
 
             return Redirect("http://legacy.bankwebinars.com/handouts/" + handout);
-         
+
         }
 
         public ActionResult Index()
@@ -450,7 +450,7 @@ namespace CUWebinars.Web.Controllers
         //    var data = new WebinarsSearchDTOAssembler(webinarsBrowserRequest.EchoId).Entity2DTO(searchResult);
         //    return Json(data, JsonRequestBehavior.AllowGet);
         //}
-        
+
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult OnDemand(string onDemandCode)
         {
@@ -548,11 +548,11 @@ namespace CUWebinars.Web.Controllers
 
                 ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
 
-                if(ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.AdminFunction))
+                if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.AdminFunction))
                 {
                     int totalNumberOrders;
                     var aff = _affiliateManagementService.LoadByTTSDomain("bankwebinars");
-                    
+
                     //var orders = _dataTablesService.GetOrdersByWebinar(
                     //    model.Webinar.idWebinar,
                     //    19,
@@ -581,7 +581,7 @@ namespace CUWebinars.Web.Controllers
                         .SingleOrDefault();
 
                     var aff = _affiliateManagementService.LoadByTTSDomain(ttsDomain);
-                    
+
                     int totalNumberOrders;
 
                     //var orders = _dataTablesService.GetOrdersByWebinar(
@@ -621,9 +621,7 @@ namespace CUWebinars.Web.Controllers
                         {
                             var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, checkOrder.WebUser.email);
 
-                            var postEventAccessExpireyDate = _orderManagementService.GetPostEventMaterialsAccessExpiry(checkOrder);
-
-                            if (postEventAccessExpireyDate >= DateTime.Today)
+                            if (_orderManagementService.FindPostEventClaim(checkOrder).ExpiryDate >= DateTime.Today)
                             {
                                 model.RegistrationSummaryViewModel.DisplayPostEventMaterials = checkOrder.idOrder;
                             };
@@ -1362,7 +1360,7 @@ namespace CUWebinars.Web.Controllers
                     "There was a problem with the update operation. Please consult with the system administrator to resolve the issue."
                     );
             }
-            
+
             return this.ModelStateJson(ModelState);
         }
 
@@ -1396,7 +1394,7 @@ namespace CUWebinars.Web.Controllers
             var clickToJoinViewModel = new ClickToJoinViewModel
             {
                 JoinCode = joinCode,
-                RedirectLinkText = @"http://" + _globalConfig.TenantURL +"/" + joinCode,
+                RedirectLinkText = @"http://" + _globalConfig.TenantURL + "/" + joinCode,
                 Webinar = webinar
             };
 
@@ -1441,7 +1439,7 @@ namespace CUWebinars.Web.Controllers
                     string message;
                     if (_webinarControllerOrchestrator.UpdateWebinarRecording(webinarDetailsViewModel, out message))
                     {
-                        return Json(new {Result = WebUiConstants.Success});
+                        return Json(new { Result = WebUiConstants.Success });
                     }
 
                     return Json(new { Result = WebUiConstants.Fail, Message = message });

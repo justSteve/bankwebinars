@@ -24,6 +24,7 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Text;
 using System.Web.UI.WebControls;
+using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Core.Helpers;
 using IEvent = CUWebinars.NotificationSystem.Event.IEvent;
 using IEventSource = CUWebinars.NotificationSystem.Event.IEventSource;
@@ -371,8 +372,6 @@ namespace CUWebinars.Business.Services
                             _logger.ErrorException("SynchOrder to Legacy Failed: " + orderEmail, ex);
                         }
                     }
-
-
             }
             catch (Exception ex)
             {
@@ -432,6 +431,7 @@ namespace CUWebinars.Business.Services
                                 SaveOrderChanges(vOrder, "", "", OrderGenesis.CreatedViaCartByExistingUser);
                             }
 
+                            
                             i++;
                         }
                         catch (Exception ex)
@@ -1499,6 +1499,13 @@ namespace CUWebinars.Business.Services
         public void SynchIds(Order order)
         {
             _orderRepository.SynchIds(order.idOrderLegacy, order.idOrder);
+        }
+
+        public PostEventClaim FindPostEventClaim(Order order)
+        {
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+            return dataOperations.FindPostEventClaim(order);
+            
         }
 
         public Discount GetDiscountByUser(WebUser currentUser)

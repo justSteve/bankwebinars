@@ -942,7 +942,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         private string CheckThatFileExists(string newFile)
         {
-            var handoutRepo = "~/Content/images/";
+            var handoutRepo = _globalConfig.HandoutRepository;
 
             HttpWebResponse response = null;
             string uri = handoutRepo + newFile;

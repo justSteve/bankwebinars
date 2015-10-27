@@ -862,9 +862,10 @@ namespace CUWebinars.Web.Core.Orchestrators
                 if (orderRow.Webinar.Status != WebinarStatus.Recorded) return;
 
                 var onDemandCode = RandomHelpers.GetUniqueCode(5).ToLower();
-                var newExpiryDate = orderRow.Webinar.Date.AddMonths(6).ToShortDateString();
+                var expiryDate = orderRow.Webinar.Date.AddMonths(6);
+                if (order.OrderDate > expiryDate) expiryDate = order.OrderDate.AddMonths(6);
                 var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
-                var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, newExpiryDate);
+                var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, expiryDate.ToShortDateString());
                 var OnDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, onDemandCode);
 
                 var claimValue = new JObject(

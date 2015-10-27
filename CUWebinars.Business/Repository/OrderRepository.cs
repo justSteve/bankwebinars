@@ -17,6 +17,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using CUWebinars.Business.Services;
 using FluentValidation.Results;
 
 namespace CUWebinars.Business.Repository
@@ -346,6 +347,11 @@ namespace CUWebinars.Business.Repository
             dataOperations.SynchOrderIds(lOrder, vOrder);
 
 
+        }
+
+        public PostEventClaim FindPostEventClaim(Order order)
+        {
+            throw new NotImplementedException();
         }
 
         public IList<int> FindOrderIdsByPartialId(int userId)

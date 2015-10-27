@@ -18,6 +18,8 @@ using System.Security.Claims;
 using System.Text;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core.Extensions;
+using CUWebinars.Business.Services;
+using Newtonsoft.Json;
 
 namespace CUWebinars.Business.Core
 {
@@ -1171,6 +1173,64 @@ namespace CUWebinars.Business.Core
         public WebUser GetWebUserLegacyByEmail(string email)
         {
             throw new NotImplementedException();
+        }
+
+        public PostEventClaim FindPostEventClaim(Order order)
+        {
+            var retValue = false;
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+                var onDemandCodeParameter = new SqlParameter
+                {
+                    SqlDbType = SqlDbType.VarChar,
+                    ParameterName = "@onDemandCode",
+                    Value = order.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).OnDemandCode
+                };
+
+                using (var insertWebUser = new SqlCommand("FindPostEventClaim", sqlConnection))
+                {
+                    insertWebUser.Parameters.Add(onDemandCodeParameter);
+
+                    try
+                    {
+                        insertWebUser.Connection = sqlConnection;
+                        insertWebUser.CommandType = CommandType.StoredProcedure;
+
+                        var result = insertWebUser.ExecuteScalar();
+                        if (result == null)
+                            retValue = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
+                            errorLogger.CommandText += "'FindPostEventClaim' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'FindPostEventClaim', 9 ,";
+                            errorLogger.CommandText += "'error at FindPostEventClaim " + ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+
+                        }
+                    }
+                }
+            }
+            PostEventClaim returnClaim = new PostEventClaim();
+            var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(retValue.ToString());
+            if (thisClaim.OnDemandCode == order.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).OnDemandCode)
+            {
+                returnClaim.OrderId = order.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idOrder;
+                returnClaim.OnDemandCode = thisClaim.OnDemandCode;
+                returnClaim.ExpiryDate = thisClaim.ExpiryDate;
+            }
+
+            return returnClaim;
+
+
+
         }
     }
 }

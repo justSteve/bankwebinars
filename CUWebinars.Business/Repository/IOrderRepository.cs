@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CUWebinars.Business.Models;
+using CUWebinars.Business.Services;
 
 namespace CUWebinars.Business.Repository
 {
@@ -50,5 +51,6 @@ namespace CUWebinars.Business.Repository
         int MigrateOrderFromV3(Order order);
         Order FindExpressCheckoutOrderByOrderId(int q11Orderid);
         void SynchIds(int lOrder, int vOrder);
+        PostEventClaim FindPostEventClaim(Order order);
     }
 }

@@ -1,6 +1,9 @@
 ﻿@using CUWebinars.Web.Core
 @model Order
-
+@functions {
+    private const string CurrencyFormatToken = "c";
+    private const string DotAndTwoDecimals = ".00";
+}
 @{
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     var myRow = Model.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
@@ -34,9 +37,10 @@
             }
             @if (!ReferenceEquals(myRow.Discount, null) && myRow.Discount.PercentOff > 0)
             {
-                amtToReduce = myRow.UnitPrice / (myRow.Discount.PercentOff) * 100;
+
+                amtToReduce = myRow.UnitPrice * ((myRow.Discount.PercentOff) / 100);
                 <i>Amt. of Discount:</i>
-                <span style="color: red;">$@amtToReduce.ToString().Replace(".00", "")</span><br />
+                <span style="color: red;">@amtToReduce.ToString(CurrencyFormatToken).Replace(".00", "")</span><br />
             }
             @if (!ReferenceEquals(myRow.Discount, null) && myRow.Discount.FlatOff > 0)
             {

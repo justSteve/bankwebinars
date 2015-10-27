@@ -378,6 +378,7 @@
     <Compile Include="Services\OrderManagementService.cs" />
     <Compile Include="Core\TtsConfiguration.cs" />
     <Compile Include="Core\TtsConfig.cs" />
+    <Compile Include="Services\PostEventClaim.cs" />
     <Compile Include="Services\WebinarManagementService.cs" />
     <Compile Include="Validation\Identity\PostEventMaterialsAccessClaimValidator.cs" />
     <Compile Include="Validation\Json\JsonIsWellFormedValidator.cs" />

@@ -3,6 +3,7 @@ using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using System;
 using System.Collections.Generic;
+using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.ViewModel;
 
@@ -117,5 +118,6 @@ namespace CUWebinars.Business.Services
         void UpdateOrderByAdmin(Order newOrder);
         int SynchExpressCheckoutOrder(Order order);
         void SynchIds(Order order);
+        PostEventClaim FindPostEventClaim(Order order);
     }
 }
