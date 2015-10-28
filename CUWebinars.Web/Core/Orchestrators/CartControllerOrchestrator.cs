@@ -195,7 +195,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         // This ViewModel is built here because it is re-used.
                         var additionalLocationsViewModel =
                             BuildAdditionalLocationsViewModel(orderRow, idOrder);
-                        
+
                         var checkoutConfirmViewModel = new CheckoutConfirmViewModel
                         {
                             //Order = order,
@@ -252,7 +252,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                             UserType = webUser.UserType
                         };
                         _logger.Info("BuildCheckoutConfirmViewModel built checkoutConfirmViewModel: " + order.idOrder);
-            
+
                         if (checkoutConfirmViewModel.OrderRowExists)
                         {
                             if (orderRow.idOrder > 0)
@@ -852,14 +852,14 @@ namespace CUWebinars.Web.Core.Orchestrators
 
 
 
-        public void CreatePostEventClaim(Order order)
+        public string CreatePostEventClaim(Order order)
         {
 
             if (!ReferenceEquals(null, order))
             {
                 var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
 
-                if (orderRow.Webinar.Status != WebinarStatus.Recorded) return;
+                if (orderRow.Webinar.Status != WebinarStatus.Recorded) return null;
 
                 var onDemandCode = RandomHelpers.GetUniqueCode(5).ToLower();
                 var expiryDate = orderRow.Webinar.Date.AddMonths(6);
@@ -896,8 +896,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 //    order
                 //    );
                 _logger.Info("Added (at checkout) expiryDate claim for: {0}. Date: {1}", order.idOrder,
-                    DateTime.Parse(newExpiryDate));
+                    expiryDate.ToShortDateString());
             }
+            return null;
         }
 
         public Webinar LoadWebinar(int idWebinar)
@@ -914,6 +915,50 @@ namespace CUWebinars.Web.Core.Orchestrators
                 return false;
             }
             return true;
+        }
+
+        public void CheckOnDemandClaims(int? idWebinar)
+        {
+
+            IList<Order> v3Orders = _orderManagementService.GetV3OrdersByWebinar(idWebinar.Value);
+
+            foreach (var order in v3Orders)
+            {
+                var onDemandCode = order.OrderRows.SingleOrDefault().OnDemandCode;
+                if (onDemandCode == null)
+                {
+                    onDemandCode = CreatePostEventClaim(order);
+                }
+                try
+                {
+                    var onDemandClaim = new PostEventClaim();
+
+                    var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
+                    var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
+
+                    foreach (var claim in claimsViewModel.UserClaims)
+                    {
+
+                        if (onDemandCode != null && (claim.Value != null && claim.Value.Contains(onDemandCode)))
+                        {
+                            var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
+
+                            if (thisClaim.OrderId != order.idOrder)
+                            {
+                                _logger.Info("Claim mismatch! Claim: {0} vs Order: {1}", thisClaim.OrderId, order.idOrder);
+                            }
+
+                            onDemandClaim.OrderId = order.idOrder;
+                            onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
+                            onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.ErrorException("Checks ondemand claim failed: " + order, ex);
+                }
+            }
         }
 
         public INotificationMessage GenerateMessagePreview(Order order)

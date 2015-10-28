@@ -78,7 +78,7 @@ var RegistrationInCart;
             this.formParsedByValidator = false;
             this.zipCheckRequired = false;
             this.nextButtonText = 'Next...';
-            this.registerButtonText = 'Submit Register';
+            this.registerButtonText = 'Submit';
             this.sameAsBillingCheckedFilter = '#sameAsBilling:checked';
             this.initialize();
         }

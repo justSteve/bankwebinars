@@ -116,9 +116,7 @@ $(function () {
         DO.ordersTable.dataTable({
             "dom": '<ilf<t>ip>',
             //'dom': 'T<"clear">lfrtip',
-            'tableTools': {
-                'sSwfPath': '/Content/DataTables/swf/copy_csv_xls_pdf.swf'
-            },
+
             'ajax': {
                 'url': '/admin/GetGridData',
                 'data': {

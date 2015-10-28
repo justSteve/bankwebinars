@@ -951,7 +951,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             try
             {
                 response = (HttpWebResponse)request.GetResponse();
-                return response.StatusCode.ToString();
+                var result = response.StatusCode.ToString();
+                return result;
             }
             catch (WebException ex)
             {

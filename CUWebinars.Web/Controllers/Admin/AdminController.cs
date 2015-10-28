@@ -2328,49 +2328,6 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
         [HandleAjaxException]
-        [AllowAnonymous]
-        public ActionResult CheckOnDemandCodes(int? webinarId, int? idAffiliate)
-        {
-            IList<Order> v3Orders = _orderManagementService.GetV3OrdersByWebinar(webinarId.Value);
-            List<string> v3Emails = v3Orders.Select(v3Order => v3Order.BillingEmail).ToList();
-
-            foreach (var order in v3Orders)
-            {
-                try
-                {
-                    var onDemandClaim = new PostEventClaim();
-
-                    var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
-                    var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
-
-                    foreach (var claim in claimsViewModel.UserClaims)
-                    {
-                        var onDemandCode = order.OrderRows.SingleOrDefault().OnDemandCode;
-                        if (onDemandCode == null) _orderManagementService.Create
-                        if (onDemandCode != null && (claim.Value != null && claim.Value.Contains(onDemandCode)))
-                        {
-                            var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
-
-                            if (thisClaim.OrderId != order.idOrder)
-                            {
-                                _logger.Info("Claim mismatch! Claim: {0} vs Order: {1}", thisClaim.OrderId, order.idOrder);
-                            }
-
-                            onDemandClaim.OrderId = order.idOrder;
-                            onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
-                            onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.ErrorException("Checks ondemand claim failed: " + order, ex);
-                }
-            }
-            return Content("Ok");
-        }
-
-        [HandleAjaxException]
         [HttpPost]
         [AllowAnonymous]
         public ActionResult GetGridData(int? webinarId, int? affiliateId)
