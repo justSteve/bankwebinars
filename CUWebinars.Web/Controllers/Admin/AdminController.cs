@@ -480,7 +480,8 @@ namespace CUWebinars.Web.Controllers.Admin
                         claimsViewModel.UserClaims.Where(
                             c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials"))
                 {
-                    if (claim.Value.Contains(model.Order.OrderRows.SingleOrDefault().OnDemandCode))
+                    var singleOrDefault = model.Order.OrderRows.SingleOrDefault();
+                    if (singleOrDefault != null && claim.Value.Contains(singleOrDefault.OnDemandCode))
                     {
                         var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
 
