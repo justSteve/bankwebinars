@@ -2371,28 +2371,10 @@ namespace CUWebinars.Web.Controllers.Admin
             return Content("Ok");
         }
 
-        //[HandleAjaxException]
-        //[HttpPost]
-        //[AllowAnonymous]
-        //public ActionResult GetGridData(int? webinarId, int? affiliateId)
-        //{
-        //    if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
-        //    {
-        //        //
-
-        //        int totalNumberOrders;
-
-        //        return Json(new
-        //        {
-        //            data = BuildDisplayOrdersViewModel(webinarId.Value, affiliateId, out totalNumberOrders)
-        //        });
-        //    }
-
-        //    return Json(new { NotAuthorized = true });
-        //}
 
         [HandleAjaxException]
         [HttpPost]
+        [AllowAnonymous]
         public JsonResult OrderDataHandler(DTParametersOrders param)
         {
             if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
