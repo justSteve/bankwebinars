@@ -1,9 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <log4net>
   <appender name="CsvFileAppender" type="log4net.Appender.FileAppender">
-    <file value="D:/home/logfiles/log4netCSV.log" />
+    <file value="D:/home/logfiles/log4netCSV_10_29_2015.log" />
     <appendToFile value="true"/>
-
     <threshold value="INFO" />
     <!--<layout type=" MyApp.Web.CsvLogging.CsvPatternLayout, MyApp.Web">-->
     <layout type=" CUWebinars.Web.CsvPatternLayout, CUWebinars.Web">

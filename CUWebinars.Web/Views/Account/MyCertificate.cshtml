@@ -2,18 +2,22 @@
 @using System.Linq
 @using System.Web.Mvc.Html
 @using CUWebinars.Business.Models
+@using CUWebinars.Web.Core
 @model CertOfCompletionViewModel
 
 @*<title>*@
 @{
     Layout = "";
 
+
+
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
     var myRow = from orderRow in Model.Order.OrderRows
                 where orderRow.RowStatus == OrderRowStatus.Active
                 select orderRow;
     var webinar = myRow.Single().Webinar;
 
-    
+
     var Presenter = webinar.Presenter.WebUser.FullName;
     string DateTimeString = DateTimeHelper.FormatDate(webinar.Date);
     var background = "~/Content/img/CertificateBackground.jpg";
@@ -80,28 +84,39 @@
                 <h3 align="center">
                     <br /><b>@webinar.Title</b>
                 </h3>
+                @{
+                    if (_globalConfig.Tenant == "CUWebinars")
+                    {
+                        <p align="center">
+                            1 Hour Webinar <br/>1.25 CE Credits
+                        </p>
+                    }
+                    else
+                    {
+                        <p align="center">
+                            2 Hour Webinar <br/>2.5 CE Credits
+                        </p>
 
-                <p align="center">
-                    1 Hour Webinar <br />1.25 CE Credits
-                </p>
-                <table align="center" cellpadding="0" cellspacing="0" width="600px" border="0">
-                    <tbody>
-                        <tr>
-                            <td valign="top">
-                                <p align="left">
-                                    Presented By: <br /><b>@Presenter</b>
-                                </p>
-                            </td>
-                            <td valign="top">
-                                <p align="right">@DateTimeString</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <br />
+                    }
+                }
+                    <table align="center" cellpadding="0" cellspacing="0" width="600px" border="0">
+                        <tbody>
+                            <tr>
+                                <td valign="top">
+                                    <p align="left">
+                                        Presented By: <br /><b>@Presenter</b>
+                                    </p>
+                                </td>
+                                <td valign="top">
+                                    <p align="right">@DateTimeString</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br />
+                </div>
             </div>
-        </div>
-    </body>
-}
-</html>
+        </body>
+                }
+            </html>
 

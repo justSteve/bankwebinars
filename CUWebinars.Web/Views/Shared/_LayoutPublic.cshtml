@@ -45,7 +45,7 @@
 <!--<![endif]-->
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <script type="text/javascript">
         var firstPage = "@firstPage";
@@ -190,6 +190,11 @@
             padding-top: 20px;
             padding-bottom: 0px;
         }
+        .preheader {
+            background-color: bisque;
+            width: 100%;
+            padding-left: 25px;
+        }
     </style>
     <script>
         window.$zopim(function () {
@@ -221,8 +226,8 @@
     <!-- end /.visuallyhidden accesibility-->
     <!-- mobile navigation trigger-->
     <h5 class="mobile_nav">
-        <a href="javascript:void(0)"><span>&nbsp;</span></a>
-    </h5>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/15">Compliance</a>
+</h5>
     <!--end mobile navigation trigger-->
     <section class="container preheader">
         <!--this is the login for the user-->
@@ -235,13 +240,13 @@
             <li><a href="" target="_blank" data-placement="bottom" title="A TTS Production"><img src="~/Content/images/TTS-logoPreHeader.jpg" /></a></li>
             <li><a class="socicon small facebook" href="https://www.facebook.com/home.php#!/pages/Total-Training-Solutions/300546163412" target="_blank" data-placement="bottom" title="Follow us on Facebook"></a></li>
             <li><a class="socicon small twitterbird" href="https://twitter.com/#!/ttstrain" target="_blank" data-placement="bottom" title="Follow us on Twitter"></a></li>
-            <li><a class="socicon small linkedin" href="https://www.linkedin.com/company/bankwebinars.com" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
+            <li><a class="socicon small linkedin" href="https://www.linkedin.com/company/bankwebinars-com" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
         </ul>
 
         <div id="search-wrapper" class="search-wrapper">
             <form class="search" method="post" action="/webinar/search">
                 <ul class="notifications" id="userNotifications">
-                    <li><i class="icon-search"></i></li>
+                    @*<li><i class="icon-search"></i></li>*@
                 </ul>
                 <input id="search-box" name="searchTerm" type="text" placeholder="Search for?">
             </form>
@@ -384,10 +389,8 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#search-box").hide();
-            $("#search-wrapper").mouseover(function () {
-                $("#search-box").show();
-            });
+
+
         });
     </script>
     @RenderSection("scripts", required: false)

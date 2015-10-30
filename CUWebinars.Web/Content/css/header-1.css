@@ -122,7 +122,8 @@ body.tall-logo nav.user {
 }
 
 .js .search input {
-    display: none;
+    /*display: none;*/
+    margin-top: 5px;
 }
 
 .preheader .phone {
@@ -130,7 +131,7 @@ body.tall-logo nav.user {
     line-height: 45px;
     margin-right: 10px;
     padding: 0 15px 0 10px;
-    border-right: 1px solid #d8dfe5;
+    /*border-right: 1px solid #d8dfe5;*/
 }
 
     .preheader .phone a, .preheader .phone {

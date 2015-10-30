@@ -45,6 +45,24 @@ namespace CUWebinars.Web.Controllers
             _stateService = stateService;
         }
 
+
+        [ValidateJsonAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
+        public ActionResult CheckOnDemandClaims(int? idWebinar)
+        {
+            try
+            {
+                _cartControllerOrchestrator.CheckOnDemandClaims(idWebinar);
+                return Json(new { Result = WebUiConstants.Success });
+            }
+            catch (Exception exception)
+            {
+                ModelState.AddModelError(string.Empty, "The operation failed.");
+                _logger.ErrorException("CheckOnDemandClaims failed ", exception);
+                return this.ModelStateJson(ModelState);
+            }
+        }
+
         [HttpPost]
         [ValidateJsonAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]

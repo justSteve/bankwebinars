@@ -27,13 +27,14 @@ namespace CUWebinars.Business.Core
     {
         private readonly string _connectionString;
 
-        private readonly ILogger _logger;
+        //private readonly ILogger _logger;
 
         private readonly TtsConfiguration _ttsConfig;
 
         public DataOperations(string connectionString)
         {
             _connectionString = connectionString;
+
         }
 
 
@@ -71,7 +72,7 @@ namespace CUWebinars.Business.Core
                     }
                     catch (Exception ex)
                     {
-                        _logger.Warn("Unknown Registration Type: " + getLegacyWebinars.CommandText +
+                        LogError("FindRegTypeForACS", "Unknown Registration Type: " + getLegacyWebinars.CommandText +
                                      " Exception.Message: " + ex.Message);
                     }
 
@@ -180,7 +181,7 @@ namespace CUWebinars.Business.Core
                     var message = command.ExecuteScalar();
                     if (message == null)
                     {
-                        _logger.Fatal("Invalid Registration Type {0} for idWebinar {1) ", registrationType, idWebinar);
+                        LogError("GetRegTypeByLableAndWebinar", "Invalid Registration Type"+ registrationType+" for idWebinar "+idWebinar);
                     }
 
                     return Convert.ToInt32(message);
@@ -263,132 +264,6 @@ namespace CUWebinars.Business.Core
 
             return numRows == 1;
         }
-
-
-        //public void SendOrderToLegacy(Order order)
-        //{
-        //    var myRow = order.OrderRows.FirstOrDefault();
-        //    var addLoc = "";
-        //    var addLocCount = 0;
-        //    var orderid = "0";
-        //    int translatedOptionId = 0;
-        //    if (myRow.RegistrationType != null)
-        //    {
-        //        translatedOptionId = getLegacyOptionID(myRow.RegistrationType.idRegType);
-        //    }
-        //    else
-        //    {
-        //        translatedOptionId = getLegacyOptionID(myRow.idRegType);
-        //    }
-        //    //int translatedOptionId = getLegacyOptionID(myRow.RegistrationType.idRegType);
-
-        //    if (myRow.AdditionalLocation != null)
-        //    {
-        //        addLocCount = myRow.AdditionalLocation.Count;
-        //        foreach (var loc in myRow.AdditionalLocation)
-        //        {
-        //            addLoc += loc.Email + ",";
-        //        }
-        //    }
-
-
-        //    int AffiliateID = order.idAffiliate;
-        //    int WebinarID = 0;
-        //    //int idRegType = _webinarManagementService.GetRegTypeByACS(dic["DeliveryType"], Convert.ToInt32(dic["BankWebID"]));
-        //    int idRegType = 0;
-        //    var FirstName = order.FirstName;
-        //    var LastName = order.LastName;
-        //    var Title = order.WebUser.Title;
-        //    var Institution = order.Institution;
-        //    var Email = order.BillingEmail;
-        //    var Phone = order.BillingPhone;
-        //    var Address = order.BillingAddress;
-        //    var Address2 = order.BillingAddress2;
-        //    var City = order.BillingCity;
-        //    var State = order.BillingState;
-        //    var Zip = order.BillingZip;
-        //    var DiscountCode = "";
-        //    var AdditionalLocations = "";
-        //    var shippingFirstName = order.FirstName;
-        //    var shippingLastName = order.LastName;
-        //    var shippingPhone = order.ShippingPhone;
-        //    var shippingAddress = order.ShippingAddress;
-        //    var shippingCity = order.ShippingCity;
-        //    var shippingState = order.ShippingState;
-        //    var shippingZip = order.ShippingZip;
-        //    var AffiliateComments = "V3Migrator";
-        //    var OrderDate = order.OrderDate;
-        //    var DeliveryType = translatedOptionId;
-
-
-        //    WebinarID = myRow.idWebinar;
-
-        //    var PostForm = MigrateOrderModelQueryString(DeliveryType, AffiliateID, FirstName, LastName, Phone,
-        //        Address, Address2, City, Zip, State, shippingFirstName, shippingLastName, shippingPhone,
-        //        shippingAddress, shippingCity, shippingState, shippingZip, Email, Title, Institution, idRegType,
-        //        WebinarID, AdditionalLocations, Convert.ToDateTime(OrderDate), DiscountCode);
-
-
-        //    //string submitImporter = "http://localhost:51405/home/migrateorder";
-        //    string submitImporter = "http://acsimporter.bankwebinars.com/home/migrateorder";
-
-
-        //    WebRequest req = WebRequest.Create(submitImporter);
-
-        //    byte[] send = Encoding.Default.GetBytes(PostForm);
-        //    req.Method = "POST";
-        //    req.ContentType = "application/x-www-form-urlencoded";
-        //    req.ContentLength = send.Length;
-
-        //    Stream sout = req.GetRequestStream();
-        //    sout.Write(send, 0, send.Length);
-        //    sout.Flush();
-        //    sout.Close();
-
-        //    //WebResponse res = req.GetResponse();
-        //    //StreamReader sr = new StreamReader(res.GetResponseStream());
-        //    //string returnvalue = sr.ReadToEnd();
-
-        //    // Display the content.
-        //    //return returnvalue;
-
-        //}
-
-        //private string MigrateOrderModelQueryString(int deliveryType, int affiliateId, string firstName, string lastName, string phone, string address1, string address2, string city, string zip, string state, string shippingFirstName, string shippingLastName, string shippingPhone, string shippingAddress, string shippingCity, string shippingState, string shippingZip, string email, string title, string institution, int idRegType, int webinarId, string additionalLocations, DateTime orderDate, string discountCode)
-        //{
-        //    var PostForm = "";
-
-        //    PostForm = "affiliateId=" + affiliateId + "&BillingAddress.AddressType=Billing";
-        //    PostForm += "&BillingAddress.Name=" + HttpUtility.UrlEncode(firstName + " " + lastName);
-        //    PostForm += "&Source=V3Migrator?Version=3";
-        //    PostForm += "&phone=" + HttpUtility.UrlEncode(phone);
-        //    PostForm += "&address1=" + HttpUtility.UrlEncode(address1);
-        //    PostForm += "&address2=" + HttpUtility.UrlEncode(address2);
-        //    PostForm += "&city=" + HttpUtility.UrlEncode(city);
-        //    PostForm += "&zip=" + HttpUtility.UrlEncode(zip);
-        //    PostForm += "&state=" + HttpUtility.UrlEncode(state);
-        //    PostForm += "&ShippingFirstName=" + HttpUtility.UrlEncode(shippingFirstName);
-        //    PostForm += "&ShippingLastName=" + HttpUtility.UrlEncode(HttpUtility.UrlEncode(shippingLastName));
-        //    PostForm += "&ShippingPhone=" + HttpUtility.UrlEncode(shippingPhone);
-        //    PostForm += "&ShippingAddress=" + HttpUtility.UrlEncode(shippingAddress);
-        //    PostForm += "&ShippingCity=" + HttpUtility.UrlEncode(shippingCity);
-        //    PostForm += "&ShippingState=" + HttpUtility.UrlEncode(shippingState);
-        //    PostForm += "&ShippingZip=" + HttpUtility.UrlEncode(shippingZip);
-        //    PostForm += "&email=" + HttpUtility.UrlEncode(email);
-        //    PostForm += "&title=" + HttpUtility.UrlEncode(title);
-        //    PostForm += "&institution=" + HttpUtility.UrlEncode(institution);
-        //    PostForm += "&firstName=" + HttpUtility.UrlEncode(firstName);
-        //    PostForm += "&lastName=" + HttpUtility.UrlEncode(lastName);
-        //    PostForm += "&deliveryType=" + deliveryType;
-        //    PostForm += "&webinarId=" + webinarId;
-        //    PostForm += "&orderDate=" + HttpUtility.UrlEncode(orderDate.ToString());
-        //    PostForm += "&discountCode=" + HttpUtility.UrlEncode(discountCode);
-        //    PostForm += "&AdditionalLocationsString=" + HttpUtility.UrlEncode(additionalLocations);
-
-        //    return PostForm;
-
-        //}
-
 
         public int getLegacyOptionID(int idRegType)
         {
@@ -511,11 +386,33 @@ namespace CUWebinars.Business.Core
                 //Premier Package ;
                 //PreEvent_5PartSeries_2014
                 default:
-                    _logger.Fatal("Invalid Regtype detected at getLegacyOptionID!! {0}", idRegType);
+
+                    LogError("GetLgacyOptionID","Invalid Regtype detected at getLegacyOptionID!! " + idRegType);
                     return idRegType;
 
 
 
+            }
+        }
+
+        public void LogError(string MethodSendingError, string ErrorToLog)
+        {
+            using (var sqlConnection = new SqlConnection(TtsConfig.LegacyConnectionString))
+            {
+                sqlConnection.Open();
+                
+                    using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                    {
+                        errorLogger.CommandText =
+                            "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                        errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
+                        errorLogger.CommandText += "'V3DataOp ErrorLogger' ,";
+                        errorLogger.CommandText += "9 ,9 ,9 ,'"+MethodSendingError+"', 9 ,";
+                        errorLogger.CommandText += "'"+ErrorToLog+"')";
+
+                        errorLogger.ExecuteNonQuery();
+
+                    }
             }
         }
 
@@ -790,7 +687,7 @@ namespace CUWebinars.Business.Core
                                 }
                                 catch (Exception ex)
                                 {
-                                    _logger.Error("GetLegacyOrders hit error on: " + reader.GetString(7) + " msg: " + ex.Message);
+                                    LogError("GetLegacyOrdersByWebinar", "GetLegacyOrders hit error on: " + reader.GetString(7) + " msg: " + ex.Message);
                                 }
                             }
                         }
@@ -863,7 +760,7 @@ namespace CUWebinars.Business.Core
         public int MigrateOrderFromV3(Order order)
         {
             if (order == null) return 0;
-            
+
             var myRow = order.OrderRows.SingleOrDefault();
             string myDiscount = "";
             if (myRow.Discount != null)
@@ -1143,7 +1040,7 @@ namespace CUWebinars.Business.Core
                                 }
                                 catch (Exception ex)
                                 {
-                                    _logger.Error("findWebUser hit error on: " + reader.GetString(7) + " msg: " + ex.Message);
+                                    LogError("GetWebUserFromLgacy","findWebUser hit error on: " + reader.GetString(7) + " msg: " + ex.Message);
                                 }
                             }
                         }

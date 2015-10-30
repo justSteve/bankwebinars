@@ -3,7 +3,7 @@ using System.Text;
 using log4net.Core;
 using log4net.Layout;
 using log4net.Util;
-
+//http://element533.blogspot.com/2010/05/writing-to-csv-using-log4net.html
 namespace CUWebinars.Web
 {
     public class CsvPatternLayout : PatternLayout

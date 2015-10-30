@@ -1244,7 +1244,7 @@ namespace CUWebinars.Business.Services
             sb.Append("");
             sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
             sb.Append("            <b>");
-            sb.Append(DisplayPostEventMaterialsAccessExpiry(order).ToShortDateString());
+            sb.Append(GetPostEventMaterialsAccessExpiry(order).ToShortDateString());
             sb.Append("            </b>");
             sb.Append("        </span>");
             sb.Append("    </td>");
@@ -1253,11 +1253,6 @@ namespace CUWebinars.Business.Services
 
             return sb.ToString();
 
-        }
-
-        private DateTime  DisplayPostEventMaterialsAccessExpiry(Order order)
-        {
-            throw new NotImplementedException();
         }
 
 

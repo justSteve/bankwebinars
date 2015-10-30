@@ -126,7 +126,7 @@ $(function () {
                     }
                 },
                 // "dom": 'frtiS',
-                "dom": '<ilf<t>ip>',
+            "dom": '<ilf<t>ip>',
                 "pageLength" : 10,
                 "scrollY": 500,
                 "scrollX": true,
@@ -166,7 +166,7 @@ $(function () {
                 "mRender": function (data, type, full) {
                     return "<a href='/account/edituser/" + data + "' target='_new' />" + full.LastName + ", " + full.FirstName + "</a><br>" + full.BillingEmail;
                 }
-            },
+                },
             {
                 "aTargets": [3], // Billing column
                 "mData": "",
@@ -195,7 +195,7 @@ $(function () {
                     return billingHtml;
                 }
             },
-            {
+                {
                 "aTargets": [6], // Status column
                 "mData": "",
                 "mRender": function (data, type, full) {
