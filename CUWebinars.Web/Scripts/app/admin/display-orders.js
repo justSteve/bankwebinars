@@ -114,35 +114,104 @@ $(function () {
     ns.wireUpDataTable = function() {
         
         DO.ordersTable.dataTable({
-            "dom": '<ilf<t>ip>',
-            //'dom': 'T<"clear">lfrtip',
-            'tableTools': {
-                'sSwfPath': '/Content/DataTables/swf/copy_csv_xls_pdf.swf'
-            },
-            'ajax': {
-                'url': '/admin/GetGridData',
-                'data': {
-                    'webinarId': parseInt(DO.webinarIdDiv.text()),
-                    'affiliateId': DO.affiliateId
+                "serverSide": true,
+                "ajax": {
+                    "type": "POST",
+                    "url": '/admin/OrderDataHandler',
+                    "contentType": 'application/json; charset=utf-8',
+                    'data': function (data) {
+                        data.webinarId = parseInt(DO.webinarIdDiv.text());
+                        data.affiliateId = DO.affiliateId;
+                        return data = JSON.stringify(data);
+                    }
                 },
-                'type': 'POST'
-
-
-            },
-            'columns': [
-                { 'data': 'OrderColumn' },
-                { 'data': 'UserColumn' },
-                { 'data': 'InstitutionColumn' },
-                { 'data': 'BillingColumn' },
-                {
-                    'data': 'AffiliateColumn',
-                    'visible': aff
+                // "dom": 'frtiS',
+                "dom": '<ilf<t>ip>',
+                "pageLength" : 10,
+                "scrollY": 500,
+                "scrollX": true,
+                "scrollCollapse": true,
+                "scroller": {
+                    loadingIndicator: false
                 },
-                { 'data': 'OrderDateColumn' },
-                { 'data': 'StatusColumn' }
-            ]
+                "processing": true,
+                "paging": true,
+                "deferRender": true,
+                'columns': [
+                    { 'data': 'idOrder' },
+                    { 'data': 'idUser' },
+                    { 'data': 'Institution' },
+                    null,
+                    {
+                        'data': 'Affiliate_ttsDomain',
+                        'visible': aff
+                    },
+                    { 'data': 'OrderDateString' },
+                    { 'data': null, 'orderable': false }
+                ],
+                "order": [0, "asc"]            
+
+            , // complex columns can be specified / created with mRender
+            "aoColumnDefs": [{
+                "aTargets": [0], // Order [id] column
+                "mData": "",
+                "mRender": function (data, type, full) {
+                    var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : data;
+                    return orderToEdit + ", " + full.TtsJoinUrl;
+                },
+            },
+            {
+                "aTargets": [1], // User column
+                "mData": "",
+                "mRender": function (data, type, full) {
+                    return "<a href='/account/edituser/" + data + "' target='_new' />" + full.LastName + ", " + full.FirstName + "</a><br>" + full.BillingEmail;
+                }
+            },
+            {
+                "aTargets": [3], // Billing column
+                "mData": "",
+                "mRender": function (data, type, full) {
+                    var showDiscount = "";
+                    var discountHTML = "<br><span class=\"DisplayDiscount\">Discounted by: {0}</span>";
+                    if (full.Discount != null)
+                    {
+                        if (full.Discount.FlatOff > 0)
+                        {
+                            showDiscount = discountHTML.replace("{0}", "$" + (full.Discount.FlatOff + "").replace(".00", ""));
+                        }
+                        else if (full.Discount.PercentOff > 0) 
+                        {
+                            showDiscount = discountHTML.replace("{0}", full.Discount.PercentOff + "%");
+                        }
+                    }
+
+                    var billingHtml = full.RegistrationType.OptionLabel
+                                            .replace(" and Hardcopy Handouts", "")
+                                            .replace("Plus Five", "Only")
+                                            + showDiscount
+                                            + "<br />Total: $" + (full.Total + "").replace(".00", "")
+                                            ;
+
+                    return billingHtml;
+                }
+            },
+            {
+                "aTargets": [6], // Status column
+                "mData": "",
+                "mRender": function (data, type, full) {
+                    var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
+                    var statusHtml = "<a href='/Admin/manageOrder/" + orderToEdit + "' target='_new' />" + full.OrderStatusString + "</a><br/>";
+                    var resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendOrderConfirmationButton btn btn-mini\">Send Confirmation</button>";
+                    if (full.Webinar_IsActive) {
+                        resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
+                    }
+
+                    return statusHtml + resendMsg;
+                }
+            }]
         });
     };
+
     ns.wireUpConnInfoDataTable = function() {
         
         DO.connInfoTable.dataTable({

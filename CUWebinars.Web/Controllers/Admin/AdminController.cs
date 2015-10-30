@@ -2346,7 +2346,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     foreach (var claim in claimsViewModel.UserClaims)
                     {
                         var onDemandCode = order.OrderRows.SingleOrDefault().OnDemandCode;
-                        if (onDemandCode == null) _orderManagementService.Create
+                        //if (onDemandCode == null) _orderManagementService.Create
                         if (onDemandCode != null && (claim.Value != null && claim.Value.Contains(onDemandCode)))
                         {
                             var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
@@ -2370,24 +2370,78 @@ namespace CUWebinars.Web.Controllers.Admin
             return Content("Ok");
         }
 
+        //[HandleAjaxException]
+        //[HttpPost]
+        //[AllowAnonymous]
+        //public ActionResult GetGridData(int? webinarId, int? affiliateId)
+        //{
+        //    if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
+        //    {
+        //        //
+
+        //        int totalNumberOrders;
+
+        //        return Json(new
+        //        {
+        //            data = BuildDisplayOrdersViewModel(webinarId.Value, affiliateId, out totalNumberOrders)
+        //        });
+        //    }
+
+        //    return Json(new { NotAuthorized = true });
+        //}
+
         [HandleAjaxException]
         [HttpPost]
-        [AllowAnonymous]
-        public ActionResult GetGridData(int? webinarId, int? affiliateId)
+        public JsonResult OrderDataHandler(DTParametersOrders param)
         {
             if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
             {
-                //
+                // based heavily on https://www.echosteg.com/jquery-datatables-asp.net-mvc5-server-side
 
-                int totalNumberOrders;
+                int totalNumberOrders = 0;
+                int webinarId = param.webinarId;
+                int? affiliateId = param.affiliateId;
 
-                return Json(new
+                try
                 {
-                    data = BuildDisplayOrdersViewModel(webinarId.Value, affiliateId, out totalNumberOrders)
-                });
+                    List<Order> dtsource = _dataTablesService.GetOrdersByWebinar(webinarId, affiliateId ?? 19, out totalNumberOrders).ToList();
+
+                    // use automapper to flatten out the order records, in this specific case the data 
+                    //  model has circular references which cause problems with JSON serialization
+                    List<OrderDTO> dtoSource = new List<OrderDTO>();
+                    AutoMapper.Mapper.Map(dtsource, dtoSource);
+
+
+                    List<String> columnSearch = new List<string>();
+                    foreach (var col in param.Columns)
+                    {
+                        columnSearch.Add(col.Search.Value);
+                    }
+
+                    List<OrderDTO> data = new DTResultSetOrders().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtoSource, columnSearch);
+                    int count = new DTResultSetOrders().Count(param.Search.Value, dtoSource, columnSearch);
+
+                    DataTableService<OrderDTO> result = new DataTableService<OrderDTO>
+                    {
+                        draw = param.Draw,
+                        data = data,
+                        recordsFiltered = count,
+                        recordsTotal = count
+                    };
+
+                    JsonResult jsonresult = Json(result);
+                    jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
+
+                    return jsonresult;
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { error = ex.Message });
+                }
             }
 
             return Json(new { NotAuthorized = true });
+
         }
 
 
@@ -2464,7 +2518,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     };
 
                     return Json(result);
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -2474,59 +2528,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return Json(new { NotAuthorized = true });
 
-        }
-
-        private IList<IDictionary<string, string>> BuildDisplayOrdersViewModel(int webinarId, int? affiliateId, out int totalNumberOrders)
-        {
-            var orders = _dataTablesService.GetOrdersByWebinar(webinarId, affiliateId ?? 19, out totalNumberOrders);
-
-            IList<IDictionary<string, string>> responsePayload = new List<IDictionary<string, string>>();
-            IDictionary<string, string> responsePayloadInner = new Dictionary<string, string>();
-
-            foreach (var order in orders)
-            {
-
-                var orderRow = order.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
-                int orderToEdit = order.idOrderLegacy;
-                if (orderToEdit == 0) orderToEdit = order.idOrder;
-
-                var orderColumn = orderToEdit.ToString() + ", " + orderRow.TtsJoinUrl;
-                var userColumn = "<a href='/account/edituser/" + order.idUser + "' target='_new' />" + order.LastName + ", " + order.FirstName + "</a><br>" + order.BillingEmail;
-                var institutionColumn = order.Institution;
-                var showDiscount = "";
-                if (!ReferenceEquals(orderRow.Discount, null) && orderRow.Discount.FlatOff > 0)
-                {
-                    showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: $" + orderRow.Discount.FlatOff.ToString().Replace(".00", "") + "</span>";
-                }
-                else if ((!ReferenceEquals(orderRow.Discount, null) && orderRow.Discount.PercentOff > 0))
-                {
-                    showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: " + orderRow.Discount.PercentOff.ToString() + "%</span>";
-                }
-                var billingColumn = orderRow.RegistrationType.OptionLabel.Replace(" and Hardcopy Handouts", "").Replace("Plus Five", "Only") + showDiscount + "<br>Total: $" + order.Total.ToString().Replace(".00", "");
-
-                var resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendOrderConfirmationButton btn btn-mini\">Send Confirmation</button>";
-                if (orderRow.Webinar.Status == WebinarStatus.Active)
-                {
-                    resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
-                }
-
-                responsePayloadInner = new Dictionary<string, string>();
-
-                responsePayloadInner.Add("OrderId", orderColumn);
-                responsePayloadInner.Add("OrderColumn", orderColumn);
-                responsePayloadInner.Add("UserColumn", userColumn);
-                responsePayloadInner.Add("InstitutionColumn", institutionColumn);
-                responsePayloadInner.Add("BillingColumn", billingColumn);
-
-                responsePayloadInner.Add("AffiliateColumn", order.Affiliate.ttsDomain);
-
-                responsePayloadInner.Add("OrderDateColumn", order.OrderDate.ToShortDateString());
-                responsePayloadInner.Add("StatusColumn", "<a href='/Admin/manageOrder/" + orderToEdit + "' target='_new' />" + order.OrderStatus.ToString() + "</a><br/>" + resendMsg);
-
-                responsePayload.Add(responsePayloadInner);
-            }
-
-            return responsePayload;
         }
 
 

@@ -895,8 +895,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 //    DateTime.Parse(newExpiryDate),
                 //    order
                 //    );
-                _logger.Info("Added (at checkout) expiryDate claim for: {0}. Date: {1}", order.idOrder,
-                    DateTime.Parse(newExpiryDate));
+                //_logger.Info("Added (at checkout) expiryDate claim for: {0}. Date: {1}", order.idOrder,
+                //    DateTime.Parse(newExpiryDate));
             }
         }
 
