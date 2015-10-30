@@ -502,7 +502,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _logger.Info(string.Format("Recordings posted for {0} is saved to {1}", webinar.idWebinar + " - " + webinar.Title, webinar.RecordingUrl));
                 SendRecordingIsPostedNotifications(webinarDetailsViewModel, webinar);
                 return true;
-
             }
             catch (Exception exception)
             {

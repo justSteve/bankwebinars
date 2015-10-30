@@ -46,7 +46,7 @@
 <head>
     <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-@*    <meta name="apple-mobile-web-app-capable" content="yes" />*@
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <script type="text/javascript">
         var firstPage = "@firstPage";
         var sessionID = "@sessionID";
@@ -190,6 +190,11 @@
             padding-top: 20px;
             padding-bottom: 0px;
         }
+        .preheader {
+            background-color: bisque;
+            width: 100%;
+            padding-left: 25px;
+        }
     </style>
     <script>
         window.$zopim(function () {
@@ -220,9 +225,9 @@
     </ul>
     <!-- end /.visuallyhidden accesibility-->
     <!-- mobile navigation trigger-->
-    @*<h5 class="mobile_nav">
-        <a href="javascript:void(0)"><span>&nbsp;</span></a>
-    </h5>*@
+    <h5 class="mobile_nav">
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/15">Compliance</a>
+</h5>
     <!--end mobile navigation trigger-->
     <section class="container preheader">
         <!--this is the login for the user-->
@@ -241,7 +246,7 @@
         <div id="search-wrapper" class="search-wrapper">
             <form class="search" method="post" action="/webinar/search">
                 <ul class="notifications" id="userNotifications">
-                    <li><i class="icon-search"></i></li>
+                    @*<li><i class="icon-search"></i></li>*@
                 </ul>
                 <input id="search-box" name="searchTerm" type="text" placeholder="Search for?">
             </form>
@@ -384,10 +389,8 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#search-box").hide();
-            $("#search-wrapper").mouseover(function () {
-                $("#search-box").show();
-            });
+
+
         });
     </script>
     @RenderSection("scripts", required: false)
