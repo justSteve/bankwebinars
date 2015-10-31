@@ -717,6 +717,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             var webinarEditModel = new WebinarEditModel
             {
                 AdditionalLocationsPrice = additionalLocationsPricing == null ? 0.00M : additionalLocationsPricing.Cost,
+                ceu = webinar.ceu,
                 PostedTopics = new PostedTopics { TopicIds = topicIdsForWebinar.Select(topic => topic.idTopic).ToArray() },
                 PostedRegTypeGroups =
                     new PostedRegTypeGroups

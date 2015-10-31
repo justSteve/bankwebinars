@@ -299,8 +299,18 @@ namespace CUWebinars.Web.Controllers
             {
                 displayName = currentUser.FirstName + ' ' + currentUser.LastName;
             }
+
             var model = new CertOfCompletionViewModel { DisplayName = displayName, Order = currentOrder };
 
+            model.CeuShort = string.Empty;
+            model.CeuStatement = string.Empty;
+
+            if (!string.IsNullOrEmpty(model.Order.OrderRows.SingleOrDefault().Webinar.ceu))
+            {
+                string[] ceu = model.Order.OrderRows.SingleOrDefault().Webinar.ceu.Split('|');
+                model.CeuShort = ceu[0];
+                model.CeuStatement = ceu[1];
+            }
 
             return View("MyCertificate", model);
         }

@@ -62,6 +62,15 @@
                 @Html.TextAreaFor(m => m.Description, new { cols = 40 })
             </div>
         </div>
+
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.ceu)
+            </div>
+            <div class="controls">
+                @Html.TextAreaFor(m => m.ceu, new { cols = 40 })
+            </div>
+        </div>
         <div class="control-group">
             <div class="control-label">
                 @Html.LabelFor(m => m.DescriptionLong, "Description Long")
