@@ -136,7 +136,7 @@ namespace CUWebinars.Business.Services
             
             var webinars = _webinarManagementService.GetWebinarByDescription(searchTerm);
 
-            totalNumberWebinars = 10;
+            totalNumberWebinars = webinars.Count();
 
             return webinars;
         }

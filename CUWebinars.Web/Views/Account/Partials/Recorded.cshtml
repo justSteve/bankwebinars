@@ -41,7 +41,7 @@
                 {
                     onDemandClaimString = onDemandClaim.OrderId.ToString() + "-" + onDemandClaim.OnDemandCode;
                 }
-                
+
                 //var expiresDate = row.Webinar.Date.AddMonths(6);
                 var remainingDays = Convert.ToInt32((onDemandClaim.ExpiryDate - DateTime.Now).TotalDays);
                 var accessPhrase = "will be accessible ";
@@ -106,7 +106,12 @@
                                         @if (!String.IsNullOrWhiteSpace(onDemandClaimString))
                                         {
                                             <p>
-                                                Need to share this event with a co-worker? Provide them this URL:<br /> <tt><strong>http://@globalConfig.TenantURL/o/@onDemandClaimString</strong></tt>
+                                                Need to share this event with a co-worker? <br />
+                                                <tt>
+                                                    <strong>
+                                                        @globalConfig.TenantURL/o/@onDemandClaimString
+                                                    </strong>
+                                                </tt>
                                             </p>
                                         }
                                         @if (currentUser.email.EndsWith("ttstrain.com") && !String.IsNullOrWhiteSpace(recorded.Key))
@@ -114,7 +119,9 @@
                                             <p>
                                                 @{
                                             var urlSuffix = recorded.Value.idOrder + "-" + recorded.Key;
-                                            <text>A post-event assesment for this event is available. Pass this URL to any co-workers<br /> <tt><strong> http://@globalConfig.TenantURL/quiz/index/@urlSuffix</strong></tt></text>
+                                                    <text>A post-event assesment for this event is available. Pass this URL to any co-workers<br/> <tt><strong>
+                                                        @globalConfig.TenantURL/quiz/index/@urlSuffix
+                                                    </strong></tt></text>
                                                 }
                                             </p>
                                         }
@@ -135,15 +142,18 @@
                                 @if (onDemandClaim.ExpiryDate > DateTime.Now)
                                 {
                                     @*<div class="span4">
-                                        <a target="_blank" href="/webinar/GetWebinarRecording/@row.Webinar.idWebinar"><span style="margin-left: 15px;"><i class="icon-facetime-video"></i></span> Playback</a>
+                                            <a target="_blank" href="/webinar/GetWebinarRecording/@row.Webinar.idWebinar"><span style="margin-left: 15px;"><i class="icon-facetime-video"></i></span> Playback</a>
 
-                                        @{Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);}
+                                            @{Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);}
 
-                                    </div>*@
+                                        </div>*@
                                     <div class="span8">
                                         <p>
                                             Complementary access to the OnDemand recording is available until @onDemandClaim.ExpiryDate.ToShortDateString().
-                                            Need to share this event with a co-worker? Provide them this URL:<br /> <tt><b>@globalConfig.TenantURL/o/@onDemandClaimString</b></tt>
+                                            Need to share this event with a co-worker?
+                                            <a href="@globalConfig.TenantURL/o/@onDemandClaimString">
+                                                Provide them this URL:<br/> <tt><b>@globalConfig.TenantURL/o/@onDemandClaimString</b></tt>
+                                            </a>
                                         </p>
                                     </div>
                                 }
