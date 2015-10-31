@@ -427,6 +427,7 @@
     <Compile Include="Controllers\StaticContentController.cs" />
     <Compile Include="Core\ConstantType.cs" />
     <Compile Include="Core\DataTableService.cs" />
+    <Compile Include="Core\DTResultSetOrders.cs" />
     <Compile Include="Core\DTResultSetUsers.cs" />
     <Compile Include="Core\Orchestrators\IQuizControllerOrchestrator.cs" />
     <Compile Include="Core\Orchestrators\IWebinarControllerOrchestrator.cs" />
