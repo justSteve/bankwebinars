@@ -37,17 +37,20 @@ namespace CUWebinars.Web.Mapping.Configuration
             // flattens the Order structure a little bit to allow
             //  easiers consumption by server-side DataTables pattern
             //  https://www.echosteg.com/jquery-datatables-asp.net-mvc5-server-side
+            Profile.CreateMap<Webinar, SearchDTO>()
+                .ForMember(d => d.);
+
             Profile.CreateMap<Order, OrderDTO>()
-                .ForMember(d => d.Affiliate_ttsDomain,
-                           map => map.MapFrom(s => s.Affiliate.ttsDomain))
-                .ForMember(d => d.TtsJoinUrl,
-                           map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).TtsJoinUrl))
-                .ForMember(d => d.Discount,
-                           map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Discount))
-                .ForMember(d => d.RegistrationType,
-                           map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).RegistrationType))
-                .ForMember(d => d.Webinar_IsActive,
-                           map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Webinar.Status == WebinarStatus.Active));
+            .ForMember(d => d.Affiliate_ttsDomain,
+                       map => map.MapFrom(s => s.Affiliate.ttsDomain))
+            .ForMember(d => d.TtsJoinUrl,
+                       map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).TtsJoinUrl))
+            .ForMember(d => d.Discount,
+                       map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Discount))
+            .ForMember(d => d.RegistrationType,
+                       map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).RegistrationType))
+            .ForMember(d => d.Webinar_IsActive,
+                       map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Webinar.Status == WebinarStatus.Active));
 
         }
     }

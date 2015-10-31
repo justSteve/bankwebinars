@@ -1,7 +1,7 @@
-﻿@model ShowWebinarsSearchViewModel
+﻿@model ShowWebinarsViewModel
 
 @{
-    ViewBag.Title = "Webinars";
+    ViewBag.Title = "Orders";
 
     if (Model.Affiliate != null && !Model.UserIsAdmin)
     {
@@ -11,30 +11,36 @@
             }
             var DW = DISPLAYWEBINARS;
             DW.affiliateId = @Model.Affiliate.idUserAff;
-
         </script>
     }
 
     var showAffColumn = Model.UserIsAdmin ? "true" : "false";
-    //\Scripts\app\admin\display-orders.js
-    // AdminController/BuildDISPLAYWEBINARSViewModel
+    //\Scripts\app\admin\display-webinars.js
+    // WebinarController/WebinarDataHandler
 
-    <table data-aff="@showAffColumn" id="webinarsSearchTable" class="table table-striped table-bordered dataTable no-footer" cellspacing="0" width="100%">
-
+    <table data-aff="@showAffColumn" id="webinarsTable" class="table table-striped table-bordered dataTable no-footer" cellspacing="0" width="100%">
         <thead>
             <tr>
-                <th>WebinarID</th>
-                <th>OrdersColumn</th>
-                <th>PresenterColumn</th>
-                <th>TopicsColumn</th>
-                <th>AddToCartColumn</th>
-                <th>MediaColumn</th>
-                <th>ShareColumn</th>
-                <th>StatusColumn</th>
+                <th>WebinarId</th>
+                <th>WebinarDate</th>
+                <th>Body</th>
+                <th>Status</th>
             </tr>
         </thead>
 
+        @*<tfoot>
+            <tr>
+                <th>Order</th>
+                <th>User</th>
+                <th>Institution</th>
+                <th>Billing</th>
+                <th>Affiliate</th>
+                <th>OrderDate</th>
+                <th>Status</th>
+            </tr>
+        </tfoot>*@
     </table>
 
-    <div id="searchTerm" class="initialHide">@ViewBag.searchTerm</div>
+    <div id="searchTermDiv" class="initialHide">@Model.SearchTerm</div>
 }
+

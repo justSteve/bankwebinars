@@ -113,6 +113,44 @@ namespace CUWebinars.Business.Repository
             return result;
         }
 
+        public IList<Webinar> GetSearchDTO(string searchTerm)
+        {
+            var stronglyTypedContext = (TTSWebinarsContext)db;
+
+            // 1st get all topics with the topicDescription
+            var topicsOfSearch = stronglyTypedContext.Topics
+                .Include(t => t.WebinarTopicXrefs.Select(wtx => wtx.Webinar))
+                .Where(t => t.topicDesc.ToLower().Contains(searchTerm.ToLower())
+                );
+
+            // project that into a list of webinars
+            var searchTopics = topicsOfSearch.SelectMany(t => t.WebinarTopicXrefs)
+                .Select(w => w.Webinar)
+                .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
+                .Include(w => w.Presenter.WebUser)
+                .Where(w => w.Status != WebinarStatus.Archived
+                    && w.Status != WebinarStatus.Deleted
+                    && w.Status != WebinarStatus.Pending
+                    );
+
+
+            var searchDesc = stronglyTypedContext.Webinars
+                .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
+                .Include(w => w.Presenter.WebUser)
+                .Where(w => w.DescriptionLong.ToLower().Contains(searchTerm)
+                        || w.Title.ToLower().Contains(searchTerm)
+                    || w.WhoAttend.ToLower().Contains(searchTerm)
+                    || w.LearnBody.ToLower().Contains(searchTerm)
+                    && w.Status != WebinarStatus.Archived
+                    && w.Status != WebinarStatus.Deleted
+                    && w.Status != WebinarStatus.Pending
+
+                    );
+
+            var result = searchTopics.Union(searchDesc).ToList();
+            return result;
+        }
+
         public IQueryable<AdditionalLocationsLookupPrice> GetAdditionalLocationsLookupPricesForWebinar(int idWebinar)
         {
             return ((TTSWebinarsContext)db).AdditionalLocationsLookupPrices.Where(a => a.idWebinar == idWebinar);

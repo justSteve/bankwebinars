@@ -95,15 +95,15 @@ namespace CUWebinars.Business.Services
             return theseOrders;
         }
 
-        public IEnumerable<Order> GetOrdersPaged(int start, int length, string orderIdFragment, out int totalNumberOrders, out int totalFilteredOrders)
-        {
-            totalNumberOrders = _context.Orders.Count();
+        //public IEnumerable<Order> GetOrdersPaged(int start, int length, string orderIdFragment, out int totalNumberOrders, out int totalFilteredOrders)
+        //{
+        //    totalNumberOrders = _context.Orders.Count();
 
-            var filteredResult = _context.Orders.Where(o => o.idOrder.ToString().ToLower().Contains(orderIdFragment));
-            totalFilteredOrders = filteredResult.Count();
+        //    var filteredResult = _context.Orders.Where(o => o.idOrder.ToString().ToLower().Contains(orderIdFragment));
+        //    totalFilteredOrders = filteredResult.Count();
 
-            return filteredResult.OrderByDescending(order => order.idOrder).Skip(start).Take(length); ;
-        }
+        //    return filteredResult.OrderByDescending(order => order.idOrder).Skip(start).Take(length); ;
+        //}
 
         public IEnumerable<WebUser> GetWebUsers(int idAffliate, out int totalNumberUsers)
         {
@@ -131,14 +131,15 @@ namespace CUWebinars.Business.Services
             return theseUsers;
         }
 
-        public IEnumerable SearchWebinars(string searchTerm, int idAffiliate, out int totalNumberWebinars)
+        public IEnumerable<Webinar> SearchWebinars(string searchTerm, int idAffiliate, out int totalNumberWebinars)
         {
             
-            var webinars = _webinarManagementService.GetWebinarByDescription(searchTerm);
+            List<Webinar> webinars = _webinarManagementService.GetSearchDTO(searchTerm).ToList();
 
-            totalNumberWebinars = 10;
+            totalNumberWebinars = webinars.Count;
 
             return webinars;
+            
         }
     }
 }

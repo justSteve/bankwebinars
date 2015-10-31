@@ -352,15 +352,16 @@ namespace CUWebinars.Web.Controllers
         {
             try
             {
-                ViewBag.PageStyleType = "two-columns-right-sidebar";
-                ViewBag.TopicCaption = " ";
                 string searchTerm = Request["searchTerm"];
 
-                var unionOfResultSets = _webinarControllerOrchestrator.SearchWebinars(searchTerm);
-
+                
+                ShowWebinarsViewModel model = new ShowWebinarsViewModel
+                {
+                    SearchTerm = searchTerm
+                };
                 ViewBag.Title = "Search Results";
 
-                return View(unionOfResultSets);
+                return View(model);
             }
             catch (Exception exception)
             {
@@ -391,13 +392,6 @@ namespace CUWebinars.Web.Controllers
             return View(webinars);
         }
 
-        public ActionResult SearchWebinars()
-        {
-            if (Request["searchFor"] != null)
-                Session["searchTerm"] = Request["searchFor"].ToString();
-
-            return View("~/Views/Webinar/SearchWebinars.cshtml");
-        }
 
         public PartialViewResult SendConnectionInfo()
         {
@@ -1197,6 +1191,60 @@ namespace CUWebinars.Web.Controllers
             _webinarManagementService.DeleteWebinar(id);
             return RedirectToAction("Index");
         }
+
+        [HandleAjaxException]
+        [HttpPost]
+        [AllowAnonymous]
+        public JsonResult WebinarDataHandler(DTParametersWebinars param)
+        {
+
+            // based heavily on https://www.echosteg.com/jquery-datatables-asp.net-mvc5-server-side
+
+            int totalNumberWebinars = 0;
+            string searchTerm = param.searchTerm;
+            int? affiliateId = param.affiliateId;
+
+            try
+            {
+                IEnumerable<Webinar> dtsource = _dataTablesService.SearchWebinars(searchTerm, affiliateId ?? 19, out totalNumberWebinars);
+
+                // use automapper to flatten out the order records, in this specific case the data 
+                //  model has circular references which cause problems with JSON serialization
+                List<SearchDTO> dtoSource = new List<SearchDTO>();
+                AutoMapper.Mapper.Map(dtsource, dtoSource);
+
+
+                List<String> columnSearch = new List<string>();
+                foreach (var col in param.Columns)
+                {
+                    columnSearch.Add(col.Search.Value);
+                }
+
+                List<SearchDTO> data = new DTResultSetWebinars().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtoSource, columnSearch);
+                int count = new DTResultSetWebinars().Count(param.Search.Value, dtoSource, columnSearch);
+
+                DataTableService<SearchDTO> result = new DataTableService<SearchDTO>
+                {
+                    draw = param.Draw,
+                    data = data,
+                    recordsFiltered = count,
+                    recordsTotal = count
+                };
+
+                JsonResult jsonresult = Json(result);
+                jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
+
+                return jsonresult;
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+
+            return Json(new { NotAuthorized = true });
+
+        }
+
 
         [System.Web.Mvc.HttpPost]
         [ValidateJsonAntiForgeryToken]

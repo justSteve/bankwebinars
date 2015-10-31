@@ -2541,9 +2541,9 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 string title = "<a href='/Webinar/Details/" +
                                webinar.idWebinar + "' target='_blank'>" + webinar.Title + "</a>";
-                var desc = webinar.Description.Length > 600
-                    ? webinar.Description.Substring(0, 600) + "... <a class=\"btn  btn-primary btn-small\" href='/Webinar/Details/" + webinar.idWebinar + "'>More →</a></p>"
-                    : webinar.Description;
+                var desc = webinar.DescriptionLong.Length > 600
+                    ? webinar.DescriptionLong.Substring(0, 600) + "... <a class=\"btn  btn-primary btn-small\" href='/Webinar/Details/" + webinar.idWebinar + "'>More →</a></p>"
+                    : webinar.DescriptionLong;
 
                 var relatedTopics = "Related Topics: <b><i>" + string.Join(", ", allTopics) + "</i></b>";
                 var descString = new StringBuilder();
