@@ -1,4 +1,4 @@
-﻿@model UserDetailsViewModel
+﻿@model ShowOrdersViewModel
 
 @{
     ViewBag.Title = "Users";
@@ -26,26 +26,12 @@
                 <th>Order</th>
                 <th>User</th>
                 <th>Institution</th>
-                <th>Billing</th>
-                @*<th>Affiliate</th>*@
-                <th>OrderDate</th>
-                <th>Status</th>
             </tr>
         </thead>
 
-        <tfoot>
-            <tr>
-                <th>Order</th>
-                <th>User</th>
-                <th>Institution</th>
-                <th>Billing</th>
-                @*<th>Affiliate</th>*@
-                <th>OrderDate</th>
-                <th>Status</th>
-            </tr>
-        </tfoot>
     </table>
 
-    <div id="webinarIdDiv" class="initialHide">@Model.UserIsAdmin</div>
+    <div id="isAdminDiv" class="initialHide">@Model.UserIsAdmin</div>
+    <div id="userIdDiv" class="initialHide">@Model.</div>
 }
 

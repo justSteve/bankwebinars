@@ -10,10 +10,15 @@
 
         </script>
     }
-
+    var _archived = "";
+    var _dirseries = "";
+    var _pending = "";
+    var _recorded = "";
+    var _upcoming = "";
+    
     var showAffColumn = Model.UserIsAdmin ? "true" : "false";
     //\Scripts\app\admin\display-orders.js
-        // AdminController/BuildDisplayOrdersViewModel
+        // AdminController/
 
     <table data-aff="@showAffColumn" id="ordersTable" class="table table-striped table-bordered dataTable no-footer" cellspacing="0" width="100%">
         <thead>
@@ -43,4 +48,9 @@
     </table>
 
     <div id="webinarIdDiv" class="initialHide">@Model.Webinar.idWebinar</div>
+    <div id="upcoming" class="initialHide">@_upcoming</div>
+    <div id="recorded" class="initialHide">@_recorded</div>
+    <div id="archived" class="initialHide">@_archived</div>
+    <div id="dirseries" class="initialHide">@_dirseries</div>
+    <div id="pending" class="initialHide">@_pending</div>
 }

@@ -9,7 +9,7 @@ namespace CUWebinars.Web.Core
 {
     public class DTResultSetUsers
     {
-        public List<WebUser> GetResult(string search, string sortOrder, int start, int length, List<WebUser> dtResult,
+        public List<UserDTO> GetResult(string search, string sortOrder, int start, int length, List<UserDTO> dtResult,
             List<string> columnFilters)
         {
             return FilterResult(search, dtResult, columnFilters).SortBy(sortOrder).Skip(start).Take(length).ToList();
