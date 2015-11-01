@@ -20,6 +20,7 @@ namespace CUWebinars.Web.ViewModel
         public string UserColumn { get; set; }
         public string InstitutionColumn { get; set; }
         public string BillingColumn { get; set; }
+        public string DiscountColumn { get; set; }
         public string AffiliateColumn { get; set; }
         public string OrderDateColumn { get; set; }
         public string StatusColumn { get; set; }

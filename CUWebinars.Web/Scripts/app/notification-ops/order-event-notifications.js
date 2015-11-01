@@ -94,6 +94,60 @@ $(function () {
         });
 
     });
+
+
+    $('#GetResendPostEventMaterialHtmlButton').on('click', function (eventArgs) {
+        eventArgs.preventDefault();
+
+        $('#OrdersMenuHeader').after('<i id="getHtmlSpinner" class="icon-spinner icon-spin"></i>');
+        
+        $('#InputFormFields').empty().load(sendRecordingPostedUrl, function () {
+        //$('#InputFormFields').empty().load(resendConnectionInfoUrl, function () {
+
+            $('#ResendPostEventMaterialButton').on('click', function () {
+
+                labelCheckRemove();
+
+                var self = this;
+
+                var orderId = $.trim($('#OrderId').val());
+
+                var payload = { orderId: orderId };
+                //Rollbar.info({ 'oen-#1': { 'payload': payload } });
+
+                $.ajax({
+                    type: 'POST',
+                    contentType: constants.JsonContentType,
+                    cache: false,
+                    url: resendConnectionInfoUrl,
+                    dataType: constants.JsonDataType,
+                    data: JSON.stringify(payload),
+                    beforeSend: function () {
+                        $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
+                    }
+                }).done(function (result) {
+
+                    if (result.Result === 'Success') {
+                        $('#InputFormFields').append(successScreenMessage);
+                    } else if (result.Result === 'Fail') {
+                        $('#InputFormFields').append(noOrderScreenMessage);
+                    }
+                    $('#spinnerLabel').remove();
+
+                    Rollbar.info({ 'oen-#2': { 'result': result } });
+
+                }).fail(function () {
+
+                }).always(function () {
+                    //$('#loadingSpinner').remove();
+                });
+            });
+
+            $('#getHtmlSpinner').remove();
+
+        });
+
+    });
             
     $('#GetResendOrderConfirmationHtmlButton').on('click', function (eventArgs) {
 
@@ -460,56 +514,6 @@ $(function () {
 
     });
 
-    $('#GetSendReminderEventHtmlButton').on('click', function (eventArgs) {
-
-        eventArgs.preventDefault();
-
-        $('#OrdersMenuHeader').after('<i id="getHtmlSpinner" class="icon-spinner icon-spin"></i>');
-
-        $('#InputFormFields').empty().load(sendReminderUrl, function () {
-
-            $('#FireSendReminderEventButton').on('click', function (eventArgs) {
-                
-                var selectedWebinarIdVal = $('#SelectedWebinarId').val();
-                var payload = { webinarId: selectedWebinarIdVal };
-
-                $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-
-                $.ajax({
-                    type: 'POST',
-                    contentType: constants.JsonContentType,
-                    cache: false,
-                    url: sendReminderUrl,
-                    dataType: constants.JsonDataType,
-                    data: JSON.stringify(payload),
-                    beforeSend: function() {
-                        $('#WaitIndicator').show();
-                    }
-                }).done(function (result) {
-
-                    labelCheckRemove();
-
-                    if (result.Result === 'Success') {
-                        $('#InputFormFields').append(successScreenMessage);
-                    } else if (result.Result === 'No Orders to send for that webinar') {
-                        $('#InputFormFields').append(noOrdersScreenMessage);
-                    }
-                }).fail(function (jqXHR, textStatus, errorThrown) {
-                    labelCheckRemove();
-                    $('#InputFormFields').append(failedScreenMessage);
-                    Rollbar.error({ 'oen-#21': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
-                    Rollbar.error({ 'oen-#22': { 'errorThrown': errorThrown } });
-
-                }).always(function () {
-                    $('#loadingSpinner').remove();
-                });;
-
-                Rollbar.info({ 'oen-#19': { 'payload': payload } });// added after the AJAX call so as not to hold it up.
-            });
-
-            $('#getHtmlSpinner').remove();
-        });
-    });
 
     $('#GetSendConnectionInfoEventHtmlButton').on('click', function (eventArgs) {
 
@@ -566,43 +570,43 @@ $(function () {
 
             });
 
-            $('#PreviewSendConnectionInfoEmailButton').on('click', function (e) {
+            //$('#PreviewSendConnectionInfoEmailButton').on('click', function (e) {
 
-                e.preventDefault();
+            //    e.preventDefault();
 
-                var resultLabel = $('#resultLabel');
-                if (resultLabel.length > 0)
-                    resultLabel.remove();
+            //    var resultLabel = $('#resultLabel');
+            //    if (resultLabel.length > 0)
+            //        resultLabel.remove();
 
-                var webinar = webinarsDropdownList.val();
+            //    var webinar = webinarsDropdownList.val();
 
-                if (!webinar) {
-                    $('#EmailConnectionInfo').after('<span id="resultLabel" class="label label-important" style="margin-left:5px"><i class="icon icon-exclamation-sign"></i>&nbsp;You need to select an Order from the Dropdown List.</span>');
-                    return;
-                }
+            //    if (!webinar) {
+            //        $('#EmailConnectionInfo').after('<span id="resultLabel" class="label label-important" style="margin-left:5px"><i class="icon icon-exclamation-sign"></i>&nbsp;You need to select an Order from the Dropdown List.</span>');
+            //        return;
+            //    }
 
 
-                $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+            //    $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
 
-                var url = '/Admin/PreviewConnectionInfo/' + webinar;
+            //    var url = '/Admin/PreviewConnectionInfo/' + webinar;
 
-                var modalPreview = $('#previewModal'),
-                    modalFormOptionsOnPageLoad = {
-                        keyboard: true,
-                        backdrop: 'static',
-                        show: true
-                    };
+            //    var modalPreview = $('#previewModal'),
+            //        modalFormOptionsOnPageLoad = {
+            //            keyboard: true,
+            //            backdrop: 'static',
+            //            show: true
+            //        };
 
-                $.get(url, function (data) {
-                    $('#emailContent').html(data);
-                    $('#loadingSpinner').remove();
+            //    $.get(url, function (data) {
+            //        $('#emailContent').html(data);
+            //        $('#loadingSpinner').remove();
 
-                    modalPreview.modal(modalFormOptionsOnPageLoad);
-                });
+            //        modalPreview.modal(modalFormOptionsOnPageLoad);
+            //    });
 
-                Rollbar.info({ 'oen-#24': { 'webinar': webinar } });// added after the AJAX call so as not to hold it up.
+            //    Rollbar.info({ 'oen-#24': { 'webinar': webinar } });// added after the AJAX call so as not to hold it up.
 
-            });
+            //});
 
             $('#EmailConnectionInfo').on('click', function (e) {
 
@@ -708,7 +712,7 @@ $(function () {
                     } else if (result.Result === 'No Orders to send for that webinar') {
                         $('#InputFormFields').append(noOrdersScreenMessage);
                     }
-                    Rollbar.info({ 'oen-#29': { 'result': result } });
+                    
 
                 }).fail(function (jqXHR, textStatus, errorThrown) {
                     labelCheckRemove();
@@ -721,7 +725,6 @@ $(function () {
                     $('#loadingSpinner').hide();
                 });
 
-                Rollbar.info({ 'oen-#28': { 'payload': payload } });// added after the AJAX call so as not to hold it up.
             });
 
             $('#PreviewSendRecordingPostedButton').on('click', function (e) {

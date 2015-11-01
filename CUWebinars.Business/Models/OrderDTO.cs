@@ -30,6 +30,7 @@ namespace CUWebinars.Business.Models
         public RegType RegistrationType { get; set; }
 
         public bool Webinar_IsActive { get; set; } // flattened via Automapper to avoid circular reference during JSON serialization
+        public bool Webinar_IsRecorded { get; set; } // flattened via Automapper to avoid circular reference during JSON serialization
 
     }
 }

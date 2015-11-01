@@ -51,6 +51,7 @@ $(function () {
                 { 'data': 'UserColumn' },
                 { 'data': 'InstitutionColumn' },
                 { 'data': 'BillingColumn' },
+                { 'data': 'DiscountColumn' },
                 {
                     'data': 'AffiliateColumn',
                     'visible': aff

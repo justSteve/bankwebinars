@@ -47,7 +47,9 @@ namespace CUWebinars.Web.Mapping.Configuration
                 .ForMember(d => d.RegistrationType,
                            map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).RegistrationType))
                 .ForMember(d => d.Webinar_IsActive,
-                           map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Webinar.Status == WebinarStatus.Active));
+                           map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Webinar.Status == WebinarStatus.Active))
+                   .ForMember(d => d.Webinar_IsRecorded,
+                           map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Webinar.Status == WebinarStatus.Recorded));
 
         }
     }

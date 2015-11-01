@@ -2501,7 +2501,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     };
 
                     return Json(result);
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -2620,6 +2620,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: " + orderRow.Discount.PercentOff.ToString() + "%</span>";
                 }
                 var billingColumn = orderRow.RegistrationType.OptionLabel.Replace(" and Hardcopy Handouts", "").Replace("Plus Five", "Only") + showDiscount + "<br>Total: $" + order.Total.ToString().Replace(".00", "");
+                var discountColumn = orderRow.Discount.DiscountCode;
 
 
                 responsePayloadInner = new Dictionary<string, string>();
@@ -2629,60 +2630,12 @@ namespace CUWebinars.Web.Controllers.Admin
                 responsePayloadInner.Add("UserColumn", userColumn);
                 responsePayloadInner.Add("InstitutionColumn", institutionColumn);
                 responsePayloadInner.Add("BillingColumn", billingColumn);
+                responsePayloadInner.Add("DiscountColumn", discountColumn);
 
                 responsePayloadInner.Add("AffiliateColumn", order.Affiliate.ttsDomain);
 
                 responsePayloadInner.Add("OrderDateColumn", order.OrderDate.ToShortDateString());
                 responsePayloadInner.Add("StatusColumn", "<a href='/Admin/manageOrder/" + orderToEdit + "' target='_new' />" + order.OrderStatus.ToString() + "</a>");
-
-                responsePayload.Add(responsePayloadInner);
-            }
-
-            return responsePayload;
-        }
-
-        private IList<IDictionary<string, string>> BuildDisplayUsersViewModel(int? affiliateId, out int totalNumberUsers)
-        {
-            var users = _dataTablesService.GetWebUsers(affiliateId ?? 19, out totalNumberUsers);
-
-            IList<IDictionary<string, string>> responsePayload = new List<IDictionary<string, string>>();
-            IDictionary<string, string> responsePayloadInner = new Dictionary<string, string>();
-
-            foreach (var user in users)
-            {
-
-                var orderColumn = user.email;
-                var userColumn = "<a href='/account/edituser/" + user.idUser + "' target='_new' />" + user.LastName + ", " + user.FirstName + "</a>";
-                var institutionColumn = "user.Institution.InstitutionName";
-                var showDiscount = "";
-                //if (!ReferenceEquals(orderRow.Discount, null) && orderRow.Discount.FlatOff > 0)
-                //{
-                //    showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: $" + orderRow.Discount.FlatOff.ToString().Replace(".00", "") + "</span>";
-                //}
-                //else if ((!ReferenceEquals(orderRow.Discount, null) && orderRow.Discount.PercentOff > 0))
-                //{
-                //    showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: " + orderRow.Discount.PercentOff.ToString() + "%</span>";
-                //}
-                var billingColumn = "";
-
-                //var resendMsg = "Resend Confirmation";
-                //if (orderRow.Webinar.Status == WebinarStatus.Active)
-                //{
-                //    resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
-                //}
-
-                responsePayloadInner = new Dictionary<string, string>();
-
-                responsePayloadInner.Add("OrderId", orderColumn);
-                responsePayloadInner.Add("OrderColumn", orderColumn);
-                responsePayloadInner.Add("UserColumn", userColumn);
-                responsePayloadInner.Add("InstitutionColumn", institutionColumn);
-                responsePayloadInner.Add("BillingColumn", billingColumn);
-
-                //responsePayloadInner.Add("AffiliateColumn", order.Affiliate.ttsDomain);
-
-                responsePayloadInner.Add("OrderDateColumn", user.DateCreated.ToShortDateString());
-                responsePayloadInner.Add("StatusColumn", "");
 
                 responsePayload.Add(responsePayloadInner);
             }
@@ -2742,6 +2695,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 responsePayloadInner.Add("UserColumn", userColumn);
                 responsePayloadInner.Add("InstitutionColumn", institutionColumn);
                 responsePayloadInner.Add("BillingColumn", billingColumn);
+                //responsePayloadInner.Add("DiscountColumn", discountColumn);
 
                 responsePayloadInner.Add("AffiliateColumn", order.Affiliate.ttsDomain);
 

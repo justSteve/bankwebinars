@@ -617,7 +617,7 @@ OCA.initializeState = function () {
 
     OCA.cartStateManager = new OrderRegistration.StateManager();
 
-    OCA.cartStateManager.setWebinarId(currentWebinarId); // webinarId is set in a script tab in razor view DetailsAffiliate.cshtml
+    //OCA.cartStateManager.setWebinarId(idWebinar); // webinarId is set in a script tab in razor view DetailsAffiliate.cshtml
     OCA.cartStateManager.setOrderRowId(orderRowId); // orderRowId is set in the razor view DetailsAffiliate.cshtml
     OCA.cartStateManager.setIsUserLoggedIn(isUserLoggedIn); // isUserLogged is set in a script tab in razor view DetailsAffiliate.cshtml
     OCA.cartStateManager.setCheckoutInProcess(checkoutInProcess); // checkoutInProcess is set in a script tab in razor view DetailsAffiliate.cshtml
