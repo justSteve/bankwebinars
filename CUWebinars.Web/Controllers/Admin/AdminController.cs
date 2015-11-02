@@ -1400,6 +1400,24 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(new { Result = WebUiConstants.Success });
         }
 
+        [HttpPost]
+        public ActionResult ResendPostEventMaterial(int orderId)
+        {
+            var order = _orderManagementService.GetOrderById(orderId);
+
+            if (ReferenceEquals(null, order))
+            {
+                return Json(new { Result = WebUiConstants.Fail });
+            }
+
+            var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+            // perf bump by assigning to local variable
+
+            _orderManagementService.FireSendConnectionInfoNotificationEvent(new[] { order }, resending: true);
+
+            return Json(new { Result = WebUiConstants.Success });
+        }
+
         public PartialViewResult SendAdhocEvent()
         {
             var model = new AdhocNotificationViewModel
@@ -2332,7 +2350,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [AllowAnonymous]
         public ActionResult CheckOnDemandCodes(int? webinarId, int? idAffiliate)
         {
-            IList<Order> v3Orders = _orderManagementService.GetV3OrdersByWebinar(webinarId.Value);
+            IList<Order> v3Orders = _orderManagementService.GetV3OrdersByOnDemandClaim();
             List<string> v3Emails = v3Orders.Select(v3Order => v3Order.BillingEmail).ToList();
 
             foreach (var order in v3Orders)
@@ -2344,29 +2362,82 @@ namespace CUWebinars.Web.Controllers.Admin
                     var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
                     var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
 
-                    foreach (var claim in claimsViewModel.UserClaims)
+                    foreach (var claim in claimsViewModel.UserClaims.Where(c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials"))
                     {
                         var onDemandCode = order.OrderRows.SingleOrDefault().OnDemandCode;
                         //if (onDemandCode == null) _orderManagementService.Create
-                        if (onDemandCode != null && (claim.Value != null && claim.Value.Contains(onDemandCode)))
+                        if (onDemandCode != null)
                         {
-                            var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
-
-                            if (thisClaim.OrderId != order.idOrder)
+                            if (claim.Value.Contains(onDemandCode))
                             {
-                                _logger.Info("Claim mismatch! Claim: {0} vs Order: {1}", thisClaim.OrderId, order.idOrder);
+                                var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
+
+                                if (thisClaim.OrderId != order.idOrder)
+                                {
+                                    _logger.Warn("Claim mismatch! Claim: {0} vs Order: {1}", thisClaim.OrderId,
+                                        order.idOrder);
+                                }
+                                else
+                                {
+                                    _logger.Info("Match on: " + order.OrderRows.SingleOrDefault().idOrder);
+                                }
+
+                                onDemandClaim.OrderId = order.idOrder;
+                                onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
+                                onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
                             }
 
-                            onDemandClaim.OrderId = order.idOrder;
-                            onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
-                            onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
+                        }
+                        else
+                        {
+
+                            _logger.Warn("Null OnDemandCode " + order.OrderRows.SingleOrDefault().idOrder);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.ErrorException("Checks ondemand claim failed: " + order, ex);
+                    _logger.ErrorException("Checks ondemand claim failed: " + order.idOrder, ex);
                 }
+            }
+            return Content("Ok");
+        }
+
+
+        [HandleAjaxException]
+        [AllowAnonymous]
+        public ActionResult RestoreOnDemandCodes(int? webinarId, int? idAffiliate)
+        {
+
+            try
+            {
+                IList<PostEventClaim> onDemandClaims = _orderManagementService.FindAllPostEventClaims();
+
+                foreach (var claim in onDemandClaims)
+                {
+                    if (claim.OnDemandCode != null)
+                    {
+                        Order order = _orderManagementService.GetOrderById(claim.OrderId);
+                        if (
+                            order.OrderRows
+                                .SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
+                                .OnDemandCode == null)
+                        {
+                            order.OrderRows
+                                .SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
+                                .OnDemandCode = claim.OnDemandCode;
+                            _orderManagementService.SaveChanges();
+                        }
+                    }
+                    else
+                    {
+                        
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorException("RestoreOnDemandCodes: " , ex);
             }
             return Content("Ok");
         }

@@ -118,6 +118,8 @@ namespace CUWebinars.Business.Services
         void UpdateOrderByAdmin(Order newOrder);
         int SynchExpressCheckoutOrder(Order order);
         void SynchIds(Order order);
-        PostEventClaim FindPostEventClaim(Order order);
+        PostEventClaim FindPostEventClaimByOnDemandCode(Order order);
+        IList<Order> GetV3OrdersByOnDemandClaim();
+        IList<PostEventClaim> FindAllPostEventClaims();
     }
 }

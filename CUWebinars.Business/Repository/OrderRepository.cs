@@ -354,6 +354,18 @@ namespace CUWebinars.Business.Repository
             throw new NotImplementedException();
         }
 
+        public IList<Order> GetV3OrdersByOnDemandClaim()
+        {
+
+            var orders = ((TTSWebinarsContext)db).OrderRows
+                .Include(or => or.Order)
+                .Where(or => or.RegistrationType.ShowRecordingNotifications == "Yes")
+                .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Submitted)
+                .Where(or => or.Webinar.Status == WebinarStatus.Recorded)
+                .Select(o => o.Order);
+            return GetLoadedEntitiesForOrder(orders);
+        }
+
         public IList<int> FindOrderIdsByPartialId(int userId)
         {
             return items.Include(o => o.WebUser)

@@ -181,7 +181,7 @@ namespace CUWebinars.Business.Core
                     var message = command.ExecuteScalar();
                     if (message == null)
                     {
-                        LogError("GetRegTypeByLableAndWebinar", "Invalid Registration Type"+ registrationType+" for idWebinar "+idWebinar);
+                        LogError("GetRegTypeByLableAndWebinar", "Invalid Registration Type" + registrationType + " for idWebinar " + idWebinar);
                     }
 
                     return Convert.ToInt32(message);
@@ -387,7 +387,7 @@ namespace CUWebinars.Business.Core
                 //PreEvent_5PartSeries_2014
                 default:
 
-                    LogError("GetLgacyOptionID","Invalid Regtype detected at getLegacyOptionID!! " + idRegType);
+                    LogError("GetLgacyOptionID", "Invalid Regtype detected at getLegacyOptionID!! " + idRegType);
                     return idRegType;
 
 
@@ -400,19 +400,19 @@ namespace CUWebinars.Business.Core
             using (var sqlConnection = new SqlConnection(TtsConfig.LegacyConnectionString))
             {
                 sqlConnection.Open();
-                
-                    using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                    {
-                        errorLogger.CommandText =
-                            "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                        errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
-                        errorLogger.CommandText += "'V3DataOp ErrorLogger' ,";
-                        errorLogger.CommandText += "9 ,9 ,9 ,'"+MethodSendingError+"', 9 ,";
-                        errorLogger.CommandText += "'"+ErrorToLog+"')";
 
-                        errorLogger.ExecuteNonQuery();
+                using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                {
+                    errorLogger.CommandText =
+                        "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                    errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
+                    errorLogger.CommandText += "'V3DataOp ErrorLogger' ,";
+                    errorLogger.CommandText += "9 ,9 ,9 ,'" + MethodSendingError + "', 9 ,";
+                    errorLogger.CommandText += "'" + ErrorToLog + "')";
 
-                    }
+                    errorLogger.ExecuteNonQuery();
+
+                }
             }
         }
 
@@ -1040,7 +1040,7 @@ namespace CUWebinars.Business.Core
                                 }
                                 catch (Exception ex)
                                 {
-                                    LogError("GetWebUserFromLgacy","findWebUser hit error on: " + reader.GetString(7) + " msg: " + ex.Message);
+                                    LogError("GetWebUserFromLgacy", "findWebUser hit error on: " + reader.GetString(7) + " msg: " + ex.Message);
                                 }
                             }
                         }
@@ -1072,7 +1072,7 @@ namespace CUWebinars.Business.Core
             throw new NotImplementedException();
         }
 
-        public PostEventClaim FindPostEventClaim(Order order)
+        public PostEventClaim FindPostEventClaimByOnDemandCode(Order order)
         {
             var retValue = false;
             using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
@@ -1085,7 +1085,7 @@ namespace CUWebinars.Business.Core
                     Value = order.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).OnDemandCode
                 };
 
-                using (var insertWebUser = new SqlCommand("FindPostEventClaim", sqlConnection))
+                using (var insertWebUser = new SqlCommand("FindPostEventClaimByOnDemandCode", sqlConnection))
                 {
                     insertWebUser.Parameters.Add(onDemandCodeParameter);
 
@@ -1105,9 +1105,9 @@ namespace CUWebinars.Business.Core
                             errorLogger.CommandText =
                                 "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
                             errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
-                            errorLogger.CommandText += "'FindPostEventClaim' ,";
-                            errorLogger.CommandText += "9 ,9 ,9 ,'FindPostEventClaim', 9 ,";
-                            errorLogger.CommandText += "'error at FindPostEventClaim " + ex.Message.Replace("'", "|") + "')";
+                            errorLogger.CommandText += "'FindPostEventClaimByOnDemandCode' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'FindPostEventClaimByOnDemandCode', 9 ,";
+                            errorLogger.CommandText += "'error at FindPostEventClaimByOnDemandCode " + ex.Message.Replace("'", "|") + "')";
 
                             errorLogger.ExecuteNonQuery();
 
@@ -1125,9 +1125,108 @@ namespace CUWebinars.Business.Core
             }
 
             return returnClaim;
+        }
 
 
+        public PostEventClaim FindPostEventClaimByOrderId(Order order)
+        {
+            var retValue = false;
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+                var onDemandCodeParameter = new SqlParameter
+                {
+                    SqlDbType = SqlDbType.Int,
+                    ParameterName = "@idOrder",
+                    Value = order.idOrder
+                };
 
+                using (var insertWebUser = new SqlCommand("FindPostEventClaimByOrderId", sqlConnection))
+                {
+                    insertWebUser.Parameters.Add(onDemandCodeParameter);
+
+                    try
+                    {
+                        insertWebUser.Connection = sqlConnection;
+                        insertWebUser.CommandType = CommandType.StoredProcedure;
+
+                        var result = insertWebUser.ExecuteScalar();
+                        if (result == null)
+                            retValue = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
+                            errorLogger.CommandText += "'FindPostEventClaimByOrderId' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'FindPostEventClaimByOrderId', 9 ,";
+                            errorLogger.CommandText += "'error at FindPostEventClaimByOrderId " + ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+
+                        }
+                    }
+                }
+            }
+            PostEventClaim returnClaim = new PostEventClaim();
+            var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(retValue.ToString());
+            if (thisClaim.OnDemandCode == order.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).OnDemandCode)
+            {
+                returnClaim.OrderId = order.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idOrder;
+                returnClaim.OnDemandCode = thisClaim.OnDemandCode;
+                returnClaim.ExpiryDate = thisClaim.ExpiryDate;
+            }
+
+            return returnClaim;
+        }
+
+
+        public IList<PostEventClaim> FindAllPostEventClaims()
+        {
+            IList<PostEventClaim> retList = new List<PostEventClaim>();
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+
+                using (var FindAllPostEventClaims = new SqlCommand("FindAllPostEventClaims", sqlConnection))
+                {
+                    try
+                    {
+                        FindAllPostEventClaims.Connection = sqlConnection;
+                        FindAllPostEventClaims.CommandType = CommandType.StoredProcedure;
+
+                        using (var reader = FindAllPostEventClaims.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                //PostEventClaim returnClaim = new PostEventClaim();
+                                var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(reader[0].ToString());
+                                retList.Add(thisClaim);
+                            }
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
+                            errorLogger.CommandText += "'FindAllPostEventClaims' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'FindAllPostEventClaims', 9 ,";
+                            errorLogger.CommandText += "'error at FindAllPostEventClaims " + ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+
+                        }
+                    }
+                }
+            }
+            return retList;
         }
     }
 }

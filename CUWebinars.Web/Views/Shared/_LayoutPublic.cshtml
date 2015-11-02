@@ -178,44 +178,48 @@
 
     <link rel="shortcut icon" href="~/Content/images/BankWebinars/favicon.ico" />
     <meta property="og:description" content="@GlobalConfig.GlobalConfigSingleton.Tenant is Webinars for the financial industry." />
+    
+    
+        <style>
+            table td {
+                border: none;
+                text-align: center;
+            }
 
-    @RenderSection("Styles", required: false)
-    <style>
-        table td {
-            border: none;
-            text-align: center;
-        }
+            .hero-unit {
+                padding-top: 20px;
+                padding-bottom: 0px;
+            }
 
-        .hero-unit {
-            padding-top: 20px;
-            padding-bottom: 0px;
-        }
-        .preheader {
-            background-color: lightgray;
-            width: 100%;
-            padding-left: 25px;
-        }
-    </style>
-    <script>
-        window.$zopim(function () {
-            window.$zopim.livechat.bubble.setTitle('Help & Feedback');
-        });
+            .preheader {
+                background-color: lightgray;
+                width: 100%;
+                padding-left: 25px;
+            }
+            .affFooter {
+                color: white;
+            }
+        </style>
+        <script>
+            window.$zopim(function () {
+                window.$zopim.livechat.bubble.setTitle('Help & Feedback');
+            });
 
-    </script>
-    @{
-        if (@User.Identity.IsAuthenticated)
-        {
-            //if (!Html.IsDebug())
-            //{
+        </script>
+        @{
+            if (@User.Identity.IsAuthenticated)
+            {
+                //if (!Html.IsDebug())
+                //{
                 <script>
                     window.$zopim(function () {
                         window.$zopim.livechat.setName("@User.Identity.Name.ToString().Replace("@", "_")");
 
                     });
                 </script>
-            //}
+                //}
+            }
         }
-    }
 </head>
 <body class="@PageStyleType">
     <!-- begin accesibility skip to nav skip content -->
@@ -243,7 +247,7 @@
             <li>
                 <div id="search-wrapper" class="search-wrapper">
                     <form class="search" method="post" action="/webinar/search">
-
+                        <li><i class="icon-search"></i></li>
                         <input id="search-box" name="searchTerm" type="text" placeholder="Search for?">
                     </form>
                 </div>
@@ -330,7 +334,7 @@
                 <div class="span4">
                     <section>
                         <h4>Contact Us</h4>
-                        @Html.Raw(footAddress)
+                        <div class="affFooter">   @Html.Raw(footAddress)</div>
                     </section>
                     <!--close section-->
                 </div>

@@ -125,7 +125,7 @@ $(function () {
                 type: 'POST',
                 contentType: constants.JsonContentType,
                 cache: false,
-                url: '/Admin/ResendConnectionInfo',
+                url: '/Admin/ResendPostEventMaterial',
                 dataType: constants.JsonDataType,
                 data: JSON.stringify(payload),
                 beforeSend: function () {
@@ -181,7 +181,7 @@ $(function () {
             "deferRender": true,
             'columns': [
                 { 'data': 'idOrder' },
-                { 'data': 'idUser' },
+                { 'data': 'LastName' },
                 { 'data': 'Institution' },
                 null,
                 { 'data': 'Discount' },
@@ -191,7 +191,8 @@ $(function () {
                     'visible': aff
                 },
                 { 'data': 'OrderDateString' },
-                { 'data': null, 'orderable': false }
+                { 'data':'OrderStatusString' }
+
             ],
             "order": [0, "asc"]
 
@@ -208,7 +209,7 @@ $(function () {
                 "aTargets": [1], // User column
                 "mData": "",
                 "mRender": function (data, type, full) {
-                    return "<a href='/account/edituser/" + data + "' target='_new' />" + full.LastName + ", " + full.FirstName + "</a><br>" + full.BillingEmail;
+                    return "<a href='/account/edituser/" + full.idUser + "' target='_new' />" + full.LastName + ", " + full.FirstName + "</a><br>" + full.BillingEmail;
                 }
             },
             {
@@ -264,9 +265,9 @@ $(function () {
                     if (full.Webinar_IsActive) {
                         resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
                     }
-                    if (full.Webinar_IsRecorded) {
-                        resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendPostEventMaterialButton btn btn-mini\">PostEvent Material</button>";
-                    }
+                    //if (full.Webinar_IsRecorded) {
+                    //    resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendPostEventMaterialButton btn btn-mini\">PostEvent Material</button>";
+                    //}
                     return statusHtml + resendMsg;
                 }
             }]

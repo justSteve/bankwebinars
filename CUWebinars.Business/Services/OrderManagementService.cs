@@ -1496,11 +1496,23 @@ namespace CUWebinars.Business.Services
             _orderRepository.SynchIds(order.idOrderLegacy, order.idOrder);
         }
 
-        public PostEventClaim FindPostEventClaim(Order order)
+        public PostEventClaim FindPostEventClaimByOnDemandCode(Order order)
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
-            return dataOperations.FindPostEventClaim(order);
+            return dataOperations.FindPostEventClaimByOnDemandCode(order);
             
+        }
+
+        public IList<PostEventClaim> FindAllPostEventClaims()
+        {
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+            return dataOperations.FindAllPostEventClaims();
+            
+        }
+
+        public IList<Order> GetV3OrdersByOnDemandClaim()
+        {
+          return   _orderRepository.GetV3OrdersByOnDemandClaim();
         }
 
         public Discount GetDiscountByUser(WebUser currentUser)

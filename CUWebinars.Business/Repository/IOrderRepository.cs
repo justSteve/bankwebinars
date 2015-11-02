@@ -52,5 +52,6 @@ namespace CUWebinars.Business.Repository
         Order FindExpressCheckoutOrderByOrderId(int q11Orderid);
         void SynchIds(int lOrder, int vOrder);
         PostEventClaim FindPostEventClaim(Order order);
+        IList<Order> GetV3OrdersByOnDemandClaim();
     }
 }
