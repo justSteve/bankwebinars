@@ -42,7 +42,9 @@ namespace CUWebinars.Web.Mapping.Configuration
                            map => map.MapFrom(s => s.Presenter.WebUser.FullName))
                 .ForMember(d => d.PresenterPhotoFull,
                            map => map.MapFrom(s => s.Presenter.PhotoFull))
-                ;
+                .ForMember(d => d.RelatedTopicsString,
+                           map => map.MapFrom(s => string.Join(", ", s.WebinarTopicXrefs.Select(x => x.Topic.topicDesc).ToList())))
+                           ;
 
             // flattens the Order structure a little bit to allow
             //  easier consumption by server-side DataTables pattern
