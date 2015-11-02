@@ -58,7 +58,7 @@ $(function () {
             "deferRender": true,
             'columns': [
                 { 'data': 'idWebinar' },
-                { 'data': 'Date' },
+                { 'data': 'WebinarDateString' },
                 { 'data': 'Body' },
                 //null,
                 //{
@@ -78,13 +78,6 @@ $(function () {
                     var orderToEdit = (full.idWebinar != 0) ? full.idWebinar : data;
                     return orderToEdit + ", ";
                 },
-            },
-            {
-                "aTargets": [1], // date column
-                "mData": "",
-                "mRender": function (data, type, full) {
-                    return "<a href='/account/edituser/" + full.Date;
-                }
             },
             {
                 "aTargets": [2], // Date column

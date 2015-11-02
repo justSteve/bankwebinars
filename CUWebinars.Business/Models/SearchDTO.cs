@@ -22,12 +22,13 @@ namespace CUWebinars.Business.Models
         public decimal Duration { get; set; }
 
         public int idPresenter { get; set; }
-        public Presenter Presenter { get; set; }
-        public string PresenterName { get { return Presenter.WebUser.FullName; } }
+        public string PresenterName { get; set; }
+        public string PresenterPhotoFull { get; set; }
 
-        public ICollection<WebinarTopicXref> WebinarTopicXrefs { get; set; }
 
-        public string Affiliate_ttsDomain { get; set; } // flattened via Automapper to avoid circular reference during JSON serialization
+        //public ICollection<WebinarTopicXref> WebinarTopicXrefs { get; set; }
+
+        //public string Affiliate_ttsDomain { get; set; } // flattened via Automapper to avoid circular reference during JSON serialization
 
     }
 }

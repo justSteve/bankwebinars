@@ -1208,7 +1208,7 @@ namespace CUWebinars.Web.Controllers
             {
                 IEnumerable<Webinar> dtsource = _dataTablesService.SearchWebinars(searchTerm, affiliateId ?? 19, out totalNumberWebinars);
 
-                // use automapper to flatten out the order records, in this specific case the data 
+                // use automapper to flatten out the webinar records, in this specific case the data 
                 //  model has circular references which cause problems with JSON serialization
                 List<SearchDTO> dtoSource = new List<SearchDTO>();
                 AutoMapper.Mapper.Map(dtsource, dtoSource);
