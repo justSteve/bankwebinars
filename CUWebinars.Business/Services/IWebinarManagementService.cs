@@ -53,5 +53,6 @@ namespace CUWebinars.Business.Services
         bool UpdateQuestions(IEnumerable<EditedQuestion> editedQuestions, int quizId);
         int CloneQuizForWebinar(Webinar webinar, int existingQuizId);
         int GetQuizIdByWebinarId(int idWebinar);
+        IList<Webinar> GetSearchDTO(string searchTerm);
     }
 }
