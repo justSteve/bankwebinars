@@ -65,8 +65,9 @@ $(function () {
                 //    'data': 'Affiliate_ttsDomain',
                 //    'visible': aff
                 //},
-                { 'data': 'Status' }
+                { 'data': 'Status' },
                 //{ 'data': null, 'orderable': false }
+                { 'data': 'RelatedTopicsString' }
             ],
             "order": [0, "asc"]
 

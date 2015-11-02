@@ -32,7 +32,8 @@ namespace CUWebinars.Web.Core
                                 (p.WhoAttend != null && p.WhoAttend.ToLower().Contains(search.ToLower())) ||
                                 (p.Title != null && p.Title.ToLower().Contains(search.ToLower())) ||
                                 (p.DescriptionLong != null && p.DescriptionLong.ToLower().Contains(search.ToLower())) ||
-                                (p.PresenterName != null && p.PresenterName.ToLower().Contains(search.ToLower()))
+                                (p.PresenterName != null && p.PresenterName.ToLower().Contains(search.ToLower())) ||
+                                (p.RelatedTopicsString != null && p.RelatedTopicsString.ToLower().Contains(search.ToLower()))
                             )
                         ));
 
