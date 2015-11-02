@@ -375,6 +375,11 @@ namespace CUWebinars.Business.Services
             return _quizRepository.GetQuizIdByWebinarId(idWebinar);
         }
 
+        public IList<Webinar> GetSearchDTO(string searchTerm)
+        {
+            return _webinarRepository.GetSearchDTO(searchTerm);
+        }
+
         public Quiz GetQuizByOrderId(int idOrder)
         {
             return _quizRepository.GetQuizFromOrder(idOrder);

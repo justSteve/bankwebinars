@@ -34,8 +34,18 @@ namespace CUWebinars.Web.Mapping.Configuration
                 .ForMember(webinarEditModel => webinarEditModel.SelectedRegTypeGroups, webinar => webinar.Ignore())
                 .ForMember(webinarEditModel => webinarEditModel.PostedRegTypeGroups, webinar => webinar.Ignore());
 
+            // flattens the Webinar structure a little bit to allow
+            //  easier consumption by server-side DataTables pattern
+            //  https://www.echosteg.com/jquery-datatables-asp.net-mvc5-server-side
+            Profile.CreateMap<Webinar, SearchDTO>()
+                .ForMember(d => d.PresenterName,
+                           map => map.MapFrom(s => s.Presenter.WebUser.FullName))
+                .ForMember(d => d.PresenterPhotoFull,
+                           map => map.MapFrom(s => s.Presenter.PhotoFull))
+                ;
+
             // flattens the Order structure a little bit to allow
-            //  easiers consumption by server-side DataTables pattern
+            //  easier consumption by server-side DataTables pattern
             //  https://www.echosteg.com/jquery-datatables-asp.net-mvc5-server-side
             Profile.CreateMap<Order, OrderDTO>()
                 .ForMember(d => d.Affiliate_ttsDomain,

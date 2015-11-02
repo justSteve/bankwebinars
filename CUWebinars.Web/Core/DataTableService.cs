@@ -140,6 +140,14 @@ namespace CUWebinars.Web.Core
         public int? affiliateId { get; set; }
     }
 
+    // extends the DTParameters class to allow us to pass additional parameters
+    //  up from the client-side JS, as recommended in comments https://www.echosteg.com/jquery-datatables-asp.net-mvc5-server-side
+    public class DTParametersWebinars: DTParameters
+    {
+        public string searchTerm { get; set; }
+        public int? affiliateId { get; set; }
+    }
+
 
     /// <summary>
     /// A jQuery DataTables column.

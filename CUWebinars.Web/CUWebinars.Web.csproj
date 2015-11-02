@@ -429,6 +429,7 @@
     <Compile Include="Core\DataTableService.cs" />
     <Compile Include="Core\DTResultSetOrders.cs" />
     <Compile Include="Core\DTResultSetUsers.cs" />
+    <Compile Include="Core\DTResultSetWebinars.cs" />
     <Compile Include="Core\Orchestrators\IQuizControllerOrchestrator.cs" />
     <Compile Include="Core\Orchestrators\IWebinarControllerOrchestrator.cs" />
     <Compile Include="Core\Orchestrators\QuizControllerOrchestrator.cs" />
@@ -505,7 +506,6 @@
     <Compile Include="Models\ShippingDetailsModel.cs" />
     <Compile Include="Models\DiscountDetailsModel.cs" />
     <Compile Include="Models\ShowMessagesModel.cs" />
-    <Compile Include="Models\ShowWebinarsSearchViewModel.cs" />
     <Compile Include="Models\TTSAttendance.cs" />
     <Compile Include="Models\TTSQuiz.cs" />
     <Compile Include="Models\UserQuizEditModel.cs" />
@@ -525,6 +525,7 @@
     <Compile Include="ViewModel\RegistrationSummaryViewModel.cs" />
     <Compile Include="ViewModel\ShareNotisViewModel.cs" />
     <Compile Include="ViewModel\ShowOrdersViewModel.cs" />
+    <Compile Include="ViewModel\ShowWebinarsViewModel.cs" />
     <Compile Include="ViewModel\UserDetailsViewModel.cs" />
     <Compile Include="ViewModel\WebinarEditModel.cs" />
     <Compile Include="ViewModel\WebinarFileViewModel.cs" />
