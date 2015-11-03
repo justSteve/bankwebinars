@@ -636,18 +636,19 @@ OCA.wireUpHandlers = function () {
     /* Click event for the big GREEN SignUp button */
     $('#AddToCart').on('click', function () {
 
-        var chosenUserName = $('#chosenUserName');
 
-        if (chosenUserName.length < 1 || !chosenUserName.is(':visible')) {
-            alert('You must select a user using the textbox to the left of the Sign Up button.');
-            return;
-        }
+        //var chosenUserName = $('#chosenUserName');
 
-        $(this).append('<i id="signUpSpinnerInButton" class="icon-spinner icon-spin"></i>');
+        //if (chosenUserName.length < 1 || !chosenUserName.is(':visible')) {
+        //    alert('You must select a user using the textbox to the left of the Sign Up button.');
+        //    return;
+        //}
 
-        formProcessor.clearValidationSummary($('#valSummarySignUpForm'));
+        //$(this).append('<i id="signUpSpinnerInButton" class="icon-spinner icon-spin"></i>');
 
-        OCA.signUpForm.submit();
+        //formProcessor.clearValidationSummary($('#valSummarySignUpForm'));
+
+        //OCA.signUpForm.submit();
     });
 
     /* Submit event for the big GREEN SignUp button */

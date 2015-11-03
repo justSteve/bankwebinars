@@ -32,7 +32,8 @@ namespace CUWebinars.Web.Infrastructure.Auth
 
         public bool GetGridDataFeature(ClaimsPrincipal claimsPrincipal)
         {
-            return claimsPrincipal.HasClaim(c => c.Type == Business.Constants.ClaimTypes.Affiliate || c.Type == Business.Constants.ClaimTypes.Admin);
+            var result = claimsPrincipal.HasClaim(c => c.Type == Business.Constants.ClaimTypes.Affiliate || c.Type == Business.Constants.ClaimTypes.Admin);
+            return result;
         }
 
     }
