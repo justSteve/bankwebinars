@@ -352,16 +352,26 @@ namespace CUWebinars.Web.Controllers
         {
             try
             {
+                ViewBag.PageStyleType = "two-columns-right-sidebar";
+                ViewBag.TopicCaption = " ";
                 string searchTerm = Request["searchTerm"];
 
-                
+                var unionOfResultSets = _webinarControllerOrchestrator.SearchWebinars(searchTerm);
                 ShowWebinarsViewModel model = new ShowWebinarsViewModel
                 {
                     SearchTerm = searchTerm
                 };
                 ViewBag.Title = "Search Results";
 
-                return View(model);
+                return View(unionOfResultSets);
+                //string searchTerm = Request["searchTerm"];
+                //ShowWebinarsViewModel model = new ShowWebinarsViewModel
+                //{
+                //    SearchTerm = searchTerm
+                //};
+                //ViewBag.Title = "Search Results";
+
+                //return View(model);
             }
             catch (Exception exception)
             {

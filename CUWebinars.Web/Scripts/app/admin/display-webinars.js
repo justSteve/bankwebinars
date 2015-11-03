@@ -57,52 +57,39 @@ $(function () {
             "paging": true,
             "deferRender": true,
             'columns': [
-                { 'data': 'idWebinar' },
-                { 'data': 'WebinarDateString' },
-                { 'data': 'Body' },
-                //null,
-                //{
-                //    'data': 'Affiliate_ttsDomain',
-                //    'visible': aff
-                //},
+
+                { 'data': 'Date' },
                 { 'data': 'Status' },
+                { 'data': 'Body' },
+
                 //{ 'data': null, 'orderable': false }
                 { 'data': 'RelatedTopicsString' }
             ],
-            "order": [0, "asc"]
+            "order": [0, "desc"]
 
             , // complex columns can be specified / created with mRender
-            "aoColumnDefs": [{
-                "aTargets": [0], //[id] column
-                "mData": "",
-                "mRender": function (data, type, full) {
-                    var orderToEdit = (full.idWebinar != 0) ? full.idWebinar : data;
-                    return orderToEdit + ", ";
-                },
-            },
+            "aoColumnDefs": [
             {
-                "aTargets": [2], // Date column
+                "aTargets": [0], // Status column
                 "mData": "",
                 "mRender": function (data, type, full) {
-                    var showDiscount = "";
-                    var discountHTML = "<br><span class=\"DisplayDiscount\">Discounted by: {0}</span>";
-                    
 
-                    var billingHtml = ""
-                    ;
+                    var statusHtml = full.WebinarDateString;
 
-                    return billingHtml;
+                    return statusHtml;
                 }
             },
-                {
-                    "aTargets": [3], // Status column
-                    "mData": "",
-                    "mRender": function (data, type, full) {
-                        var statusHtml = "<a href='/Admin/manageOrder/" + full.status + "' target='_new' />this</a><br/>";
-                        
-                        return statusHtml;
-                    }
-                }]
+            {
+                "aTargets": [2], // Status column
+                "mData": "",
+                "mRender": function (data, type, full) {
+
+                    var statusHtml = full.Title;
+
+                    return statusHtml;
+                }
+            }
+            ]
         });
     };
 

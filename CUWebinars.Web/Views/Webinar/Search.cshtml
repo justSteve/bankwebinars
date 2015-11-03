@@ -1,14 +1,12 @@
 ﻿@using System.Linq
-@model  ShowWebinarsViewModel
+@model IEnumerable<Webinar>
 
 @{
-
-
-    @section scripts{
-        @Scripts.Render("~/bundles/display-webinars")
-        @Scripts.Render("~/bundles/dataTables")
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+    var webinars = Model;
+    var rowsData = new List<object>();
 }
-    @Styles.Render("~/Content/data-tables")
+
 
 <div id="page">
     <div class="container visible-phone">
@@ -18,12 +16,131 @@
         <div class="container">
             <h1 id="PageTitle">Search Results</h1>
         </div>
+        <!--close container-->
     </div>
+    <!--close hero-unit-->
     <div class="container clearfix" id="main-content">
         <!--begin main content-->
-        @Html.Partial("~/Views/Webinar/Partials/SearchResultsGrid.cshtml")
-        <!--close main content-->
+
+        <div class="row-fluid sidebar-right">
+            <!--begin row-fluid-->
+            <div class="span9 primary-column">
+
+                @{
+                    foreach (var webinar in webinars)
+                    {
+                        if (webinar.Status != WebinarStatus.Deleted && webinar.Status != WebinarStatus.Pending && webinar.Status != WebinarStatus.Archived)
+                        {
+                            var numDaysLeft = (webinar.Date.AddMonths(6) - DateTime.Now).Days;
+                            var showDateValue = DateTimeHelper.FormatDate(webinar.Date) + " - " +
+                                                DateTimeHelper.FormatTime(webinar.Date) + " Central Time Zone";
+                            if (webinar.Status == WebinarStatus.Recorded && webinar.idWebinar != 842)
+                            {
+                                showDateValue += "<br><i>This OnDemand Webinar has <b>" + numDaysLeft + "</b> days of access remaining.</i>";
+                                //if (numDaysLeft > 45)
+                                //{
+                                //    showDateValue = "About " + Convert.ToInt32(numDaysLeft / (365.25 / 12)) + " months of access remain.";
+                                //}
+                            }
+                            var allTopics = webinar.WebinarTopicXrefs
+                                .Select(webinarTopic => webinarTopic.Topic.topicDesc)
+                                .Aggregate((s1, s2) => s1 + ", " + s2);
+
+                            string title = "<a href='/Webinar/Details/" +
+                                           webinar.idWebinar + "' target='_blank'>" + webinar.Title + "</a>";
+                            var desc = webinar.Description.Length > 200
+                                ? webinar.Description.Substring(0, 200) + "... <a class=\"btn  btn-primary btn-small\" href='/Webinar/Details/" + webinar.idWebinar + "'>More →</a></p>"
+                                : webinar.Description;
+
+                            var relatedTopics = "Related Topics: <b><i>" + string.Join(", ", allTopics) + "</i></b>";
+                            <div class="wTitle clearfix">
+                                <h3>@Html.Raw(title)</h3>
+                                <div id="eventBody" style="width: 90%; margin-left: auto; margin-right: auto;">
+                                    <p>
+                                        Presented by <img class="pull-right" src="@webinar.Presenter.PhotoThumb" alt="Photo of @webinar.Presenter.WebUser.FullName" /> @webinar.Presenter.WebUser.FullName <br />
+                                        <i>@Html.Raw(showDateValue)</i>
+                                    </p>
+                                    <span style="margin-right: 20%;">@Html.Raw(desc)</span>
+                                    <p>@Html.Raw(relatedTopics)</p>
+                                </div>
+                            </div>
+                        }
+                    }
+                }
+
+            </div>
+            <!-- close span9 primary-column-->
+
+            <section class="span3 sidebar secondary-column" id="secondary-nav">
+                <aside class="widget">
+                    <div class="rotating-testimonials">
+                        <!--"rotating-testimonials" is a required class-->
+                        <h5 class="short_headline"><span>Testimonials</span></h5>
+                        <div class="panels">
+                            <div id="t5">
+                                <blockquote>
+                                    <p>I was concerned that a 2 hour compliance webinar was going to be boring and I wouldn't retain anything. I was surprised to find that I was engaged the entire time. Having the handouts before hand was very helpful. Thanks!</p>
+                                    <footer>Casidhe Meriwether, Valero FCU</footer>
+                                </blockquote>
+                            </div>
+                            <!--close #t1 -->
+                            <div id="t2">
+                                <blockquote>
+                                    <p>Thought this was one of the best [webinars] we have done, and we will now do more through you. We loved the interaction on the screen during the presentation.</p>
+                                    <footer>Lynn Hayhurst, The Bank of Georgia </footer>
+                                </blockquote>
+                            </div>
+                            <!--close #t2 -->
+                            <div id="t3">
+                                <blockquote>
+                                    <p>Excellent Webinar. I try to sign up for any webinar concerning lending or compliance that you or Carl Pry conduct. Both of you do an excellent job compared to others that I have attended. </p>
+                                    <footer>Gary Jordan, Vice President, PeoplesBank </footer>
+                                </blockquote>
+                            </div>
+                            <!--close #t3 -->
+                            <div id="t4">
+                                <blockquote>
+                                    <p>I have to say this has to be one of the best webinars I have ever attended!! Usually, I can barely keep my eyes open. I like how it had us interact with the webinar by filling in information. We had a total of 3 that attended this webinar, and they all agreed! Just want to say, GREAT JOB!!! </p>
+                                    <footer>Lara E. Peterson, First National Bank Of Picayune</footer>
+                                </blockquote>
+                            </div>
+                            <!--close #t4 -->
+                            <div id="t1">
+                                <blockquote>
+                                    <p>The speaker clarified a lot of information for me, I will not have to contact my legal counsel as often now and will be saving money on legal fees for my Credit Union. Thanks. </p>
+                                    <footer>Lisa St. Francis, Rocky Mountain Law Enforcement FCU </footer>
+                                </blockquote>
+                            </div>
+                            <!--close #t5 -->
+                        </div>
+                        <!--close panels-->
+                        <ul class="tabs">
+                            <li class="tab"><a href="#t1">maya-angelou</a></li>
+                            <li class="tab"><a href="#t2">Lynn Hayhurst, The Bank of Georgia </a></li>
+                            <li class="tab"><a href="#t3">albert-einstein</a></li>
+                            <li class="tab"><a href="#t4">ralph-waldo-emerson</a></li>
+                        </ul>
+                    </div>
+                    <!--close rotating-testimonials-->
+                </aside>
+                <aside class="widget">
+                    <h5 class="short_headline"><span>Stay Updated</span></h5>
+                    @{Html.RenderPartial("Partials/_AddToMailingBox");}
+                </aside>
+                <!--close aside .widget -->
+
+                <aside class="widget">
+                    <h5 class="short_headline"><span>Search</span></h5>
+                    <form class="searchform" method="get">
+                        <input type="search" class="span12" value="type and hit enter" onfocus="this.value=''" onblur="this.value='type and hit enter'" />
+                    </form>
+                </aside>
+                <!--close aside widget-->
+            </section>
+            <!--close aside .widget-->
+            <!--close section sidebar span3-->
+        </div>
+        <!--close row-fluid-->
     </div>
 </div>
 
-}

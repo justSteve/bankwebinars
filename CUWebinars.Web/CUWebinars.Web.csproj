@@ -1897,7 +1897,7 @@
     <Content Include="Views\Shared\_LayoutAffiliate.cshtml" />
     <Content Include="Views\Shared\_MessagesPartial.cshtml" />
     <Content Include="Views\Webinar\DetailsAffiliate.cshtml" />
-    <Content Include="Views\Webinar\Search.cshtml" />
+    <Content Include="Views\Webinar\Search2.cshtml" />
     <Content Include="Views\Webinar\Partials\DisplayOptionsAffiliate.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutOptionsForAffiliate.cshtml" />
     <Content Include="Views\Admin\ClaimsManagement.cshtml" />
@@ -1963,8 +1963,10 @@
     <Content Include="Views\Admin\Partials\_ShowUsers.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowSendConnectionInfo.cshtml" />
     <Content Include="Views\Cart\ComplianceSchoolCheckout.cshtml" />
-    <Content Include="Views\Webinar\Partials\SearchResultsGrid.cshtml" />
+    <Content Include="Views\Webinar\Partials\SearchResultsGrid2.cshtml" />
     <Content Include="Views\Admin\COC_DS.cshtml" />
+    <Content Include="Views\Webinar\Partials\SearchResultsGrid.cshtml" />
+    <Content Include="Views\Webinar\Search.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
