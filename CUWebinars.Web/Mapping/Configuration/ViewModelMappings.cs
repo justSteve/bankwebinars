@@ -63,6 +63,8 @@ namespace CUWebinars.Web.Mapping.Configuration
                    .ForMember(d => d.Webinar_IsRecorded,
                            map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Webinar.Status == WebinarStatus.Recorded));
 
+            Profile.CreateMap<WebUser, UserDTO>();
+
         }
     }
 }

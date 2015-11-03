@@ -159,7 +159,7 @@ $(function () {
             "serverSide": true,
             "ajax": {
                 "type": "POST",
-                "url": '/admin/OrderDataHandler',
+                "url": '/admin/OrdersDataHandler',
                 "contentType": 'application/json; charset=utf-8',
                 'data': function (data) {
                     data.webinarId = parseInt(DO.webinarIdDiv.text());
@@ -257,7 +257,7 @@ $(function () {
             {
 
                 "aTargets": [7], // Status column
-                "mData": "",
+                "mData": "",s
                 "mRender": function (data, type, full) {
                     var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
                     var statusHtml = "<a href='/Admin/manageOrder/" + orderToEdit + "' target='_new' />" + full.OrderStatusString + "</a><br/>";

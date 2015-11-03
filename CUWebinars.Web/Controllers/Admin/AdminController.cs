@@ -2446,7 +2446,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [HandleAjaxException]
         [HttpPost]
         [AllowAnonymous]
-        public JsonResult OrderDataHandler(DTParametersOrders param)
+        public JsonResult OrdersDataHandler(DTParametersOrders param)
         {
             if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
             {
@@ -2476,6 +2476,62 @@ namespace CUWebinars.Web.Controllers.Admin
                     int count = new DTResultSetOrders().Count(param.Search.Value, dtoSource, columnSearch);
 
                     DataTableService<OrderDTO> result = new DataTableService<OrderDTO>
+                    {
+                        draw = param.Draw,
+                        data = data,
+                        recordsFiltered = count,
+                        recordsTotal = count
+                    };
+
+                    JsonResult jsonresult = Json(result);
+                    jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
+
+                    return jsonresult;
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { error = ex.Message });
+                }
+            }
+
+            return Json(new { NotAuthorized = true });
+
+        }
+
+
+        [HandleAjaxException]
+        [HttpPost]
+        [AllowAnonymous]
+        public JsonResult UsersDataHandler(DTParametersUsers param)
+        {
+            if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
+            {
+                // based heavily on https://www.echosteg.com/jquery-datatables-asp.net-mvc5-server-side
+
+                int totalNumberOrders = 0;
+                int webinarId = param.webinarId;
+                int? affiliateId = param.affiliateId;
+
+                try
+                {
+                    List<WebUser> dtsource = _dataTablesService.GetWebUsers(webinarId, affiliateId ?? 19, out totalNumberOrders).ToList();
+
+                    // use automapper to flatten out the order records, in this specific case the data 
+                    //  model has circular references which cause problems with JSON serialization
+                    List<UserDTO> dtoSource = new List<UserDTO>();
+                    AutoMapper.Mapper.Map(dtsource, dtoSource);
+
+
+                    List<String> columnSearch = new List<string>();
+                    foreach (var col in param.Columns)
+                    {
+                        columnSearch.Add(col.Search.Value);
+                    }
+
+                    List<UserDTO> data = new DTResultSetUsers().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtoSource, columnSearch);
+                    int count = new DTResultSetUsers().Count(param.Search.Value, dtoSource, columnSearch);
+
+                    DataTableService<UserDTO> result = new DataTableService<UserDTO>
                     {
                         draw = param.Draw,
                         data = data,
@@ -2537,52 +2593,51 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(new { NotAuthorized = true });
         }
 
-        [HandleAjaxException]
-        [HttpPost]
-        [AllowAnonymous]
+        //[HandleAjaxException]
+        //[HttpPost]
+        //[AllowAnonymous]
 
-        public JsonResult GetGridUserData(DTParameters param)
-        {
-            var aff = _affiliateManagementService.LoadByTTSDomain("bankwebinars");
+        //public JsonResult GetGridUserData(DTParameters param)
+        //{
+        //    var aff = _affiliateManagementService.LoadByTTSDomain("bankwebinars");
 
-            if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
-            {
-                //
-                try
-                {
-                    var dtsource = new List<WebUser>();
+        //    if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
+        //    {
+        //        //
+        //        try
+        //        {
+        //            var dtsource = new List<WebUser>();
 
+        //            List<String> columnSearch = new List<string>();
 
-                    List<String> columnSearch = new List<string>();
+        //            foreach (var col in param.Columns)
+        //            {
+        //                columnSearch.Add(col.Search.Value);
+        //            }
 
-                    foreach (var col in param.Columns)
-                    {
-                        columnSearch.Add(col.Search.Value);
-                    }
+        //            List<WebUser> data = new DTResultSetUsers().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtsource, columnSearch);
+        //            int count = new DTResultSetUsers().Count(param.Search.Value, dtsource, columnSearch);
 
-                    List<WebUser> data = new DTResultSetUsers().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtsource, columnSearch);
-                    int count = new DTResultSetUsers().Count(param.Search.Value, dtsource, columnSearch);
+        //            DataTableService<WebUser> result = new DataTableService<WebUser>
+        //            {
+        //                draw = param.Draw,
+        //                data = data,
+        //                recordsFiltered = count,
+        //                recordsTotal = count
+        //            };
 
-                    DataTableService<WebUser> result = new DataTableService<WebUser>
-                    {
-                        draw = param.Draw,
-                        data = data,
-                        recordsFiltered = count,
-                        recordsTotal = count
-                    };
+        //            return Json(result);
 
-                    return Json(result);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            return Json(new { error = ex.Message });
+        //        }
+        //    }
 
-                }
-                catch (Exception ex)
-                {
-                    return Json(new { error = ex.Message });
-                }
-            }
+        //    return Json(new { NotAuthorized = true });
 
-            return Json(new { NotAuthorized = true });
-
-        }
+        //}
 
 
         private IList<IDictionary<string, string>> BuildWebinarsSearchViewModel(string searchTerm, int? affiliateId, out int totalNumberWebinars)

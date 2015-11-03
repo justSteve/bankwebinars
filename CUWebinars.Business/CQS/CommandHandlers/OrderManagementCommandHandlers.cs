@@ -103,7 +103,6 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                     
                     throw new Exception();
                 }
-
             }
 
             if (!string.IsNullOrWhiteSpace(command.AdditionalLocationsString) && command.AdditionalLocationsString != "NULL")

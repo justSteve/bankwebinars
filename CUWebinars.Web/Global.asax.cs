@@ -82,12 +82,11 @@ namespace CUWebinars.Web
             {
                 case DomainConstants.BankWebinars:
                     if (!Debugger.IsAttached)
-            
                     {
                         log4net.Config.XmlConfigurator.Configure(
                             new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
                                 "BWLog4net.xml")));
-                                //"BWLocal.xml")));
+                        //"BWLocal.xml")));
                     }
                     else
                     {
@@ -260,14 +259,22 @@ namespace CUWebinars.Web
                         break;
 
                     case 500:
-                    //if (User.Identity.IsAuthenticated && User.Identity.Name.StartsWith("admin"))
-                    //{
-                    //    //Now that we know we have an authenticated/authorized Admin
-                    //    // no need to hide sensitive info. Let's dump the Context's error message
-                    //    // instead of the generic boiler plate.
-
-                    //}
-                    //break;
+                        if (User.Identity.IsAuthenticated 
+                            && User.Identity.Name.StartsWith("admin") 
+                            && User.Identity.Name.EndsWith("ttstrain.com"))
+                        {
+                            //Now that we know we have an authenticated/authorized Admin
+                            // no need to hide sensitive info. Let's dump the Context's error message
+                            // instead of the generic boiler plate.
+                            newRouteData.Values[WebUiConstants.Action] = WebUiConstants.ServerErrorPage;
+                            _errorResponseCommand.Execute(errorResponse);
+                        }
+                        else
+                        {
+                            newRouteData.Values[WebUiConstants.Action] = WebUiConstants.ServerErrorPage;
+                            _errorResponseCommand.Execute(errorResponse);
+                        }
+                        break;
                     default:
                         Response.StatusCode = 500;
                         newRouteData.Values[WebUiConstants.Action] = WebUiConstants.ServerErrorPage;

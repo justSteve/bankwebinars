@@ -149,6 +149,13 @@ namespace CUWebinars.Web.Core
     }
 
 
+    public class DTParametersUsers : DTParameters
+    {
+        public int webinarId { get; set; }
+        public int? affiliateId { get; set; }
+    }
+
+
     /// <summary>
     /// A jQuery DataTables column.
     /// </summary>

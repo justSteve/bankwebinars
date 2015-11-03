@@ -25,6 +25,11 @@ namespace CUWebinars.Business.Services
             return _context.Orders;
         }
 
+        public IEnumerable<WebUser> GetAllWebUsers()
+        {
+            return _context.WebUsers;
+        }
+
         public IEnumerable<Order> GetOrdersByWebinar(int idWebinar, int idAffliate, out int totalNumberOrders)
         {
             IList<Order> theseOrders;
@@ -140,6 +145,32 @@ namespace CUWebinars.Business.Services
 
             return webinars;
             
+        }
+
+        public IEnumerable<WebUser> GetWebUsers(int idAffliate, int totalNumberUsers, out int totalNumberUsers_)
+        {
+            IEnumerable<WebUser> theseUsers;
+
+            if (idAffliate != 19)
+            {
+                theseUsers = _context.WebUsers
+                    .Include(u => u.Institution)
+                    .Include(u => u.Orders)
+                    .Include(u => u.Addresses)
+                    .ToList();
+            }
+            else
+            {
+                theseUsers = _context.WebUsers
+                    .Include(u => u.Institution)
+                    .Include(u => u.Orders)
+                    .Include(u => u.Addresses)
+                    .ToList();
+            }
+
+            totalNumberUsers_ = theseUsers.Count();
+
+            return theseUsers;
         }
     }
 }
