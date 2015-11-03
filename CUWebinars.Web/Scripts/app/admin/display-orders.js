@@ -55,9 +55,9 @@ $(function () {
                 }
                 $('#spinnerLabel').remove();
             }).fail(function () {
-                alert("Operation Failed. Call Steve!")
+                alert("Operation Failed. Call Steve!");
             }).always(function () {
-                //$('#loadingSpinner').remove();
+                $('#loadingSpinner').remove();
             });
         });
 
@@ -257,7 +257,7 @@ $(function () {
             {
 
                 "aTargets": [7], // Status column
-                "mData": "",s
+                "mData": "",
                 "mRender": function (data, type, full) {
                     var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
                     var statusHtml = "<a href='/Admin/manageOrder/" + orderToEdit + "' target='_new' />" + full.OrderStatusString + "</a><br/>";

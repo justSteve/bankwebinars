@@ -96,7 +96,7 @@
                     var row = scheduled.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
                     var showDuration = Convert.ToInt32(row.Webinar.Duration);
                     var upgradeCaption = "<a href=\"javascript:upgrade(" + row.Order.idOrder + "); \" id=\"upgrade\" class=\"btn btn-mini btn-success\">Upgrade?</a>";
-                    var builtURL = "http:\\" + globalConfig.TenantURL + "-j-" + row.TtsJoinUrl;
+                    var builtURL = globalConfig.TenantURL + "-j-" + row.TtsJoinUrl;
 
                     TimeSpan calcDays = row.Webinar.Date - DateTime.UtcNow;
                     var numDays = Convert.ToInt32(calcDays.TotalDays);
@@ -114,7 +114,6 @@
                                         <h5 class="short_headline"><span>Share Connection Info</span></h5>
                                         @{Html.RenderPartial("Partials/_ShareNotifications", row.Order);}
                                     </aside>
-
                                 </div>
                                 <div class="span7">
                                     <h4 id="upcoming-@row.idWebinar">@row.Webinar.Title</h4>

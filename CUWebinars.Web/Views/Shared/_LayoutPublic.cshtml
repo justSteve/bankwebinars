@@ -45,7 +45,7 @@
 <!--<![endif]-->
 <head>
     <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <script type="text/javascript">
         var firstPage = "@firstPage";
@@ -59,8 +59,8 @@
 
         window.$zopim || (function (d, s) {
             var z = window.$zopim = function (c) {
-                z._.push(c);
-            },
+                    z._.push(c);
+                },
                 $ = z.s = d.createElement(s),
                 e = d.getElementsByTagName(s)[0];
 
@@ -178,48 +178,60 @@
 
     <link rel="shortcut icon" href="~/Content/images/BankWebinars/favicon.ico" />
     <meta property="og:description" content="@GlobalConfig.GlobalConfigSingleton.Tenant is Webinars for the financial industry." />
-    
-    
-        <style>
-            table td {
-                border: none;
-                text-align: center;
-            }
 
-            .hero-unit {
-                padding-top: 20px;
-                padding-bottom: 0px;
-            }
 
-            .preheader {
-                background-color: lightgray;
-                width: 100%;
-                padding-left: 25px;
-            }
-            .affFooter {
-                color: white;
-            }
-        </style>
-        <script>
-            window.$zopim(function () {
-                window.$zopim.livechat.bubble.setTitle('Help & Feedback');
-            });
-
-        </script>
-        @{
-            if (@User.Identity.IsAuthenticated)
-            {
-                //if (!Html.IsDebug())
-                //{
-                <script>
-                    window.$zopim(function () {
-                        window.$zopim.livechat.setName("@User.Identity.Name.ToString().Replace("@", "_")");
-
-                    });
-                </script>
-                //}
-            }
+    <style>
+        table td {
+            border: none;
+            text-align: center;
         }
+
+        .hero-unit {
+            padding-top: 20px;
+            padding-bottom: 0px;
+        }
+
+        .preheader {
+            background-color: lightgray;
+            width: 100%;
+            padding-left: 25px;
+        }
+
+        .affFooter {
+            color: white;
+        }
+    </style>
+    <script>
+        window.$zopim(function () {
+            window.$zopim.livechat.bubble.setTitle('Help & Feedback');
+        });
+
+    </script>
+    <script>
+        //to accomodate IE  http://stackoverflow.com/questions/5522164/input-placeholders-for-internet-explorer -- Jonathan Tonge
+        var placeholder = 'placeholder' in document.createElement('input');
+        if (!placeholder) {
+            $.getScript("/Scripts/placeholder.js", function () {
+                $(":input").each(function () {   // this will work for all input fields
+                    $(this).placeHolder();
+                });
+            });
+        }
+    </script>
+    @{
+        if (@User.Identity.IsAuthenticated)
+        {
+            //if (!Html.IsDebug())
+            //{
+            <script>
+                window.$zopim(function () {
+                    window.$zopim.livechat.setName("@User.Identity.Name.ToString().Replace("@", "_")");
+
+                });
+            </script>
+            //}
+        }
+    }
 </head>
 <body class="@PageStyleType">
     <!-- begin accesibility skip to nav skip content -->
@@ -229,8 +241,7 @@
     </ul>
     <!-- end /.visuallyhidden accesibility-->
     <!-- mobile navigation trigger-->
-    <h5 class="mobile_nav">
-    </h5>
+    <h5 class="mobile_nav"></h5>
     <!--end mobile navigation trigger-->
     <section class="container preheader">
         <!--this is the login for the user-->
@@ -247,11 +258,11 @@
             <li>
                 <div id="search-wrapper" class="search-wrapper">
                     <form class="search" method="post" action="/webinar/search">
-                        <li><i class="icon-search"></i></li>
-                        <input id="search-box" name="searchTerm" type="text" placeholder="Search for?">
-                    </form>
-                </div>
-              
+            <li><i class="icon-search"></i></li>
+            <input id="search-box" name="searchTerm" type="text" placeholder="Search for?">
+            </form>
+            </div>
+
             </li>
         </ul>
 
