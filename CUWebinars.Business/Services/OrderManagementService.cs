@@ -1650,7 +1650,7 @@ namespace CUWebinars.Business.Services
         public void GetJoinUrl(OrderRow row)
         {
             Order order = row.Order;
-            return;
+            
             if (row.Webinar.Status != WebinarStatus.Active && row.Webinar.Status != WebinarStatus.InProgress || row.Webinar.CitrixJoinInfoAvailable())
             {
                 //if not initialized, don't hit Citrix

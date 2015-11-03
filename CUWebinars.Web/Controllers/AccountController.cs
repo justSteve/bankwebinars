@@ -542,7 +542,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (Exception ex)
                 {
-                    _logger.Fatal("EditUserFromOrder error on " + id.Value);
+                    _logger.Fatal("EditUserFromOrder error on " + id.Value, ex);
                 }
             }
             return View("EditUser", null);

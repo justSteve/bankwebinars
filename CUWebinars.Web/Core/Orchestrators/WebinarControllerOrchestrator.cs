@@ -296,12 +296,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             //    string.Format("No WebUser exists with the Id {0}", order.idUser));
         }
 
-        private void AddJsonCommentToUser(Order order, string s)
-        {
-            var a = 1;
-            //throw new NotImplementedException();
-        }
-
         public string OpenMeeting(string joinCode, IIdentity userIdentity)
         {
             string webinarUrl = string.Empty;

@@ -28,13 +28,11 @@ namespace CUWebinars.Business.Core
         private readonly string _connectionString;
 
         //private readonly ILogger _logger;
-
-        private readonly TtsConfiguration _ttsConfig;
+        //private readonly TtsConfiguration _ttsConfig;
 
         public DataOperations(string connectionString)
         {
             _connectionString = connectionString;
-
         }
 
 
@@ -105,7 +103,6 @@ namespace CUWebinars.Business.Core
 
 
                     var message = getRegTypePriceCommand.ExecuteScalar();
-                    return Convert.ToDecimal(message);
                     return Convert.ToDecimal(message);
                 }
             }
@@ -387,11 +384,8 @@ namespace CUWebinars.Business.Core
                 //PreEvent_5PartSeries_2014
                 default:
 
-                    LogError("GetLgacyOptionID", "Invalid Regtype detected at getLegacyOptionID!! " + idRegType);
+                    LogError("GetLgacyOptionID", "Regtype falls thru to default " + idRegType);
                     return idRegType;
-
-
-
             }
         }
 
@@ -961,7 +955,7 @@ namespace CUWebinars.Business.Core
 
         public WebUser InsertWebUserFromLegacy(string email)
         {
-            var retValue = false;
+
             using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
             {
                 sqlConnection.Open();

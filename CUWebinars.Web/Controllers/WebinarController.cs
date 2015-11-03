@@ -259,7 +259,7 @@ namespace CUWebinars.Web.Controllers
             VRObject.Add("footer", Request["footer"].ToString());
 
 
-            string adminEmail = "steve@ttstrain.com";
+            //string adminEmail = "steve@ttstrain.com";
 
             //string myHTML = NotificationFacade.Instance.SendVRPerDay(TemplateTypes.VR_PER_WEEK, VRObject, adminEmail, "VR Code for " + Request["from"].ToString());
 
@@ -585,14 +585,6 @@ namespace CUWebinars.Web.Controllers
                         .SingleOrDefault();
 
                     var aff = _affiliateManagementService.LoadByTTSDomain(ttsDomain);
-
-                    int totalNumberOrders;
-
-                    //var orders = _dataTablesService.GetOrdersByWebinar(
-                    //    model.Webinar.idWebinar, 
-                    //    aff.idUserAff,
-                    //    out totalNumberOrders
-                    //    );
 
                     model.ShowOrdersViewModel = new ShowOrdersViewModel
                     {
@@ -1251,7 +1243,7 @@ namespace CUWebinars.Web.Controllers
                 return Json(new { error = ex.Message });
             }
 
-            return Json(new { NotAuthorized = true });
+            //return Json(new { NotAuthorized = true });
 
         }
 
@@ -1411,12 +1403,13 @@ namespace CUWebinars.Web.Controllers
 
                 return Json(new { Result = WebUiConstants.Fail, Message = message });
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
                 ModelState.AddModelError(
                     string.Empty,
                     "There was a problem with the update operation. Please consult with the system administrator to resolve the issue."
                     );
+                _logger.Fatal("UpdateWebinarFiles on " + webinarFilesEditModel.idWebinar, ex);
             }
 
             return this.ModelStateJson(ModelState);

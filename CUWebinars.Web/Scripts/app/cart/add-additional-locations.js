@@ -17,7 +17,7 @@ deleteItem = function (event) {
     var idx = trashClicked.substring(0, 1);
     var spanToRemove = locationsSpanPrefix + idx;
 
-    Rollbar.info( "aal-#1", { 'deleting AdLoc': trashClicked } );
+    //Rollbar.info( "aal-#1", { 'deleting AdLoc': trashClicked } );
 
     $('#' + spanToRemove).hide(500, function () {
         $(this).remove();
@@ -132,7 +132,7 @@ function wireUpHandlersForModal() {
         $('#AdditionalLocationEmail_' + newId).focus();
         numberOfAdditionalLocations++;
 
-        Rollbar.info( "aal-#2",{ AddInputClicked: newId, NumberAdLocs: numberOfAdditionalLocations } ); 
+        //Rollbar.info( "aal-#2",{ AddInputClicked: newId, NumberAdLocs: numberOfAdditionalLocations } ); 
     });
 
     numberOfAdditionalLocations = $('#AdditionalLocationEmailWrapper input[type="email"]').length;
@@ -157,7 +157,7 @@ function wireUpHandlersForModal() {
             $('#additionalLocationsModalDialog').modal('hide');
             $(this).remove();
 
-            Rollbar.info("aal-#3", { SubmitClicked: numberOfAdditionalLocations } );
+            //Rollbar.info("aal-#3", { SubmitClicked: numberOfAdditionalLocations } );
         });
         var trashCans = additionalLocationEmailWrapper.find('i');
 
@@ -174,6 +174,6 @@ function wireUpHandlersForModal() {
             });
             collectAdditionalLocations.append(locationsBakForCancel);
         }
-        Rollbar.info({ "aal-#4": "CloseClicked" });
+        //Rollbar.info({ "aal-#4": "CloseClicked" });
     });
 }

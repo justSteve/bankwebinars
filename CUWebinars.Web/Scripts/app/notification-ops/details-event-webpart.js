@@ -49,7 +49,7 @@ $(function () {
                 var selectedWebinarId = $('#SelectedWebinarId').val();
                 var payload = { webinarId: selectedWebinarId };
 
-                Rollbar.info({ 'dew-#1': { 'payload': payload } });
+                //Rollbar.info({ 'dew-#1': { 'payload': payload } });
 
                 $.ajax({
                     type: 'POST',
@@ -71,15 +71,15 @@ $(function () {
                         inputFormFieldsDiv.append(noOrdersScreenMessage);
                     }
 
-                    Rollbar.info({ 'dew-#2': { 'result': result } });
+                    //Rollbar.info({ 'dew-#2': { 'result': result } });
 
                 }).fail(function (jqXHR, textStatus, errorThrown) {
 
                     labelCheckRemove();
 
                     inputFormFieldsDiv.append(failedScreenMessage);
-                    Rollbar.error({ 'dew-#5': { 'fail-callback': jqXHR && jqXHR.statusCode().status } });
-                    Rollbar.error({ 'dew-#6': { 'fail-callback': errorThrown } });
+                    //Rollbar.error({ 'dew-#5': { 'fail-callback': jqXHR && jqXHR.statusCode().status } });
+                    //Rollbar.error({ 'dew-#6': { 'fail-callback': errorThrown } });
                 }).always(function () {
                     waitIndicator.hide();
                     resetButton.show();
@@ -98,7 +98,7 @@ $(function () {
 
         var webinarFileName = webinarFileInput().val();
         var payload = { webinarId: EvtWebPart.RecordedWebinar, fileName: webinarFileName };
-        Rollbar.info({ 'dew-#3': { 'payload': payload } });
+        //Rollbar.info({ 'dew-#3': { 'payload': payload } });
 
         $.ajax({
             type: 'POST',
@@ -120,12 +120,12 @@ $(function () {
                 inputFormFieldsDiv.append(noOrdersScreenMessage);
             }
 
-            Rollbar.info({ 'dew-#4': { 'result': result } });
+            //Rollbar.info({ 'dew-#4': { 'result': result } });
 
         }).fail(function (jqXHR, textStatus, errorThrown) {
             labelCheckRemove();
-            Rollbar.error({ 'dew-#8': { 'fail-callback': jqXHR && jqXHR.statusCode().status } });
-            Rollbar.error({ 'dew-#9': { 'fail-callback': errorThrown } });
+            //Rollbar.error({ 'dew-#8': { 'fail-callback': jqXHR && jqXHR.statusCode().status } });
+            //Rollbar.error({ 'dew-#9': { 'fail-callback': errorThrown } });
             inputFormFieldsDiv.append(failedScreenMessage);
         }).always(function () {
             waitIndicator.hide();

@@ -796,8 +796,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     _logger.Info(buildMessage);
 
                     order.OrderStatus = OrderStatus.Paid;
-                    JObject existingJObject = null;
-
+                    
                     var newJson =
                         new JProperty(
                             string.Concat("MonerisPayByCC-",

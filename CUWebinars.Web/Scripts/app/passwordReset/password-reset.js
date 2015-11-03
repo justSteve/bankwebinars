@@ -63,7 +63,7 @@ $(function () {
                     $('#NormalResetPasswordButton').hide();
                 } else {
 
-                    Rollbar.error({ 'Else branch of form#ResetPasswordForm: ': { 'data': data} });
+                    //Rollbar.error({ 'Else branch of form#ResetPasswordForm: ': { 'data': data} });
 
                     if (data['Invalid'] === 'UserNotVerified') {
                         crunchingLabel.html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;The data is in an invalid state. This error is known and can be <br>easily rectified by calling us at 800-831-0678 ext. 3. Or email us at support@ttstrain.com</span>');
@@ -78,7 +78,7 @@ $(function () {
                 crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;<strong>Oops!</strong> Try that again in a few moments.In case of continued problems, please contact us at 800-831-0678 ext 707.</span>');
                 
 
-                Rollbar.error({ 'ResetPassword AJAX error: ': { 'errorThrown': errorThrown } });
+                //Rollbar.error({ 'ResetPassword AJAX error: ': { 'errorThrown': errorThrown } });
 
             });
         }

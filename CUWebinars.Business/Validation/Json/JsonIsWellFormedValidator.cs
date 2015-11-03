@@ -7,7 +7,7 @@ namespace CUWebinars.Business.Validation.Json
 {
     public class JsonIsWellFormedValidator : AbstractValidator<ValidationString>
     {
-        private string _jsonString;
+        //private string _jsonString;
         public JsonIsWellFormedValidator()
         {
             RuleFor(jsonString => jsonString.StringValue).Must(ValueMustBeValidJson)

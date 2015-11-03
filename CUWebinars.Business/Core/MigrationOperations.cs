@@ -62,10 +62,6 @@ namespace CUWebinars.Business.Core
             }
 
             int idWebinarFile;
-            string fileLocation;
-            string fileDesc;
-            string myFilename;
-
             using (var sqlConnection = new SqlConnection(_connectionLegacy))
             {
                 sqlConnection.Open();

@@ -69,7 +69,7 @@ $(function () {
 
             // errorThrown has error message, or "timeout" in case of timeout.
 
-            Rollbar.error({ 'LogInAsUser AJAX error: ': { 'errorThrown': errorThrown } });
+            //Rollbar.error({ 'LogInAsUser AJAX error: ': { 'errorThrown': errorThrown } });
 
             $('#loadSpinner1').remove();
         });
@@ -134,7 +134,7 @@ $(function () {
                     email: $.trim($('#ResetPassEmail').val())
                 };
 
-                Rollbar.info({ 'mn-#1': { 'payload': model } });
+                //Rollbar.info({ 'mn-#1': { 'payload': model } });
 
                 $.ajax({
                     type: 'POST',
@@ -156,7 +156,7 @@ $(function () {
                         $(self).after('<span id="resetResult">&nbsp;<span class="label label-important"><i class="icon icon-exclamation-sign"></i>&nbsp;<span>Password reset failed!</span></span></span>');
                     }
 
-                    Rollbar.info({ 'mn-#2': { 'result': data } });
+                    //Rollbar.info({ 'mn-#2': { 'result': data } });
 
                     $('#loadSpinner2').remove();
                 });
@@ -272,7 +272,7 @@ $(function () {
 
                 var self = this;
                 var payload = $('#ManualResetPasswordForm').serialize();
-                Rollbar.info({ 'mn-#3': { 'payload': payload } });
+                //Rollbar.info({ 'mn-#3': { 'payload': payload } });
 
                 $.ajax({
                     type: 'POST',
@@ -293,7 +293,7 @@ $(function () {
                         $('#OperationMessage').html('<span class="label label-important"><strong>&nbsp;&nbsp;There was an error at the server. The new user has not been created.</strong></span>');
                     }
 
-                    Rollbar.info({ 'mn-#4': { 'result': response } });
+                    //Rollbar.info({ 'mn-#4': { 'result': response } });
 
                     $('#loadSpinner2').remove();
                 });
@@ -324,7 +324,7 @@ $(function () {
 
             var jsonData = JSON.parse(result);
 
-            Rollbar.info({ 'mn-#5': { 'result': result } });
+            //Rollbar.info({ 'mn-#5': { 'result': result } });
 
             $.ajax({
                 type: 'POST',
@@ -338,7 +338,7 @@ $(function () {
             }).done(function (result) {
 
                 var resultAsJson = JSON.parse(result);
-                Rollbar.info({ 'mn-#6': { 'result': result } });
+                //Rollbar.info({ 'mn-#6': { 'result': result } });
                 MN.inputFormFields.html('<span id="OrderSucceeded" class="label label-success">' + resultAsJson.Result + '</span>');
                 $('#loadSpinner1').remove();
 
@@ -346,7 +346,7 @@ $(function () {
                 var resultAsJson = JSON.parse(result.responseText);
                 MN.inputFormFields.html('<span id="OrderSucceeded" class="label label-important">' + resultAsJson.Result + '</span>');
                 $('#loadSpinner1').remove();
-                Rollbar.error({ 'mn-#7': { 'result': result } });
+                //Rollbar.error({ 'mn-#7': { 'result': result } });
             });
         });
     };
@@ -366,7 +366,7 @@ $(function () {
                 queryString += idx + '=' + value + '&';
             });
 
-            Rollbar.info({ 'mn-#8': { 'queryString': queryString } });
+            //Rollbar.info({ 'mn-#8': { 'queryString': queryString } });
 
             $.ajax({
                 type: 'GET',
@@ -390,7 +390,7 @@ $(function () {
 
                 $('#loadSpinner2').remove();
 
-                Rollbar.info({ 'mn-#9': { 'result': result } });
+                //Rollbar.info({ 'mn-#9': { 'result': result } });
 
             }).fail(function (result) {
 
@@ -401,7 +401,7 @@ $(function () {
                 }
                 $('#loadSpinner2').remove();
 
-                Rollbar.error({ 'mn-#10': { 'result': result } });
+                //Rollbar.error({ 'mn-#10': { 'result': result } });
             });
         });
     };
@@ -488,7 +488,7 @@ $(function () {
                 }
                 $('#loadSpinner2').remove();
 
-                Rollbar.info({ 'mn-#11': { 'result': data } });
+                //Rollbar.info({ 'mn-#11': { 'result': data } });
             });
         });
     };
@@ -511,7 +511,7 @@ $(function () {
                     verificationKey: $.trim($('#verificationKey').val())
                 };
 
-                Rollbar.info({ 'mn-#12': { 'result': model } });
+                //Rollbar.info({ 'mn-#12': { 'result': model } });
 
                 $.ajax({
                     type: 'POST',
@@ -529,7 +529,7 @@ $(function () {
                     if (data.ChangePasswordSucceeded) {
                         $('#PasswordResetVerifyStatus').text('   Operation succeeded.');
                     }
-                    Rollbar.info({ 'mn-#13': { 'result': data } });
+                    //Rollbar.info({ 'mn-#13': { 'result': data } });
                 }).always(function(data) {
                     $('#WaitIndicator').hide();
                 });
@@ -581,7 +581,7 @@ $(function () {
             UserEmails: $('#usersTextArea').val()
         };
 
-        Rollbar.info({ 'mn-#14': { 'payload': payload } });
+        //Rollbar.info({ 'mn-#14': { 'payload': payload } });
 
         $.ajax({
             type: 'POST',
@@ -606,7 +606,7 @@ $(function () {
             }
 
             $('#waitSpinner').remove();
-            Rollbar.info({ 'mn-#15': { 'result': data } });
+            //Rollbar.info({ 'mn-#15': { 'result': data } });
         }).fail(commonFuncs.failCallBack);
     };
 

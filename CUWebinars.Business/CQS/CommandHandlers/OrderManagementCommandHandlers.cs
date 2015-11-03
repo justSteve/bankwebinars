@@ -93,14 +93,12 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                 try
                 {
                     int idRegType = Convert.ToInt32(command.RegistrationType);
-                                var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
-                    
+                    var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
                     command.RegistrationType = dataOperations.getLegacyOptionID(idRegType);
 
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    
                     throw new Exception();
                 }
             }
@@ -355,8 +353,8 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             ;
             if (ReferenceEquals(null, userAlreadyHasOrder))
             {
-                
-            string buildMessage = "ImportedOn" + DateTime.UtcNow;
+
+                string buildMessage = "ImportedOn" + DateTime.UtcNow;
 
                 if (!ReferenceEquals(null, importedOrder))
                 {

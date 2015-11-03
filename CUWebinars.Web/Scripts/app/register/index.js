@@ -215,10 +215,10 @@ $(function () {
             }).done(function (data) {
                 // successful request; do something with the data
                 stateManager.zipCodeVerified(data, zipCode);
-                Rollbar.info({ 'rdc-#1 Zipcode check result': { 'data': data || 'data was falsey' } });
+                //Rollbar.info({ 'rdc-#1 Zipcode check result': { 'data': data || 'data was falsey' } });
             }).fail(commonFuncs.failCallBack).always(function () {
                 stateManager.setInputAction(Registration.InputAction.None);
-                Rollbar.info({ 'rdc-#2 Zipcode checked': { 'zipCode': zipCode } });
+                //Rollbar.info({ 'rdc-#2 Zipcode checked': { 'zipCode': zipCode } });
             });
         }
         return false;
@@ -271,7 +271,7 @@ $(function () {
 
             } else if (data.result === 'Confirmed') {
                 //  if here, user has to verify before they can log in
-                Rollbar.info('rdc-#3 Unverified', { 'msg': 'user has to verify before they can log in' });
+                //Rollbar.info('rdc-#3 Unverified', { 'msg': 'user has to verify before they can log in' });
                 utilities.goToUrl('/Account/Confirmed?email=' + data.email + '&password=' + data.password);
             } else if (data.data) {
 
@@ -281,7 +281,7 @@ $(function () {
                 if ($('#labelEmail').is(':visible')) {
                     $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;Login error...</span>');
                 }
-                Rollbar.error('rdc-#4 Validation Fail', { 'data': data && data.data });
+                //Rollbar.error('rdc-#4 Validation Fail', { 'data': data && data.data });
                 formProcessor.lightUpValidationSummary('LoginValSummary', data);
             }
         }).fail(commonFuncs.failCallBack);

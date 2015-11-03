@@ -775,9 +775,9 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     return Json(new { Result = WebUiConstants.Success });
                 }
-                catch (Exception exception)
+                catch (Exception ex)
                 {
-
+                    _logger.Fatal("ClaimsManagement error on " + model.UserEmail, ex);
                 }
             }
 

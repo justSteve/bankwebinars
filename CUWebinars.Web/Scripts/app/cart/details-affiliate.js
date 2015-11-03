@@ -77,8 +77,8 @@ OCA.initializeFunctions = function () {
             labelCheckRemove();
 
             $('#InputFormFields').append(failedScreenMessage);
-            Rollbar.error({ 'oen-#23': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
-            Rollbar.error({ 'oen-#24': { 'errorThrown': errorThrown } });
+            //Rollbar.error({ 'oen-#23': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
+            //Rollbar.error({ 'oen-#24': { 'errorThrown': errorThrown } });
 
         }).always(function () {
             $('#loadingSpinner').remove();
@@ -258,7 +258,7 @@ OCA.initializeFunctions = function () {
                 if (data.Result === 'Success') {
                     self.after('<span id="editUserResult">&nbsp;<span class="label label-success"><span> Details updated successfully! </span></span></span>').hide().fadeIn(500);
                 } else {
-                    Rollbar.error({ 'editUserResult Failure: ': { data: xhr.data } });
+                    //Rollbar.error({ 'editUserResult Failure: ': { data: xhr.data } });
 
                     self.after('<span id="editUserResult">&nbsp;<span class="label label-warning"><span> There was a problem with that edit. Try again or </span></span></span>').hide().fadeIn(500);
                 }
@@ -552,7 +552,7 @@ OCA.initializeFunctions = function () {
 
                     if (status !== 'error') {
                         if (xhr.responseJSON['success']) {
-                            Rollbar.info('Succeeded in cancelling order: ', { data: xhr && xhr.data });
+                            //Rollbar.info('Succeeded in cancelling order: ', { data: xhr && xhr.data });
 
                             OCA.okToLeave = true;
 
@@ -561,7 +561,7 @@ OCA.initializeFunctions = function () {
                             utilities.goToUrl('/webinar/details/' + OCA.cartStateManager.getWebinarId());
                         } else {
 
-                            Rollbar.error('Cancel Order Failure: ', { data: xhr && xhr.data });
+                            //Rollbar.error('Cancel Order Failure: ', { data: xhr && xhr.data });
 
                             confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                             $('#CancelModal').modal('hide');
@@ -571,7 +571,7 @@ OCA.initializeFunctions = function () {
                         //$('#cancelRegistration').removeAttr('disabled');  
                         // [dar] NO. On staging, redirect is slow and button enabled again. User could have clicked it again.
                     } else {
-                        Rollbar.error({ 'Cancel Order Failure: ': { data: xhr.data } });
+                        //Rollbar.error({ 'Cancel Order Failure: ': { data: xhr.data } });
 
                         confirmRegistrationBillMe.after('<span class="field-validation-error">Server Error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                         $('#CancelModal').modal('hide');
@@ -1199,17 +1199,17 @@ function modalShown(e) {
                 $('#updateShippingMsgLabelWrap').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details updated successfully.</span>');
 
             } else if (!data.isSuccessful) {
-                Rollbar.error('#348 userDetailsFormUrl: ' + userDetailsFormUrl, { data: data });
+                //Rollbar.error('#348 userDetailsFormUrl: ' + userDetailsFormUrl, { data: data });
                 $('#updateShippingMsgLabelWrap').empty();
                 formProcessor.lightUpValidationSummary('userDetailsValSummary', data);
             } else {
-                Rollbar.error('#348 userDetailsFormUrl Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
+                //Rollbar.error('#348 userDetailsFormUrl Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
 
                 $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>[Connection Error #348] Please call us at 800-831-0678 ext. 3 to resolve.</span>');
             }
         }).fail(function (data) {
 
-            Rollbar.error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData, { data: data });
+            //Rollbar.error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData, { data: data });
 
             $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Connection Error #048] Please call us at 800-831-0678 ext. 3 to resolve.</span>');
         });

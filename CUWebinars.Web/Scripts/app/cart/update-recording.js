@@ -102,7 +102,7 @@ $(function () {
             var url = $(this).attr('action');
             var payload = $(this).serialize();
 
-            Rollbar.info({ 'ur-#1': { 'payload': payload } });
+            //Rollbar.info({ 'ur-#1': { 'payload': payload } });
 
             $.ajax({
                 type: 'POST',
@@ -122,14 +122,14 @@ $(function () {
                 if (data.result === 'Success') {
                     var label = $('<div id="result" class="label label-success pull-left block buttonAdjacentLabel">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Files Updated</div>');
                     label.hide().insertAfter(updateWebinarRecordingButton).fadeIn(500);
-                    Rollbar.info({ 'ur-#2': { 'result': data } });
+                    //Rollbar.info({ 'ur-#2': { 'result': data } });
                 } else if (data['Result'] === 'Fail') {
                     var label = $('<div id="result" class="label label-important pull-left block buttonAdjacentLabel">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;' + data['Message'] + '</div>');
                     label.hide().insertAfter(updateWebinarRecordingButton).fadeIn(500);
-                    Rollbar.info({ 'ur-#3': { 'fail-result': data } });
+                    //Rollbar.info({ 'ur-#3': { 'fail-result': data } });
                 } else {
                     formProcessor.lightUpValidationSummary('updateFilesValSummary', data);
-                    Rollbar.info({ 'ur-#4': { 'fail-result': data } });
+                    //Rollbar.info({ 'ur-#4': { 'fail-result': data } });
                 }
             }).always(function (data) {
                 $('#waitSpinner').remove();

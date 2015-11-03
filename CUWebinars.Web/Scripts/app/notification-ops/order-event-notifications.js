@@ -59,7 +59,7 @@ $(function () {
                 //logStartOperation("Re-sending ConnectionInfo", null, true);
 
                 var payload = { orderId: orderId };
-                Rollbar.info({ 'oen-#1': { 'payload': payload } });
+                //Rollbar.info({ 'oen-#1': { 'payload': payload } });
 
                 $.ajax({
                     type: 'POST',
@@ -80,7 +80,7 @@ $(function () {
                     }
                     $('#spinnerLabel').remove();
 
-                    Rollbar.info({ 'oen-#2': { 'result': result } });
+                    //Rollbar.info({ 'oen-#2': { 'result': result } });
 
                 }).fail(function () {
 
@@ -134,7 +134,7 @@ $(function () {
                     }
                     $('#spinnerLabel').remove();
 
-                    Rollbar.info({ 'oen-#2': { 'result': result } });
+                    //Rollbar.info({ 'oen-#2': { 'result': result } });
 
                 }).fail(function () {
 
@@ -171,7 +171,7 @@ $(function () {
                 //logStartOperation("Re-sending Order Confirmation", null, true);
 
                 var payload = { orderId: orderId };
-                Rollbar.info({ 'oen-#3': { 'payload': payload } });
+                //Rollbar.info({ 'oen-#3': { 'payload': payload } });
 
                 $.ajax({
                     type: 'POST',
@@ -191,9 +191,9 @@ $(function () {
                         $('#InputFormFields').append(noOrderScreenMessage);
                     }
                     $('#spinnerLabel').remove();
-                    Rollbar.info({ 'oen-#4': { 'result': result }});
+                    //Rollbar.info({ 'oen-#4': { 'result': result }});
                 }).fail(function() {
-                    Rollbar.error({ 'oen-#5': { 'fail-result': 'no data' } });
+                    //Rollbar.error({ 'oen-#5': { 'fail-result': 'no data' } });
                 }).always(function() {
                     //$('#loadingSpinner').remove();
                 });
@@ -219,7 +219,7 @@ $(function () {
                 $('#RegTypesCheckBoxes').show(100);
 
                 var payload = { webinarId: selectedUpcomingWebinarId };
-                Rollbar.info({ 'oen-#6': { 'payload': payload } });
+                //Rollbar.info({ 'oen-#6': { 'payload': payload } });
 
                 $.ajax({
                     type: 'POST',
@@ -329,17 +329,17 @@ $(function () {
 
                             });
 
-                            Rollbar.info({ 'oen-#9': { 'result': emails } });
+                            //Rollbar.info({ 'oen-#9': { 'result': emails } });
                         });
 
-                        Rollbar.info({ 'oen-#8': { 'payload': payload } });// added after the AJAX call so as not to hold it up.
+                        //Rollbar.info({ 'oen-#8': { 'payload': payload } });// added after the AJAX call so as not to hold it up.
                     });
 
-                    Rollbar.info({ 'oen-#7': { 'result': data } });
+                    //Rollbar.info({ 'oen-#7': { 'result': data } });
                 }).fail(function (jqXHR, textStatus, errorThrown) {
                     // failed request; give feedback to user
-                    Rollbar.error({ 'oen-#14': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
-                    Rollbar.error({ 'oen-#15': { 'errorThrown': errorThrown } });
+                    //Rollbar.error({ 'oen-#14': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
+                    //Rollbar.error({ 'oen-#15': { 'errorThrown': errorThrown } });
 
                 }).always(function () {
 
@@ -391,19 +391,19 @@ $(function () {
                     } else if (result.Result === 'No Orders to send for that webinar') {
                         $('#InputFormFields').append(noOrdersScreenMessage);
                     }
-                    Rollbar.info({ 'oen-#11': { 'result': result } });
+                    //Rollbar.info({ 'oen-#11': { 'result': result } });
                 }).fail(function (jqXHR, textStatus, errorThrown) {
                     labelCheckRemove();
                     $('#InputFormFields').append(failedScreenMessage);
                     
-                    Rollbar.error({ 'oen-#12': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
-                    Rollbar.error({ 'oen-#13': { 'errorThrown': errorThrown } });
+                    //Rollbar.error({ 'oen-#12': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
+                    //Rollbar.error({ 'oen-#13': { 'errorThrown': errorThrown } });
                 }).always(function () {
                     //$('#loadingSpinner').remove();
 
                 });;
 
-                Rollbar.info({ 'oen-#10': { 'payload': payload } });// added after the AJAX call so as not to hold it up.
+                //Rollbar.info({ 'oen-#10': { 'payload': payload } });// added after the AJAX call so as not to hold it up.
             });
 
             $('#PreviewShippedOrderEmailButton').on('click', function (e) {
@@ -442,7 +442,7 @@ $(function () {
                     modalPreview.modal(modalFormOptionsOnPageLoad);
                 });
 
-                Rollbar.info({ 'oen-#16': { 'selectedOrderId': selectedOrderIdVal } });// added after the AJAX call so as not to hold it up.
+                //Rollbar.info({ 'oen-#16': { 'selectedOrderId': selectedOrderIdVal } });// added after the AJAX call so as not to hold it up.
             });
 
             $('#EmailOrderButton').on('click', function (e) {
@@ -504,8 +504,8 @@ $(function () {
 
                         $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                     });
-                    Rollbar.info({ 'oen-#17': { 'selectedOrderId': selectedOrderIdVal } });// added after the AJAX call so as not to hold it up.
-                    Rollbar.info({ 'oen-#18': { 'payload': payload } });// added after the AJAX call so as not to hold it up.
+                    //Rollbar.info({ 'oen-#17': { 'selectedOrderId': selectedOrderIdVal } });// added after the AJAX call so as not to hold it up.
+                    //Rollbar.info({ 'oen-#18': { 'payload': payload } });// added after the AJAX call so as not to hold it up.
                 });
             });
 
@@ -559,14 +559,14 @@ $(function () {
                     labelCheckRemove();
 
                     $('#InputFormFields').append(failedScreenMessage);
-                    Rollbar.error({ 'oen-#23': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
-                    Rollbar.error({ 'oen-#24': { 'errorThrown': errorThrown } });
+                    //Rollbar.error({ 'oen-#23': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
+                    //Rollbar.error({ 'oen-#24': { 'errorThrown': errorThrown } });
 
                 }).always(function () {
                     //$('#loadingSpinner').remove();
                 });;
 
-                Rollbar.info({ 'oen-#20': { 'payload': payload } });// added after the AJAX call so as not to hold it up.
+                //Rollbar.info({ 'oen-#20': { 'payload': payload } });// added after the AJAX call so as not to hold it up.
 
             });
 
@@ -604,7 +604,7 @@ $(function () {
             //        modalPreview.modal(modalFormOptionsOnPageLoad);
             //    });
 
-            //    Rollbar.info({ 'oen-#24': { 'webinar': webinar } });// added after the AJAX call so as not to hold it up.
+            //    //Rollbar.info({ 'oen-#24': { 'webinar': webinar } });// added after the AJAX call so as not to hold it up.
 
             //});
 
@@ -667,8 +667,8 @@ $(function () {
 
                         $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                     });
-                    Rollbar.info({ 'oen-#26': { 'webinar': webinar } });// added after the AJAX call so as not to hold it up.
-                    Rollbar.info({ 'oen-#27': { 'payload': payload } });
+                    //Rollbar.info({ 'oen-#26': { 'webinar': webinar } });// added after the AJAX call so as not to hold it up.
+                    //Rollbar.info({ 'oen-#27': { 'payload': payload } });
                 });
             });
 
@@ -718,8 +718,8 @@ $(function () {
                     labelCheckRemove();
 
                     $('#InputFormFields').append(failedScreenMessage);
-                    Rollbar.error({ 'oen-#30': { 'statusCode': jqXHR && jqXHR.statusCode().status } });// added after the AJAX call so as not to hold it up.
-                    Rollbar.error({ 'oen-#31': { 'errorThrown': errorThrown } });
+                    //Rollbar.error({ 'oen-#30': { 'statusCode': jqXHR && jqXHR.statusCode().status } });// added after the AJAX call so as not to hold it up.
+                    //Rollbar.error({ 'oen-#31': { 'errorThrown': errorThrown } });
 
                 }).always(function () {
                     $('#loadingSpinner').hide();
@@ -759,7 +759,7 @@ $(function () {
 
                     modalPreview.modal(modalFormOptionsOnPageLoad);
                 });
-                Rollbar.info({ 'oen-#32': { 'webinar': webinar } });// added after the AJAX call so as not to hold it up.
+                //Rollbar.info({ 'oen-#32': { 'webinar': webinar } });// added after the AJAX call so as not to hold it up.
             });
 
             $('#EmailPostedRecording').on('click', function (e) {
@@ -814,18 +814,18 @@ $(function () {
 
                         $('#emailSendingSpinner').remove();
                         $(self).removeAttr('disabled');
-                        Rollbar.info({ 'oen-#35': { 'result': data } });
+                        //Rollbar.info({ 'oen-#35': { 'result': data } });
                     }).fail(function (jqXHR, textStatus, errorThrown) {
                         $('#emailSendingSpinner').remove();
                         $(self).removeAttr('disabled');
 
                         $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
-                        Rollbar.error({ 'oen-#36': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
-                        Rollbar.error({ 'oen-#37': { 'errorThrown': errorThrown } });
+                        //Rollbar.error({ 'oen-#36': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
+                        //Rollbar.error({ 'oen-#37': { 'errorThrown': errorThrown } });
                     });
 
-                    Rollbar.info({ 'oen-#33': { 'webinar': webinar } });// added after the AJAX call so as not to hold it up.
-                    Rollbar.info({ 'oen-#34': { 'payload': payload } });
+                    //Rollbar.info({ 'oen-#33': { 'webinar': webinar } });// added after the AJAX call so as not to hold it up.
+                    //Rollbar.info({ 'oen-#34': { 'payload': payload } });
                 });
             });
 

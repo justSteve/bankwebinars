@@ -97,7 +97,7 @@ $(function () {
                 }
                 $('#spinnerLabel').remove();
 
-                Rollbar.info({ 'oen-#2': { 'result': result } });
+                //Rollbar.info({ 'oen-#2': { 'result': result } });
 
             }).fail(function () {
 
@@ -140,7 +140,7 @@ $(function () {
                 }
                 $('#spinnerLabel').remove();
 
-                Rollbar.info({ 'oen-#2': { 'result': result } });
+                //Rollbar.info({ 'oen-#2': { 'result': result } });
 
             }).fail(function () {
 
