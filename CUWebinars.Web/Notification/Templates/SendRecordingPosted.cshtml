@@ -44,8 +44,7 @@
     string TenantURL = TtsTemplateHelperObject.TenantURL();
     string TenantPrefix = TtsTemplateHelperObject.TenantPrefix();
     string TenantLogo = TtsTemplateHelperObject.TenantLogo();
-    string TenantCom = TenantURL + ".com";
-
+    
     if (webinar.AccessPhone != null)
     {
         phone = webinar.AccessPhone;
@@ -113,7 +112,7 @@
         }
     }
 
-    onDemandLink.Append(" <p>This link to the event's materials is valid until " + Model.ExpiryDate + " and may be shared with associates within your organization:</p><p><b>http://" + TenantURL + "/o/" + Model.Order.idOrder + "-" + myRow.OnDemandCode + "</b></p>Order Summary:");
+    onDemandLink.Append(" <p>This link to the event's materials is valid until " + Model.ExpiryDate + " and may be shared with associates within your organization:</p><p><b>" + TenantURL + "/o/" + Model.Order.idOrder + "-" + myRow.OnDemandCode + "</b></p>Order Summary:");
 
 
     <head>

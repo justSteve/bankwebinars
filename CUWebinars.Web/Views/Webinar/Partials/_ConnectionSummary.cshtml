@@ -3,8 +3,6 @@
 @model OrderRow
 
 @{
-
-
     <div id="showConnectionInfo">
         <table style="font-size: smaller;" width="250">
             <tr>
@@ -12,7 +10,7 @@
                     @{
                         if (@Model.CitrixJoinUrl == null)
                         {
-                            <p class="btn btn-warning btn-mini">Click-To-Join link generation is pending.</p>
+                            <p>Please check this page a day or two prior to the scheduled start time or watch your email for complete details.</p>
                         }
                         else
                         {

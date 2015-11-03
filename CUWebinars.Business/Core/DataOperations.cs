@@ -955,7 +955,7 @@ namespace CUWebinars.Business.Core
 
         public WebUser InsertWebUserFromLegacy(string email)
         {
-
+            var retValue = false;
             using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
             {
                 sqlConnection.Open();
@@ -1068,7 +1068,7 @@ namespace CUWebinars.Business.Core
 
         public PostEventClaim FindPostEventClaimByOnDemandCode(Order order)
         {
-            var retValue = false;
+            var retValue ="";
             using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
             {
                 sqlConnection.Open();
@@ -1079,18 +1079,20 @@ namespace CUWebinars.Business.Core
                     Value = order.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).OnDemandCode
                 };
 
-                using (var insertWebUser = new SqlCommand("FindPostEventClaimByOnDemandCode", sqlConnection))
+                if (onDemandCodeParameter.Value == null) return null;
+                
+                using (var findClaim = new SqlCommand("FindPostEventClaimByOnDemandCode", sqlConnection))
                 {
-                    insertWebUser.Parameters.Add(onDemandCodeParameter);
+                    findClaim.Parameters.Add(onDemandCodeParameter);
 
                     try
                     {
-                        insertWebUser.Connection = sqlConnection;
-                        insertWebUser.CommandType = CommandType.StoredProcedure;
+                        findClaim.Connection = sqlConnection;
+                        findClaim.CommandType = CommandType.StoredProcedure;
 
-                        var result = insertWebUser.ExecuteScalar();
-                        if (result == null)
-                            retValue = true;
+                        var result = findClaim.ExecuteScalar();
+                        if (result != null)
+                            retValue = result.ToString();
                     }
                     catch (Exception ex)
                     {

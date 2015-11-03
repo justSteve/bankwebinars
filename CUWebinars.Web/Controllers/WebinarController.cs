@@ -616,16 +616,23 @@ namespace CUWebinars.Web.Controllers
                         if (row.idWebinar == id)
                         {
                             //var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, checkOrder.WebUser.email);
-
-                            if (_orderManagementService.FindPostEventClaimByOnDemandCode(checkOrder).ExpiryDate >= DateTime.Today)
+                            if (
+                                checkOrder.OrderRows
+                                    .SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                                    .OnDemandCode != null)
                             {
-                                model.RegistrationSummaryViewModel.DisplayPostEventMaterials = checkOrder.idOrder;
-                            };
+                                if (_orderManagementService.FindPostEventClaimByOnDemandCode(checkOrder).ExpiryDate >=
+                                    DateTime.Today)
+                                {
+                                    model.RegistrationSummaryViewModel.DisplayPostEventMaterials = checkOrder.idOrder;
+                                }
+                                ;
+                            }
 
                             model.RegistrationSummaryViewModel.WebinarFiles = webinarFiles;
                             model.RegistrationSummaryViewModel.UserOwnsThisEvent =
                                 model.UserOwnsThisEvent = checkOrder.idOrder;
-                            model.RegistrationSummaryViewModel.DisplayPostEventMaterials = 0;
+                            //model.RegistrationSummaryViewModel.DisplayPostEventMaterials = 0;
                             model.Order = checkOrder;
                         }
 
