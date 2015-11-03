@@ -8,28 +8,33 @@ namespace CUWebinars.Business.Models
 {
     public class UserDTO
     {
-        public int idOrder { get; set; }
-        public int idOrderLegacy { get; set; }
+
         public int idUser { get; set; }
-        public DateTime OrderDate { get; set; }
-        public string OrderDateString { get { return OrderDate.ToShortDateString(); } } // to ease consuption in the JS / DataTables caller
-        public OrderStatus OrderStatus { get; set; }
-        public string OrderStatusString { get { return OrderStatus.ToString(); } } // to ease consuption in the JS / DataTables caller
-        public decimal Total { get; set; }
+        public UserType UserType { get; set; }
+        public string AcctStatus { get; set; }
+        public System.DateTime DateCreated { get; set; }
         public string FirstName { get; set; }
+        public string FullName
+        {
+            get { return FirstName + " " + LastName; }
+        }
         public string LastName { get; set; }
-        public string Institution { get; set; }
-        public string BillingEmail { get; set; }
+        public string Initial { get; set; }
+        public int idUserInstitution { get; set; }
+        public string email { get; set; }
+        public string futureMail { get; set; }
+        public string generalComments { get; set; }
+        public Nullable<bool> taxExempt { get; set; }
+        public Nullable<int> idSubscriptionDiscount { get; set; }
+        public USTimeZone timeZone { get; set; }
+        public string Title { get; set; }
+        public virtual ICollection<Address> Addresses { get; set; }
+        //public virtual Affiliate Affiliate { get; set; }
+        public virtual Institution Institution { get; set; }
+        //public virtual ICollection<Order> Orders { get; set; }
+        //public virtual Presenter Presenter { get; set; }
+        //public WebUserDiscountXref WebUserDiscountXref { get; set; }     
 
-        public string Affiliate_ttsDomain { get; set; } // flattened via Automapper to avoid circular reference during JSON serialization
-
-
-        // from active OrderRow object which was flattened via Automapper to avoid circular reference during JSON serialization
-        public string TtsJoinUrl { get; set; }
-        public Discount Discount { get; set; }
-        public RegType RegistrationType { get; set; }
-
-        public bool Webinar_IsActive { get; set; } // flattened via Automapper to avoid circular reference during JSON serialization
 
     }
 }

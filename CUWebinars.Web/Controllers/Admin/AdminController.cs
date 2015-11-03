@@ -2522,52 +2522,51 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(new { NotAuthorized = true });
         }
 
-        [HandleAjaxException]
-        [HttpPost]
-        [AllowAnonymous]
+        //[HandleAjaxException]
+        //[HttpPost]
+        //[AllowAnonymous]
 
-        public JsonResult GetGridUserData(DTParameters param)
-        {
-            var aff = _affiliateManagementService.LoadByTTSDomain("bankwebinars");
+        //public JsonResult GetGridUserData(DTParameters param)
+        //{
+        //    var aff = _affiliateManagementService.LoadByTTSDomain("bankwebinars");
 
-            if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
-            {
-                //
-                try
-                {
-                    var dtsource = new List<WebUser>();
+        //    if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
+        //    {
+        //        //
+        //        try
+        //        {
+        //            var dtsource = new List<WebUser>();
 
+        //            List<String> columnSearch = new List<string>();
 
-                    List<String> columnSearch = new List<string>();
+        //            foreach (var col in param.Columns)
+        //            {
+        //                columnSearch.Add(col.Search.Value);
+        //            }
 
-                    foreach (var col in param.Columns)
-                    {
-                        columnSearch.Add(col.Search.Value);
-                    }
+        //            List<WebUser> data = new DTResultSetUsers().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtsource, columnSearch);
+        //            int count = new DTResultSetUsers().Count(param.Search.Value, dtsource, columnSearch);
 
-                    List<WebUser> data = new DTResultSetUsers().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtsource, columnSearch);
-                    int count = new DTResultSetUsers().Count(param.Search.Value, dtsource, columnSearch);
+        //            DataTableService<WebUser> result = new DataTableService<WebUser>
+        //            {
+        //                draw = param.Draw,
+        //                data = data,
+        //                recordsFiltered = count,
+        //                recordsTotal = count
+        //            };
 
-                    DataTableService<WebUser> result = new DataTableService<WebUser>
-                    {
-                        draw = param.Draw,
-                        data = data,
-                        recordsFiltered = count,
-                        recordsTotal = count
-                    };
+        //            return Json(result);
 
-                    return Json(result);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            return Json(new { error = ex.Message });
+        //        }
+        //    }
 
-                }
-                catch (Exception ex)
-                {
-                    return Json(new { error = ex.Message });
-                }
-            }
+        //    return Json(new { NotAuthorized = true });
 
-            return Json(new { NotAuthorized = true });
-
-        }
+        //}
 
 
         private IList<IDictionary<string, string>> BuildWebinarsSearchViewModel(string searchTerm, int? affiliateId, out int totalNumberWebinars)
