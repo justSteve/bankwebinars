@@ -18,7 +18,8 @@
     </script>
     var showAffColumn = Model.UserIsAdmin ? "true" : "false";
     //\Scripts\app\admin\display-users.js
-    // AdminController/BuildDISPLAYUSERSViewModel
+    // AdminController/UsersDataHandler
+    <script src="~/Scripts/app/admin/display-users.js"></script>
 
     <table data-aff="@showAffColumn" id="usersTable" class="table table-striped table-bordered dataTable no-footer" cellspacing="0" width="100%">
         <thead>
@@ -32,6 +33,6 @@
     </table>
 
     <div id="isAdminDiv" class="initialHide">@Model.UserIsAdmin</div>
-    <div id="userIdDiv" class="initialHide">@Model.</div>
+    <div id="webinarId" class="initialHide">@Model.</div>
 }
 

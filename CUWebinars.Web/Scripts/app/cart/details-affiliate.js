@@ -631,11 +631,29 @@ OCA.initializeState = function () {
     OCA.utilities = new Common.Utilities();
 };
 
+
 OCA.wireUpHandlers = function () {
 
     /* Click event for the big GREEN SignUp button */
     $('#AddToCart').on('click', function () {
 
+        $('#users').collapse('show');
+
+    });
+
+
+    OCA.AddOrder = function (e) {
+
+        //var self = this;
+
+        var userId = e.getAttribute('data-userId');
+        var regId = $('input[name=RegistrationTypeId]').val();
+
+        var payload = {
+            userId: userId,
+            affiliateId: DU.affiliateId,
+            idRegType: regId
+        };
 
         //var chosenUserName = $('#chosenUserName');
 
@@ -646,10 +664,12 @@ OCA.wireUpHandlers = function () {
 
         //$(this).append('<i id="signUpSpinnerInButton" class="icon-spinner icon-spin"></i>');
 
-        //formProcessor.clearValidationSummary($('#valSummarySignUpForm'));
+        formProcessor.clearValidationSummary($('#valSummarySignUpForm'));
 
-        //OCA.signUpForm.submit();
-    });
+        OCA.signUpForm.submit();
+    }
+
+
 
     /* Submit event for the big GREEN SignUp button */
     OCA.signUpForm.on('submit', function (e) {
@@ -959,6 +979,10 @@ OCA.wireUpHandlers = function () {
     };
 
     OCA.foundUsersList.hide();
+
+
+
+
 
     OCA.setSelectedProduct = function (webUser) {
 

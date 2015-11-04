@@ -116,22 +116,27 @@ namespace CUWebinars.Business.Services
 
             if (idAffliate != 19)
             {
+                theseUsers = _context.Orders
+                    .Where(o => o.idAffiliate == idAffliate)
+                    .Select(o => o.WebUser).Distinct()
+                    .Include(o => o.Institution)
+                    .Include(o => o.Orders)
+                    .ToList();
+            }
+            else
+            {
                 theseUsers = _context.WebUsers
                     .Include(u => u.Institution)
                     .Include(u => u.Orders)
                     .Include(u => u.Addresses)
-                    .Take(200).ToList();
-            }
-            else
-            {
-                theseUsers = _context.WebUsers.Where(u => u.idUser > 37000).Include(u => u.Institution)
-                    .Include(u => u.Orders)
-                    .Include(u => u.Addresses)
+                    .Where( u => u.UserType == UserType.Customer)
                     .Take(200)
                     .ToList();
             }
 
             totalNumberUsers = theseUsers.Count;
+
+            theseUsers.Take(500);
 
             return theseUsers;
         }
@@ -147,6 +152,7 @@ namespace CUWebinars.Business.Services
             
         }
 
+
         public IEnumerable<WebUser> GetWebUsers(int idAffliate, int totalNumberUsers, out int totalNumberUsers_)
         {
             IEnumerable<WebUser> theseUsers;
@@ -155,8 +161,9 @@ namespace CUWebinars.Business.Services
             {
                 theseUsers = _context.WebUsers
                     .Include(u => u.Institution)
-                    .Include(u => u.Orders)
+                    .Include(u => u.Orders.Where(o => o.idAffiliate == idAffliate))
                     .Include(u => u.Addresses)
+                    
                     .ToList();
             }
             else

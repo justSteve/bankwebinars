@@ -2514,7 +2514,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 try
                 {
-                    List<WebUser> dtsource = _dataTablesService.GetWebUsers(webinarId, affiliateId ?? 19, out totalNumberOrders).ToList();
+                    List<WebUser> dtsource = _dataTablesService.GetWebUsers(affiliateId ?? 19, out totalNumberOrders).ToList();
 
                     // use automapper to flatten out the order records, in this specific case the data 
                     //  model has circular references which cause problems with JSON serialization
