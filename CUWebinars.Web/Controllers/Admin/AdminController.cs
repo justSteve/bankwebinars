@@ -1372,15 +1372,15 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(new { Result = WebUiConstants.Success });
         }
 
-        public PartialViewResult ResendConnectionInfo()
-        {
-            var model = new ResendOrderInformationViewModel
-            {
-                OrderId = string.Empty
-            };
+        //public PartialViewResult ResendConnectionInfo()
+        //{
+        //    var model = new ResendOrderInformationViewModel
+        //    {
+        //        OrderId = string.Empty
+        //    };
 
-            return PartialView("~/Views/Admin/Home/_resendConnectionInfo.cshtml", model);
-        }
+        //    return PartialView("~/Views/Admin/Home/_resendConnectionInfo.cshtml", model);
+        //}
 
         [HttpPost]
         public ActionResult ResendConnectionInfo(int orderId)
