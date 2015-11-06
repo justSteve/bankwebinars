@@ -55,7 +55,7 @@
 
     var isFirstOrderForThisUser = true;
 
-    thankYouPhrase.Append("Your email is included in an order placed by " + Model.Order.FirstName + " " + Model.Order.LastName + " as an Additional Location for the upcoming event titled");
+    thankYouPhrase.Append("Your email is included in an order placed by " + Model.Order.FirstName + " " + Model.Order.LastName + " as an Additional Location for the upcoming event titled: ");
     thankYouPhrase.Append("<i>" + row.Single().Webinar.Title + "</i>");
 
     if (webinar.Status == WebinarStatus.Scheduled)
