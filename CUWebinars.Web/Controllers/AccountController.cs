@@ -290,10 +290,12 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.AllowAnonymous]
         [System.Web.Mvc.HttpGet]
-        public ActionResult MyCertificate(int orderID, string displayName)
+        public ActionResult MyCertificate(int orderID, string displayName, string displayInst)
         {
             var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
 
+            _logger.Info("MyCertificateDS orderId=" + orderID + ", displayName=" + displayName + ", displayInst" + displayInst);
+            
             var currentOrder = _orderManagementService.GetOrderById(orderID);
             if (ReferenceEquals(displayName, null))
             {
@@ -313,6 +315,32 @@ namespace CUWebinars.Web.Controllers
             }
 
             return View("MyCertificate", model);
+        }
+
+
+        [System.Web.Mvc.AllowAnonymous]
+        [System.Web.Mvc.HttpGet]
+        public ActionResult MyCertificateDS(int webinarId, string displayName, string displayInst)
+        {
+            //The parameters dictionary contains a null entry for parameter 'webinarId' of non-nullable type 'System.Int32' for method 'System.Web.Mvc.ActionResult MyCertificateDS(Int32, System.String, System.String)' in 'CUWebinars.Web.Controllers.AccountController'. An optional parameter must be a reference type, a nullable type, or be declared as an optional parameter.
+            //Parameter name: parametersvar currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
+
+            var currentWebinar = _orderManagementService.GetWebinarById(webinarId);
+
+            _logger.Info("MyCertificateDS webinarId=" + webinarId + ", displayName=" + displayName + ", displayInst" + displayName);
+            var model = new CertOfCompletionDSViewModel { DisplayName = displayName, Webinar = currentWebinar, DisplayInst = displayInst };
+
+            model.CeuShort = string.Empty;
+            model.CeuStatement = string.Empty;
+
+            //if (!string.IsNullOrEmpty(model.Order.OrderRows.SingleOrDefault().Webinar.ceu))
+            //{
+            //    string[] ceu = model.Order.OrderRows.SingleOrDefault().Webinar.ceu.Split('|');
+            //    model.CeuShort = ceu[0];
+            //    model.CeuStatement = ceu[1];
+            //}
+
+            return View("MyCertificateDS", model);
         }
 
         [System.Web.Mvc.AllowAnonymous]
@@ -1660,5 +1688,14 @@ namespace CUWebinars.Web.Controllers
             _disposed = true;
         }
 
+    }
+
+    public class CertOfCompletionDSViewModel
+    {
+        public Webinar Webinar { get; set; }
+        public string DisplayName { get; set; }
+        public string CeuShort { get; set; }
+        public string CeuStatement { get; set; }
+        public string DisplayInst { get; set; }
     }
 }

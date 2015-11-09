@@ -1968,6 +1968,7 @@
     <Content Include="Views\Admin\COC_DS.cshtml" />
     <Content Include="Views\Webinar\Partials\SearchResultsGrid.cshtml" />
     <Content Include="Views\Webinar\Search.cshtml" />
+    <Content Include="Views\Account\MyCertificateDS.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
