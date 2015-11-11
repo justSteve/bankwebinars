@@ -14,7 +14,7 @@ namespace CUWebinars.Business.Core.Helpers
             _regTypeRepository = regTypeRepository;
         }
 
-        //public DateTime GetPostEventMaterialsAccessExpiry(Order order)
+        //public DateTime CalculatePostEventMaterialsAccessExpiry(Order order)
         //{
         //    if (order == null) throw new ArgumentNullException("order");
 

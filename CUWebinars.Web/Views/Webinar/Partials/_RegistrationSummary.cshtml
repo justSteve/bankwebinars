@@ -102,7 +102,7 @@
                 <p><b>@Html.Raw(Model.RecordingLink)</b></p>
 
                 <div>
-                    <form method="POST" action="/Account/MyCertificate">
+                    <form method="GET" action="/Account/MyCertificate">
                         <input type="hidden" name="orderID" value="@order.idOrder" />
                         <aside class="widget">
                             <input type="submit" value="My Certificate" id="ShowCertificate" class="btn btn-success btn-mini pull-right " />

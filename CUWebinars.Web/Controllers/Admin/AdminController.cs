@@ -777,7 +777,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
                 catch (Exception ex)
                 {
-                    _logger.Fatal("ClaimsManagement error on " + model.UserEmail, ex);
+                    _logger.Fatal("ClaimsManagement error on " + model.UserEmail +" "+ ex);
                 }
             }
 
@@ -873,7 +873,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
                 catch (Exception ex)
                 {
-                    _logger.Fatal("ExpressCheckout tossed exception: ", ex);
+                    _logger.Fatal("ExpressCheckout tossed exception: " + ex.Message);
                 }
 
             }
@@ -1576,7 +1576,7 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.WebUser.email);
 
-                DateTime? expiryDate = _orderManagementService.GetPostEventMaterialsAccessExpiry(order);
+                DateTime? expiryDate = _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order);
 
                 if (expiryDate.HasValue && expiryDate > TtsConfig.UtcNowAsCts)
                 {
@@ -2404,44 +2404,6 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
 
-        [HandleAjaxException]
-        [AllowAnonymous]
-        public ActionResult RestoreOnDemandCodes(int? webinarId, int? idAffiliate)
-        {
-
-            try
-            {
-                IList<PostEventClaim> onDemandClaims = _orderManagementService.FindAllPostEventClaims();
-
-                foreach (var claim in onDemandClaims)
-                {
-                    if (claim.OnDemandCode != null)
-                    {
-                        Order order = _orderManagementService.GetOrderById(claim.OrderId);
-                        if (
-                            order.OrderRows
-                                .SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
-                                .OnDemandCode == null)
-                        {
-                            order.OrderRows
-                                .SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
-                                .OnDemandCode = claim.OnDemandCode;
-                            _orderManagementService.SaveChanges();
-                        }
-                    }
-                    else
-                    {
-                        
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.ErrorException("RestoreOnDemandCodes: " , ex);
-            }
-            return Content("Ok");
-        }
-
 
         [HandleAjaxException]
         [HttpPost]
@@ -2786,11 +2748,18 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
 
-        [AllowAnonymous]
-        public ActionResult RedirectToLegacyBlog()
-        {
-            return Redirect("http://Legacy.Bankwebinars.com/Blog");
-        }
+        //[AllowAnonymous]
+        //public ActionResult RedirectToLegacyBlog()
+        //{
+        //    return Redirect("http://Legacy.Bankwebinars.com/Blog");
+        //}
+
+
+        //[AllowAnonymous]
+        //public ActionResult RedirectToAzureBlog()
+        //{
+        //    return Redirect("http://www.Bankwebinars.com/Blog");
+        //}
 
         private IList<IDictionary<string, string>> BuildDisplayOrdersByUserViewModel(string email, out int totalNumberOrders)
         {

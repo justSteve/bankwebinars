@@ -9,8 +9,6 @@
 @{
     Layout = "";
 
-
-
     GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
     var webinar = Model.Webinar;
@@ -45,6 +43,12 @@
             <script language="javascript">
 
                 $(function () {
+
+                @if (Model.DisplayName == null || Model.DisplayName == "undefined")
+                {
+                    <text>$("#displayName").html('[refresh page to enter name]');</text>
+                }
+
                     $('#myModal').modal('show');
                 });
             </script>
@@ -79,7 +83,7 @@
                 <p align="center">presents this</p>
                 <h1 style="text-align: center; font-size: 34px;">Certificate of Completion</h1>
                 <p align="center">to</p>
-                <h2 align="center">
+                <h2 id="displayName" align="center">
                     <b>@Model.DisplayName</b>
                 </h2>
                 <h4 align="center">

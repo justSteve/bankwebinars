@@ -257,7 +257,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Fatal("CheckoutConfirm heard: ", ex);
+                _logger.Fatal("CheckoutConfirm heard: " + ex);
                 throw;
             }
             return PartialView("Partials/CheckoutConfirm", model);

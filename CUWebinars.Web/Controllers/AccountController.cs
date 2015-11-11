@@ -290,7 +290,7 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.AllowAnonymous]
         [System.Web.Mvc.HttpGet]
-        public ActionResult MyCertificate(int orderID, string displayName, string displayInst)
+        public ActionResult MyCertificate(int orderID, string displayName, string displayInst="")
         {
             var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
 
@@ -322,8 +322,7 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.HttpGet]
         public ActionResult MyCertificateDS(int webinarId, string displayName, string displayInst)
         {
-            //The parameters dictionary contains a null entry for parameter 'webinarId' of non-nullable type 'System.Int32' for method 'System.Web.Mvc.ActionResult MyCertificateDS(Int32, System.String, System.String)' in 'CUWebinars.Web.Controllers.AccountController'. An optional parameter must be a reference type, a nullable type, or be declared as an optional parameter.
-            //Parameter name: parametersvar currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
+            
 
             var currentWebinar = _orderManagementService.GetWebinarById(webinarId);
 
@@ -570,7 +569,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (Exception ex)
                 {
-                    _logger.Fatal("EditUserFromOrder error on " + id.Value, ex);
+                    _logger.Fatal("EditUserFromOrder error on " + id.Value +" " + ex);
                 }
             }
             return View("EditUser", null);

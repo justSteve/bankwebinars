@@ -20,11 +20,11 @@ namespace CUWebinars.Web.App_Start
                 url: "expresscheckout",
                 defaults: new { controller = "Admin", action = "ExpressCheckout", id = 0 }
             );
-            routes.MapRoute(
-                "blog",
-                url: "blog/",
-                defaults: new { controller = "Admin", action = "RedirectToLegacyBlog"}
-            );
+            //routes.MapRoute(
+            //    "blog",
+            //    url: "blog/",
+            //    defaults: new { controller = "Admin", action = "RedirectToAzureBlog"}
+            //);
 
             routes.MapRoute(
                 "ccpostback",

@@ -221,7 +221,13 @@ namespace CUWebinars.Business.Services
 
         public Affiliate GetAffiliateByIdLoaded(int id, params Expression<Func<Affiliate, object>>[] includeProperties)
         {
-            return _affiliateRepository.FindByIdWithIncluding(id, includeProperties);
+            var aff = _affiliateRepository.FindByIdWithIncluding(id, includeProperties);
+            if (aff == null)
+            {
+                aff = GetAffiliateById(19);
+            }
+            _logger.Warn("Error: unfound affiliate=" + id);
+            return aff;
         }
 
 
@@ -285,7 +291,7 @@ namespace CUWebinars.Business.Services
             FireAdhocNotificationHandler(adhocNotificationSubmittedViewModel);
         }
 
-        public OrderRow CheckLegacyOrder(Order order)
+        public OrderRow GetLegacyOrder(Order order)
         {
             var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
             return dataOperations.GetLegacyOrder(order);
@@ -302,6 +308,26 @@ namespace CUWebinars.Business.Services
 
             List<string> legacyEmails = lOrders.Select(order => order.BillingEmail).ToList();
             List<string> v3Emails = v3Orders.Select(v3Order => v3Order.BillingEmail).ToList();
+
+
+            var query = legacyEmails.GroupBy(x => x)
+                  .Where(g => g.Count() > 1)
+                  .Select(y => y.Key)
+                  .ToList();
+            foreach (var d in query)
+            {
+                _logger.Warn("Duped order from Legacy " + webinarId + " on " + d);
+            }
+
+
+            var queryv3 = v3Emails.GroupBy(x => x)
+                  .Where(g => g.Count() > 1)
+                  .Select(y => y.Key)
+                  .ToList();
+            foreach (var d in query)
+            {
+                _logger.Warn("Duped order from V3 " + webinarId + " on " + d);
+            }
 
 
             // find orders in legacy not in v3
@@ -431,7 +457,7 @@ namespace CUWebinars.Business.Services
                                 SaveOrderChanges(vOrder, "", "", OrderGenesis.CreatedViaCartByExistingUser);
                             }
 
-                            
+
                             i++;
                         }
                         catch (Exception ex)
@@ -676,6 +702,10 @@ namespace CUWebinars.Business.Services
                 if (affiliate == null)
                 {
                     affiliate = _affiliateRepository.FindByIdWithIncluding(affiliateIdForOrder, a => a.WebUser); // use the most recent
+                    if (affiliate == null)
+                    {
+                        affiliate = GetAffiliateById(19);
+                    }
                     // keeps Affiliate object in cache for 1 hour.
                     _cachingService.Add(cachKey, affiliate, DomainConstants.BuildUtcNowAsCts.AddHours(1));
                 }
@@ -1102,7 +1132,7 @@ namespace CUWebinars.Business.Services
                     Order = order,
                     CostFor6month = (Convert.ToDecimal(cost6) - Convert.ToDecimal(basePrice)).ToString().Replace(".00", ""),
                     CostForCD = (Convert.ToDecimal(costCD) - Convert.ToDecimal(basePrice)).ToString().Replace(".00", ""),
-                    ExpiryDate = GetPostEventMaterialsAccessExpiry(order).ToShortDateString(),
+                    ExpiryDate = CalculatePostEventMaterialsAccessExpiry(order).ToShortDateString(),
                     OrderSummaryString = orderSum
                 };
                 AddEvent(new SendRecordingPostedEvent<PostEventPublishModel>
@@ -1244,7 +1274,7 @@ namespace CUWebinars.Business.Services
             sb.Append("");
             sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
             sb.Append("            <b>");
-            sb.Append(GetPostEventMaterialsAccessExpiry(order).ToShortDateString());
+            sb.Append(CalculatePostEventMaterialsAccessExpiry(order).ToShortDateString());
             sb.Append("            </b>");
             sb.Append("        </span>");
             sb.Append("    </td>");
@@ -1500,19 +1530,24 @@ namespace CUWebinars.Business.Services
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
             return dataOperations.FindPostEventClaimByOnDemandCode(order);
-            
+
         }
 
         public IList<PostEventClaim> FindAllPostEventClaims()
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
             return dataOperations.FindAllPostEventClaims();
-            
+
+        }
+
+        public Webinar GetWebinarById(int webinarId)
+        {
+            return _webinarRepository.GetWebinarByIdIncludingAllWebinarsByPresenter(webinarId);
         }
 
         public IList<Order> GetV3OrdersByOnDemandClaim()
         {
-          return   _orderRepository.GetV3OrdersByOnDemandClaim();
+            return _orderRepository.GetV3OrdersByOnDemandClaim();
         }
 
         public Discount GetDiscountByUser(WebUser currentUser)
@@ -1524,7 +1559,7 @@ namespace CUWebinars.Business.Services
         public void GenerateRegistrantKey(Order order, AdditionalLocation additionalLocation = null)
         {
             if (order == null) throw new ArgumentNullException("order");
-
+            return;
             var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             var regKeyResponse = string.Empty;
 
@@ -1610,7 +1645,7 @@ namespace CUWebinars.Business.Services
         }
 
 
-        public DateTime GetPostEventMaterialsAccessExpiry(Order order)
+        public DateTime CalculatePostEventMaterialsAccessExpiry(Order order)
         {
 
             if (order == null) throw new ArgumentNullException("order");
@@ -1623,7 +1658,7 @@ namespace CUWebinars.Business.Services
 
             if (regType.ShowRecordingNotifications.Equals("yes", StringComparison.OrdinalIgnoreCase))
                 return DateTime.Today.AddMonths(6);
-            
+
 
             //establish order date as starting point
             DateTime expryDate = order.OrderDate.AddMonths(6);
@@ -1639,24 +1674,21 @@ namespace CUWebinars.Business.Services
             }
             // now we only addressing Live+5
             //update to pull LivePlusFive value from database
-
-            if (orderRow.Webinar.LivePlusFiveValue == 0)
-            {
-                return orderRow.Webinar.Date.AddDays(7);
-            }
-            return orderRow.Webinar.Date.AddDays(orderRow.Webinar.LivePlusFiveValue);
+            
+            return orderRow.Webinar.LivePlusFiveValue;
         }
 
         public void GetJoinUrl(OrderRow row)
         {
             Order order = row.Order;
-            
+
             if (row.Webinar.Status != WebinarStatus.Active && row.Webinar.Status != WebinarStatus.InProgress || row.Webinar.CitrixJoinInfoAvailable())
             {
                 //if not initialized, don't hit Citrix
-
+                return;
             }
-            if (row.CitrixJoinUrl == null && row.RegistrationType.ShowLiveNotifications == "Yes")
+            if (row.CitrixJoinUrl == null && row.RegistrationType.ShowLiveNotifications == "Yes"
+                && (row.Webinar.Status == WebinarStatus.Active || row.Webinar.Status == WebinarStatus.InProgress))
             {
                 var regKeyResponse = CreateRegistrantKey(order.FirstName, order.LastName
                     , order.BillingEmail, row.Webinar.idWebinar, row.Webinar.WebinarKey);
