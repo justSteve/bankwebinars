@@ -1,4 +1,5 @@
-﻿var UWF = {}; // create namespace to prevent collisions. UWF is 'Update Webinar Files'
+﻿/// <reference path="../../jquery-dateFormat.min.js" />
+var UWF = {}; // create namespace to prevent collisions. UWF is 'Update Webinar Files'
 
 // document.ready function
 $(function() {
@@ -12,6 +13,8 @@ $(function() {
         backdrop: 'static',
         show: true
     };
+
+
 
     updateWebinarHandoutsModalButton.on('click', function (e) {
         e.preventDefault();

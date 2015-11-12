@@ -458,6 +458,7 @@ namespace CUWebinars.Web.Controllers
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult OnDemand(string onDemandCode)
         {
+            if (ReferenceEquals(onDemandCode, null)) return null;
             int _id;
             var isNum = Int32.TryParse(onDemandCode.Split('-')[0], out _id);
             string hasVal = null;
@@ -1416,7 +1417,7 @@ namespace CUWebinars.Web.Controllers
                     string.Empty,
                     "There was a problem with the update operation. Please consult with the system administrator to resolve the issue."
                     );
-                _logger.Fatal("UpdateWebinarFiles on " + webinarFilesEditModel.idWebinar, ex);
+                _logger.Fatal("UpdateWebinarFiles on " + webinarFilesEditModel.idWebinar +" " + ex.Message);
             }
 
             return this.ModelStateJson(ModelState);
@@ -1488,6 +1489,7 @@ namespace CUWebinars.Web.Controllers
             _webinarControllerOrchestrator.SendRecordingIsPostedBatch(idWebinar);
             return Content("ok");
         }
+
         public ActionResult UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel)
         {
             if (ModelState.IsValid)

@@ -1169,6 +1169,7 @@
     <Content Include="Content\images\email\NYBA\bannerCaption1.jpg" />
     <Content Include="Content\images\email\NYBA\header_Base.png" />
     <Content Include="Content\images\email\onDemand.jpg" />
+    <Content Include="Content\images\email\OREGONBANKERS\banner.jpg" />
     <Content Include="Content\images\email\OREGONBANKERS\bannerCaption1.jpg" />
     <Content Include="Content\images\email\ozarkCFT\addressCenter.jpg" />
     <Content Include="Content\images\email\ozarkCFT\addressLeft.jpg" />
@@ -1675,6 +1676,7 @@
     <Content Include="Content\DataTables\css\dataTables.responsive.scss" />
     <Content Include="Content\DataTables\css\dataTables.jqueryui.scss" />
     <Content Include="Notification\Templates\AdhocNotification.cshtml" />
+    <Content Include="Scripts\jquery-dateFormat.min.js" />
     <Content Include="Scripts\placeholder.js" />
     <Content Include="Views\Cart\ExpressCheckoutAffiliate.cshtml" />
     <Content Include="WinSCP.exe">
@@ -1968,6 +1970,7 @@
     <Content Include="Views\Admin\COC_DS.cshtml" />
     <Content Include="Views\Webinar\Partials\SearchResultsGrid.cshtml" />
     <Content Include="Views\Webinar\Search.cshtml" />
+    <Content Include="Views\Account\MyCertificateDS.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

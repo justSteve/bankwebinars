@@ -29,7 +29,7 @@ namespace CUWebinars.Business.Models
         public string RecordingUrl { get; set; }
         //public int idWebinarRegTypeGroup { get; set; }
         public int idPresenter { get; set; }
-        public int LivePlusFiveValue { get; set; }
+        public DateTime LivePlusFiveValue { get; set; }
         public string WebinarKey { get; set; }
         public string OrganizerKey { get; set; }
         public string OrganizerOAuthKey { get; set; }

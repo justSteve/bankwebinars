@@ -1,4 +1,5 @@
 ﻿@using System.Text
+@using System.Web.UI.WebControls
 @using CUWebinars.Business.Models
 @*@model CUWebinars.Web.ViewModel.PostEventPublishModel*@
 @model CUWebinars.Web.ViewModel.PostEventPublishModel
@@ -44,7 +45,7 @@
     string TenantURL = TtsTemplateHelperObject.TenantURL();
     string TenantPrefix = TtsTemplateHelperObject.TenantPrefix();
     string TenantLogo = TtsTemplateHelperObject.TenantLogo();
-    
+
     if (webinar.AccessPhone != null)
     {
         phone = webinar.AccessPhone;
@@ -81,38 +82,52 @@
 
     var onDemandLink = new StringBuilder();
 
-    if (notiRecordingPosted == "No")
+    if (myRow.RegistrationType.ShowLiveNotifications == "Yes")
     {
         infoPhrase.Append("<p>Dear " + Model.Order.FirstName + ",<br /><br />We hope you enjoyed <i>");
         infoPhrase.Append(row.Single().Webinar.Title + "</i>.</p>");
 
-
-        infoPhrase.Append("<p> Included in your registration are links to all course material for five(5) business days." +
-                          "  You can upgrade your order to gain 6 months OnDemand access (adds $" + Model.CostFor6month + "). Or get the Premier Package by adding a CD-ROM ($" + Model.CostForCD + "). We'll be happy to adjust your registration - just reply to this email! </p>");
-    }
-    else
-    {
-        if (notiShipped == "Yes")
+        if (notiRecordingPosted == "No")
         {
-            infoPhrase.Append("<p>Dear " + Model.Order.FirstName + ",<br /><br />We hope you enjoyed <i>");
-            infoPhrase.Append(row.Single().Webinar.Title + "</i>.</p>");
 
-            if (myRow.RegistrationType.ShowLiveNotifications == "Yes")
-            {
-                infoPhrase.Append("<p>Your materials will be shipped soon and are typically in your hands within 7-10 business days.");
-                infoPhrase.Append(" Included in your registration are links to all course material for six months.</p>");
-            }
+            infoPhrase.Append("<p> Included in your registration is a link (see below) to all course material for five(5) business days." +
+                              "  You can upgrade your order to gain 6 months OnDemand access (adds $" + Model.CostFor6month + "). Or get the Premier Package which adds a CD-ROM ($" + Model.CostForCD + "). We'll be happy to adjust your registration - just reply to this email! </p>");
         }
         else
         {
-            infoPhrase.Append("<p>Dear " + Model.Order.FirstName + ",<br /><br />The recording for  <i>" + row.Single().Webinar.Title + "</i> has been posted!</p>");
+            infoPhrase.Append("<p> Included in your registration is a link (see below) to all course material for six months.");
 
-            infoPhrase.Append("<p>Your registration includes access to OnDemand playback for the next six months.");
-            infoPhrase.Append("  Add the CD-ROM plus printouts for the Premire Package ($" + Model.CostForCD + " extra). We'll be happy to upgrade your registration - just reply to this email!</p>");
+            if (notiShipped == "Yes")
+            {
+                infoPhrase.Append(" Your CD-ROM and printouts will be shipped soon and are typically in your hands within 7-10 business days.");
+            }
+            else
+            {
+                infoPhrase.Append("  Add the CD-ROM plus printouts for the Premier Package ($" + Model.CostForCD + " extra). We'll be happy to upgrade your registration - just reply to this email!</p>");
+
+            }
         }
     }
+    else
+    {
+        infoPhrase.Append("<p>Dear " + Model.Order.FirstName + ",<br /><br />The recording of <i>");
+        infoPhrase.Append(row.Single().Webinar.Title + "</i> is posted and ready to view.</p>");
+        infoPhrase.Append("<p> Included in your registration is a link (see below) to all course material for six months.");
 
-    onDemandLink.Append(" <p>This link to the event's materials is valid until " + Model.ExpiryDate + " and may be shared with associates within your organization:</p><p><b>" + TenantURL + "/o/" + Model.Order.idOrder + "-" + myRow.OnDemandCode + "</b></p>Order Summary:");
+        if (notiShipped == "Yes")
+        {
+            infoPhrase.Append(" Your CD-ROM and printouts will be shipped soon and are typically in your hands within 7-10 business days.");
+        }
+        else
+        {
+            infoPhrase.Append("  We'll be happy to upgrade your registration and include a CD-ROM and printouts - just reply to this email!</p>");
+           
+        }
+
+    }
+
+    
+    onDemandLink.Append("<p>This link to the event's materials is valid until " + Model.ExpiryDate + " and may be shared with associates within your organization:</p><p><b>" + TenantURL + "/o/" + Model.Order.idOrder + "-" + myRow.OnDemandCode + "</b></p>Order Summary:");
 
 
     <head>
@@ -214,7 +229,7 @@
                                                                                     <td colspan="2" style="text-align: left; margin-left: 6px; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: small">
                                                                                         <div style="color: black; font-family: Arial, Helvetica, sans-serif; padding: 5px; font-size: 12px;">
                                                                                             <p>
-                                                                                                Again, thank you very much for your patronage and don't hesitate to let us know how we can serve you better!<br /><br />Sincerely,<br />The @Tenant Staff<br /><br />
+                                                                                                Again, thank you very much for your support of BankWebinars and don't hesitate to let us know how we can serve you better!<br /><br />Sincerely,<br />The @Tenant Staff<br /><br />
                                                                                             </p>
                                                                                         </div>
                                                                                     </td>

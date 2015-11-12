@@ -38,6 +38,15 @@
         activeArchived = "active";
     }
 }
+<style>
+    .nav-tabs > .active > a, .nav-tabs > .active > a:hover, .nav-tabs > .active > a:focus {
+        background-color: #555555;
+        color: white;
+    }
+    .nav-tabs {
+        border-bottom: 2px solid darkgray;
+}
+</style>
 
 <div class="container">
     <h2 class="short_headline">My Webinars</h2>
@@ -55,7 +64,7 @@
         @*<li><a href="#account" data-toggle="tab">Edit Account Profile</a></li>*@
 
     </ul>
-    
+
 
     <div class="tab-content" id="mywebinars">
         <div class="tab-pane @activeScheduled" id="upcoming1">
