@@ -276,8 +276,8 @@ namespace CUWebinars.Web.Controllers
 
 
                 var discountModel = _accountControllerOrchestrator.BuildDiscountModel();
-                var myWebinarsDTO = _accountControllerOrchestrator.BuildMyWebinarsDTO(discountModel,
-                    claimsIdentityOfAuthenticatedUser);
+                var myWebinarsDTO = _accountControllerOrchestrator.BuildMyWebinarsDTO
+                    (discountModel, claimsIdentityOfAuthenticatedUser);
 
 
                 ViewBag.idUser = myWebinarsDTO.WebUser.idUser;

@@ -150,6 +150,7 @@ namespace CUWebinars.Business.Services
             }
         }
 
+
         public IEnumerable<AdditionalLocation> GetAdditionalLocationsForOrderRow(int idOrderRow)
         {
             return _additionalLocationsRepository.GetAdditionalLocationsForOrderRow(idOrderRow);

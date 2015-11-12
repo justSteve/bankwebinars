@@ -1169,6 +1169,7 @@
     <Content Include="Content\images\email\NYBA\bannerCaption1.jpg" />
     <Content Include="Content\images\email\NYBA\header_Base.png" />
     <Content Include="Content\images\email\onDemand.jpg" />
+    <Content Include="Content\images\email\OREGONBANKERS\banner.jpg" />
     <Content Include="Content\images\email\OREGONBANKERS\bannerCaption1.jpg" />
     <Content Include="Content\images\email\ozarkCFT\addressCenter.jpg" />
     <Content Include="Content\images\email\ozarkCFT\addressLeft.jpg" />
