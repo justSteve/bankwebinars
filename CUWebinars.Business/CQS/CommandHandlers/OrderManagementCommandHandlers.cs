@@ -346,13 +346,12 @@ namespace CUWebinars.Business.CQS.CommandHandlers
         {
             if (command == null) throw new ArgumentNullException("command");
             //prevents re-importation
-            var userAlreadyHasOrder = _orderManagementService.GetOrdersByUserId(command.WebUser.idUser)
-                .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == command.Webinar.idWebinar) != null).SingleOrDefault();
+            //var userAlreadyHasOrder = _orderManagementService.GetOrdersByUserId(command.WebUser.idUser).Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == command.Webinar.idWebinar) != null).SingleOrDefault();
             var importedOrder = _orderManagementService.CreateNewOrder(command.Affiliate, command.WebUser,
                 command.Webinar, command.OrderRow, DomainConstants.OriginImported);
             ;
-            if (ReferenceEquals(null, userAlreadyHasOrder))
-            {
+            //if (ReferenceEquals(null, userAlreadyHasOrder))
+            //{
 
                 string buildMessage = "ImportedOn" + DateTime.UtcNow;
 
@@ -418,14 +417,17 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                 importedOrder.ShippingLastName = command.LastName;
 
                 _orderManagementService.GetJoinUrl(command.OrderRow);
+                _orderManagementService.SaveOrderChanges(importedOrder
+                    , command.VerificationKey
+                    , command.ConfirmChangeEmailUrl);
 
-                _orderManagementService.SaveOrderChanges(
-                    importedOrder,
-                    command.VerificationKey,
-                    //why are we using confirmChangeEmailURL instead of AddPasswordURL?
-                    command.ConfirmChangeEmailUrl,
-                    command.OrderGenesis
-                    );
+                //_orderManagementService.SaveOrderChanges(
+                //    importedOrder,
+                //    command.VerificationKey,
+                //    //why are we using confirmChangeEmailURL instead of AddPasswordURL?
+                //    command.ConfirmChangeEmailUrl,
+                //    command.OrderGenesis
+                //    );
 
                 _postCommitRegistrator.Committed += () =>
                 {
@@ -434,7 +436,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
                 _postCommitRegistrator.ExecuteActions();
                 _postCommitRegistrator.Reset();
-            }
+            //}
         }
         public void Handle(MigrateOrderCommand command)
         {

@@ -2,6 +2,7 @@
 <log4net>
   <appender name="CsvFileAppender" type="log4net.Appender.FileAppender">
     <file value="D:/home/logfiles/log4netCSV.log" />
+    <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
     <appendToFile value="true"/>
     <threshold value="INFO" />
     <!--<layout type=" MyApp.Web.CsvLogging.CsvPatternLayout, MyApp.Web">-->

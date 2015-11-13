@@ -328,6 +328,7 @@ namespace CUWebinars.Web.Controllers
                 return Json(new { Result = WebUiConstants.Fail, Error = "Invalid Registration Type: " + importedOrder.RegistrationType });
             }
             importedOrder.RegistrationType = idRegType.ToString();
+            importedOrder.OrderDate = DateTime.Now;
             try
             {
                 var email = importedOrder.Email.Trim();

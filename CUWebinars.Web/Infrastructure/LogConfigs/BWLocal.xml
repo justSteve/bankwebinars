@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <log4net>
-  <appender name="CsvFileAppender" type="log4net.Appender.FileAppender">
-    <file value="C:\Users\Steve\Desktoplogfiles/log4netCSVlocal.log" />
+  <appender name="CsvFileAppender" type="log4net.Appender.RollingFileAppender">
+    <file value="C:\Users\Steve\Desktop\logfiles/log4netCSVlocal.log" />
     <appendToFile value="true"/>
-
+    <rollingStyle value="Date" />
+    <datePattern value="yyyyMMdd" />
     <threshold value="INFO" />
     <!--<layout type=" MyApp.Web.CsvLogging.CsvPatternLayout, MyApp.Web">-->
     <layout type=" CUWebinars.Web.CsvPatternLayout, CUWebinars.Web">

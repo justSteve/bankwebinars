@@ -342,7 +342,7 @@ namespace CUWebinars.Web.Controllers
             Session["TopicID"] = ID;
             ViewBag.SearchTerm = "TopicID=" + Session["TopicID"].ToString();
 
-            var webinars = _webinarManagementService.GetByTopic(ID);
+            var webinars = _webinarManagementService.GetByTopic(ID).OrderByDescending(d => d.Date);
             //var dtos = new WebinarDTOAssembler().Entities2DTOs(webinars);
             //return View(dtos);
             return View(webinars);

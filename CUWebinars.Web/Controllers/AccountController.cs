@@ -292,17 +292,17 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.HttpGet]
         public ActionResult MyCertificate(int orderID, string displayName, string displayInst="")
         {
-            var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
+            //var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
 
             _logger.Info("MyCertificateDS orderId=" + orderID + ", displayName=" + displayName + ", displayInst" + displayInst);
             
             var currentOrder = _orderManagementService.GetOrderById(orderID);
             if (ReferenceEquals(displayName, null))
             {
-                displayName = currentUser.FirstName + ' ' + currentUser.LastName;
+                displayName = currentOrder.FirstName + ' ' + currentOrder.LastName;
             }
 
-            var model = new CertOfCompletionViewModel { DisplayName = displayName, Order = currentOrder };
+            var model = new CertOfCompletionViewModel { DisplayName = displayName, Order = currentOrder, DisplayInst = displayInst};
 
             model.CeuShort = string.Empty;
             model.CeuStatement = string.Empty;
