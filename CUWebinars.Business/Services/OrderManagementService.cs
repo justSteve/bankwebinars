@@ -317,7 +317,7 @@ namespace CUWebinars.Business.Services
                   .ToList();
             foreach (var d in query)
             {
-                _logger.Warn("Duped order from Legacy " + webinarId + " on " + d);
+                _logger.Warn("SynchError: Duped order from Legacy " + webinarId + " on " + d);
             }
 
 
@@ -327,7 +327,7 @@ namespace CUWebinars.Business.Services
                   .ToList();
             foreach (var d in query)
             {
-                _logger.Warn("Duped order from V3 " + webinarId + " on " + d);
+                _logger.Warn("SynchError: Duped order from V3 " + webinarId + " on " + d);
             }
 
 
@@ -450,12 +450,20 @@ namespace CUWebinars.Business.Services
                             {
                                 _logger.Info("SynchOrder Legacy Total = {0} vs. V3 Total = {1} on {2} ", lOrder.Total, vOrder.Total, orderEmail);
                             }
+                            if (lOrder.idAffiliate != vOrder.idAffiliate)
+                            {
+                                _logger.Warn("SynchOrder AFFILIATE MISMATCH Legacy={0} - V3={1}", lOrder.idAffiliate, vOrder.idAffiliate);
+                                //vOrder.idAffiliate = lOrder.idAffiliate;
+                                _logger.Info("UPDATE dbo.[Order] SET idAffiliate = {0} WHERE idOrder = {1}", lOrder.idAffiliate, vOrder.idOrder);
+
+                            }
 
                             if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType != vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType)
                             {
-                                _logger.Info("SynchOrder adjusted RegType from V3 RegType = {1} to Legacy = {0} on {2} ", lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, orderEmail);
                                 vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType;
-                                SaveOrderChanges(vOrder, "", "", OrderGenesis.CreatedViaCartByExistingUser);
+                                SaveChanges();
+                                _logger.Info("SynchOrder adjusted RegType from V3 RegType = {1} to Legacy = {0} on {2} ", lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, orderEmail);
+
                             }
 
 
@@ -1675,7 +1683,7 @@ namespace CUWebinars.Business.Services
             }
             // now we only addressing Live+5
             //update to pull LivePlusFive value from database
-            
+
             return orderRow.Webinar.LivePlusFiveValue;
         }
 

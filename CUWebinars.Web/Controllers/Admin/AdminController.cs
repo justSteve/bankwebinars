@@ -2150,41 +2150,48 @@ namespace CUWebinars.Web.Controllers.Admin
                 var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
 
                 if (orderRow.Webinar.Status != WebinarStatus.Recorded) return null;
+                try
+                {
+                    var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
+                    var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, expiryDate.ToShortDateString());
+                    var OnDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, orderRow.OnDemandCode);
 
-                var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
-                var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, expiryDate.ToShortDateString());
-                var OnDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, orderRow.OnDemandCode);
+                    var claimValue = new JObject(
+                        orderIdProperty,
+                        expiryDateProperty,
+                        OnDemandCodeProperty
+                        );
 
-                var claimValue = new JObject(
-                    orderIdProperty,
-                    expiryDateProperty,
-                    OnDemandCodeProperty
-                    );
+                    //orderRow.OnDemandCode = onDemandCode;
+                    //_orderManagementService.SaveChanges();
 
-                //orderRow.OnDemandCode = onDemandCode;
-                //_orderManagementService.SaveChanges();
+                    var userAccountOfOrderer = _membershipService.GetUserAccountByEmail(
+                        _globalConfig.Tenant,
+                        order.WebUser.email
+                        );
 
-                var userAccountOfOrderer = _membershipService.GetUserAccountByEmail(
-                    _globalConfig.Tenant,
-                    order.WebUser.email
-                    );
-
-                _membershipService.AddClaim(
-                    userAccountOfOrderer,
-                    ClaimTypes1.PostEventMaterials
-                    , claimValue.ToString(Formatting.None)
-                    );
+                    _membershipService.AddClaim(
+                        userAccountOfOrderer,
+                        ClaimTypes1.PostEventMaterials
+                        , claimValue.ToString(Formatting.None)
+                        );
 
 
-                //_membershipService.UpdatePostEventMaterialsClaim(
-                //    _globalConfig.Tenant,
-                //    order.BillingEmail,
-                //    DateTime.Parse(newExpiryDate),
-                //    order
-                //    );
-                _logger.Info("INSERT dbo.UserClaims ( ParentKey, Type, Value ) VALUES	( (SELECT [Key] FROM dbo.UserAccounts WHERE Email = '{0}'), http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials,'{1}')", userAccountOfOrderer.Email, claimValue);
-                _logger.Info("Added expiryDate claim for: {0}. Date: {1}", order.idOrder,
-                    expiryDate.ToShortDateString());
+                    //_membershipService.UpdatePostEventMaterialsClaim(
+                    //    _globalConfig.Tenant,
+                    //    order.BillingEmail,
+                    //    DateTime.Parse(newExpiryDate),
+                    //    order
+                    //    );
+                    _logger.Info("INSERT dbo.UserClaims ( ParentKey, Type, Value ) VALUES	( (SELECT [Key] FROM dbo.UserAccounts WHERE Email = '{0}'), http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials,'{1}')", userAccountOfOrderer.Email, claimValue);
+                    _logger.Info("Added expiryDate claim for: {0}. Date: {1}", order.idOrder,
+                        expiryDate.ToShortDateString());
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.Warn("CreateOnDemandClaimByAdjuster failed on orderId: " + order.idOrder);
+                }
             }
             return null;
         }
@@ -2251,51 +2258,52 @@ namespace CUWebinars.Web.Controllers.Admin
         public ActionResult CheckOnDemandCodes(int? webinarId, int? idAffiliate)
         {
             IList<Order> v3Orders = _orderManagementService.GetV3OrdersByOnDemandClaim();
-            List<string> v3Emails = v3Orders.Select(v3Order => v3Order.BillingEmail).ToList();
-
+            
             foreach (var order in v3Orders)
             {
                 try
                 {
-                    var onDemandClaim = new PostEventClaim();
-
                     var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
                     var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
-
+                    
+                    var onDemandCode = order.OrderRows.SingleOrDefault().OnDemandCode;
                     foreach (var claim in claimsViewModel.UserClaims.Where(c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials"))
                     {
-                        var onDemandCode = order.OrderRows.SingleOrDefault().OnDemandCode;
+                        var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
+                        if (thisClaim.ExpiryDate.AddDays(2) < DateTime.Now)
+                        {
+                            _logger.Warn("CheckOnDemandCodes finds expired claim: " + claim.Value);
+                        }
 
-                        if (onDemandCode != null || onDemandCode != string.Empty)
+                        if (!ReferenceEquals(onDemandCode, null) )
                         {
                             if (claim.Value.Contains(onDemandCode))
                             {
-                                var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
-
+                                CheckThatExpiryDateIsCorrect(order, thisClaim.ExpiryDate);
                                 if (thisClaim.OrderId != order.idOrder)
                                 {
-                                    _logger.Warn("Claim mismatch! Claim: {0} vs Order: {1}", thisClaim.OrderId,
+                                    _logger.Warn("CheckOnDemandCodes finds Claim mismatch! Claim: {0} vs Order: {1}", thisClaim.OrderId,
                                         order.idOrder);
+                                    _logger.Warn("Alert User of changed claim = '{0}' ", thisClaim.OrderId);
+                                    _logger.Warn("DELETE dbo.UserClaims WHERE Value = '{0}' --Order: {1}", claim.Value, order.idOrder);
+
                                     CreatePostEventClaim(order, thisClaim.ExpiryDate);
                                 }
                                 else
                                 {
-                                    _logger.Info("Match on: " + order.OrderRows.SingleOrDefault().idOrder);
+                                    _logger.Info("CheckOnDemandCodes found Match on: " + order.OrderRows.SingleOrDefault().idOrder);
                                 }
 
-                                onDemandClaim.OrderId = order.idOrder;
-                                onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
-                                onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
                             }
                         }
                         else
                         {
-                            order.OrderRows.SingleOrDefault().OnDemandCode = RandomHelpers.GenerateRandomCode(5);
+
                             //_orderManagementService.SaveChanges();
-                            _logger.Info("UPDATE dbo.OrderRow SET OnDemandCode = '{0}' WHERE idOrder ={1}", onDemandCode, order.idOrder);
-                            var expiryDate = _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order);
-                            
-                            CreatePostEventClaim(order, expiryDate);
+                            _logger.Info("UPDATE dbo.OrderRow SET OnDemandCode = '{0}' WHERE idOrder ={1}", RandomHelpers.GetUniqueCode(4), order.idOrder);
+                            //var expiryDate = _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order);
+
+                            //CreatePostEventClaim(order, expiryDate);
                             _logger.Warn("Null OnDemandCode is updated " + order.OrderRows.SingleOrDefault().idOrder);
                         }
                     }
@@ -2308,6 +2316,16 @@ namespace CUWebinars.Web.Controllers.Admin
             return Content("Ok");
         }
 
+        private DateTime CheckThatExpiryDateIsCorrect(Order order, DateTime expiryDate)
+        {
+            var calculatedDate = _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order);
+
+            if (expiryDate.ToShortDateString() != calculatedDate.ToShortDateString())
+            {
+                _logger.Info("exec CheckOnDemandCodesDateValues @calcDate='{0}', @storedDate='{1}', @idOrder='{2}'", calculatedDate.ToShortDateString(), expiryDate.ToShortDateString(), order.idOrder);
+            }
+            return calculatedDate;
+        }
 
 
         [HandleAjaxException]
