@@ -84,8 +84,9 @@
             }
         </div>
         <div class="tab-pane @activeArchived" id="archived">
-            @if (Model.Recorded.Count > 0)
+            @if (Model.Archived.Count > 0)
             {
+                
                 Html.RenderPartial("Partials/Archived");
             }
         </div>

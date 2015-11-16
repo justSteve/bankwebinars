@@ -225,9 +225,10 @@ namespace CUWebinars.Business.Services
             var aff = _affiliateRepository.FindByIdWithIncluding(id, includeProperties);
             if (aff == null)
             {
+                
+            _logger.Warn("Error: unfound affiliate=" + id);
                 aff = GetAffiliateById(19);
             }
-            _logger.Warn("Error: unfound affiliate=" + id);
             return aff;
         }
 
@@ -405,6 +406,7 @@ namespace CUWebinars.Business.Services
                 _logger.ErrorException("missingFromLegacy loop failed.  i=" + i + " idWebinar=" + webinarId, ex);
             }
 
+            //Missing From V3
             i = 1;
             try
             {
@@ -416,12 +418,26 @@ namespace CUWebinars.Business.Services
                         {
                             _orderRepository.ConvertLegacyOrder(order);
                             _logger.Info("SynchOrder MigrateToV3 {0} of {1} - {2}", i, missingFromV3.Count(), orderEmail);
-                            i++;
+
                         }
                         catch (Exception ex)
                         {
+                            i++;
                             _logger.ErrorException("SynchOrder Migrate to V3 failed: " + orderEmail, ex);
                         }
+                        try
+                        {
+                            _orderRepository.MigrateOrderWithDiscount(order);
+
+                            _logger.Info("SynchOrder Discount {0} of {1} - {2}", i, missingFromV3.Count(), orderEmail);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            i++;
+                            _logger.ErrorException("SynchOrder Migrate to V3 failed: " + orderEmail, ex);
+                        }
+                        i++;
 
                     }
 
@@ -1757,15 +1773,26 @@ namespace CUWebinars.Business.Services
 
         public Discount ApplyDiscountCode(string code, OrderRow row)
         {
-            _logger.Info("ApplyDiscountCode: {0}", code);
+
             var thisDiscount = GetDiscountByCode(code);
 
             if (!ReferenceEquals(null, thisDiscount))
             {
-                row.Discount = thisDiscount;
-                RedeemDiscount(thisDiscount, row);
-            }
+                var forNotes = new StringBuilder();
+                forNotes.AppendFormat(
+                    "ApplyDiscountCode: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}",
+                    thisDiscount.DiscountCode, thisDiscount.DateValidFrom, thisDiscount.DateValidTo,
+                    thisDiscount.CreditsUsed, thisDiscount.CreditsRemain);
+                thisDiscount.Notes = forNotes.ToString();
 
+                row.Discount = thisDiscount;
+                
+                RedeemDiscount(thisDiscount, row);
+
+                //Adding an explicit save attempting to persist the applied discount. Could be problemic
+                //SaveChanges();
+            }
+            _logger.Info("ApplyDiscountCode: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}", thisDiscount.DiscountCode, thisDiscount.DateValidFrom, thisDiscount.DateValidTo, thisDiscount.CreditsUsed, thisDiscount.CreditsRemain);
             return thisDiscount;
         }
 
@@ -1883,51 +1910,65 @@ namespace CUWebinars.Business.Services
                 _logger.Info("Redeemed Discount On Order: " + order.idOrder);
             }
         }
-        public virtual bool IsDiscountCodeValid(string discountCode)
-        {
+        //public virtual bool IsDiscountCodeValid(string discountCode)
+        //{
 
-            return true;
-        }
+        //    return true;
+        //}
 
 
         private void RedeemDiscount(Discount discount, OrderRow row)
         {
-            if (discount.DiscountType != DiscountType.Subscription)
+            var forNotes = new StringBuilder();
+
+            _logger.Info("Discount: RedeemDiscountStarts: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}", discount.DiscountCode, discount.DateValidFrom, discount.DateValidTo, discount.CreditsUsed, discount.CreditsRemain);
+            if (discount.DiscountType != DiscountType.Compensation && discount.DiscountType != DiscountType.ComplianceSeries)
             {
                 if (discount.CreditsRemain > 0)
                 {
 
                     discount.CreditsUsed++;
-                    if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Five"))
-                    {
-                        discount.CreditsRemain = discount.CreditsRemain - 1;
-                    }
-                    if (row.RegistrationType.OptionLabel == ("OnDemand Recording Only"))
-                    {
-                        discount.CreditsRemain = discount.CreditsRemain - 1.25M;
-                    }
-                    if (row.RegistrationType.OptionLabel == ("CD-ROM and Hardcopy Handouts"))
-                    {
-                        discount.CreditsRemain = discount.CreditsRemain - 1.25M;
-                    }
-                    if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Six"))
-                    {
-                        discount.CreditsRemain = discount.CreditsRemain - 1.25M;
-                    }
-                    if (row.RegistrationType.OptionLabel == ("Premier Package"))
-                    {
-                        discount.CreditsRemain = discount.CreditsRemain - 1.5M;
-                    }
-
-                    _logger.Info("DiscountCode {0} was applied to {1}. {2} credits remain.", discount.DiscountCode,
-                        row.idOrder, discount.CreditsRemain);
+                    CalculateDiscountRedemtion(discount, row);
+                    forNotes.AppendFormat(
+                        "Discount Applied: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}"
+                        , discount.DiscountCode, discount.DateValidFrom, discount.DateValidTo, discount.CreditsUsed,
+                        discount.CreditsRemain);
+                }
+                else
+                {
+                    forNotes.Append("No Credits Remain. Credits used = " + discount.CreditsUsed);
                 }
             }
             else
             {
                 _logger.Warn("DiscountCode {0} was a Subscription");
             }
+            discount.Notes = forNotes.ToString();
+                    
+        }
 
+        private static void CalculateDiscountRedemtion(Discount discount, OrderRow row)
+        {
+            if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Five"))
+            {
+                discount.CreditsRemain = discount.CreditsRemain - 1;
+            }
+            if (row.RegistrationType.OptionLabel == ("OnDemand Recording Only"))
+            {
+                discount.CreditsRemain = discount.CreditsRemain - 1.25M;
+            }
+            if (row.RegistrationType.OptionLabel == ("CD-ROM and Hardcopy Handouts"))
+            {
+                discount.CreditsRemain = discount.CreditsRemain - 1.25M;
+            }
+            if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Six"))
+            {
+                discount.CreditsRemain = discount.CreditsRemain - 1.25M;
+            }
+            if (row.RegistrationType.OptionLabel == ("Premier Package"))
+            {
+                discount.CreditsRemain = discount.CreditsRemain - 1.5M;
+            }
         }
 
         private void RejectDiscount(OrderRow orderRow)

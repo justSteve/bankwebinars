@@ -53,5 +53,6 @@ namespace CUWebinars.Business.Repository
         void SynchIds(int lOrder, int vOrder);
         PostEventClaim FindPostEventClaim(Order order);
         IList<Order> GetV3OrdersByOnDemandClaim();
+        Order MigrateOrderWithDiscount(Order order);
     }
 }
