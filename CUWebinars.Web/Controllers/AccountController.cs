@@ -276,8 +276,8 @@ namespace CUWebinars.Web.Controllers
 
 
                 var discountModel = _accountControllerOrchestrator.BuildDiscountModel();
-                var myWebinarsDTO = _accountControllerOrchestrator.BuildMyWebinarsDTO(discountModel,
-                    claimsIdentityOfAuthenticatedUser);
+                var myWebinarsDTO = _accountControllerOrchestrator.BuildMyWebinarsDTO
+                    (discountModel, claimsIdentityOfAuthenticatedUser);
 
 
                 ViewBag.idUser = myWebinarsDTO.WebUser.idUser;
@@ -290,10 +290,12 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.AllowAnonymous]
         [System.Web.Mvc.HttpGet]
-        public ActionResult MyCertificate(int orderID, string displayName)
+        public ActionResult MyCertificate(int orderID, string displayName, string displayInst="")
         {
             var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
 
+            _logger.Info("MyCertificateDS orderId=" + orderID + ", displayName=" + displayName + ", displayInst" + displayInst);
+            
             var currentOrder = _orderManagementService.GetOrderById(orderID);
             if (ReferenceEquals(displayName, null))
             {
@@ -313,6 +315,31 @@ namespace CUWebinars.Web.Controllers
             }
 
             return View("MyCertificate", model);
+        }
+
+
+        [System.Web.Mvc.AllowAnonymous]
+        [System.Web.Mvc.HttpGet]
+        public ActionResult MyCertificateDS(int webinarId, string displayName, string displayInst)
+        {
+            
+
+            var currentWebinar = _orderManagementService.GetWebinarById(webinarId);
+
+            _logger.Info("MyCertificateDS webinarId=" + webinarId + ", displayName=" + displayName + ", displayInst" + displayName);
+            var model = new CertOfCompletionDSViewModel { DisplayName = displayName, Webinar = currentWebinar, DisplayInst = displayInst };
+
+            model.CeuShort = string.Empty;
+            model.CeuStatement = string.Empty;
+
+            //if (!string.IsNullOrEmpty(model.Order.OrderRows.SingleOrDefault().Webinar.ceu))
+            //{
+            //    string[] ceu = model.Order.OrderRows.SingleOrDefault().Webinar.ceu.Split('|');
+            //    model.CeuShort = ceu[0];
+            //    model.CeuStatement = ceu[1];
+            //}
+
+            return View("MyCertificateDS", model);
         }
 
         [System.Web.Mvc.AllowAnonymous]
@@ -542,7 +569,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (Exception ex)
                 {
-                    _logger.Fatal("EditUserFromOrder error on " + id.Value, ex);
+                    _logger.Fatal("EditUserFromOrder error on " + id.Value +" " + ex);
                 }
             }
             return View("EditUser", null);
@@ -1700,5 +1727,14 @@ namespace CUWebinars.Web.Controllers
             _disposed = true;
         }
 
+    }
+
+    public class CertOfCompletionDSViewModel
+    {
+        public Webinar Webinar { get; set; }
+        public string DisplayName { get; set; }
+        public string CeuShort { get; set; }
+        public string CeuStatement { get; set; }
+        public string DisplayInst { get; set; }
     }
 }

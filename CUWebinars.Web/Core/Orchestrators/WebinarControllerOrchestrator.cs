@@ -887,7 +887,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         private DateTime GetPostEventMaterialsAccessExpiry(Order order)
         {
-            return _orderManagementService.GetPostEventMaterialsAccessExpiry(order);
+            return _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order);
         }
 
         private void AddClaimForPostEventMaterials(IEnumerable<Order> orders)
@@ -928,7 +928,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 }
                 catch (Exception ex)
                 {
-                    _logger.Fatal("AddClaimForPostEventMaterials| MR record not found "+ order.BillingEmail, ex);
+                    _logger.Fatal("AddClaimForPostEventMaterials| MR record not found "+ order.BillingEmail +" "+ ex.Message);
                 }
             }
         }

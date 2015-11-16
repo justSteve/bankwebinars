@@ -6,7 +6,7 @@
 @using CUWebinars.Business.Core
 @using CUWebinars.Business.Models
 @using CUWebinars.Business.Notification.ViewModel
-@model CUWebinars.Business.Notification.ViewModel.OrderSubmittedViewModel
+@model OrderSubmittedViewModel
 
 <title>
     @{
@@ -16,7 +16,7 @@
         var thisWebinar = orderRows.Single().Webinar;
         string TenantHead = TtsTemplateHelperObject.Tenant();
     }
-    [preview-@TenantHead] Confirmation of Registration: @thisWebinar.Title
+    [@TenantHead] Confirmation of Registration: @thisWebinar.Title
 </title>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -35,6 +35,13 @@
     var notiRecordingPosted = rowRegType.ShowRecordingNotifications;
     var notiShipped = rowRegType.ShowShippedNotifications;
     var displayOrderNumber = Model.Order.idOrder;
+    string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, Model.Order.WebUser.timeZone, true, webinar.Duration);
+    string Tenant = TtsTemplateHelperObject.Tenant();
+    string TenantEmail = TtsTemplateHelperObject.TenantEmail();
+    string TenantDomain = TtsTemplateHelperObject.TenantDomain();
+    string TenantURL = TtsTemplateHelperObject.TenantURL();
+    string TenantLogo = TtsTemplateHelperObject.TenantLogo();
+    string TenantPrefix = TtsTemplateHelperObject.TenantPrefix();
 
     if (Model.Order.idOrderLegacy != 0)
     {
@@ -48,109 +55,19 @@
 
     var isFirstOrderForThisUser = true;
 
-    thankYouPhrase.Append("Dear " + Model.Order.FirstName + ",<br /><br />The following contains connection information for the <i>Addition Location</i>");
-    thankYouPhrase.Append(row.Single().RegistrationType.OptionLabel);
-    thankYouPhrase.Append(" for <b>" + row.Single().Webinar.Title + "</b>");
-
-
-
-    if (locations.Count != 0)
-    {
-        //redo this code to address lack of comparison operator
-        //  lessThan sign doesn't work with the processor
-        System.Text.StringBuilder addresses = new System.Text.StringBuilder();
-        int optionsCost = 0;
-        var iterator = 0;
-        if (locations.Count == 1)
-        {
-            addLocs.Append("The registration includes a single additional location for " + @locations.First().Email + " costing " + locations.First().Price.ToString("C").Replace(".00", "") + ". ");
-        }
-        else
-        {
-            foreach (var addLoc in locations)
-            {
-                iterator++;
-                if (iterator == 2)
-                {
-                    addresses.Append(addLoc.Email);
-                }
-                if (iterator == 1)
-                {
-                    {
-                        addresses.Append(addLoc.Email + " and ");
-                    }
-                }
-                optionsCost = optionsCost + Convert.ToInt32(addLoc.Price);
-            }
-            addLocs.Append(" This registration also includes " + locations.Count + " additional locations (total added cost is " + optionsCost.ToString("C").Replace(".00", "") + ") for " + addresses + ".");
-            addLocs.Append(" Each of these addresses will receive individualized connection information.");
-        }
-    }
+    thankYouPhrase.Append("Your email is included in an order placed by " + Model.Order.FirstName + " " + Model.Order.LastName + " as an Additional Location for the upcoming event titled: ");
+    thankYouPhrase.Append("<i>" + row.Single().Webinar.Title + "</i>");
 
     if (webinar.Status == WebinarStatus.Scheduled)
     {
-
-        if (notiConnectionInfo == "Yes")
-        {
-            connInfoPhrase.Append("<p>Two to three days prior to the event we'll send connection instructions and links to handouts and other materials. </p>");
-
-            if (notiRecordingPosted == "Yes")
-            {
-                connInfoPhrase.Append("<p> Shortly following the conclusion you'll receive notification when the recording is posted");
-                if (notiShipped == "Yes")
-                {
-                    connInfoPhrase.Append(" - then again 3-5 days later informing you that we've shipped your CD and printouts");
-                }
-                connInfoPhrase.Append(".</p>");
-            }
-            connInfoPhrase.Append("<p>" + addLocs + "</p>");
-        }
-        else
-        {
-            connInfoPhrase.Append("<p>Watch your email for a notification that the OnDemand Recording is posted");
-            if (notiShipped == "Yes")
-            {
-                connInfoPhrase.Append(" and then another after your CD and printouts have shipped");
-            }
-            connInfoPhrase.Append(".</p>");
-        }
+        connInfoPhrase.Append("<p>Two to three days prior to the event we'll send connection instructions and links to handouts and other materials. </p>");
     }
 
 
     if (webinar.Status == WebinarStatus.Active || webinar.Status == WebinarStatus.InProgress)
     {
-        connInfoPhrase.Append("<p>");
-        if (notiConnectionInfo == "Yes")
-        {
-            connInfoPhrase.Append(" Below you will find a link to connect directly to the webinar.");
-        }
-        if (notiRecordingPosted == "Yes")
-        {
-            connInfoPhrase.Append(" Shortly following the conclusion you'll receive notification that the recording is posted");
-
-            if (notiShipped == "Yes")
-            {
-                connInfoPhrase.Append(" - then again 3-5 days later that we've shipped your CD and printouts");
-            }
-            connInfoPhrase.Append(".</p>");
-        }
+        connInfoPhrase.Append(" <p>Below you will find a link to connect directly to the webinar.</p>");
     }
-
-
-    if (webinar.Status == WebinarStatus.Recorded || webinar.Status == WebinarStatus.Archived)
-    {
-        connInfoPhrase.Append("<p>");
-        if (notiRecordingPosted == "Yes")
-        {
-            connInfoPhrase.Append(" See below for a link to access your recording and event materials.");
-        }
-        if (notiShipped == "Yes")
-        {
-            connInfoPhrase.Append(" Over the next 3-5 days you'll see a notification that we've shipped your physical materials.");
-        }
-        connInfoPhrase.Append("</p>");
-    }
-
 
     if (joinURL == null)
     {
@@ -161,20 +78,13 @@
         code = webinar.AccessCodeAttendee;
     }
 
-    string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, Model.Order.WebUser.timeZone, true, webinar.Duration);
-    string Tenant = TtsTemplateHelperObject.Tenant();
-    string TenantEmail = TtsTemplateHelperObject.TenantEmail();
-    string TenantDomain = TtsTemplateHelperObject.TenantDomain();
-    string TenantURL = TtsTemplateHelperObject.TenantURL();
-    string TenantLogo = TtsTemplateHelperObject.TenantLogo();
-    string TenantPrefix = TtsTemplateHelperObject.TenantPrefix();
 
     if (webinar.AccessPhone != null)
     {
         phone = webinar.AccessPhone;
     }
-    var HeaderText = "Confirmation of Registration for<br />" + webinar.Title;
-    var BannerText = "Order Number: " + TenantPrefix + displayOrderNumber + "<br />Type: " + row.Single().RegistrationType.OptionLabel;
+    var HeaderText = "Additional Location for<br />" + webinar.Title;
+    var BannerText = "Type: " + row.Single().RegistrationType.OptionLabel;
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>[@Tenant]: Confirmation of Registration for @webinar.Title</title>
@@ -193,19 +103,19 @@
             <tbody>
                 @*<tr style="background-color: #344a58">
                     <td colspan="3">
-                    <img alt="top_shadow.jpg" border="0" height="6" margin="0px 0px 0px 0px" src="~/Content/images/vrLocal/top_shadow.jpg" style="width: 100%; height: 6px; display: block;" width="660" />
+                    <img alt="top_shadow.jpg" border="0" height="6" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/top_shadow.jpg" style="width: 100%; height: 6px; display: block;" width="660" />
                     </td>
                     </tr>*@
                 <tr style="background-color: #344a58">
-                    <td background="~/Content/images/vrLocal/left_shadow.jpg" rowspan="3" valign="top" width="5">
-                        <img alt="left_shadow.jpg" border="0" height="1" margin="0px 0px 0px 0px" src="~/Content/images/vrLocal/left_shadow.jpg" style="width: 5px; height: 1px; display: block;" width="5px" />
+                    <td background="http://ttsmedia.ttstrain.com/images/vrLocal/left_shadow.jpg" rowspan="3" valign="top" width="5">
+                        <img alt="left_shadow.jpg" border="0" height="1" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/left_shadow.jpg" style="width: 5px; height: 1px; display: block;" width="5px" />
                     </td>
                     <td>
                         <table align="center" border="0" cellpadding="0" cellspacing="0" height="115" width="645px">
                             <tbody>
                                 <tr>
                                     <td bgcolor="#01232a" width="364">
-                                        <img alt="~/Content/images/vrLocal/hardware_2_header_1.jpg" border="0" height="36" margin="0px 0px 0px 0px" src="~/Content/images/vrLocal/hardware_2_header_1.jpg" style="width: 374px; height: 36px; display: block;" width="374" />
+                                        <img alt="http://ttsmedia.ttstrain.com/images/vrLocal/hardware_2_header_1.jpg" border="0" height="36" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/hardware_2_header_1.jpg" style="width: 374px; height: 36px; display: block;" width="374" />
                                     </td>
                                     <td align="right" bgcolor="#01232a" style="padding-right: 15px; border-top-color: rgb(52, 74, 88); border-right-color: rgb(52, 74, 88); border-top-width: 1px; border-right-width: 1px; border-top-style: solid; border-right-style: solid;" width="286">
                                         <div style="color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold;">
@@ -226,8 +136,8 @@
                             </tbody>
                         </table>
                     </td>
-                    <td background="~/Content/images/vrLocal/right_shadow.jpg" rowspan="3" valign="top" width="5">
-                        <img alt="right_shadow.jpg" border="0" height="1" margin="0px 0px 0px 0px" src="~/Content/images/vrLocal/right_shadow.jpg" style="width: 5px; height: 1px; display: block;" width="5" />
+                    <td background="http://ttsmedia.ttstrain.com/images/vrLocal/right_shadow.jpg" rowspan="3" valign="top" width="5">
+                        <img alt="right_shadow.jpg" border="0" height="1" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/right_shadow.jpg" style="width: 5px; height: 1px; display: block;" width="5" />
                     </td>
                 </tr>
 
@@ -237,13 +147,13 @@
                             <tbody>
                                 @*<tr style="background-color: #344a58">
                                         <td colspan="2" height="6">
-                                            <img alt="large_box_top.gif" border="0" height="6" margin="0px 0px 0px 0px" src="~/Content/images/vrLocal/large_box_top.gif" style="width: 630px; height: 6px; display: block;" />
+                                            <img alt="large_box_top.gif" border="0" height="6" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/large_box_top.gif" style="width: 630px; height: 6px; display: block;" />
                                         </td>
                                     </tr>*@
 
                                 <tr style="background-color: #000000;">
                                     <td colspan="2">
-                                        <img alt="spacer.gif" height="10" src="~/Content/images/vrLocal/spacer.gif" style="width: 1px; height: 10px; display: block;" width="1" />
+                                        <img alt="spacer.gif" height="10" src="http://ttsmedia.ttstrain.com/images/vrLocal/spacer.gif" style="width: 1px; height: 10px; display: block;" width="1" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -320,7 +230,7 @@
                                                                         <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
                                                                             <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
                                                                                 <b>
-                                                                                    @row.Single().Order.Total
+                                                                                    $@row.Single().Order.Total.ToString().Replace(".0000", "")
                                                                                 </b>
                                                                             </span>
                                                                         </td>
@@ -368,14 +278,14 @@
 
                                                                                         @if (webinar.WebinarFiles.Count == 0)
                                                                                         {
-                                                                                            <span>Event materials not yet published.</span>
+                                                                                        <span>Event materials not yet published.</span>
                                                                                         }
                                                                                         else
                                                                                         {
                                                                                             foreach (var i in webinar.WebinarFiles)
                                                                                             {
-                                                                                                <a href='~/Content/images/@i.fileLocation'>@i.fileDesc</a>
-                                                                                                <br />
+                                                                                        <a href='http://ttsmedia.ttstrain.com/@i.fileLocation'>@i.fileDesc</a>
+                                                                                        <br />
                                                                                             }
                                                                                         }
                                                                                         <br />
@@ -387,16 +297,15 @@
                                                                                 <tr>
                                                                                     <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px;">
                                                                                         <span align="right" style="vert-align: top; font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
-                                                                                            CitrixJoinUrl:
+                                                                                            Webinar Link:
                                                                                         </span>
                                                                                     </td>
                                                                                     <td width="350px" style="font-size: small; text-align: left; background-color: #B4D1EC; padding-left: 6px;">
                                                                                         <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                                                                                            Click this link 10-15 minutes prior to the scheduled start time.<br /><a style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;' href="@joinURL">@joinURL</a>
+                                                                                            <br /><a style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;' href="@TenantURL/j/@joinURL">View current connection info here.</a>
                                                                                         </span>
                                                                                     </td>
                                                                                 </tr>
-
                                                                                 <tr>
                                                                                     <td colspan="2" style="text-align: center; background-color: #B4D1EC; padding-left: 6px; padding-top: 6px; padding-bottom: 6px; font-family: Arial, Helvetica, sans-serif; font-size: small">
                                                                                         <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
@@ -454,83 +363,6 @@
                                                                             }
                                                                         }
 
-
-                                                                        if (rowRegType.ShowShippedNotifications == "Yes")
-                                                                        {
-                                                                            if (webinar.RecordingUrl == "")
-                                                                            {
-                                                                                <tr>
-                                                                                    <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: small;">
-                                                                                        <span align="right" style="vert-align: top; font-size: 10px">
-                                                                                            CD-ROM:
-                                                                                        </span>
-                                                                                    </td>
-                                                                                    <td style="width: 350px;  text-align: left; font-size: small; background-color: #B4D1EC; padding-left: 6px;">
-                                                                                        <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                                                                                            The CD-ROM and handouts will arrive 7-10 business days following the event. Your order also includes six months access to the OnDemand Playback.
-                                                                                        </span>
-                                                                                    </td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td style="text-align: right; width: 130px; background-color: #CCCCCC; padding-right: 6px; font-size: small"></td>
-                                                                                    <td style="text-align: left; background-color: #B4D1EC; padding-left: 6px; font-family: Arial, Helvetica, sans-serif; "></td>
-                                                                                </tr>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <tr>
-                                                                                    <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px">
-                                                                                        <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
-                                                                                            CD-ROM:
-                                                                                        </span>
-                                                                                    </td>
-                                                                                    <td style="width: 350px; text-align: left; font-size: small; background-color: #B4D1EC; padding-left: 6px;">
-                                                                                        <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                                                                                            The CD-ROM and handouts will arrive 7-10 business days following the event. Your order also includes six months access to the OnDemand Playback.<br />
-                                                                                        </span>
-                                                                                    </td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td style="text-align: right; width: 130px; background-color: #CCCCCC; padding: 6px; font-size: small"></td>
-                                                                                    <td style="text-align: left; width: 350px; background-color: #B4D1EC; padding: 6px;"></td>
-                                                                                </tr>
-                                                                            }
-                                                                        }
-                                                                        if (rowRegType.ShowRecordingNotifications == "Yes")
-                                                                        {
-                                                                            if (webinar.RecordingUrl == "")
-                                                                            {
-                                                                                <tr>
-                                                                                    <td valign="top" style="text-align: right; width: 130px; background-color: #CCCCCC; padding: 6px; ">
-                                                                                        <span align="right" style="vert-align: top; font-size: 10px; font-family: Arial, Helvetica, sans-serif; ">
-                                                                                            OnDemand Recording:
-                                                                                        </span>
-                                                                                    </td>
-                                                                                    <td style="table-layout: fixed; width: 350px; white-space: nowrap; text-align: left; background-color: #B4D1EC; padding: 6px;">
-                                                                                        <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                                                                                            Recordings are posted within 24 hours following the event.<br />
-                                                                                            Watch your email or log into @TenantURL/MyWebinars.
-                                                                                        </span>
-                                                                                    </td>
-                                                                                </tr>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <tr>
-                                                                                    <td valign="top" style="text-align: right; vert-align: top; width: 130px; background-color: #CCCCCC; padding: 6px;">
-                                                                                        <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
-                                                                                            OnDemand Recording:
-                                                                                        </span>
-                                                                                    </td>
-                                                                                    <td style="table-layout: fixed; width: 350px; white-space: nowrap; text-align: left; background-color: #B4D1EC; padding: 6px;">
-                                                                                        <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                                                                                            Log into @TenantURL/MyWebinars <br /> to access the recording, other event materials plus <br />
-                                                                                            details about your registration.
-                                                                                        </span>
-                                                                                    </td>
-                                                                                </tr>
-                                                                            }
-                                                                        }
                                                                     }
                                                                 </table>
                                                             </td>
@@ -554,7 +386,7 @@
                                 </tr>
                                 <tr style="background-color: #344a58">
                                     <td colspan="2" height="6">
-                                        <img alt="large_box_bottom.gif" border="0" height="6" margin="0px 0px 0px 0px" src="~/Content/images/vrLocal/large_box_bottom.gif" style="width: 630px; height: 6px; display: block;" />
+                                        <img alt="large_box_bottom.gif" border="0" height="6" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/large_box_bottom.gif" style="width: 630px; height: 6px; display: block;" />
                                     </td>
                                 </tr>
 
@@ -568,7 +400,7 @@
                             <tbody>
                                 <tr>
                                     <td align="right" style="padding-top: 10px;">
-                                        <img alt="Phone 800-831-0678" margin="0px 0px 0px 0px" src="~/Content/images/NotiFooter.gif" />
+                                        <img alt="Phone 800-831-0678" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/NotiFooter.gif" />
                                     </td>
                                 </tr>
                             </tbody>
@@ -577,7 +409,7 @@
                 </tr>
                 <tr>
                     <td colspan="3" height="23">
-                        <img alt="hardware_2_footer.jpg" border="0" height="23" margin="0px 0px 0px 0px" src="~/Content/images/vrLocal/hardware_2_footer.jpg" style="width: 660px; height: 23px; display: block;" width="660" />
+                        <img alt="hardware_2_footer.jpg" border="0" height="23" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/hardware_2_footer.jpg" style="width: 660px; height: 23px; display: block;" width="660" />
                     </td>
                 </tr>
             </tbody>

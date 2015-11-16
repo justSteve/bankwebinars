@@ -95,7 +95,7 @@ namespace CUWebinars.Business.Services
         
         Discount GetDiscountById(int discount);
         IList<Order> GetV3OrdersByWebinar(int idWebinar);
-        DateTime GetPostEventMaterialsAccessExpiry(Order order);
+        DateTime CalculatePostEventMaterialsAccessExpiry(Order order);
         //void SendOrderToLegacy(Order newOrder);
         WebUser GetWebUserWithAddressAndInstitution(int idUser);
         IEnumerable<int> GetUserIdsByPartialId(int value);
@@ -110,7 +110,7 @@ namespace CUWebinars.Business.Services
         void SetAffiliateStatusToUnChanged(Affiliate affiliate);
         IEnumerable<Order> GetOrdersByEmailDomain(string email, int aff);
         void SendAdhocNotification(string emails, string subject, string body);
-        OrderRow CheckLegacyOrder(Order order);
+        OrderRow GetLegacyOrder(Order order);
         void SynchOrders(int webinarId);
         Order FindExpressCheckoutOrderByOrderId(int q11Orderid);
         string GetAccessToRecording(Order order);
@@ -121,5 +121,6 @@ namespace CUWebinars.Business.Services
         PostEventClaim FindPostEventClaimByOnDemandCode(Order order);
         IList<Order> GetV3OrdersByOnDemandClaim();
         IList<PostEventClaim> FindAllPostEventClaims();
+        Webinar GetWebinarById(int webinarId);
     }
 }

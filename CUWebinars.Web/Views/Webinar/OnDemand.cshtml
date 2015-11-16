@@ -99,7 +99,7 @@
                             if (Model.AuthorizedToAccessMaterials)
                             {
                                 <div>
-                                    <a target="_blank" href="/webinar/GetWebinarRecording/@Model.Webinar.idWebinar"><span><i class="icon-facetime-video"></i> </span> Video Playback</a>
+                                    <a target="_blank" href="/Webinar/GetWebinarRecording/@Model.Webinar.idWebinar"><span><i class="icon-facetime-video"></i> </span> Video Playback</a>
                                 </div>
                                 <div>
                                     @{ Html.RenderPartial("DisplayTemplates/HandoutsListing", Model.Webinar); }
@@ -121,7 +121,7 @@
                                 </form>
                             </div>*@
                         <div id="cert">
-                            <form method="POST" action="/Account/MyCertificate">
+                            <form method="GET" action="/Account/MyCertificate">
                                 <input type="hidden" name="orderID" value="@ViewBag.idOrder" />
                                 <aside class="widget">
                                     <input type="submit" value="My Certificate" id="ShowCertificate" class="btn btn-success btn-mini pull-right " />
@@ -133,7 +133,6 @@
                                 </aside>
                             </form>
                         </div>
-
                     </div>
                 </aside>
                 <!--close aside .widget -->
@@ -146,5 +145,4 @@
             <!--close section tertiary-column sidebar span3-->
         </div>
     </div>
-
 }

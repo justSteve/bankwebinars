@@ -14,8 +14,9 @@ namespace CUWebinars.Web.App_Start
 
                 //"~/Scripts/jquery-1.9.1.js"
                 "~/Scripts/jquery-1.11.1.js",
-                "~/Scripts/vendor/json2.js"
+                "~/Scripts/vendor/json2.js",
                 //"~/Scripts/jquery-1.8.2.js"
+                "~/Scripts/jquery-dateFormat.min.js"
                 ));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
