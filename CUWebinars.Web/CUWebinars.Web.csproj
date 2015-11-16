@@ -437,6 +437,7 @@
     <Compile Include="Core\WebinarType.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Helpers\ControllerIdentityConstants.cs" />
+    <Compile Include="Helpers\ViewHelpers.cs" />
     <Compile Include="Helpers\DomainHelpers.cs" />
     <Compile Include="Helpers\IAppHelper.cs" />
     <Compile Include="Helpers\NotificationStorage.cs" />
@@ -1643,6 +1644,7 @@
     <Content Include="Scripts\app\admin\display-orders-by-user.js" />
     <Content Include="Scripts\app\admin\display-users.js" />
     <Content Include="Scripts\app\admin\display-webinars.js" />
+    <Content Include="Scripts\app\admin\edit-forms-in-child-row.js" />
     <Content Include="Scripts\app\admin\session-checker.js" />
     <Content Include="Scripts\app\admin\display-orders.js" />
     <Content Include="Scripts\app\client-logger.js" />
@@ -1968,6 +1970,7 @@
     <Content Include="Views\Admin\COC_DS.cshtml" />
     <Content Include="Views\Webinar\Partials\SearchResultsGrid.cshtml" />
     <Content Include="Views\Webinar\Search.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\EditUser_Compact.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -12,6 +12,37 @@
   background-repeat: no-repeat;
 }
 
+.form-compact .hidden {
+    display: none;
+}
+
+.form-compact .control-label
+{
+    margin-top: 5px;
+    margin-bottom:0px;
+    text-align:right;
+}
+
+.form-compact .control-group input
+{
+    border-radius: 4px;
+    margin-bottom: 0;
+}
+
+.child-row .row-fluid {
+    background-color:#FFFFFF;
+    padding-top:10px;
+}
+
+.child-row :last-child.row-fluid {
+    padding-bottom: 5px;
+}
+
+#webinarOrders #ordersTable td.child-showing,
+#webinarOrders #ordersTable tr.child-row,
+#webinarOrders #ordersTable td.child-row {
+    background-color: #eeeeee;
+}
 
 /* White icons with optional class, or on hover/focus/active states of certain elements */
 
