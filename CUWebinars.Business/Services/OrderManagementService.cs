@@ -1256,7 +1256,7 @@ namespace CUWebinars.Business.Services
                 sb.Append(
                     "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
                 sb.Append("            <b>");
-                sb.Append(myRow.RegistrationType.OptionLabel.Replace(" Subscription", "").Replace("-",""));
+                sb.Append(myRow.RegistrationType.OptionLabel.Replace(" Subscription", "").Replace("-"," "));
                 sb.Append("            </b>");
                 sb.Append("        </span>");
                 sb.Append("    </td>");
@@ -1267,7 +1267,7 @@ namespace CUWebinars.Business.Services
                     sb.Append("<tr>");
                     if (!ReferenceEquals(discount.DateValidFrom, null))
                     {
-                        subscriptionSpan = discount.DateValidFrom.ToString("MMM\\yy") + " until " + discount.DateValidTo.ToString("MMM\\yy");
+                        subscriptionSpan = discount.DateValidFrom.ToString("MMM-yy") + " until " + discount.DateValidTo.ToString("MMM-yy");
                         
                         sb.Append(
                             "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
