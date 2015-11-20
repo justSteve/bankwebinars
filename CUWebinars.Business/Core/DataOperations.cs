@@ -525,7 +525,7 @@ namespace CUWebinars.Business.Core
                     sqlCmd.CommandType = CommandType.Text;
                     sqlCmd.Parameters.Add(adminEmail);
                     sqlCmd.CommandText =
-                        "DELETE FROM dbo.UserClaims WHERE Type = 'http://ttstrain.com/ws/2014/01/identity/claims/BeingImpersonated' AND Value = @adminEmail;";
+                        "DELETE FROM dbo.UserClaims WHERE Type = 'http://ttstrain.com/ws/2014/01/identity/claims/BeingImpersonated' AND Value like '%"+adminUserEmail+"'";
 
                     numRows = sqlCmd.ExecuteNonQuery();
                 }

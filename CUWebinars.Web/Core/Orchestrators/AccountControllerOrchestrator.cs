@@ -81,6 +81,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 if (beingImpersonatedClaim != null)
                 {
+                    //adminUserEmail = beingImpersonatedClaim.Value.Trim();
                     adminUserEmail = beingImpersonatedClaim.Value.Split('|')[1].ToString().Trim();
 
                     _membershipService.RemoveClaim(_globals.Tenant,

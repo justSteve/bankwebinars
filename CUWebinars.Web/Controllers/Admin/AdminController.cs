@@ -1742,7 +1742,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
                 _membershipService.AddClaim(impersonatedUserAccount, Business.Constants.ClaimTypes.BeingImpersonated,
-                    impersonatedUserAccount.Email + "|" + adminUserEmail);
+                    impersonatedUserAccount.Email +"|"+adminUserEmail);
                 //adminUserEmail);
                 _membershipService.LogOutUser();
 
