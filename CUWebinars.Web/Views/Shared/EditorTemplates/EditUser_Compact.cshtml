@@ -1,9 +1,6 @@
 ﻿@model  EditUserInfoModel
 
-@Html.HiddenFor(model => model.EditFields.Email)
-@Html.HiddenFor(m => m.EditFields.AccountDetailsTitle)
-
-<div class="form-compact">
+<form id="compact-user-edit-form" class="form-compact" novalidate="novalidate">
     <div class="row-fluid">
         <div class="control-group">
             <div class="span4">
@@ -127,9 +124,10 @@
     <div class="row-fluid">
         <div class="control-group">
             <div class="span4">
-                @Html.LabelFor(model => model.EditFields.Institution, new { @class = "control-label span3" })
+                @*@Html.LabelFor(model => model.EditFields.Institution, new { @class = "control-label span3" })*@
                 <div class="controls span8">
-                    @Html.EditorFor(model => model.EditFields.Institution, new { @class = "control-label", disabled = "disabled" })
+                    @*@Html.TextBoxFor(model => model.EditFields.Institution, new { disabled = "disabled" })*@
+                    @Html.HiddenFor(m => m.EditFields.Institution)
                 </div>
             </div>
             <div class="span4 billing-field">
@@ -165,7 +163,12 @@
     <div class="row-fluid">
         <div class="control-group">
             <div class="span5 center">
-                <button id="save-changes" class="btn btn-success btn-small">Save changes</button>
+                @*@Html.HiddenFor(model => model.EditFields.idWebUser)*@
+                @Html.HiddenFor(model => model.EditFields.Email)
+                @Html.HiddenFor(model => model.EditFields.AccountDetailsTitle)
+                @Html.AntiForgeryToken()
+
+                <button id="save-changes-user" class="btn btn-success btn-small">Save changes</button>
                 <a href="#" id="cancel-changes" class="btn btn-link">Cancel</a>
             </div>
             <div class="span7 center">
@@ -174,4 +177,4 @@
             </div>
         </div>
     </div>
-</div>
+</form>

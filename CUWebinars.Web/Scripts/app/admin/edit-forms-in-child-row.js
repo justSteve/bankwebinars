@@ -4,11 +4,14 @@ function AttachDataTableEditEvents() {
     // user wants to edit a cell
     $('.dataTable').on('click', 'td.details-control', function () {
 
-        // is there already an edit happening?
+        // check to see if there is already an edit in progress.  we are going to close it so they 
+        //  can browse around, when they re-open it though, it will re-populate the form fields from the server,
+        //  any unsaved changes will be "lost".
         if ($("tr.shown").length > 0 &&
             !$(this).hasClass("child-showing")) {
-            // could communicate to the user that they need to close the open one...
-            return;
+
+            $(this).parents(".dataTable").find("td.child-showing").click();
+
         }
 
         var table = $('.dataTable').DataTable();
@@ -29,19 +32,19 @@ function AttachDataTableEditEvents() {
         }
     });
 
-
-    $('.dataTable').on("click", "#cancel-changes", function () {
+    $('.dataTable').on("click", "#cancel-changes", function (e) {
+        e.preventDefault();
         $(this).parents(".dataTable").find("td.child-showing").click();
     });
 
-    $('.dataTable').on("click", "#save-changes", function () {
-        alert("save here...");
-    });
+
 
 
 
     // EditUser_Compact form events
-    $('.dataTable').on("click", ".show-billing-address", function () {
+    $('.dataTable').on("click", ".show-billing-address", function (e) {
+        e.preventDefault();
+
         $(".shipping-field").addClass("hidden"); // .hide();
         $(".show-shipping-address").removeClass("btn-success");
 
@@ -49,13 +52,79 @@ function AttachDataTableEditEvents() {
         $(".show-billing-address").addClass("btn-success");
     });
 
-    $('.dataTable').on("click", ".show-shipping-address", function () {
+
+    $('.dataTable').on("click", ".show-shipping-address", function (e) {
+        e.preventDefault();
+
         $(".billing-field").addClass("hidden"); //.hide();
         $(".show-billing-address").removeClass("btn-success");
 
         $(".shipping-field").removeClass("hidden"); //.show();
         $(".show-shipping-address").addClass("btn-success");
     });
+
+
+    $('.dataTable').on("click", "#save-changes-user", function (e) {
+        e.preventDefault();
+
+        var form = $(this).parents("form");
+        var $form = $(form);
+
+        // configure the current validator to validate hidden form elements
+        $.validator.unobtrusive.parse($form);
+        $form.validate().settings.ignore = []; // so it doens't "ignore" .hidden fields
+
+        // check to see if the form is invalid
+        if (!$form.valid())
+        {
+            // are the invalid fields on the hidden panel? flash the button (or something!)
+            if ($(".hidden .input-validation-error").length)
+            {
+                if ($(".show-billing-address.btn-success").length) {
+                    $(".show-shipping-address").addClass("btn-danger");
+                    setTimeout(function () {
+                        $(".show-shipping-address").removeClass("btn-danger");
+                    }, 2000);
+                }
+
+                if ($(".show-shipping-address.btn-success").length)
+                {
+                    $(".show-billing-address").addClass("btn-danger");
+                    setTimeout(function () {
+                        $(".show-billing-address").removeClass("btn-danger");
+                    }, 2000);
+                }
+            }
+            return false; // do not allow form to submit if it is invalid
+        }
+
+
+        // form validation passed, save edited User fields to the database...
+        // could definitely use a "busy" cursor.
+
+        // the EditUser_Compact screen uses EditUserInfoModel directly, but we post
+        //  it to the Account/EditUser Action as an EditUserViewModel.  both models contain an EditFields object,
+        //  which is the actual representation of the form, and MVC lines the sub-objects up as it deserializes it
+
+        var data = $form.serialize();
+        $.ajax({
+            async: false,
+            url: "/account/edituser",
+            data: data ,
+            dataType: "json",
+            type: "POST",
+            success: function (data) {
+                // probably should show the user something on success
+                console.log(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+            }
+        });
+
+
+    });
+
 
 }
 
