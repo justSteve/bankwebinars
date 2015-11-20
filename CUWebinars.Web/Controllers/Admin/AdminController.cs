@@ -701,27 +701,29 @@ namespace CUWebinars.Web.Controllers.Admin
                     expressOrder.OrderStatus = OrderStatus.Submitted;
                     expressOrder.Origin = "ExpressCheckout";
                     expressOrder.AdminComments = forComment.ToString();
-                    _orderManagementService.AttachAffiliate(_orderManagementService.GetAffiliateById(expressOrder.idAffiliate));
+                    expressOrder.Affiliate = _orderManagementService.GetAffiliateById(expressOrder.idAffiliate);
+                    //_orderManagementService.AttachAffiliate(_orderManagementService.GetAffiliateById(expressOrder.idAffiliate));
+                    OrderGenesis og = OrderGenesis.CreatedViaExpressCheckout;
 
 
-                    _orderManagementService.SaveChanges();
+                    _orderManagementService.SaveOrderChanges(expressOrder, null, null, og);
 
-                    try
-                    {
-                        if (_globalConfig.Tenant == "BankWebinars")
-                        {
-                            expressOrder.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(expressOrder);
+                    //try
+                    //{
+                    //    if (_globalConfig.Tenant == "BankWebinars")
+                    //    {
+                    //        expressOrder.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(expressOrder);
 
-                            _orderManagementService.SynchIds(expressOrder);
+                    //        _orderManagementService.SynchIds(expressOrder);
 
-                            _orderManagementService.SaveChanges();
-                        }
+                    //        _orderManagementService.SaveChanges();
+                    //    }
 
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.WarnException("ExpressCheckout blows on SynchExpressCheckoutOrder", ex);
-                    }
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    _logger.WarnException("ExpressCheckout blows on SynchExpressCheckoutOrder", ex);
+                    //}
 
 
                     _logger.Info("ExpressCheckout to Confirmation Email Handler: " + expressOrder.idOrder);

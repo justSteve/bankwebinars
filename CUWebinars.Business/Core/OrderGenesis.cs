@@ -5,6 +5,7 @@ namespace CUWebinars.Business.Core
         ImportedForNewUser = 0,
         ImportedForExistingUser = 1,
         CreatedViaCartByNewUser = 2,
-        CreatedViaCartByExistingUser = 3
+        CreatedViaCartByExistingUser = 3,
+        CreatedViaExpressCheckout = 4
     }
 }
