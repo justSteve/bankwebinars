@@ -18,6 +18,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -225,8 +226,8 @@ namespace CUWebinars.Business.Services
             var aff = _affiliateRepository.FindByIdWithIncluding(id, includeProperties);
             if (aff == null)
             {
-                
-            _logger.Warn("Error: unfound affiliate=" + id);
+
+                _logger.Warn("Error: unfound affiliate=" + id);
                 aff = GetAffiliateById(19);
             }
             return aff;
@@ -1150,7 +1151,19 @@ namespace CUWebinars.Business.Services
                 Double cost6 = i[1];
                 Double costCD = i[2];
 
-                string orderSum = OrderSummaryBuilder(order);
+                Discount discount = null;
+
+                if (ReferenceEquals(order.OrderRows.Where(o => o.RowStatus == OrderRowStatus.Active), null ))
+                {
+                    discount =
+                        order.OrderRows.Where(o => o.RowStatus == OrderRowStatus.Active).SingleOrDefault().Discount;
+                }
+                else
+                {
+                    discount = GetDiscountById(order.idOrder);
+                }
+
+                string orderSum = OrderSummaryBuilder(order, discount);
                 _logger.Info("SendRecordingIsPosted: " + order.idOrder);
                 var postEventPublishModel = new PostEventPublishModel()
                 {
@@ -1177,135 +1190,250 @@ namespace CUWebinars.Business.Services
             int numRows = _orderRepository.SaveChanges();
         }
 
-        private string OrderSummaryBuilder(Order order)
+        private string OrderSummaryBuilder(Order order, Discount discount)
         {
-
             var row = from orderRow in order.OrderRows
                       where orderRow.RowStatus == OrderRowStatus.Active
                       select orderRow;
             var myRow = row.Single();
 
+            //var mySub = myRow.Order.d
 
             var webinar = myRow.Webinar;
 
             var sb = new StringBuilder();
-
-            sb.Append("<tr>");
-            sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-            sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-            sb.Append("            Title:");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-            sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-            sb.Append("            <b>");
-            sb.Append(webinar.Title);
-            sb.Append("            </b>");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("</tr>");
-            sb.Append("<tr>");
-            sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-            sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-            sb.Append("            Date:");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-            sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-            sb.Append("            <b>");
-            sb.Append(webinar.Date.ToShortDateString());
-            sb.Append("            </b>");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("</tr>");
-            sb.Append("<tr>");
-            sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-            sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-            sb.Append("            Attendance Type:");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-            sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-            sb.Append("            <b>");
-            sb.Append(myRow.RegistrationType.OptionLabel);
-            sb.Append("            </b>");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("</tr>");
-            if (!ReferenceEquals(myRow.Discount, null))
+            if (webinar.Title.StartsWith("Compliance Perspectives"))
             {
-                decimal amountToReduce;
+
+                //var subStarted = "Valid from: " + sub
+
                 sb.Append("<tr>");
-                if (!ReferenceEquals(myRow.Discount.FlatOff, null))
-                {
-                    amountToReduce = Convert.ToDecimal(myRow.Order.Total) - (myRow.Discount.FlatOff);
-                    sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                    sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                    sb.Append("            Amt. of Discount:");
-                    sb.Append("        </span>");
-                    sb.Append("    </td>");
-                    sb.Append("    <td width='350px' style='text-align: left; color: red; background-color: #B4D1EC; padding-left: 6px;'>");
-                    sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                    sb.Append("            <b>$");
-                    sb.Append(amountToReduce.ToString().Replace(".00", ""));
-                    sb.Append("            </b>");
-                    sb.Append("        </span>");
-                    sb.Append("    </td>");
-                }
-                if (!ReferenceEquals(myRow.Discount.PercentOff, null))
-                {
-                    amountToReduce = (myRow.Discount.PercentOff * 100) / Convert.ToDecimal(string.Format("{0:0.00}", myRow.Order.Total));
-
-                    sb.Append(
-                        "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                    sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                    sb.Append("            Amt. of Discount:");
-                    sb.Append("        </span>");
-                    sb.Append("    </td>");
-                    sb.Append(
-                        "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-                    sb.Append(
-                        "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                    sb.Append("            <b>$");
-                    sb.Append(amountToReduce.ToString().Replace(".00", ""));
-                    sb.Append("            </b>");
-                    sb.Append("        </span>");
-                    sb.Append("    </td>");
-                }
+                sb.Append(
+                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                sb.Append("            Title:");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append(
+                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                sb.Append(
+                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                sb.Append("            <b>");
+                sb.Append("Compliance Perspectives - " + webinar.Date.ToString("MMMM yyyy"));
+                sb.Append("            </b>");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
                 sb.Append("</tr>");
+
+                //presenter cell
+                sb.Append("<tr>");
+                sb.Append(
+                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                sb.Append("            Presenter:");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append(
+                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                sb.Append(
+                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                sb.Append("            <b>Carl Pry");
+                sb.Append("            </b>");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append("</tr>");
+
+                //
+                sb.Append("<tr>");
+                sb.Append(
+                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                sb.Append("            Subscription:");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append(
+                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                sb.Append(
+                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                sb.Append("            <b>");
+                sb.Append(myRow.RegistrationType.OptionLabel.Replace(" Subscription", "").Replace("-",""));
+                sb.Append("            </b>");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append("</tr>");
+                if (!ReferenceEquals(discount, null))
+                {
+                    string subscriptionSpan = "";
+                    sb.Append("<tr>");
+                    if (!ReferenceEquals(discount.DateValidFrom, null))
+                    {
+                        subscriptionSpan = discount.DateValidFrom.ToString("MMM\\yy") + " until " + discount.DateValidTo.ToString("MMM\\yy");
+                        
+                        sb.Append(
+                            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                        sb.Append("            Term:");
+                        sb.Append("        </span>");
+                        sb.Append("    </td>");
+                        sb.Append(
+                            "    <td width='350px' style='text-align: left; color: red; background-color: #B4D1EC; padding-left: 6px;'>");
+                        sb.Append(
+                            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                        sb.Append("            <b>");
+                        sb.Append(subscriptionSpan);
+                        sb.Append("            </b>");
+                        sb.Append("        </span>");
+                        sb.Append("    </td>");
+                    }
+                    sb.Append("</tr>");
+                }
+
+                //insert CP-specific wording for subsrip stats.
+
+
+
+                //
+
             }
+            else
+            {
 
-            sb.Append("<tr>");
-            sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-            sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-            sb.Append("            Cost:");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-            sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-            sb.Append("            <b>$");
-            sb.Append(myRow.Order.Total.ToString().Replace(".00", ""));
-            sb.Append("            </b>");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("</tr>");
-            sb.Append("<tr>");
-            sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-            sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-            sb.Append("            OnDemand Access Expires:");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-            sb.Append("");
-            sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-            sb.Append("            <b>");
-            sb.Append(CalculatePostEventMaterialsAccessExpiry(order).ToShortDateString());
-            sb.Append("            </b>");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("</tr>");
+                sb.Append("<tr>");
+                sb.Append(
+                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                sb.Append("            Title:");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append(
+                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                sb.Append(
+                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                sb.Append("            <b>");
+                sb.Append(webinar.Title);
+                sb.Append("            </b>");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append("</tr>");
+                sb.Append("<tr>");
+                sb.Append(
+                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                sb.Append("            Date:");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append(
+                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                sb.Append(
+                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                sb.Append("            <b>");
+                sb.Append(webinar.Date.ToShortDateString());
+                sb.Append("            </b>");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append("</tr>");
+                sb.Append("<tr>");
+                sb.Append(
+                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                sb.Append("            Attendance Type:");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append(
+                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                sb.Append(
+                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                sb.Append("            <b>");
+                sb.Append(myRow.RegistrationType.OptionLabel);
+                sb.Append("            </b>");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append("</tr>");
+                if (!ReferenceEquals(myRow.Discount, null))
+                {
+                    decimal amountToReduce;
+                    sb.Append("<tr>");
+                    if (!ReferenceEquals(myRow.Discount.FlatOff, null))
+                    {
+                        amountToReduce = Convert.ToDecimal(myRow.Order.Total) - (myRow.Discount.FlatOff);
+                        sb.Append(
+                            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                        sb.Append("            Amt. of Discount:");
+                        sb.Append("        </span>");
+                        sb.Append("    </td>");
+                        sb.Append(
+                            "    <td width='350px' style='text-align: left; color: red; background-color: #B4D1EC; padding-left: 6px;'>");
+                        sb.Append(
+                            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                        sb.Append("            <b>$");
+                        sb.Append(amountToReduce.ToString().Replace(".00", ""));
+                        sb.Append("            </b>");
+                        sb.Append("        </span>");
+                        sb.Append("    </td>");
+                    }
+                    if (!ReferenceEquals(myRow.Discount.PercentOff, null))
+                    {
+                        amountToReduce = (myRow.Discount.PercentOff * 100) /
+                                         Convert.ToDecimal(string.Format("{0:0.00}", myRow.Order.Total));
 
+                        sb.Append(
+                            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                        sb.Append("            Amt. of Discount:");
+                        sb.Append("        </span>");
+                        sb.Append("    </td>");
+                        sb.Append(
+                            "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                        sb.Append(
+                            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                        sb.Append("            <b>$");
+                        sb.Append(amountToReduce.ToString().Replace(".00", ""));
+                        sb.Append("            </b>");
+                        sb.Append("        </span>");
+                        sb.Append("    </td>");
+                    }
+                    sb.Append("</tr>");
+                }
 
+                sb.Append("<tr>");
+                sb.Append(
+                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                sb.Append("            Cost:");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append(
+                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                sb.Append(
+                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                sb.Append("            <b>$");
+                sb.Append(myRow.Order.Total.ToString().Replace(".00", ""));
+                sb.Append("            </b>");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append("</tr>");
+                sb.Append("<tr>");
+                sb.Append(
+                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                sb.Append("            OnDemand Access Expires:");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append(
+                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                sb.Append("");
+                sb.Append(
+                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                sb.Append("            <b>");
+
+                sb.Append(CalculatePostEventMaterialsAccessExpiry(order).ToShortDateString());
+                sb.Append("            </b>");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append("</tr>");
+
+            }
             return sb.ToString();
 
         }
@@ -1678,12 +1806,7 @@ namespace CUWebinars.Business.Services
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             // let exception be thrown if there is not a single 
 
-
             var regType = GetRegTypeOfOrderRow(orderRow.idRegType);
-
-            if (regType.ShowRecordingNotifications.Equals("yes", StringComparison.OrdinalIgnoreCase))
-                return DateTime.Today.AddMonths(6);
-
 
             //establish order date as starting point
             DateTime expryDate = order.OrderDate.AddMonths(6);
@@ -1786,7 +1909,7 @@ namespace CUWebinars.Business.Services
                 thisDiscount.Notes = forNotes.ToString();
 
                 row.Discount = thisDiscount;
-                
+
                 RedeemDiscount(thisDiscount, row);
 
                 //Adding an explicit save attempting to persist the applied discount. Could be problemic
@@ -1944,7 +2067,7 @@ namespace CUWebinars.Business.Services
                 _logger.Warn("DiscountCode {0} was a Subscription");
             }
             discount.Notes = forNotes.ToString();
-                    
+
         }
 
         private static void CalculateDiscountRedemtion(Discount discount, OrderRow row)

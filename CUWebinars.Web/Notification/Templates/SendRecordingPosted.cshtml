@@ -121,14 +121,22 @@
         else
         {
             infoPhrase.Append("  We'll be happy to upgrade your registration and include a CD-ROM and printouts - just reply to this email!</p>");
-           
+
         }
 
     }
+    if (@webinar.Title.ToString().StartsWith("Compliance Perspectives"))
+    {
+        infoPhrase.Clear();
+        infoPhrase.Append("<p>Dear " + Model.Order.FirstName + ",<br /><br />We hope you enjoyed this month's edition of the Compliance Perspectives.  </p>");
 
-    
-    onDemandLink.Append("<p>This link to the event's materials is valid until " + Model.ExpiryDate + " and may be shared with associates within your organization:</p><p><b>" + TenantURL + "/o/" + Model.Order.idOrder + "-" + myRow.OnDemandCode + "</b></p>Order Summary:");
+        onDemandLink.Append("<p>This link to the event's materials is valid until next month's edition and may be shared with associates within your organization:</p><p><b>" + TenantURL + "/o/" + Model.Order.idOrder + "-" + myRow.OnDemandCode + "</b></p>Subscription Summary:");
 
+    }
+    else
+    {
+        onDemandLink.Append("<p>This link to the event's materials is valid until " + Model.ExpiryDate + " and may be shared with associates within your organization:</p><p><b>" + TenantURL + "/o/" + Model.Order.idOrder + "-" + myRow.OnDemandCode + "</b></p>Order Summary:");
+    }
 
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />

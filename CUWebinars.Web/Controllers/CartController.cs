@@ -148,7 +148,10 @@ namespace CUWebinars.Web.Controllers
                 {
 
                     model.Order.OrderStatus = OrderStatus.Submitted;
-
+                    if (ReferenceEquals(model.Order.Affiliate, null))
+                    {
+                        var a = 0;
+                    }
 
                     if (User.Identity.IsAuthenticated)
                     {

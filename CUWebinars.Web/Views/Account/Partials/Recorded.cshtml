@@ -47,7 +47,7 @@
                 var remainingDays = Convert.ToInt32((onDemandClaim.ExpiryDate - DateTime.Now).TotalDays);
                 var accessPhrase = "will be accessible for six months from your order date";
 
-                if (row.RegistrationType.ShowRecordingNotifications == "No")
+                if (row.RegistrationType.ToString().StartsWith() == "No")
                 {
                     accessPhrase = "would be accessible (by upgrading your order) for 6 months from now";
                 }

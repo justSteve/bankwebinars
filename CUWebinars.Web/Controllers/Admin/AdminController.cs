@@ -663,7 +663,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 = JsonConvert.DeserializeObject<ExpressCheckoutModel>(postback.RawRequest);
             _logger.Info("ExpressCheckout deserialized the fields to: " + form.ToString());
 
-
+            
             var user = _membershipService.GetUserByEmail(form.q5_email5);
             //var userFromLegacy = _membershipService.GetUserFromLegacy(form.q5_email5);
             bool userCreatedByCheckout = false;
@@ -701,7 +701,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     expressOrder.OrderStatus = OrderStatus.Submitted;
                     expressOrder.Origin = "ExpressCheckout";
                     expressOrder.AdminComments = forComment.ToString();
-                    //_orderManagementService.AttachAffiliate(_orderManagementService.GetAffiliateById(expressOrder.idAffiliate));
+                    _orderManagementService.AttachAffiliate(_orderManagementService.GetAffiliateById(expressOrder.idAffiliate));
 
 
                     _orderManagementService.SaveChanges();
