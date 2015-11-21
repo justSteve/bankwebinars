@@ -35,11 +35,10 @@ namespace CUWebinars.Web
     public class MvcApplication : HttpApplication
     {
         readonly IErrorResponseCommand _errorResponseCommand = (IErrorResponseCommand)GlobalConfiguration.Configuration.DependencyResolver.GetService(typeof(IErrorResponseCommand));
-        public static ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        public static ILog logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly IStateService StateService = new StateService();
 
-        const string HtmlBreak = "<br />";
-        const string SessionStartError = "ERROR: --SESSION START-- ";
+        public const string SessionStartError = "ERROR: --SESSION START-- ";
         const char Pipe = '|';
 
         protected void Application_Start()
@@ -122,43 +121,6 @@ namespace CUWebinars.Web
                 default:
                     throw new NotSupportedException(string.Format("There is no log4net configuration for {0}", GlobalConfig.GlobalConfigSingleton.Tenant));
             }
-        }
-
-        private static void InvokeGhostTests()
-        {
-            int retryCount = 0;
-            int retryLimit = GlobalConfig.GlobalConfigSingleton.GhostRequestRetryLimit;
-
-            do
-            {
-                try
-                {
-                    using (var request = new TtsWebClient())
-                    {
-                        var response = "";
-
-                        switch (GlobalConfig.GlobalConfigSingleton.Tenant)
-                        {
-                            case DomainConstants.BankWebinars:
-                                response = request.DownloadString("https://api.ghostinspector.com/v1/suites/549561048a4917076f61463e/execute/?apiKey=a3165149c7049d91d18eeba48d2c4808eca6b2ae");
-                                break;
-                            case DomainConstants.CUWebinars:
-                                response = request.DownloadString("https://api.ghostinspector.com/v1/suites/54faf632c1ae38b460ef41de/execute/?apiKey=a3165149c7049d91d18eeba48d2c4808eca6b2ae");
-                                break;
-                            default:
-                                throw new NotSupportedException(string.Format("There is no match for {0}", GlobalConfig.GlobalConfigSingleton.Tenant));
-                        }
-
-                        retryCount++;
-
-                        break;
-                    }
-                }
-                catch (Exception exception)
-                {
-                    logger.ErrorFormat(string.Format("GhostInvoker job failed. Retry number:{0}", retryCount), exception);
-                }
-            } while (retryCount < retryLimit);
         }
 
         private static void LogStartupDetails()
@@ -294,7 +256,38 @@ namespace CUWebinars.Web
 
         private void Session_Start(object sender, EventArgs e)
         {
-            //avoids session state when the WebAPI method is invoked.
+
+
+            if (HttpContext.Current != null)
+            {
+                string userAgent = HttpContext.Current.Request.UserAgent;
+
+                if (userAgent != null)
+                {
+                    userAgent = userAgent.ToLower();
+
+                    string[] userAgents = new string[]
+                    {
+                        "googlebot",
+                        "bingbot",
+                        "msnbot",
+                        "yahoo! slurp",
+                        "baiduspider",
+                        "iaskspider",
+                        "ask jeeves"
+                    };
+
+                    foreach (string agent in userAgents)
+                    {
+                        if (userAgent.Contains(agent))
+                        {
+                            return;
+                        }
+                    }
+                }
+            }
+
+
 
             var ttsWebinarsContext = new TTSWebinarsContext();
             try
@@ -314,41 +307,59 @@ namespace CUWebinars.Web
                 //StateService.SetValue(WebUiConstants.SubdomainBranding, ConfigurationManager.AppSettings[AppConst.TESTING_URL]);  //TODO: [dar] I think this can be deleted
 
                 //following are values to be stored for audit purposes.
-                if (HttpContext.Current.Request.UrlReferrer != null)
+                if (HttpContext.Current != null && HttpContext.Current.Request.UrlReferrer != null)
                     StateService.SetValue(WebUiConstants.SubdomainBranding,
                         HttpContext.Current.Request.UrlReferrer.ToString().Trim());
 
-                StateService.SetValue(WebUiConstants.FirstPage, HttpContext.Current.Request.Url.ToString().Trim());
-                StateService.SetValue(WebUiConstants.InitialQueryString, Request.Url.Query);
-                StateService.SetValue(WebUiConstants.SessionId, HttpContext.Current.Session.SessionID);
-
-                //DETERMINE CURRENT AFFILIATE
-                //MEHTOD 1: VIA QUERY STRING -- idAff=[idUserAff]   
-                if (!string.IsNullOrEmpty(Request.QueryString[WebUiConstants.AffiliateId]))
+                if (HttpContext.Current != null)
                 {
-                    int loadAff;
+                    StateService.SetValue(WebUiConstants.FirstPage, HttpContext.Current.Request.Url.ToString().Trim());
+                    StateService.SetValue(WebUiConstants.InitialQueryString, Request.Url.Query);
+                    StateService.SetValue(WebUiConstants.SessionId, HttpContext.Current.Session.SessionID);
 
-                    if (int.TryParse(Request.QueryString[WebUiConstants.AffiliateId], out loadAff))
+                    //DETERMINE CURRENT AFFILIATE
+                    //MEHTOD 1: VIA QUERY STRING -- idAff=[idUserAff]   
+                    if (!string.IsNullOrEmpty(Request.QueryString[WebUiConstants.AffiliateId]))
                     {
-                        try
-                        {
-                            StateService.SetValue("AffiliateSessionSource", WebUiConstants.AffiliateId + Pipe + loadAff);
-                            // determine the current affiliate
-                            StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser));
-                            logger.Info(string.Format("Resolving Affiliate via query string with id {0}", loadAff));
+                        int loadAff;
 
-                        }
-                        catch (Exception ex)
+                        if (int.TryParse(Request.QueryString[WebUiConstants.AffiliateId], out loadAff))
                         {
-                            logger.Fatal(ex);
-                            logger.Info(SessionStartError + "failed to load idAff code: " +
-                                        HttpContext.Current.Request.Url.ToString());
-                            throw;
+                            Affiliate foundAff = affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser);
+
+                            if (!ReferenceEquals(foundAff, null))
+                            {
+                                StateService.SetValue(WebUiConstants.CurrentAffiliate,
+                                    affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser));
+                                logger.Info(string.Format("Resolving Affiliate via query string with id {0}", loadAff));
+
+                            }
+                            else
+                            {
+                                logger.Info(SessionStartError + "failed to load idAff code: " +
+                                            HttpContext.Current.Request.Url);
+                            }
+                            //    tries to lighten the expense of session start by removing try/catch
+                            //try
+                            //{
+                            //    StateService.SetValue("AffiliateSessionSource", WebUiConstants.AffiliateId + Pipe + loadAff);
+                            //    // determine the current affiliate
+                            //    StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser));
+                            //    logger.Info(string.Format("Resolving Affiliate via query string with id {0}", loadAff));
+
+                            //}
+                            //catch (Exception ex)
+                            //{
+                            //    logger.Fatal(ex);
+                            //    logger.Info(SessionStartError + "failed to load idAff code: " +
+                            //                HttpContext.Current.Request.Url.ToString());
+                            //    throw;
+                            //}
                         }
-                    }
-                    else
-                    {
-                        logger.Error(SessionStartError + "Non-numeric idAff: " + HttpContext.Current.Request.QueryString.ToString());
+                        else
+                        {
+                            logger.Error(SessionStartError + "Non-numeric idAff: " + HttpContext.Current.Request.QueryString);
+                        }
                     }
                 }
 

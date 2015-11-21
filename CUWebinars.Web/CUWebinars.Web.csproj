@@ -460,6 +460,7 @@
     <Compile Include="Infrastructure\TtsWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="IsRequestABot.cs" />
     <Compile Include="Mapping\Configuration\IMappingInitializer.cs" />
     <Compile Include="Mapping\Configuration\MappingBase.cs" />
     <Compile Include="Mapping\Configuration\ViewModelMappings.cs" />
