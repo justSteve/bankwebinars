@@ -1,10 +1,10 @@
-﻿/*
+/*
 // Uncomment this class to provide custom runtime policy for Glimpse
 
 using Glimpse.AspNet.Extensions;
 using Glimpse.Core.Extensibility;
 
-namespace $rootnamespace$
+namespace CUWebinars.NotificationSystem
 {
     public class GlimpseSecurityPolicy:IRuntimePolicy
     {
