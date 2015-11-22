@@ -482,6 +482,7 @@
     <Compile Include="Membership\Email\TtsTokenizerInert.cs" />
     <Compile Include="Models\AddClaimInputModel.cs" />
     <Compile Include="Models\AddQuizEditModel.cs" />
+    <Compile Include="Models\Address4JotForm.cs" />
     <Compile Include="Models\BatchPasswordResetViewModel.cs" />
     <Compile Include="Models\CompPersSubscriptionsModel.cs" />
     <Compile Include="Models\ConnectionInfoEditModel.cs" />
@@ -492,6 +493,8 @@
     <Compile Include="Models\EditUserInfoModel.cs" />
     <Compile Include="Models\EditUserModel.cs" />
     <Compile Include="Models\ExpressCheckoutModel.cs" />
+    <Compile Include="Models\ExpressCheckoutModel2.cs" />
+    <Compile Include="Models\FullName.cs" />
     <Compile Include="Models\IdentifyModel.cs" />
     <Compile Include="Models\ImportOrderModel.cs" />
     <Compile Include="Models\JotFormWebHook.cs" />
@@ -508,6 +511,7 @@
     <Compile Include="Models\MigrateOrderModel.cs" />
     <Compile Include="Models\MonerisResponse.cs" />
     <Compile Include="Models\OnDemandPlaybackModel.cs" />
+    <Compile Include="Models\PhoneNumber.cs" />
     <Compile Include="Models\PostEventInfoModel.cs" />
     <Compile Include="Models\Q14Address14.cs" />
     <Compile Include="Models\Q4Name.cs" />
@@ -1983,6 +1987,7 @@
     <Content Include="Views\Webinar\Partials\SearchResultsGrid.cshtml" />
     <Content Include="Views\Webinar\Search.cshtml" />
     <Content Include="Views\Account\MyCertificateDS.cshtml" />
+    <Content Include="Views\Cart\Partials\ExpressCheckout4IE2.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
