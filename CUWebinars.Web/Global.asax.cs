@@ -257,38 +257,6 @@ namespace CUWebinars.Web
         private void Session_Start(object sender, EventArgs e)
         {
 
-
-            if (HttpContext.Current != null)
-            {
-                string userAgent = HttpContext.Current.Request.UserAgent;
-
-                if (userAgent != null)
-                {
-                    userAgent = userAgent.ToLower();
-
-                    string[] userAgents = new string[]
-                    {
-                        "googlebot",
-                        "bingbot",
-                        "msnbot",
-                        "yahoo! slurp",
-                        "baiduspider",
-                        "iaskspider",
-                        "ask jeeves"
-                    };
-
-                    foreach (string agent in userAgents)
-                    {
-                        if (userAgent.Contains(agent))
-                        {
-                            return;
-                        }
-                    }
-                }
-            }
-
-
-
             var ttsWebinarsContext = new TTSWebinarsContext();
             try
             {
