@@ -290,19 +290,19 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.AllowAnonymous]
         [System.Web.Mvc.HttpGet]
-        public ActionResult MyCertificate(int orderID, string displayName, string displayInst="")
+        public ActionResult MyCertificate(int orderID, string displayName, string displayInst = "")
         {
             //var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
 
             _logger.Info("MyCertificateDS orderId=" + orderID + ", displayName=" + displayName + ", displayInst" + displayInst);
-            
+
             var currentOrder = _orderManagementService.GetOrderById(orderID);
             if (ReferenceEquals(displayName, null))
             {
                 displayName = currentOrder.FirstName + ' ' + currentOrder.LastName;
             }
 
-            var model = new CertOfCompletionViewModel { DisplayName = displayName, Order = currentOrder, DisplayInst = displayInst};
+            var model = new CertOfCompletionViewModel { DisplayName = displayName, Order = currentOrder, DisplayInst = displayInst };
 
             model.CeuShort = string.Empty;
             model.CeuStatement = string.Empty;
@@ -322,7 +322,7 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.HttpGet]
         public ActionResult MyCertificateDS(int webinarId, string displayName, string displayInst)
         {
-            
+
 
             var currentWebinar = _orderManagementService.GetWebinarById(webinarId);
 
@@ -569,7 +569,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (Exception ex)
                 {
-                    _logger.Fatal("EditUserFromOrder error on " + id.Value +" " + ex);
+                    _logger.Fatal("EditUserFromOrder error on " + id.Value + " " + ex);
                 }
             }
             return View("EditUser", null);
@@ -696,14 +696,14 @@ namespace CUWebinars.Web.Controllers
                         },
                         ShippingAddress = new AddressModel
                         {
-                            City = shippingAddress.City,
-                            Country = shippingAddress.Country,
-                            StreetAddress = shippingAddress.StreetAddress,
-                            StreetAddress2 = shippingAddress.StreetAddress2,
-                            State = shippingAddress.State,
-                            Zip = shippingAddress.Zip,
-                            Phone = shippingAddress.Phone,
-                            Name = shippingAddress.Name,
+                            City = string.IsNullOrWhiteSpace(shippingAddress.City) ? billingAddress.City : shippingAddress.City,
+                            Country = string.IsNullOrWhiteSpace(shippingAddress.Country) ? billingAddress.Country : shippingAddress.Country,
+                            StreetAddress = string.IsNullOrWhiteSpace(shippingAddress.StreetAddress) ? billingAddress.StreetAddress : shippingAddress.StreetAddress,
+                            StreetAddress2 = string.IsNullOrWhiteSpace(shippingAddress.StreetAddress2) ? billingAddress.StreetAddress2 : shippingAddress.StreetAddress2,
+                            State = string.IsNullOrWhiteSpace(shippingAddress.State) ? billingAddress.State : shippingAddress.State,
+                            Zip = string.IsNullOrWhiteSpace(shippingAddress.Zip) ? billingAddress.Zip : shippingAddress.Zip,
+                            Phone = string.IsNullOrWhiteSpace(shippingAddress.Phone) ? billingAddress.Phone : shippingAddress.Phone,
+                            Name = string.IsNullOrWhiteSpace(shippingAddress.Name) ? billingAddress.Name : shippingAddress.Name,
                             TypeOfAddress = AddressType.Shipping
                         },
                         FirstName = user.FirstName,
@@ -722,7 +722,7 @@ namespace CUWebinars.Web.Controllers
 
 
         [System.Web.Mvc.HttpPost, System.Web.Mvc.AllowAnonymous]
-        [ValidateAntiForgeryToken(Order = 0)]
+        //[ValidateAntiForgeryToken(Order = 0)]
         [ValidateInput(false)]
         [HandleAjaxException(Order = 1)]
         public ActionResult EditUser(EditUserViewModel model)

@@ -78,24 +78,23 @@ function AttachDataTableEditEvents() {
         if (!$form.valid())
         {
             // are the invalid fields on the hidden panel? flash the button (or something!)
-            if ($(".hidden .input-validation-error").length)
-            {
+            if ($(".hidden .input-validation-error").length) {
                 if ($(".show-billing-address.btn-success").length) {
                     $(".show-shipping-address").addClass("btn-danger");
-                    setTimeout(function () {
+                    setTimeout(function() {
                         $(".show-shipping-address").removeClass("btn-danger");
                     }, 2000);
                 }
 
-                if ($(".show-shipping-address.btn-success").length)
-                {
+                if ($(".show-shipping-address.btn-success").length) {
                     $(".show-billing-address").addClass("btn-danger");
-                    setTimeout(function () {
+                    setTimeout(function() {
                         $(".show-billing-address").removeClass("btn-danger");
                     }, 2000);
                 }
+            } else {
+                return false; // do not allow form to submit if it is invalid
             }
-            return false; // do not allow form to submit if it is invalid
         }
 
 

@@ -125,13 +125,19 @@ namespace CUWebinars.Business.Services
             }
             else
             {
-                theseUsers = _context.WebUsers
-                    .Include(u => u.Institution)
-                    .Include(u => u.Orders)
-                    .Include(u => u.Addresses)
-                    .Where( u => u.UserType == UserType.Customer)
-                    .Take(200)
+                theseUsers = _context.Orders
+                    .Where(o => o.idAffiliate == idAffliate)
+                    .Select(o => o.WebUser).Distinct()
+                    .Include(o => o.Institution)
+                    .Include(o => o.Orders)
                     .ToList();
+                //theseUsers = _context.WebUsers
+                //    .Include(u => u.Institution)
+                //    .Include(u => u.Orders)
+                //    .Include(u => u.Addresses)
+                //    .Where( u => u.UserType == UserType.Customer)
+                //    .Take(200)
+                //    .ToList();
             }
 
             totalNumberUsers = theseUsers.Count;
@@ -143,13 +149,13 @@ namespace CUWebinars.Business.Services
 
         public IEnumerable<Webinar> SearchWebinars(string searchTerm, int idAffiliate, out int totalNumberWebinars)
         {
-            
+
             List<Webinar> webinars = _webinarManagementService.GetSearchDTO(searchTerm).ToList();
 
             totalNumberWebinars = webinars.Count();
 
             return webinars;
-            
+
         }
 
 
@@ -163,7 +169,7 @@ namespace CUWebinars.Business.Services
                     .Include(u => u.Institution)
                     .Include(u => u.Orders.Where(o => o.idAffiliate == idAffliate))
                     .Include(u => u.Addresses)
-                    
+
                     .ToList();
             }
             else
