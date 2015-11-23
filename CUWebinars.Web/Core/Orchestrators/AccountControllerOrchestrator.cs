@@ -81,7 +81,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 if (beingImpersonatedClaim != null)
                 {
-                    adminUserEmail = beingImpersonatedClaim.Value.Trim();
+                    //adminUserEmail = beingImpersonatedClaim.Value.Trim();
+                    adminUserEmail = beingImpersonatedClaim.Value.Split('|')[1].ToString().Trim();
 
                     _membershipService.RemoveClaim(_globals.Tenant,
                         user.Claims.Single(c => c.Type == System.IdentityModel.Claims.ClaimTypes.Email).Value, // email address
@@ -504,7 +505,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             model.Recorded = new Dictionary<string, Order>(ordersForRecordedWebinars.Count, StringComparer.OrdinalIgnoreCase);
             model.Archived = _orderManagementService.SelectOrdersWithArchivedWebinars(currentUser.idUser);
 
-            foreach (var selectOrdersWithRecordedWebinar in ordersForRecordedWebinars)
+            foreach (var selectOrdersWithRecordedWebinar in ordersForRecordedWebinars.OrderByDescending(o => o.OrderRows.SingleOrDefault().Webinar.Date))
             {
                 var myRow =
                     selectOrdersWithRecordedWebinar.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
@@ -907,7 +908,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             UserAccount userAccount = _membershipService.GetUserAccountByVerificationKey(key);
 
-            //Should we clear UserNotVerified claims here?
             _membershipService.RemoveClaim(_globals.Tenant, userAccount.Email, ClaimTypes.HasNotVerified);
 
             if (!_membershipService.UserHasClaim(userAccount, ClaimTypes.FullName))

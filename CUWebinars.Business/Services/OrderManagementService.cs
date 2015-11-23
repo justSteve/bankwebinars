@@ -18,6 +18,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -150,6 +151,7 @@ namespace CUWebinars.Business.Services
             }
         }
 
+
         public IEnumerable<AdditionalLocation> GetAdditionalLocationsForOrderRow(int idOrderRow)
         {
             return _additionalLocationsRepository.GetAdditionalLocationsForOrderRow(idOrderRow);
@@ -221,7 +223,14 @@ namespace CUWebinars.Business.Services
 
         public Affiliate GetAffiliateByIdLoaded(int id, params Expression<Func<Affiliate, object>>[] includeProperties)
         {
-            return _affiliateRepository.FindByIdWithIncluding(id, includeProperties);
+            var aff = _affiliateRepository.FindByIdWithIncluding(id, includeProperties);
+            if (aff == null)
+            {
+
+                _logger.Warn("Error: unfound affiliate=" + id);
+                aff = GetAffiliateById(19);
+            }
+            return aff;
         }
 
 
@@ -285,7 +294,7 @@ namespace CUWebinars.Business.Services
             FireAdhocNotificationHandler(adhocNotificationSubmittedViewModel);
         }
 
-        public OrderRow CheckLegacyOrder(Order order)
+        public OrderRow GetLegacyOrder(Order order)
         {
             var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
             return dataOperations.GetLegacyOrder(order);
@@ -302,6 +311,26 @@ namespace CUWebinars.Business.Services
 
             List<string> legacyEmails = lOrders.Select(order => order.BillingEmail).ToList();
             List<string> v3Emails = v3Orders.Select(v3Order => v3Order.BillingEmail).ToList();
+
+
+            var query = legacyEmails.GroupBy(x => x)
+                  .Where(g => g.Count() > 1)
+                  .Select(y => y.Key)
+                  .ToList();
+            foreach (var d in query)
+            {
+                _logger.Warn("SynchError: Duped order from Legacy " + webinarId + " on " + d);
+            }
+
+
+            var queryv3 = v3Emails.GroupBy(x => x)
+                  .Where(g => g.Count() > 1)
+                  .Select(y => y.Key)
+                  .ToList();
+            foreach (var d in query)
+            {
+                _logger.Warn("SynchError: Duped order from V3 " + webinarId + " on " + d);
+            }
 
 
             // find orders in legacy not in v3
@@ -378,6 +407,7 @@ namespace CUWebinars.Business.Services
                 _logger.ErrorException("missingFromLegacy loop failed.  i=" + i + " idWebinar=" + webinarId, ex);
             }
 
+            //Missing From V3
             i = 1;
             try
             {
@@ -389,12 +419,26 @@ namespace CUWebinars.Business.Services
                         {
                             _orderRepository.ConvertLegacyOrder(order);
                             _logger.Info("SynchOrder MigrateToV3 {0} of {1} - {2}", i, missingFromV3.Count(), orderEmail);
-                            i++;
+
                         }
                         catch (Exception ex)
                         {
+                            i++;
                             _logger.ErrorException("SynchOrder Migrate to V3 failed: " + orderEmail, ex);
                         }
+                        try
+                        {
+                            _orderRepository.MigrateOrderWithDiscount(order);
+
+                            _logger.Info("SynchOrder Discount {0} of {1} - {2}", i, missingFromV3.Count(), orderEmail);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            i++;
+                            _logger.ErrorException("SynchOrder Migrate to V3 failed: " + orderEmail, ex);
+                        }
+                        i++;
 
                     }
 
@@ -423,15 +467,23 @@ namespace CUWebinars.Business.Services
                             {
                                 _logger.Info("SynchOrder Legacy Total = {0} vs. V3 Total = {1} on {2} ", lOrder.Total, vOrder.Total, orderEmail);
                             }
+                            if (lOrder.idAffiliate != vOrder.idAffiliate)
+                            {
+                                _logger.Warn("SynchOrder AFFILIATE MISMATCH Legacy={0} - V3={1}", lOrder.idAffiliate, vOrder.idAffiliate);
+                                //vOrder.idAffiliate = lOrder.idAffiliate;
+                                _logger.Info("UPDATE dbo.[Order] SET idAffiliate = {0} WHERE idOrder = {1}", lOrder.idAffiliate, vOrder.idOrder);
+
+                            }
 
                             if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType != vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType)
                             {
-                                _logger.Info("SynchOrder adjusted RegType from V3 RegType = {1} to Legacy = {0} on {2} ", lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, orderEmail);
                                 vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType;
-                                SaveOrderChanges(vOrder, "", "", OrderGenesis.CreatedViaCartByExistingUser);
+                                SaveChanges();
+                                _logger.Info("SynchOrder adjusted RegType from V3 RegType = {1} to Legacy = {0} on {2} ", lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, orderEmail);
+
                             }
 
-                            
+
                             i++;
                         }
                         catch (Exception ex)
@@ -676,6 +728,10 @@ namespace CUWebinars.Business.Services
                 if (affiliate == null)
                 {
                     affiliate = _affiliateRepository.FindByIdWithIncluding(affiliateIdForOrder, a => a.WebUser); // use the most recent
+                    if (affiliate == null)
+                    {
+                        affiliate = GetAffiliateById(19);
+                    }
                     // keeps Affiliate object in cache for 1 hour.
                     _cachingService.Add(cachKey, affiliate, DomainConstants.BuildUtcNowAsCts.AddHours(1));
                 }
@@ -1095,14 +1151,26 @@ namespace CUWebinars.Business.Services
                 Double cost6 = i[1];
                 Double costCD = i[2];
 
-                string orderSum = OrderSummaryBuilder(order);
+                Discount discount = null;
+
+                if (ReferenceEquals(order.OrderRows.Where(o => o.RowStatus == OrderRowStatus.Active), null ))
+                {
+                    discount =
+                        order.OrderRows.Where(o => o.RowStatus == OrderRowStatus.Active).SingleOrDefault().Discount;
+                }
+                else
+                {
+                    discount = GetDiscountById(order.idOrder);
+                }
+
+                string orderSum = OrderSummaryBuilder(order, discount);
                 _logger.Info("SendRecordingIsPosted: " + order.idOrder);
                 var postEventPublishModel = new PostEventPublishModel()
                 {
                     Order = order,
                     CostFor6month = (Convert.ToDecimal(cost6) - Convert.ToDecimal(basePrice)).ToString().Replace(".00", ""),
                     CostForCD = (Convert.ToDecimal(costCD) - Convert.ToDecimal(basePrice)).ToString().Replace(".00", ""),
-                    ExpiryDate = GetPostEventMaterialsAccessExpiry(order).ToShortDateString(),
+                    ExpiryDate = CalculatePostEventMaterialsAccessExpiry(order).ToShortDateString(),
                     OrderSummaryString = orderSum
                 };
                 AddEvent(new SendRecordingPostedEvent<PostEventPublishModel>
@@ -1122,135 +1190,250 @@ namespace CUWebinars.Business.Services
             int numRows = _orderRepository.SaveChanges();
         }
 
-        private string OrderSummaryBuilder(Order order)
+        private string OrderSummaryBuilder(Order order, Discount discount)
         {
-
             var row = from orderRow in order.OrderRows
                       where orderRow.RowStatus == OrderRowStatus.Active
                       select orderRow;
             var myRow = row.Single();
 
+            //var mySub = myRow.Order.d
 
             var webinar = myRow.Webinar;
 
             var sb = new StringBuilder();
-
-            sb.Append("<tr>");
-            sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-            sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-            sb.Append("            Title:");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-            sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-            sb.Append("            <b>");
-            sb.Append(webinar.Title);
-            sb.Append("            </b>");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("</tr>");
-            sb.Append("<tr>");
-            sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-            sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-            sb.Append("            Date:");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-            sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-            sb.Append("            <b>");
-            sb.Append(webinar.Date.ToShortDateString());
-            sb.Append("            </b>");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("</tr>");
-            sb.Append("<tr>");
-            sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-            sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-            sb.Append("            Attendance Type:");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-            sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-            sb.Append("            <b>");
-            sb.Append(myRow.RegistrationType.OptionLabel);
-            sb.Append("            </b>");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("</tr>");
-            if (!ReferenceEquals(myRow.Discount, null))
+            if (webinar.Title.StartsWith("Compliance Perspectives"))
             {
-                decimal amountToReduce;
+
+                //var subStarted = "Valid from: " + sub
+
                 sb.Append("<tr>");
-                if (!ReferenceEquals(myRow.Discount.FlatOff, null))
-                {
-                    amountToReduce = Convert.ToDecimal(myRow.Order.Total) - (myRow.Discount.FlatOff);
-                    sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                    sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                    sb.Append("            Amt. of Discount:");
-                    sb.Append("        </span>");
-                    sb.Append("    </td>");
-                    sb.Append("    <td width='350px' style='text-align: left; color: red; background-color: #B4D1EC; padding-left: 6px;'>");
-                    sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                    sb.Append("            <b>$");
-                    sb.Append(amountToReduce.ToString().Replace(".00", ""));
-                    sb.Append("            </b>");
-                    sb.Append("        </span>");
-                    sb.Append("    </td>");
-                }
-                if (!ReferenceEquals(myRow.Discount.PercentOff, null))
-                {
-                    amountToReduce = (myRow.Discount.PercentOff * 100) / Convert.ToDecimal(string.Format("{0:0.00}", myRow.Order.Total));
-
-                    sb.Append(
-                        "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                    sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                    sb.Append("            Amt. of Discount:");
-                    sb.Append("        </span>");
-                    sb.Append("    </td>");
-                    sb.Append(
-                        "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-                    sb.Append(
-                        "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                    sb.Append("            <b>$");
-                    sb.Append(amountToReduce.ToString().Replace(".00", ""));
-                    sb.Append("            </b>");
-                    sb.Append("        </span>");
-                    sb.Append("    </td>");
-                }
+                sb.Append(
+                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                sb.Append("            Title:");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append(
+                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                sb.Append(
+                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                sb.Append("            <b>");
+                sb.Append("Compliance Perspectives - " + webinar.Date.ToString("MMMM yyyy"));
+                sb.Append("            </b>");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
                 sb.Append("</tr>");
+
+                //presenter cell
+                sb.Append("<tr>");
+                sb.Append(
+                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                sb.Append("            Presenter:");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append(
+                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                sb.Append(
+                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                sb.Append("            <b>Carl Pry");
+                sb.Append("            </b>");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append("</tr>");
+
+                //
+                sb.Append("<tr>");
+                sb.Append(
+                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                sb.Append("            Subscription:");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append(
+                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                sb.Append(
+                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                sb.Append("            <b>");
+                sb.Append(myRow.RegistrationType.OptionLabel.Replace(" Subscription", "").Replace("-"," "));
+                sb.Append("            </b>");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append("</tr>");
+                if (!ReferenceEquals(discount, null))
+                {
+                    string subscriptionSpan = "";
+                    sb.Append("<tr>");
+                    if (!ReferenceEquals(discount.DateValidFrom, null))
+                    {
+                        subscriptionSpan = discount.DateValidFrom.ToString("MMM-yy") + " until " + discount.DateValidTo.ToString("MMM-yy");
+                        
+                        sb.Append(
+                            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                        sb.Append("            Term:");
+                        sb.Append("        </span>");
+                        sb.Append("    </td>");
+                        sb.Append(
+                            "    <td width='350px' style='text-align: left; color: red; background-color: #B4D1EC; padding-left: 6px;'>");
+                        sb.Append(
+                            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                        sb.Append("            <b>");
+                        sb.Append(subscriptionSpan);
+                        sb.Append("            </b>");
+                        sb.Append("        </span>");
+                        sb.Append("    </td>");
+                    }
+                    sb.Append("</tr>");
+                }
+
+                //insert CP-specific wording for subsrip stats.
+
+
+
+                //
+
             }
+            else
+            {
 
-            sb.Append("<tr>");
-            sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-            sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-            sb.Append("            Cost:");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-            sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-            sb.Append("            <b>$");
-            sb.Append(myRow.Order.Total.ToString().Replace(".00", ""));
-            sb.Append("            </b>");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("</tr>");
-            sb.Append("<tr>");
-            sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-            sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-            sb.Append("            OnDemand Access Expires:");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-            sb.Append("");
-            sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-            sb.Append("            <b>");
-            sb.Append(GetPostEventMaterialsAccessExpiry(order).ToShortDateString());
-            sb.Append("            </b>");
-            sb.Append("        </span>");
-            sb.Append("    </td>");
-            sb.Append("</tr>");
+                sb.Append("<tr>");
+                sb.Append(
+                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                sb.Append("            Title:");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append(
+                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                sb.Append(
+                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                sb.Append("            <b>");
+                sb.Append(webinar.Title);
+                sb.Append("            </b>");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append("</tr>");
+                sb.Append("<tr>");
+                sb.Append(
+                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                sb.Append("            Date:");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append(
+                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                sb.Append(
+                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                sb.Append("            <b>");
+                sb.Append(webinar.Date.ToShortDateString());
+                sb.Append("            </b>");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append("</tr>");
+                sb.Append("<tr>");
+                sb.Append(
+                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                sb.Append("            Attendance Type:");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append(
+                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                sb.Append(
+                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                sb.Append("            <b>");
+                sb.Append(myRow.RegistrationType.OptionLabel);
+                sb.Append("            </b>");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append("</tr>");
+                if (!ReferenceEquals(myRow.Discount, null))
+                {
+                    decimal amountToReduce;
+                    sb.Append("<tr>");
+                    if (!ReferenceEquals(myRow.Discount.FlatOff, null))
+                    {
+                        amountToReduce = Convert.ToDecimal(myRow.Order.Total) - (myRow.Discount.FlatOff);
+                        sb.Append(
+                            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                        sb.Append("            Amt. of Discount:");
+                        sb.Append("        </span>");
+                        sb.Append("    </td>");
+                        sb.Append(
+                            "    <td width='350px' style='text-align: left; color: red; background-color: #B4D1EC; padding-left: 6px;'>");
+                        sb.Append(
+                            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                        sb.Append("            <b>$");
+                        sb.Append(amountToReduce.ToString().Replace(".00", ""));
+                        sb.Append("            </b>");
+                        sb.Append("        </span>");
+                        sb.Append("    </td>");
+                    }
+                    if (!ReferenceEquals(myRow.Discount.PercentOff, null))
+                    {
+                        amountToReduce = (myRow.Discount.PercentOff * 100) /
+                                         Convert.ToDecimal(string.Format("{0:0.00}", myRow.Order.Total));
 
+                        sb.Append(
+                            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                        sb.Append("            Amt. of Discount:");
+                        sb.Append("        </span>");
+                        sb.Append("    </td>");
+                        sb.Append(
+                            "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                        sb.Append(
+                            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                        sb.Append("            <b>$");
+                        sb.Append(amountToReduce.ToString().Replace(".00", ""));
+                        sb.Append("            </b>");
+                        sb.Append("        </span>");
+                        sb.Append("    </td>");
+                    }
+                    sb.Append("</tr>");
+                }
 
+                sb.Append("<tr>");
+                sb.Append(
+                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                sb.Append("            Cost:");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append(
+                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                sb.Append(
+                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                sb.Append("            <b>$");
+                sb.Append(myRow.Order.Total.ToString().Replace(".00", ""));
+                sb.Append("            </b>");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append("</tr>");
+                sb.Append("<tr>");
+                sb.Append(
+                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                sb.Append("            OnDemand Access Expires:");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append(
+                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                sb.Append("");
+                sb.Append(
+                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                sb.Append("            <b>");
+
+                sb.Append(CalculatePostEventMaterialsAccessExpiry(order).ToShortDateString());
+                sb.Append("            </b>");
+                sb.Append("        </span>");
+                sb.Append("    </td>");
+                sb.Append("</tr>");
+
+            }
             return sb.ToString();
 
         }
@@ -1500,19 +1683,24 @@ namespace CUWebinars.Business.Services
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
             return dataOperations.FindPostEventClaimByOnDemandCode(order);
-            
+
         }
 
         public IList<PostEventClaim> FindAllPostEventClaims()
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
             return dataOperations.FindAllPostEventClaims();
-            
+
+        }
+
+        public Webinar GetWebinarById(int webinarId)
+        {
+            return _webinarRepository.GetWebinarByIdIncludingAllWebinarsByPresenter(webinarId);
         }
 
         public IList<Order> GetV3OrdersByOnDemandClaim()
         {
-          return   _orderRepository.GetV3OrdersByOnDemandClaim();
+            return _orderRepository.GetV3OrdersByOnDemandClaim();
         }
 
         public Discount GetDiscountByUser(WebUser currentUser)
@@ -1524,7 +1712,7 @@ namespace CUWebinars.Business.Services
         public void GenerateRegistrantKey(Order order, AdditionalLocation additionalLocation = null)
         {
             if (order == null) throw new ArgumentNullException("order");
-
+            return;
             var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             var regKeyResponse = string.Empty;
 
@@ -1610,7 +1798,7 @@ namespace CUWebinars.Business.Services
         }
 
 
-        public DateTime GetPostEventMaterialsAccessExpiry(Order order)
+        public DateTime CalculatePostEventMaterialsAccessExpiry(Order order)
         {
 
             if (order == null) throw new ArgumentNullException("order");
@@ -1618,12 +1806,7 @@ namespace CUWebinars.Business.Services
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             // let exception be thrown if there is not a single 
 
-
             var regType = GetRegTypeOfOrderRow(orderRow.idRegType);
-
-            if (regType.ShowRecordingNotifications.Equals("yes", StringComparison.OrdinalIgnoreCase))
-                return DateTime.Today.AddMonths(6);
-            
 
             //establish order date as starting point
             DateTime expryDate = order.OrderDate.AddMonths(6);
@@ -1640,23 +1823,20 @@ namespace CUWebinars.Business.Services
             // now we only addressing Live+5
             //update to pull LivePlusFive value from database
 
-            if (orderRow.Webinar.LivePlusFiveValue == 0)
-            {
-                return orderRow.Webinar.Date.AddDays(7);
-            }
-            return orderRow.Webinar.Date.AddDays(orderRow.Webinar.LivePlusFiveValue);
+            return orderRow.Webinar.LivePlusFiveValue;
         }
 
         public void GetJoinUrl(OrderRow row)
         {
             Order order = row.Order;
-            
+
             if (row.Webinar.Status != WebinarStatus.Active && row.Webinar.Status != WebinarStatus.InProgress || row.Webinar.CitrixJoinInfoAvailable())
             {
                 //if not initialized, don't hit Citrix
-
+                return;
             }
-            if (row.CitrixJoinUrl == null && row.RegistrationType.ShowLiveNotifications == "Yes")
+            if (row.CitrixJoinUrl == null && row.RegistrationType.ShowLiveNotifications == "Yes"
+                && (row.Webinar.Status == WebinarStatus.Active || row.Webinar.Status == WebinarStatus.InProgress))
             {
                 var regKeyResponse = CreateRegistrantKey(order.FirstName, order.LastName
                     , order.BillingEmail, row.Webinar.idWebinar, row.Webinar.WebinarKey);
@@ -1716,15 +1896,26 @@ namespace CUWebinars.Business.Services
 
         public Discount ApplyDiscountCode(string code, OrderRow row)
         {
-            _logger.Info("ApplyDiscountCode: {0}", code);
+
             var thisDiscount = GetDiscountByCode(code);
 
             if (!ReferenceEquals(null, thisDiscount))
             {
-                row.Discount = thisDiscount;
-                RedeemDiscount(thisDiscount, row);
-            }
+                var forNotes = new StringBuilder();
+                forNotes.AppendFormat(
+                    "ApplyDiscountCode: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}",
+                    thisDiscount.DiscountCode, thisDiscount.DateValidFrom, thisDiscount.DateValidTo,
+                    thisDiscount.CreditsUsed, thisDiscount.CreditsRemain);
+                thisDiscount.Notes = forNotes.ToString();
 
+                row.Discount = thisDiscount;
+
+                RedeemDiscount(thisDiscount, row);
+
+                //Adding an explicit save attempting to persist the applied discount. Could be problemic
+                //SaveChanges();
+            }
+            _logger.Info("ApplyDiscountCode: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}", thisDiscount.DiscountCode, thisDiscount.DateValidFrom, thisDiscount.DateValidTo, thisDiscount.CreditsUsed, thisDiscount.CreditsRemain);
             return thisDiscount;
         }
 
@@ -1842,51 +2033,65 @@ namespace CUWebinars.Business.Services
                 _logger.Info("Redeemed Discount On Order: " + order.idOrder);
             }
         }
-        public virtual bool IsDiscountCodeValid(string discountCode)
-        {
+        //public virtual bool IsDiscountCodeValid(string discountCode)
+        //{
 
-            return true;
-        }
+        //    return true;
+        //}
 
 
         private void RedeemDiscount(Discount discount, OrderRow row)
         {
-            if (discount.DiscountType != DiscountType.Subscription)
+            var forNotes = new StringBuilder();
+
+            _logger.Info("Discount: RedeemDiscountStarts: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}", discount.DiscountCode, discount.DateValidFrom, discount.DateValidTo, discount.CreditsUsed, discount.CreditsRemain);
+            if (discount.DiscountType != DiscountType.Compensation && discount.DiscountType != DiscountType.ComplianceSeries)
             {
                 if (discount.CreditsRemain > 0)
                 {
 
                     discount.CreditsUsed++;
-                    if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Five"))
-                    {
-                        discount.CreditsRemain = discount.CreditsRemain - 1;
-                    }
-                    if (row.RegistrationType.OptionLabel == ("OnDemand Recording Only"))
-                    {
-                        discount.CreditsRemain = discount.CreditsRemain - 1.25M;
-                    }
-                    if (row.RegistrationType.OptionLabel == ("CD-ROM and Hardcopy Handouts"))
-                    {
-                        discount.CreditsRemain = discount.CreditsRemain - 1.25M;
-                    }
-                    if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Six"))
-                    {
-                        discount.CreditsRemain = discount.CreditsRemain - 1.25M;
-                    }
-                    if (row.RegistrationType.OptionLabel == ("Premier Package"))
-                    {
-                        discount.CreditsRemain = discount.CreditsRemain - 1.5M;
-                    }
-
-                    _logger.Info("DiscountCode {0} was applied to {1}. {2} credits remain.", discount.DiscountCode,
-                        row.idOrder, discount.CreditsRemain);
+                    CalculateDiscountRedemtion(discount, row);
+                    forNotes.AppendFormat(
+                        "Discount Applied: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}"
+                        , discount.DiscountCode, discount.DateValidFrom, discount.DateValidTo, discount.CreditsUsed,
+                        discount.CreditsRemain);
+                }
+                else
+                {
+                    forNotes.Append("No Credits Remain. Credits used = " + discount.CreditsUsed);
                 }
             }
             else
             {
                 _logger.Warn("DiscountCode {0} was a Subscription");
             }
+            discount.Notes = forNotes.ToString();
 
+        }
+
+        private static void CalculateDiscountRedemtion(Discount discount, OrderRow row)
+        {
+            if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Five"))
+            {
+                discount.CreditsRemain = discount.CreditsRemain - 1;
+            }
+            if (row.RegistrationType.OptionLabel == ("OnDemand Recording Only"))
+            {
+                discount.CreditsRemain = discount.CreditsRemain - 1.25M;
+            }
+            if (row.RegistrationType.OptionLabel == ("CD-ROM and Hardcopy Handouts"))
+            {
+                discount.CreditsRemain = discount.CreditsRemain - 1.25M;
+            }
+            if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Six"))
+            {
+                discount.CreditsRemain = discount.CreditsRemain - 1.25M;
+            }
+            if (row.RegistrationType.OptionLabel == ("Premier Package"))
+            {
+                discount.CreditsRemain = discount.CreditsRemain - 1.5M;
+            }
         }
 
         private void RejectDiscount(OrderRow orderRow)

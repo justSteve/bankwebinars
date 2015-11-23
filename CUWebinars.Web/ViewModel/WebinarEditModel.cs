@@ -21,6 +21,7 @@ namespace CUWebinars.Web.ViewModel
         public string WhoAttend { get; set; }
         public decimal Duration { get; set; }
         public string ceu { get; set; }
+        public System.DateTime LivePlusFive { get; set; }
         public System.DateTime DateCreated { get; set; }
         public System.DateTime DateChanged { get; set; }
         public IEnumerable<SelectListItem> Presenters { get; set; }

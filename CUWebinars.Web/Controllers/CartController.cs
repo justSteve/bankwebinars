@@ -164,7 +164,10 @@ namespace CUWebinars.Web.Controllers
                 {
 
                     model.Order.OrderStatus = OrderStatus.Submitted;
-
+                    if (ReferenceEquals(model.Order.Affiliate, null))
+                    {
+                        var a = 0;
+                    }
 
                     if (User.Identity.IsAuthenticated)
                     {
@@ -273,7 +276,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Fatal("CheckoutConfirm heard: ", ex);
+                _logger.Fatal("CheckoutConfirm heard: " + ex);
                 throw;
             }
             return PartialView("Partials/CheckoutConfirm", model);

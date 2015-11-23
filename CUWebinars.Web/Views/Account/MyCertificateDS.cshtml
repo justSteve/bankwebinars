@@ -8,6 +8,7 @@
 @*<title>*@
 @{
     Layout = "";
+
     GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
     var webinar = Model.Webinar;
@@ -17,7 +18,6 @@
     string DateTimeString = DateTimeHelper.FormatDate(webinar.Date);
     var background = "~/Content/img/CertificateBackground.jpg";
 }
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 @{
@@ -43,6 +43,12 @@
             <script language="javascript">
 
                 $(function () {
+
+                @if (Model.DisplayName == null || Model.DisplayName == "undefined")
+                {
+                    <text>$("#displayName").html('[refresh page to enter name]');</text>
+                }
+
                     $('#myModal').modal('show');
                 });
             </script>
@@ -77,10 +83,12 @@
                 <p align="center">presents this</p>
                 <h1 style="text-align: center; font-size: 34px;">Certificate of Completion</h1>
                 <p align="center">to</p>
-                <h2 align="center">
+                <h2 id="displayName" align="center">
                     <b>@Model.DisplayName</b>
                 </h2>
-
+                <h4 align="center">
+                    <b>@Model.DisplayInst</b>
+                </h4>
                 <p align="center">for</p>
                 <h3 align="center">
                     <br /><b>@webinar.Title</b>
@@ -117,8 +125,7 @@
                 <br />
             </div>
         </div>
+
     </body>
 }
 </html>
-
-

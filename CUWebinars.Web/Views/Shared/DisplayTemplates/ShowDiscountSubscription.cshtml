@@ -73,8 +73,7 @@ Model.DiscountCode.StartsWith("PL")
                 @if (Model.CreditsRemain > 0)
                 {
                     <p style="font-size: larger">
-                        Your subscription package has been used <b> @Model.CreditsUsed.ToString().Replace(".0", "")</b> times and has
-                        <b>@Model.CreditsRemain.ToString().Replace(".0", "")</b> remaining.
+                        Your subscription code (@Model.DiscountCode) has <b>@Model.CreditsRemain.ToString().Replace(".0", "")</b> remaining.
                     </p>
                 }
                 else

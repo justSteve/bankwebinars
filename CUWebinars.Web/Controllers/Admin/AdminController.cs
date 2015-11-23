@@ -12,12 +12,10 @@ using System.Security.Claims;
 using System.ServiceModel.Syndication;
 using System.Text;
 using System.Web;
-using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Xml;
+using AutoMapper;
 using BrockAllen.MembershipReboot;
-using BrockAllen.MembershipReboot.Ef;
-using BrockAllen.MembershipReboot.WebHost;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
@@ -33,13 +31,10 @@ using CUWebinars.Web.Core;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
-using CUWebinars.Web.Membership.Email;
 using CUWebinars.Web.Models;
-using CUWebinars.Web.Models.JsonModels;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Elmah;
-using Microsoft.VisualBasic.ApplicationServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
@@ -47,11 +42,9 @@ using Thinktecture.IdentityModel.Authorization;
 using Thinktecture.IdentityModel.Authorization.Mvc;
 using WinSCP;
 using ClaimTypes = System.Security.Claims.ClaimTypes;
+using ClaimTypes1 = CUWebinars.Business.Constants.ClaimTypes;
 using DateTimeHelper = CUWebinars.Web.Helpers.DateTimeHelper;
 using Formatting = Newtonsoft.Json.Formatting;
-using PostEventClaim = CUWebinars.Business.Services.PostEventClaim;
-using WebUser = CUWebinars.Business.Models.WebUser;
-
 
 namespace CUWebinars.Web.Controllers.Admin
 {
@@ -115,7 +108,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
         public ActionResult GetAppLog2()
         {
-            System.Net.ServicePointManager.SetTcpKeepAlive(true, 30000, 20000);
+            ServicePointManager.SetTcpKeepAlive(true, 30000, 20000);
 
             // Get the object used to communicate with the server.
 
@@ -212,136 +205,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return View();
         }
-
-        //public ActionResult AddQuiz()
-        //{
-        //    var addQuizEditModel = new AddQuizEditModel
-        //    {
-        //        Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_webinarManagementService)
-        //    };
-        //    return View(addQuizEditModel);
-        //}
-
-        //[HttpPost]
-        //public ActionResult AddQuiz(AddQuizEditModel addQuizEditModel)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            _webinarManagementService.AddQuiz(addQuizEditModel.SelectedWebinar, addQuizEditModel.Questions);
-
-        //            return Json(new { Result = WebUiConstants.Success });
-        //        }
-        //        catch (Exception exception)
-        //        {
-        //            _logger.ErrorException(string.Format("AddQuiz. Session | {0}",
-        //                _appHelper.GetUserAuditInfo()),
-        //                exception);
-
-        //            return Json(new { Result = WebUiConstants.Fail });
-        //        }
-        //    }
-        //    return this.ModelStateJson(ModelState);
-        //}
-
-        public PartialViewResult BatchPasswordReset()
-        {
-            if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.BatchPasswordResetFeature))
-            {
-                var batchPasswordResetViewModel = new BatchPasswordResetViewModel { UserEmails = string.Empty };
-                return PartialView("~/Views/Admin/Partials/_BatchPasswordReset.cshtml", batchPasswordResetViewModel);
-            }
-
-            return PartialView("~/Views/Admin/Partials/_NotAuthorized.cshtml");
-        }
-
-        [HttpPost]
-        [ValidateJsonAntiForgeryToken(Order = 0)]
-        [HandleAjaxException(Order = 1)]
-        public ActionResult BatchPasswordReset(BatchPasswordResetViewModel batchPasswordResetViewModel)
-        {
-            const string CommaDelimiter = "|,|";
-            const string SemiColonDelimiter = "|;|";
-
-            if (ModelState.IsValid)
-            {
-
-                var emailsPlusPasswordsCollection =
-                    batchPasswordResetViewModel.UserEmails.Split(new[] { SemiColonDelimiter },
-                        StringSplitOptions.RemoveEmptyEntries);
-
-                var membershipRebootConfiguration = MembershipRebootConfigInert.Create(
-                    HttpRuntime.AppDomainAppPath,
-                    _stateService
-                    );
-
-                var userAccountService = new UserAccountService(
-                    membershipRebootConfiguration,
-                    new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase())
-                    );
-
-                var dataOperations =
-                    new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
-
-
-                foreach (var emailPwdPairing in emailsPlusPasswordsCollection)
-                {
-                    try
-                    {
-                        if (string.IsNullOrWhiteSpace(emailPwdPairing))
-                            continue;
-
-                        var pairingAsArray = emailPwdPairing.Split(
-                            new[] { CommaDelimiter },
-                            StringSplitOptions.RemoveEmptyEntries
-                            );
-
-                        var email = pairingAsArray[0].Trim();
-                        var password = pairingAsArray[1].Trim();
-
-                        var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, email);
-
-                        if (ReferenceEquals(null, userAccount))
-                        {
-                            _logger.Warn("User Not Found: " + email);
-                            throw new NullReferenceException(DomainConstants.UserNotFound);
-                        }
-
-
-                        _logger.Info("Batch Password Reset for {0}. ", email);
-                        dataOperations.SetFieldsConsistantWithVerifiedUser(userAccount);
-
-                        userAccountService.ResetPassword(_globalConfig.Tenant, email);
-
-                        var verificationKey =
-                            _stateService.GetValue<string>(DomainConstants.VerificationKeyForBatchChangePwd);
-
-                        userAccountService.ChangePasswordFromResetKey(verificationKey, password);
-
-                        _stateService.ClearValue(DomainConstants.VerificationKeyForBatchChangePwd);
-
-
-
-                        return Json(new { Result = WebUiConstants.Success });
-
-
-                    }
-                    catch (Exception exception)
-                    {
-                        _logger.ErrorException(
-                            string.Format("BatchPasswordReset | Session {0}", _appHelper.GetUserAuditInfo()), exception);
-                        ModelState.AddModelError(string.Empty,
-                            string.Format("There was an error at the server. The exception message is {0}",
-                                exception.Message));
-                    }
-                }
-
-            }
-            _logger.Error("Invalid BatchPasswordResetViewModel");
-            return this.ModelStateJson(ModelState);
-        }
-
 
         public PartialViewResult GetAffiliates()
         {
@@ -459,13 +322,6 @@ namespace CUWebinars.Web.Controllers.Admin
                 var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
 
                 var model = BuildManageOrderEditModel(id.Value);
-
-                if (userAccount == null)
-                {
-                    _logger.Info("ManageOrderFromDetails - Creating null user from Email.");
-                    RedirectToAction("CreateUserAccountFromCart", "Account",
-                        new { email = model.Order.BillingEmail });
-                }
 
                 if (model.Order.WebUser.email != model.Order.BillingEmail)
                 {
@@ -777,7 +633,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
                 catch (Exception ex)
                 {
-                    _logger.Fatal("ClaimsManagement error on " + model.UserEmail, ex);
+                    _logger.Fatal("ClaimsManagement error on " + model.UserEmail + " " + ex);
                 }
             }
 
@@ -798,6 +654,145 @@ namespace CUWebinars.Web.Controllers.Admin
 
         [HttpPost]
         [AllowAnonymous]
+        public void ExpressCheckout2(JotFormWebHook postback)
+        {
+            string formFields = Request.Form.ToString();
+            _logger.Info("ExpressCheckout2 all fields submitted to: " + formFields.ToString());
+
+            ExpressCheckoutModel2 form
+                = JsonConvert.DeserializeObject<ExpressCheckoutModel2>(postback.RawRequest);
+            _logger.Info("ExpressCheckout2 deserialized the fields to: " + form.ToString());
+
+
+            var user = _membershipService.GetUserByEmail(form.Email);
+            //var userFromLegacy = _membershipService.GetUserFromLegacy(form.Email);
+            bool userCreatedByCheckout = false;
+            if (ReferenceEquals(null, user))
+            {
+                userCreatedByCheckout = true;
+                _logger.Info("ExpressCheckout2 user must be created: " + form.Email);
+                user = _membershipService.CreateExpressCheckoutUser(_globalConfig.Tenant, form.Email
+                    , form.FullName.first
+                    , form.FullName.last
+                    , form.PhoneNumber.area + form.PhoneNumber.phone
+                    , form.Institution
+                    , form.Title);
+                _orderManagementService.SaveChanges();
+            }
+            Order expressOrder = _orderManagementService.FindExpressCheckoutOrder(form.Email,
+                form.WebinarId);
+
+            if (form.OrderId > 0)
+            {
+                expressOrder = _orderManagementService.FindExpressCheckoutOrderByOrderId(form.OrderId);
+            }
+
+            if (!ReferenceEquals(expressOrder, null))
+            {
+                try
+                {
+                    _logger.Info("ExpressCheckout2 webhook {0} found order: {1}", postback.FormId, expressOrder.idOrder);
+                    _orderManagementService.AssignWebUserToOrder(user, expressOrder);
+                    var forComment = new JProperty(
+                        string.Concat("ExpressCheckout2-",
+                            TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                        new JObject(new JProperty("ExpressCheckout2Comments", expressOrder.AdminComments))
+                        );
+                    expressOrder.OrderStatus = OrderStatus.Submitted;
+                    expressOrder.Origin = "ExpressCheckout2";
+                    expressOrder.AdminComments = forComment.ToString();
+                    expressOrder.Affiliate = _orderManagementService.GetAffiliateById(expressOrder.idAffiliate);
+                    //_orderManagementService.AttachAffiliate(_orderManagementService.GetAffiliateById(expressOrder.idAffiliate));
+                    OrderGenesis og = OrderGenesis.CreatedViaExpressCheckout;
+
+
+                    _orderManagementService.SaveOrderChanges(expressOrder, null, null, og);
+
+                    //try
+                    //{
+                    //    if (_globalConfig.Tenant == "BankWebinars")
+                    //    {
+                    //        expressOrder.idOrderLegacy = _orderManagementService.SynchExpressCheckout2Order(expressOrder);
+
+                    //        _orderManagementService.SynchIds(expressOrder);
+
+                    //        _orderManagementService.SaveChanges();
+                    //    }
+
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    _logger.WarnException("ExpressCheckout2 blows on SynchExpressCheckout2Order", ex);
+                    //}
+
+
+                    _logger.Info("ExpressCheckout2 to Confirmation Email Handler: " + expressOrder.idOrder);
+                    _orderManagementService.FireOrderSubmittedEvent(expressOrder, userCreatedByCheckout);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Fatal("ExpressCheckout2 tossed exception: " + ex.Message);
+                }
+
+            }
+            else
+            {
+                _logger.Warn("ExpressCheckout2 webhook {0} order NOT FOUND.", postback.FormId);
+
+                var idRegType = _webinarManagementService.GetRegTypeByLableAndWebinar(form.RegistrationType,
+                    form.WebinarId);
+                var newOrderRow = _orderManagementService.CreateOrderRow(null, null, idRegType);
+
+                newOrderRow.idWebinar = form.WebinarId;
+
+                newOrderRow.idRegType = idRegType;
+                _orderManagementService.LoadWebinarIntoOrderRow(newOrderRow);
+
+
+                var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+                _orderManagementService.SetUserStatusToUnChanged(user);
+
+                Order newOrder = _orderManagementService.CreateNewOrder(
+                    affiliate.idUserAff,
+                    user,
+                    newOrderRow.Webinar,
+                    newOrderRow
+                    );
+
+                newOrderRow.Order.OrderStatus = OrderStatus.Submitted;
+
+                newOrderRow.Order.Origin = "ExpressCheckout2";
+
+                JProperty createdByExpressCheckout2 = new JProperty(
+                    JsonPropertyKeys.OrderCreatedByExpressCheckoutKey,
+                    ""
+                    );
+
+                newOrderRow.Order.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrderRow.Order.AdminComments,
+                    createdByExpressCheckout2);
+                //_orderManagementService.AttachAffiliate(affiliate);
+
+                _orderManagementService.SaveChanges();
+
+
+                newOrder.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(newOrder);
+
+                _orderManagementService.SynchIds(newOrder);
+
+                _orderManagementService.SaveChanges();
+
+                _logger.Info("ExpressCheckout2 created order: " + newOrder.idOrder);
+
+                _orderManagementService.FireOrderSubmittedEvent(newOrderRow.Order, true);
+
+                //return RedirectToAction("OrderComplete", "Account", new { id = expressOrder.idOrder });
+            }
+
+        }
+
+
+        [HttpPost]
+        [AllowAnonymous]
         public void ExpressCheckout(JotFormWebHook postback)
         {
             string formFields = Request.Form.ToString();
@@ -807,7 +802,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 = JsonConvert.DeserializeObject<ExpressCheckoutModel>(postback.RawRequest);
             _logger.Info("ExpressCheckout deserialized the fields to: " + form.ToString());
 
-
+            
             var user = _membershipService.GetUserByEmail(form.q5_email5);
             //var userFromLegacy = _membershipService.GetUserFromLegacy(form.q5_email5);
             bool userCreatedByCheckout = false;
@@ -845,27 +840,29 @@ namespace CUWebinars.Web.Controllers.Admin
                     expressOrder.OrderStatus = OrderStatus.Submitted;
                     expressOrder.Origin = "ExpressCheckout";
                     expressOrder.AdminComments = forComment.ToString();
+                    expressOrder.Affiliate = _orderManagementService.GetAffiliateById(expressOrder.idAffiliate);
                     //_orderManagementService.AttachAffiliate(_orderManagementService.GetAffiliateById(expressOrder.idAffiliate));
+                    OrderGenesis og = OrderGenesis.CreatedViaExpressCheckout;
 
 
-                    _orderManagementService.SaveChanges();
+                    _orderManagementService.SaveOrderChanges(expressOrder, null, null, og);
 
-                    try
-                    {
-                        if (_globalConfig.Tenant == "BankWebinars")
-                        {
-                            expressOrder.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(expressOrder);
+                    //try
+                    //{
+                    //    if (_globalConfig.Tenant == "BankWebinars")
+                    //    {
+                    //        expressOrder.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(expressOrder);
 
-                            _orderManagementService.SynchIds(expressOrder);
+                    //        _orderManagementService.SynchIds(expressOrder);
 
-                            _orderManagementService.SaveChanges();
-                        }
+                    //        _orderManagementService.SaveChanges();
+                    //    }
 
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.WarnException("ExpressCheckout blows on SynchExpressCheckoutOrder", ex);
-                    }
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    _logger.WarnException("ExpressCheckout blows on SynchExpressCheckoutOrder", ex);
+                    //}
 
 
                     _logger.Info("ExpressCheckout to Confirmation Email Handler: " + expressOrder.idOrder);
@@ -873,7 +870,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
                 catch (Exception ex)
                 {
-                    _logger.Fatal("ExpressCheckout tossed exception: ", ex);
+                    _logger.Fatal("ExpressCheckout tossed exception: " + ex.Message);
                 }
 
             }
@@ -1372,15 +1369,15 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(new { Result = WebUiConstants.Success });
         }
 
-        public PartialViewResult ResendConnectionInfo()
-        {
-            var model = new ResendOrderInformationViewModel
-            {
-                OrderId = string.Empty
-            };
+        //public PartialViewResult ResendConnectionInfo()
+        //{
+        //    var model = new ResendOrderInformationViewModel
+        //    {
+        //        OrderId = string.Empty
+        //    };
 
-            return PartialView("~/Views/Admin/Home/_resendConnectionInfo.cshtml", model);
-        }
+        //    return PartialView("~/Views/Admin/Home/_resendConnectionInfo.cshtml", model);
+        //}
 
         [HttpPost]
         public ActionResult ResendConnectionInfo(int orderId)
@@ -1576,7 +1573,7 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.WebUser.email);
 
-                DateTime? expiryDate = _orderManagementService.GetPostEventMaterialsAccessExpiry(order);
+                DateTime? expiryDate = _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order);
 
                 if (expiryDate.HasValue && expiryDate > TtsConfig.UtcNowAsCts)
                 {
@@ -1861,14 +1858,12 @@ namespace CUWebinars.Web.Controllers.Admin
         [ValidateAntiForgeryToken]
         public ActionResult LogInAsUser(LogInAsOtherUserViewModel model)
         {
+            model.Email = model.Email.Trim();
             if (ModelState.IsValid)
             {
                 var adminUser = User.Identity as ClaimsIdentity;
-                var adminUserEmail =
-                    adminUser.Claims.Single(c => c.Type == System.IdentityModel.Claims.ClaimTypes.Email).Value;
+                var adminUserEmail = adminUser.Claims.Single(c => c.Type == System.IdentityModel.Claims.ClaimTypes.Email).Value;
                 var impersonatedUserAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, model.Email);
-
-
 
                 if (ReferenceEquals(null, impersonatedUserAccount))
                 {
@@ -1886,11 +1881,10 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
                 _membershipService.AddClaim(impersonatedUserAccount, Business.Constants.ClaimTypes.BeingImpersonated,
-                    adminUserEmail);
+                    impersonatedUserAccount.Email +"|"+adminUserEmail);
+                //adminUserEmail);
                 _membershipService.LogOutUser();
 
-                //_stateService.SetValue(WebUiConstants.AdminUserEmail, adminUserEmail);
-                //   TODO: Remove password challenge -- 
                 if (_membershipService.LogInAdminUserAsOtherUser(_globalConfig.Tenant,
                     adminUserEmail.Trim(), model.Password.Trim(),
                     impersonatedUserAccount
@@ -1938,7 +1932,7 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 try
                 {
-                    var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, model.Email);
+                    var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, model.Email.Trim());
                     if (userAccount.HasClaim(Business.Constants.ClaimTypes.HasNotVerified))
                     {
                         _membershipService.RemoveClaim(_globalConfig.Tenant, model.Email,
@@ -1954,7 +1948,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 try
                 {
-
                     _membershipService.CleanUser(_globalConfig.Tenant, model.Email, model.NewPassword);
                     _logger.Info("Manual Password Reset for {0} by: {1}. ", model.Email, _appHelper.GetUserAuditInfo());
                     return Json(new { Result = WebUiConstants.Success });
@@ -2246,6 +2239,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpPost]
         public JsonResult FirePasswordResetEvent(ChangePasswordFromResetKeyInputModel model, string verificationKey)
         {
+            model.Email = model.Email.Trim();
             if (_membershipService.ChangePasswordFromResetKey(_globalConfig.Tenant, verificationKey, model.Password))
                 model.ChangePasswordSucceeded = true;
             _logger.Info("FirePasswordResetEvent ");
@@ -2253,40 +2247,94 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
 
-        public PartialViewResult GetJsonTextArea()
+        ////        public PartialViewResult GetJsonTextArea()
+        ////        {
+        ////            const string importOrderViaDashboardViewModel = @"{""AffiliateComments"": ""Affiliate comments"",
+        ////                                  ""BillingAddress.AddressType"": ""Billing"",
+        ////                                  ""BillingAddress.Name"": ""Alan Turing"",
+        ////                                  ""BillingAddress.Phone"": ""555-555-5555"",
+        ////                                  ""BillingAddress.StreetAddress"": ""968 Wildcat Dr"",
+        ////                                  ""BillingAddress.StreetAddress2"": """",
+        ////                                  ""BillingAddress.City"": ""Del Rio"",
+        ////                                  ""BillingAddress.Zip"": ""5000"",
+        ////                                  ""BillingAddress.State"": ""Tx"",
+        ////                                  ""BillingAddress.Country"": ""USA"",
+        ////                                  ""Email"": ""alanbturingy@turing.com"",
+        ////                                  ""FirstName"": ""Alan"",
+        ////                                  ""LastName"": ""Turing"",
+        ////                                  ""idAffiliate"": 19,
+        ////                                  ""idRegType"": 88,
+        ////                                  ""idWebinar"": 437,
+        ////                                  ""Institution"": ""Some Institution"",
+        ////                                  ""ShippingAddress.AddressType"": ""Shipping"",
+        ////                                  ""ShippingAddress.Name"": ""Alan Turing"",
+        ////                                  ""ShippingAddress.Phone"": ""555-555-5555"",
+        ////                                  ""ShippingAddress.StreetAddress"": ""968 Wildcat Dr"",
+        ////                                  ""ShippingAddress.StreetAddress2"": """",
+        ////                                  ""ShippingAddress.City"": ""Del Rio"",
+        ////                                  ""ShippingAddress.Zip"": ""5000"",
+        ////                                  ""ShippingAddress.State"": ""Tx"",
+        ////                                  ""ShippingAddress.Country"": ""USA"",
+        ////                                  ""SendNotification"": ""true"",
+        ////                                  ""Title"": ""Mr""}";
+
+        ////            ViewBag.Payload = importOrderViaDashboardViewModel;
+
+        ////            return PartialView("~/Views/Admin/Home/_ImportOrder.cshtml", importOrderViaDashboardViewModel);
+        ////        }
+
+        public string CreatePostEventClaim(Order order, DateTime expiryDate)
         {
-            const string importOrderViaDashboardViewModel = @"{""AffiliateComments"": ""Affiliate comments"",
-                                  ""BillingAddress.AddressType"": ""Billing"",
-                                  ""BillingAddress.Name"": ""Alan Turing"",
-                                  ""BillingAddress.Phone"": ""555-555-5555"",
-                                  ""BillingAddress.StreetAddress"": ""968 Wildcat Dr"",
-                                  ""BillingAddress.StreetAddress2"": """",
-                                  ""BillingAddress.City"": ""Del Rio"",
-                                  ""BillingAddress.Zip"": ""5000"",
-                                  ""BillingAddress.State"": ""Tx"",
-                                  ""BillingAddress.Country"": ""USA"",
-                                  ""Email"": ""alanbturingy@turing.com"",
-                                  ""FirstName"": ""Alan"",
-                                  ""LastName"": ""Turing"",
-                                  ""idAffiliate"": 19,
-                                  ""idRegType"": 88,
-                                  ""idWebinar"": 437,
-                                  ""Institution"": ""Some Institution"",
-                                  ""ShippingAddress.AddressType"": ""Shipping"",
-                                  ""ShippingAddress.Name"": ""Alan Turing"",
-                                  ""ShippingAddress.Phone"": ""555-555-5555"",
-                                  ""ShippingAddress.StreetAddress"": ""968 Wildcat Dr"",
-                                  ""ShippingAddress.StreetAddress2"": """",
-                                  ""ShippingAddress.City"": ""Del Rio"",
-                                  ""ShippingAddress.Zip"": ""5000"",
-                                  ""ShippingAddress.State"": ""Tx"",
-                                  ""ShippingAddress.Country"": ""USA"",
-                                  ""SendNotification"": ""true"",
-                                  ""Title"": ""Mr""}";
 
-            ViewBag.Payload = importOrderViaDashboardViewModel;
+            if (!ReferenceEquals(null, order))
+            {
+                var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
 
-            return PartialView("~/Views/Admin/Home/_ImportOrder.cshtml", importOrderViaDashboardViewModel);
+                if (orderRow.Webinar.Status != WebinarStatus.Recorded) return null;
+                try
+                {
+                    var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
+                    var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, expiryDate.ToShortDateString());
+                    var OnDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, orderRow.OnDemandCode);
+
+                    var claimValue = new JObject(
+                        orderIdProperty,
+                        expiryDateProperty,
+                        OnDemandCodeProperty
+                        );
+
+                    //orderRow.OnDemandCode = onDemandCode;
+                    //_orderManagementService.SaveChanges();
+
+                    var userAccountOfOrderer = _membershipService.GetUserAccountByEmail(
+                        _globalConfig.Tenant,
+                        order.WebUser.email
+                        );
+
+                    _membershipService.AddClaim(
+                        userAccountOfOrderer,
+                        ClaimTypes1.PostEventMaterials
+                        , claimValue.ToString(Formatting.None)
+                        );
+
+
+                    //_membershipService.UpdatePostEventMaterialsClaim(
+                    //    _globalConfig.Tenant,
+                    //    order.BillingEmail,
+                    //    DateTime.Parse(newExpiryDate),
+                    //    order
+                    //    );
+                    _logger.Info("INSERT dbo.UserClaims ( ParentKey, Type, Value ) VALUES	( (SELECT [Key] FROM dbo.UserAccounts WHERE Email = '{0}'), http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials,'{1}')", userAccountOfOrderer.Email, claimValue);
+                    _logger.Info("Added expiryDate claim for: {0}. Date: {1}", order.idOrder,
+                        expiryDate.ToShortDateString());
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.Warn("CreateOnDemandClaimByAdjuster failed on orderId: " + order.idOrder);
+                }
+            }
+            return null;
         }
 
         [ValidateJsonAntiForgeryToken(Order = 0)]
@@ -2351,47 +2399,53 @@ namespace CUWebinars.Web.Controllers.Admin
         public ActionResult CheckOnDemandCodes(int? webinarId, int? idAffiliate)
         {
             IList<Order> v3Orders = _orderManagementService.GetV3OrdersByOnDemandClaim();
-            List<string> v3Emails = v3Orders.Select(v3Order => v3Order.BillingEmail).ToList();
-
+            
             foreach (var order in v3Orders)
             {
                 try
                 {
-                    var onDemandClaim = new PostEventClaim();
-
                     var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
                     var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
-
+                    
+                    var onDemandCode = order.OrderRows.SingleOrDefault().OnDemandCode;
                     foreach (var claim in claimsViewModel.UserClaims.Where(c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials"))
                     {
-                        var onDemandCode = order.OrderRows.SingleOrDefault().OnDemandCode;
-                        //if (onDemandCode == null) _orderManagementService.Create
-                        if (onDemandCode != null)
+                        var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
+                        if (thisClaim.ExpiryDate.AddDays(2) < DateTime.Now)
+                        {
+                            _logger.Warn("CheckOnDemandCodes finds expired claim: " + claim.Value);
+                        }
+
+                        if (!ReferenceEquals(onDemandCode, null) )
                         {
                             if (claim.Value.Contains(onDemandCode))
                             {
-                                var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
-
+                                CheckThatExpiryDateIsCorrect(order, thisClaim.ExpiryDate);
                                 if (thisClaim.OrderId != order.idOrder)
                                 {
-                                    _logger.Warn("Claim mismatch! Claim: {0} vs Order: {1}", thisClaim.OrderId,
+                                    _logger.Warn("CheckOnDemandCodes finds Claim mismatch! Claim: {0} vs Order: {1}", thisClaim.OrderId,
                                         order.idOrder);
+                                    _logger.Warn("Alert User of changed claim = '{0}' ", thisClaim.OrderId);
+                                    _logger.Warn("DELETE dbo.UserClaims WHERE Value = '{0}' --Order: {1}", claim.Value, order.idOrder);
+
+                                    CreatePostEventClaim(order, thisClaim.ExpiryDate);
                                 }
                                 else
                                 {
-                                    _logger.Info("Match on: " + order.OrderRows.SingleOrDefault().idOrder);
+                                    _logger.Info("CheckOnDemandCodes found Match on: " + order.OrderRows.SingleOrDefault().idOrder);
                                 }
 
-                                onDemandClaim.OrderId = order.idOrder;
-                                onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
-                                onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
                             }
-
                         }
                         else
                         {
 
-                            _logger.Warn("Null OnDemandCode " + order.OrderRows.SingleOrDefault().idOrder);
+                            //_orderManagementService.SaveChanges();
+                            _logger.Info("UPDATE dbo.OrderRow SET OnDemandCode = '{0}' WHERE idOrder ={1}", RandomHelpers.GetUniqueCode(4), order.idOrder);
+                            //var expiryDate = _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order);
+
+                            //CreatePostEventClaim(order, expiryDate);
+                            _logger.Warn("Null OnDemandCode is updated " + order.OrderRows.SingleOrDefault().idOrder);
                         }
                     }
                 }
@@ -2403,43 +2457,15 @@ namespace CUWebinars.Web.Controllers.Admin
             return Content("Ok");
         }
 
-
-        [HandleAjaxException]
-        [AllowAnonymous]
-        public ActionResult RestoreOnDemandCodes(int? webinarId, int? idAffiliate)
+        private DateTime CheckThatExpiryDateIsCorrect(Order order, DateTime expiryDate)
         {
+            var calculatedDate = _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order);
 
-            try
+            if (expiryDate.ToShortDateString() != calculatedDate.ToShortDateString())
             {
-                IList<PostEventClaim> onDemandClaims = _orderManagementService.FindAllPostEventClaims();
-
-                foreach (var claim in onDemandClaims)
-                {
-                    if (claim.OnDemandCode != null)
-                    {
-                        Order order = _orderManagementService.GetOrderById(claim.OrderId);
-                        if (
-                            order.OrderRows
-                                .SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
-                                .OnDemandCode == null)
-                        {
-                            order.OrderRows
-                                .SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
-                                .OnDemandCode = claim.OnDemandCode;
-                            _orderManagementService.SaveChanges();
-                        }
-                    }
-                    else
-                    {
-                        
-                    }
-                }
+                _logger.Info("exec CheckOnDemandCodesDateValues @calcDate='{0}', @storedDate='{1}', @idOrder='{2}'", calculatedDate.ToShortDateString(), expiryDate.ToShortDateString(), order.idOrder);
             }
-            catch (Exception ex)
-            {
-                _logger.ErrorException("RestoreOnDemandCodes: " , ex);
-            }
-            return Content("Ok");
+            return calculatedDate;
         }
 
 
@@ -2463,7 +2489,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     // use automapper to flatten out the order records, in this specific case the data 
                     //  model has circular references which cause problems with JSON serialization
                     List<OrderDTO> dtoSource = new List<OrderDTO>();
-                    AutoMapper.Mapper.Map(dtsource, dtoSource);
+                    Mapper.Map(dtsource, dtoSource);
 
 
                     List<String> columnSearch = new List<string>();
@@ -2519,7 +2545,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     // use automapper to flatten out the order records, in this specific case the data 
                     //  model has circular references which cause problems with JSON serialization
                     List<UserDTO> dtoSource = new List<UserDTO>();
-                    AutoMapper.Mapper.Map(dtsource, dtoSource);
+                    Mapper.Map(dtsource, dtoSource);
 
 
                     List<String> columnSearch = new List<string>();
@@ -2769,28 +2795,6 @@ namespace CUWebinars.Web.Controllers.Admin
             return responsePayload;
         }
 
-        [AllowAnonymous]
-        [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult CertificateOfCompletionDS(int id, string displayName, string displayInst)
-        {
-            //if
-            //OrderRow row = OrderFacade.Instance.LoadOrderRow(id);
-            var webinar = _webinarManagementService.GetWebinar(id);
-            ViewData["displayName"] = displayName;
-            ViewData["SessionInfo"] = "The Directors Education Series<br>" + webinar.Title + " - Presented By " +
-                                      webinar.Presenter.WebUser.FullName;
-            ;
-            ViewData["displayInst"] = displayInst;
-
-            return View("COC_DS");
-        }
-
-
-        [AllowAnonymous]
-        public ActionResult RedirectToLegacyBlog()
-        {
-            return Redirect("http://Legacy.Bankwebinars.com/Blog");
-        }
 
         private IList<IDictionary<string, string>> BuildDisplayOrdersByUserViewModel(string email, out int totalNumberOrders)
         {
@@ -2949,34 +2953,6 @@ namespace CUWebinars.Web.Controllers.Admin
             }
 
             return null;
-        }
-
-    }
-
-    public class MembershipRebootConfigInert
-    {
-        private static readonly GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
-
-        public static MembershipRebootConfiguration Create(string pathToRootDirectory, IStateService stateService)
-        {
-            var settings = SecuritySettings.FromConfiguration();
-            var config = new MembershipRebootConfiguration(settings);
-
-            var appinfo = new AspNetApplicationInformation(
-                _globalConfig.Tenant,
-                _globalConfig.EmailSignature,
-                _globalConfig.RelativeLoginUrl,
-                _globalConfig.RelativeConfirmChangeUrl,
-                _globalConfig.RelativeCancelVerificationUrl,
-                _globalConfig.RelativeConfirmPasswordResetUrl);
-
-            IMessageDelivery delivery = new TtsSmtpMessageDeliveryInert();
-
-            var emailFormatter = new TtsEmailFormatterInert(appinfo, stateService);
-
-            config.AddEventHandler(new EmailAccountEventsHandler(emailFormatter, delivery));
-
-            return config;
         }
 
     }

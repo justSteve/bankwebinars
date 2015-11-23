@@ -32,7 +32,8 @@ namespace CUWebinars.Web.Mapping.Configuration
                 .ForMember(webinarEditModel => webinarEditModel.Topics, webinar => webinar.Ignore())
                 .ForMember(webinarEditModel => webinarEditModel.RegTypeGroups, webinar => webinar.Ignore())
                 .ForMember(webinarEditModel => webinarEditModel.SelectedRegTypeGroups, webinar => webinar.Ignore())
-                .ForMember(webinarEditModel => webinarEditModel.PostedRegTypeGroups, webinar => webinar.Ignore());
+                .ForMember(webinarEditModel => webinarEditModel.PostedRegTypeGroups, webinar => webinar.Ignore())
+                .ForMember(webinarEditModel => webinarEditModel.LivePlusFive, webinar => webinar.Ignore());
 
             // flattens the Webinar structure a little bit to allow
             //  easier consumption by server-side DataTables pattern

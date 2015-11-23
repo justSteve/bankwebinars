@@ -6,7 +6,7 @@
     {
         @Html.AntiForgeryToken()
         @Html.ValidationSummary("The following errors need attention:", new { id = "CloneWebinarValSummary" })
-        
+
     <fieldset>
         <legend>Edit Webinar Details</legend>
 
@@ -19,6 +19,13 @@
             <div class="control-label">@Html.LabelFor(m => m.Date)</div>
             <div class="controls">
                 @Html.EditorFor(m => m.Date)
+            </div>
+        </div>
+
+        <div class="control-group">
+            <div class="control-label">@Html.LabelFor(m => m.LivePlusFive)</div>
+            <div class="controls">
+                @Html.EditorFor(m => m.LivePlusFive)
             </div>
         </div>
         <div class="control-group">

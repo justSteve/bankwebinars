@@ -760,7 +760,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 RegTypesGroupsXref = new List<RegTypesGroupsXref>(),
                 SmallImageUrl = webinarEditModel.SmallImageUrl,
                 WebinarTopicXrefs = new List<WebinarTopicXref>(),
-                WhoAttend = webinarEditModel.WhoAttend
+                WhoAttend = webinarEditModel.WhoAttend, 
+                LivePlusFiveValue = webinarEditModel.LivePlusFive 
+                
             };
 
 
@@ -840,14 +842,14 @@ namespace CUWebinars.Web.Core.Orchestrators
                 });
             }
 
-            foreach (
-                var existingRegTypeGroupId in
-                    existingRegTypeGroupIds.Where(
-                        existingRegTypeGroupId =>
-                            !webinarEditModel.PostedRegTypeGroups.RegTypeGroupIds.Contains(existingRegTypeGroupId)))
-            {
-                _webinarManagementService.DeleteRegTypeGroupXRef(webinar, existingRegTypeGroupId);
-            }
+            //foreach (
+            //    var existingRegTypeGroupId in
+            //        existingRegTypeGroupIds.Where(
+            //            existingRegTypeGroupId =>
+            //                !webinarEditModel.PostedRegTypeGroups.RegTypeGroupIds.Contains(existingRegTypeGroupId)))
+            //{
+            //    _webinarManagementService.DeleteRegTypeGroupXRef(webinar, existingRegTypeGroupId);
+            //}
 
             var existingTopicIds =
                 webinar.WebinarTopicXrefs.Where(r => r.idWebinar == webinar.idWebinar).Select(r => r.idTopic).ToArray();
@@ -887,7 +889,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         private DateTime GetPostEventMaterialsAccessExpiry(Order order)
         {
-            return _orderManagementService.GetPostEventMaterialsAccessExpiry(order);
+            return _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order);
         }
 
         private void AddClaimForPostEventMaterials(IEnumerable<Order> orders)
@@ -928,7 +930,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 }
                 catch (Exception ex)
                 {
-                    _logger.Fatal("AddClaimForPostEventMaterials| MR record not found "+ order.BillingEmail, ex);
+                    _logger.Fatal("AddClaimForPostEventMaterials| MR record not found "+ order.BillingEmail +" "+ ex.Message);
                 }
             }
         }

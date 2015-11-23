@@ -74,7 +74,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
 
             _commandProcessor.Execute(migrateOrderCommand);
-
+            
             return migrateOrderCommand.OrderId;
         }
 

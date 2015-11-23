@@ -525,7 +525,7 @@ namespace CUWebinars.Business.Core
                     sqlCmd.CommandType = CommandType.Text;
                     sqlCmd.Parameters.Add(adminEmail);
                     sqlCmd.CommandText =
-                        "DELETE FROM dbo.UserClaims WHERE Type = 'http://ttstrain.com/ws/2014/01/identity/claims/BeingImpersonated' AND Value = @adminEmail;";
+                        "DELETE FROM dbo.UserClaims WHERE Type = 'http://ttstrain.com/ws/2014/01/identity/claims/BeingImpersonated' AND Value like '%"+adminUserEmail+"'";
 
                     numRows = sqlCmd.ExecuteNonQuery();
                 }
@@ -685,7 +685,7 @@ namespace CUWebinars.Business.Core
                                 }
                             }
                         }
-
+                          
                         return orders;
                     }
                     catch (Exception ex)
@@ -817,6 +817,7 @@ namespace CUWebinars.Business.Core
 
             // Display the content.
             //return returnvalue;
+
             ;
             SynchOrderIds(Convert.ToInt32(returnvalue.Split(':')[1].Replace("\"", "").Replace("}", "")), order.idOrder);
             return Convert.ToInt32(returnvalue);
@@ -825,12 +826,33 @@ namespace CUWebinars.Business.Core
 
         public void SynchOrderIds(int legacyOrderId, int v3OrderId)
         {
+            if (legacyOrderId == v3OrderId) return;
+
+
             using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
             {
                 sqlConnection.Open();
                 var v3idOrderParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idOrderV3", Value = v3OrderId };
                 var idOrderParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idOrder", Value = legacyOrderId };
 
+                if (legacyOrderId == 0)
+                {
+                    using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                    {
+                        errorLogger.CommandText =
+                            "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                        errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
+                        errorLogger.CommandText += "'LegacyIdIsZero' ,";
+                        errorLogger.CommandText += "9 ,9 ,9 ,'[SynchOrderIds found LegacyIdIsZero', 9 ,";
+                        errorLogger.CommandText += "'exec  BuildQueryToFindLegacyOrderOnZeroCondition @idOrderV3 =" + v3OrderId + "')";
+                        
+
+                        errorLogger.ExecuteNonQuery();
+
+                    }
+                    return;
+
+                }
                 using (var synchOrderIds = new SqlCommand("SynchOrderIds", sqlConnection))
                 {
                     synchOrderIds.Parameters.Add(v3idOrderParameter);
@@ -1068,7 +1090,7 @@ namespace CUWebinars.Business.Core
 
         public PostEventClaim FindPostEventClaimByOnDemandCode(Order order)
         {
-            var retValue ="";
+            var retValue = "";
             using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
             {
                 sqlConnection.Open();
@@ -1080,7 +1102,7 @@ namespace CUWebinars.Business.Core
                 };
 
                 if (onDemandCodeParameter.Value == null) return null;
-                
+
                 using (var findClaim = new SqlCommand("FindPostEventClaimByOnDemandCode", sqlConnection))
                 {
                     findClaim.Parameters.Add(onDemandCodeParameter);

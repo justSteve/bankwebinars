@@ -13,7 +13,6 @@ using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Services;
-using Glimpse.Core.Tab;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Trace = System.Diagnostics.Trace;

@@ -18,8 +18,6 @@ namespace CUWebinars.Web.Core
         public string HandoutRepository { get; private set; }
         public string ImgRepository { get; private set; }
         public string DefaultConnectionString { get; private set; }
-        public int GhostRequestRetryLimit { get; private set; }
-        public int GhostRequestTimeout { get; private set; }
         public string MembershipConnectionString { get; private set; }
         public bool NotificationsTesting { get; private set; }
         public string RelativeLoginUrl { get; private set; }
@@ -57,8 +55,6 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.CcPaymentProcessingUrlKey = ApplicationSettingsSection["CcPaymentProcessingUrlKey"];
                 UniqueInstance.CreateUserQueueName = ApplicationSettingsSection["CreateUserQueueName"];
                 UniqueInstance.EmailSendingMode = ApplicationSettingsSection["EmailSendingMode"];
-                UniqueInstance.GhostRequestRetryLimit = int.Parse(ApplicationSettingsSection["GhostRequestRetryLimit"]);
-                UniqueInstance.GhostRequestTimeout = int.Parse(ApplicationSettingsSection["GhostRequestTimeout"]);
                 UniqueInstance.HandoutRepository = ApplicationSettingsSection["HandoutRepository"];
                 UniqueInstance.NotificationsTesting = bool.Parse(ApplicationSettingsSection["NotificationsTesting"]);
                 UniqueInstance.RelativeCancelVerificationUrl = ApplicationSettingsSection["RelativeCancelVerificationUrl"];

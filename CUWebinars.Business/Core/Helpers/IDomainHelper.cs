@@ -5,6 +5,6 @@ namespace CUWebinars.Business.Core.Helpers
 {
     public interface IDomainHelper
     {
-        //DateTime GetPostEventMaterialsAccessExpiry(Order order);
+        //DateTime CalculatePostEventMaterialsAccessExpiry(Order order);
     }
 }

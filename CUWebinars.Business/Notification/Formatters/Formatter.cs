@@ -38,7 +38,8 @@ namespace CUWebinars.Business.Notification.Formatters
         {
             LoadBodyTemplate(templateName);
 
-            return CreateMessage(GetSubject(underPinningObject), GetBody(underPinningObject));
+            var returnThis = CreateMessage(GetSubject(underPinningObject), GetBody(underPinningObject));
+            return returnThis;
         }
 
         public string FormatToString<T>(T objectOfMessage, string templateName)

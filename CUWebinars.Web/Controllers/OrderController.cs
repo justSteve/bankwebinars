@@ -17,6 +17,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using CUWebinars.Business.Core;
+using CUWebinars.Business.Models;
 
 namespace CUWebinars.Web.Controllers
 {
@@ -245,6 +246,10 @@ namespace CUWebinars.Web.Controllers
 
                 _logger.Info(string.Format("MigrateOrder|CreateNewOrder: {0}", idOfLastOrder));
 
+                //Order resultOrder = _orderManagementService.GetOrderById(idOfLastOrder);
+                //var discount =
+                //    resultOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount;
+                //_logger.Info("Discount: RedeemDiscountStarts: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}", discount.DiscountCode, discount.DateValidFrom, discount.DateValidTo, discount.CreditsUsed, discount.CreditsRemain);
                 return Json(new { Result = idOfLastOrder.ToString() }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception exception)
@@ -328,6 +333,7 @@ namespace CUWebinars.Web.Controllers
                 return Json(new { Result = WebUiConstants.Fail, Error = "Invalid Registration Type: " + importedOrder.RegistrationType });
             }
             importedOrder.RegistrationType = idRegType.ToString();
+            importedOrder.OrderDate = DateTime.Now;
             try
             {
                 var email = importedOrder.Email.Trim();

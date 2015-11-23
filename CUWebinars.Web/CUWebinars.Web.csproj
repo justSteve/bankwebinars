@@ -131,14 +131,23 @@
       <HintPath>..\packages\FluentValidation.5.5.0.0\lib\Net40\FluentValidation.dll</HintPath>
     </Reference>
     <Reference Include="Glimpse.AspNet, Version=1.9.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Glimpse.AspNet.1.9.2\lib\net45\Glimpse.AspNet.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Glimpse.Core">
+    <Reference Include="Glimpse.Core, Version=1.8.6.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Glimpse.1.8.6\lib\net45\Glimpse.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Glimpse.Ninject">
-      <HintPath>..\packages\Glimpse.Ninject.0.9.0\lib\net4\Glimpse.Ninject.dll</HintPath>
+    <Reference Include="Glimpse.EF5">
+      <HintPath>..\packages\Glimpse.EF5.1.6.5\lib\net45\Glimpse.EF5.dll</HintPath>
+    </Reference>
+    <Reference Include="Glimpse.Elmah, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Glimpse.Elmah.1.1.1\lib\net40\Glimpse.Elmah.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Glimpse.Mvc5, Version=1.5.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Glimpse.Mvc5.1.5.3\lib\net45\Glimpse.Mvc5.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.4.9.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -457,9 +466,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Infrastructure\IErrorResponseCommand.cs" />
-    <Compile Include="Infrastructure\TtsWebClient.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Mapping\Configuration\IMappingInitializer.cs" />
     <Compile Include="Mapping\Configuration\MappingBase.cs" />
     <Compile Include="Mapping\Configuration\ViewModelMappings.cs" />
@@ -471,6 +477,7 @@
     <Compile Include="Membership\Email\TtsTokenizerInert.cs" />
     <Compile Include="Models\AddClaimInputModel.cs" />
     <Compile Include="Models\AddQuizEditModel.cs" />
+    <Compile Include="Models\Address4JotForm.cs" />
     <Compile Include="Models\BatchPasswordResetViewModel.cs" />
     <Compile Include="Models\CompPersSubscriptionsModel.cs" />
     <Compile Include="Models\ConnectionInfoEditModel.cs" />
@@ -481,6 +488,8 @@
     <Compile Include="Models\EditUserInfoModel.cs" />
     <Compile Include="Models\EditUserModel.cs" />
     <Compile Include="Models\ExpressCheckoutModel.cs" />
+    <Compile Include="Models\ExpressCheckoutModel2.cs" />
+    <Compile Include="Models\FullName.cs" />
     <Compile Include="Models\IdentifyModel.cs" />
     <Compile Include="Models\ImportOrderModel.cs" />
     <Compile Include="Models\JotFormWebHook.cs" />
@@ -497,6 +506,7 @@
     <Compile Include="Models\MigrateOrderModel.cs" />
     <Compile Include="Models\MonerisResponse.cs" />
     <Compile Include="Models\OnDemandPlaybackModel.cs" />
+    <Compile Include="Models\PhoneNumber.cs" />
     <Compile Include="Models\PostEventInfoModel.cs" />
     <Compile Include="Models\Q14Address14.cs" />
     <Compile Include="Models\Q4Name.cs" />
@@ -1169,6 +1179,7 @@
     <Content Include="Content\images\email\NYBA\bannerCaption1.jpg" />
     <Content Include="Content\images\email\NYBA\header_Base.png" />
     <Content Include="Content\images\email\onDemand.jpg" />
+    <Content Include="Content\images\email\OREGONBANKERS\banner.jpg" />
     <Content Include="Content\images\email\OREGONBANKERS\bannerCaption1.jpg" />
     <Content Include="Content\images\email\ozarkCFT\addressCenter.jpg" />
     <Content Include="Content\images\email\ozarkCFT\addressLeft.jpg" />
@@ -1399,6 +1410,7 @@
     <Content Include="Content\images\presenters\cooley.jpg" />
     <Content Include="Content\images\presenters\costonis.jpg" />
     <Content Include="Content\images\presenters\crawford.jpg" />
+    <Content Include="Content\images\presenters\crawfordcostonis.jpg" />
     <Content Include="Content\images\presenters\crawfordshelton.jpg" />
     <Content Include="Content\images\presenters\c_crawford.jpg" />
     <Content Include="Content\images\presenters\danasummer.jpg" />
@@ -1675,6 +1687,7 @@
     <Content Include="Content\DataTables\css\dataTables.responsive.scss" />
     <Content Include="Content\DataTables\css\dataTables.jqueryui.scss" />
     <Content Include="Notification\Templates\AdhocNotification.cshtml" />
+    <Content Include="Scripts\jquery-dateFormat.min.js" />
     <Content Include="Scripts\placeholder.js" />
     <Content Include="Views\Cart\ExpressCheckoutAffiliate.cshtml" />
     <Content Include="WinSCP.exe">
@@ -1968,6 +1981,8 @@
     <Content Include="Views\Admin\COC_DS.cshtml" />
     <Content Include="Views\Webinar\Partials\SearchResultsGrid.cshtml" />
     <Content Include="Views\Webinar\Search.cshtml" />
+    <Content Include="Views\Account\MyCertificateDS.cshtml" />
+    <Content Include="Views\Cart\Partials\ExpressCheckout4IE2.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

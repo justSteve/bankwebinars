@@ -61,7 +61,7 @@ namespace CUWebinars.Web.Infrastructure.Attributes
                 {
                     var webUser =
                         _orderManagementService.GetWebUser(
-                            ((ClaimsIdentity) userIdentity).Claims.Single(c => c.Type == ClaimTypes.Email).Value
+                            ((ClaimsIdentity)userIdentity).Claims.Single(c => c.Type == ClaimTypes.Email).Value
                             );
 
                     Affiliate affiliate = null;
@@ -76,12 +76,12 @@ namespace CUWebinars.Web.Infrastructure.Attributes
                         affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(19);
                     }
 
-                        // if null returned, just use whatever is stored in Session for CurrentAffiliate. O/w, set that value.
+                    // if null returned, just use whatever is stored in Session for CurrentAffiliate. O/w, set that value.
                     if (!ReferenceEquals(null, affiliate))
-                        {
-                            _stateService.SetValue(WebUiConstants.CurrentAffiliate, affiliate);
-                        }
-                    
+                    {
+                        _stateService.SetValue(WebUiConstants.CurrentAffiliate, affiliate);
+                    }
+
                 }
             }
             else
@@ -114,13 +114,13 @@ namespace CUWebinars.Web.Infrastructure.Attributes
                     //   be literally the Domain Name used by the given affiliate.
 
                     _stateService.SetValue(
-                        WebUiConstants.CurrentAffiliate, 
-                        _orderManagementService.GetAffiliateByDomain(affilliateDomain) ??_orderManagementService.GetAffiliateByDomain("bennett")
+                        WebUiConstants.CurrentAffiliate,
+                        _orderManagementService.GetAffiliateByDomain(affilliateDomain) ?? _orderManagementService.GetAffiliateByDomain("bennett")
                         );
                 }
                 catch (Exception exception)
                 {
-                    ILog logger = LogManager.GetLogger(typeof (MonitorAffiliateFilter));
+                    ILog logger = LogManager.GetLogger(typeof(MonitorAffiliateFilter));
                     logger.Fatal(exception);
                     throw;
                 }
@@ -133,24 +133,34 @@ namespace CUWebinars.Web.Infrastructure.Attributes
 
             if (int.TryParse(currentRequest.QueryString[WebUiConstants.AffiliateId], out loadAff))
             {
-                try
-                {
-                    _stateService.SetValue(
-                        WebUiConstants.CurrentAffiliate,
-                        _orderManagementService.GetAffiliateByIdLoaded(loadAff, a => a.WebUser)
-                        );
-                }
-                catch (Exception exception)
-                {
-                    ILog logger = LogManager.GetLogger(typeof(MonitorAffiliateFilter));
-                    logger.ErrorFormat("ERROR: failed to load idAff code: {0}", HttpContext.Current.Request.Url);
-                    logger.Error(exception.Message);
-                    _stateService.SetValue(
-                        WebUiConstants.CurrentAffiliate,
-                        _orderManagementService.GetAffiliateByIdLoaded(19, a => a.WebUser)
-                        );
+                Affiliate foundAff =
+                    _orderManagementService.GetAffiliateByIdLoaded(loadAff, a => a.WebUser);
 
+                if (!ReferenceEquals(foundAff, null))
+                {
+                    _stateService.SetValue(
+                        WebUiConstants.CurrentAffiliate,
+                        foundAff
+                        );
                 }
+                //try
+                //{
+                //    _stateService.SetValue(
+                //        WebUiConstants.CurrentAffiliate,
+                //        _orderManagementService.GetAffiliateByIdLoaded(loadAff, a => a.WebUser)
+                //        );
+                //}
+                //catch (Exception exception)
+                //{
+                //    ILog logger = LogManager.GetLogger(typeof(MonitorAffiliateFilter));
+                //    logger.ErrorFormat("ERROR: failed to load idAff code: {0}", HttpContext.Current.Request.Url);
+                //    logger.Error(exception.Message);
+                //    _stateService.SetValue(
+                //        WebUiConstants.CurrentAffiliate,
+                //        _orderManagementService.GetAffiliateByIdLoaded(19, a => a.WebUser)
+                //        );
+
+                //}
             }
             else
             {
