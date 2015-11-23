@@ -575,6 +575,46 @@ namespace CUWebinars.Web.Controllers
             return View("EditUser", null);
         }
 
+
+
+        public JsonResult GetEditUserCompactForm(int? id)
+        {
+            // similar to the existing EditUserFromOrder routine
+
+            //if (id.Value <= 0)
+            //    throw new Exception("Id of user to edit must be >= 0");
+
+            string html = "";
+
+            try
+            {
+                var user = _accountControllerOrchestrator.GetWebUserById(id.Value);
+
+                WebUser editingUser = null;
+
+                if (User.Identity.IsAuthenticated)
+                {
+                    editingUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
+                }
+
+                _logger.Info(string.Format("{0} is editing {1}", editingUser.email, user.email));
+
+                var editModel = BuildEditUserInfoModel(user, "");
+
+                html = ViewHelpers.RenderViewToString(ControllerContext,
+                        "~/Views/Shared/EditorTemplates/EditUser_Compact.cshtml",
+                        editModel, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("GetEditUserCompactForm error on " + id.Value, ex);
+            }
+
+            return Json(new { html = html });
+
+        }
+
+
         [System.Web.Mvc.HttpGet]
         public ActionResult EditUser(int? id, string returnUrl = null)
         {

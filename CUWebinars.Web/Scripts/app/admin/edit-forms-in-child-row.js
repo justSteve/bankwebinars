@@ -1,0 +1,224 @@
+﻿
+function AttachDataTableEditEvents() {
+
+    // user wants to edit a cell
+    $('.dataTable').on('click', 'td.details-control', function () {
+
+        // check to see if there is already an edit in progress.  we are going to close it so they 
+        //  can browse around, when they re-open it though, it will re-populate the form fields from the server,
+        //  any unsaved changes will be "lost".
+        if ($("tr.shown").length > 0 &&
+            !$(this).hasClass("child-showing")) {
+
+            $(this).parents(".dataTable").find("td.child-showing").click();
+
+        }
+
+        var table = $('.dataTable').DataTable();
+        var tr = $(this).parents('tr');
+        var row = table.row(tr);
+
+        var cell = table.cell($(this));
+        var $td = $(cell.node());
+
+        if (row.child.isShown()) {
+            row.child.hide();
+            tr.removeClass('shown');
+            $("td", tr).removeClass("child-showing");
+        } else {
+            row.child(createChildRow(cell, $td, row.data()), "child-row").show();
+            $td.addClass("child-showing");
+            tr.addClass('shown');
+        }
+    });
+
+    $('.dataTable').on("click", "#cancel-changes", function (e) {
+        e.preventDefault();
+        $(this).parents(".dataTable").find("td.child-showing").click();
+    });
+
+
+
+
+
+    // EditUser_Compact form events
+    $('.dataTable').on("click", ".show-billing-address", function (e) {
+        e.preventDefault();
+
+        $(".shipping-field").addClass("hidden"); // .hide();
+        $(".show-shipping-address").removeClass("btn-success");
+
+        $(".billing-field").removeClass("hidden"); //.show();
+        $(".show-billing-address").addClass("btn-success");
+    });
+
+
+    $('.dataTable').on("click", ".show-shipping-address", function (e) {
+        e.preventDefault();
+
+        $(".billing-field").addClass("hidden"); //.hide();
+        $(".show-billing-address").removeClass("btn-success");
+
+        $(".shipping-field").removeClass("hidden"); //.show();
+        $(".show-shipping-address").addClass("btn-success");
+    });
+
+
+    $('.dataTable').on("click", "#save-changes-user", function (e) {
+        e.preventDefault();
+
+        var form = $(this).parents("form");
+        var $form = $(form);
+
+        // configure the current validator to validate hidden form elements
+        $.validator.unobtrusive.parse($form);
+        $form.validate().settings.ignore = []; // so it doens't "ignore" .hidden fields
+
+        // check to see if the form is invalid
+        if (!$form.valid())
+        {
+            // are the invalid fields on the hidden panel? flash the button (or something!)
+            if ($(".hidden .input-validation-error").length)
+            {
+                if ($(".show-billing-address.btn-success").length) {
+                    $(".show-shipping-address").addClass("btn-danger");
+                    setTimeout(function () {
+                        $(".show-shipping-address").removeClass("btn-danger");
+                    }, 2000);
+                }
+
+                if ($(".show-shipping-address.btn-success").length)
+                {
+                    $(".show-billing-address").addClass("btn-danger");
+                    setTimeout(function () {
+                        $(".show-billing-address").removeClass("btn-danger");
+                    }, 2000);
+                }
+            }
+            return false; // do not allow form to submit if it is invalid
+        }
+
+
+        // form validation passed, save edited User fields to the database...
+        // could definitely use a "busy" cursor.
+
+        // the EditUser_Compact screen uses EditUserInfoModel directly, but we post
+        //  it to the Account/EditUser Action as an EditUserViewModel.  both models contain an EditFields object,
+        //  which is the actual representation of the form, and MVC lines the sub-objects up as it deserializes it
+
+        var data = $form.serialize();
+        $.ajax({
+            async: false,
+            url: "/account/edituser",
+            data: data ,
+            dataType: "json",
+            type: "POST",
+            success: function (data) {
+                // probably should show the user something on success
+                console.log(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+            }
+        });
+
+
+    });
+
+
+}
+
+
+
+function createChildRow(cell, $td, rowData) {
+
+    if ($td.hasClass("edit-user-name-email")) {
+        return editUserCell(cell, $td, rowData);
+    }
+
+    if ($td.hasClass("edit-date")) {
+        return editDateCell(cell, $td, rowData);
+    }
+
+    return "Row " + cell.index().row + ", Col " + cell.index().column;
+
+}
+
+
+function editUserCell(cell, $td, rowData) {
+
+    // could definitely use a "busy" cursor.
+
+    var html = "";
+
+    $.ajax({
+        async: false,
+        url: "/account/geteditusercompactform",
+        data: ({ id: rowData.idUser }),
+        dataType: "json",
+        type: "POST",
+        success: function (data) {
+            html = data.html;
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus);
+        }
+    });
+
+    return html;
+}
+
+
+function editDateCell(cell, $td, rowData) {
+    // need this in some sort of editable format...  pull from server via ajax?
+    //  apply editor plugin?
+
+    return "" +
+"<form class='form-inline'>" +
+  "<div class='form-group'>" +
+    "<label for='orderDate'>Order Date</label>" +
+    "<input type='date' class='form-control' id='orderDate' value='" + rowData.OrderDateString + "'>" +
+  "</div>" +
+  "<button type='submit' class='btn btn-default'>Save</button> <button type='button' class='btn btn-link'>Cancel</button>" +
+"</form>"
+
+}
+
+
+
+
+
+//function createChildRow(rowData)
+//{
+//// if you return an HTML string that isn't a TR, datatables.net gives you a TD colspan=x, so the child content can have the whole row.
+//    return "" +
+//"<form class='form-inline'>" +
+//  "<div class='form-group'>" +
+//    "<label for='exampleInputName2'>First Name</label>" +
+//    "<input type='text' class='form-control' id='exampleInputName2' placeholder='Jane' value='" + rowData.FirstName + "'>" +
+//  "</div>" +
+//  "<div class='form-group'>" +
+//    "<label for='exampleInputName2'>Last Name</label>" +
+//    "<input type='text' class='form-control' id='exampleInputName2' placeholder='Doe' value='" + rowData.LastName + "'>" +
+//  "</div>" +
+//  "<div class='form-group'>" +
+//    "<label for='exampleInputEmail2'>Email</label>" +
+//    "<input type='email' class='form-control' id='exampleInputEmail2' disabled placeholder='jane.doe@example.com' value='" + rowData.BillingEmail + "'>" +
+//  "</div>" +
+//  "<button type='submit' class='btn btn-default'>Save</button> <button type='button' class='btn btn-link'>Cancel</button>" +
+//"</form>"
+
+//// if you return a Row then it nests naturally under the parent.
+//    return $(
+//        '<tr>' +
+//            '<td>asdf</td>' +
+//            '<td>asdf</td>' +
+//            '<td>asdf</td>' +
+//            '<td>asdf</td>' +
+//            '<td>asdf</td>' +
+//            '<td>asdf</td>' +
+//            '<td>asdf</td>' +
+//            '<td>asdf</td>' +
+//        '</tr>'
+//    );
+//}

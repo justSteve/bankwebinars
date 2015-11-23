@@ -149,7 +149,7 @@ $(function () {
             });
         });
 
-
+        AttachDataTableEditEvents(); // edit-forms-in-child-rows.js
 
     };
 
@@ -181,16 +181,17 @@ $(function () {
             "deferRender": true,
             'columns': [
                 { 'data': 'idOrder' },
-                { 'data': 'LastName' },
-                { 'data': 'Institution' },
-                null,
-                { 'data': 'Discount' },
+                { 'data': 'LastName', 'class': 'details-control edit-user-name-email' },
+                { 'data': 'Institution', 'class': 'details-control' },
+                { 'data': null, 'class': 'details-control' },
+                { 'data': 'Discount', 'class': 'details-control' },
 
                 {
                     'data': 'Affiliate_ttsDomain',
-                    'visible': aff
+                    'visible': aff,
+                    'class': 'details-control'
                 },
-                { 'data': 'OrderDateString' },
+                { 'data': 'OrderDateString', 'class': 'details-control edit-date' },
                 { 'data':'OrderStatusString' }
 
             ],
