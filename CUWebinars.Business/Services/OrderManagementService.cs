@@ -1729,7 +1729,7 @@ namespace CUWebinars.Business.Services
                 order.ShippingState = shippingAddress.State;
                 order.ShippingZip = shippingAddress.Zip;
 
-                _logger.Info( "Order's user was updated from " + order.BillingEmail + " on " + order.idOrder);
+                _logger.Info("idOrder {0} user info updated from {1}", order.idOrder, order.BillingEmail);
 
             }
         }

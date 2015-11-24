@@ -485,6 +485,9 @@
     <Compile Include="Models\DiscountModel.cs" />
     <Compile Include="Models\EditContactInfoModel.cs" />
     <Compile Include="Models\EditDiscountModel.cs" />
+    <Compile Include="Models\EditInstitionModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Models\EditQuizEditModel.cs" />
     <Compile Include="Models\EditUserInfoModel.cs" />
     <Compile Include="Models\EditUserModel.cs" />
@@ -1588,7 +1591,6 @@
     <Compile Include="Models\AdminDTO.cs" />
     <Compile Include="Models\WebinarFilesEditModel.cs" />
     <Compile Include="Models\EditBillingAddressModel.cs" />
-    <Compile Include="Models\EditInstitionModel.cs" />
     <Compile Include="Models\EditNameTitleModel.cs" />
     <Compile Include="Models\EditShippingAddressModel.cs" />
     <Compile Include="Models\ImportOrderResponse.cs" />
@@ -1986,6 +1988,9 @@
     <Content Include="Views\Account\MyCertificateDS.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\EditUser_Compact.cshtml" />
     <Content Include="Views\Cart\Partials\ExpressCheckout4IE2.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\EditInstitution.cshtml">
+      <SubType>Code</SubType>
+    </Content>
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -615,6 +615,45 @@ namespace CUWebinars.Web.Controllers
         }
 
 
+
+        public JsonResult GetEditInstitutionForm(int? id)
+        {
+            // similar to the existing EditUserFromOrder routine
+
+            //if (id.Value <= 0)
+            //    throw new Exception("Id of user to edit must be >= 0");
+
+            string html = "";
+
+            try
+            {
+                var user = _accountControllerOrchestrator.GetWebUserById(id.Value);
+
+                WebUser editingUser = null;
+
+                if (User.Identity.IsAuthenticated)
+                {
+                    editingUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
+                }
+
+                _logger.Info(string.Format("{0} is editing {1}", editingUser.email, user.email));
+
+                var editModel = BuildEditUserInfoModel(user, "");
+
+                html = ViewHelpers.RenderViewToString(ControllerContext,
+                        "~/Views/Shared/EditorTemplates/EditInstitution.cshtml",
+                        editModel, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("GetEditUserCompactForm error on " + id.Value, ex);
+            }
+
+            return Json(new { html = html });
+
+        }
+
+
         [System.Web.Mvc.HttpGet]
         public ActionResult EditUser(int? id, string returnUrl = null)
         {
@@ -711,6 +750,27 @@ namespace CUWebinars.Web.Controllers
                         Institution = user.Institution.InstitutionName,
                         Email = user.email,
                         Title = user.Title,
+                        AccountDetailsTitle = WebUiConstants.ManageUser
+                    },
+                    LoggedInUser = (ClaimsIdentity)User.Identity,
+                    ReturlUrl = returnUrl,
+                    StatusMessage = string.Empty
+                };
+            return editModel;
+        }
+
+        private EditInstitutionModel BuildEditInstitutionModel(WebUser user, string returnUrl)
+        {
+            if (user == null)
+            {
+                throw new NullReferenceException();
+            }
+            var institution = user.Institution;
+            //
+            var editModel = new EditInstitutionModel
+                {
+                    EditFields = new EditInstitutionModel
+                    {
                         AccountDetailsTitle = WebUiConstants.ManageUser
                     },
                     LoggedInUser = (ClaimsIdentity)User.Identity,

@@ -1,0 +1,180 @@
+﻿@model  EditInstitutionModel
+
+<form id="compact-user-edit-form" class="form-compact" novalidate="novalidate">
+    <div class="row-fluid">
+        <div class="control-group">
+            <div class="span4">
+                @Html.LabelFor(model => model.EditFields.Title, new { @class = "control-label span3" })
+                <div class="controls span8">
+                    @Html.EditorFor(model => model.EditFields.Title)
+                    @Html.ValidationMessageFor(model => model.EditFields.Title)
+                </div>
+            </div>
+            <div class="span4 billing-field">
+                @Html.LabelFor(model => model.EditFields.BillingAddress.Name, new { @class = "control-label span3" })
+                <div class="controls span8">
+                    @Html.EditorFor(model => model.EditFields.BillingAddress.Name)
+                    @Html.ValidationMessageFor(model => model.EditFields.BillingAddress.Name)
+                </div>
+            </div>
+            <div class="span4 shipping-field hidden">
+                @Html.LabelFor(model => model.EditFields.ShippingAddress.Name, new { @class = "control-label span3" })
+                <div class="controls span8">
+                    @Html.EditorFor(model => model.EditFields.ShippingAddress.Name)
+                    @Html.ValidationMessageFor(model => model.EditFields.ShippingAddress.Name)
+                </div>
+            </div>
+            <div class="span4 billing-field">
+                @Html.LabelFor(model => model.EditFields.BillingAddress.State, new { @class = "control-label span3" })
+                <div class="controls span8">
+                    @Html.EditorFor(model => model.EditFields.BillingAddress.State)
+                    @Html.ValidationMessageFor(model => model.EditFields.BillingAddress.State)
+                </div>
+            </div>
+            <div class="span4 shipping-field hidden">
+                @Html.LabelFor(model => model.EditFields.ShippingAddress.State, new { @class = "control-label span3" })
+                <div class="controls span8">
+                    @Html.EditorFor(model => model.EditFields.ShippingAddress.State)
+                    @Html.ValidationMessageFor(model => model.EditFields.ShippingAddress.State)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="control-group">
+            <div class="span4">
+                @Html.LabelFor(model => model.EditFields.FirstName, new { @class = "control-label span3" })
+                <div class="controls span8">
+                    @Html.EditorFor(model => model.EditFields.FirstName)
+                    @Html.ValidationMessageFor(model => model.EditFields.FirstName)
+                </div>
+            </div>
+            <div class="span4 billing-field">
+                @Html.LabelFor(model => model.EditFields.BillingAddress.StreetAddress, "Street 1", new { @class = "control-label span3" })
+                <div class="controls span8">
+                    @Html.EditorFor(model => model.EditFields.BillingAddress.StreetAddress)
+                    @Html.ValidationMessageFor(model => model.EditFields.BillingAddress.StreetAddress)
+                </div>
+            </div>
+            <div class="span4 shipping-field hidden">
+                @Html.LabelFor(model => model.EditFields.ShippingAddress.StreetAddress, "Street 1", new { @class = "control-label span3" })
+                <div class="controls span8">
+                    @Html.EditorFor(model => model.EditFields.ShippingAddress.StreetAddress)
+                    @Html.ValidationMessageFor(model => model.EditFields.ShippingAddress.StreetAddress)
+                </div>
+            </div>
+            <div class="span4 billing-field">
+                @Html.LabelFor(model => model.EditFields.BillingAddress.Zip, new { @class = "control-label span3" })
+                <div class="controls span8">
+                    @Html.EditorFor(model => model.EditFields.BillingAddress.Zip)
+                    @Html.ValidationMessageFor(model => model.EditFields.BillingAddress.Zip)
+                </div>
+            </div>
+            <div class="span4 shipping-field hidden">
+                @Html.LabelFor(model => model.EditFields.ShippingAddress.Zip, new { @class = "control-label span3" })
+                <div class="controls span8">
+                    @Html.EditorFor(model => model.EditFields.ShippingAddress.Zip)
+                    @Html.ValidationMessageFor(model => model.EditFields.ShippingAddress.Zip)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="control-group">
+            <div class="span4">
+                @Html.LabelFor(model => model.EditFields.LastName, new { @class = "control-label span3" })
+                <div class="controls span8">
+                    @Html.EditorFor(model => model.EditFields.LastName)
+                    @Html.ValidationMessageFor(model => model.EditFields.LastName)
+                </div>
+            </div>
+            <div class="span4 billing-field">
+                @Html.LabelFor(model => model.EditFields.BillingAddress.StreetAddress2, "Street 2", new { @class = "control-label span3" })
+                <div class="controls span8">
+                    @Html.EditorFor(model => model.EditFields.BillingAddress.StreetAddress2)
+                    @Html.ValidationMessageFor(model => model.EditFields.BillingAddress.StreetAddress2)
+                </div>
+            </div>
+            <div class="span4 shipping-field hidden">
+                @Html.LabelFor(model => model.EditFields.ShippingAddress.StreetAddress2, "Street 2", new { @class = "control-label span3" })
+                <div class="controls span8">
+                    @Html.EditorFor(model => model.EditFields.ShippingAddress.StreetAddress2)
+                    @Html.ValidationMessageFor(model => model.EditFields.ShippingAddress.StreetAddress2)
+                </div>
+            </div>
+            <div class="span4 billing-field">
+                @Html.LabelFor(model => model.EditFields.BillingAddress.Country, new { @class = "control-label span3" })
+                <div class="controls span8">
+                    @Html.EditorFor(model => model.EditFields.BillingAddress.Country)
+                    @Html.ValidationMessageFor(model => model.EditFields.BillingAddress.Country)
+                </div>
+            </div>
+            <div class="span4 shipping-field hidden">
+                @Html.LabelFor(model => model.EditFields.ShippingAddress.Country, new { @class = "control-label span3" })
+                <div class="controls span8">
+                    @Html.EditorFor(model => model.EditFields.ShippingAddress.Country)
+                    @Html.ValidationMessageFor(model => model.EditFields.ShippingAddress.Country)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="control-group">
+            <div class="span4">
+                @*@Html.LabelFor(model => model.EditFields.Institution, new { @class = "control-label span3" })*@
+                <div class="controls span8">
+                    @*@Html.TextBoxFor(model => model.EditFields.Institution, new { disabled = "disabled" })*@
+                    @Html.HiddenFor(m => m.EditFields.Institution)
+                </div>
+            </div>
+            <div class="span4 billing-field">
+                @Html.LabelFor(model => model.EditFields.BillingAddress.City, new { @class = "control-label span3" })
+                <div class="controls span8">
+                    @Html.EditorFor(model => model.EditFields.BillingAddress.City)
+                    @Html.ValidationMessageFor(model => model.EditFields.BillingAddress.City)
+                </div>
+            </div>
+            <div class="span4 shipping-field hidden">
+                @Html.LabelFor(model => model.EditFields.ShippingAddress.City, new { @class = "control-label span3" })
+                <div class="controls span8">
+                    @Html.EditorFor(model => model.EditFields.ShippingAddress.City)
+                    @Html.ValidationMessageFor(model => model.EditFields.ShippingAddress.City)
+                </div>
+            </div>
+            <div class="span4 billing-field">
+                @Html.LabelFor(model => model.EditFields.BillingAddress.Phone, new { @class = "control-label span3" })
+                <div class="controls span8">
+                    @Html.EditorFor(model => model.EditFields.BillingAddress.Phone)
+                    @Html.ValidationMessageFor(model => model.EditFields.BillingAddress.Phone)
+                </div>
+            </div>
+            <div class="span4 shipping-field hidden">
+                @Html.LabelFor(model => model.EditFields.ShippingAddress.Phone, new { @class = "control-label span3" })
+                <div class="controls span8">
+                    @Html.EditorFor(model => model.EditFields.ShippingAddress.Phone)
+                    @Html.ValidationMessageFor(model => model.EditFields.ShippingAddress.Phone)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="control-group">
+            <div class="span5 center">
+                @*@Html.HiddenFor(model => model.EditFields.idWebUser)*@
+                @Html.HiddenFor(model => model.EditFields.Email)
+                @Html.HiddenFor(model => model.EditFields.AccountDetailsTitle)
+                @Html.AntiForgeryToken()
+
+                <button id="save-changes-user" class="btn btn-success btn-small">Save changes</button>
+                <a href="#" id="cancel-changes" class="btn btn-link">Cancel</a>
+            </div>
+            <div class="span7 center">
+                <button class="btn btn-small btn-success show-billing-address">Billing Address</button>
+                <button class="btn btn-small show-shipping-address">Shipping Address</button>
+            </div>
+        </div>
+    </div>
+</form>
