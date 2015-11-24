@@ -823,7 +823,6 @@
     <Content Include="Content\images\bg.jpg" />
     <Content Include="Content\images\bkg_headerWS.jpg" />
     <Content Include="Content\images\bullet.png" />
-    <Content Include="Content\images\buttons.gif" />
     <Content Include="Content\images\bwBanner.png" />
     <Content Include="Content\images\Calendar.gif" />
     <Content Include="Content\images\Calendar.png" />
@@ -1517,7 +1516,6 @@
     <Content Include="Content\images\tall-logo-desktop.png" />
     <Content Include="Content\images\tall-logo-mobile.png" />
     <Content Include="Content\images\tempMenuCap.jpg" />
-    <Content Include="Content\images\toolbar.gif" />
     <Content Include="Content\images\top.png" />
     <Content Include="Content\images\trans.gif" />
     <Content Include="Content\images\TTS-logo.jpg" />

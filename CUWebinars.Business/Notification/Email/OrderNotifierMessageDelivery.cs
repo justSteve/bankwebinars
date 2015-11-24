@@ -2,6 +2,7 @@
 using CUWebinars.Business.Notification.ViewModel;
 using Ninject.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Net.Configuration;
 using System.Net.Mail;
@@ -37,15 +38,29 @@ namespace CUWebinars.Business.Notification.Email
             var notificationMessage = _generalFormatter.Format(orderSubmittedViewModel, "OrderSubmitted");
             notificationMessage.PersistedName = confirmOrderMessage.PersistedName;
 
-            notificationMessage.To = order.idAffiliate == 62 ? "steve@ttstrain.com" : order.BillingEmail;
 
+            //notificationMessage.To = order.idAffiliate == 62 ? "steve@ttstrain.com" : order.BillingEmail;
+            if (ReferenceEquals(null, order.Affiliate.ContactEmail))
+            {
+                notificationMessage.Addresses = new List<string>
+                {
+                    order.BillingEmail
+                };
+            }
+            else
+            {
+                notificationMessage.Addresses = new List<string>
+                {
+                    order.Affiliate.ContactEmail,
+                    order.BillingEmail
+                };
+            }
             SendMessage(notificationMessage);
         }
 
         private void SendMessage(INotificationMessage notificationMessage)
         {
-            _logger.Info("Sending Order Comfirmation message!");
-            _logger.Info(string.Format("Message Subject is:{0}, PersistedName is:{1}",
+            _logger.Info(string.Format("Message Order Comfirmation Subject is: {0}, PersistedName is:{1}",
                 notificationMessage.Subject, notificationMessage.PersistedName ?? "null"));
 
             var timeStamp = DomainConstants.BuildUtcNowAsCts;
@@ -69,27 +84,32 @@ namespace CUWebinars.Business.Notification.Email
                 //smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
 
                 //  Set this AppSetting in App.Config to something other than 'live' when testing i.e. notlive
-                if (ConfigurationManager.AppSettings["EmailSendingMode"] != "live")
+                if (ConfigurationManager.AppSettings["EmailSendingMode"] == "live")
+                {
+
+                    foreach (var address in notificationMessage.Addresses)
+                    {
+                        mailMessage.To.Add(new MailAddress(address));
+    
+                    }
+                }
+                else
                 {
                     destinationEmailAddress = ConfigurationManager.AppSettings["TestEmailAddress"];
-                    mailMessage.To.Add(new MailAddress(ConfigurationManager.AppSettings["TestEmailAddress2"]));
+                    mailMessage.To.Add(new MailAddress(ConfigurationManager.AppSettings["TestEmailAddress2"]));    
                 }
-
-                mailMessage.To.Add(new MailAddress("steve@ttstrain.com"));
-                mailMessage.To.Add(new MailAddress(destinationEmailAddress));
 
                 try
                 {
                     mailMessage.From = new MailAddress(notificationMessage.From);
-
-                    _logger.Info(string.Format("Sending msg to {0}", notificationMessage.To));
+                    
+                    _logger.Info(string.Format("Sending msg to {0}: ", notificationMessage.Addresses));
 
                     mailMessage.Subject = notificationMessage.Subject;
                     mailMessage.Body = notificationMessage.Body;
                     mailMessage.IsBodyHtml = true;
                     smtp.Send(mailMessage);
 
-                    _logger.Info("Message sent successfully!");
                 }
                 catch (ArgumentNullException)
                 {

@@ -429,7 +429,6 @@ namespace CUWebinars.Business.Services
                         try
                         {
                             _orderRepository.MigrateOrderWithDiscount(order);
-
                             _logger.Info("SynchOrder Discount {0} of {1} - {2}", i, missingFromV3.Count(), orderEmail);
 
                         }
@@ -488,6 +487,7 @@ namespace CUWebinars.Business.Services
                         }
                         catch (Exception ex)
                         {
+                            _logger.Info("EXEC dbo.FindDupeEmailPerWebinarAndRemove @idWebinar =  " + webinarId);
                             _logger.ErrorException("SynchOrder checks common orders to V3 failed: " + orderEmail, ex);
                         }
                     }
