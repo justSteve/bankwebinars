@@ -38,11 +38,23 @@
     padding-bottom: 5px;
 }
 
+/* unfortunately this needs to be very specific to overcome zebra striping, etc. unless we want to break out the !important stick */
 #webinarOrders #ordersTable td.child-showing,
 #webinarOrders #ordersTable tr.child-row,
 #webinarOrders #ordersTable td.child-row {
     background-color: #eeeeee;
 }
+
+/* unfortunately this needs to be very specific to overcome zebra striping, etc. unless we want to break out the !important stick */
+#webinarOrders #ordersTable td.success {
+    background-color: #5bb75b;
+}
+
+td.save-bg-transition
+{
+    transition: background-color ease .5s;
+}
+
 
 /* White icons with optional class, or on hover/focus/active states of certain elements */
 

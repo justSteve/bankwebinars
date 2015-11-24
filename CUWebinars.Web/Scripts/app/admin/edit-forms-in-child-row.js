@@ -113,8 +113,17 @@ function AttachDataTableEditEvents() {
             dataType: "json",
             type: "POST",
             success: function (data) {
-                // probably should show the user something on success
                 console.log(data);
+                var $cell = $("td.child-showing");
+                $cell.click(); // hide the child row
+                $cell.addClass("success"); // has a background color specified
+                setTimeout(function () {
+                    $cell.addClass("save-bg-transition"); // specifies an ease effect so the next line "fades" back to normal
+                    $cell.removeClass("success"); // remove the customized background color
+                    setTimeout(function () {
+                        $cell.removeClass("save-bg-transition"); // reset this so next color change doesn't fade in
+                    }, 3000);
+                }, 1500);
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert(textStatus);
