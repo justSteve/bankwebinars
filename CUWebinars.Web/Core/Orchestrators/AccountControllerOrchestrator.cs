@@ -429,6 +429,12 @@ namespace CUWebinars.Web.Core.Orchestrators
                 updateFields.Title == null ? "na" : updateFields.Title.Trim()
                 );
 
+            _orderManagementService.UpdateWebUserInfo(updateFields.FirstName.Trim(),
+                updateFields.LastName.Trim(),
+                updateFields.Email.Trim(),
+                updateFields.Institution,
+                billingAddress);
+
         }
 
         public void AddShippingAddressVerifiedClaim(int userId)

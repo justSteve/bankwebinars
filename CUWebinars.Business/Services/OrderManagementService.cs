@@ -495,8 +495,7 @@ namespace CUWebinars.Business.Services
             }
             catch (Exception ex)
             {
-
-                _logger.ErrorException("CommonToBoth loop failed.  i=" + i + " idWebinar=" + webinarId, ex);
+                _logger.ErrorException("SynchOrder CommonToBoth loop failed.  i=" + i + " idWebinar=" + webinarId, ex);
             }
 
             _logger.Info("SynchOrders ends for: " + webinarId);
@@ -1153,7 +1152,7 @@ namespace CUWebinars.Business.Services
 
                 Discount discount = null;
 
-                if (ReferenceEquals(order.OrderRows.Where(o => o.RowStatus == OrderRowStatus.Active), null ))
+                if (ReferenceEquals(order.OrderRows.Where(o => o.RowStatus == OrderRowStatus.Active), null))
                 {
                     discount =
                         order.OrderRows.Where(o => o.RowStatus == OrderRowStatus.Active).SingleOrDefault().Discount;
@@ -1256,7 +1255,7 @@ namespace CUWebinars.Business.Services
                 sb.Append(
                     "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
                 sb.Append("            <b>");
-                sb.Append(myRow.RegistrationType.OptionLabel.Replace(" Subscription", "").Replace("-"," "));
+                sb.Append(myRow.RegistrationType.OptionLabel.Replace(" Subscription", "").Replace("-", " "));
                 sb.Append("            </b>");
                 sb.Append("        </span>");
                 sb.Append("    </td>");
@@ -1268,7 +1267,7 @@ namespace CUWebinars.Business.Services
                     if (!ReferenceEquals(discount.DateValidFrom, null))
                     {
                         subscriptionSpan = discount.DateValidFrom.ToString("MMM-yy") + " until " + discount.DateValidTo.ToString("MMM-yy");
-                        
+
                         sb.Append(
                             "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
                         sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
@@ -1696,6 +1695,24 @@ namespace CUWebinars.Business.Services
         public Webinar GetWebinarById(int webinarId)
         {
             return _webinarRepository.GetWebinarByIdIncludingAllWebinarsByPresenter(webinarId);
+        }
+
+        public void UpdateWebUserInfo(string firstName, string LastName, string email, string institution, Address billingAddress)
+        {
+            var webUserIdByEmail = _webUserRepository.GetWebUserIdByEmail(email);
+            if (webUserIdByEmail != null)
+            {
+                var orders2Update = _orderRepository.GetOrdersByUserId(webUserIdByEmail.Value);
+
+                foreach (var order in orders2Update)
+                {
+                    order.FirstName = firstName;
+                    order.LastName = LastName;
+                    order.BillingEmail = email;
+                    order.Institution = institution;
+                }
+            }
+
         }
 
         public IList<Order> GetV3OrdersByOnDemandClaim()
