@@ -122,5 +122,6 @@ namespace CUWebinars.Business.Services
         IList<Order> GetV3OrdersByOnDemandClaim();
         IList<PostEventClaim> FindAllPostEventClaims();
         Webinar GetWebinarById(int webinarId);
+        void UpdateUserDetails(WebUser user, string firstName, string lastName, string email, string institution, Address billingAddress, Address shippingAddress);
     }
 }

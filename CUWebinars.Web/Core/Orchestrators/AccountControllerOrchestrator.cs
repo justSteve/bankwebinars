@@ -421,13 +421,23 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             _membershipService.UpdateUserDetails(_globals.Tenant,
                 updateFields.FirstName.Trim(),
-                updateFields.LastName.Trim(), 
+                updateFields.LastName.Trim(),
                 updateFields.Email.Trim(),
                 updateFields.Institution,
                 billingAddress,
                 shippingAddress,
                 updateFields.Title == null ? "na" : updateFields.Title.Trim()
                 );
+
+            ;
+            WebUser user = GetWebUserByEmail( updateFields.Email.Trim());
+            _orderManagementService.UpdateUserDetails(user,updateFields.FirstName.Trim(),
+                updateFields.LastName.Trim(),
+                updateFields.Email.Trim(),
+                updateFields.Institution,
+                billingAddress,
+                shippingAddress);
+
 
         }
 
@@ -522,7 +532,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     model.Recorded.Add(new KeyValuePair<string, Order>("na" + selectOrdersWithRecordedWebinar.idOrder, selectOrdersWithRecordedWebinar));
                 }
-                
+
             }
 
             foreach (var orderRow in model.Scheduled.Select(order => order.OrderRows

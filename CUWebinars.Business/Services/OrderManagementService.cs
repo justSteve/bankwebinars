@@ -1153,7 +1153,7 @@ namespace CUWebinars.Business.Services
 
                 Discount discount = null;
 
-                if (ReferenceEquals(order.OrderRows.Where(o => o.RowStatus == OrderRowStatus.Active), null ))
+                if (ReferenceEquals(order.OrderRows.Where(o => o.RowStatus == OrderRowStatus.Active), null))
                 {
                     discount =
                         order.OrderRows.Where(o => o.RowStatus == OrderRowStatus.Active).SingleOrDefault().Discount;
@@ -1256,7 +1256,7 @@ namespace CUWebinars.Business.Services
                 sb.Append(
                     "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
                 sb.Append("            <b>");
-                sb.Append(myRow.RegistrationType.OptionLabel.Replace(" Subscription", "").Replace("-"," "));
+                sb.Append(myRow.RegistrationType.OptionLabel.Replace(" Subscription", "").Replace("-", " "));
                 sb.Append("            </b>");
                 sb.Append("        </span>");
                 sb.Append("    </td>");
@@ -1268,7 +1268,7 @@ namespace CUWebinars.Business.Services
                     if (!ReferenceEquals(discount.DateValidFrom, null))
                     {
                         subscriptionSpan = discount.DateValidFrom.ToString("MMM-yy") + " until " + discount.DateValidTo.ToString("MMM-yy");
-                        
+
                         sb.Append(
                             "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
                         sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
@@ -1696,6 +1696,42 @@ namespace CUWebinars.Business.Services
         public Webinar GetWebinarById(int webinarId)
         {
             return _webinarRepository.GetWebinarByIdIncludingAllWebinarsByPresenter(webinarId);
+        }
+
+        public void UpdateUserDetails(WebUser user,
+            string firstName,
+            string lastName,
+                string email,
+                string institution,
+                Address billingAddress,
+                Address shippingAddress
+                )
+        {
+
+            var orders = _orderRepository.GetOrdersByUserId(user.idUser);
+
+            foreach (var order in orders)
+            {
+                order.UserComments = "Order's user was updated from " + order.BillingEmail + " on " + DateTime.Now.ToShortDateString() + ". | " + order.UserComments;
+                order.FirstName = firstName;
+                order.LastName = lastName;
+                order.BillingEmail = email;
+                order.Institution = institution;
+                order.BillingAddress = billingAddress.StreetAddress;
+                order.BillingAddress2 = billingAddress.StreetAddress2;
+                order.BillingCity = billingAddress.City;
+                order.BillingState = billingAddress.State;
+                order.BillingZip = billingAddress.Zip;
+
+                order.ShippingAddress = shippingAddress.StreetAddress;
+                order.ShippingAddress2 = shippingAddress.StreetAddress2;
+                order.ShippingCity = shippingAddress.City;
+                order.ShippingState = shippingAddress.State;
+                order.ShippingZip = shippingAddress.Zip;
+
+                _logger.Info( "Order's user was updated from " + order.BillingEmail + " on " + order.idOrder);
+
+            }
         }
 
         public IList<Order> GetV3OrdersByOnDemandClaim()
