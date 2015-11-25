@@ -1986,6 +1986,7 @@
     <Content Include="Views\Account\MyCertificateDS.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\EditUser_Compact.cshtml" />
     <Content Include="Views\Cart\Partials\ExpressCheckout4IE2.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\EditOrderStatus_Compact.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

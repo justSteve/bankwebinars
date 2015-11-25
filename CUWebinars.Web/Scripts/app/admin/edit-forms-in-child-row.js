@@ -108,34 +108,70 @@ function AttachDataTableEditEvents() {
         var data = $form.serialize();
         $.ajax({
             async: false,
-            url: "/account/edituser",
+            url: "/account/updateuser",
             data: data ,
             dataType: "json",
             type: "POST",
             success: function (data) {
                 console.log(data);
+
+                // need to update the currently displaying name (in case it changed)
+
                 var $cell = $("td.child-showing");
                 $cell.click(); // hide the child row
-                $cell.addClass("success"); // has a background color specified
-                setTimeout(function () {
-                    $cell.addClass("save-bg-transition"); // specifies an ease effect so the next line "fades" back to normal
-                    $cell.removeClass("success"); // remove the customized background color
-                    setTimeout(function () {
-                        $cell.removeClass("save-bg-transition"); // reset this so next color change doesn't fade in
-                    }, 3000);
-                }, 1500);
+                fireSuccessIndicator($cell);
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert(textStatus);
             }
         });
-
-
     });
 
 
+    //// EditOrderStatus_Compact form events
+    //$('.dataTable').on("click", "#save-changes-order-status", function (e) {
+    //    e.preventDefault();
+
+    //    var form = $(this).parents("form");
+    //    var $form = $(form);
+    //    var data = $form.serialize();
+
+    //    $.ajax({
+    //        async: false,
+    //        url: "/admin/updateorderstatus",
+    //        data: data,
+    //        dataType: "json",
+    //        type: "POST",
+    //        success: function (data) {
+    //            console.log(data);
+
+    //            var $cell = $("td.child-showing");
+
+    //            // need to update the currently displaying order status text, this will be
+    //            //  fairly customized for each cell / edit form
+    //            $("a:first", $cell).html(data.orderStatus)
+
+    //            $cell.click(); // hide the child row
+    //            fireSuccessIndicator($cell);
+    //        },
+    //        error: function (XMLHttpRequest, textStatus, errorThrown) {
+    //            alert(textStatus);
+    //        }
+    //    });
+    //});
 }
 
+function fireSuccessIndicator($cell)
+{
+    $cell.addClass("success"); // has a background color specified
+    setTimeout(function () {
+        $cell.addClass("save-bg-transition"); // specifies an ease effect so the next line "fades" back to normal
+        $cell.removeClass("success"); // remove the customized background color
+        setTimeout(function () {
+            $cell.removeClass("save-bg-transition"); // reset this so next color change doesn't fade in
+        }, 3000);
+    }, 1500);
+}
 
 
 function createChildRow(cell, $td, rowData) {
@@ -147,6 +183,11 @@ function createChildRow(cell, $td, rowData) {
     if ($td.hasClass("edit-date")) {
         return editDateCell(cell, $td, rowData);
     }
+
+    // doing the order status dropdown "live" on the parent row
+    //if ($td.hasClass("edit-order-status")) {
+    //    return editOrderStatusCell(cell, $td, rowData);
+    //}
 
     return "Row " + cell.index().row + ", Col " + cell.index().column;
 
@@ -175,6 +216,31 @@ function editUserCell(cell, $td, rowData) {
 
     return html;
 }
+
+
+//function editOrderStatusCell(cell, $td, rowData) {
+
+//    // could definitely use a "busy" cursor.
+
+//    var html = "";
+//    var orderToEdit = (rowData.idOrderLegacy != 0) ? rowData.idOrderLegacy : rowData.idOrder;
+
+//    $.ajax({
+//        async: false,
+//        url: "/admin/geteditorderstatuscompactform",
+//        data: ({ id: orderToEdit }),
+//        dataType: "json",
+//        type: "POST",
+//        success: function (data) {
+//            html = data.html;
+//        },
+//        error: function (XMLHttpRequest, textStatus, errorThrown) {
+//            alert(textStatus);
+//        }
+//    });
+
+//    return html;
+//}
 
 
 function editDateCell(cell, $td, rowData) {

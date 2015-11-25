@@ -725,7 +725,7 @@ namespace CUWebinars.Web.Controllers
         //[ValidateAntiForgeryToken(Order = 0)]
         [ValidateInput(false)]
         [HandleAjaxException(Order = 1)]
-        public ActionResult EditUser(EditUserViewModel model)
+        public ActionResult UpdateUser(EditUserViewModel model)
         {
             if (ModelState.IsValid)
             {

@@ -17,6 +17,27 @@ $(function () {
 
 });
 
+
+function getOrderStatusHtml() {
+    // this seems a little slower than I'd like...
+    var html = "";
+
+    $.ajax({
+        async: false,
+        url: "/admin/geteditorderstatusdropdownhtml",
+        dataType: "json",
+        type: "POST",
+        success: function (data) {
+            html = data.html;
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus);
+        }
+    });
+
+    return html;
+}
+
 // self-invoking function for creating methods using Module pattern.
 (function (ns) {
 
@@ -24,6 +45,7 @@ $(function () {
         DO.ordersTable = $('#ordersTable');
         DO.connInfoTable = $('#connInfoTable');
         DO.webinarIdDiv = $('#webinarIdDiv');
+        DO.baseOrderStatusHtml = getOrderStatusHtml();  // this seems a little slower than I'd like...
     };
 
     ns.wireUpHandlers = function () {
@@ -261,15 +283,29 @@ $(function () {
                 "mData": "",
                 "mRender": function (data, type, full) {
                     var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
-                    var statusHtml = "<a href='/Admin/manageOrder/" + orderToEdit + "' target='_new' />" + full.OrderStatusString + "</a><br/>";
+
+                    // setup a Bootstrap dropdown (http://getbootstrap.com/2.3.2/javascript.html#dropdowns) with the current 
+                    //  order status selected, fire custom ajax when it changes
+               
+                    // we need to build this one time on the server via ajax...
+                    var dd_html = DO.baseOrderStatusHtml.replace("[ORDERSTATUS]", full.OrderStatusString).replace("[ORDERID]", orderToEdit);
+                    // find and set the dropdown to our status
+                    
+
+                    //// added a hook into Edit Order in the dropdown...
+                    //var statusHtml = "<a href='/Admin/manageOrder/" + orderToEdit + "' target='_new' />" + full.OrderStatusString + "</a><br/>";
+
+
                     var resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendOrderConfirmationButton btn btn-mini\">Send Confirmation</button>";
                     if (full.Webinar_IsActive) {
                         resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
                     }
+
                     //if (full.Webinar_IsRecorded) {
                     //    resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendPostEventMaterialButton btn btn-mini\">PostEvent Material</button>";
                     //}
-                    return statusHtml + resendMsg;
+
+                    return dd_html + resendMsg;
                 }
             }]
         });

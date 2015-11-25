@@ -422,6 +422,47 @@ namespace CUWebinars.Web.Controllers.Admin
             }
         }
 
+        public JsonResult GetEditOrderStatusDropdownHtml()
+        {
+
+            string html = ViewHelpers.RenderViewToString(ControllerContext,
+                                        "~/Views/Shared/EditorTemplates/EditOrderStatus_Compact.cshtml",
+                                        null, true);
+
+
+            return Json(new { html = html });
+
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
+        public ActionResult UpdateOrderStatus(ManageOrderEditModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var order = _orderManagementService.GetOrderById(model.Id);
+                    
+                    order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus; // the only field that we are worried about at this time
+                    // what about audit fields?
+                    // are there any order properties not populated by GetOrderById which we risk deleting?
+                    _orderManagementService.UpdateOrderByAdmin(order);
+
+                    return Json(new { Result = WebUiConstants.Success, orderStatus = model.DisplayRowPriceViewModel.OrderStatus.ToString() });
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException("In UpdateOrderStatus Action: ", exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
+                    throw;
+                }
+            }
+            return this.ModelStateJson(ModelState);
+        }
+
         [HttpPost]
         public ActionResult Delete(int idOrder)
         {
