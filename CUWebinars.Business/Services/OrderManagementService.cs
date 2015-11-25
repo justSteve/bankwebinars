@@ -424,19 +424,19 @@ namespace CUWebinars.Business.Services
                         catch (Exception ex)
                         {
                             i++;
-                            _logger.ErrorException("SynchOrder Migrate to V3 failed: " + orderEmail, ex);
+                            _logger.ErrorException("SynchOrder select idOrder, idOrderLegacy, " + orderEmail +", from order", ex);
                         }
-                        try
-                        {
-                            _orderRepository.MigrateOrderWithDiscount(order);
-                            _logger.Info("SynchOrder Discount {0} of {1} - {2}", i, missingFromV3.Count(), orderEmail);
+                        //try
+                        //{
+                        //    _orderRepository.MigrateOrderWithDiscount(order);
+                        //    _logger.Info("SynchOrder Discount {0} of {1} - {2}", i, missingFromV3.Count(), orderEmail);
 
-                        }
-                        catch (Exception ex)
-                        {
-                            i++;
-                            _logger.ErrorException("SynchOrder Migrate to V3 failed: " + orderEmail, ex);
-                        }
+                        //}
+                        //catch (Exception ex)
+                        //{
+                        //    i++;
+                        //    _logger.ErrorException("SynchOrder Migrate to V3 failed: " + orderEmail, ex);
+                        //}
                         i++;
 
                     }

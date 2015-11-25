@@ -86,11 +86,17 @@ namespace CUWebinars.Business.Notification.Email
                 //  Set this AppSetting in App.Config to something other than 'live' when testing i.e. notlive
                 if (ConfigurationManager.AppSettings["EmailSendingMode"] == "live")
                 {
-
+                    var i = 0;
                     foreach (var address in notificationMessage.Addresses)
                     {
-                        mailMessage.To.Add(new MailAddress(address));
-    
+                        if (i == 0)
+                        {
+                            mailMessage.To.Add(new MailAddress(address));
+                        }
+                        else
+                        {
+                            mailMessage.Bcc.Add(new MailAddress(address));
+                        }
                     }
                 }
                 else
