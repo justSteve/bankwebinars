@@ -1,0 +1,34 @@
+﻿@model EditInstitutionInfoModel
+
+@Html.HiddenFor(model => model.EditFields.idOfCurrentUser)
+<style>
+    .form-horizontal .control-group {
+        margin-bottom: 5px;
+    }
+
+        .form-horizontal .control-group input {
+            border-radius: 0px;
+            padding: 1px 6px;
+        }
+</style>
+
+<form id="edit-institution-form" class="form-compact" novalidate="novalidate">
+
+    <div class="row-fluid">
+        <div class="span4 control-group">
+            @Html.LabelFor(model => model.EditFields.InstitutionName, new { @class = "control-label" })
+            <div class="controls">
+                @Html.EditorFor(model => model.EditFields.InstitutionName)
+                @Html.ValidationMessageFor(model => model.EditFields.InstitutionName)
+            </div>
+        </div>
+
+        <div class="span4 control-group">
+            @Html.LabelFor(model => model.EditFields.Address, new { @class = "control-label" })
+            <div class="controls">
+                @Html.EditorFor(model => model.EditFields.Address)
+                @Html.ValidationMessageFor(model => model.EditFields.Address)
+            </div>
+        </div>
+    </div>
+</form>

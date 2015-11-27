@@ -386,6 +386,13 @@ namespace CUWebinars.Web.Core.Orchestrators
             _membershipService.UpdateDiscountDetails(discount);
         }
 
+        public void EditInstitution(EditInstitutionInfoModel model)
+        {
+            Institution saveInst = _membershipService.GetInstitutionById(model.EditFields.idInstitution);
+            _membershipService.UpdateInstitutionDetails(saveInst);
+
+        }
+
         public void EditUser(EditUserViewModel model)
         {
             var updateFields = model.EditFields;

@@ -595,6 +595,17 @@ namespace CUWebinars.Business.AccountService
                 return addressShipping;
             }
         }
+
+        public Institution GetInstitutionById(int idInstitution)
+        {
+           return _institutionRepository.GetById(idInstitution);
+        }
+
+        public void UpdateInstitutionDetails(Institution saveInst)
+        {
+            _institutionRepository.Update(saveInst);
+        }
+
         public void AddAccountTypeNotVerifiedClaim(UserAccount userAccount, string accountType)
         {
             _logger.Info("AddAccountTypeNotVerifiedClaim: {0}", userAccount.Email);

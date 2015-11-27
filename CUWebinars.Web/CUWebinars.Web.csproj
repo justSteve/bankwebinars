@@ -485,6 +485,7 @@
     <Compile Include="Models\DiscountModel.cs" />
     <Compile Include="Models\EditContactInfoModel.cs" />
     <Compile Include="Models\EditDiscountModel.cs" />
+    <Compile Include="Models\EditInstitutionInfoModel.cs" />
     <Compile Include="Models\EditQuizEditModel.cs" />
     <Compile Include="Models\EditUserInfoModel.cs" />
     <Compile Include="Models\EditUserModel.cs" />
@@ -1589,7 +1590,7 @@
     <Compile Include="Models\AdminDTO.cs" />
     <Compile Include="Models\WebinarFilesEditModel.cs" />
     <Compile Include="Models\EditBillingAddressModel.cs" />
-    <Compile Include="Models\EditInstitionModel.cs" />
+    <Compile Include="Models\EditInstitutionModel.cs" />
     <Compile Include="Models\EditNameTitleModel.cs" />
     <Compile Include="Models\EditShippingAddressModel.cs" />
     <Compile Include="Models\ImportOrderResponse.cs" />
@@ -1696,6 +1697,9 @@
     <Content Include="Scripts\jquery.cleditor.min.js" />
     <Content Include="Scripts\placeholder.js" />
     <Content Include="Views\Cart\ExpressCheckoutAffiliate.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\EditInstitution.cshtml">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="WinSCP.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -1990,6 +1994,7 @@
     <Content Include="Views\Shared\EditorTemplates\EditUser_Compact.cshtml" />
     <Content Include="Views\Cart\Partials\ExpressCheckout4IE2.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\EditOrderStatus_Compact.cshtml" />
+    <Content Include="Views\Error\EditInstitution.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2476,7 +2481,6 @@
     <Content Include="Views\Account\Confirmed.cshtml" />
     <Content Include="Views\Webinar\Partials\_UpdateConnectionInfo.cshtml" />
     <Content Include="Views\Shared\Partials\_EditNameTitle.cshtml" />
-    <Content Include="Views\Shared\Partials\_EditInsitution.cshtml" />
     <Content Include="Views\Shared\Partials\_EditBillingAddress.cshtml" />
     <Content Include="Views\Shared\Partials\_EditShippingAddress.cshtml" />
     <Content Include="Views\Admin\Home\Index.cshtml" />

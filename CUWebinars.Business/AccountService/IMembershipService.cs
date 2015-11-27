@@ -100,6 +100,8 @@ namespace CUWebinars.Business.AccountService
         WebUser CreateExpressCheckoutUser(string tenant, string email, string firstName, string lastName, string phone, string institution, string title);
         Address BuildPlaceHolderAddressBilling(string email);
         Address BuildPlaceHolderAddressShipping(string email);
-        
+
+        Institution GetInstitutionById(int idInstitution);
+        void UpdateInstitutionDetails(Institution saveInst);
     }
 }

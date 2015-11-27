@@ -204,7 +204,7 @@ function getOrderStatusHtml() {
             'columns': [
                 { 'data': 'idOrder', 'visible': false },
                 { 'data': 'LastName', 'class': 'details-control edit-user-name-email' },
-                { 'data': 'Institution', 'class': 'details-control' },
+                { 'data': 'Institution', 'class': 'details-control edit-institution ' },
                 { 'data': null, 'class': 'details-control' },
                 { 'data': 'Discount', 'class': 'details-control' },
 

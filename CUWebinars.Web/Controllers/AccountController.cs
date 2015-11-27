@@ -459,29 +459,6 @@ namespace CUWebinars.Web.Controllers
             return PartialView("Partials/_EditShippingAddress", model);
         }
 
-        [System.Web.Mvc.HttpGet]
-        public ActionResult EditInstitution()
-        {
-            var model = new EditInstitutionModel();
-
-            ViewBag.ReturnUrl = Url.Action(ManageActionName);
-            ViewBag.Title = WebUiConstants.ManageUser;
-
-            try
-            {
-                var user = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
-                model.Institution = user.Institution.InstitutionName;
-            }
-            catch (Exception exception)
-            {
-                _logger.ErrorException("In EditInstitution Action", exception);
-                ErrorSignal.FromCurrentContext().Raise(exception);
-
-                throw;
-            }
-
-            return PartialView("Partials/_EditInsitution", model);
-        }
 
         [System.Web.Mvc.HttpPost]
         public ActionResult EditNameTitle(EditNameTitleModel model)
@@ -577,6 +554,84 @@ namespace CUWebinars.Web.Controllers
 
 
 
+        public JsonResult GetResendInfoForm(int? id)
+        {
+            // similar to the existing EditUserFromOrder routine
+
+            //if (id.Value <= 0)
+            //    throw new Exception("Id of user to edit must be >= 0");
+
+            string html = "";
+
+            try
+            {
+                var user = _accountControllerOrchestrator.GetWebUserById(id.Value);
+
+                WebUser editingUser = null;
+
+                if (User.Identity.IsAuthenticated)
+                {
+                    editingUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
+                }
+
+                _logger.Info(string.Format("{0} is editing {1}", editingUser.email, user.email));
+
+                var editModel = BuildEditUserInfoModel(user, "");
+
+                html = ViewHelpers.RenderViewToString(ControllerContext,
+                        "~/Views/Shared/EditorTemplates/EditUser_Compact.cshtml",
+                        editModel, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("GetEditUserCompactForm error on " + id.Value, ex);
+            }
+
+            return Json(new { html = html });
+
+        }
+
+
+
+        public JsonResult GetEditBillingForm(int? id)
+        {
+            // similar to the existing EditUserFromOrder routine
+
+            //if (id.Value <= 0)
+            //    throw new Exception("Id of user to edit must be >= 0");
+
+            string html = "";
+
+            try
+            {
+                var user = _accountControllerOrchestrator.GetWebUserById(id.Value);
+
+                WebUser editingUser = null;
+
+                if (User.Identity.IsAuthenticated)
+                {
+                    editingUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
+                }
+
+                _logger.Info(string.Format("{0} is editing {1}", editingUser.email, user.email));
+
+                var editModel = BuildEditUserInfoModel(user, "");
+
+                html = ViewHelpers.RenderViewToString(ControllerContext,
+                        "~/Views/Shared/EditorTemplates/EditUser_Compact.cshtml",
+                        editModel, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("GetEditUserCompactForm error on " + id.Value, ex);
+            }
+
+            return Json(new { html = html });
+
+        }
+
+
+
         public JsonResult GetEditUserCompactForm(int? id)
         {
             // similar to the existing EditUserFromOrder routine
@@ -608,6 +663,44 @@ namespace CUWebinars.Web.Controllers
             catch (Exception ex)
             {
                 _logger.Fatal("GetEditUserCompactForm error on " + id.Value, ex);
+            }
+
+            return Json(new { html = html });
+
+        }
+
+
+        public JsonResult GetEditInstitutionForm(int? id)
+        {
+            // similar to the existing EditUserFromOrder routine
+
+            //if (id.Value <= 0)
+            //    throw new Exception("Id of user to edit must be >= 0");
+
+            string html = "";
+
+            try
+            {
+                var user = _accountControllerOrchestrator.GetWebUserById(id.Value);
+
+                WebUser editingUser = null;
+
+                if (User.Identity.IsAuthenticated)
+                {
+                    editingUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
+                }
+
+                _logger.Info(string.Format("{0} is editing {1}", editingUser.email, user.email));
+
+                var editModel = BuildEditInstitutionInfoModel(user, "");
+
+                html = ViewHelpers.RenderViewToString(ControllerContext,
+                        "~/Views/Shared/EditorTemplates/EditInstitution.cshtml",
+                        editModel, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("EditInstitution error on " + id.Value, ex);
             }
 
             return Json(new { html = html });
@@ -720,9 +813,36 @@ namespace CUWebinars.Web.Controllers
             return editModel;
         }
 
+        private EditInstitutionInfoModel BuildEditInstitutionInfoModel(WebUser user, string returnUrl)
+        {
+            if (user == null)
+            {
+                throw new NullReferenceException();
+            }
+            var institution = user.Institution;
+            
+            var editModel = new EditInstitutionInfoModel
+                {
+                    EditFields = new EditInstitutionModel
+                    {
+                        InstitutionName = user.Institution.InstitutionName,
+                        Address = user.Institution.Address,
+                        City = user.Institution.City,
+                        Zip= user.Institution.Zip,
+                        State = user.Institution.State,
+                        idInstitution = user.idUserInstitution,
+                        idOfCurrentUser = user.idUser
+                    },
+                    LoggedInUser = (ClaimsIdentity)User.Identity,
+                    ReturlUrl = returnUrl,
+                    StatusMessage = string.Empty
+                };
+            return editModel;
+        }
+
 
         [System.Web.Mvc.HttpPost, System.Web.Mvc.AllowAnonymous]
-        //[ValidateAntiForgeryToken(Order = 0)]
+        [ValidateAntiForgeryToken(Order = 0)]
         [ValidateInput(false)]
         [HandleAjaxException(Order = 1)]
         public ActionResult UpdateUser(EditUserViewModel model)
@@ -737,6 +857,30 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     _logger.ErrorException("In EditUser Action: ", exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
+                    throw;
+                }
+            }
+            return this.ModelStateJson(ModelState);
+        }
+
+
+        [System.Web.Mvc.HttpPost, System.Web.Mvc.AllowAnonymous]
+        [ValidateAntiForgeryToken(Order = 0)]
+        [ValidateInput(false)]
+        [HandleAjaxException(Order = 1)]
+        public ActionResult UpdateInstitution(EditInstitutionInfoModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _accountControllerOrchestrator.EditInstitution(model);
+                    return Json(new { Result = WebUiConstants.Success });
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException("In EditInstitution Action: ", exception);
                     ErrorSignal.FromCurrentContext().Raise(exception);
                     throw;
                 }
