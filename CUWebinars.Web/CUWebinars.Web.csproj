@@ -1555,6 +1555,7 @@
     <Content Include="Content\images\xls.png" />
     <Content Include="Content\images\xls_hover.png" />
     <Content Include="Content\images\zoom-corner.png" />
+    <Content Include="Content\jquery.cleditor.css" />
     <Content Include="Content\manage-order.css" />
     <Content Include="Content\quiz.css" />
     <Content Include="Content\toastr.css" />
@@ -1689,7 +1690,10 @@
     <Content Include="Content\DataTables\css\dataTables.responsive.scss" />
     <Content Include="Content\DataTables\css\dataTables.jqueryui.scss" />
     <Content Include="Notification\Templates\AdhocNotification.cshtml" />
+    <Content Include="Scripts\cleditor\jquery.cleditor.min.js" />
     <Content Include="Scripts\jquery-dateFormat.min.js" />
+    <Content Include="Scripts\jquery.cleditor.js" />
+    <Content Include="Scripts\jquery.cleditor.min.js" />
     <Content Include="Scripts\placeholder.js" />
     <Content Include="Views\Cart\ExpressCheckoutAffiliate.cshtml" />
     <Content Include="WinSCP.exe">
@@ -1744,9 +1748,8 @@
     <None Include="Properties\PublishProfiles\CUWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars33 - Web Deploy.pubxml" />
     <Content Include="Scripts\calendarview.js" />
-    <Content Include="Scripts\cleditor\jquery.cleditor.min.js.map">
-      <DependentUpon>jquery.cleditor.min.js</DependentUpon>
-    </Content>
+    <None Include="Properties\PublishProfiles\devtts - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\devtts - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\app\webinar\manage-webinar-from-details.js" />
     <Content Include="Scripts\bootstrap-filestyle.min.js" />
@@ -1991,6 +1994,15 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <None Include="Web.CUWebinars33 - Web Deploy.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.devtts - Web Deploy.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
@@ -2377,7 +2389,6 @@
     <Content Include="Scripts\cleditor\images\toolbar.gif" />
     <Content Include="Scripts\cleditor\jquery.cleditor.css" />
     <Content Include="Scripts\cleditor\jquery.cleditor.js" />
-    <Content Include="Scripts\cleditor\jquery.cleditor.min.js" />
     <Content Include="Scripts\cleditor\jquery.cleditor.xhtml.js" />
     <Content Include="Scripts\cleditor\jquery.cleditor.xhtml.min.js" />
     <Content Include="Scripts\fullcalendar\fullcalendar.css" />
