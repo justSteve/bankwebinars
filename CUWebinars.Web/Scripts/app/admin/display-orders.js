@@ -17,6 +17,47 @@ $(function () {
 
 });
 
+
+function getResendInfoHtml() {
+    // this seems a little slower than I'd like...
+    var html = "";
+
+    $.ajax({
+        async: false,
+        url: "/admin/getresendinfohtml",
+        dataType: "json",
+        type: "POST",
+        success: function (data) {
+            html = data.html;
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus);
+        }
+    });
+
+    return html;
+}
+
+function getOrderStatusHtml() {
+    // this seems a little slower than I'd like...
+    var html = "";
+
+    $.ajax({
+        async: false,
+        url: "/admin/geteditorderstatusdropdownhtml",
+        dataType: "json",
+        type: "POST",
+        success: function (data) {
+            html = data.html;
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus);
+        }
+    });
+
+    return html;
+}
+
 // self-invoking function for creating methods using Module pattern.
 (function (ns) {
 
@@ -24,6 +65,7 @@ $(function () {
         DO.ordersTable = $('#ordersTable');
         DO.connInfoTable = $('#connInfoTable');
         DO.webinarIdDiv = $('#webinarIdDiv');
+        DO.baseOrderStatusHtml = getOrderStatusHtml();  // this seems a little slower than I'd like...
     };
 
     ns.wireUpHandlers = function () {
@@ -65,8 +107,6 @@ $(function () {
 
 
         $('.dataTable').on("click", ".ResendConnectionInfoButton", function () {
-
-
             var self = this;
 
             var orderId = this.getAttribute('data-orderId');
@@ -180,96 +220,110 @@ $(function () {
             "paging": true,
             "deferRender": true,
             'columns': [
-                { 'data': 'idOrder' },
+                { 'data': 'idOrder', 'visible': false },
                 { 'data': 'LastName', 'class': 'details-control edit-user-name-email' },
-                { 'data': 'Institution', 'class': 'details-control' },
-                { 'data': null, 'class': 'details-control' },
-                { 'data': 'Discount', 'class': 'details-control' },
+                { 'data': 'Institution', 'class': 'details-control edit-institution' },
+                { 'data': null, 'class': 'details-control edit-billing' },
+                //{ 'data': 'Discount', 'class': 'details-control' },
 
                 {
                     'data': 'Affiliate_ttsDomain',
                     'visible': aff,
                     'class': 'details-control'
                 },
-                { 'data': 'OrderDateString', 'class': 'details-control edit-date' },
-                { 'data':'OrderStatusString' }
+                { 'data': 'OrderDateString', 'class': 'details-control edit-resends' },
+                { 'data': 'OrderStatusString' }
 
             ],
             "order": [0, "asc"]
 
             , // complex columns can be specified / created with mRender
-            "aoColumnDefs": [{
+            "aoColumnDefs": [
+            {
                 "aTargets": [0], // Order [id] column
                 "mData": "",
                 "mRender": function (data, type, full) {
                     var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : data;
                     return orderToEdit + ", " + full.TtsJoinUrl;
-                },
+                }
             },
             {
                 "aTargets": [1], // User column
                 "mData": "",
                 "mRender": function (data, type, full) {
-                    return "<a href='/account/edituser/" + full.idUser + "' target='_new' />" + full.LastName + ", " + full.FirstName + "</a><br>" + full.BillingEmail;
+                    return full.LastName + ", " + full.FirstName + " [add OrdersByUser]<br>" + full.BillingEmail;
+                    //return "<a href='/account/ordersbyuser/" + full.idUser + "' />" + full.LastName + ", " + full.FirstName + "</a><br>" + full.BillingEmail;
                 }
+                // link on user name should implement 'orders by user' current contorl: byUserWrapper
             },
             {
-                "aTargets": [3], // Billing column
+                "aTargets": [2], // institution column
                 "mData": "",
                 "mRender": function (data, type, full) {
-                    var showDiscount = "";
-                    var discountHTML = "<br><span class=\"DisplayDiscount\">Discounted by: {0}</span>";
-                    if (full.Discount != null) {
-                        if (full.Discount.FlatOff > 0) {
-                            showDiscount = discountHTML.replace("{0}", "$" + (full.Discount.FlatOff + "").replace(".00", ""));
-                        }
-                        else if (full.Discount.PercentOff > 0) {
-                            showDiscount = discountHTML.replace("{0}", full.Discount.PercentOff + "%");
-                        }
-                    }
-
-                    var billingHtml = full.RegistrationType.OptionLabel
-                                            .replace(" and Hardcopy Handouts", "")
-                                            .replace("Plus Five", "")
-                                            + showDiscount
-                                            + "<br />Total: $" + (full.Total + "").replace(".00", "")
-                    ;
-
-                    return billingHtml;
+                    return "<a href='/account/editinstitution/" + full.idUser + "' target='_new' />" + full.Institution + "</a>";
                 }
             },
+           {
+               "aTargets": [3], // Billing column
+               "mData": "",
+               "mRender": function (data, type, full) {
+                   var showDiscount = "";
+                   var discountHTML = "<br><span class=\"DisplayDiscount\">Discounted by: {0}</span>";
+                   if (full.Discount != null) {
+                       if (full.Discount.FlatOff > 0) {
+                           showDiscount = discountHTML.replace("{0}", "$" + (full.Discount.FlatOff + "").replace(".00", ""));
+                       }
+                       else if (full.Discount.PercentOff > 0) {
+                           showDiscount = discountHTML.replace("{0}", full.Discount.PercentOff + "%");
+                       }
+                   }
+
+                   var billingHtml = full.RegistrationType.OptionLabel
+                                           .replace(" and Hardcopy Handouts", "")
+                                           .replace("Plus Five", "")
+                                           + showDiscount
+                                           + "<br />Total: $" + (full.Total + "").replace(".00", "")
+                   ;
+
+                   return billingHtml;
+               }
+           },
+            //{
+            //    "aTargets": [4], // Discount column
+            //    "mData": "",
+            //    "mRender": function (data, type, full) {
+            //        var discountCode = "";
+            //        if (full.Discount != null) {
+
+            //            discountCode = full.Discount.DiscountCode;
+            //        }
+
+
+            //        var showDiscount = "";
+            //        var discountHtml = "<span class=\"EditDiscount\">" + discountCode + "</span>";
+
+            //        return discountHtml;
+            //    }
+            //},
             {
-                "aTargets": [4], // Discount column
-                "mData": "",
-                "mRender": function (data, type, full) {
-                    var discountCode = "";
-                    if (full.Discount != null) {
 
-                        discountCode = full.Discount.DiscountCode;
-                    }
-
-
-                    var showDiscount = "";
-                    var discountHtml = "<span class=\"EditDiscount\">" + discountCode + "</span>";
-
-                    return discountHtml;
-                }
-            },
-            {
-
-                "aTargets": [7], // Status column
+                "aTargets": [6], // Status column
                 "mData": "",
                 "mRender": function (data, type, full) {
                     var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
-                    var statusHtml = "<a href='/Admin/manageOrder/" + orderToEdit + "' target='_new' />" + full.OrderStatusString + "</a><br/>";
-                    var resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendOrderConfirmationButton btn btn-mini\">Send Confirmation</button>";
-                    if (full.Webinar_IsActive) {
-                        resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
-                    }
-                    //if (full.Webinar_IsRecorded) {
-                    //    resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendPostEventMaterialButton btn btn-mini\">PostEvent Material</button>";
-                    //}
-                    return statusHtml + resendMsg;
+
+                    // setup a Bootstrap dropdown (http://getbootstrap.com/2.3.2/javascript.html#dropdowns) with the current 
+                    //  order status selected, fire custom ajax when it changes
+
+                    // we need to build this one time on the server via ajax...
+                    var dd_html = DO.baseOrderStatusHtml.replace("[ORDERSTATUS]", full.OrderStatusString).replace("[ORDERID]", orderToEdit);
+                    // find and set the dropdown to our status
+
+
+                    //// added a hook into Edit Order in the dropdown...
+                    //var statusHtml = "<a href='/Admin/manageOrder/" + orderToEdit + "' target='_new' />" + full.OrderStatusString + "</a><br/>";
+
+                    return dd_html;
                 }
             }]
         });

@@ -1,6 +1,12 @@
-﻿using System.Linq;
+﻿using System;
 using CUWebinars.Business.Models;
+using Ninject.Extensions.Logging;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Validation;
+using System.Linq;
+using System.Text;
+using CUWebinars.Business.Core;
 
 namespace CUWebinars.Business.Repository
 {
@@ -31,5 +37,24 @@ namespace CUWebinars.Business.Repository
         {
             return items.Where(i => i.InstitutionName.ToLower().Contains(name.ToLower()));
         }
+
+        public Institution GetById(int idInstitution)
+        {
+            return items.Single(i => i.idInstitution== idInstitution);
+        }
+
+        public void Update(Institution institution)
+        {
+            CheckDisposed();
+
+            var entry = db.Entry(institution);
+            if (entry.State == EntityState.Detached)
+            {
+                items.Attach(institution);
+                entry.State = EntityState.Modified;
+            }
+            db.SaveChanges();
+        }
+
     }
 }

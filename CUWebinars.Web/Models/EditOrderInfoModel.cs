@@ -1,9 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Security.Claims;
+using System.Web;
 
 namespace CUWebinars.Web.Models
 {
-    public class EditUserInfoModel
+    public class EditOrderInfoModel
     {
         public bool HasLocalPassword { get; set; }
         public ClaimsIdentity LoggedInUser { get; set; }
@@ -11,6 +15,6 @@ namespace CUWebinars.Web.Models
         public string StatusMessage { get; set; }
 
         [UIHint("EditUser")]
-        public EditUserModel EditFields { get; set; }
+        public EditOrderModel EditFields { get; set; }
     }
 }

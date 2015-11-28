@@ -108,34 +108,129 @@ function AttachDataTableEditEvents() {
         var data = $form.serialize();
         $.ajax({
             async: false,
-            url: "/account/edituser",
+            url: "/account/updateuser",
             data: data ,
             dataType: "json",
             type: "POST",
             success: function (data) {
                 console.log(data);
+
+                // need to update the currently displaying name (in case it changed)
+
                 var $cell = $("td.child-showing");
                 $cell.click(); // hide the child row
-                $cell.addClass("success"); // has a background color specified
-                setTimeout(function () {
-                    $cell.addClass("save-bg-transition"); // specifies an ease effect so the next line "fades" back to normal
-                    $cell.removeClass("success"); // remove the customized background color
-                    setTimeout(function () {
-                        $cell.removeClass("save-bg-transition"); // reset this so next color change doesn't fade in
-                    }, 3000);
-                }, 1500);
+                fireSuccessIndicator($cell);
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert(textStatus);
             }
         });
-
-
     });
 
 
+
+    $('.dataTable').on("click", "#save-changes-institution", function (e) {
+        e.preventDefault();
+
+        var form = $(this).parents("form");
+        var $form = $(form);
+
+        // configure the current validator to validate hidden form elements
+        $.validator.unobtrusive.parse($form);
+        $form.validate().settings.ignore = []; // so it doens't "ignore" .hidden fields
+
+        // check to see if the form is invalid
+        if (!$form.valid())
+        {
+            // are the invalid fields on the hidden panel? flash the button (or something!)
+            if ($(".hidden .input-validation-error").length) {
+                if ($(".show-billing-address.btn-success").length) {
+                    $(".show-shipping-address").addClass("btn-danger");
+                    setTimeout(function() {
+                        $(".show-shipping-address").removeClass("btn-danger");
+                    }, 2000);
+                }
+
+                if ($(".show-shipping-address.btn-success").length) {
+                    $(".show-billing-address").addClass("btn-danger");
+                    setTimeout(function() {
+                        $(".show-billing-address").removeClass("btn-danger");
+                    }, 2000);
+                }
+            } else {
+                return false; // do not allow form to submit if it is invalid
+            }
+        }
+        
+        // could definitely use a "busy" cursor.
+
+        var data = $form.serialize();
+        $.ajax({
+            async: false,
+            url: "/account/updateinstitution",
+            data: data ,
+            dataType: "json",
+            type: "POST",
+            success: function (data) {
+                console.log(data);
+
+                // need to update the currently displaying name (in case it changed)
+
+                var $cell = $("td.child-showing");
+                $cell.click(); // hide the child row
+                fireSuccessIndicator($cell);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+            }
+        });
+    });
+
+
+    //// EditOrderStatus_Compact form events
+    //$('.dataTable').on("click", "#save-changes-order-status", function (e) {
+    //    e.preventDefault();
+
+    //    var form = $(this).parents("form");
+    //    var $form = $(form);
+    //    var data = $form.serialize();
+
+    //    $.ajax({
+    //        async: false,
+    //        url: "/admin/updateorderstatus",
+    //        data: data,
+    //        dataType: "json",
+    //        type: "POST",
+    //        success: function (data) {
+    //            console.log(data);
+
+    //            var $cell = $("td.child-showing");
+
+    //            // need to update the currently displaying order status text, this will be
+    //            //  fairly customized for each cell / edit form
+    //            $("a:first", $cell).html(data.orderStatus)
+
+    //            $cell.click(); // hide the child row
+    //            fireSuccessIndicator($cell);
+    //        },
+    //        error: function (XMLHttpRequest, textStatus, errorThrown) {
+    //            alert(textStatus);
+    //        }
+    //    });
+    //});
 }
 
+function fireSuccessIndicator($cell)
+{
+    $cell.addClass("success"); // has a background color specified
+    setTimeout(function () {
+        $cell.addClass("save-bg-transition"); // specifies an ease effect so the next line "fades" back to normal
+        $cell.removeClass("success"); // remove the customized background color
+        setTimeout(function () {
+            $cell.removeClass("save-bg-transition"); // reset this so next color change doesn't fade in
+        }, 3000);
+    }, 1500);
+}
 
 
 function createChildRow(cell, $td, rowData) {
@@ -144,9 +239,22 @@ function createChildRow(cell, $td, rowData) {
         return editUserCell(cell, $td, rowData);
     }
 
-    if ($td.hasClass("edit-date")) {
-        return editDateCell(cell, $td, rowData);
+    if ($td.hasClass("edit-institution")) {
+        return editInstitutionCell(cell, $td, rowData);
     }
+
+    if ($td.hasClass("edit-billing")) {
+        return editBillingCell(cell, $td, rowData);
+    }
+
+    if ($td.hasClass("edit-resends")) {
+        return editResendsCell(cell, $td, rowData);
+    }
+
+    // doing the order status dropdown "live" on the parent row
+    //if ($td.hasClass("edit-order-status")) {
+    //    return editOrderStatusCell(cell, $td, rowData);
+    //}
 
     return "Row " + cell.index().row + ", Col " + cell.index().column;
 
@@ -177,22 +285,101 @@ function editUserCell(cell, $td, rowData) {
 }
 
 
-function editDateCell(cell, $td, rowData) {
-    // need this in some sort of editable format...  pull from server via ajax?
-    //  apply editor plugin?
+function editBillingCell(cell, $td, rowData) {
 
-    return "" +
-"<form class='form-inline'>" +
-  "<div class='form-group'>" +
-    "<label for='orderDate'>Order Date</label>" +
-    "<input type='date' class='form-control' id='orderDate' value='" + rowData.OrderDateString + "'>" +
-  "</div>" +
-  "<button type='submit' class='btn btn-default'>Save</button> <button type='button' class='btn btn-link'>Cancel</button>" +
-"</form>"
+    // could definitely use a "busy" cursor.
 
+    var html = "";
+
+    $.ajax({
+        async: false,
+        url: "/account/GetEditBillingForm",
+        data: ({ orderId: rowData.idOrder }),
+        dataType: "json",
+        type: "POST",
+        success: function (data) {
+            html = data.html;
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus);
+        }
+    });
+
+    return html;
 }
 
 
+function editInstitutionCell(cell, $td, rowData) {
+
+    // could definitely use a "busy" cursor.
+
+    var html = "";
+
+    $.ajax({
+        async: false,
+        url: "/account/geteditinstitutionform",
+        data: ({ id: rowData.idUser }),
+        dataType: "json",
+        type: "POST",
+        success: function (data) {
+            html = data.html;
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus);
+        }
+    });
+
+    return html;
+}
+
+
+function editResendsCell(cell, $td, rowData) {
+
+    // could definitely use a "busy" cursor.
+
+    var html = "";
+
+    $.ajax({
+        async: false,
+        url: "/account/GetResendInfoForm",
+        data: ({ orderId: rowData.idOrder }),
+        dataType: "json",
+        type: "POST",
+        success: function (data) {
+            html = data.html;
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus);
+        }
+    });
+
+    return html;
+}
+
+
+//function editOrderStatusCell(cell, $td, rowData) {
+
+//    // could definitely use a "busy" cursor.
+
+//    var html = "";
+//    var orderToEdit = (rowData.idOrderLegacy != 0) ? rowData.idOrderLegacy : rowData.idOrder;
+
+//    $.ajax({
+//        async: false,
+//        url: "/admin/geteditorderstatuscompactform",
+//        data: ({ id: orderToEdit }),
+//        dataType: "json",
+//        type: "POST",
+//        success: function (data) {
+//            html = data.html;
+//        },
+//        error: function (XMLHttpRequest, textStatus, errorThrown) {
+//            alert(textStatus);
+//        }
+//    });
+
+//    return html;
+//}
 
 
 

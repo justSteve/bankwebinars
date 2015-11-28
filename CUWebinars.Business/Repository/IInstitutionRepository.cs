@@ -15,5 +15,7 @@ namespace CUWebinars.Business.Repository
         IEnumerable<Institution> GetAllIncluding(params Expression<Func<Institution, object>>[] includeProperties);
         IEnumerable<Institution> GetByNameAndZipCode(string name, string zip);
         IEnumerable<Institution> GetInstitutionsByName(string name);
+        Institution GetById(int idInstitution);
+        void Update(Institution saveInst);
     }
 }

@@ -9,6 +9,7 @@
         public string Title { get; set; }
         public string Institution { get; set; }
         public string Email { get; set; }
+        public string Comments { get; set; }
         public PhoneNumber PhoneNumber { get; set; }
         public Address4JotForm Address { get; set; }
         public int WebinarId { get; set; }

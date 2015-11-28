@@ -55,5 +55,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         int CreateUserForAdmin(EditUserModel editUserModel);
         Address BuildPlaceHolderAddressBilling(string email);
         Address BuildPlaceHolderAddressShipping(string email);
+        void EditInstitution(EditInstitutionInfoModel model);
     }
 }
