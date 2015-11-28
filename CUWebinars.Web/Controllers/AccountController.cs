@@ -554,18 +554,13 @@ namespace CUWebinars.Web.Controllers
 
 
 
-        public JsonResult GetResendInfoForm(int? id)
+        public JsonResult GetResendInfoForm(int orderId)
         {
-            // similar to the existing EditUserFromOrder routine
-
-            //if (id.Value <= 0)
-            //    throw new Exception("Id of user to edit must be >= 0");
-
             string html = "";
 
             try
             {
-                var user = _accountControllerOrchestrator.GetWebUserById(id.Value);
+                var order = _orderManagementService.GetOrderById(orderId);
 
                 WebUser editingUser = null;
 
@@ -574,38 +569,29 @@ namespace CUWebinars.Web.Controllers
                     editingUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
                 }
 
-                _logger.Info(string.Format("{0} is editing {1}", editingUser.email, user.email));
+                _logger.Info(string.Format("GetResendInfoForm: {0} is resending {1}", editingUser.email, order.BillingEmail));
 
-                var editModel = BuildEditUserInfoModel(user, "");
+                var editModel = BuildOrderInfoModel(order, "");
 
                 html = ViewHelpers.RenderViewToString(ControllerContext,
-                        "~/Views/Shared/EditorTemplates/EditUser_Compact.cshtml",
+                        "~/Views/Shared/EditorTemplates/ResendInfo_Compact.cshtml",
                         editModel, true);
             }
             catch (Exception ex)
             {
-                _logger.Fatal("GetEditUserCompactForm error on " + id.Value, ex);
+                _logger.Fatal("GetResendInfoForm error on " + orderId, ex);
             }
 
             return Json(new { html = html });
 
         }
 
-
-
-        public JsonResult GetEditBillingForm(int? id)
+        public JsonResult GetEditBillingForm(int orderId)
         {
-            // similar to the existing EditUserFromOrder routine
-
-            //if (id.Value <= 0)
-            //    throw new Exception("Id of user to edit must be >= 0");
-
             string html = "";
 
             try
             {
-                var user = _accountControllerOrchestrator.GetWebUserById(id.Value);
-
                 WebUser editingUser = null;
 
                 if (User.Identity.IsAuthenticated)
@@ -613,17 +599,18 @@ namespace CUWebinars.Web.Controllers
                     editingUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
                 }
 
-                _logger.Info(string.Format("{0} is editing {1}", editingUser.email, user.email));
+                _logger.Info(string.Format("{0} is editing {1}", editingUser.email, orderId));
+                var order = _orderManagementService.GetOrderById(orderId);
 
-                var editModel = BuildEditUserInfoModel(user, "");
+                var editModel = BuildOrderInfoModel(order, "");
 
                 html = ViewHelpers.RenderViewToString(ControllerContext,
-                        "~/Views/Shared/EditorTemplates/EditUser_Compact.cshtml",
+                        "~/Views/Shared/EditorTemplates/EditBilling_Compact.cshtml",
                         editModel, true);
             }
             catch (Exception ex)
             {
-                _logger.Fatal("GetEditUserCompactForm error on " + id.Value, ex);
+                _logger.Fatal("GetOrderInfoForm error on " + orderId, ex);
             }
 
             return Json(new { html = html });
@@ -807,11 +794,46 @@ namespace CUWebinars.Web.Controllers
                         AccountDetailsTitle = WebUiConstants.ManageUser
                     },
                     LoggedInUser = (ClaimsIdentity)User.Identity,
-                    ReturlUrl = returnUrl,
+                    ReturnUrl = returnUrl,
                     StatusMessage = string.Empty
                 };
             return editModel;
         }
+
+        private EditOrderInfoModel BuildOrderInfoModel(Order order, string empty)
+        {
+            if (order == null) throw new ArgumentNullException("order");
+            var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+            var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
+            var additionalLocationsPricing =
+                _orderManagementService.GetCostOfAdditionalLocations(orderRow.AdditionalLocation,orderRow.idWebinar);
+            var additionalLocations = orderRow.AdditionalLocation;
+            var additionalLocationsCount = additionalLocations.Count;
+
+            var editModel = new EditOrderInfoModel
+            {
+                EditFields = new EditOrderModel
+                {
+                    AdditionalLocations = additionalLocations,
+                    CostPerAdditionalLocation = additionalLocationsPricing.Item2,
+                    ClaimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims },
+                    DisplayRowPriceViewModel = new DisplayRowPriceViewModel
+                    {
+                        Discount = orderRow.Discount,
+                        NumberOfAdditionalLocations = additionalLocationsCount,
+                        OrderStatus = order.OrderStatus,
+                        Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
+                        PricesAndDiscounts =
+                            _orderManagementService.CalculateOrderCost(order, additionalLocationsPricing.Item2),
+                        RegistrationType = orderRow.RegistrationType,
+                        RowPrice = orderRow.RowPrice
+                    },
+                    NumberOfAdditionalLocations = additionalLocationsCount
+                }
+            };
+            return editModel;
+        }
+
 
         private EditInstitutionInfoModel BuildEditInstitutionInfoModel(WebUser user, string returnUrl)
         {
@@ -820,7 +842,7 @@ namespace CUWebinars.Web.Controllers
                 throw new NullReferenceException();
             }
             var institution = user.Institution;
-            
+
             var editModel = new EditInstitutionInfoModel
                 {
                     EditFields = new EditInstitutionModel
@@ -828,13 +850,13 @@ namespace CUWebinars.Web.Controllers
                         InstitutionName = user.Institution.InstitutionName,
                         Address = user.Institution.Address,
                         City = user.Institution.City,
-                        Zip= user.Institution.Zip,
+                        Zip = user.Institution.Zip,
                         State = user.Institution.State,
                         idInstitution = user.idUserInstitution,
                         idOfCurrentUser = user.idUser
                     },
                     LoggedInUser = (ClaimsIdentity)User.Identity,
-                    ReturlUrl = returnUrl,
+                    ReturnUrl = returnUrl,
                     StatusMessage = string.Empty
                 };
             return editModel;

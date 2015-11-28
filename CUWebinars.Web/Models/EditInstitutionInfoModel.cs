@@ -7,7 +7,7 @@ namespace CUWebinars.Web.Models
     {
         public bool HasLocalPassword { get; set; }
         public ClaimsIdentity LoggedInUser { get; set; }
-        public string ReturlUrl { get; set; }
+        public string ReturnUrl { get; set; }
         public string StatusMessage { get; set; }
 
         [UIHint("EditInstitution")]

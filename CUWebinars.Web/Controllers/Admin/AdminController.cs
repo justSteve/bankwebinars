@@ -422,6 +422,23 @@ namespace CUWebinars.Web.Controllers.Admin
             }
         }
 
+        public JsonResult getResendInfoHtml()
+        {
+
+            string html = "";
+
+            //var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
+
+            //var resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendOrderConfirmationButton btn btn-mini\">Send Confirmation</button>";
+            //if (full.Webinar_IsActive)
+            //{
+            //    resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
+            //}
+
+            return Json(new { html = html });
+
+        }
+
         public JsonResult GetEditOrderStatusDropdownHtml()
         {
 

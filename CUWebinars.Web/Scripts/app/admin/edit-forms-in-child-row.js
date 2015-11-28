@@ -243,7 +243,11 @@ function createChildRow(cell, $td, rowData) {
         return editInstitutionCell(cell, $td, rowData);
     }
 
-    if ($td.hasClass("edit-date")) {
+    if ($td.hasClass("edit-billing")) {
+        return editBillingCell(cell, $td, rowData);
+    }
+
+    if ($td.hasClass("edit-resends")) {
         return editResendsCell(cell, $td, rowData);
     }
 
@@ -267,6 +271,30 @@ function editUserCell(cell, $td, rowData) {
         async: false,
         url: "/account/geteditusercompactform",
         data: ({ id: rowData.idUser }),
+        dataType: "json",
+        type: "POST",
+        success: function (data) {
+            html = data.html;
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus);
+        }
+    });
+
+    return html;
+}
+
+
+function editBillingCell(cell, $td, rowData) {
+
+    // could definitely use a "busy" cursor.
+
+    var html = "";
+
+    $.ajax({
+        async: false,
+        url: "/account/GetEditBillingForm",
+        data: ({ orderId: rowData.idOrder }),
         dataType: "json",
         type: "POST",
         success: function (data) {
@@ -313,8 +341,8 @@ function editResendsCell(cell, $td, rowData) {
 
     $.ajax({
         async: false,
-        url: "/account/geteditusercompactform",
-        data: ({ id: rowData.idUser }),
+        url: "/account/GetResendInfoForm",
+        data: ({ orderId: rowData.idOrder }),
         dataType: "json",
         type: "POST",
         success: function (data) {
@@ -352,24 +380,6 @@ function editResendsCell(cell, $td, rowData) {
 
 //    return html;
 //}
-
-
-function editDateCell(cell, $td, rowData) {
-    // need this in some sort of editable format...  pull from server via ajax?
-    //  apply editor plugin?
-
-    return "" +
-"<form class='form-inline'>" +
-  "<div class='form-group'>" +
-    "<label for='orderDate'>Order Date</label>" +
-    "<input type='date' class='form-control' id='orderDate' value='" + rowData.OrderDateString + "'>" +
-  "</div>" +
-  "<button type='submit' class='btn btn-default'>Save</button> <button type='button' class='btn btn-link'>Cancel</button>" +
-"</form>"
-
-}
-
-
 
 
 

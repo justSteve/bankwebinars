@@ -18,6 +18,26 @@ $(function () {
 });
 
 
+function getResendInfoHtml() {
+    // this seems a little slower than I'd like...
+    var html = "";
+
+    $.ajax({
+        async: false,
+        url: "/admin/getresendinfohtml",
+        dataType: "json",
+        type: "POST",
+        success: function (data) {
+            html = data.html;
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus);
+        }
+    });
+
+    return html;
+}
+
 function getOrderStatusHtml() {
     // this seems a little slower than I'd like...
     var html = "";
@@ -87,8 +107,6 @@ function getOrderStatusHtml() {
 
 
         $('.dataTable').on("click", ".ResendConnectionInfoButton", function () {
-
-
             var self = this;
 
             var orderId = this.getAttribute('data-orderId');
@@ -204,16 +222,16 @@ function getOrderStatusHtml() {
             'columns': [
                 { 'data': 'idOrder', 'visible': false },
                 { 'data': 'LastName', 'class': 'details-control edit-user-name-email' },
-                { 'data': 'Institution', 'class': 'details-control edit-institution ' },
-                { 'data': null, 'class': 'details-control' },
-                { 'data': 'Discount', 'class': 'details-control' },
+                { 'data': 'Institution', 'class': 'details-control edit-institution' },
+                { 'data': null, 'class': 'details-control edit-billing' },
+                //{ 'data': 'Discount', 'class': 'details-control' },
 
                 {
                     'data': 'Affiliate_ttsDomain',
                     'visible': aff,
                     'class': 'details-control'
                 },
-                { 'data': 'OrderDateString', 'class': 'details-control edit-date' },
+                { 'data': 'OrderDateString', 'class': 'details-control edit-resends' },
                 { 'data': 'OrderStatusString' }
 
             ],
@@ -270,44 +288,26 @@ function getOrderStatusHtml() {
                    return billingHtml;
                }
            },
-            {
-                "aTargets": [4], // Discount column
-                "mData": "",
-                "mRender": function (data, type, full) {
-                    var discountCode = "";
-                    if (full.Discount != null) {
+            //{
+            //    "aTargets": [4], // Discount column
+            //    "mData": "",
+            //    "mRender": function (data, type, full) {
+            //        var discountCode = "";
+            //        if (full.Discount != null) {
 
-                        discountCode = full.Discount.DiscountCode;
-                    }
+            //            discountCode = full.Discount.DiscountCode;
+            //        }
 
 
-                    var showDiscount = "";
-                    var discountHtml = "<span class=\"EditDiscount\">" + discountCode + "</span>";
+            //        var showDiscount = "";
+            //        var discountHtml = "<span class=\"EditDiscount\">" + discountCode + "</span>";
 
-                    return discountHtml;
-                }
-            },
-            {
-                "aTargets": [6], // orderDate - resends column
-                "mData": "",
-                "mRender": function (data, type, full) {
-                    var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
-
-                    var resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendOrderConfirmationButton btn btn-mini\">Send Confirmation</button>";
-                    if (full.Webinar_IsActive) {
-                        resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
-                    }
-
-                    //if (full.Webinar_IsRecorded) {
-                    //    resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendPostEventMaterialButton btn btn-mini\">PostEvent Material</button>";
-                    //}
-
-                    return resendMsg;
-                }
-            },
+            //        return discountHtml;
+            //    }
+            //},
             {
 
-                "aTargets": [7], // Status column
+                "aTargets": [6], // Status column
                 "mData": "",
                 "mRender": function (data, type, full) {
                     var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
