@@ -6,6 +6,7 @@ using CUWebinars.Web.Models;
 using CUWebinars.Web.ViewModel;
 using System;
 using System.Collections.Generic;
+using CUWebinars.Web.Models.DataTablesModels;
 
 namespace CUWebinars.Web.Core.Orchestrators
 {

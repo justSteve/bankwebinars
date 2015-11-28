@@ -443,7 +443,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
 
             string html = ViewHelpers.RenderViewToString(ControllerContext,
-                                        "~/Views/Shared/EditorTemplates/EditOrderStatus_Compact.cshtml",
+                                        "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditOrderStatus_Compact.cshtml",
                                         null, true);
 
 

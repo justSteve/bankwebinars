@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
-namespace CUWebinars.Web.Models
+namespace CUWebinars.Web.Models.DataTablesModels
 {
     public class EditUserInfoModel
     {

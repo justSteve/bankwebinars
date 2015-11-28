@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Web.Mvc;
 using CUWebinars.Business.Models;
 
-namespace CUWebinars.Web.Models
+namespace CUWebinars.Web.Models.DataTablesModels
 {
     public class EditInstitutionModel
     {

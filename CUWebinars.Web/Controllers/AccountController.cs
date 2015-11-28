@@ -24,6 +24,7 @@ using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models;
+using CUWebinars.Web.Models.DataTablesModels;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Elmah;
@@ -574,7 +575,7 @@ namespace CUWebinars.Web.Controllers
                 var editModel = BuildOrderInfoModel(order, "");
 
                 html = ViewHelpers.RenderViewToString(ControllerContext,
-                        "~/Views/Shared/EditorTemplates/ResendInfo_Compact.cshtml",
+                        "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/ResendInfo_Compact.cshtml",
                         editModel, true);
             }
             catch (Exception ex)
@@ -605,7 +606,7 @@ namespace CUWebinars.Web.Controllers
                 var editModel = BuildOrderInfoModel(order, "");
 
                 html = ViewHelpers.RenderViewToString(ControllerContext,
-                        "~/Views/Shared/EditorTemplates/EditBilling_Compact.cshtml",
+                        "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditBilling_Compact.cshtml",
                         editModel, true);
             }
             catch (Exception ex)
@@ -644,7 +645,7 @@ namespace CUWebinars.Web.Controllers
                 var editModel = BuildEditUserInfoModel(user, "");
 
                 html = ViewHelpers.RenderViewToString(ControllerContext,
-                        "~/Views/Shared/EditorTemplates/EditUser_Compact.cshtml",
+                        "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditUser_Compact.cshtml",
                         editModel, true);
             }
             catch (Exception ex)
@@ -682,7 +683,7 @@ namespace CUWebinars.Web.Controllers
                 var editModel = BuildEditInstitutionInfoModel(user, "");
 
                 html = ViewHelpers.RenderViewToString(ControllerContext,
-                        "~/Views/Shared/EditorTemplates/EditInstitution.cshtml",
+                        "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditInstitution.cshtml",
                         editModel, true);
             }
             catch (Exception ex)
@@ -696,42 +697,6 @@ namespace CUWebinars.Web.Controllers
 
 
 
-        public JsonResult GetEditInstitutionForm(int? id)
-        {
-            // similar to the existing EditUserFromOrder routine
-
-            //if (id.Value <= 0)
-            //    throw new Exception("Id of user to edit must be >= 0");
-
-            string html = "";
-
-            try
-            {
-                var user = _accountControllerOrchestrator.GetWebUserById(id.Value);
-
-                WebUser editingUser = null;
-
-                if (User.Identity.IsAuthenticated)
-                {
-                    editingUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
-                }
-
-                _logger.Info(string.Format("{0} is editing {1}", editingUser.email, user.email));
-
-                var editModel = BuildEditUserInfoModel(user, "");
-
-                html = ViewHelpers.RenderViewToString(ControllerContext,
-                        "~/Views/Shared/EditorTemplates/EditInstitution.cshtml",
-                        editModel, true);
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal("GetEditUserCompactForm error on " + id.Value, ex);
-            }
-
-            return Json(new { html = html });
-
-        }
 
 
         [System.Web.Mvc.HttpGet]
@@ -901,7 +866,7 @@ namespace CUWebinars.Web.Controllers
             return editModel;
         }
 
-        private EditInstitutionModel BuildEditInstitutionModel(WebUser user, string returnUrl)
+        private EditInstitutionInfoModel BuildEditInstitutionModel(WebUser user, string returnUrl)
         {
             if (user == null)
             {
@@ -909,14 +874,21 @@ namespace CUWebinars.Web.Controllers
             }
             var institution = user.Institution;
             //
-            var editModel = new EditInstitutionModel
+            var editModel = new EditInstitutionInfoModel
                 {
                     EditFields = new EditInstitutionModel
                     {
-                        AccountDetailsTitle = WebUiConstants.ManageUser
+                        idOfCurrentUser = user.idUser,
+                        idInstitution = institution.idInstitution,
+                        InstitutionName = institution.InstitutionName,
+                        Address = institution.Address,
+                        City = institution.City,
+                        State = institution.State,
+                        Zip = institution.Zip
+
                     },
                     LoggedInUser = (ClaimsIdentity)User.Identity,
-                    ReturlUrl = returnUrl,
+                    ReturnUrl = returnUrl,
                     StatusMessage = string.Empty
                 };
             return editModel;

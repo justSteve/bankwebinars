@@ -485,17 +485,15 @@
     <Compile Include="Models\DiscountModel.cs" />
     <Compile Include="Models\EditContactInfoModel.cs" />
     <Compile Include="Models\EditDiscountModel.cs" />
-    <Compile Include="Models\EditInstitionModel.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Models\EditInstitutionInfoModel.cs" />
-    <Compile Include="Models\EditOrderInfoModel.cs" />
-    <Compile Include="Models\EditOrderModel.cs" />
+    <Compile Include="Models\DataTablesModels\EditInstitutionInfoModel.cs" />
+    <Compile Include="Models\DataTablesModels\EditInstitutionModel.cs" />
+    <Compile Include="Models\DataTablesModels\EditOrderInfoModel.cs" />
+    <Compile Include="Models\DataTablesModels\EditOrderModel.cs" />
     <Compile Include="Models\EditQuizEditModel.cs" />
-    <Compile Include="Models\EditResendsInfoModel.cs" />
-    <Compile Include="Models\EditResendsModel.cs" />
-    <Compile Include="Models\EditUserInfoModel.cs" />
-    <Compile Include="Models\EditUserModel.cs" />
+    <Compile Include="Models\DataTablesModels\EditResendsInfoModel.cs" />
+    <Compile Include="Models\DataTablesModels\EditResendsModel.cs" />
+    <Compile Include="Models\DataTablesModels\EditUserInfoModel.cs" />
+    <Compile Include="Models\DataTablesModels\EditUserModel.cs" />
     <Compile Include="Models\ExpressCheckoutModel.cs" />
     <Compile Include="Models\ExpressCheckoutModel2.cs" />
     <Compile Include="Models\FullName.cs" />
@@ -1597,7 +1595,6 @@
     <Compile Include="Models\AdminDTO.cs" />
     <Compile Include="Models\WebinarFilesEditModel.cs" />
     <Compile Include="Models\EditBillingAddressModel.cs" />
-    <Compile Include="Models\EditInstitionModel.cs" />
     <Compile Include="Models\EditNameTitleModel.cs" />
     <Compile Include="Models\EditShippingAddressModel.cs" />
     <Compile Include="Models\ImportOrderResponse.cs" />
@@ -1704,7 +1701,7 @@
     <Content Include="Scripts\jquery.cleditor.min.js" />
     <Content Include="Scripts\placeholder.js" />
     <Content Include="Views\Cart\ExpressCheckoutAffiliate.cshtml" />
-    <Content Include="Views\Shared\EditorTemplates\EditInstitution.cshtml">
+    <Content Include="Views\Shared\EditorTemplates\DataTablesEditorTemplates\EditInstitution.cshtml">
       <SubType>Code</SubType>
     </Content>
     <Content Include="WinSCP.exe">
@@ -1998,8 +1995,15 @@
     <Content Include="Views\Webinar\Partials\SearchResultsGrid.cshtml" />
     <Content Include="Views\Webinar\Search.cshtml" />
     <Content Include="Views\Account\MyCertificateDS.cshtml" />
-    <Content Include="Views\Shared\EditorTemplates\EditUser_Compact.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DataTablesEditorTemplates\EditUser_Compact.cshtml" />
     <Content Include="Views\Cart\Partials\ExpressCheckout4IE2.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DataTablesEditorTemplates\EditOrder_Compact.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DataTablesEditorTemplates\EditOrderStatus_Compact.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DataTablesEditorTemplates\ResendInfo_Compact.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\ResendNotifications.cshtml" />
+    <Content Include="Views\AdhocNotification\ResendInfo_Compact.cshtml" />
+    <Content Include="Views\AdhocNotification\EditInstitution.cshtml" />
+    <Content Include="Views\AdhocNotification\EditOrder_Compact.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -25,6 +25,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using CUWebinars.Web.Mapping.Mappers;
+using CUWebinars.Web.Models.DataTablesModels;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
 namespace CUWebinars.Web.Core.Orchestrators

@@ -6,7 +6,7 @@ using System.Web.Mvc;
 using CUWebinars.Business.Models;
 using CUWebinars.Web.ViewModel;
 
-namespace CUWebinars.Web.Models
+namespace CUWebinars.Web.Models.DataTablesModels
 {
     public class EditOrderModel
     {

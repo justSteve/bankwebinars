@@ -1,4 +1,4 @@
-﻿@model  EditUserInfoModel
+﻿@model  CUWebinars.Web.Models.DataTablesModels.EditUserInfoModel
 @{
     ViewBag.Title = "Edit Contact Info";
     var fullNameClaim = Model.LoggedInUser.Claims.FirstOrDefault(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName);
