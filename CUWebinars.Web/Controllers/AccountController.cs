@@ -606,7 +606,7 @@ namespace CUWebinars.Web.Controllers
                 var editModel = BuildOrderInfoModel(order, "");
 
                 html = ViewHelpers.RenderViewToString(ControllerContext,
-                        "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditBilling_Compact.cshtml",
+                        "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditOrder_Compact.cshtml",
                         editModel, true);
             }
             catch (Exception ex)
@@ -813,6 +813,7 @@ namespace CUWebinars.Web.Controllers
                 _orderManagementService.GetCostOfAdditionalLocations(orderRow.AdditionalLocation,orderRow.idWebinar);
             var additionalLocations = orderRow.AdditionalLocation;
             var additionalLocationsCount = additionalLocations.Count;
+            var regTypes = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.Webinar.idWebinar, false);
 
             var editModel = new EditOrderInfoModel
             {
@@ -856,6 +857,7 @@ namespace CUWebinars.Web.Controllers
                         City = user.Institution.City,
                         Zip = user.Institution.Zip,
                         State = user.Institution.State,
+                        Country = user.Institution.Country,
                         idInstitution = user.idUserInstitution,
                         idOfCurrentUser = user.idUser
                     },

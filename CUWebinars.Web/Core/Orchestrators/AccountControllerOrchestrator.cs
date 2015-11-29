@@ -389,7 +389,19 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public void EditInstitution(EditInstitutionInfoModel model)
         {
+            var updateFields = model.EditFields;
+
+
             Institution saveInst = _membershipService.GetInstitutionById(model.EditFields.idInstitution);
+            if (saveInst == null) throw new ArgumentNullException("saveInst");
+
+            saveInst.Address = updateFields.Address.Trim();
+            saveInst.City = updateFields.City.Trim();
+            saveInst.State = updateFields.State.Trim();
+            saveInst.Zip = updateFields.Zip.Trim();
+            saveInst.Country = updateFields.Country.Trim();
+            saveInst.InstitutionName = updateFields.InstitutionName.Trim();
+
             _membershipService.UpdateInstitutionDetails(saveInst);
 
         }
@@ -414,16 +426,17 @@ namespace CUWebinars.Web.Core.Orchestrators
                 AddressType = Enum.GetName(typeof(AddressType), billingAddressFields.TypeOfAddress)
             };
 
+            //any null or empty fields in shipping should default to Billing
             var shippingAddress = new Address
             {
                 Name = shippingAddressFields.Name.Trim(),
-                StreetAddress = shippingAddressFields.StreetAddress.Trim(),
-                StreetAddress2 = shippingAddressFields.StreetAddress2 == null ? shippingAddressFields.StreetAddress2 : shippingAddressFields.StreetAddress2.Trim(),
-                State = shippingAddressFields.State.Trim(),
-                City = shippingAddressFields.City.Trim(),
-                Country = shippingAddressFields.Country.Trim(),
-                Zip = shippingAddressFields.Zip.Trim(),
-                Phone = shippingAddressFields.Phone.Trim(),
+                StreetAddress = String.IsNullOrWhiteSpace(shippingAddressFields.StreetAddress) ? billingAddress.StreetAddress.Trim() : shippingAddressFields.StreetAddress,
+                StreetAddress2 = String.IsNullOrWhiteSpace(shippingAddressFields.StreetAddress2) ? billingAddress.StreetAddress2 : shippingAddressFields.StreetAddress2,
+                State = String.IsNullOrWhiteSpace(shippingAddressFields.State) ? billingAddressFields.State : shippingAddressFields.State.Trim(),
+                City = String.IsNullOrWhiteSpace(shippingAddressFields.City) ? billingAddressFields.City : shippingAddressFields.City.Trim(),
+                Country = String.IsNullOrWhiteSpace(shippingAddressFields.Country) ? billingAddressFields.Country : shippingAddressFields.Country.Trim(),
+                Zip = String.IsNullOrWhiteSpace(shippingAddressFields.Zip) ? billingAddressFields.Zip : shippingAddressFields.Zip.Trim(),
+                Phone = String.IsNullOrWhiteSpace(shippingAddressFields.Phone) ? shippingAddressFields.Phone : billingAddressFields.Phone.Trim(),
                 AddressType = Enum.GetName(typeof(AddressType), shippingAddressFields.TypeOfAddress)
             };
 
@@ -438,8 +451,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 );
 
             ;
-            WebUser user = GetWebUserByEmail( updateFields.Email.Trim());
-            _orderManagementService.UpdateUserDetails(user,updateFields.FirstName.Trim(),
+            //ensure contact info for orders is also updated
+            WebUser user = GetWebUserByEmail(updateFields.Email.Trim());
+            _orderManagementService.UpdateUserDetails(user, updateFields.FirstName.Trim(),
                 updateFields.LastName.Trim(),
                 updateFields.Email.Trim(),
                 updateFields.Institution,

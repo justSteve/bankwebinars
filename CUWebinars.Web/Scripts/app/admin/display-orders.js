@@ -220,12 +220,11 @@ function getOrderStatusHtml() {
             "paging": true,
             "deferRender": true,
             'columns': [
+                // class names function as trigger - createChildRow
                 { 'data': 'idOrder', 'visible': false },
                 { 'data': 'LastName', 'class': 'details-control edit-user-name-email' },
                 { 'data': 'Institution', 'class': 'details-control edit-institution' },
                 { 'data': null, 'class': 'details-control edit-billing' },
-                //{ 'data': 'Discount', 'class': 'details-control' },
-
                 {
                     'data': 'Affiliate_ttsDomain',
                     'visible': aff,
@@ -240,15 +239,9 @@ function getOrderStatusHtml() {
             , // complex columns can be specified / created with mRender
             "aoColumnDefs": [
             {
-                "aTargets": [0], // Order [id] column
-                "mData": "",
-                "mRender": function (data, type, full) {
-                    var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : data;
-                    return orderToEdit + ", " + full.TtsJoinUrl;
-                }
-            },
-            {
-                "aTargets": [1], // User column
+                // [0] idOrder column is hidden
+
+                "aTargets": [1], // User column  -- triggers EditUser_Compact.cshtml
                 "mData": "",
                 "mRender": function (data, type, full) {
                     return full.LastName + ", " + full.FirstName + " [add OrdersByUser]<br>" + full.BillingEmail;
@@ -257,14 +250,14 @@ function getOrderStatusHtml() {
                 // link on user name should implement 'orders by user' current contorl: byUserWrapper
             },
             {
-                "aTargets": [2], // institution column
+                "aTargets": [2], // institution column  -- triggers EditInstitution.chtml
                 "mData": "",
                 "mRender": function (data, type, full) {
                     return "<a href='/account/editinstitution/" + full.idUser + "' target='_new' />" + full.Institution + "</a>";
                 }
             },
            {
-               "aTargets": [3], // Billing column
+               "aTargets": [3], // Billing column  -- triggers EditOrder_Compact.cshtml
                "mData": "",
                "mRender": function (data, type, full) {
                    var showDiscount = "";
@@ -288,23 +281,8 @@ function getOrderStatusHtml() {
                    return billingHtml;
                }
            },
-            //{
-            //    "aTargets": [4], // Discount column
-            //    "mData": "",
-            //    "mRender": function (data, type, full) {
-            //        var discountCode = "";
-            //        if (full.Discount != null) {
-
-            //            discountCode = full.Discount.DiscountCode;
-            //        }
-
-
-            //        var showDiscount = "";
-            //        var discountHtml = "<span class=\"EditDiscount\">" + discountCode + "</span>";
-
-            //        return discountHtml;
-            //    }
-            //},
+           // [4] Affiliate Column
+           // [5] Resends Column
             {
 
                 "aTargets": [6], // Status column

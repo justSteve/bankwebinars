@@ -86,9 +86,8 @@ namespace CUWebinars.Business.Repository
 
             // There can be only one RegTypesGroupsXrefs per webinar at any one time
             var regTypesGroupsXrefs = webinars.SelectMany(w => w.RegTypesGroupsXref);
+            
             //when pre-event
-
-
             //  For each of those RegTypesGroupsXrefs, get the relevant OptionGroup
             var regtypesGroups = regTypesGroupsXrefs.Include(o => o.RegTypesGroup).Select(o => o.RegTypesGroup);
 

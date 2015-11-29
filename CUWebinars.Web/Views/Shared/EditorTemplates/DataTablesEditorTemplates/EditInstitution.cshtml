@@ -14,20 +14,50 @@
 
 <form id="edit-institution-form" class="form-compact" novalidate="novalidate">
     <div class="row-fluid">
-        <div class="control-group">
-            <div class="span4">
-                @Html.LabelFor(model => model.EditFields.InstitutionName, new {@class = "control-label span3"})
-                <div class="controls span8">
-                    @Html.EditorFor(model => model.EditFields.InstitutionName)
-                    @Html.ValidationMessageFor(model => model.EditFields.InstitutionName)
-                </div>
+        <div class="span4 offset1">
+            @Html.LabelFor(model => model.EditFields.InstitutionName, new { @class = "control-label span4" })
+            <div class="controls span4">
+                @Html.EditorFor(model => model.EditFields.InstitutionName)
+                @Html.ValidationMessageFor(model => model.EditFields.InstitutionName)
             </div>
-            <div class="span4 ">
-                @Html.LabelFor(model => model.EditFields.City, new {@class = "control-label span3"})
-                <div class="controls span8">
-                    @Html.EditorFor(model => model.EditFields.City)
-                    @Html.ValidationMessageFor(model => model.EditFields.City)
-                </div>
+        </div>
+        <div class="span6">
+            @Html.LabelFor(model => model.EditFields.City, new { @class = "control-label span3" })
+            <div class="controls span3">
+                @Html.EditorFor(model => model.EditFields.City)
+                @Html.ValidationMessageFor(model => model.EditFields.City)
+            </div>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span4 offset1">
+            @Html.LabelFor(model => model.EditFields.Address, new { @class = "control-label span4" })
+            <div class="controls span4">
+                @Html.EditorFor(model => model.EditFields.Address)
+                @Html.ValidationMessageFor(model => model.EditFields.Address)
+            </div>
+        </div>
+        <div class="span6">
+            @Html.LabelFor(model => model.EditFields.State, new { @class = "control-label span3" })
+            <div class="controls span3">
+                @Html.EditorFor(model => model.EditFields.State)
+                @Html.ValidationMessageFor(model => model.EditFields.State)
+            </div>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span4 offset1">
+            @Html.LabelFor(model => model.EditFields.Country, new { @class = "control-label span4" })
+            <div class="controls span4">
+                @Html.EditorFor(model => model.EditFields.Country)
+                @Html.ValidationMessageFor(model => model.EditFields.Country)
+            </div>
+        </div>
+        <div class="span6">
+            @Html.LabelFor(model => model.EditFields.Zip, new { @class = "control-label span3" })
+            <div class="controls span3">
+                @Html.EditorFor(model => model.EditFields.Zip)
+                @Html.ValidationMessageFor(model => model.EditFields.Zip)
             </div>
         </div>
     </div>

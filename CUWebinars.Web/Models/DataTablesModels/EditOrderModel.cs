@@ -21,6 +21,7 @@ namespace CUWebinars.Web.Models.DataTablesModels
         public Discount Discount{ get; set; }
         public Order Order { get; set; }
         public RegType RegType { get; set; }
+        public ICollection<RegType> RegTypes { get; set; }
         public WebUser WebUser { get; set; }
         public ClaimsViewModel ClaimsViewModel { get; set; }
         

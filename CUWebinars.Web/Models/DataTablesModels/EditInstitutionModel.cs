@@ -13,6 +13,7 @@ namespace CUWebinars.Web.Models.DataTablesModels
         public string RegIdentifier { get; set; }
         public string Address { get; set; }
         public string City { get; set; }
+        public string Country { get; set; }
         public string State { get; set; }
         public string Zip { get; set; }
         public virtual ICollection<WebUser> WebUsers { get; set; }

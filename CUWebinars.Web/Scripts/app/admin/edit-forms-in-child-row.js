@@ -237,7 +237,7 @@ function createChildRow(cell, $td, rowData) {
 
     if ($td.hasClass("edit-user-name-email")) {
         return editUserCell(cell, $td, rowData);
-    }
+    }  //
 
     if ($td.hasClass("edit-institution")) {
         return editInstitutionCell(cell, $td, rowData);
