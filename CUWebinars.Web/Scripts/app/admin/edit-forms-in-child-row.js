@@ -174,38 +174,6 @@ function AttachDataTableEditEvents() {
         });
     });
 
-
-    //// EditOrderStatus_Compact form events
-    //$('.dataTable').on("click", "#save-changes-order-status", function (e) {
-    //    e.preventDefault();
-
-    //    var form = $(this).parents("form");
-    //    var $form = $(form);
-    //    var data = $form.serialize();
-
-    //    $.ajax({
-    //        async: false,
-    //        url: "/admin/updateorderstatus",
-    //        data: data,
-    //        dataType: "json",
-    //        type: "POST",
-    //        success: function (data) {
-    //            console.log(data);
-
-    //            var $cell = $("td.child-showing");
-
-    //            // need to update the currently displaying order status text, this will be
-    //            //  fairly customized for each cell / edit form
-    //            $("a:first", $cell).html(data.orderStatus)
-
-    //            $cell.click(); // hide the child row
-    //            fireSuccessIndicator($cell);
-    //        },
-    //        error: function (XMLHttpRequest, textStatus, errorThrown) {
-    //            alert(textStatus);
-    //        }
-    //    });
-    //});
 }
 
 function fireSuccessIndicator($cell)
@@ -342,6 +310,43 @@ function editResendsCell(cell, $td, rowData) {
     });
 
     return html;
+}
+
+// EditOrderStatus_Compact form event
+function updateOrderStatus(item, orderId, newOrderStatus)
+{
+    var $item = $(item);
+    var form = $item.parents("form");
+    var $form = $(form);
+
+    $("input[name='Id']", $form).val(orderId);
+    $("input[name='DisplayRowPriceViewModel.OrderStatus']", $form).val(newOrderStatus);
+
+    var data = $form.serialize();
+
+    $.ajax({
+        async: false,
+        url: "/admin/updateorderstatus",
+        data: data,
+        dataType: "json",
+        type: "POST",
+        success: function (data) {
+            console.log(data);
+
+            if (data.Result == "Success")
+            {
+                // need to update the currently displaying status (presuming it changed)
+                $(".dropdown-toggle", $form).html(data.orderStatus + "&nbsp;<b class=\"caret\"></b>");
+
+                var $cell = $item.parents("td");
+                fireSuccessIndicator($cell);
+            }
+
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus);
+        }
+    });
 }
 
 

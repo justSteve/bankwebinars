@@ -463,9 +463,11 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     var order = _orderManagementService.GetOrderById(model.Id);
                     
-                    order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus; // the only field that we are worried about at this time
+                    order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus; // the only field that we are updating at this time
+
                     // what about audit fields?
                     // are there any order properties not populated by GetOrderById which we risk deleting?
+
                     _orderManagementService.UpdateOrderByAdmin(order);
 
                     return Json(new { Result = WebUiConstants.Success, orderStatus = model.DisplayRowPriceViewModel.OrderStatus.ToString() });

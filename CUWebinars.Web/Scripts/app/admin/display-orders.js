@@ -288,18 +288,14 @@ function getOrderStatusHtml() {
                 "aTargets": [6], // Status column
                 "mData": "",
                 "mRender": function (data, type, full) {
+
+                    // setup a Bootstrap dropdown (http://getbootstrap.com/2.3.2/javascript.html#dropdowns) with the current order status "selected"
+
                     var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
 
-                    // setup a Bootstrap dropdown (http://getbootstrap.com/2.3.2/javascript.html#dropdowns) with the current 
-                    //  order status selected, fire custom ajax when it changes
-
-                    // we need to build this one time on the server via ajax...
-                    var dd_html = DO.baseOrderStatusHtml.replace("[ORDERSTATUS]", full.OrderStatusString).replace("[ORDERID]", orderToEdit);
-                    // find and set the dropdown to our status
-
-
-                    //// added a hook into Edit Order in the dropdown...
-                    //var statusHtml = "<a href='/Admin/manageOrder/" + orderToEdit + "' target='_new' />" + full.OrderStatusString + "</a><br/>";
+                    // the dropdown's HTML gets built one time on the server via ajax via a partial view and RenderViewToString
+                    //  magic strings [ORDERSTATUS] and [ORDERID] are hand-/hard-coded in the partial View
+                    var dd_html = DO.baseOrderStatusHtml.replace(/\[ORDERSTATUS\]/gi, full.OrderStatusString).replace(/\[ORDERID\]/gi, orderToEdit);
 
                     return dd_html;
                 }
