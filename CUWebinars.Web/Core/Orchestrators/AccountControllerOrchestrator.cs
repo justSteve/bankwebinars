@@ -390,8 +390,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void EditInstitution(EditInstitutionInfoModel model)
         {
             var updateFields = model.EditFields;
-
-
+            
             Institution saveInst = _membershipService.GetInstitutionById(model.EditFields.idInstitution);
             if (saveInst == null) throw new ArgumentNullException("saveInst");
 
