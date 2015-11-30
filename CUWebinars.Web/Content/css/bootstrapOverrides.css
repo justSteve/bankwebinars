@@ -29,6 +29,17 @@
     margin-bottom: 0;
 }
 
+.form-compact .dropdown-menu li
+{
+    padding: 0 6px;
+    font-size: 10.5px;
+}
+
+.form-compact .dropdown-menu li a
+{
+    padding: 0 4px;
+}
+
 .child-row .row-fluid {
     background-color:#FFFFFF;
     padding-top:10px;
