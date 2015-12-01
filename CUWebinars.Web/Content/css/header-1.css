@@ -578,9 +578,9 @@ body.tall-logo nav.user {
     }
 
     /*** Mobile Navigation ***/
-    #main_menu, #main_menu .primary_menu, .js #main_menu, .js #main_menu {
+    .js #main_menu {
         /* hide on mobile */
-        display: none !important;
+        display: none;
     }
 
     .primary_menu {

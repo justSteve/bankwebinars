@@ -96,7 +96,7 @@ if (document.documentElement.clientWidth < 767) { //if client width is less than
     $(document).ready(function () {
 
         // accordion
-        $('.accordmobile').dcAccordion({
+        $('.primary_menu').dcAccordion({
             eventType: 'click',
             saveState: false,
             autoClose: true,
@@ -120,8 +120,10 @@ $(document).ready(function () {
     $('.mobile_nav a').click(function () {
 
         //$('#main_menu').slideToggle(400);
-        $('#main_menu').show();
-        $(this).toggleClass('active'); return false;
+        $('#main_menu').toggle();
+        // alert($('#main_menu').attr("style"));
+        $(this).toggleClass('active');
+        return false;
     });
 
     /*================================================================*/
