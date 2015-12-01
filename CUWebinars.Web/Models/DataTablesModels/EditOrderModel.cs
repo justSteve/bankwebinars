@@ -13,7 +13,8 @@ namespace CUWebinars.Web.Models.DataTablesModels
         public IEnumerable<AdditionalLocation> AdditionalLocations { get; set; }
         public decimal CostPerAdditionalLocation { get; set; }
         public DisplayRowPriceViewModel DisplayRowPriceViewModel { get; set; }
-
+        public bool AdditionalLocationsAvailableOnLoad { get; set; }
+        
         public DateTime? PostEventAccessExpires { get; set; }
         public TagBuilder AdditionalLocationsRenderer { get; set; }
         public int NumberOfAdditionalLocations { get; set; }

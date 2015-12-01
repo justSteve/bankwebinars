@@ -819,6 +819,9 @@ namespace CUWebinars.Web.Controllers
             {
                 EditFields = new EditOrderModel
                 {
+                    AdditionalLocationsAvailableOnLoad = false, // see below for where this is properly decided.
+                    AdditionalLocationsRenderer = ViewHelpers.GetRendererOfAdditionalLocations(additionalLocations.Select(al => al.Email).ToList()),
+                    
                     AdditionalLocations = additionalLocations,
                     CostPerAdditionalLocation = additionalLocationsPricing.Item2,
                     ClaimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims },
@@ -836,7 +839,29 @@ namespace CUWebinars.Web.Controllers
                     NumberOfAdditionalLocations = additionalLocationsCount
                 }
             };
+            var regType = orderRow.RegistrationType;
+
+            {
+                var option = CheckIfAddLocAvailable(regType.idRegType);
+                if (option.HasValue)
+                {
+                    editModel.EditFields.AdditionalLocationsAvailableOnLoad = option.Value;
+                }
+            }
             return editModel;
+        }
+        private bool? CheckIfAddLocAvailable(int optionId)
+        {
+            var firstOrDefault = _orderManagementService.GetRegTypeOption(optionId)
+                .Select(o => new { Show = o.ShowLiveNotifications, Ship = o.ShowShippedNotifications })
+                .FirstOrDefault();
+
+            if (firstOrDefault != null)
+            {
+                return firstOrDefault.Show.Equals("Yes", StringComparison.OrdinalIgnoreCase);
+            }
+
+            return null;
         }
 
 
