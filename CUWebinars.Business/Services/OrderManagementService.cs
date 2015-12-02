@@ -109,7 +109,9 @@ namespace CUWebinars.Business.Services
             try
             {
                 var regType = _regTypeRepository.FindRegType(registrationType);
-                return _orderRepository.CreateOrderRow(webinar, additionalLocation, regType);
+                OrderRow row = _orderRepository.CreateOrderRow(webinar, additionalLocation, regType);
+
+                return row;
             }
             catch (Exception exception)
             {
@@ -1715,6 +1717,19 @@ namespace CUWebinars.Business.Services
 
         }
 
+        public string CreateOnDemandClaimForMigratedOrder(OrderRow row)
+        {
+            if (row == null) throw new  NullReferenceException();
+            var order = GetOrderById(row.idOrder);
+            var getExpiry = CalculatePostEventMaterialsAccessExpiry(order);
+
+            DataOperations dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+
+           var makeOnDemandClaim = dataOperations.CreateOnDemandClaimForMigratedOrder(row, getExpiry);
+
+            return "";
+        }
+
         public IList<Order> GetV3OrdersByOnDemandClaim()
         {
             return _orderRepository.GetV3OrdersByOnDemandClaim();
@@ -1814,6 +1829,11 @@ namespace CUWebinars.Business.Services
             _orderRepository.RemoveAndDeleteAdditionalLocation(deletedAdditionalLocation);
         }
 
+
+        private object CalculatePostEventMaterialsAccessExpiryFromRow(OrderRow row)
+        {
+            throw new NotImplementedException();
+        }
 
         public DateTime CalculatePostEventMaterialsAccessExpiry(Order order)
         {

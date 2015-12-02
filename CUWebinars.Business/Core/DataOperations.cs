@@ -525,7 +525,7 @@ namespace CUWebinars.Business.Core
                     sqlCmd.CommandType = CommandType.Text;
                     sqlCmd.Parameters.Add(adminEmail);
                     sqlCmd.CommandText =
-                        "DELETE FROM dbo.UserClaims WHERE Type = 'http://ttstrain.com/ws/2014/01/identity/claims/BeingImpersonated' AND Value like '%"+adminUserEmail+"'";
+                        "DELETE FROM dbo.UserClaims WHERE Type = 'http://ttstrain.com/ws/2014/01/identity/claims/BeingImpersonated' AND Value like '%" + adminUserEmail + "'";
 
                     numRows = sqlCmd.ExecuteNonQuery();
                 }
@@ -685,7 +685,7 @@ namespace CUWebinars.Business.Core
                                 }
                             }
                         }
-                          
+
                         return orders;
                     }
                     catch (Exception ex)
@@ -845,7 +845,7 @@ namespace CUWebinars.Business.Core
                         errorLogger.CommandText += "'LegacyIdIsZero' ,";
                         errorLogger.CommandText += "9 ,9 ,9 ,'[SynchOrderIds found LegacyIdIsZero', 9 ,";
                         errorLogger.CommandText += "'exec  BuildQueryToFindLegacyOrderOnZeroCondition @idOrderV3 =" + v3OrderId + "')";
-                        
+
 
                         errorLogger.ExecuteNonQuery();
 
@@ -969,9 +969,17 @@ namespace CUWebinars.Business.Core
 
             // Display the content.
             //return returnvalue;
+            try
+            {
+                SynchOrderIds(order.idOrderLegacy, Convert.ToInt32(returnvalue.Split(':')[1].Replace("\"", "").Replace("}", "")));
+                ;
 
-            SynchOrderIds(order.idOrderLegacy, Convert.ToInt32(returnvalue.Split(':')[1].Replace("\"", "").Replace("}", "")));
-            ;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
 
         }
 
@@ -1245,6 +1253,11 @@ namespace CUWebinars.Business.Core
                 }
             }
             return retList;
+        }
+
+        public string CreateOnDemandClaimForMigratedOrder(OrderRow row, DateTime getExpiry)
+        {
+            return "";
         }
     }
 }

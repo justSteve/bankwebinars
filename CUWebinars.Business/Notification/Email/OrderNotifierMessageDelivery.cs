@@ -51,8 +51,9 @@ namespace CUWebinars.Business.Notification.Email
             {
                 notificationMessage.Addresses = new List<string>
                 {
-                    order.Affiliate.ContactEmail,
-                    order.BillingEmail
+                    order.BillingEmail,
+                    order.Affiliate.ContactEmail
+                   
                 };
             }
             SendMessage(notificationMessage);
