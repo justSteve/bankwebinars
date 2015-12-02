@@ -761,6 +761,12 @@ namespace CUWebinars.Business.Core
             {
                 myDiscount = myRow.Discount.DiscountCode;
             }
+            var onDemandCode = "";
+
+            if (myRow.OnDemandCode != null)
+            {
+                onDemandCode = myRow.OnDemandCode;
+            }
 
             var PostForm = "";
 
@@ -791,6 +797,7 @@ namespace CUWebinars.Business.Core
             PostForm += "&Status=" + order.OrderStatus + "&Total=" + order.Total;
             PostForm += "&AdminComments=" + order.AdminComments;
             PostForm += "&OrderStatus=" + (int)order.OrderStatus;
+            PostForm += "&OnDemandCode=" + onDemandCode;
 
             var submitImporter = "http://acsimporter.bankwebinars.com/home/MigrateOrderFromV3/";
             if (Debugger.IsAttached)
@@ -944,6 +951,7 @@ namespace CUWebinars.Business.Core
             PostForm += "&DiscountCode=" + myDiscount;
             PostForm += "&Status=" + order.OrderStatus + "&Total=" + order.Total;
             PostForm += "&AdminComments=" + order.AdminComments;
+            PostForm += "&OnDemandCode=" + myRow.OnDemandCode;
 
             PostForm = PostForm.Replace("<br>", "");
             var submitImporter = "http://v3.bankwebinars.com/order/MigrateOrder/";
