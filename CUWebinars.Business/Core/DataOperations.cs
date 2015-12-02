@@ -897,6 +897,7 @@ namespace CUWebinars.Business.Core
             {
                 myDiscount = myRow.Discount.DiscountCode;
             }
+
             var addLocs = "";
 
 
