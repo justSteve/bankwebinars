@@ -131,12 +131,18 @@
 </div>
 <!-- end  .content-slider-wrapper dark -->
 @*http://www.slidorion.com/*@
-<div class="content-wrapper">
-    <hgroup class="title">
-        <h2>@ViewBag.Message</h2>
-    </hgroup>
 
-</div>
+
+@if (!string.IsNullOrWhiteSpace(ViewBag.Message))
+{
+    <div class="content-wrapper">
+        <hgroup class="title">
+            <h2>@ViewBag.Message</h2>
+        </hgroup>
+    </div>
+}
+
+
 <script type="text/javascript">
     $(document).ready(function () {
         $('#page > div').height(497);

@@ -761,7 +761,6 @@
     <Content Include="Content\images\BankWebinars\menu\Security.jpg" />
     <Content Include="Content\images\BankWebinars\menu\Teller.jpg" />
     <Content Include="Content\images\BankWebinars\menu_arrow.png" />
-    <Content Include="Content\images\BankWebinars\navtriggerbg.png" />
     <Content Include="Content\images\BankWebinars\open-quote-white.png" />
     <Content Include="Content\images\BankWebinars\open-quote.png" />
     <Content Include="Content\images\BankWebinars\orderedList0.png" />
@@ -1381,7 +1380,6 @@
     <Content Include="Content\images\menu\Security.jpg" />
     <Content Include="Content\images\menu\Teller.jpg" />
     <Content Include="Content\images\menu_arrow.png" />
-    <Content Include="Content\images\navtriggerbg.png" />
     <Content Include="Content\images\nav_bg.jpg" />
     <Content Include="Content\images\NotiFooter.gif" />
     <Content Include="Content\images\open-quote-white.png" />

@@ -86,26 +86,30 @@
     <!-- mobile navigation trigger-->
     <h5 class="mobile_nav"><a href="javascript:void(0)">&nbsp;<span></span></a></h5>
     <!--end mobile navigation trigger-->
-    <section class="container preheader">
-        <!--this is the login for the user-->
-        @Html.Partial("_LoginPartial")
+    <section class="preheader">
+        <section class="container">
+
+            <!--this is the login for the user-->
+            @Html.Partial("_LoginPartial")
 
 
-        <ul class="social">
-            @*<li><a class="socicon small rss" href="#" data-placement="bottom" title="Subscribe to our RSS feed"></a></li>*@
-            <li><a class="socicon small facebook" href="http://www.facebook.com/home.php#!/pages/Total-Training-Solutions/300546163412" target="_blank" data-placement="bottom" title="Follow us on Facebook"></a></li>
-            <li><a class="socicon small twitterbird" href="http://twitter.com/#!/ttstrain" target="_blank" data-placement="bottom" title="Follow us on Twitter"></a></li>
-            <li><a class="socicon small linkedin" href="https://www.linkedin.com/company/bankwebinars.com" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
-            <li>
-                <div id="search-wrapper" class="search-wrapper">
-                    <form class="search" method="post" action="/webinar/search">
-                        <input id="search-box" name="searchTerm" type="text" placeholder="Search for?">
-                    </form>
-                </div>
-            </li>
-        </ul>
+            <ul class="social">
+                @*<li><a class="socicon small rss" href="#" data-placement="bottom" title="Subscribe to our RSS feed"></a></li>*@
+                <li><a class="socicon small facebook" href="http://www.facebook.com/home.php#!/pages/Total-Training-Solutions/300546163412" target="_blank" data-placement="bottom" title="Follow us on Facebook"></a></li>
+                <li><a class="socicon small twitterbird" href="http://twitter.com/#!/ttstrain" target="_blank" data-placement="bottom" title="Follow us on Twitter"></a></li>
+                <li><a class="socicon small linkedin" href="https://www.linkedin.com/company/bankwebinars.com" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
+                <li>
+                    <div id="search-wrapper" class="search-wrapper">
+                        <form class="search" method="post" action="/webinar/search">
+                            <input id="search-box" name="searchTerm" type="text" placeholder="Search for?">
+                        </form>
+                    </div>
+                </li>
+            </ul>
 
+        </section>
     </section>
+
     <!-- begin .header-->
     <header class="header  clearfix" style="margin-bottom: 0px; padding-bottom: 0; ">
         <img src="~/Content/images/BankWebinars/print-logo.png" class="print logo" alt="CUWebinars is a production of TTSTrain.com" />

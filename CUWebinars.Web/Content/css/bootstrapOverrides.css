@@ -102,3 +102,60 @@ table.dataTable thead .sorting_desc_disabled { background: url('../images/sort_d
     font-size: x-small;
     color: red;
 }
+
+
+/* NEW UPDATES */
+.container {width: 90%;}
+.container.preheader {right: 0;}
+.preheader {padding-left: 0 !important;}
+.preheader .social {border-right: 0; padding-right: 0;}
+.social {left: 0;}
+.social li {padding: 0 0 0 14px;}
+#main_menu {right: 0;}
+.primary_menu li a {font-size: 100%; padding: 0 10px;}
+.caption h2 {text-align: left !important;}
+.caption div, .caption p {color: #fff; margin-left: 0 !important; margin-right: 0 !important;}
+.caption blockquote {color: #fff;}
+
+@media only screen and (max-width: 1150px) {
+   #logo {background-size: 240px !important; min-height: 90px; width: 250px;}
+}
+
+@media only screen and (max-width: 1064px) {
+  #logo {background-size: 180px !important; min-height: 70px; width: 200px; margin-top: 10px;}
+   .primary_menu li {margin: 0;}
+   .primary_menu li a {font-size: 100%; padding: 0 10px;}
+}
+
+@media only screen and (max-width: 960px) {
+  #logo {background-size: 160px !important; min-height: 70px; width: 180px; margin-top: 10px;}
+  .widget img.alignleft {margin-bottom: 5px; width: 100%;}
+  .row-fluid #main-menu.span8 {width: auto;}
+}
+
+@media only screen and (max-width: 930px) {
+  .primary_menu li a {font-size: 82%; padding: 0 4px;}
+}
+
+@media only screen and (max-width: 767px) {
+  body {padding-left: 0; padding-right: 0;}
+  .header {margin-top: 0;}
+  .header #logo {margin-left: 20px;}
+  #logo {background-size: 280px !important; min-height: 90px; width: 280px;}
+  .mobile_nav a {text-decoration: none;}
+  .mobile_nav a span {background: url('../images/navtriggerbg.png') -20px 50% no-repeat;}
+  #main_menu {right: 0;}
+  #main_menu ul ul li a {padding-left: 30px;}
+  .primary_menu li a {padding: 10px 0 5px 20px}
+
+  .hero-unit {padding: 60px 20px;}
+  .hero-unit + .container blockquote {margin-right: 0;}
+  .hero-unit h1 {font-size: 35px !important;}
+
+  .content-slider.flexslider h2 {text-align: center !important;}
+  .content-slider-wrapper {margin: 0;}
+
+  .widget img.alignleft {width: auto;}
+
+  footer .container {padding: 0 20px;}
+}
