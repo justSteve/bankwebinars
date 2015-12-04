@@ -1374,7 +1374,6 @@
     <Content Include="Content\images\menu\Security.jpg" />
     <Content Include="Content\images\menu\Teller.jpg" />
     <Content Include="Content\images\menu_arrow.png" />
-    <Content Include="Content\images\navtriggerbg.png" />
     <Content Include="Content\images\nav_bg.jpg" />
     <Content Include="Content\images\NotiFooter.gif" />
     <Content Include="Content\images\open-quote-white.png" />
