@@ -525,7 +525,7 @@ namespace CUWebinars.Business.Core
                     sqlCmd.CommandType = CommandType.Text;
                     sqlCmd.Parameters.Add(adminEmail);
                     sqlCmd.CommandText =
-                        "DELETE FROM dbo.UserClaims WHERE Type = 'http://ttstrain.com/ws/2014/01/identity/claims/BeingImpersonated' AND Value like '%"+adminUserEmail+"'";
+                        "DELETE FROM dbo.UserClaims WHERE Type = 'http://ttstrain.com/ws/2014/01/identity/claims/BeingImpersonated' AND Value like '%" + adminUserEmail + "'";
 
                     numRows = sqlCmd.ExecuteNonQuery();
                 }
@@ -685,7 +685,7 @@ namespace CUWebinars.Business.Core
                                 }
                             }
                         }
-                          
+
                         return orders;
                     }
                     catch (Exception ex)
@@ -761,6 +761,12 @@ namespace CUWebinars.Business.Core
             {
                 myDiscount = myRow.Discount.DiscountCode;
             }
+            var onDemandCode = "";
+
+            if (myRow.OnDemandCode != null)
+            {
+                onDemandCode = myRow.OnDemandCode;
+            }
 
             var PostForm = "";
 
@@ -791,6 +797,7 @@ namespace CUWebinars.Business.Core
             PostForm += "&Status=" + order.OrderStatus + "&Total=" + order.Total;
             PostForm += "&AdminComments=" + order.AdminComments;
             PostForm += "&OrderStatus=" + (int)order.OrderStatus;
+            PostForm += "&OnDemandCode=" + onDemandCode;
 
             var submitImporter = "http://acsimporter.bankwebinars.com/home/MigrateOrderFromV3/";
             if (Debugger.IsAttached)
@@ -845,7 +852,7 @@ namespace CUWebinars.Business.Core
                         errorLogger.CommandText += "'LegacyIdIsZero' ,";
                         errorLogger.CommandText += "9 ,9 ,9 ,'[SynchOrderIds found LegacyIdIsZero', 9 ,";
                         errorLogger.CommandText += "'exec  BuildQueryToFindLegacyOrderOnZeroCondition @idOrderV3 =" + v3OrderId + "')";
-                        
+
 
                         errorLogger.ExecuteNonQuery();
 
@@ -945,6 +952,7 @@ namespace CUWebinars.Business.Core
             PostForm += "&DiscountCode=" + myDiscount;
             PostForm += "&Status=" + order.OrderStatus + "&Total=" + order.Total;
             PostForm += "&AdminComments=" + order.AdminComments;
+            PostForm += "&OnDemandCode=" + myRow.OnDemandCode;
 
             PostForm = PostForm.Replace("<br>", "");
             var submitImporter = "http://v3.bankwebinars.com/order/MigrateOrder/";
@@ -970,9 +978,17 @@ namespace CUWebinars.Business.Core
 
             // Display the content.
             //return returnvalue;
+            try
+            {
+                SynchOrderIds(order.idOrderLegacy, Convert.ToInt32(returnvalue.Split(':')[1].Replace("\"", "").Replace("}", "")));
+                ;
 
-            SynchOrderIds(order.idOrderLegacy, Convert.ToInt32(returnvalue.Split(':')[1].Replace("\"", "").Replace("}", "")));
-            ;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
 
         }
 
@@ -1246,6 +1262,11 @@ namespace CUWebinars.Business.Core
                 }
             }
             return retList;
+        }
+
+        public string CreateOnDemandClaimForMigratedOrder(OrderRow row, DateTime getExpiry)
+        {
+            return "";
         }
     }
 }

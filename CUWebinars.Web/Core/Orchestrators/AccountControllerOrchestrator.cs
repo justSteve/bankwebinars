@@ -441,7 +441,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             _membershipService.UpdateUserDetails(_globals.Tenant,
                 updateFields.FirstName.Trim(),
-                updateFields.LastName.Trim(),
+                updateFields.LastName.Trim(), 
                 updateFields.Email.Trim(),
                 updateFields.Institution,
                 billingAddress,
@@ -553,7 +553,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     model.Recorded.Add(new KeyValuePair<string, Order>("na" + selectOrdersWithRecordedWebinar.idOrder, selectOrdersWithRecordedWebinar));
                 }
-
+                
             }
 
             foreach (var orderRow in model.Scheduled.Select(order => order.OrderRows

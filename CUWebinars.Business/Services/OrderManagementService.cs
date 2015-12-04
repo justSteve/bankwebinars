@@ -109,7 +109,9 @@ namespace CUWebinars.Business.Services
             try
             {
                 var regType = _regTypeRepository.FindRegType(registrationType);
-                return _orderRepository.CreateOrderRow(webinar, additionalLocation, regType);
+                OrderRow row = _orderRepository.CreateOrderRow(webinar, additionalLocation, regType);
+
+                return row;
             }
             catch (Exception exception)
             {
@@ -424,20 +426,19 @@ namespace CUWebinars.Business.Services
                         catch (Exception ex)
                         {
                             i++;
-                            _logger.ErrorException("SynchOrder Migrate to V3 failed: " + orderEmail, ex);
+                            _logger.ErrorException("SynchOrder select idOrder, idOrderLegacy, " + orderEmail +", from order", ex);
                         }
-                        try
-                        {
-                            _orderRepository.MigrateOrderWithDiscount(order);
+                        //try
+                        //{
+                        //    _orderRepository.MigrateOrderWithDiscount(order);
+                        //    _logger.Info("SynchOrder Discount {0} of {1} - {2}", i, missingFromV3.Count(), orderEmail);
 
-                            _logger.Info("SynchOrder Discount {0} of {1} - {2}", i, missingFromV3.Count(), orderEmail);
-
-                        }
-                        catch (Exception ex)
-                        {
-                            i++;
-                            _logger.ErrorException("SynchOrder Migrate to V3 failed: " + orderEmail, ex);
-                        }
+                        //}
+                        //catch (Exception ex)
+                        //{
+                        //    i++;
+                        //    _logger.ErrorException("SynchOrder Migrate to V3 failed: " + orderEmail, ex);
+                        //}
                         i++;
 
                     }
@@ -488,6 +489,7 @@ namespace CUWebinars.Business.Services
                         }
                         catch (Exception ex)
                         {
+                            _logger.Info("EXEC dbo.FindDupeEmailPerWebinarAndRemove @idWebinar =  " + webinarId);
                             _logger.ErrorException("SynchOrder checks common orders to V3 failed: " + orderEmail, ex);
                         }
                     }
@@ -495,8 +497,7 @@ namespace CUWebinars.Business.Services
             }
             catch (Exception ex)
             {
-
-                _logger.ErrorException("CommonToBoth loop failed.  i=" + i + " idWebinar=" + webinarId, ex);
+                _logger.ErrorException("SynchOrder CommonToBoth loop failed.  i=" + i + " idWebinar=" + webinarId, ex);
             }
 
             _logger.Info("SynchOrders ends for: " + webinarId);
@@ -1268,7 +1269,7 @@ namespace CUWebinars.Business.Services
                     if (!ReferenceEquals(discount.DateValidFrom, null))
                     {
                         subscriptionSpan = discount.DateValidFrom.ToString("MMM-yy") + " until " + discount.DateValidTo.ToString("MMM-yy");
-
+                        
                         sb.Append(
                             "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
                         sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
@@ -1833,6 +1834,11 @@ namespace CUWebinars.Business.Services
             _orderRepository.RemoveAndDeleteAdditionalLocation(deletedAdditionalLocation);
         }
 
+
+        private object CalculatePostEventMaterialsAccessExpiryFromRow(OrderRow row)
+        {
+            throw new NotImplementedException();
+        }
 
         public DateTime CalculatePostEventMaterialsAccessExpiry(Order order)
         {
