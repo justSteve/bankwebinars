@@ -2,6 +2,15 @@
 @using MvcCheckBoxList.Model
 @model WebinarEditModel
 
+<script language="javascript" type="text/javascript">
+    //TODO: Intent here is to size all textarea controls to height of existant text
+
+    window.onload = function () {
+        window.setTimeout(function() {
+            $(".textarea").height($("textarea")[0].scrollHeight);
+        }, 1);
+    };
+</script>
 @using (Html.BeginForm("Edit", "Webinar", FormMethod.Post, new { id = "editWebinarForm", @class = "form-horizontal" }))
 {
     @Html.AntiForgeryToken()
@@ -71,7 +80,7 @@
                 @Html.LabelFor(m => m.Description)
             </div>
             <div class="controls">
-                @Html.TextAreaFor(m => m.Description, new { cols = 40 })
+               @Html.TextAreaFor(m => m.Description, new { cols = 40  })
             </div>
         </div>
 

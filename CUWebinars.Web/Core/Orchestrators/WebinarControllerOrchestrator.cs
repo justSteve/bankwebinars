@@ -492,7 +492,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 webinar.Status = WebinarStatus.Recorded;
                 webinar.LivePlusFiveValue = webinarDetailsViewModel.Webinar.LivePlusFiveValue;
                 _webinarManagementService.UpdateWebinar(webinar);
-
+                
                 _logger.Info(string.Format("Recordings posted for {0} is saved to {1}", webinar.idWebinar + " - " + webinar.Title, webinar.RecordingUrl));
                 SendRecordingIsPostedNotifications(webinarDetailsViewModel, webinar);
                 return true;
