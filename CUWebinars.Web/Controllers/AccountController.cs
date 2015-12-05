@@ -815,6 +815,18 @@ namespace CUWebinars.Web.Controllers
             var additionalLocationsCount = additionalLocations.Count;
             var regTypes = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.Webinar.idWebinar, false);
 
+
+            DisplayOptionsInDropDownViewModel regTypeDD = new DisplayOptionsInDropDownViewModel
+            {
+                Options = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.idWebinar, false),
+                OrderRowId = orderRow.idOrderRow,
+                OrderRowRegistrationType = orderRow.RegistrationType
+            };
+
+            ViewBag.RegTypeDropDownHtml = ViewHelpers.RenderViewToString(ControllerContext,
+                                        "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditRegType_DropDown.cshtml",
+                                        regTypeDD, true);
+
             var editModel = new EditOrderInfoModel
             {
                 EditFields = new EditOrderModel
@@ -850,6 +862,9 @@ namespace CUWebinars.Web.Controllers
             }
             return editModel;
         }
+
+
+
         private bool? CheckIfAddLocAvailable(int optionId)
         {
             var firstOrDefault = _orderManagementService.GetRegTypeOption(optionId)

@@ -1,6 +1,8 @@
 ﻿@model  CUWebinars.Web.Models.DataTablesModels.EditOrderInfoModel
 
 @{
+    var regTypeDropDownHtml = ViewBag.RegTypeDropDownHtml;
+
     var abbvLable = "";
 
     if (Model.EditFields.DisplayRowPriceViewModel.RegistrationType.OptionLabel.StartsWith("Live Plus Five"))
@@ -37,7 +39,7 @@
         <table>
             <tr>
                 <td align="right">
-                    @abbvLable
+                    @Html.Raw(regTypeDropDownHtml)
                 </td>
                 <td>@Model.EditFields.DisplayRowPriceViewModel.Price.ToString("C0")</td>
                 <td id="_xRowPrice"></td>
@@ -104,7 +106,7 @@
             </div>
         </div>
         <div id="discountPanel" class="hidden">
-            
+
         </div>
     </div>
 </div>

@@ -350,6 +350,44 @@ function updateOrderStatus(item, orderId, newOrderStatus)
 }
 
 
+// EditRegType_Compact form event
+function updateRegType(item, orderId, newOrderStatus)
+{
+    var $item = $(item);
+    var form = $item.parents("form");
+    var $form = $(form);
+
+    $("input[name='Id']", $form).val(orderId);
+    $("input[name='DisplayRowPriceViewModel.RegType.Option']", $form).val(newOrderStatus);
+
+    var data = $form.serialize();
+
+    $.ajax({
+        async: false,
+        url: "/admin/updateorderstatus",
+        data: data,
+        dataType: "json",
+        type: "POST",
+        success: function (data) {
+            console.log(data);
+
+            if (data.Result == "Success")
+            {
+                // need to update the currently displaying status (presuming it changed)
+                $(".dropdown-toggle", $form).html(data.orderStatus + "&nbsp;<b class=\"caret\"></b>");
+
+                var $cell = $item.parents("td");
+                fireSuccessIndicator($cell);
+            }
+
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus);
+        }
+    });
+}
+
+
 //function editOrderStatusCell(cell, $td, rowData) {
 
 //    // could definitely use a "busy" cursor.

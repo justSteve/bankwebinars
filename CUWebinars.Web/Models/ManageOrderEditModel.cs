@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace CUWebinars.Web.Models
 {
-    public class ManageOrderEditModel
+    public class DisplayOptionsInDropDownViewModelManageOrderEditModel
     {
         private WebUserFromLegacy _webUserFromLegacy;
         public IEnumerable<AdditionalLocation> AdditionalLocations { get; set; }

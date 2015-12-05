@@ -2002,6 +2002,7 @@
     <Content Include="Views\AdhocNotification\ResendInfo_Compact.cshtml" />
     <Content Include="Views\AdhocNotification\EditInstitution.cshtml" />
     <Content Include="Views\AdhocNotification\EditOrder_Compact.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DataTablesEditorTemplates\EditRegType_DropDown.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
