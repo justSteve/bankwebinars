@@ -21,5 +21,6 @@ namespace CUWebinars.Business.Constants
         public static readonly string PayByCC = "PayByCC";
         public static readonly string MonerisResponse = "MonerisResponse";
         public static readonly string V3OrderUpdatedByLegacyRegType = "V3OrderUpdatedByLegacyRegType";
+        public static readonly string Note = "Note";
     }
 }

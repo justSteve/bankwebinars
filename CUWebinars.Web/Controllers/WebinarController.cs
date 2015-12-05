@@ -1481,12 +1481,23 @@ namespace CUWebinars.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult UpdateWebinarRecordingBatch(int idWebinar, string recordingURL)
+        public ActionResult UpdateWebinarRecordingBatch(int idWebinar, string recordingURL, DateTime livePlusFive)
         {
             var webinar = _webinarManagementService.GetWebinar(idWebinar);
             webinar.RecordingUrl = recordingURL;
-
+            webinar.LivePlusFiveValue = livePlusFive;
+            
             _webinarControllerOrchestrator.SendRecordingIsPostedBatch(idWebinar);
+            return Content("ok");
+        }
+
+        [HttpGet]
+        public ActionResult UpdateWebinarRecordingPerOrder(int idOrder, string recordingURL, string livePlusFive, string note)
+        {
+            var order= _orderManagementService.GetOrderById(idOrder);
+            order.UserComments = note + " Prior Comments: " + order.UserComments;
+            _orderManagementService.SaveOrderChanges(order, null, null, OrderGenesis.Resend);
+            _webinarControllerOrchestrator.SendRecordingIsPostedPerOrder(idOrder, note);
             return Content("ok");
         }
 

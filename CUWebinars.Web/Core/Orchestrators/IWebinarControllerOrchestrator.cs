@@ -29,5 +29,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         bool UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel, out string message);
         ActionResult OnDemandLegacy(int idWebinar, int idUser);
         void SendRecordingIsPostedBatch(int idWebinar);
+        void SendRecordingIsPostedPerOrder(int idWebinar, string note);
     }
 }

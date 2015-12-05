@@ -171,7 +171,7 @@ namespace CUWebinars.Business.Repository
         {
             return items.Where(w => w.idWebinar == idWebinar)
                 .SelectMany(webinar => webinar.RegTypesGroupsXref)
-                .Select(r => r.RegTypesGroup).Where(r => r.RegTypeGroupDesc.ToLower().Contains("15") && !r.RegTypeGroupDesc.ToLower().Contains("post"));
+                .Select(r => r.RegTypesGroup).Where(r => r.RegTypeGroupDesc.ToLower().Contains("15"));
         }
 
         public RegTypesGroupsXref GetRegTypesGroupsXref(int idRegTypesGroupsXref, int idWebinar)
@@ -186,7 +186,7 @@ namespace CUWebinars.Business.Repository
         public IQueryable<RegTypesGroup> GetUpcomingRegTypesForWebinars()
         {
             return ((TTSWebinarsContext)db).RegTypesGroups.Where(
-                    r => r.RegTypeGroupDesc.ToLower().Contains("15") && !r.RegTypeGroupDesc.ToLower().Contains("post")
+                    r => r.RegTypeGroupDesc.ToLower().Contains("15")
                     );
         }
 

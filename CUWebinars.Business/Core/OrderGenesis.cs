@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+
 namespace CUWebinars.Business.Core
 {
     public enum OrderGenesis
@@ -6,6 +8,7 @@ namespace CUWebinars.Business.Core
         ImportedForExistingUser = 1,
         CreatedViaCartByNewUser = 2,
         CreatedViaCartByExistingUser = 3,
-        CreatedViaExpressCheckout = 4
+        CreatedViaExpressCheckout = 4,
+        Resend = 5
     }
 }

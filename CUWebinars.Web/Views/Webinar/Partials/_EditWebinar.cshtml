@@ -38,7 +38,9 @@
             </div>
 
         </div>
+
         <div class="row">
+
             <div class="control-group span4">
                 <div class="control-label">
                     @Html.LabelFor(m => m.idPresenter, "Presenter")
@@ -47,7 +49,17 @@
                     @Html.DropDownListFor(m => m.SelectedPresenter, new SelectList(Model.Presenters, "Value", "Text"), "Choose a presenter")
                 </div>
             </div>
-            <div class="control-group span2">
+            <div class="control-group span4">
+                <div class="control-label">@Html.LabelFor(m => m.LivePlusFive)</div>
+                <div class="controls">
+                    @Html.EditorFor(model => model.LivePlusFive, new { style = "width: 20px" })
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            
+            <div class="control-group offset4 span2">
                 <div class="control-label">Additional Locations $</div>
                 <div class="controls">
                     @Html.TextBoxFor(model => model.AdditionalLocationsPrice, new { style = "width: 50px" })
@@ -129,7 +141,7 @@
                         Position.Vertical)
                 </div>
             </div>
-            <div class="control-group span4">
+            <div class="control-group span5">
                 <div class="control-label">
                     @Html.LabelFor(m => m.RegTypeGroups, "Options")
                 </div>

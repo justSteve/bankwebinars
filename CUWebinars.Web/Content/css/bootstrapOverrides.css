@@ -12,6 +12,16 @@
   background-repeat: no-repeat;
 }
 
+/*overrides checkbox positioning to accomodate EditWebinarDetails boxes. 
+
+*/ 
+input[type="checkbox"] {
+    line-height: normal;
+    margin-right: 5px;
+    margin-top: 0px;
+}
+
+
 .form-compact .hidden {
     display: none;
 }
