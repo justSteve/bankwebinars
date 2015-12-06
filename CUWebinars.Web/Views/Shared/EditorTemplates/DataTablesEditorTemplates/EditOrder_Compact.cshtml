@@ -42,7 +42,7 @@
 
 <script type="text/javascript" language="javascript">
 
-    $("#addLocsPanel").hide();
+    //$("#addLocsPanel").hide();
     $("#_xAddLoc").click(function () {
         $("#addLocsPanel").show();
     });
@@ -56,21 +56,21 @@
                 <td align="right">
                     @Html.Raw(regTypeDropDownHtml)
                 </td>
-                <td>@Model.EditFields.DisplayRowPriceViewModel.Price.ToString("C0")</td>
+                <td id="DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice">@Model.EditFields.DisplayRowPriceViewModel.Price.ToString("C0")</td>
                 <td id="_xRowPrice"></td>
             </tr>
             <tr>
                 <td align="right">
                     AddLocs:
                 </td>
-                <td>@Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions.ToString("C0")</td>
+                <td id="DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions">@Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions.ToString("C0")</td>
                 <td id="_xAddLoc"><i class="icon-white icon-plus-sign"></i></td>
             </tr>
             <tr>
                 <td align="right">
                     Discount:
                 </td>
-                <td>@Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalDiscount.ToString("C0")</td>
+                <td id="DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount"> @Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalDiscount.ToString("C0")</td>
                 <td><i id="_xDiscount" class="icon-white icon-plus-sign"></i></td>
             </tr>
             @if (@Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount > 0)
@@ -80,14 +80,14 @@
                         Tax:
                     </td>
                     <td>@Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount.ToString("C0")</td>
-                    <td id="_xTax"><i class="fa fa-plus-circle"></i></td>
+                    <td id="_xTax"></td>
                 </tr>
             }
             <tr>
                 <td align="right">
                     Total Price:
                 </td>
-                <td>@Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice.ToString("C0")</td>
+                <td id="DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice">@Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice.ToString("C0")</td>
                 <td id="_xTotalPrice"></td>
             </tr>
         </table>
@@ -133,12 +133,7 @@
         </div>
     </div>
 </div>
-<div id="additionalLocationsModalDialog" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-body">
-        stuff
-        @* modal content goes here *@
-    </div><!-- /.modal-content -->
-</div>
+
 @*<div class="row-fluid">
         <div class="span4 control-group">
             @Html.LabelFor(model => model.EditFields.Title, new { @class = "control-label" })
@@ -180,4 +175,10 @@
 
     @Html.HiddenFor(m => m.StatusMessage)
 
+</div>
+<div id="additionalLocationsModalDialog" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-body">
+        stuff
+        @* modal content goes here *@
+    </div><!-- /.modal-content -->
 </div>

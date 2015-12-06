@@ -82,7 +82,7 @@ function primeDomVariables() {
 }
 
 function updateAdditionalLocations(e) {
-    alert("hit");
+    
     e.preventDefault();
 
     updateAdditionalLocationsForm.submit();
@@ -147,6 +147,50 @@ function wireUpHandlersForModal() {
         //Rollbar.info( "aal-#2",{ AddInputClicked: newId, NumberAdLocs: numberOfAdditionalLocations } ); 
     });
 
+
+    $('#AddInputsCCButton').on('click', function (e) {
+
+        e.preventDefault();
+
+        if (numberOfAdditionalLocations == 0) {
+            $('#AdditionalLocationEmailWrapper').after($('<button>',
+            {
+                id: 'sumbitEMailCCButton',
+                text: 'Submit',
+                'class': 'btn btn-primary'
+            }));
+
+            $('#sumbitEMailCCButton').on('click', function () {
+
+                collectAdditionalLocations.empty();
+                collectAdditionalLocations.append(additionalLocationEmailWrapper.children());
+
+                $('#additionalLocationsModalDialog').modal('hide');
+
+                $(this).remove();
+            });
+        }
+
+        var newId;
+
+        if (numberOfAdditionalLocations == 0) {
+            newId = 0;
+        } else {
+            // first get the last previous email input
+            var lastInput = additionalLocationEmailWrapper.find('input[type="email"]:last');
+            // get its id
+            var lastInputId = lastInput.attr('id');
+            var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
+            newId = id + 1;
+        }
+        additionalLocationEmailWrapper.append('<span id="' + locationsSpanPrefix + newId + '"><input id="AdditionalLocationEmail_' + newId + '" name="AdditionalLocations[' + newId + '].Email" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + newId + '-AdditionLocationEmail-delete"></i></span> <br id="' + newId + breakSuffix + '">');
+        additionalLocationEmailWrapper.find('i#' + newId + '-AdditionLocationEmail-delete').on('click', deleteItem);
+        $('#AdditionalLocationEmail_' + newId).focus();
+        numberOfAdditionalLocations++;
+
+        //Rollbar.info( "aal-#2",{ AddInputClicked: newId, NumberAdLocs: numberOfAdditionalLocations } ); 
+    });
+
     numberOfAdditionalLocations = $('#AdditionalLocationEmailWrapper input[type="email"]').length;
 
     if (numberOfAdditionalLocations < 1) {
@@ -179,7 +223,7 @@ function wireUpHandlersForModal() {
     }
 
     $('#closeButton, #additionalLocationsModalDialog > div > div.modal-header > button').on('click', function (e) {
-        alert("Hit");
+        
         if (locationsBakForCancel) {
 
             $.each(locationsBakForCancel.find('i'), function (idx, i) {

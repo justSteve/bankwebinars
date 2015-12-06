@@ -17,7 +17,7 @@ $(function () {
     M.wireUpHandlers();
 
     M.addLocsUnitPrice = $('#CostPerAdditionalLocation').val();
-    M.addLocsTotalPrice = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions').val();
+    M.addLocsTotalPrice = $('#DisplayAddLocCost').val();
 
     M.wireUpTrashIcons();
 
@@ -103,7 +103,7 @@ $(function () {
         ns.numberAddLocsLabel = $('#nrAddLocs');
         ns.addAdditionalLocationsButton = $('#addLocationsButton');
         ns.updateAddLocsButton = $('#UpdateAddLocsButton');
-        ns.totalOptionsInput = $('DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions');
+        ns.totalOptionsInput = $('DisplayAddLocCost');
         ns.updateAdditionalLocationsForm = $('#updateAdditionalLocationsForm');
         ns.showChangeAssignedAffiliate = $('#showChangeAssignedAffiliate');
         ns.showChangeUser = $('#showChangeUser');
@@ -147,23 +147,6 @@ $(function () {
     ns.submitForm = function (e) {
 
         e.preventDefault();
-
-        var emailInputs = ns.wrapperDiv.find('input[type="email"]');
-
-        var invalidEmailInput = [];
-
-        $.each(emailInputs, function (idx, i) {
-            if ($(i).val().indexOf('@') < 0) {
-                invalidEmailInput.push($(i).attr('id'));
-                $(i).css('border-color', '#b94a48').css('background-color', '#ec8d8d');
-            }
-            $(i).attr('name', 'AdditionalLocations[' + idx + '].Email');
-        });
-
-        if (invalidEmailInput.length > 0) {
-            ns.logInvalidOperation("At least 1 of the email address textboxes is empty or has an invalid address. Please add a valid address or delete the textbox by clicking the adjacent trashcan.", null, true);
-            return; // if even 1 email input has no email address, stop processing. Remove it or enter an email address.
-        }
 
         // next 4 lines not really required, as those parts of the ViewModel aren't necessary for the POST. 
         //But may as well set them, as easy enough to do.
@@ -386,85 +369,6 @@ $(function () {
         ns.totalPrice = newTotalPrice;
         ns.totalPriceInput.val(newTotalPrice);
     };
-
-    ns.searchOrder = _.debounce(function (query, process) {
-
-        var searchTerm = $.trim(ns.orderIdInput.val());
-
-        if (searchTerm === '')
-            return;
-
-        if (searchTerm.indexOf('@') > 0) {
-            // in here if searching for an email
-
-            M.searchBy = 'email';
-
-            $.ajax({
-                type: 'GET',
-                contentType: constants.FormPostContentType,
-                cache: false,
-                url: '/Admin/GetOrdersByEmailTypeahead',
-                dataType: constants.JsonDataType,
-                data: { email: searchTerm },
-                beforeSend: function () {
-                    ns.orderIdList = null; // dereference whatever is currently in 'ns.orderIdList'. 
-                }
-            }).done(function (data) {
-                M.orderIdList = _.map(data.results, function (item) {
-                    var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName, email: item.billingEmail, institution: item.institution };
-                    return JSON.stringify(aItem);
-                });
-
-                process(M.orderIdList);
-            });
-
-        } else if (_.isFinite(searchTerm)) {
-            // in here if searching on an order number
-
-            M.searchBy = 'orderID';
-
-            $.ajax({
-                type: 'GET',
-                contentType: constants.FormPostContentType,
-                cache: false,
-                url: '/Admin/GetOrdersByTypeahead',
-                dataType: constants.JsonDataType,
-                data: { id: searchTerm },
-                beforeSend: function () {
-                    ns.orderIdList = null; // dereference whatever is currently in 'ns.orderIdList'. 
-                }
-            }).done(function (data) {
-                ns.orderIdList = data.results;
-                process(ns.orderIdList);
-            });
-        } else {
-            // if not a number and not an email address, search is by lastname
-
-            M.searchBy = 'lastName';
-
-            $.ajax({
-                type: 'GET',
-                contentType: constants.FormPostContentType,
-                cache: false,
-                url: '/Admin/GetOrdersByLastName',
-                dataType: constants.JsonDataType,
-                data: { lastName: searchTerm },
-                beforeSend: function () {
-                    ns.orderIdList = null; // dereference whatever is currently in 'ns.orderIdList'. 
-                }
-            }).done(function (data) {
-
-                M.orderIdList = _.map(data.results, function (item) {
-                    var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName, email: item.billingEmail, institution: item.institution };
-                    return JSON.stringify(aItem);
-                });
-
-                process(M.orderIdList);
-            });
-        }
-
-    }, 200);
-
     ns.hookUpApplyDiscountLogic = function (e) {
 
         e.preventDefault();
@@ -621,7 +525,7 @@ $(function () {
         if ($('#errorDiv').length > 0)
             $('#errorDiv').remove();
 
-        $('#orderRelatedFields').load('/Admin/GetOrderDetails/' + ns.idOrder, function (response, status, xhr) {
+        $('#orderRelatedFields').load('/Admin/GetOrderDetailsForGrid/' + ns.idOrder, function (response, status, xhr) {
 
             if (status === 'error') {
                 $(this).html('<div id="errorDiv" class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance. <br />' + (xhr.statusText === 'Internal Server Error' ? '' : xhr.statusText) + '</div>');
@@ -631,7 +535,7 @@ $(function () {
                 ns.titleHeading.text(ns.titleInput.val());
 
                 ns.addLocsUnitPrice = $('#CostPerAdditionalLocation').val();
-                ns.addLocsTotalPrice = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions').val();
+                ns.addLocsTotalPrice = $('#DisplayAddLocCost').val();
 
                 ns.wireUpTrashIcons();
             }
