@@ -29,28 +29,42 @@
 
 
 <style>
+    #EditFields_DisplayRowPriceViewModel_Discount_DiscountCode {
+        margin-top: 9px;
+    }
+
     .form-horizontal .control-group {
         margin-bottom: 5px;
     }
 
-        .form-horizontal .control-group input {
-            border-radius: 0px;
-            padding: 1px 6px;
-        }
+    .form-horizontal .control-group input {
+        border-radius: 0px;
+        padding: 1px 6px;
+    }
 </style>
-@Scripts.Render("~/bundles/AdditionalLocation")
 
 <script type="text/javascript" language="javascript">
 
-    //$("#addLocsPanel").hide();
+    $("#addLocsPanel").hide();
+    //$("#discountPanel").hide();
     $("#_xAddLoc").click(function () {
+        $("#discountPanel").hide();
         $("#addLocsPanel").show();
     });
 
 </script>
-<div class="row-fluid">
 
-    <div class="offset1 span3 control-group">
+<div class="row-fluid">
+    <div class="span2 control-group">
+        <div class="dropdown">
+            <a class="dropdown-toggle btn btn-info btn-small" data-toggle="dropdown" href="#">Change Order</a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                <li><a tabindex="-1" href="#" id="showChangeUser">Assign to Different User</a></li>
+                <li><a tabindex="-1" href="#" id="showChangeAssignedAffiliate">Credited to <span id="affiliateNameText">@Model.EditFields.Order.Affiliate.ttsDomain</span> Change?</a></li>
+                <li><a tabindex="-1" href="#" id="showMoneris">Submit Payment</a></li>
+            </ul>
+        </div>
+    </div><div class="span3 control-group">
         <table>
             <tr>
                 <td align="right">
@@ -102,11 +116,11 @@
                     There are <span id="nrAddLocs">@Model.EditFields.NumberOfAdditionalLocations</span> Additional Locations for this order.
                     @if (Model.EditFields.AdditionalLocationsAvailableOnLoad)
                     {
-                        <button id="addLocationsButton" class="btn btn-default btn-small">Add?</button>
+                    <button id="addLocationsButton" class="btn btn-default btn-small">Add?</button>
                     }
                     else
                     {
-                        <button id="addLocationsButton" class="btn btn-default btn-small" disabled="disabled">Add?</button>
+                    <button id="addLocationsButton" class="btn btn-default btn-small" disabled="disabled">Add?</button>
                     }
 
                 </div>
@@ -115,21 +129,36 @@
             @{
                 if (Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions > 0)
                 {
-                    <div class="control-group">
-                        <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions">Total Additional Locations Price:</label>
-                        <div class="controls">
-                            @Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions.ToString("C0")<br />
-                            @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions) @* Required for POST. TextBoxFor won't ModelBind *@
-                            &nbsp;
-                        </div>
-                    </div>
+            <div class="control-group">
+                <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions">Total Additional Locations Price:</label>
+                <div class="controls">
+                    @Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions.ToString("C0")<br />
+                    @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions) @* Required for POST. TextBoxFor won't ModelBind *@
+                    &nbsp;
+                </div>
+            </div>
                 }
             }
             <button id="UpdateAddLocsButton" class="btn btn-primary btn-mini">Update Additional Locations</button>
 
         </div>
-        <div id="discountPanel" class="hidden">
+        <div id="discountPanel">
+            @if (Model.EditFields.DisplayRowPriceViewModel.Discount == null)
+            {
 
+                @Html.TextBoxFor(m => m.EditFields.DisplayRowPriceViewModel.Discount.DiscountCode, new { placeholder = "Enter discount code ", @class = "input input-small" })
+                <button id="applyDiscountButton" class="btn btn-default">Apply code</button>
+            }
+            else
+            {
+                @Html.TextBoxFor(m => m.EditFields.DisplayRowPriceViewModel.Discount.DiscountCode, new { placeholder = "Enter discount code ", @class = "input input-small" })
+                <button id="applyDiscountButton" class="btn btn-default btn-mini ">Edit Discount</button>
+
+                <div class="controls">
+                    @Html.TextBoxFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalDiscount, new { id = "TotalDiscountText", disabled = "disabled" }) @*read-only*@
+                    @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalDiscount) @* Required for POST. TextBoxFor won't ModelBind *@
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -182,3 +211,9 @@
         @* modal content goes here *@
     </div><!-- /.modal-content -->
 </div>
+@section scripts {
+    @Scripts.Render("~/bundles/EditOrderInGrid")
+    @Scripts.Render("~/bundles/admin-notifications")
+    @Scripts.Render("~/bundles/AdditionalLocations")
+}
+

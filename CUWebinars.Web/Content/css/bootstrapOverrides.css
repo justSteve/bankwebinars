@@ -12,7 +12,9 @@
   background-repeat: no-repeat;
 }
 
-/*overrides checkbox positioning to accomodate EditWebinarDetails boxes. */ 
+
+
+/*overrides checkbox positioning to accomodate EditWebinarDetails checkboxes. */ 
 input[type="checkbox"] {
     line-height: normal;
     margin-right: 5px;
@@ -71,7 +73,8 @@ input[type="checkbox"] {
     padding-bottom: 5px;
 }
 
-/* unfortunately this needs to be very specific to overcome zebra striping, etc. unless we want to break out the !important stick */
+/* unfortunately this needs to be very specific to overcome zebra striping, etc. 
+    unless we want to break out the !important stick */
 #webinarOrders #ordersTable td.child-showing,
 #webinarOrders #ordersTable tr.child-row,
 #webinarOrders #ordersTable td.child-row {
