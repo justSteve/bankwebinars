@@ -2,7 +2,8 @@
 
 var addLocationsButton,
     AdditionalLocationSubmitButton,
-    newLocationsContainer;
+    newLocationsContainer,
+    updateAddLocsButton;
 
 var additionalLocationEmailWrapper,
     breakSuffix,
@@ -34,7 +35,7 @@ deleteItem = function (event) {
     }
 };
 
-$(function() {
+$(function () {
     primeDomVariables();
     wireUpHandlers();
 });
@@ -49,6 +50,7 @@ function wireUpHandlers() {
         backdrop: 'static',
         show: true
     };
+    updateAddLocsButton.on('click', updateAdditionalLocations);
 
 
     addLocationsButton.on('click', function (e) {
@@ -57,24 +59,34 @@ function wireUpHandlers() {
 
         $(this).append('<i id="loadModalSpinner" class="icon-spinner icon-spin"></i>');
 
-        $('#additionalLocationsModalDialog > div.modal-body').load('/Cart/GetAdditionalLocationByOrderId/' + $('#Webinar_idWebinar').val() + '/' + ($('#WebUser_idUser').val() || 0).toString(), function () {
-            wireUpHandlersForModal();
-            $('#AddInputsButton').focus();
-            $('#additionalLocationsModalDialog').modal(modalFormOptions);
-        });
+        $('#additionalLocationsModalDialog > div.modal-body').load('/Cart/GetAdditionalLocationByOrderId/'
+            + $('#Webinar_idWebinar').val() + '/' + ($('#WebUser_idUser').val() || 0).toString()
+            , function () {
+                wireUpHandlersForModal();
+                $('#AddInputsButton').focus();
+                $('#additionalLocationsModalDialog').modal(modalFormOptions);
+            });
 
     });
 
-    $('#additionalLocationsModalDialog').on('shown', function() {
+    $('#additionalLocationsModalDialog').on('shown', function () {
         $('#loadModalSpinner').remove();
     });
 
 };
 
 function primeDomVariables() {
-    addLocationsButton = $('#AddLocationsButton');
+    addLocationsButton = $('#addLocationsButton');
+    updateAddLocsButton = $('#UpdateAddLocsButton');
     newLocationsContainer = $('#NewLocationsContainer'); // commented out in razor
 }
+
+function updateAdditionalLocations(e) {
+    alert("hit");
+    e.preventDefault();
+
+    updateAdditionalLocationsForm.submit();
+};
 
 function wireUpHandlersForModal() {
     var locationsCloned, locationsBakForCancel;
@@ -91,8 +103,8 @@ function wireUpHandlersForModal() {
     additionalLocationEmailWrapper = $('#AdditionalLocationEmailWrapper');
     if (locationsCloned)
         additionalLocationEmailWrapper.append(locationsCloned);
-    
-    $('#AddInputsButton').on('click', function(e) {
+
+    $('#AddInputsButton').on('click', function (e) {
 
         e.preventDefault();
 
@@ -104,7 +116,7 @@ function wireUpHandlersForModal() {
                 'class': 'btn btn-primary'
             }));
 
-            $('#sumbitAdditionalLocationsButton').on('click', function() {
+            $('#sumbitAdditionalLocationsButton').on('click', function () {
 
                 collectAdditionalLocations.empty();
                 collectAdditionalLocations.append(additionalLocationEmailWrapper.children());
@@ -149,7 +161,7 @@ function wireUpHandlersForModal() {
             'class': 'btn btn-primary'
         }));
 
-        $('#sumbitAdditionalLocationsButton').on('click', function() {
+        $('#sumbitAdditionalLocationsButton').on('click', function () {
 
             collectAdditionalLocations.empty();
             collectAdditionalLocations.append(additionalLocationEmailWrapper.children());
@@ -161,15 +173,16 @@ function wireUpHandlersForModal() {
         });
         var trashCans = additionalLocationEmailWrapper.find('i');
 
-        $.each(trashCans, function(idx, i) {
+        $.each(trashCans, function (idx, i) {
             $(i).on('click', deleteItem);
         });
     }
 
-    $('#closeButton, #additionalLocationsModalDialog > div > div.modal-header > button').on('click', function(e) {
+    $('#closeButton, #additionalLocationsModalDialog > div > div.modal-header > button').on('click', function (e) {
+        alert("Hit");
         if (locationsBakForCancel) {
 
-            $.each(locationsBakForCancel.find('i'), function(idx, i) {
+            $.each(locationsBakForCancel.find('i'), function (idx, i) {
                 $(i).on('click', deleteItem);
             });
             collectAdditionalLocations.append(locationsBakForCancel);

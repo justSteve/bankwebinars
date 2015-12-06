@@ -848,6 +848,8 @@ namespace CUWebinars.Web.Controllers
                         RegistrationType = orderRow.RegistrationType,
                         RowPrice = orderRow.RowPrice
                     },
+                    Order = order,
+                    WebUser = order.WebUser,
                     NumberOfAdditionalLocations = additionalLocationsCount
                 }
             };

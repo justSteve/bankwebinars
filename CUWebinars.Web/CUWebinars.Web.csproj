@@ -1661,6 +1661,7 @@
     <Content Include="Scripts\app\admin\display-users.js" />
     <Content Include="Scripts\app\admin\display-webinars.js" />
     <Content Include="Scripts\app\admin\edit-forms-in-child-row.js" />
+    <Content Include="Scripts\app\admin\edit-forms-in-grid.js" />
     <Content Include="Scripts\app\admin\session-checker.js" />
     <Content Include="Scripts\app\admin\display-orders.js" />
     <Content Include="Scripts\app\client-logger.js" />

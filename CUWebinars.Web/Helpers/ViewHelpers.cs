@@ -69,14 +69,14 @@ namespace CUWebinars.Web.Helpers
                     stringBuilder.Append(spanBuilder.ToString(TagRenderMode.Normal));
                 }
             }
-            else
-            {
-                spanBuilder = new TagBuilder("span");
-                spanBuilder.GenerateId("noLocationsText");
-                spanBuilder.InnerHtml = "No additionalLocations yet";
-                spanBuilder.AddCssClass("text");
-                spanBuilder.AddCssClass("text-info");
-            }
+            //else
+            //{
+            //    spanBuilder = new TagBuilder("span");
+            //    spanBuilder.GenerateId("noLocationsText");
+            //    spanBuilder.InnerHtml = "No additionalLocations yet";
+            //    spanBuilder.AddCssClass("text");
+            //    spanBuilder.AddCssClass("text-info");
+            //}
 
 
             var div = new TagBuilder("div");
