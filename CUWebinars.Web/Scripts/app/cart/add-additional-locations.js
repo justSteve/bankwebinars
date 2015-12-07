@@ -10,7 +10,7 @@ var additionalLocationEmailWrapper,
     deleteItem,
     locationsSpanPrefix,
     numberOfAdditionalLocations;
-
+alert("opened");
 
 deleteItem = function (event) {
     numberOfAdditionalLocations--;
@@ -41,7 +41,7 @@ $(function () {
 });
 
 function wireUpHandlers() {
-
+    alert("hit");
     locationsSpanPrefix = 'LocationSpan-',
     breakSuffix = '-break';
 

@@ -187,7 +187,6 @@ function fireSuccessIndicator($cell)
         }, 3000);
     }, 1500);
 }
-
 function fireIsLoadingIndicator($cell) {
 
 

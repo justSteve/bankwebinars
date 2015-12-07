@@ -1380,6 +1380,7 @@
     <Content Include="Content\images\menu\Security.jpg" />
     <Content Include="Content\images\menu\Teller.jpg" />
     <Content Include="Content\images\menu_arrow.png" />
+    <Content Include="Content\images\navtriggerbg.png" />
     <Content Include="Content\images\nav_bg.jpg" />
     <Content Include="Content\images\NotiFooter.gif" />
     <Content Include="Content\images\open-quote-white.png" />
@@ -2004,6 +2005,7 @@
     <Content Include="Views\AdhocNotification\EditInstitution.cshtml" />
     <Content Include="Views\AdhocNotification\EditOrder_Compact.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DataTablesEditorTemplates\EditRegType_DropDown.cshtml" />
+    <Content Include="Views\Webinar\Partials\_AdditionalLocationsModalAdmin.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

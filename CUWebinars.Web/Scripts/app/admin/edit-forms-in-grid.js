@@ -1,77 +1,17 @@
-﻿// MANAGE namespace
-if (MANAGE === null || typeof MANAGE === 'undefined')
-    var MANAGE = {};
+﻿// EDIT namespace
+if (EDIT === null || typeof EDIT === 'undefined')
+    var EDIT = {};
 
-var M = MANAGE; // alias for code brevity
+var M = EDIT; // alias for code brevity
 
 // jQuery doc.ready function
 $(function () {
-
+alert("hit efig");
     M.orderIdInput = $('#orderIdInput');
     M.orderIdInput.focus();
     M.idOrder = M.orderIdInput.val();
 
     M.orderIdList = {}; // javascript object to be used in the Bootstrap typahead as in-memory list
-
-    M.orderIdInput.typeahead({
-        source: function (query, process) {
-            M.searchOrder(query, process);
-        },
-
-        matcher: function (item) {
-            return true;
-        },
-
-        highlighter: function (listedUser) {
-
-            // if integer, return it as we are dealing with an orderID
-            if (_.isFinite(listedUser)) {
-                return listedUser;
-            }
-
-            var item = JSON.parse(listedUser);
-            var user = _.find(M.orderIdList, function (webUser) {
-                return JSON.parse(webUser)['id'] === item.id;
-            });
-            if (user !== null && typeof user !== 'undefined') {
-                var userParsed = JSON.parse(user);
-                if (M.searchBy == "email") {
-                    return userParsed.email + ', ' + userParsed.lastName;
-                }
-                if (M.searchBy == "orderID") {
-                    return userParsed.email + ', ' + userParsed.lastName;
-                }
-                if (M.searchBy == "lastName") {
-                    return userParsed.lastName + ', ' + userParsed.firstName;
-                }
-
-            }
-        },
-
-        sorter: function (items) {
-            return items;
-        },
-
-        updater: function (selection) {
-
-            if (_.isFinite(selection)) {
-                return selection;
-            }
-
-            var userParsed = JSON.parse(selection);
-            var user = _.find(M.orderIdList, function (p) {
-                return JSON.parse(p)['id'] === userParsed['id'];
-            });
-
-            if (typeof user !== 'undefined') {
-                var parsedUser = JSON.parse(user);
-                //OCA.setSelectedProduct(parsedUser);
-                return parsedUser['lastName'] + ', ' + parsedUser['firstName'];
-            }
-            return '';
-        }
-    });
-
 
     M.primeDomVariables();
     M.wireUpHandlers();
@@ -85,10 +25,10 @@ $(function () {
 });
 
 
-// self-invoking function adds methods to MANAGE namespace
-// replace MANAGE with parameter 'ns' as MANAGE is passed in at bottom in the self-invoking parentheses.
+// self-invoking function adds methods to EDIT namespace
+// replace EDIT with parameter 'ns' as EDIT is passed in at bottom in the self-invoking parentheses.
 (function (ns) {
-
+    alert("hit ns");
     ns.addAdditionalLocation = function (e) {
 
         e.preventDefault();
@@ -983,4 +923,4 @@ $(function () {
         ns.totalPriceSansDiscount = (ns.allAddLocsPrice || 0) + ns.basePrice;
     };
 
-})(MANAGE);
+})(EDIT);

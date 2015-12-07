@@ -493,7 +493,6 @@ namespace CUWebinars.Business.Services
                             _logger.ErrorException("SynchOrder checks common orders to V3 failed: " + orderEmail, ex);
                         }
                     }
-
             }
             catch (Exception ex)
             {

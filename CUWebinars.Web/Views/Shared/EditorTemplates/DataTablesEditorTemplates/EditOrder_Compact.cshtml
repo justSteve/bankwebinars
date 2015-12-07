@@ -26,8 +26,8 @@
 {
     @*@Html.AntiForgeryToken()*@
 }
-
-
+<script src="~/Scripts/app/admin/edit-forms-in-grid.js"></script>
+<script src="~/Scripts/app/cart/add-additional-locations.js"></script>
 <style>
     #EditFields_DisplayRowPriceViewModel_Discount_DiscountCode {
         margin-top: 9px;
@@ -211,9 +211,4 @@
         @* modal content goes here *@
     </div><!-- /.modal-content -->
 </div>
-@section scripts {
-    @Scripts.Render("~/bundles/EditOrderInGrid")
-    @Scripts.Render("~/bundles/admin-notifications")
-    @Scripts.Render("~/bundles/AdditionalLocations")
-}
 
