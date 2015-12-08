@@ -473,6 +473,20 @@ namespace CUWebinars.Web.Controllers
                 return _webinarControllerOrchestrator.OnDemand(_id, hasVal, User.Identity);
             }
 
+            string codeByVal = _orderManagementService.GetOnDemandClaimByCode(hasVal);
+
+            var thisClaim = JsonConvert.DeserializeObject<Models.JsonModels.PostEventClaim>(codeByVal.ToString());
+            if (thisClaim == null) throw new ArgumentNullException("thisClaim");
+
+
+            order = _orderManagementService.GetOrderByOnDemandClaim(thisClaim.OnDemandCode);
+
+
+
+            if (order != null)
+            {
+                return _webinarControllerOrchestrator.OnDemand(thisClaim.OrderId, thisClaim.OnDemandCode, User.Identity);
+            }
             ModelState.AddModelError(string.Empty, "Invalid Code");
             return View();
         }
@@ -505,6 +519,36 @@ namespace CUWebinars.Web.Controllers
 
                 return View(model);
             }
+            else
+            {
+                string codeByVal = _orderManagementService.GetOnDemandClaimByCode(hasVal);
+
+                var thisClaim = JsonConvert.DeserializeObject<Models.JsonModels.PostEventClaim>(codeByVal.ToString());
+                if (thisClaim == null) throw new ArgumentNullException("thisClaim");
+
+                order = _orderManagementService.GetOrderById(thisClaim.OrderId);
+
+                if (order != null && hasVal != null)
+                {
+                    var model = new IdentifyModel
+                    {
+                        Email = string.Empty,
+                        OnDemandCode = thisClaim.OnDemandCode,
+                        FullName = string.Empty,
+                        Institution = order.Institution,
+                        idOrder = order.idOrder,
+                        SignInModel = new SignInModel
+                        {
+                            ReturnUrl = "o/" + thisClaim.OnDemandCode
+                        }
+                    };
+
+                    return View(model);
+                }
+                
+            }
+
+
             _logger.Fatal("Unfound idOrder from demandcode: " + onDemandCode);
             return View();
         }
@@ -1417,7 +1461,7 @@ namespace CUWebinars.Web.Controllers
                     string.Empty,
                     "There was a problem with the update operation. Please consult with the system administrator to resolve the issue."
                     );
-                _logger.Fatal("UpdateWebinarFiles on " + webinarFilesEditModel.idWebinar +" " + ex.Message);
+                _logger.Fatal("UpdateWebinarFiles on " + webinarFilesEditModel.idWebinar + " " + ex.Message);
             }
 
             return this.ModelStateJson(ModelState);
@@ -1486,7 +1530,7 @@ namespace CUWebinars.Web.Controllers
             var webinar = _webinarManagementService.GetWebinar(idWebinar);
             webinar.RecordingUrl = recordingURL;
             webinar.LivePlusFiveValue = livePlusFive;
-            
+
             _webinarControllerOrchestrator.SendRecordingIsPostedBatch(idWebinar);
             return Content("ok");
         }
@@ -1494,7 +1538,7 @@ namespace CUWebinars.Web.Controllers
         [HttpGet]
         public ActionResult UpdateWebinarRecordingPerOrder(int idOrder, string recordingURL, string livePlusFive, string note)
         {
-            var order= _orderManagementService.GetOrderById(idOrder);
+            var order = _orderManagementService.GetOrderById(idOrder);
             order.UserComments = note + " Prior Comments: " + order.UserComments;
             _orderManagementService.SaveOrderChanges(order, null, null, OrderGenesis.Resend);
             _webinarControllerOrchestrator.SendRecordingIsPostedPerOrder(idOrder, note);

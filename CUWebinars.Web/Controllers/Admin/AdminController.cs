@@ -2404,7 +2404,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
                     var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
                     
-                    var onDemandCode = order.OrderRows.SingleOrDefault().OnDemandCode;
+                    var onDemandCode = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).OnDemandCode;
                     foreach (var claim in claimsViewModel.UserClaims.Where(c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials"))
                     {
                         var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
@@ -2458,7 +2458,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             var calculatedDate = _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order);
 
-            if (expiryDate.ToShortDateString() != calculatedDate.ToShortDateString())
+            if (expiryDate >= calculatedDate.AddDays(2) && expiryDate <= calculatedDate.AddDays(-2) )
             {
                 _logger.Info("exec CheckOnDemandCodesDateValues @calcDate='{0}', @storedDate='{1}', @idOrder='{2}'", calculatedDate.ToShortDateString(), expiryDate.ToShortDateString(), order.idOrder);
             }

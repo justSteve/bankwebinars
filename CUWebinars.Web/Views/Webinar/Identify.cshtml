@@ -8,9 +8,9 @@
 
 <div class="container">
     <div class="legendImitator">Please provide your name and email</div>
-    <p>Access to this page is governed by terms bound to order number @globalConfig.TenantPrefix@Model.idOrder<text>.</text><br/>
+    @*<p>Access to this page is governed by terms bound to order number @globalConfig.TenantPrefix@Model.idOrder<text>.</text><br/>
         By entering, you affirm that you are associated with <b>@Model.Institution</b>.
-    </p>
+    </p>*@
 
     @using (Html.BeginForm("Identify", "Webinar", FormMethod.Post, new { id = "IdentifyDetailsForm", @class = "form-horizontal" }))
             {

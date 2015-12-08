@@ -54,5 +54,6 @@ namespace CUWebinars.Business.Repository
         PostEventClaim FindPostEventClaim(Order order);
         IList<Order> GetV3OrdersByOnDemandClaim();
         Order MigrateOrderWithDiscount(Order order);
+        Order GetOrderByIdByOnDemandCode(string onDemandCode);
     }
 }

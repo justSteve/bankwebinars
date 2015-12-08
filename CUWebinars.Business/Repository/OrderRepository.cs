@@ -381,6 +381,21 @@ namespace CUWebinars.Business.Repository
             return item.FirstOrDefault();
         }
 
+        public Order GetOrderByIdByOnDemandCode(string onDemandCode)
+        {
+            var item = items
+                .Include(o => o.WebUser)
+                .Include(o => o.WebUser.Addresses)
+                .Include(o => o.Affiliate)
+                .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                .Include(o => o.OrderRows.Select(or => or.Webinar.Presenter.WebUser))
+                .Include(o => o.OrderRows.Select(or => or.Webinar.WebinarFiles))
+                .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                .Include(o => o.OrderRows.Select(or => or.Discount))
+               .Where(o => o.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).OnDemandCode == onDemandCode);
+            return item.FirstOrDefault();
+        }
+
         public IList<int> FindOrderIdsByPartialId(int userId)
         {
             return items.Include(o => o.WebUser)
