@@ -3,6 +3,8 @@ using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Renderers;
 using System;
 using System.IO;
+using System.Net;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -40,6 +42,42 @@ namespace CUWebinars.Business.Notification.Formatters
 
             var returnThis = CreateMessage(GetSubject(underPinningObject), GetBody(underPinningObject));
             return returnThis;
+        }
+
+        public INotificationMessage FormatV2<T>(T underPinningObject, string templatePath)
+        {
+            // using MVC for text template rendering "outside" of the web project (based on http://www.codemag.com/article/1312081)
+            var controller = ViewRenderer.CreateController<EmptyController>(); // Create an arbitrary controller instance
+
+            string markup = ViewRenderer.RenderPartialView(
+                             templatePath,
+                             underPinningObject,
+                             controller.ControllerContext);
+
+            var returnThis = CreateMessage(markup);
+            return returnThis;
+        }
+
+        private INotificationMessage CreateMessage(string markup)
+        {
+            string subject = null;
+            string body = null;
+            
+            // grab inner text of Title tag as subject
+            Regex reFindTitle = new Regex("<title>([^<>]*)</title>", RegexOptions.Multiline);
+            Match matches = reFindTitle.Match(markup);
+            if (matches.Success)
+            {
+                subject = matches.Groups[1].Value.Trim();
+
+                // html decode the subject in case the administrator included special characters in the 
+                //  textbox which were automatically HTML Encoded on submit
+                subject = WebUtility.HtmlDecode(subject);
+            }
+
+            body = reFindTitle.Replace(markup, "").Trim(); // delete the title tag and use the rest as the body
+
+            return CreateMessage(subject, body);
         }
 
         public string FormatToString<T>(T objectOfMessage, string templateName)

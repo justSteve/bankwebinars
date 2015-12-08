@@ -39,6 +39,11 @@ namespace CUWebinars.Business.Notification.Formatters
             throw new NotImplementedException();
         }
 
+        public INotificationMessage FormatV2<T>(T underPinningObject, string templateName)
+        {
+            throw new NotImplementedException();
+        }
+
         public string FormatToString<T>(T objectOfMessage, string templateName)
         {
             LoadBodyTemplate(templateName);

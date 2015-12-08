@@ -1747,6 +1747,9 @@
     <Content Include="Content\images\email\wisbank - Copy %282%29\Thumbs.db" />
     <Content Include="Content\images\email\wisbank\Thumbs.db" />
     <Content Include="Content\images\Thumbs.db" />
+    <Content Include="Notification\Templates\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy %282%29.pubxml" />

@@ -119,6 +119,7 @@
       <HintPath>..\packages\System.Spatial.5.6.2\lib\net40\System.Spatial.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Mvc, Version=4.0.0.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.Razor.3.1.2\lib\net45\System.Web.Razor.dll</HintPath>
@@ -216,6 +217,7 @@
     <Compile Include="Models\WebUserDiscountXref.cs" />
     <Compile Include="Models\WebUserLegacy.cs" />
     <Compile Include="Notification\Email\AdditionalLocationOrderDetailsMessage.cs" />
+    <Compile Include="Notification\Email\AdhocNotificationDelivery.cs" />
     <Compile Include="Notification\Email\AzureAdhocNotificationDelivery.cs" />
     <Compile Include="Notification\Email\AdhocNotificationMessage.cs" />
     <Compile Include="Notification\Email\AzureCuwWebJobSmtpMessageDelivery.cs" />
@@ -270,8 +272,10 @@
     <Compile Include="Notification\IOrderConfirmedForAdditionalLocationNotificationDelivery.cs" />
     <Compile Include="Notification\IOrderConfirmedNotificationDelivery.cs" />
     <Compile Include="Notification\IOrderSynchMessage.cs" />
+    <Compile Include="Notification\Renderers\IViewRenderer.cs" />
     <Compile Include="Notification\Renderers\IRenderer.cs" />
     <Compile Include="Notification\Renderers\Renderer.cs" />
+    <Compile Include="Notification\Renderers\ViewRenderer.cs" />
     <Compile Include="Notification\TtsConfigHelper.cs" />
     <Compile Include="Notification\TtsTemplateHelper.cs" />
     <Compile Include="Notification\TtsHtmlTemplateBase.cs" />
