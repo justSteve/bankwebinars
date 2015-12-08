@@ -58,6 +58,26 @@ function getOrderStatusHtml() {
     return html;
 }
 
+//function getRegTypeDropDownHtml() {
+//    // this seems a little slower than I'd like...
+//    var html = "";
+
+//    $.ajax({
+//        async: false,
+//        url: "/admin/GetRegTypeDropdownHtml",
+//        dataType: "json",
+//        type: "POST",
+//        success: function (data) {
+//            html = data.html;
+//        },
+//        error: function (XMLHttpRequest, textStatus, errorThrown) {
+//            alert(textStatus);
+//        }
+//    });
+
+//    return html;
+//}
+
 // self-invoking function for creating methods using Module pattern.
 (function (ns) {
 
@@ -66,6 +86,7 @@ function getOrderStatusHtml() {
         DO.connInfoTable = $('#connInfoTable');
         DO.webinarIdDiv = $('#webinarIdDiv');
         DO.baseOrderStatusHtml = getOrderStatusHtml();  // this seems a little slower than I'd like...
+        //DO.baseRegTypeDropDownHtml = getRegTypeDropDownHtml();  // this seems a little slower than I'd like...
     };
 
     ns.wireUpHandlers = function () {

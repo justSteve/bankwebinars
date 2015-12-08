@@ -5,30 +5,11 @@ if (EDIT === null || typeof EDIT === 'undefined')
 var M = EDIT; // alias for code brevity
 
 // jQuery doc.ready function
-$(function () {
-alert("hit efig");
-    M.orderIdInput = $('#orderIdInput');
-    M.orderIdInput.focus();
-    M.idOrder = M.orderIdInput.val();
-
-    M.orderIdList = {}; // javascript object to be used in the Bootstrap typahead as in-memory list
-
-    M.primeDomVariables();
-    M.wireUpHandlers();
-
-    M.addLocsUnitPrice = $('#CostPerAdditionalLocation').val();
-    M.addLocsTotalPrice = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions').val();
-
-    M.wireUpTrashIcons();
-
-    M.getOrderButton.on('click', M.getOrder);
-});
-
 
 // self-invoking function adds methods to EDIT namespace
 // replace EDIT with parameter 'ns' as EDIT is passed in at bottom in the self-invoking parentheses.
 (function (ns) {
-    alert("hit ns");
+
     ns.addAdditionalLocation = function (e) {
 
         e.preventDefault();
@@ -924,3 +905,22 @@ alert("hit efig");
     };
 
 })(EDIT);
+
+$(function () {
+
+    M.orderIdInput = $('#orderIdInput');
+    M.orderIdInput.focus();
+    M.idOrder = M.orderIdInput.val();
+
+
+    M.primeDomVariables();
+    M.wireUpHandlers();
+
+    M.addLocsUnitPrice = $('#CostPerAdditionalLocation').val();
+    M.addLocsTotalPrice = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions').val();
+
+    M.wireUpTrashIcons();
+
+    M.getOrderButton.on('click', M.getOrder);
+});
+

@@ -23,6 +23,9 @@ namespace CUWebinars.Web.Models.DataTablesModels
         public Order Order { get; set; }
         public RegType RegType { get; set; }
         public ICollection<RegType> RegTypes { get; set; }
+
+        public int UserId { get; set; }
+        public int WebinarId { get; set; }
         public WebUser WebUser { get; set; }
         public ClaimsViewModel ClaimsViewModel { get; set; }
         

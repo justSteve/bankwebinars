@@ -24,7 +24,10 @@
 
 @using (Html.BeginForm("UpdateAdditionalLocations", "Admin", FormMethod.Post, new { id = "updateAdditionalLocationsForm" }))
 {
-    @*@Html.AntiForgeryToken()*@
+    @Html.AntiForgeryToken()
+    @*<input type="hidden" name="orderRowId" value="@Model.EditFields.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow" />
+        <input type="hidden" name="additionalLocations" value="" id="updateAdditionalLocationsForm_addLocs" />*@
+
 }
 <script src="~/Scripts/app/admin/edit-forms-in-grid.js"></script>
 <script src="~/Scripts/app/cart/add-additional-locations.js"></script>
@@ -37,10 +40,10 @@
         margin-bottom: 5px;
     }
 
-    .form-horizontal .control-group input {
-        border-radius: 0px;
-        padding: 1px 6px;
-    }
+        .form-horizontal .control-group input {
+            border-radius: 0px;
+            padding: 1px 6px;
+        }
 </style>
 
 <script type="text/javascript" language="javascript">
@@ -51,7 +54,7 @@
         $("#discountPanel").hide();
         $("#addLocsPanel").show();
     });
-
+    $("#displayRegType").text("@abbvLable");
 </script>
 
 <div class="row-fluid">
@@ -64,7 +67,8 @@
                 <li><a tabindex="-1" href="#" id="showMoneris">Submit Payment</a></li>
             </ul>
         </div>
-    </div><div class="span3 control-group">
+    </div>
+    <div class="span3 control-group">
         <table>
             <tr>
                 <td align="right">
@@ -107,41 +111,83 @@
         </table>
     </div>
     <div span4>
-        <div id="addLocsPanel">
-            <input id="WebUser_idUser" name="WebUser_idUser" type="hidden" value="@Model.EditFields.Order.WebUser.idUser" />
+        <div class="addLocsPanel">
+            @using (Html.BeginForm("ManageOrder", "Admin", FormMethod.Post, new {id = "manageOrderForm"}))
+            {
+                <div class="control-group">
+                    <div class="controls">
+                        There are <span id="nrAddLocs">@Model.EditFields.NumberOfAdditionalLocations</span> Additional Locations for this order.
+                        @if (Model.EditFields.AdditionalLocationsAvailableOnLoad)
+                        {
+                            <button id="addLocationsButton" class="btn btn-default btn-small">add more?</button>
+                        }
+                        else
+                        {
+                            <button id="addLocationsButton" class="btn btn-default btn-small" disabled="disabled">add more?</button>
+                        }
 
-            @Html.HiddenFor(m => m.EditFields.Order.OrderRows.Where(r => r.RowStatus == OrderRowStatus.Active).SingleOrDefault().Webinar.idWebinar)
-            <div class="control-group">
-                <div class="controls">
-                    There are <span id="nrAddLocs">@Model.EditFields.NumberOfAdditionalLocations</span> Additional Locations for this order.
-                    @if (Model.EditFields.AdditionalLocationsAvailableOnLoad)
-                    {
-                    <button id="addLocationsButton" class="btn btn-default btn-small">Add?</button>
-                    }
-                    else
-                    {
-                    <button id="addLocationsButton" class="btn btn-default btn-small" disabled="disabled">Add?</button>
-                    }
+                    </div>
+                    @Html.Raw(Model.EditFields.AdditionalLocationsRenderer.ToString())
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions">Total Additional Locations Price:</label>
+                    <div class="controls">
 
+                        @Html.TextBoxFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions, new {id = "TotalCostOfOptionsText", disabled = "disabled"}) @*read-only*@
+                        @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions) @* Required for POST. TextBoxFor won't ModelBind *@
+                        &nbsp;
+                        <button id="UpdateAddLocsButton" class="btn btn-primary btn-mini">Update Additional Locations</button>
+                    </div>
                 </div>
-                @Html.Raw(Model.EditFields.AdditionalLocationsRenderer.ToString())
-            </div>
-            @{
-                if (Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions > 0)
-                {
-            <div class="control-group">
-                <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions">Total Additional Locations Price:</label>
-                <div class="controls">
-                    @Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions.ToString("C0")<br />
-                    @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions) @* Required for POST. TextBoxFor won't ModelBind *@
-                    &nbsp;
-                </div>
-            </div>
-                }
+                @Html.HiddenFor(m => m.EditFields.CostPerAdditionalLocation)
+                @Html.HiddenFor(m => m.EditFields.Id)
+                @Html.HiddenFor(m => m.EditFields.UserId)
+                @Html.HiddenFor(m => m.EditFields.WebinarId)
+                @Html.HiddenFor(m => m.EditFields.NumberOfAdditionalLocations)
+                @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.NumberOfAdditionalLocations)
+                @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)
+                @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)
+                @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.FlatOff)
+                
+
+
             }
-            <button id="UpdateAddLocsButton" class="btn btn-primary btn-mini">Update Additional Locations</button>
-
         </div>
+        @*<div id="addLocsPanel">
+                <input id="WebUser_idUser" name="WebUser_idUser" type="hidden" value="@Model.EditFields.Order.WebUser.idUser" />
+
+                @Html.HiddenFor(m => m.EditFields.Order.OrderRows.Where(r => r.RowStatus == OrderRowStatus.Active).SingleOrDefault().Webinar.idWebinar)
+                <div class="control-group">
+                    <div class="controls">
+                        There are <span id="nrAddLocs">@Model.EditFields.NumberOfAdditionalLocations</span> Additional Locations for this order.
+                        @if (Model.EditFields.AdditionalLocationsAvailableOnLoad)
+                        {
+                            <button id="addLocationsButton" class="btn btn-default btn-small">Add?</button>
+                        }
+                        else
+                        {
+                            <button id="addLocationsButton" class="btn btn-default btn-small" disabled="disabled">Add?</button>
+                        }
+
+                    </div>
+                    @Html.Raw(Model.EditFields.AdditionalLocationsRenderer.ToString())
+                </div>
+                @{
+                    if (Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions > 0)
+                    {
+                        <div class="control-group">
+                            <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions">Total Additional Locations Price:</label>
+                            <div class="controls">
+                                @Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions.ToString("C0")<br />
+                                @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions) @* Required for POST. TextBoxFor won't ModelBind
+                                &nbsp;
+                            </div>
+                        </div>
+                    }
+                }
+                <button id="UpdateAddLocsButton" class="btn btn-primary btn-mini">Update Additional Locations</button>
+
+            </div>*@
         <div id="discountPanel">
             @if (Model.EditFields.DisplayRowPriceViewModel.Discount == null)
             {
