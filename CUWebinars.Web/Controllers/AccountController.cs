@@ -815,6 +815,18 @@ namespace CUWebinars.Web.Controllers
             var additionalLocationsCount = additionalLocations.Count;
             var regTypes = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.Webinar.idWebinar, false);
 
+
+            DisplayOptionsInDropDownViewModel regTypeDD = new DisplayOptionsInDropDownViewModel
+            {
+                Options = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.idWebinar, false),
+                OrderRowId = orderRow.idOrderRow,
+                OrderRowRegistrationType = orderRow.RegistrationType
+            };
+
+            ViewBag.RegTypeDropDownHtml = ViewHelpers.RenderViewToString(ControllerContext,
+                                        "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditRegType_DropDown.cshtml",
+                                        regTypeDD, true);
+
             var editModel = new EditOrderInfoModel
             {
                 EditFields = new EditOrderModel
@@ -836,6 +848,8 @@ namespace CUWebinars.Web.Controllers
                         RegistrationType = orderRow.RegistrationType,
                         RowPrice = orderRow.RowPrice
                     },
+                    Order = order,
+                    WebUser = order.WebUser,
                     NumberOfAdditionalLocations = additionalLocationsCount
                 }
             };
@@ -850,6 +864,9 @@ namespace CUWebinars.Web.Controllers
             }
             return editModel;
         }
+
+
+
         private bool? CheckIfAddLocAvailable(int optionId)
         {
             var firstOrDefault = _orderManagementService.GetRegTypeOption(optionId)
@@ -1302,49 +1319,46 @@ namespace CUWebinars.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult PasswordResetConfirm(ChangePasswordFromResetKeyInputModel model, string returnUrl)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                if (string.IsNullOrWhiteSpace(model.Key))
                 {
-                    if (string.IsNullOrWhiteSpace(model.Key))
-                    {
-                        _logger.Error(
-                            "Account.PasswordResetConfirm.POST was passed empty or null ID. Session=PasswordResetConfirm. " +
-                            _appHelper.GetUserAuditInfo());
-                        ModelState.AddModelError(string.Empty,
-                            "There appears to have been a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again. In case of persisant problems contact us at 800-831-0678 ext. 707");
-                    }
-                    else
-                    {
-                        try
-                        {
-                            if (_accountControllerOrchestrator.ChangePasswordFromResetKey(model.Key, model.Password))
-                            {
-                                model.ChangePasswordSucceeded = true;
-
-                                return Json(new { Result = "Success" });
-                            }
-                        }
-                        catch (Exception exception)
-                        {
-                            _logger.Error("_accountControllerOrchestrator.ChangePasswordFromResetKey {0} tossed error to: ", model.Key);
-                            ModelState.AddModelError(string.Empty,
-                                "We've logged an error. Please attempt the password reset procedure again. In case of persisant failures contact us at support@ttstrain.com - or, for immediate assistance contact us at 800-831-0678 ext. 707.");
-                            ErrorSignal.FromCurrentContext().Raise(exception);
-
-                        }
-                    }
-                    _logger.Info("Account.PasswordResetConfirm Success. Session=" + _appHelper.GetUserAuditInfo());
+                    _logger.Error(
+                        "Account.PasswordResetConfirm.POST was passed empty or null ID. Session=PasswordResetConfirm. " +
+                        _appHelper.GetUserAuditInfo());
+                    ModelState.AddModelError(string.Empty,
+                        "There appears to have been a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again. In case of persisant problems contact us at 800-831-0678 ext. 707");
                 }
-                _logger.Error("Invalid ModelState in PasswordResetConfirm" + model.Key);
-            }
-            catch (ValidationException validationException)
-            {
+                else
+                {
+                    try
+                    {
+                        if (_accountControllerOrchestrator.ChangePasswordFromResetKey(model.Key, model.Password))
+                        {
+                            model.ChangePasswordSucceeded = true;
+                            _logger.Info("Account.PasswordResetConfirm Success. Session=" + _appHelper.GetUserAuditInfo());
+                            return Json(new { Result = "Success" });
+                        }
+                    }
+                    catch (ValidationException validationException)
+                    {
 
-                _logger.Fatal("Account.ResetPassword. " + validationException.Message + " Session=" +
-                              _appHelper.GetUserAuditInfo());
-                ModelState.AddModelError(string.Empty, "The new password must be different than the old password.");
+                        _logger.Fatal("Account.ResetPassword. " + validationException.Message + " Session=" +
+                                      _appHelper.GetUserAuditInfo());
+                        ModelState.AddModelError(string.Empty, "The new password must be different than the old password.");
+                    }
+                    catch (Exception exception)
+                    {
+                        _logger.Error("_accountControllerOrchestrator.ChangePasswordFromResetKey {0} tossed error to: ", model.Key);
+                        ModelState.AddModelError(string.Empty,
+                            "We've logged an error. Please attempt the password reset procedure again. In case of persisant failures contact us at support@ttstrain.com - or, for immediate assistance contact us at 800-831-0678 ext. 707.");
+                        ErrorSignal.FromCurrentContext().Raise(exception);
+
+                    }
+                }
             }
+
+            _logger.Error("Invalid ModelState in PasswordResetConfirm" + model.Key);
 
             return this.ModelStateJson(ModelState);
         }

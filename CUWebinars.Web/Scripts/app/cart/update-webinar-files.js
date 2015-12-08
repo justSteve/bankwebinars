@@ -70,8 +70,7 @@ $(function() {
         }
 
         if (UWF.numberOfWebinarFiles < 1) {
-            //$('#sumbitAdditionalLocationsButton').off('click');
-
+            var a = "holder";
         } else {
 
             var trashCans = UWF.manageFilesWrapper.find('i[id$="-Filedetails-delete"]');

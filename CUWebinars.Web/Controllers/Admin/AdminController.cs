@@ -452,6 +452,20 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
 
+        public JsonResult GetRegTypeDropdownHtml()
+        {
+
+            string html = ViewHelpers.RenderViewToString(ControllerContext,
+                                        "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditRegType_Compact.cshtml",
+                                        null, true);
+
+
+            return Json(new { html = html });
+
+        }
+
+
+
         [HttpPost]
         [ValidateAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
@@ -2320,22 +2334,22 @@ namespace CUWebinars.Web.Controllers.Admin
             return null;
         }
 
-        [ValidateJsonAntiForgeryToken(Order = 0)]
+        //[ValidateJsonAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
         [HttpPost]
-        public ActionResult UpdateAdditionalLocations(int orderRowId,
-            IEnumerable<AdditionalLocation> additionalLocations)
+        public ActionResult UpdateAdditionalLocations(FormCollection form)
+        //public ActionResult UpdateAdditionalLocations(int orderRowId, IEnumerable<AdditionalLocation> additionalLocations)
         {
-            var orderRow = _orderManagementService.GetOrderRowById(orderRowId);
+            //var orderRow = _orderManagementService.GetOrderRowById(orderRowId);
 
-            var manageOrderEditModel = new ManageOrderEditModel
-            {
-                AdditionalLocations = additionalLocations
-            };
+            //var manageOrderEditModel = new ManageOrderEditModel
+            //{
+            //    AdditionalLocations = additionalLocations
+            //};
 
-            SyncAdditionalLocations(manageOrderEditModel, orderRow);
+            //SyncAdditionalLocations(manageOrderEditModel, orderRow);
 
-            _orderManagementService.SaveChanges();
+            //_orderManagementService.SaveChanges();
 
             return Json(new { Result = WebUiConstants.Success });
         }

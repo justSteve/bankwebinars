@@ -99,6 +99,14 @@ namespace CUWebinars.Web.App_Start
                 ));
 
 
+            bundles.Add(new ScriptBundle("~/bundles/EditOrderInGrid").Include(
+                "~/Scripts/toastr.js",
+                "~/Scripts/app/toastLogger.js",
+                "~/Scripts/app/admin/edit-forms-in-grid.js",
+                "~/Scripts/app/admin/display-orders-by-user.js"
+                ));
+
+
             bundles.Add(new ScriptBundle("~/bundles/admin-notifications").Include(
                 "~/Scripts/app/notification-ops/order-event-notifications.js",
                 "~/Scripts/app/notification-ops/membership-notifications.js",

@@ -478,7 +478,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             try
             {
                 Webinar webinar = _webinarManagementService.GetWebinar(webinarDetailsViewModel.Webinar.idWebinar);
-                
+
                 var checkThatNewFilesExist = CheckThatFileExists(webinarDetailsViewModel.Webinar.RecordingUrl);
 
                 if (checkThatNewFilesExist != "OK")
@@ -490,9 +490,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 webinar.RecordingUrl = webinarDetailsViewModel.Webinar.RecordingUrl;
 
                 webinar.Status = WebinarStatus.Recorded;
-
+                webinar.LivePlusFiveValue = webinarDetailsViewModel.Webinar.LivePlusFiveValue;
                 _webinarManagementService.UpdateWebinar(webinar);
-
+                
                 _logger.Info(string.Format("Recordings posted for {0} is saved to {1}", webinar.idWebinar + " - " + webinar.Title, webinar.RecordingUrl));
                 SendRecordingIsPostedNotifications(webinarDetailsViewModel, webinar);
                 return true;
@@ -506,7 +506,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             return false;
         }
 
-         public bool UpdateWebinarRecordingBatch(int idWebinar, string recordingURL, out string message)
+        public bool UpdateWebinarRecordingBatch(int idWebinar, string recordingURL, out string message)
         {
             int webinarId = 0;
             message = string.Empty;
@@ -514,7 +514,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             try
             {
                 Webinar webinar = _webinarManagementService.GetWebinar(idWebinar); //_webinarManagementService.GetWebinar(webinarDetailsViewModel.Webinar.idWebinar);
-                
+
                 var checkThatNewFilesExist = CheckThatFileExists(webinar.RecordingUrl);
 
                 if (checkThatNewFilesExist != "OK")
@@ -547,10 +547,82 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             var ordersForWebinar = _orderManagementService.GetV3OrdersByWebinar(webinar.idWebinar);
 
-            AddClaimForPostEventMaterials(ordersForWebinar);
+            //try
+            //{
+            //    AddNoteClaim(ordersForWebinar);
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.ErrorException(string.Format("SendRecordingIsPostedNotifications| AddNoteClaim failed {0} on idWebinar: {1}", ex.Message, webinar.idWebinar), ex);
+                
+            //}
+
+            try
+            {
+                AddClaimForPostEventMaterials(ordersForWebinar);
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.ErrorException(string.Format("SendRecordingIsPostedNotifications| AddClaimForPostEventMaterials failed {0} on idWebinar: {1}", ex.Message, webinar.idWebinar), ex);
+                
+            }
 
             _orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
 
+        }
+
+        private void AddNoteClaim(IList<Order> ordersForWebinar)
+        {
+
+            foreach (var order in ordersForWebinar)
+            {
+                var userAccountOfOrderer = _membershipService.GetUserAccountByEmail(
+                    _globalConfig.Tenant,
+                    order.WebUser.email
+                    );
+
+                try
+                {
+                    // and add logs retrieval
+                    // Zopim
+                    // email
+                    // Grasshopper
+                    // Moneris
+
+                    var addNote = GetLoggedIncidents(order);
+
+                    var note = addNote + " Prior Comments: " +  order.UserComments;
+                    
+                    var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
+                    var noteToOrderProperty = new JProperty(JsonPropertyKeys.Note, note);
+
+                    var claimValue = new JObject(
+                        orderIdProperty,
+                        noteToOrderProperty
+                        );
+
+                    _membershipService.AddClaim(
+                        userAccountOfOrderer, ClaimTypes.OrderNote, claimValue.ToString(Formatting.None)
+                        );
+
+                    _logger.Info("AddClaimForOrderNote: " + order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar + " - " + order.idOrder + ": " + order.UserComments);
+
+                }
+                    //how to get this ex to detail the tossed error? Inner ex is null.
+                catch (Exception ex)
+                {
+                    _logger.Fatal("AddClaimForOrderNote| MR record not found " + order.BillingEmail + " " + ex.Message);
+                }
+            }
+
+        }
+
+        private object GetLoggedIncidents(Order order)
+        {
+            return null;
         }
 
         public void SendRecordingIsPostedBatch(int idWebinar)
@@ -558,9 +630,15 @@ namespace CUWebinars.Web.Core.Orchestrators
             var ordersForWebinar = _orderManagementService.GetV3OrdersByWebinarForPostEventClaims(idWebinar).ToList();
 
             AddClaimForPostEventMaterials(ordersForWebinar);
+            AddNoteClaim(ordersForWebinar);
 
             //_orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
 
+        }
+
+        public void SendRecordingIsPostedPerOrder(int idOrder, string note)
+        {
+            throw new NotImplementedException();
         }
 
         //public string SetEventToRecorded(int webinarId)
@@ -712,6 +790,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 AdditionalLocationsPrice = additionalLocationsPricing == null ? 0.00M : additionalLocationsPricing.Cost,
                 ceu = webinar.ceu,
+                LivePlusFive = webinar.Date.AddDays(7),
                 PostedTopics = new PostedTopics { TopicIds = topicIdsForWebinar.Select(topic => topic.idTopic).ToArray() },
                 PostedRegTypeGroups =
                     new PostedRegTypeGroups
@@ -740,6 +819,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 webinarEditModel.PostedRegTypeGroups = new PostedRegTypeGroups { RegTypeGroupIds = new int[0] };
             if (ReferenceEquals(webinarEditModel.PostedTopics, null))
                 webinarEditModel.PostedTopics = new PostedTopics { TopicIds = new int[0] };
+            
+            //initialize Date value
+                webinarEditModel.LivePlusFive = webinarEditModel.Date.AddDays(7);
 
             var webinar = new Webinar
             {
@@ -760,9 +842,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 RegTypesGroupsXref = new List<RegTypesGroupsXref>(),
                 SmallImageUrl = webinarEditModel.SmallImageUrl,
                 WebinarTopicXrefs = new List<WebinarTopicXref>(),
-                WhoAttend = webinarEditModel.WhoAttend, 
-                LivePlusFiveValue = webinarEditModel.LivePlusFive 
-                
+                WhoAttend = webinarEditModel.WhoAttend,
+                LivePlusFiveValue = webinarEditModel.LivePlusFive
+
             };
 
 
@@ -822,6 +904,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             webinar.SmallImageUrl = webinarEditModel.SmallImageUrl;
             webinar.WhoAttend = webinarEditModel.WhoAttend;
             webinar.RecordingUrl = webinarEditModel.RecordingUrl;
+            webinar.LivePlusFiveValue = webinarEditModel.LivePlusFive;
 
             var existingRegTypeGroupIds =
                 webinar.RegTypesGroupsXref.Where(r => r.idWebinar == webinar.idWebinar)
@@ -910,7 +993,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).OnDemandCode = onDemandCode;
 
                     _orderManagementService.SaveChanges();
-                    
+
                     var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
                     var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, expiryDate.ToString(DomainConstants.ClaimDateFormatText));
                     var OnDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, onDemandCode);
@@ -930,7 +1013,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 }
                 catch (Exception ex)
                 {
-                    _logger.Fatal("AddClaimForPostEventMaterials| MR record not found "+ order.BillingEmail +" "+ ex.Message);
+                    _logger.Fatal("AddClaimForPostEventMaterials| MR record not found " + order.BillingEmail + " " + ex.Message);
                 }
             }
         }

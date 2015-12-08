@@ -731,10 +731,20 @@ namespace CUWebinars.Business.Repository
         }
         public virtual Discount GetUserDiscount(int idUser)
         {
-            var usercode = ((TTSWebinarsContext)db).WebUsers.Where(u => u.idUser == idUser).Select(u => u.idSubscriptionDiscount).Single();
+            try
+            {
+                var usercode =
+                    ((TTSWebinarsContext) db).WebUsers.Where(u => u.idUser == idUser)
+                        .Select(u => u.idSubscriptionDiscount)
+                        .Single();
 
-            var discount = ((TTSWebinarsContext)db).Discounts.Where(d => d.idDiscount == usercode).Single();
-            return discount;
+                var discount = ((TTSWebinarsContext) db).Discounts.Where(d => d.idDiscount == usercode).SingleOrDefault();
+                return discount;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
 
         }
         public virtual bool IsDiscountCodeValid(string discountCode)

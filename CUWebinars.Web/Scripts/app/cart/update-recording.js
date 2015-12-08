@@ -60,8 +60,7 @@ $(function () {
         newFileId = WR.numberOfWebinarFiles++;
 
         if (WR.numberOfWebinarFiles < 1) {
-            //$('#sumbitAdditionalLocationsButton').off('click');
-
+            var a = "holder";
         } else {
 
             var trashCans = WR.manageRecordingsWrapper.find('i[id$="-Filedetails-delete"]');

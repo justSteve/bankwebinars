@@ -425,6 +425,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 Price = priceOfAdditionalLocation,
                 WebUser = order == null ? null : order.WebUser
             };
+
             return addAdditionalLocationViewModel;
         }
 

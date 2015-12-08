@@ -1,19 +1,5 @@
 ﻿@model WebinarDetailsViewModel
 
-
-<script type="text/javascript">
-    $(function () {
-        var showExpiryDate = new Date();
-        //showExpiryDate = "@Model.Webinar.LivePlusFiveValue";
-        //https://github.com/phstc/jquery-dateFormat
-        $("#btnIncrementExpriyDate").on('click', function (e) {
-            alert(showExpiryDate);
-            showExpiryDate.setDate(showExpiryDate.getDate() + 1);
-            $("#showExpiryDate").val($.format.date("Wed Jan 13 10:43:41 CET 2010", "dd~MM~yyyy"));
-            $("#LivePlusFiveValue").val(showExpiryDate);
-        });
-    });
-</script>
 @{
     ViewBag.Title = "Set Recording Info";
 
@@ -65,23 +51,19 @@
                 @Html.ValidationSummary("Error:", new { id = "updateWebinarRecordingValSummary" })
 
                 <div class="well well-large form-group">
-                    @*<div class="pull-right" id="LivePlusFive">
-                        <span class="control-label">Live Plus Five Expires</span>
-
-                        <input type="text" id="showExpiryDate" />
-                        <button id="btnIncrementExpriyDate" type="button" class="btn btn-primary">+</button>
-                        <input type="hidden" class="form-control" id="LivePlusFiveValue" name="Webinar.LivePlusFiveValue" value="@Model.Webinar.LivePlusFiveValue" />
-                    </div>*@
 
                     <div id="manageRecordingsWrapper">
-                        <div id="fileLocationDiv_">
-                            <i class="icon-trash icon-white pull-left" style="cursor: pointer" id="Filedetails-delete"></i>
-                            <span class="control-label">File Name</span>
-                            <input type="text" class="form-control" name="Webinar.RecordingUrl" value="@Model.Webinar.RecordingUrl" />
-                            @*<i class="icon-book icon-white"></i>*@
+                        <div id="LivePlusFive" >
+                            <span class="control-label">Live Plus Five:&nbsp;</span>
+                            @Html.TextBoxFor(m => m.Webinar.LivePlusFiveValue)
+                            
+                        </div>
+
+                        <div id="fileLocationDiv_" class=" pull-left">
+                            <span class="control-label">File Name:&nbsp;</span>
+                            @Html.TextBoxFor(m => m.Webinar.RecordingUrl)
                         </div>
                     </div>
-
                 </div>
             </div>
             <!-- closes modal-body -->

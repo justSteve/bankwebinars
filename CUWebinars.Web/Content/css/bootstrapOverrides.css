@@ -12,6 +12,30 @@
   background-repeat: no-repeat;
 }
 
+
+
+/*overrides checkbox positioning to accomodate EditWebinarDetails checkboxes. */ 
+input[type="checkbox"] {
+    line-height: normal;
+    margin-right: 5px;
+    margin-top: 0px;
+}
+/* flattens modal panels */
+.modal {
+    background-clip: padding-box;
+    background-color: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    /*border-radius: 6px;
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);*/
+    left: 50%;
+    margin-left: -280px;
+    outline: medium none;
+    position: fixed;
+    top: 10%;
+    width: 560px;
+    z-index: 1050;
+}
+
 .form-compact .hidden {
     display: none;
 }
@@ -49,7 +73,8 @@
     padding-bottom: 5px;
 }
 
-/* unfortunately this needs to be very specific to overcome zebra striping, etc. unless we want to break out the !important stick */
+/* unfortunately this needs to be very specific to overcome zebra striping, etc. 
+    unless we want to break out the !important stick */
 #webinarOrders #ordersTable td.child-showing,
 #webinarOrders #ordersTable tr.child-row,
 #webinarOrders #ordersTable td.child-row {

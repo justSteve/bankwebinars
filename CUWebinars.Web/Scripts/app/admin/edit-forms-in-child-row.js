@@ -187,7 +187,18 @@ function fireSuccessIndicator($cell)
         }, 3000);
     }, 1500);
 }
+function fireIsLoadingIndicator($cell) {
 
+
+    //$cell.addClass("warning"); // has a background color specified
+    //setTimeout(function () {
+    //    $cell.addClass("save-bg-transition"); // specifies an ease effect so the next line "fades" back to normal
+    //    $cell.removeClass("warning"); // remove the customized background color
+    //    setTimeout(function () {
+    //        $cell.removeClass("save-bg-transition"); // reset this so next color change doesn't fade in
+    //    }, 3000);
+    //}, 1500);
+}
 
 function createChildRow(cell, $td, rowData) {
 
@@ -244,7 +255,8 @@ function editUserCell(cell, $td, rowData) {
 function editBillingCell(cell, $td, rowData) {
 
     // could definitely use a "busy" cursor.
-
+    $cell = cell;
+    fireIsLoadingIndicator($cell);
     var html = "";
 
     $.ajax({
@@ -268,6 +280,8 @@ function editBillingCell(cell, $td, rowData) {
 function editInstitutionCell(cell, $td, rowData) {
 
     // could definitely use a "busy" cursor.
+
+    fireIsLoadingIndicator(cell);
 
     var html = "";
 
@@ -337,6 +351,44 @@ function updateOrderStatus(item, orderId, newOrderStatus)
             {
                 // need to update the currently displaying status (presuming it changed)
                 $(".dropdown-toggle", $form).html(data.orderStatus + "&nbsp;<b class=\"caret\"></b>");
+
+                var $cell = $item.parents("td");
+                fireSuccessIndicator($cell);
+            }
+
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus);
+        }
+    });
+}
+
+
+// EditRegType_Compact form event
+function updateRegType(item, orderId, newRegType)
+{
+    var $item = $(item);
+    var form = $item.parents("form");
+    var $form = $(form);
+
+    $("input[name='Id']", $form).val(orderId);
+    $("input[name='DisplayRowPriceViewModel.RegType.Option']", $form).val(newRegType);
+
+    var data = $form.serialize();
+
+    $.ajax({
+        async: false,
+        url: "/admin/updateregtype",
+        data: data,
+        dataType: "json",
+        type: "POST",
+        success: function (data) {
+            console.log(data);
+
+            if (data.Result == "Success")
+            {
+                // need to update the currently displaying regType (presuming it changed)
+                $(".dropdown-toggle", $form).html(data.regType + "&nbsp;<b class=\"caret\"></b>");
 
                 var $cell = $item.parents("td");
                 fireSuccessIndicator($cell);
