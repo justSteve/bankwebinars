@@ -68,7 +68,9 @@ namespace CUWebinars.Business.Core
                     new OrderConfirmedForAdditionalLocationDelivery(
                         new Log4NetLogger(typeof (OrderConfirmedForAdditionalLocationDelivery)), genericFormatter
                         );
-                adhocNotificationDelivery = null; // todo: implement non-azure version 
+                adhocNotificationDelivery = new AdhocNotificationDelivery(
+                    new Log4NetLogger(typeof(AzureAdhocNotificationDelivery)),
+                    genericFormatter);
             }
 
             var notificationOrderHandlerLogger = new Log4NetLogger(typeof(OrderSubmittedHandler));
