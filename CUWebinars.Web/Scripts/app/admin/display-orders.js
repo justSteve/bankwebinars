@@ -306,6 +306,23 @@ function getOrderStatusHtml() {
            // [5] Resends Column
             {
 
+                "aTargets": [5], // Status column
+                "mData": "",
+                "mRender": function (data, type, full) {
+                    var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
+                    var statusHtml = full.OrderDateString;
+                    var resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendOrderConfirmationButton btn btn-mini\">Send Confirmation</button>";
+                    if (full.Webinar_IsActive) {
+                        resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
+                    }
+                    //if (full.Webinar_IsRecorded) {
+                    //    resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendPostEventMaterialButton btn btn-mini\">PostEvent Material</button>";
+                    //}
+                    return statusHtml +"</br>"+ resendMsg;
+                }
+            },
+            {
+
                 "aTargets": [6], // Status column
                 "mData": "",
                 "mRender": function (data, type, full) {

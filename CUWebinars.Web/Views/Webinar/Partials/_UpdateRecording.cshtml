@@ -50,13 +50,11 @@
             <div class="form-horizontal">
                 @Html.ValidationSummary("Error:", new { id = "updateWebinarRecordingValSummary" })
 
-                <div class="well well-large form-group">
-
-                    <div id="manageRecordingsWrapper">
-                        <div id="LivePlusFive" >
+                <div id="manageRecordingsWrapper">
+                        <div id="LivePlusFive" class=" pull-left">
                             <span class="control-label">Live Plus Five:&nbsp;</span>
                             @Html.TextBoxFor(m => m.Webinar.LivePlusFiveValue)
-                            
+
                         </div>
 
                         <div id="fileLocationDiv_" class=" pull-left">
@@ -64,12 +62,12 @@
                             @Html.TextBoxFor(m => m.Webinar.RecordingUrl)
                         </div>
                     </div>
-                </div>
+                
             </div>
             <!-- closes modal-body -->
 
             <div class="modal-footer">
-                <button id="updateWebinarRecordingButton" class="btn btn-primary pull-left">Save</button>&nbsp;
+                <button id="updateWebinarRecordingButton" class="btn btn-primary">Save</button>&nbsp;
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
             </div>
         }

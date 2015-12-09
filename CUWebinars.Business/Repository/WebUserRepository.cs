@@ -36,6 +36,7 @@ namespace CUWebinars.Business.Repository
         {
             int nextId = items
                 .OrderByDescending(i => i.idUser)
+                .Take(1)
                 .Select(i => i.idUser).Single();
 
             return nextId++;
@@ -236,7 +237,8 @@ namespace CUWebinars.Business.Repository
             if (starterUser != null)
             {
                 newUser.generalComments = "Account seeded by idUser: " + starterUser.idUser;
-                newUser.Institution = starterUser.Institution;
+                newUser.idUserInstitution = starterUser.idUserInstitution;
+
                 Address addBilling = new Address { AddressType = "Billing" };
                 Address addShipping = new Address { AddressType = "Shipping" };
                 var bill = starterUser.Addresses.SingleOrDefault(a => a.AddressType == "Billing");
@@ -278,33 +280,29 @@ namespace CUWebinars.Business.Repository
             }
             else
             {
-                starterUser = GetWebUserByEmail("user@ttstrain.com");
 
-                newUser.generalComments = "Account seeded by idUser: " + starterUser.idUser;
-                newUser.Institution = starterUser.Institution;
+                newUser.generalComments = "Account seeded with blank values.";
+                newUser.idUserInstitution = 16263;
                 Address addBilling = new Address { AddressType = "Billing" };
                 Address addShipping = new Address { AddressType = "Shipping" };
-                var bill = starterUser.Addresses.SingleOrDefault(a => a.AddressType == "Billing");
                 addBilling.WebUser = newUser;
-                addBilling.City = bill.City;
-                addBilling.Country = bill.Country;
-                addBilling.Name = bill.Name;
-                addBilling.Phone = bill.Phone;
-                addBilling.State = bill.State;
-                addBilling.StreetAddress = bill.StreetAddress;
-                addBilling.StreetAddress2 = bill.StreetAddress2;
-                addBilling.Zip = bill.Zip;
+                addBilling.City ="";
+                addBilling.Country = "";
+                addBilling.Name = "";
+                addBilling.Phone = "";
+                addBilling.State = "";
+                addBilling.StreetAddress = "";
+                addBilling.StreetAddress2 = "";
+                addBilling.Zip = "";
 
-                var ship = starterUser.Addresses.SingleOrDefault(a => a.AddressType == "Shipping");
-                addShipping.WebUser = newUser;
-                addShipping.City = ship.City;
-                addShipping.Country = ship.Country;
-                addShipping.Name = ship.Name;
-                addShipping.Phone = ship.Phone;
-                addShipping.State = ship.State;
-                addShipping.StreetAddress = ship.StreetAddress;
-                addShipping.StreetAddress2 = ship.StreetAddress2;
-                addShipping.Zip = ship.Zip;
+                addShipping.City = "";
+                addShipping.Country = "";
+                addShipping.Name = "";
+                addShipping.Phone = "";
+                addShipping.State = "";
+                addShipping.StreetAddress = "";
+                addShipping.StreetAddress2 = "";
+                addShipping.Zip = "";
 
 
                 newUser.Addresses.Add(addBilling);

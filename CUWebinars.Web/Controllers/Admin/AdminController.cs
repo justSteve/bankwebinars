@@ -336,7 +336,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         claimsViewModel.UserClaims.Where(
                             c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials"))
                 {
-                    var singleOrDefault = model.Order.OrderRows.SingleOrDefault();
+                    var singleOrDefault = model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                     if (singleOrDefault != null && claim.Value.Contains(singleOrDefault.OnDemandCode))
                     {
                         var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
@@ -344,7 +344,6 @@ namespace CUWebinars.Web.Controllers.Admin
                         onDemandClaim.OrderId = model.Order.idOrder;
                         onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
                         onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
-
                     }
                 }
 
