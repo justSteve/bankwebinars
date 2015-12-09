@@ -881,6 +881,11 @@ namespace CUWebinars.Business.AccountService
                 && c.Value.ToLower().Contains(idOrder.ToString()) && c.Value.Contains(onDemandCode)
                 );
 
+            if (ReferenceEquals(null, claim))
+            {
+                _logger.Warn("OnDemandCode not found. " + onDemandCode + " for " + userAccount.Email);
+            }
+
             return !ReferenceEquals(null, claim) ? claim.Value : null;
         }
 

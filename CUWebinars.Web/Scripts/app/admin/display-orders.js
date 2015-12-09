@@ -265,7 +265,7 @@ function getOrderStatusHtml() {
                 "aTargets": [1], // User column  -- triggers EditUser_Compact.cshtml
                 "mData": "",
                 "mRender": function (data, type, full) {
-                    return full.LastName + ", " + full.FirstName + " [add OrdersByUser]<br>" + full.BillingEmail;
+                    return full.LastName + ", " + full.FirstName + "<br>" + full.BillingEmail;
                     //return "<a href='/account/ordersbyuser/" + full.idUser + "' />" + full.LastName + ", " + full.FirstName + "</a><br>" + full.BillingEmail;
                 }
                 // link on user name should implement 'orders by user' current contorl: byUserWrapper
@@ -310,7 +310,7 @@ function getOrderStatusHtml() {
                 "mData": "",
                 "mRender": function (data, type, full) {
                     var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
-                    var statusHtml = full.OrderDateString;
+                    var statusHtml = full.OrderDateString + " - " + orderToEdit;
                     var resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendOrderConfirmationButton btn btn-mini\">Send Confirmation</button>";
                     if (full.Webinar_IsActive) {
                         resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
