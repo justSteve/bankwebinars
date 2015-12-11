@@ -323,8 +323,6 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.HttpGet]
         public ActionResult MyCertificateDS(int webinarId, string displayName, string displayInst)
         {
-
-
             var currentWebinar = _orderManagementService.GetWebinarById(webinarId);
 
             _logger.Info("MyCertificateDS webinarId=" + webinarId + ", displayName=" + displayName + ", displayInst" + displayName);
@@ -332,13 +330,6 @@ namespace CUWebinars.Web.Controllers
 
             model.CeuShort = string.Empty;
             model.CeuStatement = string.Empty;
-
-            //if (!string.IsNullOrEmpty(model.Order.OrderRows.SingleOrDefault().Webinar.ceu))
-            //{
-            //    string[] ceu = model.Order.OrderRows.SingleOrDefault().Webinar.ceu.Split('|');
-            //    model.CeuShort = ceu[0];
-            //    model.CeuStatement = ceu[1];
-            //}
 
             return View("MyCertificateDS", model);
         }
@@ -617,6 +608,36 @@ namespace CUWebinars.Web.Controllers
             return Json(new { html = html });
 
         }
+        public JsonResult GetEditDiscountForm(int orderId)
+        {
+            string html = "";
+
+            try
+            {
+                WebUser editingUser = null;
+
+                if (User.Identity.IsAuthenticated)
+                {
+                    editingUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
+                }
+
+                _logger.Info(string.Format("{0} is editing {1}", editingUser.email, orderId));
+                var order = _orderManagementService.GetOrderById(orderId);
+
+                var editModel = BuildOrderInfoModel(order, "");
+
+                html = ViewHelpers.RenderViewToString(ControllerContext,
+                        "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditCompact_Discount.cshtml",
+                        editModel, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("GetOrderInfoForm error on " + orderId, ex);
+            }
+
+            return Json(new { html = html });
+
+        }
 
 
 
@@ -810,7 +831,7 @@ namespace CUWebinars.Web.Controllers
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
             var additionalLocationsPricing =
-                _orderManagementService.GetCostOfAdditionalLocations(orderRow.AdditionalLocation,orderRow.idWebinar);
+                _orderManagementService.GetCostOfAdditionalLocations(orderRow.AdditionalLocation, orderRow.idWebinar);
             var additionalLocations = orderRow.AdditionalLocation;
             var additionalLocationsCount = additionalLocations.Count;
             var regTypes = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.Webinar.idWebinar, false);
@@ -833,7 +854,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     AdditionalLocationsAvailableOnLoad = false, // see below for where this is properly decided.
                     AdditionalLocationsRenderer = ViewHelpers.GetRendererOfAdditionalLocations(additionalLocations.Select(al => al.Email).ToList()),
-                    
+
                     AdditionalLocations = additionalLocations,
                     CostPerAdditionalLocation = additionalLocationsPricing.Item2,
                     ClaimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims },
@@ -850,6 +871,8 @@ namespace CUWebinars.Web.Controllers
                     },
                     Order = order,
                     WebUser = order.WebUser,
+                    WebinarId = orderRow.Webinar.idWebinar,
+                    Id = orderRow.idOrderRow,
                     NumberOfAdditionalLocations = additionalLocationsCount
                 }
             };
@@ -1944,11 +1967,6 @@ namespace CUWebinars.Web.Controllers
             return this.ModelStateJson(ModelState);
         }
 
-        public ActionResult EditCpSubscription(string s)
-        {
-            throw new NotImplementedException();
-        }
-
         protected override void Dispose(bool disposing)
         {
             if (!_disposed && disposing)
@@ -1966,6 +1984,21 @@ namespace CUWebinars.Web.Controllers
             _disposed = true;
         }
 
+        [System.Web.Mvc.HttpPost]
+        [ValidateAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
+        public ActionResult UpdateOrderCompactDiscount(EditOrderModel order)
+        {
+            throw new NotImplementedException();
+        }
+
+        [System.Web.Mvc.HttpPost]
+        [ValidateAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
+        public ActionResult UpdateOrderCompactAddLoc(EditOrderModel order)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class CertOfCompletionDSViewModel

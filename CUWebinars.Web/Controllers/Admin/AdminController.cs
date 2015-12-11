@@ -32,6 +32,7 @@ using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Models;
+using CUWebinars.Web.Models.DataTablesModels;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Elmah;
@@ -287,6 +288,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return View();
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
@@ -475,7 +477,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 try
                 {
                     var order = _orderManagementService.GetOrderById(model.Id);
-                    
+
                     order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus; // the only field that we are updating at this time
 
                     // what about audit fields?
@@ -875,7 +877,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 = JsonConvert.DeserializeObject<ExpressCheckoutModel>(postback.RawRequest);
             _logger.Info("ExpressCheckout deserialized the fields to: " + form.ToString());
 
-            
+
             var user = _membershipService.GetUserByEmail(form.q5_email5);
             //var userFromLegacy = _membershipService.GetUserFromLegacy(form.q5_email5);
             bool userCreatedByCheckout = false;
@@ -1877,7 +1879,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
                 _membershipService.AddClaim(impersonatedUserAccount, Business.Constants.ClaimTypes.BeingImpersonated,
-                    impersonatedUserAccount.Email +"|"+adminUserEmail);
+                    impersonatedUserAccount.Email + "|" + adminUserEmail);
                 //adminUserEmail);
                 _membershipService.LogOutUser();
 
@@ -2336,7 +2338,6 @@ namespace CUWebinars.Web.Controllers.Admin
         //[ValidateJsonAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
         [HttpPost]
-        //public ActionResult UpdateAdditionalLocations(FormCollection form)
         public ActionResult UpdateAdditionalLocations(int orderRowId, IEnumerable<AdditionalLocation> additionalLocations)
         {
             var orderRow = _orderManagementService.GetOrderRowById(orderRowId);
@@ -2395,14 +2396,14 @@ namespace CUWebinars.Web.Controllers.Admin
         public ActionResult CheckOnDemandCodes(int? webinarId, int? idAffiliate)
         {
             IList<Order> v3Orders = _orderManagementService.GetV3OrdersByOnDemandClaim();
-            
+
             foreach (var order in v3Orders)
             {
                 try
                 {
                     var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
                     var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
-                    
+
                     var onDemandCode = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).OnDemandCode;
                     foreach (var claim in claimsViewModel.UserClaims.Where(c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials"))
                     {
@@ -2412,7 +2413,7 @@ namespace CUWebinars.Web.Controllers.Admin
                             _logger.Warn("CheckOnDemandCodes finds expired claim: " + claim.Value);
                         }
 
-                        if (!ReferenceEquals(onDemandCode, null) )
+                        if (!ReferenceEquals(onDemandCode, null))
                         {
                             if (claim.Value.Contains(onDemandCode))
                             {
@@ -2457,7 +2458,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             var calculatedDate = _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order);
 
-            if (expiryDate >= calculatedDate.AddDays(2) && expiryDate <= calculatedDate.AddDays(-2) )
+            if (expiryDate >= calculatedDate.AddDays(2) && expiryDate <= calculatedDate.AddDays(-2))
             {
                 _logger.Info("exec CheckOnDemandCodesDateValues @calcDate='{0}', @storedDate='{1}', @idOrder='{2}'", calculatedDate.ToShortDateString(), expiryDate.ToShortDateString(), order.idOrder);
             }

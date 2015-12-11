@@ -4,14 +4,13 @@ if (EDIT === null || typeof EDIT === 'undefined')
 
 var M = EDIT; // alias for code brevity
 
-// jQuery doc.ready function
+
 
 // self-invoking function adds methods to EDIT namespace
 // replace EDIT with parameter 'ns' as EDIT is passed in at bottom in the self-invoking parentheses.
 (function (ns) {
 
     ns.addAdditionalLocation = function (e) {
-
         e.preventDefault();
 
         var noLocationsSpane = $('#noLocationsText');
@@ -45,6 +44,7 @@ var M = EDIT; // alias for code brevity
         ns.numberOfAdditionalLocations += 1;
         ns.adjustAdditionalLocationsTotal(ns.numberOfAdditionalLocations);
         ns.adjustTotalPrice();
+        
     };
 
     ns.deleteItem = function (e) {
@@ -80,7 +80,6 @@ var M = EDIT; // alias for code brevity
 
     ns.primeDomVariables = function () {
 
-        ns.getOrderButton = $('#getOrderButton');
         ns.wrapperDiv = $('#collectAdditionalLocations');
         ns.numberAddLocsLabel = $('#nrAddLocs');
         ns.addAdditionalLocationsButton = $('#addLocationsButton');
@@ -108,13 +107,15 @@ var M = EDIT; // alias for code brevity
         //ns.selectedAdditionalLocationsPrice = ns.regTypesList.find(":selected").data('price');
 
         ns.additionalLocationsTotal = $('#TotalCostOfOptionsText');
+        
         ns.totalDiscountInput = $('#TotalDiscountText');
         ns.totalPriceInput = $('#TotalOrderPriceText');
         ns.basePrice = parseFloat($('#UnitPriceText').val());
 
         ns.orderIdHiddenInputInDropdownPartial = $('#regTypeSelectWrapper input[type="hidden"]');
         ns.orderIdHiddenInputInDropdownPartial.attr('name', 'DisplayOptionsInDropDownViewModel.OrderRowId');
-        ns.orderRowIdHidden = $('input[name="DisplayOptionsInDropDownViewModel.OrderRowId"]');
+        ns.orderRowIdHidden = $('#EditFields_Id');
+        //ns.orderRowIdHidden = $('input[name="EditFields_DisplayOptionsInDropDownViewModel.OrderRowId"]');
 
         ns.titleHeading = null;
         ns.titleHeading = $('#webinarHeading');
@@ -127,7 +128,7 @@ var M = EDIT; // alias for code brevity
     };
 
     ns.submitForm = function (e) {
-
+        alert("submited form");
         e.preventDefault();
 
         var emailInputs = ns.wrapperDiv.find('input[type="email"]');
@@ -161,8 +162,8 @@ var M = EDIT; // alias for code brevity
 
         var self = $(this);
 
-        var form = $('#manageOrderForm');
-
+        var form = $('#editOrderCompact');
+        alert("hit form");
         $.ajax({
             type: 'POST',
             contentType: constants.FormPostContentType,
@@ -250,7 +251,7 @@ var M = EDIT; // alias for code brevity
     };
 
     ns.updatePriceOnNewSelection = function (registrationTypeId, totalPrice, dropDown) {
-
+        alert("here updatePriceOnNewSelection");
         ns.gatherPricingData();
 
         var url = '/Cart/UpdateOrderDetails';
@@ -270,7 +271,7 @@ var M = EDIT; // alias for code brevity
         }).done(function (data) {
 
             if (data) {
-
+                alert(data.OptionsPrice);
                 $('#UnitPriceText').val(data.BasePrice);
                 $('#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPriceUnitPriceText').val(data.BasePrice);
                 $('#TotalDiscountText').val(data.Discount);
@@ -360,6 +361,7 @@ var M = EDIT; // alias for code brevity
         ns.additionalLocationsTotal.val(newAddLocsPrice);
         ns.allAddLocsPrice = parseInt(ns.additionalLocationsTotal.val());
         ns.totalPriceSansDiscount = ns.allAddLocsPrice + ns.basePrice;
+
     };
 
     ns.adjustTotalPrice = function () {
@@ -368,84 +370,6 @@ var M = EDIT; // alias for code brevity
         ns.totalPrice = newTotalPrice;
         ns.totalPriceInput.val(newTotalPrice);
     };
-
-    ns.searchOrder = _.debounce(function (query, process) {
-
-        var searchTerm = $.trim(ns.orderIdInput.val());
-
-        if (searchTerm === '')
-            return;
-
-        if (searchTerm.indexOf('@') > 0) {
-            // in here if searching for an email
-
-            M.searchBy = 'email';
-
-            $.ajax({
-                type: 'GET',
-                contentType: constants.FormPostContentType,
-                cache: false,
-                url: '/Admin/GetOrdersByEmailTypeahead',
-                dataType: constants.JsonDataType,
-                data: { email: searchTerm },
-                beforeSend: function () {
-                    ns.orderIdList = null; // dereference whatever is currently in 'ns.orderIdList'. 
-                }
-            }).done(function (data) {
-                M.orderIdList = _.map(data.results, function (item) {
-                    var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName, email: item.billingEmail, institution: item.institution };
-                    return JSON.stringify(aItem);
-                });
-
-                process(M.orderIdList);
-            });
-
-        } else if (_.isFinite(searchTerm)) {
-            // in here if searching on an order number
-
-            M.searchBy = 'orderID';
-
-            $.ajax({
-                type: 'GET',
-                contentType: constants.FormPostContentType,
-                cache: false,
-                url: '/Admin/GetOrdersByTypeahead',
-                dataType: constants.JsonDataType,
-                data: { id: searchTerm },
-                beforeSend: function () {
-                    ns.orderIdList = null; // dereference whatever is currently in 'ns.orderIdList'. 
-                }
-            }).done(function (data) {
-                ns.orderIdList = data.results;
-                process(ns.orderIdList);
-            });
-        } else {
-            // if not a number and not an email address, search is by lastname
-
-            M.searchBy = 'lastName';
-
-            $.ajax({
-                type: 'GET',
-                contentType: constants.FormPostContentType,
-                cache: false,
-                url: '/Admin/GetOrdersByLastName',
-                dataType: constants.JsonDataType,
-                data: { lastName: searchTerm },
-                beforeSend: function () {
-                    ns.orderIdList = null; // dereference whatever is currently in 'ns.orderIdList'. 
-                }
-            }).done(function (data) {
-
-                M.orderIdList = _.map(data.results, function (item) {
-                    var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName, email: item.billingEmail, institution: item.institution };
-                    return JSON.stringify(aItem);
-                });
-
-                process(M.orderIdList);
-            });
-        }
-
-    }, 200);
 
     ns.hookUpApplyDiscountLogic = function (e) {
 
@@ -502,18 +426,18 @@ var M = EDIT; // alias for code brevity
     };
 
     ns.submitUpdateAddLocsForm = function (e) {
-
+        
         e.preventDefault();
 
         var emailInputs = ns.wrapperDiv.find('input[type="email"]');
         var addLocs = [];
-
+        
         _.each(emailInputs, function (element, index) {
-            addLocs.push({
+             addLocs.push({
                 Email: $(element).val()
             });
         });
-
+        alert("id: " + ns.orderRowIdHidden.val());
         var payload = {
             orderRowId: ns.orderRowIdHidden.val(),
             additionalLocations: addLocs
@@ -590,37 +514,6 @@ var M = EDIT; // alias for code brevity
 
         $('#getHtmlSpinner').remove();
 
-    };
-
-    ns.getOrder = function (e) {
-
-        e.preventDefault();
-        //TODO: update controller action to permit email submission
-        ns.idOrder = ns.orderIdInput.val();
-
-        // loading spinner
-        ns.orderIdInput.after('<span id="spinWrapper">&nbsp;<span class="label label-info"><i id="spinner" class="icon-spinner icon-spin"></i>&nbsp;loading...</span></span>');
-        if ($('#errorDiv').length > 0)
-            $('#errorDiv').remove();
-
-        $('#orderRelatedFields').load('/Admin/GetOrderDetails/' + ns.idOrder, function (response, status, xhr) {
-
-            if (status === 'error') {
-                $(this).html('<div id="errorDiv" class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance. <br />' + (xhr.statusText === 'Internal Server Error' ? '' : xhr.statusText) + '</div>');
-            } else {
-                ns.primeDomVariables();
-                ns.wireUpHandlers();
-                ns.titleHeading.text(ns.titleInput.val());
-
-                ns.addLocsUnitPrice = $('#CostPerAdditionalLocation').val();
-                ns.addLocsTotalPrice = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions').val();
-
-                ns.wireUpTrashIcons();
-            }
-
-            // remove loading spinner
-            $('#spinWrapper').remove();
-        });
     };
 
     ns.displayChangeAffiliateModal = function (e) {
@@ -906,21 +799,16 @@ var M = EDIT; // alias for code brevity
 
 })(EDIT);
 
-$(function () {
-
-    M.orderIdInput = $('#orderIdInput');
-    M.orderIdInput.focus();
-    M.idOrder = M.orderIdInput.val();
+// jQuery doc.ready function
+$(document).ready(function () {
 
 
     M.primeDomVariables();
     M.wireUpHandlers();
 
-    M.addLocsUnitPrice = $('#CostPerAdditionalLocation').val();
-    M.addLocsTotalPrice = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions').val();
+    M.addLocsUnitPrice = $('#EditFields_CostPerAdditionalLocation').val();
+    M.addLocsTotalPrice = $('#EditFields_DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions').val();
 
     M.wireUpTrashIcons();
-
-    M.getOrderButton.on('click', M.getOrder);
+    //alert(addLocsUnitPrice);
 });
-

@@ -52,7 +52,7 @@ function wireUpHandlers() {
 
 
     addLocationsButton.on('click', function (e) {
-
+        
         e.preventDefault();
 
         $(this).append('<i id="loadModalSpinner" class="icon-spinner icon-spin"></i>');

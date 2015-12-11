@@ -3,13 +3,18 @@
 @{
     ViewBag.Title = "Orders";
 
-    if (Model.Affiliate != null && !Model.UserIsAdmin)
+    @*if (Model.Affiliate != null && !Model.UserIsAdmin)
     {
         <script type="text/javascript">
-            if (DISPLAYORDERS === null || typeof DISPLAYORDERS === 'undefined') {var DISPLAYORDERS = {};}var DO = DISPLAYORDERS;DO.affiliateId = @Model.Affiliate.idUserAff;
+            if (SHOWORDERS === null || typeof SHOWORDERS === 'undefined') {
+                var SHOWORDERS = {};
+                
+            }
+            //var DO = SHOWORDERS;
+            SHOWORDERS.affiliateId = @Model.Affiliate.idUserAff;
 
         </script>
-    }
+    }*@
     var _archived = "";
     var _dirseries = "";
     var _pending = "";
