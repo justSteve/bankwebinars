@@ -860,7 +860,6 @@ namespace CUWebinars.Web.Controllers
                     ClaimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims },
                     DisplayRowPriceViewModel = new DisplayRowPriceViewModel
                     {
-                        Discount = orderRow.Discount,
                         NumberOfAdditionalLocations = additionalLocationsCount,
                         OrderStatus = order.OrderStatus,
                         Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
@@ -869,6 +868,7 @@ namespace CUWebinars.Web.Controllers
                         RegistrationType = orderRow.RegistrationType,
                         RowPrice = orderRow.RowPrice
                     },
+                    Discount = orderRow.Discount,
                     Order = order,
                     WebUser = order.WebUser,
                     WebinarId = orderRow.Webinar.idWebinar,
@@ -1998,6 +1998,11 @@ namespace CUWebinars.Web.Controllers
         public ActionResult UpdateOrderCompactAddLoc(EditOrderModel order)
         {
             throw new NotImplementedException();
+        }
+
+        public ActionResult UpdateCpSubscription(EditOrderModel order)
+        {
+            return null;
         }
     }
 

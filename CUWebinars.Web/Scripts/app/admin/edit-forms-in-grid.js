@@ -92,6 +92,7 @@ var M = EDIT; // alias for code brevity
         ns.changeUserOrderButton = $('#changeUserOrderButton');
         ns.changeUserOrdersButton = $('#changeUserOrdersButton');
         ns.extendPostEventAccessModal = $('#ExtendPostEventAccessModal');
+        ns.renewCPSubscriptionModal = $('#renewCPSubscriptionModal');
         ns.extendEventAccessButton = $('#extendEventAccessButton');
         ns.fireResendConfirmationButton = $('#fireResendConfirmationButton');
         ns.add6MonthsButton = $('#Add6MonthsButton');
@@ -293,12 +294,14 @@ var M = EDIT; // alias for code brevity
 
         ns.addAdditionalLocationsButton.on('click', ns.addAdditionalLocation);
         $('#editOrderSubmitButton').on('click', ns.submitForm);
-        $('#applyDiscountButton').on('click', ns.hookUpApplyDiscountLogic);
+        $('#applyDiscountButton').on('click', ns.showRenewCPSubscriptionModal);
+        $('#renewCPSubscriptionButton').on('click', ns.ShowRenewCPSubscriptionModal);
         ns.regTypesList.on('change', ns.changeRegType);
         ns.updateAddLocsButton.on('click', ns.updateAdditionalLocations);
         ns.updateAdditionalLocationsForm.on('submit', ns.submitUpdateAddLocsForm);
 
         ns.extendEventAccessButton.on('click', ns.extendEventAccess);
+        $("#frmUpdateCPSubscription").on('submit', ns.updateCPSubscription);
         ns.add6MonthsButton.on('click', ns.add6MonthsButtonClick);
         ns.add5DaysButton.on('click', ns.add5DaysButtonClick);
         ns.adInfinitumButton.on('click', ns.adInfinitumButtonClick);
@@ -418,6 +421,68 @@ var M = EDIT; // alias for code brevity
         });
     };
 
+    ns.ShowRenewCPSubscriptionModal = function (e) {
+        e.preventDefault();
+
+        var modalFormOptions = {
+            keyboard: true,
+            backdrop: 'static',
+            show: true
+        };
+
+        ns.renewCPSubscriptionModal.modal(modalFormOptions);
+
+        ns.renewCPSubscriptionModal.on('hidden', function () {
+            modalFormOptions = null;
+        });
+    };
+
+    ns.updateCPSubscription = function (e) {
+        e.preventDefault();
+        alert("hit");
+        ns.gatherPricingData();
+
+        if (ns.totalPriceSansDiscount < 1) {
+            return;
+        }
+
+        var url = '/Account/ApplyDiscountCode';
+        var payload = { code: $('#EditFields_Discount_DiscountCode').val(), orderRowId: ns.orderRowId };
+        var self = this;
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: url,
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payload),
+            beforeSend: function () {
+                $(self).prepend('<span id="discountSpinner"><i class="icon-spinner icon-spin"></i>&nbsp;</span>');
+                $(self).attr('disabled', 'disabled');
+            }
+        }).done(function (data) {
+            if (data.Result == -1) {
+                ns.totalDiscount = 'no credits';
+            } else {
+                if (data.Result.indexOf('%') !== -1) {
+                    var amount2Discount = data.Result.replace('.00%', '') / 100;
+                    ns.totalDiscount = ns.totalPriceSansDiscount * amount2Discount;
+                } else {
+                    ns.totalDiscount = data.Result;
+                }
+                ns.adjustTotalPrice();
+            }
+            ns.totalDiscountInput.val(ns.totalDiscount);
+
+            $('#discountSpinner').remove();
+
+        }).always(function (e) {
+            $('#discountSpinner').remove();
+            $(self).removeAttr('disabled');
+        });
+
+    }
     ns.updateAdditionalLocations = function (e) {
 
         e.preventDefault();
@@ -437,7 +502,7 @@ var M = EDIT; // alias for code brevity
                 Email: $(element).val()
             });
         });
-        alert("id: " + ns.orderRowIdHidden.val());
+
         var payload = {
             orderRowId: ns.orderRowIdHidden.val(),
             additionalLocations: addLocs
