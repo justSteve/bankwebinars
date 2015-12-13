@@ -43,6 +43,7 @@ namespace CUWebinars.Business.Services
         private readonly IAdditionalLocationsRepository _additionalLocationsRepository;
         private readonly ILogger _logger;
         private readonly IWebUserRepository _webUserRepository;
+        private readonly IDiscountRepository _discountRepository;
         private readonly TtsConfiguration _ttsConfig;
         readonly List<IEvent> _events = new List<IEvent>();
         private bool _disposed;
@@ -53,6 +54,7 @@ namespace CUWebinars.Business.Services
             IOrderRepository orderRepository,
             IRefDataRepository refDataRepository,
             IWebUserRepository webUserRepository,
+            IDiscountRepository discountRepository,
             IWebinarRepository webinarRepository,
             IAdditionalLocationsRepository additionalLocationsRepository,
             ILogger logger,
@@ -64,6 +66,7 @@ namespace CUWebinars.Business.Services
             _refDataRepository = refDataRepository;
             _ttsConfig = ttsConfig;
             _webinarRepository = webinarRepository;
+            _discountRepository = discountRepository;
             _additionalLocationsRepository = additionalLocationsRepository;
             _logger = logger;
             _webUserRepository = webUserRepository;
@@ -1746,6 +1749,11 @@ namespace CUWebinars.Business.Services
         {
             var order = _orderRepository.GetOrderByIdByOnDemandCode(onDemandCode);
             return order;
+        }
+
+        public void UpdateDiscountDetails(Discount discount)
+        {
+            _discountRepository.SaveChanges(discount);
         }
 
         public IList<Order> GetV3OrdersByOnDemandClaim()

@@ -439,17 +439,15 @@ var M = EDIT; // alias for code brevity
 
     ns.updateCPSubscription = function (e) {
         e.preventDefault();
-        alert("hit");
-        ns.gatherPricingData();
 
-        if (ns.totalPriceSansDiscount < 1) {
-            return;
-        }
-
-        var url = '/Account/ApplyDiscountCode';
-        var payload = { code: $('#EditFields_Discount_DiscountCode').val(), orderRowId: ns.orderRowId };
+        var url = '/Account/UpdateCpSubscription';
+        var payload = {
+            notes: $('#EditFields_Discount_Notes').val()
+            , idOrder: $('#EditFields_Order_idOrder').val()
+            , newCPExpiryDate: $('#newCPExpiryDate').val()
+        };
         var self = this;
-
+        alert('orderid: ' + payload.idOrder);
         $.ajax({
             type: 'POST',
             contentType: constants.JsonContentType,
@@ -463,9 +461,10 @@ var M = EDIT; // alias for code brevity
             }
         }).done(function (data) {
             if (data.Result == -1) {
-                ns.totalDiscount = 'no credits';
+                ns.totalDiscount = 'expired';
             } else {
-                if (data.Result.indexOf('%') !== -1) {
+                if (data.Notes !== null) {
+                    alert('non-NullNote');
                     var amount2Discount = data.Result.replace('.00%', '') / 100;
                     ns.totalDiscount = ns.totalPriceSansDiscount * amount2Discount;
                 } else {

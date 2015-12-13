@@ -361,6 +361,11 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             _membershipService.UpdateShippingAddressDetails(shippingAddress);
         }
+        public void UpdateDiscountDetails(Discount discount)
+        {
+
+            _orderManagementService.UpdateDiscountDetails(discount);
+        }
 
         public void UpdateDiscountDetails(DiscountModel discountModel, int idUser)
         {
@@ -384,7 +389,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 //idDiscount = 
             };
 
-            _membershipService.UpdateDiscountDetails(discount);
+            _orderManagementService.UpdateDiscountDetails(discount);
         }
 
         public void EditInstitution(EditInstitutionInfoModel model)
@@ -404,6 +409,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             _membershipService.UpdateInstitutionDetails(saveInst);
 
         }
+
 
         public void EditUser(EditUserViewModel model)
         {

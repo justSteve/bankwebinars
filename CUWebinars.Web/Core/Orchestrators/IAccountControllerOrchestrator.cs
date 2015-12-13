@@ -57,5 +57,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         Address BuildPlaceHolderAddressBilling(string email);
         Address BuildPlaceHolderAddressShipping(string email);
         void EditInstitution(EditInstitutionInfoModel model);
+        void UpdateDiscountDetails(Discount thisSubscription);
     }
 }

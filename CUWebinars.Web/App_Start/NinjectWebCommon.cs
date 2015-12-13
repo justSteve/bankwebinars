@@ -178,6 +178,7 @@ namespace CUWebinars.Web.App_Start
                     new OrderRepository(sharedContext),
                     new RefDataRepository(),
                     new WebUserRepository(sharedContext, loggerForOrderManagementService),
+                    new DiscountRepository(sharedContext), 
                     new WebinarRepository(sharedContext),
                     new AdditionalLocationRepository(sharedContext),
                     loggerForOrderManagementService,

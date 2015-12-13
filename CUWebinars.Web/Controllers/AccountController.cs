@@ -1929,7 +1929,6 @@ namespace CUWebinars.Web.Controllers
 
         [ValidateAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
-
         public ActionResult UpdateSubscriptionDetails(DiscountDetailsModel discountDetailsModel)
         {
             if (ModelState.IsValid)
@@ -1999,10 +1998,59 @@ namespace CUWebinars.Web.Controllers
         {
             throw new NotImplementedException();
         }
-
-        public ActionResult UpdateCpSubscription(EditOrderModel order)
+        [System.Web.Mvc.HttpPost]
+        [HandleAjaxException]
+        public ActionResult UpdateCpSubscription(string notes, int idOrder, DateTime newCPExpiryDate)
         {
-            return null;
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var thisSubscription = _orderManagementService.GetDiscountByCode("CP_" + idOrder);
+                    var priorNotes = thisSubscription.Notes ?? "" ;
+
+                    var priorExpiry = thisSubscription.DateValidTo;
+
+                    notes = "Subscription was renewed from: " +priorExpiry.ToShortDateString()
+                        + " to: "+ newCPExpiryDate + " by: " + " USER NOTES: " + notes;
+
+                    if (priorNotes != "")
+                    {
+                        notes = "[PRIOR NOTES]" + priorNotes;
+                    }
+
+                    thisSubscription.Notes = notes;
+                    thisSubscription.DateValidTo = newCPExpiryDate;
+
+                    _accountControllerOrchestrator.UpdateDiscountDetails(thisSubscription);
+                    return Json(new { Result = WebUiConstants.Success, Notes="Notes:" + notes });
+                }
+                catch (DbEntityValidationException dbEntityValidationException)
+                {
+                    var stringBuilder = new StringBuilder();
+
+                    foreach (var validationErrors in dbEntityValidationException.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            //Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,validationError.ErrorMessage);
+                            stringBuilder.AppendFormat("Property: {0} Error: {1} ", validationError.PropertyName,
+                                validationError.ErrorMessage);
+                        }
+                    }
+                    _logger.Error("UpdateDiscountDetails dbEntityValidationException errors | {0}",
+                        stringBuilder.ToString());
+                }
+
+                catch (Exception e)
+                {
+                    _logger.Error("UpdateDiscountDetails Catch block: {0} | Session = {1} | idOrder: {2}", e.Message,
+                        _appHelper.GetUserAuditInfo(), idOrder);
+                }
+                return Json(new { Result = WebUiConstants.Fail });
+            }
+            return this.ModelStateJson(ModelState);
+
         }
     }
 

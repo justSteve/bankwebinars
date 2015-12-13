@@ -993,11 +993,6 @@ namespace CUWebinars.Business.AccountService
             }
         }
 
-        public void UpdateDiscountDetails(Discount discount)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool UserHasClaim(UserAccount userAccount, string claim, string value = null)
         {
             if (string.IsNullOrWhiteSpace(value))

@@ -266,13 +266,6 @@
         var currentExpiryDate = Model.EditFields.Discount.DateValidTo.Month + "/" + Model.EditFields.Discount.DateValidTo.Year;
         var newExpiryDate = Model.EditFields.Discount.DateValidTo.AddMonths(@Model.EditFields.Discount.RenewalTerm);
         @Html.AntiForgeryToken()
-        <div>
-            @Html.HiddenFor(m => m.EditFields.Id)
-            @Html.HiddenFor(m => m.EditFields.WebUser.idUser)
-            @Html.HiddenFor(m => m.EditFields.WebinarId)
-            @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)
-            @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)
-        </div>
 
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -286,7 +279,7 @@
             <br />Renewal Term: @Html.TextBoxFor(m => m.EditFields.Discount.RenewalTerm, new { id = "RenewalTerm", disabled = "disabled", @class = "input input-small" })
             @Html.HiddenFor(m => m.EditFields.Discount.DateValidTo) @* Required for POST. TextBoxFor won't ModelBind *@
             <br />New Expiration Date:
-            <input class="input input-small" type="text" name="newExpiryDate" id="newExpiryDate" value="@newExpiryDate.ToShortDateString()" />
+            <input class="input input-small" type="text" name="newCPExpiryDate" id="newCPExpiryDate" value="@newExpiryDate.ToShortDateString()" />
             <br />Notes:
             @Html.TextAreaFor(m => m.EditFields.Discount.Notes)
         </div>
@@ -294,6 +287,14 @@
             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
             <button id="updateCPSubscriptionButton" name="moveOne" class="btn btn-primary">Update Subscription</button>
         </div>
+        <div>
+            @Html.HiddenFor(m => m.EditFields.Order.idOrder)
+            @Html.HiddenFor(m => m.EditFields.WebUser.idUser)
+            @Html.HiddenFor(m => m.EditFields.WebinarId)
+            @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)
+            @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)
+        </div>
+
     }
 </div>
 

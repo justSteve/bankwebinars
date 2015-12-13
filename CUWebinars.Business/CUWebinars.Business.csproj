@@ -301,6 +301,8 @@
     <Compile Include="Notification\ViewModel\PostEventPublishModel.cs" />
     <Compile Include="Notification\ViewModel\WebinarPromoViewModel.cs" />
     <Compile Include="Repository\AdditionalLocationRepository.cs" />
+    <Compile Include="Repository\DiscountRepository.cs" />
+    <Compile Include="Repository\IDiscountRepository.cs" />
     <Compile Include="Repository\IAccountRepository.cs" />
     <Compile Include="Repository\IAdditionalLocationsRepository.cs" />
     <Compile Include="Repository\IAffiliateRepository.cs" />

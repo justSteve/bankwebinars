@@ -91,7 +91,7 @@ namespace CUWebinars.Business.AccountService
         void UpdatePostEventMaterialsClaim(string tenant, string email, DateTime newDate, Order order);
         void UpdatePostEventMaterialsClaim(UserAccount userAccount, DateTime newDate, Order order);
         void UpdateShippingAddressDetails(Address shippingAddress);
-        void UpdateDiscountDetails(Discount discount);
+        //void UpdateDiscountDetails(Discount discount);
         bool UserHasClaim(UserAccount userAccount, string claim, string value = null);
         WebUser CreateBareUserFromEmail(string email);
         string FindDisplayPostEventMaterialsClaimValue(Order order);
