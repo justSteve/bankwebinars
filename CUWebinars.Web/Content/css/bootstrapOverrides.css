@@ -25,8 +25,8 @@ input[type="checkbox"] {
     background-clip: padding-box;
     background-color: #ffffff;
     border: 1px solid rgba(0, 0, 0, 0.3);
-    /*border-radius: 6px;
-    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);*/
+    border-radius: 0;
+
     left: 50%;
     margin-left: -280px;
     outline: medium none;
@@ -35,7 +35,10 @@ input[type="checkbox"] {
     width: 560px;
     z-index: 1050;
 }
-
+    .modal-header {
+        background-color: black;
+        color: white;
+    }
 .form-compact .hidden {
     display: none;
 }
