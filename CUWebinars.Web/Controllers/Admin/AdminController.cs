@@ -2477,17 +2477,34 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 int totalNumberOrders = 0;
                 int webinarId = param.webinarId;
-                int? affiliateId = param.affiliateId;
+                int affiliateId = param.affiliateId ?? 19; // 19 is magic internal / house affiliate id
+                bool showAllEvents = param.showAllEvents ?? false;
+
+                List<Order> dtsource = null;
 
                 try
                 {
-                    List<Order> dtsource = _dataTablesService.GetOrdersByWebinar(webinarId, affiliateId ?? 19, out totalNumberOrders).ToList();
+
+                    // custom filtering by Webinar Id
+                    if (!showAllEvents)
+                    {
+                        dtsource = _dataTablesService.GetOrdersByWebinar(webinarId, affiliateId, out totalNumberOrders).ToList();
+                    }
+                    else
+                    {
+                        dtsource = _orderManagementService.GetOrdersAll(affiliateId, out totalNumberOrders).ToList();
+                    }
 
                     // use automapper to flatten out the order records, in this specific case the data 
                     //  model has circular references which cause problems with JSON serialization
                     List<OrderDTO> dtoSource = new List<OrderDTO>();
                     Mapper.Map(dtsource, dtoSource);
 
+                    // custom filtering by Order Status
+                    if (param.selectedOrderStatuses != null)
+                    {
+                        dtoSource = dtoSource.Where(x => param.selectedOrderStatuses.Contains(x.OrderStatus)).ToList();
+                    }
 
                     List<String> columnSearch = new List<string>();
                     foreach (var col in param.Columns)

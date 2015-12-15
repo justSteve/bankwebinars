@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CUWebinars.Business.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -138,7 +139,10 @@ namespace CUWebinars.Web.Core
     {
         public int webinarId { get; set; }
         public int? affiliateId { get; set; }
+        public bool? showAllEvents { get; set; }
+        public List<OrderStatus> selectedOrderStatuses { get; set; }
     }
+
 
     // extends the DTParameters class to allow us to pass additional parameters
     //  up from the client-side JS, as recommended in comments https://www.echosteg.com/jquery-datatables-asp.net-mvc5-server-side
@@ -149,6 +153,8 @@ namespace CUWebinars.Web.Core
     }
 
 
+    // extends the DTParameters class to allow us to pass additional parameters
+    //  up from the client-side JS, as recommended in comments https://www.echosteg.com/jquery-datatables-asp.net-mvc5-server-side
     public class DTParametersUsers : DTParameters
     {
         public int webinarId { get; set; }

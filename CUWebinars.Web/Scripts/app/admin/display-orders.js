@@ -87,6 +87,7 @@ function getOrderStatusHtml() {
         DO.webinarIdDiv = $('#webinarIdDiv');
         DO.baseOrderStatusHtml = getOrderStatusHtml();  // this seems a little slower than I'd like...
         //DO.baseRegTypeDropDownHtml = getRegTypeDropDownHtml();  // this seems a little slower than I'd like...
+        DO.orderStatusFilters = undefined;
     };
 
     ns.wireUpHandlers = function () {
@@ -212,6 +213,45 @@ function getOrderStatusHtml() {
 
         AttachDataTableEditEvents(); // edit-forms-in-child-rows.js
 
+        // setup radio button group filters
+        $("#filter-buttons").on("click", "button", function (e) {
+            e.stopImmediatePropagation(); // the bootstrap buttons plugin doesn't toggle the clicked on button soon enough so do it ourselves https://github.com/twbs/bootstrap/issues/2380
+            $(this).button('toggle'); // flip the state of the clicked on button
+            $(this).blur(); // the focused look is very similar to the active look, which is confusing when deselecting buttons, blur causes the button to look unselected, as it should
+
+            var $button = $(this);
+
+            // collect all "active" filters, there are buttons for each status (some are hidden, see _ShowOrders.cshtml) so we don't have to do any extra processing
+            var selectedButtons = [];
+            $("#order-status-filter-container button.active").each(function () {
+                if (this.value != "Active" && this.value != "Inactive") // don't need to have these value in the list of filters sent to the server
+                    selectedButtons.push(this.value);
+            });
+
+            DO.orderStatusFilters = selectedButtons;
+
+            // trigger search with existing textbox value, additional params will be constructed on that event handler
+            var currentSearchVal = $("input[type='search']", "#ordersTable_filter").val();
+            DO.ordersTable.DataTable().search(currentSearchVal).draw();
+
+        });
+
+        // manually deal with the UI for Active/Inactive button clicks
+        $("#order-status-filter-container").on("click", "button", function (e) {
+
+            var selector = "#order-status-filter-container button.os-" + $(this).val().toLowerCase(); // see the CUWebinars.Web\Views\Admin\Partials\_ShowOrders.cshtml file
+
+            // check whether they are selecting or deselecting the Active/Inactive button
+            // NOTE: it looks "backwards" because the active class hasn't been set yet for this click
+            if ($(this).hasClass("active")) // looks backwards because the active class hasn't been set yet for this click
+            {
+                $(selector).removeClass("active"); // "deselect" the buttons
+            } else {
+                $(selector).addClass("active"); // "select" the buttons
+            }
+
+        });
+
     };
 
     ns.wireUpDataTable = function () {
@@ -223,8 +263,15 @@ function getOrderStatusHtml() {
                 "url": '/admin/OrdersDataHandler',
                 "contentType": 'application/json; charset=utf-8',
                 'data': function (data) {
+
+                    // additional custom filters
+                    var showAllEvents = ($("#filter-buttons #showAllOrders button.active").val() == "showAllEvents");
+                    var includeOrderStatuses = DO.orderStatusFilters;
+
                     data.webinarId = parseInt(DO.webinarIdDiv.text());
                     data.affiliateId = DO.affiliateId;
+                    data.showAllEvents = showAllEvents;
+                    data.selectedOrderStatuses = includeOrderStatuses;
                     return data = JSON.stringify(data);
                 }
             },

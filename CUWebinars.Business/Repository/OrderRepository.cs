@@ -422,6 +422,29 @@ namespace CUWebinars.Business.Repository
             return items.Where(o => o.idUser == userId);
         }
 
+        public IEnumerable<Order> GetOrdersAll(int idAffliate, out int totalNumberOrders)
+        {
+            IList<Order> orders = items
+                .Include(o => o.WebUser)
+                .Include(o => o.Affiliate)
+                .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                .Include(o => o.OrderRows.Select(or => or.Discount))
+                .Include(o => o.OrderRows.Select(or => or.Webinar))
+                .ToList();
+
+            if (idAffliate != 19)
+            {
+                orders = orders
+                    .Where(o => o.idAffiliate == idAffliate)
+                    .ToList();
+            }
+
+            totalNumberOrders = orders.Count;
+
+            return orders;
+        }
+
         public IList<Order> GetOrdersForLiveEventNotifications(int idWebinar)
         {
             var orders = ((TTSWebinarsContext)db).OrderRows

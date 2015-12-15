@@ -14,16 +14,47 @@
             SHOWORDERS.affiliateId = @Model.Affiliate.idUserAff;
 
         </script>
-    }*@
-    var _archived = "";
-    var _dirseries = "";
-    var _pending = "";
-    var _recorded = "";
-    var _upcoming = "";
+    }
+    //OrderStatus enum
+    //Error = 0,
+    //InProcess = 1,
+    //Submitted = 2,
+    //Billed = 3,
+    //Paid = 4,
+    //Abandoned = 5,
+    //Canceled = 6,
+    //AwaitingVerification = 7,
+    //Unknown = 255
     
     var showAffColumn = Model.UserIsAdmin ? "true" : "false";
     //\Scripts\app\admin\display-orders.js
         // AdminController/
+    <div id="filter-buttons" class="clearfix" style="margin-bottom:8px;">
+        <div class="btn-group pull-left" id="showAllOrders" data-toggle="buttons-radio">
+            <button type="button" class="btn btn-info active" value="justThisEvent">Just This Event</button>
+            <button type="button" class="btn btn-info" value="showAllEvents">All Orders</button>
+        </div>
+
+        <div class="btn-group pull-right" id="order-status-filter-container" data-toggle="buttons-checkbox">
+            @{
+                List<OrderStatus> statusesToHide = new List<OrderStatus>() { OrderStatus.Error, OrderStatus.Abandoned, OrderStatus.Canceled, OrderStatus.Unknown };
+                List<OrderStatus> activeStatuses = new List<OrderStatus>() { OrderStatus.Submitted, OrderStatus.Billed, OrderStatus.Paid };
+                List<OrderStatus> inActiveStatuses = new List<OrderStatus>() { OrderStatus.Error, OrderStatus.InProcess, OrderStatus.Abandoned, OrderStatus.Canceled, OrderStatus.AwaitingVerification, OrderStatus.Unknown };
+
+                foreach (OrderStatus s in Enum.GetValues(typeof(OrderStatus)))
+                {
+                    string hideClass = (statusesToHide.Exists(x => x == s)) ? "hidden" : "";
+                    string activeClass = (activeStatuses.Exists(x => x == s)) ? "os-active" : "";
+                    string inActiveClass = (inActiveStatuses.Exists(x => x == s)) ? "os-inactive" : "";
+
+                    <button type="button" class="btn btn-primary @hideClass @activeClass @inActiveClass" value="@s">@(s != OrderStatus.AwaitingVerification ? @s.ToString() : "Pending")</button>
+                }
+
+                <button type="button" class="btn btn-info" value="Active">Active</button>
+                <button type="button" class="btn btn-info" value="Inactive">Inactive</button>
+            }
+        </div>
+    </div>
 
     <table data-aff="@showAffColumn" id="ordersTable" class="table table-striped table-bordered dataTable no-footer" cellspacing="0" width="100%">
         <thead>
@@ -34,16 +65,11 @@
                 <th>Billing</th>
                 @*<th>Discount</th>*@
                 <th>Affiliate</th>
-                <th>OrderDate</th>
+                <th>Order Date</th>
                 <th>Status</th>
             </tr>
         </thead>
     </table>
 
     <div id="webinarIdDiv" class="initialHide">@Model.Webinar.idWebinar</div>
-    <div id="upcoming" class="initialHide">@_upcoming</div>
-    <div id="recorded" class="initialHide">@_recorded</div>
-    <div id="archived" class="initialHide">@_archived</div>
-    <div id="dirseries" class="initialHide">@_dirseries</div>
-    <div id="pending" class="initialHide">@_pending</div>
 }

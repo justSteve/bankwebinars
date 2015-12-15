@@ -646,6 +646,11 @@ namespace CUWebinars.Business.Services
             }
         }
 
+        public IEnumerable<Order> GetOrdersAll(int idAffliate, out int totalNumberOrders)
+        {
+            return _orderRepository.GetOrdersAll(idAffliate, out totalNumberOrders);
+        }
+
         public WebUser GetWebUser(int id)
         {
             return _webUserRepository.FindByIdLoaded(id);
