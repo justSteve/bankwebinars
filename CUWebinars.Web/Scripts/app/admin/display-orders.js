@@ -221,11 +221,27 @@ function getOrderStatusHtml() {
 
             var $button = $(this);
 
-            // collect all "active" filters, there are buttons for each status (some are hidden, see _ShowOrders.cshtml) so we don't have to do any extra processing
+            // collect all "active" filters
             var selectedButtons = [];
             $("#order-status-filter-container button.active").each(function () {
-                if (this.value != "Active" && this.value != "Inactive") // don't need to have these value in the list of filters sent to the server
-                    selectedButtons.push(this.value);
+                // inspect the actual value of the clicked buttons
+                switch (this.value) {
+                    case "Active":
+                        break; // do nothing, don't want the word Active included, all statuses that are categorized as active have an actual button on the screen
+
+                    case "Inactive":
+                        // the following statuses don't have actual buttons on the screen but we still want to include them when Inactive is clicked
+                        //  also, we don't want the word Inactive included
+                        selectedButtons.push("Error");
+                        selectedButtons.push("Abandoned");
+                        selectedButtons.push("Canceled");
+                        selectedButtons.push("Unknown");
+                        break;
+
+                    default:
+                        selectedButtons.push(this.value); // not the buttons Active or Inactive, include it
+                        break;
+                }
             });
 
             DO.orderStatusFilters = selectedButtons;
