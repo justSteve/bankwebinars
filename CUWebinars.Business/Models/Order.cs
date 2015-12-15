@@ -14,6 +14,7 @@ namespace CUWebinars.Business.Models
         public int idOrderLegacy { get; set; }
         public int idUser { get; set; }
         public int idAffiliate { get; set; }
+        public int? SageInvoiceId { get; set; }
         public DateTime OrderDate { get; set; }
         public OrderStatus OrderStatus { get; set; }
         public decimal Total { get; set; }

@@ -23,6 +23,7 @@ namespace CUWebinars.Business.Models
         public string LastName { get; set; }
         public string Initial { get; set; }
         public int idUserInstitution { get; set; }
+        public int SageAccountId { get; set; }
         public string email { get; set; }
         public string futureMail { get; set; }
         public string generalComments { get; set; }

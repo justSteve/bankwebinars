@@ -124,9 +124,9 @@
     <div class="row-fluid">
         <div class="control-group">
             <div class="span4">
-                @*@Html.LabelFor(model => model.EditFields.Institution, new { @class = "control-label span3" })*@
+                @Html.LabelFor(model => model.EditFields.SageAccountId, new { @class = "control-label span3" })
                 <div class="controls span8">
-                    @*@Html.TextBoxFor(model => model.EditFields.Institution, new { disabled = "disabled" })*@
+                    @Html.TextBoxFor(model => model.EditFields.SageAccountId)
                     @Html.HiddenFor(m => m.EditFields.Institution)
                 </div>
             </div>

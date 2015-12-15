@@ -9,7 +9,10 @@
 @{
 
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+    var TaxAmount = ViewBag.TaxAmount;
 
+    if (ReferenceEquals(TaxAmount, null))
+    {TaxAmount = 0;}
     //Layout = "/Views/Shared/_Layout_PayCC.cshtml";
     var hpp_id = globalConfig.TenantMonerisHpp_Id;
     var hpp_key = globalConfig.TenantMonerisHpp_Key;
@@ -63,8 +66,8 @@
                 <input type="hidden" name="li_description1" value="@title - @regTypeDesc">
                 <input type="hidden" name="li_quantity1" value="1">
                 <input type="hidden" name="li_price1" value="@Math.Round(myRow.RowPrice, 2)">
-                <input type="hidden" name="li_taxes" value="@Math.Round(ViewBag.TaxAmount,2)">
-                <input type="hidden" name="li_taxamount" value="@Math.Round(ViewBag.TaxAmount, 2)">
+                <input type="hidden" name="li_taxes" value="@Math.Round(@TaxAmount,2)">
+                <input type="hidden" name="li_taxamount" value="@Math.Round(@TaxAmount, 2)">
                 <input type="hidden" name="li_invoice" value="@globalConfig.TenantPrefix@order.idOrder">
                 <input type="hidden" name="cust_id" value="Customer ID: @order.idUser">
                 <input type="hidden" name="order_no" value="@globalConfig.TenantPrefix@order.idOrder">

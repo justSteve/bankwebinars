@@ -84,6 +84,7 @@ var M = EDIT; // alias for code brevity
         ns.numberAddLocsLabel = $('#nrAddLocs');
         ns.addAdditionalLocationsButton = $('#addLocationsButton');
         ns.updateAddLocsButton = $('#UpdateAddLocsButton');
+        ns.editDiscountNotesButton = $('#editDiscountNotesButton');
         ns.totalOptionsInput = $('DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions');
         ns.updateAdditionalLocationsForm = $('#updateAdditionalLocationsForm');
         ns.showChangeAssignedAffiliate = $('#showChangeAssignedAffiliate');
@@ -129,7 +130,7 @@ var M = EDIT; // alias for code brevity
     };
 
     ns.submitForm = function (e) {
-        alert("submited form");
+        //alert("submited form");
         e.preventDefault();
 
         var emailInputs = ns.wrapperDiv.find('input[type="email"]');
@@ -164,7 +165,7 @@ var M = EDIT; // alias for code brevity
         var self = $(this);
 
         var form = $('#editOrderCompact');
-        alert("hit form");
+        //alert("hit form");
         $.ajax({
             type: 'POST',
             contentType: constants.FormPostContentType,
@@ -252,7 +253,7 @@ var M = EDIT; // alias for code brevity
     };
 
     ns.updatePriceOnNewSelection = function (registrationTypeId, totalPrice, dropDown) {
-        alert("here updatePriceOnNewSelection");
+        //alert("here updatePriceOnNewSelection");
         ns.gatherPricingData();
 
         var url = '/Cart/UpdateOrderDetails';
@@ -272,7 +273,7 @@ var M = EDIT; // alias for code brevity
         }).done(function (data) {
 
             if (data) {
-                alert(data.OptionsPrice);
+               // alert(data.OptionsPrice);
                 $('#UnitPriceText').val(data.BasePrice);
                 $('#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPriceUnitPriceText').val(data.BasePrice);
                 $('#TotalDiscountText').val(data.Discount);
@@ -298,6 +299,7 @@ var M = EDIT; // alias for code brevity
         $('#renewCPSubscriptionButton').on('click', ns.ShowRenewCPSubscriptionModal);
         ns.regTypesList.on('change', ns.changeRegType);
         ns.updateAddLocsButton.on('click', ns.updateAdditionalLocations);
+        ns.editDiscountNotesButton.on('click', ns.ShowNotesModal);
         ns.updateAdditionalLocationsForm.on('submit', ns.submitUpdateAddLocsForm);
 
         ns.extendEventAccessButton.on('click', ns.extendEventAccess);
@@ -437,6 +439,38 @@ var M = EDIT; // alias for code brevity
         });
     };
 
+    ns.ShowNotesModal = function (e) {
+        e.preventDefault();
+
+        var modalFormOptions = {
+            keyboard: true,
+            backdrop: 'static',
+            show: true
+        };
+
+        ns.editNotes.modal(modalFormOptions);
+
+        ns.editNotes.on('hidden', function () {
+            modalFormOptions = null;
+        });
+    };
+
+    ns.ShowMonerisModal = function (e) {
+        e.preventDefault();
+
+        var modalFormOptions = {
+            keyboard: true,
+            backdrop: 'static',
+            show: true
+        };
+
+        ns.PayByMonerisModal.modal(modalFormOptions);
+
+        ns.PayByMonerisModal.on('hidden', function () {
+            modalFormOptions = null;
+        });
+    };
+
     ns.updateCPSubscription = function (e) {
         e.preventDefault();
 
@@ -447,7 +481,7 @@ var M = EDIT; // alias for code brevity
             , newCPExpiryDate: $('#newCPExpiryDate').val()
         };
         var self = this;
-        alert('orderid: ' + payload.idOrder);
+        //alert('orderid: ' + payload.idOrder);
         $.ajax({
             type: 'POST',
             contentType: constants.JsonContentType,
@@ -464,7 +498,7 @@ var M = EDIT; // alias for code brevity
                 ns.totalDiscount = 'expired';
             } else {
                 if (data.Notes !== null) {
-                    alert('non-NullNote');
+                   // alert('non-NullNote');
                     var amount2Discount = data.Result.replace('.00%', '') / 100;
                     ns.totalDiscount = ns.totalPriceSansDiscount * amount2Discount;
                 } else {

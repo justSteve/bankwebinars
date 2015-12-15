@@ -82,7 +82,7 @@ namespace CUWebinars.Business.AccountService
             //string password,
             string email,
             string title);
-        void UpdateUserDetails(string tenant, string firstName, string lastName, string email, string institutionName, Address billingAddress, Address shippingAddress, string title);
+        void UpdateUserDetails(string tenant, string firstName, string lastName, string email, string institutionName, Address billingAddress, Address shippingAddress, string title, int? sageAccountId);
         void UpdateUserDetails(WebUser webUser);
         string GetDisplayPostEventMaterialsClaimValue(string tenant, string email, int idOrder, string onDemandCode);
         //string GetDisplayPostEventMaterialsClaimValue(UserAccount userAccount);

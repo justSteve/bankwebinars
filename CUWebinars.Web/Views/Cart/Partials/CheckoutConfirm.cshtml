@@ -169,7 +169,7 @@
     Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
     if (ViewBag.Order != null)
     {
-        Html.RenderPartial("~/Views/Cart/Partials/_PayByCCModal.cshtml", (Order)ViewBag.Order);
+        Html.RenderPartial("~/Views/Cart/Partials/_PayByMoneris.cshtml", (Order)ViewBag.Order);
     }
     Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml");
     Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);

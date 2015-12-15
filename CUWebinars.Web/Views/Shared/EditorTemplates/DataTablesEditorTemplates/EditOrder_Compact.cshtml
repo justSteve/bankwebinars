@@ -126,11 +126,11 @@
                         <div class="controls">
                             @if (Model.EditFields.AdditionalLocationsAvailableOnLoad)
                             {
-                            <button id="addLocationsButton" class="btn btn-default btn-mini">Add?</button>
+                                <button id="addLocationsButton" class="btn btn-default btn-mini">Add?</button>
                             }
                             else
                             {
-                            <button id="addLocationsButton" class="btn btn-default btn-mini" disabled="disabled">na</button>
+                                <button id="addLocationsButton" class="btn btn-default btn-mini" disabled="disabled">na</button>
                             }
                             Additional Locations: <span id="nrAddLocs">@Model.EditFields.NumberOfAdditionalLocations</span>
 
@@ -149,24 +149,24 @@
 
                 @if (Model.EditFields.Discount == null)
                 {
-                @Html.TextBoxFor(m => m.EditFields.Discount.DiscountCode, new { placeholder = "Enter discount code ", @class = "input input-sm" })
-                <button id="applyDiscountButton" class="btn btn-default">Apply code</button>
+                    @Html.TextBoxFor(m => m.EditFields.Discount.DiscountCode, new { placeholder = "Enter discount code ", @class = "input input-sm" })
+                    <button id="applyDiscountButton" class="btn btn-default">Apply code</button>
                 }
                 else
                 {
                     if (Model.EditFields.Discount.DiscountType == DiscountType.ComplianceSeries)
                     {
-                <div class="control-group">
-                    <br />
-                    <button id="renewCPSubscriptionButton" class="btn btn-default btn-mini btn-success ">Renew Subscription</button>
+                        <div class="control-group">
+                            <br />
+                            <button id="renewCPSubscriptionButton" class="btn btn-default btn-mini btn-success ">Renew Subscription</button>
 
-                    <div class="controls">
-                        Expires on: @Model.EditFields.Discount.DateValidTo.ToShortDateString()
-                        <br />
-                        Billing Date: @Model.EditFields.Discount.DateBilled.ToString().Split(' ')[0]
-                    </div><br />
-                    <button id="cancelDiscountButton" class="btn btn-danger btn-mini ">Cancel Subscription</button>
-                </div>
+                            <div class="controls">
+                                Expires on: @Model.EditFields.Discount.DateValidTo.ToShortDateString()
+                                <br />
+                                Billing Date: @Model.EditFields.Discount.DateBilled.ToString().Split(' ')[0]
+                            </div><br />
+                            <button id="cancelDiscountButton" class="btn btn-danger btn-mini ">Cancel Subscription</button>
+                        </div>
                     }
                 }
             </div>
@@ -175,6 +175,11 @@
             <div id="notesPanel">
                 <textarea class="form-control" style="min-width: 100%">"@Model.EditFields.Order.AdminComments</textarea>
             </div>
+            @if (Model.EditFields.Discount != null && Model.EditFields.Discount.Notes != null)
+            {
+                <div><textarea class="form-control" style="min-width: 100%">"@Model.EditFields.Discount.Notes</textarea></div>
+                <button id="editDiscountNotesButton" class="btn btn-default btn-mini">Edit Note</button>
+            }
         </div>
 
         @*//  modals*@
@@ -194,44 +199,80 @@
                 </div>
             }
         </div>
+        @if (Model.EditFields.Discount != null)
+        {
+            <div id="renewCPSubscriptionModal" class="modal hide fade">
+                @using (Html.BeginForm("UpdateCPSubscription", "Account", FormMethod.Post, new { id = "frmUpdateCPSubscription" }))
+                {
+                    var currentExpiryDate = Model.EditFields.Discount.DateValidTo.Month + "/" + Model.EditFields.Discount.DateValidTo.Year;
+                    var newExpiryDate = Model.EditFields.Discount.DateValidTo.AddMonths(@Model.EditFields.Discount.RenewalTerm);
+                    @Html.AntiForgeryToken()
 
-        <div id="renewCPSubscriptionModal" class="modal hide fade">
-            @using (Html.BeginForm("UpdateCPSubscription", "Account", FormMethod.Post, new { id = "frmUpdateCPSubscription" }))
-            {
-                var currentExpiryDate = Model.EditFields.Discount.DateValidTo.Month + "/" + Model.EditFields.Discount.DateValidTo.Year;
-                var newExpiryDate = Model.EditFields.Discount.DateValidTo.AddMonths(@Model.EditFields.Discount.RenewalTerm);
-                @Html.AntiForgeryToken()
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3>Update Compliance Series Subscription</h3>
+                    </div>
+                    <div class="modal-body">
 
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h3>Update Compliance Series Subscription</h3>
-                </div>
-                <div class="modal-body">
+                        <input type="hidden" name="orderID" value="@Model.EditFields.Order.idOrder" />
+                        Current Expiration Date:
+                        <input disabled="disabled" class="input input-small;" type="text" name="currentExpiryDate" id="currentExpiryDate" value="@currentExpiryDate" />
+                        <br />Renewal Term: @Html.TextBoxFor(m => m.EditFields.Discount.RenewalTerm, new { id = "RenewalTerm", disabled = "disabled", @class = "input input-sm" })
+                        @Html.HiddenFor(m => m.EditFields.Discount.DateValidTo) @* Required for POST. TextBoxFor won't ModelBind *@
+                        <br />New Expiration Date:
+                        <input class="input input-small" type="text" name="newCPExpiryDate" id="newCPExpiryDate" value="@newExpiryDate.ToShortDateString()" />
+                        <br />Sage Invoice Number:
+                        @Html.TextBoxFor(m => m.EditFields.Order.SageInvoiceId, new { id = "SageInvoiceId", @class = "input input-small" })
+                        <br />Notes:
+                        @Html.TextAreaFor(m => m.EditFields.Discount.Notes)
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                        <button id="updateCPSubscriptionButton" name="moveOne" class="btn btn-primary">Update Subscription</button>
+                    </div>
+                    <div>
+                        @Html.HiddenFor(m => m.EditFields.Order.idOrder)
+                        @Html.HiddenFor(m => m.EditFields.WebUser.idUser)
+                        @Html.HiddenFor(m => m.EditFields.WebinarId)
+                        @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)
+                        @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)
+                    </div>
 
-                    <input type="hidden" name="orderID" value="@Model.EditFields.Order.idOrder" />
-                    Current Expiration Date:
-                    <input disabled="disabled" class="input input-small;" type="text" name="currentExpiryDate" id="currentExpiryDate" value="@currentExpiryDate" />
-                    <br />Renewal Term: @Html.TextBoxFor(m => m.EditFields.Discount.RenewalTerm, new { id = "RenewalTerm", disabled = "disabled", @class = "input input-small" })
-                    @Html.HiddenFor(m => m.EditFields.Discount.DateValidTo) @* Required for POST. TextBoxFor won't ModelBind *@
-                    <br />New Expiration Date:
-                    <input class="input input-small" type="text" name="newCPExpiryDate" id="newCPExpiryDate" value="@newExpiryDate.ToShortDateString()" />
-                    <br />Notes:
-                    @Html.TextAreaFor(m => m.EditFields.Discount.Notes)
-                </div>
-                <div class="modal-footer">
-                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                    <button id="updateCPSubscriptionButton" name="moveOne" class="btn btn-primary">Update Subscription</button>
-                </div>
-                <div>
-                    @Html.HiddenFor(m => m.EditFields.Order.idOrder)
-                    @Html.HiddenFor(m => m.EditFields.WebUser.idUser)
-                    @Html.HiddenFor(m => m.EditFields.WebinarId)
-                    @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)
-                    @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)
-                </div>
+                }
+            </div>
+        }
+        @if (Model.EditFields.Discount != null)
+        {
+            <div id="editNotes" class="modal hide fade">
+                @using (Html.BeginForm("UpdateDiscountNotes", "Account", FormMethod.Post, new { id = "frmUpdateDiscountNotes" }))
+                {
+                    @Html.AntiForgeryToken()
 
-            }
-        </div>
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3>Update Notes</h3>
+                    </div>
+                    <div class="modal-body">
+
+                        <input type="hidden" name="orderID" value="@Model.EditFields.Order.idOrder" />
+                        <br />Notes:
+                        <div><textarea class="form-control" style="min-width: 100%">"@Model.EditFields.Discount.Notes</textarea></div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                        <button id="updateDiscountNotesButton" name="moveOne" class="btn btn-primary">Update Notes</button>
+                    </div>
+                    <div>
+                        @Html.HiddenFor(m => m.EditFields.Order.idOrder)
+                        @Html.HiddenFor(m => m.EditFields.WebUser.idUser)
+                        @Html.HiddenFor(m => m.EditFields.WebinarId)
+                        @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)
+                        @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)
+                    </div>
+                }
+            </div>
+        }
 
         <div id="changeAssignedUser" class="modal hide fade">
             @using (Html.BeginForm("SetUserAssignedToOrder", "Admin", FormMethod.Post, new { id = "frmSetUserAssignedToOrder" }))
@@ -306,7 +347,24 @@
             }
         </div>
 
+        <div id="PayByMonerisModal" class="modal hide fade">
 
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Submit Payment</h3>
+            </div>
+            <div class="modal-body">
+                @*<input type="hidden" name="orderID" value="@Model.EditFields.Order.idOrder" />
+                    @{
+                        Html.RenderPartial("~/Views/Cart/Partials/_PayByMoneris.cshtml", Model.EditFields.Order);
+                    }*@
 
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                <button id="editDiscountButton" class="btn btn-primary">Submit</button>
+            </div>
+
+        </div>
     </div>
 </div>

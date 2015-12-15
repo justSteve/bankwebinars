@@ -396,6 +396,8 @@ namespace CUWebinars.Business.Repository
             return item.FirstOrDefault();
         }
 
+
+
         public IList<int> FindOrderIdsByPartialId(int userId)
         {
             return items.Include(o => o.WebUser)
@@ -484,7 +486,7 @@ namespace CUWebinars.Business.Repository
 
         public OrderRow GetOrderRowById(int idOrderRow)
         {
-            return ((TTSWebinarsContext)db).OrderRows.Include(or => or.Webinar)
+            var row = ((TTSWebinarsContext)db).OrderRows.Include(or => or.Webinar)
                 .Include(or => or.Order.WebUser.Institution)
                 .Include(or => or.Order.WebUser.Presenter)
                 .Include(or => or.Order.WebUser.Addresses)
@@ -493,6 +495,8 @@ namespace CUWebinars.Business.Repository
                 .Include(or => or.AdditionalLocation)
                 .Include(or => or.Discount)
                 .SingleOrDefault(or => or.idOrderRow == idOrderRow);
+
+            return row;
         }
 
         public void AddAdditionalLocation(AdditionalLocation addedAdditionalLocation)
@@ -643,11 +647,22 @@ namespace CUWebinars.Business.Repository
 
         public Discount FindDiscountByCode(string discount)
         {
-            return ((TTSWebinarsContext)db).Discounts.SingleOrDefault
+            var code = ((TTSWebinarsContext)db).Discounts.SingleOrDefault
                 (d => d.DiscountCode.EndsWith(discount));
 
+            if (ReferenceEquals(code, null))
+            {
+                code = ((TTSWebinarsContext)db).Discounts.SingleOrDefault
+                (d => d.DiscountCode == (discount));
+            }
+            return code;
         }
-
+        public Discount GetDiscountByOrderId(int idOrder)
+        {
+            var code = ((TTSWebinarsContext)db).OrderRows.Where
+                (d => d.idOrder == idOrder).Select(o => o.Discount);
+            return code.FirstOrDefault();
+        }
         public Discount FindDiscountByUser(WebUser currentUser)
         {
             Discount myDiscount = null;
@@ -749,11 +764,11 @@ namespace CUWebinars.Business.Repository
             try
             {
                 var usercode =
-                    ((TTSWebinarsContext) db).WebUsers.Where(u => u.idUser == idUser)
+                    ((TTSWebinarsContext)db).WebUsers.Where(u => u.idUser == idUser)
                         .Select(u => u.idSubscriptionDiscount)
                         .Single();
 
-                var discount = ((TTSWebinarsContext) db).Discounts.Where(d => d.idDiscount == usercode).SingleOrDefault();
+                var discount = ((TTSWebinarsContext)db).Discounts.Where(d => d.idDiscount == usercode).SingleOrDefault();
                 return discount;
             }
             catch (Exception ex)

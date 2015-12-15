@@ -85,6 +85,7 @@ namespace CUWebinars.Business.Services
         void UpdateOrderWithUserId(int orderId, int userId);
         void RemoveAdditionalLocationsForOrder(int idOrderRow);
         Discount GetDiscountByCode(string discount);
+        Discount GetDiscountByOrderId(int idOrder);
         decimal GetPriceOfAdditionalLocation(int idWebinar);
         Discount GetDiscountByUser(WebUser currentUser);
         void GetJoinUrl(OrderRow row);

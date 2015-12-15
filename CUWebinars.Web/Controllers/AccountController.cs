@@ -816,6 +816,7 @@ namespace CUWebinars.Web.Controllers
                         Institution = user.Institution.InstitutionName,
                         Email = user.email,
                         Title = user.Title,
+                        SageAccountId = user.SageAccountId,
                         AccountDetailsTitle = WebUiConstants.ManageUser
                     },
                     LoggedInUser = (ClaimsIdentity)User.Identity,
@@ -847,7 +848,7 @@ namespace CUWebinars.Web.Controllers
             ViewBag.RegTypeDropDownHtml = ViewHelpers.RenderViewToString(ControllerContext,
                                         "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditRegType_DropDown.cshtml",
                                         regTypeDD, true);
-
+            ViewBag.Order = order;
             var editModel = new EditOrderInfoModel
             {
                 EditFields = new EditOrderModel
@@ -2007,23 +2008,66 @@ namespace CUWebinars.Web.Controllers
                 try
                 {
                     var thisSubscription = _orderManagementService.GetDiscountByCode("CP_" + idOrder);
-                    var priorNotes = thisSubscription.Notes ?? "" ;
+                    var priorNotes = thisSubscription.Notes ?? "";
 
                     var priorExpiry = thisSubscription.DateValidTo;
 
-                    notes = "Subscription was renewed from: " +priorExpiry.ToShortDateString()
-                        + " to: "+ newCPExpiryDate + " by: " + " USER NOTES: " + notes;
+                    notes = "Subscription was invoiced on " + DateTime.Now.ToShortDateString() + " " +
+                            "from: " + priorExpiry.ToShortDateString()
+                        + " to: " + newCPExpiryDate + " by: " + User.Identity.Name + " USER NOTES: " + priorNotes;
 
-                    if (priorNotes != "")
-                    {
-                        notes = "[PRIOR NOTES]" + priorNotes;
-                    }
 
                     thisSubscription.Notes = notes;
                     thisSubscription.DateValidTo = newCPExpiryDate;
+                    thisSubscription.DateBilled = DateTime.Now;
 
                     _accountControllerOrchestrator.UpdateDiscountDetails(thisSubscription);
-                    return Json(new { Result = WebUiConstants.Success, Notes="Notes:" + notes });
+                    return Json(new { Result = WebUiConstants.Success, Notes = "Notes:" + notes });
+                }
+                catch (DbEntityValidationException dbEntityValidationException)
+                {
+                    var stringBuilder = new StringBuilder();
+
+                    foreach (var validationErrors in dbEntityValidationException.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            //Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,validationError.ErrorMessage);
+                            stringBuilder.AppendFormat("Property: {0} Error: {1} ", validationError.PropertyName,
+                                validationError.ErrorMessage);
+                        }
+                    }
+                    _logger.Error("UpdateDiscountDetails dbEntityValidationException errors | {0}",
+                        stringBuilder.ToString());
+                }
+
+                catch (Exception e)
+                {
+                    _logger.Error("UpdateDiscountDetails Catch block: {0} | Session = {1} | idOrder: {2}", e.Message,
+                        _appHelper.GetUserAuditInfo(), idOrder);
+                }
+                return Json(new { Result = WebUiConstants.Fail });
+            }
+            return this.ModelStateJson(ModelState);
+
+        }
+        [System.Web.Mvc.HttpPost]
+        [HandleAjaxException]
+        public ActionResult UpdateDiscountNotes(string notes, int idOrder)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var thisSubscription = _orderManagementService.GetDiscountByOrderId(idOrder);
+                    var priorNotes = thisSubscription.Notes ?? "";
+
+                    notes += priorNotes;
+
+                    thisSubscription.Notes = notes;
+
+                    _accountControllerOrchestrator.UpdateDiscountDetails(thisSubscription);
+                    return Json(new { Result = WebUiConstants.Success, Notes = "Notes:" + notes });
                 }
                 catch (DbEntityValidationException dbEntityValidationException)
                 {

@@ -1645,6 +1645,12 @@ namespace CUWebinars.Business.Services
             return myDiscount;
         }
 
+        public Discount GetDiscountByOrderId(int idOrder)
+        {
+            var myDiscount = _orderRepository.GetDiscountByOrderId(idOrder);
+            return myDiscount;
+        }
+
         //public Discount GetDiscountById(int discount)
         //{
         //    var myDiscount = _orderRepository.FindDiscountById(discount);

@@ -32,6 +32,9 @@ namespace CUWebinars.Web.Models.DataTablesModels
         public string Title { get; set; }
         public int? idWebUser { get; set; }
 
+        [Display(Name = "Sage Account")]
+        public int? SageAccountId { get; set; }
+
         [HiddenInput]
         public string AccountDetailsTitle { get; set; }
     }

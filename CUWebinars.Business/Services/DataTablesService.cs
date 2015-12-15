@@ -64,7 +64,7 @@ namespace CUWebinars.Business.Services
 
             return theseOrders;
         }
-
+        //ErrorResponseCMD logs Controller: images | Action: sidebar-list-icon.png
         public IEnumerable<Order> GetOrdersByUser(string email, int idAffliate, out int totalNumberOrders)
         {
             IList<Order> theseOrders;

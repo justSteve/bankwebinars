@@ -678,7 +678,7 @@ namespace CUWebinars.Business.AccountService
             }
         }
 
-        public void UpdateUserDetails(string tenant, string firstName, string lastName, string email, string institutionName, Address billingAddress, Address shippingAddress, string title)
+        public void UpdateUserDetails(string tenant, string firstName, string lastName, string email, string institutionName, Address billingAddress, Address shippingAddress, string title, int? sageAccountId)
         {
             _logger.Info("UpdateUserDetails: {0}", email);
             //if (_userAccountService.AuthenticateWithEmail(tenant, email, password))
@@ -853,7 +853,7 @@ namespace CUWebinars.Business.AccountService
                 var comments = (auditChanges + Environment.NewLine + "--------" +
                                 Environment.NewLine + webUser.generalComments);
                 webUser.generalComments = comments.Length < 1000 ? comments : comments.Substring(0, 1000);
-
+                webUser.SageAccountId = sageAccountId.Value;
 
                 _webUserRepository.Update(webUser);
             }

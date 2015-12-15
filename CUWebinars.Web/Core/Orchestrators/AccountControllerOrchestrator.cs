@@ -339,7 +339,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 updateFields.Institution,
                 billingAddress,
                 shippingAddress,
-                updateFields.Title == null ? "na" : updateFields.Title.Trim()
+                updateFields.Title == null ? "na" : updateFields.Title.Trim(),
+                existingUser.SageAccountId
                 );
         }
 
@@ -452,7 +453,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 updateFields.Institution,
                 billingAddress,
                 shippingAddress,
-                updateFields.Title == null ? "na" : updateFields.Title.Trim()
+                updateFields.Title == null ? "na" : updateFields.Title.Trim(),
+                updateFields.SageAccountId
                 );
 
             ;
@@ -665,6 +667,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 Phone = shippingAddressFields.Phone.Trim(),
                 AddressType = Enum.GetName(typeof(AddressType), shippingAddressFields.TypeOfAddress)
             };
+            WebUser existingUser = GetWebUserByEmail(model.RegisterFields.Email);
+            
 
             _membershipService.UpdateUserDetails(_globals.Tenant,
                 updateFields.FirstName.Trim(),
@@ -674,7 +678,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 updateFields.Institution,
                 billingAddress,
                 shippingAddress,
-                updateFields.Title == null ? "na" : updateFields.Title.Trim()
+                updateFields.Title == null ? "na" : updateFields.Title.Trim(),
+                existingUser.SageAccountId
                 );
 
         }

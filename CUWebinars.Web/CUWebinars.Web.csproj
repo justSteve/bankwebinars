@@ -1840,7 +1840,7 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="Views\Cart\Partials\_LogsModal.cshtml" />
-    <Content Include="Views\Cart\Partials\_PayByCCModal.cshtml" />
+    <Content Include="Views\Cart\Partials\_PayByMoneris.cshtml" />
     <Content Include="Views\Cart\Partials\_UserDetailsModal.cshtml" />
     <Content Include="Views\Home\robots.txt" />
     <Content Include="Views\Shared\DisplayTemplates\ShowDiscountSubscription.cshtml">
