@@ -873,7 +873,7 @@ namespace CUWebinars.Web.Controllers
                     Order = order,
                     WebUser = order.WebUser,
                     WebinarId = orderRow.Webinar.idWebinar,
-                    Id = orderRow.idOrderRow,
+                    idOrderRow = orderRow.idOrderRow,
                     NumberOfAdditionalLocations = additionalLocationsCount
                 }
             };

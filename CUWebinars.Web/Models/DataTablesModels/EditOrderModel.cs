@@ -18,7 +18,7 @@ namespace CUWebinars.Web.Models.DataTablesModels
         public DateTime? PostEventAccessExpires { get; set; }
         public TagBuilder AdditionalLocationsRenderer { get; set; }
         public int NumberOfAdditionalLocations { get; set; }
-        public int Id { get; set; }
+        public int idOrderRow { get; set; }
         public Discount Discount{ get; set; }
         public Order Order { get; set; }
         public RegType RegType { get; set; }

@@ -3,7 +3,7 @@
 @{
     ViewBag.Title = "Orders";
 
-    @*if (Model.Affiliate != null && !Model.UserIsAdmin)
+    if (Model.Affiliate != null && !Model.UserIsAdmin)
     {
         <script type="text/javascript">
             if (SHOWORDERS === null || typeof SHOWORDERS === 'undefined') {
@@ -63,7 +63,6 @@
                 <th>User</th>
                 <th>Institution</th>
                 <th>Billing</th>
-                @*<th>Discount</th>*@
                 <th>Affiliate</th>
                 <th>Order Date</th>
                 <th>Status</th>

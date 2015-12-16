@@ -80,25 +80,29 @@ var M = EDIT; // alias for code brevity
 
     ns.primeDomVariables = function () {
 
+        //BUTTONS:
+        ns.add5DaysButton = $('#Add5DaysButton');
+        ns.add6MonthsButton = $('#Add6MonthsButton');
+        ns.addAdditionalLocationsButton = $('#addLocationsButton');
+        ns.adInfinitumButton = $('#AdInfinitumButton');
+        ns.changeUserOrderButton = $('#changeUserOrderButton');
+        ns.changeUserOrdersButton = $('#changeUserOrdersButton');
+        ns.editDiscountNotesButton = $('#editDiscountNotesButton');
+        ns.extendEventAccessButton = $('#extendEventAccessButton');
+        ns.fireResendConfirmationButton = $('#fireResendConfirmationButton');
+        ns.updateAddLocsButton = $('#UpdateAddLocsButton');
+
+        //MODALS
+        ns.extendPostEventAccessModal = $('#ExtendPostEventAccessModal');
+        ns.renewCPSubscriptionModal = $('#renewCPSubscriptionModal');
+
         ns.wrapperDiv = $('#collectAdditionalLocations');
         ns.numberAddLocsLabel = $('#nrAddLocs');
-        ns.addAdditionalLocationsButton = $('#addLocationsButton');
-        ns.updateAddLocsButton = $('#UpdateAddLocsButton');
-        ns.editDiscountNotesButton = $('#editDiscountNotesButton');
         ns.totalOptionsInput = $('DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions');
         ns.updateAdditionalLocationsForm = $('#updateAdditionalLocationsForm');
         ns.showChangeAssignedAffiliate = $('#showChangeAssignedAffiliate');
         ns.showChangeUser = $('#showChangeUser');
         ns.changeAssignedUser = $('#changeAssignedUser');
-        ns.changeUserOrderButton = $('#changeUserOrderButton');
-        ns.changeUserOrdersButton = $('#changeUserOrdersButton');
-        ns.extendPostEventAccessModal = $('#ExtendPostEventAccessModal');
-        ns.renewCPSubscriptionModal = $('#renewCPSubscriptionModal');
-        ns.extendEventAccessButton = $('#extendEventAccessButton');
-        ns.fireResendConfirmationButton = $('#fireResendConfirmationButton');
-        ns.add6MonthsButton = $('#Add6MonthsButton');
-        ns.add5DaysButton = $('#Add5DaysButton');
-        ns.adInfinitumButton = $('#AdInfinitumButton');
 
         ns.regTypesList = $('#RegType');
         ns.orderRowId = $('#manageOrderForm input[name="ID"]').val();
@@ -127,6 +131,74 @@ var M = EDIT; // alias for code brevity
 
         ns.toastLogger = new Common.Logger(); // for toast notifications
         ns.logInvalidOperation = ns.toastLogger.getLogFn('ManageOrderFormSubmit', 'error');
+    };
+    ns.wireUpHandlers = function () {
+
+        //ns.changeUserOrderButton = $('#changeUserOrderButton');
+        //ns.changeUserOrdersButton = $('#changeUserOrdersButton');
+        //ns.extendEventAccessButton = $('#extendEventAccessButton');
+        //ns.fireResendConfirmationButton = $('#fireResendConfirmationButton');
+        
+        $("#frmUpdateCPSubscription").on('submit', ns.updateCPSubscription);
+        $('#applyDiscountButton').on('click', ns.showRenewCPSubscriptionModal);
+        $('#editOrderSubmitButton').on('click', ns.submitForm);
+        $('#renewCPSubscriptionButton').on('click', ns.ShowRenewCPSubscriptionModal);
+        ns.add5DaysButton.on('click', ns.add5DaysButtonClick);//
+        ns.add6MonthsButton.on('click', ns.add6MonthsButtonClick);//
+        ns.addAdditionalLocationsButton.on('click', ns.addAdditionalLocation);//
+        ns.adInfinitumButton.on('click', ns.adInfinitumButtonClick);
+        ns.editDiscountNotesButton.on('click', ns.ShowNotesModal);
+        ns.extendEventAccessButton.on('click', ns.extendEventAccess);
+        ns.regTypesList.on('change', ns.changeRegType);
+        ns.updateAdditionalLocationsForm.on('submit', ns.submitUpdateAddLocsForm);
+        ns.updateAddLocsButton.on('click', ns.updateAdditionalLocations);
+        ns.extendPostEventAccessModal.on('shown', function () {
+
+            $('#newExpiryDate').focus();
+
+            $('#resultLabel').remove();
+
+            var valSummary = $('#extendPostEventAccessValSummary');
+            valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
+
+            var errorsList = valSummary.find('ul');
+            errorsList.empty();
+            errorsList.append('<li style="display:none"></li>');
+        });
+
+        ns.extendPostEventAccessModal.on('hidden', function () {
+            $('#resultLabel').remove();
+
+            var valSummary = $('#extendPostEventAccessValSummary');
+            valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
+
+            var errorsList = valSummary.find('ul');
+            errorsList.empty();
+            errorsList.append('<li style="display:none"></li>');
+        });
+
+        ns.showChangeUser.on('click', function (e) {
+
+            e.preventDefault();
+
+            var modalFormOptions = {
+                keyboard: true,
+                backdrop: 'static',
+                show: true
+            };
+
+            ns.changeAssignedUser.modal(modalFormOptions);
+
+            ns.changeAssignedUser.on('hidden', function () {
+                modalFormOptions = null;
+            });
+        });
+
+        ns.changeUserOrderButton.on('click', ns.changeUserOrder);
+
+        ns.changeUserOrdersButton.on('click', ns.changeUserOrders);
+
+        ns.showChangeAssignedAffiliate.on('click', ns.displayChangeAffiliateModal);
     };
 
     ns.submitForm = function (e) {
@@ -291,71 +363,6 @@ var M = EDIT; // alias for code brevity
         });
     };
 
-    ns.wireUpHandlers = function () {
-
-        ns.addAdditionalLocationsButton.on('click', ns.addAdditionalLocation);
-        $('#editOrderSubmitButton').on('click', ns.submitForm);
-        $('#applyDiscountButton').on('click', ns.showRenewCPSubscriptionModal);
-        $('#renewCPSubscriptionButton').on('click', ns.ShowRenewCPSubscriptionModal);
-        ns.regTypesList.on('change', ns.changeRegType);
-        ns.updateAddLocsButton.on('click', ns.updateAdditionalLocations);
-        ns.editDiscountNotesButton.on('click', ns.ShowNotesModal);
-        ns.updateAdditionalLocationsForm.on('submit', ns.submitUpdateAddLocsForm);
-
-        ns.extendEventAccessButton.on('click', ns.extendEventAccess);
-        $("#frmUpdateCPSubscription").on('submit', ns.updateCPSubscription);
-        ns.add6MonthsButton.on('click', ns.add6MonthsButtonClick);
-        ns.add5DaysButton.on('click', ns.add5DaysButtonClick);
-        ns.adInfinitumButton.on('click', ns.adInfinitumButtonClick);
-
-        ns.extendPostEventAccessModal.on('shown', function () {
-
-            $('#newExpiryDate').focus();
-
-            $('#resultLabel').remove();
-
-            var valSummary = $('#extendPostEventAccessValSummary');
-            valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
-
-            var errorsList = valSummary.find('ul');
-            errorsList.empty();
-            errorsList.append('<li style="display:none"></li>');
-        });
-
-        ns.extendPostEventAccessModal.on('hidden', function () {
-            $('#resultLabel').remove();
-
-            var valSummary = $('#extendPostEventAccessValSummary');
-            valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
-
-            var errorsList = valSummary.find('ul');
-            errorsList.empty();
-            errorsList.append('<li style="display:none"></li>');
-        });
-
-        ns.showChangeUser.on('click', function (e) {
-
-            e.preventDefault();
-
-            var modalFormOptions = {
-                keyboard: true,
-                backdrop: 'static',
-                show: true
-            };
-
-            ns.changeAssignedUser.modal(modalFormOptions);
-
-            ns.changeAssignedUser.on('hidden', function () {
-                modalFormOptions = null;
-            });
-        });
-
-        ns.changeUserOrderButton.on('click', ns.changeUserOrder);
-
-        ns.changeUserOrdersButton.on('click', ns.changeUserOrders);
-
-        ns.showChangeAssignedAffiliate.on('click', ns.displayChangeAffiliateModal);
-    };
 
     ns.adjustAdditionalLocationsTotal = function (number) {
 

@@ -69,7 +69,7 @@
                 <input type="hidden" name="li_taxes" value="@Math.Round(@TaxAmount,2)">
                 <input type="hidden" name="li_taxamount" value="@Math.Round(@TaxAmount, 2)">
                 <input type="hidden" name="li_invoice" value="@globalConfig.TenantPrefix@order.idOrder">
-                <input type="hidden" name="cust_id" value="Customer ID: @order.idUser">
+                <input type="hidden" name="cust_id" value="Customer ID: @order.BillingEmail">
                 <input type="hidden" name="order_no" value="@globalConfig.TenantPrefix@order.idOrder">
                 <input type="hidden" name="client_email" value="@order.BillingEmail">
                 <input type="hidden" name="note" value="@globalConfig.Tenant thanks you! Watch your email for complete details.">

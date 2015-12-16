@@ -2,7 +2,8 @@
 
 @{
     var regTypeDropDownHtml = ViewBag.RegTypeDropDownHtml;
-
+    var discount = Model.EditFields.Discount;
+                
     var abbvLable = Model.EditFields.DisplayRowPriceViewModel.RegistrationType.OptionLabel;
 
 
@@ -18,17 +19,15 @@
     {
         abbvLable = "CD-ROM";
     }
-
 }
 
-@Html.HiddenFor(model => model.EditFields.Id)
+@Html.HiddenFor(model => model.EditFields.idOrderRow)
 
 @using (Html.BeginForm("UpdateAdditionalLocations", "Admin", FormMethod.Post, new { id = "updateAdditionalLocationsForm" }))
 {
     @Html.AntiForgeryToken()
     @*<input type="hidden" name="orderRowId" value="@Model.EditFields.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow" />
         <input type="hidden" name="additionalLocations" value="" id="updateAdditionalLocationsForm_addLocs" />*@
-
 }
 
 <script src="~/Scripts/app/admin/edit-forms-in-grid.js"></script>
@@ -74,7 +73,7 @@
                 <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
                     <li><a tabindex="-1" href="#" id="showChangeUser">Assign to Different User</a></li>
                     <li><a tabindex="-1" href="#" id="showChangeAssignedAffiliate">Credited to <span id="affiliateNameText">@Model.EditFields.Order.Affiliate.ttsDomain</span> Change?</a></li>
-                    <li><a tabindex="-1" href="#" id="showMoneris">Submit Payment</a></li>
+                    <li><a tabindex="-1" href="#" id="showMonerisModal">Submit Payment</a></li>
                 </ul>
             </div>
         </div>
@@ -113,7 +112,7 @@
                     @Html.AntiForgeryToken()
                     <div>
                         @Html.HiddenFor(m => m.EditFields.CostPerAdditionalLocation)
-                        @Html.HiddenFor(m => m.EditFields.Id)
+                        @Html.HiddenFor(m => m.EditFields.idOrderRow)
                         @Html.HiddenFor(m => m.EditFields.WebUser.idUser)
                         @Html.HiddenFor(m => m.EditFields.WebinarId)
                         @Html.HiddenFor(m => m.EditFields.NumberOfAdditionalLocations)
@@ -147,10 +146,13 @@
             </div>
             <div style="text-align: center;border-style: solid;" id="discountPanel">
 
-                @if (Model.EditFields.Discount == null)
+
+                
+                
+                @if (discount == null)
                 {
-                    @Html.TextBoxFor(m => m.EditFields.Discount.DiscountCode, new { placeholder = "Enter discount code ", @class = "input input-sm" })
-                    <button id="applyDiscountButton" class="btn btn-default">Apply code</button>
+                    @Html.TextBoxFor(m => m.EditFields.Discount.DiscountCode, new { placeholder = "Enter code", @class = "input input-small" })
+                    <button id="applyDiscountButton" class="btn btn-mini btn-success">Apply Code</button>
                 }
                 else
                 {
