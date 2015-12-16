@@ -221,11 +221,56 @@ function getOrderStatusHtml() {
 
             var $button = $(this);
 
-            // collect all "active" filters, there are buttons for each status (some are hidden, see _ShowOrders.cshtml) so we don't have to do any extra processing
+            if ($button.hasClass("active")) {
+                // they are "selecting" a button, we want to "uncheck" Active or Inactive IF the user manually clicked a button in the opposite group
+                if ($button.hasClass("os-active") && // this button is in the "active" category
+                    $(".os-inactive-group-control").hasClass("active")) { // the inactive category is also selected
+
+                    $("#order-status-filter-container button.active.os-inactive").removeClass("active"); // virtually "uncheck" the inactive buttons
+                    $(".os-inactive-group-control").removeClass("active"); // virtually "uncheck" the inactive category
+
+                } else if ($button.hasClass("os-inactive") && // this button is in the "inactive" category
+                    $(".os-active-group-control").hasClass("active")) { // the active category is also selected
+
+                    $("#order-status-filter-container button.active.os-active").removeClass("active"); // virtually "uncheck" the active buttons
+                    $(".os-active-group-control").removeClass("active"); // virtually "uncheck" the active category
+
+                }
+            } else {
+                // they are deselecting a button, uncheck Active or Inactive category when there aren't any others left selected
+                if ($button.hasClass("os-active") && // this button is in the "active" category
+                    $("button.os-active.active").length == 0) { // there are no other "active" buttons selected
+
+                    $(".os-active-group-control").removeClass("active"); // virtually "uncheck" the active category
+
+                } else if ($button.hasClass("os-inactive") && // this button is in the "inactive" category
+                           $("button.os-inactive.active").length == 0) { // there are no other "inactive" buttons selected
+
+                    $(".os-inactive-group-control").removeClass("active"); // virtually "uncheck" the inactive category
+                }
+            }
+
+            // collect all "active" filters
             var selectedButtons = [];
             $("#order-status-filter-container button.active").each(function () {
-                if (this.value != "Active" && this.value != "Inactive") // don't need to have these value in the list of filters sent to the server
-                    selectedButtons.push(this.value);
+                // inspect the actual value of the clicked buttons
+                switch (this.value) {
+                    case "Active":
+                        break; // do nothing, don't want the word Active included, all statuses that are categorized as active have an actual button on the screen
+
+                    case "Inactive":
+                        // the following statuses don't have actual buttons on the screen but we still want to include them when Inactive is clicked
+                        //  also, we don't want the word Inactive included
+                        selectedButtons.push("Error");
+                        selectedButtons.push("Abandoned");
+                        selectedButtons.push("Canceled");
+                        selectedButtons.push("Unknown");
+                        break;
+
+                    default:
+                        selectedButtons.push(this.value); // not the buttons Active or Inactive, include it
+                        break;
+                }
             });
 
             DO.orderStatusFilters = selectedButtons;

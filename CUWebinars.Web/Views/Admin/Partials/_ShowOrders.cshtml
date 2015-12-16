@@ -36,23 +36,16 @@
         </div>
 
         <div class="btn-group pull-right" id="order-status-filter-container" data-toggle="buttons-checkbox">
-            @{
-                List<OrderStatus> statusesToHide = new List<OrderStatus>() { OrderStatus.Error, OrderStatus.Abandoned, OrderStatus.Canceled, OrderStatus.Unknown };
-                List<OrderStatus> activeStatuses = new List<OrderStatus>() { OrderStatus.Submitted, OrderStatus.Billed, OrderStatus.Paid };
-                List<OrderStatus> inActiveStatuses = new List<OrderStatus>() { OrderStatus.Error, OrderStatus.InProcess, OrderStatus.Abandoned, OrderStatus.Canceled, OrderStatus.AwaitingVerification, OrderStatus.Unknown };
 
-                foreach (OrderStatus s in Enum.GetValues(typeof(OrderStatus)))
-                {
-                    string hideClass = (statusesToHide.Exists(x => x == s)) ? "hidden" : "";
-                    string activeClass = (activeStatuses.Exists(x => x == s)) ? "os-active" : "";
-                    string inActiveClass = (inActiveStatuses.Exists(x => x == s)) ? "os-inactive" : "";
+            <button type="button" class="btn btn-primary os-inactive" value="InProcess">In Process</button>
+            <button type="button" class="btn btn-primary os-active" value="Submitted">Submitted</button>
+            <button type="button" class="btn btn-primary os-active" value="Billed">Billed</button>
+            <button type="button" class="btn btn-primary os-active" value="Paid">Paid</button>
+            <button type="button" class="btn btn-primary os-inactive" value="AwaitingVerification">Pending</button>
 
-                    <button type="button" class="btn btn-primary @hideClass @activeClass @inActiveClass" value="@s">@(s != OrderStatus.AwaitingVerification ? @s.ToString() : "Pending")</button>
-                }
+            <button type="button" class="btn btn-info os-active-group-control" value="Active">Active</button>
+            <button type="button" class="btn btn-info os-inactive-group-control" value="Inactive">Inactive</button>
 
-                <button type="button" class="btn btn-info" value="Active">Active</button>
-                <button type="button" class="btn btn-info" value="Inactive">Inactive</button>
-            }
         </div>
     </div>
 
