@@ -221,6 +221,35 @@ function getOrderStatusHtml() {
 
             var $button = $(this);
 
+            if ($button.hasClass("active")) {
+                // they are "selecting" a button, we want to "uncheck" Active or Inactive IF the user manually clicked a button in the opposite group
+                if ($button.hasClass("os-active") && // this button is in the "active" category
+                    $(".os-inactive-group-control").hasClass("active")) { // the inactive category is also selected
+
+                    $("#order-status-filter-container button.active.os-inactive").removeClass("active"); // virtually "uncheck" the inactive buttons
+                    $(".os-inactive-group-control").removeClass("active"); // virtually "uncheck" the inactive category
+
+                } else if ($button.hasClass("os-inactive") && // this button is in the "inactive" category
+                    $(".os-active-group-control").hasClass("active")) { // the active category is also selected
+
+                    $("#order-status-filter-container button.active.os-active").removeClass("active"); // virtually "uncheck" the active buttons
+                    $(".os-active-group-control").removeClass("active"); // virtually "uncheck" the active category
+
+                }
+            } else {
+                // they are deselecting a button, uncheck Active or Inactive category when there aren't any others left selected
+                if ($button.hasClass("os-active") && // this button is in the "active" category
+                    $("button.os-active.active").length == 0) { // there are no other "active" buttons selected
+
+                    $(".os-active-group-control").removeClass("active"); // virtually "uncheck" the active category
+
+                } else if ($button.hasClass("os-inactive") && // this button is in the "inactive" category
+                           $("button.os-inactive.active").length == 0) { // there are no other "inactive" buttons selected
+
+                    $(".os-inactive-group-control").removeClass("active"); // virtually "uncheck" the inactive category
+                }
+            }
+
             // collect all "active" filters
             var selectedButtons = [];
             $("#order-status-filter-container button.active").each(function () {
