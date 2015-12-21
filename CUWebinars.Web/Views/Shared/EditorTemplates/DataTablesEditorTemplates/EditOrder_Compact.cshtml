@@ -3,7 +3,7 @@
 @{
     var regTypeDropDownHtml = ViewBag.RegTypeDropDownHtml;
     var discount = Model.EditFields.Discount;
-                
+
     var abbvLable = Model.EditFields.DisplayRowPriceViewModel.RegistrationType.OptionLabel;
 
 
@@ -74,6 +74,7 @@
                     <li><a tabindex="-1" href="#" id="showChangeUser">Assign to Different User</a></li>
                     <li><a tabindex="-1" href="#" id="showChangeAssignedAffiliate">Credited to <span id="affiliateNameText">@Model.EditFields.Order.Affiliate.ttsDomain</span> Change?</a></li>
                     <li><a tabindex="-1" href="#" id="showMonerisModal">Submit Payment</a></li>
+                    <li><a tabindex="-1" href="#" id="showExtendAccessButton">Extend OnDemand Access</a></li>
                 </ul>
             </div>
         </div>
@@ -100,13 +101,17 @@
                     </tr>
                 }
                 <tr>
-                    <td><div align="right">Total:</div></td>
-                    <td id="DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice"><div class="align_right">@Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice.ToString("C0")</div></td>
+                    <td>
+                        <div align="right">Total:</div>
+                    </td>
+                    <td id="DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice">
+                        <div class="align_right">@Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice.ToString("C0")</div>
+                    </td>
                 </tr>
             </table>
         </div>
         <div style="background-color: lightsteelblue" class="span4">
-            <div id="addLocsPanel" style="text-align: center;border-style: solid;">
+            <div id="addLocsPanel" style="text-align: center; border-style: solid;">
                 @using (Html.BeginForm("UpdateOrderCompactAddLoc", "Account", FormMethod.Post, new { id = "editOrderCompactAddLoc" }))
                 {
                     @Html.AntiForgeryToken()
@@ -144,11 +149,11 @@
                     </div>
                 }
             </div>
-            <div style="text-align: center;border-style: solid;" id="discountPanel">
+            <div style="text-align: center; border-style: solid;" id="discountPanel">
 
 
-                
-                
+
+
                 @if (discount == null)
                 {
                     @Html.TextBoxFor(m => m.EditFields.Discount.DiscountCode, new { placeholder = "Enter code", @class = "input input-small" })
@@ -179,7 +184,9 @@
             </div>
             @if (Model.EditFields.Discount != null && Model.EditFields.Discount.Notes != null)
             {
-                <div><textarea class="form-control" style="min-width: 100%">"@Model.EditFields.Discount.Notes</textarea></div>
+                <div>
+                    <textarea class="form-control" style="min-width: 100%">"@Model.EditFields.Discount.Notes</textarea>
+                </div>
                 <button id="editDiscountNotesButton" class="btn btn-default btn-mini">Edit Note</button>
             }
         </div>
@@ -258,7 +265,9 @@
 
                         <input type="hidden" name="orderID" value="@Model.EditFields.Order.idOrder" />
                         <br />Notes:
-                        <div><textarea class="form-control" style="min-width: 100%">"@Model.EditFields.Discount.Notes</textarea></div>
+                        <div>
+                            <textarea class="form-control" style="min-width: 100%">"@Model.EditFields.Discount.Notes</textarea>
+                        </div>
 
                     </div>
                     <div class="modal-footer">
@@ -366,7 +375,8 @@
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
                 <button id="editDiscountButton" class="btn btn-primary">Submit</button>
             </div>
-
         </div>
     </div>
 </div>
+
+

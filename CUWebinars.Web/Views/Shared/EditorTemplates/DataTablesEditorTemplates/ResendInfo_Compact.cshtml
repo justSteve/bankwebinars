@@ -24,9 +24,14 @@
         }
         if (row.Webinar.Status == WebinarStatus.Recorded)
         {
+            
             if (!ReferenceEquals(row.OnDemandCode, null))
             {
                 onDemandCode = _globalConfig.TenantURL + "/o/" + row.idOrder + '-' + row.OnDemandCode;
+            }
+            else
+            {
+                <div>OnDemandCode is null</div>
             }
         }
         if (row.Webinar.Status == WebinarStatus.Archived || row.Webinar.Status == WebinarStatus.Recorded)
@@ -57,9 +62,9 @@
     <div class="span7 offset1 control-group">
         <span class="control-label">Links:</span>
         <div class="controls">
-            @joinURL<br />
-            @ttsJoinURL<br />
-            @onDemandCode<br />
+            @joinURL<br/>
+            @ttsJoinURL<br/>
+            @onDemandCode<br/>
             @certificate
         </div>
     </div>

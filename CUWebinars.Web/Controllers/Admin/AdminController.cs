@@ -2495,66 +2495,80 @@ namespace CUWebinars.Web.Controllers.Admin
                         "'{\"OrderId\":" + order.idOrder + ",\"ExpiryDate\":\"" + calculatedDate.ToShortDateString() +
                         "\", \"OnDemandCode\":\"" + onDemandCode + "\"}')");
                 }
+                //audit claim
 
-                //try
-                //{
-                //    var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
+                try
+                {
+                    var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
 
-                //    var onDemandCode = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).OnDemandCode;
+                    var onDemandCode =
+                        order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).OnDemandCode;
+                    var claim =
+                        userAccount.Claims.Where(
+                            c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials").SingleOrDefault();
+                    if (claim != null)
+                    {
+                        var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
 
-                //        if (!ReferenceEquals(onDemandCode, null))
-                //        {
-                //            if (claim.Value.Contains(onDemandCode))
-                //            {
-                //                var needsCreatedClaim = true;
-                //                if (thisClaim.OrderId != order.idOrder)
-                //                {
-                //                    _logger.Warn("CheckOnDemandCodes finds Claim mismatch! Claim: {0} vs Order: {1}", thisClaim.OrderId,
-                //                        order.idOrder);
-                //                    _logger.Warn("Alert User of changed claim = '{0}' ", thisClaim.OrderId);
-                //                    _logger.Warn("DELETE dbo.UserClaims WHERE Value = '{0}' --Order: {1}", claim.Value, order.idOrder);
+                        var claimMatchOnOrderId = "";
+                        var claimMatchOnCode = "";
+                        var claimFullyMatched = false;
+                        if (claim.Value.Contains(order.idOrder.ToString()))
+                        {
+                            claimMatchOnOrderId = claim.Value;
+                            if (claim.Value.Contains(onDemandCode))
+                            {
+                                claimFullyMatched = true;
+                            }
+                        }
+                        else
+                        {
+                            if (claim.Value.Contains(onDemandCode))
+                            {
+                                claimMatchOnCode = claim.Value;
+                            }
+                        }
 
-                //                    //CreatePostEventClaim(order, thisClaim.ExpiryDate);
-                //                }
-                //                else
-                //                {
-                //                    needsCreatedClaim = false;
-                //                    _logger.Info("CheckOnDemandCodes found Match on: " + order.OrderRows.SingleOrDefault().idOrder);
-                //                }
-                //                if (needsCreatedClaim)
-                //                    _logger.Info("INSERT dbo.UserClaims ( ParentKey, Type, Value ) VALUES	( (SELECT [Key] FROM dbo.UserAccounts WHERE " +
-                //                                 "Email = '{0}'), 'http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials', " +
-                //                                 "'{\"OrderId\":{1},\"ExpiryDate\":' )", order.BillingEmail);
-                //                }
-                //            }
-                //        }
-                //        else
-                //        {
-                //            if (claim.Value.Contains(order.idOrder.ToString()))
-                //            {
-                //                //_orderManagementService.SaveChanges();
-                //                _logger.Info("UPDATE dbo.OrderRow SET OnDemandCode = '{0}' WHERE idOrder ={1}",
-                //                    thisClaim.OnDemandCode, order.idOrder);
-                //                //var expiryDate = _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order);
+                        if (claimFullyMatched)
+                        {
+                            //_logger.Info("fully matched");
+                            var a = 2;
+                        }
+                        else
+                        {
+                            _logger.Warn("OrderId=" + order.idOrder + " vs. ClaimOrderID=" + thisClaim.OrderId + " OnDemandCode=" + onDemandCode + " vs. ClaimOnDemand=" + thisClaim.OnDemandCode);
+                        }
+                    }
 
-                //                //CreatePostEventClaim(order, expiryDate);
-                //                //_logger.Warn("Null OnDemandCode is updated " + order.OrderRows.SingleOrDefault().idOrder);
-                //            }
-                //            else
-                //            {
-                //                _logger.Info("UPDATE dbo.OrderRow SET OnDemandCode = '{0}' WHERE idOrder ={1}",
-                //                            RandomHelpers.GetUniqueCode(4), order.idOrder);
-                //            }
-                //        }
+                    //else
+                    //{
+                    //    if (claim.Value.Contains(order.idOrder.ToString()))
+                    //    {
+                    //        //_orderManagementService.SaveChanges();
+                    //        _logger.Info("UPDATE dbo.OrderRow SET OnDemandCode = '{0}' WHERE idOrder ={1}",
+                    //            thisClaim.OnDemandCode, order.idOrder);
+                    //        //var expiryDate = _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order);
 
-                //}
-                //catch (Exception ex)
-                //{
-                //    _logger.ErrorException("Checks ondemand claim failed: " + order.idOrder, ex);
-                //}
+                    //        //CreatePostEventClaim(order, expiryDate);
+                    //        //_logger.Warn("Null OnDemandCode is updated " + order.OrderRows.SingleOrDefault().idOrder);
+                    //    }
+                    //    else
+                    //    {
+                    //        _logger.Info("UPDATE dbo.OrderRow SET OnDemandCode = '{0}' WHERE idOrder ={1}",
+                    //                    RandomHelpers.GetUniqueCode(4), order.idOrder);
+                    //    }
+                    //}
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.ErrorException("Checks ondemand claim failed: " + order.idOrder, ex);
+                }
+
             }
             return Content("Ok");
         }
+
 
 
         private DateTime CheckThatExpiryDateIsCorrect(Order order, DateTime expiryDate)

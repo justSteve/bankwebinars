@@ -30,7 +30,7 @@ namespace CUWebinars.Web.Models
         public int UserIdLegacy { get; set; }
         public int WebinarId { get; set; }
         public WebUser WebUser { get; set; }
-        public ClaimsViewModel ClaimsViewModel { get; set; }
+        public OrderClaimsViewModel OrderClaimsViewModel { get; set; }
 
         //public WebUserFromLegacy WebUserFromLegacy
         //{

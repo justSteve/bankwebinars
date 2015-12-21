@@ -27,7 +27,7 @@ namespace CUWebinars.Web.Models.DataTablesModels
         public int UserId { get; set; }
         public int WebinarId { get; set; }
         public WebUser WebUser { get; set; }
-        public ClaimsViewModel ClaimsViewModel { get; set; }
+        public OrderClaimsViewModel OrderClaimsViewModel { get; set; }
         
     }
 }

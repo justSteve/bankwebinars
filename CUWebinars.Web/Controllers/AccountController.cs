@@ -858,7 +858,7 @@ namespace CUWebinars.Web.Controllers
 
                     AdditionalLocations = additionalLocations,
                     CostPerAdditionalLocation = additionalLocationsPricing.Item2,
-                    ClaimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims },
+                    OrderClaimsViewModel = new OrderClaimsViewModel { UserClaims = userAccount.Claims },
                     DisplayRowPriceViewModel = new DisplayRowPriceViewModel
                     {
                         NumberOfAdditionalLocations = additionalLocationsCount,

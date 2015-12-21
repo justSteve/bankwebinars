@@ -102,6 +102,8 @@ var M = EDIT; // alias for code brevity
         ns.updateAdditionalLocationsForm = $('#updateAdditionalLocationsForm');
         ns.showChangeAssignedAffiliate = $('#showChangeAssignedAffiliate');
         ns.showMonerisModalButton = $('#showMonerisModal');
+        ns.showExtendAccessButton = $('#showExtendAccessButton');
+        ns.showExtendAccess = $('#showExtendAccess');
         ns.showChangeUser = $('#showChangeUser');
         ns.changeAssignedUser = $('#changeAssignedUser');
         ns.PayByMonerisModal = $('#PayByMonerisModal');
@@ -142,11 +144,12 @@ var M = EDIT; // alias for code brevity
         $('#renewCPSubscriptionButton').on('click', ns.ShowRenewCPSubscriptionModal);
         ns.add5DaysButton.on('click', ns.add5DaysButtonClick);//
         ns.showMonerisModalButton.on('click', ns.ShowMonerisModal);//
+        ns.showExtendAccessButton.on('click', ns.showExtendAccessModal);//
         ns.add6MonthsButton.on('click', ns.add6MonthsButtonClick);//
         ns.addAdditionalLocationsButton.on('click', ns.addAdditionalLocation);//
         ns.adInfinitumButton.on('click', ns.adInfinitumButtonClick);
         ns.editDiscountNotesButton.on('click', ns.ShowNotesModal);
-        ns.extendEventAccessButton.on('click', ns.extendEventAccess);
+        ns.extendEventAccessButton.on('click', ns.extendEventAccessSubmitter);
         ns.regTypesList.on('change', ns.changeRegType);
         ns.updateAdditionalLocationsForm.on('submit', ns.submitUpdateAddLocsForm);
         ns.updateAddLocsButton.on('click', ns.updateAdditionalLocations);
@@ -462,7 +465,7 @@ var M = EDIT; // alias for code brevity
     };
 
     ns.ShowMonerisModal = function (e) {
-        alert("show Moneris");
+        
         e.preventDefault();
 
         var modalFormOptions = {
@@ -474,6 +477,23 @@ var M = EDIT; // alias for code brevity
         ns.PayByMonerisModal.modal(modalFormOptions);
 
         ns.PayByMonerisModal.on('hidden', function () {
+            modalFormOptions = null;
+        });
+    };
+
+    ns.showExtendAccessModal = function (e) {
+        
+        e.preventDefault();
+
+        var modalFormOptions = {
+            keyboard: true,
+            backdrop: 'static',
+            show: true
+        };
+
+        ns.extendPostEventAccessModal.modal(modalFormOptions);
+
+        ns.extendPostEventAccessModal.on('hidden', function () {
             modalFormOptions = null;
         });
     };
@@ -763,7 +783,7 @@ var M = EDIT; // alias for code brevity
         });
     };
 
-    ns.extendEventAccess = function (e) {
+    ns.extendEventAccessSubmitter = function (e) {
 
         e.preventDefault();
 
@@ -868,7 +888,7 @@ var M = EDIT; // alias for code brevity
     };
 
     ns.add5DaysButtonClick = function (e) {
-
+        
         e.preventDefault();
 
         var dateVal = new Date();
@@ -881,8 +901,9 @@ var M = EDIT; // alias for code brevity
 
         e.preventDefault();
 
+
         var dateVal = new Date();
-        dateVal.setDate(dateVal.getDate() + 10000);
+        dateVal.setDate(dateVal.getDate() + 15);
 
         $('#frmExtendPostEventAccess').find('input[name="newExpiryDate"]').val(ns.convertDateToStringUSFormat(dateVal));
     };

@@ -38,7 +38,7 @@
     <div id="webinarTitle" class="container">
         <div class="span10">
             <h1>@Model.Webinar.Title</h1>
-        </div>    <!--close container-->
+        </div> <!--close container-->
     </div>
 
 </div>
@@ -92,8 +92,8 @@
 
             <section class="span3">
                 <aside class="widget">
-                    <div style="padding: 10px; margin-left: 20px; width: 200px; " class="well pull-right well-large">
-                        
+                    <div style="padding: 10px; margin-left: 20px; width: 200px;" class="well pull-right well-large">
+
                         <h4 align="center">Webinar Materials</h4>
                         @{
                             if (Model.AuthorizedToAccessMaterials)
@@ -104,6 +104,12 @@
                                 <div>
                                     @{ Html.RenderPartial("DisplayTemplates/HandoutsListing", Model.Webinar); }
                                 </div>
+                            }
+                            else
+                            {
+                                <script type="text/javascript">
+                                    L.clientLogger.info('OnDemand problem! @Model.idOrder', { 'Non-auth':  @Model.idOrder});
+                                </script>
                             }
                         }
                         <div style="font-size: smaller; line-height: 1.2; text-align: center; margin-bottom: 10px; margin-top: 10px;">

@@ -529,7 +529,8 @@
     <Compile Include="ViewModel\AdjustUserDetailsEditModel.cs" />
     <Compile Include="ViewModel\AffiliatesChooserModel.cs" />
     <Compile Include="ViewModel\AffPromoMsgViewModel.cs" />
-    <Compile Include="ViewModel\ClaimsViewModel.cs" />
+    <Compile Include="ViewModel\ClaimsAuditViewModel.cs" />
+    <Compile Include="ViewModel\OrderClaimsViewModel.cs" />
     <Compile Include="ViewModel\ClickToJoinViewModel.cs" />
     <Compile Include="ViewModel\DiscountPackageViewModel.cs" />
     <Compile Include="ViewModel\DisplayOrdersViewModel.cs" />
@@ -1142,6 +1143,9 @@
     <Content Include="Content\images\email\ILFI\bannerOrg.png" />
     <Content Include="Content\images\email\INDIANABANKERS\bannerCaption1.jpg" />
     <Content Include="Content\images\email\interaction-training\bannerCaption1.jpg" />
+    <Content Include="Content\images\email\iowabankers\banner.jpg" />
+    <Content Include="Content\images\email\iowabankers\bannerCaption1.jpg" />
+    <Content Include="Content\images\email\iowabankers\bannerTTSBase.png" />
     <Content Include="Content\images\email\LBA\bannerCaption1.jpg" />
     <Content Include="Content\images\email\logo.png" />
     <Content Include="Content\images\email\MASSBANKERS\bannerCaption1.jpg" />
@@ -1752,6 +1756,7 @@
     <Content Include="Notification\Templates\Web.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Content\images\email\iowabankers\Thumbs.db" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy %282%29.pubxml" />
