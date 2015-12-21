@@ -1,8 +1,10 @@
 ﻿using CUWebinars.Business.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using CUWebinars.Business.Core;
 
 namespace CUWebinars.Business.Repository
 {
@@ -24,11 +26,23 @@ namespace CUWebinars.Business.Repository
         {
             return items.Where(o => o.idRegType == optionId).ToList();
         }
+
+        public IDictionary<RegType, bool> FindAllPossibleRegTypesByWebinarId2(int id, bool detached)
+        {
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+
+            IList<RegType> regTypes = dataOperations.FindAllPossibleRegTypesByWebinarId(id);
+            IDictionary<RegType, bool> regTypesAndShippingRequirement = new Dictionary<RegType, bool>();
+
+
+            return regTypesAndShippingRequirement;
+        }
+
+
         public IDictionary<RegType, bool> FindAllPossibleRegTypesByWebinarId(int id, bool detached)
         {
             //return every RegType a given event without regard to current state of the event. 
             // permits admins to change a recorded order to 'live' even after the event has occurred
-            IDictionary<RegType, bool> regTypesAndShippingRequirement = new Dictionary<RegType, bool>();
 
             var stronglyTypedContext = (TTSWebinarsContext)db;
 

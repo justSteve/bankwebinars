@@ -44,7 +44,7 @@ var M = EDIT; // alias for code brevity
         ns.numberOfAdditionalLocations += 1;
         ns.adjustAdditionalLocationsTotal(ns.numberOfAdditionalLocations);
         ns.adjustTotalPrice();
-        
+
     };
 
     ns.deleteItem = function (e) {
@@ -101,8 +101,10 @@ var M = EDIT; // alias for code brevity
         ns.totalOptionsInput = $('DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions');
         ns.updateAdditionalLocationsForm = $('#updateAdditionalLocationsForm');
         ns.showChangeAssignedAffiliate = $('#showChangeAssignedAffiliate');
+        ns.showMonerisModalButton = $('#showMonerisModal');
         ns.showChangeUser = $('#showChangeUser');
         ns.changeAssignedUser = $('#changeAssignedUser');
+        ns.PayByMonerisModal = $('#PayByMonerisModal');
 
         ns.regTypesList = $('#RegType');
         ns.orderRowId = $('#manageOrderForm input[name="ID"]').val();
@@ -113,7 +115,7 @@ var M = EDIT; // alias for code brevity
         //ns.selectedAdditionalLocationsPrice = ns.regTypesList.find(":selected").data('price');
 
         ns.additionalLocationsTotal = $('#TotalCostOfOptionsText');
-        
+
         ns.totalDiscountInput = $('#TotalDiscountText');
         ns.totalPriceInput = $('#TotalOrderPriceText');
         ns.basePrice = parseFloat($('#UnitPriceText').val());
@@ -134,16 +136,12 @@ var M = EDIT; // alias for code brevity
     };
     ns.wireUpHandlers = function () {
 
-        //ns.changeUserOrderButton = $('#changeUserOrderButton');
-        //ns.changeUserOrdersButton = $('#changeUserOrdersButton');
-        //ns.extendEventAccessButton = $('#extendEventAccessButton');
-        //ns.fireResendConfirmationButton = $('#fireResendConfirmationButton');
-        
         $("#frmUpdateCPSubscription").on('submit', ns.updateCPSubscription);
         $('#applyDiscountButton').on('click', ns.showRenewCPSubscriptionModal);
         $('#editOrderSubmitButton').on('click', ns.submitForm);
         $('#renewCPSubscriptionButton').on('click', ns.ShowRenewCPSubscriptionModal);
         ns.add5DaysButton.on('click', ns.add5DaysButtonClick);//
+        ns.showMonerisModalButton.on('click', ns.ShowMonerisModal);//
         ns.add6MonthsButton.on('click', ns.add6MonthsButtonClick);//
         ns.addAdditionalLocationsButton.on('click', ns.addAdditionalLocation);//
         ns.adInfinitumButton.on('click', ns.adInfinitumButtonClick);
@@ -152,6 +150,7 @@ var M = EDIT; // alias for code brevity
         ns.regTypesList.on('change', ns.changeRegType);
         ns.updateAdditionalLocationsForm.on('submit', ns.submitUpdateAddLocsForm);
         ns.updateAddLocsButton.on('click', ns.updateAdditionalLocations);
+
         ns.extendPostEventAccessModal.on('shown', function () {
 
             $('#newExpiryDate').focus();
@@ -345,7 +344,7 @@ var M = EDIT; // alias for code brevity
         }).done(function (data) {
 
             if (data) {
-               // alert(data.OptionsPrice);
+                // alert(data.OptionsPrice);
                 $('#UnitPriceText').val(data.BasePrice);
                 $('#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPriceUnitPriceText').val(data.BasePrice);
                 $('#TotalDiscountText').val(data.Discount);
@@ -463,6 +462,7 @@ var M = EDIT; // alias for code brevity
     };
 
     ns.ShowMonerisModal = function (e) {
+        alert("show Moneris");
         e.preventDefault();
 
         var modalFormOptions = {
@@ -505,7 +505,7 @@ var M = EDIT; // alias for code brevity
                 ns.totalDiscount = 'expired';
             } else {
                 if (data.Notes !== null) {
-                   // alert('non-NullNote');
+                    // alert('non-NullNote');
                     var amount2Discount = data.Result.replace('.00%', '') / 100;
                     ns.totalDiscount = ns.totalPriceSansDiscount * amount2Discount;
                 } else {
@@ -531,14 +531,14 @@ var M = EDIT; // alias for code brevity
     };
 
     ns.submitUpdateAddLocsForm = function (e) {
-        
+
         e.preventDefault();
 
         var emailInputs = ns.wrapperDiv.find('input[type="email"]');
         var addLocs = [];
-        
+
         _.each(emailInputs, function (element, index) {
-             addLocs.push({
+            addLocs.push({
                 Email: $(element).val()
             });
         });

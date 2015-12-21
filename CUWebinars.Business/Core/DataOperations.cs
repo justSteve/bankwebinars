@@ -1377,5 +1377,53 @@ namespace CUWebinars.Business.Core
 
           
         }
+
+        public IList<RegType> FindAllPossibleRegTypesByWebinarId(int id)
+        {
+
+            string retClaim = "";
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+
+                using (var GetOnDemandClaimByCode = new SqlCommand("GetOnDemandClaimByCode", sqlConnection))
+                {
+                    try
+                    {
+                        GetOnDemandClaimByCode.Connection = sqlConnection;
+                        GetOnDemandClaimByCode.CommandType = CommandType.StoredProcedure;
+                        var onDemandCodeParameter = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.Int,
+                            ParameterName = "@idWebinar",
+                            Value = id
+                        };
+                        GetOnDemandClaimByCode.Parameters.Add(onDemandCodeParameter);
+                        retClaim = GetOnDemandClaimByCode.ExecuteScalar().ToString();
+
+
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
+                            errorLogger.CommandText += "'FindAllPostEventClaims' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'FindAllPostEventClaims', 9 ,";
+                            errorLogger.CommandText += "'error at FindAllPostEventClaims " + ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+
+                        }
+                    }
+                }
+            }
+            return null;
+
+          
+
+        }
     }
 }

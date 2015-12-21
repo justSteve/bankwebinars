@@ -24,6 +24,11 @@
                 var row = recorded.Value.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
 
                 var onDemandClaim = new PostEventClaim();
+                var onDemandClaimUrl = "";
+                var showMedia = false;
+
+                var accessPhrase = "";
+
                 if (Model.MyClaims != null)
                 {
                     foreach (var claim in Model.MyClaims)
@@ -34,36 +39,46 @@
                             onDemandClaim.OrderId = row.idOrder;
                             onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
                             onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
+
+                            if (onDemandClaim.ExpiryDate > DateTime.Now)
+                            {
+                                showMedia = true;
+                                accessPhrase = "will be accessible until " + onDemandClaim.ExpiryDate.ToShortDateString();
+                                onDemandClaimUrl = "Need to share this event with a co-worker? Provide them this URL:<br />" +
+                                                   "<a href=\"" + globalConfig.TenantURL + "/o/" + row.idOrder + "-" + thisClaim.OnDemandCode + "\"> <tt><b>" + globalConfig.TenantURL + "/o/" + row.idOrder + "-" + thisClaim.OnDemandCode + "</b></tt></a>";
+
+                                //if (row.RegistrationType.ShowRecordingNotifications.ToString() == "No")
+                                //{
+                                //    accessPhrase = "is eligable for an upgrade.";
+                                //}
+                            }
+                            else
+                            {
+                                onDemandClaimUrl = "Access to the OnDemand recording expired on " + thisClaim.ExpiryDate.ToShortDateString();
+                                if (row.RegistrationType.ShowRecordingNotifications.ToString() == "No")
+                                {
+                                    accessPhrase = "expired on " + onDemandClaim.ExpiryDate.ToShortDateString();
+                                }
+                            }
                         }
                     }
                 }
-                var onDemandClaimString = "";
-                if (onDemandClaim.OnDemandCode != null)
-                {
-                    onDemandClaimString = onDemandClaim.OrderId.ToString() + "-" + onDemandClaim.OnDemandCode;
-                }
 
                 //var expiresDate = row.Webinar.Date.AddMonths(6);
-                var remainingDays = Convert.ToInt32((onDemandClaim.ExpiryDate - DateTime.Now).TotalDays);
-                var accessPhrase = "will be accessible for six months from your order date";
-
-                if (row.RegistrationType.ToString() == "No")
-                {
-                    accessPhrase = "would be accessible (by upgrading your order) for 6 months from now";
-                }
 
                 <div class="container-fluid">
                     <div class="row-fluid">
-                        <div class="pull-right span3" id="orderSum-@row.idWebinar">
-                            @{Html.RenderPartial("DisplayTemplates/OrderSumUser", row.Order);}
-                        </div>
-                        <div class="span7" style="font-size: small;  line-height: 1.2; margin-bottom: 10px;">
-                            <h4 id="recorded-@row.idWebinar">@row.Webinar.Title</h4>
+
+                        <div class="span8">
+                            <h4 style="padding-right: 30px;" id="recorded-@row.idWebinar">@row.Webinar.Title</h4>
                             <div>
                                 <p>
                                     This event was recorded on @Html.DisplayDate(row.Webinar.Date) and @accessPhrase.
                                 </p>
                             </div>
+                        </div>
+                        <div class="span3 offset1 " id="orderSum-@row.idWebinar">
+                            @{Html.RenderPartial("DisplayTemplates/OrderSumUser", row.Order);}
                         </div>
                     </div>
 
@@ -74,11 +89,13 @@
                         </form>
                     </div>
                     <div class="container-fluid">
-                        @if (row.RegistrationType.ShowRecordingNotifications == "Yes")
+                        @if (onDemandClaim.ExpiryDate > DateTime.Now)
                         {
-                            <div class="row-fluid">
-                                @if (row.Webinar.RecordingUrl != "")
-                                {
+                            if (row.RegistrationType.ShowRecordingNotifications == "Yes")
+                            {
+                                <div class="row-fluid">
+                                    @if (row.Webinar.RecordingUrl != "")
+                                    {
                                     <div class="span3 well well-large">
                                         <a target="_blank" href="/webinar/GetWebinarRecording/@row.Webinar.idWebinar">
                                             <span><i class="icon-facetime-video"> </i></span> Video Playback
@@ -86,76 +103,68 @@
 
                                         @{Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);}
                                         @if (row.RegistrationType.ShowShippedNotifications == "Yes")
-                                        {
-                                            if (row.ShipmentDate != null)
                                             {
-                                                <div>
-                                                    The CD and handouts shipped @row.ShipmentDate<text>.</text>
-                                                </div>
+                                                if (row.ShipmentDate != null)
+                                                {
+                                        <div>
+                                            The CD and handouts shipped @row.ShipmentDate<text>.</text>
+                                        </div>
+                                                }
+                                                else
+                                                {
+                                        <div>
+                                            The CD and handouts are typically shipped within 3-5 days following the event.
+                                        </div>
+                                                }
                                             }
-                                            else
-                                            {
-                                                <div>
-                                                    The CD and handouts are typically shipped within 3-5 days following the event.
-                                                </div>
-                                            }
-                                        }
 
                                     </div>
                                     <div class="span6">
-                                        @if (!String.IsNullOrWhiteSpace(onDemandClaimString))
-                                        {
-                                            <p>
-                                                Need to share this event with a co-worker? <br />
-                                                <tt>
-                                                    <strong>
-                                                        @globalConfig.TenantURL/o/@onDemandClaimString
-                                                    </strong>
-                                                </tt>
-                                            </p>
-                                        }
+
+                                        @Html.Raw(onDemandClaimUrl)
+
                                         @if (currentUser.email.EndsWith("ttstrain.com") && !String.IsNullOrWhiteSpace(recorded.Key))
-                                        {
-                                            <p>
-                                                @{
-                                            var urlSuffix = recorded.Value.idOrder + "-" + recorded.Key;
-                                            <text>A post-event assesment for this event is available. Pass this URL to any co-workers<br /> <tt>
-                                                    <strong>
-                                                        @globalConfig.TenantURL/quiz/index/@urlSuffix
-                                                    </strong>
-                                                </tt></text>
-                                                }
-                                            </p>
-                                        }
+                                            {
+                                        <p>
+                                            @{
+                                                var urlSuffix = recorded.Value.idOrder + "-" + recorded.Key;
+                                                <text>A post-event assesment for this event is available. Pass this URL to any co-workers<br /> <tt>
+                                                        <strong>
+                                                            @globalConfig.TenantURL/quiz/index/@urlSuffix
+                                                        </strong>
+                                                    </tt></text>
+                                            }
+                                        </p>
+                                            }
                                     </div>
-                                }
-                                else
-                                {
+                                    }
+                                    else
+                                    {
                                     <div>
                                         <span style="font-size: small;">(Recording not yet uploaded.)</span>
                                     </div>
-                                }
-                            </div>
-                        }
-                        else
-                        {
-                            // user has not purchased recording
-                            <div class="row-fluid">
-                                <div class="span3 well well-large">
-                                    <a target="_blank" href="/webinar/GetWebinarRecording/@row.Webinar.idWebinar"><span><i class="icon-facetime-video"></i></span> Playback</a>
-                                    @{Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);}
+                                    }
                                 </div>
-                                <div class="span6">
-                                    Access to the OnDemand recording is available until @onDemandClaim.ExpiryDate.ToShortDateString().
-                                    Need to share this event with a co-worker?
-                                    <a href="@globalConfig.TenantURL/o/@onDemandClaimString">
-                                        Provide them this URL:<br /> <tt><b>@globalConfig.TenantURL/o/@onDemandClaimString</b></tt>
-                                    </a>
+                            }
+                            else
+                            {
+                                // user has not purchased recording
+                                <div class="row-fluid">
+                                    @if (showMedia)
+                                    {
+                                        <div class="span3 well well-large">
+                                            <a target="_blank" href="/webinar/GetWebinarRecording/@row.Webinar.idWebinar"><span><i class="icon-facetime-video"></i></span> Playback</a>
+                                            @{Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);}
+                                        </div>
+                                        <div class="span6">
+                                            @Html.Raw(onDemandClaimUrl)
+                                        </div>
+                                    }
                                 </div>
-                            </div>
+                            }
                         }
                     </div>
-                </div>
+                </div><hr />
             }
         </div>
     </div>

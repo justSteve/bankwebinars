@@ -15,36 +15,25 @@
 
         </script>
     }
-    //OrderStatus enum
-    //Error = 0,
-    //InProcess = 1,
-    //Submitted = 2,
-    //Billed = 3,
-    //Paid = 4,
-    //Abandoned = 5,
-    //Canceled = 6,
-    //AwaitingVerification = 7,
-    //Unknown = 255
-    
+
     var showAffColumn = Model.UserIsAdmin ? "true" : "false";
     //\Scripts\app\admin\display-orders.js
         // AdminController/
     <div id="filter-buttons" class="clearfix" style="margin-bottom:8px;">
         <div class="btn-group pull-left" id="showAllOrders" data-toggle="buttons-radio">
-            <button type="button" class="btn btn-info active" value="justThisEvent">Just This Event</button>
-            <button type="button" class="btn btn-info" value="showAllEvents">All Orders</button>
+            <button type="button" class="btn btn-info btn-mini active" value="justThisEvent">Just This Event</button>
         </div>
 
         <div class="btn-group pull-right" id="order-status-filter-container" data-toggle="buttons-checkbox">
 
-            <button type="button" class="btn btn-primary os-inactive" value="InProcess">In Process</button>
-            <button type="button" class="btn btn-primary os-active" value="Submitted">Submitted</button>
-            <button type="button" class="btn btn-primary os-active" value="Billed">Billed</button>
-            <button type="button" class="btn btn-primary os-active" value="Paid">Paid</button>
-            <button type="button" class="btn btn-primary os-inactive" value="AwaitingVerification">Pending</button>
+            <button type="button" class="btn btn-primary btn-mini os-inactive" value="InProcess">In Process</button>
+            <button type="button" class="btn btn-primary btn-mini os-active" value="Submitted">Submitted</button>
+            <button type="button" class="btn btn-primary btn-mini os-active" value="Billed">Billed</button>
+            <button type="button" class="btn btn-primary btn-mini os-active" value="Paid">Paid</button>
+            <button type="button" class="btn btn-primary btn-mini os-inactive" value="AwaitingVerification">Pending</button>
 
-            <button type="button" class="btn btn-info os-active-group-control" value="Active">Active</button>
-            <button type="button" class="btn btn-info os-inactive-group-control" value="Inactive">Inactive</button>
+            <button type="button" class="btn btn-info btn-mini os-active-group-control" value="Active">Active</button>
+            <button type="button" class="btn btn-info btn-mini os-inactive-group-control" value="Inactive">Inactive</button>
 
         </div>
     </div>

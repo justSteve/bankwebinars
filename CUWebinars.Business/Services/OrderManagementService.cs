@@ -429,7 +429,7 @@ namespace CUWebinars.Business.Services
                         catch (Exception ex)
                         {
                             i++;
-                            _logger.ErrorException("SynchOrder select idOrder, idOrderLegacy, " + orderEmail +", from order", ex);
+                            _logger.ErrorException("SynchOrder select idOrder, idOrderLegacy, " + orderEmail + ", from order", ex);
                         }
                         //try
                         //{
@@ -1276,7 +1276,7 @@ namespace CUWebinars.Business.Services
                     if (!ReferenceEquals(discount.DateValidFrom, null))
                     {
                         subscriptionSpan = discount.DateValidFrom.ToString("MMM-yy") + " until " + discount.DateValidTo.ToString("MMM-yy");
-                        
+
                         sb.Append(
                             "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
                         sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
@@ -1882,12 +1882,14 @@ namespace CUWebinars.Business.Services
 
             var regType = GetRegTypeOfOrderRow(orderRow.idRegType);
 
+
             //establish order date as starting point
             DateTime expryDate = order.OrderDate.AddMonths(6);
+            var webinar = _webinarRepository.FindById(orderRow.idWebinar);
 
             //if order's placed before event - override starting point
-            if (orderRow.Webinar.Date > order.OrderDate)
-                expryDate = orderRow.Webinar.Date.AddMonths(6);
+            if (webinar.Date > order.OrderDate)
+                expryDate = webinar.Date.AddMonths(6);
 
 
             if (regType.ShowRecordingNotifications.Equals("yes", StringComparison.OrdinalIgnoreCase))
@@ -1897,7 +1899,7 @@ namespace CUWebinars.Business.Services
             // now we only addressing Live+5
             //update to pull LivePlusFive value from database
 
-            return orderRow.Webinar.LivePlusFiveValue;
+            return webinar.LivePlusFiveValue;
         }
 
         public void GetJoinUrl(OrderRow row)
@@ -1984,7 +1986,7 @@ namespace CUWebinars.Business.Services
 
                 row.Discount = thisDiscount;
 
-                RedeemDiscount(thisDiscount, row);
+                thisDiscount = RedeemDiscount(thisDiscount, row);
 
                 //Adding an explicit save attempting to persist the applied discount. Could be problemic
                 //SaveChanges();
@@ -2114,34 +2116,44 @@ namespace CUWebinars.Business.Services
         //}
 
 
-        private void RedeemDiscount(Discount discount, OrderRow row)
+        private Discount RedeemDiscount(Discount discount, OrderRow row)
         {
             var forNotes = new StringBuilder();
 
             _logger.Info("Discount: RedeemDiscountStarts: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}", discount.DiscountCode, discount.DateValidFrom, discount.DateValidTo, discount.CreditsUsed, discount.CreditsRemain);
-            if (discount.DiscountType != DiscountType.Compensation && discount.DiscountType != DiscountType.ComplianceSeries)
-            {
-                if (discount.CreditsRemain > 0)
-                {
 
-                    discount.CreditsUsed++;
-                    CalculateDiscountRedemtion(discount, row);
-                    forNotes.AppendFormat(
-                        "Discount Applied: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}"
-                        , discount.DiscountCode, discount.DateValidFrom, discount.DateValidTo, discount.CreditsUsed,
-                        discount.CreditsRemain);
-                }
-                else
-                {
-                    forNotes.Append("No Credits Remain. Credits used = " + discount.CreditsUsed);
-                }
-            }
-            else
+            switch (discount.DiscountType)
             {
-                _logger.Warn("DiscountCode {0} was a Subscription");
-            }
-            discount.Notes = forNotes.ToString();
+                case DiscountType.Compensation:
+                case DiscountType.ComplianceSeries:
+                case DiscountType.DirectorSeries:
+                case DiscountType.FivePart:
+                case DiscountType.FourPart:
+                case DiscountType.ThreePart:
+                case DiscountType.Package:
+                case DiscountType.Promo:
+                case DiscountType.Subscription:
+                    if (discount.CreditsRemain > 0)
+                    {
 
+                        discount.CreditsUsed++;
+                        //computes CreditsRemain property
+                        CalculateDiscountRedemtion(discount, row);
+                        forNotes.AppendFormat(
+                            "Discount Applied: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}"
+                            , discount.DiscountCode, discount.DateValidFrom, discount.DateValidTo, discount.CreditsUsed,
+                            discount.CreditsRemain);
+                    }
+                    else
+                    {
+
+                        forNotes.Append("No Credits Remain. Credits used = " + discount.CreditsUsed);
+                    }
+                        _discountRepository.SaveChanges(discount);
+                    break;
+
+            }
+            return discount;
         }
 
         private static void CalculateDiscountRedemtion(Discount discount, OrderRow row)

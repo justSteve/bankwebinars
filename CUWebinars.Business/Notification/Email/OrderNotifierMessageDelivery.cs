@@ -98,6 +98,9 @@ namespace CUWebinars.Business.Notification.Email
                         {
                             mailMessage.Bcc.Add(new MailAddress(address));
                         }
+
+                        _logger.Info(string.Format("Sending msg to {0}: ", address));
+
                     }
                 }
                 else
