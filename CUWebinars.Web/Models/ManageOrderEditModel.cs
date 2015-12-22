@@ -3,6 +3,7 @@ using CUWebinars.Business.Models;
 using CUWebinars.Web.ViewModel;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using CUWebinars.Business.Services;
 
 namespace CUWebinars.Web.Models
 {
@@ -30,7 +31,8 @@ namespace CUWebinars.Web.Models
         public int UserIdLegacy { get; set; }
         public int WebinarId { get; set; }
         public WebUser WebUser { get; set; }
-        public OrderClaimsViewModel OrderClaimsViewModel { get; set; }
+        public ClaimsViewModel ClaimsViewModel { get; set; }
+        public PostEventClaim ClaimByOrderViewModel { get; set; }
 
         //public WebUserFromLegacy WebUserFromLegacy
         //{

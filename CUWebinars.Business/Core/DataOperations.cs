@@ -1331,6 +1331,53 @@ namespace CUWebinars.Business.Core
             return "";
         }
 
+        public string GetOnDemandClaimById(int idOrder)
+        {
+
+            string retClaim = "";
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+
+                using (var GetOnDemandClaim = new SqlCommand("GetOnDemandClaimById", sqlConnection))
+                {
+                    try
+                    {
+                        GetOnDemandClaim.Connection = sqlConnection;
+                        GetOnDemandClaim.CommandType = CommandType.StoredProcedure;
+                        var onDemandCodeParameter = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.Int,
+                            ParameterName = "@idOrder",
+                            Value = idOrder
+                        };
+                        GetOnDemandClaim.Parameters.Add(onDemandCodeParameter);
+                        retClaim = GetOnDemandClaim.ExecuteScalar().ToString();
+
+
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
+                            errorLogger.CommandText += "'FindAllPostEventClaims' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'FindAllPostEventClaims', 9 ,";
+                            errorLogger.CommandText += "'error at FindAllPostEventClaims " + ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+
+                        }
+                    }
+                }
+            }
+            return retClaim;
+
+          
+        }
+
         public string GetOnDemandClaimByCode(string onDemandCode)
         {
 

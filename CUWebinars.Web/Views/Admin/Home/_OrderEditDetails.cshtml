@@ -9,7 +9,7 @@
     nfi.CurrencyDecimalDigits = 0;
 
     var myRow = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-    var orderClaims = Model.OrderClaimsViewModel.UserClaims;
+    var orderClaims = Model.ClaimsViewModel.UserClaims;
 }
 
 @using (Html.BeginForm("UpdateAdditionalLocations", "Admin", FormMethod.Post, new { id = "updateAdditionalLocationsForm" }))

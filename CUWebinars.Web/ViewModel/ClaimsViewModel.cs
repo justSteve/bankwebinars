@@ -5,9 +5,9 @@ using CUWebinars.Business.Services;
 
 namespace CUWebinars.Web.ViewModel
 {
-    public class OrderClaimsViewModel
+    public class ClaimsViewModel
     {
-        public IEnumerable<PostEventClaim> OrderClaims { get; set; }
+        public IEnumerable<UserClaim> UserClaims { get; set; }
         public string ClaimToDelete { get; set; }
     }
 }

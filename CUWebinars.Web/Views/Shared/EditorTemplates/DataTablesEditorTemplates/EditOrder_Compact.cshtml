@@ -322,7 +322,7 @@
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="orderID" value="@Model.EditFields.Order.idOrder" />
-                    <input type="text" id="newExpiryDate" name="newExpiryDate" placeholder="Expires On" /> <span class="text text-info">Insert Date to Expire</span>
+                    <input type="text" id="newExpiryDate" name="newExpiryDate" placeholder="Expires On" /> <span class="text text-info">@Model.EditFields.PostEventClaim.OnDemandCode</span>
                     <div class="btn-group">
                         <button id="Add6MonthsButton" class="btn btn-mini">Add 6 months</button>
                         <button id="Add5DaysButton" class="btn btn-mini">Add 5 days</button>

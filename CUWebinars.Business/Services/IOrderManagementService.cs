@@ -126,6 +126,7 @@ namespace CUWebinars.Business.Services
         Webinar GetWebinarById(int webinarId);
         void UpdateUserDetails(WebUser user, string firstName, string lastName, string email, string institution, Address billingAddress, Address shippingAddress);
         string GetOnDemandClaimByCode(string hasVal);
+        string GetOnDemandClaimById(int idOrder);
         Order GetOrderByOnDemandClaim(string onDemandCode);
         void UpdateDiscountDetails(Discount discount);
     }

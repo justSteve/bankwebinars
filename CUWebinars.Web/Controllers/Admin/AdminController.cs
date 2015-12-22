@@ -346,9 +346,11 @@ namespace CUWebinars.Web.Controllers.Admin
                         onDemandClaim.OrderId = model.Order.idOrder;
                         onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
                         onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
+
+                        model.ClaimByOrderViewModel = onDemandClaim;
                     }
                 }
-
+                
                 model.PostEventAccessExpires = onDemandClaim.ExpiryDate;
 
                 return View(model);
@@ -1160,6 +1162,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             var manageOrderEditModel = new ManageOrderEditModel
             {
+                //EditOrder_Compact should look to 
                 AdditionalLocations = additionalLocations,
                 AdditionalLocationsAvailableOnLoad = false, // see below for where this is properly decided.
                 AdditionalLocationsRenderer = ViewHelpers.GetRendererOfAdditionalLocations(additionalLocations.Select(al => al.Email).ToList()),
@@ -2182,7 +2185,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpPost]
         [ValidateJsonAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
-        public ActionResult ExtendPostEventAccess(int? orderID, string newExpiryDate, string email)
+        public ActionResult ExtendPostEventAccess(int? orderID, string newExpiryDate)
         {
             try
             {
@@ -2215,7 +2218,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     _membershipService.UpdatePostEventMaterialsClaim(
                         _globalConfig.Tenant,
-                        email,
+                        order.BillingEmail,
                         DateTime.Parse(newExpiryDate),
                         order
                         );

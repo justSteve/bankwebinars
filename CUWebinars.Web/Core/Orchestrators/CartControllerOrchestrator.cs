@@ -935,7 +935,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     var onDemandClaim = new PostEventClaim();
 
                     var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
-                    var claimsViewModel = new OrderClaimsViewModel { UserClaims = userAccount.Claims };
+                    var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
 
                     foreach (var claim in claimsViewModel.UserClaims)
                     {

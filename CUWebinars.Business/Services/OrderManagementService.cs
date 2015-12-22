@@ -1756,6 +1756,13 @@ namespace CUWebinars.Business.Services
 
         }
 
+        public string GetOnDemandClaimById(int idOrder)
+        {
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+            var retClaim = dataOperations.GetOnDemandClaimById(idOrder);
+            return retClaim;
+        }
+
         public Order GetOrderByOnDemandClaim(string onDemandCode)
         {
             var order = _orderRepository.GetOrderByIdByOnDemandCode(onDemandCode);

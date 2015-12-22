@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using CUWebinars.Business.Models;
+using CUWebinars.Business.Services;
 using CUWebinars.Web.ViewModel;
 
 namespace CUWebinars.Web.Models.DataTablesModels
@@ -27,7 +28,8 @@ namespace CUWebinars.Web.Models.DataTablesModels
         public int UserId { get; set; }
         public int WebinarId { get; set; }
         public WebUser WebUser { get; set; }
-        public OrderClaimsViewModel OrderClaimsViewModel { get; set; }
+        public ClaimsViewModel ClaimsViewModel { get; set; }
+        public PostEventClaim PostEventClaim { get; set; }
         
     }
 }

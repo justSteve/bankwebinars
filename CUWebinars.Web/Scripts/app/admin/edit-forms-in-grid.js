@@ -846,7 +846,7 @@ var M = EDIT; // alias for code brevity
 
         var tabInputs = formProcessor.getApplicableInputs('frmEditDiscount');
         var payload = formProcessor.processInputs(tabInputs);
-        payload['email'] = $('#UserEmail').val();
+        //payload['email'] = $('#UserEmail').val();
 
         // delete the following properties from the payload which are from inputs that are not
         // part of the form. Not sure why they are being picked up by the formProcessor.

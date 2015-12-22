@@ -28,6 +28,7 @@ using CUWebinars.Web.Models.DataTablesModels;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Elmah;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
@@ -828,6 +829,7 @@ namespace CUWebinars.Web.Controllers
 
         private EditOrderInfoModel BuildOrderInfoModel(Order order, string empty)
         {
+            //Used by EditOrder_Compact grid order editor
             if (order == null) throw new ArgumentNullException("order");
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
@@ -836,6 +838,8 @@ namespace CUWebinars.Web.Controllers
             var additionalLocations = orderRow.AdditionalLocation;
             var additionalLocationsCount = additionalLocations.Count;
             var regTypes = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.Webinar.idWebinar, false);
+            PostEventClaim postEvent = new PostEventClaim();
+            var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
 
 
             DisplayOptionsInDropDownViewModel regTypeDD = new DisplayOptionsInDropDownViewModel
@@ -848,7 +852,7 @@ namespace CUWebinars.Web.Controllers
             ViewBag.RegTypeDropDownHtml = ViewHelpers.RenderViewToString(ControllerContext,
                                         "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditRegType_DropDown.cshtml",
                                         regTypeDD, true);
-            ViewBag.Order = order;
+
             var editModel = new EditOrderInfoModel
             {
                 EditFields = new EditOrderModel
@@ -858,7 +862,8 @@ namespace CUWebinars.Web.Controllers
 
                     AdditionalLocations = additionalLocations,
                     CostPerAdditionalLocation = additionalLocationsPricing.Item2,
-                    OrderClaimsViewModel = new OrderClaimsViewModel { UserClaims = userAccount.Claims },
+                    ClaimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims },
+
                     DisplayRowPriceViewModel = new DisplayRowPriceViewModel
                     {
                         NumberOfAdditionalLocations = additionalLocationsCount,
@@ -877,7 +882,27 @@ namespace CUWebinars.Web.Controllers
                     NumberOfAdditionalLocations = additionalLocationsCount
                 }
             };
+            var onDemandClaim = new PostEventClaim();
+            foreach (
+                var claim in
+                    claimsViewModel.UserClaims.Where(
+                        c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials"))
+            {
+                var singleOrDefault = editModel.EditFields.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                if (singleOrDefault != null && claim.Value.Contains(singleOrDefault.OnDemandCode))
+                {
+                    var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
+
+                    onDemandClaim.OrderId = editModel.EditFields.Order.idOrder;
+                    onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
+                    onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
+
+                    editModel.EditFields.PostEventClaim = onDemandClaim;
+                }
+            }
             var regType = orderRow.RegistrationType;
+
+            //editModel.EditFields.PostEventClaim = editModel.EditFields.ClaimsViewModel.UserClaims.Where(c =>c.)
 
             {
                 var option = CheckIfAddLocAvailable(regType.idRegType);
