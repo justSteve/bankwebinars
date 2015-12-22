@@ -1906,7 +1906,7 @@ namespace CUWebinars.Business.Services
             // now we only addressing Live+5
             //update to pull LivePlusFive value from database
 
-            return webinar.LivePlusFiveValue;
+            return webinar.LivePlusFiveValue.AddDays(1);
         }
 
         public void GetJoinUrl(OrderRow row)

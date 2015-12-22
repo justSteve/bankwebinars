@@ -45,7 +45,6 @@
                     @Html.TextBoxFor(model => model.Duration, new { style = "width: 20px" })
                 </div>
             </div>
-
         </div>
 
         <div class="row">
@@ -67,8 +66,13 @@
 
         </div>
         <div class="row">
-            
-            <div class="control-group offset4 span2">
+            <div class="control-group span2">
+                <div class="control-label">RecordingUrl</div>
+                <div class="controls">
+                    @Html.TextBoxFor(model => model.RecordingUrl, new { style = "width: 50px" })
+                </div>
+            </div>           
+            <div class="control-group span2">
                 <div class="control-label">Additional Locations $</div>
                 <div class="controls">
                     @Html.TextBoxFor(model => model.AdditionalLocationsPrice, new { style = "width: 50px" })

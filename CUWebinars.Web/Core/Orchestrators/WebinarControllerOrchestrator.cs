@@ -233,7 +233,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 Presenter = webinar.Presenter,
                 Webinar = webinar,
-                AuthorizedToAccessMaterials = true
+                AuthorizedToAccessMaterials = "true"
             };
 
             var viewResult = new ViewResult { ViewName = "OnDemand" };
@@ -274,18 +274,27 @@ namespace CUWebinars.Web.Core.Orchestrators
                     _globalConfig.Tenant,
                     webUser.email, playModel.idOrder, playModel.OnDemandCode);
 
+                var checkExpired = GetPostEventMaterialsAccessExpiry(order);
+
                 if (myClaim != null)
                 {
-                    playModel.AuthorizedToAccessMaterials = true;
-                    //here's a chance for a handy bit of scripting
+                    playModel.AuthorizedToAccessMaterials = "This code is valid until " + checkExpired.ToShortDateString() + ".";
 
                     _logger.Info("AuthorizedToAccessMaterials granted to: " + webUser.email);
 
                     return myClaim;
                 }
-                playModel.AuthorizedToAccessMaterials = false;
-                _logger.Warn("AuthorizedToAccessMaterials denied to: " + webUser.email);
 
+
+                playModel.AuthorizedToAccessMaterials = "Invalid code: " + playModel.OnDemandCode;
+
+                if (checkExpired < DateTime.Now)
+                {
+                    playModel.AuthorizedToAccessMaterials = "Code expired on " + checkExpired.ToShortDateString();
+
+                    _logger.Warn("AuthorizedToAccessMaterials found expired code: " + webUser.email + " " + playModel.OnDemandCode);
+                    return "Code is Expired.";
+                }
                 return "Not Authorized";
             }
 
@@ -492,7 +501,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 webinar.Status = WebinarStatus.Recorded;
                 webinar.LivePlusFiveValue = webinarDetailsViewModel.Webinar.LivePlusFiveValue;
                 _webinarManagementService.UpdateWebinar(webinar);
-                
+
                 _logger.Info(string.Format("Recordings posted for {0} is saved to {1}", webinar.idWebinar + " - " + webinar.Title, webinar.RecordingUrl));
                 SendRecordingIsPostedNotifications(webinarDetailsViewModel, webinar);
                 return true;
@@ -555,7 +564,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             //catch (Exception ex)
             //{
             //    _logger.ErrorException(string.Format("SendRecordingIsPostedNotifications| AddNoteClaim failed {0} on idWebinar: {1}", ex.Message, webinar.idWebinar), ex);
-                
+
             //}
 
             try
@@ -567,7 +576,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
 
                 _logger.ErrorException(string.Format("SendRecordingIsPostedNotifications| AddClaimForPostEventMaterials failed {0} on idWebinar: {1}", ex.Message, webinar.idWebinar), ex);
-                
+
             }
 
             _orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
@@ -594,8 +603,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     var addNote = GetLoggedIncidents(order);
 
-                    var note = addNote + " Prior Comments: " +  order.UserComments;
-                    
+                    var note = addNote + " Prior Comments: " + order.UserComments;
+
                     var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
                     var noteToOrderProperty = new JProperty(JsonPropertyKeys.Note, note);
 
@@ -611,7 +620,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     _logger.Info("AddClaimForOrderNote: " + order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar + " - " + order.idOrder + ": " + order.UserComments);
 
                 }
-                    //how to get this ex to detail the tossed error? Inner ex is null.
+                //how to get this ex to detail the tossed error? Inner ex is null.
                 catch (Exception ex)
                 {
                     _logger.Fatal("AddClaimForOrderNote| MR record not found " + order.BillingEmail + " " + ex.Message);
@@ -799,6 +808,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     },
                 Presenters = presenters,
                 RegTypeGroups = upcomingRegTypeGroups,
+                RecordingUrl = webinar.RecordingUrl,
                 SelectedPresenter = webinar.idPresenter,
                 SelectedRegTypeGroups = regTypeGroupsForWebinars,
                 SelectedTopics = topicIdsForWebinar,
@@ -819,9 +829,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 webinarEditModel.PostedRegTypeGroups = new PostedRegTypeGroups { RegTypeGroupIds = new int[0] };
             if (ReferenceEquals(webinarEditModel.PostedTopics, null))
                 webinarEditModel.PostedTopics = new PostedTopics { TopicIds = new int[0] };
-            
+
             //initialize Date value
-                webinarEditModel.LivePlusFive = webinarEditModel.Date.AddDays(7);
+            webinarEditModel.LivePlusFive = webinarEditModel.Date.AddDays(7);
 
             var webinar = new Webinar
             {

@@ -172,7 +172,20 @@
                                 <br />
                                 Billing Date: @Model.EditFields.Discount.DateBilled.ToString().Split(' ')[0]
                             </div><br />
-                            <button id="cancelDiscountButton" class="btn btn-danger btn-mini ">Cancel Subscription</button>
+                            
+                        </div>
+                    }
+                    if (Model.EditFields.Discount.DiscountType == DiscountType.Subscription)
+                    {
+                        <div class="control-group">
+                            <br />
+                            @*<button id="renewPackageSubscriptionButton" class="btn btn-default btn-mini btn-success ">Renew Subscription</button>*@
+
+                            <div class="controls">
+                                Credits Used: @Model.EditFields.Discount.CreditsUsed
+                                <br />
+                                Credits Remain: @Model.EditFields.Discount.CreditsRemain
+                            </div><br />
                         </div>
                     }
                 }

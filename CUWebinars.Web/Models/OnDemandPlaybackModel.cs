@@ -6,7 +6,7 @@ namespace CUWebinars.Web.Models
 {
     public class OnDemandPlaybackModel
     {
-        public bool AuthorizedToAccessMaterials { get; set; }
+        public string AuthorizedToAccessMaterials { get; set; }
         public Presenter Presenter { get; set; }
         public Webinar Webinar { get; set; }
         public int idOrder { get; set; }

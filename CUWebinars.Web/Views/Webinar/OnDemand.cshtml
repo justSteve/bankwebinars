@@ -96,7 +96,7 @@
 
                         <h4 align="center">Webinar Materials</h4>
                         @{
-                            if (Model.AuthorizedToAccessMaterials)
+                            if (Model.AuthorizedToAccessMaterials.Contains("until"))
                             {
                                 <div>
                                     <a target="_blank" href="/Webinar/GetWebinarRecording/@Model.Webinar.idWebinar"><span><i class="icon-facetime-video"></i> </span> Video Playback</a>
@@ -105,16 +105,20 @@
                                     @{ Html.RenderPartial("DisplayTemplates/HandoutsListing", Model.Webinar); }
                                 </div>
                             }
+                            else if (Model.AuthorizedToAccessMaterials.Contains("expired on"))
+                            {
+                                <div>@Model.AuthorizedToAccessMaterials</div>
+                            }
                             else
                             {
+
                                 <script type="text/javascript">
                                     L.clientLogger.info('OnDemand problem! @Model.idOrder', { 'Non-auth':  @Model.idOrder});
                                 </script>
                             }
                         }
-                        <div style="font-size: smaller; line-height: 1.2; text-align: center; margin-bottom: 10px; margin-top: 10px;">
-                            This event was recorded on <i>@Html.DisplayDate(Model.Webinar.Date)</i> and is available for OnDemand Playback until @Html.DisplayDate(expiresDate)
-                            - @remainingDays.ToString() more days.
+                        <div style="font-size: small; line-height: 1.2; text-align: center; margin-bottom: 10px; margin-top: 10px;">
+                            This event was recorded on <i>@Html.DisplayDate(Model.Webinar.Date)</i>. <b>@Model.AuthorizedToAccessMaterials</b>
                         </div>
                         @*<div style="text-align: center;" id="quiz">
                                 <hr />

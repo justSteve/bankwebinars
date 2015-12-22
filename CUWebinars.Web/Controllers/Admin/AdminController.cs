@@ -350,7 +350,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         model.ClaimByOrderViewModel = onDemandClaim;
                     }
                 }
-                
+
                 model.PostEventAccessExpires = onDemandClaim.ExpiryDate;
 
                 return View(model);
@@ -2488,7 +2488,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         onDemandCode = RandomHelpers.GetUniqueCode(4);
                         _logger.Info("UPDATE dbo.OrderRow SET OnDemandCode = '{0}' WHERE idOrder ={1}",
-                                    onDemandCode , order.idOrder);
+                                    onDemandCode, order.idOrder);
                     }
                     //                    //{"OrderId":30706,"ExpiryDate":"2015-12-23","OnDemandCode":"oybo"}
                     _logger.Info(
@@ -2506,43 +2506,36 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     var onDemandCode =
                         order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).OnDemandCode;
-                    var claim =
+                    var claims =
                         userAccount.Claims.Where(
-                            c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials").SingleOrDefault();
-                    if (claim != null)
+                            c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials");
+                    foreach (var claim in claims)
                     {
                         var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
 
                         var claimMatchOnOrderId = "";
-                        var claimMatchOnCode = "";
+                        var claimMatchOnCodeButNotId = "";
                         var claimFullyMatched = false;
-                        if (claim.Value.Contains(order.idOrder.ToString()))
+                        if (thisClaim.OrderId == order.idOrder && thisClaim.OnDemandCode == onDemandCode)
                         {
-                            claimMatchOnOrderId = claim.Value;
-                            if (claim.Value.Contains(onDemandCode))
-                            {
-                                claimFullyMatched = true;
-                            }
+                            claimFullyMatched = true;
                         }
                         else
                         {
-                            if (claim.Value.Contains(onDemandCode))
-                            {
-                                claimMatchOnCode = claim.Value;
-                            }
-                        }
+                            //claim did
+                            var isClaimOrderIdADifferentOrder =
+                                _orderManagementService.GetOrdersByEmail(order.BillingEmail, 19).Where(o => o.idOrder == order.idOrder);
 
-                        if (claimFullyMatched)
-                        {
-                            //_logger.Info("fully matched");
-                            var a = 2;
-                        }
-                        else
-                        {
-                            _logger.Warn("OrderId=" + order.idOrder + " vs. ClaimOrderID=" + thisClaim.OrderId + " OnDemandCode=" + onDemandCode + " vs. ClaimOnDemand=" + thisClaim.OnDemandCode);
+                            if (isClaimOrderIdADifferentOrder.Count() == 0)
+                            {
+                                if (thisClaim.OnDemandCode == onDemandCode)
+                                {
+                                    claimMatchOnCodeButNotId = claim.Value;
+                                    _logger.Warn("claimMatchOnCodeButNotId: " + claimMatchOnCodeButNotId);
+                                }
+                            }
                         }
                     }
-
                     //else
                     //{
                     //    if (claim.Value.Contains(order.idOrder.ToString()))
