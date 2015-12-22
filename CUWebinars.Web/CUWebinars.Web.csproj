@@ -476,6 +476,7 @@
     <Compile Include="Membership\Email\TtsEmailFormatterInert.cs" />
     <Compile Include="Membership\Email\TtsSmtpMessageDeliveryInert.cs" />
     <Compile Include="Membership\Email\TtsTokenizerInert.cs" />
+    <Compile Include="Models\NotificationHeaderModel.cs" />
     <Compile Include="Models\AddClaimInputModel.cs" />
     <Compile Include="Models\AddQuizEditModel.cs" />
     <Compile Include="Models\Address4JotForm.cs" />
@@ -1752,6 +1753,8 @@
     <Content Include="Notification\Templates\Web.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Notification\Templates\Partials\_GeneralHeader.cshtml" />
+    <Content Include="Notification\Templates\Partials\_GeneralFooter.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy %282%29.pubxml" />

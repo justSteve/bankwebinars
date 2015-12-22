@@ -283,7 +283,7 @@ $(function () {
                             recipientsEmailAddresses = recipientsEmailAddresses.substring(0, recipientsEmailAddresses.length - 1);
 
                             regTypesCheckBoxesDiv.append('<br /><input type="Text" id="SubjectInput" class="input-xxlarge" style="margin-top:10px;" placeholder="Enter Subject" />');
-                            regTypesCheckBoxesDiv.append('<input type="Text" id="RecipientsInput" style="width:100%;margin-top:10px;clear:left" value="' + recipientsEmailAddresses + '" />');
+                            regTypesCheckBoxesDiv.append('<input type="Text" id="RecipientsInput" style="width:100%;margin-top:10px;clear:left" placeholder="Recipient emails, semi-colon separated" value="' + recipientsEmailAddresses + '" />');
                             regTypesCheckBoxesDiv.append('<textarea cols="40" data-val="true" data-val-required="The NotificationBody field is required." id="NotificationBody" name="NotificationBody" rows="2" placeholder="Enter the body of the notification" style="width:100%;margin-top:10px;clear:left"></textarea>');
                             regTypesCheckBoxesDiv.append('<button id="SendNotificationButton" class="btn btn-primary" style="margin-top:10px;">Send Notification</button>');
 
