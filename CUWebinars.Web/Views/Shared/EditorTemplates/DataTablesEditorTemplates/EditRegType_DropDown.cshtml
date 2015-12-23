@@ -12,7 +12,7 @@
     <div class="dropdown">
 
         <a class="dropdown-toggle btn btn-mini" id="displayRegType" role="button" href="#" data-toggle="dropdown">[REGTYPE]&nbsp;<b class="caret"></b></a>
-        <ul class="dropdown-menu" role="menu">
+        <ul class="dropdown-menu" id="listOfRegTypes" role="menu">
             @{
                 var idx = 0;
                 foreach (var option in Model.Options)

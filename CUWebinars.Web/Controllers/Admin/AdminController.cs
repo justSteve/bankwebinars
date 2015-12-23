@@ -2490,13 +2490,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         _logger.Info("UPDATE dbo.OrderRow SET OnDemandCode = '{0}' WHERE idOrder ={1}",
                                     onDemandCode, order.idOrder);
                     }
-                    //                    //{"OrderId":30706,"ExpiryDate":"2015-12-23","OnDemandCode":"oybo"}
-                    _logger.Info(
-                        "INSERT dbo.UserClaims ( ParentKey, Type, Value ) VALUES	( (SELECT [Key] FROM dbo.UserAccounts WHERE " +
-                        "Email = '" + order.BillingEmail +
-                        "'), 'http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials', " +
-                        "'{\"OrderId\":" + order.idOrder + ",\"ExpiryDate\":\"" + calculatedDate.ToShortDateString() +
-                        "\", \"OnDemandCode\":\"" + onDemandCode + "\"}')");
+
                 }
                 //audit claim
 

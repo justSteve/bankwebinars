@@ -108,6 +108,7 @@ var M = EDIT; // alias for code brevity
         ns.showChangeUser = $('#showChangeUser');
         ns.changeAssignedUser = $('#changeAssignedUser');
         ns.PayByMonerisModal = $('#PayByMonerisModal');
+        ns.listOfRegTypes = $('#listOfRegTypes');
 
         ns.orderRowId = $('#manageOrderForm input[name="ID"]').val();
 
@@ -150,7 +151,7 @@ var M = EDIT; // alias for code brevity
         ns.adInfinitumButton.on('click', ns.adInfinitumButtonClick);
         ns.editDiscountNotesButton.on('click', ns.ShowNotesModal);
         ns.extendEventAccessButton.on('click', ns.extendEventAccessSubmitter);
-        ns.regTypesList.on('change', ns.changeRegType);
+        ns.listOfRegTypes.on('change', ns.changeRegType);
         ns.updateAdditionalLocationsForm.on('submit', ns.submitUpdateAddLocsForm);
         ns.updateAddLocsButton.on('click', ns.updateAdditionalLocations);
 
@@ -258,13 +259,14 @@ var M = EDIT; // alias for code brevity
     };
 
     ns.changeRegType = function (e) {
-        alert("hit");
         e.preventDefault();
 
         var self = this;
 
         var optionId = $(this).val();
-
+// originally this method was required to update the 'AddLocations' control (should it show or not show?)
+        // no longer operative
+        
         $.ajax({
             url: "/cart/CheckIfAddLocShouldHide?optionID=" + optionId,
             type: "GET",
