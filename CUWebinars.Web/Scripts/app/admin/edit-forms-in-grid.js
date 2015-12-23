@@ -267,68 +267,9 @@ var M = EDIT; // alias for code brevity
 // originally this method was required to update the 'AddLocations' control (should it show or not show?)
         // no longer operative
         
-        $.ajax({
-            url: "/cart/CheckIfAddLocShouldHide?optionID=" + optionId,
-            type: "GET",
-            cache: false,
-            dataType: constants.JsonDataType,
-
-            beforeSend: function () {
-                var valSummary = $('#manageOrderFormValSummary');
-                valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
-
-                var errorsList = valSummary.find('ul');
-                errorsList.empty();
-                errorsList.append('<li style="display:none"></li>');
-
-                ns.regTypesList.after('<span id="regTypeSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
-            }
-        }).done(function (data) {
-            //console.log('done CheckIfAddLocShouldHide');
-            if (data.shouldShow === 'Yes') {
-                ns.addAdditionalLocationsButton.removeAttr('disabled');
-                $('#collectAdditionalLocations').empty().html('<span id="naText" class="text text-info">No additionalLocations yet</span>');
-                //var typeChosenCurrent = $.trim($('#RegType option:selected').text());
-                ns.updatePriceOnNewSelection(ns.regTypesList.val(), ns.totalPrice, ns.regTypesList);
-
-            } else if (data.shouldShow === 'No') {
-                //console.log('hide  CheckIfAddLocShouldHide');
-                $('#collectAdditionalLocations').empty().html('<span id="naText" class="text text-info">Not applicable for this RegType</span>');
-                ns.numberOfAdditionalLocations = 0;
-                ns.numberAddLocsLabel.text(0);
-                ns.addAdditionalLocationsButton.attr('disabled', 'disabled');
-
-                var url = '/Cart/RemoveAdditionalLocationsFromOrder';
-                var payLoad = {
-                    idOrderRow: ns.orderRowIdHidden.val()
-                };
-
-                $.ajax({
-                    type: 'POST',
-                    contentType: constants.JsonContentType,
-                    cache: false,
-                    url: url,
-                    dataType: constants.JsonDataType,
-                    data: JSON.stringify(payLoad)
-                }).done(function (data) {
-
-                    if (data.Result === 'Success') {
-
-                        var totalPrice = ns.totalPrice - ns.allAddLocsPrice;
-
-                        ns.updatePriceOnNewSelection(ns.regTypesList.val(), totalPrice, ns.regTypesList);
-                    }
-                });
-
-            } else if (!data.isSuccessful) {
-                formProcessor.lightUpValidationSummary('manageOrderFormValSummary', data);
-            }
-        }).fail(function (data) {
-            $('#orderRelatedFields').html('<div class="text-error">There has been a transport-level error, please call 800-831-0678 ext 706 for immediate assistance.</div>');
-        });
     };
 
-    ns.updatePriceOnNewSelection = function (registrationTypeId, totalPrice, dropDown) {
+    ns.updatePriceOnNewSelection = function (registrationTypeId,  dropDown) {
         //alert("here updatePriceOnNewSelection");
         ns.gatherPricingData();
 
@@ -351,13 +292,13 @@ var M = EDIT; // alias for code brevity
             if (data) {
                 // alert(data.OptionsPrice);
                 $('#UnitPriceText').val(data.BasePrice);
-                $('#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPriceUnitPriceText').val(data.BasePrice);
+                $('#EditFields_DisplayRowPriceViewModel_PricesAndDiscounts_UnitPriceUnitPriceText').val(data.BasePrice);
                 $('#TotalDiscountText').val(data.Discount);
-                $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount').val(data.Discount);
+                $('#EditFields_DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount').val(data.Discount);
                 $('#TotalCostOfOptionsText').val(data.OptionsPrice);
-                $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions').val(data.OptionsPrice);
+                $('#EditFields_DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions').val(data.OptionsPrice);
                 $('#TotalOrderPriceText').val(data.Total);
-                $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice').val(data.Total);
+                $('#EditFields_DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice').val(data.Total);
 
                 $('#regTypeSpinner').remove();
             }
