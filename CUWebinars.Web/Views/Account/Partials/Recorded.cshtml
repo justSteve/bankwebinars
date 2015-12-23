@@ -38,7 +38,7 @@
                         {
                             onDemandClaim.OrderId = row.idOrder;
                             onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
-                            onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
+                            onDemandClaim.ExpiryDate = thisClaim.ExpiryDate.AddDays(1);
 
                             if (onDemandClaim.ExpiryDate > DateTime.Now)
                             {

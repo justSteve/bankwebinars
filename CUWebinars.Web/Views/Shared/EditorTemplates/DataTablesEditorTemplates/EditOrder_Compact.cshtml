@@ -172,7 +172,7 @@
                                 <br />
                                 Billing Date: @Model.EditFields.Discount.DateBilled.ToString().Split(' ')[0]
                             </div><br />
-                            
+
                         </div>
                     }
                     if (Model.EditFields.Discount.DiscountType == DiscountType.Subscription)
@@ -335,7 +335,8 @@
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="orderID" value="@Model.EditFields.Order.idOrder" />
-                    <input type="text" id="newExpiryDate" name="newExpiryDate" placeholder="Expires On" /> <span class="text text-info">@Model.EditFields.PostEventClaim.OnDemandCode</span>
+                    <input type="text" id="newExpiryDate" name="newExpiryDate" placeholder="Expires On" />
+                    
                     <div class="btn-group">
                         <button id="Add6MonthsButton" class="btn btn-mini">Add 6 months</button>
                         <button id="Add5DaysButton" class="btn btn-mini">Add 5 days</button>

@@ -91,6 +91,7 @@ var M = EDIT; // alias for code brevity
         ns.extendEventAccessButton = $('#extendEventAccessButton');
         ns.fireResendConfirmationButton = $('#fireResendConfirmationButton');
         ns.updateAddLocsButton = $('#UpdateAddLocsButton');
+        ns.regTypesList = $('#displayRegType');
 
         //MODALS
         ns.extendPostEventAccessModal = $('#ExtendPostEventAccessModal');
@@ -108,7 +109,6 @@ var M = EDIT; // alias for code brevity
         ns.changeAssignedUser = $('#changeAssignedUser');
         ns.PayByMonerisModal = $('#PayByMonerisModal');
 
-        ns.regTypesList = $('#RegType');
         ns.orderRowId = $('#manageOrderForm input[name="ID"]').val();
 
         ns.locationsSpanPrefix = 'LocationSpan-';
@@ -258,7 +258,7 @@ var M = EDIT; // alias for code brevity
     };
 
     ns.changeRegType = function (e) {
-
+        alert("hit");
         e.preventDefault();
 
         var self = this;
@@ -936,5 +936,5 @@ $(document).ready(function () {
     M.addLocsTotalPrice = $('#EditFields_DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions').val();
 
     M.wireUpTrashIcons();
-    //alert(addLocsUnitPrice);
+
 });

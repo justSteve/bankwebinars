@@ -562,8 +562,6 @@ namespace CUWebinars.Web.Controllers
                     editingUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
                 }
 
-                _logger.Info(string.Format("GetResendInfoForm: {0} is resending {1}", editingUser.email, order.BillingEmail));
-
                 var editModel = BuildOrderInfoModel(order, "");
 
                 html = ViewHelpers.RenderViewToString(ControllerContext,
@@ -902,15 +900,13 @@ namespace CUWebinars.Web.Controllers
             }
             var regType = orderRow.RegistrationType;
 
-            //editModel.EditFields.PostEventClaim = editModel.EditFields.ClaimsViewModel.UserClaims.Where(c =>c.)
-
+            var option = CheckIfAddLocAvailable(regType.idRegType);
+            //governs if addLoc editor is displayed.
+            if (option.HasValue)
             {
-                var option = CheckIfAddLocAvailable(regType.idRegType);
-                if (option.HasValue)
-                {
-                    editModel.EditFields.AdditionalLocationsAvailableOnLoad = option.Value;
-                }
+                editModel.EditFields.AdditionalLocationsAvailableOnLoad = option.Value;
             }
+
             return editModel;
         }
 
