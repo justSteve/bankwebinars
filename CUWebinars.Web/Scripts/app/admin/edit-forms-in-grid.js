@@ -517,8 +517,7 @@ var M = EDIT; // alias for code brevity
         var token = form.find('input[name=__RequestVerificationToken]').val();
         var headers = {};
         headers['__RequestVerificationToken'] = token;
-        alert("EditFields_idOrderRow=" + $("#EditFields_idOrderRow").val());
-
+        
         $.ajax({
             type: 'POST',
             contentType: constants.JsonContentType,

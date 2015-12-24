@@ -46,9 +46,6 @@ var OrderRegistration;
             return this.checkoutInProcess;
         };
 
-        //getConfirmOrderByCCForm(): JQuery {
-        //    return this.confirmOrderForm;
-        //}
         StateManager.prototype.getConfirmOrderForm = function () {
             return this.confirmOrderForm;
         };

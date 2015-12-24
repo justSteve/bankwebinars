@@ -6,8 +6,12 @@
     if (Model.Affiliate != null && !Model.UserIsAdmin)
     {
         <script type="text/javascript">
-            if (SENDCONNINFO === null || typeof SENDCONNINFO === 'undefined') {var SENDCONNINFO = {};}var DO = SENDCONNINFO;DO.affiliateId = @Model.Affiliate.idUserAff;
-
+            if (SENDCONNINFO === null || typeof SENDCONNINFO === 'undefined') {
+                var SENDCONNINFO = {};
+            }
+            var SCI = SENDCONNINFO;
+            SCI.affiliateId = @Model.Affiliate.idUserAff;
+            
         </script>
     }
 

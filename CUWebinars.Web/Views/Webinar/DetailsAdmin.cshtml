@@ -33,6 +33,7 @@
     var checkoutInProcess = @(Model.CheckoutInProcess ? "true" : "false");
     var isUserLoggedIn = @(@Model.UserIsLoggedIn ? "true" : "false");
     var currentWebinarId = @(@Model.Webinar.idWebinar);
+    var showAffiliateColumn = false;
     var currentAffiliateId = @currentAffiliate;
     var notificationsTesting = @(GlobalConfig.GlobalConfigSingleton.NotificationsTesting ? "true" : "false");
     var orderRowId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow : 0);
@@ -74,7 +75,7 @@
 
 <div class="container clearfix" id="main-content">
     <!--begin main content-->
-    <div id="webinarOrders" class="collapse">
+    <div id="webinarOrders" data-affiliateId="19" class="collapse">
 
         @Html.Partial("~/Views/Admin/Partials/_ShowOrders.cshtml", Model.ShowOrdersViewModel)
 
