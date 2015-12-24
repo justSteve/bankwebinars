@@ -494,7 +494,7 @@ var M = EDIT; // alias for code brevity
     };
 
     ns.submitUpdateAddLocsForm = function (e) {
-
+        
         e.preventDefault();
 
         var emailInputs = ns.wrapperDiv.find('input[type="email"]');
@@ -507,7 +507,7 @@ var M = EDIT; // alias for code brevity
         });
 
         var payload = {
-            orderRowId: ns.orderRowIdHidden.val(),
+            orderRowId: $("#EditFields_idOrderRow").val(),
             additionalLocations: addLocs
         };
 
@@ -517,7 +517,7 @@ var M = EDIT; // alias for code brevity
         var token = form.find('input[name=__RequestVerificationToken]').val();
         var headers = {};
         headers['__RequestVerificationToken'] = token;
-
+        alert("EditFields_idOrderRow=" + $("#EditFields_idOrderRow").val());
 
         $.ajax({
             type: 'POST',
