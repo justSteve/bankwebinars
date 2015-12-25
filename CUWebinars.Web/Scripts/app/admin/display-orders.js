@@ -46,6 +46,7 @@ function getOrderStatusHtml() {
         dataType: "json",
         type: "POST",
         success: function (data) {
+
             html = data.html;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {

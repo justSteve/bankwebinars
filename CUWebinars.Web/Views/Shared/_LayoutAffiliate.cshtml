@@ -1,25 +1,39 @@
 ﻿@using System.Text
 @using CUWebinars.Web.Core
+@using CUWebinars.Business.Constants
 
 @{
     var PageStyleType = ViewBag.PageStyleType;
     IStateService stateService = new StateService();
+    var currentAffiliate = stateService.GetValue<Affiliate>
+    (WebUiConstants.CurrentAffiliate);
 
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
 
-    var currentAffiliate = stateService.GetValue<Affiliate>
-    (WebUiConstants.CurrentAffiliate);
     string currentUserAffiliateFullName = string.Empty;
-    if (currentAffiliate != null)
+
+    if (User != null && User.Identity.IsAuthenticated)
     {
-        currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
+        ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+
+        if (claimsIdentityOfAuthenticatedUser.HasClaim(
+            (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
+        {
+            if (currentAffiliate != null)
+            {
+                currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
+            }
+            else
+            {
+                CUWebinars.Business.Core.Tracing.Tracer.Warning("CurrentAffiliate should always have a value. Session | {0}", new AppHelper(Request, stateService).GetUserAuditInfo());
+                Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
+            }
+
+
+        }
     }
-    else
-    {
-        CUWebinars.Business.Core.Tracing.Tracer.Warning("CurrentAffiliate should always have a value. Session | {0}", new AppHelper(Request, stateService).GetUserAuditInfo());
-        Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
-    }
+
 
     var subdomainBranding = stateService.GetValue<string>
         ("SubdomainBranding");
@@ -42,9 +56,6 @@
 <head>
     @if (globalConfig.Tenant == "BankWebinars")
     {
-        @*Rollbar Placeholder
-        *@
-
         <script type="text/javascript">
             window.$zopim || (function (d, s) {
                 var z = window.$zopim = function (c) {
@@ -69,9 +80,11 @@
     }
     @if (@User.Identity.IsAuthenticated && !HttpContext.Current.IsDebuggingEnabled)
     {
+
         if (!Html.IsDebug())
         {
             <script>
+                //var affiliateId =
                 window.$zopim(function () {
                     window.$zopim.livechat.setName("AFFILIATE: @User.Identity.Name.ToString().Replace("@", "_")");
 

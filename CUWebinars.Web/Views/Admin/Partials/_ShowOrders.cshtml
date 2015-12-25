@@ -16,9 +16,22 @@
         </script>
     }
 
-    var showAffColumn = Model.UserIsAdmin ? "true" : "false";
+    if (Model.UserIsAdmin)
+    {
+        <script type="text/javascript">
+            if (SHOWORDERS === null || typeof SHOWORDERS === 'undefined') {
+                var SHOWORDERS = {};
+
+            }
+            //var DO = SHOWORDERS;
+            SHOWORDERS.affiliateId = 19;
+
+        </script>
+    }
+
+    //var showAffColumn = Model.UserIsAdmin ? "true" : "false";
     //\Scripts\app\admin\display-orders.js
-        // AdminController/
+    // AdminController/
     <div id="filter-buttons" class="clearfix" style="margin-bottom:8px;">
         <div class="btn-group pull-left" id="showAllOrders" data-toggle="buttons-radio">
             <button type="button" class="btn btn-info btn-mini active" value="justThisEvent">Just This Event</button>
@@ -38,7 +51,7 @@
         </div>
     </div>
 
-    <table data-aff="@showAffColumn" id="ordersTable" class="table table-striped table-bordered dataTable no-footer" cellspacing="0" width="100%">
+    <table id="ordersTable" class="table table-striped table-bordered dataTable no-footer" cellspacing="0" width="100%">
         <thead>
             <tr>
                 <th>Order</th>

@@ -9,6 +9,10 @@
 
     var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
 
+    <script type="text/javascript">
+        var affiliateId = @currentAffiliate.idUserAff;
+        var showAffiliateColumn = true;
+    </script>
 }
 <!doctype html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en" dir="ltr"> <![endif]-->
