@@ -1567,22 +1567,22 @@ namespace CUWebinars.Web.Controllers.Admin
         //    return Json(new { Result = WebUiConstants.NoOrdersForWebinar });
         //}
 
-        private IEnumerable<Order> GetOrdersWhichAreEligibleForMaterials(IEnumerable<Order> orders)
-        {
-            IList<Order> eligableOrders = new Order[0];
-            foreach (var order in orders)
-            {
-                var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.WebUser.email);
+        //private IEnumerable<Order> GetOrdersWhichAreEligibleForMaterials(IEnumerable<Order> orders)
+        //{
+        //    IList<Order> eligableOrders = new Order[0];
+        //    foreach (var order in orders)
+        //    {
+        //        var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.WebUser.email);
 
-                DateTime? expiryDate = _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order);
+        //        DateTime? expiryDate = _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order);
 
-                if (expiryDate.HasValue && expiryDate > TtsConfig.UtcNowAsCts)
-                {
-                    eligableOrders.Add(order);
-                }
-            }
-            return eligableOrders;
-        }
+        //        if (expiryDate.HasValue && expiryDate > TtsConfig.UtcNowAsCts)
+        //        {
+        //            eligableOrders.Add(order);
+        //        }
+        //    }
+        //    return eligableOrders;
+        //}
 
 
         public PartialViewResult SendShippedOrder()
@@ -2325,8 +2325,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     //    order
                     //    );
                     //_logger.Info("INSERT dbo.UserClaims ( ParentKey, Type, Value ) VALUES	( (SELECT [Key] FROM dbo.UserAccounts WHERE Email = '{0}'), http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials,'{1}')", userAccountOfOrderer.Email, claimValue);
-                    _logger.Info("Added expiryDate claim for: {0}. Date: {1}", order.idOrder,
-                        expiryDate.ToShortDateString());
+                    _logger.Info("CreatePostEventClaim: {0}", claimValue.ToString(Formatting.None));
 
                 }
                 catch (Exception ex)
@@ -2410,10 +2409,6 @@ namespace CUWebinars.Web.Controllers.Admin
                     foreach (var claim in claimsViewModel.UserClaims.Where(c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials"))
                     {
                         var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
-                        if (thisClaim.ExpiryDate.AddDays(2) < DateTime.Now)
-                        {
-                            _logger.Warn("CheckOnDemandCodes finds expired claim: " + claim.Value);
-                        }
 
                         if (!ReferenceEquals(onDemandCode, null))
                         {
@@ -2439,7 +2434,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                     //{"OrderId":30706,"ExpiryDate":"2015-12-23","OnDemandCode":"oybo"}
                                     _logger.Info("INSERT dbo.UserClaims ( ParentKey, Type, Value ) VALUES	( (SELECT [Key] FROM dbo.UserAccounts WHERE " +
                                                  "Email = '{0}'), 'http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials', " +
-                                                 "'{\"OrderId\":{1},\"ExpiryDate\":' )", order.BillingEmail);
+                                                 "'{\"OrderId\":{1},\"ExpiryDate\":\"{2}\"' )", order.BillingEmail, order.idOrder, thisClaim.ExpiryDate );
                                 }
                             }
                         }
@@ -2516,16 +2511,35 @@ namespace CUWebinars.Web.Controllers.Admin
                         }
                         else
                         {
-                            //claim did
-                            var isClaimOrderIdADifferentOrder =
-                                _orderManagementService.GetOrdersByEmail(order.BillingEmail, 19).Where(o => o.idOrder == order.idOrder);
-
-                            if (isClaimOrderIdADifferentOrder.Count() == 0)
+                            if (thisClaim.OrderId == order.idOrder)
                             {
-                                if (thisClaim.OnDemandCode == onDemandCode)
+                                claimMatchOnOrderId = "matched orderId but not code: " + order.idOrder + "-" +
+                                                      onDemandCode;
+                            }
+                            else
+                            {
+                                
+                                var isClaimOrderIdADifferentOrder =
+                                    _orderManagementService.GetOrdersByEmail(order.BillingEmail, 19)
+                                        .Where(o => o.idOrder == order.idOrder);
+
+                                if (isClaimOrderIdADifferentOrder.Count() == 0)
                                 {
-                                    claimMatchOnCodeButNotId = claim.Value;
-                                    _logger.Warn("claimMatchOnCodeButNotId: " + claimMatchOnCodeButNotId);
+                                    if (onDemandCode == thisClaim.OnDemandCode)
+                                    {
+                                        claimMatchOnCodeButNotId = "matched on code but not orderId: " + order.idOrder + "-" +
+                                                                   onDemandCode;
+                                    }
+                                    else
+                                    {
+                                        _logger.Warn("no match found: " + order.idOrder);
+                                    }
+                                    _logger.Info(claimMatchOnCodeButNotId + claimMatchOnOrderId);
+                                    if (thisClaim.OnDemandCode == onDemandCode)
+                                    {
+                                        claimMatchOnCodeButNotId = claim.Value;
+                                        _logger.Warn("claimMatchOnCodeButNotId: " + claimMatchOnCodeButNotId);
+                                    }
                                 }
                             }
                         }
@@ -2557,19 +2571,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
             }
             return Content("Ok");
-        }
-
-
-
-        private DateTime CheckThatExpiryDateIsCorrect(Order order, DateTime expiryDate)
-        {
-            var calculatedDate = _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order);
-
-            if (expiryDate >= calculatedDate.AddDays(2) && expiryDate <= calculatedDate.AddDays(-2))
-            {
-                _logger.Info("exec CheckOnDemandCodesDateValues @calcDate='{0}', @storedDate='{1}', @idOrder='{2}'", calculatedDate.ToShortDateString(), expiryDate.ToShortDateString(), order.idOrder);
-            }
-            return calculatedDate;
         }
 
 

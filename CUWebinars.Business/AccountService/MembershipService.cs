@@ -116,11 +116,12 @@ namespace CUWebinars.Business.AccountService
 
         public DateTime? GetPostEventAccessExpireyDate(UserAccount userAccount, int idOrder)
         {
-            if (userAccount == null || !userAccount.HasClaim(ClaimTypes.PostEventMaterials)) return null;
+            if (userAccount == null || !userAccount.HasClaim(ClaimTypes.PostEventMaterials) || !userAccount.HasClaim(ClaimTypes.PostEventMaterialsExtended)) return null;
 
 
-            var claimsForOrder = userAccount.Claims.FirstOrDefault(c => c.Value.ToLower().Contains(idOrder.ToString())
-                && c.Type == ClaimTypes.PostEventMaterials);
+            var claimsForOrder = userAccount.Claims
+                .Where(c => c.Value.ToLower().Contains(idOrder.ToString()))
+                .FirstOrDefault(c => c.Type == ClaimTypes.PostEventMaterials || c.Type == ClaimTypes.PostEventMaterialsExtended);
 
             // extract the date
             if (claimsForOrder == null) return null;
@@ -598,7 +599,7 @@ namespace CUWebinars.Business.AccountService
 
         public Institution GetInstitutionById(int idInstitution)
         {
-           return _institutionRepository.GetById(idInstitution);
+            return _institutionRepository.GetById(idInstitution);
         }
 
         public void UpdateInstitutionDetails(Institution saveInst)
@@ -877,9 +878,9 @@ namespace CUWebinars.Business.AccountService
         {
             if (userAccount == null) throw new ArgumentNullException("userAccount");
 
-            var claim = userAccount.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PostEventMaterials
-                && c.Value.ToLower().Contains(idOrder.ToString()) && c.Value.Contains(onDemandCode)
-                );
+            var claim = userAccount.Claims
+                .Where( c=> c.Type == ClaimTypes.PostEventMaterials || c.Type == ClaimTypes.PostEventMaterialsExtended)
+                .FirstOrDefault(c => c.Value.ToLower().Contains(idOrder.ToString()) && c.Value.Contains(onDemandCode));
 
             if (ReferenceEquals(null, claim))
             {

@@ -135,6 +135,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     stringBuilder.AppendFormat("Property: {0} Error: {1} ", error.PropertyName, error.ErrorMessage);
                 }
+                _logger.Warn("Identify | OnDemand claim processing: " + stringBuilder.ToString());
                 Trace.TraceInformation(stringBuilder.ToString());
             }
 
@@ -276,24 +277,30 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 var checkExpired = GetPostEventMaterialsAccessExpiry(order);
 
-                if (myClaim != null)
+                if (myClaim == null)
                 {
-                    playModel.AuthorizedToAccessMaterials = "This code is valid until " + checkExpired.ToShortDateString() + ".";
-
-                    _logger.Info("AuthorizedToAccessMaterials granted to: " + webUser.email);
-
-                    return myClaim;
+                    playModel.AuthorizedToAccessMaterials = "Invalid code: " + playModel.OnDemandCode;
                 }
-
-
-                playModel.AuthorizedToAccessMaterials = "Invalid code: " + playModel.OnDemandCode;
-
-                if (checkExpired < DateTime.Now)
+                else
                 {
-                    playModel.AuthorizedToAccessMaterials = "Code expired on " + checkExpired.ToShortDateString();
+                    if (checkExpired > DateTime.Now)
+                    {
+                        playModel.AuthorizedToAccessMaterials = "This code is valid until " +
+                                                                checkExpired.ToShortDateString() + ".";
 
-                    _logger.Warn("AuthorizedToAccessMaterials found expired code: " + webUser.email + " " + playModel.OnDemandCode);
-                    return "Code is Expired.";
+                        _logger.Info("AuthorizedToAccessMaterials granted to: " + webUser.email);
+
+                        return myClaim;
+                    }
+
+                    if (checkExpired < DateTime.Now)
+                    {
+                        playModel.AuthorizedToAccessMaterials = "Code expired on " + checkExpired.ToShortDateString();
+
+                        _logger.Warn("AuthorizedToAccessMaterials found expired code: " + webUser.email + " " +
+                                     playModel.OnDemandCode);
+                        return "Code is Expired.";
+                    }
                 }
                 return "Not Authorized";
             }
