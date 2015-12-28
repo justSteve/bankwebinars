@@ -835,7 +835,7 @@ namespace CUWebinars.Web.Controllers
                 _orderManagementService.GetCostOfAdditionalLocations(orderRow.AdditionalLocation, orderRow.idWebinar);
             var additionalLocations = orderRow.AdditionalLocation;
             var additionalLocationsCount = additionalLocations.Count;
-            var regTypes = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.Webinar.idWebinar, false);
+
             PostEventClaim postEvent = new PostEventClaim();
             var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
 
@@ -884,7 +884,8 @@ namespace CUWebinars.Web.Controllers
             foreach (
                 var claim in
                     claimsViewModel.UserClaims.Where(
-                        c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials"))
+                          c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials"
+                            || c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterialsExtended"))
             {
                 var singleOrDefault = editModel.EditFields.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                 if (singleOrDefault != null && claim.Value.Contains(singleOrDefault.OnDemandCode))

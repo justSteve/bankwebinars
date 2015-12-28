@@ -404,7 +404,7 @@ function getOrderStatusHtml() {
                 "mData": "",
                 "mRender": function (data, type, full) {
                     var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
-                    var statusHtml = full.OrderDateString + " - " + orderToEdit;
+                    var statusHtml = full.OrderDateString;
                     var resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendOrderConfirmationButton btn btn-mini\">Send Confirmation</button>";
                     if (full.Webinar_IsActive) {
                         resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
@@ -429,7 +429,7 @@ function getOrderStatusHtml() {
                     //  magic strings [ORDERSTATUS] and [ORDERID] are hand-/hard-coded in the partial View
                     var dd_html = DO.baseOrderStatusHtml.replace(/\[ORDERSTATUS\]/gi, full.OrderStatusString).replace(/\[ORDERID\]/gi, orderToEdit);
 
-                    return dd_html;
+                    return dd_html + orderToEdit;
                 }
             }]
         });

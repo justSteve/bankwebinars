@@ -879,7 +879,7 @@ namespace CUWebinars.Business.AccountService
             if (userAccount == null) throw new ArgumentNullException("userAccount");
 
             var claim = userAccount.Claims
-                .Where( c=> c.Type == ClaimTypes.PostEventMaterials || c.Type == ClaimTypes.PostEventMaterialsExtended)
+                .Where(c => c.Type == ClaimTypes.PostEventMaterials || c.Type == ClaimTypes.PostEventMaterialsExtended)
                 .FirstOrDefault(c => c.Value.ToLower().Contains(idOrder.ToString()) && c.Value.Contains(onDemandCode));
 
             if (ReferenceEquals(null, claim))
@@ -929,7 +929,7 @@ namespace CUWebinars.Business.AccountService
                 || c.Type == ClaimTypes.PostEventMaterialsExtended);
 
             var claimForOrder = allPostEventMaterialsClaimsForUser
-                .FirstOrDefault(c => c.Value.Contains(order.ToString()));
+                .FirstOrDefault(c => c.Value.Contains(order.idOrder.ToString()));
 
             if (!ReferenceEquals(null, claimForOrder))
             {
@@ -939,6 +939,8 @@ namespace CUWebinars.Business.AccountService
 
                 _userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.PostEventMaterials,
                     claimForOrder.Value);
+                _userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.PostEventMaterialsExtended,
+                                    claimForOrder.Value);
 
                 _userAccountService.AddClaim(userAccount.ID, ClaimTypes.PostEventMaterialsExtended,
                     jsonParsedClaim.ToString(Formatting.None));

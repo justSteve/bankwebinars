@@ -1,51 +1,5 @@
 ﻿@using CUWebinars.Web.Core
 @model  CUWebinars.Web.Models.DataTablesModels.EditOrderInfoModel
-@{
-
-    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
-    var row = Model.EditFields.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-    var joinURL = "";
-    var ttsJoinURL = "";
-    var onDemandCode = "";
-    var certificate = "";
-
-    if (!ReferenceEquals(row, null))
-    {
-        if (row.Webinar.Status == WebinarStatus.InProgress || row.Webinar.Status == WebinarStatus.Active || row.Webinar.Status == WebinarStatus.Scheduled)
-        {
-            if (!ReferenceEquals(row.CitrixJoinUrl, null))
-            {
-                joinURL = row.CitrixJoinUrl;
-            }
-            if (!ReferenceEquals(row.TtsJoinUrl, null))
-            {
-                ttsJoinURL = _globalConfig.TenantURL + "/j/" + row.TtsJoinUrl;
-            }
-        }
-        if (row.Webinar.Status == WebinarStatus.Recorded)
-        {
-            
-            if (!ReferenceEquals(row.OnDemandCode, null))
-            {
-                onDemandCode = _globalConfig.TenantURL + "/o/" + row.idOrder + '-' + row.OnDemandCode;
-            }
-            else
-            {
-                <div>OnDemandCode is null</div>
-            }
-        }
-        if (row.Webinar.Status == WebinarStatus.Archived || row.Webinar.Status == WebinarStatus.Recorded)
-        {
-            if (!ReferenceEquals(row.OnDemandCode, null))
-            {
-                certificate = _globalConfig.TenantURL + "/Account/MyCertificate?orderID=" + row.idOrder;
-            }
-        }
-
-
-    }
-}
-@Html.HiddenFor(model => model.EditFields.idOrderRow)
 <style>
     .form-horizontal .control-group {
         margin-bottom: 5px;
@@ -55,19 +9,92 @@
             border-radius: 0px;
             padding: 1px 6px;
         }
+
+
 </style>
 
+@{
 
-<div class="row-fluid">
-    <div class="span7 offset1 control-group">
-        <span class="control-label">Links:</span>
-        <div class="controls">
-            @joinURL<br/>
-            @ttsJoinURL<br/>
-            @onDemandCode<br/>
-            @certificate
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+    var row = Model.EditFields.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+    var joinURL = "";
+    var ttsJoinURL = "";
+    var onDemandCode = "";
+    if (!ReferenceEquals(row.OnDemandCode, null))
+    {
+        onDemandCode = _globalConfig.TenantURL + "/o/" + row.idOrder + '-' + row.OnDemandCode;
+    }
+    else
+    {
+        onDemandCode = "OnDemandCode is null.";
+    }
+
+    if (!ReferenceEquals(row.CitrixJoinUrl, null))
+    {
+        joinURL = row.CitrixJoinUrl;
+    }
+    if (!ReferenceEquals(row.TtsJoinUrl, null))
+    {
+        ttsJoinURL = _globalConfig.TenantURL + "/j/" + row.TtsJoinUrl;
+    }
+    var certificate = _globalConfig.TenantURL + "/Account/MyCertificate?orderID=" + row.idOrder;
+    @Html.HiddenFor(model => model.EditFields.idOrderRow)
+
+    <div class="row-fluid">
+        <div class="span10 offset1 control-group">
+            <span class="control-label">Links:</span>
+            <div class="controls">
+                @{
+
+                    if (row.Webinar.Status == WebinarStatus.InProgress || row.Webinar.Status == WebinarStatus.Active || row.Webinar.Status == WebinarStatus.Scheduled)
+                    {
+                        @joinURL<br />
+                        @ttsJoinURL<br />
+                    }
+                    if (row.Webinar.Status == WebinarStatus.Recorded)
+                    {
+                        @onDemandCode<br />
+                    }
+                    if (row.Webinar.Status == WebinarStatus.Archived || row.Webinar.Status == WebinarStatus.Recorded)
+                    {
+                        @certificate
+                    }
+
+
+                }
+                <p style="font-size: smaller">
+                    <br/><b>OnDemand Claim Values</b>
+                    <table style="font-size: smaller; margin: 0; padding: 0;">
+                        <tr>
+                            <td>
+                                ExpiryDate:
+                            </td>
+                            <td>
+                                @Model.EditFields.PostEventClaim.ExpiryDate
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Code:
+                            </td>
+                            <td>
+                                @Model.EditFields.PostEventClaim.OnDemandCode
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Claim's OrderId:
+                            </td>
+                            <td>
+                                @Model.EditFields.PostEventClaim.OrderId
+                            </td>
+                        </tr>
+                    </table>
+                </p>
+
+            </div>
         </div>
+
+
     </div>
-
-
-</div>
+}

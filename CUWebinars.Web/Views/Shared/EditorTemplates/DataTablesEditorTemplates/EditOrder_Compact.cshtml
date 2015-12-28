@@ -15,7 +15,7 @@
     }
     if (Model.EditFields.DisplayRowPriceViewModel.RegistrationType.OptionLabel.StartsWith("OnDemand"))
     {
-        abbvLable = "Recorded Only";
+        abbvLable = "Recorded";
     }
     if (Model.EditFields.DisplayRowPriceViewModel.RegistrationType.OptionLabel.StartsWith("CD"))
     {
@@ -153,9 +153,6 @@
             </div>
             <div style="text-align: center; border-style: solid;" id="discountPanel">
 
-
-
-
                 @if (discount == null)
                 {
                     @Html.TextBoxFor(m => m.EditFields.Discount.DiscountCode, new { placeholder = "Enter code", @class = "input input-small" })
@@ -230,37 +227,37 @@
                 {
                     var currentExpiryDate = Model.EditFields.Discount.DateValidTo.Month + "/" + Model.EditFields.Discount.DateValidTo.Year;
                     var newExpiryDate = Model.EditFields.Discount.DateValidTo.AddMonths(@Model.EditFields.Discount.RenewalTerm);
-                    @Html.AntiForgeryToken()
+                @Html.AntiForgeryToken()
 
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h3>Update Compliance Series Subscription</h3>
-                    </div>
-                    <div class="modal-body">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3>Update Compliance Series Subscription</h3>
+                </div>
+                <div class="modal-body">
 
-                        <input type="hidden" name="orderID" value="@Model.EditFields.Order.idOrder" />
-                        Current Expiration Date:
-                        <input disabled="disabled" class="input input-small;" type="text" name="currentExpiryDate" id="currentExpiryDate" value="@currentExpiryDate" />
-                        <br />Renewal Term: @Html.TextBoxFor(m => m.EditFields.Discount.RenewalTerm, new { id = "RenewalTerm", disabled = "disabled", @class = "input input-sm" })
-                        @Html.HiddenFor(m => m.EditFields.Discount.DateValidTo) @* Required for POST. TextBoxFor won't ModelBind *@
-                        <br />New Expiration Date:
-                        <input class="input input-small" type="text" name="newCPExpiryDate" id="newCPExpiryDate" value="@newExpiryDate.ToShortDateString()" />
-                        <br />Sage Invoice Number:
-                        @Html.TextBoxFor(m => m.EditFields.Order.SageInvoiceId, new { id = "SageInvoiceId", @class = "input input-small" })
-                        <br />Notes:
-                        @Html.TextAreaFor(m => m.EditFields.Discount.Notes)
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                        <button id="updateCPSubscriptionButton" name="moveOne" class="btn btn-primary">Update Subscription</button>
-                    </div>
-                    <div>
-                        @Html.HiddenFor(m => m.EditFields.Order.idOrder)
-                        @Html.HiddenFor(m => m.EditFields.WebUser.idUser)
-                        @Html.HiddenFor(m => m.EditFields.WebinarId)
-                        @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)
-                        @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)
-                    </div>
+                    <input type="hidden" name="orderID" value="@Model.EditFields.Order.idOrder" />
+                    Current Expiration Date:
+                    <input disabled="disabled" class="input input-small;" type="text" name="currentExpiryDate" id="currentExpiryDate" value="@currentExpiryDate" />
+                    <br />Renewal Term: @Html.TextBoxFor(m => m.EditFields.Discount.RenewalTerm, new { id = "RenewalTerm", disabled = "disabled", @class = "input input-sm" })
+                    @Html.HiddenFor(m => m.EditFields.Discount.DateValidTo) @* Required for POST. TextBoxFor won't ModelBind *@
+                    <br />New Expiration Date:
+                    <input class="input input-small" type="text" name="newCPExpiryDate" id="newCPExpiryDate" value="@newExpiryDate.ToShortDateString()" />
+                    <br />Sage Invoice Number:
+                    @Html.TextBoxFor(m => m.EditFields.Order.SageInvoiceId, new { id = "SageInvoiceId", @class = "input input-small" })
+                    <br />Notes:
+                    @Html.TextAreaFor(m => m.EditFields.Discount.Notes)
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                    <button id="updateCPSubscriptionButton" name="moveOne" class="btn btn-primary">Update Subscription</button>
+                </div>
+                <div>
+                    @Html.HiddenFor(m => m.EditFields.Order.idOrder)
+                    @Html.HiddenFor(m => m.EditFields.WebUser.idUser)
+                    @Html.HiddenFor(m => m.EditFields.WebinarId)
+                    @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)
+                    @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)
+                </div>
 
                 }
             </div>
@@ -270,32 +267,32 @@
             <div id="editNotes" class="modal hide fade">
                 @using (Html.BeginForm("UpdateDiscountNotes", "Account", FormMethod.Post, new { id = "frmUpdateDiscountNotes" }))
                 {
-                    @Html.AntiForgeryToken()
+                @Html.AntiForgeryToken()
 
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h3>Update Notes</h3>
-                    </div>
-                    <div class="modal-body">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3>Update Notes</h3>
+                </div>
+                <div class="modal-body">
 
-                        <input type="hidden" name="orderID" value="@Model.EditFields.Order.idOrder" />
-                        <br />Notes:
-                        <div>
-                            <textarea class="form-control" style="min-width: 100%">"@Model.EditFields.Discount.Notes</textarea>
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                        <button id="updateDiscountNotesButton" name="moveOne" class="btn btn-primary">Update Notes</button>
-                    </div>
+                    <input type="hidden" name="orderID" value="@Model.EditFields.Order.idOrder" />
+                    <br />Notes:
                     <div>
-                        @Html.HiddenFor(m => m.EditFields.Order.idOrder)
-                        @Html.HiddenFor(m => m.EditFields.WebUser.idUser)
-                        @Html.HiddenFor(m => m.EditFields.WebinarId)
-                        @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)
-                        @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)
+                        <textarea class="form-control" style="min-width: 100%">"@Model.EditFields.Discount.Notes</textarea>
                     </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                    <button id="updateDiscountNotesButton" name="moveOne" class="btn btn-primary">Update Notes</button>
+                </div>
+                <div>
+                    @Html.HiddenFor(m => m.EditFields.Order.idOrder)
+                    @Html.HiddenFor(m => m.EditFields.WebUser.idUser)
+                    @Html.HiddenFor(m => m.EditFields.WebinarId)
+                    @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)
+                    @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)
+                </div>
                 }
             </div>
         }
@@ -336,14 +333,45 @@
                     <h3>Enter Expiration Date:</h3>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="orderID" value="@Model.EditFields.Order.idOrder" />
-                    <input type="text" id="newExpiryDate" name="newExpiryDate" placeholder="Expires On" />
+                    <div>
 
+                        <input type="hidden" name="orderID" value="@Model.EditFields.Order.idOrder" />
+                        <input type="text" id="newExpiryDate" name="newExpiryDate" placeholder="Expires On" />
+                    </div>
                     <div class="btn-group">
                         <button id="Add6MonthsButton" class="btn btn-mini">Add 6 months</button>
                         <button id="Add5DaysButton" class="btn btn-mini">Add 5 days</button>
                         <button id="AdInfinitumButton" class="btn btn-mini">Custom</button>
                     </div>
+                    <p style="font-size: smaller">
+                        <br /><b>OnDemand Claim Values</b>
+                        <table style="font-size: smaller; margin: 0; padding: 0;">
+                            <tr>
+                                <td>
+                                    ExpiryDate:
+                                </td>
+                                <td>
+                                    @Model.EditFields.PostEventClaim.ExpiryDate
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Code:
+                                </td>
+                                <td>
+                                    @Model.EditFields.PostEventClaim.OnDemandCode
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Claim's OrderId:
+                                </td>
+                                <td>
+                                    @Model.EditFields.PostEventClaim.OrderId
+                                </td>
+                            </tr>
+                        </table>
+                    </p>
                 </div>
                 <div class="modal-footer">
                     <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -430,8 +458,8 @@
 
                     <input type="hidden" name="id" />
                     <input type="hidden" id="Step2_BillMeFormReferred" name="referred" value="" />
-                    
-                        <h3 id="confirmCaption"></h3>
+
+                    <h3 id="confirmCaption"></h3>
                     <div>
                         <input type="hidden" name="hpp_id" value="@globalConfig.TenantMonerisHpp_Id">
                         <input type="hidden" name="hpp_key" value="@globalConfig.TenantMonerisHpp_Key">
@@ -457,7 +485,6 @@
                         <input type="hidden" name="od_bill_city" value="@order.BillingCity">
                         <input type="hidden" name="od_bill_state" value="@order.BillingState">
                         <input type="hidden" name="od_bill_zipcode" value="@order.BillingZip">
-
                         <input type="hidden" name="od_bill_phone" value="@order.BillingPhone">
 
                         <input type="hidden" name="od_ship_firstname" value="@order.ShippingFirstName">
@@ -467,7 +494,6 @@
                         <input type="hidden" name="od_ship_city" value="@order.ShippingCity">
                         <input type="hidden" name="od_ship_state" value="@order.ShippingState">
                         <input type="hidden" name="od_ship_zipcode" value="@order.ShippingZip">
-
                         <input type="hidden" name="od_ship_phone" value="@order.ShippingPhone">
 
 

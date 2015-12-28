@@ -1233,10 +1233,6 @@
     <Content Include="Content\images\email\upcomingwebinars.png" />
     <Content Include="Content\images\email\upcomingwebinars1.jpg" />
     <Content Include="Content\images\email\VABANKERS\bannerCaption1.jpg" />
-    <Content Include="Content\images\email\wisbank - Copy %282%29\banner.jpg" />
-    <Content Include="Content\images\email\wisbank - Copy %282%29\banner.png" />
-    <Content Include="Content\images\email\wisbank - Copy %282%29\bannerCaption1.jpg" />
-    <Content Include="Content\images\email\wisbank - Copy %282%29\bannerTTSBase.png" />
     <Content Include="Content\images\email\wisbank\banner.jpg" />
     <Content Include="Content\images\email\wisbank\banner.png" />
     <Content Include="Content\images\email\wisbank\bannerCaption1.jpg" />
@@ -1751,7 +1747,6 @@
     <Content Include="Content\images\email\sfcft\Thumbs.db" />
     <Content Include="Content\images\email\Thumbs.db" />
     <Content Include="Content\images\email\VABANKERS\Thumbs.db" />
-    <Content Include="Content\images\email\wisbank - Copy %282%29\Thumbs.db" />
     <Content Include="Content\images\email\wisbank\Thumbs.db" />
     <Content Include="Content\images\Thumbs.db" />
     <Content Include="Notification\Templates\Web.config">
