@@ -54,29 +54,35 @@
 <html class="no-js" lang="en" dir="ltr">
 <!--<![endif]-->
 <head>
-    @if (globalConfig.Tenant == "BankWebinars")
-    {
-        <script type="text/javascript">
-            window.$zopim || (function (d, s) {
-                var z = window.$zopim = function (c) {
-                    z._.push(c);
-                },
-                    $ = z.s = d.createElement(s),
-                    e = d.getElementsByTagName(s)[0];
 
-                z.set = function (o) {
-                    z.set._.push(o);
-                };
-                z._ = [];
-                z.set._ = [];
-                $.async = !0;
-                $.setAttribute("charset", "utf-8");
-                $.src = "//v2.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU";
-                z.t = +new Date;
-                $.type = "text/javascript";
-                e.parentNode.insertBefore($, e);
-            })(document, "script");
-        </script>
+    <script type="text/javascript">
+        var affiliateId = @currentAffiliate.idUserAff;
+        var showAffiliateColumn = true;
+        var currentAffiliateId = "@currentAffiliate.idUserAff";
+        var currentAffiliateDisplayTitle = "@currentAffiliate.DisplayTitle";
+    </script>
+
+    <script type="text/javascript">
+        window.$zopim || (function(d, s) {
+            var z = window.$zopim = function(c) {
+                z._.push(c);
+            },
+                $ = z.s = d.createElement(s),
+                e = d.getElementsByTagName(s)[0];
+
+            z.set = function(o) {
+                z.set._.push(o);
+            };
+            z._ = [];
+            z.set._ = [];
+            $.async = !0;
+            $.setAttribute("charset", "utf-8");
+            $.src = "//v2.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU";
+            z.t = +new Date;
+            $.type = "text/javascript";
+            e.parentNode.insertBefore($, e);
+        })(document, "script");
+    </script>
     }
     @if (@User.Identity.IsAuthenticated && !HttpContext.Current.IsDebuggingEnabled)
     {
@@ -85,7 +91,7 @@
         {
             <script>
                 //var affiliateId =
-                window.$zopim(function () {
+                window.$zopim(function() {
                     window.$zopim.livechat.setName("AFFILIATE: @User.Identity.Name.ToString().Replace("@", "_")");
 
                 });
@@ -119,9 +125,9 @@
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="~/Content/images/BankWebinars/apple-touch-icon-144x144-precomposed.png" />
     <link rel="shortcut icon" href="~/Content/images/BankWebinars/favicon.ico" />
     <!-- Open Graph for facebook
-        http://graph.facebook.com/[UserName] replace [UserName]
-        with yours and get your fb:admis content information where the XXXX goes.
-        ================================================== -->
+    http://graph.facebook.com/[UserName] replace [UserName]
+    with yours and get your fb:admis content information where the XXXX goes.
+    ================================================== -->
     <meta property="og:title" content="" />
     <meta property="og:type" content="" />
     <meta property="og:url" content="" />

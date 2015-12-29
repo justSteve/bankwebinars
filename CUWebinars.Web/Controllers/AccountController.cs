@@ -880,7 +880,13 @@ namespace CUWebinars.Web.Controllers
                     NumberOfAdditionalLocations = additionalLocationsCount
                 }
             };
-            var onDemandClaim = new PostEventClaim();
+            var onDemandClaim = new PostEventClaim
+            {
+                OnDemandCode = "notfound",
+                OrderId = 0,
+                ExpiryDate = DateTime.Now.AddYears(-10)
+            };
+            editModel.EditFields.PostEventClaim = onDemandClaim;
             foreach (
                 var claim in
                     claimsViewModel.UserClaims.Where(
