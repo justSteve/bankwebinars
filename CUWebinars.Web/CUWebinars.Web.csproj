@@ -1294,6 +1294,8 @@
     <Content Include="Content\images\LogoBase.png" />
     <Content Include="Content\images\logoCU.png" />
     <Content Include="Content\images\logoCUTrans.png" />
+    <Content Include="Content\images\LogOntoWebinar.jpg" />
+    <Content Include="Content\images\LogOntoWebinar.png" />
     <Content Include="Content\images\logo_abtc.png" />
     <Content Include="Content\images\logo_alabamabankers.png" />
     <Content Include="Content\images\logo_arkbankers.png" />
@@ -1438,6 +1440,7 @@
     <Content Include="Content\images\presenters\gregg.jpg" />
     <Content Include="Content\images\presenters\hinkel.jpg" />
     <Content Include="Content\images\presenters\hull.jpg" />
+    <Content Include="Content\images\presenters\jackandkelly.jpg" />
     <Content Include="Content\images\presenters\johnson.jpg" />
     <Content Include="Content\images\presenters\jsmith.jpg" />
     <Content Include="Content\images\presenters\kasel.jpg" />
@@ -2566,7 +2569,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>3538</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:3538/</IISUrl>
+          <IISUrl>http://localhost:44300/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

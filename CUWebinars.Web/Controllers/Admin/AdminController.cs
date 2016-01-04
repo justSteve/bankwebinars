@@ -116,29 +116,25 @@ namespace CUWebinars.Web.Controllers.Admin
             FtpWebRequest request =
                 (FtpWebRequest)
                     WebRequest.Create(
-                        "ftp://waws-prod-ch1-005.ftp.azurewebsites.windows.net/LogFiles/log4netCSVlocal.log");
+                        "ftp://waws-prod-ch1-005.ftp.azurewebsites.windows.net/LogFiles/log4netCSV.log");
 
             request.Method = WebRequestMethods.Ftp.DownloadFile;
 
-
-
-            // This example assumes the FTP site uses anonymous logon.
 
             request.Credentials = new NetworkCredential("$BankWebinars33",
                 "FDcehM4K2WbSuxEplrG2B7uJxqrMbeqJ6MdDm3GLyraYTmzWnmLDQAkllu0t", "BankWebinars33");
 
             FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-
-
-
+            
+            
             Stream responseStream = response.GetResponseStream();
 
             StreamReader reader = new StreamReader(responseStream);
 
-            Console.WriteLine(reader.ReadToEnd());
 
-
-
+            StreamWriter writer = new StreamWriter("C:\\Users\\Steve\\Desktop\\logfiles\\resultStream.log");
+            writer.Write(reader.ReadToEnd());
+            
             Console.WriteLine("Download Complete, status {0}", response.StatusDescription);
 
 
@@ -2434,7 +2430,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                     //{"OrderId":30706,"ExpiryDate":"2015-12-23","OnDemandCode":"oybo"}
                                     _logger.Info("INSERT dbo.UserClaims ( ParentKey, Type, Value ) VALUES	( (SELECT [Key] FROM dbo.UserAccounts WHERE " +
                                                  "Email = '{0}'), 'http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials', " +
-                                                 "'{\"OrderId\":{1},\"ExpiryDate\":\"{2}\"' )", order.BillingEmail, order.idOrder, thisClaim.ExpiryDate );
+                                                 "'{\"OrderId\":{1},\"ExpiryDate\":\"{2}\"' )", order.BillingEmail, order.idOrder, thisClaim.ExpiryDate);
                                 }
                             }
                         }
@@ -2474,94 +2470,62 @@ namespace CUWebinars.Web.Controllers.Admin
 
             foreach (var order in v3Orders)
             {
-                var calculatedDate = _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order);
-
-                if (DateTime.Now <= calculatedDate)
+                var onDemandCode = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).OnDemandCode;
+                if (onDemandCode == null)
                 {
-                    var onDemandCode = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).OnDemandCode;
-                    if (onDemandCode == null)
-                    {
-                        onDemandCode = RandomHelpers.GetUniqueCode(4);
-                        _logger.Info("UPDATE dbo.OrderRow SET OnDemandCode = '{0}' WHERE idOrder ={1}",
-                                    onDemandCode, order.idOrder);
-                    }
-
+                    onDemandCode = RandomHelpers.GetUniqueCode(4);
+                    _logger.Warn("UPDATE dbo.OrderRow SET OnDemandCode = '{0}' WHERE idOrder ={1}",
+                                onDemandCode, order.idOrder);
+                    continue;
                 }
-                //audit claim
 
                 try
                 {
                     var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
+                    var order1 = order;
 
-                    var onDemandCode =
-                        order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).OnDemandCode;
                     var claims =
-                        userAccount.Claims.Where(
-                            c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials");
-                    foreach (var claim in claims)
+                        userAccount.Claims
+                            .Where(
+                                c =>
+                                    c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials"
+                                    ||
+                                    c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterialsExtended")
+                            .ToList();
+
+                    var fullMatch = claims.Where(c => c.Value.Contains(order1.idOrder.ToString()))
+                        .Where(c => c.Value.Contains(onDemandCode));
+
+                    if (fullMatch.Any())
                     {
-                        var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
-
-                        var claimMatchOnOrderId = "";
-                        var claimMatchOnCodeButNotId = "";
-                        var claimFullyMatched = false;
-                        if (thisClaim.OrderId == order.idOrder && thisClaim.OnDemandCode == onDemandCode)
-                        {
-                            claimFullyMatched = true;
-                        }
-                        else
-                        {
-                            if (thisClaim.OrderId == order.idOrder)
-                            {
-                                claimMatchOnOrderId = "matched orderId but not code: " + order.idOrder + "-" +
-                                                      onDemandCode;
-                            }
-                            else
-                            {
-                                
-                                var isClaimOrderIdADifferentOrder =
-                                    _orderManagementService.GetOrdersByEmail(order.BillingEmail, 19)
-                                        .Where(o => o.idOrder == order.idOrder);
-
-                                if (isClaimOrderIdADifferentOrder.Count() == 0)
-                                {
-                                    if (onDemandCode == thisClaim.OnDemandCode)
-                                    {
-                                        claimMatchOnCodeButNotId = "matched on code but not orderId: " + order.idOrder + "-" +
-                                                                   onDemandCode;
-                                    }
-                                    else
-                                    {
-                                        _logger.Warn("no match found: " + order.idOrder);
-                                    }
-                                    _logger.Info(claimMatchOnCodeButNotId + claimMatchOnOrderId);
-                                    if (thisClaim.OnDemandCode == onDemandCode)
-                                    {
-                                        claimMatchOnCodeButNotId = claim.Value;
-                                        _logger.Warn("claimMatchOnCodeButNotId: " + claimMatchOnCodeButNotId);
-                                    }
-                                }
-                            }
-                        }
+                        continue;
                     }
-                    //else
-                    //{
-                    //    if (claim.Value.Contains(order.idOrder.ToString()))
-                    //    {
-                    //        //_orderManagementService.SaveChanges();
-                    //        _logger.Info("UPDATE dbo.OrderRow SET OnDemandCode = '{0}' WHERE idOrder ={1}",
-                    //            thisClaim.OnDemandCode, order.idOrder);
-                    //        //var expiryDate = _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order);
 
-                    //        //CreatePostEventClaim(order, expiryDate);
-                    //        //_logger.Warn("Null OnDemandCode is updated " + order.OrderRows.SingleOrDefault().idOrder);
-                    //    }
-                    //    else
-                    //    {
-                    //        _logger.Info("UPDATE dbo.OrderRow SET OnDemandCode = '{0}' WHERE idOrder ={1}",
-                    //                    RandomHelpers.GetUniqueCode(4), order.idOrder);
-                    //    }
-                    //}
+                    var notfoundOrderId = claims.Where(c => !c.Value.Contains(order1.idOrder.ToString()))
+                        .Where(c => c.Value.Contains(onDemandCode));
+
+
+                    var notfoundCode = claims.Where(c => c.Value.Contains(order1.idOrder.ToString()))
+                        .Where(c => !c.Value.Contains(onDemandCode));
+
+                    if (notfoundCode.Any())
+                    {
+                        _logger.Warn("notfoundCode: " + onDemandCode);
+                        continue;
+                    }
+                    if (notfoundOrderId.Any())
+                    {
+                        _logger.Warn("notfoundOrderId:" + order1.idOrder);
+                        continue;
+                    }
+                    _logger.Warn("found Neither: " + order1.idOrder + "-" + onDemandCode);
+                    var expriyDate = _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order).ToShortDateString();
+
+                    //{"OrderId":91274,"ExpiryDate":"2015-12-28","OnDemandCode":"5wbf"}
+                    _logger.Info("INSERT dbo.UserClaims ( ParentKey, Type, Value ) VALUES	( (SELECT [Key] FROM dbo.UserAccounts WHERE " +
+                                 "Email = '"+order.BillingEmail+"'), 'http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials', " +
+                                 "'{\"OrderId\":"+order.idOrder+",\"ExpiryDate\":\""+expriyDate+"\",\"OnDemandCode\":\""+onDemandCode+"\"}' )");
+
 
                 }
                 catch (Exception ex)

@@ -923,7 +923,7 @@ namespace CUWebinars.Business.AccountService
 
         public void UpdatePostEventMaterialsClaim(UserAccount userAccount, DateTime newDate, Order order)
         {
-            _logger.Info("UpdatePostEventMaterialsClaim Email: {0}, DateToExpire: {1}, idOrder: {2}", userAccount.Email, newDate, order);
+            _logger.Info("UpdatePostEventMaterialsClaim Email: {0}, DateToExpire: {1}, idOrder: {2}", userAccount.Email, newDate, order.idOrder);
             var allPostEventMaterialsClaimsForUser = userAccount.Claims
                 .Where(c => c.Type == ClaimTypes.PostEventMaterials
                 || c.Type == ClaimTypes.PostEventMaterialsExtended);
