@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Configuration;
 using System.Reflection;
+using System.Security.Claims;
 using System.Text;
 using System.Web;
 using System.Web.Helpers;
@@ -266,6 +267,22 @@ namespace CUWebinars.Web
 
                 StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(AppConst.DEFAULT_AFFILIATE, a => a.WebUser));
                 StateService.SetValue("AValidInstitution", institutionRepository.FindFirst());
+
+                if (User != null && User.Identity.IsAuthenticated)
+                {
+                    ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+
+                    if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                        (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
+                    {
+                        var claimTTSDomain =
+                            claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate)
+                                .First()
+                                .Value;
+                        StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.LoadByTTSDomain(claimTTSDomain));
+
+                    }
+                }
 
                 //This session var lets us understand the origin of the Affiliate session - 
                 //...answers the question - How was the Session Affiliate determined?

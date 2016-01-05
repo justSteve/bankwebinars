@@ -642,28 +642,10 @@ OCA.wireUpHandlers = function () {
     });
 
 
-    OCA.AddOrder = function (e) {
-
-        //var self = this;
-
-        var userId = e.getAttribute('data-userId');
-        var regId = $('input[name=RegistrationTypeId]').val();
-
-        var payload = {
-            userId: userId,
-            affiliateId: DU.affiliateId,
-            idRegType: regId
-        };
-
-        //var chosenUserName = $('#chosenUserName');
-
-        //if (chosenUserName.length < 1 || !chosenUserName.is(':visible')) {
-        //    alert('You must select a user using the textbox to the left of the Sign Up button.');
-        //    return;
-        //}
-
-        //$(this).append('<i id="signUpSpinnerInButton" class="icon-spinner icon-spin"></i>');
-
+    OCA.AddOrder = function (e, idUser) {
+        
+        $('#idUser').val(idUser);
+        
         formProcessor.clearValidationSummary($('#valSummarySignUpForm'));
 
         OCA.signUpForm.submit();
@@ -675,6 +657,7 @@ OCA.wireUpHandlers = function () {
     OCA.signUpForm.on('submit', function (e) {
         e.preventDefault();
 
+        $('#users').collapse('hide');
         var confirmationForAffiliateDiv = $('#confirmationForAffiliate');
 
         var beigeFormArea = OCA.signUpFormContainer.find('div.well');
@@ -706,7 +689,7 @@ OCA.wireUpHandlers = function () {
                         OCA.cartStateManager.setOrderId(xhr.responseJSON['orderId']);
                         OCA.cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
 
-                        confirmationForAffiliateDiv.load('/cart/CheckoutConfirmForAffiliate/' + OCA.cartStateManager.getOrderRowId(), function (response, status, xhr) {
+                        confirmationForAffiliateDiv.load('/cart/CheckoutConfirmForAffiliate/' + OCA.cartStateManager.getOrderId(), function (response, status, xhr) {
 
                             if (status === 'error') {
                                 $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');

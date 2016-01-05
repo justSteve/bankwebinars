@@ -57,7 +57,7 @@ namespace CUWebinars.Business.Repository
 
         public Affiliate LoadByTTSDomain(string ttsDomain)
         {
-            return items.Single(a => a.ttsDomain == ttsDomain);
+            return items.Include(w => w.WebUser).Single(a => a.ttsDomain == ttsDomain);
         }
 
         public IQueryable<Order> GetOrdersByUser(int affiliateId, int userId)

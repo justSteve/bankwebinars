@@ -74,7 +74,7 @@ $(function () {
                 "mData": "",
                 "mRender": function (data, type, full) {
 
-                    var startOrder = "<a data-idUser=" + full.idUser + " onclick='OCA.AddOrder(this)'; class='btn btn-mini' href='#'/>Place Order</a><br/>";
+                    var startOrder = "<a data-iduser=" + full.idUser + " onclick='OCA.AddOrder(this," + full.idUser + ")' class='btn btn-mini' href='#'/>Place Order</a><br/>";
 
                     return startOrder;
                 }

@@ -894,7 +894,7 @@ namespace CUWebinars.Web.Controllers
                             || c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterialsExtended"))
             {
                 var singleOrDefault = editModel.EditFields.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                if (singleOrDefault != null && claim.Value.Contains(singleOrDefault.OnDemandCode))
+                if (singleOrDefault != null && singleOrDefault.OnDemandCode != null &&   claim.Value.Contains(singleOrDefault.OnDemandCode))
                 {
                     var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
 

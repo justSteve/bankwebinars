@@ -357,19 +357,17 @@ namespace CUWebinars.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult AffiliateSignup(CheckoutOptionsViewModel formModel)
+        public ActionResult SignupAffiliate(CheckoutOptionsViewModel formModel)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _logger.Info("Signup2 Enters: " + _appHelper.GetUserAuditInfo());
                     var order = _cartControllerOrchestrator.CreateOrder(
                         formModel
                         );
 
-                    _logger.Info("Signup2 order initialized: " + _appHelper.GetUserAuditInfo());
-
+                    
                     return Json(new
                     {
                         success = "success",

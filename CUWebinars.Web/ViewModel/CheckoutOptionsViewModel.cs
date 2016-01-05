@@ -12,6 +12,7 @@ namespace CUWebinars.Web.ViewModel
         public DisplayOptionsViewModel DisplayOptionsViewModel { get; set; }
         public int idUser{ get; set; }
         public int idWebinar { get; set; }
+        //public int idAffiliate { get; set; }
         public bool OrderExists { get; set; }
         public bool OrderHasId { get; set; }
         public OrderStatus OrderStatus { get; set; }
