@@ -884,7 +884,7 @@ namespace CUWebinars.Business.AccountService
 
             if (ReferenceEquals(null, claim))
             {
-                _logger.Warn("OnDemandCode not found. " + onDemandCode + " for " + userAccount.Email);
+                _logger.Warn("OnDemandCode not found. " + idOrder + '-' + onDemandCode + " for " + userAccount.Email);
             }
 
             return !ReferenceEquals(null, claim) ? claim.Value : null;

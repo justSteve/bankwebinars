@@ -154,18 +154,15 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 Protocol = Protocol.Ftp,
                 HostName = "waws-prod-ch1-005.ftp.azurewebsites.windows.net",
-                UserName = "BankWebinars33\\$BankWebinarsOp",
+                PortNumber = 21,
+                UserName = @"BankWebinars33\$BankWebinars33",
                 Password = "FDcehM4K2WbSuxEplrG2B7uJxqrMbeqJ6MdDm3GLyraYTmzWnmLDQAkllu0t",
-                FtpMode = FtpMode.Passive
-
-                //PortNumber = 21,
-                //FtpSecure = FtpSecure.Implicit,
-                //SshHostKeyFingerprint = "ssh-rsa 2048 xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx"
+                FtpMode = FtpMode.Active,
             };
+
 
             try
             {
-
                 using (Session session = new Session())
                 {
                     // Connect
@@ -178,7 +175,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     transferOptions.TransferMode = TransferMode.Ascii;
 
                     TransferOperationResult transferResult;
-                    transferResult = session.GetFiles("LogFiles/log4netCSVlocal.log", "D:\\log4net.log", false,
+                    transferResult = session.GetFiles("LogFiles/log4netCSV.log", "D:\\log4net.log", false,
                         transferOptions);
 
 

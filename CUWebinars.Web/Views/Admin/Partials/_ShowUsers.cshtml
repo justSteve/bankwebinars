@@ -9,6 +9,11 @@
 
     }
     <script type="text/javascript">
+        $( document ).ready(function() {
+            $('#users').collapse({
+                toggle: false
+            });
+        });
         if (DISPLAYUSERS === null || typeof DISPLAYUSERS === 'undefined') {
             var DISPLAYUSERS = {};
         }
@@ -25,8 +30,10 @@
         <thead>
             <tr>
                 <th>Order</th>
-                <th>User</th>
+                <th>Email</th>
+                <th>Name</th>
                 <th>Institution</th>
+                <th>DateCreated</th>
             </tr>
         </thead>
 

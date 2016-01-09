@@ -15,6 +15,7 @@ using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core.Exceptions;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
+using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Orchestrators;
@@ -55,6 +56,8 @@ namespace CUWebinars.Web.Controllers
 
         private readonly GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
+        private readonly IAffiliateRepository _affiliateRepository;
+
         private readonly IAccountControllerOrchestrator _accountControllerOrchestrator;
         private readonly ILogger _logger;
         private readonly IMembershipService _membershipService;
@@ -71,7 +74,8 @@ namespace CUWebinars.Web.Controllers
             IOrderManagementService orderManagementService,
             IStateService stateService,
             IAppHelper appHelper,
-            IUniversalMapper universalMapper)
+            IUniversalMapper universalMapper,
+            IAffiliateRepository affiliateRepository)
         {
             _accountControllerOrchestrator = accountControllerOrchestrator;
             _logger = logger;
@@ -80,6 +84,7 @@ namespace CUWebinars.Web.Controllers
             _stateService = stateService;
             _appHelper = appHelper;
             _universalMapper = universalMapper;
+            _affiliateRepository = affiliateRepository;
         }
 
 
@@ -276,7 +281,16 @@ namespace CUWebinars.Web.Controllers
                 }
                 ViewBag.OnDemandClaim = "";
 
+                if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                    (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
+                {
+                    var claimTTSDomain =
+                        claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate)
+                            .First()
+                            .Value;
+                    _stateService.SetValue(WebUiConstants.CurrentAffiliate, _affiliateRepository.LoadByTTSDomain(claimTTSDomain));
 
+                }
                 var discountModel = _accountControllerOrchestrator.BuildDiscountModel();
                 var myWebinarsDTO = _accountControllerOrchestrator.BuildMyWebinarsDTO
                     (discountModel, claimsIdentityOfAuthenticatedUser);
@@ -894,7 +908,7 @@ namespace CUWebinars.Web.Controllers
                             || c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterialsExtended"))
             {
                 var singleOrDefault = editModel.EditFields.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                if (singleOrDefault != null && singleOrDefault.OnDemandCode != null &&   claim.Value.Contains(singleOrDefault.OnDemandCode))
+                if (singleOrDefault != null && singleOrDefault.OnDemandCode != null && claim.Value.Contains(singleOrDefault.OnDemandCode))
                 {
                     var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
 
@@ -1149,6 +1163,7 @@ namespace CUWebinars.Web.Controllers
 
                     if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
                     {
+
                         _logger.Info("Account.SignIn. Email: {1},  Session={0}",
                             _appHelper.GetUserAuditInfo(),
                             model.Email
@@ -1777,14 +1792,22 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                var idUser = 0;
                 try
                 {
-                    var idUser = _accountControllerOrchestrator.CreateUserForAdmin(editUserModel);
+                    idUser = _accountControllerOrchestrator.CreateUserForAdmin(editUserModel);
 
                     return Json(new { Result = WebUiConstants.Success, UserId = idUser });
                 }
                 catch (Exception exception)
                 {
+                    if (exception.Message.Contains("already"))
+                    {
+                        _stateService.SetValue("editUserModel", editUserModel);
+
+                        idUser = Convert.ToInt32(_accountControllerOrchestrator.GetWebUserIdByEmail(editUserModel.Email));
+                        return Json(new { Result = WebUiConstants.Success, UserId = idUser });
+                    }
                     _logger.ErrorException("In AdminAddNewUser Action", exception);
                     return Json(new { Result = WebUiConstants.Fail });
                 }

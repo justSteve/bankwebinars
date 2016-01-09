@@ -656,7 +656,6 @@ OCA.wireUpHandlers = function () {
     /* Submit event for the big GREEN SignUp button */
     OCA.signUpForm.on('submit', function (e) {
         e.preventDefault();
-
         $('#users').collapse('hide');
         var confirmationForAffiliateDiv = $('#confirmationForAffiliate');
 
@@ -702,7 +701,7 @@ OCA.wireUpHandlers = function () {
                                 $('#AdjustOrder').hide();
 
                                 if (OCA.shippingAddressRequired && !OCA.cartStateManager.getNotificationsTesting(notificationsTesting) && !OCA.cartStateManager.getAddressVerified(addressVerified)) {
-
+                                    alert("Shipping required");
                                     OCA.displayModal($('#UserDetailsModal'));
                                 }
 
@@ -745,173 +744,6 @@ OCA.wireUpHandlers = function () {
         return false;
     });
 
-    var searchPeople = _.debounce(function (query, process) {
-
-        OCA.foundUsersList.hide();
-
-        var searchTerm = OCA.lastNameInput.val();
-
-        if (searchTerm === '')
-            return;
-        if (searchTerm.indexOf('@') == 0) {
-            // in here if searching for an email
-            searchBy = 'emailDomain';
-            $.ajax({
-                type: 'GET',
-                contentType: constants.FormPostContentType,
-                cache: false,
-                url: '/Admin/GetOrdersByEmailDomain',
-                dataType: constants.JsonDataType,
-                data: { email: searchTerm },
-                beforeSend: function () {
-                    OCA.users = null; // dereference whatever is currently in 'OCA.users'. 
-                }
-            }).done(function (data) {
-
-                OCA.users = _.map(data.results, function (item) {
-                    var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName, email: item.billingEmail, institution: item.institution };
-                    return JSON.stringify(aItem);
-                });
-
-                process(OCA.users);
-
-            });
-
-        }
-        else if (searchTerm.indexOf('@') > 1) {
-            // in here if searching for an email
-            searchBy = 'email';
-            $.ajax({
-                type: 'GET',
-                contentType: constants.FormPostContentType,
-                cache: false,
-                url: '/Admin/GetOrdersByEmailTypeahead',
-                dataType: constants.JsonDataType,
-                data: { email: searchTerm },
-                beforeSend: function () {
-                    OCA.users = null; // dereference whatever is currently in 'OCA.users'. 
-                }
-            }).done(function (data) {
-
-                OCA.users = _.map(data.results, function (item) {
-                    var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName, email: item.billingEmail, institution: item.institution };
-                    return JSON.stringify(aItem);
-                });
-
-                process(OCA.users);
-
-            });
-
-        } else if (_.isFinite(searchTerm)) {
-            // in here if searching on an order number
-            searchBy = 'orderID';
-            $.ajax({
-                type: 'GET',
-                contentType: constants.FormPostContentType,
-                cache: false,
-                url: '/Admin/GetOrdersByTypeahead',
-                dataType: constants.JsonDataType,
-                data: { id: searchTerm },
-                beforeSend: function () {
-                    OCA.users = null; // dereference whatever is currently in 'OCA.users'. 
-                }
-            }).done(function (data) {
-
-                OCA.users = _.map(data.results, function (item) {
-                    var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName, email: item.billingEmail, institution: item.institution };
-                    return JSON.stringify(aItem);
-                });
-
-                process(OCA.users);
-            });
-        } else {
-            // if not a number and not an email address, search is by lastname
-            searchBy = 'lastName';
-            $.ajax({
-                type: 'GET',
-                contentType: constants.FormPostContentType,
-                cache: false,
-                url: '/Admin/GetOrdersByLastName',
-                dataType: constants.JsonDataType,
-                data: { lastName: searchTerm },
-                beforeSend: function () {
-                    OCA.users = null; // dereference whatever is currently in 'OCA.users'. 
-                }
-            }).done(function (data) {
-
-                OCA.users = _.map(data.results, function (item) {
-                    var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName, email: item.billingEmail, institution: item.institution };
-                    return JSON.stringify(aItem);
-                });
-
-                process(OCA.users);
-            });
-        }
-
-    }, 200);
-    //}).done(function (data) {
-    //    OCA.users = data.people;
-
-    //    var results = _.map(OCA.users, function (user) {
-    //        return user.id;
-    //    });
-    //    process(results);
-    //});
-
-    //}, 500);
-
-
-    OCA.lastNameInput.typeahead({
-        source: function (query, process) {
-            searchPeople(query, process);
-        },
-
-        matcher: function (item) {
-            return true;
-        },
-
-        highlighter: function (listedUser) {
-            var item = JSON.parse(listedUser);
-            var user = _.find(OCA.users, function (webUser) {
-                return JSON.parse(webUser)['id'] === item.id;
-            });
-            if (user !== null && typeof user !== 'undefined') {
-                var userParsed = JSON.parse(user);
-                if (searchBy == "email") {
-                    return userParsed.email + ', ' + userParsed.lastName;
-                }
-                if (searchBy == "orderID") {
-                    return userParsed.email + ', ' + userParsed.lastName;
-                }
-                if (searchBy == "emailDomain") {
-                    return userParsed.institution + ', ' + userParsed.email;
-                }
-                if (searchBy == "lastName") {
-                    return userParsed.lastName + ', ' + userParsed.firstName;
-                }
-
-            }
-        },
-
-        sorter: function (items) {
-            return items;
-        },
-
-        updater: function (userJson) {
-            var userParsed = JSON.parse(userJson);
-            var user = _.find(OCA.users, function (p) {
-                return JSON.parse(p)['id'] === userParsed['id'];
-            });
-
-            if (typeof user !== 'undefined') {
-                var parsedUser = JSON.parse(user);
-                OCA.setSelectedProduct(parsedUser);
-                return parsedUser['lastName'] + ', ' + parsedUser['firstName'];
-            }
-            return '';
-        }
-
-    });
 
     OCA.emailOrderButtonHandler = function (e) {
 
@@ -961,7 +793,7 @@ OCA.wireUpHandlers = function () {
         });
     };
 
-    OCA.foundUsersList.hide();
+    //OCA.foundUsersList.hide();
 
 
 
@@ -998,7 +830,8 @@ OCA.wireUpHandlers = function () {
 
                 var form = $('#adminAddUserForm');
                 var url = form.attr('action');
-
+                //provides a way for 'onhiddened' to verify success condition
+                $('#idUser').val(0);
                 $('#ShippingAddress_Name').val($('#BillingAddress_Name').val());
                 $('#ShippingAddress_StreetAddress').val($('#BillingAddress_StreetAddress').val());
                 $('#ShippingAddress_StreetAddress2').val($('#BillingAddress_StreetAddress2').val());
@@ -1029,6 +862,7 @@ OCA.wireUpHandlers = function () {
                     OCA.createNewUserButton.removeAttr('disabled');
 
                     if (data.Result === "Success") {
+                        $('#idUser').val(data.UserId);
                         OCA.adminCreatedUserInput.val(data.UserId);
                         OCA.selectedWebUserInput.val(data.UserId);
                         $('#userCreatedByAdmin').val(true);
@@ -1048,6 +882,9 @@ OCA.wireUpHandlers = function () {
             modalFormOptions = null;
             $('#cancelCreateUserButton').text('Cancel');
             $('#newUserResultLabel').remove();
+            if ($('#idUser').val() > 0) {
+                OCA.signUpForm.submit();
+            }
         });
 
         $('#addNewUserModal ').on('shown', function (e) {

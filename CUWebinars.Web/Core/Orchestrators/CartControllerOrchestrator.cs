@@ -483,9 +483,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         RowPrice = orderRow.RowPrice,
                         RegistrationType = orderRow.RegistrationType
                     };
-
-
-
+                    
                     _logger.Info("Returning BuildDisplayRowPriceViewModel price for " + orderRow.Order.idOrder);
 
                     return displayRowPriceViewModel;
@@ -831,26 +829,6 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             }
         }
-
-        public int ProcessModelForConfirmation(WebinarDetailsViewModel model, bool? adminCreatedWebUser)
-        {
-            model.Order.OrderStatus = OrderStatus.Submitted;
-            model.Order.Origin = "Cart";
-
-            if (Request.IsAuthenticated && !adminCreatedWebUser.HasValue)
-            {
-                FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
-            }
-            else
-            {
-                FireOrderSubmittedNotification(model.Order, userCreatedInCart: true);
-            }
-
-            UpdateOrderPricing(model.Order);
-
-            return model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
-        }
-
 
 
         public string CreatePostEventClaim(Order order)

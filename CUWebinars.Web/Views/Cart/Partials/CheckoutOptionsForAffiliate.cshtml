@@ -1,7 +1,15 @@
 ﻿@model CheckoutOptionsViewModel
 
 @Html.ValidationSummary("Please address the following issues in the form below, or call 800-831-0678 ext 706 for immediate assistance:", new { id = "valSummarySignUpForm" })
+<style>
+    .form-horizontal .control-group {
+        margin-bottom: 0;
+    }
+     .control-group{
+         margin-bottom: 0;
 
+     }
+</style>
 @using (Html.BeginForm("SignupAffiliate", "Cart", FormMethod.Post, new { id = "affiliateSignUpForm" }))
 {
     @Html.HiddenFor(model => model.idWebinar)

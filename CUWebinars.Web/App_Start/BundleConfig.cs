@@ -16,6 +16,7 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/jquery-1.11.1.js",
                 "~/Scripts/vendor/json2.js",
                 //"~/Scripts/jquery-1.8.2.js"
+                "~/Scripts/moment.min.js",
                 "~/Scripts/jquery-dateFormat.min.js"
                 ));
 
@@ -25,8 +26,8 @@ namespace CUWebinars.Web.App_Start
             //"~/Scripts/jquery-ui-1.8.24.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/dataTables").Include(
-                        "~/Scripts/DataTables/jquery.dataTables.js"
-                //,"~/Scripts/DataTables/dataTables.tableTools.js"
+                        "~/Scripts/DataTables/jquery.dataTables.js",
+                        "~/Scripts/DataTables/datetime-moment.js"
                         )
                     );
 

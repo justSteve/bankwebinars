@@ -14,6 +14,7 @@ using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models;
+using CUWebinars.Web.Models.DataTablesModels;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Elmah;
@@ -162,12 +163,7 @@ namespace CUWebinars.Web.Controllers
                 var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
                 try
                 {
-
                     model.Order.OrderStatus = OrderStatus.Submitted;
-                    if (ReferenceEquals(model.Order.Affiliate, null))
-                    {
-                        var a = 0;
-                    }
 
                     if (User.Identity.IsAuthenticated)
                     {
@@ -179,8 +175,6 @@ namespace CUWebinars.Web.Controllers
                     }
 
                     _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
-
-
                     _cartControllerOrchestrator.CreatePostEventClaim(model.Order);
 
                     return Json(new
@@ -213,13 +207,61 @@ namespace CUWebinars.Web.Controllers
                 try
                 {
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
-                    int orderId = _cartControllerOrchestrator.ProcessModelForConfirmation(model, adminCreatedWebUser);
+
+                    JProperty adminMsg = new JProperty(JsonPropertyKeys.AffiliateCheckout, JsonConvert.SerializeObject(model.Order.Affiliate, Formatting.None,
+                        new JsonSerializerSettings()
+                        {
+                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                        }));
+
+                    var editUserModel = _stateService.GetValue<EditUserModel>("editUserModel");
+                    if (editUserModel != null)
+                    {
+                        adminMsg = new JProperty(JsonPropertyKeys.AffiliateCheckout, JsonConvert.SerializeObject(editUserModel, Formatting.None,
+                        new JsonSerializerSettings()
+                        {
+                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                        }));
+
+                        model.Order.AdminComments = JsonHelpers.MergeJsonWithStoredField(model.Order.AdminComments, adminMsg);
+
+                        model.Order.FirstName = editUserModel.FirstName;
+                        model.Order.LastName = editUserModel.LastName;
+                        model.Order.Institution = editUserModel.Institution;
+                        model.Order.BillingAddress = editUserModel.BillingAddress.StreetAddress;
+                        model.Order.BillingAddress2 = editUserModel.BillingAddress.StreetAddress2;
+                        model.Order.BillingCity = editUserModel.BillingAddress.City;
+                        model.Order.BillingState = editUserModel.BillingAddress.State;
+                        model.Order.BillingZip = editUserModel.BillingAddress.Zip;
+                        model.Order.ShippingAddress = editUserModel.ShippingAddress.StreetAddress;
+                        model.Order.ShippingAddress2 = editUserModel.ShippingAddress.StreetAddress2;
+                        model.Order.ShippingCity = editUserModel.ShippingAddress.City;
+                        model.Order.ShippingState = editUserModel.ShippingAddress.State;
+                        model.Order.ShippingZip = editUserModel.ShippingAddress.Zip;
+                        _stateService.SetValue<EditUserModel>("editUserModel", null);
+                    }
+
+                    model.Order.OrderStatus = OrderStatus.Submitted;
+                    model.Order.Origin = "CartByAffiliate";
+
+
+                    if (Request.IsAuthenticated && !adminCreatedWebUser.HasValue)
+                    {
+                        _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
+                    }
+                    else
+                    {
+                        _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: true);
+                    }
+
+                    _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
+                    var orderId = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
 
                     return Json(new
                     {
                         Result = WebUiConstants.Success,
                         OrderRowID = orderId,
-                        Msg = string.Format("<p>Your Order ID is {0}. Please check your email for connection information for the webinar.</p>", orderId)
+                        Msg = string.Format("<p>Your Order ID is {0}.</p>", orderId)
                     }, JsonRequestBehavior.AllowGet);
                 }
                 catch (Exception exception)
@@ -367,7 +409,7 @@ namespace CUWebinars.Web.Controllers
                         formModel
                         );
 
-                    
+
                     return Json(new
                     {
                         success = "success",
