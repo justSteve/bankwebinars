@@ -418,9 +418,8 @@ function updateRegType(item, orderId, newRegTypeId)
                 var parentHtml = DO.getBillingCellHtml(data.FlatOff, data.PercentOff, data.regTypeShort, data.Total);
                 $parentCell.html(parentHtml);
 
-                var $cell = $item.parents("td");
-                fireSuccessIndicator($cell.add($parentCell)); // not auto-hiding the child row yet...  color both the child row and the originating parent
-
+                var $childRow = $item.closest("td.child-row");
+                fireSuccessIndicator($childRow.add($parentCell)); // not auto-hiding the child row yet...  color both the child row and the originating parent
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
