@@ -19,6 +19,11 @@
         <div class="controls">
             @Html.EditorFor(model => model.LastName)
         </div>
+    </div>    <div class="control-group">
+        @Html.LabelFor(model => model.Title, new { @class = "control-label " })
+        <div class="controls">
+            @Html.EditorFor(model => model.Title)
+        </div>
     </div>
     <div class="control-group">
         @Html.LabelFor(model => model.Institution, new { @class = "control-label " })
@@ -26,4 +31,18 @@
             @Html.EditorFor(model => model.Institution)
         </div>
     </div>
+    <div class="control-group ">
+        @Html.LabelFor(model => model.BillingAddress, new { @class = "control-label " })
+        <div id="BillingAddressEditor" class="controls initialHide">
+            @Html.EditorFor(model => model.BillingAddress)
+        </div>
+    </div>
+
+    <div class="control-group">
+        @Html.LabelFor(model => model.ShippingAddress, new { @class = "control-label " })
+        <div id="ShippingAddressEditor" class="controls initialHide">
+            @Html.EditorFor(model => model.ShippingAddress)
+        </div>
+    </div>
+
 </div>

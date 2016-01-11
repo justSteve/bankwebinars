@@ -326,6 +326,16 @@ namespace CUWebinars.Web.Controllers
         public ActionResult CheckoutConfirmForAffiliate(int? ID = null)
         {
             var model = _cartControllerOrchestrator.BuildCheckoutConfirmViewModel(ID);
+
+            if (ID != null && ID > 0)
+            {
+                ViewBag.Order = _cartControllerOrchestrator.LoadOrder(ID.Value);
+                ViewBag.TaxAmount = model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount;
+            }
+            else
+            {
+                _logger.Fatal("CheckoutConfirm was passed a null or zero value: ", new Exception("null or zero ID passed to CheckoutConfirm partial"));
+            }
             return PartialView("Partials/CheckoutConfirmForAffiliate", model);
         }
         public ActionResult CheckoutDisplayRowPrice(int ID)

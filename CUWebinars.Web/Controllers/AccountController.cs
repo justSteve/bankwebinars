@@ -1006,7 +1006,7 @@ namespace CUWebinars.Web.Controllers
 
 
         [System.Web.Mvc.HttpPost, System.Web.Mvc.AllowAnonymous]
-        [ValidateAntiForgeryToken(Order = 0)]
+        //[ValidateAntiForgeryToken(Order = 0)]
         [ValidateInput(false)]
         [HandleAjaxException(Order = 1)]
         public ActionResult UpdateUser(EditUserViewModel model)

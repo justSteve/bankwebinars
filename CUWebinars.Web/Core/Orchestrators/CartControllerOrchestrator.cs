@@ -207,9 +207,34 @@ namespace CUWebinars.Web.Core.Orchestrators
                                 FirstName = webUser.FirstName,
                                 idUser = webUser.idUser,
                                 LastName = webUser.LastName,
-                                Institution = order.Institution
+                                Institution = order.Institution,
+                                Title = webUser.Title,
+                                BillingAddress = new AddressModel()
+                                {
+                                    StreetAddress = order.BillingAddress,
+                                    StreetAddress2 = order.BillingAddress2,
+                                    City = order.BillingCity,
+                                    Name = order.FirstName + ' ' + order.LastName,
+                                    Phone = order.BillingPhone,
+                                    State = order.BillingState,
+                                    TypeOfAddress = AddressType.Billing,
+                                    Zip = order.BillingZip
+                                },
+                                ShippingAddress = new AddressModel()
+                                {
+
+                                    TypeOfAddress= AddressType.Shipping,
+                                    StreetAddress = order.ShippingAddress,
+                                    StreetAddress2 = order.ShippingAddress2,
+                                    City = order.ShippingCity,
+                                    Name = order.FirstName + ' ' + order.LastName,
+                                    Phone = order.ShippingPhone,
+                                    State = order.ShippingState,
+                                    Zip = order.ShippingZip
+                                }
                             },
                             AdminComments = order.AdminComments,
+                            Affiliate = order.Affiliate,
                             //AffiliateComments = order.AffiliateComments,
                             //CCUserDetails =
                             //    "None <a href=\"#AddCCModal\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Add?</a> ", // CC user removed at request

@@ -5,7 +5,9 @@
 @{
     var PageStyleType = ViewBag.PageStyleType;
     IStateService stateService = new StateService();
+    
     var currentAffiliate = stateService.GetValue<Affiliate>
+
     (WebUiConstants.CurrentAffiliate);
 
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;

@@ -190,7 +190,9 @@ OCA.initializeFunctions = function () {
             dropDown.removeAttr('disabled');
             $('#discountSpinner').remove();
 
-            if (OCA.shippingAddressRequired && !OCA.cartStateManager.getNotificationsTesting(notificationsTesting) && !OCA.cartStateManager.getAddressVerified(addressVerified)) {
+            if (OCA.shippingAddressRequired
+                && !OCA.cartStateManager.getNotificationsTesting(notificationsTesting)
+                && !OCA.cartStateManager.getAddressVerified(addressVerified)) {
                 OCA.displayModal($('#UserDetailsModal'));
             }
         });
@@ -238,7 +240,9 @@ OCA.initializeFunctions = function () {
                 idUser: $('#AdjustUserDetailsPanel_idUser').val(),
                 firstname: $('#AdjustUserDetailsPanel_FirstName').val(),
                 lastname: $('#AdjustUserDetailsPanel_LastName').val(),
-                Institution: $('#AdjustUserDetailsPanel_Institution').val()
+                Institution: $('#AdjustUserDetailsPanel_Institution').val(),
+                BillingAddress: $('#AdjustUserDetailsPanel_BillingAddress').val(),
+                ShippingAddress: $('#AdjustUserDetailsPanel_Shipping').val()
             };
 
             $.ajax({
@@ -431,17 +435,6 @@ OCA.initializeFunctions = function () {
             cancelOrderForm.submit();
         });
 
-
-        // The 'TO PAY BY CREDIT CARD' button on 3rd tab
-        $('#ConfirmRegistrationPayByCC').on('click', function (e) {
-            e.preventDefault();
-
-            var orderId = OCA.cartStateManager.getOrderId();
-            var url = '/Cart/PayCC/' + orderId;
-
-            OCA.utilities.goToUrl(url);
-
-        });
     };
 
     OCA.displayModal = function (modalForm) {
@@ -457,6 +450,7 @@ OCA.initializeFunctions = function () {
     };
 
     OCA.hookUpEditUserLogic = function (button) {
+        alert("hookUpEditUserLogic");
 
         var modalForm = $('#UserDetailsModal');
 
@@ -643,9 +637,9 @@ OCA.wireUpHandlers = function () {
 
 
     OCA.AddOrder = function (e, idUser) {
-        
+
         $('#idUser').val(idUser);
-        
+
         formProcessor.clearValidationSummary($('#valSummarySignUpForm'));
 
         OCA.signUpForm.submit();
@@ -657,6 +651,9 @@ OCA.wireUpHandlers = function () {
     OCA.signUpForm.on('submit', function (e) {
         e.preventDefault();
         $('#users').collapse('hide');
+        $('#createNewUserButton').html("<b>processing...</b>");
+
+        $('#confirmationTabForAffiliate a').tab('show');
         var confirmationForAffiliateDiv = $('#confirmationForAffiliate');
 
         var beigeFormArea = OCA.signUpFormContainer.find('div.well');
@@ -687,6 +684,8 @@ OCA.wireUpHandlers = function () {
                         OCA.cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
                         OCA.cartStateManager.setOrderId(xhr.responseJSON['orderId']);
                         OCA.cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
+                        $('#createNewUserButton').html("New User");
+                        $('#createNewUserButton').hide();
 
                         confirmationForAffiliateDiv.load('/cart/CheckoutConfirmForAffiliate/' + OCA.cartStateManager.getOrderId(), function (response, status, xhr) {
 
@@ -700,8 +699,11 @@ OCA.wireUpHandlers = function () {
 
                                 $('#AdjustOrder').hide();
 
-                                if (OCA.shippingAddressRequired && !OCA.cartStateManager.getNotificationsTesting(notificationsTesting) && !OCA.cartStateManager.getAddressVerified(addressVerified)) {
-                                    alert("Shipping required");
+                                if (OCA.shippingAddressRequired
+                                    && !OCA.cartStateManager.getNotificationsTesting(notificationsTesting)
+                                    && !OCA.cartStateManager.getAddressVerified(addressVerified)) {
+                                    alert("hit");
+                                    OCA.displayModal($('#UserDetailsModal'));
                                     OCA.displayModal($('#UserDetailsModal'));
                                 }
 
@@ -964,6 +966,7 @@ OCA.wireUpHandlers = function () {
     };
 
     OCA.showSetAssignedAffiliate.on('click', function (e) {
+
         e.preventDefault();
         OCA.displaySetAffiliateModal(this);
     });

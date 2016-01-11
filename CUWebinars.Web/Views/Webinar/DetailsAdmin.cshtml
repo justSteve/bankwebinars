@@ -146,7 +146,7 @@
                     <div id="SignUpFormContainer" class="row-fluid">
 
                         <div class="content span12 well">
-                            <button class="btn btn-link" tabindex="-1" id="showSetAssignedAffiliate" disabled="disabled">Choose Affiliate to Credit</button>
+                            @*<button class="btn btn-link" tabindex="-1" id="showSetAssignedAffiliate" disabled="disabled">Choose Affiliate to Credit</button>*@
                             <button class="btn btn-link" tabindex="-1" id="createNewUserButton">New User</button>
                             <ul class="nav nav-tabs" id="regTabs">
                                 <li id="findUserTab" class="active"><a href="#findUserForAffiliate" data-toggle="tab">@Model.SignUpCaption</a></li>
@@ -212,8 +212,8 @@
                 <div class=" pull-right label label-success">@Model.Webinar.Status.ToString()</div><br>
                 @Html.ActionLink("Manage Webinar", "EditWebinarFromDetails", "Webinar", new { id = @Model.Webinar.idWebinar }, new { @class = "pull-right btn btn-default", style = "margin-top: 5px" })
             </aside>
-            @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
-
+            
+            
             <div id="setAssignedAffiliate" class="modal hide fade">
                 @using (Html.BeginForm("SetAffiliateAssignedToOrder", "Admin", FormMethod.Post, new { id = "frmChangeAffiliate" }))
                 {

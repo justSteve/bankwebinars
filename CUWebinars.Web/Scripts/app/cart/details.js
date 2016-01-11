@@ -365,15 +365,15 @@ $(function () {
                                 });
 
                                 // The 'To pay by credit card' button on 3rd tab
-                                $('#ConfirmRegistrationPayByCC').on('click', function (e) {
-                                    e.preventDefault();
+                                //$('#ConfirmRegistrationPayByCC').on('click', function (e) {
+                                //    e.preventDefault();
 
-                                    var orderId = cartStateManager.getOrderId();
-                                    var url = '/Cart/PayCC/' + orderId;
+                                //    var orderId = cartStateManager.getOrderId();
+                                //    var url = '/Cart/PayCC/' + orderId;
 
-                                    utilities.goToUrl(url);
+                                //    utilities.goToUrl(url);
 
-                                });
+                                //});
 
                                 // The Cancel Registration button on 3rd tab
                                 $('#Canceller').on('click', function (e) {
