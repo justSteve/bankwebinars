@@ -1,19 +1,18 @@
 ﻿@* this partial view is intended for use in a DataTables.net table. *@
-@* magic strings [REGTYPE] and [ORDERID] are replaced in client-side script for each Row *@
 @{
     @model DisplayOptionsInDropDownViewModel
-
 }
 <form class="form-compact compact-reg-type-edit-form" novalidate="novalidate">
     @Html.AntiForgeryToken()
-    <input type="hidden" name="Id" />
-    <input type="hidden" name="DisplayRowPriceViewModel.RegType.idRegType" />
+
+    <input type="hidden" name="OrderRowId" value="@Model.OrderRowId" />
+    @*<input type="hidden" name="DisplayRowPriceViewModel.RegType.idRegType" value="@Model.OrderRowRegistrationType.idRegType" />*@
 
     <div class="dropdown">
 
-        <a class="dropdown-toggle btn btn-mini" id="displayRegType" role="button" href="#" data-toggle="dropdown">[REGTYPE]&nbsp;<b class="caret"></b></a>
+        <a class="dropdown-toggle btn btn-mini" id="displayRegType" role="button" href="#" data-toggle="dropdown">@Model.OrderRowRegistrationType.OptionLabelShort&nbsp;<b class="caret"></b></a>
         <ul class="dropdown-menu" id="listOfRegTypes" role="menu">
-            @{
+                        @{
                 var idx = 0;
                 foreach (var option in Model.Options)
                 {
@@ -21,10 +20,9 @@
                     if (optionType.Name == "RegType")
                     {
                         string isSelected = (int) Model.OrderRowRegistrationType.idRegType == option.Key.idRegType ? "selected='selected'" : "";
-
-                        <option id="@string.Concat("regTypeID_", idx++)" class="radio" @isSelected value="@option.Key.idRegType" data-price="@option.Key.Price">
-                            @option.Key.OptionLabel
-                        </option>
+                        <li id="@string.Concat("regTypeID_", idx++)" class="radio" @isSelected value="@option.Key.idRegType" data-price="@option.Key.Price">
+                            <a href="#">@option.Key.OptionLabelShort</a>
+                        </li>
                     }
                 }
             }

@@ -14,6 +14,26 @@ namespace CUWebinars.Business.Models
         public int idRegType { get; set; }
         public string OptionExplain { get; set; }
         public string OptionLabel { get; set; }
+        public string OptionLabelShort
+        {
+            get
+            {
+                return this.OptionLabel.Replace(" and Hardcopy Handouts", "").Replace("Plus Five", "");
+                // from EditOrder_Compact.cshtml...
+                //if (Model.EditFields.DisplayRowPriceViewModel.RegistrationType.OptionLabel.StartsWith("Live Plus Five"))
+                //{
+                //    abbvLable = "Live";
+                //}
+                //if (Model.EditFields.DisplayRowPriceViewModel.RegistrationType.OptionLabel.StartsWith("OnDemand"))
+                //{
+                //    abbvLable = "Recorded Only";
+                //}
+                //if (Model.EditFields.DisplayRowPriceViewModel.RegistrationType.OptionLabel.StartsWith("CD"))
+                //{
+                //    abbvLable = "CD-ROM";
+                //}
+            }
+        }
         public double Price { get; set; }
         public Nullable<bool> TaxExempt { get; set; }
         public int SortOrder { get; set; }

@@ -3,22 +3,6 @@
 @{
     var regTypeDropDownHtml = ViewBag.RegTypeDropDownHtml;
     var discount = Model.EditFields.Discount;
-
-    var abbvLable = Model.EditFields.DisplayRowPriceViewModel.RegistrationType.OptionLabel;
-
-
-    if (Model.EditFields.DisplayRowPriceViewModel.RegistrationType.OptionLabel.StartsWith("Live Plus Five"))
-    {
-        abbvLable = "Live";
-    }
-    if (Model.EditFields.DisplayRowPriceViewModel.RegistrationType.OptionLabel.StartsWith("OnDemand"))
-    {
-        abbvLable = "Recorded Only";
-    }
-    if (Model.EditFields.DisplayRowPriceViewModel.RegistrationType.OptionLabel.StartsWith("CD"))
-    {
-        abbvLable = "CD-ROM";
-    }
 }
 
 @Html.HiddenFor(model => model.EditFields.idOrderRow)
@@ -62,7 +46,7 @@
     //    $("#discountPanel").show();
     //    $("#addLocsPanel").hide();
     //});
-    $("#displayRegType").text("@abbvLable");
+
 </script>
 
 <div class="row-fluid">
@@ -93,19 +77,19 @@
                     <td align="right" id="DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount"><span></span> @Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalDiscount.ToString("C0")</td>
 
                 </tr>
-                @if (@Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount > 0)
-                {
-                    <tr>
+                @{
+                    string taxHiddenCss = @Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount > 0 ? "" : "hidden"; // need to be able to show/hide this client-side/ajax
+                    <tr class="@taxHiddenCss">
                         <td align="right">Tax:</td>
-                        <td align="right">@Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount.ToString("C0")</td>
+                        <td align="right" id="DisplayRowPriceViewModel_PricesAndDiscounts_Tax">@Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount.ToString("C0")</td>
                     </tr>
                 }
                 <tr>
                     <td>
                         <div align="right">Total:</div>
                     </td>
-                    <td id="DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice">
-                        <div class="align_right">@Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice.ToString("C0")</div>
+                    <td>
+                        <div class="align_right" id="DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice">@Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice.ToString("C0")</div>
                     </td>
                 </tr>
             </table>

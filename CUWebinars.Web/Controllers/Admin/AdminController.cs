@@ -454,21 +454,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
         }
 
-
-        public JsonResult GetRegTypeDropdownHtml()
-        {
-
-            string html = ViewHelpers.RenderViewToString(ControllerContext,
-                                        "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditRegType_Compact.cshtml",
-                                        null, true);
-
-
-            return Json(new { html = html });
-
-        }
-
-
-
         [HttpPost]
         [ValidateAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
