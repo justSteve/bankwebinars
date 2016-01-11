@@ -33,7 +33,8 @@
     var checkoutInProcess = @(Model.CheckoutInProcess ? "true" : "false");
     var isUserLoggedIn = @(@Model.UserIsLoggedIn ? "true" : "false");
     var currentWebinarId = @(@Model.Webinar.idWebinar);
-    var currentAffiliateId = @currentAffiliate;
+    var showAffiliateColumn = true;
+    var affiliateId = 19;
     var notificationsTesting = @(GlobalConfig.GlobalConfigSingleton.NotificationsTesting ? "true" : "false");
     var orderRowId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow : 0);
     var orderId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.idOrder : 0);
@@ -74,14 +75,14 @@
 
 <div class="container clearfix" id="main-content">
     <!--begin main content-->
-    <div id="webinarOrders" class="collapse">
+    <div id="webinarOrders" data-affiliateId="19" class="collapse">
 
         @Html.Partial("~/Views/Admin/Partials/_ShowOrders.cshtml", Model.ShowOrdersViewModel)
 
     </div>
-    @*<div id="users" class="collapse">
+    <div id="users" class="collapse">
         @Html.Partial("~/Views/Admin/Partials/_ShowUsers.cshtml", Model.ShowOrdersViewModel)
-    </div>*@
+    </div>
     @*<div id="byUserWrapper" class="collapse">
         @Html.Partial("~/Views/Admin/Partials/_ShowOrdersByUser.cshtml", Model.ShowOrdersViewModel)
     </div>*@
@@ -145,7 +146,7 @@
                     <div id="SignUpFormContainer" class="row-fluid">
 
                         <div class="content span12 well">
-                            <button class="btn btn-link" tabindex="-1" id="showSetAssignedAffiliate" disabled="disabled">Choose Affiliate to Credit</button>
+                            @*<button class="btn btn-link" tabindex="-1" id="showSetAssignedAffiliate" disabled="disabled">Choose Affiliate to Credit</button>*@
                             <button class="btn btn-link" tabindex="-1" id="createNewUserButton">New User</button>
                             <ul class="nav nav-tabs" id="regTabs">
                                 <li id="findUserTab" class="active"><a href="#findUserForAffiliate" data-toggle="tab">@Model.SignUpCaption</a></li>
@@ -211,8 +212,8 @@
                 <div class=" pull-right label label-success">@Model.Webinar.Status.ToString()</div><br>
                 @Html.ActionLink("Manage Webinar", "EditWebinarFromDetails", "Webinar", new { id = @Model.Webinar.idWebinar }, new { @class = "pull-right btn btn-default", style = "margin-top: 5px" })
             </aside>
-            @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
-
+            
+            
             <div id="setAssignedAffiliate" class="modal hide fade">
                 @using (Html.BeginForm("SetAffiliateAssignedToOrder", "Admin", FormMethod.Post, new { id = "frmChangeAffiliate" }))
                 {

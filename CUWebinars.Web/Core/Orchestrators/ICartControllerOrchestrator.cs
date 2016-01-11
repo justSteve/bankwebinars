@@ -40,7 +40,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         void UpdateAdditionalLocationsForOrderRow(IEnumerable<AdditionalLocation> additionalLocations, int newOrderRowId);
         Order LoadOrder(int id);
         void SetOrderPaidByCC(int qOrder, string s, string formFields);
-        int ProcessModelForConfirmation(WebinarDetailsViewModel model, bool? adminCreatedWebUser);
+        //int ProcessModelForConfirmation(WebinarDetailsViewModel model, bool? adminCreatedWebUser);
         
         string CreatePostEventClaim(Order order);
         Webinar LoadWebinar(int idWebinar);

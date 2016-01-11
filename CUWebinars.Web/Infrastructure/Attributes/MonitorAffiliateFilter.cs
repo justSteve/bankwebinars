@@ -29,20 +29,16 @@ namespace CUWebinars.Web.Infrastructure.Attributes
         public void OnActionExecuting(ActionExecutingContext filterContext)
         {
             HttpRequestBase currentRequest = filterContext.RequestContext.HttpContext.Request;
-            var currentHost = currentRequest.ServerVariables[ServerName].Split(DotCharSeparator)[0];
+            //subdomains and currentHost is depricated
+            //var currentHost = currentRequest.ServerVariables[ServerName].Split(DotCharSeparator)[0];
             //var subdomainBranding = _stateService.GetValue<string>(WebUiConstants.SubdomainBranding);
-            var subdomainBranding = string.Empty;
+            //var subdomainBranding = string.Empty;
 
 
             if (!string.IsNullOrEmpty(currentRequest.QueryString[WebUiConstants.AffiliateId]))
             {
                 /* ATTEMPT 1: Handle the affiliate ID comming from the ?idAff query string */
                 ExtractFromQueryString(currentRequest);
-            }
-            else if (!string.IsNullOrEmpty(subdomainBranding))
-            {
-                /* ATTEMPT 2: we are running with an affiliate's subdomain */
-                ExtractFromDomain(subdomainBranding);
             }
             else
             {

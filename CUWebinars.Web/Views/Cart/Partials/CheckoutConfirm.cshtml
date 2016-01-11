@@ -1,20 +1,7 @@
 ﻿@using CUWebinars.Business.Core
 @model CheckoutConfirmViewModel
-@*<script language="javascript" type="text/javascript">
 
-    $(document).ready(function() {
-       
-        $("#ShowPayByCCModal").click(function() {
-            if (!$('#PayByCCModal').is(':visible')) {
-                
-                alert("hit " + $('#PayByCCModal').is(':visible'));
-                // if modal is not shown/visible then do something
-                $('#PayByCCModal').modal('show');
-            }
-        });
 
-    });
-</script>*@
 @{
     if (Model.OrderExists)
     {

@@ -116,11 +116,12 @@ namespace CUWebinars.Business.AccountService
 
         public DateTime? GetPostEventAccessExpireyDate(UserAccount userAccount, int idOrder)
         {
-            if (userAccount == null || !userAccount.HasClaim(ClaimTypes.PostEventMaterials)) return null;
+            if (userAccount == null || !userAccount.HasClaim(ClaimTypes.PostEventMaterials) || !userAccount.HasClaim(ClaimTypes.PostEventMaterialsExtended)) return null;
 
 
-            var claimsForOrder = userAccount.Claims.FirstOrDefault(c => c.Value.ToLower().Contains(idOrder.ToString())
-                && c.Type == ClaimTypes.PostEventMaterials);
+            var claimsForOrder = userAccount.Claims
+                .Where(c => c.Value.ToLower().Contains(idOrder.ToString()))
+                .FirstOrDefault(c => c.Type == ClaimTypes.PostEventMaterials || c.Type == ClaimTypes.PostEventMaterialsExtended);
 
             // extract the date
             if (claimsForOrder == null) return null;
@@ -598,7 +599,7 @@ namespace CUWebinars.Business.AccountService
 
         public Institution GetInstitutionById(int idInstitution)
         {
-           return _institutionRepository.GetById(idInstitution);
+            return _institutionRepository.GetById(idInstitution);
         }
 
         public void UpdateInstitutionDetails(Institution saveInst)
@@ -877,13 +878,13 @@ namespace CUWebinars.Business.AccountService
         {
             if (userAccount == null) throw new ArgumentNullException("userAccount");
 
-            var claim = userAccount.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PostEventMaterials
-                && c.Value.ToLower().Contains(idOrder.ToString()) && c.Value.Contains(onDemandCode)
-                );
+            var claim = userAccount.Claims
+                .Where(c => c.Type == ClaimTypes.PostEventMaterials || c.Type == ClaimTypes.PostEventMaterialsExtended)
+                .FirstOrDefault(c => c.Value.ToLower().Contains(idOrder.ToString()) && c.Value.Contains(onDemandCode));
 
             if (ReferenceEquals(null, claim))
             {
-                _logger.Warn("OnDemandCode not found. " + onDemandCode + " for " + userAccount.Email);
+                _logger.Warn("OnDemandCode not found. " + idOrder + '-' + onDemandCode + " for " + userAccount.Email);
             }
 
             return !ReferenceEquals(null, claim) ? claim.Value : null;
@@ -922,13 +923,13 @@ namespace CUWebinars.Business.AccountService
 
         public void UpdatePostEventMaterialsClaim(UserAccount userAccount, DateTime newDate, Order order)
         {
-            _logger.Info("UpdatePostEventMaterialsClaim Email: {0}, DateToExpire: {1}, idOrder: {2}", userAccount.Email, newDate, order);
+            _logger.Info("UpdatePostEventMaterialsClaim Email: {0}, DateToExpire: {1}, idOrder: {2}", userAccount.Email, newDate, order.idOrder);
             var allPostEventMaterialsClaimsForUser = userAccount.Claims
                 .Where(c => c.Type == ClaimTypes.PostEventMaterials
                 || c.Type == ClaimTypes.PostEventMaterialsExtended);
 
             var claimForOrder = allPostEventMaterialsClaimsForUser
-                .FirstOrDefault(c => c.Value.Contains(order.ToString()));
+                .FirstOrDefault(c => c.Value.Contains(order.idOrder.ToString()));
 
             if (!ReferenceEquals(null, claimForOrder))
             {
@@ -938,6 +939,8 @@ namespace CUWebinars.Business.AccountService
 
                 _userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.PostEventMaterials,
                     claimForOrder.Value);
+                _userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.PostEventMaterialsExtended,
+                                    claimForOrder.Value);
 
                 _userAccountService.AddClaim(userAccount.ID, ClaimTypes.PostEventMaterialsExtended,
                     jsonParsedClaim.ToString(Formatting.None));

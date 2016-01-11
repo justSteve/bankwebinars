@@ -1,11 +1,20 @@
 ﻿@model CheckoutOptionsViewModel
 
 @Html.ValidationSummary("Please address the following issues in the form below, or call 800-831-0678 ext 706 for immediate assistance:", new { id = "valSummarySignUpForm" })
+<style>
+    .form-horizontal .control-group {
+        margin-bottom: 0;
+    }
+     .control-group{
+         margin-bottom: 0;
 
-@using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new { id = "affiliateSignUpForm" }))
+     }
+</style>
+@using (Html.BeginForm("SignupAffiliate", "Cart", FormMethod.Post, new { id = "affiliateSignUpForm" }))
 {
     @Html.HiddenFor(model => model.idWebinar)
     @Html.HiddenFor(model => model.idUser)
+    //@Html.HiddenFor(model => model.idAffiliate)
     @Html.HiddenFor(model => model.OrderExists)
     @Html.HiddenFor(model => model.OrderHasId)
     @Html.HiddenFor(model => model.OrderStatus)
@@ -30,7 +39,7 @@
         }
         else
         {
-            <span>We show a that you have pending order for this event that requires your confirmation or cancelation.</span>
+            <span>We show a pending order for this event & user. Please confirmation or cancel before continuing.</span>
             @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptionsAffiliate.cshtml", model: Model.DisplayOptionsViewModel)
         }
     }

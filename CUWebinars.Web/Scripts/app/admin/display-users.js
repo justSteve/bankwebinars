@@ -35,6 +35,8 @@ $(function () {
 
     ns.wireUpDataTable = function () {
 
+        $.fn.dataTable.moment('M/D/YYYY');
+
         DU.usersTable.dataTable({
             "serverSide": true,
             "ajax": {
@@ -61,24 +63,32 @@ $(function () {
             'columns': [
                 { 'data': 'idUser' },
                 { 'data': 'email' },
+                { 'data': 'LastName' },
                 { 'data': 'Institution' },
-
+                { 'data': 'DateCreated', "searchable": false }
             ],
-            "order": [0, "asc"]
-
-            , // complex columns can be specified / created with mRender
+            "order": [0, "asc"], // complex columns can be specified / created with mRender
             "aoColumnDefs": [
-            {
+                {
+                    "aTargets": [0], // Status column
+                    "mData": "",
+                    "mRender": function (data, type, full) {
 
-                "aTargets": [0], // Status column
-                "mData": "",
-                "mRender": function (data, type, full) {
+                        var startOrder = "<a data-iduser=" + full.idUser + " onclick='OCA.AddOrder(this," + full.idUser + ")' class='btn btn-mini' href='#'/>Place Order</a><br/>";
 
-                    var startOrder = "<a data-idUser=" + full.idUser + " onclick='OCA.AddOrder(this)'; class='btn btn-mini' href='#'/>Place Order</a><br/>";
+                        return startOrder;
+                    }
+                },
+                {
+                    "aTargets": [2], // name
+                    "mData": "",
+                    "mRender": function (data, type, full) {
 
-                    return startOrder;
+                        var nameCol = "<span>" + full.LastName + ", " + full.FirstName + " </span";
+
+                        return nameCol;
+                    }
                 }
-            }
             ]
         });
     };

@@ -29,7 +29,7 @@ namespace CUWebinars.Web.Core
                 (p => (search == null ||
                     (p.LastName != null && p.LastName.ToLower().Contains(search.ToLower()))||
                     (p.email != null && p.email.ToLower().Contains(search.ToLower()))
-                    //(p.Institution != null && p.BillingEmail.ToLower().Contains(search.ToLower()))
+//                    (p.Institution != null && p.N.ToLower().Contains(search.ToLower()))
 
                         ));
 

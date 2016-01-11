@@ -1,8 +1,6 @@
 ﻿/// <reference path="../Constants.js" />
 /// <reference path="../utilities.js" />
 
-var aff = $('#ordersTable').data('aff');
-
 if (DISPLAYORDERS === null || typeof DISPLAYORDERS === 'undefined')
     var DISPLAYORDERS = {}; // create namespace - object to holds all references and methods.
 
@@ -48,6 +46,7 @@ function getOrderStatusHtml() {
         dataType: "json",
         type: "POST",
         success: function (data) {
+
             html = data.html;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -85,6 +84,9 @@ function getOrderStatusHtml() {
         DO.ordersTable = $('#ordersTable');
         DO.connInfoTable = $('#connInfoTable');
         DO.webinarIdDiv = $('#webinarIdDiv');
+        //defined in parent page
+        DO.affiliateId = affiliateId;
+
         DO.baseOrderStatusHtml = getOrderStatusHtml();  // this seems a little slower than I'd like...
         //DO.baseRegTypeDropDownHtml = getRegTypeDropDownHtml();  // this seems a little slower than I'd like...
         DO.orderStatusFilters = undefined;
@@ -323,7 +325,7 @@ function getOrderStatusHtml() {
     };
 
     ns.wireUpDataTable = function () {
-
+        
         DO.ordersTable.dataTable({
             "serverSide": true,
             "ajax": {
@@ -363,7 +365,7 @@ function getOrderStatusHtml() {
                 { 'data': null, 'class': 'details-control edit-billing' },
                 {
                     'data': 'Affiliate_ttsDomain',
-                    'visible': aff,
+                    'visible': showAffiliateColumn,
                     'class': 'details-control'
                 },
                 { 'data': 'OrderDateString', 'class': 'details-control edit-resends' },
@@ -424,7 +426,7 @@ function getOrderStatusHtml() {
                 "mData": "",
                 "mRender": function (data, type, full) {
                     var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
-                    var statusHtml = full.OrderDateString + " - " + orderToEdit;
+                    var statusHtml = full.OrderDateString;
                     var resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendOrderConfirmationButton btn btn-mini\">Send Confirmation</button>";
                     if (full.Webinar_IsActive) {
                         resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
@@ -449,7 +451,7 @@ function getOrderStatusHtml() {
                     //  magic strings [ORDERSTATUS] and [ORDERID] are hand-/hard-coded in the partial View
                     var dd_html = DO.baseOrderStatusHtml.replace(/\[ORDERSTATUS\]/gi, full.OrderStatusString).replace(/\[ORDERID\]/gi, orderToEdit);
 
-                    return dd_html;
+                    return dd_html + orderToEdit;
                 }
             }]
         });

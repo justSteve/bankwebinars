@@ -1,6 +1,17 @@
 ﻿@model CheckoutConfirmViewModel
 
 @{
+    var isAdmin = false;
+    if (User != null && User.Identity.IsAuthenticated)
+    {
+        ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+
+        if (claimsIdentityOfAuthenticatedUser.HasClaim(
+            (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Admin))
+        {
+            isAdmin = true;
+        }
+    }
     if (Model.OrderExists)
     {
         var orderRowID = 0;
@@ -16,12 +27,18 @@
                     <div id="userDetailsSummed" class="span10 offset2">
                         <p>
                             @Html.Raw(@Model.UserDetails)
-                            <a id="editUserDetails" role="button" class="btn btn-mini"> Edit?</a>
+                            @if (isAdmin)
+                            {
+                                <button id="showSetAssignedAffiliate" class="btn btn-link" tabindex="-1">Affiliate: @Model.Affiliate.ttsDomain</button>
+                            @*<a id="editUserDetails" role="button" class="btn btn-mini"> Edit?</a>*@
+                            }
                         </p>
                     </div>
                 </div>
-                <div id="AdjustUserDetails" class="row initialHide">
-                    @using (Html.BeginForm("adjustuserdetails", "cart", FormMethod.Post, new { id = "UserDetailsAdjustForm", @class = "form form-horizontal" }))
+                <div id="AdjustUserDetails" class="row _initialHide">
+                    @using (Html.BeginForm("updateuser", "Account", FormMethod.Post, new { id = "UserDetailsAdjustForm", @class = "form form-horizontal" }))
+                    
+                    //@using (Html.BeginForm("adjustuserdetails", "cart", FormMethod.Post, new { id = "UserDetailsAdjustForm", @class = "form form-horizontal" }))
                     {
                         @Html.AntiForgeryToken()
                         @Html.EditorFor(m => m.AdjustUserDetailsPanel)
@@ -71,7 +88,12 @@
                         </div>
                         <div style="font-size: x-small; text-align: center;">
                             <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button><br />
-                            <button class="btn btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button><br />
+                            @{
+                                <span>
+                                    <button data-toggle="modal" role="button" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button>
+                                </span><br />
+
+                            }
                             <a class="btn" id="Canceller">Cancel Registration</a><br />
                             Sales tax may be added to orders in Wisconsin or Illinois.
                         </div>
@@ -118,9 +140,17 @@
 
 @{
     Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModalForAffiliate.cshtml");
+    if (ViewBag.Order != null)
+    {
+        ViewBag.NoteVersion = "03";
+        Html.RenderPartial("~/Views/Cart/Partials/_PayByMoneris.cshtml", (Order)ViewBag.Order);
+    }
     Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml");
     Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
-
 }
 
-<script type="text/javascript">var anyAddLocs = @(string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption) ? "false" : "true");</script>
+<script type="text/javascript">
+    
+    OCA.showSetAssignedAffiliate = $('#showSetAssignedAffiliate');
+    var anyAddLocs = @(string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption) ? "false" : "true");
+</script>

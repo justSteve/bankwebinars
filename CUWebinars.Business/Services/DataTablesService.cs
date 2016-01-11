@@ -121,15 +121,17 @@ namespace CUWebinars.Business.Services
                     .Select(o => o.WebUser).Distinct()
                     .Include(o => o.Institution)
                     .Include(o => o.Orders)
+
+                    .Where(u => u.UserType == UserType.Customer)
                     .ToList();
             }
             else
             {
                 theseUsers = _context.Orders
-                    .Where(o => o.idAffiliate == idAffliate)
                     .Select(o => o.WebUser).Distinct()
                     .Include(o => o.Institution)
                     .Include(o => o.Orders)
+                    .Where(u => u.UserType == UserType.Customer)
                     .ToList();
                 //theseUsers = _context.WebUsers
                 //    .Include(u => u.Institution)

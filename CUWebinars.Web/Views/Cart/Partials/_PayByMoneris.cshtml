@@ -7,10 +7,11 @@
 
 }
 @{
-
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     var TaxAmount = ViewBag.TaxAmount;
 
+    var note = globalConfig.Tenant + " thanks you! Watch your email for complete details. " +ViewBag.NoteVersion;
+    
     if (ReferenceEquals(TaxAmount, null))
     {TaxAmount = 0;}
     //Layout = "/Views/Shared/_Layout_PayCC.cshtml";
@@ -72,7 +73,7 @@
                 <input type="hidden" name="cust_id" value="@order.BillingEmail">
                 <input type="hidden" name="order_no" value="@globalConfig.TenantPrefix@order.idOrder">
                 <input type="hidden" name="client_email" value="@order.BillingEmail">
-                <input type="hidden" name="note" value="@globalConfig.Tenant thanks you! Watch your email for complete details.">
+                <input type="hidden" name="note" value="@note">
 
                 <input type="hidden" name="od_bill_firstname" value="@order.FirstName">
                 <input type="hidden" name="od_bill_lastname" value="@order.LastName">

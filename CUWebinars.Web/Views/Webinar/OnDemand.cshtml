@@ -107,7 +107,7 @@
                             }
                             else if (Model.AuthorizedToAccessMaterials.Contains("expired on"))
                             {
-                                <div>@Model.AuthorizedToAccessMaterials</div>
+                                <div style="color: red"><b>@Model.AuthorizedToAccessMaterials</b></div>
                             }
                             else
                             {
@@ -118,7 +118,7 @@
                             }
                         }
                         <div style="font-size: small; line-height: 1.2; text-align: center; margin-bottom: 10px; margin-top: 10px;">
-                            This event was recorded on <i>@Html.DisplayDate(Model.Webinar.Date)</i>. <b>@Model.AuthorizedToAccessMaterials</b>
+                            This event was recorded on <i>@Html.DisplayDate(Model.Webinar.Date)</i>. 
                         </div>
                         @*<div style="text-align: center;" id="quiz">
                                 <hr />

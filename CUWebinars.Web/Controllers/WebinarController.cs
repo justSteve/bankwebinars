@@ -545,7 +545,7 @@ namespace CUWebinars.Web.Controllers
 
                     return View(model);
                 }
-                
+
             }
 
 
@@ -750,8 +750,32 @@ namespace CUWebinars.Web.Controllers
                                 FirstName = webUser.FirstName,
                                 idUser = webUser.idUser,
                                 LastName = webUser.LastName,
-                                Institution = orderRow.Order.Institution
+                                Title = webUser.Title,
+                                Institution = orderRow.Order.Institution,
+                                BillingAddress = new AddressModel()
+                                {
+                                    TypeOfAddress = AddressType.Billing,
+                                    StreetAddress = order.BillingAddress,
+                                    StreetAddress2 = order.BillingAddress2,
+                                    City = order.BillingCity,
+                                    Name = order.FirstName + ' ' + order.LastName,
+                                    Phone = order.BillingPhone,
+                                    State = order.BillingState,
+                                    Zip = order.BillingZip
+                                },
+                                ShippingAddress = new AddressModel()
+                                {
+                                    TypeOfAddress = AddressType.Shipping,
+                                    StreetAddress = order.ShippingAddress,
+                                    StreetAddress2 = order.ShippingAddress2,
+                                    City = order.ShippingCity,
+                                    Name = order.FirstName + ' ' + order.LastName,
+                                    Phone = order.ShippingPhone,
+                                    State = order.ShippingState,
+                                    Zip = order.ShippingZip
+                                }
                             },
+                            Affiliate = order.Affiliate,
                             AdminComments = order.AdminComments,
                             //AffiliateComments = model.Order.AffiliateComments,
                             //CCUserDetails = "",
@@ -839,31 +863,6 @@ namespace CUWebinars.Web.Controllers
 
             return RedirectToAction("allActive", new { eventsToShow = "upcoming" });
         }
-
-        //public IEnumerable<Order> CheckDisplayPostEventMaterials(UserAccount userAccount, Order checkOrder)
-        //{
-        //    if (userAccount != null && userAccount.HasClaim(Business.Constants.ClaimTypes.DisplayPostEventMaterials))
-        //    {
-        //        var claimsForOrder =
-        //            userAccount.Claims.FirstOrDefault(c => c.Value.ToLower().Contains(checkOrder.idOrder.ToString()));
-
-        //        // extract the date
-        //        if (claimsForOrder != null)
-        //        {
-        //            var expiryAsString = claimsForOrder.Value.Substring(claimsForOrder.Value.IndexOf(":") + 1);
-
-        //            DateTime expiryDate;
-
-        //            if (DateTime.TryParse(expiryAsString, out expiryDate))
-        //            {
-        //                if (DateTime.Today <= expiryDate)
-        //                {
-        //                    yield return checkOrder;
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
 
         /// <summary>
         /// This method initializes state for variables which needed to be retrieved from the Database

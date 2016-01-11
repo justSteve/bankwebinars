@@ -190,7 +190,9 @@ OCA.initializeFunctions = function () {
             dropDown.removeAttr('disabled');
             $('#discountSpinner').remove();
 
-            if (OCA.shippingAddressRequired && !OCA.cartStateManager.getNotificationsTesting(notificationsTesting) && !OCA.cartStateManager.getAddressVerified(addressVerified)) {
+            if (OCA.shippingAddressRequired
+                && !OCA.cartStateManager.getNotificationsTesting(notificationsTesting)
+                && !OCA.cartStateManager.getAddressVerified(addressVerified)) {
                 OCA.displayModal($('#UserDetailsModal'));
             }
         });
@@ -238,7 +240,9 @@ OCA.initializeFunctions = function () {
                 idUser: $('#AdjustUserDetailsPanel_idUser').val(),
                 firstname: $('#AdjustUserDetailsPanel_FirstName').val(),
                 lastname: $('#AdjustUserDetailsPanel_LastName').val(),
-                Institution: $('#AdjustUserDetailsPanel_Institution').val()
+                Institution: $('#AdjustUserDetailsPanel_Institution').val(),
+                BillingAddress: $('#AdjustUserDetailsPanel_BillingAddress').val(),
+                ShippingAddress: $('#AdjustUserDetailsPanel_Shipping').val()
             };
 
             $.ajax({
@@ -431,17 +435,6 @@ OCA.initializeFunctions = function () {
             cancelOrderForm.submit();
         });
 
-
-        // The 'TO PAY BY CREDIT CARD' button on 3rd tab
-        $('#ConfirmRegistrationPayByCC').on('click', function (e) {
-            e.preventDefault();
-
-            var orderId = OCA.cartStateManager.getOrderId();
-            var url = '/Cart/PayCC/' + orderId;
-
-            OCA.utilities.goToUrl(url);
-
-        });
     };
 
     OCA.displayModal = function (modalForm) {
@@ -457,6 +450,7 @@ OCA.initializeFunctions = function () {
     };
 
     OCA.hookUpEditUserLogic = function (button) {
+        alert("hookUpEditUserLogic");
 
         var modalForm = $('#UserDetailsModal');
 
@@ -642,27 +636,9 @@ OCA.wireUpHandlers = function () {
     });
 
 
-    OCA.AddOrder = function (e) {
+    OCA.AddOrder = function (e, idUser) {
 
-        //var self = this;
-
-        var userId = e.getAttribute('data-userId');
-        var regId = $('input[name=RegistrationTypeId]').val();
-
-        var payload = {
-            userId: userId,
-            affiliateId: DU.affiliateId,
-            idRegType: regId
-        };
-
-        //var chosenUserName = $('#chosenUserName');
-
-        //if (chosenUserName.length < 1 || !chosenUserName.is(':visible')) {
-        //    alert('You must select a user using the textbox to the left of the Sign Up button.');
-        //    return;
-        //}
-
-        //$(this).append('<i id="signUpSpinnerInButton" class="icon-spinner icon-spin"></i>');
+        $('#idUser').val(idUser);
 
         formProcessor.clearValidationSummary($('#valSummarySignUpForm'));
 
@@ -674,7 +650,10 @@ OCA.wireUpHandlers = function () {
     /* Submit event for the big GREEN SignUp button */
     OCA.signUpForm.on('submit', function (e) {
         e.preventDefault();
+        $('#users').collapse('hide');
+        $('#createNewUserButton').html("<b>processing...</b>");
 
+        $('#confirmationTabForAffiliate a').tab('show');
         var confirmationForAffiliateDiv = $('#confirmationForAffiliate');
 
         var beigeFormArea = OCA.signUpFormContainer.find('div.well');
@@ -705,8 +684,10 @@ OCA.wireUpHandlers = function () {
                         OCA.cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
                         OCA.cartStateManager.setOrderId(xhr.responseJSON['orderId']);
                         OCA.cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
+                        $('#createNewUserButton').html("New User");
+                        $('#createNewUserButton').hide();
 
-                        confirmationForAffiliateDiv.load('/cart/CheckoutConfirmForAffiliate/' + OCA.cartStateManager.getOrderRowId(), function (response, status, xhr) {
+                        confirmationForAffiliateDiv.load('/cart/CheckoutConfirmForAffiliate/' + OCA.cartStateManager.getOrderId(), function (response, status, xhr) {
 
                             if (status === 'error') {
                                 $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
@@ -718,8 +699,11 @@ OCA.wireUpHandlers = function () {
 
                                 $('#AdjustOrder').hide();
 
-                                if (OCA.shippingAddressRequired && !OCA.cartStateManager.getNotificationsTesting(notificationsTesting) && !OCA.cartStateManager.getAddressVerified(addressVerified)) {
-
+                                if (OCA.shippingAddressRequired
+                                    && !OCA.cartStateManager.getNotificationsTesting(notificationsTesting)
+                                    && !OCA.cartStateManager.getAddressVerified(addressVerified)) {
+                                    alert("hit");
+                                    OCA.displayModal($('#UserDetailsModal'));
                                     OCA.displayModal($('#UserDetailsModal'));
                                 }
 
@@ -762,173 +746,6 @@ OCA.wireUpHandlers = function () {
         return false;
     });
 
-    var searchPeople = _.debounce(function (query, process) {
-
-        OCA.foundUsersList.hide();
-
-        var searchTerm = OCA.lastNameInput.val();
-
-        if (searchTerm === '')
-            return;
-        if (searchTerm.indexOf('@') == 0) {
-            // in here if searching for an email
-            searchBy = 'emailDomain';
-            $.ajax({
-                type: 'GET',
-                contentType: constants.FormPostContentType,
-                cache: false,
-                url: '/Admin/GetOrdersByEmailDomain',
-                dataType: constants.JsonDataType,
-                data: { email: searchTerm },
-                beforeSend: function () {
-                    OCA.users = null; // dereference whatever is currently in 'OCA.users'. 
-                }
-            }).done(function (data) {
-
-                OCA.users = _.map(data.results, function (item) {
-                    var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName, email: item.billingEmail, institution: item.institution };
-                    return JSON.stringify(aItem);
-                });
-
-                process(OCA.users);
-
-            });
-
-        }
-        else if (searchTerm.indexOf('@') > 1) {
-            // in here if searching for an email
-            searchBy = 'email';
-            $.ajax({
-                type: 'GET',
-                contentType: constants.FormPostContentType,
-                cache: false,
-                url: '/Admin/GetOrdersByEmailTypeahead',
-                dataType: constants.JsonDataType,
-                data: { email: searchTerm },
-                beforeSend: function () {
-                    OCA.users = null; // dereference whatever is currently in 'OCA.users'. 
-                }
-            }).done(function (data) {
-
-                OCA.users = _.map(data.results, function (item) {
-                    var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName, email: item.billingEmail, institution: item.institution };
-                    return JSON.stringify(aItem);
-                });
-
-                process(OCA.users);
-
-            });
-
-        } else if (_.isFinite(searchTerm)) {
-            // in here if searching on an order number
-            searchBy = 'orderID';
-            $.ajax({
-                type: 'GET',
-                contentType: constants.FormPostContentType,
-                cache: false,
-                url: '/Admin/GetOrdersByTypeahead',
-                dataType: constants.JsonDataType,
-                data: { id: searchTerm },
-                beforeSend: function () {
-                    OCA.users = null; // dereference whatever is currently in 'OCA.users'. 
-                }
-            }).done(function (data) {
-
-                OCA.users = _.map(data.results, function (item) {
-                    var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName, email: item.billingEmail, institution: item.institution };
-                    return JSON.stringify(aItem);
-                });
-
-                process(OCA.users);
-            });
-        } else {
-            // if not a number and not an email address, search is by lastname
-            searchBy = 'lastName';
-            $.ajax({
-                type: 'GET',
-                contentType: constants.FormPostContentType,
-                cache: false,
-                url: '/Admin/GetOrdersByLastName',
-                dataType: constants.JsonDataType,
-                data: { lastName: searchTerm },
-                beforeSend: function () {
-                    OCA.users = null; // dereference whatever is currently in 'OCA.users'. 
-                }
-            }).done(function (data) {
-
-                OCA.users = _.map(data.results, function (item) {
-                    var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName, email: item.billingEmail, institution: item.institution };
-                    return JSON.stringify(aItem);
-                });
-
-                process(OCA.users);
-            });
-        }
-
-    }, 200);
-    //}).done(function (data) {
-    //    OCA.users = data.people;
-
-    //    var results = _.map(OCA.users, function (user) {
-    //        return user.id;
-    //    });
-    //    process(results);
-    //});
-
-    //}, 500);
-
-
-    OCA.lastNameInput.typeahead({
-        source: function (query, process) {
-            searchPeople(query, process);
-        },
-
-        matcher: function (item) {
-            return true;
-        },
-
-        highlighter: function (listedUser) {
-            var item = JSON.parse(listedUser);
-            var user = _.find(OCA.users, function (webUser) {
-                return JSON.parse(webUser)['id'] === item.id;
-            });
-            if (user !== null && typeof user !== 'undefined') {
-                var userParsed = JSON.parse(user);
-                if (searchBy == "email") {
-                    return userParsed.email + ', ' + userParsed.lastName;
-                }
-                if (searchBy == "orderID") {
-                    return userParsed.email + ', ' + userParsed.lastName;
-                }
-                if (searchBy == "emailDomain") {
-                    return userParsed.institution + ', ' + userParsed.email;
-                }
-                if (searchBy == "lastName") {
-                    return userParsed.lastName + ', ' + userParsed.firstName;
-                }
-
-            }
-        },
-
-        sorter: function (items) {
-            return items;
-        },
-
-        updater: function (userJson) {
-            var userParsed = JSON.parse(userJson);
-            var user = _.find(OCA.users, function (p) {
-                return JSON.parse(p)['id'] === userParsed['id'];
-            });
-
-            if (typeof user !== 'undefined') {
-                var parsedUser = JSON.parse(user);
-                OCA.setSelectedProduct(parsedUser);
-                return parsedUser['lastName'] + ', ' + parsedUser['firstName'];
-            }
-            return '';
-        }
-
-    });
 
     OCA.emailOrderButtonHandler = function (e) {
 
@@ -978,7 +795,7 @@ OCA.wireUpHandlers = function () {
         });
     };
 
-    OCA.foundUsersList.hide();
+    //OCA.foundUsersList.hide();
 
 
 
@@ -1015,7 +832,8 @@ OCA.wireUpHandlers = function () {
 
                 var form = $('#adminAddUserForm');
                 var url = form.attr('action');
-
+                //provides a way for 'onhiddened' to verify success condition
+                $('#idUser').val(0);
                 $('#ShippingAddress_Name').val($('#BillingAddress_Name').val());
                 $('#ShippingAddress_StreetAddress').val($('#BillingAddress_StreetAddress').val());
                 $('#ShippingAddress_StreetAddress2').val($('#BillingAddress_StreetAddress2').val());
@@ -1046,6 +864,7 @@ OCA.wireUpHandlers = function () {
                     OCA.createNewUserButton.removeAttr('disabled');
 
                     if (data.Result === "Success") {
+                        $('#idUser').val(data.UserId);
                         OCA.adminCreatedUserInput.val(data.UserId);
                         OCA.selectedWebUserInput.val(data.UserId);
                         $('#userCreatedByAdmin').val(true);
@@ -1065,6 +884,9 @@ OCA.wireUpHandlers = function () {
             modalFormOptions = null;
             $('#cancelCreateUserButton').text('Cancel');
             $('#newUserResultLabel').remove();
+            if ($('#idUser').val() > 0) {
+                OCA.signUpForm.submit();
+            }
         });
 
         $('#addNewUserModal ').on('shown', function (e) {
@@ -1144,6 +966,7 @@ OCA.wireUpHandlers = function () {
     };
 
     OCA.showSetAssignedAffiliate.on('click', function (e) {
+
         e.preventDefault();
         OCA.displaySetAffiliateModal(this);
     });

@@ -23,6 +23,7 @@ namespace CUWebinars.Web.ViewModel
         public bool OrderRowHasId { get; set; }
         public OrderStatus OrderStatus { get; set; }
         public string Origin { get; set; }
+        public Affiliate Affiliate { get; set; }
         public string OptionLabel { get; set; }
         public ShippingDetailsModel ShippingDetailsModel { get; set; }
         public DiscountDetailsModel DiscountDetailsModel { get; set; }

@@ -1,25 +1,41 @@
 ﻿@using System.Text
 @using CUWebinars.Web.Core
+@using CUWebinars.Business.Constants
 
 @{
     var PageStyleType = ViewBag.PageStyleType;
     IStateService stateService = new StateService();
+    
+    var currentAffiliate = stateService.GetValue<Affiliate>
+
+    (WebUiConstants.CurrentAffiliate);
 
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
 
-    var currentAffiliate = stateService.GetValue<Affiliate>
-    (WebUiConstants.CurrentAffiliate);
     string currentUserAffiliateFullName = string.Empty;
-    if (currentAffiliate != null)
+
+    if (User != null && User.Identity.IsAuthenticated)
     {
-        currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
+        ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+
+        if (claimsIdentityOfAuthenticatedUser.HasClaim(
+            (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
+        {
+            if (currentAffiliate != null)
+            {
+                currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
+            }
+            else
+            {
+                CUWebinars.Business.Core.Tracing.Tracer.Warning("CurrentAffiliate should always have a value. Session | {0}", new AppHelper(Request, stateService).GetUserAuditInfo());
+                Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
+            }
+
+
+        }
     }
-    else
-    {
-        CUWebinars.Business.Core.Tracing.Tracer.Warning("CurrentAffiliate should always have a value. Session | {0}", new AppHelper(Request, stateService).GetUserAuditInfo());
-        Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
-    }
+
 
     var subdomainBranding = stateService.GetValue<string>
         ("SubdomainBranding");
@@ -40,39 +56,44 @@
 <html class="no-js" lang="en" dir="ltr">
 <!--<![endif]-->
 <head>
-    @if (globalConfig.Tenant == "BankWebinars")
-    {
-        @*Rollbar Placeholder
-        *@
 
-        <script type="text/javascript">
-            window.$zopim || (function (d, s) {
-                var z = window.$zopim = function (c) {
-                    z._.push(c);
-                },
-                    $ = z.s = d.createElement(s),
-                    e = d.getElementsByTagName(s)[0];
+    <script type="text/javascript">
+        var affiliateId = @currentAffiliate.idUserAff;
+        var showAffiliateColumn = false;
+        var currentAffiliateId = "@currentAffiliate.idUserAff";
+        var currentAffiliateDisplayTitle = "@currentAffiliate.DisplayTitle";
+    </script>
 
-                z.set = function (o) {
-                    z.set._.push(o);
-                };
-                z._ = [];
-                z.set._ = [];
-                $.async = !0;
-                $.setAttribute("charset", "utf-8");
-                $.src = "//v2.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU";
-                z.t = +new Date;
-                $.type = "text/javascript";
-                e.parentNode.insertBefore($, e);
-            })(document, "script");
-        </script>
+    <script type="text/javascript">
+        window.$zopim || (function(d, s) {
+            var z = window.$zopim = function(c) {
+                z._.push(c);
+            },
+                $ = z.s = d.createElement(s),
+                e = d.getElementsByTagName(s)[0];
+
+            z.set = function(o) {
+                z.set._.push(o);
+            };
+            z._ = [];
+            z.set._ = [];
+            $.async = !0;
+            $.setAttribute("charset", "utf-8");
+            $.src = "//v2.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU";
+            z.t = +new Date;
+            $.type = "text/javascript";
+            e.parentNode.insertBefore($, e);
+        })(document, "script");
+    </script>
     }
     @if (@User.Identity.IsAuthenticated && !HttpContext.Current.IsDebuggingEnabled)
     {
+
         if (!Html.IsDebug())
         {
             <script>
-                window.$zopim(function () {
+                //var affiliateId =
+                window.$zopim(function() {
                     window.$zopim.livechat.setName("AFFILIATE: @User.Identity.Name.ToString().Replace("@", "_")");
 
                 });
@@ -106,9 +127,9 @@
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="~/Content/images/BankWebinars/apple-touch-icon-144x144-precomposed.png" />
     <link rel="shortcut icon" href="~/Content/images/BankWebinars/favicon.ico" />
     <!-- Open Graph for facebook
-        http://graph.facebook.com/[UserName] replace [UserName]
-        with yours and get your fb:admis content information where the XXXX goes.
-        ================================================== -->
+    http://graph.facebook.com/[UserName] replace [UserName]
+    with yours and get your fb:admis content information where the XXXX goes.
+    ================================================== -->
     <meta property="og:title" content="" />
     <meta property="og:type" content="" />
     <meta property="og:url" content="" />
