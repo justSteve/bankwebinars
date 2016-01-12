@@ -13,20 +13,6 @@
 }
 
 
-input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
-    line-height: normal;
-    margin-right: 5px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    height: 20px;
-    border-radius: 0;
-}
-/*overrides checkbox positioning to accomodate EditWebinarDetails checkboxes. */
-input[type="checkbox"] {
-    line-height: normal;
-    margin-right: 5px;
-    margin-top: 0px;
-}
 /* flattens modal panels */
 .modal {
     background-clip: padding-box;
@@ -195,6 +181,22 @@ table.dataTable thead .sorting_desc_disabled {
 
 .caption blockquote {
     color: #fff;
+}
+
+
+input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+    line-height: normal;
+    margin-right: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    height: 20px;
+    border-radius: 0;
+}
+/*overrides checkbox positioning to accomodate EditWebinarDetails checkboxes. */
+input[type="checkbox"] {
+    line-height: normal;
+    margin-right: 5px;
+    margin-top: 0px;
 }
 
 @media only screen and (max-width: 1150px) {

@@ -1006,7 +1006,7 @@ namespace CUWebinars.Web.Controllers
 
 
         [System.Web.Mvc.HttpPost, System.Web.Mvc.AllowAnonymous]
-        //[ValidateAntiForgeryToken(Order = 0)]
+        [ValidateAntiForgeryToken(Order = 0)]
         [ValidateInput(false)]
         [HandleAjaxException(Order = 1)]
         public ActionResult UpdateUser(EditUserViewModel model)
@@ -1015,6 +1015,37 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
+                    _accountControllerOrchestrator.EditUser(model);
+                    return Json(new { Result = WebUiConstants.Success });
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException("In EditUser Action: ", exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
+                    throw;
+                }
+            }
+            return this.ModelStateJson(ModelState);
+        }
+
+
+
+        [System.Web.Mvc.HttpPost, System.Web.Mvc.AllowAnonymous]
+        //[ValidateAntiForgeryToken(Order = 0)]
+        [ValidateInput(false)]
+        [HandleAjaxException(Order = 0)]
+        public ActionResult UpdateUserByAffiliate(FormCollection _model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+
+                    var model = new EditUserViewModel
+                    {
+                        //EditFields = _model.EditFields
+                    };
+
                     _accountControllerOrchestrator.EditUser(model);
                     return Json(new { Result = WebUiConstants.Success });
                 }

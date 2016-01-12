@@ -42,7 +42,6 @@
                             @Html.TextBoxFor(m => m.CheckoutDiscountCode, new { @class = "input input-medium", placeholder = "Enter Discount Code" })
                             <button class="btn btn-mini btn-primary" role="button" id="SubmitDiscountCode">Apply Code</button>
                             <button class="btn btn-mini" role="button" id="closeApplyCode">close</button>
-
                         </div>
                     </div>
                 </div>
@@ -53,9 +52,7 @@
 
                             @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new { id = "AdjustAddLocsForm" }))
                             {
-                                <div id="additionalLocationsList">
-
-                                </div>
+                                <div id="additionalLocationsList"></div>
                             }
                         </div>
                     </div>

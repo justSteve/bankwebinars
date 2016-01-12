@@ -12,6 +12,7 @@
             isAdmin = true;
         }
     }
+
     if (Model.OrderExists)
     {
         var orderRowID = 0;
@@ -20,119 +21,116 @@
         {
             if (Model.OrderStatus == OrderStatus.InProcess)
             {
-                <b>Please review this order summary and and choose billing method.</b>
+    <b>Please review this order summary and and choose billing method.</b>
 
-                <div class="row">
-                    <div class="offset1 span10">Primary Contact:</div>
-                    <div id="userDetailsSummed" class="span10 offset2">
-                        <p>
-                            @Html.Raw(@Model.UserDetails)
-                            @if (isAdmin)
+    <div class="row">
+        <div class="offset1 span10">Primary Contact:</div>
+        <div id="userDetailsSummed" class="span10 offset2">
+            <p>
+                @Html.Raw(@Model.UserDetails)
+                @if (isAdmin)
                             {
-                                <button id="showSetAssignedAffiliate" class="btn btn-link" tabindex="-1">Affiliate: @Model.Affiliate.ttsDomain</button>
-                            @*<a id="editUserDetails" role="button" class="btn btn-mini"> Edit?</a>*@
+                    <button id="showSetAssignedAffiliate" class="btn btn-link" tabindex="-1">Affiliate: @Model.Affiliate.ttsDomain</button>
+                    @*<a id="editUserDetails" role="button" class="btn btn-mini"> Edit?</a>*@
                             }
-                        </p>
-                    </div>
+            </p>
+        </div>
+    </div>
+    <div id="AdjustUserDetails" class="row _initialHide">
+        @using (Html.BeginForm("UpdateUserByAffiliate", "Account", FormMethod.Post, new { id = "UserDetailsAdjustForm", @class = "form form-horizontal" }))
+            {
+            @Html.EditorFor(m => m.AdjustUserDetailsPanel)
+            <div class="control-group">
+                <div class="controls">
+                    <button id="SubmitUserDetailEdits" class="btn btn-default btn-mini btn-primary">apply edits</button>
                 </div>
-                <div id="AdjustUserDetails" class="row _initialHide">
-                    @using (Html.BeginForm("updateuser", "Account", FormMethod.Post, new { id = "UserDetailsAdjustForm", @class = "form form-horizontal" }))
-                    
-                    //@using (Html.BeginForm("adjustuserdetails", "cart", FormMethod.Post, new { id = "UserDetailsAdjustForm", @class = "form form-horizontal" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        @Html.EditorFor(m => m.AdjustUserDetailsPanel)
-                        <div class="control-group">
-                            <div class="controls">
-                                <button id="SubmitUserDetailEdits" class="btn btn-default btn-mini btn-primary">apply edits</button>
-                            </div>
-                        </div>
+            </div>
                     }
-                </div>
-                <div id="AdjustDiscount" class="row initialHide">
-                    <div class="offset2 span9 ">
-                        <div id="EnterDiscountCode" class="clear pull-right">
-                            @Html.TextBoxFor(m => m.CheckoutDiscountCode, new { @class = "input input-medium", placeholder = "Enter Discount Code" })
-                            <button class="btn btn-mini btn-primary" role="button" id="SubmitDiscountCode">Apply Code</button>
-                        </div>
-                    </div>
-                </div>
-                <div id="AdjustAddLoc" class="row initialHide">
-                    <div class="offset2 span9 ">
-                        <div id="additionalLocationsCaption" class="clear pull-right">
-                            Additional Locations: <button id="addAnotherAddLoc" class="btn btn-mini">add</button>
+    </div>
+    <div id="AdjustDiscount" class="row initialHide">
+        <div class="offset2 span9 ">
+            <div id="EnterDiscountCode" class="clear pull-right">
+                @Html.TextBoxFor(m => m.CheckoutDiscountCode, new { @class = "input input-medium", placeholder = "Enter Discount Code" })
+                <button class="btn btn-mini btn-primary" role="button" id="SubmitDiscountCode">Apply Code</button>
+            </div>
+        </div>
+    </div>
+    <div id="AdjustAddLoc" class="row initialHide">
+        <div class="offset2 span9 ">
+            <div id="additionalLocationsCaption" class="clear pull-right">
+                Additional Locations: <button id="addAnotherAddLoc" class="btn btn-mini">add</button>
 
-                            @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new { id = "AdjustAddLocsForm" }))
+                @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new { id = "AdjustAddLocsForm" }))
                             {
-                                <div id="additionalLocationsList">
-                                    @* List of additional location inputs gets copied here. *@
+                    <div id="additionalLocationsList">
+                        @* List of additional location inputs gets copied here. *@
 
-                            </div>
-                            }
-                        </div>
                     </div>
-                </div>
-                <div id="AdjustOrder" class="row initialHide">
-                    <div class="offset2 span9 ">
-                        <div id="RegTypeChanger" class="clear pull-right">
-                            @{
-                            Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel);
                             }
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div id="inProcCart" class="well text-center">
-                        <div id="showCartPrice">
-                            @{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPriceForAffiliate.cshtml", Model.DisplayRowPriceViewModel); }
-                        </div>
-                        <div style="font-size: x-small; text-align: center;">
-                            <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button><br />
-                            @{
-                                <span>
-                                    <button data-toggle="modal" role="button" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button>
-                                </span><br />
+            </div>
+        </div>
+    </div>
+    <div id="AdjustOrder" class="row initialHide">
+        <div class="offset2 span9 ">
+            <div id="RegTypeChanger" class="clear pull-right">
+                @{
+                Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel);
+                }
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div id="inProcCart" class="well text-center">
+            <div id="showCartPrice">
+                @{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPriceForAffiliate.cshtml", Model.DisplayRowPriceViewModel); }
+            </div>
+            <div style="font-size: x-small; text-align: center;">
+                <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button><br />
+                @{
+                    <span>
+                        <button data-toggle="modal" role="button" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button>
+                    </span><br />
 
-                            }
-                            <a class="btn" id="Canceller">Cancel Registration</a><br />
-                            Sales tax may be added to orders in Wisconsin or Illinois.
-                        </div>
-                    </div>
-                </div>
+                }
+                <a class="btn" id="Canceller">Cancel Registration</a><br />
+                Sales tax may be added to orders in Wisconsin or Illinois.
+            </div>
+        </div>
+    </div>
             }
 
             if (Model.OrderStatus != OrderStatus.InProcess)
             {
-                <div id="postCheckout" class="well pull-right">
-                    <div id="showCartPrice">@{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }</div>
-                    @if (Model.OrderStatus != OrderStatus.Paid)
+    <div id="postCheckout" class="well pull-right">
+        <div id="showCartPrice">@{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }</div>
+        @if (Model.OrderStatus != OrderStatus.Paid)
                     {
-                        <span style="font-size: small; text-align: center;">
-                            To be invoiced after the event or
-                        </span>
-                        <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>
-                        <br />
+            <span style="font-size: small; text-align: center;">
+                To be invoiced after the event or
+            </span>
+            <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>
+            <br />
                     }
-                </div>
-                <div class="row">
-                    <div class="span2 offset1 alignright">
-                        Primary Contact:<br />
-                        <br />
+    </div>
+    <div class="row">
+        <div class="span2 offset1 alignright">
+            Primary Contact:<br />
+            <br />
 
-                        Type:<br />
+            Type:<br />
 
-                    </div>
-                    <div class="span4">
-                        @Html.Raw(@Model.UserDetails)<br />
+        </div>
+        <div class="span4">
+            @Html.Raw(@Model.UserDetails)<br />
 
-                        @Model.OptionLabel<br />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="pull-right">
-                        <a class="btn btn-mini btn-success" href="#ResendConfirmationModal" data-toggle="modal" id="ConfirmationResender">Resend/Forward Order Summary</a>
-                    </div>
-                </div>
+            @Model.OptionLabel<br />
+        </div>
+    </div>
+    <div class="row">
+        <div class="pull-right">
+            <a class="btn btn-mini btn-success" href="#ResendConfirmationModal" data-toggle="modal" id="ConfirmationResender">Resend/Forward Order Summary</a>
+        </div>
+    </div>
             }
         }
     }
@@ -150,7 +148,7 @@
 }
 
 <script type="text/javascript">
-    
+
     OCA.showSetAssignedAffiliate = $('#showSetAssignedAffiliate');
     var anyAddLocs = @(string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption) ? "false" : "true");
 </script>

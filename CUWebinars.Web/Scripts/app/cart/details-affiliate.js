@@ -231,8 +231,8 @@ OCA.initializeFunctions = function () {
             var url = form.attr('action');
 
             var token = form.find('input[name=__RequestVerificationToken]').val();
-            var headers = {};
-            headers['__RequestVerificationToken'] = token;
+            //var headers = {};
+            //headers['__RequestVerificationToken'] = token;
 
 
             var payload = {
@@ -244,7 +244,7 @@ OCA.initializeFunctions = function () {
                 BillingAddress: $('#AdjustUserDetailsPanel_BillingAddress').val(),
                 ShippingAddress: $('#AdjustUserDetailsPanel_Shipping').val()
             };
-
+            alert($("#AdjustUserDetailsPanel_Email").val());
             $.ajax({
                 type: 'POST',
                 contentType: constants.JsonContentType,
@@ -252,7 +252,7 @@ OCA.initializeFunctions = function () {
                 url: url,
                 dataType: constants.JsonDataType,
                 data: JSON.stringify(payload),
-                headers: headers,
+                //headers: headers,
                 beforeSend: function () {
                     $('#editUserResult').remove();
                     self.after('<span id="userDetailsSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
@@ -796,10 +796,6 @@ OCA.wireUpHandlers = function () {
     };
 
     //OCA.foundUsersList.hide();
-
-
-
-
 
     OCA.setSelectedProduct = function (webUser) {
 

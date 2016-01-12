@@ -235,7 +235,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 Presenter = webinar.Presenter,
                 Webinar = webinar,
-                AuthorizedToAccessMaterials = "true"
+                AuthorizedToAccessMaterials = "until"
+                // magic string == 'true'
             };
 
             var viewResult = new ViewResult { ViewName = "OnDemand" };
