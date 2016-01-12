@@ -123,6 +123,7 @@ var M = EDIT; // alias for code brevity
         ns.totalPriceInput = $('#TotalOrderPriceText');
         ns.basePrice = parseFloat($('#UnitPriceText').val());
 
+        // orderIdHiddenInputInDropdownPartial seems unused
         ns.orderIdHiddenInputInDropdownPartial = $('#regTypeSelectWrapper input[type="hidden"]');
         ns.orderIdHiddenInputInDropdownPartial.attr('name', 'DisplayOptionsInDropDownViewModel.OrderRowId');
         ns.orderRowIdHidden = $('#EditFields_Id');
@@ -151,7 +152,6 @@ var M = EDIT; // alias for code brevity
         ns.adInfinitumButton.on('click', ns.adInfinitumButtonClick);
         ns.editDiscountNotesButton.on('click', ns.ShowNotesModal);
         ns.extendEventAccessButton.on('click', ns.extendEventAccessSubmitter);
-        ns.listOfRegTypes.on('change', ns.changeRegType);
         ns.updateAdditionalLocationsForm.on('submit', ns.submitUpdateAddLocsForm);
         ns.updateAddLocsButton.on('click', ns.updateAdditionalLocations);
 
@@ -255,56 +255,6 @@ var M = EDIT; // alias for code brevity
         }).done(function (data, bla, bla) {
             $('#submitSpinWrapper').remove();
             self.after('<span id="postFeedbackLabel">&nbsp;<span class="label label-success">&nbsp;Operation succeeded</span></span>');
-        });
-    };
-
-    ns.changeRegType = function (e) {
-        e.preventDefault();
-
-        var self = this;
-
-        var optionId = $(this).val();
-// originally this method was required to update the 'AddLocations' control (should it show or not show?)
-        // no longer operative
-        
-    };
-
-    ns.updatePriceOnNewSelection = function (registrationTypeId,  dropDown) {
-        //alert("here updatePriceOnNewSelection");
-        ns.gatherPricingData();
-
-        var url = '/Cart/UpdateOrderDetails';
-
-        var payLoad = {
-            idOrderRow: ns.orderRowIdHidden.val(),
-            idRegType: registrationTypeId
-        };
-
-        $.ajax({
-            type: 'POST',
-            contentType: constants.JsonContentType,
-            cache: false,
-            url: url,
-            dataType: constants.JsonDataType,
-            data: JSON.stringify(payLoad)
-        }).done(function (data) {
-
-            if (data) {
-                // alert(data.OptionsPrice);
-                $('#UnitPriceText').val(data.BasePrice);
-                $('#EditFields_DisplayRowPriceViewModel_PricesAndDiscounts_UnitPriceUnitPriceText').val(data.BasePrice);
-                $('#TotalDiscountText').val(data.Discount);
-                $('#EditFields_DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount').val(data.Discount);
-                $('#TotalCostOfOptionsText').val(data.OptionsPrice);
-                $('#EditFields_DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions').val(data.OptionsPrice);
-                $('#TotalOrderPriceText').val(data.Total);
-                $('#EditFields_DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice').val(data.Total);
-
-                $('#regTypeSpinner').remove();
-            }
-
-            dropDown.removeAttr('disabled');
-            //$('#discountSpinner').remove();
         });
     };
 

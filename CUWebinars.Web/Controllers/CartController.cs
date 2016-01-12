@@ -536,15 +536,21 @@ namespace CUWebinars.Web.Controllers
                     model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType = regType;
 
                     var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
+                    if (pricesAndDiscounts.Discount == null)
+                        pricesAndDiscounts.Discount = new Discount();
 
                     return
                         Json(
                             new
                             {
+                                regTypeShort = regType.OptionLabelShort,
                                 BasePrice = pricesAndDiscounts.UnitPrice,
                                 Discount = pricesAndDiscounts.TotalDiscount,
                                 OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
-                                Total = pricesAndDiscounts.TotalOrderPrice
+                                Tax = pricesAndDiscounts.TaxAmount,
+                                Total = pricesAndDiscounts.TotalOrderPrice,
+                                FlatOff = pricesAndDiscounts.Discount.FlatOff,
+                                PercentOff = pricesAndDiscounts.Discount.PercentOff
                             });
                 }
                 catch (Exception exception)

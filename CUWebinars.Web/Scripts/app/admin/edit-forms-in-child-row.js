@@ -174,6 +174,16 @@ function AttachDataTableEditEvents() {
         });
     });
 
+    // EditBilling_Compact form events
+    $('.dataTable').on("click", "#listOfRegTypes li", function (e) { // EDIT.listOfRegTypes (not defined yet)
+        e.preventDefault();
+
+        // could refactor into the NS module pattern
+        // EDIT.changeRegType(e, $(this), $(this).parent());
+        updateRegType(this, $('input[name="OrderRowId"]').val(), $(this).val());
+
+    });
+
 }
 
 function fireSuccessIndicator($cell)
@@ -187,6 +197,7 @@ function fireSuccessIndicator($cell)
         }, 3000);
     }, 1500);
 }
+
 function fireIsLoadingIndicator($cell) {
 
 
@@ -364,36 +375,52 @@ function updateOrderStatus(item, orderId, newOrderStatus)
 }
 
 
-// EditRegType_Compact form event
-function updateRegType(item, orderId, newRegType)
+// EditRegType_DropDown form event
+function updateRegType(item, orderId, newRegTypeId)
 {
     var $item = $(item);
     var form = $item.parents("form");
     var $form = $(form);
 
-    $("input[name='Id']", $form).val(orderId);
-    $("input[name='DisplayRowPriceViewModel.RegType.Option']", $form).val(newRegType);
 
-    var data = $form.serialize();
+    var payLoad = {
+        idOrderRow: orderId,
+        idRegType: newRegTypeId
+    };
 
     $.ajax({
-        async: false,
-        url: "/admin/updateregtype",
-        data: data,
-        dataType: "json",
+        //async: false,
         type: "POST",
+        contentType: constants.JsonContentType,
+        cache: false,
+        url: "/cart/updateorderdetails",
+        dataType: constants.JsonDataType,
+        data: JSON.stringify(payLoad),
         success: function (data) {
-            console.log(data);
+            if (data) {
 
-            if (data.Result == "Success")
-            {
-                // need to update the currently displaying regType (presuming it changed)
-                $(".dropdown-toggle", $form).html(data.regType + "&nbsp;<b class=\"caret\"></b>");
+                // need to update the currently displaying regType and associated costs
+                $(".dropdown-toggle", $form).html(data.regTypeShort + "&nbsp;<b class=\"caret\"></b>");
+                $("#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice").html("$" + data.BasePrice);
+                $("#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions").html("$" + data.OptionsPrice);
+                $("#DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount").html("$" + data.Discount);
 
-                var $cell = $item.parents("td");
-                fireSuccessIndicator($cell);
+                $("#DisplayRowPriceViewModel_PricesAndDiscounts_Tax").html("$" + data.Tax);
+                if (data.Tax > 0)
+                    $("#DisplayRowPriceViewModel_PricesAndDiscounts_Tax").parents("tr").removeClass("hidden");
+
+                $("#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice").html("$" + data.Total);
+
+                // also need to update the originating cell in parent row
+                var $parentCell = $("td.child-showing");
+
+                //  Reuse logic already in display-orders.js for when the datatables.net gets created...
+                var parentHtml = DO.getBillingCellHtml(data.FlatOff, data.PercentOff, data.regTypeShort, data.Total);
+                $parentCell.html(parentHtml);
+
+                var $childRow = $item.closest("td.child-row");
+                fireSuccessIndicator($childRow.add($parentCell)); // not auto-hiding the child row yet...  color both the child row and the originating parent
             }
-
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert(textStatus);

@@ -92,6 +92,29 @@ function getOrderStatusHtml() {
         DO.orderStatusFilters = undefined;
     };
 
+    ns.getBillingCellHtml = function (flatOff, percentOff, regTypeLabel, total) {
+
+        var showDiscount = "";
+        var discountHTML = "<br><span class=\"DisplayDiscount\">Discounted by: {0}</span>";
+
+        //if (full.Discount != null) {
+        if (flatOff > 0) {
+            showDiscount = discountHTML.replace("{0}", "$" + (flatOff + "").replace(".00", ""));
+        }
+        else if (percentOff > 0) {
+            showDiscount = discountHTML.replace("{0}", percentOff + "%");
+        }
+        //}
+
+        var billingHtml = regTypeLabel
+                            + showDiscount
+                            + "<br />Total: $" + (total + "").replace(".00", "")
+        ;
+
+        return billingHtml;
+
+    };
+
     ns.wireUpHandlers = function () {
 
         $('.dataTable').on("click", ".ResendOrderConfirmationButton", function () {
@@ -372,28 +395,27 @@ function getOrderStatusHtml() {
                 }
             },
            {
-               "aTargets": [3], // Billing column  -- triggers EditOrder_Compact.cshtml
+               "aTargets": [3], // Billing column  -- triggers EditOrder_Compact.cshtml and EditRegType_DropDown.cshtml
                "mData": "",
                "mRender": function (data, type, full) {
-                   var showDiscount = "";
-                   var discountHTML = "<br><span class=\"DisplayDiscount\">Discounted by: {0}</span>";
-                   if (full.Discount != null) {
-                       if (full.Discount.FlatOff > 0) {
-                           showDiscount = discountHTML.replace("{0}", "$" + (full.Discount.FlatOff + "").replace(".00", ""));
-                       }
-                       else if (full.Discount.PercentOff > 0) {
-                           showDiscount = discountHTML.replace("{0}", full.Discount.PercentOff + "%");
-                       }
+
+                   var flatOff = 0;
+                   var percentOff = 0;
+
+                   if (full.Discount != null)
+                   {
+                       flatOff = full.Discount.FlatOff;
+                       percentOff = full.Discount.PercentOff;
+
                    }
 
-                   var billingHtml = full.RegistrationType.OptionLabel
-                                           .replace(" and Hardcopy Handouts", "")
-                                           .replace("Plus Five", "")
-                                           + showDiscount
-                                           + "<br />Total: $" + (full.Total + "").replace(".00", "")
-                   ;
+                   var newBillingHtml = ns.getBillingCellHtml(flatOff,
+                                                           percentOff,
+                                                           full.RegistrationType.OptionLabelShort,
+                                                           full.Total);
 
-                   return billingHtml;
+                   return newBillingHtml;
+                   
                }
            },
            // [4] Affiliate Column
