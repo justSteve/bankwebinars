@@ -533,7 +533,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     var order = orderRow.Order;
                     //var additionalLocations = orderRow.AdditionalLocation.ToList();
                     var webUser = order.WebUser;
-                    var webinar = orderRow.Webinar;
+                    var webinar = _webinarManagementService.GetWebinar(order.OrderRows.FirstOrDefault().idWebinar);
 
                     _logger.Info("BuildCheckOutViewModel for " + orderRow.Order.idOrder);
 

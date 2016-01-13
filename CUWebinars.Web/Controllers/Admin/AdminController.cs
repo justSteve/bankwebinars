@@ -435,13 +435,16 @@ namespace CUWebinars.Web.Controllers.Admin
 
         }
 
+        [AllowAnonymous]
         public JsonResult GetEditOrderStatusDropdownHtml()
         {
-
-            string html = ViewHelpers.RenderViewToString(ControllerContext,
-                                        "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditOrderStatus_Compact.cshtml",
-                                        null, true);
-
+            string html = "";
+            if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
+            {
+                 html = ViewHelpers.RenderViewToString(ControllerContext,
+                    "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditOrderStatus_Compact.cshtml",
+                    null, true);
+            }
 
             return Json(new { html = html });
 
