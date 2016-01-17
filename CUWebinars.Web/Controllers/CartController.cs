@@ -365,9 +365,18 @@ namespace CUWebinars.Web.Controllers
             return PartialView("Partials/_DisplayRowPrice", model);
         }
 
-        public PartialViewResult CheckoutContactDetails()
+        public PartialViewResult CheckoutContactDetails(int? fromAffCheckout)
         {
-            return PartialView("~/Views/cart/Partials/CheckoutContact.cshtml", _cartControllerOrchestrator.BuildRegisterViewModel());
+            if (fromAffCheckout == null)
+            {
+                return PartialView("~/Views/cart/Partials/CheckoutContact.cshtml",
+                    _cartControllerOrchestrator.BuildRegisterViewModel());
+            }
+            else
+            {
+                return PartialView("~/Views/cart/Partials/CheckoutContactForAffiliate.cshtml",
+                    _cartControllerOrchestrator.BuildRegisterViewModel());
+            }
         }
 
 

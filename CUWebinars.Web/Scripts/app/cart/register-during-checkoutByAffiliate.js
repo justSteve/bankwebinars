@@ -3,11 +3,9 @@ registerDuringCheckout.institutionNames = {};
 
 
 registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, addressOptions, callback) {
-    debugger;
-    L.clientLogger.info('registerDuringCheckout.initialize', { orderId: orderId, webinarId: webinarId, orderRowId: orderRowId, shippingAddressRequired: shippingAddressRequired });
 
-    cartStateManager.setCancelOrderForm($('#cancelOrder'));
-    cartStateManager.setConfirmOrderForm($('#confirmOrder'));
+    OCA.cartStateManager.setCancelOrderForm($('#cancelOrder'));
+    OCA.cartStateManager.setConfirmOrderForm($('#confirmOrder'));
     registerDuringCheckout.addressOptions = addressOptions;
 
     var regUserStateManager, userId;
@@ -17,7 +15,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
     regUserStateManager = new RegistrationInCart.StateManager();
     regUserStateManager.initializeState();
     regUserStateManager.setAction(RegistrationInCart.Action.CheckEmail); // starting off with CheckEmail action.
-    regUserStateManager.setisShippingAddressRequired(addressOptions['shippingAddressRequired']);
+    //regUserStateManager.setisShippingAddressRequired(addressOptions['shippingAddressRequired']);
 
     $('#RegisterFields_Email').bind('change keyup', function () {
         regUserStateManager.ensureFormValidatorParsed();
@@ -857,8 +855,7 @@ function hookUpModal(modalForm) {
     modalForm.modal('show');
 }
 
-function hookUpEditUserLogic(button, shippingAddressRequired) {
-
+function hookUpEditUserLogic(button) {
     var modalForm = $('#UserDetailsModal');
 
     // There may be times where a button does not trigger the modal.

@@ -103,28 +103,28 @@ td.save-bg-transition {
 .dropdown-submenu:focus > a > [class^="icon-"],
 .dropdown-submenu:hover > a > [class*=" icon-"],
 .dropdown-submenu:focus > a > [class*=" icon-"] {
-    background-image: url("../images/glyphicons-halflings-white.png");
+    background-image: url("/Content/images/glyphicons-halflings-white.png");
 }
 
 
 table.dataTable thead .sorting {
-    background: url('../images/sort_both.png') no-repeat center right;
+    background: url('/Content/images/sort_both.png') no-repeat center right;
 }
 
 table.dataTable thead .sorting_asc {
-    background: url('../images/sort_asc.png') no-repeat center right;
+    background: url('/Content/images/sort_asc.png') no-repeat center right;
 }
 
 table.dataTable thead .sorting_desc {
-    background: url('../images/sort_desc.png') no-repeat center right;
+    background: url('/Content/images/sort_desc.png') no-repeat center right;
 }
 
 table.dataTable thead .sorting_asc_disabled {
-    background: url('../images/sort_asc_disabled.png') no-repeat center right;
+    background: url('/Content/images/sort_asc_disabled.png') no-repeat center right;
 }
 
 table.dataTable thead .sorting_desc_disabled {
-    background: url('../images/sort_desc_disabled.png') no-repeat center right;
+    background: url('/Content/images/sort_desc_disabled.png') no-repeat center right;
 }
 
 

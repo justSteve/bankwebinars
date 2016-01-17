@@ -115,7 +115,6 @@ namespace CUWebinars.Business.Services
         OrderRow GetLegacyOrder(Order order);
         void SynchOrders(int webinarId);
         Order FindExpressCheckoutOrderByOrderId(int q11Orderid);
-        string GetAccessToRecording(Order order);
         IEnumerable<Order> GetV3OrdersByWebinarForPostEventClaims(int idWebinar);
         void UpdateOrderByAdmin(Order newOrder);
         int SynchExpressCheckoutOrder(Order order);

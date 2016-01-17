@@ -763,6 +763,7 @@
     <Content Include="Content\images\BankWebinars\menu\Security.jpg" />
     <Content Include="Content\images\BankWebinars\menu\Teller.jpg" />
     <Content Include="Content\images\BankWebinars\menu_arrow.png" />
+    <Content Include="Content\images\BankWebinars\navtriggerbg.png" />
     <Content Include="Content\images\BankWebinars\open-quote-white.png" />
     <Content Include="Content\images\BankWebinars\open-quote.png" />
     <Content Include="Content\images\BankWebinars\orderedList0.png" />
@@ -782,7 +783,6 @@
     <Content Include="Content\images\BankWebinars\retina\logo_%402x.png" />
     <Content Include="Content\images\BankWebinars\retina\logo_%402xBW.png" />
     <Content Include="Content\images\BankWebinars\retina\menu_arrow_%402x.png" />
-    <Content Include="Content\images\BankWebinars\retina\NASNaviInst.exe" />
     <Content Include="Content\images\BankWebinars\retina\navtriggerbg_%402x.png" />
     <Content Include="Content\images\BankWebinars\retina\open-quote-white_%402x.png" />
     <Content Include="Content\images\BankWebinars\retina\open-quote_%402x.png" />
@@ -1673,6 +1673,7 @@
     <Content Include="Scripts\app\admin\edit-forms-in-grid.js" />
     <Content Include="Scripts\app\admin\session-checker.js" />
     <Content Include="Scripts\app\admin\display-orders.js" />
+    <Content Include="Scripts\app\cart\register-during-checkoutByAffiliate.js" />
     <Content Include="Scripts\app\client-logger.js" />
     <Content Include="Scripts\app\mywebinars\share-notis.js" />
     <Content Include="Scripts\app\quiz\edit-quiz.js" />
@@ -2021,6 +2022,7 @@
     <Content Include="Views\AdhocNotification\EditOrder_Compact.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DataTablesEditorTemplates\EditRegType_DropDown.cshtml" />
     <Content Include="Views\Webinar\Partials\_AdditionalLocationsModalAdmin.cshtml" />
+    <Content Include="Views\Cart\Partials\CheckoutContactForAffiliate.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

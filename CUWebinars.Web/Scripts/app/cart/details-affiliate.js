@@ -190,10 +190,10 @@ OCA.initializeFunctions = function () {
             dropDown.removeAttr('disabled');
             $('#discountSpinner').remove();
 
-            if (OCA.shippingAddressRequired
-                && !OCA.cartStateManager.getNotificationsTesting(notificationsTesting)
+            if (OCA.shippingAddressrequired
                 && !OCA.cartStateManager.getAddressVerified(addressVerified)) {
-                OCA.displayModal($('#UserDetailsModal'));
+                OCA.displayModal($('#UserDetailsModal')
+);
             }
         });
     };
@@ -464,8 +464,9 @@ OCA.initializeFunctions = function () {
 
     /* This function gets invoked when the 3rd tab is loaded and an existing user is using the cart */
     OCA.checkoutConfirm.initialize = function (userId) {
+        alert("Hit");
 
-        OCA.cartStateManager.setCancelOrderForm($('#cancelOrder'));
+        //OCA.cartStateManager.setCancelOrderForm($('#cancelOrder'));
         OCA.cartStateManager.setConfirmOrderForm($('#confirmOrderForAffiliateForm'));
         var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
 
@@ -599,6 +600,7 @@ OCA.initializeFunctions = function () {
 OCA.initializeState = function () {
 
     OCA.signUpForm = $('#affiliateSignUpForm');
+    shippingAddressRequired = "";
     OCA.signUpFormContainer = $('#SignUpFormContainer'); // The big beige box
     OCA.lastNameInput = $('#lastName');
     OCA.searchWebUsersButton = $('#searchWebUsersButton');
@@ -817,66 +819,25 @@ OCA.wireUpHandlers = function () {
             backdrop: 'static',
             show: true
         };
+        $('#contactInfoForAffiliate').load('/Cart/CheckoutContactDetails?fromAffCheckout=1', function (response, status, xhr) {
 
-        $('#addNewUserModal > div.modal-body').load('/Account/GetAddUserFieldsForModal', function (data) {
+            if (status !== 'error') {
 
-            $('#addNewUserModal').modal(modalFormOptions);
+                var addressOptions = {
+                    'shippingAddressRequired': OCA.shippingAddressRequired,
+                    'notificationsTesting': OCA.cartStateManager.getNotificationsTesting(),
+                    'addressVerified': OCA.cartStateManager.getAddressVerified()
+                };
 
-            $('#confirmCreateUserButton').on('click', function (e) {
-
-                e.preventDefault();
-
-                var self = this;
-
-                var form = $('#adminAddUserForm');
-                var url = form.attr('action');
-                //provides a way for 'onhiddened' to verify success condition
-                $('#idUser').val(0);
-                $('#ShippingAddress_Name').val($('#BillingAddress_Name').val());
-                $('#ShippingAddress_StreetAddress').val($('#BillingAddress_StreetAddress').val());
-                $('#ShippingAddress_StreetAddress2').val($('#BillingAddress_StreetAddress2').val());
-                $('#ShippingAddress_City').val($('#BillingAddress_City').val());
-                $('#ShippingAddress_State').val($('#BillingAddress_State').val());
-                $('#ShippingAddress_Zip').val($('#BillingAddress_Zip').val());
-                $('#ShippingAddress_Country').val($('#BillingAddress_Country').val());
-                $('#ShippingAddress_Phone').val($('#BillingAddress_Phone').val());
-                $('#ShippingAddress_TypeOfAddress').val('Shipping');
-                $('#BillingAddress_TypeOfAddress').val('Billing');
-
-                var data = form.serialize();
-
-                $.ajax({
-                    type: 'POST',
-                    contentType: constants.FormPostContentType,
-                    cache: false,
-                    url: url,
-                    dataType: constants.JsonDataType,
-                    data: data,
-                    beforeSend: function () {
-                        $(self).attr('disabled', 'disabled').after('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
-                        //Rollbar.info("addPasswordForm Sent");
-
-                    }
-                }).done(function (data, textStatus, jqXHR) {
-                    $('#loadingSpinner').remove();
-                    OCA.createNewUserButton.removeAttr('disabled');
-
-                    if (data.Result === "Success") {
-                        $('#idUser').val(data.UserId);
-                        OCA.adminCreatedUserInput.val(data.UserId);
-                        OCA.selectedWebUserInput.val(data.UserId);
-                        $('#userCreatedByAdmin').val(true);
-                        OCA.chosenUserNameSpan.text($('#NewUserFirstName').val() + ' ' + $('#NewUserLastName').val());
-                        OCA.lastNameInput.attr('disabled', 'disabled');
-                        $('#confirmCreateUserButton').removeAttr('disabled');
-                        $('#cancelCreateUserButton').text('close');
-                        $(self).before('<span id="newUserResultLabel">&nbsp;<span class="label label-success">User created successully!</span>&nbsp;</span>');
-                    }
-                });
-            });
-
+                registerDuringCheckout.initialize(OCA.cartStateManager.getOrderId(), OCA.cartStateManager.getWebinarId(), OCA.cartStateManager.getOrderRowId(), OCA.addressOptions, OCA.checkoutConfirm.initialize);
+            } else {
+                $('#labelEmail').html('<span class="label label-important">Server error #21. Try again or call 800-831-0678 ext 706 for immediate assistance!</span>');
+                L.clientLogger.error('d-#28', { 'responseObject': xhr.responseJSON, 'anonymousUserSubmit': 'Fail condition.' });
+            }
+            $('#loadSpinner').remove();
         });
 
+        $('#contactInfoTab a').tab('show');
         $('#addNewUserModal ').on('hidden', function (e) {
             //$('#submitChangeAffilate').off('click');
             modalFormOptions = null;

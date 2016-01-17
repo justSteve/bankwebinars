@@ -987,7 +987,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 }
 
 .sidebar-left {
-	background-image: url(../images/rule.png);
+	background-image: url(/Content/images/rule.png);
 	background-position: 23.5% 0;
 	background-repeat: repeat-y;
 }
@@ -998,7 +998,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 
 /****** right sidebar layout ******/
 .sidebar-right {
-	background-image: url(../images/rule.png);
+	background-image: url(/Content/images/rule.png);
 	background-position: 76.5% 0;
 	background-repeat: repeat-y;
 }
@@ -1009,7 +1009,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 
 /******  contemporary 3 columns layout ******/
 .contemp-three-cols {
-	background-image: url(../images/rule.png), url(../images/rule.png);
+	background-image: url(/Content/images/rule.png), url(/Content/images/rule.png);
 	background-position: 50.75% 0, 76% 0;
 	background-repeat: repeat-y;
 }
@@ -1041,7 +1041,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 }
 
 .holy-grail {
-	background-image: url(../images/rule.png), url(../images/rule.png);
+	background-image: url(/Content/images/rule.png), url(/Content/images/rule.png);
 	background-position: 23.5% 0, 76.5% 0;
 	background-repeat: repeat-y;
 }
@@ -1099,7 +1099,7 @@ ul.navigation {
 		padding: 3px 0 3px 13px;
 		list-style: none;
 		display: block;
-		background: url(../images/sidebar-list-icon.png) 0 8px no-repeat;
+		background: url(/Content/images/sidebar-list-icon.png) 0 8px no-repeat;
 	}
 
 		ul.navigation li a {
@@ -1594,7 +1594,7 @@ ul.image-widget {
 }
 
 	.login-box .login-wrapper {
-		background-image: url(../images/rule.png);
+		background-image: url(/Content/images/rule.png);
 		background-position: 50% 0;
 		background-repeat: repeat-y;
 	}
@@ -1947,7 +1947,7 @@ html[xmlns] .slides, .no-js .slides > li:first-child {
 	}
 
 	.widget ul.navigation li {
-		background: url(../images/sidebar-list-icon.png) 0 10px no-repeat;
+		background: url(/Content/images/sidebar-list-icon.png) 0 10px no-repeat;
 	}
 	/*** Sidebar sponsors ***/
 	.span4 .widget .sponsors li {

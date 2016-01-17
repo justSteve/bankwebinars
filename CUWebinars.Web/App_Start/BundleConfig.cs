@@ -165,9 +165,10 @@ namespace CUWebinars.Web.App_Start
                         ));
 
             bundles.Add(new ScriptBundle("~/bundles/create-order-affiliate").Include(
-                         "~/Scripts/app/cart/create-order-new.js",
-                //"~/Scripts/app/cart/register-during-checkout.js", // required because some functions here are common to all cart operations
-                         "~/Scripts/app/cart/details-affiliate.js"
+                        "~/Scripts/app/cart/create-order-new.js",
+                        "~/Scripts/app/cart/register-during-checkoutByAffiliate.js", // required because some functions here are common to all cart operations
+                        "~/Scripts/app/cart/details-affiliate.js",
+                        "~/Scripts/app/cart/register-user-in-cart.js"
                         ));
 
 
