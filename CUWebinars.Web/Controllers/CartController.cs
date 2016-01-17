@@ -99,7 +99,7 @@ namespace CUWebinars.Web.Controllers
         }
 
         [HttpPost]
-        //[ValidateJsonAntiForgeryToken(Order = 0)]
+        [ValidateJsonAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
         public ActionResult ApplyDiscountCode(string code, int orderRowId)
         {
@@ -174,22 +174,43 @@ namespace CUWebinars.Web.Controllers
                         _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: true);
                     }
 
-                    _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
-                    _cartControllerOrchestrator.CreatePostEventClaim(model.Order);
-
-                    return Json(new
-                    {
-                        Result = WebUiConstants.Success,
-                        OrderRowID = model.Order.idOrder,
-                        Msg = string.Format("Your registration is confirmed. Complete details will be emailed to {0}.", model.Order.BillingEmail)
-                    }, JsonRequestBehavior.AllowGet);
                 }
                 catch (Exception exception)
                 {
-                    ModelState.AddModelError(string.Empty, "There was a problem at the server. Please contact the administrator.");
+                    ModelState.AddModelError(string.Empty,
+                        "ConfirmOrder|ConfirmOrder failed.");
                     _logger.ErrorException("ConfirmOrder|ConfirmOrder failed ", exception);
                     ErrorSignal.FromCurrentContext().Raise(exception);
                 }
+                try
+                {
+                    _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
+                }
+                catch (Exception exception)
+                {
+                    ModelState.AddModelError(string.Empty, "ConfirmOrder|UpdateOrderPricing failed.");
+                    _logger.ErrorException("ConfirmOrder|UpdateOrderPricing failed ", exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
+                }
+
+                try
+                {
+                    _cartControllerOrchestrator.CreatePostEventClaim(model.Order);
+                }
+                catch (Exception exception)
+                {
+                    ModelState.AddModelError(string.Empty, "ConfirmOrder|CreatePostEventClaim failed" );
+                    _logger.ErrorException("ConfirmOrder|CreatePostEventClaim failed ", exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
+                }
+
+                return Json(new
+                {
+                    Result = WebUiConstants.Success,
+                    OrderRowID = model.Order.idOrder,
+                    Msg = string.Format("Your registration is confirmed. Complete details will be emailed to {0}.", model.Order.BillingEmail)
+                }, JsonRequestBehavior.AllowGet);
+
             }
 
             _logger.Error("ConfirmOrder Action | Id parameter was null");

@@ -496,7 +496,8 @@ OCA.initializeFunctions = function () {
                 }
             }).done(function (data) {
                 if (data.Result === 'Success') {
-                    orderRowId = data.OrderRowId;
+                    //seems unused -- delete?
+                    //var orderRowId = data.OrderRowId;
 
                     $('#orderDetails').empty();
                     $('#orderDetails').append(data.Msg);
@@ -775,7 +776,8 @@ OCA.wireUpHandlers = function () {
                 }
             }).done(function (data) {
                 if (data.Result === 'Success') {
-                    orderRowId = data.OrderRowId;
+                    //seems unused
+                    //var orderRowId = data.OrderRowId;
                     $(self).after('<span id="resultLabel" class="label label-success" style="margin-left:5px">&nbsp;Email sent</span>');
 
                 } else {

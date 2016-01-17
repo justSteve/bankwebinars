@@ -2,10 +2,15 @@
 
 @model  CUWebinars.Web.Models.DataTablesModels.EditOrderInfoModel
 
+<script type="text/javascript">
+    var idOrderFromDTEOC = @Model.EditFields.Order.idOrder;
+    var idOrderRowFromDTEOC = @Model.EditFields.Order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow;
+</script>
+
 @{
     var regTypeDropDownHtml = ViewBag.RegTypeDropDownHtml;
     var discount = Model.EditFields.Discount;
-    }
+}
 
 @Html.HiddenFor(model => model.EditFields.idOrderRow)
 
@@ -19,12 +24,10 @@
 <script src="~/Scripts/app/admin/edit-forms-in-grid.js"></script>
 <script src="~/Scripts/app/cart/add-additional-locations.js"></script>
 <style>
-    #EditFields_DisplayRowPriceViewModel_Discount_DiscountCode {
+    #EditFields_Discount_DiscountCode {
         margin-top: 9px;
     }
-
-
-
+    
     .form-horizontal .control-group {
         margin-bottom: 5px;
     }
@@ -35,21 +38,6 @@
         }
 </style>
 
-<script type="text/javascript" language="javascript">
-
-    //$("#addLocsPanel").hide();
-    //$("#discountPanel").hide();
-    //$("#_xAddLoc").click(function () {
-    //    $("#discountPanel").hide();
-    //    $("#addLocsPanel").show();
-    //});
-
-    //$("#_xDiscount").click(function () {
-    //    $("#discountPanel").show();
-    //    $("#addLocsPanel").hide();
-    //});
-
-</script>
 
 <div class="row-fluid">
     <div class="span12">
@@ -319,8 +307,8 @@
                 <div class="modal-body">
                     <div>
 
-                    <input type="hidden" name="orderID" value="@Model.EditFields.Order.idOrder" />
-                    <input type="text" id="newExpiryDate" name="newExpiryDate" placeholder="Expires On" />
+                        <input type="hidden" name="orderID" value="@Model.EditFields.Order.idOrder" />
+                        <input type="text" id="newExpiryDate" name="newExpiryDate" placeholder="Expires On" />
                     </div>
                     <div class="btn-group">
                         <button id="Add6MonthsButton" class="btn btn-mini">Add 6 months</button>
@@ -489,8 +477,8 @@
                             We will now redirect your browser to our credit card processor - https://esplusqa.moneris.com - for entry of credit card information.
                         </div>
 
-            </div>
-            <div class="modal-footer">
+                    </div>
+                    <div class="modal-footer">
                         <input class="btn btn-success" type="submit" value="Continue" />
                         <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
                     </div>

@@ -544,7 +544,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 _webinarManagementService.UpdateWebinar(webinar);
 
-                _logger.Info(string.Format("Recordings posted for {0} is saved to {1}", webinar.idWebinar + " - " + webinar.Title, webinar.RecordingUrl));
+                _logger.Info(string.Format("Recordings posted by UpdateWebinarRecordingBatch for {0} is saved to {1}", webinar.idWebinar + " - " + webinar.Title, webinar.RecordingUrl));
                 SendRecordingIsPostedBatch(idWebinar);
                 return true;
 

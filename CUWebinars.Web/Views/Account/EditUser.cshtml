@@ -31,7 +31,7 @@
         }<br />Email: <strong>@Model.EditFields.Email</strong>
 </p>
 
-    @using (Html.BeginForm("EditUser", "Account", FormMethod.Post, new { id = "editUserForm", @class = "form-horizontal" }))
+    @using (Html.BeginForm("updateuser", "Account", FormMethod.Post, new { id = "editUserForm", @class = "form-horizontal" }))
     {
         @Html.AntiForgeryToken()
 

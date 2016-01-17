@@ -9,7 +9,6 @@ var M = EDIT; // alias for code brevity
 // self-invoking function adds methods to EDIT namespace
 // replace EDIT with parameter 'ns' as EDIT is passed in at bottom in the self-invoking parentheses.
 (function (ns) {
-
     ns.addAdditionalLocation = function (e) {
         e.preventDefault();
 
@@ -117,17 +116,14 @@ var M = EDIT; // alias for code brevity
         ns.numberOfAdditionalLocations = parseInt(ns.numberAddLocsLabel.text());
         //ns.selectedAdditionalLocationsPrice = ns.regTypesList.find(":selected").data('price');
 
-        ns.additionalLocationsTotal = $('#TotalCostOfOptionsText');
+        ns.additionalLocationsTotal = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions').text().replace('$', '');
 
-        ns.totalDiscountInput = $('#TotalDiscountText');
-        ns.totalPriceInput = $('#TotalOrderPriceText');
-        ns.basePrice = parseFloat($('#UnitPriceText').val());
+        ns.totalDiscountInput = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount').text().replace('$', '');
+        ns.totalPriceInput = $('DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice#TotalOrderPriceText').text().replace('$', '');
+        ns.basePrice = parseFloat($('#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice').text().replace('$', ''));
 
-        // orderIdHiddenInputInDropdownPartial seems unused
-        ns.orderIdHiddenInputInDropdownPartial = $('#regTypeSelectWrapper input[type="hidden"]');
-        ns.orderIdHiddenInputInDropdownPartial.attr('name', 'DisplayOptionsInDropDownViewModel.OrderRowId');
-        ns.orderRowIdHidden = $('#EditFields_Id');
-        //ns.orderRowIdHidden = $('input[name="EditFields_DisplayOptionsInDropDownViewModel.OrderRowId"]');
+        //ns.orderRowIdHidden = $('#EditFields_Order_idOrderRow').val();
+
 
         ns.titleHeading = null;
         ns.titleHeading = $('#webinarHeading');
@@ -141,7 +137,9 @@ var M = EDIT; // alias for code brevity
     ns.wireUpHandlers = function () {
 
         $("#frmUpdateCPSubscription").on('submit', ns.updateCPSubscription);
-        $('#applyDiscountButton').on('click', ns.showRenewCPSubscriptionModal);
+        $('#applyDiscountButton').on('click', ns.hookUpApplyDiscountLogic);
+
+        //        $('#applyDiscountButton').on('click', ns.showRenewCPSubscriptionModal);
         $('#editOrderSubmitButton').on('click', ns.submitForm);
         $('#renewCPSubscriptionButton').on('click', ns.ShowRenewCPSubscriptionModal);
         ns.add5DaysButton.on('click', ns.add5DaysButtonClick);//
@@ -280,23 +278,30 @@ var M = EDIT; // alias for code brevity
 
     ns.hookUpApplyDiscountLogic = function (e) {
 
+        alert("idOrderRowFromDTEOC: " + idOrderRowFromDTEOC);
         e.preventDefault();
 
+        // initialization code currently commented out
         ns.gatherPricingData();
 
         if (ns.totalPriceSansDiscount < 1) {
             return;
         }
 
-        var url = '/cart/ApplyDiscountCode';
-        var payload = { code: $('#DisplayRowPriceViewModel_Discount_DiscountCode').val(), orderRowId: ns.orderRowId };
-        var self = this;
+        var token = $(this).find('input[name=__RequestVerificationToken]').val();
+        var headers = {};
+        headers['__RequestVerificationToken'] = token;
 
+        var url = '/cart/ApplyDiscountCode';
+        var payload = { code: $('#EditFields_Discount_DiscountCode').val(), orderRowId: idOrderRowFromDTEOC };
+        var self = this;
+        debugger;
         $.ajax({
             type: 'POST',
             contentType: constants.JsonContentType,
             cache: false,
             url: url,
+            headers: headers,
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
             beforeSend: function () {
@@ -304,6 +309,11 @@ var M = EDIT; // alias for code brevity
                 $(self).attr('disabled', 'disabled');
             }
         }).done(function (data) {
+            
+            if (data.Result == 0) {
+                alert("The discount code " + $('#CheckoutDiscountCode').val() + " was not found. Try again or call 800-831-0678 ext. 703 for assistance.");
+            }
+
             if (data.Result == -1) {
                 ns.totalDiscount = 'no credits';
             } else {
@@ -358,7 +368,7 @@ var M = EDIT; // alias for code brevity
     };
 
     ns.ShowMonerisModal = function (e) {
-        
+
         e.preventDefault();
 
         var modalFormOptions = {
@@ -375,7 +385,7 @@ var M = EDIT; // alias for code brevity
     };
 
     ns.showExtendAccessModal = function (e) {
-        
+
         e.preventDefault();
 
         var modalFormOptions = {
@@ -397,7 +407,7 @@ var M = EDIT; // alias for code brevity
         var url = '/Account/UpdateCpSubscription';
         var payload = {
             notes: $('#EditFields_Discount_Notes').val()
-            , idOrder: $('#EditFields_Order_idOrder').val()
+            , idOrder: ns.idOrder
             , newCPExpiryDate: $('#newCPExpiryDate').val()
         };
         var self = this;
@@ -444,7 +454,7 @@ var M = EDIT; // alias for code brevity
     };
 
     ns.submitUpdateAddLocsForm = function (e) {
-        
+
         e.preventDefault();
 
         var emailInputs = ns.wrapperDiv.find('input[type="email"]');
@@ -467,7 +477,7 @@ var M = EDIT; // alias for code brevity
         var token = form.find('input[name=__RequestVerificationToken]').val();
         var headers = {};
         headers['__RequestVerificationToken'] = token;
-        
+
         $.ajax({
             type: 'POST',
             contentType: constants.JsonContentType,
@@ -780,7 +790,7 @@ var M = EDIT; // alias for code brevity
     };
 
     ns.add5DaysButtonClick = function (e) {
-        
+
         e.preventDefault();
 
         var dateVal = new Date();
@@ -809,10 +819,16 @@ var M = EDIT; // alias for code brevity
     };
 
     ns.gatherPricingData = function () {
-        ns.allAddLocsPrice = parseInt(ns.additionalLocationsTotal.val());
-        ns.totalDiscount = parseInt(ns.totalDiscountInput.val());
-        ns.totalPrice = parseInt(ns.totalPriceInput.val());
-        ns.totalPriceSansDiscount = (ns.allAddLocsPrice || 0) + ns.basePrice;
+
+        //$('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice').val($('#TotalOrderPriceText').val());
+        //$('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount').val($('#TotalDiscountText').val());
+        //$('#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice').val($('#UnitPriceText').val());
+        //$('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions').val($('#TotalCostOfOptionsText').val());
+
+        //ns.allAddLocsPrice = parseInt(ns.additionalLocationsTotal.val());
+        //ns.totalDiscount = parseInt(ns.totalDiscountInput.val());
+        //ns.totalPrice = parseInt(ns.totalPriceInput.val());
+        //ns.totalPriceSansDiscount = (ns.allAddLocsPrice || 0) + ns.basePrice;
     };
 
 })(EDIT);

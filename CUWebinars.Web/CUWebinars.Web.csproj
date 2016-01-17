@@ -1008,6 +1008,7 @@
     <Content Include="Content\images\email\bennett\BannerLogo.jpg" />
     <Content Include="Content\images\email\bennett\BWNewsletter.htm" />
     <Content Include="Content\images\email\bennett\spacer.gif" />
+    <Content Include="Content\images\email\button.jpg" />
     <Content Include="Content\images\email\calbankers\banner.jpg" />
     <Content Include="Content\images\email\calbankers\bannerCaption1.jpg" />
     <Content Include="Content\images\email\CBAO\bannerCaption1.jpg" />
@@ -1427,6 +1428,7 @@
     <Content Include="Content\images\presenters\demaio.jpg" />
     <Content Include="Content\images\presenters\demarino.jpg" />
     <Content Include="Content\images\presenters\dicara.jpg" />
+    <Content Include="Content\images\presenters\dickinson.jpg" />
     <Content Include="Content\images\presenters\doepke.jpg" />
     <Content Include="Content\images\presenters\doshi.jpg" />
     <Content Include="Content\images\presenters\dowdy.jpg" />
@@ -1455,6 +1457,7 @@
     <Content Include="Content\images\presenters\mcguinn.jpg" />
     <Content Include="Content\images\presenters\mitchell.jpg" />
     <Content Include="Content\images\presenters\morin.jpg" />
+    <Content Include="Content\images\presenters\moyer.jpg" />
     <Content Include="Content\images\presenters\nelson.jpg" />
     <Content Include="Content\images\presenters\neuman.jpg" />
     <Content Include="Content\images\presenters\orosz.jpg" />
@@ -1465,6 +1468,7 @@
     <Content Include="Content\images\presenters\rasske.jpg" />
     <Content Include="Content\images\presenters\rechel.jpg" />
     <Content Include="Content\images\presenters\reed.jpg" />
+    <Content Include="Content\images\presenters\reedHoney.jpg" />
     <Content Include="Content\images\presenters\Reimink_Tim-1.jpg" />
     <Content Include="Content\images\presenters\ringstrom.jpg" />
     <Content Include="Content\images\presenters\rutkowski.jpg" />

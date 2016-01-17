@@ -863,7 +863,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
 
-                if (orderRow.Webinar.Status != WebinarStatus.Recorded) return null;
+                if (orderRow.Webinar.Status != WebinarStatus.Recorded || orderRow.Webinar.Status != WebinarStatus.Archived ) return null;
 
                 var onDemandCode = RandomHelpers.GetUniqueCode(5).ToLower();
                 var expiryDate = orderRow.Webinar.Date.AddMonths(6);

@@ -8,7 +8,7 @@
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     var myRow = Model.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
     NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
-    nfi.CurrencyDecimalDigits = 0;
+    nfi.CurrencyDecimalDigits = 2;
 
     decimal amtToReduce;
 
@@ -48,7 +48,7 @@
                 <i>Amt. of Discount:</i>
                 <span style="color: red;">@amtToReduce.ToString().Replace(".00", "")</span><br />
             }
-            <i>Total Cost:</i> <b>@Model.Total.ToString("C", nfi)</b>
+            <i>Total Cost:</i> <b>@Model.Total.ToString(CurrencyFormatToken).Replace(".00", "")</b>
         </div>
 
     </div>

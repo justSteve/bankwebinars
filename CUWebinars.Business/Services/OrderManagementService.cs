@@ -473,9 +473,9 @@ namespace CUWebinars.Business.Services
                             }
                             if (lOrder.idAffiliate != vOrder.idAffiliate)
                             {
-                                _logger.Warn("SynchOrder AFFILIATE MISMATCH Legacy={0} - V3={1}", lOrder.idAffiliate, vOrder.idAffiliate);
+                                _logger.Info("SynchOrder AFFILIATE MISMATCH Legacy={0} - V3={1}", lOrder.idAffiliate, vOrder.idAffiliate);
                                 //vOrder.idAffiliate = lOrder.idAffiliate;
-                                _logger.Info("UPDATE dbo.[Order] SET idAffiliate = {0} WHERE idOrder = {1}", lOrder.idAffiliate, vOrder.idOrder);
+                                _logger.Warn("UPDATE dbo.[Order] SET idAffiliate = {0} WHERE idOrder = {1}", lOrder.idAffiliate, vOrder.idOrder);
 
                             }
 
@@ -492,7 +492,7 @@ namespace CUWebinars.Business.Services
                         }
                         catch (Exception ex)
                         {
-                            _logger.Info("EXEC dbo.FindDupeEmailPerWebinarAndRemove @idWebinar =  " + webinarId);
+                            _logger.Warn("EXEC dbo.FindDupeEmailPerWebinarAndRemove @idWebinar =  " + webinarId);
                             _logger.ErrorException("SynchOrder checks common orders to V3 failed: " + orderEmail, ex);
                         }
                     }
@@ -510,13 +510,9 @@ namespace CUWebinars.Business.Services
             return _orderRepository.FindExpressCheckoutOrderByOrderId(q11Orderid);
         }
 
-        public string GetAccessToRecording(Order order)
-        {
-            throw new NotImplementedException();
-        }
-
         public IEnumerable<Order> GetV3OrdersByWebinarForPostEventClaims(int idWebinar)
         {
+            
             return _webinarRepository.GetOrdersByWebinarForPostEventClaims(idWebinar);
         }
 
