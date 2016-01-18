@@ -125,8 +125,8 @@ namespace CUWebinars.Web.Controllers.Admin
                 "FDcehM4K2WbSuxEplrG2B7uJxqrMbeqJ6MdDm3GLyraYTmzWnmLDQAkllu0t", "BankWebinars33");
 
             FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-            
-            
+
+
             Stream responseStream = response.GetResponseStream();
 
             StreamReader reader = new StreamReader(responseStream);
@@ -134,7 +134,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             StreamWriter writer = new StreamWriter("C:\\Users\\Steve\\Desktop\\logfiles\\resultStream.log");
             writer.Write(reader.ReadToEnd());
-            
+
             Console.WriteLine("Download Complete, status {0}", response.StatusDescription);
 
 
@@ -441,9 +441,9 @@ namespace CUWebinars.Web.Controllers.Admin
             string html = "";
             if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
             {
-                 html = ViewHelpers.RenderViewToString(ControllerContext,
-                    "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditOrderStatus_Compact.cshtml",
-                    null, true);
+                html = ViewHelpers.RenderViewToString(ControllerContext,
+                   "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditOrderStatus_Compact.cshtml",
+                   null, true);
             }
 
             return Json(new { html = html });
@@ -1785,19 +1785,20 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
         [HttpGet]
-        public ActionResult PerWeekPromo(int id)
+        public ActionResult PerWeekPromo(int id, List<int> includedEvents)
         {
-            ViewBag.NumberOfOrders = _orderManagementService.GetNumberOfOrdersPerWebinar(id);
-
+            //barebones starting point.
             WebinarPromoViewModel model = new WebinarPromoViewModel()
             {
 
             };
             model.SendDate = TtsConfig.UtcNowAsCts;
-            model.Webinars = _webinarManagementService.GetUpcomingWebinars().ToList();
+            //Webinars is the user selected list of webinars to include in main body of 'weekly' version.
+            // not the list that shows in the sidebar.
+            //model.Webinars = _webinarManagementService.GetUpcomingWebinars().Where(w => w.idWebinar ).ToList();
             model.Webinar = _webinarManagementService.GetWebinar(id);
             model.TimeZone = USTimeZone.Eastern;
-            model.Affiliates = new AffiliateRepository().GetAffiliatesByPromoType("Daily").ToList();
+            model.Affiliates = new AffiliateRepository().GetAffiliatesByPromoType("Weekly").ToList();
 
             return View(model);
 
@@ -1815,7 +1816,7 @@ namespace CUWebinars.Web.Controllers.Admin
             model.Webinar = _webinarManagementService.GetWebinar(id);
             model.TimeZone = USTimeZone.Eastern;
             model.Affiliates = new AffiliateRepository().GetAffiliatesByPromoType("Daily").ToList();
-            //model.Affiliates = AffiliateFacade.Instance.FindNonDailyPromoSubscribers();
+
 
             return View(model);
 
@@ -2508,8 +2509,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     //{"OrderId":91274,"ExpiryDate":"2015-12-28","OnDemandCode":"5wbf"}
                     _logger.Info("INSERT dbo.UserClaims ( ParentKey, Type, Value ) VALUES	( (SELECT [Key] FROM dbo.UserAccounts WHERE " +
-                                 "Email = '"+order.BillingEmail+"'), 'http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials', " +
-                                 "'{\"OrderId\":"+order.idOrder+",\"ExpiryDate\":\""+expriyDate+"\",\"OnDemandCode\":\""+onDemandCode+"\"}' )");
+                                 "Email = '" + order.BillingEmail + "'), 'http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials', " +
+                                 "'{\"OrderId\":" + order.idOrder + ",\"ExpiryDate\":\"" + expriyDate + "\",\"OnDemandCode\":\"" + onDemandCode + "\"}' )");
 
 
                 }

@@ -168,54 +168,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
     });
 
     $('#TheSubmitButton').on('mouseenter', function () {
-        if ($('#TheSubmitButton').val() === regUserStateManager.getRegisterButtonText() && $(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
+        if ($('#TheSubmitButton').val() === regUserStateManager.getRegisterButtonText()
+            && $(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
             regUserStateManager.setShippingToBilling();
         }
-    });
-
-    $('#ResetPasswordForm').on('submit', function (e) {
-
-        var hiddenInput = $('#ResetPassEmail');
-
-        e.preventDefault();
-
-        var jsonUrl = $(this).attr('action');
-        var jsonPayload = { email: hiddenInput.val() };
-
-        var token = $(this).find('input[name=__RequestVerificationToken]').val();
-        var headers = {};
-        headers['__RequestVerificationToken'] = token;
-
-        $.ajax({
-            type: 'POST',
-            contentType: RegistrationInCartByAffiliate.Constants.JsonContentType,
-            cache: false,
-            url: jsonUrl,
-            dataType: RegistrationInCartByAffiliate.Constants.JsonDataType,
-            data: JSON.stringify(jsonPayload),
-            headers: headers,
-            beforeSend: function () {
-                $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Working...</span>');
-            }
-        }).done(function (data) {
-            if (data.Result === 'Success') {
-                $('#labelEmail').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Reset instructions are on the way.</span>');
-            } else {
-                if (data['Invalid'] === 'UserNotVerified') {
-                    L.clientLogger.error("#388 UserNotVerified ", { result: data && data.Result });
-
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #388. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
-                } else if (data['Invalid'] === 'UnkownEmail') {
-                    L.clientLogger.error("UnknownEmail", { result: data && data.Result });
-
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
-                } else {
-                    L.clientLogger.error("Unknown error #454", { result: data && data.Result });
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Error.Connection Error #454. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
-                }
-            }
-        }).fail(commonFuncs.failCallBack);
-
     });
 
     $('form#checkEmail').submit(function (e) {
@@ -244,18 +200,17 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
             }).done(function (data) {
 
                 regUserStateManager.setInputAction(RegistrationInCartByAffiliate.InputAction.None);
-
+                    
                 // successful request; do something with the data
                 if (data.success === 'foundExisting') {
-                    //L.clientLogger.info('Existing user came anon: ', { email: email });
-                    //regUserStateManager.resetPasswordOrLoginView(email, webinarId);
+
                     regUserStateManager.goToAddressFields(email);
                     if (data.createUser === "true") {
                         createUserAccount(email);
                     }
                 } else if (data.success === 'foundInstitution') {
-                    regUserStateManager.foundInstitutionView(data, email);
-                    L.clientLogger.info('foundInstitution for user: ', { email: email });
+                    //regUserStateManager.foundInstitutionView(data, email);
+                    regUserStateManager.goToAddressFields(email);
                     if (data.createUser === "true") {
                         createUserAccount(email);
                     }
@@ -266,12 +221,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                     }
                 } else if (data.error === 'Fail') {
 
-                    L.clientLogger.info("goToAddressFields 319", { data: data });
+                    L.clientLogger.info("goToAddressFields #319", { data: data });
                     $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #319. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 } else if (data.error === 'Uncaught Ajax Error') {
                     L.clientLogger.error("Uncaught Ajax Error 343", { result: data || "data was falsey", payload: payload });
-
-
                     $('#labelEmail').html('<span class="label label-important">&nbsp;Uncaught Ajax Error 343</span>');
                 }
 
@@ -413,7 +366,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
         }).done(function (data) {
             if (data.Result) {
                 if (data.Result === 'Success') {
-                    debugger;
+                    
                     regUserStateManager.setAction('');
                     registerDuringCheckout.emailOfNewUser = $.trim($('#RegisterFields_Email').val());
                     $('#idUser').val(data.UserId);

@@ -464,7 +464,6 @@ OCA.initializeFunctions = function () {
 
     /* This function gets invoked when the 3rd tab is loaded and an existing user is using the cart */
     OCA.checkoutConfirm.initialize = function (userId) {
-        alert("Hit");
 
         //OCA.cartStateManager.setCancelOrderForm($('#cancelOrder'));
         OCA.cartStateManager.setConfirmOrderForm($('#confirmOrderForAffiliateForm'));
@@ -667,7 +666,7 @@ OCA.wireUpHandlers = function () {
 
         //  value converted to a Boolean in isShippingAddressRequired function
         //  value comes from a hidden input in the radio btn list next to the relevant radio button (previous-sibling)
-        //OCA.shippingAddressRequired = OCA.isShippingAddressRequired($('#RegistrationType > dl dt input:checked').prev());
+        OCA.shippingAddressRequired = OCA.isShippingAddressRequired($('#RegistrationType > dl dt input:checked').prev());
         OCA.shippingAddressRequired = "false";
 
         var data = OCA.signUpForm.serialize();
@@ -707,7 +706,7 @@ OCA.wireUpHandlers = function () {
                                 if (OCA.shippingAddressRequired
                                     && !OCA.cartStateManager.getNotificationsTesting(notificationsTesting)
                                     && !OCA.cartStateManager.getAddressVerified(addressVerified)) {
-                                    alert("hit");
+                                    
                                     OCA.displayModal($('#UserDetailsModal'));
                                 }
 
@@ -1023,10 +1022,10 @@ function modalShown(e) {
         });
     });
 
-    $('#passwordWrapper').remove();
+    //$('#passwordWrapper').remove();
 
-    if ($('#RegisterFields_Password').length < 1) {
-        $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields_Password" name="RegisterFields.Password" value="456rty^Y" />');
-        $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields.ConfirmPassword" name="RegisterFields.ConfirmPassword" value="456rty^Y" />');
-    }
+    //if ($('#RegisterFields_Password').length < 1) {
+    //    $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields_Password" name="RegisterFields.Password" value="456rty^Y" />');
+    //    $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields.ConfirmPassword" name="RegisterFields.ConfirmPassword" value="456rty^Y" />');
+    //}
 };

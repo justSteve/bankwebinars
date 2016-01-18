@@ -1676,6 +1676,8 @@ namespace CUWebinars.Web.Controllers
 
                     if (webUser != null)
                     {
+                        _logger.Info("Existing email is resubmitted for registration {0} | Sesssion = {1}", model.RegisterFields.Email.Trim(), _appHelper.GetUserAuditInfo());
+
                         return Json(new { Result = WebUiConstants.Success, UserId = webUser.idUser, Email = webUser.email });
                     }
 
@@ -1694,7 +1696,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     var webUser = _accountControllerOrchestrator.CreateWebUserFromCart(model);
 
-                    _logger.Info("Account.Register UserAdded: {0}", model.RegisterFields.Email);
+                    _logger.Info("New email is registered {0} | Sesssion = {1}", model.RegisterFields.Email.Trim(), _appHelper.GetUserAuditInfo());
 
                     return Json(new { Result = WebUiConstants.Success, UserId = webUser.idUser, Email = webUser.email });
                 }
