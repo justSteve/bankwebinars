@@ -63,7 +63,7 @@ module RegistrationInCart {
         private formParsedByValidator: boolean = false;
         private zipCheckRequired: boolean = false;
         private nextButtonText: string = 'Next...';
-        private registerButtonText: string = 'Submit Register';
+        private registerButtonText: string = 'Submit';
         private sameAsBillingCheckedFilter: string = '#sameAsBilling:checked';
         private typeofAddressBilling: JQuery;
         private typeofAddressShipping;

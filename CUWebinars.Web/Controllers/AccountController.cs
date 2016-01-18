@@ -1578,7 +1578,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     _logger.ErrorException(string.Format("AddPasswordForCartCreatedUser | Session: {0}", _appHelper.GetSessionStartInfo()), exception);
-                    ModelState.AddModelError(string.Empty, "We have logged the error. Please call us at 800-831-0678 ext. 3 to resolve.");
+                    ModelState.AddModelError(string.Empty, "We have logged an error. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.");
                 }
             }
 
@@ -1672,6 +1672,26 @@ namespace CUWebinars.Web.Controllers
 
                 try
                 {
+                    var webUser = _accountControllerOrchestrator.GetWebUserByEmail(model.RegisterFields.Email);
+
+                    if (webUser != null)
+                    {
+                        return Json(new { Result = WebUiConstants.Success, UserId = webUser.idUser, Email = webUser.email });
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+
+                    _logger.FatalException("Account.Register Catch block: " +
+                        ex.Message + "| Session=" +
+                        _appHelper.GetUserAuditInfo(),
+                        ex);
+                }
+
+                try
+                {
                     var webUser = _accountControllerOrchestrator.CreateWebUserFromCart(model);
 
                     _logger.Info("Account.Register UserAdded: {0}", model.RegisterFields.Email);
@@ -1700,7 +1720,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (Exception exception)
                 {
-                    ModelState.AddModelError(string.Empty, "Please call us at 800-831-0678 ext. 3 to resolve.");
+                    ModelState.AddModelError(string.Empty, "Server Error at Account.Register. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.");
                     ErrorSignal.FromCurrentContext().Raise(exception);
                     _logger.FatalException(string.Format("Account.Register Catch block | Session= {0}", _appHelper.GetUserAuditInfo()), exception);
                 }

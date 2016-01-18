@@ -652,6 +652,7 @@ OCA.wireUpHandlers = function () {
 
     /* Submit event for the big GREEN SignUp button */
     OCA.signUpForm.on('submit', function (e) {
+        
         e.preventDefault();
         $('#users').collapse('hide');
         $('#createNewUserButton').html("<b>processing...</b>");
@@ -666,7 +667,8 @@ OCA.wireUpHandlers = function () {
 
         //  value converted to a Boolean in isShippingAddressRequired function
         //  value comes from a hidden input in the radio btn list next to the relevant radio button (previous-sibling)
-        OCA.shippingAddressRequired = OCA.isShippingAddressRequired($('#RegistrationType > dl dt input:checked').prev());
+        //OCA.shippingAddressRequired = OCA.isShippingAddressRequired($('#RegistrationType > dl dt input:checked').prev());
+        OCA.shippingAddressRequired = "false";
 
         var data = OCA.signUpForm.serialize();
 
@@ -706,7 +708,6 @@ OCA.wireUpHandlers = function () {
                                     && !OCA.cartStateManager.getNotificationsTesting(notificationsTesting)
                                     && !OCA.cartStateManager.getAddressVerified(addressVerified)) {
                                     alert("hit");
-                                    OCA.displayModal($('#UserDetailsModal'));
                                     OCA.displayModal($('#UserDetailsModal'));
                                 }
 
@@ -1012,13 +1013,13 @@ function modalShown(e) {
             } else {
                 //Rollbar.error('#348 userDetailsFormUrl Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
 
-                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>[Connection Error #348] Please call us at 800-831-0678 ext. 3 to resolve.</span>');
+                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>[Connection Error #348] For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.</span>');
             }
         }).fail(function (data) {
 
             //Rollbar.error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData, { data: data });
 
-            $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Connection Error #048] Please call us at 800-831-0678 ext. 3 to resolve.</span>');
+            $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Connection Error #048] For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.</span>');
         });
     });
 

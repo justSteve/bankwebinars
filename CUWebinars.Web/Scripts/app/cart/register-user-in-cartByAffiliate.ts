@@ -1,88 +1,79 @@
 ﻿/// <reference path="../../typings/jquery/jquery.d.ts" />
 /// <reference path="../../typings/jquery/jquery.validation.d.ts" />
 /// <reference path="../../typings/bootstrap/bootstrap.d.ts" />
-var RegistrationInCart;
-(function (RegistrationInCart) {
-    var Button = (function () {
-        function Button() {
-        }
-        Button.EnterDiffAddress = 'EnterDiffAddress';
-        Button.nonUSAddressBtn = 'nonUSAddressBtn';
-        Button.NotInstitution = 'NotInstitution';
-        Button.ResetPass = 'resetPass';
-        Button.SignInButton = 'SignInButton';
-        Button.TheSubmit = 'TheSubmit';
-        Button.YesUseAddress = 'YesUseAddress';
-        return Button;
-    })();
-    RegistrationInCart.Button = Button;
-    ;
 
-    var InputAction = (function () {
-        function InputAction() {
-        }
-        InputAction.EnterKeyPress = 'EnterKeyPress';
-        InputAction.ButtonClick = 'ButtonClick';
-        InputAction.None = 'None';
-        return InputAction;
-    })();
-    RegistrationInCart.InputAction = InputAction;
-    ;
+module RegistrationInCartByAffiliate {
 
-    var Action = (function () {
-        function Action() {
-        }
-        Action.CheckEmail = 'CheckEmail';
-        Action.CheckZip = 'CheckZip';
-        Action.GetPassword = 'GetPassword';
-        Action.LogIn = 'LogIn';
-        Action.PostCreateAccount = 'PostCreateAccount';
-        Action.SubmitLogin = 'SubmitLogin';
-        Action.SubmitRegister = 'SubmitRegister';
-        Action.DisplayBillingAddressFields = 'DisplayBillingAddressFields';
-        return Action;
-    })();
-    RegistrationInCart.Action = Action;
-    ;
+    declare var $;
+    
+    export class Button {
+        static EnterDiffAddress: string = 'EnterDiffAddress';
+        static nonUSAddressBtn: string = 'nonUSAddressBtn';
+        static NotInstitution: string = 'NotInstitution';
+        static ResetPass: string = 'resetPass';
+        static SignInButton: string = 'SignInButton';
+        static TheSubmit: string = 'TheSubmit';
+        static YesUseAddress: string = 'YesUseAddress';
+    };
 
-    var Constants = (function () {
-        function Constants() {
-        }
-        Constants.BillingAddressFields = '#RegisterFields_BillingAddress';
-        Constants.ShippingAddressFields = '#RegisterFields_ShippingAddress';
-        Constants.ShippingAddressContainer = '#ShippingAddressContainer';
-        Constants.City = '_City';
-        Constants.Country = '_Country';
-        Constants.ConfirmDeleteShippingAddressdialog = '#ConfirmDeleteShippingAddressdialog';
-        Constants.FormPostContentType = 'application/x-www-form-urlencoded';
-        Constants.JsonContentType = 'application/json; charset=utf-8';
-        Constants.JsonDataType = 'json';
-        Constants.HtmlDataType = 'html';
-        Constants.Phone = '_Phone';
-        Constants.State = '_State';
-        Constants.AddShippingAddressLink = '#AddShippingAddressLink';
-        Constants.HideAddShippingAddressLink = '#HideAddShippingAddressLink';
-        Constants.StreetAddress = '_StreetAddress';
-        Constants.StreetAddress2 = '_StreetAddress2';
-        Constants.TypeofAddressBilling = 'Billing';
-        Constants.TypeofAddressShipping = 'Shipping';
-        Constants.Zip = '_Zip';
-        return Constants;
-    })();
-    RegistrationInCart.Constants = Constants;
-    ;
+    export class InputAction {
+        static EnterKeyPress: string = 'EnterKeyPress';
+        static ButtonClick: string = 'ButtonClick';
+        static None: string = 'None';
+    };
 
-    var StateManager = (function () {
-        function StateManager() {
-            this.disregardInstitutionDomain = false;
-            this.formParsedByValidator = false;
-            this.zipCheckRequired = false;
-            this.nextButtonText = 'Next...';
-            this.registerButtonText = 'Submit';
-            this.sameAsBillingCheckedFilter = '#sameAsBilling:checked';
+    export class Action {
+        static CheckEmail: string = 'CheckEmail';
+        static CheckZip: string = 'CheckZip';
+        static GetPassword: string = 'GetPassword';
+        static LogIn: string = 'LogIn';
+        static PostCreateAccount: string = 'PostCreateAccount';
+        static SubmitLogin: string = 'SubmitLogin';
+        static SubmitRegister: string = 'SubmitRegister';
+        static DisplayBillingAddressFields: string = 'DisplayBillingAddressFields';
+    };
+
+    export class Constants {
+        static BillingAddressFields: string = '#RegisterFields_BillingAddress';
+        static ShippingAddressFields: string = '#RegisterFields_ShippingAddress';
+        static ShippingAddressContainer: string = '#ShippingAddressContainer';
+        static City: string = '_City';
+        static Country: string = '_Country';
+        static ConfirmDeleteShippingAddressdialog: string = '#ConfirmDeleteShippingAddressdialog';
+        static FormPostContentType: string = 'application/x-www-form-urlencoded';
+        static JsonContentType: string = 'application/json; charset=utf-8';
+        static JsonDataType: string = 'json';
+        static HtmlDataType: string = 'html';
+        static Phone: string = '_Phone';
+        static State: string = '_State';
+        static AddShippingAddressLink: string = '#AddShippingAddressLink';
+        static HideAddShippingAddressLink: string = '#HideAddShippingAddressLink';
+        static StreetAddress: string = '_StreetAddress';
+        static StreetAddress2: string = '_StreetAddress2';
+        static TypeofAddressBilling: string = 'Billing';
+        static TypeofAddressShipping: string = 'Shipping';
+        static Zip: string = '_Zip';
+    };
+
+    export class StateManager {
+        private action: Action;
+        private isShippingAddressRequired: boolean;
+        private inputAction: InputAction;
+        private disregardInstitutionDomain: boolean = false;
+        private formParsedByValidator: boolean = false;
+        private zipCheckRequired: boolean = false;
+        private nextButtonText: string = 'Next...';
+        private registerButtonText: string = 'Submit';
+        private sameAsBillingCheckedFilter: string = '#sameAsBilling:checked';
+        private typeofAddressBilling: JQuery;
+        private typeofAddressShipping;
+
+        constructor() {
             this.initialize();
         }
-        StateManager.prototype.initializeState = function () {
+
+        initializeState(): void {
+
             $('#sameAsBilling').attr('checked', 'checked'); // So shipping address fields same as billing address fields by default.
             $('#collapseBilling').parent().hide();
             $('#collapseShipping').parent().hide();
@@ -100,9 +91,9 @@ var RegistrationInCart;
             this.typeofAddressBilling = $('#RegisterFields_BillingAddress_TypeOfAddress').val(Constants.TypeofAddressBilling);
 
             $('#RegisterFields_Email').focus();
-        };
+        }
 
-        StateManager.prototype.checkAndSubmitEmail = function () {
+        checkAndSubmitEmail(): boolean {
             this.ensureFormValidatorParsed();
             if ($('#RegisterFields_Email').valid() === true) {
                 //console.log(REG.PageObjects.emailInput().valid());
@@ -114,16 +105,17 @@ var RegistrationInCart;
                 this.inputAction = InputAction.None;
                 return false;
             }
-        };
+        }
 
-        StateManager.prototype.checkAndSubmitZip = function () {
+        checkAndSubmitZip(): void {
             $('#TheSubmitButton').prop('value', this.nextButtonText);
-
             //console.log('checkAndSubmitZip');
-            $('#checkZip').submit();
-        };
 
-        StateManager.prototype.displayBillingFields = function () {
+            $('#checkZip').submit();
+        }
+
+        displayBillingFields(): void {
+
             if (this.inputAction === InputAction.EnterKeyPress)
                 this.inputAction = InputAction.None;
 
@@ -135,6 +127,7 @@ var RegistrationInCart;
                 });
 
                 $.when(showBillingInputs.resolve()).then(function () {
+
                     $('#FullName').focus();
                 });
 
@@ -152,16 +145,17 @@ var RegistrationInCart;
 
             if (!timeZoneInput.val())
                 timeZoneInput.val('3'); // Central = 3
-        };
 
-        StateManager.prototype.ensureFormValidatorParsed = function () {
+        }
+
+        ensureFormValidatorParsed(): void {
             if (!this.formParsedByValidator) {
                 $.validator.unobtrusive.parse($('#_CreateUserFromCartForm'));
                 this.formParsedByValidator = true;
             }
-        };
+        }
 
-        StateManager.prototype.enterBillingPane = function (data) {
+        enterBillingPane(data: any): void {
             $('#collapseBilling').parent().show();
 
             if (this.isShippingAddressRequired)
@@ -187,9 +181,9 @@ var RegistrationInCart;
 
             if (this.inputAction === InputAction.EnterKeyPress)
                 this.inputAction = InputAction.None;
-        };
+        }
 
-        StateManager.prototype.enterDifferentAddress = function () {
+        enterDifferentAddress(): void {
             //user choose - yes that's my institution but I'd like to enter a different address'
             ////console.log('EnterDiffAddress hit');
             $('#modalInstitution').modal('hide');
@@ -213,12 +207,12 @@ var RegistrationInCart;
             $.when(showEmailInput.resolve()).then(function () {
                 $('#RegisterFields_Email').focus();
             });
-        };
+        }
 
-        StateManager.prototype.foundInstitutionView = function (data, email) {
+        foundInstitutionView(data, email): void {
+
             if (this.inputAction === InputAction.EnterKeyPress)
                 this.inputAction = InputAction.None;
-
             ////console.log("call foundInstitutionView: " + email);
             $('#modalInstitution').modal('show');
 
@@ -234,29 +228,29 @@ var RegistrationInCart;
             $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;' + email + '</b>&nbsp;</span>');
             $('#ShowInstitution').html(data.Institution + '<br>' + data.Address + '<br>' + data.City + ', ' + data.State + ' ' + data.Zip + '<br>');
             $('input[name=YesUseAddress]').focus();
-        };
+        }
 
-        StateManager.prototype.getAction = function () {
+        getAction(): Action {
             return this.action;
-        };
+        }
 
-        StateManager.prototype.getDisregardIntitutionDomain = function () {
+        getDisregardIntitutionDomain(): boolean {
             return this.disregardInstitutionDomain;
-        };
+        }
 
-        StateManager.prototype.getInputAction = function () {
+        getInputAction(): InputAction {
             return this.inputAction;
-        };
+        }
 
-        StateManager.prototype.getRegisterButtonText = function () {
+        getRegisterButtonText(): string {
             return this.registerButtonText;
-        };
+        }
 
-        StateManager.prototype.getSameAsBillingCheckedFilter = function () {
+        getSameAsBillingCheckedFilter(): string {
             return this.sameAsBillingCheckedFilter;
-        };
+        }
 
-        StateManager.prototype.initialize = function () {
+        initialize(): void {
             this.action = Action.LogIn;
             this.inputAction = InputAction.None;
             this.disregardInstitutionDomain = false;
@@ -264,17 +258,19 @@ var RegistrationInCart;
             this.startView();
 
             $('#TheSubmitButton').prop('value', this.nextButtonText);
-        };
+        }
 
-        StateManager.prototype.logIn = function () {
+        logIn(): void {
+
             if (this.inputAction === InputAction.EnterKeyPress)
                 this.inputAction = InputAction.None;
 
             $('form#frmSignIn').submit();
-        };
+        }
 
-        StateManager.prototype.goToAddressFields = function (email) {
+        goToAddressFields(email: string): void {
             ////console.log("call newPasswordView: " + email);
+
             if (email)
                 $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;Recorded: ' + $('#RegisterFields_Email').val() + '.</span>');
 
@@ -311,18 +307,18 @@ var RegistrationInCart;
                     }
                 });
             }
-        };
+        }
 
-        StateManager.prototype.nonUsAdddressInvoked = function () {
+        nonUsAdddressInvoked(): void {
             //console.log("hit nonUsAdddressInvoked");
             $('#labelEmail').html('<span class="label label-info"><b>&nbsp;&nbsp;Non-US address? Please enter Special Handling Instructions</span>');
             $('#RegisterFields_BillingAddress_Zip').val('na');
             $('#nonUSAddressInput').show();
             this.displayBillingFields();
             this.action = Action.SubmitRegister;
-        };
+        }
 
-        StateManager.prototype.notInstitutionAddress = function () {
+        notInstitutionAddress(): void {
             //console.log('NotInstitution hit');
             $('#modalInstitution').modal('hide');
 
@@ -356,9 +352,9 @@ var RegistrationInCart;
 
             if (this.inputAction === InputAction.EnterKeyPress)
                 this.inputAction = InputAction.None;
-        };
+        }
 
-        StateManager.prototype.passResetView = function () {
+        passResetView(): void {
             //console.log("call passResetView");
             $('#login').hide('slow');
 
@@ -369,9 +365,9 @@ var RegistrationInCart;
             $.when(showResetInput.resolve()).then(function () {
                 $('#ResetPassEmail').focus();
             });
-        };
+        }
 
-        StateManager.prototype.registerView = function () {
+        registerView(): void {
             $('#login').hide('slow');
 
             this.action = Action.CheckEmail;
@@ -383,9 +379,9 @@ var RegistrationInCart;
             $.when(showRegisterInput.resolve()).then(function () {
                 $('#RegisterFields_Email').focus();
             });
-        };
+        }
 
-        StateManager.prototype.resetPassword = function (normalResetPasswordButton) {
+        resetPassword(normalResetPasswordButton: JQuery): void {
             //console.log('resetPass hit');
             if (normalResetPasswordButton.data('clicked'))
                 normalResetPasswordButton.removeData('clicked');
@@ -393,9 +389,9 @@ var RegistrationInCart;
             $('#EdgeCaseResetPasswordButton').data('clicked', true);
             $('#ResetPassEmail').val($('#Email1').val());
             $('form#ResetPasswordForm').submit();
-        };
+        }
 
-        StateManager.prototype.resetPasswordOrLoginView = function (email, webinarId) {
+        resetPasswordOrLoginView(email: JQuery, webinarId: number): void {
             //fires when existing user is detected entering 'signup'.
             //console.log("call resetPasswordOrLoginView: " + email);
             $('#Email1').val(email);
@@ -419,23 +415,25 @@ var RegistrationInCart;
 
             if (this.inputAction === InputAction.EnterKeyPress)
                 this.inputAction = InputAction.None;
-        };
+        }
 
-        StateManager.prototype.setAction = function (incomingAction) {
+        setAction(incomingAction: Action): void {
             this.action = incomingAction;
-        };
+        }
 
-        StateManager.prototype.setInputAction = function (incomingInputAction) {
+        setInputAction(incomingInputAction: InputAction): void {
             this.inputAction = incomingInputAction;
-        };
+        }
 
-        StateManager.prototype.setisShippingAddressRequired = function (isShippingAddressRequired) {
+        setisShippingAddressRequired(isShippingAddressRequired: boolean): void {
             this.isShippingAddressRequired = isShippingAddressRequired;
-        };
+        }
 
-        StateManager.prototype.setShippingToBilling = function () {
+        setShippingToBilling(): void {
+
             var firstName = $('#RegisterFields_FirstName').val();
             var lastName = $('#RegisterFields_LastName').val();
+
 
             if (!firstName) {
                 firstName = 'nonValidFirst';
@@ -459,16 +457,17 @@ var RegistrationInCart;
             $('#RegisterFields_ShippingAddress_Zip').val($('#RegisterFields_BillingAddress_Zip').val());
             $('#RegisterFields_ShippingAddress_Country').val($('#RegisterFields_BillingAddress_Country').val());
             $('#RegisterFields_ShippingAddress_Phone').val($('#RegisterFields_BillingAddress_Phone').val());
-        };
+        }
 
-        StateManager.prototype.startView = function () {
+        startView(): void {
             $('#register').hide();
             $('#reset').hide();
             $('#nonUSAddressInput').hide();
             $('#nonUSAddressBtn').hide();
-        };
+        }
 
-        StateManager.prototype.submit = function () {
+        submit(): void {
+
             switch (this.action) {
                 case Action.CheckEmail:
                     //console.log('CheckEmail hit');
@@ -505,42 +504,45 @@ var RegistrationInCart;
                     this.displayBillingFields();
                     break;
             }
-        };
+        }
 
-        StateManager.prototype.submitCreateUserForm = function () {
+        submitCreateUserForm(): void {
+
             var valid = $('#_CreateUserFromCartForm').valid();
 
             // on account creation default the shipping phone to be same as billing
             $("#RegisterFields.ShippingAddress.phone").val($('#RegisterFields_BillingAddress_Phone'));
-
             //console.log("validating createUserForm: " + valid);
+
             if (valid) {
                 //console.log('createUserForm submitted.');
                 $('#_CreateUserFromCartForm').submit();
 
                 $('#TheSubmitButton').off('mouseenter');
             }
-        };
+        }
 
-        StateManager.prototype.submitLogin = function () {
+        submitLogin(): void {
             //REG.PageObjects.emailLoginInput().val($('#RegisterFields_Email').val());
             //$('#Password').val($('#Password1').val());
             //$('#frmSignin').submit();
             $('#Password').val($('#RegisterFields_Password').val());
             $('#Email').val($('#emailAddress').val());
             $('form#frmSignIn').submit();
-        };
+        }
 
-        StateManager.prototype.useRegisteredAddress = function () {
+        useRegisteredAddress(): void {
             //console.log('YesUseAddress hit');
+
             $('#modalInstitution').modal('hide');
 
             this.zipCheckRequired = false;
 
             this.goToAddressFields(null);
-        };
+        }
 
-        StateManager.prototype.zipCodeVerified = function (data, zipCode) {
+        zipCodeVerified(data: any, zipCode: string) {
+
             switch (data.success) {
                 case 'true':
                     //console.log('zipCodeVerified-true hit');
@@ -558,10 +560,8 @@ var RegistrationInCart;
                     $('#labelEmail').html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode entered was not in the correct format!</span>');
                     break;
             }
-        };
-        return StateManager;
-    })();
-    RegistrationInCart.StateManager = StateManager;
-    ;
-})(RegistrationInCart || (RegistrationInCart = {}));
-//# sourceMappingURL=register-user-in-cart.js.map
+        }
+
+    };
+
+} 

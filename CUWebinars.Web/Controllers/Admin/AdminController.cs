@@ -600,7 +600,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         Result = WebUiConstants.Fail,
                         Reason =
-                            "There has been an error at the server. Please call us at 800-831-0678 ext. 3 to resolve."
+                            "Server Error - Set user assigned to Order: For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com."
                     });
         }
 

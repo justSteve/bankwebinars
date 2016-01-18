@@ -152,7 +152,7 @@ $(function() {
 
                 if (data.status && data.status === 500) {
                     data.data = {};
-                    data.data.error = 'Please call us at 800-831-0678 ext. 3 to resolve.';
+                    data.data.error = 'For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.';
                 }
 
                 if (!data['Result']){

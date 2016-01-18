@@ -917,7 +917,7 @@ function hookUpEditUserLogic(button, shippingAddressRequired) {
                     L.clientLogger.error("Error #416: ", { data: data && data.Result });
                 };
 
-                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #416. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
+                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #416. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.</span>');
 
             }).fail(function (data) {
 
@@ -931,7 +931,7 @@ function hookUpEditUserLogic(button, shippingAddressRequired) {
                 };
 
                 L.clientLogger.error("Error #417", { jqXHR: jqXHR && jqXHR.statusCode().statusText });
-                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #417. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
+                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #417. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.</span>');
             });
         });
 

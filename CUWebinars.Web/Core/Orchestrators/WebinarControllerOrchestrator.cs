@@ -731,7 +731,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     string.Format("UpdateWebinarFiles| UpdateWebinarFiles failed {0}", exception.Message),
                     exception
                     );
-                message = "Update failed. We have logged the error. Please call us at 800-831-0678 ext. 3 to resolve.";
+                message = "Update failed. We have logged an error.";
 
             }
             return false;

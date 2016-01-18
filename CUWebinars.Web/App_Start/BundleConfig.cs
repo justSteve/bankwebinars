@@ -168,7 +168,7 @@ namespace CUWebinars.Web.App_Start
                         "~/Scripts/app/cart/create-order-new.js",
                         "~/Scripts/app/cart/register-during-checkoutByAffiliate.js", // required because some functions here are common to all cart operations
                         "~/Scripts/app/cart/details-affiliate.js",
-                        "~/Scripts/app/cart/register-user-in-cart.js"
+                        "~/Scripts/app/cart/register-user-in-cartByAffiliate.js"
                         ));
 
 
