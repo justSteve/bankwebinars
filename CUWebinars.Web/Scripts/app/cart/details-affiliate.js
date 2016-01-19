@@ -465,7 +465,7 @@ OCA.initializeFunctions = function () {
     /* This function gets invoked when the 3rd tab is loaded and an existing user is using the cart */
     OCA.checkoutConfirm.initialize = function (userId) {
 
-        //OCA.cartStateManager.setCancelOrderForm($('#cancelOrder'));
+        OCA.cartStateManager.setCancelOrderForm($('#cancelOrder'));
         OCA.cartStateManager.setConfirmOrderForm($('#confirmOrderForAffiliateForm'));
         var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
 
@@ -509,7 +509,7 @@ OCA.initializeFunctions = function () {
                     OCA.utilities.goToUrl('/Account/OrderCompleteAffiliate/' + OCA.cartStateManager.getOrderId());
 
                 } else {
-                    confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                    confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data. Please try again. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.</span>');
                 }
 
                 $('#finalLoadingSpinner').remove();
@@ -667,7 +667,7 @@ OCA.wireUpHandlers = function () {
         //  value converted to a Boolean in isShippingAddressRequired function
         //  value comes from a hidden input in the radio btn list next to the relevant radio button (previous-sibling)
         OCA.shippingAddressRequired = OCA.isShippingAddressRequired($('#RegistrationType > dl dt input:checked').prev());
-        OCA.shippingAddressRequired = "false";
+        
 
         var data = OCA.signUpForm.serialize();
 
@@ -704,9 +704,7 @@ OCA.wireUpHandlers = function () {
                                 $('#AdjustOrder').hide();
 
                                 if (OCA.shippingAddressRequired
-                                    && !OCA.cartStateManager.getNotificationsTesting(notificationsTesting)
                                     && !OCA.cartStateManager.getAddressVerified(addressVerified)) {
-                                    
                                     OCA.displayModal($('#UserDetailsModal'));
                                 }
 
@@ -925,7 +923,7 @@ OCA.wireUpHandlers = function () {
     };
 
     OCA.showSetAssignedAffiliate.on('click', function (e) {
-
+        
         e.preventDefault();
         OCA.displaySetAffiliateModal(this);
     });

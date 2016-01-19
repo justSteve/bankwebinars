@@ -57,5 +57,6 @@ namespace CUWebinars.Business.Repository
         Order MigrateOrderWithDiscount(Order order);
         Order GetOrderByIdByOnDemandCode(string onDemandCode);
         Discount GetDiscountByOrderId(int idOrder);
+        void UpdateShippingAddressDetails(Address shippingAddress, int idUser);
     }
 }

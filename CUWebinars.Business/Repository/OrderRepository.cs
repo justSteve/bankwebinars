@@ -686,6 +686,26 @@ namespace CUWebinars.Business.Repository
                 (d => d.idOrder == idOrder).Select(o => o.Discount);
             return code.FirstOrDefault();
         }
+
+        public void UpdateShippingAddressDetails(Address shippingAddress, int idUser)
+        {
+            var orders = items.Where(o => o.idUser == idUser && (o.OrderStatus == OrderStatus.InProcess)
+        );
+
+            foreach (var order in orders)
+            {
+                order.ShippingFirstName  = shippingAddress.Name.Split(' ')[0];
+                order.ShippingLastName = shippingAddress.Name.Split(' ')[1];
+                order.ShippingAddress = shippingAddress.StreetAddress;
+                order.ShippingAddress2 = shippingAddress.StreetAddress2;
+                order.ShippingCity = shippingAddress.City;
+                order.ShippingState = shippingAddress.State;
+                order.ShippingZip = shippingAddress.Zip;
+                
+            }
+            db.SaveChanges();
+        }
+
         public Discount FindDiscountByUser(WebUser currentUser)
         {
             Discount myDiscount = null;

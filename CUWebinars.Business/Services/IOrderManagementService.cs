@@ -128,5 +128,6 @@ namespace CUWebinars.Business.Services
         string GetOnDemandClaimById(int idOrder);
         Order GetOrderByOnDemandClaim(string onDemandCode);
         void UpdateDiscountDetails(Discount discount);
+        void UpdateShippingAddressDetails(Address shippingAddress, int idUser);
     }
 }

@@ -490,7 +490,7 @@ function cancelOrder(orderId, webinarId) {
     var cartStateManager = new OrderRegistration.StateManager();
 
     cartStateManager.setCancelOrderForm($('#cancelOrder'));
-
+    
     var cancelOrderForm = cartStateManager.getCancelOrderForm();
 
     $('#cancelModalOrderId').val(orderId);
@@ -556,7 +556,7 @@ function hookUpEditUserLogic(button) {
     }
 
     modalForm.on('shown', function (e) {
-
+        
         $('#updateShippingMsgLabelWrap').empty();
         var userDetailsForm = $('#userDetailsForm');
 
@@ -571,7 +571,7 @@ function hookUpEditUserLogic(button) {
             e.preventDefault();
 
             var url = $(this).attr('action'); // -> /Account/UpdateShippingDetails
-
+            alert(url);
             var payload = $(this).serialize();
             $.ajax({
                 type: 'POST',

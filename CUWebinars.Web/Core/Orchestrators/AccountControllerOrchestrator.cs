@@ -361,6 +361,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             };
 
             _membershipService.UpdateShippingAddressDetails(shippingAddress);
+            _orderManagementService.UpdateShippingAddressDetails(shippingAddress,  idUser);
         }
         public void UpdateDiscountDetails(Discount discount)
         {

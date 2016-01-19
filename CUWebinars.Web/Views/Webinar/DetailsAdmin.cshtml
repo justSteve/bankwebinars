@@ -146,18 +146,19 @@
                     <div id="SignUpFormContainer" class="row-fluid">
 
                         <div class="content span12 well">
-                            @*<button class="btn btn-link" tabindex="-1" id="showSetAssignedAffiliate" disabled="disabled">Choose Affiliate to Credit</button>*@
-                            <button class="btn btn-link" tabindex="-1" id="createNewUserButton">New User</button>
+                            
                             <ul class="nav nav-tabs" id="regTabs">
                                 <li id="findUserTab" class="active"><a href="#findUserForAffiliate" data-toggle="tab">@Model.SignUpCaption</a></li>
+                                <li id="createNewUserButton"><a href="#contactInfoForAffiliate" data-toggle="tab">Create New User</a></li>
                                 <li id="confirmationTabForAffiliate"><a href="#confirmationForAffiliate" data-toggle="tab">@Model.ConfirmationCaption</a></li>
                             </ul>
 
                             <div class="tab-content">
                                 <div class="tab-pane active" id="findUserForAffiliate">
-                                    <button type="button" class="btn-success btn pull-right" id="AddToCart"> Sign Up </button>
+                                    <button type="button" class="btn-success btn pull-right" id="AddToCart"> Add Order</button>
                                     @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptionsForAffiliate.cshtml", model: Model.CheckoutOptionsViewModel)
                                 </div>
+                                <div class="tab-pane" id="contactInfoForAffiliate"></div>
                                 <div class="tab-pane" id="confirmationForAffiliate"></div>
                             </div>
                         </div>
@@ -214,22 +215,7 @@
             </aside>
             
             
-            <div id="setAssignedAffiliate" class="modal hide fade">
-                @using (Html.BeginForm("SetAffiliateAssignedToOrder", "Admin", FormMethod.Post, new { id = "frmChangeAffiliate" }))
-                {
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h3>Change Affiliate Credited To Order:</h3>
-                    </div>
-                    <div class="modal-body">
-                        @*modal content will be loaded here*@
-                    </div>
-                    <div class="modal-footer">
-                        <button id="cancelChangeAffiliate " class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                        <button id="submitChangeAffilate" class="btn btn-primary">Save Changes</button>
-                    </div>
-                }
-            </div>
+
 
             <!-- close .widget -->
             <!-- For certificate file widget -->

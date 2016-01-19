@@ -1714,6 +1714,7 @@
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\placeholder.js" />
+    <Content Include="Scripts\remote-list.js" />
     <Content Include="Views\Cart\ExpressCheckoutAffiliate.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DataTablesEditorTemplates\EditInstitution.cshtml">
       <SubType>Code</SubType>

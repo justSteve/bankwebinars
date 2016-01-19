@@ -511,7 +511,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     _logger.ErrorException(string.Format("CheckIfAddLocShouldHide in cart. | Session{0}", _appHelper.GetUserAuditInfo()), exception);
-                    ModelState.AddModelError(string.Empty, "There has been an error. Please call 800-831-0678 ext 706 for immediate assistance.");
+                    ModelState.AddModelError(string.Empty, "There has been an error. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.");
                 }
             }
             return this.ModelStateJson(ModelState);

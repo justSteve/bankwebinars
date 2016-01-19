@@ -1770,6 +1770,11 @@ namespace CUWebinars.Business.Services
             _discountRepository.SaveChanges(discount);
         }
 
+        public void UpdateShippingAddressDetails(Address shippingAddress, int idUser)
+        {
+            _orderRepository.UpdateShippingAddressDetails(shippingAddress, idUser);
+        }
+
         public IList<Order> GetV3OrdersByOnDemandClaim()
         {
             return _orderRepository.GetV3OrdersByOnDemandClaim();

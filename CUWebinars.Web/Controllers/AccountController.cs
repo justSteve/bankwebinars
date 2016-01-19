@@ -1239,7 +1239,7 @@ namespace CUWebinars.Web.Controllers
                     ModelState.AddModelError(
                         string.Empty,
                         // Needs to be an empty string to show up in ValidationSummary as not model-level error.
-                        "There was an error at the server which has been logged. If the error recurs, please call 800-831-0678 ext 706 for immediate assistance."
+                        "There was an error at the server which has been logged. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com."
                         );
                 }
             }
@@ -1425,7 +1425,7 @@ namespace CUWebinars.Web.Controllers
                         "Account.PasswordResetConfirm.POST was passed empty or null ID. Session=PasswordResetConfirm. " +
                         _appHelper.GetUserAuditInfo());
                     ModelState.AddModelError(string.Empty,
-                        "There appears to have been a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again. In case of persisant problems contact us at 800-831-0678 ext. 707");
+                        "There appears to have been a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.");
                 }
                 else
                 {
@@ -1447,7 +1447,7 @@ namespace CUWebinars.Web.Controllers
                     }
                     catch (Exception exception)
                     {
-                        _logger.Error("_accountControllerOrchestrator.ChangePasswordFromResetKey {0} tossed error to: ", model.Key);
+                        _logger.Error("_accountControllerOrchestrator.ChangePasswordFromResetKey {0} tossed error to: {1}", model.Key, model.Email);
                         ModelState.AddModelError(string.Empty,
                             "We've logged an error. Please attempt the password reset procedure again. In case of persisant failures contact us at support@ttstrain.com - or, for immediate assistance contact us at 800-831-0678 ext. 707.");
                         ErrorSignal.FromCurrentContext().Raise(exception);
@@ -1877,9 +1877,14 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
-                    _accountControllerOrchestrator.UpdateShippingAddressDetails(shippingDetailsModel.ShippingAddress,
-                        shippingDetailsModel.UserId);
-
+                    var usershipping =
+                        _accountControllerOrchestrator.GetWebUserById(shippingDetailsModel.UserId)
+                            .Addresses.Where(a => a.AddressType == "Shipping");
+                    if (shippingDetailsModel.ShippingAddress != usershipping)
+                    {
+                        _accountControllerOrchestrator.UpdateShippingAddressDetails(
+                            shippingDetailsModel.ShippingAddress, shippingDetailsModel.UserId);
+                    }
                     _accountControllerOrchestrator.AddShippingAddressVerifiedClaim(shippingDetailsModel.UserId);
 
                     return Json(new { Result = WebUiConstants.Success });
