@@ -505,7 +505,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 webinar.RecordingUrl = webinarDetailsViewModel.Webinar.RecordingUrl;
 
                 webinar.Status = WebinarStatus.Recorded;
-                webinar.LivePlusFiveValue = webinarDetailsViewModel.Webinar.LivePlusFiveValue;
+                webinar.LivePlusFiveValue = Convert.ToDateTime(webinarDetailsViewModel.Webinar.LivePlusFiveValue.ToShortDateString()).AddHours(23).AddMinutes(59);
                 _webinarManagementService.UpdateWebinar(webinar);
 
                 _logger.Info(string.Format("Recordings posted for {0} is saved to {1}", webinar.idWebinar + " - " + webinar.Title, webinar.RecordingUrl));

@@ -155,7 +155,11 @@ namespace CUWebinars.Business.Repository
         {
             var orderToDelete = items.Find(orderId);
 
-            Remove(orderToDelete);
+            orderToDelete.OrderStatus = OrderStatus.Canceled;
+            orderToDelete.AdminComments = "ORDER SET TO CANCELED AT CART";
+            
+            SaveChanges();
+            //Remove(orderToDelete);
         }
 
         public AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullName)

@@ -1882,6 +1882,7 @@ namespace CUWebinars.Web.Controllers
                             .Addresses.Where(a => a.AddressType == "Shipping");
                     if (shippingDetailsModel.ShippingAddress != usershipping)
                     {
+                        _logger.Info("Shipping details were updated by: " + _appHelper.GetUserAuditInfo());
                         _accountControllerOrchestrator.UpdateShippingAddressDetails(
                             shippingDetailsModel.ShippingAddress, shippingDetailsModel.UserId);
                     }

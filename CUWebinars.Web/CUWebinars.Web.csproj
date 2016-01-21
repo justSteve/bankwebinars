@@ -676,6 +676,7 @@
     <Content Include="Content\images\aff\MINNBANKERS\bannerOrg.png" />
     <Content Include="Content\images\aff\MINNBANKERS\logo.jpg" />
     <Content Include="Content\images\aff\MINNBANKERS\logo.png" />
+    <Content Include="Content\images\aff\msbankers\logo_msbankers.png" />
     <Content Include="Content\images\aff\NCBANKERS\logo.png" />
     <Content Include="Content\images\aff\ncba\bannerOrg.png" />
     <Content Include="Content\images\aff\NHBANKERS\bannerOrg.png" />
@@ -1334,6 +1335,7 @@
     <Content Include="Content\images\logo_mibankers.png" />
     <Content Include="Content\images\logo_minnbankers.png" />
     <Content Include="Content\images\logo_montanabankers.png" />
+    <Content Include="Content\images\logo_msbankers.png" />
     <Content Include="Content\images\logo_mscua.png" />
     <Content Include="Content\images\logo_ncbankers.png" />
     <Content Include="Content\images\logo_ndba.png" />
@@ -2526,6 +2528,7 @@
     <Folder Include="App_Data\Logs\" />
     <Folder Include="App_Data\Notifications\" />
     <Folder Include="App_Data\Trace\" />
+    <Folder Include="Content\images\email\msbankers\" />
     <Folder Include="Infrastructure\apis\citrix\GTW\" />
     <Folder Include="Notification\Delivery\" />
     <Folder Include="Scripts\app\types\" />

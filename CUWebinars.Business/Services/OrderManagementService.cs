@@ -674,9 +674,17 @@ namespace CUWebinars.Business.Services
 
             if (affiliateIds == null)
             {
+                //affiliateIds = _orderRepository.FindOrdersByUserId(idUser)
+                //                    .OrderByDescending(o => o.OrderDate)
+                //                    .Select(o => o.idAffiliate)
+                //                    .ToList();
+                ////
+                //HACK: eliminate the problematic calculations and hard-wire the
+                // resultset to include only 1 affiliate chosen by most recent order.
                 affiliateIds = _orderRepository.FindOrdersByUserId(idUser)
                                     .OrderByDescending(o => o.OrderDate)
                                     .Select(o => o.idAffiliate)
+                                    .Take(1)
                                     .ToList();
 
                 // keeps affiliateIds object in cache for 1 hour.
@@ -1906,8 +1914,9 @@ namespace CUWebinars.Business.Services
             }
             // now we only addressing Live+5
             //update to pull LivePlusFive value from database
+            var forceToMidnight = Convert.ToDateTime(webinar.LivePlusFiveValue.ToShortDateString()).AddHours(23).AddMinutes(59);
+            return forceToMidnight;
 
-            return webinar.LivePlusFiveValue.AddDays(1);
         }
 
         public void GetJoinUrl(OrderRow row)

@@ -9,14 +9,20 @@
         var outerSpan = new TagBuilder("span");
         outerSpan.GenerateId("discountedText");
 
-        if (Model.PricesAndDiscounts.TotalDiscount == 0)
-            outerSpan.AddCssClass("muted");
 
         var totalDiscountElement = new TagBuilder("span");
         totalDiscountElement.GenerateId("totalDiscount");
         totalDiscountElement.SetInnerText(Model.PricesAndDiscounts.TotalDiscount.ToString(CurrencyFormatToken));
+        if (Model.PricesAndDiscounts.TotalDiscount == 0)
+        {
+            outerSpan.AddCssClass("muted");
+        }
+        else
+        {
+            totalDiscountElement.AddCssClass("text-error");
+        }
 
-        outerSpan.InnerHtml = string.Concat("Discounted: ", totalDiscountElement.ToString(TagRenderMode.Normal), (Model.Discount == null ? string.Empty : string.Concat(" (", Model.Discount.DiscountCode, ")")));
+        outerSpan.InnerHtml = string.Concat("Discounted: <span style=\"color: red;\"", totalDiscountElement.ToString(TagRenderMode.Normal));
 
         return outerSpan.ToString(TagRenderMode.Normal);
     }
@@ -97,6 +103,11 @@
         if (Model.Discount == null)
         {
             rowAmount.Append("<button id='revealDiscountInput' class='btn btn-mini btn-default'> add discount?</button> " + GetDiscountedTextSpan() + "<br />");
+            
+        }
+        else
+        {
+            rowAmount.Append(GetDiscountedTextSpan() + "<br />");
         }
 
         //if (Model.NumberOfAdditionalLocations == 0)

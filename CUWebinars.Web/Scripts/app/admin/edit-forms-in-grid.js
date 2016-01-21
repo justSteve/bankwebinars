@@ -109,7 +109,9 @@ var M = EDIT; // alias for code brevity
         ns.PayByMonerisModal = $('#PayByMonerisModal');
         ns.listOfRegTypes = $('#listOfRegTypes');
 
-        ns.orderRowId = $('#manageOrderForm input[name="ID"]').val();
+        //the following 2 values are loaded at EditOrder_Compact.cshtml so as to pull the value directly from the server.
+        ns.orderRowId = idOrderRowFromDTEOC;
+        ns.idOrder = idOrderFromDTEOC;
 
         ns.locationsSpanPrefix = 'LocationSpan-';
         ns.breakSuffix = '-break';
@@ -278,7 +280,6 @@ var M = EDIT; // alias for code brevity
 
     ns.hookUpApplyDiscountLogic = function (e) {
 
-        alert("idOrderRowFromDTEOC: " + idOrderRowFromDTEOC);
         e.preventDefault();
 
         // initialization code currently commented out
@@ -293,7 +294,7 @@ var M = EDIT; // alias for code brevity
         headers['__RequestVerificationToken'] = token;
 
         var url = '/cart/ApplyDiscountCode';
-        var payload = { code: $('#EditFields_Discount_DiscountCode').val(), orderRowId: idOrderRowFromDTEOC };
+        var payload = { code: $('#EditFields_Discount_DiscountCode').val(), orderRowId: ns.idOrder };
         var self = this;
         debugger;
         $.ajax({
@@ -403,7 +404,7 @@ var M = EDIT; // alias for code brevity
 
     ns.updateCPSubscription = function (e) {
         e.preventDefault();
-
+        
         var url = '/Account/UpdateCpSubscription';
         var payload = {
             notes: $('#EditFields_Discount_Notes').val()
@@ -570,7 +571,7 @@ var M = EDIT; // alias for code brevity
 
                 var payload = {
                     idAffiliate: $('#SelectedAffiliate').val(),
-                    idOrder: $('#Id').val()
+                    idOrder: ns.idOrder
                 };
 
                 var url = $('#frmChangeAffiliate').attr('action');
