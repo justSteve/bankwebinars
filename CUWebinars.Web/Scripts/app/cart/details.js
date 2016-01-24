@@ -183,6 +183,7 @@ $(function () {
     cartStateManager.setWebinarId(webinarId); // webinarId is set in a script tag in razor view Details.cshtml
     cartStateManager.setOrderRowId(orderRowId); // orderRowId is set in the razor view Details.cshtml
     cartStateManager.setIsUserLoggedIn(isUserLoggedIn); // isUserLogged is set in a script tag in razor view Details.cshtml
+    cartStateManager.setUserHasDiscount(userHasDiscount); // isUserLogged is set in a script tag in razor view Details.cshtml
     cartStateManager.setCheckoutInProcess(checkoutInProcess); // checkoutInProcess is set in a script tag in razor view Details.cshtml
     cartStateManager.setAddressVerified(addressVerified); // addressVerified is set in a script tag in razor view Details.cshtml
     cartStateManager.setNotificationsTesting(notificationsTesting); // notificationsTesting is set in a script tag in razor view Details.cshtml
@@ -211,8 +212,11 @@ $(function () {
         signUpForm.submit();
     });
 
-    if (discount !== 'none') {
+    if (cartStateManager.userHasDiscount) {
+        
         $('#showDiscount').css('display', 'block');
+        $('#userHasDiscount').html(_discountCaption);
+        
     }
 
     // Flow goes inside this block where the order exists and is in process e.g. previously abandoned before finializing

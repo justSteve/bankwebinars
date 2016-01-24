@@ -11,22 +11,17 @@ namespace CUWebinars.Web.App_Start
         {
 
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-
-                //"~/Scripts/jquery-1.9.1.js"
                 "~/Scripts/jquery-1.11.1.js",
                 "~/Scripts/vendor/json2.js",
-                //"~/Scripts/jquery-1.8.2.js"
                 "~/Scripts/moment.min.js",
                 "~/Scripts/jquery-dateFormat.min.js"
                 ));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
                         "~/Scripts/jquery-ui-1.11.1.js"));
-            //"~/Scripts/jquery-ui-1.10.3.custom.js"));
-            //"~/Scripts/jquery-ui-1.8.24.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/dataTables").Include(
-                        "~/Scripts/DataTables/jquery.dataTables.js",
+                        "~/Scripts/DataTables/jquery.dataTables.min.js",
                         "~/Scripts/DataTables/datetime-moment.js"
                         )
                     );
@@ -145,14 +140,14 @@ namespace CUWebinars.Web.App_Start
                 ));
 
             bundles.Add(new ScriptBundle("~/bundles/myApp").Include(
-                //"~/Scripts/bootstrap3/bootstrap.js",
+                
                         "~/Scripts/bootstrap.js",
                         "~/Scripts/bootstrap-modal.js",
                         "~/Scripts/bootstrap-modalmanager.js",
-                        "~/Content/js/jquery-plugins/dataTables/media/js/jquery.dataTables.js",
-                        "~/Content/js/jquery-plugins/dataTables/plugins/fnSetFilteringDelay.js"
-                //"~/Scripts/app/cart/additional-locations.js"
-                //,"~/Scripts/app/cart/edit-order.js"
+                        "~/Scripts/zopimCore.js"
+
+                        //"~/Content/js/jquery-plugins/dataTables/media/js/jquery.dataTables.js",
+                        //"~/Content/js/jquery-plugins/dataTables/plugins/fnSetFilteringDelay.js"
                         ));
 
             bundles.Add(new ScriptBundle("~/bundles/create-order").Include(

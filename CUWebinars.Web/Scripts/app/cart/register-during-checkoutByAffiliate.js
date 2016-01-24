@@ -200,7 +200,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
             }).done(function (data) {
 
                 regUserStateManager.setInputAction(RegistrationInCartByAffiliate.InputAction.None);
-                    
+
                 // successful request; do something with the data
                 if (data.success === 'foundExisting') {
 
@@ -340,7 +340,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
         delete (payload['undefined']); // this was the __RequestVerificationToken which we chucked in the headers. See immediately above.
 
         var url = createUserForm.attr('action');
-        alert(url);
+        //        alert(url); /// account\registerfromcart
         $.ajax({
             type: 'POST',
             contentType: constants.JsonContentType,
@@ -352,7 +352,6 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
             beforeSend: function () {
                 // this is where we append a loading image
                 $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Registering new user...</span>');
-
                 var valSummary = $('#valSummarySignUpForm');
                 valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
 
@@ -360,13 +359,13 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 errorsList.empty();
                 errorsList.append('<li style="display:none"></li>');
 
-                beigeFormArea.height(500);
-                //TODO: Why are we setting this height?
+                //beigeFormArea.height(500);
+                //
             }
         }).done(function (data) {
             if (data.Result) {
                 if (data.Result === 'Success') {
-                    
+
                     regUserStateManager.setAction('');
                     registerDuringCheckout.emailOfNewUser = $.trim($('#RegisterFields_Email').val());
                     $('#idUser').val(data.UserId);
@@ -490,7 +489,7 @@ function cancelOrder(orderId, webinarId) {
     var cartStateManager = new OrderRegistration.StateManager();
 
     cartStateManager.setCancelOrderForm($('#cancelOrder'));
-    
+
     var cancelOrderForm = cartStateManager.getCancelOrderForm();
 
     $('#cancelModalOrderId').val(orderId);
@@ -556,7 +555,7 @@ function hookUpEditUserLogic(button) {
     }
 
     modalForm.on('shown', function (e) {
-        
+
         $('#updateShippingMsgLabelWrap').empty();
         var userDetailsForm = $('#userDetailsForm');
 
@@ -571,7 +570,7 @@ function hookUpEditUserLogic(button) {
             e.preventDefault();
 
             var url = $(this).attr('action'); // -> /Account/UpdateShippingDetails
-            alert(url);
+            //alert(url);
             var payload = $(this).serialize();
             $.ajax({
                 type: 'POST',

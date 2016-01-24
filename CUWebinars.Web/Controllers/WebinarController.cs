@@ -856,6 +856,12 @@ namespace CUWebinars.Web.Controllers
                         };
                     }
                 }
+
+                if (model.WebUser.idSubscriptionDiscount != null)
+                {
+                    var discount = _orderManagementService.GetDiscountById(model.WebUser.idSubscriptionDiscount.Value);
+                    ViewBag.DiscountCaption = discount.CreditsRemain;
+                }
                 return View(model);
             }
 

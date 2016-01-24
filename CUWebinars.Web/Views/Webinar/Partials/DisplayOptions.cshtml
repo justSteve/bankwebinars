@@ -25,20 +25,6 @@
         <button type="button" class="btn btn-success" data-dismiss="modal" aria-hidden="true">Finished</button>
     </div>
 </div>
-@*<div id="OptionsOpener">
-    @if (@Model.WebinarDuration == 1)
-    {
-        <span>Prices start at $155. </span>
-    }
-    else
-    {
-        <span>Prices start at $265. </span>
-    }
-    <a data-toggle="collapse" data-target="#ShowsOptions" class="linkCursor">
-
-        Click here to find the attendance option that's right for you!
-    </a>
-</div>*@
 <div id="ShowsOptions">
     <button type="button" class="btn-success btn pull-right" id="AddToCart"> Sign Up </button>
     @{
@@ -49,7 +35,7 @@
             </div>
         }
     }
-
+    <div id="userHasDiscount"></div>
     <div id="RegistrationType">
         <dl>
             @foreach (var myOption in Model.Options)

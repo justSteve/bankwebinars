@@ -41,6 +41,7 @@ module OrderRegistration {
         private checkoutInProcess: boolean;
         private idWebinar: number;
         private isUserLoggedIn: boolean;
+        private userHasDiscount: boolean;
         private confirmOrderForm: JQuery;
         private cancelOrderForm: JQuery;
         private shippingAddressRequired: boolean;
@@ -65,6 +66,9 @@ module OrderRegistration {
 
         getIsUserLoggedIn(): boolean {
             return this.isUserLoggedIn;
+        }
+        getUserHasDiscount(): boolean {
+            return this.userHasDiscount;
         }
 
         getNotificationsTesting(): boolean {
@@ -106,6 +110,10 @@ module OrderRegistration {
 
         setIsUserLoggedIn(val: boolean): void {
             this.isUserLoggedIn = val;
+        }
+
+        setUserHasDiscount(val: boolean): void {
+            this.userHasDiscount = val;
         }
 
         setNotificationsTesting(val: boolean): void {

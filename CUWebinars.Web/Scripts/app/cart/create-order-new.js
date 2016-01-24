@@ -53,6 +53,9 @@ var OrderRegistration;
         StateManager.prototype.getIsUserLoggedIn = function () {
             return this.isUserLoggedIn;
         };
+        StateManager.prototype.getUserHasDiscount = function () {
+            return this.userHasDiscount;
+        };
 
         StateManager.prototype.getNotificationsTesting = function () {
             return this.notificationsTesting;
@@ -92,6 +95,10 @@ var OrderRegistration;
 
         StateManager.prototype.setIsUserLoggedIn = function (val) {
             this.isUserLoggedIn = val;
+        };
+
+        StateManager.prototype.setUserHasDiscount = function (val) {
+            this.userHasDiscount = val;
         };
 
         StateManager.prototype.setNotificationsTesting = function (val) {
