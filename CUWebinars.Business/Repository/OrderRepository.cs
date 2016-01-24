@@ -151,15 +151,14 @@ namespace CUWebinars.Business.Repository
             }
         }
 
-        public void DeleteOrder(int orderId)
+        public void DeleteOrder(Order order)
         {
-            var orderToDelete = items.Find(orderId);
-
-            orderToDelete.OrderStatus = OrderStatus.Canceled;
-            orderToDelete.AdminComments = "ORDER SET TO CANCELED AT CART";
             
-            SaveChanges();
-            //Remove(orderToDelete);
+
+            //order.OrderStatus = OrderStatus.Canceled;
+            
+            //SaveChanges();
+            Remove(order);
         }
 
         public AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullName)

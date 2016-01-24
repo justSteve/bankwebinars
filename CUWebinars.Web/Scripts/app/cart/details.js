@@ -1,10 +1,11 @@
 ﻿//  This script correlates with the Details View.
-var additionalLocationsList, checkoutConfirm, discount, cartStateManager, okToLeave, shippingAddressRequired, signUpForm, signUpFormContainer, storedHeight, numberOfAdditionalLocationsTab3;
+var userHasDiscount, additionalLocationsList, checkoutConfirm, discount, cartStateManager, okToLeave, shippingAddressRequired, signUpForm, signUpFormContainer, storedHeight, numberOfAdditionalLocationsTab3;
 
 discount = '';
 checkoutConfirm = {};
 okToLeave = true;
 pagetitle = $("h1:first").text();
+userHasDiscount = false;
 function getInternetExplorerVersion()
     // Returns the version of Internet Explorer or a -1
     // (indicating the use of another browser).
@@ -212,12 +213,6 @@ $(function () {
         signUpForm.submit();
     });
 
-    if (cartStateManager.userHasDiscount) {
-        
-        $('#showDiscount').css('display', 'block');
-        $('#userHasDiscount').html(_discountCaption);
-        
-    }
 
     // Flow goes inside this block where the order exists and is in process e.g. previously abandoned before finializing
     if (cartStateManager.getOrderRowId() > 0 && cartStateManager.getCheckoutInProcess()) {

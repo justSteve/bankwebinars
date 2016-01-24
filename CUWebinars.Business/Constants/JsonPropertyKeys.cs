@@ -23,5 +23,7 @@ namespace CUWebinars.Business.Constants
         public static readonly string V3OrderUpdatedByLegacyRegType = "V3OrderUpdatedByLegacyRegType";
         public static readonly string Note = "Note";
         public static readonly string AffiliateCheckout = "AffiliateCheckout";
+        public static readonly string DiscountRestored = "DiscountRestored";
+        public static readonly string DiscountRedeemed = "DiscountRedeemed";
     }
 }

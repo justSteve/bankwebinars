@@ -61,7 +61,8 @@
     </div>
 }
 
-@if (Model.DiscountCode.StartsWith("BZ") ||
+@if (
+Model.DiscountCode.StartsWith("BZ") ||
 Model.DiscountCode.StartsWith("SL") ||
 Model.DiscountCode.StartsWith("GD") ||
 Model.DiscountCode.StartsWith("PL")
@@ -73,13 +74,13 @@ Model.DiscountCode.StartsWith("PL")
                 @if (Model.CreditsRemain > 0)
                 {
                     <p style="font-size: larger">
-                        Your subscription code (@Model.DiscountCode) has <b>@Model.CreditsRemain.ToString().Replace(".0", "")</b> remaining.
+                        Your subscription (@Model.DiscountCode) has <b>@Model.CreditsRemain.ToString().Replace(".00", "")</b> remaining.
                     </p>
                 }
                 else
                 {
                     <p style="font-size: larger; color: red;">
-                        Your subscription package has expired. It has been used <b> @Model.CreditsUsed.ToString().Replace(".0", "")</b> times.
+                        Your subscription package has expired. It has been used <b> @Model.CreditsUsed.ToString().Replace(".00", "")</b> times.
                     </p>
                 }
                 <div style="margin-top: 6px;">

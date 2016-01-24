@@ -273,6 +273,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             if (!ReferenceEquals(null, importedOrder))
             {
 
+
                 JObject existingJObject = null;
 
                 string comments = string.Empty;

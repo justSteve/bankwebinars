@@ -664,7 +664,43 @@ namespace CUWebinars.Business.Services
 
         public void DeleteOrder(int orderId)
         {
-            _orderRepository.DeleteOrder(orderId);
+            var order = GetOrderById(orderId);
+
+            if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Discount != null)
+            {
+
+                JObject existingJObject = null;
+
+                string comments = string.Empty;
+
+
+                if (!ReferenceEquals(null, order.AdminComments))
+                {
+                    comments = order.AdminComments.Trim();
+                }
+
+                var newJson =
+                    new JProperty(
+                        string.Concat("DiscountRestored-",
+                            TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                        new JObject(new JProperty("CanceledOrder", order.AdminComments))
+                        );
+
+                if (string.IsNullOrWhiteSpace(comments))
+                {
+                    existingJObject = new JObject(newJson);
+                }
+                else
+                {
+                    existingJObject = JObject.Parse(comments);
+                    existingJObject.Add(newJson);
+                }
+
+                order.AdminComments = existingJObject.ToString(Formatting.None);
+
+                CalculateDiscountRedemtion(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Discount, order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active), 1);
+            }
+            _orderRepository.DeleteOrder(order);
         }
 
         public Affiliate DetermineAffiliateByAlternativeMeans(int idUser)
@@ -1797,7 +1833,7 @@ namespace CUWebinars.Business.Services
         public void GenerateRegistrantKey(Order order, AdditionalLocation additionalLocation = null)
         {
             if (order == null) throw new ArgumentNullException("order");
-            return;
+
             var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             var regKeyResponse = string.Empty;
 
@@ -2152,9 +2188,7 @@ namespace CUWebinars.Business.Services
                 case DiscountType.Subscription:
                     if (discount.CreditsRemain > 0)
                     {
-
-                        discount.CreditsUsed++;
-                        //computes CreditsRemain property
+                        
                         CalculateDiscountRedemtion(discount, row, null);
                         forNotes.AppendFormat(
                             "Discount Applied: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}"
@@ -2177,50 +2211,77 @@ namespace CUWebinars.Business.Services
         {
             if (undo != null)
             {
-                // allows re-apply of discount due to canceled order
-                if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Five"))
+                if (discount.DiscountType == DiscountType.Compensation)
                 {
-                    discount.CreditsRemain = discount.CreditsRemain + 1;
+                        discount.CreditsRemain = discount.CreditsRemain + 1;
+                        discount.CreditsUsed = discount.CreditsUsed - 1;
                 }
-                if (row.RegistrationType.OptionLabel == ("OnDemand Recording Only"))
+                if (discount.DiscountType == DiscountType.Subscription)
                 {
-                    discount.CreditsRemain = discount.CreditsRemain + 1.25M;
-                }
-                if (row.RegistrationType.OptionLabel == ("CD-ROM and Hardcopy Handouts"))
-                {
-                    discount.CreditsRemain = discount.CreditsRemain + 1.25M;
-                }
-                if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Six"))
-                {
-                    discount.CreditsRemain = discount.CreditsRemain + 1.25M;
-                }
-                if (row.RegistrationType.OptionLabel == ("Premier Package"))
-                {
-                    discount.CreditsRemain = discount.CreditsRemain + 1.5M;
+                    // allows re-apply of discount due to canceled order
+                    if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Five"))
+                    {
+                        discount.CreditsRemain = discount.CreditsRemain + 1;
+                        discount.CreditsUsed = discount.CreditsUsed - 1;
+                    }
+                    if (row.RegistrationType.OptionLabel == ("OnDemand Recording Only"))
+                    {
+                        discount.CreditsRemain = discount.CreditsRemain + 1.25M;
+                        discount.CreditsUsed = discount.CreditsUsed - 1.25M;
+                    }
+                    if (row.RegistrationType.OptionLabel == ("CD-ROM and Hardcopy Handouts"))
+                    {
+                        discount.CreditsRemain = discount.CreditsRemain + 1.25M;
+                        discount.CreditsUsed = discount.CreditsUsed - 1.25M;
+                    }
+                    if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Six"))
+                    {
+                        discount.CreditsRemain = discount.CreditsRemain + 1.25M;
+                        discount.CreditsUsed = discount.CreditsUsed - 1.25M;
+                    }
+                    if (row.RegistrationType.OptionLabel == ("Premier Package"))
+                    {
+                        discount.CreditsRemain = discount.CreditsRemain + 1.5M;
+                        discount.CreditsUsed = discount.CreditsUsed - 1.5M;
+                    }
                 }
             }
             else
             {
 
-                if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Five"))
+                if (discount.DiscountType == DiscountType.Compensation)
                 {
                     discount.CreditsRemain = discount.CreditsRemain - 1;
+                    discount.CreditsUsed = discount.CreditsUsed + 1;
                 }
-                if (row.RegistrationType.OptionLabel == ("OnDemand Recording Only"))
+                if (discount.DiscountType == DiscountType.Subscription)
                 {
-                    discount.CreditsRemain = discount.CreditsRemain - 1.25M;
-                }
-                if (row.RegistrationType.OptionLabel == ("CD-ROM and Hardcopy Handouts"))
-                {
-                    discount.CreditsRemain = discount.CreditsRemain - 1.25M;
-                }
-                if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Six"))
-                {
-                    discount.CreditsRemain = discount.CreditsRemain - 1.25M;
-                }
-                if (row.RegistrationType.OptionLabel == ("Premier Package"))
-                {
-                    discount.CreditsRemain = discount.CreditsRemain - 1.5M;
+                    // allows re-apply of discount due to canceled order
+                    if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Five"))
+                    {
+                        discount.CreditsRemain = discount.CreditsRemain - 1;
+                        discount.CreditsUsed = discount.CreditsUsed + 1;
+                    }
+                    if (row.RegistrationType.OptionLabel == ("OnDemand Recording Only"))
+                    {
+                        discount.CreditsRemain = discount.CreditsRemain - 1.25M;
+                        discount.CreditsUsed = discount.CreditsUsed + 1.25M;
+                    }
+                    if (row.RegistrationType.OptionLabel == ("CD-ROM and Hardcopy Handouts"))
+                    {
+                        discount.CreditsRemain = discount.CreditsRemain - 1.25M;
+                        discount.CreditsUsed = discount.CreditsUsed + 1.25M;
+                    }
+                    if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Six"))
+                    {
+                        discount.CreditsRemain = discount.CreditsRemain - 1.25M;
+                        discount.CreditsUsed = discount.CreditsUsed + 1.25M;
+                    }
+                    if (row.RegistrationType.OptionLabel == ("Premier Package"))
+                    {
+                        discount.CreditsRemain = discount.CreditsRemain - 1.5M;
+                        discount.CreditsUsed = discount.CreditsUsed + 1.5M;
+                    }
                 }
             }
         }

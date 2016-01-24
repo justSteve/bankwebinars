@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CUWebinars.Business.Models;
 using System.Text;
 using System.Web.Mvc;
+using log4net.Util.TypeConverters;
 
 // from here: http://www.codemag.com/article/1312081
 namespace CUWebinars.Web.Helpers
@@ -118,6 +120,68 @@ namespace CUWebinars.Web.Helpers
             }
 
             return result;
+        }
+
+        public static string RenderDiscountCaption(Discount discount)
+        {
+            var sb = new StringBuilder();
+            if (!ReferenceEquals(null, discount))
+            {
+                if (discount.DiscountType == DiscountType.Compensation)
+                {
+                    int switchOn = Convert.ToInt32(discount.CreditsRemain);
+                    if (switchOn > 1) switchOn = 2;
+                    if (switchOn < 1) switchOn = 0;
+
+                    string discOff;
+                    switch (switchOn)
+                    {
+                        case 0:
+                            if (discount.FlatOff > 0)
+                            {
+                                discOff = "$" + discount.FlatOff;
+                            }
+                            else
+                            {
+                                discOff = discount.PercentOff + "%";
+                            }
+
+                            sb.AppendFormat("class=\"text-error\">Your discount was redeemed for {0} the registration.</span>", discOff);
+                            break;                        
+                        case 1:
+                            if (discount.FlatOff > 0)
+                            {
+                                discOff = "$" + discount.FlatOff;
+                            }
+                            else
+                            {
+                                discOff = discount.PercentOff + "%";
+                            }
+
+                            sb.AppendFormat("<span class=\"text-success\">You have a discount of {0} available.</span>", discOff);
+                            break;
+                 
+                        case 2:
+                            if (discount.FlatOff > 0)
+                            {
+                                discOff = "$" + discount.FlatOff;
+                            }
+                            else
+                            {
+                                discOff = discount.PercentOff + "%";
+                            }
+
+                            sb.AppendFormat("<span class=\"text-success\">You have discounts of {0} off your next {1} registrations.</span>", discOff, discount.CreditsRemain);
+                            break;
+                    }
+                }
+                if (discount.DiscountType == DiscountType.Subscription)
+                {
+                    sb.AppendFormat("<div  style=\"font-size: small\" class=\"text-success\">Your subscription ({0}) has {1} credits remaining.</div>", discount.DiscountCode, discount.CreditsRemain.ToString().Replace(".00", ""));
+                }
+
+            }
+            return sb.ToString();
         }
     }
 }
