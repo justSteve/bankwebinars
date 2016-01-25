@@ -143,8 +143,7 @@ namespace CUWebinars.Web.App_Start
                 
                         "~/Scripts/bootstrap.js",
                         "~/Scripts/bootstrap-modal.js",
-                        "~/Scripts/bootstrap-modalmanager.js",
-                        "~/Scripts/zopimCore.js"
+                        "~/Scripts/bootstrap-modalmanager.js"
 
                         //"~/Content/js/jquery-plugins/dataTables/media/js/jquery.dataTables.js",
                         //"~/Content/js/jquery-plugins/dataTables/plugins/fnSetFilteringDelay.js"
@@ -176,10 +175,8 @@ namespace CUWebinars.Web.App_Start
                         "~/Content/js/jquery.flexslider-min.js",  //https://github.com/woothemes/FlexSlider/issues?state=open//flexslider content slider twitter slider and initializations--> 
                         "~/Content/js/responsive-tables.js",  //responsive table--> 
                         "~/Content/js/jquery.fitvid.js",         //responsive videos --> 
-                //initialize scripts / custom scripts all pages--> 
-                        "~/Content/js/scripts.js"
-                //"~/Scripts/app/waitButton.js",
-                //"~/Scripts/app/EditOrder.js"
+                        "~/Content/js/scripts.js",
+                        "~/Scripts/zopimCore.js"
                         ));
 
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(

@@ -50,9 +50,11 @@
 
     if (ViewBag.DiscountCaption != null)
     {
-        <script type="text/javascript">
-            
-            var _discountCaption = '@Html.Raw(ViewBag.DiscountCaption)';
+        <script language="javascript" type="text/javascript">
+            $(function() {
+                $('#showDiscount').css('display', 'block');
+                $('#userHasDiscount').html('@Html.Raw(ViewBag.DiscountCaption)');
+            });
         </script>
     }
 }

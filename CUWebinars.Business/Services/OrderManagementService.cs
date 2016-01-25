@@ -279,7 +279,12 @@ namespace CUWebinars.Business.Services
 
         public Order FindExpressCheckoutOrder(string email, int idWebinar)
         {
-            return _orderRepository.FindExpressCheckoutOrder(email.Trim(), idWebinar);
+            var order = _orderRepository.FindExpressCheckoutOrder(email.Trim(), idWebinar);
+            var regType = GetRegTypeOfOrderRow(order.OrderRows.FirstOrDefault().idRegType);
+            var webinar = GetWebinarById(order.OrderRows.FirstOrDefault().idWebinar);
+            order.OrderRows.FirstOrDefault(o => o.RowStatus == OrderRowStatus.Active).RegistrationType = regType;
+            order.OrderRows.FirstOrDefault(o => o.RowStatus == OrderRowStatus.Active).Webinar = webinar;
+            return order;
         }
 
         public IEnumerable<Order> GetOrdersByEmailDomain(string email, int aff)
@@ -894,6 +899,7 @@ namespace CUWebinars.Business.Services
             }
             else
             {
+
                 var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
                 var regTypePricing = dataOperations.GetCostOfRegtype(row.idRegType);

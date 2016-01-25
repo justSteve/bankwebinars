@@ -41,6 +41,30 @@
     @Scripts.Render("~/bundles/myApp")
     @Styles.Render("~/Content/CrispCSS")
 
+    <!--Start of Zopim Live Chat Script-->
+    <script type="text/javascript">
+
+        window.$zopim || (function (d, s) {
+            var z = window.$zopim = function (c) {
+                z._.push(c);
+            },
+                $ = z.s = d.createElement(s),
+                e = d.getElementsByTagName(s)[0];
+
+            z.set = function (o) {
+                z.set._.push(o);
+            };
+            z._ = [];
+            z.set._ = [];
+            $.async = !0;
+            $.setAttribute("charset", "utf-8");
+            $.src = "//v2.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU";
+            z.t = +new Date;
+            $.type = "text/javascript";
+            e.parentNode.insertBefore($, e);
+        })(document, "script");
+    </script>
+    <!--End of Zopim Live Chat Script-->
     <!-- Icons ================ -->
     <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
     <link rel="apple-touch-icon-precomposed" href="~/Content/images/BankWebinars/apple-touch-icon.png" />
@@ -82,6 +106,7 @@
             padding-left: 25px;
         }
     </style>
+
 </head>
 <body class="@PageStyleType">
     <!-- begin accesibility skip to nav skip content -->
@@ -133,6 +158,7 @@
                         <ul>
                             <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/20">Auditing</a></li>
                             <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/15">Compliance</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/17">Customer Service</a></li>
                             <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/17">Customer Service</a></li>
                             <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/23">Human Resources</a></li>
                             <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/16">IRA</a></li>
