@@ -165,6 +165,14 @@ namespace CUWebinars.Web.App_Start
                 url: "{controller}/{action}/{email}/{password}"
             );
 
+            //replicates legacy's generic connection info endpoint
+            routes.MapRoute(
+                    "WebinarConnectionDetails",
+                    "{id}",
+                    new { controller = "Webinar", action = "ConnectionDetails", id = "" },  // Parameter defaults
+                    new { id = @"\d+" }
+                );
+
             //  Catch-all, for any routes which do not exist.
             routes.MapRoute(
                 "404PageNotFound",
@@ -172,21 +180,6 @@ namespace CUWebinars.Web.App_Start
                 new { controller = WebUiConstants.StaticContent, action = WebUiConstants.PageNotFound }
                 );
 
-            //in the legacy system this route will catch:
-            // bankwebinars.com/1522
-            // and redirect to the webinarController.ConnInfo
-            //routes.MapRoute(
-            //        "WebinarConnectionDetails",                                             // Route name
-            //        "{id}",                                                                 // URL with parameters
-            //        new { controller = "Webinar", action = "ConnectionDetails", id = "" },  // Parameter defaults
-            //        new{id = @"\d+"}
-            //    );
-
-            //add route that responds to
-            // 1) cuwebinars.com/mywebinars
-            // 2) mywebinars.cuwebinars.com
-
-            // by redirecting to AccountController.NewMethodThatHandlesReturningUsers
         }
     }
 }

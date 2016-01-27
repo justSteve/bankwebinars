@@ -1472,5 +1472,55 @@ namespace CUWebinars.Business.Core
           
 
         }
+
+        public void UpdateUserEmail(string oldEmail, string email)
+        {
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+
+                using (var UpdateUserEmail = new SqlCommand("UpdateUserEmail", sqlConnection))
+                {
+                    try
+                    {
+                        UpdateUserEmail.Connection = sqlConnection;
+                        UpdateUserEmail.CommandType = CommandType.StoredProcedure;
+                        var updateUserEmailNew = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.VarChar,
+                            ParameterName = "@newEmail",
+                            Value = email
+                        };
+                        UpdateUserEmail.Parameters.Add(updateUserEmailNew);
+
+                        var updateUserEmailOld = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.VarChar,
+                            ParameterName = "@oldEmail",
+                            Value = oldEmail
+                        };
+                        UpdateUserEmail.Parameters.Add(updateUserEmailOld);
+
+                        UpdateUserEmail.ExecuteScalar();
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
+                            errorLogger.CommandText += "'UpdateUserEmail' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'UpdateUserEmail', 9 ,";
+                            errorLogger.CommandText += "'error at UpdateUserEmail " + ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+
+                        }
+                        throw;
+                    }
+                }
+            }
+        }
     }
 }

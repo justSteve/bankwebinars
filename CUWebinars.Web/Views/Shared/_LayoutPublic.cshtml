@@ -15,7 +15,6 @@
     {
         currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
         ViewBag.currentAffiliateId = currentAffiliate.idUserAff;
-
     }
     else
     {
@@ -33,7 +32,6 @@
     var firstPage = stateService.GetValue<string>("FirstPage");
     var sessionID = stateService.GetValue<string>(WebUiConstants.SessionId);
     var affiliateSessionSource = stateService.GetValue<string>("AffiliateSessionSource");
-
 }
 <!doctype html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en" dir="ltr"> <![endif]-->

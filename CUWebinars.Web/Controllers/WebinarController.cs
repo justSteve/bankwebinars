@@ -304,6 +304,21 @@ namespace CUWebinars.Web.Controllers
             //return View(webinar);
         }
 
+        public ActionResult ConnectionDetails(int id)
+        {
+
+             var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id);
+
+                if (webinar == null) return HttpNotFound();
+
+                var model = new WebinarDetailsViewModel()
+                {
+                    Webinar = webinar,
+                    WebinarFiles = webinar.WebinarFiles.ToList()
+                };
+            return null;
+        }
+
 
         public ActionResult RedirectLegacy(int? w, int? u)
         {

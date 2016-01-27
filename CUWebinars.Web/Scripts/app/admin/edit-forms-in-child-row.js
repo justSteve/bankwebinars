@@ -64,6 +64,47 @@ function AttachDataTableEditEvents() {
     });
 
 
+    $('.dataTable').on("click", "#editEmailButton", function (e) {
+        e.preventDefault();
+        alert("hit");
+        var form = $(this).parents("form");
+        var $form = $(form);
+
+        // configure the current validator to validate hidden form elements
+        $.validator.unobtrusive.parse($form);
+        $form.validate().settings.ignore = []; // so it doens't "ignore" .hidden fields
+
+        // check to see if the form is invalid
+        //if (!$form.valid()) {
+
+        //}
+        // how can we di
+
+        var data = $form.serialize();
+        $.ajax({
+            async: false,
+            url: "/admin/editemail",
+            data: data,
+            dataType: "json",
+            type: "POST",
+            success: function (data) {
+                console.log(data);
+                alert("hit");
+                debugger;
+                // need to update the currently displaying name (in case it changed)
+
+                var $cell = $("td.child-showing");
+                $("#save-changes-email").text("Edit is complete");
+                
+                fireSuccessIndicator($cell);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+            }
+        });
+
+    });
+
     $('.dataTable').on("click", "#save-changes-user", function (e) {
         e.preventDefault();
 
@@ -75,20 +116,19 @@ function AttachDataTableEditEvents() {
         $form.validate().settings.ignore = []; // so it doens't "ignore" .hidden fields
 
         // check to see if the form is invalid
-        if (!$form.valid())
-        {
+        if (!$form.valid()) {
             // are the invalid fields on the hidden panel? flash the button (or something!)
             if ($(".hidden .input-validation-error").length) {
                 if ($(".show-billing-address.btn-success").length) {
                     $(".show-shipping-address").addClass("btn-danger");
-                    setTimeout(function() {
+                    setTimeout(function () {
                         $(".show-shipping-address").removeClass("btn-danger");
                     }, 2000);
                 }
 
                 if ($(".show-shipping-address.btn-success").length) {
                     $(".show-billing-address").addClass("btn-danger");
-                    setTimeout(function() {
+                    setTimeout(function () {
                         $(".show-billing-address").removeClass("btn-danger");
                     }, 2000);
                 }
@@ -109,7 +149,7 @@ function AttachDataTableEditEvents() {
         $.ajax({
             async: false,
             url: "/account/updateuser",
-            data: data ,
+            data: data,
             dataType: "json",
             type: "POST",
             success: function (data) {
@@ -140,8 +180,7 @@ function AttachDataTableEditEvents() {
         $form.validate().settings.ignore = []; // so it doens't "ignore" .hidden fields
 
         // check to see if the form is invalid
-        if (!$form.valid())
-        {
+        if (!$form.valid()) {
             // are the invalid fields on the hidden panel? flash the button (or something!)
             if ($(".hidden .input-validation-error").length) {
                 // add check to ensure zip code matches city/state
@@ -149,14 +188,14 @@ function AttachDataTableEditEvents() {
                 return false; // do not allow form to submit if it is invalid
             }
         }
-        
+
         // could definitely use a "busy" cursor.
 
         var data = $form.serialize();
         $.ajax({
             async: false,
             url: "/account/updateinstitution",
-            data: data ,
+            data: data,
             dataType: "json",
             type: "POST",
             success: function (data) {
@@ -186,8 +225,7 @@ function AttachDataTableEditEvents() {
 
 }
 
-function fireSuccessIndicator($cell)
-{
+function fireSuccessIndicator($cell) {
     $cell.addClass("success"); // has a background color specified
     setTimeout(function () {
         $cell.addClass("save-bg-transition"); // specifies an ease effect so the next line "fades" back to normal
@@ -338,8 +376,7 @@ function editResendsCell(cell, $td, rowData) {
 }
 
 // EditOrderStatus_Compact form event
-function updateOrderStatus(item, orderId, newOrderStatus)
-{
+function updateOrderStatus(item, orderId, newOrderStatus) {
     var $item = $(item);
     var form = $item.parents("form");
     var $form = $(form);
@@ -358,8 +395,7 @@ function updateOrderStatus(item, orderId, newOrderStatus)
         success: function (data) {
             console.log(data);
 
-            if (data.Result == "Success")
-            {
+            if (data.Result == "Success") {
                 // need to update the currently displaying status (presuming it changed)
                 $(".dropdown-toggle", $form).html(data.orderStatus + "&nbsp;<b class=\"caret\"></b>");
 
@@ -376,8 +412,7 @@ function updateOrderStatus(item, orderId, newOrderStatus)
 
 
 // EditRegType_DropDown form event
-function updateRegType(item, orderId, newRegTypeId)
-{
+function updateRegType(item, orderId, newRegTypeId) {
     var $item = $(item);
     var form = $item.parents("form");
     var $form = $(form);

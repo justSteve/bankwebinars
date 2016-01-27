@@ -369,6 +369,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             _orderManagementService.UpdateDiscountDetails(discount);
         }
 
+        public void EditEmail(string oldEmail, string email, string tenant)
+        {
+            _membershipService.UpdateUserEmail(oldEmail, email, tenant);
+        }
+
         public void UpdateDiscountDetails(DiscountModel discountModel, int idUser)
         {
             var discount = new Discount

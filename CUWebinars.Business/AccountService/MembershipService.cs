@@ -607,6 +607,33 @@ namespace CUWebinars.Business.AccountService
             _institutionRepository.Update(saveInst);
         }
 
+        public void UpdateUserEmail(string oldEmail, string email, string tenant)
+        {
+            var userAccount = _userAccountService.GetByEmail(tenant, oldEmail);
+            var user = GetUserByEmail(oldEmail);
+
+            if (ReferenceEquals(null, userAccount))
+            {
+                throw new NullReferenceException(DomainConstants.UserNotFound);
+            }
+
+            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
+
+            dataOperations.UpdateUserEmail(oldEmail, email);
+
+            // HACK: stepping carefully around the API way of doing things
+            // I've been unable to resovle the error tossed when updating email by the book:
+            //  {"EmailIsUsername is enabled in SecuritySettings -- use ChangeEmail APIs instead."}
+            //  https://gitter.im/brockallen/BrockAllen.MembershipReboot/archives/2015/10/22
+
+            //_userAccountService.ChangeUsername(userAccount.ID, email);
+            //_userAccountService.SetConfirmedEmail(userAccount.ID, email);
+
+            //user.email = email;
+
+            //_webUserRepository.Update(user);
+        }
+
         public void AddAccountTypeNotVerifiedClaim(UserAccount userAccount, string accountType)
         {
             _logger.Info("AddAccountTypeNotVerifiedClaim: {0}", userAccount.Email);

@@ -103,5 +103,6 @@ namespace CUWebinars.Business.AccountService
 
         Institution GetInstitutionById(int idInstitution);
         void UpdateInstitutionDetails(Institution saveInst);
+        void UpdateUserEmail(string oldEmail, string email, string tenant);
     }
 }

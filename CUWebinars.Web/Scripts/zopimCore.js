@@ -28,7 +28,7 @@ $zopim(function () {
         'offline': 'Leave a message'
     });
     $zopim.livechat.button.show();
-    $zopim.livechat.bubble.hide();
+    $zopim.livechat.bubble.show();
     var bubble = 'online';
 
     window.$zopim.livechat.bubble.setTitle('Help & Feedback');

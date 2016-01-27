@@ -1028,6 +1028,30 @@ namespace CUWebinars.Web.Controllers
             return this.ModelStateJson(ModelState);
         }
 
+        [System.Web.Mvc.HttpPost, System.Web.Mvc.AllowAnonymous]
+        [ValidateAntiForgeryToken(Order = 0)]
+        [ValidateInput(false)]
+        [HandleAjaxException(Order = 1)]
+        public ActionResult EditEmail(string oldEmail, string newEmail)
+        {
+            _logger.Info("Updating Email from " + oldEmail + " to: " + newEmail);
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _accountControllerOrchestrator.EditEmail(oldEmail, newEmail, _globalConfig.Tenant);
+                    return Json(new { Result = WebUiConstants.Success });
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException("In EditEmail Action: ", exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
+                    return Json(new { Result = WebUiConstants.Fail });
+                }
+            }
+            return this.ModelStateJson(ModelState);
+        }
+
 
 
         [System.Web.Mvc.HttpPost, System.Web.Mvc.AllowAnonymous]

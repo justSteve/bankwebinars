@@ -1164,6 +1164,10 @@
     <Content Include="Content\images\email\MIBankers\miHeadLogo.jpg" />
     <Content Include="Content\images\email\MIBankers\spacer.gif" />
     <Content Include="Content\images\email\MINNBANKERS\bannerCaption1.jpg" />
+    <Content Include="Content\images\email\msbankers\banner.jpg" />
+    <Content Include="Content\images\email\msbankers\banner.png" />
+    <Content Include="Content\images\email\msbankers\bannerCaption1.jpg" />
+    <Content Include="Content\images\email\msbankers\msbankers.png" />
     <Content Include="Content\images\email\NCBANKERS\banner.jpg" />
     <Content Include="Content\images\email\NCBANKERS\banner.png" />
     <Content Include="Content\images\email\NCBANKERS\bannerCaption1.jpg" />
@@ -2529,7 +2533,6 @@
     <Folder Include="App_Data\Logs\" />
     <Folder Include="App_Data\Notifications\" />
     <Folder Include="App_Data\Trace\" />
-    <Folder Include="Content\images\email\msbankers\" />
     <Folder Include="Infrastructure\apis\citrix\GTW\" />
     <Folder Include="Notification\Delivery\" />
     <Folder Include="Scripts\app\types\" />
