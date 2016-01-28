@@ -161,6 +161,9 @@ $RECYCLE.BIN/
 # Mac desktop service store files
 .DS_Store
 
+# any image files
+CUWebinars.Web/images
+CUWebinars.Web/img
 
 # =========================
 # Selenium Binaries

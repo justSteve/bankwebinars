@@ -314,6 +314,9 @@ namespace CUWebinars.Business.Services
         public void SynchOrders(int webinarId)
         {
             _logger.Info("SynchOrders begins for: " + webinarId);
+
+            var webinar = GetWebinarById(webinarId);
+
             var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
             IList<Order> lOrders = dataOperations.GetLegacyOrdersByWebinar(webinarId);
             IList<Order> v3Orders = GetV3OrdersByWebinar(webinarId);
@@ -321,6 +324,7 @@ namespace CUWebinars.Business.Services
 
             List<string> legacyEmails = lOrders.Select(order => order.BillingEmail).ToList();
             List<string> v3Emails = v3Orders.Select(v3Order => v3Order.BillingEmail).ToList();
+
 
 
             var query = legacyEmails.GroupBy(x => x)
@@ -457,6 +461,7 @@ namespace CUWebinars.Business.Services
                 _logger.ErrorException("missingFromV3 loop failed. i=" + i + " idWebinar=" + webinarId, ex);
             }
 
+            // Common to both
             i = 1;
             try
             {
@@ -467,7 +472,7 @@ namespace CUWebinars.Business.Services
                         var vOrder = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
                         try
                         {
-                            _logger.Info("SynchOrder CommonToBoth {0} of {1} - {2} ", i, commonEmails.Count(), orderEmail);
+                            //_logger.Info("SynchOrder CommonToBoth {0} of {1} - {2} ", i, commonEmails.Count(), orderEmail);
                             if (vOrder.idOrder != vOrder.idOrderLegacy)
                             {
                                 _orderRepository.SynchIds(vOrder.idOrderLegacy, vOrder.idOrder);
@@ -478,7 +483,7 @@ namespace CUWebinars.Business.Services
                             }
                             if (lOrder.idAffiliate != vOrder.idAffiliate)
                             {
-                                _logger.Info("SynchOrder AFFILIATE MISMATCH Legacy={0} - V3={1}", lOrder.idAffiliate, vOrder.idAffiliate);
+                                //_logger.Info("SynchOrder AFFILIATE MISMATCH Legacy={0} - V3={1}", lOrder.idAffiliate, vOrder.idAffiliate);
                                 //vOrder.idAffiliate = lOrder.idAffiliate;
                                 _logger.Warn("UPDATE dbo.[Order] SET idAffiliate = {0} WHERE idOrder = {1}", lOrder.idAffiliate, vOrder.idOrder);
 
@@ -489,9 +494,32 @@ namespace CUWebinars.Business.Services
                                 vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType;
                                 SaveChanges();
                                 _logger.Info("SynchOrder adjusted RegType from V3 RegType = {1} to Legacy = {0} on {2} ", lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, orderEmail);
-
                             }
 
+                            if (webinar.Date > DateTime.Parse("01/01/2016"))
+                            {
+                                try
+                                {
+                                    if (!ReferenceEquals(null, lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount) && ReferenceEquals(null, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount))
+                                    {
+                                        var code = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount.DiscountCode;
+
+                                        var discount = GetDiscountById(Convert.ToInt32(code));
+
+                                        //ApplyDiscountCode(discount.DiscountCode, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active));
+                                        //SaveChanges();
+                                        _logger.Warn("SynchOrder adjusted Discount = {0} on order {1} ",
+                                            vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
+                                                .Discount.DiscountCode, vOrder.idOrder);
+                                    }
+
+                                }
+                                catch (Exception ex)
+                                {
+                                    _logger.ErrorException(
+                                        "SynchOrder attempt to apply discount failed: " + orderEmail, ex);
+                                }
+                            }
 
                             i++;
                         }
@@ -2047,8 +2075,7 @@ namespace CUWebinars.Business.Services
 
                 thisDiscount = RedeemDiscount(thisDiscount, row);
 
-                //Adding an explicit save attempting to persist the applied discount. Could be problemic
-                //SaveChanges();
+
             }
             _logger.Info("ApplyDiscountCode: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}", thisDiscount.DiscountCode, thisDiscount.DateValidFrom, thisDiscount.DateValidTo, thisDiscount.CreditsUsed, thisDiscount.CreditsRemain);
             return thisDiscount;
@@ -2194,7 +2221,7 @@ namespace CUWebinars.Business.Services
                 case DiscountType.Subscription:
                     if (discount.CreditsRemain > 0)
                     {
-                        
+
                         CalculateDiscountRedemtion(discount, row, null);
                         forNotes.AppendFormat(
                             "Discount Applied: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}"
@@ -2219,8 +2246,8 @@ namespace CUWebinars.Business.Services
             {
                 if (discount.DiscountType == DiscountType.Compensation)
                 {
-                        discount.CreditsRemain = discount.CreditsRemain + 1;
-                        discount.CreditsUsed = discount.CreditsUsed - 1;
+                    discount.CreditsRemain = discount.CreditsRemain + 1;
+                    discount.CreditsUsed = discount.CreditsUsed - 1;
                 }
                 if (discount.DiscountType == DiscountType.Subscription)
                 {

@@ -391,7 +391,8 @@ function getOrderStatusHtml() {
                 "aTargets": [2], // institution column  -- triggers EditInstitution.chtml
                 "mData": "",
                 "mRender": function (data, type, full) {
-                    return "<a href='/account/editinstitution/" + full.idUser + "' target='_new' />" + full.Institution + "</a>";
+                    return full.Institution + "</br>";
+                    //return "<a href='/account/editinstitution/" + full.idUser + "' target='_new' />" + full.Institution + "</a>";
                 }
             },
            {

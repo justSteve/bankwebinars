@@ -64,46 +64,6 @@ function AttachDataTableEditEvents() {
     });
 
 
-    $('.dataTable').on("click", "#editEmailButton", function (e) {
-        e.preventDefault();
-        alert("hit");
-        var form = $(this).parents("form");
-        var $form = $(form);
-
-        // configure the current validator to validate hidden form elements
-        $.validator.unobtrusive.parse($form);
-        $form.validate().settings.ignore = []; // so it doens't "ignore" .hidden fields
-
-        // check to see if the form is invalid
-        //if (!$form.valid()) {
-
-        //}
-        // how can we di
-
-        var data = $form.serialize();
-        $.ajax({
-            async: false,
-            url: "/admin/editemail",
-            data: data,
-            dataType: "json",
-            type: "POST",
-            success: function (data) {
-                console.log(data);
-                alert("hit");
-                debugger;
-                // need to update the currently displaying name (in case it changed)
-
-                var $cell = $("td.child-showing");
-                $("#save-changes-email").text("Edit is complete");
-                
-                fireSuccessIndicator($cell);
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                alert(textStatus);
-            }
-        });
-
-    });
 
     $('.dataTable').on("click", "#save-changes-user", function (e) {
         e.preventDefault();
@@ -232,22 +192,28 @@ function fireSuccessIndicator($cell) {
         $cell.removeClass("success"); // remove the customized background color
         setTimeout(function () {
             $cell.removeClass("save-bg-transition"); // reset this so next color change doesn't fade in
-        }, 3000);
-    }, 1500);
+        }, 3000); // this should be at least as long as the duration of the animation specified in the css
+    }, 1500); // wait this long prior to removing the background-color from the cell
 }
 
-function fireIsLoadingIndicator($cell) {
-
-
-    //$cell.addClass("warning"); // has a background color specified
-    //setTimeout(function () {
-    //    $cell.addClass("save-bg-transition"); // specifies an ease effect so the next line "fades" back to normal
-    //    $cell.removeClass("warning"); // remove the customized background color
-    //    setTimeout(function () {
-    //        $cell.removeClass("save-bg-transition"); // reset this so next color change doesn't fade in
-    //    }, 3000);
-    //}, 1500);
+// set removeAfter (milliseconds) to -1 to skip 'removing' logic (allowing you to do it manually as needed)
+function addIsLoadingIndicator($cell, removeAfter) {
+    $cell.addClass("loading"); // has a background color, etc specified
+    if (removeAfter != -1) {
+        setTimeout(function () {
+            removeIsLoadingIndicator($cell);
+        }, removeAfter);
+    }
 }
+
+function removeIsLoadingIndicator($cell) {
+    $cell.addClass("loading-bg-transition"); // specifies an ease effect so the next line "fades" back to normal
+    $cell.removeClass("loading"); // remove the customized background color
+    setTimeout(function () {
+        $cell.removeClass("loading-bg-transition"); // reset this so next color change doesn't fade in
+    }, 1500); // this should be at least as long as the duration of the animation specified in the css
+}
+
 
 function createChildRow(cell, $td, rowData) {
 
@@ -279,8 +245,6 @@ function createChildRow(cell, $td, rowData) {
 
 function editUserCell(cell, $td, rowData) {
 
-    // could definitely use a "busy" cursor.
-
     var html = "";
 
     $.ajax({
@@ -294,6 +258,12 @@ function editUserCell(cell, $td, rowData) {
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert(textStatus);
+        },
+        beforeSend: function () {
+            addIsLoadingIndicator($td, -1); // let ajax "complete" call remove
+        },
+        complete: function () {
+            removeIsLoadingIndicator($td);
         }
     });
 
@@ -303,9 +273,6 @@ function editUserCell(cell, $td, rowData) {
 
 function editBillingCell(cell, $td, rowData) {
 
-    // could definitely use a "busy" cursor.
-    $cell = cell;
-    fireIsLoadingIndicator($cell);
     var html = "";
 
     $.ajax({
@@ -319,6 +286,12 @@ function editBillingCell(cell, $td, rowData) {
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert(textStatus);
+        },
+        beforeSend: function () {
+            addIsLoadingIndicator($td, -1); // let ajax "complete" call remove
+        },
+        complete: function () {
+            removeIsLoadingIndicator($td);
         }
     });
 
@@ -327,10 +300,6 @@ function editBillingCell(cell, $td, rowData) {
 
 
 function editInstitutionCell(cell, $td, rowData) {
-
-    // could definitely use a "busy" cursor.
-
-    fireIsLoadingIndicator(cell);
 
     var html = "";
 
@@ -345,6 +314,12 @@ function editInstitutionCell(cell, $td, rowData) {
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert(textStatus);
+        },
+        beforeSend: function () {
+            addIsLoadingIndicator($td, -1); // let ajax "complete" call remove
+        },
+        complete: function () {
+            removeIsLoadingIndicator($td);
         }
     });
 
@@ -353,8 +328,6 @@ function editInstitutionCell(cell, $td, rowData) {
 
 
 function editResendsCell(cell, $td, rowData) {
-
-    // could definitely use a "busy" cursor.
 
     var html = "";
 
@@ -369,6 +342,12 @@ function editResendsCell(cell, $td, rowData) {
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert(textStatus);
+        },
+        beforeSend: function () {
+            addIsLoadingIndicator($td, -1); // let ajax "complete" call remove
+        },
+        complete: function () {
+            removeIsLoadingIndicator($td);
         }
     });
 
@@ -410,6 +389,47 @@ function updateOrderStatus(item, orderId, newOrderStatus) {
     });
 }
 
+function submitEditEmailForm(e, thatThis) {
+    
+    e.preventDefault();
+
+    var form = $(thatThis).parents("form");
+    var $form = $(form);
+
+    // configure the current validator to validate hidden form elements
+    $.validator.unobtrusive.parse($form);
+    $form.validate().settings.ignore = []; // so it doens't "ignore" .hidden fields
+
+    // check to see if the form is invalid
+    //if (!$form.valid()) {
+
+    //}
+    // how can we di
+
+    var data = $form.serialize();
+    $.ajax({
+        async: false,
+        url: "/account/editemail",
+        data: data,
+        dataType: "json",
+        type: "POST",
+        success: function (data) {
+            console.log(data);
+
+            var $cell = $("td.child-showing");
+            $("#edit-email").text("Edit is complete").addClass("btn btn-success");
+            $("#EditEmailModal").modal("hide");
+
+            fireSuccessIndicator($cell);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            
+            console.log(data);
+            alert(textStatus);
+        }
+    });
+
+}
 
 // EditRegType_DropDown form event
 function updateRegType(item, orderId, newRegTypeId) {
@@ -482,7 +502,13 @@ function updateRegType(item, orderId, newRegTypeId) {
 //        },
 //        error: function (XMLHttpRequest, textStatus, errorThrown) {
 //            alert(textStatus);
-//        }
+//        },
+//beforeSend: function () {
+//    addIsLoadingIndicator($td, -1); // let ajax "complete" call remove
+//},
+//complete: function () {
+//    removeIsLoadingIndicator($td);
+//}
 //    });
 
 //    return html;
