@@ -117,7 +117,7 @@ td.loading-bg-transition
 .dropdown-submenu:focus > a > [class^="icon-"],
 .dropdown-submenu:hover > a > [class*=" icon-"],
 .dropdown-submenu:focus > a > [class*=" icon-"] {
-  background-image: url("../images/glyphicons-halflings-white.png");
+  background-image: url("/content/images/glyphicons-halflings-white.png");
 }
 
 

@@ -564,7 +564,7 @@ namespace CUWebinars.Web.Controllers
                     var regType = _cartControllerOrchestrator.GetRegTypeById(idRegType.Value);
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(idOrderRow);
                     model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType = regType;
-
+                    
                     var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
                     if (pricesAndDiscounts.Discount == null)
                         pricesAndDiscounts.Discount = new Discount();

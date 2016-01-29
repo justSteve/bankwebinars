@@ -12,6 +12,7 @@ using System.Web.Mvc;
 using System.Web.Security;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Exceptions;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
@@ -1034,6 +1035,11 @@ namespace CUWebinars.Web.Controllers
         [HandleAjaxException(Order = 1)]
         public ActionResult EditEmail(string oldEmail, string newEmail)
         {
+            var user = _accountControllerOrchestrator.GetWebUserByEmail(newEmail);
+
+            if (!ReferenceEquals(null, user))
+                return Json(new { Result = WebUiConstants.Fail, EmailExists = "Yes" });
+
             _logger.Info("Updating Email from " + oldEmail + " to: " + newEmail);
             if (ModelState.IsValid)
             {
@@ -2118,21 +2124,8 @@ namespace CUWebinars.Web.Controllers
             _disposed = true;
         }
 
-        [System.Web.Mvc.HttpPost]
-        [ValidateAntiForgeryToken(Order = 0)]
-        [HandleAjaxException(Order = 1)]
-        public ActionResult UpdateOrderCompactDiscount(EditOrderModel order)
-        {
-            throw new NotImplementedException();
-        }
 
-        [System.Web.Mvc.HttpPost]
-        [ValidateAntiForgeryToken(Order = 0)]
-        [HandleAjaxException(Order = 1)]
-        public ActionResult UpdateOrderCompactAddLoc(EditOrderModel order)
-        {
-            throw new NotImplementedException();
-        }
+
         [System.Web.Mvc.HttpPost]
         [HandleAjaxException]
         public ActionResult UpdateCpSubscription(string notes, int idOrder, DateTime newCPExpiryDate)

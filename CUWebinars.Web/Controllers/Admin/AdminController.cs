@@ -2321,6 +2321,7 @@ namespace CUWebinars.Web.Controllers.Admin
         //[ValidateJsonAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
         [HttpPost]
+        [AllowAnonymous]
         public ActionResult UpdateAdditionalLocations(int orderRowId, IEnumerable<AdditionalLocation> additionalLocations)
         {
             var orderRow = _orderManagementService.GetOrderRowById(orderRowId);
@@ -2332,8 +2333,26 @@ namespace CUWebinars.Web.Controllers.Admin
 
             SyncAdditionalLocations(manageOrderEditModel, orderRow);
 
-            _orderManagementService.SaveChanges();
 
+            PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
+            _orderManagementService.UpdateOrderChanges(orderRow.Order, ref pricesAndDiscounts);
+
+                    if (pricesAndDiscounts.Discount == null)
+                        pricesAndDiscounts.Discount = new Discount();
+
+                    return
+                        Json(
+                            new
+                            {
+
+                                BasePrice = pricesAndDiscounts.UnitPrice,
+                                Discount = pricesAndDiscounts.TotalDiscount,
+                                OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
+                                Tax = pricesAndDiscounts.TaxAmount,
+                                Total = pricesAndDiscounts.TotalOrderPrice,
+                                FlatOff = pricesAndDiscounts.Discount.FlatOff,
+                                PercentOff = pricesAndDiscounts.Discount.PercentOff
+                            });
             return Json(new { Result = WebUiConstants.Success });
         }
 

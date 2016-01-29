@@ -5,9 +5,11 @@
 <script type="text/javascript">
     var idOrderFromDTEOC = @Model.EditFields.Order.idOrder;
     var idOrderRowFromDTEOC = @Model.EditFields.Order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow;
+    var isAffiliate = true;
 </script>
 
 @{
+    var isAffiliate = true;
     var regTypeDropDownHtml = ViewBag.RegTypeDropDownHtml;
     var discount = Model.EditFields.Discount;
 }
@@ -21,13 +23,15 @@
         <input type="hidden" name="additionalLocations" value="" id="updateAdditionalLocationsForm_addLocs" />*@
 }
 
+
+
 <script src="~/Scripts/app/admin/edit-forms-in-grid.js"></script>
 <script src="~/Scripts/app/cart/add-additional-locations.js"></script>
 <style>
     #EditFields_Discount_DiscountCode {
         margin-top: 9px;
     }
-    
+
     .form-horizontal .control-group {
         margin-bottom: 5px;
     }
@@ -41,17 +45,24 @@
 
 <div class="row-fluid">
     <div class="span12">
+
         <div class="span1 control-group">
-            <div class="dropdown">
-                <a class="dropdown-toggle btn btn-info btn-small" data-toggle="dropdown" href="#">Change Order</a>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-                    <li><a tabindex="-1" href="#" id="showChangeUser">Assign to Different User</a></li>
-                    <li><a tabindex="-1" href="#" id="showChangeAssignedAffiliate">Credited to <span id="affiliateNameText">@Model.EditFields.Order.Affiliate.ttsDomain</span> Change?</a></li>
-                    <li><a tabindex="-1" href="#" id="showMonerisModal">Submit Payment</a></li>
-                    <li><a tabindex="-1" href="#" id="showExtendAccessButton">Extend OnDemand Access</a></li>
-                </ul>
-            </div>
+            @{
+                if (!isAffiliate)
+                {
+                    <div class="dropdown">
+                        <a class="dropdown-toggle btn btn-info btn-small" data-toggle="dropdown" href="#">Change Order</a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                            <li><a tabindex="-1" href="#" id="showChangeUser">Assign to Different User</a></li>
+                            <li><a tabindex="-1" href="#" id="showChangeAssignedAffiliate">Credited to <span id="affiliateNameText">@Model.EditFields.Order.Affiliate.ttsDomain</span> Change?</a></li>
+                            <li><a tabindex="-1" href="#" id="showMonerisModal">Submit Payment</a></li>
+                            <li><a tabindex="-1" href="#" id="showExtendAccessButton">Extend OnDemand Access</a></li>
+                        </ul>
+                    </div>
+                }
+            }
         </div>
+
         <div class="span2">
             <table width="100%;">
                 <tr>
@@ -86,7 +97,7 @@
         </div>
         <div style="background-color: lightsteelblue" class="span4">
             <div id="addLocsPanel" style="text-align: center; border-style: solid;">
-                @using (Html.BeginForm("UpdateOrderCompactAddLoc", "Account", FormMethod.Post, new { id = "editOrderCompactAddLoc" }))
+                @using (Html.BeginForm("UpdateAdditionalLocations", "Admin", FormMethod.Post, new { id = "editOrderCompactAddLoc" }))
                 {
                     @Html.AntiForgeryToken()
                     <div>
@@ -391,7 +402,9 @@
                     double TaxAmount = Convert.ToDouble(ViewBag.TaxAmount);
 
                     if (ReferenceEquals(TaxAmount, null))
-                    { TaxAmount = 0; }
+                    {
+                        TaxAmount = 0;
+                    }
                     //Layout = "/Views/Shared/_Layout_PayCC.cshtml";
                     var hpp_id = globalConfig.TenantMonerisHpp_Id;
                     var hpp_key = globalConfig.TenantMonerisHpp_Key;
@@ -442,7 +455,7 @@
                         <input type="hidden" name="li_description1" value="@title - @regTypeDesc">
                         <input type="hidden" name="li_quantity1" value="1">
                         <input type="hidden" name="li_price1" value="@Math.Round(myRow.RowPrice, 2)">
-                        <input type="hidden" name="li_taxes" value="@Math.Round(TaxAmount,2)">
+                        <input type="hidden" name="li_taxes" value="@Math.Round(TaxAmount, 2)">
                         <input type="hidden" name="li_taxamount" value="@Math.Round(TaxAmount, 2)">
                         <input type="hidden" name="li_invoice" value="@globalConfig.TenantPrefix@order.idOrder">
                         <input type="hidden" name="cust_id" value="@order.BillingEmail">
@@ -473,7 +486,7 @@
                             Credit Card Processing Redirect
                         </div>
 
-                        <div style="margin-bottom:10px;">
+                        <div style="margin-bottom: 10px;">
                             We will now redirect your browser to our credit card processor - https://esplusqa.moneris.com - for entry of credit card information.
                         </div>
 
@@ -487,5 +500,3 @@
         </div>
     </div>
 </div>
-
-

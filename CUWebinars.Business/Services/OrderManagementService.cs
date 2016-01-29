@@ -496,7 +496,7 @@ namespace CUWebinars.Business.Services
                                 _logger.Info("SynchOrder adjusted RegType from V3 RegType = {1} to Legacy = {0} on {2} ", lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, orderEmail);
                             }
 
-                            if (webinar.Date > DateTime.Parse("01/01/2016"))
+                            if (vOrder.OrderDate > DateTime.Parse("01/01/2016"))
                             {
                                 try
                                 {
@@ -512,7 +512,6 @@ namespace CUWebinars.Business.Services
                                             vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
                                                 .Discount.DiscountCode, vOrder.idOrder);
                                     }
-
                                 }
                                 catch (Exception ex)
                                 {

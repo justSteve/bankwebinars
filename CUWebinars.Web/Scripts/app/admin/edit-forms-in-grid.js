@@ -4,11 +4,19 @@ if (EDIT === null || typeof EDIT === 'undefined')
 
 var M = EDIT; // alias for code brevity
 
+// jQuery doc.ready function
+$(document).ready(function () {
+
+
+
+});
 
 
 // self-invoking function adds methods to EDIT namespace
 // replace EDIT with parameter 'ns' as EDIT is passed in at bottom in the self-invoking parentheses.
 (function (ns) {
+
+
     ns.addAdditionalLocation = function (e) {
         e.preventDefault();
 
@@ -118,14 +126,12 @@ var M = EDIT; // alias for code brevity
         ns.numberOfAdditionalLocations = parseInt(ns.numberAddLocsLabel.text());
         //ns.selectedAdditionalLocationsPrice = ns.regTypesList.find(":selected").data('price');
 
-        ns.additionalLocationsTotal = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions').text().replace('$', '');
+        //ns.additionalLocationsTotal = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions').text().replace('$', '');
+        ns.additionalLocationsTotal = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions');
 
-        ns.totalDiscountInput = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount').text().replace('$', '');
-        ns.totalPriceInput = $('DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice#TotalOrderPriceText').text().replace('$', '');
+        ns.totalDiscountInput = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount');
+        ns.totalPriceInput = $('DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice#TotalOrderPriceText');
         ns.basePrice = parseFloat($('#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice').text().replace('$', ''));
-
-        //ns.orderRowIdHidden = $('#EditFields_Order_idOrderRow').val();
-
 
         ns.titleHeading = null;
         ns.titleHeading = $('#webinarHeading');
@@ -204,59 +210,59 @@ var M = EDIT; // alias for code brevity
         ns.showChangeAssignedAffiliate.on('click', ns.displayChangeAffiliateModal);
     };
 
-    ns.submitForm = function (e) {
-        //alert("submited form");
-        e.preventDefault();
+    //ns.submitForm = function (e) {
+    //    //alert("submited form");
+    //    e.preventDefault();
 
-        var emailInputs = ns.wrapperDiv.find('input[type="email"]');
+    //    var emailInputs = ns.wrapperDiv.find('input[type="email"]');
 
-        var invalidEmailInput = [];
+    //    var invalidEmailInput = [];
 
-        $.each(emailInputs, function (idx, i) {
-            if ($(i).val().indexOf('@') < 0) {
-                invalidEmailInput.push($(i).attr('id'));
-                $(i).css('border-color', '#b94a48').css('background-color', '#ec8d8d');
-            }
-            $(i).attr('name', 'AdditionalLocations[' + idx + '].Email');
-        });
+    //    $.each(emailInputs, function (idx, i) {
+    //        if ($(i).val().indexOf('@') < 0) {
+    //            invalidEmailInput.push($(i).attr('id'));
+    //            $(i).css('border-color', '#b94a48').css('background-color', '#ec8d8d');
+    //        }
+    //        $(i).attr('name', 'AdditionalLocations[' + idx + '].Email');
+    //    });
 
-        if (invalidEmailInput.length > 0) {
-            ns.logInvalidOperation("At least 1 of the email address textboxes is empty or has an invalid address. Please add a valid address or delete the textbox by clicking the adjacent trashcan.", null, true);
-            return; // if even 1 email input has no email address, stop processing. Remove it or enter an email address.
-        }
+    //    if (invalidEmailInput.length > 0) {
+    //        ns.logInvalidOperation("At least 1 of the email address textboxes is empty or has an invalid address. Please add a valid address or delete the textbox by clicking the adjacent trashcan.", null, true);
+    //        return; // if even 1 email input has no email address, stop processing. Remove it or enter an email address.
+    //    }
 
-        // next 4 lines not really required, as those parts of the ViewModel aren't necessary for the POST. 
-        //But may as well set them, as easy enough to do.
-        if (ns.numberOfAdditionalLocations > -1) {
-            $('#NumberOfAdditionalLocations').val(ns.numberOfAdditionalLocations);
-            $('#DisplayRowPriceViewModel_NumberOfAdditionalLocations').val(ns.numberOfAdditionalLocations);
-        }
+    //    // next 4 lines not really required, as those parts of the ViewModel aren't necessary for the POST. 
+    //    //But may as well set them, as easy enough to do.
+    //    if (ns.numberOfAdditionalLocations > -1) {
+    //        $('#NumberOfAdditionalLocations').val(ns.numberOfAdditionalLocations);
+    //        $('#DisplayRowPriceViewModel_NumberOfAdditionalLocations').val(ns.numberOfAdditionalLocations);
+    //    }
 
-        $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice').val($('#TotalOrderPriceText').val());
-        $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount').val($('#TotalDiscountText').val());
-        $('#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice').val($('#UnitPriceText').val());
-        $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions').val($('#TotalCostOfOptionsText').val());
+    //    $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice').val($('#TotalOrderPriceText').val());
+    //    $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount').val($('#TotalDiscountText').val());
+    //    $('#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice').val($('#UnitPriceText').val());
+    //    $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions').val($('#TotalCostOfOptionsText').val());
 
-        var self = $(this);
+    //    var self = $(this);
 
-        var form = $('#editOrderCompact');
-        //alert("hit form");
-        $.ajax({
-            type: 'POST',
-            contentType: constants.FormPostContentType,
-            cache: false,
-            url: form.attr('action'),
-            dataType: constants.JsonDataType,
-            data: form.serialize(),
-            beforeSend: function () {
-                $('#postFeedbackLabel').remove();
-                self.append('<span id="submitSpinWrapper">&nbsp;<span class="label label-info"><i id="spinner" class="icon-spinner icon-spin"></i>&nbsp;loading...</span></span>');
-            }
-        }).done(function (data, bla, bla) {
-            $('#submitSpinWrapper').remove();
-            self.after('<span id="postFeedbackLabel">&nbsp;<span class="label label-success">&nbsp;Operation succeeded</span></span>');
-        });
-    };
+    //    var form = $('#editOrderCompact');
+    //    //alert("hit form");
+    //    $.ajax({
+    //        type: 'POST',
+    //        contentType: constants.FormPostContentType,
+    //        cache: false,
+    //        url: form.attr('action'),
+    //        dataType: constants.JsonDataType,
+    //        data: form.serialize(),
+    //        beforeSend: function () {
+    //            $('#postFeedbackLabel').remove();
+    //            self.append('<span id="submitSpinWrapper">&nbsp;<span class="label label-info"><i id="spinner" class="icon-spinner icon-spin"></i>&nbsp;loading...</span></span>');
+    //        }
+    //    }).done(function (data, bla, bla) {
+    //        $('#submitSpinWrapper').remove();
+    //        self.after('<span id="postFeedbackLabel">&nbsp;<span class="label label-success">&nbsp;Operation succeeded</span></span>');
+    //    });
+    //};
 
 
     ns.adjustAdditionalLocationsTotal = function (number) {
@@ -266,12 +272,14 @@ var M = EDIT; // alias for code brevity
         var newAddLocsPrice = number * parseFloat(ns.addLocsUnitPrice);
 
         ns.additionalLocationsTotal.val(newAddLocsPrice);
-        ns.allAddLocsPrice = parseInt(ns.additionalLocationsTotal.val());
+        ns.additionalLocationsTotal = newAddLocsPrice;
+        ns.allAddLocsPrice = newAddLocsPrice;
         ns.totalPriceSansDiscount = ns.allAddLocsPrice + ns.basePrice;
 
     };
 
     ns.adjustTotalPrice = function () {
+
         var newTotalPrice = ns.totalPriceSansDiscount - (ns.totalDiscount || 0);
 
         ns.totalPrice = newTotalPrice;
@@ -310,7 +318,7 @@ var M = EDIT; // alias for code brevity
                 $(self).attr('disabled', 'disabled');
             }
         }).done(function (data) {
-            
+
             if (data.Result == 0) {
                 alert("The discount code " + $('#CheckoutDiscountCode').val() + " was not found. Try again or call 800-831-0678 ext. 703 for assistance.");
             }
@@ -404,7 +412,7 @@ var M = EDIT; // alias for code brevity
 
     ns.updateCPSubscription = function (e) {
         e.preventDefault();
-        
+
         var url = '/Account/UpdateCpSubscription';
         var payload = {
             notes: $('#EditFields_Discount_Notes').val()
@@ -489,10 +497,32 @@ var M = EDIT; // alias for code brevity
             headers: headers,
             beforeSend: function () {
                 ns.updateAddLocsButton.append('<span id="addLocUpSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
-            }
-        }).done(function (data) {
-            if (data.Result === 'Success') {
-                $('#addLocUpSpinner').remove();
+            },
+            success: function (data) {
+                if (data) {
+
+                    // need to update the currently displaying regType and associated costs
+                    $("#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice").html("$" + data.BasePrice);
+                    $("#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions").html("$" + data.OptionsPrice);
+                    $("#DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount").html("$" + data.Discount);
+
+                    $("#DisplayRowPriceViewModel_PricesAndDiscounts_Tax").html("$" + data.Tax);
+                    if (data.Tax > 0)
+                        $("#DisplayRowPriceViewModel_PricesAndDiscounts_Tax").parents("tr").removeClass("hidden");
+
+                    $("#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice").html("$" + data.Total);
+
+                    // also need to update the originating cell in parent row
+                    var $parentCell = $("td.child-showing");
+
+                    //  Reuse logic already in display-orders.js for when the datatables.net gets created...
+                    var parentHtml = DO.getBillingCellHtml(data.FlatOff, data.PercentOff, data.regTypeShort, data.Total);
+                    $parentCell.html(parentHtml);
+
+                    var $childRow = $item.closest("td.child-row");
+                    fireSuccessIndicator($childRow.add($parentCell)); // not auto-hiding the child row yet...  color both the child row and the originating parent
+                }
+
             }
         });
     };
@@ -821,23 +851,16 @@ var M = EDIT; // alias for code brevity
 
     ns.gatherPricingData = function () {
 
-        //$('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice').val($('#TotalOrderPriceText').val());
-        //$('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount').val($('#TotalDiscountText').val());
-        //$('#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice').val($('#UnitPriceText').val());
-        //$('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions').val($('#TotalCostOfOptionsText').val());
+        $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice').val($('#TotalOrderPriceText').val());
+        $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount').val($('#TotalDiscountText').val());
+        $('#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice').val($('#UnitPriceText').val());
+        $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions').val($('#TotalCostOfOptionsText').val());
 
-        //ns.allAddLocsPrice = parseInt(ns.additionalLocationsTotal.val());
-        //ns.totalDiscount = parseInt(ns.totalDiscountInput.val());
-        //ns.totalPrice = parseInt(ns.totalPriceInput.val());
-        //ns.totalPriceSansDiscount = (ns.allAddLocsPrice || 0) + ns.basePrice;
+        ns.allAddLocsPrice = parseInt(ns.additionalLocationsTotal.val());
+        ns.totalDiscount = parseInt(ns.totalDiscountInput.val());
+        ns.totalPrice = parseInt(ns.totalPriceInput.val());
+        ns.totalPriceSansDiscount = (ns.allAddLocsPrice || 0) + ns.basePrice;
     };
-
-})(EDIT);
-
-// jQuery doc.ready function
-$(document).ready(function () {
-
-
     M.primeDomVariables();
     M.wireUpHandlers();
 
@@ -846,4 +869,5 @@ $(document).ready(function () {
 
     M.wireUpTrashIcons();
 
-});
+})(EDIT);
+
