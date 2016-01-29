@@ -93,7 +93,7 @@ function getOrderStatusHtml() {
     };
 
     ns.getBillingCellHtml = function (flatOff, percentOff, regTypeLabel, total) {
-
+        
         var showDiscount = "";
         var discountHTML = "<br><span class=\"DisplayDiscount\">Discounted by: {0}</span>";
 

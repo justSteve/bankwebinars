@@ -18,7 +18,7 @@ namespace CUWebinars.Business.Models
         {
             get
             {
-                return this.OptionLabel.Replace(" Package", "").Replace(" Plus Six", "").Replace(" and Hardcopy Handouts", "").Replace("OnDemand Only", "").Replace("Plus Five", "");
+                return this.OptionLabel.Replace(" Package", "").Replace("Live Plus Six", "Live+6").Replace(" and Hardcopy Handouts", "").Replace(" Recording Only", "").Replace(" Plus Five", "+5");
                 // from EditOrder_Compact.cshtml...
                 //if (Model.EditFields.DisplayRowPriceViewModel.RegistrationType.OptionLabel.StartsWith("Live Plus Five"))
                 //{

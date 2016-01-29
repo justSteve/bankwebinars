@@ -463,6 +463,9 @@ $(document).ready(function () {
     };
 
     ns.submitUpdateAddLocsForm = function (e) {
+        var $item = $(e);
+        var form = $item.parents("form");
+        //var $form = $(form);
 
         e.preventDefault();
 
@@ -480,9 +483,6 @@ $(document).ready(function () {
             additionalLocations: addLocs
         };
 
-        var form = $(this);
-
-        var url = form.attr('action');
         var token = form.find('input[name=__RequestVerificationToken]').val();
         var headers = {};
         headers['__RequestVerificationToken'] = token;
@@ -491,7 +491,7 @@ $(document).ready(function () {
             type: 'POST',
             contentType: constants.JsonContentType,
             cache: false,
-            url: url,
+            url: "/admin/UpdateAdditionalLocations",
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
             headers: headers,
