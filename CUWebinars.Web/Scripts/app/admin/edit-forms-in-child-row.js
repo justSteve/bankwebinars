@@ -128,6 +128,52 @@ function AttachDataTableEditEvents() {
     });
 
 
+    $('.dataTable').on("click", "#save-changes-discount", function (e) {
+        e.preventDefault();
+
+        var form = $(this).parents("form");
+        var $form = $(form);
+
+        // configure the current validator to validate hidden form elements
+        $.validator.unobtrusive.parse($form);
+        $form.validate().settings.ignore = []; // so it doens't "ignore" .hidden fields
+
+        // check to see if the form is invalid
+        if (!$form.valid()) {
+            // are the invalid fields on the hidden panel? flash the button (or something!)
+            if ($(".hidden .input-validation-error").length) {
+                var a = "holder";
+            } else {
+                return false; // do not allow form to submit if it is invalid
+            }
+        }
+
+
+        // form validation passed, save edited Discount fields to the database...
+        // could definitely use a "busy" cursor.
+
+        var data = $form.serialize();
+        $.ajax({
+            async: false,
+            url: "/account/updatediscount",
+            data: data,
+            dataType: "json",
+            type: "POST",
+            success: function (data) {
+                console.log(data);
+
+                // need to update the currently displaying name (in case it changed)
+
+                var $cell = $("td.child-showing");
+                $cell.click(); // hide the child row
+                fireSuccessIndicator($cell);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+            }
+        });
+    });
+    
 
     $('.dataTable').on("click", "#save-changes-institution", function (e) {
         e.preventDefault();
@@ -389,7 +435,43 @@ function updateOrderStatus(item, orderId, newOrderStatus) {
     });
 }
 
-function submitEditEmailForm(e, thatThis) {
+// EditDiscount_Compact form event
+//  derived from // EditOrderStatus_Compact form event
+function updateDiscount(item, orderId, newDiscount) {
+    var $item = $(item);
+    var form = $item.parents("form");
+    var $form = $(form);
+
+    $("input[name='Id']", $form).val(orderId);
+    $("input[name='Discount']", $form).val(newDiscount);
+
+    var data = $form.serialize();
+
+    $.ajax({
+        async: false,
+        url: "/admin/updateDiscount",
+        data: data,
+        dataType: "json",
+        type: "POST",
+        success: function (data) {
+            console.log(data);
+
+            if (data.Result == "Success") {
+                // need to update the currently displaying status (presuming it changed)
+                $(".dropdown-toggle", $form).html(data.Discount + "&nbsp;<b class=\"caret\"></b>");
+
+                var $cell = $item.parents("td");
+                fireSuccessIndicator($cell);
+            }
+
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus);
+        }
+    });
+}
+
+function updateEmail(e, thatThis) {
     
     e.preventDefault();
 

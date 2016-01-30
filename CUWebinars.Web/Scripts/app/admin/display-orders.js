@@ -17,7 +17,7 @@ $(function () {
 
 
 function getResendInfoHtml() {
-    // this seems a little slower than I'd like...
+
     var html = "";
 
     $.ajax({
@@ -26,6 +26,26 @@ function getResendInfoHtml() {
         dataType: "json",
         type: "POST",
         success: function (data) {
+            html = data.html;
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus);
+        }
+    });
+
+    return html;
+}
+function getDiscountHtml() {
+
+    var html = "";
+
+    $.ajax({
+        async: false,
+        url: "/admin/geteditdiscountdropdownhtml",
+        dataType: "json",
+        type: "POST",
+        success: function (data) {
+
             html = data.html;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -87,29 +107,20 @@ function getOrderStatusHtml() {
         //defined in parent page
         DO.affiliateId = affiliateId;
 
-        DO.baseOrderStatusHtml = getOrderStatusHtml();  // this seems a little slower than I'd like...
-        //DO.baseRegTypeDropDownHtml = getRegTypeDropDownHtml();  // this seems a little slower than I'd like...
-        DO.orderStatusFilters = undefined;
+        DO.baseOrderStatusHtml = getOrderStatusHtml();  // 
+        DO.baseDiscountHtml = getDiscountHtml();  // 
+      
     };
 
-    ns.getBillingCellHtml = function (flatOff, percentOff, regTypeLabel, total) {
-        
-        var showDiscount = "";
-        var discountHTML = "<br><span class=\"DisplayDiscount\">Discounted by: {0}</span>";
-
-        //if (full.Discount != null) {
-        if (flatOff > 0) {
-            showDiscount = discountHTML.replace("{0}", "$" + (flatOff + "").replace(".00", ""));
-        }
-        else if (percentOff > 0) {
-            showDiscount = discountHTML.replace("{0}", percentOff + "%");
-        }
-        //}
+    ns.getBillingCellHtml = function (discount, regTypeLabel, total) {
+        //alert(discount);
+        var showDiscount = discount;
 
         var billingHtml = regTypeLabel
                             + showDiscount
-                            + "<br />Total: $" + (total + "").replace(".00", "")
-        ;
+                            + "<br />Total: $" + (total + "").replace(".00", "");
+
+        DO.orderStatusFilters = undefined;
 
         return billingHtml;
 
@@ -325,7 +336,7 @@ function getOrderStatusHtml() {
     };
 
     ns.wireUpDataTable = function () {
-        
+
         DO.ordersTable.dataTable({
             "serverSide": true,
             "ajax": {
@@ -400,23 +411,20 @@ function getOrderStatusHtml() {
                "mData": "",
                "mRender": function (data, type, full) {
 
-                   var flatOff = 0;
-                   var percentOff = 0;
+                   var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
+                   
+                   // the dropdown's HTML gets built one time on the server via ajax via a partial view and RenderViewToString
+                   //  magic strings [DISCOUNT] and [DISCOUNTID] are hand-/hard-coded in the partial View
+                   var dd_html = "";// DO.baseDiscountHtml.replace(/\[DISCOUNT\]/gi, full.Discount.DiscountType.ToString).replace(/\[DISCOUNTID\]/gi, orderToEdit);
 
-                   if (full.Discount != null)
-                   {
-                       flatOff = full.Discount.FlatOff;
-                       percentOff = full.Discount.PercentOff;
+                   //return dd_html + orderToEdit;
 
-                   }
-
-                   var newBillingHtml = ns.getBillingCellHtml(flatOff,
-                                                           percentOff,
+                   var newBillingHtml = ns.getBillingCellHtml(dd_html + orderToEdit,
                                                            full.RegistrationType.OptionLabelShort,
                                                            full.Total);
 
                    return newBillingHtml;
-                   
+
                }
            },
            // [4] Affiliate Column
@@ -435,7 +443,7 @@ function getOrderStatusHtml() {
                     //if (full.Webinar_IsRecorded) {
                     //    resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendPostEventMaterialButton btn btn-mini\">PostEvent Material</button>";
                     //}
-                    return statusHtml +"</br>"+ resendMsg;
+                    return statusHtml + "</br>" + resendMsg;
                 }
             },
             {

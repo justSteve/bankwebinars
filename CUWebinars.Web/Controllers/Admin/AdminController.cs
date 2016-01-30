@@ -450,6 +450,21 @@ namespace CUWebinars.Web.Controllers.Admin
 
         }
 
+        [AllowAnonymous]
+        public JsonResult GetEditDiscountDropdownHtml()
+        {
+            string html = "";
+            if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
+            {
+                html = ViewHelpers.RenderViewToString(ControllerContext,
+                   "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditDiscount_Compact.cshtml",
+                   null, true);
+            }
+
+            return Json(new { html = html });
+
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]

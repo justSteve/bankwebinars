@@ -2031,6 +2031,7 @@
     <Content Include="Views\Shared\EditorTemplates\DataTablesEditorTemplates\EditRegType_DropDown.cshtml" />
     <Content Include="Views\Webinar\Partials\_AdditionalLocationsModalAdmin.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutContactForAffiliate.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DataTablesEditorTemplates\EditDiscount_Compact.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
