@@ -307,15 +307,15 @@ namespace CUWebinars.Web.Controllers
         public ActionResult ConnectionDetails(int id)
         {
 
-             var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id);
+            var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id);
 
-                if (webinar == null) return HttpNotFound();
+            if (webinar == null) return HttpNotFound();
 
-                var model = new WebinarDetailsViewModel()
-                {
-                    Webinar = webinar,
-                    WebinarFiles = webinar.WebinarFiles.ToList()
-                };
+            var model = new WebinarDetailsViewModel()
+            {
+                Webinar = webinar,
+                WebinarFiles = webinar.WebinarFiles.ToList()
+            };
             return null;
         }
 
@@ -876,7 +876,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     var discount = _orderManagementService.GetDiscountById(model.WebUser.idSubscriptionDiscount.Value);
 
-                    ViewBag.DiscountCaption = ViewHelpers.RenderDiscountCaption(discount); 
+                    ViewBag.DiscountCaption = ViewHelpers.RenderDiscountCaption(discount);
                 }
                 return View(model);
             }
@@ -1345,7 +1345,7 @@ namespace CUWebinars.Web.Controllers
                     _logger.ErrorException(
                         string.Format("UpdateConnectionInfo | Session {0}", exception.Message + " : " + _appHelper.GetUserAuditInfo()), exception
                         );
-                    ModelState.AddModelError(string.Empty, WebUiConstants.ServerErrorWithAssistNumber);
+                    ModelState.AddModelError(string.Empty, "Error condition. Email us at " + _globalConfig.TenantEmail + ". For immediate assistance, use our Help & Feedback button in your lower right screen.");
 
                     return Json(new { Result = WebUiConstants.Fail });
                 }

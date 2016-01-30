@@ -320,7 +320,7 @@ $(document).ready(function () {
         }).done(function (data) {
 
             if (data.Result == 0) {
-                alert("The discount code " + $('#CheckoutDiscountCode').val() + " was not found. Try again or call 800-831-0678 ext. 703 for assistance.");
+                alert("The discount code " + $('#CheckoutDiscountCode').val() + " was not found. Try again or call with our Help & Feedback button in your lower right screen for assistance.");
             }
 
             if (data.Result == -1) {

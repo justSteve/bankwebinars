@@ -24,8 +24,17 @@
               select orderRow;
     var webinar = row.Single().Webinar;
     var myRow = row.Single();
+    string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, Model.WebUser.timeZone, true, webinar.Duration);
+    string Tenant = TtsTemplateHelperObject.Tenant();
+    string TenantEmail = TtsTemplateHelperObject.TenantEmail();
+    string TenantDomain = TtsTemplateHelperObject.TenantDomain();
+    string TenantURL = TtsTemplateHelperObject.TenantURL();
+    string TenantLogo = TtsTemplateHelperObject.TenantLogo();
+    string TenantPrefix = TtsTemplateHelperObject.TenantPrefix();
+    string TenantCom = TenantDomain + ".com";
 
-    var joinURL = myrow.TtsJoinUrl;
+
+    var joinURL = myRow.TtsJoinUrl;
     var phone = "TBA";
     var code = "TBA";
 
@@ -36,22 +45,13 @@
 
     if (myRow.RegistrationType.ShowLiveNotifications == "No")
     {
-        joinURL = "This order is currently OnDemand Playback Only. Please call 800-831-0678 ext 3 if you wish to upgrade.";
+        joinURL = "This order is currently OnDemand Playback Only.  Please email us at " + TenantEmail + " if you wish to upgrade.";
     }
 
     if (webinar.AccessCodeAttendee != null)
     {
         code = webinar.AccessCodeAttendee;
     }
-
-    string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, Model.WebUser.timeZone, true, webinar.Duration);
-    string Tenant = TtsTemplateHelperObject.Tenant();
-    string TenantEmail = TtsTemplateHelperObject.TenantEmail();
-    string TenantDomain = TtsTemplateHelperObject.TenantDomain();
-    string TenantURL = TtsTemplateHelperObject.TenantURL();
-    string TenantLogo = TtsTemplateHelperObject.TenantLogo();
-    string TenantPrefix = TtsTemplateHelperObject.TenantPrefix();
-    string TenantCom = TenantDomain + ".com";
 
     if (webinar.AccessPhone != null)
     {

@@ -310,7 +310,7 @@ namespace CUWebinars.Web.Controllers
                 }, JsonRequestBehavior.AllowGet);
                 //return RedirectToAction("Step2");
             }
-            ModelState.AddModelError(string.Empty, "No Order ID was posted to the Server. In case of persistant error contact us at support@ttstrain.com, or, for immediate assistance, 800-831-0678 ext. 707."); // 
+            ModelState.AddModelError(string.Empty, "No Order ID was posted to the Server. In case of persistant error contact us at support@ttstrain.com. For immediate assistance, use our Help & Feedback button in your lower right screen.");
             return this.ModelStateJson(ModelState);
         }
 

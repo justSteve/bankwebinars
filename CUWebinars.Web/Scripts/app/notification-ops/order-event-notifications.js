@@ -492,7 +492,7 @@ $(function () {
                         } else if (data.Result === 'Fail') {
                             $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;' + data.Msg + ' </span>');
                         } else {
-                            $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                            $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Invalid Data. Try again or use our Help & Feedback button in your lower right screen for immediate assistance! </span>');
                         }
 
                         $('#emailSendingSpinner').remove();
@@ -502,7 +502,7 @@ $(function () {
                         $('#emailSendingSpinner').remove();
                         $(self).removeAttr('disabled');
 
-                        $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                        $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Transport error. Try again or use our Help & Feedback button in your lower right screen for immediate assistance! </span>');
                     });
                     //Rollbar.info({ 'oen-#17': { 'selectedOrderId': selectedOrderIdVal } });// added after the AJAX call so as not to hold it up.
                     //Rollbar.info({ 'oen-#18': { 'payload': payload } });// added after the AJAX call so as not to hold it up.
@@ -655,7 +655,7 @@ $(function () {
                         } else if (data.Result === 'Fail') {
                             $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;' + data.Msg + ' </span>');
                         } else {
-                            $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                            $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Invalid Data. Try again or use our Help & Feedback button in your lower right screen for immediate assistance! </span>');
                         }
 
                         $('#emailSendingSpinner').remove();
@@ -665,7 +665,7 @@ $(function () {
                         $('#emailSendingSpinner').remove();
                         $(self).removeAttr('disabled');
 
-                        $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                        $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Transport error. Try again or use our Help & Feedback button in your lower right screen for immediate assistance! </span>');
                     });
                     //Rollbar.info({ 'oen-#26': { 'webinar': webinar } });// added after the AJAX call so as not to hold it up.
                     //Rollbar.info({ 'oen-#27': { 'payload': payload } });
@@ -809,7 +809,7 @@ $(function () {
                         } else if (data.Result === 'Fail') {
                             $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;' + data.Msg + ' </span>');
                         } else {
-                            $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                            $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Invalid Data. Try again or use our Help & Feedback button in your lower right screen for immediate assistance! </span>');
                         }
 
                         $('#emailSendingSpinner').remove();
@@ -819,7 +819,7 @@ $(function () {
                         $('#emailSendingSpinner').remove();
                         $(self).removeAttr('disabled');
 
-                        $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                        $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Transport error. Try again or use our Help & Feedback button in your lower right screen for immediate assistance! </span>');
                         //Rollbar.error({ 'oen-#36': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
                         //Rollbar.error({ 'oen-#37': { 'errorThrown': errorThrown } });
                     });

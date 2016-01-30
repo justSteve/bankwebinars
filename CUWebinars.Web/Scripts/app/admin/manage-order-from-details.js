@@ -324,7 +324,7 @@ $(function () {
                 formProcessor.lightUpValidationSummary('manageOrderFormValSummary', data);
             }
         }).fail(function (data) {
-            $('#orderRelatedFields').html('<div class="text-error">There has been a transport-level error, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+            $('#orderRelatedFields').html('<div class="text-error">There has been a transport-level error, please use our Help & Feedback button in your lower right screen for immediate assistance.</div>');
         });
     };
 
@@ -685,7 +685,7 @@ $(function () {
         $('#orderRelatedFields').load('/Admin/GetOrderDetails/' + ns.idOrder, function (response, status, xhr) {
 
             if (status === 'error') {
-                $(this).html('<div id="errorDiv" class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance. <br />' + (xhr.statusText === 'Internal Server Error' ? '' : xhr.statusText) + '</div>');
+                $(this).html('<div id="errorDiv" class="text-error">There has been an error at the server, please use our Help & Feedback button in your lower right screen for immediate assistance. <br />' + (xhr.statusText === 'Internal Server Error' ? '' : xhr.statusText) + '</div>');
             } else {
                 ns.primeDomVariables();
                 ns.wireUpHandlers();

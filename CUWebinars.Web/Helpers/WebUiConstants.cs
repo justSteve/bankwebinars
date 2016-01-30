@@ -47,7 +47,7 @@ namespace CUWebinars.Web.Helpers
 
         public const string Webinars = "webinars";
         
-        public const string ServerErrorWithAssistNumber = "There's been an error at the server. If the error recurs, please call 800-831-0678 ext 706 for immediate assistance.";
+        public const string ServerErrorWithAssistNumber = "There's been an error at the server. If the error recurs contact us at, For immediate assistance, use our Help & Feedback button in your lower right screen.";
         public const string TimedOut = "TimedOut";
         public const string NullValueParameter = "NullValueParameter";
         public const string WebinarFromCode = "WebinarFromCode";

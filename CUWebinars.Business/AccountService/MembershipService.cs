@@ -13,6 +13,7 @@ using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -874,10 +875,7 @@ namespace CUWebinars.Business.AccountService
                 webUser.Addresses.Add(billingAddressFromDb);
                 webUser.Addresses.Add(shippingAddressFromDb);
 
-                // This string has blown out a couple of times. This following code ensures it does not exceed the max size of the database column.
-                // I'll update field to VarChar(max) - just not worth skimping. Let's ensure we apply same to all *Comments fields
-                // TODO: Convert comments using the newly adopted 'everything in JSON' pattern.
-                // serialize webUser and auditChanges to json, right?
+
                 var comments = (auditChanges + Environment.NewLine + "--------" +
                                 Environment.NewLine + webUser.generalComments);
                 webUser.generalComments = comments.Length < 1000 ? comments : comments.Substring(0, 1000);
@@ -919,7 +917,6 @@ namespace CUWebinars.Business.AccountService
 
         public UserAccount VerifyEmailFromKey(string key, string password)
         {
-            _logger.Info("VerifyEmailFromKey: {0}", key);
             UserAccount userAccount = null;
 
             try
@@ -931,6 +928,11 @@ namespace CUWebinars.Business.AccountService
                 _logger.ErrorException("VerifyEmailFromKey", exception);
 
             }
+
+            Debug.Assert(userAccount != null, "userAccount != null"); _logger.Info("VerifyEmailFromKey: {0}", key);
+
+            _logger.Info("VerifyEmailFromKey email: {0} key: {1}", userAccount.Email, key);
+
             return userAccount;
         }
 

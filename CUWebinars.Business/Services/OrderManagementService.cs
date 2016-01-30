@@ -492,7 +492,7 @@ namespace CUWebinars.Business.Services
                             if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType != vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType)
                             {
                                 vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType;
-                                SaveChanges();
+                                //SaveChanges();
                                 _logger.Info("SynchOrder adjusted RegType from V3 RegType = {1} to Legacy = {0} on {2} ", lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, orderEmail);
                             }
 
@@ -500,17 +500,17 @@ namespace CUWebinars.Business.Services
                             {
                                 try
                                 {
-                                    if (!ReferenceEquals(null, lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount) && ReferenceEquals(null, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount))
+                                    if (!ReferenceEquals(null, lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount) 
+                                        && ReferenceEquals(null, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount))
                                     {
                                         var code = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount.DiscountCode;
 
                                         var discount = GetDiscountById(Convert.ToInt32(code));
 
-                                        //ApplyDiscountCode(discount.DiscountCode, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active));
-                                        //SaveChanges();
+                                        ApplyDiscountCode(discount.DiscountCode, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active));
+                                        
                                         _logger.Warn("SynchOrder adjusted Discount = {0} on order {1} ",
-                                            vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
-                                                .Discount.DiscountCode, vOrder.idOrder);
+                                            code, vOrder.idOrder);
                                     }
                                 }
                                 catch (Exception ex)
@@ -519,6 +519,8 @@ namespace CUWebinars.Business.Services
                                         "SynchOrder attempt to apply discount failed: " + orderEmail, ex);
                                 }
                             }
+                            PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
+                            UpdateOrderChanges(vOrder, ref pricesAndDiscounts);
 
                             i++;
                         }
@@ -2058,25 +2060,15 @@ namespace CUWebinars.Business.Services
 
         public Discount ApplyDiscountCode(string code, OrderRow row)
         {
-
             var thisDiscount = GetDiscountByCode(code);
 
             if (!ReferenceEquals(null, thisDiscount))
             {
-                var forNotes = new StringBuilder();
-                forNotes.AppendFormat(
-                    "ApplyDiscountCode: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}",
-                    thisDiscount.DiscountCode, thisDiscount.DateValidFrom, thisDiscount.DateValidTo,
-                    thisDiscount.CreditsUsed, thisDiscount.CreditsRemain);
-                thisDiscount.Notes = forNotes.ToString();
-
                 row.Discount = thisDiscount;
 
                 thisDiscount = RedeemDiscount(thisDiscount, row);
-
-
             }
-            _logger.Info("ApplyDiscountCode: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}", thisDiscount.DiscountCode, thisDiscount.DateValidFrom, thisDiscount.DateValidTo, thisDiscount.CreditsUsed, thisDiscount.CreditsRemain);
+
             return thisDiscount;
         }
 
@@ -2204,7 +2196,7 @@ namespace CUWebinars.Business.Services
         private Discount RedeemDiscount(Discount discount, OrderRow row)
         {
             var forNotes = new StringBuilder();
-
+            forNotes.Append(Environment.NewLine + Environment.NewLine + discount.Notes);
             _logger.Info("Discount: RedeemDiscountStarts: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}", discount.DiscountCode, discount.DateValidFrom, discount.DateValidTo, discount.CreditsUsed, discount.CreditsRemain);
 
             switch (discount.DiscountType)
@@ -2221,28 +2213,27 @@ namespace CUWebinars.Business.Services
                     if (discount.CreditsRemain > 0)
                     {
 
-                        CalculateDiscountRedemtion(discount, row, null);
-                        forNotes.AppendFormat(
-                            "Discount Applied: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}"
-                            , discount.DiscountCode, discount.DateValidFrom, discount.DateValidTo, discount.CreditsUsed,
-                            discount.CreditsRemain);
-                        _logger.Info(forNotes.ToString());
+                        forNotes.Append(CalculateDiscountRedemtion(discount, row, null));
+
                     }
                     else
                     {
                         forNotes.Append("No Credits Remain. Credits used = " + discount.CreditsUsed);
-                        _logger.Info(forNotes.ToString());
                     }
+                    _logger.Info(forNotes.ToString());
                     _discountRepository.SaveChanges(discount);
                     break;
             }
             return discount;
         }
 
-        private static void CalculateDiscountRedemtion(Discount discount, OrderRow row, int? undo)
+        private string CalculateDiscountRedemtion(Discount discount, OrderRow row, int? undo)
         {
+            var forNotes = new StringBuilder();
+            var regTypeLabel = GetRegTypeOfOrderRow(row.idRegType).OptionLabel;
             if (undo != null)
             {
+                forNotes.AppendFormat(Environment.NewLine + "--UnDo Usage: {0}" + row.idOrder);
                 if (discount.DiscountType == DiscountType.Compensation)
                 {
                     discount.CreditsRemain = discount.CreditsRemain + 1;
@@ -2251,35 +2242,37 @@ namespace CUWebinars.Business.Services
                 if (discount.DiscountType == DiscountType.Subscription)
                 {
                     // allows re-apply of discount due to canceled order
-                    if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Five"))
+                    if (regTypeLabel.StartsWith("Live Plus Five"))
                     {
                         discount.CreditsRemain = discount.CreditsRemain + 1;
                         discount.CreditsUsed = discount.CreditsUsed - 1;
                     }
-                    if (row.RegistrationType.OptionLabel == ("OnDemand Recording Only"))
+                    if (regTypeLabel == ("OnDemand Recording Only"))
                     {
                         discount.CreditsRemain = discount.CreditsRemain + 1.25M;
                         discount.CreditsUsed = discount.CreditsUsed - 1.25M;
                     }
-                    if (row.RegistrationType.OptionLabel == ("CD-ROM and Hardcopy Handouts"))
+                    if (regTypeLabel == ("CD-ROM and Hardcopy Handouts"))
                     {
                         discount.CreditsRemain = discount.CreditsRemain + 1.25M;
                         discount.CreditsUsed = discount.CreditsUsed - 1.25M;
                     }
-                    if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Six"))
+                    if (regTypeLabel.StartsWith("Live Plus Six"))
                     {
                         discount.CreditsRemain = discount.CreditsRemain + 1.25M;
                         discount.CreditsUsed = discount.CreditsUsed - 1.25M;
                     }
-                    if (row.RegistrationType.OptionLabel == ("Premier Package"))
+                    if (regTypeLabel == ("Premier Package"))
                     {
                         discount.CreditsRemain = discount.CreditsRemain + 1.5M;
                         discount.CreditsUsed = discount.CreditsUsed - 1.5M;
                     }
                 }
+
             }
             else
             {
+                forNotes.AppendFormat(Environment.NewLine + "Applied By: {0}", row.idOrder);
 
                 if (discount.DiscountType == DiscountType.Compensation)
                 {
@@ -2289,33 +2282,35 @@ namespace CUWebinars.Business.Services
                 if (discount.DiscountType == DiscountType.Subscription)
                 {
                     // allows re-apply of discount due to canceled order
-                    if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Five"))
+                    if (regTypeLabel.StartsWith("Live Plus Five"))
                     {
                         discount.CreditsRemain = discount.CreditsRemain - 1;
                         discount.CreditsUsed = discount.CreditsUsed + 1;
                     }
-                    if (row.RegistrationType.OptionLabel == ("OnDemand Recording Only"))
+                    if (regTypeLabel == ("OnDemand Recording Only"))
                     {
                         discount.CreditsRemain = discount.CreditsRemain - 1.25M;
                         discount.CreditsUsed = discount.CreditsUsed + 1.25M;
                     }
-                    if (row.RegistrationType.OptionLabel == ("CD-ROM and Hardcopy Handouts"))
+                    if (regTypeLabel == ("CD-ROM and Hardcopy Handouts"))
                     {
                         discount.CreditsRemain = discount.CreditsRemain - 1.25M;
                         discount.CreditsUsed = discount.CreditsUsed + 1.25M;
                     }
-                    if (row.RegistrationType.OptionLabel.StartsWith("Live Plus Six"))
+                    if (regTypeLabel.StartsWith("Live Plus Six"))
                     {
                         discount.CreditsRemain = discount.CreditsRemain - 1.25M;
                         discount.CreditsUsed = discount.CreditsUsed + 1.25M;
                     }
-                    if (row.RegistrationType.OptionLabel == ("Premier Package"))
+                    if (regTypeLabel == ("Premier Package"))
                     {
                         discount.CreditsRemain = discount.CreditsRemain - 1.5M;
                         discount.CreditsUsed = discount.CreditsUsed + 1.5M;
                     }
                 }
             }
+            forNotes.AppendFormat(" Used: {0} Remain: {1}" + Environment.NewLine, discount.CreditsUsed, discount.CreditsRemain);
+            return forNotes.ToString();
         }
 
         private void RejectDiscount(OrderRow orderRow)

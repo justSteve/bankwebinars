@@ -34,7 +34,7 @@
                 @using (Html.BeginForm("DiscountManagement", "Admin", FormMethod.Post, new { id = "addDiscountForm" }))
                 {
                     @Html.AntiForgeryToken()
-                    @Html.ValidationSummary("There have been some errors:", new { id = "addDiscountSummary" })
+                    @Html.ValidationSummary("Error: ", new { id = "addDiscountSummary" })
 
                     @Html.HiddenFor(m => m.Discount)
 

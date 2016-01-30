@@ -33,7 +33,7 @@
                 @using (Html.BeginForm("ClaimsManagement", "Admin", FormMethod.Post, new { id = "addClaimForm" }))
                 {
                     @Html.AntiForgeryToken()
-                    @Html.ValidationSummary("There have been some errors:", new { id = "addClaimSummary" })
+                    @Html.ValidationSummary("Error: ", new { id = "addClaimSummary" })
 
                     @Html.HiddenFor(m => m.NewClaimType)
 

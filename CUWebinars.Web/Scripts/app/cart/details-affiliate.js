@@ -518,7 +518,7 @@ OCA.initializeFunctions = function () {
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 $('#finalLoadingSpinner').remove();
                 confirmRegistrationBillMe.removeAttr('disabled');
-                confirmRegistrationBillMe.after('<span class="field-validation-error">Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                confirmRegistrationBillMe.after('<span class="field-validation-error">Transport error. Try again or use our Help & Feedback button in your lower right screen for immediate assistance! </span>');
             });
         });
 
@@ -558,7 +558,7 @@ OCA.initializeFunctions = function () {
 
                             //Rollbar.error('Cancel Order Failure: ', { data: xhr && xhr.data });
 
-                            confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                            confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data. Try again or use our Help & Feedback button in your lower right screen for immediate assistance! </span>');
                             $('#CancelModal').modal('hide');
                         }
 
@@ -568,7 +568,7 @@ OCA.initializeFunctions = function () {
                     } else {
                         //Rollbar.error({ 'Cancel Order Failure: ': { data: xhr.data } });
 
-                        confirmRegistrationBillMe.after('<span class="field-validation-error">Server Error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                        confirmRegistrationBillMe.after('<span class="field-validation-error">Server Error. Try again or use our Help & Feedback button in your lower right screen for immediate assistance! </span>');
                         $('#CancelModal').modal('hide');
                     }
 
@@ -694,7 +694,7 @@ OCA.wireUpHandlers = function () {
                         confirmationForAffiliateDiv.load('/cart/CheckoutConfirmForAffiliate/' + OCA.cartStateManager.getOrderId(), function (response, status, xhr) {
 
                             if (status === 'error') {
-                                $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+                                $(this).html('<div class="text-error">There has been an error at the server, please use our Help & Feedback button in your lower right screen for immediate assistance.</div>');
                                 $('#loadingSpinner').remove();
                                 $('#confirmationTabForAffiliate a').tab('show');
                             } else {
@@ -735,7 +735,7 @@ OCA.wireUpHandlers = function () {
                     }
                     spinner.remove();
                 } else {
-                    confirmationForAffiliateDiv.html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+                    confirmationForAffiliateDiv.html('<div class="text-error">There has been an error at the server, please use our Help & Feedback button in your lower right screen for immediate assistance.</div>');
                     spinner.remove();
                 }
                 spinner.remove();
@@ -782,7 +782,7 @@ OCA.wireUpHandlers = function () {
 
                 } else {
 
-                    $(self).after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                    $(self).after('<span class="field-validation-error">Invalid Data. Try again or use our Help & Feedback button in your lower right screen for immediate assistance! </span>');
                 }
 
                 $('#emailSendingSpinner').remove();
@@ -792,7 +792,7 @@ OCA.wireUpHandlers = function () {
                 $('#emailSendingSpinner').remove();
                 $(self).removeAttr('disabled');
 
-                $(self).after('<span class="field-validation-error">Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                $(self).after('<span class="field-validation-error">Transport error. Try again or use our Help & Feedback button in your lower right screen for immediate assistance! </span>');
             });
         });
     };
@@ -829,7 +829,7 @@ OCA.wireUpHandlers = function () {
 
                 registerDuringCheckout.initialize(OCA.cartStateManager.getOrderId(), OCA.cartStateManager.getWebinarId(), OCA.cartStateManager.getOrderRowId(), OCA.addressOptions, OCA.checkoutConfirm.initialize);
             } else {
-                $('#labelEmail').html('<span class="label label-important">Server error #21. Try again or call 800-831-0678 ext 706 for immediate assistance!</span>');
+                $('#labelEmail').html('<span class="label label-important">Server error #21. Try again or use our Help & Feedback button in your lower right screen for immediate assistance!</span>');
                 L.clientLogger.error('d-#28', { 'responseObject': xhr.responseJSON, 'anonymousUserSubmit': 'Fail condition.' });
             }
             $('#loadSpinner').remove();

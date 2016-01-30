@@ -458,7 +458,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
                                 if (status == 'error') {
                                     L.clientLogger.error("Error at /cart/checkoutConfirm/", { rowid: cartStateManager.getOrderId() });
-                                    $(this).html('<div class="text-error">There has been error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+                                    $(this).html('<div class="text-error">There has been error at the server, please use our Help & Feedback button in your lower right screen for immediate assistance.</div>');
                                     $('#loadingSpinner').remove();
                                     $('#confirmationTab a').tab('show');
                                 } else {
@@ -601,7 +601,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                         if (status == 'error') {
                                             L.clientLogger.error("Connection Error #106.", { 'data': data || 'data was falsey' });
 
-                                            $(this).html('<div class="text-error">Connection Error #106. Email support@ttstrain.com or call 800-831-0678 ext 706 for immediate assistance.</div>');
+                                            $(this).html('<div class="text-error">Connection Error #106. Email support@ttstrain.com or use our Help & Feedback button in your lower right screen for immediate assistance.</div>');
                                             $('#confirmationTab a').tab('show');
                                         } else {
                                             $('#ConfirmRegistrationBillMe').on('click', function (e) {
@@ -788,7 +788,7 @@ function completeOrder(userId, orderRowId, webinarId, orderId) {
             } else {
 
                 L.clientLogger.error("Error #935: ", { result: result && result.Result });
-                confirmRegistrationBillMe.after('<span class="text-error">Error #935. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                confirmRegistrationBillMe.after('<span class="text-error">Error #935. Try again or use our Help & Feedback button in your lower right screen for immediate assistance! </span>');
             }
 
             $('#finalLoadingSpinner').remove();
@@ -827,7 +827,7 @@ function cancelOrder(orderId, webinarId) {
 
                 L.clientLogger.error("Cancel Order Failure: ", { data: xhr && xhr.data });
 
-                $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Error #216. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Error #216. Try again or use our Help & Feedback button in your lower right screen for immediate assistance! </span>');
                 $('#CancelModal').modal('hide');
             }
 
@@ -1007,7 +1007,7 @@ function hookUpChangeTypeLogic(dropDown) {
                             anyAddLocs = false;
                             $('#additionalLocationsCaption').html('None');
 
-                            $('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 706 for immediate assistance').addClass('text-info');
+                            $('#addlocSpiel').text('To add additional locations for this order, please use our Help & Feedback button in your lower right screen for immediate assistance').addClass('text-info');
 
                             $('#addLocsText').html('Additional Locations: <span id="totalAdLocsPrice">$0.00</span>').addClass('muted');
                             totalPrice = registerDuringCheckout.totalPrice - registerDuringCheckout.addLocsPrice;
@@ -1121,7 +1121,7 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
         }).done(function (data) {
 
             if (data.Result == 0) {
-                alert("The discount code " + $('#CheckoutDiscountCode').val() + " was not found. Try again or call 800-831-0678 ext. 703 for assistance.");
+                alert("The discount code " + $('#CheckoutDiscountCode').val() + " was not found. Try again or call with our Help & Feedback button in your lower right screen for assistance.");
             }
 
             if (data.Result.indexOf('%') !== -1) {

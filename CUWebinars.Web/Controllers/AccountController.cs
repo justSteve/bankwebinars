@@ -1479,7 +1479,7 @@ namespace CUWebinars.Web.Controllers
                     {
                         _logger.Error("_accountControllerOrchestrator.ChangePasswordFromResetKey {0} tossed error to: {1}", model.Key, model.Email);
                         ModelState.AddModelError(string.Empty,
-                            "We've logged an error. Please attempt the password reset procedure again. In case of persisant failures contact us at support@ttstrain.com - or, for immediate assistance contact us at 800-831-0678 ext. 707.");
+                            "We've logged an error. Please attempt the password reset procedure again. In case of persisant failures contact us at support@ttstrain.com - or, for immediate assistance contact us with our Help & Feedback button in your lower right screen.");
                         ErrorSignal.FromCurrentContext().Raise(exception);
 
                     }

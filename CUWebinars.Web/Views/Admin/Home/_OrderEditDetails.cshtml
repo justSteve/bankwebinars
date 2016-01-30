@@ -19,14 +19,14 @@
 
 @using (Html.BeginForm("ManageOrder", "Admin", FormMethod.Post, new { id = "manageOrderForm" }))
 {
-    @Html.ValidationSummary("There have been some errors:", new { id = "manageOrderFormValSummary" })
+    @Html.ValidationSummary("Error: ", new { id = "manageOrderFormValSummary" })
 
     @Html.AntiForgeryToken()
     <div class="row navbar">
 
         <div class="span6 navbar-inner" style="margin-right: 10px;">
             <ul class="nav" aria-labelledby="dLabel">
-                @*<li><a tabindex="-1" href="#" onclick="payByCC(); return true;" role="button" data-toggle="modal">Submit Payment</a></li>*@
+                
                 <li><a tabindex="-1" id="showChangeUser">Assign to Different User</a></li>
                 <li><a tabindex="-1" id="showChangeAssignedAffiliate">Credited to <span id="affiliateNameText">@Model.AffiliateName</span> Change?</a></li>
             </ul>

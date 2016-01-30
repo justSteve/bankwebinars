@@ -100,7 +100,7 @@ $(function () {
                     //console.error('Failed to post order');
                     L.clientLogger.error('d-#4 Failed to post order', { 'jsonResponse': data });
 
-                    confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data #554. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                    confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data #554. Try again or use our Help & Feedback button in your lower right screen for immediate assistance! </span>');
                 }
 
                 $('#finalLoadingSpinner').remove();
@@ -110,7 +110,7 @@ $(function () {
                 $('#finalLoadingSpinner').remove();
                 confirmRegistrationBillMe.removeAttr('disabled');
                 $('#signUpSpinner').remove();
-                confirmRegistrationBillMe.after('<span class="field-validation-error">Transport error #555. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                confirmRegistrationBillMe.after('<span class="field-validation-error">Transport error #555. Try again or use our Help & Feedback button in your lower right screen for immediate assistance! </span>');
                 L.clientLogger.error('d-#5', { 'Error': jqXHR.responseText });
             });
 
@@ -151,13 +151,13 @@ $(function () {
                             utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
                         } else {
                             L.clientLogger.error('d-#8', { 'orderCancellationFailed': 'Deletion failed. System potentially in error state.' });
-                            $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Invalid Data #88. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                            $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Invalid Data #88. Try again or use our Help & Feedback button in your lower right screen for immediate assistance! </span>');
                             $('#CancelModal').modal('hide');
                         }
 
                     } else {
                         L.clientLogger.error('d-#9', { 'orderCancellationFailed': 'Deletion failed. System potentially in error state.' });
-                        $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Server Error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                        $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Server Error. Try again or use our Help & Feedback button in your lower right screen for immediate assistance! </span>');
                         $('#CancelModal').modal('hide');
                     }
                 }, 'json');
@@ -305,7 +305,7 @@ $(function () {
 
                                 registerDuringCheckout.initialize(cartStateManager.getOrderId(), cartStateManager.getWebinarId(), cartStateManager.getOrderRowId(), addressOptions, checkoutConfirm.initialize);
                             } else {
-                                $('#labelEmail').html('<span class="label label-important">Server error #21. Try again or call 800-831-0678 ext 706 for immediate assistance!</span>');
+                                $('#labelEmail').html('<span class="label label-important">Server error #21. Try again or use our Help & Feedback button in your lower right screen for immediate assistance!</span>');
                                 L.clientLogger.error('d-#28', { 'responseObject': xhr.responseJSON, 'anonymousUserSubmit': 'Fail condition.' });
                             }
                             loadingSpinner.remove();
@@ -319,7 +319,7 @@ $(function () {
                         L.clientLogger.error('d-#22', { 'anonymousUserSubmit': 'Fail condition.' });
                     }
                 } else {
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;Server error. Try again or call 800-831-0678 ext 706 for immediate assistance!</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;Server error. Try again or use our Help & Feedback button in your lower right screen for immediate assistance!</span>');
                     loadingSpinner.remove();
                     L.clientLogger.error('d-#23', { 'anonymousUserSubmit': 'Fail condition.' });
                 }
@@ -339,7 +339,7 @@ $(function () {
                         $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderId(), function (response, status, xhr) {
 
                             if (status === 'error') {
-                                $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+                                $(this).html('<div class="text-error">There has been an error at the server, please use our Help & Feedback button in your lower right screen for immediate assistance.</div>');
                                 $('#loadingSpinner').remove();
                                 $('#confirmationTab a').tab('show');
 
@@ -408,7 +408,7 @@ $(function () {
                     }
                 } else {
                     spinner.remove();
-                    $('#confirmation').html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+                    $('#confirmation').html('<div class="text-error">There has been an error at the server, please use our Help & Feedback button in your lower right screen for immediate assistance.</div>');
                     L.clientLogger.error('d-#26', { 'loggedInUser': 'Fail condition.' });
                 }
             }, constants.JsonDataType);

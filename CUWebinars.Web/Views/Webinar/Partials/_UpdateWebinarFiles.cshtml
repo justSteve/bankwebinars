@@ -48,7 +48,7 @@
             <p><button id="addFilesButton" class="btn btn-success">Click to Add More</button></p>
 
             <div class="form-horizontal">
-                @Html.ValidationSummary("There have been some errors:", new { id = "updateFilesValSummary" })
+                @Html.ValidationSummary("Error: ", new { id = "updateFilesValSummary" })
                 @if (Model.WebinarFiles != null && Model.WebinarFiles.Count > 0)
                 {
                     <div class="well well-large form-group">
