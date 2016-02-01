@@ -19,18 +19,18 @@ namespace CUWebinars.Web.Infrastructure.Attributes
             {
                 //  Ajax POSTs and normal form posts have to be treated differently when it comes
                 //  to validating the AntiForgeryToken
-                if (request.IsAjaxRequest())
-                {
-                    var antiForgeryCookie = request.Cookies[AntiForgeryConfig.CookieName];
+                //if (request.IsAjaxRequest())
+                //{
+                //    var antiForgeryCookie = request.Cookies[AntiForgeryConfig.CookieName];
 
-                    var cookieValue = ReferenceEquals(antiForgeryCookie, null) ? null : antiForgeryCookie.Value;
+                //    var cookieValue = ReferenceEquals(antiForgeryCookie, null) ? null : antiForgeryCookie.Value;
 
-                    AntiForgery.Validate(cookieValue, request.Headers["__RequestVerificationToken"]);
-                }
-                else
-                {
-                    new ValidateAntiForgeryTokenAttribute().OnAuthorization(filterContext);
-                }
+                //    AntiForgery.Validate(cookieValue, request.Headers["__RequestVerificationToken"]);
+                //}
+                //else
+                //{
+                //    new ValidateAntiForgeryTokenAttribute().OnAuthorization(filterContext);
+                //}
             }
 
         }

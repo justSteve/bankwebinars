@@ -551,8 +551,20 @@ function updateRegType(item, orderId, newRegTypeId) {
                 // also need to update the originating cell in parent row
                 var $parentCell = $("td.child-showing");
 
+                var flatOff = data.FlatOff;
+                var percentOff = data.PercentOff;
+
+                var showDiscount = "";
+                if (flatOff > 0) {
+                    showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: $" + flatOff + "</span>";
+                }
+
+                if (percentOff > 0) {
+                    showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: " + percentOff + "%</span>";
+                }
+
                 //  Reuse logic already in display-orders.js for when the datatables.net gets created...
-                var parentHtml = DO.getBillingCellHtml(data.FlatOff, data.PercentOff, data.regTypeShort, data.Total);
+                var parentHtml = DO.getBillingCellHtml(showDiscount, data.regTypeShort, data.Total);
                 $parentCell.html(parentHtml);
 
                 var $childRow = $item.closest("td.child-row");

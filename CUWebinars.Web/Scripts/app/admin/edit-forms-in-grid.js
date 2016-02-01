@@ -210,61 +210,6 @@ $(document).ready(function () {
         ns.showChangeAssignedAffiliate.on('click', ns.displayChangeAffiliateModal);
     };
 
-    //ns.submitForm = function (e) {
-    //    //alert("submited form");
-    //    e.preventDefault();
-
-    //    var emailInputs = ns.wrapperDiv.find('input[type="email"]');
-
-    //    var invalidEmailInput = [];
-
-    //    $.each(emailInputs, function (idx, i) {
-    //        if ($(i).val().indexOf('@') < 0) {
-    //            invalidEmailInput.push($(i).attr('id'));
-    //            $(i).css('border-color', '#b94a48').css('background-color', '#ec8d8d');
-    //        }
-    //        $(i).attr('name', 'AdditionalLocations[' + idx + '].Email');
-    //    });
-
-    //    if (invalidEmailInput.length > 0) {
-    //        ns.logInvalidOperation("At least 1 of the email address textboxes is empty or has an invalid address. Please add a valid address or delete the textbox by clicking the adjacent trashcan.", null, true);
-    //        return; // if even 1 email input has no email address, stop processing. Remove it or enter an email address.
-    //    }
-
-    //    // next 4 lines not really required, as those parts of the ViewModel aren't necessary for the POST. 
-    //    //But may as well set them, as easy enough to do.
-    //    if (ns.numberOfAdditionalLocations > -1) {
-    //        $('#NumberOfAdditionalLocations').val(ns.numberOfAdditionalLocations);
-    //        $('#DisplayRowPriceViewModel_NumberOfAdditionalLocations').val(ns.numberOfAdditionalLocations);
-    //    }
-
-    //    $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice').val($('#TotalOrderPriceText').val());
-    //    $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount').val($('#TotalDiscountText').val());
-    //    $('#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice').val($('#UnitPriceText').val());
-    //    $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions').val($('#TotalCostOfOptionsText').val());
-
-    //    var self = $(this);
-
-    //    var form = $('#editOrderCompact');
-    //    //alert("hit form");
-    //    $.ajax({
-    //        type: 'POST',
-    //        contentType: constants.FormPostContentType,
-    //        cache: false,
-    //        url: form.attr('action'),
-    //        dataType: constants.JsonDataType,
-    //        data: form.serialize(),
-    //        beforeSend: function () {
-    //            $('#postFeedbackLabel').remove();
-    //            self.append('<span id="submitSpinWrapper">&nbsp;<span class="label label-info"><i id="spinner" class="icon-spinner icon-spin"></i>&nbsp;loading...</span></span>');
-    //        }
-    //    }).done(function (data, bla, bla) {
-    //        $('#submitSpinWrapper').remove();
-    //        self.after('<span id="postFeedbackLabel">&nbsp;<span class="label label-success">&nbsp;Operation succeeded</span></span>');
-    //    });
-    //};
-
-
     ns.adjustAdditionalLocationsTotal = function (number) {
 
         ns.numberAddLocsLabel.text(ns.numberOfAdditionalLocations);
@@ -287,6 +232,10 @@ $(document).ready(function () {
     };
 
     ns.hookUpApplyDiscountLogic = function (e) {
+        var $item = $(e);
+        var form = $item.parents("form");
+        var $form = $(form);
+
 
         e.preventDefault();
 
@@ -297,46 +246,73 @@ $(document).ready(function () {
             return;
         }
 
-        var token = $(this).find('input[name=__RequestVerificationToken]').val();
-        var headers = {};
-        headers['__RequestVerificationToken'] = token;
+        //var token = $(this).find('input[name=__RequestVerificationToken]').val();
+        //var headers = {};
+        //headers['__RequestVerificationToken'] = token;
 
         var url = '/cart/ApplyDiscountCode';
-        var payload = { code: $('#EditFields_Discount_DiscountCode').val(), orderRowId: ns.idOrder };
+        var payload = { code: $('#EditFields_Discount_DiscountCode').val(), orderRowId: idOrderRowFromDTEOC };
         var self = this;
-        debugger;
+
         $.ajax({
             type: 'POST',
             contentType: constants.JsonContentType,
             cache: false,
             url: url,
-            headers: headers,
+            //headers: headers,
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
             beforeSend: function () {
                 $(self).prepend('<span id="discountSpinner"><i class="icon-spinner icon-spin"></i>&nbsp;</span>');
                 $(self).attr('disabled', 'disabled');
-            }
-        }).done(function (data) {
+            },
+            success: function (data) {
 
-            if (data.Result == 0) {
-                alert("The discount code " + $('#CheckoutDiscountCode').val() + " was not found. Try again or call with our Help & Feedback button in your lower right screen for assistance.");
-            }
+                if (data) {
+                    if (data.Result == 0) {
 
-            if (data.Result == -1) {
-                ns.totalDiscount = 'no credits';
-            } else {
-                if (data.Result.indexOf('%') !== -1) {
-                    var amount2Discount = data.Result.replace('.00%', '') / 100;
-                    ns.totalDiscount = ns.totalPriceSansDiscount * amount2Discount;
-                } else {
-                    ns.totalDiscount = data.Result;
+                        alert("The discount code " + data.Code + " was not found." +
+                            " Try again or use our Help & Feedback button (lower right corner)  for assistance.");
+                    } else {
+                        // need to update the currently displaying regType and associated costs
+
+                        $("#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice").html("$" + data.BasePrice);
+                        $("#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions").html("$" + data.OptionsPrice);
+                        $("#DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount").html("$" + data.Discount);
+
+                        $("#DisplayRowPriceViewModel_PricesAndDiscounts_Tax").html("$" + data.Tax);
+                        if (data.Tax > 0)
+                            $("#DisplayRowPriceViewModel_PricesAndDiscounts_Tax").parents("tr").removeClass("hidden");
+
+                        $("#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice").html("$" + data.Total);
+
+                        // also need to update the originating cell in parent row
+                        var $parentCell = $("td.child-showing");
+
+                        var flatOff = data.FlatOff;
+                        var percentOff = data.PercentOff;
+
+                        var showDiscount = "";
+                        if (flatOff > 0) {
+                            showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: $" + flatOff + "</span>";
+                        }
+
+                        if (percentOff > 0) {
+                            showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: " + percentOff + "%</span>";
+                        }
+
+                        //  Reuse logic already in display-orders.js for when the datatables.net gets created...
+                        var parentHtml = DO.getBillingCellHtml(showDiscount, data.regTypeShort, data.Total);
+                        $parentCell.html(parentHtml);
+
+                        var $childRow = $item.closest("td.child-row");
+                        fireSuccessIndicator($childRow.add($parentCell)); // not auto-hiding the child row yet...  color both the child row and the originating parent
+                    }
                 }
-                ns.adjustTotalPrice();
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
             }
-            ns.totalDiscountInput.val(ns.totalDiscount);
-
-            $('#discountSpinner').remove();
 
         }).always(function (e) {
             $('#discountSpinner').remove();
@@ -516,7 +492,7 @@ $(document).ready(function () {
                     var $parentCell = $("td.child-showing");
 
                     //  Reuse logic already in display-orders.js for when the datatables.net gets created...
-                    var parentHtml = DO.getBillingCellHtml(data.FlatOff, data.PercentOff, data.regTypeShort, data.Total);
+                    var parentHtml = DO.getBillingCellHtml(data.discount, data.regTypeShort, data.Total);
                     $parentCell.html(parentHtml);
 
                     var $childRow = $item.closest("td.child-row");

@@ -9,18 +9,6 @@
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
 
-    if (Model.UserOwnsThisEvent > 0)
-    {
-        <script type="text/javascript">
-            function exprsOrder(idRegType) {
-                alert("Please call us at with our Help & Feedback button in your lower right screen and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder");
-
-            };
-            function upgrade(idRegType) {
-                alert("Please call us at with our Help & Feedback button in your lower right screen and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder");
-            };
-        </script>
-    }
 }
 
 <script type="text/javascript">
@@ -55,7 +43,7 @@
 <div class="hero-unit">
     <div id="webinarTitle" class="container">
         <div class="span10">
-            <h1>@Model.Webinar.Title</h1>
+            <h3>@Model.Webinar.Title</h3>
             <button id="showOrdersButton" type="button" class="btn btn-info pull-right"
                     data-toggle="collapse" data-target="#webinarOrders">
                 Show Orders

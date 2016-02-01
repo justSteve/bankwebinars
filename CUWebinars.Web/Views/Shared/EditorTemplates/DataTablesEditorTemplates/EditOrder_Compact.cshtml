@@ -101,33 +101,33 @@
                 <div id="addLocsPanel" style="text-align: center; border-style: solid; border-color: darkgrey">
                     @using (Html.BeginForm("UpdateAdditionalLocations", "Admin", FormMethod.Post, new { id = "editOrderCompactAddLoc" }))
                     {
-                        @Html.AntiForgeryToken()
-                        <div>
-                            @Html.HiddenFor(m => m.EditFields.CostPerAdditionalLocation)
-                            @Html.HiddenFor(m => m.EditFields.idOrderRow)
-                            @Html.HiddenFor(m => m.EditFields.WebUser.idUser)
-                            @Html.HiddenFor(m => m.EditFields.WebinarId)
-                            @Html.HiddenFor(m => m.EditFields.NumberOfAdditionalLocations)
-                            @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.NumberOfAdditionalLocations)
-                            @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)
-                            @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)
-                            @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions)
-                            @* Required for POST. TextBoxFor won't ModelBind *@&nbsp;
-                        </div>
-                        <div class="control-group">
-                            <div class="controls">
+                    @Html.AntiForgeryToken()
+                    <div>
+                        @Html.HiddenFor(m => m.EditFields.CostPerAdditionalLocation)
+                        @Html.HiddenFor(m => m.EditFields.idOrderRow)
+                        @Html.HiddenFor(m => m.EditFields.WebUser.idUser)
+                        @Html.HiddenFor(m => m.EditFields.WebinarId)
+                        @Html.HiddenFor(m => m.EditFields.NumberOfAdditionalLocations)
+                        @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.NumberOfAdditionalLocations)
+                        @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)
+                        @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)
+                        @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions)
+                        @* Required for POST. TextBoxFor won't ModelBind *@&nbsp;
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
 
-                                <button id="addLocationsButton" class="btn btn-default btn-mini">Add?</button>
+                            <button id="addLocationsButton" class="btn btn-default btn-mini">Add?</button>
 
-                                Additional Locations: <span id="nrAddLocs">@Model.EditFields.NumberOfAdditionalLocations</span>
+                            Additional Locations: <span id="nrAddLocs">@Model.EditFields.NumberOfAdditionalLocations</span>
 
-                            </div>
-                            @Html.Raw(Model.EditFields.AdditionalLocationsRenderer.ToString())
                         </div>
-                        <div class="control-group">
-                            @*@Html.TextBoxFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions, new { id = "TotalCostOfOptionsText", disabled = "disabled" })*@
-                            <button id="UpdateAddLocsButton" class="btn btn-primary btn-mini">Submit</button>
-                        </div>
+                        @Html.Raw(Model.EditFields.AdditionalLocationsRenderer.ToString())
+                    </div>
+                    <div class="control-group">
+                        @*@Html.TextBoxFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions, new { id = "TotalCostOfOptionsText", disabled = "disabled" })*@
+                        <button id="UpdateAddLocsButton" class="btn btn-primary btn-mini">Submit</button>
+                    </div>
 
                     }
                 </div>
@@ -160,14 +160,25 @@
                     {
                         <div class="control-group">
                             <br />
-                            @*<button id="renewPackageSubscriptionButton" class="btn btn-default btn-mini btn-success ">Renew Subscription</button>*@
-
                             <div class="controls">
-                                Credits Used: @Model.EditFields.Discount.CreditsUsed
-                                <br />
-                                Credits Remain: @Model.EditFields.Discount.CreditsRemain
-                            </div><br />
-                        </div>
+                                @Model.EditFields.Discount.DiscountCode<br />
+                            Credits Used: @Model.EditFields.Discount.CreditsUsed
+                            <br />
+                            Credits Remain: @Model.EditFields.Discount.CreditsRemain
+                        </div><br />
+                    </div>
+                    }
+                    if (Model.EditFields.Discount.DiscountType == DiscountType.Promo)
+                    {
+                        <div class="control-group">
+                            <br />
+                            <div class="controls">
+                                @Model.EditFields.Discount.DiscountCode<br />
+                            @*Credits Used: @Model.EditFields.Discount.CreditsUsed
+                            <br />
+                            Credits Remain: @Model.EditFields.Discount.CreditsRemain*@
+                        </div><br />
+                    </div>
                     }
                 }
             </div>
@@ -249,32 +260,32 @@
             <div id="editNotes" class="modal hide fade">
                 @using (Html.BeginForm("UpdateDiscountNotes", "Account", FormMethod.Post, new { id = "frmUpdateDiscountNotes" }))
                 {
-                    @Html.AntiForgeryToken()
+                @Html.AntiForgeryToken()
 
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h3>Update Notes</h3>
-                    </div>
-                    <div class="modal-body">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3>Update Notes</h3>
+                </div>
+                <div class="modal-body">
 
-                        <input type="hidden" name="orderID" value="@Model.EditFields.Order.idOrder" />
-                        <br />Notes:
-                        <div>
-                            <textarea class="form-control" style="min-width: 100%">"@Model.EditFields.Discount.Notes</textarea>
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                        <button id="updateDiscountNotesButton" name="moveOne" class="btn btn-primary">Update Notes</button>
-                    </div>
+                    <input type="hidden" name="orderID" value="@Model.EditFields.Order.idOrder" />
+                    <br />Notes:
                     <div>
-                        @Html.HiddenFor(m => m.EditFields.Order.idOrder)
-                        @Html.HiddenFor(m => m.EditFields.WebUser.idUser)
-                        @Html.HiddenFor(m => m.EditFields.WebinarId)
-                        @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)
-                        @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)
+                        <textarea class="form-control" style="min-width: 100%">"@Model.EditFields.Discount.Notes</textarea>
                     </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                    <button id="updateDiscountNotesButton" name="moveOne" class="btn btn-primary">Update Notes</button>
+                </div>
+                <div>
+                    @Html.HiddenFor(m => m.EditFields.Order.idOrder)
+                    @Html.HiddenFor(m => m.EditFields.WebUser.idUser)
+                    @Html.HiddenFor(m => m.EditFields.WebinarId)
+                    @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)
+                    @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)
+                </div>
                 }
             </div>
         }

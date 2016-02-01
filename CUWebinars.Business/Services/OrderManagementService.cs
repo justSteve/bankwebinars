@@ -496,29 +496,29 @@ namespace CUWebinars.Business.Services
                                 _logger.Info("SynchOrder adjusted RegType from V3 RegType = {1} to Legacy = {0} on {2} ", lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, orderEmail);
                             }
 
-                            if (vOrder.OrderDate > DateTime.Parse("01/01/2016"))
-                            {
-                                try
-                                {
-                                    if (!ReferenceEquals(null, lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount) 
-                                        && ReferenceEquals(null, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount))
-                                    {
-                                        var code = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount.DiscountCode;
+                            //if (vOrder.OrderDate > DateTime.Parse("01/01/2016"))
+                            //{
+                            //    try
+                            //    {
+                            //        if (!ReferenceEquals(null, lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount) 
+                            //            && ReferenceEquals(null, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount))
+                            //        {
+                            //            var code = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount.DiscountCode;
 
-                                        var discount = GetDiscountById(Convert.ToInt32(code));
+                            //            var discount = GetDiscountById(Convert.ToInt32(code));
 
-                                        ApplyDiscountCode(discount.DiscountCode, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active));
+                            //            ApplyDiscountCode(discount.DiscountCode, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active));
                                         
-                                        _logger.Warn("SynchOrder adjusted Discount = {0} on order {1} ",
-                                            code, vOrder.idOrder);
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    _logger.ErrorException(
-                                        "SynchOrder attempt to apply discount failed: " + orderEmail, ex);
-                                }
-                            }
+                            //            _logger.Warn("SynchOrder adjusted Discount = {0} on order {1} ",
+                            //                code, vOrder.idOrder);
+                            //        }
+                            //    }
+                            //    catch (Exception ex)
+                            //    {
+                            //        _logger.ErrorException(
+                            //            "SynchOrder attempt to apply discount failed: " + orderEmail, ex);
+                            //    }
+//                            }
                             PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
                             UpdateOrderChanges(vOrder, ref pricesAndDiscounts);
 
@@ -2233,7 +2233,7 @@ namespace CUWebinars.Business.Services
             var regTypeLabel = GetRegTypeOfOrderRow(row.idRegType).OptionLabel;
             if (undo != null)
             {
-                forNotes.AppendFormat(Environment.NewLine + "--UnDo Usage: {0}" + row.idOrder);
+                forNotes.AppendFormat(Environment.NewLine + "--UnDo Usage: {0}", + row.idOrder);
                 if (discount.DiscountType == DiscountType.Compensation)
                 {
                     discount.CreditsRemain = discount.CreditsRemain + 1;

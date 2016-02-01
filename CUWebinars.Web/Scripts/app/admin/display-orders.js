@@ -109,11 +109,11 @@ function getOrderStatusHtml() {
 
         DO.baseOrderStatusHtml = getOrderStatusHtml();  // 
         DO.baseDiscountHtml = getDiscountHtml();  // 
-      
+
     };
 
     ns.getBillingCellHtml = function (discount, regTypeLabel, total) {
-        //alert(discount);
+        //debugger;
         var showDiscount = discount;
 
         var billingHtml = regTypeLabel
@@ -359,9 +359,9 @@ function getOrderStatusHtml() {
             // "dom": 'frtiS',
             "dom": '<ilf<t>ip>',
             "pageLength": 10,
-            "scrollY": 500,
-            "scrollX": true,
-            "scrollCollapse": true,
+            //"scrollY": 500,
+            //"scrollX": true,
+            //"scrollCollapse": true,
             "scroller": {
                 loadingIndicator: false
             },
@@ -373,15 +373,14 @@ function getOrderStatusHtml() {
                 { 'data': 'idOrder', 'visible': false },
                 { 'data': 'LastName', 'class': 'details-control edit-user-name-email' },
                 { 'data': 'Institution', 'class': 'details-control edit-institution' },
-                { 'data': null, 'class': 'details-control edit-billing' },
+                { 'data': 'RegistrationTypeString', 'class': 'details-control edit-billing' },
                 {
                     'data': 'Affiliate_ttsDomain',
                     'visible': showAffiliateColumn,
                     'class': 'details-control'
                 },
-                { 'data': 'OrderDateString', 'class': 'details-control edit-resends' },
+                { 'data': 'OrderDate', 'class': 'details-control edit-resends'},
                 { 'data': 'OrderStatusString' }
-
             ],
             "order": [0, "asc"]
 
@@ -408,18 +407,30 @@ function getOrderStatusHtml() {
             },
            {
                "aTargets": [3], // Billing column  -- triggers EditOrder_Compact.cshtml and EditRegType_DropDown.cshtml
-               "mData": "",
+               "mData": "RegistrationType",
                "mRender": function (data, type, full) {
 
                    var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
-                   
-                   // the dropdown's HTML gets built one time on the server via ajax via a partial view and RenderViewToString
-                   //  magic strings [DISCOUNT] and [DISCOUNTID] are hand-/hard-coded in the partial View
-                   var dd_html = "";// DO.baseDiscountHtml.replace(/\[DISCOUNT\]/gi, full.Discount.DiscountType.ToString).replace(/\[DISCOUNTID\]/gi, orderToEdit);
 
-                   //return dd_html + orderToEdit;
+                   var flatOff = 0;
+                   var percentOff = 0;
 
-                   var newBillingHtml = ns.getBillingCellHtml(dd_html + orderToEdit,
+                   if (full.Discount != null) {
+                       flatOff = full.Discount.FlatOff;
+                       percentOff = full.Discount.PercentOff;
+
+                   };
+                   var showDiscount = "";
+                   if (flatOff > 0) {
+                       showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: $" + flatOff + "</span>";
+                   }
+
+                   if (percentOff > 0) {
+                       showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: " + percentOff + "%</span>";
+                   }
+
+
+                   var newBillingHtml = ns.getBillingCellHtml(showDiscount,
                                                            full.RegistrationType.OptionLabelShort,
                                                            full.Total);
 
@@ -431,19 +442,20 @@ function getOrderStatusHtml() {
            // [5] Resends Column
             {
 
-                "aTargets": [5], // Status column
+                "aTargets": [5], // OrderDate column
                 "mData": "",
                 "mRender": function (data, type, full) {
+
                     var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
                     var statusHtml = full.OrderDateString;
-                    var resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendOrderConfirmationButton btn btn-mini\">Send Confirmation</button>";
+                    var resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendOrderConfirmationButton btn btn-mini\">Confirmation</button>";
                     if (full.Webinar_IsActive) {
                         resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
                     }
                     //if (full.Webinar_IsRecorded) {
                     //    resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendPostEventMaterialButton btn btn-mini\">PostEvent Material</button>";
                     //}
-                    return statusHtml + "</br>" + resendMsg;
+                    return "<div style=\"text-align: center\">"+ statusHtml + "</br>" + resendMsg + "</div>";
                 }
             },
             {
@@ -460,7 +472,7 @@ function getOrderStatusHtml() {
                     //  magic strings [ORDERSTATUS] and [ORDERID] are hand-/hard-coded in the partial View
                     var dd_html = DO.baseOrderStatusHtml.replace(/\[ORDERSTATUS\]/gi, full.OrderStatusString).replace(/\[ORDERID\]/gi, orderToEdit);
 
-                    return dd_html + orderToEdit;
+                    return orderToEdit + dd_html;
                 }
             }]
         });

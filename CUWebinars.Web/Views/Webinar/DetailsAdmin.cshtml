@@ -9,18 +9,6 @@
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
 
-    if (Model.UserOwnsThisEvent > 0)
-    {
-        <script type="text/javascript">
-            function exprsOrder(idRegType) {
-                alert("Please call us at with our Help & Feedback button in your lower right screen and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder");
-
-            };
-            function upgrade(idRegType) {
-                alert("Please call us at with our Help & Feedback button in your lower right screen and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder");
-            };
-        </script>
-    }
     IStateService stateService = new StateService();
 
 
@@ -52,17 +40,7 @@
 
 @Styles.Render("~/Content/create-order-details")
 @Styles.Render("~/Content/data-tables")
-<style>
-    /*td.details-control {
-        background: url('../../Content/DataTables/images/details_open.png') no-repeat center center;
-        cursor: pointer;
-    }
 
-    tr.shown td.details-control {
-        background: url('../../Content/DataTables/images/details_close.png') no-repeat center center;
-        
-    }*/
-</style>
 <div class="hero-unit">
     <div id="webinarTitle" class="container">
         <div class="pull-right">

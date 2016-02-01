@@ -101,6 +101,7 @@ namespace CUWebinars.Web.Controllers
         [HttpPost]
         [ValidateJsonAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
+        [AllowAnonymous]
         public ActionResult ApplyDiscountCode(string code, int orderRowId)
         {
             try
@@ -109,24 +110,29 @@ namespace CUWebinars.Web.Controllers
 
                 var myDiscount = _cartControllerOrchestrator.ApplyDiscountCode(code, row);
 
-
                 if (!ReferenceEquals(myDiscount, null))
                 {
-                    if (myDiscount.CreditsRemain == 0)
-                    {
-                        return Json(new { Result = -1 });
-                    }
                     _cartControllerOrchestrator.UpdateOrderPricing(row.Order);
 
-                    var amountToDiscount =
-                        _cartControllerOrchestrator.GetDiscountAmountAsPercentageOrDollarAmount(myDiscount);
+                    var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(row.Order);
 
-                    return Json(new { Result = amountToDiscount });
+                    return
+                        Json(
+                            new
+                            {
+                                regTypeShort = row.RegistrationType.OptionLabelShort,
+                                BasePrice = pricesAndDiscounts.UnitPrice,
+                                Discount = pricesAndDiscounts.TotalDiscount,
+                                OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
+                                Tax = pricesAndDiscounts.TaxAmount,
+                                Total = pricesAndDiscounts.TotalOrderPrice,
+                                FlatOff = pricesAndDiscounts.Discount.FlatOff,
+                                PercentOff = pricesAndDiscounts.Discount.PercentOff
+                            });
                 }
                 else
                 {
-
-                    return Json(new { Result = 0 });
+                    return Json(new { Result = 0, Code = code, Order = orderRowId });
                 }
 
             }
@@ -199,7 +205,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (Exception exception)
                 {
-                    ModelState.AddModelError(string.Empty, "ConfirmOrder|CreatePostEventClaim failed" );
+                    ModelState.AddModelError(string.Empty, "ConfirmOrder|CreatePostEventClaim failed");
                     _logger.ErrorException("ConfirmOrder|CreatePostEventClaim failed ", exception);
                     ErrorSignal.FromCurrentContext().Raise(exception);
                 }
@@ -564,7 +570,7 @@ namespace CUWebinars.Web.Controllers
                     var regType = _cartControllerOrchestrator.GetRegTypeById(idRegType.Value);
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(idOrderRow);
                     model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType = regType;
-                    
+
                     var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
                     if (pricesAndDiscounts.Discount == null)
                         pricesAndDiscounts.Discount = new Discount();

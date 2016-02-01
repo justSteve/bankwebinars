@@ -413,6 +413,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             saveInst.Country = updateFields.Country.Trim();
             saveInst.InstitutionName = updateFields.InstitutionName.Trim();
 
+            if (ReferenceEquals(null, saveInst.Address))
+                saveInst.Address = " ";
             _membershipService.UpdateInstitutionDetails(saveInst);
 
         }
