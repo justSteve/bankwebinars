@@ -826,7 +826,6 @@
     <Content Include="Content\images\BankWebinars\vrLocal\right_shadow.jpg" />
     <Content Include="Content\images\BankWebinars\vrLocal\spacer.gif" />
     <Content Include="Content\images\BankWebinars\vrLocal\top_shadow.jpg" />
-    <Content Include="Content\images\BankWebinars\Webinars\w1534\cert.jpg" />
     <Content Include="Content\images\BankWebinars\zoom-corner.png" />
     <Content Include="Content\images\bannerCalendar.png" />
     <Content Include="Content\images\bg.jpg" />
@@ -1737,11 +1736,6 @@
     <Content Include="Content\images\aff\wisbank\Thumbs.db" />
     <Content Include="Content\images\BankWebinars\Logo\BankWebinarFinalLogo.eps" />
     <Content Include="Content\images\BankWebinars\Logo\BankWebinarFinalLogo.pdf" />
-    <Content Include="Content\images\BankWebinars\Webinars\w1534\cert.doc" />
-    <Content Include="Content\images\BankWebinars\Webinars\w1536\cert.doc" />
-    <Content Include="Content\images\BankWebinars\Webinars\w1547\cert.doc" />
-    <Content Include="Content\images\BankWebinars\Webinars\w1553\cert.doc" />
-    <Content Include="Content\images\BankWebinars\Webinars\w1553\cert.docx" />
     <Content Include="Content\images\copyLogo.bat" />
     <Content Include="Content\images\CUWebinars\Logo\BankWebinarFinalLogo.eps" />
     <Content Include="Content\images\CUWebinars\Logo\BankWebinarFinalLogo.pdf" />

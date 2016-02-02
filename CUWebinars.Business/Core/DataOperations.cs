@@ -1522,5 +1522,49 @@ namespace CUWebinars.Business.Core
                 }
             }
         }
+
+        public string InsertOnDemandClaim(int orderId)
+        {
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+
+                using (var insertOnDemandClaim = new SqlCommand("InsertOnDemandClaim", sqlConnection))
+                {
+                    try
+                    {
+                        insertOnDemandClaim.Connection = sqlConnection;
+                        insertOnDemandClaim.CommandType = CommandType.StoredProcedure;
+                        var updateUserEmailNew = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.Int,
+                            ParameterName = "@idOrder",
+                            Value = orderId
+                        };
+                        insertOnDemandClaim.Parameters.Add(updateUserEmailNew);
+
+                        insertOnDemandClaim.ExecuteScalar();
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
+                            errorLogger.CommandText += "'InsertOnDemandClaim' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'InsertOnDemandClaim', 9 ,";
+                            errorLogger.CommandText += "'error at InsertOnDemandClaim " + ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+
+                        }
+                        
+                        throw;
+                    }
+                }
+            }
+            return "suceeded";
+        }
     }
 }

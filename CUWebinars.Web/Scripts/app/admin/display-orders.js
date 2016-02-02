@@ -110,6 +110,9 @@ function getOrderStatusHtml() {
         DO.baseOrderStatusHtml = getOrderStatusHtml();  // 
         DO.baseDiscountHtml = getDiscountHtml();  // 
 
+        DO.orderStatusFilters = [];
+
+
     };
 
     ns.getBillingCellHtml = function (discount, regTypeLabel, total) {
@@ -119,8 +122,6 @@ function getOrderStatusHtml() {
         var billingHtml = regTypeLabel
                             + showDiscount
                             + "<br />Total: $" + (total + "").replace(".00", "");
-
-        DO.orderStatusFilters = undefined;
 
         return billingHtml;
 
@@ -251,6 +252,7 @@ function getOrderStatusHtml() {
 
         // setup radio button group filters
         $("#filter-buttons").on("click", "button", function (e) {
+
             e.stopImmediatePropagation(); // the bootstrap buttons plugin doesn't toggle the clicked on button soon enough so do it ourselves https://github.com/twbs/bootstrap/issues/2380
             $(this).button('toggle'); // flip the state of the clicked on button
             $(this).blur(); // the focused look is very similar to the active look, which is confusing when deselecting buttons, blur causes the button to look unselected, as it should
@@ -313,6 +315,7 @@ function getOrderStatusHtml() {
 
             // trigger search with existing textbox value, additional params will be constructed on that event handler
             var currentSearchVal = $("input[type='search']", "#ordersTable_filter").val();
+
             DO.ordersTable.DataTable().search(currentSearchVal).draw();
 
         });
@@ -379,7 +382,7 @@ function getOrderStatusHtml() {
                     'visible': showAffiliateColumn,
                     'class': 'details-control'
                 },
-                { 'data': 'OrderDate', 'class': 'details-control edit-resends'},
+                { 'data': 'OrderDate', 'class': 'details-control edit-resends' },
                 { 'data': 'OrderStatusString' }
             ],
             "order": [0, "asc"]
@@ -455,7 +458,7 @@ function getOrderStatusHtml() {
                     //if (full.Webinar_IsRecorded) {
                     //    resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendPostEventMaterialButton btn btn-mini\">PostEvent Material</button>";
                     //}
-                    return "<div style=\"text-align: center\">"+ statusHtml + "</br>" + resendMsg + "</div>";
+                    return "<div style=\"text-align: center\">" + statusHtml + "</br>" + resendMsg + "</div>";
                 }
             },
             {

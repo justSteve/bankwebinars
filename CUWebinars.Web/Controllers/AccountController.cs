@@ -304,6 +304,13 @@ namespace CUWebinars.Web.Controllers
             return RedirectToAction("Login", "Account", new { ReturnURL = "MyWebinars" });
         }
 
+        [System.Web.Mvc.AllowAnonymous]
+        [System.Web.Mvc.HttpGet]
+        public ActionResult InsertOnDemandClaim(int orderID)
+        {
+            _accountControllerOrchestrator.InsertOnDemandClaim(orderID);
+            return null;
+        }
 
         [System.Web.Mvc.AllowAnonymous]
         [System.Web.Mvc.HttpGet]

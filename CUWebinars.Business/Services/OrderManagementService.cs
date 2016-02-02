@@ -492,7 +492,7 @@ namespace CUWebinars.Business.Services
                             if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType != vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType)
                             {
                                 vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType;
-                                //SaveChanges();
+                                SaveChanges();
                                 _logger.Info("SynchOrder adjusted RegType from V3 RegType = {1} to Legacy = {0} on {2} ", lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, orderEmail);
                             }
 
@@ -519,8 +519,8 @@ namespace CUWebinars.Business.Services
                             //            "SynchOrder attempt to apply discount failed: " + orderEmail, ex);
                             //    }
 //                            }
-                            PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
-                            UpdateOrderChanges(vOrder, ref pricesAndDiscounts);
+                            //PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
+                            //UpdateOrderChanges(vOrder, ref pricesAndDiscounts);
 
                             i++;
                         }
@@ -1852,6 +1852,14 @@ namespace CUWebinars.Business.Services
         public void UpdateShippingAddressDetails(Address shippingAddress, int idUser)
         {
             _orderRepository.UpdateShippingAddressDetails(shippingAddress, idUser);
+        }
+
+        public string InsertOnDemandClaim(int orderId)
+        {
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+            var result = dataOperations.InsertOnDemandClaim(orderId);
+
+            return result;
         }
 
         public IList<Order> GetV3OrdersByOnDemandClaim()

@@ -229,6 +229,34 @@ function AttachDataTableEditEvents() {
 
     });
 
+
+    $('.dataTable').on("click", "#genMissingOnDemandCode", function(e) {
+        debugger;
+
+        var html = "";
+
+        $.ajax({
+            async: false,
+            url: "/account/insertondemandclaim?idOrder=6",
+            dataType: "json",
+            type: "GET",
+            success: function(data) {
+                html = data.html;
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+            },
+            beforeSend: function() {
+                //addIsLoadingIndicator($td, -1); // let ajax "complete" call remove
+            },
+            complete: function() {
+                //removeIsLoadingIndicator($td);
+            }
+        });
+
+        return html;
+    });
+
 }
 
 function fireSuccessIndicator($cell) {
@@ -343,6 +371,7 @@ function editBillingCell(cell, $td, rowData) {
 
     return html;
 }
+
 
 
 function editInstitutionCell(cell, $td, rowData) {
