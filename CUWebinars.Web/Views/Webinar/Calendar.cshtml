@@ -7,13 +7,17 @@
     ViewBag.Title = "Calendar";
     Layout = "/Views/Shared/_LayoutPublic.cshtml";
 
-    //var identity = ((ClaimsIdentity)User.Identity)
-    //    .Claims.FirstOrDefault(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName);
+    var identity = ((ClaimsIdentity)User.Identity)
+        .Claims.FirstOrDefault(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName);
 
-    //if (!ReferenceEquals(null, identity))
-    //{
-    //    ViewBag.LoggedInUserIdentity = identity;
-    //}
+    if (!ReferenceEquals(null, identity))
+    {
+        //ViewBag.LoggedInUserIdentity = identity;
+        
+
+    }
+    
+    
 }
 
 <script src="/Scripts/fullcalendar/fullcalendar.js" type="text/javascript"></script>
@@ -22,9 +26,7 @@
     <h2>
         TTS Event Calendar
     </h2>
-    <p>
-        (all times are displayed in Central Standard Time)
-    </p>
+
     <script type="text/javascript">
         $(document).ready(function () {
             $('#calendar').fullCalendar({

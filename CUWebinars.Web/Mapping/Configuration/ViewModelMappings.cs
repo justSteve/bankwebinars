@@ -51,6 +51,11 @@ namespace CUWebinars.Web.Mapping.Configuration
             Profile.CreateMap<Order, OrderDTO>()
                 .ForMember(d => d.Affiliate_ttsDomain,
                            map => map.MapFrom(s => s.Affiliate.ttsDomain))
+                .ForMember(d => d.Institution,
+                           map => map.MapFrom
+                               (s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Order.WebUser.Institution.InstitutionName + "<br>"
+                               + s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Order.WebUser.Institution.City + ", "
+                               + s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Order.WebUser.Institution.State ))
                 .ForMember(d => d.TtsJoinUrl,
                            map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).TtsJoinUrl))
                 .ForMember(d => d.Discount,
@@ -63,7 +68,7 @@ namespace CUWebinars.Web.Mapping.Configuration
                            map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Webinar.Status == WebinarStatus.Recorded));
 
             Profile.CreateMap<WebUser, UserDTO>()
-                .ForMember(d => d.Institution, 
+                .ForMember(d => d.Institution,
                 map => map.MapFrom(s => s.Institution.InstitutionName))
                 //.ForMember(d => d.Orders,
                 //map => map.MapFrom(s => s.Orders))

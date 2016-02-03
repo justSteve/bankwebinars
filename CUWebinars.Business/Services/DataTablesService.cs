@@ -39,6 +39,7 @@ namespace CUWebinars.Business.Services
                 theseOrders = _context.Orders
 
                     .Include(o => o.WebUser)
+                    .Include(o => o.WebUser.Institution)
                     .Include(o => o.Affiliate)
                     .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
                     .Include(o => o.OrderRows.Select(or => or.RegistrationType))
@@ -51,6 +52,7 @@ namespace CUWebinars.Business.Services
             {
                 theseOrders = _context.Orders
                     .Include(o => o.WebUser)
+                    .Include(o => o.WebUser.Institution)
                     .Include(o => o.Affiliate)
                     .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
                     .Include(o => o.OrderRows.Select(or => or.RegistrationType))
