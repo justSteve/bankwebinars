@@ -306,10 +306,11 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.AllowAnonymous]
         [System.Web.Mvc.HttpGet]
-        public ActionResult InsertOnDemandClaim(int orderID)
+        public string InsertOnDemandClaim(int orderID)
         {
-            _accountControllerOrchestrator.InsertOnDemandClaim(orderID);
-            return null;
+            var result = _accountControllerOrchestrator.InsertOnDemandClaim(orderID);
+
+            return result;
         }
 
         [System.Web.Mvc.AllowAnonymous]

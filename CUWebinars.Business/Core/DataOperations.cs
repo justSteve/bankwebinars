@@ -1525,6 +1525,7 @@ namespace CUWebinars.Business.Core
 
         public string InsertOnDemandClaim(int orderId)
         {
+            var result = "failed on" + orderId;
             using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
             {
                 sqlConnection.Open();
@@ -1543,7 +1544,7 @@ namespace CUWebinars.Business.Core
                         };
                         insertOnDemandClaim.Parameters.Add(updateUserEmailNew);
 
-                        insertOnDemandClaim.ExecuteScalar();
+                      result = insertOnDemandClaim.ExecuteScalar().ToString();
                     }
                     catch (Exception ex)
                     {
@@ -1551,7 +1552,7 @@ namespace CUWebinars.Business.Core
                         {
                             errorLogger.CommandText =
                                 "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
                             errorLogger.CommandText += "'InsertOnDemandClaim' ,";
                             errorLogger.CommandText += "9 ,9 ,9 ,'InsertOnDemandClaim', 9 ,";
                             errorLogger.CommandText += "'error at InsertOnDemandClaim " + ex.Message.Replace("'", "|") + "')";
@@ -1564,7 +1565,7 @@ namespace CUWebinars.Business.Core
                     }
                 }
             }
-            return "suceeded";
+            return result;
         }
     }
 }

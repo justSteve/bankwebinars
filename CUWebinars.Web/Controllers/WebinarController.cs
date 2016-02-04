@@ -379,6 +379,8 @@ namespace CUWebinars.Web.Controllers
                 ViewBag.Title = "Search Results";
 
                 return View(unionOfResultSets);
+
+                //uncomment to use Updated DataTable code
                 //string searchTerm = Request["searchTerm"];
                 //ShowWebinarsViewModel model = new ShowWebinarsViewModel
                 //{
