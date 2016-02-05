@@ -10,6 +10,7 @@ using System.Text;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Security;
+using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
@@ -1467,6 +1468,13 @@ namespace CUWebinars.Web.Controllers
                 }
                 else
                 {
+                    UserAccount userAccount = _membershipService.GetUserAccountByVerificationKey(model.Key);
+                    if (ReferenceEquals(null, userAccount))
+                    {
+                        _logger.Error("PasswordResetConfirm | User not found" + model.Key);
+                        return Json(new { Result = "Not Found" });
+                    }
+
                     try
                     {
                         if (_accountControllerOrchestrator.ChangePasswordFromResetKey(model.Key, model.Password))

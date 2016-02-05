@@ -963,13 +963,17 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             UserAccount userAccount = _membershipService.GetUserAccountByVerificationKey(key);
 
+            if (userAccount == null)
+            { 
+            }
             _membershipService.RemoveClaim(_globals.Tenant, userAccount.Email, ClaimTypes.HasNotVerified);
 
-            if (!_membershipService.UserHasClaim(userAccount, ClaimTypes.FullName))
-            {
-                var webUser = _membershipService.GetWebUserById(_membershipService.GetWebUserIdByEmail(userAccount.Email).Value);
-                _membershipService.AddClaim(userAccount, ClaimTypes.FullName, webUser.FirstName + " " + webUser.LastName);
-            }
+                if (!_membershipService.UserHasClaim(userAccount, ClaimTypes.FullName))
+                {
+                    var webUser = _membershipService.GetWebUserById(_membershipService.GetWebUserIdByEmail(userAccount.Email).Value);
+                    _membershipService.AddClaim(userAccount, ClaimTypes.FullName, webUser.FirstName + " " + webUser.LastName);
+                }
+            
 
             return _membershipService.ChangePasswordFromResetKey(_globals.Tenant, key, password);
         }

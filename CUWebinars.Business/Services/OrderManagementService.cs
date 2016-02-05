@@ -2194,11 +2194,6 @@ namespace CUWebinars.Business.Services
                 _logger.Info("Redeemed Discount On Order: " + order.idOrder);
             }
         }
-        //public virtual bool IsDiscountCodeValid(string discountCode)
-        //{
-
-        //    return true;
-        //}
 
 
         private Discount RedeemDiscount(Discount discount, OrderRow row)
@@ -2257,8 +2252,8 @@ namespace CUWebinars.Business.Services
                     }
                     if (regTypeLabel == ("OnDemand Recording Only"))
                     {
-                        discount.CreditsRemain = discount.CreditsRemain + 1.25M;
-                        discount.CreditsUsed = discount.CreditsUsed - 1.25M;
+                        discount.CreditsRemain = discount.CreditsRemain + 1M;
+                        discount.CreditsUsed = discount.CreditsUsed - 1M;
                     }
                     if (regTypeLabel == ("CD-ROM and Hardcopy Handouts"))
                     {
@@ -2297,8 +2292,8 @@ namespace CUWebinars.Business.Services
                     }
                     if (regTypeLabel == ("OnDemand Recording Only"))
                     {
-                        discount.CreditsRemain = discount.CreditsRemain - 1.25M;
-                        discount.CreditsUsed = discount.CreditsUsed + 1.25M;
+                        discount.CreditsRemain = discount.CreditsRemain - 1M;
+                        discount.CreditsUsed = discount.CreditsUsed + 1M;
                     }
                     if (regTypeLabel == ("CD-ROM and Hardcopy Handouts"))
                     {

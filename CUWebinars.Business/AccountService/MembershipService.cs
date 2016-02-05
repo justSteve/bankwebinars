@@ -666,8 +666,9 @@ namespace CUWebinars.Business.AccountService
 
                 //dataOperations.SetFieldsConsistantWithVerifiedUser(userAccount);
                 RemoveClaim(tenant, userAccount.Email, ClaimTypes.HasNotVerified);
-
-                return _userAccountService.ChangePasswordFromResetKey(key, newPassword);
+                var isValid = _userAccountService.ChangePasswordFromResetKey(key, newPassword);
+                
+                return isValid;
             }
             catch (Exception exception)
             {
