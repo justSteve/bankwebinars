@@ -38,9 +38,6 @@ function AttachDataTableEditEvents() {
     });
 
 
-
-
-
     // EditUser_Compact form events
     $('.dataTable').on("click", ".show-billing-address", function (e) {
         e.preventDefault();
@@ -62,7 +59,6 @@ function AttachDataTableEditEvents() {
         $(".shipping-field").removeClass("hidden"); //.show();
         $(".show-shipping-address").addClass("btn-success");
     });
-
 
 
     $('.dataTable').on("click", "#save-changes-user", function (e) {
@@ -122,7 +118,7 @@ function AttachDataTableEditEvents() {
                 fireSuccessIndicator($cell);
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                alert(textStatus);
+                alert("/account/updateuser: " + textStatus);
             }
         });
     });
@@ -169,11 +165,11 @@ function AttachDataTableEditEvents() {
                 fireSuccessIndicator($cell);
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                alert(textStatus);
+                alert("/account/updatediscount: " + textStatus);
             }
         });
     });
-    
+
 
     $('.dataTable').on("click", "#save-changes-institution", function (e) {
         e.preventDefault();
@@ -214,7 +210,7 @@ function AttachDataTableEditEvents() {
                 fireSuccessIndicator($cell);
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                alert(textStatus);
+                alert("/account/updateinstitution: " + textStatus);
             }
         });
     });
@@ -227,34 +223,6 @@ function AttachDataTableEditEvents() {
         // EDIT.changeRegType(e, $(this), $(this).parent());
         updateRegType(this, $('input[name="OrderRowId"]').val(), $(this).val());
 
-    });
-
-
-    $('.dataTable').on("click", "#genMissingOnDemandCode", function(e) {
-        debugger;
-
-        var html = "";
-
-        $.ajax({
-            async: false,
-            url: "/account/insertondemandclaim?idOrder=6",
-            dataType: "json",
-            type: "GET",
-            success: function(data) {
-                html = data.html;
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
-                alert(textStatus);
-            },
-            beforeSend: function() {
-                //addIsLoadingIndicator($td, -1); // let ajax "complete" call remove
-            },
-            complete: function() {
-                //removeIsLoadingIndicator($td);
-            }
-        });
-
-        return html;
     });
 
 }
@@ -331,10 +299,16 @@ function editUserCell(cell, $td, rowData) {
             html = data.html;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
+            alert("/account/geteditusercompactform: " + textStatus);
+            $zopim.livechat.addTags(errorThrown);
+
+
         },
         beforeSend: function () {
             addIsLoadingIndicator($td, -1); // let ajax "complete" call remove
+            $zopim.livechat.addTags("editing: " + rowData.idUser);
+
+            L.clientLogger.appendNotes('editing', { 'responseObject': XMLHttpRequest.responseJSON, 'geteditusercompactform': rowData.idUser });
         },
         complete: function () {
             removeIsLoadingIndicator($td);
@@ -359,7 +333,7 @@ function editBillingCell(cell, $td, rowData) {
             html = data.html;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
+            alert("/account/GetEditBillingForm: " + textStatus);
         },
         beforeSend: function () {
             addIsLoadingIndicator($td, -1); // let ajax "complete" call remove
@@ -388,7 +362,7 @@ function editInstitutionCell(cell, $td, rowData) {
             html = data.html;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
+            alert("/account/geteditinstitutionform: " + textStatus);
         },
         beforeSend: function () {
             addIsLoadingIndicator($td, -1); // let ajax "complete" call remove
@@ -416,7 +390,7 @@ function editResendsCell(cell, $td, rowData) {
             html = data.html;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
+            alert("/account/GetResendInfoForm: " + textStatus);
         },
         beforeSend: function () {
             addIsLoadingIndicator($td, -1); // let ajax "complete" call remove
@@ -459,7 +433,7 @@ function updateOrderStatus(item, orderId, newOrderStatus) {
 
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
+            alert("/admin/updateorderstatus: " + textStatus);
         }
     });
 }
@@ -495,13 +469,13 @@ function updateDiscount(item, orderId, newDiscount) {
 
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
+            alert("/admin/updateDiscount: " + textStatus);
         }
     });
 }
 
 function updateEmail(e, thatThis) {
-    
+
     e.preventDefault();
 
     var form = $(thatThis).parents("form");
@@ -534,9 +508,9 @@ function updateEmail(e, thatThis) {
             fireSuccessIndicator($cell);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            
+
             console.log(data);
-            alert(textStatus);
+            alert("/account/editemail: " + textStatus);
         }
     });
 
@@ -601,7 +575,7 @@ function updateRegType(item, orderId, newRegTypeId) {
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
+            alert("/cart/updateorderdetails: " + textStatus);
         }
     });
 }

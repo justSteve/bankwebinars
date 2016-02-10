@@ -13,29 +13,6 @@
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
 
-    string currentUserAffiliateFullName = string.Empty;
-
-    if (User != null && User.Identity.IsAuthenticated)
-    {
-        ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
-
-        if (claimsIdentityOfAuthenticatedUser.HasClaim(
-            (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
-        {
-            if (currentAffiliate != null)
-            {
-                currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
-            }
-            else
-            {
-                CUWebinars.Business.Core.Tracing.Tracer.Warning("CurrentAffiliate should always have a value. Session | {0}", new AppHelper(Request, stateService).GetUserAuditInfo());
-                Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
-            }
-
-
-        }
-    }
-
 
     var subdomainBranding = stateService.GetValue<string>
         ("SubdomainBranding");
@@ -86,7 +63,7 @@
         })(document, "script");
     </script>
     }
-    @if (@User.Identity.IsAuthenticated && !HttpContext.Current.IsDebuggingEnabled)
+    @if (User.Identity.IsAuthenticated && !HttpContext.Current.IsDebuggingEnabled)
     {
 
         if (!Html.IsDebug())

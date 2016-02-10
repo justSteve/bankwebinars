@@ -23,7 +23,15 @@ namespace CUWebinars.Business.Core.Helpers
                 JObject objectToValidate;
                 try
                 {
+                    if (existingJson.Contains("moneris"))
+                        existingJson = existingJson.Replace("moneris", "MonerisDupeTx");
+                    
+                    //when moneris tx already exists (but why would that be?)
+                    //code execution does not step into catch block - wtf.
+
+                    //does this enlighten?
                     //http://stackoverflow.com/questions/29830198/newtonsoft-jobject-parse-throws-base-exception-how-to-handle
+
                     objectToValidate = JObject.Parse(existingJson);
                 }
                 catch (Exception e)

@@ -594,7 +594,8 @@ namespace CUWebinars.Web.Controllers
             if (id.HasValue)
             {
 
-                var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id.Value);
+//                var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id.Value);
+                var webinar = _webinarManagementService.GetWebinar(id.Value);
 
                 if (webinar == null) return HttpNotFound();
 
@@ -920,7 +921,7 @@ namespace CUWebinars.Web.Controllers
                 additionalLocations = orderRowForOrder.AdditionalLocation.ToList();
             }
 
-            model.Topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar);
+            model.Topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar).ToList();
 
             model.WebinarFiles = _webinarManagementService.GetWebinarFilesPerWebinar(webinar.idWebinar);
             var AddLocPrice = _orderManagementService.GetPriceOfAdditionalLocation(webinar.idWebinar);

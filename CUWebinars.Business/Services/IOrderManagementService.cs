@@ -130,5 +130,6 @@ namespace CUWebinars.Business.Services
         void UpdateDiscountDetails(Discount discount);
         void UpdateShippingAddressDetails(Address shippingAddress, int idUser);
         string InsertOnDemandClaim(int orderId);
+        string SynchOrdersWhereLegacyIsZero(int idOrderLegacy, int idOrderV3);
     }
 }

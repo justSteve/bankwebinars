@@ -27,8 +27,11 @@
                 var onDemandClaimUrl = "Live Plus Five access is expired.";
                 var showMedia = false;
 
-                var accessPhrase = "Please logout and re-login to ensure you have the most up-to-date information.";
-
+                var accessPhrase = "";
+                if (row.RegistrationType.ShowRecordingNotifications.ToString() == "No")
+                {
+                    accessPhrase = onDemandClaimUrl;
+                }
                 if (Model.MyClaims != null)
                 {
                     foreach (var claim in Model.MyClaims)
@@ -55,10 +58,7 @@
                             else
                             {
                                 onDemandClaimUrl = "Access to the OnDemand recording expired on " + thisClaim.ExpiryDate.ToShortDateString();
-                                if (row.RegistrationType.ShowRecordingNotifications.ToString() == "No")
-                                {
-                                    accessPhrase = "expired on " + onDemandClaim.ExpiryDate.ToShortDateString();
-                                }
+
                             }
                         }
                     }
@@ -73,7 +73,7 @@
                             <h4 style="padding-right: 30px;" id="recorded-@row.idWebinar">@row.Webinar.Title</h4>
                             <div>
                                 <p>
-                                    This event was recorded on @Html.DisplayDate(row.Webinar.Date) and @accessPhrase.
+                                    This event was recorded on @Html.DisplayDate(row.Webinar.Date)<text>.</text> @accessPhrase
                                 </p>
                             </div>
                         </div>

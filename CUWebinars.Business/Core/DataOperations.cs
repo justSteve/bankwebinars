@@ -1335,6 +1335,7 @@ namespace CUWebinars.Business.Core
         {
 
             string retClaim = "";
+            var i = -1;
             using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
             {
                 sqlConnection.Open();
@@ -1352,8 +1353,16 @@ namespace CUWebinars.Business.Core
                             Value = idOrder
                         };
                         GetOnDemandClaim.Parameters.Add(onDemandCodeParameter);
-                        retClaim = GetOnDemandClaim.ExecuteScalar().ToString();
 
+                        using (var reader = GetOnDemandClaim.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                retClaim = reader[0].ToString();
+                                i++;
+                            }
+
+                        }
 
                     }
                     catch (Exception ex)
@@ -1373,9 +1382,12 @@ namespace CUWebinars.Business.Core
                     }
                 }
             }
+            if (i == -1) retClaim = "none found";
+            if (i > 0) retClaim = "duped";
+
             return retClaim;
 
-          
+
         }
 
         public string GetOnDemandClaimByCode(string onDemandCode)
@@ -1422,7 +1434,7 @@ namespace CUWebinars.Business.Core
             }
             return retClaim;
 
-          
+
         }
 
         public IList<RegType> FindAllPossibleRegTypesByWebinarId(int id)
@@ -1469,7 +1481,7 @@ namespace CUWebinars.Business.Core
             }
             return null;
 
-          
+
 
         }
 
@@ -1544,7 +1556,7 @@ namespace CUWebinars.Business.Core
                         };
                         insertOnDemandClaim.Parameters.Add(updateUserEmailNew);
 
-                      result = insertOnDemandClaim.ExecuteScalar().ToString();
+                        result = insertOnDemandClaim.ExecuteScalar().ToString();
                     }
                     catch (Exception ex)
                     {
@@ -1560,11 +1572,129 @@ namespace CUWebinars.Business.Core
                             errorLogger.ExecuteNonQuery();
 
                         }
-                        
+
                         throw;
                     }
                 }
             }
+            return result;
+        }
+
+        public object SynchOrderIdsWithOnDemandCode(int idOrderLegacy, int idOrderV3, string oldClaim)
+        {
+            var result = "failed on" + idOrderLegacy;
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+
+                using (var synchWhereLegacyIsZero = new SqlCommand("InsertOnDemandClaim", sqlConnection))
+                {
+                    try
+                    {
+                        synchWhereLegacyIsZero.Connection = sqlConnection;
+                        synchWhereLegacyIsZero.CommandType = CommandType.StoredProcedure;
+                        var idOrderNew = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.Int,
+                            ParameterName = "@idOrderNew",
+                            Value = idOrderLegacy
+                        };
+                        synchWhereLegacyIsZero.Parameters.Add(idOrderNew);
+
+                        var idOrderV3Old = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.Int,
+                            ParameterName = "@idOrderV3Old",
+                            Value = idOrderV3
+                        };
+                        synchWhereLegacyIsZero.Parameters.Add(idOrderV3Old);
+
+
+                        var onDemandCode = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.VarChar,
+                            ParameterName = "@OnDemandCode",
+                            Value = oldClaim
+                        };
+                        synchWhereLegacyIsZero.Parameters.Add(onDemandCode);
+
+                        result = synchWhereLegacyIsZero.ExecuteScalar().ToString();
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
+                            errorLogger.CommandText += "'synchWhereLegacyIsZero' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'synchWhereLegacyIsZero', 9 ,";
+                            errorLogger.CommandText += "'error at synchWhereLegacyIsZero " + ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+
+                        }
+
+                        throw;
+                    }
+                }
+
+
+            }
+
+            int resultOut;
+            bool res = int.TryParse(result, out resultOut);
+
+            if (res)
+            {
+                using (var sqlConnection = new SqlConnection(TtsConfig.LegacyConnectionString))
+                {
+                    sqlConnection.Open();
+                    using (var synchLegacyOrder = new SqlCommand("InsertOrder2", sqlConnection))
+                    {
+                        try
+                        {
+                            synchLegacyOrder.Connection = sqlConnection;
+                            synchLegacyOrder.CommandType = CommandType.StoredProcedure;
+                            var idOrderNew = new SqlParameter
+                            {
+                                SqlDbType = SqlDbType.Int,
+                                ParameterName = "@idOrderNew",
+                                Value = resultOut
+                            };
+                            synchLegacyOrder.Parameters.Add(idOrderNew);
+
+                            var idOrderV3Old = new SqlParameter
+                            {
+                                SqlDbType = SqlDbType.Int,
+                                ParameterName = "@idOrderOld",
+                                Value = idOrderLegacy
+                            };
+                            synchLegacyOrder.Parameters.Add(idOrderV3Old);
+
+                            result = synchLegacyOrder.ExecuteScalar().ToString();
+                        }
+                        catch (Exception ex)
+                        {
+                            using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                            {
+                                errorLogger.CommandText =
+                                    "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                                errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
+                                errorLogger.CommandText += "'synchLegacyOrder' ,";
+                                errorLogger.CommandText += "9 ,9 ,9 ,'synchLegacyOrder', 9 ,";
+                                errorLogger.CommandText += "'error at synchLegacyOrder " + ex.Message.Replace("'", "|") + "')";
+
+                                errorLogger.ExecuteNonQuery();
+
+                            }
+
+                            throw;
+                        }
+                    }
+                }
+            }
+
             return result;
         }
     }

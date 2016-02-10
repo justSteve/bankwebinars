@@ -49,7 +49,7 @@ function getDiscountHtml() {
             html = data.html;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
+            alert("geteditdiscountdropdownhtml" + textStatus);
         }
     });
 
@@ -70,7 +70,7 @@ function getOrderStatusHtml() {
             html = data.html;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
+            alert("geteditorderstatusdropdownhtml" + textStatus);
         }
     });
 

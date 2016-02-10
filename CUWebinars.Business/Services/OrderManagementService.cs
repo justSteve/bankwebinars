@@ -242,11 +242,11 @@ namespace CUWebinars.Business.Services
         public IDictionary<RegType, bool> GetOptionsByWebinarId(int id, bool detached)
         {
             string cachKey = "options-" + id;
-            var options = _cachingService.Get(cachKey);
+            //var options = _cachingService.Get(cachKey);
 
             //if (options == null)
             //{
-            options = _regTypeRepository.FindRegTypesByWebinarId(id, false);
+            var options = _regTypeRepository.FindRegTypesByWebinarId(id, false);
 
             //    // keeps options object in cache for 1 hour.
             //    _cachingService.Add(cachKey, options, DomainConstants.BuildUtcNowAsCts.AddHours(1));
@@ -508,7 +508,7 @@ namespace CUWebinars.Business.Services
                             //            var discount = GetDiscountById(Convert.ToInt32(code));
 
                             //            ApplyDiscountCode(discount.DiscountCode, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active));
-                                        
+
                             //            _logger.Warn("SynchOrder adjusted Discount = {0} on order {1} ",
                             //                code, vOrder.idOrder);
                             //        }
@@ -518,7 +518,7 @@ namespace CUWebinars.Business.Services
                             //        _logger.ErrorException(
                             //            "SynchOrder attempt to apply discount failed: " + orderEmail, ex);
                             //    }
-//                            }
+                            //                            }
                             //PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
                             //UpdateOrderChanges(vOrder, ref pricesAndDiscounts);
 
@@ -740,7 +740,8 @@ namespace CUWebinars.Business.Services
         public Affiliate DetermineAffiliateByAlternativeMeans(int idUser)
         {
             string cachKey = "webUserId-" + idUser;
-            var affiliateIds = _cachingService.Get(cachKey) as IList<int>;
+            //var affiliateIds = _cachingService.Get(cachKey) as IList<int>;
+            IList<int> affiliateIds = null;
 
             if (affiliateIds == null)
             {
@@ -758,7 +759,7 @@ namespace CUWebinars.Business.Services
                                     .ToList();
 
                 // keeps affiliateIds object in cache for 1 hour.
-                _cachingService.Add(cachKey, affiliateIds, DomainConstants.BuildUtcNowAsCts.AddHours(1));
+                //_cachingService.Add(cachKey, affiliateIds, DomainConstants.BuildUtcNowAsCts.AddHours(1));
             }
 
             if (affiliateIds.Any())
@@ -804,7 +805,7 @@ namespace CUWebinars.Business.Services
 
                 }
 
-                cachKey = "affiliateId-" + affiliateIdForOrder;
+                //cachKey = "affiliateId-" + affiliateIdForOrder;
                 var affiliate = _cachingService.Get(cachKey) as Affiliate;
 
                 if (affiliate == null)
@@ -815,7 +816,7 @@ namespace CUWebinars.Business.Services
                         affiliate = GetAffiliateById(19);
                     }
                     // keeps Affiliate object in cache for 1 hour.
-                    _cachingService.Add(cachKey, affiliate, DomainConstants.BuildUtcNowAsCts.AddHours(1));
+                    //_cachingService.Add(cachKey, affiliate, DomainConstants.BuildUtcNowAsCts.AddHours(1));
                 }
 
                 return affiliate;
@@ -1862,6 +1863,24 @@ namespace CUWebinars.Business.Services
             return result;
         }
 
+        public string SynchOrdersWhereLegacyIsZero(int idOrderLegacy, int idOrderV3)
+        {
+            var oldClaim = GetOnDemandClaimById(idOrderV3);
+
+            //if (oldClaim == "duped")
+            //    return null;
+            //if (oldClaim == "none found")
+            //    return null;
+
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+            var result = dataOperations.SynchOrderIdsWithOnDemandCode(idOrderLegacy, idOrderV3, oldClaim);
+
+
+
+            return null;
+
+        }
+
         public IList<Order> GetV3OrdersByOnDemandClaim()
         {
             return _orderRepository.GetV3OrdersByOnDemandClaim();
@@ -2236,7 +2255,7 @@ namespace CUWebinars.Business.Services
             var regTypeLabel = GetRegTypeOfOrderRow(row.idRegType).OptionLabel;
             if (undo != null)
             {
-                forNotes.AppendFormat(Environment.NewLine + "--UnDo Usage: {0}", + row.idOrder);
+                forNotes.AppendFormat(Environment.NewLine + "--UnDo Usage: {0}", +row.idOrder);
                 if (discount.DiscountType == DiscountType.Compensation)
                 {
                     discount.CreditsRemain = discount.CreditsRemain + 1;

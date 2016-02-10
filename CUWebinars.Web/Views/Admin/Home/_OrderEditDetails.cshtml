@@ -245,7 +245,7 @@
         @using (Html.BeginForm("EditDiscount", "Admin", FormMethod.Post, new { id = "frmEditDiscount" }))
         {
             @Html.AntiForgeryToken()
-            @Html.ValidationSummary("Please address the following error/s:", new { id = "editDiscountSummary" })
+            @Html.ValidationSummary("Error:", new { id = "editDiscountSummary" })
 
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

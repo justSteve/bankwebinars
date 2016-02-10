@@ -36,7 +36,6 @@
         ttsJoinURL = _globalConfig.TenantURL + "/j/" + row.TtsJoinUrl;
     }
     var certificate = _globalConfig.TenantURL + "/Account/MyCertificate?orderID=" + row.idOrder;
-    @Html.HiddenFor(model => model.EditFields.idOrderRow)
 
     <div class="row-fluid">
         <div class="span10 offset1 control-group">
@@ -56,47 +55,48 @@
                     {
                         @certificate
                     }
-                    if (!ReferenceEquals(row.OnDemandCode, null))
+                    if (row.Webinar.Status == WebinarStatus.Recorded)
                     {
-                        var tableHead = "OnDemand Claim Values";
-                        if (row.RegistrationType.ShowRecordingNotifications == "No" && Model.EditFields.PostEventClaim.ExpiryDate < DateTime.Now)
+                        if (!ReferenceEquals(row.OnDemandCode, null))
                         {
-                            tableHead = "Expired Live+Five";
+                            var tableHead = "OnDemand Claim Values";
+                            if (row.RegistrationType.ShowRecordingNotifications == "No" && Model.EditFields.PostEventClaim.ExpiryDate < DateTime.Now)
+                            {
+                                tableHead = "Expired Live+Five";
+                            }
+                            <p style="font-size: smaller">
+                                <br /><b>@tableHead</b>
+                                <table style="font-size: smaller; margin: 0; padding: 0;">
+                                    <tr>
+                                        <td>
+                                            ExpiryDate:
+                                        </td>
+                                        <td>
+                                            @Model.EditFields.PostEventClaim.ExpiryDate
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Code:
+                                        </td>
+                                        <td>
+                                            @Model.EditFields.PostEventClaim.OnDemandCode
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Claim's OrderId:
+                                        </td>
+                                        <td>
+                                            @Model.EditFields.PostEventClaim.OrderId
+                                        </td>
+                                    </tr>
+                                </table>
+                            </p>
                         }
-                        <p style="font-size: smaller">
-                            <br /><b>@tableHead</b>
-                            <table style="font-size: smaller; margin: 0; padding: 0;">
-                                <tr>
-                                    <td>
-                                        ExpiryDate:
-                                    </td>
-                                    <td>
-                                        @Model.EditFields.PostEventClaim.ExpiryDate
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Code:
-                                    </td>
-                                    <td>
-                                        @Model.EditFields.PostEventClaim.OnDemandCode
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Claim's OrderId:
-                                    </td>
-                                    <td>
-                                        @Model.EditFields.PostEventClaim.OrderId
-                                    </td>
-                                </tr>
-                            </table>
-                        </p>
                     }
                 }
             </div>
         </div>
-
-
     </div>
 }

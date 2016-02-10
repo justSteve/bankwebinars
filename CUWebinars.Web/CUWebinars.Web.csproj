@@ -1771,6 +1771,7 @@
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\BWDev.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars33 - Web Deploy.pubxml" />
     <Content Include="Scripts\calendarview.js" />
@@ -2027,6 +2028,9 @@
     <Content Include="Views\Cart\Partials\CheckoutContactForAffiliate.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DataTablesEditorTemplates\EditDiscount_Compact.cshtml" />
     <None Include="Web.BankWebinars33.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.BWDev.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <None Include="Web.CUWebinars33 - Web Deploy.config">

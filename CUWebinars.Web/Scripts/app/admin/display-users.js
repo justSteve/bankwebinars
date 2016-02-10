@@ -64,8 +64,7 @@ $(function () {
                 { 'data': 'idUser' },
                 { 'data': 'email' },
                 { 'data': 'LastName' },
-                { 'data': 'Institution' },
-                { 'data': 'DateCreated', "searchable": false }
+                { 'data': 'Institution' }
             ],
             "order": [0, "asc"], // complex columns can be specified / created with mRender
             "aoColumnDefs": [

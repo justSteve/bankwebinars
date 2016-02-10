@@ -512,21 +512,14 @@ namespace CUWebinars.Web.Controllers.Admin
 
         [HttpPost]
         [HandleAjaxException]
-        public ActionResult SetUserAssignedToOrder(int orderID, string migrateOrder, int targetUserID)
+        public ActionResult SetUserAssignedToOrder(int orderID, string migrateOrder, string targetUserEmail)
         {
             try
             {
-                if (targetUserID < 2)
-                {
-                    TempData["EditResult"] = "Invalid UserID";
-                    TempData["alertType"] = "alert-error";
-                    return RedirectToAction("Edit", new { ID = orderID });
-                }
 
                 var order = _orderManagementService.GetOrderByIdThin(orderID);
-                WebUser webUser = _membershipService.GetWebUserById(targetUserID);
-
-
+                var webUser = _membershipService.GetWebUserById(_membershipService.GetWebUserIdByEmail(targetUserEmail).Value);
+                   
                 if (ReferenceEquals(null, webUser))
                 {
                     return
@@ -535,7 +528,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 var linkToNewUser = string.Concat(
                     "/account/edituser/",
-                    targetUserID,
+                    webUser.idUser,
                     "?returnUrl=/Admin/ManageOrder/",
                     orderID
                     );
@@ -555,37 +548,18 @@ namespace CUWebinars.Web.Controllers.Admin
                     for (int j = 0; j < ordersToMove.Count; j++)
                     {
                         ordersToMove[j].BillingEmail = webUser.email;
-                        ordersToMove[j].idUser = targetUserID;
+                        ordersToMove[j].idUser = webUser.idUser;
                         ordersToMove[j].FirstName = webUser.FirstName;
                         ordersToMove[j].LastName = webUser.LastName;
+
                     }
 
                     _orderManagementService.SaveChanges();
 
-                    //var i = 0;
-                    //string numOrdersMigrated = string.Empty;
-                    //string emailOfTargetUser = string.Empty;
-                    //foreach (var order in ordersToMove)
-                    //{
-                    //    i++;
-                    //    TempData["migratingOrder"] += TempData["migratingOrder"] + "Migrating " + order.idOrder;
-                    //    //intent of next line not clear
-                    //    //if (!UserAssignedToOrder(order.idOrder, newUserID)) return RedirectToAction("Edit", new { ID = orderID });
-                    //    emailOfTargetUser = order.BillingEmail;
-                    //    TempData["migratingOrder"] += TempData["migratingOrder"] + " was successful. ";
-                    //}
-                    //if (i == 1)
-                    //{
-                    //    numOrdersMigrated = "One order was ";
-                    //}
-                    //else
-                    //{
-                    //    numOrdersMigrated = i + " orders were ";
-                    //}
                 }
                 else
                 {
-                    order.idUser = targetUserID;
+                    order.idUser = webUser.idUser;
                     order.BillingEmail = webUser.email;
                     order.FirstName = webUser.FirstName;
                     order.LastName = webUser.LastName;
@@ -2405,6 +2379,16 @@ namespace CUWebinars.Web.Controllers.Admin
         {
 
             _orderManagementService.SynchOrders(webinarId.Value);
+            return Content("Ok");
+        }
+
+
+        [AllowAnonymous]
+        [HttpGet]
+        public ActionResult SynchOrdersWhereLegacyIsZero(int idOrderLegacy, int idOrderV3)
+        {
+
+            _orderManagementService.SynchOrdersWhereLegacyIsZero(idOrderLegacy, idOrderV3);
             return Content("Ok");
         }
 
