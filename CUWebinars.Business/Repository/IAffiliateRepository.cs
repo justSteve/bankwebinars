@@ -11,7 +11,8 @@ namespace CUWebinars.Business.Repository
         Affiliate AttachItem(Affiliate item);
         bool Exists(Affiliate item);
         Affiliate FindByIdAndDetachItem(int id);
-        Affiliate FindByIdWithIncluding(int id, params Expression<Func<Affiliate, object>>[] includeProperties);
+        Affiliate FindByIdWithIncluding(int id);
+        //Affiliate FindByIdWithIncluding(int id, params Expression<Func<Affiliate, object>>[] includeProperties);
         IQueryable<Affiliate> GetAffiliates();
         IEnumerable<Affiliate> GetAll();
         //Affiliate GetCurrentAffiliate();

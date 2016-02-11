@@ -20,19 +20,25 @@ namespace CUWebinars.Business.Repository
         }
 
         
-        public Affiliate FindByIdWithIncluding(int id, params Expression<Func<Affiliate, object>>[] includeProperties)
+        public Affiliate FindByIdWithIncluding(int id)
         {
-            IQueryable<Affiliate> queryable = items;
-            foreach (Expression<Func<Affiliate, object>> includeProperty in includeProperties)
-            {
-                queryable = queryable.Include<Affiliate, object>(includeProperty);
-            }
-            if (queryable.Count() == 0)
-            {
-                return items.Single(a => a.idUserAff == 19);
-            }
-                return queryable.First(a => a.idUserAff == id);
+            return items
+                .Where(a => a.idUserAff == id).Include(u => u.WebUser).Single();
         }
+        
+        //public Affiliate FindByIdWithIncluding(int id, params Expression<Func<Affiliate, object>>[] includeProperties)
+        //{
+        //    IQueryable<Affiliate> queryable = items;
+        //    foreach (Expression<Func<Affiliate, object>> includeProperty in includeProperties)
+        //    {
+        //        queryable = queryable.Include<Affiliate, object>(includeProperty);
+        //    }
+        //    if (queryable.Count() == 0)
+        //    {
+        //        return items.Single(a => a.idUserAff == 19);
+        //    }
+        //        return queryable.First(a => a.idUserAff == id);
+        //}
 
         public IQueryable<Affiliate> GetAffiliates()
         {
@@ -77,7 +83,8 @@ namespace CUWebinars.Business.Repository
 
         public Affiliate LoadById(int id)
         {
-            return items.Single(a => a.idUserAff== id);
+            return items
+                .Where(a => a.idUserAff== id).Include(u => u.WebUser).Single();
         }
     }
 }

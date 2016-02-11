@@ -228,7 +228,8 @@ namespace CUWebinars.Business.Services
 
         public Affiliate GetAffiliateByIdLoaded(int id, params Expression<Func<Affiliate, object>>[] includeProperties)
         {
-            var aff = _affiliateRepository.FindByIdWithIncluding(id, includeProperties);
+            //var aff = _affiliateRepository.FindByIdWithIncluding(id, includeProperties);
+            var aff = _affiliateRepository.FindByIdWithIncluding(id);
             if (aff == null)
             {
 
@@ -810,7 +811,8 @@ namespace CUWebinars.Business.Services
 
                 if (affiliate == null)
                 {
-                    affiliate = _affiliateRepository.FindByIdWithIncluding(affiliateIdForOrder, a => a.WebUser); // use the most recent
+                    affiliate = _affiliateRepository.FindByIdWithIncluding(affiliateIdForOrder); // use the most recent
+                    //affiliate = _affiliateRepository.FindByIdWithIncluding(affiliateIdForOrder, a => a.WebUser); // use the most recent
                     if (affiliate == null)
                     {
                         affiliate = GetAffiliateById(19);
