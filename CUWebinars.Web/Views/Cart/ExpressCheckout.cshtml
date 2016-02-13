@@ -3,8 +3,11 @@
 @model ExpressCheckoutModel
 @{
 
-    ViewBag.Title = "Express Checkout";
-    Layout = "~/Views/Shared/_LayoutJotForm.cshtml";
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+    //ViewBag.Title = Model.Webinar.Title + " - Presented by: " + Model.Webinar.Presenter.WebUser.FullName;
+    
+    //ViewBag.Title = "Express Checkout";
+    //Layout = "~/Views/Shared/_LayoutJotForm.cshtml";
 
 }
 <style type="text/css">
@@ -60,16 +63,16 @@
                     </div>
                 </div>
             </li>
-        <li class="form-line" data-type="control_textarea" id="id_12">
-            <label class="form-label form-label-left form-label-auto" id="label_12" for="input_12"> Title </label>
-            <div id="cid_12" class="form-input jf-required">
-                <textarea readonly="readonly" tabindex=-1 id="input_12" class="form-readonly form-textarea" name="q12_webinarTitle12" cols="50" rows="2">@Model.q12_webinarTitle</textarea>
-            </div>
-        </li>
+            <li class="form-line" data-type="control_textarea" id="id_12">
+                <label class="form-label form-label-left form-label-auto" id="label_12" for="input_12">Title </label>
+                <div id="cid_12" class="form-input jf-required">
+                    <textarea readonly="readonly" tabindex="-1" id="input_12" class="form-readonly form-textarea" name="q12_webinarTitle12" cols="50" rows="2"></textarea>
+                </div>
+            </li>
             <li class="form-line" data-type="control_email" id="id_5">
-                <label class="form-label form-label-right" id="label_5" for="input_5"> E-mail </label>
+                <label class="form-label form-label-right" id="label_5" for="input_5">E-mail </label>
                 <div id="cid_5" class="form-input jf-required">
-                    <input type="email" readonly="readonly" tabindex=-1 class="form-readonly  form-textbox validate[Email]" id="input_5" name="q5_email5" size="32" value="@Model.q5_email5" />
+                    <input type="email" readonly="readonly" tabindex="-1" class="form-readonly  form-textbox validate[Email]" id="input_5" name="q5_email5" size="32" value="@Model.q5_email5" />
                 </div>
             </li>
             <li class="form-line jf-required" data-type="control_radio" id="id_10">
@@ -83,23 +86,23 @@
                     <div class="form-single-column">
                         <span class="form-radio-item" style="clear: left;">
                             <input type="radio" class="form-radio validate[required]" id="input_10_0" name="q10_registrationType" value="Live Plus Five (days)" />
-                            <label id="label_input_10_0" for="input_10_0"> Live Plus Five (days) </label>
+                            <label id="label_input_10_0" for="input_10_0">Live Plus Five (days) </label>
                         </span>
                         <span class="form-radio-item" style="clear: left;">
                             <input type="radio" class="form-radio validate[required]" id="input_10_1" name="q10_registrationType" value="OnDemand Recording Only" />
-                            <label id="label_input_10_1" for="input_10_1"> OnDemand Recording Only </label>
+                            <label id="label_input_10_1" for="input_10_1">OnDemand Recording Only </label>
                         </span>
                         <span class="form-radio-item" style="clear: left;">
                             <input type="radio" class="form-radio validate[required]" id="input_10_2" name="q10_registrationType" value="CD-ROM and Hardcopy Handouts" />
-                            <label id="label_input_10_2" for="input_10_2"> CD-ROM and Hardcopy Handouts </label>
+                            <label id="label_input_10_2" for="input_10_2">CD-ROM and Hardcopy Handouts </label>
                         </span>
                         <span class="form-radio-item" style="clear: left;">
                             <input type="radio" class="form-radio validate[required]" id="input_10_3" name="q10_registrationType" value="Live Plus Six (months)" />
-                            <label id="label_input_10_3" for="input_10_3"> Live Plus Six (months) </label>
+                            <label id="label_input_10_3" for="input_10_3">Live Plus Six (months) </label>
                         </span>
                         <span class="form-radio-item" style="clear: left;">
                             <input type="radio" class="form-radio validate[required]" id="input_10_4" name="q10_registrationType" value="Premier Package (includes all options above)" />
-                            <label id="label_input_10_4" for="input_10_4"> Premier Package (includes all options above) </label>
+                            <label id="label_input_10_4" for="input_10_4">Premier Package (includes all options above) </label>
                         </span>
                     </div>
                 </div>
@@ -113,11 +116,11 @@
                 <div id="cid_4" class="form-input jf-required">
                     <span class="form-sub-label-container" style="vertical-align: top">
                         <input class="form-textbox" type="text" size="10" name="q4_name[first]" id="first_4" value="@Model.q4_name.first" />
-                        <label class="form-sub-label" for="first_4" id="sublabel_first" style="min-height: 13px;"> First Name </label>
+                        <label class="form-sub-label" for="first_4" id="sublabel_first" style="min-height: 13px;">First Name </label>
                     </span>
                     <span class="form-sub-label-container" style="vertical-align: top">
-                        <input class="form-textbox" type="text" size="15" name="q4_name[last]" id="last_4"  value="@Model.q4_name.last" />
-                        <label class="form-sub-label" for="last_4" id="sublabel_last" style="min-height: 13px;"> Last Name </label>
+                        <input class="form-textbox" type="text" size="15" name="q4_name[last]" id="last_4" value="@Model.q4_name.last" />
+                        <label class="form-sub-label" for="last_4" id="sublabel_last" style="min-height: 13px;">Last Name </label>
                     </span>
                 </div>
             </li>
@@ -126,7 +129,7 @@
                     Title
                 </label>
                 <div id="cid_9" class="form-input jf-required">
-                    <input type="text" class=" form-textbox" data-type="input-textbox" id="input_9" name="q9_title" size="20" value="" />
+                    <input type="text" class=" form-textbox" data-type="input-textbox" id="input_9" name="q9_title" size="20" value="@Model.q9_title" />
                 </div>
             </li>
             <li class="form-line  jf-required" data-type="control_textbox" id="id_8">
@@ -136,7 +139,7 @@
                     </span>
                 </label>
                 <div id="cid_8" class="form-input jf-required">
-                    <input type="text" class=" form-textbox" data-type="input-textbox" id="input_8" name="q8_institution" size="50" value="" />
+                    <input type="text" class=" form-textbox" data-type="input-textbox" id="input_8" name="q8_institution" size="50" value="@Model.q8_institution" />
                 </div>
             </li>
             <li class="form-line  jf-required" data-type="control_phone" id="id_6">
@@ -147,15 +150,15 @@
                 </label>
                 <div id="cid_6" class="form-input jf-required">
                     <span class="form-sub-label-container" style="vertical-align: top">
-                        <input class="form-textbox" type="tel" name="q6_phoneNumber6[area]" id="input_6_area" size="3">
+                        <input class="form-textbox" type="tel" name="q6_phoneNumber6[area]" value="@Model.q6_phoneNumber6.area" id="input_6_area" size="3">
                         <span class="phone-separate">
                             &nbsp;-
                         </span>
-                        <label class="form-sub-label" for="input_6_area" id="sublabel_area" style="min-height: 13px;"> Area Code </label>
+                        <label class="form-sub-label" for="input_6_area" id="sublabel_area" style="min-height: 13px;">Area Code </label>
                     </span>
                     <span class="form-sub-label-container" style="vertical-align: top">
-                        <input class="form-textbox" type="tel" name="q6_phoneNumber6[phone]" id="input_6_phone" size="8">
-                        <label class="form-sub-label" for="input_6_phone" id="sublabel_phone" style="min-height: 13px;"> Phone Number </label>
+                        <input class="form-textbox" type="tel" name="q6_phoneNumber6[phone]" id="input_6_phone" value="@Model.q6_phoneNumber6.phone" size="8">
+                        <label class="form-sub-label" for="input_6_phone" id="sublabel_phone" style="min-height: 13px;">Phone Number </label>
                     </span>
                 </div>
             </li>
@@ -170,37 +173,38 @@
                         <tr>
                             <td colspan="2">
                                 <span class="form-sub-label-container" style="vertical-align: top">
-                                    <input class="form-textbox form-address-line" type="text" name="q14_address14[addr_line1]" id="input_14_addr_line1" />
-                                    <label class="form-sub-label" for="input_14_addr_line1" id="sublabel_14_addr_line1" style="min-height: 13px;"> Street Address </label>
+                                    <input value="@Model.q14_address14.addr_line1" class="form-textbox form-address-line" type="text" name="q14_address14[addr_line1]" id="input_14_addr_line1" />
+                                    <label class="form-sub-label" for="input_14_addr_line1" id="sublabel_14_addr_line1" style="min-height: 13px;">Street Address </label>
                                 </span>
                             </td>
                         </tr>
                         <tr>
                             <td colspan="2">
                                 <span class="form-sub-label-container" style="vertical-align: top">
-                                    <input class="form-textbox form-address-line" type="text" name="q14_address14[addr_line2]" id="input_14_addr_line2" size="46" />
-                                    <label class="form-sub-label" for="input_14_addr_line2" id="sublabel_14_addr_line2" style="min-height: 13px;"> Street Address Line 2 </label>
+                                    <input class="form-textbox form-address-line" value="@Model.q14_address14.addr_line2" type="text" name="q14_address14[addr_line2]" id="input_14_addr_line2" size="46" />
+                                    <label class="form-sub-label" for="input_14_addr_line2" id="sublabel_14_addr_line2" style="min-height: 13px;">Street Address Line 2 </label>
                                 </span>
                             </td>
                         </tr>
                         <tr>
                             <td width="50%">
                                 <span class="form-sub-label-container" style="vertical-align: top">
-                                    <input class="form-textbox form-address-city" type="text" name="q14_address14[city]" id="input_14_city" size="21" />
-                                    <label class="form-sub-label" for="input_14_city" id="sublabel_14_city" style="min-height: 13px;"> City </label>
+                                    <input class="form-textbox form-address-city" value="@Model.q14_address14.city" type="text" name="q14_address14[city]" id="input_14_city" size="21" />
+                                    <label class="form-sub-label" for="input_14_city" id="sublabel_14_city" style="min-height: 13px;">City </label>
                                 </span>
                             </td>
                             <td>
                                 <span class="form-sub-label-container" style="vertical-align: top">
-                                    <input class="form-textbox form-address-state" type="text" name="q14_address14[state]" id="input_14_state" size="22" />
-                                    <label class="form-sub-label" for="input_14_state" id="sublabel_14_state" style="min-height: 13px;"> State / Province </label>
+                                    <input class="form-textbox form-address-state" type="text" name="q14_address14[state]" value="@Model.q14_address14.state" id="input_14_state" size="22" />
+                                    <label class="form-sub-label" for="input_14_state" id="sublabel_14_state" style="min-height: 13px;">State / Province </label>
                                 </span>
                             </td>
                         </tr>
+
                         <tr>
                             <td width="50%" function zip(){var iterator=Prototype.K,args =$A(arguments);if(Object.isFunction(args.last())) iterator=args.pop();var collections=[this].concat(args).map($A);return this.map(function(value,index){return iterator(collections.pluck(index));});}>
                                 <span class="form-sub-label-container" style="vertical-align: top">
-                                    <input class="form-textbox form-address-postal" type="text" name="q14_address14[postal]" id="input_14_postal" size="10" />
+                                    <input class="form-textbox form-address-postal" type="text" name="q14_address14[postal]" id="input_14_postal" value="@Model.q14_address14.postal" size="10" />
                                     <label class="form-sub-label" for="input_14_postal" id="sublabel_14_postal" style="min-height: 13px;"> Postal / Zip Code </label>
                                 </span>
                             </td>
@@ -247,27 +251,27 @@
                 </div>
             </li>
             <li class="form-line" data-type="control_textarea" id="id_19">
-                <label class="form-label form-label-right" id="label_19" for="input_19"> Additional Locations </label>
+                <label class="form-label form-label-right" id="label_19" for="input_19">Additional Locations </label>
                 <div id="cid_19" class="form-input jf-required">
                     <span class="form-sub-label-container" style="vertical-align: top">
                         <textarea id="input_19" class="form-textarea validate[Email]" name="q19_additionalLocations19" cols="40" rows="3"></textarea>
-                        <label class="form-sub-label" for="input_19" style="min-height: 13px;"> Add addresses to your registration (one per line). </label>
+                        <label class="form-sub-label" for="input_19" style="min-height: 13px;">Add addresses to your registration (one per line). </label>
                     </span>
                 </div>
             </li>
             <li class="form-line" data-type="control_textbox" id="id_20">
-                <label class="form-label form-label-right" id="label_20" for="input_20"> Discount Code </label>
+                <label class="form-label form-label-right" id="label_20" for="input_20">Discount Code </label>
                 <div id="cid_20" class="form-input jf-required">
                     <span class="form-sub-label-container" style="vertical-align: top">
-                        <input type="text" class=" form-textbox" data-type="input-textbox" id="input_20" name="q20_discountCode20" size="20" value="" />
-                        <label class="form-sub-label" for="input_20" style="min-height: 13px;"> Webinar Subsciription Package </label>
+                        <input type="text" class=" form-textbox" data-type="input-textbox" id="input_20" name="q20_discountCode20" size="20" value="@Model.q20_discountCode20" />
+                        <label class="form-sub-label" for="input_20" style="min-height: 13px;">Webinar Subsciription Package </label>
                     </span>
                 </div>
             </li>
             <li class="form-line" data-type="control_textarea" id="id_17">
-                <label class="form-label form-label-left form-label-auto" id="label_17" for="input_17"> Comments </label>
+                <label class="form-label form-label-left form-label-auto" id="label_17" for="input_17">Comments </label>
                 <div id="cid_17" class="form-input">
-                    <textarea tabindex=-1 id="input_17" class=" form-textarea" name="q17_comments" cols="60" rows="2"></textarea>
+                    <textarea tabindex="-1" id="input_17" class=" form-textarea" name="q17_comments" cols="60" rows="2"></textarea>
                 </div>
             </li>
             <li class="form-line" data-type="control_button" id="id_2">

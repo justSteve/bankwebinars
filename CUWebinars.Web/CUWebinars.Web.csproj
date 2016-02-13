@@ -2002,9 +2002,7 @@
     <Content Include="Views\Cart\Partials\_WPSForm.cshtml" />
     <Content Include="Views\Account\Partials\Archived.cshtml" />
     <Content Include="Views\Account\ExpressCheckout.cshtml" />
-    <Content Include="Views\Cart\ExpressCheckout4IE1.cshtml" />
     <Content Include="Views\Shared\_LayoutJotForm.cshtml" />
-    <Content Include="Views\Cart\ExpressCheckout4IE1CU.cshtml" />
     <Content Include="Views\Cart\ThankYou.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowUsers.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowSendConnectionInfo.cshtml" />
@@ -2027,6 +2025,7 @@
     <Content Include="Views\Webinar\Partials\_AdditionalLocationsModalAdmin.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutContactForAffiliate.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DataTablesEditorTemplates\EditDiscount_Compact.cshtml" />
+    <Content Include="Views\Cart\ExpressCheckout.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

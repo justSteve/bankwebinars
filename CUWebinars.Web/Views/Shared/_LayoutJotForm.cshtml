@@ -12,16 +12,6 @@
     var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
     ViewBag.currentAffiliateId = currentAffiliate.idUserAff;
 
-    string currentUserAffiliateFullName = string.Empty;
-    if (currentAffiliate != null)
-    {
-        currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
-    }
-    else
-    {
-        CUWebinars.Business.Core.Tracing.Tracer.Warning("CurrentAffiliate should always have a value. Session | {0}", new AppHelper(Request, stateService).GetUserAuditInfo());
-        Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
-    }
 
     var footAddress = currentAffiliate.WebFooter.Split('~')[0];
     var footSocial = "";
@@ -78,12 +68,12 @@
 
     <title>@ViewBag.Title</title>
     @{
-        <script type="text/javascript">
+        @*<script type="text/javascript">
             var firstPage = "@firstPage";
             var sessionID = "@sessionID";
             var affiliateSessionSource = "@affiliateSessionSource";
             var currentAffiliate = "@currentAffiliate.idUserAff";
-        </script>
+        </script>*@
         if (globalConfig.Tenant == DomainConstants.CUWebinars)
         {
 
