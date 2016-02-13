@@ -46,5 +46,9 @@ namespace CUWebinars.Web.Core.Orchestrators
         Webinar LoadWebinar(int idWebinar);
         bool UserHasPriorOrders(WebUser webUser);
         void CheckOnDemandClaims(int? idWebinar);
+        Order GetOrderById(int? idOrder);
+        Discount GetDiscountById(int value);
+        bool AssignWebUserToOrder(Order order);
+        WebUser GetWebUserByEmail(string email);
     }
 }

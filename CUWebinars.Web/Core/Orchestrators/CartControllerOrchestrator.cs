@@ -223,7 +223,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                                 ShippingAddress = new AddressModel()
                                 {
 
-                                    TypeOfAddress= AddressType.Shipping,
+                                    TypeOfAddress = AddressType.Shipping,
                                     StreetAddress = order.ShippingAddress,
                                     StreetAddress2 = order.ShippingAddress2,
                                     City = order.ShippingCity,
@@ -508,7 +508,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         RowPrice = orderRow.RowPrice,
                         RegistrationType = orderRow.RegistrationType
                     };
-                    
+
                     _logger.Info("Returning BuildDisplayRowPriceViewModel price for " + orderRow.Order.idOrder);
 
                     return displayRowPriceViewModel;
@@ -821,7 +821,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     _logger.Info(buildMessage);
 
                     order.OrderStatus = OrderStatus.Paid;
-                    
+
                     var newJson =
                         new JProperty(
                             string.Concat("MonerisPayByCC-",
@@ -863,7 +863,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
 
-                if (orderRow.Webinar.Status != WebinarStatus.Recorded || orderRow.Webinar.Status != WebinarStatus.Archived ) return null;
+                if (orderRow.Webinar.Status != WebinarStatus.Recorded || orderRow.Webinar.Status != WebinarStatus.Archived) return null;
 
                 var onDemandCode = RandomHelpers.GetUniqueCode(5).ToLower();
                 var expiryDate = orderRow.Webinar.Date.AddMonths(6);
@@ -965,6 +965,35 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
         }
 
+        public Order GetOrderById(int? idOrder)
+        {
+            return _orderManagementService.GetOrderById(idOrder.Value);
+        }
+
+        public Discount GetDiscountById(int value)
+        {
+            return _orderManagementService.GetDiscountById(value);
+        }
+
+        public bool AssignWebUserToOrder(Order _order)
+        {
+            var succeeded = false;
+
+            var order = _orderManagementService.AssignWebUserToOrder(_order.WebUser, _order);
+            if (order != null)
+            {
+                succeeded = true;
+            }
+
+            return succeeded;
+
+        }
+
+        public WebUser GetWebUserByEmail(string email)
+        {
+           return _orderManagementService.GetWebUser(email);
+        }
+
         public INotificationMessage GenerateMessagePreview(Order order)
         {
             var orderSubmittedViewModel = new OrderSubmittedViewModel
@@ -1002,6 +1031,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             return discount;
 
 
+        }
+        public Discount CheckDiscountCode(int idDiscount)
+        {
+            return _orderManagementService.GetDiscountById(idDiscount);
         }
 
         public void RemoveAdditionalLocationsFromOrder(int idOrderRow)
