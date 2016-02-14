@@ -230,6 +230,17 @@ namespace CUWebinars.Web.Controllers
         [HandleAjaxException]
         public PartialViewResult GetLoginPartial()
         {
+            WebUser user = new WebUser();
+            if (User.Identity.IsAuthenticated)
+            {
+                user = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
+                var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, user.email);
+                //var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
+            }
+
+
+
+
             return PartialView("_LoginPartial");
         }
 
@@ -409,7 +420,7 @@ namespace CUWebinars.Web.Controllers
                 _logger.Info("Email is successfully verified in our system: {1} Session={0}",
                     _appHelper.GetUserAuditInfo(), model.Email);
 
-                model.ScreenMessage = "Your email is confirmed.";
+                model.ScreenMessage = "Your email (" + model.Email + " ) is confirmed.";
 
                 return View(model);
             }
@@ -2238,6 +2249,11 @@ namespace CUWebinars.Web.Controllers
             }
             return this.ModelStateJson(ModelState);
 
+        }
+
+        public ActionResult GetUserDiscount()
+        {
+            throw new NotImplementedException();
         }
     }
 

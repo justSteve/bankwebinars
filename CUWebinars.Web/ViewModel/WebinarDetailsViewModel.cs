@@ -26,6 +26,7 @@ namespace CUWebinars.Web.ViewModel
         public bool UserIsLoggedIn { get; set; }
         public int UserHasOpenOrder { get; set; }
         public int UserOwnsThisEvent { get; set; }
+        public Discount UserHasDiscount { get; set; }
 
         public Webinar Webinar { get; set; }
         public WebUser WebUser { get; set; }
