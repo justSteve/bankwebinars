@@ -628,28 +628,7 @@ namespace CUWebinars.Web.Controllers
 
 
 
-        public ActionResult ExpressCheckout4IE1CU(int idWebinar, int? idAffiliate)
-        {
-
-            var webinar = _cartControllerOrchestrator.LoadWebinar(idWebinar);
-            var _idAffiliate = 19;
-            if (!ReferenceEquals(idAffiliate, null))
-            {
-                _idAffiliate = idAffiliate.Value;
-            }
-
-            var model = new ExpressCheckoutModel
-            {
-                q18_q_webinarid18 = idWebinar,
-                q15_affiliateid15 = _idAffiliate,
-                q12_webinarTitle = webinar.Title
-            };
-
-            return View(model);
-
-        }
-
-        public ActionResult ExpressCheckout4IE1(int? idOrder, int? idWebinar, int? idAffiliate, string email)
+        public ActionResult ExpressCheckout(int? idOrder, int? idWebinar, int? idAffiliate, string email)
         {
             try
             {
@@ -657,53 +636,11 @@ namespace CUWebinars.Web.Controllers
                 {
                     var order = _cartControllerOrchestrator.GetOrderById(idOrder);
                     WebUser user = _cartControllerOrchestrator.GetWebUserByEmail(email);
-                    //var userAssignedToOrder = _cartControllerOrchestrator.AssignWebUserToOrder(order);
+                    
 
                     if (order != null && user != null)
                     {
-                        _cartControllerOrchestrator.UpdateOrderWithUserId(idOrder.Value, user.idUser);
-                        var row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
-
-                        var _idAffiliate = 19;
-                        if (!ReferenceEquals(idAffiliate, null))
-                        {
-                            _idAffiliate = idAffiliate.Value;
-                        }
-
-                        var addLocs = "";
-
-                        if (row.AdditionalLocation.Any())
-                        {
-                            foreach (var loc in row.AdditionalLocation)
-                            {
-                                addLocs = loc.Email + Environment.NewLine;
-                            }
-                        }
-
-
-
-                        var model = new ExpressCheckoutModel
-                        {
-                            q18_q_webinarid18 = row.Webinar.idWebinar,
-                            q15_affiliateid15 = _idAffiliate,
-                            q12_webinarTitle = row.Webinar.Title,
-                            q11_orderid = order.idOrder,
-                            q4_name = new Q4Name { first = order.FirstName, last = order.LastName },
-                            q8_institution = order.Institution,
-                            q5_email5 = order.BillingEmail,
-                            q19_additionalLocations19 = addLocs
-                            //q10_registrationType = or
-
-                        };
-
-
-                        if (order.WebUser.idSubscriptionDiscount.HasValue)
-                        {
-                            var discount =
-                                _cartControllerOrchestrator.GetDiscountById(order.WebUser.idSubscriptionDiscount.Value);
-                            model.q20_discountCode20 = discount.DiscountCode;
-                        }
-
+                        ExpressCheckoutModel model = _cartControllerOrchestrator.ExpressCheckout(order, user);
                         return View(model);
                     }
                     else { _logger.Fatal("ExpressChecked Null Order: " + idOrder.Value); }

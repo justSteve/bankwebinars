@@ -4,10 +4,9 @@
 @{
 
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
-    //ViewBag.Title = Model.Webinar.Title + " - Presented by: " + Model.Webinar.Presenter.WebUser.FullName;
     
-    //ViewBag.Title = "Express Checkout";
-    //Layout = "~/Views/Shared/_LayoutJotForm.cshtml";
+    ViewBag.Title = "Express Checkout";
+    Layout = "~/Views/Shared/_LayoutJotForm.cshtml";
 
 }
 <style type="text/css">
@@ -50,15 +49,15 @@
         JotForm.onSubmissionError = "jumpToSubmit";
     });
 </script>
-<form class="jotform-form" action="http://submit.jotformpro.com/submit.php" method="post" name="form_52205870745961" id="52205870745961" accept-charset="utf-8">
-    <input type="hidden" name="formID" value="52205870745961" />
+<form class="jotform-form" action="http://submit.jotformpro.com/submit.php" method="post" name="form_@Model.formID" id="@Model.formID" accept-charset="utf-8">
+    <input type="hidden" name="formID" value="@Model.formID" />
     <div class="form-all">
         <ul class="form-section page-section">
             <li id="cid_13" class="form-input-wide" data-type="control_head">
                 <div class="form-header-group">
                     <div class="header-text httal htvam">
                         <h2 id="header_13" class="form-header">
-                            Express Checkout for BankWebinars.com
+                            Express Checkout
                         </h2>
                     </div>
                 </div>
@@ -66,7 +65,7 @@
             <li class="form-line" data-type="control_textarea" id="id_12">
                 <label class="form-label form-label-left form-label-auto" id="label_12" for="input_12">Title </label>
                 <div id="cid_12" class="form-input jf-required">
-                    <textarea readonly="readonly" tabindex="-1" id="input_12" class="form-readonly form-textarea" name="q12_webinarTitle12" cols="50" rows="2"></textarea>
+                    <textarea readonly="readonly" tabindex="-1" id="input_12" class="form-readonly form-textarea" name="q12_webinarTitle12" cols="50" rows="2">@Model.q12_webinarTitle</textarea>
                 </div>
             </li>
             <li class="form-line" data-type="control_email" id="id_5">
@@ -289,9 +288,9 @@
             </li>
         </ul>
     </div>
-    <input type="hidden" id="simple_spc" name="simple_spc" value="52205870745961" />
+    <input type="hidden" id="simple_spc" name="simple_spc" value="@Model.formID" />
     <script type="text/javascript">
-        document.getElementById("si" + "mple" + "_spc").value = "52205870745961-52205870745961";
+        document.getElementById("si" + "mple" + "_spc").value = "@Model.formID-@Model.formID";
     </script>
     <input type="hidden" class="form-hidden" value="@Model.q18_q_webinarid18" id="input_18" name="q18_q_webinarid18" />
     <input type="hidden" class="form-hidden" value="@Model.q11_orderid" id="input_11" name="q11_orderid" />

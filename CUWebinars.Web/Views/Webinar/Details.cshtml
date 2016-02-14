@@ -7,10 +7,10 @@
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     ViewBag.Title = Model.Webinar.Title + " - Presented by: " + Model.Webinar.Presenter.WebUser.FullName;
     IStateService stateService = new StateService();
+    var ExpressCheckoutURL = "ExpressCheckout";
 
     if (Model.UserOwnsThisEvent > 0)
     {
-        var ExpressCheckoutURL = "ExpressCheckout";
 
         <script type="text/javascript">
             function exprsOrder(idRegType) {

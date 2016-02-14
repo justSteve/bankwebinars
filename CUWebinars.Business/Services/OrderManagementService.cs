@@ -542,7 +542,7 @@ namespace CUWebinars.Business.Services
 
         public Order FindExpressCheckoutOrderByOrderId(int q11Orderid)
         {
-            return _orderRepository.FindExpressCheckoutOrderByOrderId(q11Orderid);
+            return _orderRepository.GetOrderById(q11Orderid);
         }
 
         public IEnumerable<Order> GetV3OrdersByWebinarForPostEventClaims(int idWebinar)
@@ -1881,6 +1881,11 @@ namespace CUWebinars.Business.Services
 
             return null;
 
+        }
+
+        public RegType GetRegTypeByLabel(string regType, int idWebinar)
+        {
+            return _regTypeRepository.GetRegTypeByLabel(regType, idWebinar);
         }
 
         public IList<Order> GetV3OrdersByOnDemandClaim()

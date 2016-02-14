@@ -131,5 +131,6 @@ namespace CUWebinars.Business.Services
         void UpdateShippingAddressDetails(Address shippingAddress, int idUser);
         string InsertOnDemandClaim(int orderId);
         string SynchOrdersWhereLegacyIsZero(int idOrderLegacy, int idOrderV3);
+        RegType GetRegTypeByLabel(string regType, int idWebinar);
     }
 }

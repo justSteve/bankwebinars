@@ -336,14 +336,6 @@ namespace CUWebinars.Business.Repository
             return dataOperations.MigrateOrderFromV3(order);
         }
 
-        public Order FindExpressCheckoutOrderByOrderId(int q11Orderid)
-        {
-            return items
-                .Include(o => o.WebUser)
-                .Include(o => o.OrderRows)
-                .FirstOrDefault(order => order.idOrder == q11Orderid);
-        }
-
         public void SynchIds(int lOrder, int vOrder)
         {
             var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
@@ -708,6 +700,7 @@ namespace CUWebinars.Business.Repository
             }
             db.SaveChanges();
         }
+
 
         public Discount FindDiscountByUser(WebUser currentUser)
         {

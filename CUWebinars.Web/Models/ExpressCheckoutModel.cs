@@ -3,6 +3,7 @@ namespace CUWebinars.Web.Models
     public class ExpressCheckoutModel
     {
         public string slug { get; set; }
+        public string formID { get; set; }
         public string q12_webinarTitle { get; set; }
         public string q10_registrationType { get; set; }
         public Q4Name q4_name { get; set; }

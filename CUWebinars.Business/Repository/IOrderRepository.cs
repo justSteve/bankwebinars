@@ -50,7 +50,6 @@ namespace CUWebinars.Business.Repository
         Order FindExpressCheckoutOrder(string trim, int idWebinar);
         void ConvertLegacyOrder(Order order);
         int MigrateOrderFromV3(Order order);
-        Order FindExpressCheckoutOrderByOrderId(int q11Orderid);
         void SynchIds(int lOrder, int vOrder);
         PostEventClaim FindPostEventClaim(Order order);
         IList<Order> GetV3OrdersByOnDemandClaim();
@@ -58,5 +57,6 @@ namespace CUWebinars.Business.Repository
         Order GetOrderByIdByOnDemandCode(string onDemandCode);
         Discount GetDiscountByOrderId(int idOrder);
         void UpdateShippingAddressDetails(Address shippingAddress, int idUser);
+
     }
 }

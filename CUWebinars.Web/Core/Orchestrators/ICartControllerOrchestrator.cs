@@ -4,6 +4,7 @@ using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification;
 using CUWebinars.Web.ViewModel;
 using System;
+using CUWebinars.Web.Models;
 
 namespace CUWebinars.Web.Core.Orchestrators
 {
@@ -50,5 +51,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         Discount GetDiscountById(int value);
         bool AssignWebUserToOrder(Order order);
         WebUser GetWebUserByEmail(string email);
+        ExpressCheckoutModel ExpressCheckout(Order order, WebUser user);
     }
 }
