@@ -41,10 +41,13 @@
 <script type="text/javascript">
 
     JotForm.init(function () {
-        JotForm.description('input_10', 'Please let us know how we can best serve you.');
         setTimeout(function () {
             $('input_5').hint('ex: myname@example.com');
         }, 20);
+        JotForm.description('input_10', 'Please let us know how we can best serve you.');
+        JotForm.description('input_19', 'Place each address on a new line. Additional Locations will impact your price.');
+        JotForm.description('input_20', 'Not sure? Not a problem! Feel free to adjust an order after you complete this form so we can make necessary adjustments before payment.');
+
         JotForm.clearFieldOnHide = "disable";
         JotForm.onSubmissionError = "jumpToSubmit";
     });
@@ -76,7 +79,7 @@
             </li>
             <li class="form-line jf-required" data-type="control_radio" id="id_10">
                 <label class="form-label form-label-right" id="label_10" for="input_10">
-                    Registration Type:
+                    Registration Type
                     <span class="form-required">
                         *
                     </span>
@@ -253,7 +256,7 @@
                 <label class="form-label form-label-right" id="label_19" for="input_19">Additional Locations </label>
                 <div id="cid_19" class="form-input jf-required">
                     <span class="form-sub-label-container" style="vertical-align: top">
-                        <textarea id="input_19" class="form-textarea validate[Email]" name="q19_additionalLocations19" cols="40" rows="3"></textarea>
+                        <textarea id="input_19" class="form-textarea validate[Email]" name="q19_additionalLocations19" cols="40" rows="3">@Model.q19_additionalLocations19</textarea>
                         <label class="form-sub-label" for="input_19" style="min-height: 13px;">Add addresses to your registration (one per line). </label>
                     </span>
                 </div>

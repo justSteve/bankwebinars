@@ -1573,6 +1573,17 @@
     <Content Include="Content\images\xls.png" />
     <Content Include="Content\images\xls_hover.png" />
     <Content Include="Content\images\zoom-corner.png" />
+    <Content Include="Content\jfSource\52205870745961_ExpressCheckout_BW\css\calendarview.css" />
+    <Content Include="Content\jfSource\52205870745961_ExpressCheckout_BW\css\styles\form.css" />
+    <Content Include="Content\jfSource\52205870745961_ExpressCheckout_BW\css\styles\nova.css" />
+    <Content Include="Content\jfSource\52205870745961_ExpressCheckout_BW\Express_Checkout_for_PreIE10.html" />
+    <Content Include="Content\jfSource\52205870745961_ExpressCheckout_BW\js\calendarview.js" />
+    <Content Include="Content\jfSource\52205870745961_ExpressCheckout_BW\js\jotform.js" />
+    <Content Include="Content\jfSource\52205870745961_ExpressCheckout_BW\js\location.js" />
+    <Content Include="Content\jfSource\52205870745961_ExpressCheckout_BW\js\protoplus-ui-form.js" />
+    <Content Include="Content\jfSource\52205870745961_ExpressCheckout_BW\js\protoplus.js" />
+    <Content Include="Content\jfSource\52205870745961_ExpressCheckout_BW\js\prototype.js" />
+    <Content Include="Content\jfSource\52205870745961_ExpressCheckout_BW\js\vendor\json2.js" />
     <Content Include="Content\jquery.cleditor.css" />
     <Content Include="Content\manage-order.css" />
     <Content Include="Content\quiz.css" />

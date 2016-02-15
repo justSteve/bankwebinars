@@ -704,15 +704,15 @@ namespace CUWebinars.Web.Controllers.Admin
         public void ExpressCheckout(JotFormWebHook postback)
         {
             string formFields = Request.Form.ToString();
-            _logger.Info("ExpressPostback all fields submitted to: " + formFields.ToString());
+            _logger.Info("ExpressCheckoutPostBack all fields submitted to: " + formFields.ToString());
 
             ExpressCheckoutModel form
                 = JsonConvert.DeserializeObject<ExpressCheckoutModel>(postback.RawRequest);
-            _logger.Info("ExpressCheckout deserialized the fields to: " + form.ToString());
+            _logger.Info("ExpressCheckoutPostBack deserialized the fields to: " + formFields.ToString());
+            _logger.Info("-- deserialized the fields to: " + JsonConvert.DeserializeObject<ExpressCheckoutModel>(postback.RawRequest));
 
 
             var user = _membershipService.GetUserByEmail(form.q5_email5);
-            //var userFromLegacy = _membershipService.GetUserFromLegacy(form.q5_email5);
             bool userCreatedByCheckout = false;
             if (ReferenceEquals(null, user))
             {
@@ -726,13 +726,27 @@ namespace CUWebinars.Web.Controllers.Admin
                     , form.q9_title);
                 _orderManagementService.SaveChanges();
             }
-            Order expressOrder = _orderManagementService.FindExpressCheckoutOrder(form.q5_email5,
-                form.q18_q_webinarid18);
 
-            if (form.q11_orderid > 0)
+            var userFromLegacy = _membershipService.GetUserFromLegacy(form.q5_email5);
+            if (ReferenceEquals(userFromLegacy, null))
             {
-                expressOrder = _orderManagementService.GetOrderById(form.q11_orderid);
+                var makeLegacyUser = _membershipService.CreateUserOnLegacy(user);
+
+                _logger.Warn("ExpressCheckoutPostBack created: " + form.q5_email5);
+
             }
+            else
+            {
+                _logger.Info("ExpressCheckoutPostBack found: " + userFromLegacy.email);
+
+            }
+
+            userFromLegacy = _membershipService.GetUserFromLegacy(form.q5_email5);
+
+            //Create The Order
+            Order expressOrder = _orderManagementService.GetOrderById(form.q11_orderid);
+
+            expressOrder = _orderManagementService.GetOrderById(form.q11_orderid);
 
             if (!ReferenceEquals(expressOrder, null))
             {
@@ -747,6 +761,8 @@ namespace CUWebinars.Web.Controllers.Admin
                         _orderManagementService.ApplyDiscountCode(discount.DiscountCode, row);
                     }
 
+                    _logger.Info("ExpressCheckout webhook {0} found order: {1}", postback.FormId, expressOrder.idOrder);
+
 
                     RegType regType = _orderManagementService.GetRegTypeByLabel(form.q10_registrationType, form.q18_q_webinarid18);
 
@@ -757,17 +773,15 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     _logger.Info("ExpressCheckout webhook {0} found order: {1}", postback.FormId, expressOrder.idOrder);
 
-                    JProperty createdByExpressCheckout = new JProperty(
-                        JsonPropertyKeys.OrderCreatedByExpressCheckoutKey,
-                        form
-                        );
+                    JProperty createdByExpressCheckout = new JProperty(JsonPropertyKeys.OrderCreatedByExpressCheckoutKey,
+                        "'ExpressCheckoutPostBack': {'" +  postback.Pretty +"'}");
 
                     expressOrder.AdminComments = JsonHelpers.MergeJsonWithStoredField(expressOrder.AdminComments,
                         createdByExpressCheckout);
 
                     expressOrder.OrderStatus = OrderStatus.Submitted;
                     expressOrder.Origin = "ExpressCheckout";
-                    
+
                     OrderGenesis og = OrderGenesis.CreatedViaExpressCheckout;
 
                     _orderManagementService.CalculateOrderCost(expressOrder, additionalLocationsPricing.Single().Price);

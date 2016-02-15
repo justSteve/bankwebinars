@@ -637,7 +637,7 @@ namespace CUWebinars.Web.Controllers
                     var order = _cartControllerOrchestrator.GetOrderById(idOrder);
                     WebUser user = _cartControllerOrchestrator.GetWebUserByEmail(email);
                     
-
+                    _logger.Info("ExpressCheckout builds form for: " + idOrder);
                     if (order != null && user != null)
                     {
                         ExpressCheckoutModel model = _cartControllerOrchestrator.ExpressCheckout(order, user);

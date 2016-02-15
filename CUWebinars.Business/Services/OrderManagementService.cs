@@ -2099,10 +2099,10 @@ namespace CUWebinars.Business.Services
             if (!ReferenceEquals(null, thisDiscount))
             {
                 row.Discount = thisDiscount;
-
                 thisDiscount = RedeemDiscount(thisDiscount, row);
             }
 
+            _logger.Info("ApplyDiscountCode: " + row.Discount.DiscountCode + " idOrder: " + row.idOrder);
             return thisDiscount;
         }
 

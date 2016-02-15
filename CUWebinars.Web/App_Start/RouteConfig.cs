@@ -18,6 +18,9 @@ namespace CUWebinars.Web.App_Start
             routes.MapRoute(
                 "expresscheckout",
                 url: "expresscheckout",
+                // this should work and would be better
+                // id to the method 
+                //defaults: new { controller = "Admin", action = "ExpressCheckoutPostBack", id = 0 }
                 defaults: new { controller = "Admin", action = "ExpressCheckout", id = 0 }
             );
             //routes.MapRoute(

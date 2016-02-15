@@ -1697,5 +1697,58 @@ namespace CUWebinars.Business.Core
 
             return result;
         }
+
+        public string CreateUserOnLegacy(WebUser user)
+        {
+            var result = "";
+            using (var sqlConnection = new SqlConnection(TtsConfig.LegacyConnectionString))
+            {
+                sqlConnection.Open();
+                using (var synchLegacyUser 
+                    = new SqlCommand("CreateUserOnLegacy", sqlConnection))
+                {
+                    try
+                    {
+                        synchLegacyUser.Connection = sqlConnection;
+                        synchLegacyUser.CommandType = CommandType.StoredProcedure;
+                        var emailParam = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.VarChar,
+                            ParameterName = "@email",
+                            Value = user.email
+                        };
+                        synchLegacyUser.Parameters.Add(emailParam);
+
+                        var idUserV3 = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.Int,
+                            ParameterName = "@idUser",
+                            Value = user.idUser
+                        };
+                        synchLegacyUser.Parameters.Add(idUserV3);
+
+                        result = synchLegacyUser.ExecuteScalar().ToString();
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
+                            errorLogger.CommandText += "'synchLegacyUser' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'synchLegacyUser', 9 ,";
+                            errorLogger.CommandText += "'error at synchLegacyUser " + ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+
+                        }
+
+                        throw;
+                    }
+                }
+                return result;
+            }
+        }
     }
 }

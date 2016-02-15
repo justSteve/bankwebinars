@@ -635,6 +635,15 @@ namespace CUWebinars.Business.AccountService
             //_webUserRepository.Update(user);
         }
 
+        public string CreateUserOnLegacy(WebUser user)
+        {
+
+            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
+
+            return dataOperations.CreateUserOnLegacy(user);
+
+        }
+
         public void AddAccountTypeNotVerifiedClaim(UserAccount userAccount, string accountType)
         {
             _logger.Info("AddAccountTypeNotVerifiedClaim: {0}", userAccount.Email);
@@ -667,7 +676,7 @@ namespace CUWebinars.Business.AccountService
                 //dataOperations.SetFieldsConsistantWithVerifiedUser(userAccount);
                 RemoveClaim(tenant, userAccount.Email, ClaimTypes.HasNotVerified);
                 var isValid = _userAccountService.ChangePasswordFromResetKey(key, newPassword);
-                
+
                 return isValid;
             }
             catch (Exception exception)

@@ -333,7 +333,7 @@ function editBillingCell(cell, $td, rowData) {
             html = data.html;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert("/account/GetEditBillingForm: " + textStatus);
+            alert("/account/GetEditBillingForm idOrder=" + rowData.idOrder + textStatus);
         },
         beforeSend: function () {
             addIsLoadingIndicator($td, -1); // let ajax "complete" call remove
