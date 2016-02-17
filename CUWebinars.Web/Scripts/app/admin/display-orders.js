@@ -59,7 +59,20 @@ function getResendInfoHtml() {
 function getOrderStatusHtml() {
     // this seems a little slower than I'd like...
     var html = "";
-
+    html = html + '<form class=\"form-compact compact-order-status-edit-form\" novalidate=\"novalidate\">';
+    html = html + '    <input type=\"hidden\" name=\"Id\" />';
+    html = html + '    <input type=\"hidden\" name=\"DisplayRowPriceViewModel.OrderStatus\" />';
+    html = html + '    <div class=\"dropdown\">';
+    html = html + '        <a class=\"dropdown-toggle btn btn-mini\" role=\"button\" href=\"#\" data-toggle=\"dropdown\">[ORDERSTATUS]&nbsp;<b class=\"caret\"></b></a>';
+    html = html + '        <ul class=\"dropdown-menu\" role=\"menu\">';
+    html = html + '                    <li role=\"presentation\"><a tabindex=\"-1\" role=\"menuitem\" href=\"#\" onclick=\"updateOrderStatus(this, [ORDERID], \'Submitted\'); return false;\">Submitted</a></li>';
+    html = html + '                    <li role=\"presentation\"><a tabindex=\"-1\" role=\"menuitem\" href=\"#\" onclick=\"updateOrderStatus(this, [ORDERID], \'Billed\'); return false;\">Billed</a></li>';
+    html = html + '                    <li role=\"presentation\"><a tabindex=\"-1\" role=\"menuitem\" href=\"#\" onclick=\"updateOrderStatus(this, [ORDERID], \'Paid\'); return false;\">Paid</a></li>';
+    html = html + '                    <li role=\"presentation\"><a tabindex=\"-1\" role=\"menuitem\" href=\"#\" onclick=\"updateOrderStatus(this, [ORDERID], \'Canceled\'); return false;\">Canceled</a></li>';
+    html = html + '                    <li role=\"presentation\"><a tabindex=\"-1\" role=\"menuitem\" href=\"#\" onclick=\"updateOrderStatus(this, [ORDERID], \'AwaitingVerification\'); return false;\">AwaitingVerification</a></li>';
+    html = html + '        </ul>';
+    html = html + '    </div>';
+    html = html + '</form>';
     //$.ajax({
     //    async: false,
     //    url: "/admin/geteditorderstatusdropdownhtml",
@@ -73,50 +86,8 @@ function getOrderStatusHtml() {
     //        alert(textStatus);
     //    }
     //});
-
-
-    '<form class="form-compact compact-order-status-edit-form" novalidate="novalidate">' +
-        '<input name="__RequestVerificationToken" type="hidden" value="jJilB85pu61OJsg8zfFseCDmNzyeRVEHcENfBU8WbOjd-y4KGPledmlgNggGE0W0ftEJp7zcDJ9_yVmDvC0GWOlsyPocYN9rRuw-_N8vXR2LhbKokhmMmQZmI4WhLE5VEU9vbiL6hmMNLKHZk4YBlQ2" />' +
-        '<input type="hidden" name="Id" />' +
-        '<input type="hidden" name="DisplayRowPriceViewModel.OrderStatus" />' +
-        '<div class="dropdown">' +
-            '<a class="dropdown-toggle btn btn-mini" role="button" href="#" data-toggle="dropdown">[ORDERSTATUS]&nbsp;<b class="caret"></b></a>' +
-            '<ul class="dropdown-menu" role="menu">' +
-                    '<li class="" role="presentation"><a tabindex="-1" role="menuitem" href="#" onclick="updateOrderStatus(this, [ORDERID], \'Error\'); return false;">Error</a></li>' +
-                    '<li class="" role="presentation"><a tabindex="-1" role="menuitem" href="#" onclick="updateOrderStatus(this, [ORDERID], \'InProcess\'); return false;">InProcess</a></li>' +
-                    '<li class="" role="presentation"><a tabindex="-1" role="menuitem" href="#" onclick="updateOrderStatus(this, [ORDERID], \'Submitted\'); return false;">Submitted</a></li>' +
-                    '<li class="" role="presentation"><a tabindex="-1" role="menuitem" href="#" onclick="updateOrderStatus(this, [ORDERID], \'Billed\'); return false;">Billed</a></li>' +
-                    '<li class="" role="presentation"><a tabindex="-1" role="menuitem" href="#" onclick="updateOrderStatus(this, [ORDERID], \'Paid\'); return false;">Paid</a></li>' +
-                    '<li class="" role="presentation"><a tabindex="-1" role="menuitem" href="#" onclick="updateOrderStatus(this, [ORDERID], \'Abandoned\'); return false;">Abandoned</a></li>' +
-                    '<li class="" role="presentation"><a tabindex="-1" role="menuitem" href="#" onclick="updateOrderStatus(this, [ORDERID], \'Canceled\'); return false;">Canceled</a></li>' +
-                    '<li class="" role="presentation"><a tabindex="-1" role="menuitem" href="#" onclick="updateOrderStatus(this, [ORDERID], \'AwaitingVerification\'); return false;">AwaitingVerification</a></li>' +
-                    '<li class="" role="presentation"><a tabindex="-1" role="menuitem" href="#" onclick="updateOrderStatus(this, [ORDERID], \'Unknown\'); return false;">Unknown</a></li>'
-    '</ul>' +
-'</div>' +
-'</form>'
-
     return html;
 }
-//function getOrderStatusHtml() {
-//    // this seems a little slower than I'd like...
-//    var html = "";
-
-//    $.ajax({
-//        async: false,
-//        url: "/admin/geteditorderstatusdropdownhtml",
-//        dataType: "json",
-//        type: "POST",
-//        success: function (data) {
-
-//            html = data.html;
-//        },
-//        error: function (XMLHttpRequest, textStatus, errorThrown) {
-//            alert("geteditorderstatusdropdownhtml" + textStatus);
-//        }
-//    });
-
-//    return html;
-//}
 
 //function getRegTypeDropDownHtml() {
 //    // this seems a little slower than I'd like...

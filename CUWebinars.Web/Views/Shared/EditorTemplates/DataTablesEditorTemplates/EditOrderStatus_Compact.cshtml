@@ -1,11 +1,9 @@
 ﻿@* this partial view is intended for use in a DataTables.net table. *@
 @* magic strings [ORDERSTATUS] and [ORDERID] are replaced in client-side script for each Row *@
-@{
-    var isAffiliate = "";
-}
+
 <form class="form-compact compact-order-status-edit-form" novalidate="novalidate">
+    <input type="hidden" name="Id"/>
     @Html.AntiForgeryToken()
-    <input type="hidden" name="Id" />
     <input type="hidden" name="DisplayRowPriceViewModel.OrderStatus" />
 
     <div class="dropdown">
@@ -13,20 +11,11 @@
         <a class="dropdown-toggle btn btn-mini" role="button" href="#" data-toggle="dropdown">[ORDERSTATUS]&nbsp;<b class="caret"></b></a>
         <ul class="dropdown-menu" role="menu">
 
-            @*Error = 0,  //cancelled
-                InProcess = 1,
-                Submitted = 2,
-                Billed = 3,
-                Paid = 4,
-                Abandoned = 5, //cancelled
-                Canceled = 6, //cancelled
-                AwaitingVerification = 7,
-                Unknown = 255 //cancelled*@
             @foreach (string name in Enum.GetNames(typeof (OrderStatus)))
             {
                 if (name.Contains("Submitted") || name.Contains("Billed") || name.Contains("Paid") || name.Contains("Canceled") || name.Contains("AwaitingVerification"))
                 {
-                    <li class="@isAffiliate" role="presentation"><a tabindex="-1" role="menuitem" href="#" onclick="updateOrderStatus(this, [ORDERID], '@name'); return false;">@name</a></li>
+                    <li role="presentation"><a tabindex="-1" role="menuitem" href="#" onclick="updateOrderStatus(this, [ORDERID], '@name'); return false;">@name</a></li>
                 }
             }
 

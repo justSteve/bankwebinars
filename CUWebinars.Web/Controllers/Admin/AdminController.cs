@@ -439,12 +439,14 @@ namespace CUWebinars.Web.Controllers.Admin
         public JsonResult GetEditOrderStatusDropdownHtml()
         {
             string html = "";
-            if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
-            {
-                html = ViewHelpers.RenderViewToString(ControllerContext,
-                   "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditOrderStatus_Compact.cshtml",
-                   null, true);
-            }
+
+            _logger.Info("GetEditOrderStatusDropdownHtml called");
+            //if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
+            //{
+            html = ViewHelpers.RenderViewToString(ControllerContext,
+               "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditOrderStatus_Compact.cshtml",
+               null, true);
+            //}
 
             return Json(new { html = html });
 
@@ -466,8 +468,8 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken(Order = 0)]
-        [HandleAjaxException(Order = 1)]
+        //[ValidateAntiForgeryToken(Order = 0)]
+        [HandleAjaxException]
         public ActionResult UpdateOrderStatus(ManageOrderEditModel model)
         {
             if (ModelState.IsValid)
