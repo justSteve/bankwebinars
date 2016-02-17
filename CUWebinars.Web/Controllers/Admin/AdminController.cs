@@ -708,9 +708,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             ExpressCheckoutModel form
                 = JsonConvert.DeserializeObject<ExpressCheckoutModel>(postback.RawRequest);
-            _logger.Info("ExpressCheckoutPostBack deserialized the fields to: " + formFields.ToString());
-            _logger.Info("-- deserialized the fields to: " + JsonConvert.DeserializeObject<ExpressCheckoutModel>(postback.RawRequest));
-
+            _logger.Info("ExpressCheckoutPostBack all fields submitted to " + form.q11_orderid + ". " + formFields.ToString());
 
             var user = _membershipService.GetUserByEmail(form.q5_email5);
             bool userCreatedByCheckout = false;
@@ -718,40 +716,35 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 userCreatedByCheckout = true;
                 _logger.Info("ExpressCheckout user must be created: " + form.q5_email5);
-                user = _membershipService.CreateExpressCheckoutUser(_globalConfig.Tenant, form.q5_email5
+                //(string city, string state, string zip, string streetAdd1, string streetAdd2
+                //, string tenant, string email, string firstName, string lastName, string phone, string institution, string title)
+                user = _membershipService.CreateWebUserFromExpressCheckout(
+                    form.q14_address14.city
+                    , form.q14_address14.state
+                    , form.q14_address14.postal
+                    , form.q14_address14.addr_line1
+                    , form.q14_address14.addr_line2
+                    , _globalConfig.Tenant
+                    , form.q5_email5
                     , form.q4_name.first
                     , form.q4_name.last
-                    , form.q6_phoneNumber6.area + form.q6_phoneNumber6.phone
+                    , form.q6_phoneNumber6.area + "=" + form.q6_phoneNumber6.phone
                     , form.q8_institution
                     , form.q9_title);
                 _orderManagementService.SaveChanges();
             }
 
-            var userFromLegacy = _membershipService.GetUserFromLegacy(form.q5_email5);
-            if (ReferenceEquals(userFromLegacy, null))
-            {
-                var makeLegacyUser = _membershipService.CreateUserOnLegacy(user);
-
-                _logger.Warn("ExpressCheckoutPostBack created: " + form.q5_email5);
-
-            }
-            else
-            {
-                _logger.Info("ExpressCheckoutPostBack found: " + userFromLegacy.email);
-
-            }
-
-            userFromLegacy = _membershipService.GetUserFromLegacy(form.q5_email5);
-
-            //Create The Order
             Order expressOrder = _orderManagementService.GetOrderById(form.q11_orderid);
 
-            expressOrder = _orderManagementService.GetOrderById(form.q11_orderid);
 
+            var regTypeLable = form.q10_registrationType.Replace(" (months)", "").Replace(" (days)", "");
             if (!ReferenceEquals(expressOrder, null))
             {
                 try
                 {
+                    _logger.Info("ExpressCheckout webhook {0} found order: {1}", postback.FormId, expressOrder.idOrder);
+                    _orderManagementService.AssignWebUserToOrder(user, expressOrder);
+
                     var row = expressOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
 
                     if (!ReferenceEquals(form.q20_discountCode20, ""))
@@ -759,22 +752,18 @@ namespace CUWebinars.Web.Controllers.Admin
                         var discount = _orderManagementService.GetDiscountByCode(form.q20_discountCode20);
 
                         _orderManagementService.ApplyDiscountCode(discount.DiscountCode, row);
+
                     }
 
-                    _logger.Info("ExpressCheckout webhook {0} found order: {1}", postback.FormId, expressOrder.idOrder);
+                    RegType regType = _orderManagementService.GetRegTypeByLabel(regTypeLable, form.q18_q_webinarid18);
 
-
-                    RegType regType = _orderManagementService.GetRegTypeByLabel(form.q10_registrationType, form.q18_q_webinarid18);
-
-                    row.RegistrationType = regType;
                     var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
                     var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(row.idWebinar);
 
-                    _logger.Info("ExpressCheckout webhook {0} found order: {1}", postback.FormId, expressOrder.idOrder);
 
                     JProperty createdByExpressCheckout = new JProperty(JsonPropertyKeys.OrderCreatedByExpressCheckoutKey,
-                        "'ExpressCheckoutPostBack': {'" +  postback.Pretty +"'}");
+                        "'ExpressCheckoutPostBack': {'" + postback.Pretty + "'}");
 
                     expressOrder.AdminComments = JsonHelpers.MergeJsonWithStoredField(expressOrder.AdminComments,
                         createdByExpressCheckout);
@@ -784,11 +773,14 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     OrderGenesis og = OrderGenesis.CreatedViaExpressCheckout;
 
+                    row.RegistrationType = regType;
+                    row.idRegType = regType.idRegType;
                     _orderManagementService.CalculateOrderCost(expressOrder, additionalLocationsPricing.Single().Price);
-
-                    //_orderManagementService.SaveOrderChanges(expressOrder, null, null, og);
-
+                    _orderManagementService.SaveChanges();
                     _orderManagementService.FireOrderSubmittedEvent(expressOrder, userCreatedByCheckout);
+
+                    expressOrder.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(expressOrder);
+                    _orderManagementService.SaveChanges();
                 }
                 catch (Exception ex)
                 {
@@ -798,57 +790,57 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             else
             {
-                _logger.Warn("ExpressCheckout webhook {0} order NOT FOUND.", postback.FormId);
+                _logger.Warn("ExpressCheckout webhook {0} order NOT FOUND: " + form.q11_orderid);
 
-                var idRegType = _webinarManagementService.GetRegTypeByLableAndWebinar(form.q10_registrationType,
-                    form.q18_q_webinarid18);
-                var newOrderRow = _orderManagementService.CreateOrderRow(null, null, idRegType);
+                //var idRegType = _webinarManagementService.GetRegTypeByLableAndWebinar(regTypeLable,
+                //    form.q18_q_webinarid18);
+                //var newOrderRow = _orderManagementService.CreateOrderRow(null, null, idRegType);
 
-                newOrderRow.idWebinar = form.q18_q_webinarid18;
+                //newOrderRow.idWebinar = form.q18_q_webinarid18;
 
-                newOrderRow.idRegType = idRegType;
-                _orderManagementService.LoadWebinarIntoOrderRow(newOrderRow);
-
-
-                var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
-                _orderManagementService.SetUserStatusToUnChanged(user);
-
-                Order newOrder = _orderManagementService.CreateNewOrder(
-                    affiliate.idUserAff,
-                    user,
-                    newOrderRow.Webinar,
-                    newOrderRow
-                    );
-
-                newOrderRow.Order.OrderStatus = OrderStatus.Submitted;
-
-                newOrderRow.Order.Origin = "ExpressCheckout";
-
-                JProperty createdByExpressCheckout = new JProperty(
-                    JsonPropertyKeys.OrderCreatedByExpressCheckoutKey,
-                    ""
-                    );
-
-                newOrderRow.Order.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrderRow.Order.AdminComments,
-                    createdByExpressCheckout);
-                //_orderManagementService.AttachAffiliate(affiliate);
-
-                _orderManagementService.SaveChanges();
+                //newOrderRow.idRegType = idRegType;
+                //_orderManagementService.LoadWebinarIntoOrderRow(newOrderRow);
 
 
-                newOrder.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(newOrder);
+                //var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+                //_orderManagementService.SetUserStatusToUnChanged(user);
 
-                _orderManagementService.SynchIds(newOrder);
+                //Order newOrder = _orderManagementService.CreateNewOrder(
+                //    affiliate.idUserAff,
+                //    user,
+                //    newOrderRow.Webinar,
+                //    newOrderRow
+                //    );
 
-                _orderManagementService.SaveChanges();
+                //newOrderRow.Order.OrderStatus = OrderStatus.Submitted;
 
-                _logger.Info("ExpressCheckout created order: " + newOrder.idOrder);
+                //newOrderRow.Order.Origin = "ExpressCheckout";
 
-                _orderManagementService.FireOrderSubmittedEvent(newOrderRow.Order, true);
+                //JProperty createdByExpressCheckout = new JProperty(
+                //    JsonPropertyKeys.OrderCreatedByExpressCheckoutKey,
+                //    ""
+                //    );
 
-                //return RedirectToAction("OrderComplete", "Account", new { id = expressOrder.idOrder });
+                //newOrderRow.Order.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrderRow.Order.AdminComments,
+                //    createdByExpressCheckout);
+                ////_orderManagementService.AttachAffiliate(affiliate);
+
+                //_orderManagementService.SaveChanges();
+
+
+                //newOrder.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(newOrder);
+
+                //_orderManagementService.SynchIds(newOrder);
+
+                //_orderManagementService.SaveChanges();
+
+                //_logger.Info("ExpressCheckout created order: " + newOrder.idOrder);
+
+                //_orderManagementService.FireOrderSubmittedEvent(newOrderRow.Order, true);
+
+
             }
-
+            //return RedirectToAction("OrderComplete", "Account", new { id = expressOrder.idOrder });
         }
 
         [HttpPost]

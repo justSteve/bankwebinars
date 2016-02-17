@@ -52,5 +52,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         bool AssignWebUserToOrder(Order order);
         WebUser GetWebUserByEmail(string email);
         ExpressCheckoutModel ExpressCheckout(Order order, WebUser user);
+        RegType GetRegTypeByLabel(string livePlusFive, int? idWebinar);
     }
 }

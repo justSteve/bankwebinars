@@ -331,7 +331,6 @@ namespace CUWebinars.Business.Repository
 
         public int MigrateOrderFromV3(Order order)
         {
-
             var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
             return dataOperations.MigrateOrderFromV3(order);
         }

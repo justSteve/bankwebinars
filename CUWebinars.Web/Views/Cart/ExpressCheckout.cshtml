@@ -4,11 +4,30 @@
 @{
 
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
-    
+
     ViewBag.Title = "Express Checkout";
     Layout = "~/Views/Shared/_LayoutJotForm.cshtml";
+    var form_readonly = "read-only";
+    var inputReadOnly = " readonly=\"readonly\"";
+    if (Model.q5_email5.Contains("notauthenticated.com"))
+    {
+        inputReadOnly = "";
+        form_readonly = "";
+        Model.q5_email5 = " ";
+        Model.q14_address14.addr_line1 = "";
+        Model.q14_address14.addr_line2 = "";
+        Model.q14_address14.city = "";
+        Model.q14_address14.state = "";
+        Model.q14_address14.postal = "";
+        Model.q4_name.first = "";
+        Model.q4_name.last = "";
+        Model.q8_institution = "";
+        Model.q6_phoneNumber6.area = "";
+        Model.q6_phoneNumber6.phone = "";
 
+    }
 }
+
 <style type="text/css">
     .form-label-left {
         width: 150px !important;
@@ -44,6 +63,7 @@
         setTimeout(function () {
             $('input_5').hint('ex: myname@example.com');
         }, 20);
+
         JotForm.description('input_10', 'Please let us know how we can best serve you.');
         JotForm.description('input_19', 'Place each address on a new line. Additional Locations will impact your price.');
         JotForm.description('input_20', 'Not sure? Not a problem! Feel free to adjust an order after you complete this form so we can make necessary adjustments before payment.');
@@ -52,7 +72,8 @@
         JotForm.onSubmissionError = "jumpToSubmit";
     });
 </script>
-<form class="jotform-form" action="http://submit.jotformpro.com/submit.php" method="post" name="form_@Model.formID" id="@Model.formID" accept-charset="utf-8">
+@*<form class="jotform-form" action="http://submit.jotformpro.com/submit.php" method="post" name="form_@Model.formID" id="@Model.formID" accept-charset="utf-8">*@
+<form class="jotform-form" action="//submit.jotformpro.com/submit/@Model.formID/" method="post" name="form_@Model.formID" id="@Model.formID" accept-charset="utf-8">
     <input type="hidden" name="formID" value="@Model.formID" />
     <div class="form-all">
         <ul class="form-section page-section">
@@ -71,10 +92,14 @@
                     <textarea readonly="readonly" tabindex="-1" id="input_12" class="form-readonly form-textarea" name="q12_webinarTitle12" cols="50" rows="2">@Model.q12_webinarTitle</textarea>
                 </div>
             </li>
-            <li class="form-line" data-type="control_email" id="id_5">
-                <label class="form-label form-label-right" id="label_5" for="input_5">E-mail </label>
+            <li class="form-line jf-required" data-type="control_email" id="id_5">
+                <label class="form-label form-label-right" id="label_5" for="input_5">
+                    E-mail <span class="form-required">
+                        *
+                    </span>
+                </label>
                 <div id="cid_5" class="form-input jf-required">
-                    <input type="email" readonly="readonly" tabindex="-1" class="form-readonly  form-textbox validate[Email]" id="input_5" name="q5_email5" size="32" value="@Model.q5_email5" />
+                    <input type="email" @inputReadOnly tabindex="-1" class="@form_readonly  form-textbox validate[Email]" id="input_5" name="q5_email5" size="32" value="@Model.q5_email5" />
                 </div>
             </li>
             <li class="form-line jf-required" data-type="control_radio" id="id_10">
@@ -109,7 +134,7 @@
                     </div>
                 </div>
             </li>
-            <li class="form-line  jf-required" data-type="control_fullname" id="id_4">
+            <li class="form-line " data-type="control_fullname" id="id_4">
                 <label class="form-label form-label-right" id="label_4" for="input_4">
                     Name <span class="form-required">
                         *
@@ -131,7 +156,7 @@
                     Title
                 </label>
                 <div id="cid_9" class="form-input jf-required">
-                    <input type="text" class=" form-textbox" data-type="input-textbox" id="input_9" name="q9_title" size="20" value="@Model.q9_title" />
+                    <input type="text" class=" form-textbox" data-type="input-textbox" id="input_9" name="q9_title" size="20" value="" />
                 </div>
             </li>
             <li class="form-line  jf-required" data-type="control_textbox" id="id_8">
@@ -252,7 +277,7 @@
                     </table>
                 </div>
             </li>
-            <li class="form-line" data-type="control_textarea" id="id_19">
+            @*<li class="form-line" data-type="control_textarea" id="id_19">
                 <label class="form-label form-label-right" id="label_19" for="input_19">Additional Locations </label>
                 <div id="cid_19" class="form-input jf-required">
                     <span class="form-sub-label-container" style="vertical-align: top">
@@ -260,7 +285,7 @@
                         <label class="form-sub-label" for="input_19" style="min-height: 13px;">Add addresses to your registration (one per line). </label>
                     </span>
                 </div>
-            </li>
+            </li>*@
             <li class="form-line" data-type="control_textbox" id="id_20">
                 <label class="form-label form-label-right" id="label_20" for="input_20">Discount Code </label>
                 <div id="cid_20" class="form-input jf-required">

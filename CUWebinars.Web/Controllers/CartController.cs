@@ -632,19 +632,49 @@ namespace CUWebinars.Web.Controllers
         {
             try
             {
-                if (idOrder != null)
+                if (idOrder != null && idOrder > 0)
                 {
                     var order = _cartControllerOrchestrator.GetOrderById(idOrder);
                     WebUser user = _cartControllerOrchestrator.GetWebUserByEmail(email);
-                    
+
+                    if (ReferenceEquals(user, null))
+                    {
+                        
+                    }
+
                     _logger.Info("ExpressCheckout builds form for: " + idOrder);
-                    if (order != null && user != null)
+                    if (order != null)
                     {
                         ExpressCheckoutModel model = _cartControllerOrchestrator.ExpressCheckout(order, user);
                         return View(model);
                     }
-                    else { _logger.Fatal("ExpressChecked Null Order: " + idOrder.Value); }
+                    else
+                    {
+                        _logger.Fatal("ExpressChecked Null Order: " + idOrder.Value);
+                    }
                 }
+                else
+                {
+                    var regTypeID =
+                        _cartControllerOrchestrator.GetRegTypeByLabel("OnDemand Recording Only", idWebinar: idWebinar).idRegType;
+
+                    var order = _cartControllerOrchestrator.CreateOrder(new CheckoutOptionsViewModel
+                    {
+                        idWebinar = idWebinar.Value,
+                        RegistrationTypeId= 
+                            regTypeID,
+                        SelectedWebUser = 0
+                    });
+
+
+                    _logger.Info("ExpressCheckout PREIE10 builds form for: " + order.idOrder);
+                    if (order.WebUser != null)
+                    {
+                        ExpressCheckoutModel model = _cartControllerOrchestrator.ExpressCheckout(order, order.WebUser);
+                        return View(model);
+                    }
+                }
+
             }
             catch (Exception ex)
             {
@@ -673,7 +703,9 @@ namespace CUWebinars.Web.Controllers
 
             return View();
 
-        }
+        }        
+        
+        [HttpPost]
         public ActionResult ThankYou(FormCollection form)
         {
             string formFields = Request.Form.ToString();

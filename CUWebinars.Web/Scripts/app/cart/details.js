@@ -48,7 +48,7 @@ $(function () {
 
     // This function gets invoked when the 3rd tab is loaded and an existing user is using the cart
     checkoutConfirm.initialize = function (userId) {
-        
+
         cartStateManager.setCancelOrderForm($('#cancelOrder'));
         cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
@@ -262,7 +262,7 @@ $(function () {
 
     /* Submit event for the big green SIGNUP button */
     signUpForm.on('submit', function (e) {
-        
+
         e.preventDefault();
 
         var beigeFormArea = signUpFormContainer.find('div.well');

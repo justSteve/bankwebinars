@@ -255,6 +255,69 @@ namespace CUWebinars.Business.AccountService
             return account;
         }
 
+        public WebUser CreateWebUserFromExpressCheckout(string city, string state, string zip, string streetAdd1, string streetAdd2, string tenant, string email, string firstName, string lastName, string phone, string institution, string title)
+        {
+            _logger.Info("CreateWebUserFromExpressCheckout: {0}", email);
+            var institutionForUser = ProcessInstitutionForUser(institution
+                    , email
+                    , city
+                    , state
+                    , "N"
+                    , "New"
+                    , zip
+                    );
+
+            USTimeZone userTimeZone = GetTimeZoneByZip();
+
+            var addresses = new List<Address> { new Address
+            {
+                AddressType = "Billing",
+                Name = firstName + " "+lastName,
+                Phone = phone,
+                State = state,
+                StreetAddress = streetAdd1,
+                StreetAddress2 = streetAdd2,
+                Zip = zip,
+                Country = "USA",
+                City = city,
+
+            }, new Address
+            {
+                                AddressType = "Shipping",
+                Name = firstName + " "+lastName,
+                Phone = phone,
+                State = state,
+                StreetAddress = streetAdd1,
+                StreetAddress2 = streetAdd2,
+                Zip = zip,
+                Country = "USA",
+                City = city,
+            } };
+
+
+            var webUser = new WebUser
+            {
+                idUser = _refDataRepository.GetMaxWebUserId() + 1,
+                AcctStatus = DomainConstants.New,
+                UserType = UserType.Customer,
+                DateCreated = DomainConstants.BuildUtcNowAsCts,
+                FirstName = firstName,
+                LastName = lastName,
+                idUserInstitution = institutionForUser.idInstitution,
+                email = email,
+                timeZone = USTimeZone.Central,
+                generalComments = "Origin: CreatedAtExpressCheckout",
+                Addresses = addresses
+            };
+
+            _webUserRepository.Add(webUser);
+
+            CreateUserFromCart(tenant, RandomHelpers.GetUniqueCode(8), email);
+
+            return webUser;
+        }
+
+
         public WebUser CreateWebUser(
             string tenant,
             string firstName,
@@ -491,29 +554,6 @@ namespace CUWebinars.Business.AccountService
             return _postEventMaterialsAccessClaimValidator.Validate(new Tuple<string, string>(claimType, claimValue));
         }
 
-        public WebUser CreateExpressCheckoutUser(string tenant, string email, string firstName, string lastName, string phone, string institution, string title)
-        {
-            _logger.Info("CreateExpressCheckoutUser: {0}", email);
-            var webUser = new WebUser
-            {
-                idUser = _refDataRepository.GetMaxWebUserId() + 1,
-                AcctStatus = DomainConstants.New,
-                UserType = UserType.Customer,
-                DateCreated = DomainConstants.BuildUtcNowAsCts,
-                FirstName = firstName,
-                LastName = lastName,
-                idUserInstitution = 8,
-                email = email,
-                timeZone = USTimeZone.Central,
-                generalComments = "Origin: CreatedAtExpressCheckout"
-            };
-
-            _webUserRepository.Add(webUser);
-
-            CreateUserFromCart(tenant, RandomHelpers.GetUniqueCode(8), email);
-
-            return webUser;
-        }
 
         public Address BuildPlaceHolderAddressBilling(string email)
         {

@@ -991,6 +991,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public WebUser GetWebUserByEmail(string email)
         {
+
            return _orderManagementService.GetWebUser(email);
         }
 
@@ -1001,7 +1002,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             var addLocs = "";
 
-            if (row.AdditionalLocation.Any())
+            if (row.AdditionalLocation != null && row.AdditionalLocation.Any())
             {
                 foreach (var loc in row.AdditionalLocation)
                 {
@@ -1011,10 +1012,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             string justNumbers = new String(order.BillingPhone.Where(Char.IsDigit).ToArray());
             var area = justNumbers.Substring(0, 3);
             var phone = justNumbers.Substring(3, 3) + "-" + justNumbers.Substring(6, 4);
-            var formID = "52222784153957";
+            var formID = "60456422151952";
             if (_globalConfig.Tenant == "BankWebinars")
             {
-                formID = "52205870745961";
+                formID = "52205870745961"; //production
+                //formID = "60463854157965"; //dev
             }
 
             var model = new ExpressCheckoutModel
@@ -1049,6 +1051,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
 
             return model;
+        }
+
+        public RegType GetRegTypeByLabel(string livePlusFive, int? idWebinar)
+        {
+         return   _orderManagementService.GetRegTypeByLabel("Live Plus Five", idWebinar: idWebinar.Value);
         }
 
         public INotificationMessage GenerateMessagePreview(Order order)

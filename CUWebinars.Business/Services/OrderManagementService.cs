@@ -1669,29 +1669,63 @@ namespace CUWebinars.Business.Services
             order.AuditInfo = "anon user is updated with " + user.email + Environment.NewLine + order.AuditInfo;
             order.idUser = userId;
 
-            var billingAddress = user.Addresses.Where(a => a.AddressType == DomainConstants.BillingAddress).Single();
-            var shippingAddress = user.Addresses.Where(a => a.AddressType == DomainConstants.ShippingAddress).Single();
+            var billingAddress = user.Addresses.Where(a => a.AddressType == DomainConstants.BillingAddress).SingleOrDefault();
+            var shippingAddress = user.Addresses.Where(a => a.AddressType == DomainConstants.ShippingAddress).SingleOrDefault();
+
+            if (ReferenceEquals(billingAddress, null))
+            {
+                billingAddress = new Address
+                {
+                    AddressType = "Billing",
+                    Country = "USA",
+                    City = "-",
+                    StreetAddress = "-",
+                    State = "-",
+                    StreetAddress2 = "-",
+                    Name = "-",
+                    Phone = "555-555-5555",
+                    Zip = "00000",
+                    idUser = userId
+                };
+            }
+            if (ReferenceEquals(shippingAddress, null))
+            {
+                shippingAddress = new Address
+                {
+                    AddressType = "Shipping",
+                    Country = "USA",
+                    City = "-",
+                    StreetAddress = "-",
+                    State = "-",
+                    StreetAddress2 = "-",
+                    Name = "-",
+                    Phone = "555-555-5555",
+                    Zip = "00000",
+                    idUser = userId
+                };
+            }
 
             order.FirstName = user.FirstName;
             order.LastName = user.LastName;
             order.Institution = user.Institution.InstitutionName;
-            order.BillingPhone = billingAddress.Phone;
+            order.BillingPhone = billingAddress.Phone ?? "";
             order.BillingEmail = user.email;
-            order.BillingAddress = billingAddress.StreetAddress;
-            order.BillingAddress2 = billingAddress.StreetAddress2;
-            order.BillingState = billingAddress.State;
-            order.BillingCity = billingAddress.City;
-            order.BillingZip = billingAddress.Zip;
+            order.BillingAddress = billingAddress.StreetAddress ?? "";
+            order.BillingAddress2 = billingAddress.StreetAddress2 ?? "";
+            order.BillingState = billingAddress.State ?? "";
+            order.BillingCity = billingAddress.City ?? "";
+            order.BillingZip = billingAddress.Zip ?? "";
 
             order.ShippingFirstName = user.FirstName;
             order.ShippingLastName = user.LastName;
-            order.ShippingPhone = shippingAddress.Phone;
-            order.ShippingAddress = shippingAddress.StreetAddress;
-            order.ShippingAddress2 = shippingAddress.StreetAddress2;
-            order.ShippingState = shippingAddress.State;
-            order.ShippingCity = shippingAddress.City;
-            order.ShippingZip = shippingAddress.Zip;
+            order.ShippingPhone = shippingAddress.Phone ?? "";
+            order.ShippingAddress = shippingAddress.StreetAddress ?? "";
+            order.ShippingAddress2 = shippingAddress.StreetAddress2 ?? "";
+            order.ShippingState = shippingAddress.State ?? "";
+            order.ShippingCity = shippingAddress.City ?? "";
+            order.ShippingZip = shippingAddress.Zip ?? "";
 
+            order.Institution = user.Institution.InstitutionName;
 
             _orderRepository.SaveOrderChanges(order, null);
         }

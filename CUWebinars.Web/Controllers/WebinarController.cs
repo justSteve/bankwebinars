@@ -25,7 +25,9 @@ using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Json;
 using System.Security.Claims;
+using System.ServiceModel.Syndication;
 using System.Text;
 using System.Web.Hosting;
 using System.Web.Mvc;
@@ -594,7 +596,7 @@ namespace CUWebinars.Web.Controllers
             if (id.HasValue)
             {
 
-//                var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id.Value);
+                //                var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id.Value);
                 var webinar = _webinarManagementService.GetWebinar(id.Value);
 
                 if (webinar == null) return HttpNotFound();
@@ -1066,12 +1068,21 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.AcceptVerbs(HttpVerbs.Get)]
         public ActionResult CalendarData()
         {
-            //IList<Webinar> webinarsList = WebinarFacade.Instance.SelectAllActiveWebinars();
+
+            //refactor according to: http://rickyrosario.com/blog/creating-an-rss-feed-in-asp-net-mvc/
             IList<Webinar> webinarsList = _webinarManagementService.GetAllActive().ToList();
 
             var dtos = new CalendarDTOAssembler().Entities2DTOs(webinarsList);
 
             TempData["ListUpcoming"] = webinarsList;
+            SyndicationFeed feed = new SyndicationFeed("Custom JSON feed", "A Syndication extensibility sample", null);
+            feed.LastUpdatedTime = DateTime.Now;
+            feed.Items = from s in new string[] { "hello", "world" }
+                         select new SyndicationItem()
+                         {
+                             Summary = SyndicationContent.CreatePlaintextContent(s)
+                         };
+
 
             return Json(dtos, JsonRequestBehavior.AllowGet);
         }
