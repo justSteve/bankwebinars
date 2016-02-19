@@ -1475,15 +1475,15 @@ namespace CUWebinars.Web.Controllers
                         "Account.PasswordResetConfirm.POST was passed empty or null ID. Session=PasswordResetConfirm. " +
                         _appHelper.GetUserAuditInfo());
                     ModelState.AddModelError(string.Empty,
-                        "There appears to have been a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.");
+                        "There was a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.");
                 }
                 else
                 {
                     UserAccount userAccount = _membershipService.GetUserAccountByVerificationKey(model.Key);
                     if (ReferenceEquals(null, userAccount))
                     {
-                        _logger.Error("PasswordResetConfirm | User not found" + model.Key);
-                        return Json(new { Result = "Not Found" });
+                        _logger.Error("PasswordResetConfirm | User not found " + model.Email + " for key:" + model.Key);
+                        return Json(new { Result = "Not Found: " + model.Email });
                     }
 
                     try
@@ -1491,8 +1491,17 @@ namespace CUWebinars.Web.Controllers
                         if (_accountControllerOrchestrator.ChangePasswordFromResetKey(model.Key, model.Password))
                         {
                             model.ChangePasswordSucceeded = true;
-                            _logger.Info("Account.PasswordResetConfirm Success. Session=" + _appHelper.GetUserAuditInfo());
+                            _logger.Info("Account.PasswordResetConfirm Success. Session=" +
+                                         _appHelper.GetUserAuditInfo());
                             return Json(new { Result = "Success" });
+                        }
+                        else
+                        {
+                            model.ChangePasswordSucceeded = false;
+                            _logger.Info("Account.PasswordResetConfirm Failed on "+model.Email+". Session=" +
+                                         _appHelper.GetUserAuditInfo());
+
+                            return Json(new { Result = "Fail" });
                         }
                     }
                     catch (ValidationException validationException)
@@ -2074,7 +2083,7 @@ namespace CUWebinars.Web.Controllers
         {
             var errors = ModelState.Values.SelectMany(v => v.Errors); // Get all errors flattened
 
-            _logger.Error("Invalid ModelState Detected in Register");
+            
 
             foreach (var error in errors)
             {

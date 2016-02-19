@@ -745,7 +745,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             //  if still null here, retries have exceeded RetryCount and operation aborted
             if (ReferenceEquals(userAccount, null))
             {
-                _logger.Error(string.Format("GetUserAccountByEmail ({1}) failed after {0} seconds.", _globals.RetryCount / 2), model.Email);
+                _logger.Error(string.Format("GetUserAccountByEmail ({1}) failed after {0} seconds.", _globals.RetryCount / 2, model.Email));
                 return false;
             }
             if (!userAccount.HasClaim(ClaimTypes.FullName))
@@ -777,7 +777,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
 
-            _logger.Info("verificationKey is {0}", verificationKey);
+            _logger.Info("verificationKey is {0} for {1}", verificationKey, model.Email);
 
             _stateService.ClearValue(DomainConstants.CartCreatedUserPasswordCreate);
 

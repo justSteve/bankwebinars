@@ -1948,8 +1948,8 @@ namespace CUWebinars.Business.Services
                 if (row.RegistrationType.ShowLiveNotifications.TrimEnd().Equals("Yes", StringComparison.OrdinalIgnoreCase))
                 {
                     regKeyResponse = CreateRegistrantKey(
-                        order.FirstName,
-                        order.LastName,
+                        order.FirstName ?? " ",
+                        order.LastName  ?? " ",
                         order.BillingEmail,
                         row.Webinar.idWebinar,
                         row.Webinar.WebinarKey
@@ -1961,7 +1961,7 @@ namespace CUWebinars.Business.Services
                 // This branch gets key for main Additional Locations
                 regKeyResponse = CreateRegistrantKey(
                     "c/o " + order.FirstName,
-                    order.LastName,
+                    order.LastName ?? " ",
                     additionalLocation.Email,
                     row.Webinar.idWebinar,
                     row.Webinar.WebinarKey

@@ -1572,8 +1572,6 @@ namespace CUWebinars.Business.Core
                             errorLogger.ExecuteNonQuery();
 
                         }
-
-                        throw;
                     }
                 }
             }
