@@ -170,6 +170,8 @@ namespace CUWebinars.Web.Controllers
                 try
                 {
                     model.Order.OrderStatus = OrderStatus.Submitted;
+                    _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email, model.Order.OrderRows.FirstOrDefault());
+
 
                     if (User.Identity.IsAuthenticated)
                     {
@@ -639,12 +641,19 @@ namespace CUWebinars.Web.Controllers
 
                     if (ReferenceEquals(user, null))
                     {
-                        
+throw new ArgumentNullException("user");
                     }
 
-                    _logger.Info("ExpressCheckout builds form for: " + idOrder);
                     if (order != null)
                     {
+                        order.AdminComments = "";
+                        var newJson = new JProperty(string.Concat(JsonPropertyKeys.OrderCreatedByExpressCheckoutKey), JsonConvert.SerializeObject(_appHelper.GetSessionStartInfo()));
+
+                        JProperty createdByImpersonatedUserMsg = new JProperty(JsonPropertyKeys.OrderCreatedByExpressCheckoutKey,newJson.Value);
+
+                        order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, createdByImpersonatedUserMsg);
+
+
                         ExpressCheckoutModel model = _cartControllerOrchestrator.ExpressCheckout(order, user);
                         return View(model);
                     }
@@ -652,6 +661,8 @@ namespace CUWebinars.Web.Controllers
                     {
                         _logger.Fatal("ExpressChecked Null Order: " + idOrder.Value);
                     }
+
+
                 }
                 else
                 {
@@ -661,7 +672,7 @@ namespace CUWebinars.Web.Controllers
                     var order = _cartControllerOrchestrator.CreateOrder(new CheckoutOptionsViewModel
                     {
                         idWebinar = idWebinar.Value,
-                        RegistrationTypeId= 
+                        RegistrationTypeId =
                             regTypeID,
                         SelectedWebUser = 0
                     });
@@ -703,8 +714,8 @@ namespace CUWebinars.Web.Controllers
 
             return View();
 
-        }        
-        
+        }
+
         [HttpPost]
         public ActionResult ThankYou(FormCollection form)
         {

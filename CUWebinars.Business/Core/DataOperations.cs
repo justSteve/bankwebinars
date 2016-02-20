@@ -965,7 +965,7 @@ namespace CUWebinars.Business.Core
             PostForm += "&OnDemandCode=" + myRow.OnDemandCode;
 
             PostForm = PostForm.Replace("<br>", "");
-            var submitImporter = "http://v3.bankwebinars.com/order/MigrateOrder/";
+            var submitImporter = "https://www.bankwebinars.com/order/MigrateOrder/";
             if (Debugger.IsAttached)
             {
                 submitImporter = "http://localhost:3538/order/MigrateOrder/";

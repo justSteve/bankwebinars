@@ -531,9 +531,11 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     var orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
                     var order = orderRow.Order;
+                    
                     //var additionalLocations = orderRow.AdditionalLocation.ToList();
                     var webUser = order.WebUser;
                     var webinar = _webinarManagementService.GetWebinar(order.OrderRows.FirstOrDefault().idWebinar);
+
 
                     _logger.Info("BuildCheckOutViewModel for " + orderRow.Order.idOrder);
 
@@ -1056,6 +1058,16 @@ namespace CUWebinars.Web.Core.Orchestrators
         public RegType GetRegTypeByLabel(string livePlusFive, int? idWebinar)
         {
             return _orderManagementService.GetRegTypeByLabel("Live Plus Five", idWebinar: idWebinar.Value);
+        }
+
+        public void AddClaimForPostEventMaterials(string email, OrderRow row)
+        {
+
+
+            _membershipService.AddClaimForPostEventMaterials(email, row,
+            _orderManagementService.CalculatePostEventMaterialsAccessExpiry(row), _globalConfig.Tenant);
+        
+
         }
 
         public INotificationMessage GenerateMessagePreview(Order order)
