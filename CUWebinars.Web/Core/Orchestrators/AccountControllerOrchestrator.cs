@@ -234,6 +234,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public bool SignUserIn(SignInModel model, out string userMustVerify)
         {
+
+
             if (_membershipService.LogInUser(_globals.Tenant, model.Email, model.Password, model.RememberMe, out userMustVerify))
             {
                 if (!ReferenceEquals(_request.ApplicationPath, null) && !ReferenceEquals(_request.Url, null))

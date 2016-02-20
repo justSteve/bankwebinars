@@ -808,31 +808,6 @@ namespace CUWebinars.Web.Controllers
                             DisplayRowPriceViewModel =
                                 model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel,
                             idUser = model.Order.idUser,
-                            DiscountDetailsModel = new DiscountDetailsModel()
-                            {
-                                UserId = webUser.idUser,
-                                Discount = orderRow.Discount == null
-                                    ? new DiscountModel()
-                                    : new DiscountModel()
-                                    {
-                                        //Cost = discountModel.Cost,
-                                        //DateBilled = discountModel.DateBilled,
-                                        //DateValidFrom = discountModel.DateValidFrom,
-                                        ////idUser = idUser,
-                                        //DateValidTo = discountModel.DateValidTo,
-                                        //DiscountCode = discountModel.DiscountCode,
-                                        //DiscountType = discountModel.TypeOfDiscount,
-                                        //FlatOff = discountModel.FlatOff,
-                                        //Notes = discountModel.Notes,
-                                        //PercentOff = discountModel.PercentOff,
-                                        //RenewalTerm = discountModel.RenewalTerm,
-                                        //Status = discountModel.Status,
-                                        //CreditsUsed = discountModel.CreditsUsed,
-                                        //CreditsRemain = discountModel.CreditsRemain,
-                                        ////WebUserDiscountXref = 
-                                        ////idDiscount = 
-                                    },
-                            },
                             ShippingDetailsModel = new ShippingDetailsModel()
                             {
                                 UserId = webUser.idUser,

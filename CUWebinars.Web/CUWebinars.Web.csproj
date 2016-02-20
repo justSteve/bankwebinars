@@ -523,7 +523,6 @@
     <Compile Include="Models\QuizModel.cs" />
     <Compile Include="Models\RegisterFieldsDTO.cs" />
     <Compile Include="Models\ShippingDetailsModel.cs" />
-    <Compile Include="Models\DiscountDetailsModel.cs" />
     <Compile Include="Models\ShowMessagesModel.cs" />
     <Compile Include="Models\TTSAttendance.cs" />
     <Compile Include="Models\TTSQuiz.cs" />
@@ -1961,14 +1960,12 @@
     <Content Include="Views\Admin\ClaimsManagement.cshtml" />
     <Content Include="Views\Cart\Partials\_DisplayRowPriceForAffiliate.cshtml" />
     <Content Include="Views\Cart\Partials\_ConfirmModalForAffiliate.cshtml" />
-    <Content Include="Views\Cart\Partials\_DisplayAppliedDiscount.cshtml" />
     <Content Include="Views\Shared\Admin\_Last5Error.cshtml" />
     <Content Include="Views\StaticContent\PageNotFound.cshtml" />
     <Content Include="Views\StaticContent\ServerError.cshtml" />
     <Content Include="Views\Shared\Partials\_ShowClickToJoinLink.cshtml" />
     <Content Include="Views\Shared\Partials\_ShareEventInfo.cshtml" />
     <Content Include="Views\Admin\Home\Modals\_SendShippedPreviewModal.cshtml" />
-    <Content Include="Views\Account\Partials\Subscription.cshtml" />
     <Content Include="Views\Webinar\DetailsAdmin.cshtml" />
     <Content Include="Views\Webinar\Partials\_ListOrders.cshtml" />
     <Content Include="Views\Webinar\Partials\_UpdateRecording.cshtml" />
