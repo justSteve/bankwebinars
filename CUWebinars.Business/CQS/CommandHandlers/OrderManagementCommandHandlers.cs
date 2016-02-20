@@ -330,9 +330,12 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                 importedOrder.ShippingFirstName = command.FirstName;
                 importedOrder.ShippingLastName = command.LastName;
 
+                
+                _orderManagementService.GetJoinUrl(command.OrderRow);;
 
-                _orderManagementService.GetJoinUrl(command.OrderRow);
-
+                _membershipService.AddClaimForPostEventMaterials(importedOrder.BillingEmail, command.OrderRow, 
+                _orderManagementService.CalculatePostEventMaterialsAccessExpiry(command.OrderRow), command.Tenant);
+        
 
                 _orderManagementService.SaveOrderChanges(importedOrder, command.VerificationKey,
                     command.ConfirmChangeEmailUrl, command.OrderGenesis);
@@ -422,6 +425,11 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             importedOrder.ShippingLastName = command.LastName;
 
             _orderManagementService.GetJoinUrl(command.OrderRow);
+
+            _membershipService.AddClaimForPostEventMaterials(importedOrder.BillingEmail, command.OrderRow,
+            _orderManagementService.CalculatePostEventMaterialsAccessExpiry(command.OrderRow), command.Tenant);
+        
+
             _orderManagementService.SaveOrderChanges(importedOrder
                 , command.VerificationKey
                 , command.ConfirmChangeEmailUrl);
@@ -518,6 +526,10 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
             _orderManagementService.GetJoinUrl(command.OrderRow);
 
+
+            _membershipService.AddClaimForPostEventMaterials(migratedOrder.BillingEmail, command.OrderRow,
+            _orderManagementService.CalculatePostEventMaterialsAccessExpiry(command.OrderRow), "BankWebinars");
+        
 
             _orderManagementService.SaveOrderChanges(migratedOrder, command.VerificationKey, command.ConfirmChangeEmailUrl);
 

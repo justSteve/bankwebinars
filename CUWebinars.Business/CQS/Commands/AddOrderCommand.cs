@@ -17,6 +17,7 @@ namespace CUWebinars.Business.CQS.Commands
         public OrderRow OrderRow { get; set; }
         public OrderGenesis OrderGenesis { get; set; }
         public Address ShippingAddress { get; set; }
+        public string Tenant { get; set; }
 
         public string VerificationKey { get; set; }
         public Webinar Webinar { get; set; }

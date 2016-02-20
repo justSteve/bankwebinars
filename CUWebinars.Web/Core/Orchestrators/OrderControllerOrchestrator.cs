@@ -110,6 +110,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 OrderGenesis = existingUser ? OrderGenesis.ImportedForExistingUser : OrderGenesis.ImportedForNewUser,
                 OrderRow = ImportOrderRowCommand.OrderRow, // out parameter of addOrderRowCommand command
                 ShippingAddress = ImportOrderModel.ShippingAddress,
+                Tenant = globalConfig.Tenant,
                 VerificationKey = verificationKey,
                 Webinar = importQueryResult.Webinar,
                 WebUser = importQueryResult.WebUser,
@@ -147,6 +148,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 OrderGenesis =
                     userAlreadyExists ? OrderGenesis.CreatedViaCartByExistingUser : OrderGenesis.CreatedViaCartByNewUser,
                 ShippingAddress = incomingOrderModel.ShippingAddress,
+                Tenant = globalConfig.Tenant,
                 VerificationKey = verificationKey,
                 Webinar = orderManagementQueryResult.Webinar,
                 WebUser = orderManagementQueryResult.WebUser

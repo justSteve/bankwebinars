@@ -992,7 +992,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         public WebUser GetWebUserByEmail(string email)
         {
 
-           return _orderManagementService.GetWebUser(email);
+            return _orderManagementService.GetWebUser(email);
         }
 
         public ExpressCheckoutModel ExpressCheckout(Order order, WebUser user)
@@ -1042,7 +1042,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 q5_email5 = order.BillingEmail,
                 q19_additionalLocations19 = addLocs
             };
-            
+
             if (order.WebUser.idSubscriptionDiscount.HasValue)
             {
                 var discount =
@@ -1055,7 +1055,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public RegType GetRegTypeByLabel(string livePlusFive, int? idWebinar)
         {
-         return   _orderManagementService.GetRegTypeByLabel("Live Plus Five", idWebinar: idWebinar.Value);
+            return _orderManagementService.GetRegTypeByLabel("Live Plus Five", idWebinar: idWebinar.Value);
         }
 
         public INotificationMessage GenerateMessagePreview(Order order)
@@ -1113,6 +1113,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             return orderRow;
         }
+
+
 
         public void Dispose()
         {

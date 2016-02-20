@@ -101,7 +101,7 @@ namespace CUWebinars.Business.Services
         {
             var order = _orderRepository.CreateOrder(affiliateId, webUser, webinar, orderRow, origin);
             var email = webUser == null ? "notauthenticated@cuwebinars.com" : webUser.email;
-
+            
             //_logger.Info("CreateNewOrder: " + email + " | " + orderRow.Webinar.Title + " | " + orderRow.RegistrationType.OptionLabel);
             return order;
 
@@ -1256,7 +1256,7 @@ namespace CUWebinars.Business.Services
                     Order = order,
                     CostFor6month = (Convert.ToDecimal(cost6) - Convert.ToDecimal(basePrice)).ToString().Replace(".00", ""),
                     CostForCD = (Convert.ToDecimal(costCD) - Convert.ToDecimal(basePrice)).ToString().Replace(".00", ""),
-                    ExpiryDate = CalculatePostEventMaterialsAccessExpiry(order).ToShortDateString(),
+                    //ExpiryDate = CalculatePostEventMaterialsAccessExpiry(order).ToShortDateString(),
                     OrderSummaryString = orderSum
                 };
                 AddEvent(new SendRecordingPostedEvent<PostEventPublishModel>
@@ -1499,25 +1499,25 @@ namespace CUWebinars.Business.Services
                 sb.Append("        </span>");
                 sb.Append("    </td>");
                 sb.Append("</tr>");
-                sb.Append("<tr>");
-                sb.Append(
-                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                sb.Append("            OnDemand Access Expires:");
-                sb.Append("        </span>");
-                sb.Append("    </td>");
-                sb.Append(
-                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-                sb.Append("");
-                sb.Append(
-                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                sb.Append("            <b>");
+                //sb.Append("<tr>");
+                //sb.Append(
+                //    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                //sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                //sb.Append("            OnDemand Access Expires:");
+                //sb.Append("        </span>");
+                //sb.Append("    </td>");
+                //sb.Append(
+                //    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                //sb.Append("");
+                //sb.Append(
+                //    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                //sb.Append("            <b>");
 
-                sb.Append(CalculatePostEventMaterialsAccessExpiry(order).ToShortDateString());
-                sb.Append("            </b>");
-                sb.Append("        </span>");
-                sb.Append("    </td>");
-                sb.Append("</tr>");
+                //sb.Append(CalculatePostEventMaterialsAccessExpiry(order).ToShortDateString());
+                //sb.Append("            </b>");
+                //sb.Append("        </span>");
+                //sb.Append("    </td>");
+                //sb.Append("</tr>");
 
             }
             return sb.ToString();
@@ -1922,6 +1922,8 @@ namespace CUWebinars.Business.Services
             return _regTypeRepository.GetRegTypeByLabel(regType, idWebinar);
         }
 
+
+
         public IList<Order> GetV3OrdersByOnDemandClaim()
         {
             return _orderRepository.GetV3OrdersByOnDemandClaim();
@@ -2022,28 +2024,26 @@ namespace CUWebinars.Business.Services
         }
 
 
-        private object CalculatePostEventMaterialsAccessExpiryFromRow(OrderRow row)
+        public DateTime CalculatePostEventMaterialsAccessExpiry(OrderRow row)
         {
-            throw new NotImplementedException();
-        }
-
-        public DateTime CalculatePostEventMaterialsAccessExpiry(Order order)
-        {
-
-            if (order == null) throw new ArgumentNullException("order");
-
-            var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+            if (row == null) throw new ArgumentNullException("order");
+            var orderDate = DateTime.Now;
+            if (row.Order != null)
+            {
+                orderDate = row.Order.OrderDate;
+            }
+            var orderRow = row;
             // let exception be thrown if there is not a single 
 
             var regType = GetRegTypeOfOrderRow(orderRow.idRegType);
 
 
             //establish order date as starting point
-            DateTime expryDate = order.OrderDate.AddMonths(6);
+            DateTime expryDate = orderDate.AddMonths(6);
             var webinar = _webinarRepository.FindById(orderRow.idWebinar);
 
             //if order's placed before event - override starting point
-            if (webinar.Date > order.OrderDate)
+            if (webinar.Date > orderDate)
                 expryDate = webinar.Date.AddMonths(6);
 
 

@@ -97,7 +97,9 @@ namespace CUWebinars.Business.AccountService
         string FindDisplayPostEventMaterialsClaimValue(Order order);
         UserAccount GetUserAccountByVerificationKey(string key);
         ValidationResult ValidatePostEventMaterialsAccessClaimValue(string claimValue, string claimType);
-
+        
+        void AddClaimForPostEventMaterials(string email, OrderRow row, DateTime expiryDate, string tenant);
+        
         WebUser CreateWebUserFromExpressCheckout(string city, string state, string zip, string streetAdd1,
             string streetAdd2, string tenant, string email, string firstName, string lastName, string phone,
             string institution, string title);

@@ -726,6 +726,43 @@ namespace CUWebinars.Business.AccountService
             }
         }
 
+        public void AddClaimForPostEventMaterials(string email, OrderRow row, DateTime expiryDate, string tenant)
+        {
+            var userAccountOfOrderer = GetUserAccountByEmail(tenant, email);
+
+            //var expiryDate = _orderManagementService.CalculatePostEventMaterialsAccessExpiry(row);
+
+            try
+            {
+                var onDemandCode = RandomHelpers.GetUniqueCode(5);
+
+                row.OnDemandCode = onDemandCode;
+
+                //_orderManagementService.SaveChanges();
+
+                var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, row.idOrder);
+                var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, expiryDate.ToString(DomainConstants.ClaimDateFormatText));
+                var OnDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, onDemandCode);
+
+                var claimValue = new JObject(
+                    orderIdProperty,
+                    expiryDateProperty,
+                    OnDemandCodeProperty
+                    );
+
+                AddClaim(userAccountOfOrderer, ClaimTypes.PostEventMaterials, claimValue.ToString(Formatting.None));
+
+                _logger.Info("AddClaimForPostEventMaterials: " + row.Webinar.idWebinar + " - " + row.idOrder + "-" + onDemandCode);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("AddClaimForPostEventMaterials| MR record not found " + email + " " + ex.Message);
+            }
+
+        }
+
+
         private UserAccount GetUserAccountByVerificationKey(string tenant, string key)
         {
             if (tenant == null) throw new ArgumentNullException("tenant");

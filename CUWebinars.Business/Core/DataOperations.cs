@@ -768,6 +768,16 @@ namespace CUWebinars.Business.Core
                 onDemandCode = myRow.OnDemandCode;
             }
 
+            var addLocString = "";
+
+            if (myRow.AdditionalLocation != null)
+            {
+                foreach (var addLoc in myRow.AdditionalLocation)
+                {
+                    addLocString = addLoc.Email + ", ";
+                }
+            }
+
             var PostForm = "";
 
             PostForm = "affiliateId=" + order.idAffiliate;
@@ -791,7 +801,7 @@ namespace CUWebinars.Business.Core
             PostForm += "&Institution=" + order.Institution;
             PostForm += "&idRegType=" + myRow.idRegType;
             PostForm += "&webinarId=" + myRow.idWebinar;
-            PostForm += "&AdditionalLocationsString=" + myRow.AdditionalLocation;
+            PostForm += "&AdditionalLocationsString=" + addLocString;
             PostForm += "&OrderDate=" + order.OrderDate;
             PostForm += "&DiscountCode=" + myDiscount;
             PostForm += "&Status=" + order.OrderStatus + "&Total=" + order.Total;

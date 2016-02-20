@@ -24,6 +24,8 @@ namespace CUWebinars.Business.CQS.Commands
         public Webinar Webinar { get; set; }
         public WebUser WebUser { get; set; }
 
+        public string Tenant { get; set; }
+
         //  Out parameter
         public int OrderId { get; set; }
     }
