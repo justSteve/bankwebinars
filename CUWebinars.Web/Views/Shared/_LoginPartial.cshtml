@@ -11,9 +11,9 @@
             {
                 fullNameClaim = claimsIdentity.Claims
                     .FirstOrDefault(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName);
-                
+
                 ViewBag.CurrentIdentity = User.Identity;
-                
+
             }
             else
             {
@@ -23,17 +23,31 @@
 
             if (!ReferenceEquals(null, fullNameClaim))
             {
-                @Html.AntiForgeryToken()
+                <div>
+                    @Html.AntiForgeryToken()
 
-                @Html.ActionLink(fullNameClaim.Value, "EditUser", "Account", routeValues: null, htmlAttributes: new { title = "Manage", id = "btnLogin" })
+                    @Html.ActionLink(fullNameClaim.Value, "EditUser", "Account", routeValues: null, htmlAttributes: new { title = "Manage", id = "btnLogin" })
 
-                if (claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.BeingImpersonated) == null)
-                {
+                    @if (claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.BeingImpersonated) == null)
+                    {
                     <a href="javascript:document.getElementById('logoutForm').submit()">&nbsp;&nbsp;[Log Off]</a>
-                }
-                else
-                {
+                    }
+                    else
+                    {
                     <a href="javascript:document.getElementById('logoutForm').submit()">&nbsp;&nbsp;[Release]</a>
+                    }
+                </div>
+                if (!ReferenceEquals(null, ViewBag.DiscountCaption))
+                {
+                    <div class="userDiscount-wrapper">
+                        @Html.Raw(ViewBag.DiscountCaption)
+                    </div>
+                }
+                if (!ReferenceEquals(null, ViewBag.UserHasMessages))
+                {
+                    <div class="search-wrapper">
+                        @Html.Partial("_MessagesPartial")
+                    </div>
                 }
             }
             else
@@ -41,23 +55,13 @@
                 <a id="btnLogin" href="@Url.Action("Login", "Account")"><i class="icon-user"></i> Login</a>
             }
 
-            if (!ReferenceEquals(null, ViewBag.UserHasDiscount))
-            {
-                <div class="search-wrapper">
-                    @Html.Action("GetUserDiscount", "Account")
-                </div>
-            }
-            if (!ReferenceEquals(null, ViewBag.UserHasMessages))
-            {
-                <div class="search-wrapper">
-                    @Html.Partial("_MessagesPartial")
-                </div>
-            }
+
 
 
         }
 
     </nav>
+
 }
 else
 {

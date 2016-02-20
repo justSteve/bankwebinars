@@ -596,11 +596,9 @@ namespace CUWebinars.Web.Controllers
             if (id.HasValue)
             {
 
-                //                var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id.Value);
                 var webinar = _webinarManagementService.GetWebinar(id.Value);
 
                 if (webinar == null) return HttpNotFound();
-
                 var model = new WebinarDetailsViewModel()
                 {
                     Webinar = webinar,
@@ -879,9 +877,9 @@ namespace CUWebinars.Web.Controllers
 
                 if (model.WebUser.idSubscriptionDiscount != null)
                 {
-                    var discount = _orderManagementService.GetDiscountById(model.WebUser.idSubscriptionDiscount.Value);
 
-                    ViewBag.DiscountCaption = ViewHelpers.RenderDiscountCaption(discount);
+                    model.UserHasDiscount = _orderManagementService.GetDiscountById(model.WebUser.idSubscriptionDiscount.Value);
+                    ViewBag.DiscountCaption = ViewHelpers.RenderDiscountCaption(model.UserHasDiscount);
                 }
                 return View(model);
             }

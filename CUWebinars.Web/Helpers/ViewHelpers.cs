@@ -175,7 +175,7 @@ namespace CUWebinars.Web.Helpers
                             break;
                     }
                 }
-                if (discount.DiscountType == DiscountType.Package)
+                if (discount.DiscountType == DiscountType.Subscription)
                 {
                     sb.AppendFormat("<div  style=\"font-size: small\" class=\"text-success\">Your subscription ({0}) has {1} credits remaining.</div>", discount.DiscountCode, discount.CreditsRemain.ToString().Replace(".00", ""));
                 }

@@ -2262,7 +2262,9 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult GetUserDiscount()
         {
-            throw new NotImplementedException();
+            var discountModel = _accountControllerOrchestrator.BuildDiscountModel();
+            return null;
+
         }
     }
 
