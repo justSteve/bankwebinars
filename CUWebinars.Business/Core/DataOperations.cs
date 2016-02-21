@@ -797,7 +797,7 @@ namespace CUWebinars.Business.Core
             PostForm += "&shippingState=" + order.ShippingState;
             PostForm += "&shippingZip=" + order.ShippingZip;
             PostForm += "&Email=" + order.BillingEmail;
-            PostForm += "&Title=" + "";
+            if (order.WebUser.Title != null) PostForm += "&Title=" + order.WebUser.Title;
             PostForm += "&Institution=" + order.Institution;
             PostForm += "&idRegType=" + myRow.idRegType;
             PostForm += "&webinarId=" + myRow.idWebinar;
@@ -837,7 +837,7 @@ namespace CUWebinars.Business.Core
 
             ;
             SynchOrderIds(Convert.ToInt32(returnvalue.Split(':')[1].Replace("\"", "").Replace("}", "")), order.idOrder);
-            return Convert.ToInt32(returnvalue);
+            return Convert.ToInt32(returnvalue.Split(':')[1].Replace("\"", "").Replace("}", ""));
 
         }
 

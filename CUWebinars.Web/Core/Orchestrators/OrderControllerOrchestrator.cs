@@ -65,7 +65,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                 VerificationKey = verificationKey,
                 OrderDate = migrateOrderModel.OrderDate,
                 Total = migrateOrderModel.Total,
-                //idUserLegacy = migrateOrderModel.idUserLegacy,
                 idOrderLegacy = migrateOrderModel.idOrderLegacy,
                 Webinar = migratorQueryResult.Webinar,
                 WebUser = migratorQueryResult.WebUser,

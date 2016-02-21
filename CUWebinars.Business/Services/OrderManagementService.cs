@@ -101,7 +101,7 @@ namespace CUWebinars.Business.Services
         {
             var order = _orderRepository.CreateOrder(affiliateId, webUser, webinar, orderRow, origin);
             var email = webUser == null ? "notauthenticated@cuwebinars.com" : webUser.email;
-            
+
             //_logger.Info("CreateNewOrder: " + email + " | " + orderRow.Webinar.Title + " | " + orderRow.RegistrationType.OptionLabel);
             return order;
 
@@ -112,6 +112,18 @@ namespace CUWebinars.Business.Services
             try
             {
                 var regType = _regTypeRepository.FindRegType(registrationType);
+
+                if (additionalLocation != null)
+                {
+                    foreach (var addLoc in additionalLocation)
+                    {
+                        addLoc.Price = GetCostOfAdditionalLocations(additionalLocation, webinar.idWebinar).Item2;
+                    }
+                }
+
+                GetCostOfAdditionalLocations(additionalLocation, webinar.idWebinar);
+
+
                 OrderRow row = _orderRepository.CreateOrderRow(webinar, additionalLocation, regType);
 
                 return row;
@@ -364,7 +376,7 @@ namespace CUWebinars.Business.Services
                 if (missingFromLegacy.Count > 0)
                     foreach (var orderEmail in missingFromLegacy)
                     {
-                        var order = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
+                        var order = _orderRepository.GetOrderById(v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail).idOrder);
                         if (order != null && order.WebUser.email.EndsWith("notauthenticated.com"))
                         {
                             var user = _webUserRepository.GetWebUserByEmail(orderEmail);
@@ -1951,7 +1963,7 @@ namespace CUWebinars.Business.Services
                 {
                     regKeyResponse = CreateRegistrantKey(
                         order.FirstName ?? " ",
-                        order.LastName  ?? " ",
+                        order.LastName ?? " ",
                         order.BillingEmail,
                         row.Webinar.idWebinar,
                         row.Webinar.WebinarKey

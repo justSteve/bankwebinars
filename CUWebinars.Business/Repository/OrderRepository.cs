@@ -114,12 +114,16 @@ namespace CUWebinars.Business.Repository
         {
             try
             {
+
                 var strongTypedContext = (TTSWebinarsContext)db;
 
                 var newOrderRow = strongTypedContext.OrderRows.Create();
 
                 if (additionalLocations != null)
+                {
                     newOrderRow.AdditionalLocation = additionalLocations;
+
+                }
 
                 newOrderRow.Webinar = webinar;
                 newOrderRow.RegistrationType = registrationType;
@@ -332,7 +336,8 @@ namespace CUWebinars.Business.Repository
         public int MigrateOrderFromV3(Order order)
         {
             var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
-            return dataOperations.MigrateOrderFromV3(order);
+            var result = dataOperations.MigrateOrderFromV3(order);
+            return result;
         }
 
         public void SynchIds(int lOrder, int vOrder)
