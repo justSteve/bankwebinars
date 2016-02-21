@@ -531,7 +531,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     var orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
                     var order = orderRow.Order;
-                    
+
                     //var additionalLocations = orderRow.AdditionalLocation.ToList();
                     var webUser = order.WebUser;
                     var webinar = _webinarManagementService.GetWebinar(order.OrderRows.FirstOrDefault().idWebinar);
@@ -1066,8 +1066,16 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             _membershipService.AddClaimForPostEventMaterials(email, row,
             _orderManagementService.CalculatePostEventMaterialsAccessExpiry(row), _globalConfig.Tenant);
-        
 
+
+        }
+
+        public IList<Order> GetOrderByUserIdAndWebinar(int selectedWebUser, int idWebinar)
+        {
+            return
+                _orderManagementService.GetOrdersByUserId(selectedWebUser)
+                    .Where(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                        .Webinar.idWebinar == idWebinar).ToList();
         }
 
         public INotificationMessage GenerateMessagePreview(Order order)

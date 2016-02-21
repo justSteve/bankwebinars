@@ -233,6 +233,11 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                //var UserAlreadyHasOrder = _cartControllerOrchestrator.GetOrderByUserIdAndWebinar()
+                //if (UserAlreadyHasOrder)
+                //{
+
+                //}
                 try
                 {
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
@@ -451,31 +456,90 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
+                var orderAlreadyExists = _cartControllerOrchestrator.GetOrderByUserIdAndWebinar(
+                    formModel.idUser, formModel.idWebinar);
+
+                if (orderAlreadyExists != null)
                 {
-                    var order = _cartControllerOrchestrator.CreateOrder(
-                        formModel
-                        );
-
-
-                    return Json(new
+                    foreach (var order in orderAlreadyExists)
                     {
-                        success = "success",
-                        orderId = order.idOrder,
-                        orderRowId = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow,
-                        webinarId = formModel.idWebinar
-                    }, JsonRequestBehavior.AllowGet);
+                        if (order.OrderStatus == OrderStatus.Submitted ||
+                            order.OrderStatus == OrderStatus.Paid)
+                        {
+                            return Json(new
+                            {
+                                success = "AlreadySubmitted",
+                                orderId = order.idOrder,
+                                orderRowId =
+                                    order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
+                                        .idOrderRow,
+                                webinarId = formModel.idWebinar
+                            }, JsonRequestBehavior.AllowGet);
+                        }
 
-                }
-                catch (Exception exception)
-                {
-                    ModelState.AddModelError(string.Empty,
-                        "There has been an error at the server which has been logged.");
-                    _logger.FatalException("Signup2 order excepted: ", exception);
 
-                    ErrorSignal.FromCurrentContext().Raise(exception);
+                        if (order.OrderStatus == OrderStatus.Canceled)
+                        {
+                            return Json(new
+                            {
+                                success = "WasCanceled",
+                                orderId = order.idOrder,
+                                orderRowId =
+                                    order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
+                                        .idOrderRow,
+                                webinarId = formModel.idWebinar
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        if (order.OrderStatus == OrderStatus.InProcess ||
+                            order.OrderStatus == OrderStatus.AwaitingVerification)
+                        {
+                            return Json(new
+                            {
+                                success = "InProcess",
+                                orderId = order.idOrder,
+                                orderRowId =
+                                    order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
+                                        .idOrderRow,
+                                webinarId = formModel.idWebinar
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
                 }
+
+
             }
+            try
+            {
+                var order = _cartControllerOrchestrator.CreateOrder(
+                    formModel
+                    );
+
+                return Json(new
+                {
+                    success = "success",
+                    orderId = order.idOrder,
+                    orderRowId = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow,
+                    webinarId = formModel.idWebinar
+                }, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception exception)
+            {
+                ModelState.AddModelError(string.Empty,
+                    "There has been an error at the server which has been logged.");
+                _logger.FatalException("Signup2 order excepted: ", exception);
+
+                return Json(new
+                {
+                    success = "fail",
+                    orderId = 0,
+                    orderRowId = 0,
+                    webinarId = formModel.idWebinar
+                }, JsonRequestBehavior.AllowGet);
+
+                ErrorSignal.FromCurrentContext().Raise(exception);
+            }
+
             return this.ModelStateJson(ModelState);
         }
 
@@ -641,7 +705,7 @@ namespace CUWebinars.Web.Controllers
 
                     if (ReferenceEquals(user, null))
                     {
-throw new ArgumentNullException("user");
+                        throw new ArgumentNullException("user");
                     }
 
                     if (order != null)
@@ -649,7 +713,7 @@ throw new ArgumentNullException("user");
                         order.AdminComments = "";
                         var newJson = new JProperty(string.Concat(JsonPropertyKeys.OrderCreatedByExpressCheckoutKey), JsonConvert.SerializeObject(_appHelper.GetSessionStartInfo()));
 
-                        JProperty createdByImpersonatedUserMsg = new JProperty(JsonPropertyKeys.OrderCreatedByExpressCheckoutKey,newJson.Value);
+                        JProperty createdByImpersonatedUserMsg = new JProperty(JsonPropertyKeys.OrderCreatedByExpressCheckoutKey, newJson.Value);
 
                         order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, createdByImpersonatedUserMsg);
 

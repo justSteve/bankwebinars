@@ -120,10 +120,7 @@ namespace CUWebinars.Business.Services
                         addLoc.Price = GetCostOfAdditionalLocations(additionalLocation, webinar.idWebinar).Item2;
                     }
                 }
-
-                GetCostOfAdditionalLocations(additionalLocation, webinar.idWebinar);
-
-
+                
                 OrderRow row = _orderRepository.CreateOrderRow(webinar, additionalLocation, regType);
 
                 return row;

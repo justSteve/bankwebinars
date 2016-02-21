@@ -54,5 +54,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         ExpressCheckoutModel ExpressCheckout(Order order, WebUser user);
         RegType GetRegTypeByLabel(string livePlusFive, int? idWebinar);
         void AddClaimForPostEventMaterials(string email, OrderRow row);
+        IList<Order> GetOrderByUserIdAndWebinar(int selectedWebUser, int idWebinar);
     }
 }

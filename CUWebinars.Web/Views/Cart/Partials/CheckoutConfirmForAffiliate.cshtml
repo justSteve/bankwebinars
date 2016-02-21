@@ -19,7 +19,7 @@
         var orderID = 0;
         if (Model.OrderRowExists && Model.OrderRowHasId)
         {
-            if (Model.OrderStatus == OrderStatus.InProcess)
+            if (Model.OrderStatus != OrderStatus.Error)
             {
                 <b>Please review this order summary and and choose billing method.</b>
 
@@ -112,7 +112,7 @@
                 </div>
             }
 
-            if (Model.OrderStatus != OrderStatus.InProcess)
+            @*if (Model.OrderStatus != OrderStatus.InProcess)
             {
                 <div id="postCheckout" class="well pull-right">
                     <div id="showCartPrice">@{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }</div>
@@ -144,7 +144,7 @@
                         <a class="btn btn-mini btn-success" href="#ResendConfirmationModal" data-toggle="modal" id="ConfirmationResender">Resend/Forward Order Summary</a>
                     </div>
                 </div>
-            }
+            }*@
         }
     }
 }
