@@ -308,7 +308,7 @@ namespace CUWebinars.Business.Repository
                 .Include(o => o.WebUser)
                 .Include(o => o.OrderRows);
 
-            //.Include(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType);
+            //why is registration type not hydrated from here
         }
 
         public IEnumerable<Order> GetOrdersByWebinarForPostEventClaims(int idWebinar)

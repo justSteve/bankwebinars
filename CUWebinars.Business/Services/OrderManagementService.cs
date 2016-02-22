@@ -120,7 +120,7 @@ namespace CUWebinars.Business.Services
                         addLoc.Price = GetCostOfAdditionalLocations(additionalLocation, webinar.idWebinar).Item2;
                     }
                 }
-                
+
                 OrderRow row = _orderRepository.CreateOrderRow(webinar, additionalLocation, regType);
 
                 return row;
@@ -1295,6 +1295,7 @@ namespace CUWebinars.Business.Services
             //var mySub = myRow.Order.d
 
             var webinar = myRow.Webinar;
+            var OptionLabel = GetRegTypeOfOrderRow(myRow.idRegType).OptionLabel;
 
             var sb = new StringBuilder();
             if (webinar.Title.StartsWith("Compliance Perspectives"))
@@ -1439,7 +1440,7 @@ namespace CUWebinars.Business.Services
                 sb.Append(
                     "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
                 sb.Append("            <b>");
-                sb.Append(myRow.RegistrationType.OptionLabel);
+                sb.Append(OptionLabel);
                 sb.Append("            </b>");
                 sb.Append("        </span>");
                 sb.Append("    </td>");
@@ -1847,7 +1848,24 @@ namespace CUWebinars.Business.Services
 
             foreach (var order in orders)
             {
-                order.UserComments = "Order's user was updated from " + order.BillingEmail + " on " + DateTime.Now.ToShortDateString() + ". | " + order.UserComments;
+                var changedVals = "";
+
+                if (order.FirstName != firstName) { changedVals += order.FirstName + " to " + firstName + Environment.NewLine; }
+                if (order.LastName != lastName) { changedVals += order.LastName + " to " + lastName + Environment.NewLine; }
+                if (order.BillingEmail != email) { changedVals += order.BillingEmail + " to " + email + Environment.NewLine; }
+                if (order.Institution != institution) { changedVals += order.Institution + " to " + institution + Environment.NewLine; }
+                if (order.BillingAddress != billingAddress.StreetAddress) { changedVals += order.BillingAddress + " to " + billingAddress.StreetAddress + Environment.NewLine; }
+                if (order.BillingAddress2 != billingAddress.StreetAddress2) { changedVals += order.BillingAddress2 + " to " + billingAddress.StreetAddress2 + Environment.NewLine; }
+                if (order.BillingCity != billingAddress.City) { changedVals += order.BillingCity + " to " + billingAddress.City + Environment.NewLine; }
+                if (order.BillingState != billingAddress.State) { changedVals += order.BillingState + " to " + billingAddress.State + Environment.NewLine; }
+                if (order.BillingZip != billingAddress.Zip) { changedVals += order.BillingZip + " to " + billingAddress.Zip + Environment.NewLine; }
+
+                if (order.ShippingAddress != shippingAddress.StreetAddress) { changedVals += order.ShippingAddress + " to " + shippingAddress.StreetAddress + Environment.NewLine; }
+                if (order.ShippingAddress2 != shippingAddress.StreetAddress2) { changedVals += order.ShippingAddress2 + " to " + shippingAddress.StreetAddress2 + Environment.NewLine; }
+                if (order.ShippingCity != shippingAddress.City) { changedVals += order.ShippingCity + " to " + shippingAddress.City + Environment.NewLine; }
+                if (order.ShippingState != shippingAddress.State) { changedVals += order.ShippingState + " to " + shippingAddress.State + Environment.NewLine; }
+                if (order.ShippingZip != shippingAddress.Zip) { changedVals += order.ShippingZip + " to " + shippingAddress.Zip + Environment.NewLine; }
+
                 order.FirstName = firstName;
                 order.LastName = lastName;
                 order.BillingEmail = email;
@@ -1863,10 +1881,12 @@ namespace CUWebinars.Business.Services
                 order.ShippingCity = shippingAddress.City;
                 order.ShippingState = shippingAddress.State;
                 order.ShippingZip = shippingAddress.Zip;
+                order.UserComments += "'ContactInfoUpdated': '" + changedVals + "'";
+                _logger.Info("idOrder {0} user info updated:  {1}", order.idOrder, changedVals);
 
-                _logger.Info("idOrder {0} user info updated from {1}", order.idOrder, order.BillingEmail);
-
+                SaveChanges();
             }
+
         }
 
         public string GetOnDemandClaimByCode(string onDemandCode)

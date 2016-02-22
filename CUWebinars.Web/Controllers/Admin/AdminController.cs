@@ -2182,14 +2182,28 @@ namespace CUWebinars.Web.Controllers.Admin
         [AllowAnonymous]
         public ActionResult UpdateAdditionalLocations(int orderRowId, IEnumerable<AdditionalLocation> additionalLocations)
         {
+            //submitted by edit-forms-in-grid.js | submitUpdateAddLocsForm
             var orderRow = _orderManagementService.GetOrderRowById(orderRowId);
 
-            var manageOrderEditModel = new ManageOrderEditModel
-            {
-                AdditionalLocations = additionalLocations
-            };
 
-            SyncAdditionalLocations(manageOrderEditModel, orderRow);
+            if (additionalLocations != null)
+            {
+                var manageOrderEditModel = new ManageOrderEditModel
+                {
+                    AdditionalLocations = additionalLocations
+                };
+
+                var addLocEmails = "UpdateAdditionalLocations: " + orderRow.idOrder;
+                foreach (var addLoc in additionalLocations)
+                {
+                    addLocEmails += addLoc.Email + ",";
+                }
+
+                _logger.Info(addLocEmails.TrimEnd(','));
+
+            
+                SyncAdditionalLocations(manageOrderEditModel, orderRow);
+            }
 
 
             PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
@@ -2211,7 +2225,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         FlatOff = pricesAndDiscounts.Discount.FlatOff,
                         PercentOff = pricesAndDiscounts.Discount.PercentOff
                     });
-            return Json(new { Result = WebUiConstants.Success });
+
         }
 
 

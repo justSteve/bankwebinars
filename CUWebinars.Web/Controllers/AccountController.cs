@@ -1259,7 +1259,7 @@ namespace CUWebinars.Web.Controllers
                         // In such a case, we don't want to redirect back to the page where they just set their password. So send to base instead.
                         var returnUrl = string.IsNullOrWhiteSpace(model.ReturnUrl) ? @"/" :
                             model.ReturnUrl.Contains(@"ACC/APWD") ? @"/" : Server.HtmlDecode(model.ReturnUrl);
-
+                        if (returnUrl == "MyWebinars") returnUrl = "/MyWebinars";
                         return Json(new { result = LoggedInResult, returnUrl = returnUrl });
                     }
 

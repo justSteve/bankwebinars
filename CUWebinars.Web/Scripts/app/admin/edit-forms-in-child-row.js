@@ -109,7 +109,7 @@ function AttachDataTableEditEvents() {
             dataType: "json",
             type: "POST",
             success: function (data) {
-                console.log(data);
+                //console.log(data);
 
                 // need to update the currently displaying name (in case it changed)
 
@@ -118,7 +118,7 @@ function AttachDataTableEditEvents() {
                 fireSuccessIndicator($cell);
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                alert("/account/updateuser: " + textStatus);
+                alert("Update failed. Account Update User: " + textStatus);
             }
         });
     });

@@ -404,10 +404,9 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _logger.Info("Signup2 Enters: " + _appHelper.GetUserAuditInfo());
+                _logger.Info("Signup2 Enters: " + _appHelper.GetSessionStartInfo());
 
-                //var telemetry = new TelemetryClient();
-                //telemetry.TrackEvent("Signup2Start");
+
                 try
                 {
                     var order = _cartControllerOrchestrator.CreateOrder(
@@ -461,6 +460,7 @@ namespace CUWebinars.Web.Controllers
 
                 if (orderAlreadyExists != null)
                 {
+                    _logger.Warn("SignupAffiliate pulls existing order: " +  formModel.idUser +" " + formModel.idWebinar);
                     foreach (var order in orderAlreadyExists)
                     {
                         if (order.OrderStatus == OrderStatus.Submitted ||
@@ -936,9 +936,16 @@ namespace CUWebinars.Web.Controllers
         [HttpPost]
         public ActionResult UpdateAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations, int? newOrderRowId)
         {
-            _cartControllerOrchestrator.UpdateAdditionalLocationsForOrderRow(additionalLocations, newOrderRowId.Value);
-
-            return Json(new { Result = WebUiConstants.Success });
+            try
+            {
+                _cartControllerOrchestrator.UpdateAdditionalLocationsForOrderRow(additionalLocations, newOrderRowId.Value);
+                return Json(new { Result = WebUiConstants.Success });
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("UpdateAdditionalLocations", ex);
+                return Json(new { Result = WebUiConstants.Fail });
+            }
         }
 
         protected override void Dispose(bool disposing)
