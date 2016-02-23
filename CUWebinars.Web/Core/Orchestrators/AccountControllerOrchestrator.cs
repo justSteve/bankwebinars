@@ -376,11 +376,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             _membershipService.UpdateUserEmail(oldEmail, email, tenant);
         }
 
-        public string InsertOnDemandClaim(int orderId)
-        {
-            return _orderManagementService.InsertOnDemandClaim(orderId);
-        }
-
         public void UpdateDiscountDetails(DiscountModel discountModel, int idUser)
         {
             var discount = new Discount

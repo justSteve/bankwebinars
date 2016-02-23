@@ -808,105 +808,6 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         }
 
-        public void SetOrderPaidByCC(int qOrder, string s, string formFields)
-        {
-            {
-                Order order = LoadOrder(qOrder);
-
-                if (!ReferenceEquals(null, order))
-                {
-                    order.PaymentType = 2;
-
-                    //order.AdminComments = order.StoreComments + "\r\nCredit Card Order Approved: " + txApprovalCode.ToString();
-
-                    string buildMessage = "Moneris SetOrderPaidByCC: " + order.idOrder + " QueryString: " + formFields;
-                    _logger.Info(buildMessage);
-
-                    order.OrderStatus = OrderStatus.Paid;
-
-                    var newJson =
-                        new JProperty(
-                            string.Concat("MonerisPayByCC-",
-                                TtsConfig.UtcNowAsCts.ToString()),
-                            new JObject(new JProperty("PayByCC", buildMessage))
-                            );
-                    order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, newJson);
-
-                    _orderManagementService.SaveChanges();
-
-                    try
-                    {
-                        if (_globalConfig.Tenant == "BankWebinars")
-                        {
-
-                            order.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(order);
-
-                            _orderManagementService.SynchIds(order);
-
-                            _orderManagementService.SaveChanges();
-                        }
-
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.WarnException("ExpressCheckout blows on SynchExpressCheckoutOrder", ex);
-                    }
-
-                }
-
-            }
-        }
-
-
-        public string CreatePostEventClaim(Order order)
-        {
-
-            if (!ReferenceEquals(null, order))
-            {
-                var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-
-                if (orderRow.Webinar.Status != WebinarStatus.Recorded || orderRow.Webinar.Status != WebinarStatus.Archived) return null;
-
-                var onDemandCode = RandomHelpers.GetUniqueCode(5).ToLower();
-                var expiryDate = orderRow.Webinar.Date.AddMonths(6);
-                if (order.OrderDate > expiryDate) expiryDate = order.OrderDate.AddMonths(6);
-                var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
-                var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, expiryDate.ToShortDateString());
-                var OnDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, onDemandCode);
-
-                var claimValue = new JObject(
-                    orderIdProperty,
-                    expiryDateProperty,
-                    OnDemandCodeProperty
-                    );
-
-                orderRow.OnDemandCode = onDemandCode;
-                _orderManagementService.SaveChanges();
-
-                var userAccountOfOrderer = _membershipService.GetUserAccountByEmail(
-                    _globalConfig.Tenant,
-                    order.WebUser.email
-                    );
-
-                _membershipService.AddClaim(
-                    userAccountOfOrderer,
-                    ClaimTypes.PostEventMaterials
-                    , claimValue.ToString(Formatting.None)
-                    );
-
-
-                //_membershipService.UpdatePostEventMaterialsClaim(
-                //    _globalConfig.Tenant,
-                //    order.BillingEmail,
-                //    DateTime.Parse(newExpiryDate),
-                //    order
-                //    );
-                _logger.Info("Added (at checkout) expiryDate claim for: {0}. Date: {1}", order.idOrder,
-                    expiryDate.ToShortDateString());
-            }
-            return null;
-        }
-
         public Webinar LoadWebinar(int idWebinar)
         {
             return _webinarManagementService.GetWebinar(idWebinar);
@@ -921,50 +822,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                 return false;
             }
             return true;
-        }
-
-        public void CheckOnDemandClaims(int? idWebinar)
-        {
-
-            IList<Order> v3Orders = _orderManagementService.GetV3OrdersByWebinar(idWebinar.Value);
-
-            foreach (var order in v3Orders)
-            {
-                var onDemandCode = order.OrderRows.SingleOrDefault().OnDemandCode;
-                if (onDemandCode == null)
-                {
-                    onDemandCode = CreatePostEventClaim(order);
-                }
-                try
-                {
-                    var onDemandClaim = new PostEventClaim();
-
-                    var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
-                    var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
-
-                    foreach (var claim in claimsViewModel.UserClaims)
-                    {
-
-                        if (onDemandCode != null && (claim.Value != null && claim.Value.Contains(onDemandCode)))
-                        {
-                            var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
-
-                            if (thisClaim.OrderId != order.idOrder)
-                            {
-                                _logger.Info("Claim mismatch! Claim: {0} vs Order: {1}", thisClaim.OrderId, order.idOrder);
-                            }
-
-                            onDemandClaim.OrderId = order.idOrder;
-                            onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
-                            onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.ErrorException("Checks ondemand claim failed: " + order, ex);
-                }
-            }
         }
 
         public Order GetOrderById(int? idOrder)
@@ -1062,12 +919,30 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public void AddClaimForPostEventMaterials(string email, OrderRow row)
         {
+            if (email == null) throw new ArgumentNullException(@"email");
+            if (row == null) throw new ArgumentNullException(@"row");
 
+            try
+            {
+                if (!OnDemandCodeIsUnique(row.OnDemandCode))
+                {
+                    row.OnDemandCode = RandomHelpers.GetUniqueCode(5);
 
-            _membershipService.AddClaimForPostEventMaterials(email, row,
-            _orderManagementService.CalculatePostEventMaterialsAccessExpiry(row), _globalConfig.Tenant);
+                }
+                _orderManagementService.SaveChanges();
+                _membershipService.AddClaimForPostEventMaterials(email, row,
+                    _orderManagementService.CalculatePostEventMaterialsAccessExpiry(row), _globalConfig.Tenant);
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("AddClaimForPostEventMaterials: ", ex);
+            }
 
+        }
 
+        private bool OnDemandCodeIsUnique(string onDemandCode)
+        {
+            return _orderManagementService.OnDemandCodeIsUnique(onDemandCode);
         }
 
         public IList<Order> GetOrderByUserIdAndWebinar(int selectedWebUser, int idWebinar)
@@ -1076,6 +951,23 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _orderManagementService.GetOrdersByUserId(selectedWebUser)
                     .Where(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
                         .Webinar.idWebinar == idWebinar).ToList();
+        }
+
+        public string InsertOnDemandClaim(int orderId)
+        {
+            var order = GetOrderById(orderId);
+
+            try
+            {
+                AddClaimForPostEventMaterials(order.BillingEmail, order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active));
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("InsertOnDemandClaim" + ex);
+            }
+
+            var result = _globalConfig.TenantURL +"/" + orderId + "-" + order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).OnDemandCode;
+            return result;
         }
 
         public INotificationMessage GenerateMessagePreview(Order order)

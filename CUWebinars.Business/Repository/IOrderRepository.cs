@@ -58,5 +58,6 @@ namespace CUWebinars.Business.Repository
         Discount GetDiscountByOrderId(int idOrder);
         void UpdateShippingAddressDetails(Address shippingAddress, int idUser);
 
+        bool OnDemandCodeIsUnique(string onDemandCode);
     }
 }

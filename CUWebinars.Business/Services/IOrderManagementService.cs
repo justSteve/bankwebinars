@@ -129,8 +129,9 @@ namespace CUWebinars.Business.Services
         Order GetOrderByOnDemandClaim(string onDemandCode);
         void UpdateDiscountDetails(Discount discount);
         void UpdateShippingAddressDetails(Address shippingAddress, int idUser);
-        string InsertOnDemandClaim(int orderId);
+        //string InsertOnDemandClaim(int orderId);
         string SynchOrdersWhereLegacyIsZero(int idOrderLegacy, int idOrderV3);
         RegType GetRegTypeByLabel(string regType, int idWebinar);
+        bool OnDemandCodeIsUnique(string onDemandCode);
     }
 }

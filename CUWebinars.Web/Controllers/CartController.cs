@@ -47,38 +47,6 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        [HttpPost]
-        public ActionResult AddOrder(int? idWebinar)
-        {
-            try
-            {
-                _cartControllerOrchestrator.CheckOnDemandClaims(idWebinar);
-                return Json(new { Result = WebUiConstants.Success });
-            }
-            catch (Exception exception)
-            {
-                ModelState.AddModelError(string.Empty, "The operation failed.");
-                _logger.ErrorException("CheckOnDemandClaims failed ", exception);
-                return this.ModelStateJson(ModelState);
-            }
-        }
-
-        [ValidateJsonAntiForgeryToken(Order = 0)]
-        [HandleAjaxException(Order = 1)]
-        public ActionResult CheckOnDemandClaims(int? idWebinar)
-        {
-            try
-            {
-                _cartControllerOrchestrator.CheckOnDemandClaims(idWebinar);
-                return Json(new { Result = WebUiConstants.Success });
-            }
-            catch (Exception exception)
-            {
-                ModelState.AddModelError(string.Empty, "The operation failed.");
-                _logger.ErrorException("CheckOnDemandClaims failed ", exception);
-                return this.ModelStateJson(ModelState);
-            }
-        }
 
         [HttpPost]
         [ValidateJsonAntiForgeryToken(Order = 0)]
@@ -97,6 +65,16 @@ namespace CUWebinars.Web.Controllers
                 return this.ModelStateJson(ModelState);
             }
         }
+
+        [System.Web.Mvc.AllowAnonymous]
+        [System.Web.Mvc.HttpGet]
+        public string InsertOnDemandClaim(int orderID)
+        {
+            var result = _cartControllerOrchestrator.InsertOnDemandClaim(orderID);
+
+            return result;
+        }
+
 
         [HttpPost]
         [ValidateJsonAntiForgeryToken(Order = 0)]
@@ -203,7 +181,9 @@ namespace CUWebinars.Web.Controllers
 
                 try
                 {
-                    _cartControllerOrchestrator.CreatePostEventClaim(model.Order);
+                    //_cartControllerOrchestrator.CreatePostEventClaim(model.Order);
+                    _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.Order.BillingEmail, model.Order.OrderRows.FirstOrDefault());
+
                 }
                 catch (Exception exception)
                 {
@@ -276,6 +256,8 @@ namespace CUWebinars.Web.Controllers
                     }
 
                     model.Order.OrderStatus = OrderStatus.Submitted;
+                    _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email, model.Order.OrderRows.FirstOrDefault());
+
                     model.Order.Origin = "CartByAffiliate";
 
 
@@ -505,8 +487,6 @@ namespace CUWebinars.Web.Controllers
                         }
                     }
                 }
-
-
             }
             try
             {
@@ -812,7 +792,9 @@ namespace CUWebinars.Web.Controllers
 
                     order.OrderStatus = OrderStatus.Paid;
 
-                    _cartControllerOrchestrator.CreatePostEventClaim(order);
+                    //_cartControllerOrchestrator.CreatePostEventClaim(order);
+                    _cartControllerOrchestrator.AddClaimForPostEventMaterials(order.BillingEmail, order.OrderRows.FirstOrDefault());
+
                     var userHasPriorOrders = _cartControllerOrchestrator.UserHasPriorOrders(order.WebUser);
 
 
@@ -880,7 +862,8 @@ namespace CUWebinars.Web.Controllers
                     order.OrderStatus = OrderStatus.Paid;
 
 
-                    _cartControllerOrchestrator.CreatePostEventClaim(order);
+                    //_cartControllerOrchestrator.CreatePostEventClaim(order);
+                    _cartControllerOrchestrator.AddClaimForPostEventMaterials(order.BillingEmail, order.OrderRows.FirstOrDefault());
 
                     if (User.Identity.IsAuthenticated)
                     {

@@ -1920,13 +1920,6 @@ namespace CUWebinars.Business.Services
             _orderRepository.UpdateShippingAddressDetails(shippingAddress, idUser);
         }
 
-        public string InsertOnDemandClaim(int orderId)
-        {
-            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
-            var result = dataOperations.InsertOnDemandClaim(orderId);
-
-            return result;
-        }
 
         public string SynchOrdersWhereLegacyIsZero(int idOrderLegacy, int idOrderV3)
         {
@@ -1951,6 +1944,10 @@ namespace CUWebinars.Business.Services
             return _regTypeRepository.GetRegTypeByLabel(regType, idWebinar);
         }
 
+        public bool OnDemandCodeIsUnique(string onDemandCode)
+        {
+            return _orderRepository.OnDemandCodeIsUnique(onDemandCode);
+        }
 
 
         public IList<Order> GetV3OrdersByOnDemandClaim()

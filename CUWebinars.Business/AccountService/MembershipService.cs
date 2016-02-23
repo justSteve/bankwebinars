@@ -729,30 +729,26 @@ namespace CUWebinars.Business.AccountService
         public void AddClaimForPostEventMaterials(string email, OrderRow row, DateTime expiryDate, string tenant)
         {
             var userAccountOfOrderer = GetUserAccountByEmail(tenant, email);
-
-            //var expiryDate = _orderManagementService.CalculatePostEventMaterialsAccessExpiry(row);
-
+            if (row == null) throw new ArgumentNullException("row");
             try
             {
-                var onDemandCode = RandomHelpers.GetUniqueCode(5);
-
-                row.OnDemandCode = onDemandCode;
-
-                //_orderManagementService.SaveChanges();
 
                 var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, row.idOrder);
                 var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, expiryDate.ToString(DomainConstants.ClaimDateFormatText));
-                var OnDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, onDemandCode);
+                if (row.OnDemandCode != null)
+                {
+                    var OnDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, row.OnDemandCode);
 
-                var claimValue = new JObject(
-                    orderIdProperty,
-                    expiryDateProperty,
-                    OnDemandCodeProperty
-                    );
+                    var claimValue = new JObject(
+                        orderIdProperty,
+                        expiryDateProperty,
+                        OnDemandCodeProperty
+                        );
 
-                AddClaim(userAccountOfOrderer, ClaimTypes.PostEventMaterials, claimValue.ToString(Formatting.None));
+                    AddClaim(userAccountOfOrderer, ClaimTypes.PostEventMaterials, claimValue.ToString(Formatting.None));
+                 _logger.Info("AddClaimForPostEventMaterials: " + row.Webinar.idWebinar + " - " + row.idOrder + "-" + row.OnDemandCode);
+               }
 
-                _logger.Info("AddClaimForPostEventMaterials: " + row.Webinar.idWebinar + " - " + row.idOrder + "-" + onDemandCode);
 
             }
             catch (Exception ex)

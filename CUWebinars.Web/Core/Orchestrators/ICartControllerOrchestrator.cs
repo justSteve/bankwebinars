@@ -40,13 +40,13 @@ namespace CUWebinars.Web.Core.Orchestrators
         string GetDiscountAmountAsPercentageOrDollarAmount(Discount myDiscount);
         void UpdateAdditionalLocationsForOrderRow(IEnumerable<AdditionalLocation> additionalLocations, int newOrderRowId);
         Order LoadOrder(int id);
-        void SetOrderPaidByCC(int qOrder, string s, string formFields);
+        //void SetOrderPaidByCC(int qOrder, string s, string formFields);
         //int ProcessModelForConfirmation(WebinarDetailsViewModel model, bool? adminCreatedWebUser);
         
-        string CreatePostEventClaim(Order order);
+        //string CreatePostEventClaim(Order order);
         Webinar LoadWebinar(int idWebinar);
         bool UserHasPriorOrders(WebUser webUser);
-        void CheckOnDemandClaims(int? idWebinar);
+        //void CheckOnDemandClaims(int? idWebinar);
         Order GetOrderById(int? idOrder);
         Discount GetDiscountById(int value);
         bool AssignWebUserToOrder(Order order);
@@ -55,5 +55,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         RegType GetRegTypeByLabel(string livePlusFive, int? idWebinar);
         void AddClaimForPostEventMaterials(string email, OrderRow row);
         IList<Order> GetOrderByUserIdAndWebinar(int selectedWebUser, int idWebinar);
+        string InsertOnDemandClaim(int orderId);
     }
 }
