@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using CUWebinars.Business.Services;
 
 namespace CUWebinars.Business.AccountService
 {
@@ -30,6 +31,7 @@ namespace CUWebinars.Business.AccountService
         private readonly FluentValidation.IValidator<Tuple<string, string>> _postEventMaterialsAccessClaimValidator;
         private readonly IDomainHelper _domainHelper;
         private readonly ILogger _logger;
+        //private readonly IOrderManagementService _orderManagementService;
         private bool _disposed;
 
         public MembershipService(IInstitutionRepository institutionRepository,
@@ -40,6 +42,7 @@ namespace CUWebinars.Business.AccountService
             FluentValidation.IValidator<Tuple<string, string>> postEventMaterialsAccessClaimValidator,
             IDomainHelper domainHelper,
             ILogger logger)
+        //,IOrderManagementService orderManagementService)
         {
             _institutionRepository = institutionRepository;
             _refDataRepository = refDataRepository;
@@ -49,6 +52,7 @@ namespace CUWebinars.Business.AccountService
             _postEventMaterialsAccessClaimValidator = postEventMaterialsAccessClaimValidator;
             _domainHelper = domainHelper;
             _logger = logger;
+            //_orderManagementService = orderManagementService;
         }
 
         public WebUser GetDetailsOfUser(string email)
@@ -115,10 +119,24 @@ namespace CUWebinars.Business.AccountService
             return _institutionRepository.GetInstitutionsByName(name);
         }
 
+        public void RemovePostEventClaimByEvent(UserAccount userAccount, int idOrder)
+        {
+
+            var claimsForOrder = userAccount.Claims
+                .Where(c => c.Value.ToLower().Contains(idOrder.ToString()))
+                .Where(c => c.Type == ClaimTypes.PostEventMaterials || c.Type == ClaimTypes.PostEventMaterialsExtended).ToList();
+            foreach (var claim in claimsForOrder)
+            {
+                // extract the date
+
+                RemoveClaim(userAccount.Tenant, userAccount.Email, ClaimTypes.PostEventMaterials, claim.Value);
+
+            }
+        }
+
         public DateTime? GetPostEventAccessExpireyDate(UserAccount userAccount, int idOrder)
         {
             if (userAccount == null || !userAccount.HasClaim(ClaimTypes.PostEventMaterials) || !userAccount.HasClaim(ClaimTypes.PostEventMaterialsExtended)) return null;
-
 
             var claimsForOrder = userAccount.Claims
                 .Where(c => c.Value.ToLower().Contains(idOrder.ToString()))
@@ -172,40 +190,6 @@ namespace CUWebinars.Business.AccountService
 
             return false;
         }
-
-        //public string CheckDisplayPostEventMaterials(string tenant, string email, out string messageIfFalse)
-        //{
-        //    messageIfFalse = string.Empty;
-        //    var userAccount = GetUserAccountByEmail(tenant, email);
-
-        //    if (userAccount != null)
-        //    {
-        //        var claimValue = GetDisplayPostEventMaterialsClaimValue(userAccount);
-
-        //        if (!string.IsNullOrWhiteSpace(claimValue))
-        //        {
-        //            var expiryAsString = claimValue.Substring(claimValue.IndexOf(":", StringComparison.Ordinal) + 1);
-
-        //            DateTime expiryDate;
-
-        //            if (DateTime.TryParse(expiryAsString, out expiryDate))
-        //            {
-        //                return claimValue;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            messageIfFalse = string.Format("User with email {0} is not authorised to access materials", email);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        messageIfFalse = string.Format("No UserAccount exists with the email {0}", email);
-        //    }
-
-        //    return "false";
-        //}
-
 
         public void CleanUser(string tenant, string email, string newPassword)
         {
@@ -729,6 +713,10 @@ namespace CUWebinars.Business.AccountService
         public void AddClaimForPostEventMaterials(string email, OrderRow row, DateTime expiryDate, string tenant)
         {
             var userAccountOfOrderer = GetUserAccountByEmail(tenant, email);
+            //if already exists, clear
+            RemovePostEventClaimByEvent(userAccountOfOrderer, row.idOrder);
+
+
             if (row == null) throw new ArgumentNullException("row");
             try
             {
@@ -746,8 +734,8 @@ namespace CUWebinars.Business.AccountService
                         );
 
                     AddClaim(userAccountOfOrderer, ClaimTypes.PostEventMaterials, claimValue.ToString(Formatting.None));
-                 _logger.Info("AddClaimForPostEventMaterials: " + row.Webinar.idWebinar + " - " + row.idOrder + "-" + row.OnDemandCode);
-               }
+                    _logger.Info("AddClaimForPostEventMaterials: " + row.Webinar.idWebinar + " - " + row.idOrder + "-" + row.OnDemandCode);
+                }
 
 
             }

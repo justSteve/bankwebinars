@@ -922,6 +922,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (email == null) throw new ArgumentNullException(@"email");
             if (row == null) throw new ArgumentNullException(@"row");
 
+            
+
             try
             {
                 if (!OnDemandCodeIsUnique(row.OnDemandCode))
@@ -966,7 +968,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _logger.Fatal("InsertOnDemandClaim" + ex);
             }
 
-            var result = _globalConfig.TenantURL +"/" + orderId + "-" + order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).OnDemandCode;
+            var result = _globalConfig.TenantURL +"/o/" + orderId + "-" + order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).OnDemandCode;
             return result;
         }
 

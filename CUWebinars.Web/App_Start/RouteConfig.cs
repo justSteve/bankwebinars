@@ -9,6 +9,13 @@ namespace CUWebinars.Web.App_Start
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+            //replicates legacy's generic connection info endpoint
+            routes.MapRoute(
+                    "WebinarConnectionDetails",
+                    "{id}",
+                    new { controller = "Webinar", action = "ConnectionDetails", id = "" },  // Parameter defaults
+                    new { id = @"\d+" }
+                );
 
             routes.MapRoute(
                 "PostBackWPS",
@@ -168,13 +175,6 @@ namespace CUWebinars.Web.App_Start
                 url: "{controller}/{action}/{email}/{password}"
             );
 
-            //replicates legacy's generic connection info endpoint
-            routes.MapRoute(
-                    "WebinarConnectionDetails",
-                    "{id}",
-                    new { controller = "Webinar", action = "ConnectionDetails", id = "" },  // Parameter defaults
-                    new { id = @"\d+" }
-                );
 
             //  Catch-all, for any routes which do not exist.
             routes.MapRoute(

@@ -96,7 +96,7 @@
 
                         <h4 align="center">Webinar Materials</h4>
                         @{
-                            if (Model.AuthorizedToAccessMaterials.Contains("until"))
+                            if (Model.AuthorizedToAccessMaterials.Contains("through"))
                             {
                                 <div>
                                     <a target="_blank" href="/Webinar/GetWebinarRecording/@Model.Webinar.idWebinar"><span><i class="icon-facetime-video"></i> </span> Video Playback</a>

@@ -286,9 +286,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 }
                 else
                 {
-                    if (thisClaim.ExpiryDate > DateTime.Now)
+                    if (thisClaim.ExpiryDate.AddDays(1) > DateTime.Today.AddHours(23))
                     {
-                        playModel.AuthorizedToAccessMaterials = "This code is valid until " +
+                        playModel.AuthorizedToAccessMaterials = "This code is valid through " +
                                                                 thisClaim.ExpiryDate.ToShortDateString() + ".";
 
                         _logger.Info("AuthorizedToAccessMaterials granted to: " + webUser.email);
@@ -561,20 +561,28 @@ namespace CUWebinars.Web.Core.Orchestrators
         private void SendRecordingIsPostedNotifications(WebinarDetailsViewModel webinarDetailsViewModel, Webinar webinar)
         {
             var ordersForWebinar = _orderManagementService.GetV3OrdersByWebinar(webinar.idWebinar);
-            //
-            
-            //----Moved the creation of the claim to CreateOrderRow
-            //try
-            //{
-            //    AddClaimForPostEventMaterials(ordersForWebinar);
+            IList<int> orderIDsForWebinar = _orderManagementService.GetV3OrdersIdsByWebinar(webinar.idWebinar);
+            // 95336
 
-            //}
-            //catch (Exception ex)
-            //{
 
-            //    _logger.ErrorException(string.Format("SendRecordingIsPostedNotifications| AddClaimForPostEventMaterials failed {0} on idWebinar: {1}", ex.Message, webinar.idWebinar), ex);
+            try
+            {
+                foreach (var orderId in orderIDsForWebinar)
+                {
+                    var order = _orderManagementService.GetOrderById(orderId);
+                    _membershipService.AddClaimForPostEventMaterials(order.BillingEmail
+                        , order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active)
+                        , _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active))
+                        , _globalConfig.Tenant);
+                }
 
-            //}
+            }
+            catch (Exception ex)
+            {
+
+                _logger.ErrorException(string.Format("SendRecordingIsPostedNotifications| AddClaimForPostEventMaterials failed {0} on idWebinar: {1}", ex.Message, webinar.idWebinar), ex);
+
+            }
 
             _orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
 

@@ -103,8 +103,6 @@ namespace CUWebinars.Business.Services
         IEnumerable<int> GetUserIdsByPartialId(int value);
         object SearchRegistrations(int affiliateID, IList<int> excludeUserIDs, int skip, int take, string search);
         
-        string SetPostEventClaims(int webinarId);
-
         bool VerifyWebUserExists(int idUser);
         Webinar GetWebinarByJoinCode(string joinCode);
         void LoadWebinarIntoOrderRow(OrderRow newOrderRow);
@@ -133,5 +131,6 @@ namespace CUWebinars.Business.Services
         string SynchOrdersWhereLegacyIsZero(int idOrderLegacy, int idOrderV3);
         RegType GetRegTypeByLabel(string regType, int idWebinar);
         bool OnDemandCodeIsUnique(string onDemandCode);
+        IList<int> GetV3OrdersIdsByWebinar(int idWebinar);
     }
 }

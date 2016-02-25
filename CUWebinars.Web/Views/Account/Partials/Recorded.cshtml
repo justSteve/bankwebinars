@@ -41,12 +41,12 @@
                         {
                             onDemandClaim.OrderId = row.idOrder;
                             onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
-                            onDemandClaim.ExpiryDate = thisClaim.ExpiryDate.AddDays(1);
+                            onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
 
-                            if (onDemandClaim.ExpiryDate > DateTime.Now)
+                            if (onDemandClaim.ExpiryDate.AddDays(1) > DateTime.Today.AddHours(23))
                             {
                                 showMedia = true;
-                                accessPhrase = "will be accessible until " + onDemandClaim.ExpiryDate.ToShortDateString();
+                                accessPhrase = " The recording will be accessible through " + onDemandClaim.ExpiryDate.ToShortDateString() + ".";
                                 onDemandClaimUrl = "Need to share this event with a co-worker? Provide them this URL:<br />" +
                                                    "<a href=\"" + globalConfig.TenantURL + "/o/" + row.idOrder + "-" + thisClaim.OnDemandCode + "\"> <tt><b>" + globalConfig.TenantURL + "/o/" + row.idOrder + "-" + thisClaim.OnDemandCode + "</b></tt></a>";
 
@@ -89,7 +89,7 @@
                         </form>
                     </div>
                     <div class="container-fluid">
-                        @if (onDemandClaim.ExpiryDate > DateTime.Now)
+                        @if (showMedia)
                         {
                             if (row.RegistrationType.ShowRecordingNotifications == "Yes")
                             {

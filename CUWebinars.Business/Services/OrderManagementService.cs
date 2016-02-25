@@ -640,11 +640,6 @@ namespace CUWebinars.Business.Services
                 _orderRepository.SearchOrders(affiliateID, excludeUserIDs, skip, take, search);
         }
 
-        public string SetPostEventClaims(int webinarId)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool VerifyWebUserExists(int idUser)
         {
             return _webUserRepository.WebUserExists(idUser);
@@ -1241,6 +1236,8 @@ namespace CUWebinars.Business.Services
             foreach (var order in orders)
             {
                 Double[] i = _webinarRepository.GetCostOfUpgrades(order.OrderRows.Single().idRegType);
+
+                
 
                 Double basePrice = i[0];
                 Double cost6 = i[1];
@@ -1947,6 +1944,11 @@ namespace CUWebinars.Business.Services
         public bool OnDemandCodeIsUnique(string onDemandCode)
         {
             return _orderRepository.OnDemandCodeIsUnique(onDemandCode);
+        }
+
+        public IList<int> GetV3OrdersIdsByWebinar(int idWebinar)
+        {
+            return _webinarRepository.GetV3OrdersIdsByWebinar(idWebinar);
         }
 
 
