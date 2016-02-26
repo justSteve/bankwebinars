@@ -159,10 +159,10 @@ namespace CUWebinars.Business.Repository
 
         public void DeleteOrder(Order order)
         {
-            
+
 
             //order.OrderStatus = OrderStatus.Canceled;
-            
+
             //SaveChanges();
             Remove(order);
         }
@@ -361,7 +361,7 @@ namespace CUWebinars.Business.Repository
             var orders = ((TTSWebinarsContext)db).OrderRows
                 .Include(or => or.Order)
                 .Where(or => or.RegistrationType.ShowRecordingNotifications == "Yes")
-                .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Submitted)
+                .Where(o => o.Order.OrderStatus == OrderStatus.Paid ||  o.Order.OrderStatus == OrderStatus.Billed || o.Order.OrderStatus == OrderStatus.Submitted)
                 .Where(or => or.Webinar.Status == WebinarStatus.Recorded)
                 .Select(o => o.Order);
             return GetLoadedEntitiesForOrder(orders);
@@ -454,7 +454,7 @@ namespace CUWebinars.Business.Repository
                 .Where(or => or.idWebinar == idWebinar)
                 .Where(or => or.RegistrationType.ShowLiveNotifications == "Yes")
                 .Where(or => or.RowStatus == OrderRowStatus.Active)
-                .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Submitted)
+                .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Billed || o.Order.OrderStatus == OrderStatus.Submitted)
                 .Select(o => o.Order);
 
             return GetLoadedEntitiesForOrder(orders);
@@ -494,7 +494,7 @@ namespace CUWebinars.Business.Repository
                 .Include(or => or.Order)
                 .Where(or => or.idWebinar == idWebinar)
                 .Where(or => or.RegistrationType.ShowRecordingNotifications == "Yes")
-                .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Submitted)
+                .Where(o => o.Order.OrderStatus == OrderStatus.Paid ||  o.Order.OrderStatus == OrderStatus.Billed || o.Order.OrderStatus == OrderStatus.Submitted)
                 .Select(o => o.Order);
             return GetLoadedEntitiesForOrder(orders);
         }
@@ -695,14 +695,14 @@ namespace CUWebinars.Business.Repository
 
             foreach (var order in orders)
             {
-                order.ShippingFirstName  = shippingAddress.Name.Split(' ')[0];
+                order.ShippingFirstName = shippingAddress.Name.Split(' ')[0];
                 order.ShippingLastName = shippingAddress.Name.Split(' ')[1];
                 order.ShippingAddress = shippingAddress.StreetAddress;
                 order.ShippingAddress2 = shippingAddress.StreetAddress2;
                 order.ShippingCity = shippingAddress.City;
                 order.ShippingState = shippingAddress.State;
                 order.ShippingZip = shippingAddress.Zip;
-                
+
             }
             db.SaveChanges();
         }

@@ -922,15 +922,18 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (email == null) throw new ArgumentNullException(@"email");
             if (row == null) throw new ArgumentNullException(@"row");
 
-            
-
             try
             {
                 if (!OnDemandCodeIsUnique(row.OnDemandCode))
                 {
-                    row.OnDemandCode = RandomHelpers.GetUniqueCode(5);
-
+                    var fromVal = row.OnDemandCode;
+                    while (!OnDemandCodeIsUnique(row.OnDemandCode))
+                    {
+                        row.OnDemandCode = RandomHelpers.GetUniqueCode(5);
+                    }
+                    _logger.Warn("OnDemand Order Changed " + row.idOrder + " from: " + fromVal + " to: " + row.OnDemandCode);
                 }
+
                 _orderManagementService.SaveChanges();
                 _membershipService.AddClaimForPostEventMaterials(email, row,
                     _orderManagementService.CalculatePostEventMaterialsAccessExpiry(row), _globalConfig.Tenant);
@@ -968,7 +971,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _logger.Fatal("InsertOnDemandClaim" + ex);
             }
 
-            var result = _globalConfig.TenantURL +"/o/" + orderId + "-" + order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).OnDemandCode;
+            var result = _globalConfig.TenantURL + "/o/" + orderId + "-" + order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).OnDemandCode;
             return result;
         }
 

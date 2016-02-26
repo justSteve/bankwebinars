@@ -128,6 +128,7 @@ namespace CUWebinars.Business.Notification.Email
                 catch (InvalidOperationException ex)
                 {
                     tmpMsg = "WriteLine MailerInvalidOperationException: " + destinationEmailAddress;
+                    tmpMsg += " Addressee: " + notificationMessage.To;
                     tmpMsg += " Subject: " + notificationMessage.Subject;
                     tmpMsg += " WriteLineMsg: " + ex.Message;
                     tmpMsg += " Timestamp was: " + timeStamp;
@@ -137,6 +138,7 @@ namespace CUWebinars.Business.Notification.Email
                 catch (SmtpFailedRecipientsException)
                 {
                     tmpMsg = "WriteLine MailerSmtpFailedRecipientsException: " + destinationEmailAddress;
+                    tmpMsg += " Addressee: " + notificationMessage.To; 
                     tmpMsg += " Subject: " + notificationMessage.Subject;
                     tmpMsg += " Timestamp was: " + timeStamp;
                     _logger.Error(tmpMsg);
@@ -146,6 +148,7 @@ namespace CUWebinars.Business.Notification.Email
                 {
                     System.Threading.Thread.Sleep(2000);
                     tmpMsg = "WriteLine MailerSmtpException: " + destinationEmailAddress;
+                    tmpMsg += " Addressee: " + notificationMessage.To; 
                     tmpMsg += " Subject: " + notificationMessage.Subject;
                     tmpMsg += " WriteLineMsg: " + ex.Message;
                     tmpMsg += " Timestamp was: " + timeStamp;
@@ -155,6 +158,7 @@ namespace CUWebinars.Business.Notification.Email
                 {
                     System.Threading.Thread.Sleep(2000);
                     tmpMsg = "WriteLine Exception: " + destinationEmailAddress;
+                    tmpMsg += " Addressee: " + notificationMessage.To; 
                     tmpMsg += " Subject: " + notificationMessage.Subject;
                     tmpMsg += " WriteLineMsg: " + exception.Message;
                     tmpMsg += " Timestamp was: " + timeStamp;
@@ -162,6 +166,7 @@ namespace CUWebinars.Business.Notification.Email
                 }
 
                 tmpMsg = "MailerSent: " + destinationEmailAddress;
+                tmpMsg += " Addressee: " + notificationMessage.To; 
                 tmpMsg += " Subject: " + notificationMessage.Subject;
                 tmpMsg += " Timestamp was: " + timeStamp;
 

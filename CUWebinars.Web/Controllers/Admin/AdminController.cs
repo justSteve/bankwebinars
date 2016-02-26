@@ -218,11 +218,11 @@ namespace CUWebinars.Web.Controllers.Admin
 
         public ActionResult SetAffiliateAssignedToOrder(int? idAffiliate, int? idOrder)
         {
+            var originalAffiliate = new AffiliateRepository().FindByIdWithIncluding(order.idAffiliate);
             var order = _orderManagementService.GetOrderByIdThin(idOrder.Value);
             order.idAffiliate = idAffiliate.Value;
             //_orderManagementService.SaveChanges();
 
-            var originalAffiliate = new AffiliateRepository().FindByIdWithIncluding(order.idAffiliate);
             var newAffiliate = new AffiliateRepository().FindByIdWithIncluding(idAffiliate.Value);
             //            var orderUser = _membershipService.GetUserByEmail(order.BillingEmail);
 
@@ -231,8 +231,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                   newAffiliate.ttsDomain + " by " + User.Identity.Name +
                                   " on " + TtsConfig.UtcNowAsCts.ToShortDateString() +
                                   "</div>";
-
-            if (!ReferenceEquals(null, order))
+            try
             {
                 //following copies pattern found at WebinarController | Identify
                 JObject existingJObject = null;
@@ -268,6 +267,12 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 _orderManagementService.SaveChanges();
 
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("SetAffiliateAssigedToOrder: ", ex);
+                throw;
             }
 
             _logger.Info(buildMessage);
@@ -305,70 +310,70 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(new { Result = WebUiConstants.Success });
         }
 
-        public ActionResult ManageOrderFromDetails(int? id)
-        {
-            if (id.HasValue)
-            {
-                if (id == 0)
-                    return RedirectToAction("ManageOrder");
+        //public ActionResult ManageOrderFromDetails(int? id)
+        //{
+        //    if (id.HasValue)
+        //    {
+        //        if (id == 0)
+        //            return RedirectToAction("ManageOrder");
 
-                var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant,
-                    _orderManagementService.GetOrderById(id.Value).BillingEmail);
-                var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
+        //        var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant,
+        //            _orderManagementService.GetOrderById(id.Value).BillingEmail);
+        //        var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
 
-                var model = BuildManageOrderEditModel(id.Value);
+        //        var model = BuildManageOrderEditModel(id.Value);
 
-                if (model.Order.WebUser.email != model.Order.BillingEmail)
-                {
-                    model.Order.WebUser = _membershipService.GetUserByEmail(model.Order.BillingEmail);
-                    if (model.Order.WebUser != null)
-                        _orderManagementService.SaveChanges();
-                }
+        //        if (model.Order.WebUser.email != model.Order.BillingEmail)
+        //        {
+        //            model.Order.WebUser = _membershipService.GetUserByEmail(model.Order.BillingEmail);
+        //            if (model.Order.WebUser != null)
+        //                _orderManagementService.SaveChanges();
+        //        }
 
-                var onDemandClaim = new PostEventClaim();
-                foreach (
-                    var claim in
-                        claimsViewModel.UserClaims.Where(
-                            c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials"))
-                {
-                    var singleOrDefault = model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                    if (singleOrDefault != null && claim.Value.Contains(singleOrDefault.OnDemandCode))
-                    {
-                        var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
+        //        var onDemandClaim = new PostEventClaim();
+        //        foreach (
+        //            var claim in
+        //                claimsViewModel.UserClaims.Where(
+        //                    c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials"))
+        //        {
+        //            var singleOrDefault = model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+        //            if (singleOrDefault != null && claim.Value.Contains(singleOrDefault.OnDemandCode))
+        //            {
+        //                var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
 
-                        onDemandClaim.OrderId = model.Order.idOrder;
-                        onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
-                        onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
+        //                onDemandClaim.OrderId = model.Order.idOrder;
+        //                onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
+        //                onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
 
-                        model.ClaimByOrderViewModel = onDemandClaim;
-                    }
-                }
+        //                model.ClaimByOrderViewModel = onDemandClaim;
+        //            }
+        //        }
 
-                model.PostEventAccessExpires = onDemandClaim.ExpiryDate;
+        //        model.PostEventAccessExpires = onDemandClaim.ExpiryDate;
 
-                return View(model);
-            }
+        //        return View(model);
+        //    }
 
-            //  should never reach here as RouteConfig will not route here with anything but an integer > 0.
-            throw new NullReferenceException(
-                "Query string parameter has to be an positive integer for the ManageOrderFromDetails action.");
-        }
+        //    //  should never reach here as RouteConfig will not route here with anything but an integer > 0.
+        //    throw new NullReferenceException(
+        //        "Query string parameter has to be an positive integer for the ManageOrderFromDetails action.");
+        //}
 
-        private Order ApplyModelChangesToOrder(ManageOrderEditModel model)
-        {
-            var order = _orderManagementService.GetOrderById(model.Id);
-            var orderRow = order.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
+        //private Order ApplyModelChangesToOrder(ManageOrderEditModel model)
+        //{
+        //    var order = _orderManagementService.GetOrderById(model.Id);
+        //    var orderRow = order.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
 
-            order.Total = model.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice;
-            order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus;
+        //    order.Total = model.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice;
+        //    order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus;
 
-            orderRow.RowPrice = order.Total;
-            orderRow.UnitPrice = model.DisplayRowPriceViewModel.PricesAndDiscounts.UnitPrice;
+        //    orderRow.RowPrice = order.Total;
+        //    orderRow.UnitPrice = model.DisplayRowPriceViewModel.PricesAndDiscounts.UnitPrice;
 
-            SyncAdditionalLocations(model, orderRow);
+        //    SyncAdditionalLocations(model, orderRow);
 
-            return order;
-        }
+        //    return order;
+        //}
 
         private void SyncAdditionalLocations(ManageOrderEditModel model, OrderRow orderRow)
         {
@@ -2646,7 +2651,7 @@ namespace CUWebinars.Web.Controllers.Admin
             IList<IDictionary<string, string>> responsePayload = new List<IDictionary<string, string>>();
             IDictionary<string, string> responsePayloadInner = new Dictionary<string, string>();
 
-            foreach (var order in orders.Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted))
+            foreach (var order in orders.Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Submitted))
             {
 
                 var orderRow = order.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);

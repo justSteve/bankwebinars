@@ -1468,7 +1468,7 @@ namespace CUWebinars.Business.Services
                     if (!ReferenceEquals(myRow.Discount.PercentOff, null))
                     {
                         amountToReduce = (myRow.Discount.PercentOff * 100) /
-                                         Convert.ToDecimal(string.Format("{0:0.00}", myRow.Order.Total));
+                                         Convert.ToDecimal(string.Format("{0:0.00}", myRow.UnitPrice));
 
                         sb.Append(
                             "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");

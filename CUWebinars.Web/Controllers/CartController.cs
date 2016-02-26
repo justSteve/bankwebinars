@@ -672,6 +672,17 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
+        //handle search engine cra
+        public ActionResult ExpressCheckout4IE1()
+        {
+            return Content("Nothing for Search Engines here!");
+        }
+
+
+        public ActionResult ExpressCheckout4IE1CU()
+        {
+            return Content("Nothing for Search Engines here!");
+        }
 
 
         public ActionResult ExpressCheckout(int? idOrder, int? idWebinar, int? idAffiliate, string email)
