@@ -185,6 +185,7 @@
     <Compile Include="CQS\QueryHandlers\OrderManagementQueryHandlers.cs" />
     <Compile Include="CQS\QueryProcessor.cs" />
     <Compile Include="Models\AdditionalLocationsLookupPrice.cs" />
+    <Compile Include="Models\AffiliateReportDTO.cs" />
     <Compile Include="Models\DiscountType.cs">
       <SubType>Code</SubType>
     </Compile>

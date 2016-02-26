@@ -164,6 +164,8 @@ namespace CUWebinars.Web.App_Start
 
                 return new AffiliateManagementService(
                    loggerForAffiliateManagementService,
+                    new OrderRepository(sharedContext),
+                    new WebinarRepository(sharedContext), 
                    new AffiliateRepository(sharedContext)
                     );
             }).InRequestScope();

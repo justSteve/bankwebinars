@@ -2206,7 +2206,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 _logger.Info(addLocEmails.TrimEnd(','));
 
-            
+
                 SyncAdditionalLocations(manageOrderEditModel, orderRow);
             }
 
