@@ -211,6 +211,7 @@
     <Compile Include="Models\QuizUserAnswer.cs" />
     <Compile Include="Models\QuizUserOrder.cs" />
     <Compile Include="Models\QuizWithQuestion.cs" />
+    <Compile Include="Models\Royalty.cs" />
     <Compile Include="Models\SearchDTO.cs" />
     <Compile Include="Models\TimeLimit.cs" />
     <Compile Include="Models\UserDTO.cs" />

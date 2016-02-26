@@ -454,6 +454,17 @@ function getOrderStatusHtml() {
                }
            },
            // [4] Affiliate Column
+            {
+                "aTargets": [4], // OrderDate column
+                "mData": "Affiliate_ttsDomain",
+                "mRender": function (data, type, full) {
+
+                    var royaltyHtml = full.Royalty;
+
+                    return "<div style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</br>" + royaltyHtml + "</div>";
+                }
+            },
+
            // [5] Resends Column
             {
 
