@@ -218,8 +218,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
         public ActionResult SetAffiliateAssignedToOrder(int? idAffiliate, int? idOrder)
         {
-            var originalAffiliate = new AffiliateRepository().FindByIdWithIncluding(order.idAffiliate);
             var order = _orderManagementService.GetOrderByIdThin(idOrder.Value);
+            var originalAffiliate = new AffiliateRepository().FindByIdWithIncluding(order.idAffiliate);
             order.idAffiliate = idAffiliate.Value;
             //_orderManagementService.SaveChanges();
 
@@ -281,34 +281,34 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(new { Result = WebUiConstants.Success, NewAffiliate = newAffiliate.ttsDomain });
         }
 
-        public ActionResult ManageOrder()
-        {
-            return View();
-        }
+        //public ActionResult ManageOrder()
+        //{
+        //    return View();
+        //}
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken(Order = 0)]
-        [HandleAjaxException(Order = 1)]
-        public ActionResult ManageOrder(ManageOrderEditModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var newOrder = ApplyModelChangesToOrder(model);
-                var oldOrder = model.Order;
+        //[HttpPost]
+        //[ValidateAntiForgeryToken(Order = 0)]
+        //[HandleAjaxException(Order = 1)]
+        //public ActionResult ManageOrder(ManageOrderEditModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var newOrder = ApplyModelChangesToOrder(model);
+        //        var oldOrder = model.Order;
 
-                //var orderchanges = new OrderChanges
-                //{
+        //        //var orderchanges = new OrderChanges
+        //        //{
 
-                //}
+        //        //}
 
-                //model.PostEventAccessExpires = _membershipService.SetPostEventAccessExpireyDate(userAccount, id.Value);
+        //        //model.PostEventAccessExpires = _membershipService.SetPostEventAccessExpireyDate(userAccount, id.Value);
 
-                _orderManagementService.UpdateOrderByAdmin(newOrder);
-            }
+        //        _orderManagementService.UpdateOrderByAdmin(newOrder);
+        //    }
 
-            return Json(new { Result = WebUiConstants.Success });
-        }
+        //    return Json(new { Result = WebUiConstants.Success });
+        //}
 
         //public ActionResult ManageOrderFromDetails(int? id)
         //{
