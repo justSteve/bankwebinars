@@ -244,7 +244,7 @@ OCA.initializeFunctions = function () {
                 BillingAddress: $('#AdjustUserDetailsPanel_BillingAddress').val(),
                 ShippingAddress: $('#AdjustUserDetailsPanel_Shipping').val()
             };
-            alert($("#AdjustUserDetailsPanel_Email").val());
+
             $.ajax({
                 type: 'POST',
                 contentType: constants.JsonContentType,

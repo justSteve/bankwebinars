@@ -2353,6 +2353,25 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             return Content("Ok");
         }
+
+
+        [HandleAjaxException]
+        [HttpPost]
+        [AllowAnonymous]
+        public JsonResult BuildAffiliateInvoice(int? idWebinar, string aff)
+        {
+            if (idWebinar != null)
+            {
+                AffiliateInvoiceDTO model = _affiliateManagementService.GetAffiliateInvoice(idWebinar.Value, aff);
+
+                JsonResult jsonresult = Json(model);
+                jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
+
+                return jsonresult;
+            }
+            return null;
+        }
+
         [HandleAjaxException]
         [HttpPost]
         [AllowAnonymous]
@@ -2401,6 +2420,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     List<OrderDTO> data = new DTResultSetOrders().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtoSource, columnSearch);
                     int count = new DTResultSetOrders().Count(param.Search.Value, dtoSource, columnSearch);
+
+                    //_affiliateManagementService.BuildAffiliateReport(dtsource, webinarId);
 
                     DataTableService<OrderDTO> result = new DataTableService<OrderDTO>
                     {

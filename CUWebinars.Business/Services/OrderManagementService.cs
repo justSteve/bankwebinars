@@ -1951,6 +1951,11 @@ namespace CUWebinars.Business.Services
             return _webinarRepository.GetV3OrdersIdsByWebinar(idWebinar);
         }
 
+        public List<Order> GetOrdersByWebinar(int idWebinar)
+        {
+            return _webinarRepository.GetOrdersByWebinar(idWebinar).ToList();
+        }
+
 
         public IList<Order> GetV3OrdersByOnDemandClaim()
         {

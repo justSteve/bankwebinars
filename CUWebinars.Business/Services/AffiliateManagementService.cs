@@ -31,23 +31,10 @@ namespace CUWebinars.Business.Services
             _logger = logger;
         }
 
-        private void CalculateAffiliateRevenuesAndComissions(IList<AffiliateReportDTO> reportData)
+        private void ComputeRoyalty(IList<Order> orders)
         {
             //Calculate total revenues
-            foreach (AffiliateReportDTO registration in reportData)
-            {
-                foreach (Order order in registration.Orders)
-                {
-                    if (order.OrderStatus == OrderStatus.Submitted
-                        || order.OrderStatus == OrderStatus.Billed
-                        || order.OrderStatus == OrderStatus.Paid)
-                    {
-                        registration.TotalRevenues += order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).RowPrice;
-                    }
-                }
-            }
-
-            //Calculate total commissions
+            // saves that calculation to Row.Royalty
 
             //NoCommission = 0,
             //Sliding4TierNoCCBreak =1,
@@ -56,13 +43,14 @@ namespace CUWebinars.Business.Services
             //Flat40 = 3,
             //Flat35 = 4
 
-            foreach (AffiliateReportDTO registration in reportData)
+            //Calculate total commissions
+            foreach (var registration in orders)
             {
-                switch (registration.Affiliate.CommissionModel)
+                 switch (registration.Affiliate.CommissionModel)
                 {
                     case 1: // Sliding4TierNoCCBreak:
                         int numberOfRegistrations = 0;
-                        foreach (Order order in registration.Orders)
+                        foreach (Order order in orders.OrderBy(o => o.OrderDate))
                         {
                             OrderRow row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
                             decimal commissionPercent = 0.0M;
@@ -83,65 +71,40 @@ namespace CUWebinars.Business.Services
                             {
                                 commissionPercent = 0.3M;
                             }
-
-                            //if (row.Webinar.IsSubscriptionWebinar)
-                            //{
-                            //    commissionPercent = 0.35M;
-                            //}
                             row.Royalty = row.RowPrice * commissionPercent;
-                            registration.TotalCommissions += row.Royalty;
+                            //registration.TotalCommissions += row.Royalty;
                         }
                         break;
 
-
                     case 3:// CommissionModel.Flat40:
-
-                        foreach (Order order in registration.Orders)
+                        foreach (Order order in orders.OrderBy(o => o.OrderDate))
                         {
                             OrderRow row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
                             decimal commissionPercent = 0.0M;
-                            //if (row.Webinar.IsSubscriptionWebinar)
-                            //{
-                            //    commissionPercent = 0.35M;
-                            //}
-                            //else
-                            //{
+                            
                             commissionPercent = 0.4M;
-                            //}
-
+                            
                             row.Royalty = row.RowPrice * commissionPercent;
-                            registration.TotalCommissions += row.Royalty;
+                            //registration.TotalCommissions += row.Royalty;
                         }
                         break;
                     case 4:// CommissionModel.Flat35:
-                        foreach (Order order in registration.Orders)
+                        foreach (Order order in orders.OrderBy(o => o.OrderDate))
                         {
                             OrderRow row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
                             decimal commissionPercent = 0.35M;
-                            //if (row.Order.PaymentType == PaymentType.CreditCard ||
-                            //    row.Webinar.IsSubscriptionWebinar)
-                            //{
-                            //    commissionPercent = 0.35M;
-                            //}
-                            //else
-                            //{
-                            //    commissionPercent = 0.4M;
-                            //}
-
+                            
                             row.Royalty = row.RowPrice * commissionPercent;
-                            registration.TotalCommissions += row.Royalty;
+                            //registration.TotalCommissions += row.Royalty;
                         }
                         break;
-                    case 0:// CommissionModel.NoCommission:
-                        registration.TotalCommissions = 0;
-                        break;
-
 
                     default:
                         throw new TTSException("Invalid commission model " +
                             registration.Affiliate.CommissionModel);
 
-                    //not currently in use:
+                    //:not currently in use
+                    #region not currently in use
                     //case 2:// CommissionModel.Flat35plusCC30:
                     //    foreach (OrderRow row in registration.OrderRows)
                     //    {
@@ -195,123 +158,184 @@ namespace CUWebinars.Business.Services
                     //        row.Royalty = row.RowPrice * commissionPercent;
                     //        registration.TotalCommissions += row.Royalty;
                     //    }
-                    //    break;
+                    //    break; 
+                    #endregion
 
                 }
             }
+
+            _orderRepository.SaveChanges();
         }
+        
         public virtual IList<AffiliateReportDTO> AffiliateReport(int webinarID)
         {
-            IList<Order> orders = _webinarRepository.GetOrdersByWebinar(webinarID).ToList();
+            List<Order> orders = _webinarRepository.GetOrdersByWebinar(webinarID).ToList();
 
             IList<AffiliateReportDTO> reportData = BuildAffiliateReport(orders, webinarID);
             return reportData;
         }
 
 
-        //public virtual AffiliateInvoiceDTO AffiliateInvoice(int webinarID, int affiliateID)
-        //{
-        //    IList<OrderRow> orderRows = OrderFacade.Instance.LoadSubmittedOrderRowsPerWebinar(webinarID,
-        //        affiliateID);
-
-        //    IList<AffiliateInvoiceDTO> reportData = BuildAffiliateInvoice(orderRows, webinarID);
-        //    if (reportData.Count == 0)
-        //    {
-        //        return new AffiliateInvoiceDTO { WebinarID = webinarID, Affiliate = AffiliateFacade.Instance.Load(affiliateID) };
-        //    }
-
-        //    return reportData[0];
-        //}
-
-        public virtual AffiliateReportDTO AffiliateReport(int webinarID, int affiliateID)
+        public virtual AffiliateInvoiceDTO AffiliateInvoice(int webinarID, int affiliateID)
         {
-            IList<Order> orders = _webinarRepository.GetOrdersByWebinar(webinarID).ToList();
+            List<Order> orders = _webinarRepository.GetOrdersByWebinar(webinarID)
+                .Where(o => o.idAffiliate == affiliateID).ToList();
+                
 
-            IList<AffiliateReportDTO> reportData = BuildAffiliateReport(orders, webinarID);
+            IList<AffiliateInvoiceDTO> reportData = BuildAffiliateInvoice(orders, webinarID);
             if (reportData.Count == 0)
             {
-                return new AffiliateReportDTO { WebinarID = webinarID, Affiliate = FindById(affiliateID) };
+                return new AffiliateInvoiceDTO { WebinarID = webinarID, Affiliate = FindById(affiliateID) };
             }
 
             return reportData[0];
         }
 
-        private IList<AffiliateReportDTO> BuildAffiliateReport(IList<Order> orders, int webinarID)
+        public virtual AffiliateReportDTO AffiliateReport(int webinarID, int affiliateID)
         {
-            var registrations =
-                from o in orders
-                where o.Affiliate != null
-                orderby o.idOrder ascending
-                group o by o.Affiliate into u
-                select new AffiliateReportDTO
-                {
-                    WebinarID = webinarID,
-                    Affiliate = u.Key,
-                    Orders = u.ToList<Order>(),
-                };
+            List<Order> orders = _webinarRepository.GetOrdersByWebinar(webinarID).ToList();
 
-            IList<AffiliateReportDTO> reportData = registrations.ToList<AffiliateReportDTO>();
+            IList<AffiliateReportDTO> reportData = BuildAffiliateReport(orders, webinarID);
+            if (reportData.Count == 0)
+            {
+                return new AffiliateReportDTO { WebinarId = webinarID, Affiliate = FindById(affiliateID) };
+            }
 
-            CalculateAffiliateRevenuesAndComissions(reportData);
+            return reportData[0];
+        }
+
+        public IList<AffiliateReportDTO> BuildAffiliateReport(List<Order> orders, int webinarID)
+        {
+            var reportData =
+                orders.Where(o => o.Affiliate != null)
+                    .OrderBy(o => o.OrderDate)
+                    .GroupBy(o => o.Affiliate)
+                    .Select(u => new AffiliateReportDTO
+                    {
+                        WebinarId = webinarID,
+                        Affiliate = u.Key,
+                        Orders = u.ToList(),
+                    }).ToList();
+
+            //ComputeAffiliateRevenuesAndComissions(reportData);
 
             return reportData;
         }
-        //private IList<AffiliateInvoiceDTO> BuildAffiliateInvoice(IList<OrderRow> orderRows, int webinarID)
-        //{
-        //    var registrations =
-        //        from r in orderRows
-        //        where r.Order.Affiliate != null
-        //        orderby r.Order.ID ascending
-        //        group r by r.Order.Affiliate into u
-        //        select new AffiliateInvoiceDTO
-        //        {
-        //            WebinarID = webinarID,
-        //            Affiliate = u.Key,
-        //            OrderRows = u.ToList<OrderRow>(),
-        //        };
 
-        //    IList<AffiliateInvoiceDTO> reportData = registrations.ToList<AffiliateInvoiceDTO>();
+        
 
-        //    CalculateAffiliateRoyalties(reportData);
+        public IList<AffiliateInvoiceDTO> BuildAffiliateInvoice(List<Order> orders, int webinarID)
+        {
+            IList<AffiliateInvoiceDTO> reportData = orders.Where(o => o.Affiliate != null)
+                    .OrderBy(o => o.idOrder)
+                    .GroupBy(o => o.Affiliate)
+                    .Select(u => new AffiliateInvoiceDTO()
+                    {
+                        WebinarID = webinarID,
+                        Affiliate = u.Key,
+                        Orders = u.ToList<Order>(),
+                    }).ToList();
+            
 
-        //    return reportData;
-        //}
+            CalculateAffiliateRoyalties(reportData);
 
-        //private void CalculateAffiliateRoyalties(IList<AffiliateInvoiceDTO> reportData)
-        //{
-        //    //Calculate total revenues
-        //    foreach (AffiliateInvoiceDTO registration in reportData)
-        //    {
-        //        foreach (OrderRow row in registration.OrderRows)
-        //        {
-        //            if (registration.Affiliate.BillingModel == "TTS")
-        //            {
-        //                if (row.Status == OrderRowStatus.Submitted || row.Status == OrderRowStatus.Billed)
-        //                {
-        //                    registration.TotalOnBilled += row.RowPrice;
+            return reportData;
+        }
 
-        //                }
-        //                if (row.Status == OrderRowStatus.Paid)
-        //                {
-        //                    registration.TotalOnPaid += row.RowPrice;
-        //                }
-        //            }
+        public AffiliateInvoiceDTO GetAffiliateInvoice(int idWebinar, string aff)
+        {
+            decimal _totalDue = 0;
+            decimal _totalOnBilled = 0;
+            decimal _totalDiscounts = 0;
+            decimal _totalOnPaid = 0;
+            decimal _totalRoyalties = 0;
+            int idAffiliate = LoadByTTSDomain(aff).idUserAff;
+            Webinar webinar = _webinarRepository.FindById(idWebinar);
+            var orders = _orderRepository.GetOrdersByWebinar(idWebinar).Where(a => a.idAffiliate == idAffiliate).ToList();
+           IList<OrderRowModel> rows = new List<OrderRowModel>();
 
-        //            if (row.Status == OrderRowStatus.Submitted || row.Status == OrderRowStatus.Billed ||
-        //                row.Status == OrderRowStatus.Paid)
-        //            {
-        //                registration.TotalOnPaid += row.RowPrice;
-        //            }
-        //        }
-        //    }
+            ComputeRoyalty(orders);
 
-        //    //Calculate total commissions
-        //    foreach (AffiliateInvoiceDTO registration in reportData)
-        //    {
-        //        var order = OrderFacade.Instance.LoadOrderByOrderRowID(registration.OrderRows.SingleOrDefault().ID);
+            var ordinalHolder = 0;
+            foreach (var order in orders)
+            {
+                ordinalHolder++;
+                var orow = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
+                OrderRowModel row = new OrderRowModel
+                {
+                    Royalty = orow.Royalty.ToString(),
+                    Email = order.BillingEmail,
+                    Institution = order.Institution,
+                    Name = order.FirstName + " " + order.LastName,
+                    OrderID = order.idOrder.ToString(),
+                    Percent = GetRowPercent(ordinalHolder, FindById(idAffiliate).CommissionModel ),
+                    Price = order.Total.ToString(),
+                    Discount = (orow.UnitPrice - orow.RowPrice).ToString(),
+                    Status = order.OrderStatus.ToString()
+                };
+                rows.Add(row);
+            }
 
-        //    }
-        //}
+            var model = new AffiliateInvoiceDTO
+            {
+                AffiliateName = LoadByTTSDomain(aff).DisplayTitle,
+                InoviceDate = DateTime.Now.ToShortDateString(),
+                InvoiceId = "Invoice #: " + idAffiliate + '-' + idWebinar,
+                WebinarTitle = webinar.Title,
+                WebinarDate = webinar.Date.ToShortDateString(),
+                Orders = orders,
+                Rows = rows,
+                TotalDiscounts = _totalDiscounts,
+                TotalNetDue = _totalDue,
+                TotalOnBilled = _totalOnBilled,
+                TotalOnPaid = _totalOnPaid,
+                TotalRoyalties = _totalRoyalties
+
+            };
+            return model;
+        }
+
+        private string GetRowPercent(int ordinalHolder, byte commissionModel)
+        {
+            return "30%";
+        }
+
+        private void CalculateAffiliateRoyalties(IList<AffiliateInvoiceDTO> reportData)
+        {
+            //Calculate total revenues
+            foreach (AffiliateInvoiceDTO registration in reportData)
+            {
+                foreach (var order in registration.Orders)
+                {
+                    var row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
+                    if (registration.Affiliate.BillingModel == "TTS")
+                    {
+                        if (order.OrderStatus== OrderStatus.Submitted || order.OrderStatus== OrderStatus.Billed)
+                        {
+                            registration.TotalOnBilled += row.RowPrice;
+
+                        }
+                        if (order.OrderStatus== OrderStatus.Paid)
+                        {
+                            registration.TotalOnPaid += row.RowPrice;
+                        }
+                    }
+
+                    if (order.OrderStatus== OrderStatus.Submitted || order.OrderStatus== OrderStatus.Billed ||
+                        order.OrderStatus== OrderStatus.Paid)
+                    {
+                        registration.TotalOnPaid += row.RowPrice;
+                    }
+                }
+            }
+
+            //Calculate total commissions
+            //foreach (AffiliateInvoiceDTO registration in reportData)
+            //{
+            //    var order = _orderRepository.GetOrderById(registration.id);
+
+            //}
+        }
             
             
         
@@ -374,5 +398,6 @@ namespace CUWebinars.Business.Services
         {
             throw new NotImplementedException();
         }
+
     }
 }

@@ -59,5 +59,6 @@ namespace CUWebinars.Business.Repository
         void UpdateShippingAddressDetails(Address shippingAddress, int idUser);
 
         bool OnDemandCodeIsUnique(string onDemandCode);
+        IList<Order> GetOrdersByWebinar(int idWebinar);
     }
 }

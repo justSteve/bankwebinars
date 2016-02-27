@@ -132,5 +132,6 @@ namespace CUWebinars.Business.Services
         RegType GetRegTypeByLabel(string regType, int idWebinar);
         bool OnDemandCodeIsUnique(string onDemandCode);
         IList<int> GetV3OrdersIdsByWebinar(int idWebinar);
+        List<Order> GetOrdersByWebinar(int idWebinar);
     }
 }

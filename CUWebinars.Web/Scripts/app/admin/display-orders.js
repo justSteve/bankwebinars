@@ -174,8 +174,36 @@ function getOrderStatusHtml() {
             });
         });
 
+        $('.dataTable').on("click", ".CalculateRoyalties", function () {
+            
+            var self = this;
+            
+            var payload = { idWebinar: this.getAttribute('data-w'), aff: this.getAttribute('data-a') };
 
+            $.ajax({
+                type: 'POST',
+                contentType: constants.JsonContentType,
+                cache: false,
+                url: '/Admin/BuildAffiliateInvoice',
+                dataType: constants.JsonDataType,
+                data: JSON.stringify(payload),
+                beforeSend: function() {
+                    $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
+                }
+            }).done(function(result) {
 
+                if (result.Result === 'Success') {
+                    $('#InputFormFields').append(successScreenMessage);
+                } else if (result.Result === 'Fail') {
+                    $('#InputFormFields').append(noOrderScreenMessage);
+                }
+                $('#spinnerLabel').remove();
+            }).fail(function() {
+                alert("Operation Failed. Call Steve!");
+            }).always(function() {
+                $('#loadingSpinner').remove();
+            });
+        });
 
         $('.dataTable').on("click", ".ResendConnectionInfoButton", function () {
             var self = this;
@@ -371,12 +399,9 @@ function getOrderStatusHtml() {
                     return data = JSON.stringify(data);
                 }
             },
-            // "dom": 'frtiS',
+
             "dom": '<ilf<t>ip>',
             "pageLength": 10,
-            //"scrollY": 500,
-            //"scrollX": true,
-            //"scrollCollapse": true,
             "scroller": {
                 loadingIndicator: false
             },
@@ -460,8 +485,7 @@ function getOrderStatusHtml() {
                 "mRender": function (data, type, full) {
 
                     var royaltyHtml = full.Royalty;
-
-                    return "<div style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</br>" + royaltyHtml + "</div>";
+                    return "<div class=\"CalculateRoyalties\" data-w=" + parseInt(DO.webinarIdDiv.text()) + " data-a='" + full.Affiliate_ttsDomain + "' style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</br>" + royaltyHtml + "</div>";
                 }
             },
 
