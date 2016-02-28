@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Web.Mvc;
 using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Web.Core.Orchestrators;
@@ -442,7 +443,7 @@ namespace CUWebinars.Web.Controllers
 
                 if (orderAlreadyExists != null)
                 {
-                    _logger.Warn("SignupAffiliate pulls existing order: " +  formModel.idUser +" " + formModel.idWebinar);
+                    _logger.Warn("SignupAffiliate pulls existing order: " + formModel.idUser + " " + formModel.idWebinar);
                     foreach (var order in orderAlreadyExists)
                     {
                         if (order.OrderStatus == OrderStatus.Submitted ||
@@ -609,11 +610,13 @@ namespace CUWebinars.Web.Controllers
         {
             if (idOrderRow.HasValue && idRegType.HasValue)
             {
-
                 try
                 {
-
                     var regType = _cartControllerOrchestrator.GetRegTypeById(idRegType.Value);
+
+                    var newRegType = regType.OptionLabel;
+                    var oldRegType = _cartControllerOrchestrator.GetOrderRowLoaded(idOrderRow.Value).RegistrationType.OptionLabel;
+
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(idOrderRow);
                     model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType = regType;
 
@@ -621,10 +624,16 @@ namespace CUWebinars.Web.Controllers
                     if (pricesAndDiscounts.Discount == null)
                         pricesAndDiscounts.Discount = new Discount();
 
+                    _logger.Info("EditRegTypeTo: " + newRegType + " From: " + oldRegType + " on orderId: " + model.Order.idOrder);
+                    var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+
+                    var updateRegTypeOnLegacy = dataOperations.UpdateRegTypeOnLegacy(idRegType.Value, model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar, model.Order.BillingEmail );
+
                     return
                         Json(
                             new
                             {
+                                updateRegTypeOnLegacy = updateRegTypeOnLegacy,
                                 regTypeShort = regType.OptionLabelShort,
                                 BasePrice = pricesAndDiscounts.UnitPrice,
                                 Discount = pricesAndDiscounts.TotalDiscount,
@@ -640,6 +649,9 @@ namespace CUWebinars.Web.Controllers
                     _logger.ErrorException(
                         String.Format("UpdateOrderDetails failed on {0} with {1} Session={2}", idRegType, exception.Message, _appHelper.GetUserAuditInfo()), exception);
                     ErrorSignal.FromCurrentContext().Raise(exception);
+
+                    return Json(new { Result = WebUiConstants.Fail });
+
                 }
 
                 return Json(new { Result = WebUiConstants.Success });

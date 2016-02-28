@@ -23,12 +23,12 @@
     </layout>
   </appender>
 
-  <!--<appender name="AdoNetAppender" type="log4net.Appender.AdoNetAppender">
+  <appender name="AdoNetAppender" type="log4net.Appender.AdoNetAppender">
     <threshold value="INFO" />
     <bufferSize value="1" />
     <connectionType value="System.Data.SqlClient.SqlConnection, System.Data,  Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-    --><!--<connectionString value="Data Source=tcp:bw33.database.windows.net,1433;Initial Catalog=BW33_;User Id=BW33Op@bw33;Password=AM69XtlC;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;" />--><!--
-    <connectionString value="Data Source=tcp:bw33.database.windows.net,1433;Initial Catalog=BW33_;User Id=BW33Op@bw33;Password=AM69XtlC;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;" />
+    <connectionString value="Data Source=tcp:bw33.database.windows.net,1433;Initial Catalog=BW33;User Id=BW33Op@bw33;Password=AM69XtlC;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;" />
+    <connectionString value="Data Source=tcp:bw33.database.windows.net,1433;Initial Catalog=BW33;User Id=BW33Op@bw33;Password=AM69XtlC;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;" />
     <commandText value="INSERT INTO Logger ([Date],[Level],[Message],[Exception], [Logger]) VALUES (@log_date, @log_level, @message, @exception, @logger)" />
     <parameter>
       <parameterName value="@log_date" />
@@ -65,9 +65,9 @@
         <conversionPattern value="%logger" />
       </layout>
     </parameter>
-  </appender>-->
+  </appender>
   <root>
-    <!--<appender-ref ref="AdoNetAppender" />-->
+    <appender-ref ref="AdoNetAppender" />
     <appender-ref ref="CsvFileAppender" />
 
     <appender-ref ref="FileAppender" />

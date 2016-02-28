@@ -1059,6 +1059,13 @@ namespace CUWebinars.Web.Controllers
                 {
                     _accountControllerOrchestrator.EditEmail(oldEmail, newEmail, _globalConfig.Tenant);
 
+
+                    var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
+
+                    var EditEmailAddressOnLegacy = dataOperations.EditEmailAddressOnLegacy(oldEmail, newEmail);
+
+
+
                     return Json(new
                     {
                         Result = WebUiConstants.Success

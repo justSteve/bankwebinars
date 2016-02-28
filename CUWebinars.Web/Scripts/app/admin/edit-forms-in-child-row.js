@@ -512,7 +512,7 @@ function updateEmail(e, thatThis) {
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
 
-            $("#edit-email").text("Edit Succeeded").addClass("btn btn-success");
+            $("#edit-email").text("Edit Failed").addClass("btn btn-danger");
             alert("/account/editemail: " + textStatus);
         }
     });
@@ -541,7 +541,11 @@ function updateRegType(item, orderId, newRegTypeId) {
         data: JSON.stringify(payLoad),
         success: function (data) {
             if (data) {
-
+                if (data.updateRegTypeOnLegacy == "Order Not Found") {
+                    alert("Order at Legacy was not found");
+                } else {
+                    alert(data.updateRegTypeOnLegacy);
+                }
                 // need to update the currently displaying regType and associated costs
                 $(".dropdown-toggle", $form).html(data.regTypeShort + "&nbsp;<b class=\"caret\"></b>");
                 $("#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice").html("$" + data.BasePrice);
