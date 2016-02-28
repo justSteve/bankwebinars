@@ -408,11 +408,12 @@ namespace CUWebinars.Web.Core.Orchestrators
             Institution saveInst = _membershipService.GetInstitutionById(model.EditFields.idInstitution);
             if (saveInst == null) throw new ArgumentNullException("saveInst");
 
-            saveInst.Address = updateFields.Address.Trim();
+            saveInst.Address = updateFields.Address ?? "";
+            if (updateFields.Address != null) saveInst.Address = updateFields.Address.Trim();
             saveInst.City = updateFields.City.Trim();
             saveInst.State = updateFields.State.Trim();
             saveInst.Zip = updateFields.Zip.Trim();
-            saveInst.Country = updateFields.Country.Trim();
+            saveInst.Country = updateFields.Country?? "US";
             saveInst.InstitutionName = updateFields.InstitutionName.Trim();
 
             if (ReferenceEquals(null, saveInst.Address))
@@ -463,7 +464,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 updateFields.Institution,
                 billingAddress,
                 shippingAddress,
-                updateFields.Title == null ? "na" : updateFields.Title.Trim(),
+                updateFields.Title == null ? "" : updateFields.Title.Trim(),
                 updateFields.SageAccountId
                 );
 

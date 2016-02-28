@@ -370,7 +370,7 @@ OCA.initializeFunctions = function () {
     };
 
     OCA.applyAdditionalLocations = function (e) {
-
+//this handler only applies to shopping cart AddLoc control - for grid editor see edit-forms-in-child-row
         e.preventDefault();
 
         var self = $(this);

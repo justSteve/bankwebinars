@@ -132,16 +132,19 @@
                             <div class="controls">
 
                                 <button id="addLocationsButton" class="btn btn-default btn-mini">Add?</button>
-
+                                @if (@Model.EditFields.NumberOfAdditionalLocations == 1)
+                                {
+                                    var a = 1;
+                                }
                                 Additional Locations: <span id="nrAddLocs">@Model.EditFields.NumberOfAdditionalLocations</span>
 
                             </div>
                             @Html.Raw(Model.EditFields.AdditionalLocationsRenderer.ToString())
                         </div>
-                        <div class="control-group">
-                            @*@Html.TextBoxFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions, new { id = "TotalCostOfOptionsText", disabled = "disabled" })*@
-                            <button id="UpdateAddLocsButton" class="btn btn-primary btn-mini">Submit</button>
-                        </div>
+    <div id="UpdateAddLocsButtonWrapper" class="control-group">
+        @*@Html.TextBoxFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions, new { id = "TotalCostOfOptionsText", disabled = "disabled" })*@
+        <button id="UpdateAddLocsButton" class="btn btn-primary btn-mini">Submit</button>
+    </div>
 
                     }
                 </div>

@@ -264,6 +264,8 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
 
                 order.AdminComments = existingJObject.ToString(Formatting.None);
+                //_membershipService.AddClaim(_membershipService.GetUserAccountByEmail(_globalConfig.Tenant, _globalConfig.TenantEmail)
+                //                ,CUWebinars.Business.Constants.ClaimTypes.CommentAdmin, "SetAffiliateAssignedToOrder: {" + newJson + "}");
 
                 _orderManagementService.SaveChanges();
 
@@ -774,6 +776,12 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     expressOrder.AdminComments = JsonHelpers.MergeJsonWithStoredField(expressOrder.AdminComments,
                         createdByExpressCheckout);
+
+                    //_membershipService.AddClaim(
+                    // _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, _globalConfig.TenantEmail)
+                    // ,CUWebinars.Business.Constants.ClaimTypes.CommentAdmin, JsonConvert.SerializeObject(createdByExpressCheckout)
+                       
+                    //    );
 
                     expressOrder.OrderStatus = OrderStatus.Submitted;
                     expressOrder.Origin = "ExpressCheckout";
@@ -2221,7 +2229,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 Json(
                     new
                     {
-
+                        regTypeShort = orderRow.RegistrationType.OptionLabelShort,
                         BasePrice = pricesAndDiscounts.UnitPrice,
                         Discount = pricesAndDiscounts.TotalDiscount,
                         OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,

@@ -129,10 +129,11 @@ function getOrderStatusHtml() {
 
     ns.getBillingCellHtml = function (discount, regTypeLabel, total) {
         //debugger;
+
         var showDiscount = discount;
 
         var billingHtml = regTypeLabel
-                            + showDiscount
+                            + (showDiscount +"")
                             + "<br />Total: $" + (total + "").replace(".00", "");
 
         return billingHtml;

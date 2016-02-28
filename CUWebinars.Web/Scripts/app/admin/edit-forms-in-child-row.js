@@ -95,7 +95,7 @@ function AttachDataTableEditEvents() {
 
 
         // form validation passed, save edited User fields to the database...
-        // could definitely use a "busy" cursor.
+        // 
 
         // the EditUser_Compact screen uses EditUserInfoModel directly, but we post
         //  it to the Account/EditUser Action as an EditUserViewModel.  both models contain an EditFields object,
@@ -489,7 +489,7 @@ function updateEmail(e, thatThis) {
     //if (!$form.valid()) {
 
     //}
-    // how can we di
+
 
     var data = $form.serialize();
     $.ajax({
@@ -498,18 +498,21 @@ function updateEmail(e, thatThis) {
         data: data,
         dataType: "json",
         type: "POST",
+
+        beforeSend: function () {
+            alert("H"); //  $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
+        }, // let ajax "complete" call remove
         success: function (data) {
-            console.log(data);
 
             var $cell = $("td.child-showing");
-            $("#edit-email").text("Edit is complete").addClass("btn btn-success");
+            $("#edit-email").text("Edit Succeeded").addClass("btn btn-success");
             $("#EditEmailModal").modal("hide");
 
             fireSuccessIndicator($cell);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
 
-            console.log(data);
+            $("#edit-email").text("Edit Succeeded").addClass("btn btn-success");
             alert("/account/editemail: " + textStatus);
         }
     });

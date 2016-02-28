@@ -16,6 +16,8 @@ namespace CUWebinars.Business.Constants
         public static readonly string UserIP = "UserIP";
 
         public static readonly string PostEventMaterialsWereAccessedKey = "PostEventMaterialsWereAccessed";
+        public static readonly string Elmah = "Elmah";
+        public static readonly string SessionRoot = "SessionRoot";
         public static readonly string OrderCreatedByImpersonatedUserKey = "OrderCreatedByImpersonatedUser";
         public static readonly string OrderCreatedByExpressCheckoutKey = "OrderCreatedByExpressCheckout";
         public static readonly string PayByCC = "PayByCC";

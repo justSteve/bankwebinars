@@ -189,6 +189,12 @@ namespace CUWebinars.Web.Core.Orchestrators
                             existingJObject = JObject.Parse(comments);
                             existingJObject.Add(newJson);
                         }
+                        //_membershipService.AddClaim(
+                        // _membershipService.GetUserAccountByEmail(_globalConfig.Tenant
+                        // , _globalConfig.TenantEmail)
+                        // , "SetUserAssignedToOrder",
+                        //   CUWebinars.Business.Constants.ClaimTypes.CommentAdmin
+                        //    );
 
                         order.AdminComments = existingJObject.ToString(Formatting.None);
 

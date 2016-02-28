@@ -617,7 +617,7 @@ namespace CUWebinars.Web.Controllers
                     editingUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
                 }
 
-                _logger.Info(string.Format("{0} is editing {1}", editingUser.email, orderId));
+                _logger.Info(string.Format("GetEditBillingForm: {0} opened {1}", editingUser.email, orderId));
                 var order = _orderManagementService.GetOrderById(orderId);
 
                 var editModel = BuildOrderInfoModel(order, "");
@@ -1052,19 +1052,28 @@ namespace CUWebinars.Web.Controllers
             if (!ReferenceEquals(null, user))
                 return Json(new { Result = WebUiConstants.Fail, EmailExists = "Yes" });
 
-            _logger.Info("Updating Email from " + oldEmail + " to: " + newEmail);
+            _logger.Info("Updating Email from " + oldEmail + " to: " + newEmail + " by: " + _appHelper.GetUserAuditInfo());
             if (ModelState.IsValid)
             {
                 try
                 {
                     _accountControllerOrchestrator.EditEmail(oldEmail, newEmail, _globalConfig.Tenant);
-                    return Json(new { Result = WebUiConstants.Success });
+
+                    return Json(new
+                    {
+                        Result = WebUiConstants.Success
+                        ,
+                        Msg = "UpdatedEmailTo: " + newEmail + " from: " + oldEmail
+                    });
+
+
                 }
                 catch (Exception exception)
                 {
                     _logger.ErrorException("In EditEmail Action: ", exception);
                     ErrorSignal.FromCurrentContext().Raise(exception);
                     return Json(new { Result = WebUiConstants.Fail });
+
                 }
             }
             return this.ModelStateJson(ModelState);
@@ -1496,7 +1505,7 @@ namespace CUWebinars.Web.Controllers
                         else
                         {
                             model.ChangePasswordSucceeded = false;
-                            _logger.Info("Account.PasswordResetConfirm Failed on "+model.Email+". Session=" +
+                            _logger.Info("Account.PasswordResetConfirm Failed on " + model.Email + ". Session=" +
                                          _appHelper.GetUserAuditInfo());
 
                             return Json(new { Result = "Fail" });
@@ -2081,7 +2090,7 @@ namespace CUWebinars.Web.Controllers
         {
             var errors = ModelState.Values.SelectMany(v => v.Errors); // Get all errors flattened
 
-            
+
 
             foreach (var error in errors)
             {

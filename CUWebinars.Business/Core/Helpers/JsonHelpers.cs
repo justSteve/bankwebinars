@@ -10,6 +10,16 @@ namespace CUWebinars.Business.Core.Helpers
 {
     public class JsonHelpers
     {
+        //usage:
+        //    JProperty somthingMsg = new JProperty(
+        //    JsonPropertyKeys.somthingKey,
+        //    sometingVal.Value
+        //    );
+
+        // the msgs & keys have constants in 
+
+        //newOrder.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrder.AdminComments, createdByImpersonatedUserMsg);
+
         public static string MergeJsonWithStoredField(string existingJson, JProperty newJson)
         {
             JObject jObject;

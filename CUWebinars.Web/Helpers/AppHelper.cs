@@ -24,7 +24,7 @@ namespace CUWebinars.Web.Helpers
         private readonly IStateService _stateService;
 
         private readonly HttpRequestBase _request;
-        private readonly IAffiliateManagementService _affiliateManagementService;
+
 
         public AppHelper(HttpRequestBase request, IStateService stateService)
         {
@@ -180,6 +180,7 @@ namespace CUWebinars.Web.Helpers
         }
         public SessionStartInfo GetSessionStartInfo()
         {
+            
             HttpRequest request = HttpContext.Current.Request;
             
             var info = new SessionStartInfo
@@ -190,6 +191,8 @@ namespace CUWebinars.Web.Helpers
                 UserAgent = _request.ServerVariables["HTTP_USER_AGENT"],
                 UserCookie = _request.ServerVariables["HTTP_COOKIE"],
                 FirstPage = _stateService.GetValue<string>("FirstPage"),
+                Elmah = _stateService.GetValue<string>("Elmah"),
+                SessionRoot= _stateService.GetValue<string>("SessionRoot"),
                 SessionID = _stateService.GetValue<string>(WebUiConstants.SessionId),
                 AffiliateSessionSource =  _stateService.GetValue<string>("AffiliateSessionSource")
             };
@@ -214,15 +217,20 @@ namespace CUWebinars.Web.Helpers
         public string GetUserAuditInfo()
         {
             IDictionary<string, string> auditInfoDictionary = new Dictionary<string, string>();
-            
+            var sessionStart = GetSessionStartInfo();
             auditInfoDictionary.Add("RemoteAddress", SecurityElement.Escape(_request.ServerVariables["REMOTE_ADDR"]));
             auditInfoDictionary.Add("RemoteHost", SecurityElement.Escape(_request.ServerVariables["REMOTE_HOST"]));
             auditInfoDictionary.Add("RemoteUser", SecurityElement.Escape(_request.ServerVariables["REMOTE_USER"]));
             auditInfoDictionary.Add("UserAgent", SecurityElement.Escape(_request.ServerVariables["HTTP_USER_AGENT"]));
             auditInfoDictionary.Add("Cookie", SecurityElement.Escape(_request.ServerVariables["HTTP_COOKIE"]));
             auditInfoDictionary.Add("FirstPage", SecurityElement.Escape(_stateService.GetValue<string>("FirstPage")));
+            auditInfoDictionary.Add("Elmah", SecurityElement.Escape(_stateService.GetValue<string>("Elmah")));
+            auditInfoDictionary.Add("SessionRoot", SecurityElement.Escape(_stateService.GetValue<string>("SessonRoot")));
             auditInfoDictionary.Add("SessionID", SecurityElement.Escape(_stateService.GetValue<string>("SessionID")));
             auditInfoDictionary.Add("AffiliateSessionSource", SecurityElement.Escape(_stateService.GetValue<string>("AffiliateSessionSource")));
+            auditInfoDictionary.Add("SessionStart", SecurityElement.Escape(_stateService.GetValue<string>("AffiliateSessionSource")));
+
+
 
             var auditObjectInner = JsonHelpers.CreateJsonObjectFromDictionary(auditInfoDictionary);
 
