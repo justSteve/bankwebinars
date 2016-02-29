@@ -42,8 +42,28 @@
 
 <div class="hero-unit">
     <div id="webinarTitle" class="container">
-        <div class="span10">
-            <h3>@Model.Webinar.Title</h3>
+        <div class="span2">
+            <aside class="widget" style="position: absolute; bottom: 0; font-size: 12px; line-height: 1.2;">
+                
+                @if (Model.Webinar.Status == WebinarStatus.Recorded)
+                {
+                    <div>
+                        This event was recorded on @Html.DisplayDate(Model.Webinar.Date).
+                    </div>
+                }
+                else
+                {
+                    <b>@Html.DisplayDate(Model.Webinar.Date)</b>
+                    <br/>
+                    <span>@Html.Raw(Model.TimeFormatDisplay)</span>
+                }
+            </aside>
+        </div>
+
+        <div class="span7">
+            <h3 style="line-height: 1.1;">@Model.Webinar.Title</h3>
+        </div>
+        <div class="span2">
             <button id="showOrdersButton" type="button" class="btn btn-info pull-right"
                     data-toggle="collapse" data-target="#webinarOrders">
                 Show Orders
@@ -80,8 +100,8 @@
         <div class="span6">
             @{
                 if (Model.Webinar.Status != WebinarStatus.Archived
-                                                && Model.Webinar.Status != WebinarStatus.Deleted
-                                                && Model.Webinar.Status != WebinarStatus.Pending)
+                                                                        && Model.Webinar.Status != WebinarStatus.Deleted
+                                                                        && Model.Webinar.Status != WebinarStatus.Pending)
                 {
                     <div id="SignUpFormContainer" class="row-fluid">
 
@@ -134,30 +154,7 @@
 
 
         <div class="span3">
-            <aside class="widget">
-                <h5 class="short_headline"><span>Date/Time</span></h5>
-                @if (Model.Webinar.Status == WebinarStatus.Recorded)
-                {
-                    var expiresDate = Model.Webinar.Date.AddMonths(6);
-                    var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
-
-                <div style="font-size: smaller; line-height: 1.2; text-align: center; margin-bottom: 10px;">
-                    This event was recorded on <i>@Html.DisplayDate(Model.Webinar.Date)</i> and is available for OnDemand Playback until @Html.DisplayDate(expiresDate)
-                    - @remainingDays.ToString() more days.
-                </div>
-                }
-                else
-                {
-                <b>@Html.DisplayDate(Model.Webinar.Date)</b>
-                <br />
-                <span>@Html.Raw(Model.TimeFormatDisplay)</span>
-                }
-                <div id="ceu">
-                    <a href="#" title="@Model.CeuStatement ">
-                        @Html.Raw(Model.CeuShort)
-                    </a>
-                </div>
-            </aside>
+            
             @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
 
             <aside class="widget">
@@ -167,9 +164,9 @@
                 <ul>
                     @foreach (var webinarTopic in Model.Topics)
                     {
-                    <li>
-                        @webinarTopic.topicDesc
-                    </li>
+                        <li>
+                            @webinarTopic.topicDesc
+                        </li>
                     }
                 </ul>
             </aside>

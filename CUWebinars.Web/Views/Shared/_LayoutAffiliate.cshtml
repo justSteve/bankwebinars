@@ -5,7 +5,7 @@
 @{
     var PageStyleType = ViewBag.PageStyleType;
     IStateService stateService = new StateService();
-    
+
     var currentAffiliate = stateService.GetValue<Affiliate>
 
     (WebUiConstants.CurrentAffiliate);
@@ -126,6 +126,12 @@
         .hero-unit {
             padding-top: 20px;
             padding-bottom: 0px;
+        }
+
+        .preheader {
+            background-color: lightgray;
+            width: 100%;
+            padding-left: 25px;
         }
     </style>
 </head>

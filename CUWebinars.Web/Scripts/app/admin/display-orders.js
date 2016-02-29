@@ -133,7 +133,7 @@ function getOrderStatusHtml() {
         var showDiscount = discount;
 
         var billingHtml = regTypeLabel
-                            + (showDiscount +"")
+                            + (showDiscount + "")
                             + "<br />Total: $" + (total + "").replace(".00", "");
 
         return billingHtml;
@@ -141,6 +141,41 @@ function getOrderStatusHtml() {
     };
 
     ns.wireUpHandlers = function () {
+        //var mouseX;
+        //var mouseY;
+        //$(document).mousemove(function (e) {
+        //    mouseX = e.pageX;
+        //    mouseY = e.pageY;
+        //}); http://stackoverflow.com/questions/4666367/how-do-i-position-a-div-relative-to-the-mouse-pointer-using-jquery
+
+        $('.dataTable').on("mouseover", ".edit-user-name-email", function () {
+            $('#hdrCaption').text("Edit Contact");
+//            $('#hdrCaption').css({ 'top': mouseY, 'left': mouseX }).fadeIn('slow');
+        });
+        $('.dataTable').on("mouseout", ".edit-user-name-email", function () {
+            $('#hdrCaption').text("");
+        });
+
+        $('.dataTable').on("mouseover", ".edit-institution", function () {
+            $('#hdrCaption').text("Institution Details");
+        });
+        $('.dataTable').on("mouseout", ".edit-institution", function () {
+            $('#hdrCaption').text("");
+        });
+
+        $('.dataTable').on("mouseover", ".edit-billing", function () {
+            $('#hdrCaption').text("Edit Order Details");
+        });
+        $('.dataTable').on("mouseout", ".edit-billing", function () {
+            $('#hdrCaption').text("");
+        });
+
+        $('.dataTable').on("mouseover", ".edit-resends", function () {
+            $('#hdrCaption').text("Links for User's Media");
+        });
+        $('.dataTable').on("mouseout", ".edit-resends", function () {
+            $('#hdrCaption').text("");
+        });
 
         $('.dataTable').on("click", ".ResendOrderConfirmationButton", function () {
 
@@ -176,9 +211,9 @@ function getOrderStatusHtml() {
         });
 
         $('.dataTable').on("click", ".CalculateRoyalties", function () {
-            
+
             var self = this;
-            
+
             var payload = { idWebinar: this.getAttribute('data-w'), aff: this.getAttribute('data-a') };
 
             $.ajax({
@@ -188,10 +223,10 @@ function getOrderStatusHtml() {
                 url: '/Admin/BuildAffiliateInvoice',
                 dataType: constants.JsonDataType,
                 data: JSON.stringify(payload),
-                beforeSend: function() {
+                beforeSend: function () {
                     $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
                 }
-            }).done(function(result) {
+            }).done(function (result) {
 
                 if (result.Result === 'Success') {
                     $('#InputFormFields').append(successScreenMessage);
@@ -199,9 +234,9 @@ function getOrderStatusHtml() {
                     $('#InputFormFields').append(noOrderScreenMessage);
                 }
                 $('#spinnerLabel').remove();
-            }).fail(function() {
+            }).fail(function () {
                 alert("Operation Failed. Call Steve!");
-            }).always(function() {
+            }).always(function () {
                 $('#loadingSpinner').remove();
             });
         });
@@ -421,7 +456,7 @@ function getOrderStatusHtml() {
                     'class': 'details-control'
                 },
                 { 'data': 'OrderDate', 'class': 'details-control edit-resends' },
-                { 'data': 'OrderStatusString' }
+                { 'data': 'OrderStatusString', 'class': 'edit-status' }
             ],
             "order": [0, "asc"]
 

@@ -895,6 +895,9 @@ namespace CUWebinars.Business.Core
 
         public void SynchOrderIds(int legacyOrderId, int v3OrderId)
         {
+            //disabled
+            return;
+
             if (legacyOrderId == v3OrderId) return;
 
 

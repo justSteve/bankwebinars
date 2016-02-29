@@ -8,7 +8,7 @@
         <script type="text/javascript">
             if (SHOWORDERS === null || typeof SHOWORDERS === 'undefined') {
                 var SHOWORDERS = {};
-                
+
             }
             //var DO = SHOWORDERS;
             SHOWORDERS.affiliateId = @Model.Affiliate.idUserAff;
@@ -34,10 +34,10 @@
     // AdminController/
     <div id="filter-buttons" class="clearfix" style="margin-bottom:8px;">
         @*<div class="btn-group pull-left" id="showAllOrders" data-toggle="buttons-radio">
-            <button type="button" class="btn btn-info btn-mini active" value="justThisEvent">Just This Event</button>
-            <button type="button" class="btn btn-info btn-mini " value="showAllEvents">All Orders</button>
-        </div>*@
-
+                <button type="button" class="btn btn-info btn-mini active" value="justThisEvent">Just This Event</button>
+                <button type="button" class="btn btn-info btn-mini " value="showAllEvents">All Orders</button>
+            </div>*@
+        <div id="hdrCaption" style="position: absolute; color: white; font-size: larger; background-color: darkgray; padding: 10px;" class="classForHoverEffect pull-left"></div>
         <div class="btn-group pull-right" id="order-status-filter-container" data-toggle="buttons-checkbox">
 
             <button type="button" class="btn btn-primary btn-mini os-inactive" value="InProcess">In Process</button>
@@ -55,15 +55,25 @@
     <table id="ordersTable" class="table table-striped table-bordered dataTable no-footer" cellspacing="0" width="100%">
         <thead>
             <tr>
-                <th>Order</th>
-                <th>User</th>
-                <th>Institution</th>
-                <th>Billing</th>
-                <th>Affiliate</th>
-                <th>Order Date</th>
-                <th>Status</th>
+                <th id="hdrOrder"><br/><br/>Order</th>
+                <th id="hdrUser">User</th>
+                <th id="hdrInstitution">Institution</th>
+                <th id="hdrBilling">Billing</th>
+                <th id="hdrAffiliate">Affiliate</th>
+                <th id="hdrLinks">Order Date</th>
+                <th id="hdrStatus">Status</th>
             </tr>
         </thead>
+        <tr>
+            <th >Order</th>
+            <th>User</th>
+            <th>Institution</th>
+            <th>Billing</th>
+            <th>Affiliate</th>
+            <th>Order Date</th>
+            <th>Status</th>
+        </tr>
+
     </table>
 
     <div id="webinarIdDiv" class="initialHide">@Model.Webinar.idWebinar</div>
