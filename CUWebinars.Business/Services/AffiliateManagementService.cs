@@ -292,6 +292,7 @@ namespace CUWebinars.Business.Services
 
             var model = new AffiliateInvoiceDTO
             {
+                Affiliate = null,
                 AffiliateName = LoadByTTSDomain(aff).DisplayTitle,
                 InoviceDate = DateTime.Now.ToShortDateString(),
                 InvoiceId = "Invoice #: " + idAffiliate + '-' + idWebinar,

@@ -140,8 +140,7 @@ function getOrderStatusHtml() {
         return billingHtml;
 
     };
-
-    ns.wireUpHandlers = function() {
+    ns.wireUpHandlers = function () {
         //var mouseX;
         //var mouseY;
         //$(document).mousemove(function (e) {
@@ -149,36 +148,36 @@ function getOrderStatusHtml() {
         //    mouseY = e.pageY;
         //}); http://stackoverflow.com/questions/4666367/how-do-i-position-a-div-relative-to-the-mouse-pointer-using-jquery
 
-        $('.dataTable').on("mouseover", ".edit-user-name-email", function() {
+        $('.dataTable').on("mouseover", ".edit-user-name-email", function () {
             $('#hdrCaption').text("Edit Contact");
             //            $('#hdrCaption').css({ 'top': mouseY, 'left': mouseX }).fadeIn('slow');
         });
-        $('.dataTable').on("mouseout", ".edit-user-name-email", function() {
+        $('.dataTable').on("mouseout", ".edit-user-name-email", function () {
             $('#hdrCaption').text("");
         });
 
-        $('.dataTable').on("mouseover", ".edit-institution", function() {
+        $('.dataTable').on("mouseover", ".edit-institution", function () {
             $('#hdrCaption').text("Institution Details");
         });
-        $('.dataTable').on("mouseout", ".edit-institution", function() {
+        $('.dataTable').on("mouseout", ".edit-institution", function () {
             $('#hdrCaption').text("");
         });
 
-        $('.dataTable').on("mouseover", ".edit-billing", function() {
+        $('.dataTable').on("mouseover", ".edit-billing", function () {
             $('#hdrCaption').text("Edit Order Details");
         });
-        $('.dataTable').on("mouseout", ".edit-billing", function() {
+        $('.dataTable').on("mouseout", ".edit-billing", function () {
             $('#hdrCaption').text("");
         });
 
-        $('.dataTable').on("mouseover", ".edit-resends", function() {
+        $('.dataTable').on("mouseover", ".edit-resends", function () {
             $('#hdrCaption').text("Links for User's Media");
         });
-        $('.dataTable').on("mouseout", ".edit-resends", function() {
+        $('.dataTable').on("mouseout", ".edit-resends", function () {
             $('#hdrCaption').text("");
         });
 
-        $('.dataTable').on("click", ".ResendOrderConfirmationButton", function() {
+        $('.dataTable').on("click", ".ResendOrderConfirmationButton", function () {
 
             var self = this;
 
@@ -193,10 +192,10 @@ function getOrderStatusHtml() {
                 url: '/Admin/ResendOrderConfirmation',
                 dataType: constants.JsonDataType,
                 data: JSON.stringify(payload),
-                beforeSend: function() {
+                beforeSend: function () {
                     $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
                 }
-            }).done(function(result) {
+            }).done(function (result) {
 
                 if (result.Result === 'Success') {
                     $('#InputFormFields').append(successScreenMessage);
@@ -204,58 +203,48 @@ function getOrderStatusHtml() {
                     $('#InputFormFields').append(noOrderScreenMessage);
                 }
                 $('#spinnerLabel').remove();
-            }).fail(function() {
+            }).fail(function () {
                 alert("Operation Failed. Call Steve!");
-            }).always(function() {
+            }).always(function () {
                 $('#loadingSpinner').remove();
             });
         });
 
-        $('.dataTable').on("click", ".aff-revenue-summary", function() {
+        $('.dataTable').on("click", ".aff-revenue-summary", function () {
 
             var self = this;
 
-            royaltiesTable.dataTable({
-                "serverSide": true,
-                "ajax": {
-                    "type": "POST",
-                    "url": '/Admin/BuildAffiliateInvoice',
-                    "contentType": 'application/json; charset=utf-8',
-                    'data': function (payload) {
-                        data.idWebinar = this.getAttribute('data-w');
-                        data.idAffiliate = this.getAttribute('data-a');
-                        return data = JSON.stringify(payload);
-                    }
-                },
+            var payload = { idWebinar: this.getAttribute('data-w'), aff: this.getAttribute('data-a') };
 
-                "dom": '<ilf<t>ip>',
-                "pageLength": 10,
-                "scroller": {
-                    loadingIndicator: false
-                },
-                "processing": true,
-                "paging": true,
-                "deferRender": true,
-                'columns': [
-                    // Name	Email	Company	Price	Percent	Royalty	Status	OrderID
-                    { 'data': 'Name' },
-                    { 'data': 'Email' },
-                    { 'data': 'Company' },
-                    { 'data': 'Price' },
-                    { 'data': 'Percent' },
-                    { 'data': 'Royalty' },
-                    { 'data': 'Status' },
-                    { 'data': 'OrderID' }
-                ],
-                "order": [7, "asc"]
-
+            $.ajax({
+                type: 'POST',
+                contentType: constants.JsonContentType,
+                cache: false,
+                url: '/Admin/BuildAffiliateInvoice',
+                dataType: constants.JsonDataType,
+                data: JSON.stringify(payload),
+                beforeSend: function () {
+                    $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
+                }
+            }).done(function (data) {
+                alert("hit");
+                if (result.Result === 'Success') {
+                    $('#InputFormFields').append(successScreenMessage);
+                } else if (result.Result === 'Fail') {
+                    $('#InputFormFields').append(noOrderScreenMessage);
+                }
+                $('#spinnerLabel').remove();
+            }).fail(function (result) {
+                ns.formatAffRevTable(result);
+            }).always(function () {
+                $('#loadingSpinner').remove();
             });
-
-
         });
+        ns.formatAffRevTable = function (data) {
+            alert(data.InvoiceId);
+        };
 
-
-        $('.dataTable').on("click", ".ResendConnectionInfoButton", function() {
+        $('.dataTable').on("click", ".ResendConnectionInfoButton", function () {
             var self = this;
 
             var orderId = this.getAttribute('data-orderId');
@@ -274,10 +263,10 @@ function getOrderStatusHtml() {
                 url: '/Admin/ResendConnectionInfo',
                 dataType: constants.JsonDataType,
                 data: JSON.stringify(payload),
-                beforeSend: function() {
+                beforeSend: function () {
                     $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
                 }
-            }).done(function(result) {
+            }).done(function (result) {
 
                 if (result.Result === 'Success') {
                     $('#InputFormFields').append(successScreenMessage);
@@ -288,15 +277,15 @@ function getOrderStatusHtml() {
 
                 //Rollbar.info({ 'oen-#2': { 'result': result } });
 
-            }).fail(function() {
+            }).fail(function () {
 
-            }).always(function() {
+            }).always(function () {
                 //$('#loadingSpinner').remove();
             });
         });
 
 
-        $('.dataTable').on("click", ".ResendPostEventMaterialButton", function() {
+        $('.dataTable').on("click", ".ResendPostEventMaterialButton", function () {
 
 
             var self = this;
@@ -317,10 +306,10 @@ function getOrderStatusHtml() {
                 url: '/Admin/ResendPostEventMaterial',
                 dataType: constants.JsonDataType,
                 data: JSON.stringify(payload),
-                beforeSend: function() {
+                beforeSend: function () {
                     $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
                 }
-            }).done(function(result) {
+            }).done(function (result) {
 
                 if (result.Result === 'Success') {
                     $('#InputFormFields').append(successScreenMessage);
@@ -331,9 +320,9 @@ function getOrderStatusHtml() {
 
                 //Rollbar.info({ 'oen-#2': { 'result': result } });
 
-            }).fail(function() {
+            }).fail(function () {
 
-            }).always(function() {
+            }).always(function () {
                 //$('#loadingSpinner').remove();
             });
         });
@@ -341,7 +330,7 @@ function getOrderStatusHtml() {
         AttachDataTableEditEvents(); // edit-forms-in-child-rows.js
 
         // setup radio button group filters
-        $("#filter-buttons").on("click", "button", function(e) {
+        $("#filter-buttons").on("click", "button", function (e) {
 
             e.stopImmediatePropagation(); // the bootstrap buttons plugin doesn't toggle the clicked on button soon enough so do it ourselves https://github.com/twbs/bootstrap/issues/2380
             $(this).button('toggle'); // flip the state of the clicked on button
@@ -380,24 +369,24 @@ function getOrderStatusHtml() {
 
             // collect all "active" filters
             var selectedButtons = [];
-            $("#order-status-filter-container button.active").each(function() {
+            $("#order-status-filter-container button.active").each(function () {
                 // inspect the actual value of the clicked buttons
                 switch (this.value) {
-                case "Active":
-                    break; // do nothing, don't want the word Active included, all statuses that are categorized as active have an actual button on the screen
+                    case "Active":
+                        break; // do nothing, don't want the word Active included, all statuses that are categorized as active have an actual button on the screen
 
-                case "Inactive":
-                    // the following statuses don't have actual buttons on the screen but we still want to include them when Inactive is clicked
-                    //  also, we don't want the word Inactive included
-                    selectedButtons.push("Error");
-                    selectedButtons.push("Abandoned");
-                    selectedButtons.push("Canceled");
-                    selectedButtons.push("Unknown");
-                    break;
+                    case "Inactive":
+                        // the following statuses don't have actual buttons on the screen but we still want to include them when Inactive is clicked
+                        //  also, we don't want the word Inactive included
+                        selectedButtons.push("Error");
+                        selectedButtons.push("Abandoned");
+                        selectedButtons.push("Canceled");
+                        selectedButtons.push("Unknown");
+                        break;
 
-                default:
-                    selectedButtons.push(this.value); // not the buttons Active or Inactive, include it
-                    break;
+                    default:
+                        selectedButtons.push(this.value); // not the buttons Active or Inactive, include it
+                        break;
                 }
             });
 
@@ -411,7 +400,7 @@ function getOrderStatusHtml() {
         });
 
         // manually deal with the UI for Active/Inactive button clicks
-        $("#order-status-filter-container").on("click", "button", function(e) {
+        $("#order-status-filter-container").on("click", "button", function (e) {
 
             var selector = "#order-status-filter-container button.os-" + $(this).val().toLowerCase(); // see the CUWebinars.Web\Views\Admin\Partials\_ShowOrders.cshtml file
 
@@ -430,153 +419,153 @@ function getOrderStatusHtml() {
 
     ns.wireUpDataTable = function () {
 
-            DO.ordersTable.dataTable({
-                "serverSide": true,
-                "ajax": {
-                    "type": "POST",
-                    "url": '/admin/OrdersDataHandler',
-                    "contentType": 'application/json; charset=utf-8',
-                    'data': function (data) {
+        DO.ordersTable.dataTable({
+            "serverSide": true,
+            "ajax": {
+                "type": "POST",
+                "url": '/admin/OrdersDataHandler',
+                "contentType": 'application/json; charset=utf-8',
+                'data': function (data) {
 
-                        // additional custom filters
-                        var showAllEvents = ($("#filter-buttons #showAllOrders button.active").val() == "showAllEvents");
-                        var includeOrderStatuses = DO.orderStatusFilters;
+                    // additional custom filters
+                    var showAllEvents = ($("#filter-buttons #showAllOrders button.active").val() == "showAllEvents");
+                    var includeOrderStatuses = DO.orderStatusFilters;
 
-                        data.webinarId = parseInt(DO.webinarIdDiv.text());
-                        data.affiliateId = DO.affiliateId;
-                        data.showAllEvents = showAllEvents;
-                        data.selectedOrderStatuses = includeOrderStatuses;
-                        return data = JSON.stringify(data);
-                    }
-                },
+                    data.webinarId = parseInt(DO.webinarIdDiv.text());
+                    data.affiliateId = DO.affiliateId;
+                    data.showAllEvents = showAllEvents;
+                    data.selectedOrderStatuses = includeOrderStatuses;
+                    return data = JSON.stringify(data);
+                }
+            },
 
-                "dom": '<ilf<t>ip>',
-                "pageLength": 10,
-                "scroller": {
-                    loadingIndicator: false
-                },
-                "processing": true,
-                "paging": true,
-                "deferRender": true,
-                'columns': [
-                    // class names function as trigger - createChildRow
-                    { 'data': 'idOrder', 'visible': false },
-                    { 'data': 'LastName', 'class': 'details-control edit-user-name-email' },
-                    { 'data': 'Institution', 'class': 'details-control edit-institution' },
-                    { 'data': 'RegistrationTypeString', 'class': 'details-control edit-billing' },
-                    {
-                        'data': 'Affiliate_ttsDomain',
-                        'visible': showAffiliateColumn,
-                        'class': 'details-control aff-revenue-summary'
-                    },
-                    { 'data': 'OrderDate', 'class': 'details-control edit-resends' },
-                    { 'data': 'OrderStatusString', 'class': 'edit-status' }
-                ],
-                "order": [0, "asc"]
-
-                , // complex columns can be specified / created with mRender
-                "aoColumnDefs": [
+            "dom": '<ilf<t>ip>',
+            "pageLength": 10,
+            "scroller": {
+                loadingIndicator: false
+            },
+            "processing": true,
+            "paging": true,
+            "deferRender": true,
+            'columns': [
+                // class names function as trigger - createChildRow
+                { 'data': 'idOrder', 'visible': false },
+                { 'data': 'LastName', 'class': 'details-control edit-user-name-email' },
+                { 'data': 'Institution', 'class': 'details-control edit-institution' },
+                { 'data': 'RegistrationTypeString', 'class': 'details-control edit-billing' },
                 {
-                    // [0] idOrder column is hidden
-
-                    "aTargets": [1], // User column  -- triggers EditUser_Compact.cshtml
-                    "mData": "",
-                    "mRender": function (data, type, full) {
-                        return full.LastName + ", " + full.FirstName + "<br>" + full.BillingEmail;
-                        //return "<a href='/account/ordersbyuser/" + full.idUser + "' />" + full.LastName + ", " + full.FirstName + "</a><br>" + full.BillingEmail;
-                    }
-                    // link on user name should implement 'orders by user' current contorl: byUserWrapper
+                    'data': 'Affiliate_ttsDomain',
+                    'visible': showAffiliateColumn,
+                    'class': 'details-control '
                 },
-                {
-                    "aTargets": [2], // institution column  -- triggers EditInstitution.chtml
-                    "mData": "",
-                    "mRender": function (data, type, full) {
-                        return full.Institution + "</br>";
-                        //return "<a href='/account/editinstitution/" + full.idUser + "' target='_new' />" + full.Institution + "</a>";
-                    }
-                },
-               {
-                   "aTargets": [3], // Billing column  -- triggers EditOrder_Compact.cshtml and EditRegType_DropDown.cshtml
-                   "mData": "RegistrationType",
-                   "mRender": function (data, type, full) {
+                { 'data': 'OrderDate', 'class': 'details-control edit-resends' },
+                { 'data': 'OrderStatusString', 'class': 'edit-status' }
+            ],
+            "order": [0, "asc"]
 
-                       var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
+            , // complex columns can be specified / created with mRender
+            "aoColumnDefs": [
+            {
+                // [0] idOrder column is hidden
 
-                       var flatOff = 0;
-                       var percentOff = 0;
+                "aTargets": [1], // User column  -- triggers EditUser_Compact.cshtml
+                "mData": "",
+                "mRender": function (data, type, full) {
+                    return full.LastName + ", " + full.FirstName + "<br>" + full.BillingEmail;
+                    //return "<a href='/account/ordersbyuser/" + full.idUser + "' />" + full.LastName + ", " + full.FirstName + "</a><br>" + full.BillingEmail;
+                }
+                // link on user name should implement 'orders by user' current contorl: byUserWrapper
+            },
+            {
+                "aTargets": [2], // institution column  -- triggers EditInstitution.chtml
+                "mData": "",
+                "mRender": function (data, type, full) {
+                    return full.Institution + "</br>";
+                    //return "<a href='/account/editinstitution/" + full.idUser + "' target='_new' />" + full.Institution + "</a>";
+                }
+            },
+           {
+               "aTargets": [3], // Billing column  -- triggers EditOrder_Compact.cshtml and EditRegType_DropDown.cshtml
+               "mData": "RegistrationType",
+               "mRender": function (data, type, full) {
 
-                       if (full.Discount != null) {
-                           flatOff = full.Discount.FlatOff;
-                           percentOff = full.Discount.PercentOff;
+                   var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
 
-                       };
-                       var showDiscount = "";
-                       if (flatOff > 0) {
-                           showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: $" + flatOff + "</span>";
-                       }
+                   var flatOff = 0;
+                   var percentOff = 0;
 
-                       if (percentOff > 0) {
-                           showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: " + percentOff + "%</span>";
-                       }
+                   if (full.Discount != null) {
+                       flatOff = full.Discount.FlatOff;
+                       percentOff = full.Discount.PercentOff;
 
-
-                       var newBillingHtml = ns.getBillingCellHtml(showDiscount,
-                                                               full.RegistrationType.OptionLabelShort,
-                                                               full.Total);
-
-                       return newBillingHtml;
-
+                   };
+                   var showDiscount = "";
+                   if (flatOff > 0) {
+                       showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: $" + flatOff + "</span>";
                    }
-               },
-               // [4] Affiliate Column
-                {
-                    "aTargets": [4], //
-                    "mData": "Affiliate_ttsDomain",
-                    "mRender": function (data, type, full) {
 
-                        var royaltyHtml =  full.Royalty;
-                        return "<div data-w=" + parseInt(DO.webinarIdDiv.text()) + " data-a='" + full.Affiliate_ttsDomain + "' style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</br>" + royaltyHtml + "</div>";
+                   if (percentOff > 0) {
+                       showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: " + percentOff + "%</span>";
+                   }
+
+
+                   var newBillingHtml = ns.getBillingCellHtml(showDiscount,
+                                                           full.RegistrationType.OptionLabelShort,
+                                                           full.Total);
+
+                   return newBillingHtml;
+
+               }
+           },
+           // [4] Affiliate Column
+            {
+                "aTargets": [4], //
+                "mData": "Affiliate_ttsDomain",
+                "mRender": function (data, type, full) {
+
+                    var royaltyHtml = full.Royalty;
+                    return "<div class=\"aff-revenue-summary\" data-w=" + parseInt(DO.webinarIdDiv.text()) + " data-a='" + full.Affiliate_ttsDomain + "' style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</br>" + royaltyHtml + "</div>";
+                }
+            },
+
+           // [5] Resends Column
+            {
+
+                "aTargets": [5], // OrderDate column
+                "mData": "",
+                "mRender": function (data, type, full) {
+
+                    var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
+                    var statusHtml = full.OrderDateString;
+                    var resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendOrderConfirmationButton btn btn-mini\">Confirmation</button>";
+                    if (full.Webinar_IsActive) {
+                        resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
                     }
-                },
+                    //if (full.Webinar_IsRecorded) {
+                    //    resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendPostEventMaterialButton btn btn-mini\">PostEvent Material</button>";
+                    //}
+                    return "<div style=\"text-align: center\">" + statusHtml + "</br>" + resendMsg + "</div>";
+                }
+            },
+            {
 
-               // [5] Resends Column
-                {
+                "aTargets": [6], // Status column
+                "mData": "",
+                "mRender": function (data, type, full) {
 
-                    "aTargets": [5], // OrderDate column
-                    "mData": "",
-                    "mRender": function (data, type, full) {
+                    // setup a Bootstrap dropdown (http://getbootstrap.com/2.3.2/javascript.html#dropdowns) with the current order status "selected"
 
-                        var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
-                        var statusHtml = full.OrderDateString;
-                        var resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendOrderConfirmationButton btn btn-mini\">Confirmation</button>";
-                        if (full.Webinar_IsActive) {
-                            resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
-                        }
-                        //if (full.Webinar_IsRecorded) {
-                        //    resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendPostEventMaterialButton btn btn-mini\">PostEvent Material</button>";
-                        //}
-                        return "<div style=\"text-align: center\">" + statusHtml + "</br>" + resendMsg + "</div>";
-                    }
-                },
-                {
+                    var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
 
-                    "aTargets": [6], // Status column
-                    "mData": "",
-                    "mRender": function (data, type, full) {
+                    // the dropdown's HTML gets built one time on the server via ajax via a partial view and RenderViewToString
+                    //  magic strings [ORDERSTATUS] and [ORDERID] are hand-/hard-coded in the partial View
+                    var dd_html = DO.baseOrderStatusHtml.replace(/\[ORDERSTATUS\]/gi, full.OrderStatusString).replace(/\[ORDERID\]/gi, orderToEdit);
 
-                        // setup a Bootstrap dropdown (http://getbootstrap.com/2.3.2/javascript.html#dropdowns) with the current order status "selected"
-
-                        var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
-
-                        // the dropdown's HTML gets built one time on the server via ajax via a partial view and RenderViewToString
-                        //  magic strings [ORDERSTATUS] and [ORDERID] are hand-/hard-coded in the partial View
-                        var dd_html = DO.baseOrderStatusHtml.replace(/\[ORDERSTATUS\]/gi, full.OrderStatusString).replace(/\[ORDERID\]/gi, orderToEdit);
-
-                        return orderToEdit + dd_html;
-                    }
-                }]
-            });
-        };
+                    return orderToEdit + dd_html;
+                }
+            }]
+        });
+    };
 
 
-    })(DO);
+})(DO);

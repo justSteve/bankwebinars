@@ -106,13 +106,13 @@ namespace CUWebinars.Business.Notification.Email
                 else
                 {
                     destinationEmailAddress = ConfigurationManager.AppSettings["TestEmailAddress"];
-                    mailMessage.To.Add(new MailAddress(ConfigurationManager.AppSettings["TestEmailAddress2"]));    
+                    mailMessage.To.Add(new MailAddress(ConfigurationManager.AppSettings["TestEmailAddress2"]));
                 }
 
                 try
                 {
                     mailMessage.From = new MailAddress(notificationMessage.From);
-                    
+
                     mailMessage.Subject = notificationMessage.Subject;
                     mailMessage.Body = notificationMessage.Body;
                     mailMessage.IsBodyHtml = true;
@@ -136,7 +136,7 @@ namespace CUWebinars.Business.Notification.Email
                 catch (SmtpFailedRecipientsException)
                 {
                     tmpMsg = "WriteLine MailerSmtpFailedRecipientsException: " + destinationEmailAddress;
-                    tmpMsg += " Addressee: " + notificationMessage.To; 
+                    tmpMsg += " Addressee: " + notificationMessage.To;
                     tmpMsg += " Subject: " + notificationMessage.Subject;
                     tmpMsg += " Timestamp was: " + timeStamp;
                     _logger.Error(tmpMsg);
@@ -146,7 +146,7 @@ namespace CUWebinars.Business.Notification.Email
                 {
                     System.Threading.Thread.Sleep(2000);
                     tmpMsg = "WriteLine MailerSmtpException: " + destinationEmailAddress;
-                    tmpMsg += " Addressee: " + notificationMessage.To; 
+                    tmpMsg += " Addressee: " + notificationMessage.To;
                     tmpMsg += " Subject: " + notificationMessage.Subject;
                     tmpMsg += " WriteLineMsg: " + ex.Message;
                     tmpMsg += " Timestamp was: " + timeStamp;
@@ -156,7 +156,7 @@ namespace CUWebinars.Business.Notification.Email
                 {
                     System.Threading.Thread.Sleep(2000);
                     tmpMsg = "WriteLine Exception: " + destinationEmailAddress;
-                    tmpMsg += " Addressee: " + notificationMessage.To; 
+                    tmpMsg += " Addressee: " + notificationMessage.To;
                     tmpMsg += " Subject: " + notificationMessage.Subject;
                     tmpMsg += " WriteLineMsg: " + exception.Message;
                     tmpMsg += " Timestamp was: " + timeStamp;
@@ -164,7 +164,7 @@ namespace CUWebinars.Business.Notification.Email
                 }
 
                 tmpMsg = "MailerSent: " + destinationEmailAddress;
-                tmpMsg += " Addressee: " + notificationMessage.To; 
+                tmpMsg += " Addressee: " + notificationMessage.To;
                 tmpMsg += " Subject: " + notificationMessage.Subject;
                 tmpMsg += " Timestamp was: " + timeStamp;
 

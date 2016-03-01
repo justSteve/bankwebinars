@@ -2372,10 +2372,25 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 AffiliateInvoiceDTO model = _affiliateManagementService.GetAffiliateInvoice(idWebinar.Value, aff);
 
-                JsonResult jsonresult = Json(model);
+                JsonResult jsonresult = Json(model.Rows);
                 jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
+                string html = "";
 
-                return jsonresult;
+                try
+                {
+                    WebUser editingUser = null;
+
+                    html = ViewHelpers.RenderViewToString(ControllerContext,
+                            "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditOrder_Compact.cshtml",
+                            model, true);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Fatal("GetOrderInfoForm error", ex);
+                }
+
+                return Json(new { html = html });
+
             }
             return null;
         }
