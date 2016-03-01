@@ -653,21 +653,82 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _logger.Error(string.Format("Null value for Webinar {0}", formModel.idWebinar));
                 throw new NullReferenceException(string.Format("Null value for Webinar with id {0}", formModel.idWebinar));
             }
+            try
+            {
+                var newOrderRow = CreateOrderRow(webinar,
+                               formModel.AdditionalLocations == null ? null : formModel.AdditionalLocations.ToList(),
+                               formModel.RegistrationTypeId);
 
-            var newOrderRow = CreateOrderRow(webinar,
-                formModel.AdditionalLocations == null ? null : formModel.AdditionalLocations.ToList(),
-                formModel.RegistrationTypeId);
 
-            var currentAffiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate");
-            _orderManagementService.AttachAffiliate(currentAffiliate);
+                var currentAffiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate");
+                _orderManagementService.AttachAffiliate(currentAffiliate);
 
-            // At this point, user may not be registered. So, when creating the Order, if user 
-            // does not exist, a dummy user with an email of notauthenticated@cuwebinars.com will be created.
-            WebUser webUser = formModel.SelectedWebUser > 0 ?
-                _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.SelectedWebUser) : // if logged in as admin or affiliate
-                _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.idUser);
+                // At this point, user may not be registered. So, when creating the Order, if user 
+                // does not exist, a dummy user with an email of notauthenticated@cuwebinars.com will be created.
+                WebUser webUser = formModel.SelectedWebUser > 0 ?
+                    _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.SelectedWebUser) : // if logged in as admin or affiliate
+                    _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.idUser);
 
-            return CreateNewOrder(currentAffiliate, webUser, webinar, newOrderRow, beingImpersonatedClaim);
+                return CreateNewOrder(currentAffiliate, webUser, webinar, newOrderRow, beingImpersonatedClaim);
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("CreateOrder", ex);
+                return null;
+
+            }
+        }
+
+        public Order CreateOrderByAffiliate(CheckoutOptionsViewModel formModel, Affiliate affiliate)
+        {
+            _stateService.SetValue(DomainConstants.CheckoutInProcess, true);
+            Claim beingImpersonatedClaim = null;
+
+            if (Request.IsAuthenticated)
+            {
+                var user = Request.RequestContext.HttpContext.User as ClaimsPrincipal;
+                beingImpersonatedClaim = user.Claims.SingleOrDefault(c => c.Type == ClaimTypes.BeingImpersonated);
+            }
+
+            var webinar = _webinarManagementService.GetWebinar(formModel.idWebinar);
+
+            if (webinar == null)
+            {
+                _logger.Error(string.Format("Null value for Webinar {0}", formModel.idWebinar));
+                throw new NullReferenceException(string.Format("Null value for Webinar with id {0}", formModel.idWebinar));
+            }
+            try
+            {
+                var newOrderRow = CreateOrderRow(webinar,
+                               formModel.AdditionalLocations == null ? null 
+                                   : formModel.AdditionalLocations.ToList(),
+                               formModel.RegistrationTypeId);
+
+                var currentAffiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate");
+                //_orderManagementService.AttachAffiliate(currentAffiliate);
+
+                var tempAff = _orderManagementService.GetAffiliateById(19);
+
+                // At this point, user may not be registered. So, when creating the Order, if user 
+                // does not exist, a dummy user with an email of notauthenticated@cuwebinars.com will be created.
+                WebUser webUser = formModel.SelectedWebUser > 0 ?
+                    _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.SelectedWebUser) : // if logged in as admin or affiliate
+                    _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.idUser);
+
+                var order = CreateNewOrder(tempAff, webUser, webinar, newOrderRow, beingImpersonatedClaim);
+
+               order = _orderManagementService.AssignAffiliateToOrder(currentAffiliate.idUserAff, order);
+
+                //_orderManagementService.SaveChanges();
+
+                return order;
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("CreateOrder", ex);
+                return null;
+
+            }
         }
 
         public OrderRow GetOrderRowLoaded(int idOrderRow)
@@ -682,6 +743,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         private Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, Claim createdByImpersonatedClaim = null)
         {
+            try
+            {
             if (ReferenceEquals(null, webUser))
             {
                 if (!_stateService.HasValue(WebUiConstants.SessionId))
@@ -723,6 +786,13 @@ namespace CUWebinars.Web.Core.Orchestrators
             newOrder = _orderManagementService.SaveOrderChanges(newOrder, string.Empty, string.Empty);
 
             return newOrder;
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("CreateNewOrder", ex);
+                throw;
+            }
+
         }
 
         public RegType GetRegTypeById(int idRegType)
@@ -980,6 +1050,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             var result = _globalConfig.TenantURL + "/o/" + orderId + "-" + order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).OnDemandCode;
             return result;
         }
+
 
         public INotificationMessage GenerateMessagePreview(Order order)
         {

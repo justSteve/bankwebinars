@@ -56,5 +56,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         void AddClaimForPostEventMaterials(string email, OrderRow row);
         IList<Order> GetOrderByUserIdAndWebinar(int selectedWebUser, int idWebinar);
         string InsertOnDemandClaim(int orderId);
+        Order CreateOrderByAffiliate(CheckoutOptionsViewModel formModel, Affiliate affiliate);
     }
 }

@@ -214,11 +214,6 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                //var UserAlreadyHasOrder = _cartControllerOrchestrator.GetOrderByUserIdAndWebinar()
-                //if (UserAlreadyHasOrder)
-                //{
-
-                //}
                 try
                 {
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
@@ -436,12 +431,14 @@ namespace CUWebinars.Web.Controllers
         [HttpPost]
         public ActionResult SignupAffiliate(CheckoutOptionsViewModel formModel)
         {
+            
+            _logger.Info("AffiliateSignup: " + JsonConvert.SerializeObject(formModel));
             if (ModelState.IsValid)
             {
                 var orderAlreadyExists = _cartControllerOrchestrator.GetOrderByUserIdAndWebinar(
                     formModel.idUser, formModel.idWebinar);
 
-                if (orderAlreadyExists != null)
+                if (orderAlreadyExists != null && orderAlreadyExists.Count > 0)
                 {
                     _logger.Warn("SignupAffiliate pulls existing order: " + formModel.idUser + " " + formModel.idWebinar);
                     foreach (var order in orderAlreadyExists)
@@ -489,10 +486,13 @@ namespace CUWebinars.Web.Controllers
                     }
                 }
             }
+            
+
             try
             {
-                var order = _cartControllerOrchestrator.CreateOrder(
-                    formModel
+                var order = _cartControllerOrchestrator.CreateOrderByAffiliate(
+                    formModel, _stateService.GetValue<Affiliate>("CurrentAffiliate")
+
                     );
 
                 return Json(new
@@ -510,6 +510,7 @@ namespace CUWebinars.Web.Controllers
                     "There has been an error at the server which has been logged.");
                 _logger.FatalException("Signup2 order excepted: ", exception);
 
+                ErrorSignal.FromCurrentContext().Raise(exception);
                 return Json(new
                 {
                     success = "fail",
@@ -518,7 +519,6 @@ namespace CUWebinars.Web.Controllers
                     webinarId = formModel.idWebinar
                 }, JsonRequestBehavior.AllowGet);
 
-                ErrorSignal.FromCurrentContext().Raise(exception);
             }
 
             return this.ModelStateJson(ModelState);

@@ -19,11 +19,11 @@ namespace CUWebinars.Business.Services
         private readonly IOrderRepository _orderRepository;
         private readonly IWebinarRepository _webinarRepository;
         //private readonly IOrderRepository _orderRepository;
-        
+
         readonly List<IEvent> _events = new List<IEvent>();
         private bool _disposed;
 
-        public AffiliateManagementService(ILogger logger, IOrderRepository orderRepository, IWebinarRepository webinarRepository,IAffiliateRepository affiliateRepository )
+        public AffiliateManagementService(ILogger logger, IOrderRepository orderRepository, IWebinarRepository webinarRepository, IAffiliateRepository affiliateRepository)
         {
             _affiliateRepository = affiliateRepository;
             _orderRepository = orderRepository;
@@ -46,7 +46,7 @@ namespace CUWebinars.Business.Services
             //Calculate total commissions
             foreach (var registration in orders)
             {
-                 switch (registration.Affiliate.CommissionModel)
+                switch (registration.Affiliate.CommissionModel)
                 {
                     case 1: // Sliding4TierNoCCBreak:
                         int numberOfRegistrations = 0;
@@ -81,9 +81,9 @@ namespace CUWebinars.Business.Services
                         {
                             OrderRow row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
                             decimal commissionPercent = 0.0M;
-                            
+
                             commissionPercent = 0.4M;
-                            
+
                             row.Royalty = row.RowPrice * commissionPercent;
                             //registration.TotalCommissions += row.Royalty;
                         }
@@ -93,7 +93,7 @@ namespace CUWebinars.Business.Services
                         {
                             OrderRow row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
                             decimal commissionPercent = 0.35M;
-                            
+
                             row.Royalty = row.RowPrice * commissionPercent;
                             //registration.TotalCommissions += row.Royalty;
                         }
@@ -166,7 +166,7 @@ namespace CUWebinars.Business.Services
 
             _orderRepository.SaveChanges();
         }
-        
+
         public virtual IList<AffiliateReportDTO> AffiliateReport(int webinarID)
         {
             List<Order> orders = _webinarRepository.GetOrdersByWebinar(webinarID).ToList();
@@ -180,7 +180,7 @@ namespace CUWebinars.Business.Services
         {
             List<Order> orders = _webinarRepository.GetOrdersByWebinar(webinarID)
                 .Where(o => o.idAffiliate == affiliateID).ToList();
-                
+
 
             IList<AffiliateInvoiceDTO> reportData = BuildAffiliateInvoice(orders, webinarID);
             if (reportData.Count == 0)
@@ -222,7 +222,7 @@ namespace CUWebinars.Business.Services
             return reportData;
         }
 
-        
+
 
         public IList<AffiliateInvoiceDTO> BuildAffiliateInvoice(List<Order> orders, int webinarID)
         {
@@ -235,7 +235,7 @@ namespace CUWebinars.Business.Services
                         Affiliate = u.Key,
                         Orders = u.ToList<Order>(),
                     }).ToList();
-            
+
 
             CalculateAffiliateRoyalties(reportData);
 
@@ -252,7 +252,7 @@ namespace CUWebinars.Business.Services
             int idAffiliate = LoadByTTSDomain(aff).idUserAff;
             Webinar webinar = _webinarRepository.FindById(idWebinar);
             var orders = _orderRepository.GetOrdersByWebinar(idWebinar).Where(a => a.idAffiliate == idAffiliate).ToList();
-           IList<OrderRowModel> rows = new List<OrderRowModel>();
+            IList<OrderRowModel> rows = new List<OrderRowModel>();
 
             ComputeRoyalty(orders);
 
@@ -268,12 +268,26 @@ namespace CUWebinars.Business.Services
                     Institution = order.Institution,
                     Name = order.FirstName + " " + order.LastName,
                     OrderID = order.idOrder.ToString(),
-                    Percent = GetRowPercent(ordinalHolder, FindById(idAffiliate).CommissionModel ),
+                    Percent = GetRowPercent(ordinalHolder, FindById(idAffiliate).CommissionModel),
                     Price = order.Total.ToString(),
                     Discount = (orow.UnitPrice - orow.RowPrice).ToString(),
                     Status = order.OrderStatus.ToString()
                 };
+
+                if (order.OrderStatus == OrderStatus.Paid)
+                {
+                    _totalOnPaid += order.Total;
+                }
+                if (order.OrderStatus == OrderStatus.Submitted)
+                {
+                    _totalOnBilled += order.Total;
+                }
+                _totalDue += order.Total;
+                _totalRoyalties += orow.Royalty;
+
                 rows.Add(row);
+
+
             }
 
             var model = new AffiliateInvoiceDTO
@@ -310,19 +324,19 @@ namespace CUWebinars.Business.Services
                     var row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
                     if (registration.Affiliate.BillingModel == "TTS")
                     {
-                        if (order.OrderStatus== OrderStatus.Submitted || order.OrderStatus== OrderStatus.Billed)
+                        if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed)
                         {
                             registration.TotalOnBilled += row.RowPrice;
 
                         }
-                        if (order.OrderStatus== OrderStatus.Paid)
+                        if (order.OrderStatus == OrderStatus.Paid)
                         {
                             registration.TotalOnPaid += row.RowPrice;
                         }
                     }
 
-                    if (order.OrderStatus== OrderStatus.Submitted || order.OrderStatus== OrderStatus.Billed ||
-                        order.OrderStatus== OrderStatus.Paid)
+                    if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed ||
+                        order.OrderStatus == OrderStatus.Paid)
                     {
                         registration.TotalOnPaid += row.RowPrice;
                     }
@@ -336,9 +350,9 @@ namespace CUWebinars.Business.Services
 
             //}
         }
-            
-            
-        
+
+
+
 
         public IEnumerable<IEvent> GetEvents()
         {
@@ -363,7 +377,7 @@ namespace CUWebinars.Business.Services
                     logger.Dispose();
 
                 _affiliateRepository.Dispose();
-                
+
                 _disposed = true;
             }
         }

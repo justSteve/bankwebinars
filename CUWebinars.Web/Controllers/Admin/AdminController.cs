@@ -2429,7 +2429,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     List<OrderDTO> data = new DTResultSetOrders().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtoSource, columnSearch);
                     int count = new DTResultSetOrders().Count(param.Search.Value, dtoSource, columnSearch);
 
-                    //_affiliateManagementService.BuildAffiliateReport(dtsource, webinarId);
+                    _affiliateManagementService.BuildAffiliateReport(dtsource, webinarId);
 
                     DataTableService<OrderDTO> result = new DataTableService<OrderDTO>
                     {

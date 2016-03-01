@@ -113,8 +113,6 @@ namespace CUWebinars.Business.Notification.Email
                 {
                     mailMessage.From = new MailAddress(notificationMessage.From);
                     
-                    _logger.Info(string.Format("Sending msg to {0}: ", notificationMessage.Addresses));
-
                     mailMessage.Subject = notificationMessage.Subject;
                     mailMessage.Body = notificationMessage.Body;
                     mailMessage.IsBodyHtml = true;
