@@ -64,7 +64,7 @@ namespace CUWebinars.Business.Repository
 
             if (validationResult.Errors.FirstOrDefault().ErrorMessage.Contains("already has"))
             {
-                if (origin == "Imported" || origin == "Migrator")
+                if (origin == "Imported" || origin == "Migrator" || origin == "AcsImporter")
                 {
                     //instead of throwing error - passback the pre-existing order id
                     return FindOrderForUserByWebinarID(newOrder.idUser, webinar.idWebinar);
@@ -76,38 +76,38 @@ namespace CUWebinars.Business.Repository
             var errors = ValidationHelper.GetMessagesAsXmlElement(validationResult.Errors);
             throw new Exception(errors.ToString());
         }
-        public Order CreateOrder(int affiliateId, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null)
-        {
+        //public Order CreateOrder(int affiliateId, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null)
+        //{
 
-            var newOrder = items.Create();
-            newOrder.OrderDate = DomainConstants.BuildUtcNowAsCts;
-            newOrder.OrderStatus = OrderStatus.InProcess;
-            newOrder.idAffiliate = affiliateId;
-            newOrder.BillingEmail = webUser.email;
-            newOrder.idUser = webUser.idUser;
-            newOrder.Origin = origin;
+        //    var newOrder = items.Create();
+        //    newOrder.OrderDate = DomainConstants.BuildUtcNowAsCts;
+        //    newOrder.OrderStatus = OrderStatus.InProcess;
+        //    newOrder.idAffiliate = affiliateId;
+        //    newOrder.BillingEmail = webUser.email;
+        //    newOrder.idUser = webUser.idUser;
+        //    newOrder.Origin = origin;
 
-            newOrder = AssignWebUserToOrder(webUser, newOrder);
-            //if (newOrder.Affiliate == null) { }
-            // reconcile orderRow with order relationship
-            ((TTSWebinarsContext)db).OrderRows.Add(orderRow);
-            orderRow.Order = newOrder;
-            newOrder.OrderRows = new List<OrderRow> { orderRow };
+        //    newOrder = AssignWebUserToOrder(webUser, newOrder);
+        //    //if (newOrder.Affiliate == null) { }
+        //    // reconcile orderRow with order relationship
+        //    ((TTSWebinarsContext)db).OrderRows.Add(orderRow);
+        //    orderRow.Order = newOrder;
+        //    newOrder.OrderRows = new List<OrderRow> { orderRow };
 
-            //if (webUser.idSubscriptionDiscount != null && webUser.idSubscriptionDiscount > 0)
-            //{
-            //    orderRow.Discount = GetUserDiscount(webUser.idUser);
-            //}
-
-
-            Add(newOrder);
-
-            return newOrder;
+        //    //if (webUser.idSubscriptionDiscount != null && webUser.idSubscriptionDiscount > 0)
+        //    //{
+        //    //    orderRow.Discount = GetUserDiscount(webUser.idUser);
+        //    //}
 
 
-            //var errors = ValidationHelper.GetMessagesAsXmlElement(validationResult.Errors);
-            //throw new Exception(errors.ToString());
-        }
+        //    Add(newOrder);
+
+        //    return newOrder;
+
+
+        //    //var errors = ValidationHelper.GetMessagesAsXmlElement(validationResult.Errors);
+        //    //throw new Exception(errors.ToString());
+        //}
 
         public OrderRow CreateOrderRow(Webinar webinar,
             IList<AdditionalLocation> additionalLocations,

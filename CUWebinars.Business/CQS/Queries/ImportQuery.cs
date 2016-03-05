@@ -7,6 +7,7 @@ namespace CUWebinars.Business.CQS.Queries
     {
         public int AffiliateId { get; set; }
         public string Email { get; set; }
+        public string Origin { get; set; }
         public int WebinarId { get; set; }
         public DateTime OrderDate { get; set; }
     }

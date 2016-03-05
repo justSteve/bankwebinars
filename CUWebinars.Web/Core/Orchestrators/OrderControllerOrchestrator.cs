@@ -10,6 +10,7 @@ using CUWebinars.Web.Services;
 using Ninject.Extensions.Logging;
 using System;
 using System.Diagnostics;
+using Newtonsoft.Json;
 
 namespace CUWebinars.Web.Core.Orchestrators
 {
@@ -115,6 +116,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 WebUser = importQueryResult.WebUser,
                 AdditionalLocationsString = ImportOrderModel.AdditionalLocationsString
             };
+
 
             _commandProcessor.Execute(ImportOrderCommand);
 
@@ -245,7 +247,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 AffiliateId = importOrderModel.idAffiliate,
                 Email = email,
                 OrderDate = importOrderModel.OrderDate,
-                WebinarId = importOrderModel.idWebinar
+                WebinarId = importOrderModel.idWebinar, 
+                Origin = importOrderModel.Source
             };
 
             return _queryProcessor.Process(importQuery);

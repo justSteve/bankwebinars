@@ -97,14 +97,24 @@ namespace CUWebinars.Business.Services
             return _affiliateRepository.Exists(item) ? item : _affiliateRepository.AttachItem(item);
         }
 
-        public Order CreateNewOrder(int affiliateId, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null)
+        //public Order CreateNewOrder(int affiliateId, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null)
+        //{
+        //    var order = _orderRepository.CreateOrder(GetAffiliateById(affiliateId), webUser, webinar, orderRow, origin);
+        //    var email = webUser == null ? "notauthenticated@cuwebinars.com" : webUser.email;
+
+        //    //_logger.Info("CreateNewOrder: " + email + " | " + orderRow.Webinar.Title + " | " + orderRow.RegistrationType.OptionLabel);
+        //    return order;
+
+        //}
+
+
+        public Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null)
         {
-            var order = _orderRepository.CreateOrder(affiliateId, webUser, webinar, orderRow, origin);
+            var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow, origin);
             var email = webUser == null ? "notauthenticated@cuwebinars.com" : webUser.email;
 
-            //_logger.Info("CreateNewOrder: " + email + " | " + orderRow.Webinar.Title + " | " + orderRow.RegistrationType.OptionLabel);
+            _logger.Info("CreateNewOrder: " + email + " | " + orderRow.Webinar.Title + " | " + orderRow.RegistrationType.OptionLabel);
             return order;
-
         }
 
         public OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, int registrationType)
@@ -2424,15 +2434,6 @@ namespace CUWebinars.Business.Services
             orderRow.Discount.CreditsRemain++;
             //according to legacy code but can a condition exist 
             //  a non-valid discount resulted in a decrement.
-        }
-
-        public Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null)
-        {
-            var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow, origin);
-            var email = webUser == null ? "notauthenticated@cuwebinars.com" : webUser.email;
-
-            _logger.Info("CreateNewOrder: " + email + " | " + orderRow.Webinar.Title + " | " + orderRow.RegistrationType.OptionLabel);
-            return order;
         }
 
         public Discount GetDiscountById(int id)

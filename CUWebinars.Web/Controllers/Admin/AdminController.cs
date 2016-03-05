@@ -894,7 +894,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
                     _orderManagementService.CreateNewOrder(
-                        affiliate.idUserAff,
+                       _orderManagementService.GetAffiliateById(affiliate.idUserAff),
                         user,
                         newOrderRow.Webinar,
                         newOrderRow
