@@ -46,8 +46,8 @@ namespace CUWebinars.Business.Core.Helpers
                 }
                 catch (Exception e)
                 {
-                    if (e.GetType().IsSubclassOf(typeof(Exception)))
-                        throw;
+                    if (e.GetType().IsSubclassOf(typeof (Exception)))
+                        newJson = null;
 
                     //Handle the case when e is the base Exception
                     objectToValidate = JObject.FromObject(new

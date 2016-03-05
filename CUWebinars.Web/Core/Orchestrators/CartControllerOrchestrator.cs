@@ -866,12 +866,15 @@ namespace CUWebinars.Web.Core.Orchestrators
             foreach (var newSubmittedAdditionalLocation in additionalLocations.Where(al => !existingAdditionalLocationsForOrderRow.Select(eal => eal.Email).Contains(al.Email)))
             {
                 newSubmittedAdditionalLocation.idOrderRow = newOrderRowId;
+                _orderManagementService.RemoveFromDiscount(newOrderRowId);
                 _orderManagementService.AddAdditionalLocation(newSubmittedAdditionalLocation);
             }
 
             foreach (var additionalLocationToDelete in
                 existingAdditionalLocationsForOrderRow.Where(existingEmail => !additionalLocations.Select(al => al.Email).Contains(existingEmail.Email)))
             {
+
+                _orderManagementService.RestoreToDiscount(newOrderRowId);
                 _orderManagementService.RemoveAndDeleteAdditionalLocation(additionalLocationToDelete);
             }
 

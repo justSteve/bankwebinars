@@ -39,13 +39,18 @@ namespace CUWebinars.Web.App_Start
             routes.MapRoute(
                 "ccpostback",
                 url: "ccpostback",
-                defaults: new { controller = "Cart", action = "PostBackMoneris", id = 0 }
+                defaults: new { controller = "Cart", action = "PostBackMonerisDEPRICATED", id = 0 }
             );
 
             routes.MapRoute(
                 "ccpostbackbw",
                 url: "ccpostbackbw",
-                defaults: new { controller = "Cart", action = "PostBackMonerisBW", id = 0 }
+                defaults: new { controller = "Cart", action = "PostBackMonerisbwDEPRICATED", id = 0 }
+            );
+            routes.MapRoute(
+                "PostBackMoneris",
+                url: "PostBackMoneris",
+                defaults: new { controller = "Cart", action = "PostBackMoneris", id = 0 }
             );
 
             routes.MapRoute(

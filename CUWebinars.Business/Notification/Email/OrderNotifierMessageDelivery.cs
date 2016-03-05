@@ -40,22 +40,10 @@ namespace CUWebinars.Business.Notification.Email
 
 
             //notificationMessage.To = order.idAffiliate == 62 ? "steve@ttstrain.com" : order.BillingEmail;
-            if (ReferenceEquals(null, order.Affiliate.ContactEmail))
-            {
-                notificationMessage.Addresses = new List<string>
-                {
-                    order.BillingEmail
-                };
-            }
-            else
-            {
-                notificationMessage.Addresses = new List<string>
-                {
-                    order.BillingEmail,
-                    order.Affiliate.ContactEmail
-                   
-                };
-            }
+
+            notificationMessage.To = order.BillingEmail;
+            notificationMessage.Bcc = order.BillingEmail;
+            
             SendMessage(notificationMessage);
         }
 
@@ -68,6 +56,7 @@ namespace CUWebinars.Business.Notification.Email
             var mailMessage = new MailMessage();
             var tmpMsg = string.Empty;
             var destinationEmailAddress = notificationMessage.To;
+            var destinationEmailAddressAffiliate = notificationMessage.Bcc;
 
             if (string.IsNullOrWhiteSpace(notificationMessage.From))
             {
@@ -79,38 +68,19 @@ namespace CUWebinars.Business.Notification.Email
             //using (var smtp = new SmtpClient(ConfigurationManager.AppSettings["smtp.host"], int.Parse(ConfigurationManager.AppSettings["smtp.port"])))
             {
                 smtp.Timeout = 5000;
-                //smtp.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["smtp.userName"], ConfigurationManager.AppSettings["smtp.password"]);
-                //smtp.EnableSsl = true;
-                //smtp.UseDefaultCredentials = false;
-                //smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-
+                
                 //  Set this AppSetting in App.Config to something other than 'live' when testing i.e. notlive
-                if (ConfigurationManager.AppSettings["EmailSendingMode"] == "live")
-                {
-                    var i = 0;
-                    foreach (var address in notificationMessage.Addresses)
-                    {
-                        if (i == 0)
-                        {
-                            mailMessage.To.Add(new MailAddress(address));
-                        }
-                        else
-                        {
-                            mailMessage.Bcc.Add(new MailAddress(address));
-                        }
-
-                        _logger.Info(string.Format("Sending msg to {0}: ", address));
-
-                    }
-                }
-                else
+                if (ConfigurationManager.AppSettings["EmailSendingMode"] != "live")
                 {
                     destinationEmailAddress = ConfigurationManager.AppSettings["TestEmailAddress"];
-                    mailMessage.To.Add(new MailAddress(ConfigurationManager.AppSettings["TestEmailAddress2"]));
+                    destinationEmailAddressAffiliate = ConfigurationManager.AppSettings["TestEmailAddress"];
                 }
 
                 try
                 {
+                    mailMessage.To.Add(destinationEmailAddress);
+                    mailMessage.Bcc.Add(destinationEmailAddressAffiliate);
+
                     mailMessage.From = new MailAddress(notificationMessage.From);
 
                     mailMessage.Subject = notificationMessage.Subject;

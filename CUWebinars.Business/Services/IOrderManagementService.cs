@@ -133,5 +133,7 @@ namespace CUWebinars.Business.Services
         bool OnDemandCodeIsUnique(string onDemandCode);
         IList<int> GetV3OrdersIdsByWebinar(int idWebinar);
         List<Order> GetOrdersByWebinar(int idWebinar);
+        void RestoreToDiscount(int newOrderRowId);
+        void RemoveFromDiscount(int newOrderRowId);
     }
 }

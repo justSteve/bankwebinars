@@ -1956,6 +1956,16 @@ namespace CUWebinars.Business.Services
             return _webinarRepository.GetOrdersByWebinar(idWebinar).ToList();
         }
 
+        public void RestoreToDiscount(int newOrderRowId)
+        {
+            _logger.Fatal("logs the restoration of discount credit when addLocation is deleted.");
+        }
+
+        public void RemoveFromDiscount(int newOrderRowId)
+        {
+            _logger.Fatal("logs the decrement of discount credit when addLocation is added.");
+        }
+
 
         public IList<Order> GetV3OrdersByOnDemandClaim()
         {
