@@ -289,6 +289,112 @@ namespace CUWebinars.Web.Controllers
             return myErr;
         }
 
+        /// <summary>
+        /// Imports orders based on form submissions from Affiliate Import Sheets.
+        /// </summary>
+        /// <param name="ImportOrderModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult importorder4ACS(ImportOrderModel importedOrder)
+        {
+            int idOfLastOrder = default(int);
+            string verificationKey = string.Empty;
+            string confirmChangeEmailUrl = string.Empty;
+
+            if (!ModelState.IsValid)
+            {
+                var myError = ProcessModelStateErrors();
+                return Json(new { Result = WebUiConstants.Fail, Error = myError });
+            }
+            int idRegType;
+            if (importedOrder.Source == "ACSGmailImportViaWebJob?Version=3")
+            {
+                _logger.Info("ACS EmailParser Posted: " + JsonConvert.SerializeObject(importedOrder));
+                idRegType = Convert.ToInt32(importedOrder.RegistrationType);
+            }
+            else
+            {
+                return Json(new { Result = 0 }, JsonRequestBehavior.AllowGet);
+            }
+
+            if (idRegType == 0)
+            {
+                _logger.Fatal(string.Format("idRegType comes up 0. RegType = {0}; email = {1}; orderDate = {2};", importedOrder.RegistrationType, importedOrder.Email, importedOrder.OrderDate));
+                return Json(new { Result = WebUiConstants.Fail, Error = "Invalid Registration Type: " + importedOrder.RegistrationType });
+            }
+            importedOrder.RegistrationType = idRegType.ToString();
+            importedOrder.OrderDate = importedOrder.OrderDate;
+            try
+            {
+                var email = importedOrder.Email.Trim();
+
+                _logger.Info("Begin import: " + JsonConvert.SerializeObject(importedOrder));
+
+                var importQueryResult = _orderControllerOrchestrator.GetPreparatoryDataForImporter(importedOrder
+                    , email);
+
+                bool userAlreadyExists = true;
+
+                // If WebUser is null, it is a new user that will be created upon importation of this order.
+                if (ReferenceEquals(null, importQueryResult.WebUser))
+                {
+                    try
+                    {
+                        userAlreadyExists = false;
+
+                        importQueryResult.WebUser =
+                            _orderControllerOrchestrator.ImportUser(importedOrder, email);
+
+                        verificationKey = _orderControllerOrchestrator.GetVerificationKeyForNewUserAccount();
+
+                        confirmChangeEmailUrl =
+                            _orderControllerOrchestrator.GetConfirmChangeEmailLinkForNewUserAccount();
+
+                        _orderControllerOrchestrator.FinalizeImportedRegistation(verificationKey);
+
+                        _logger.Info(string.Format("ImportOrder|CreateUser Succeeded: {0}", email));
+                    }
+                    catch (Exception exception)
+                    {
+                        _logger.ErrorException(
+                            string.Format("ImportOrder|CreateUser failed: {0}", exception.Message), exception);
+                        Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                        throw;
+                    }
+                }
+
+                idOfLastOrder = _orderControllerOrchestrator.ImportOrder(importedOrder, email,
+                    importQueryResult, verificationKey, confirmChangeEmailUrl, userAlreadyExists);
+                var newOrder = _orderManagementService.GetOrderById(idOfLastOrder);
+                if (idOfLastOrder == 0)
+                {
+                    newOrder = _orderManagementService.GetOrdersByUserId(importQueryResult.WebUser.idUser)
+                        .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == importedOrder.idWebinar) != null)
+                        .SingleOrDefault();
+
+                    _logger.Info("ACS Imported: " + JsonConvert.SerializeObject(newOrder));
+
+
+                    newOrder.OrderDate = importedOrder.OrderDate;
+                    _orderManagementService.SaveChanges();
+                }
+
+                //idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
+                _logger.Info(string.Format("ImportOrder from {0} produced: {1}", importedOrder.Source + "-" + importedOrder.Version, idOfLastOrder));
+                return Json(new { Result = idOfLastOrder.ToString() }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception exception)
+            {
+                var errString = string.Format("ImportOrder from {3} failed on {0} - {1} with msg: {2}", importedOrder.Email, importedOrder.idWebinar, exception.Message, importedOrder.Source + "-" + importedOrder.Version);
+                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                _logger.ErrorException(errString, exception);
+
+            }
+
+            return Json(new { Result = "0" }, JsonRequestBehavior.AllowGet);
+            //return Json(new { Result = WebUiConstants.Fail });
+        }
+
 
         /// <summary>
         /// Imports orders based on form submissions from Affiliate Import Sheets.
@@ -312,9 +418,8 @@ namespace CUWebinars.Web.Controllers
             {
                 if (importedOrder.Source == "ACSGmailImportViaWebJob?Version=3")
                 {
-                    _logger.Info("ACS Importer hears: " + importedOrder.Email + " idWebinar: " + importedOrder.idWebinar);
-                    idRegType = _webinarManagementService.GetRegTypeByACS(importedOrder.RegistrationType,
-                        importedOrder.idWebinar);
+                    _logger.Info("ACS EmailParser Posted: " + JsonConvert.SerializeObject(importedOrder));
+                    idRegType = Convert.ToInt32(importedOrder.RegistrationType);
                 }
                 else
                 {

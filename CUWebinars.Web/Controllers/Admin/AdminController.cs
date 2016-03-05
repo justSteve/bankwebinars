@@ -774,7 +774,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     JProperty createdByExpressCheckout = new JProperty(JsonPropertyKeys.OrderCreatedByExpressCheckoutKey,
                         "'ExpressCheckoutPostBack': {'" + postback.Pretty + "'}");
 
-                    expressOrder.AdminComments = JsonHelpers.MergeJsonWithStoredField(expressOrder.AdminComments,
+                    expressOrder.AdminComments = JsonHelpers.MergeJsonWithStoredField(null,
                         createdByExpressCheckout);
 
                     //_membershipService.AddClaim(

@@ -784,10 +784,10 @@ namespace CUWebinars.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult ThankYou(FormCollection form)
+        public ActionResult ThankYou(ExpressCheckoutPostBackModel form)
         {
             string formFields = Request.Form.ToString();
-            _logger.Info("ThankYou postback: " + formFields);
+            _logger.Info("ExpressCheckoutThankYou postback: " + formFields);
 
             return View();
         }
@@ -897,5 +897,4 @@ namespace CUWebinars.Web.Controllers
             }
         }
     }
-
 }
