@@ -9,6 +9,8 @@ namespace CUWebinars.Business.Core
         CreatedViaCartByNewUser = 2,
         CreatedViaCartByExistingUser = 3,
         CreatedViaExpressCheckout = 4,
-        Resend = 5
+        Resend = 5,
+                ImportedForACSNewUser = 6,
+        ImportedForACSExistingUser = 7,
     }
 }

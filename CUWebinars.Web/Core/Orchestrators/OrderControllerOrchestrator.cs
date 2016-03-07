@@ -74,7 +74,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
 
             _commandProcessor.Execute(migrateOrderCommand);
-            
+
             return migrateOrderCommand.OrderId;
         }
 
@@ -85,6 +85,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             string confirmChangeEmailUrl,
             bool existingUser)
         {
+            
             var ImportOrderRowCommand = new ImportOrderRowCommand
             {
                 AdditionalLocationsString = ImportOrderModel.AdditionalLocationsString,
@@ -117,6 +118,14 @@ namespace CUWebinars.Web.Core.Orchestrators
                 AdditionalLocationsString = ImportOrderModel.AdditionalLocationsString
             };
 
+            if (importQueryResult.Source == "ACSGmailImportViaWebJob?Version=3")
+            {
+                ImportOrderCommand.OrderGenesis = existingUser
+                    ? OrderGenesis.ImportedForACSExistingUser
+                    : OrderGenesis.ImportedForACSNewUser;
+            }
+            //        ImportedForACSNewUser = 6,
+            //ImportedForACSExistingUser = 7,
 
             _commandProcessor.Execute(ImportOrderCommand);
 
@@ -223,7 +232,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     WebinarId = migrateOrderModel.idWebinar
                 };
 
-
+                //processed by: OrderManagementQueryHandlers
                 return _queryProcessor.Process(migratorQuery);
 
             }
@@ -236,6 +245,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     LegacyOrderId = migrateOrderModel.idOrderLegacy,
                     WebinarId = migrateOrderModel.idWebinar
                 };
+                //processed by: OrderManagementQueryHandlers
                 return _queryProcessor.Process(migratorQuery);
             }
         }
@@ -247,10 +257,10 @@ namespace CUWebinars.Web.Core.Orchestrators
                 AffiliateId = importOrderModel.idAffiliate,
                 Email = email,
                 OrderDate = importOrderModel.OrderDate,
-                WebinarId = importOrderModel.idWebinar, 
+                WebinarId = importOrderModel.idWebinar,
                 Origin = importOrderModel.Source
             };
-
+            //processed by: OrderManagementQueryHandlers
             return _queryProcessor.Process(importQuery);
         }
 
@@ -262,7 +272,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 Email = email,
                 WebinarId = incomingOrderModel.idWebinar
             };
-
+            //processed by: OrderManagementQueryHandlers
             return _queryProcessor.Process(orderManagementQuery);
         }
 

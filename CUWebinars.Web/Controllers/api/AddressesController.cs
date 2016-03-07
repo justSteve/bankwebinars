@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using CUWebinars.Business.AccountService;
 using Newtonsoft.Json;
 using System.Linq;
@@ -24,26 +25,10 @@ namespace CUWebinars.Web.Controllers.api
         {
             context.Configuration.LazyLoadingEnabled = false;
 
+            Debug.Assert(id != null, "id != null");
             var address = _membershipService.GetAddressesForUser(id.Value);
 
             return JsonConvert.SerializeObject(address, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
-
-            //return JsonConvert.SerializeObject(
-            //    context.WebUsers
-            //   .Include("Addresses")
-            //   .Where(u => u.idUser == id.Value)
-            //   .Single()
-            //   .Addresses
-            //   .Select(a => new { 
-            //       City = a.City,
-            //       StreetAddress = a.StreetAddress,
-            //       StreetAddress2 = a.StreetAddress2,
-            //       Country = a.Country,
-            //       Phone = a.Phone,
-            //       State = a.State,
-            //       Zip = a.Zip                   
-            //   })
-            //   , Formatting.Indented, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
         }
 
         protected override void Dispose(bool disposing)

@@ -431,8 +431,8 @@ namespace CUWebinars.Web.Controllers
         [HttpPost]
         public ActionResult SignupAffiliate(CheckoutOptionsViewModel formModel)
         {
-            
-            _logger.Info("AffiliateSignup: " + JsonConvert.SerializeObject(formModel));
+
+            _logger.Info("AffiliateSignup: " + JsonConvert.SerializeObject(formModel, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
             if (ModelState.IsValid)
             {
                 var orderAlreadyExists = _cartControllerOrchestrator.GetOrderByUserIdAndWebinar(
@@ -811,7 +811,7 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
-                    _logger.Info("Confirming Moneris submission with Id BW-{0}", JsonConvert.SerializeObject(order));
+                    _logger.Info("Confirming Moneris submission with Id BW-{0}", JsonConvert.SerializeObject(order, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
 
                     order.OrderStatus = OrderStatus.Paid;
 
@@ -842,7 +842,7 @@ namespace CUWebinars.Web.Controllers
             }
             else
             {
-                _logger.Info("Moneris declined with msg {0}: order {1}", form.message, JsonConvert.SerializeObject(order));
+                _logger.Info("Moneris declined with msg {0}: order {1}", form.message, JsonConvert.SerializeObject(order, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
                 return Json(new
                 {
                     Result = WebUiConstants.Fail,

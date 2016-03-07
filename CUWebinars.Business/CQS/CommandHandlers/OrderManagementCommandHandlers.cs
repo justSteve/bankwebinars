@@ -361,6 +361,12 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             //if (ReferenceEquals(null, userAlreadyHasOrder))
             //{
 
+            if (command.OrderGenesis == OrderGenesis.ImportedForACSExistingUser
+                || command.OrderGenesis == OrderGenesis.ImportedForACSNewUser)
+            {
+                importedOrder.Origin = DomainConstants.OriginImportedACS;
+            }
+
             string buildMessage = "ImportedOn" + DateTime.UtcNow;
 
             if (!ReferenceEquals(null, importedOrder))

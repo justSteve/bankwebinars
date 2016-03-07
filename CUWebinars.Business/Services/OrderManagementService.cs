@@ -2244,7 +2244,8 @@ namespace CUWebinars.Business.Services
                 //  clicked the SignUp button or the order was migrated. The notification is still sent, it is just that
                 //  it will be sent when the user clicks the "Bill Me" button on the 3rd tab of the cart. Not now.
                 if (!currentOrder.Origin.Equals("Migrator", StringComparison.OrdinalIgnoreCase) &&
-                    !currentOrder.Origin.Equals(DomainConstants.Cart, StringComparison.OrdinalIgnoreCase))
+                    !currentOrder.Origin.Equals(DomainConstants.Cart, StringComparison.OrdinalIgnoreCase) &&
+                    !currentOrder.Origin.Equals(DomainConstants.OriginImportedACS, StringComparison.OrdinalIgnoreCase))
                 {
                     _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
 

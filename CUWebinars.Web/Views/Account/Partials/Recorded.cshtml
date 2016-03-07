@@ -58,6 +58,11 @@
                             else
                             {
                                 onDemandClaimUrl = "Access to the OnDemand recording expired on " + thisClaim.ExpiryDate.ToShortDateString();
+                                onDemandClaimUrl += "<br>Please note: If this expiration date appears incorrect there may be a problem with your browser's cookies. THe link below is designed to bypass cookies - in the event of continued problems you may visit us in our online chat (lower right of this page) " +
+                                                    "where we can resolve the issue. <br />" +
+                                                   "<a href=\"" + globalConfig.TenantURL +
+                                                   "/o/" + row.idOrder + "-" + thisClaim.OnDemandCode +
+                                                   "\"> <tt><b>" + globalConfig.TenantURL + "/o/" + row.idOrder + "-" + thisClaim.OnDemandCode + "?checkExpiry="+row.idOrder+"</b></tt></a>";
 
                             }
                         }
@@ -96,53 +101,53 @@
                                 <div class="row-fluid">
                                     @if (row.Webinar.RecordingUrl != "")
                                     {
-                                    <div class="span3 well well-large">
-                                        <a target="_blank" href="/webinar/GetWebinarRecording/@row.Webinar.idWebinar">
-                                            <span><i class="icon-facetime-video"> </i></span> Video Playback
-                                        </a>
+                                        <div class="span3 well well-large">
+                                            <a target="_blank" href="/webinar/GetWebinarRecording/@row.Webinar.idWebinar">
+                                                <span><i class="icon-facetime-video"> </i></span> Video Playback
+                                            </a>
 
-                                        @{Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);}
-                                        @if (row.RegistrationType.ShowShippedNotifications == "Yes")
+                                            @{Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);}
+                                            @if (row.RegistrationType.ShowShippedNotifications == "Yes")
                                             {
                                                 if (row.ShipmentDate != null)
                                                 {
-                                        <div>
-                                            The CD and handouts shipped @row.ShipmentDate<text>.</text>
-                                        </div>
+                                                    <div>
+                                                        The CD and handouts shipped @row.ShipmentDate<text>.</text>
+                                                    </div>
                                                 }
                                                 else
                                                 {
-                                        <div>
-                                            The CD and handouts are typically shipped within 3-5 days following the event.
-                                        </div>
+                                                    <div>
+                                                        The CD and handouts are typically shipped within 3-5 days following the event.
+                                                    </div>
                                                 }
                                             }
 
-                                    </div>
-                                    <div class="span6">
+                                        </div>
+                                        <div class="span6">
 
-                                        @Html.Raw(onDemandClaimUrl)
+                                            @Html.Raw(onDemandClaimUrl)
 
-                                        @if (currentUser.email.EndsWith("ttstrain.com") && !String.IsNullOrWhiteSpace(recorded.Key))
+                                            @if (currentUser.email.EndsWith("ttstrain.com") && !String.IsNullOrWhiteSpace(recorded.Key))
                                             {
-                                        <p>
-                                            @{
+                                                <p>
+                                                    @{
                                                 var urlSuffix = recorded.Value.idOrder + "-" + recorded.Key;
                                                 <text>A post-event assesment for this event is available. Pass this URL to any co-workers<br /> <tt>
                                                         <strong>
                                                             @globalConfig.TenantURL/quiz/index/@urlSuffix
                                                         </strong>
                                                     </tt></text>
+                                                    }
+                                                </p>
                                             }
-                                        </p>
-                                            }
-                                    </div>
+                                        </div>
                                     }
                                     else
                                     {
-                                    <div>
-                                        <span style="font-size: small;">(Recording not yet uploaded.)</span>
-                                    </div>
+                                        <div>
+                                            <span style="font-size: small;">(Recording not yet uploaded.)</span>
+                                        </div>
                                     }
                                 </div>
                             }
