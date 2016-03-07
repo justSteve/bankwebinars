@@ -2217,6 +2217,18 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 SyncAdditionalLocations(manageOrderEditModel, orderRow);
             }
+            else
+            {
+                 var manageOrderEditModel = new ManageOrderEditModel
+                {
+                    AdditionalLocations = null
+                };
+
+                var addLocEmails = "UpdateAdditionalLocations | Removed : " + orderRow.idOrder;
+                
+                _logger.Info(addLocEmails.TrimEnd(','));
+                SyncAdditionalLocations(manageOrderEditModel, orderRow);               
+            }
 
 
             PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
@@ -2626,7 +2638,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                     DateTimeHelper.FormatTime(webinar.Date) + " Central Time Zone";
                 if (webinar.Status == WebinarStatus.Recorded && webinar.idWebinar != 842)
                 {
-                    showDateValue += "<br><i>This OnDemand Webinar has <b>" + numDaysLeft + "</b> days of access remaining.</i>";
+                    //showDateValue += "<br><i>This OnDemand Webinar has <b>" + numDaysLeft + "</b> days of access remaining.</i>";
                     //if (numDaysLeft > 45)
                     //{
                     //    showDateValue = "About " + Convert.ToInt32(numDaysLeft / (365.25 / 12)) + " months of access remain.";

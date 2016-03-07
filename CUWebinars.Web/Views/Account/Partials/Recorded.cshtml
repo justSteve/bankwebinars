@@ -62,7 +62,7 @@
                                                     "where we can resolve the issue. <br />" +
                                                    "<a href=\"" + globalConfig.TenantURL +
                                                    "/o/" + row.idOrder + "-" + thisClaim.OnDemandCode +
-                                                   "\"> <tt><b>" + globalConfig.TenantURL + "/o/" + row.idOrder + "-" + thisClaim.OnDemandCode + "?checkExpiry="+row.idOrder+"</b></tt></a>";
+                                                   "\"> <tt><b>" + globalConfig.TenantURL + "/o/" + row.idOrder + "-" + thisClaim.OnDemandCode + "?checkExpiry=" + row.idOrder + "</b></tt></a>";
 
                             }
                         }
@@ -161,10 +161,11 @@
                                             <a target="_blank" href="/webinar/GetWebinarRecording/@row.Webinar.idWebinar"><span><i class="icon-facetime-video"></i></span> Playback</a>
                                             @{Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);}
                                         </div>
-                                        <div class="span6">
-                                            @Html.Raw(onDemandClaimUrl)
-                                        </div>
+
                                     }
+                                    <div class="span6">
+                                        @Html.Raw(onDemandClaimUrl)
+                                    </div>
                                 </div>
                             }
                         }

@@ -630,6 +630,12 @@
     <Content Include="Content\images\aff\auroratraining\banner.png" />
     <Content Include="Content\images\aff\auroratraining\bannerTTSBase.png" />
     <Content Include="Content\images\aff\auroratraining\logo.png" />
+    <Content Include="Content\images\aff\azbankers\banner.fw.png" />
+    <Content Include="Content\images\aff\azbankers\banner.htm" />
+    <Content Include="Content\images\aff\azbankers\banner.jpg" />
+    <Content Include="Content\images\aff\azbankers\banner.png" />
+    <Content Include="Content\images\aff\azbankers\bannerTTSBase.png" />
+    <Content Include="Content\images\aff\azbankers\logo.png" />
     <Content Include="Content\images\aff\bankerswebinar\banner.png" />
     <Content Include="Content\images\aff\bkg_header.jpg" />
     <Content Include="Content\images\aff\calbankers\banner.png" />
@@ -996,6 +1002,13 @@
     <Content Include="Content\images\email\auroratraining\banner.png" />
     <Content Include="Content\images\email\auroratraining\bannerCaption1.jpg" />
     <Content Include="Content\images\email\auroratraining\bannerTTSBase.png" />
+    <Content Include="Content\images\email\azbankers\addressCenter.jpg" />
+    <Content Include="Content\images\email\azbankers\addressLeft.jpg" />
+    <Content Include="Content\images\email\azbankers\addressRight.jpg" />
+    <Content Include="Content\images\email\azbankers\bannerCaption.jpg" />
+    <Content Include="Content\images\email\azbankers\bannerCaption1.jpg" />
+    <Content Include="Content\images\email\azbankers\banner.jpg" />
+    <Content Include="Content\images\email\azbankers\spacer.gif" />
     <Content Include="Content\images\email\banner.png" />
     <Content Include="Content\images\email\bannerCalendar.png" />
     <Content Include="Content\images\email\bannerCaption.jpg" />
@@ -1307,6 +1320,7 @@
     <Content Include="Content\images\logo_alabamabankers.png" />
     <Content Include="Content\images\logo_arkbankers.png" />
     <Content Include="Content\images\logo_auroratraining.png" />
+    <Content Include="Content\images\logo_azbankers.png" />
     <Content Include="Content\images\logo_bankwebinars.png" />
     <Content Include="Content\images\logo_calbankers.png" />
     <Content Include="Content\images\logo_cbao.png" />
@@ -1780,6 +1794,8 @@
     <Content Include="Notification\Templates\Partials\_GeneralHeader.cshtml" />
     <Content Include="Notification\Templates\Partials\_GeneralFooter.cshtml" />
     <Content Include="Content\images\email\iowabankers\Thumbs.db" />
+    <Content Include="Content\images\aff\azbankers\Thumbs.db" />
+    <Content Include="Content\images\email\azbankers\Thumbs.db" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy %282%29.pubxml" />

@@ -42,7 +42,7 @@ namespace CUWebinars.Business.Notification.Email
             //notificationMessage.To = order.idAffiliate == 62 ? "steve@ttstrain.com" : order.BillingEmail;
 
             notificationMessage.To = order.BillingEmail;
-            notificationMessage.Bcc = order.BillingEmail;
+            notificationMessage.Bcc = order.Affiliate.ContactEmail + ";steve@ttstrain.com";
             
             SendMessage(notificationMessage);
         }
@@ -73,19 +73,19 @@ namespace CUWebinars.Business.Notification.Email
                 if (ConfigurationManager.AppSettings["EmailSendingMode"] != "live")
                 {
                     destinationEmailAddress = ConfigurationManager.AppSettings["TestEmailAddress"];
-                    destinationEmailAddressAffiliate = ConfigurationManager.AppSettings["TestEmailAddress"];
+                    destinationEmailAddressAffiliate = "steve@juststeve.com";
                 }
 
                 try
                 {
-                    mailMessage.To.Add(destinationEmailAddress);
-                    mailMessage.Bcc.Add(destinationEmailAddressAffiliate);
-
                     mailMessage.From = new MailAddress(notificationMessage.From);
 
                     mailMessage.Subject = notificationMessage.Subject;
                     mailMessage.Body = notificationMessage.Body;
                     mailMessage.IsBodyHtml = true;
+                    mailMessage.To.Add(destinationEmailAddress);
+                    mailMessage.Bcc.Add(destinationEmailAddressAffiliate);
+                    _logger.Info("OrderNotification Bcc:" + mailMessage.Bcc +" value should be: "+ destinationEmailAddressAffiliate);
                     smtp.Send(mailMessage);
 
                 }

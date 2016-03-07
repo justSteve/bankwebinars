@@ -142,12 +142,8 @@
                                 DateTimeHelper.FormatTime(webinar.Date) + " Central Time Zone";
             if (webinar.Status == WebinarStatus.Recorded)
             {
-                showDateValue = "This OnDemand Webinar has " + numDaysLeft + " days of access remaining.";
-                if (numDaysLeft > 45)
-                {
-                    showDateValue = "About " + Convert.ToInt32(numDaysLeft / (365.25 / 12)) + " months of access remain.";
+                showDateValue = "This event was recorded on <i>" + DateTimeHelper.FormatDate(webinar.Date) + "</i>.";
                 }
-            }
 
             var allTopics = webinar.WebinarTopicXrefs
                 .Select(webinarTopic => webinarTopic.Topic.topicDesc)
