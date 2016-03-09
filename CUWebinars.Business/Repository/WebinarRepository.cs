@@ -159,12 +159,12 @@ namespace CUWebinars.Business.Repository
         public IQueryable<Webinar> GetUpcoming()
         {
             return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
-                .Include(w => w.Presenter.WebUser)
-                .Where(
-                    w =>
-                        (w.Status == WebinarStatus.Scheduled || w.Status == WebinarStatus.Active ||
-                         w.Status == WebinarStatus.InProgress))
-                .OrderByDescending(w => w.Date);
+                   .Include(w => w.Presenter.WebUser)
+                   .Where(
+                       w =>
+                           (w.Status == WebinarStatus.Scheduled || w.Status == WebinarStatus.Active ||
+                            w.Status == WebinarStatus.InProgress))
+                   .OrderByDescending(w => w.Date);
         }
 
         public IQueryable<RegTypesGroup> GetRegTypeGroupsForWebinars(int idWebinar)
@@ -194,6 +194,7 @@ namespace CUWebinars.Business.Repository
         {
             return items.Include(w => w.Presenter.WebUser)
                 .Include(w => w.Presenter.Webinars)
+                .Include(w => w.WebinarFiles)
                 .First(w => w.idWebinar == id);
 
             //return webinar;
@@ -264,6 +265,7 @@ namespace CUWebinars.Business.Repository
             {
                 return items.Include(w => w.Presenter.WebUser)
                     .Include(w => w.OrderRows)
+                    .Include(w => w.WebinarFiles)
                     .SingleOrDefault(w => w.idWebinar == orderRow.idWebinar);
             }
 
@@ -303,7 +305,9 @@ namespace CUWebinars.Business.Repository
                         idWebinar
                         && (o.OrderStatus == OrderStatus.Billed
                             || o.OrderStatus == OrderStatus.Paid
-                            || o.OrderStatus == OrderStatus.Submitted)).Select(o => o.idOrder).ToList();
+                            || o.OrderStatus == OrderStatus.Submitted
+                            || o.OrderStatus == OrderStatus.AwaitingVerification)
+                            ).Select(o => o.idOrder).ToList();
         }
 
         public IQueryable<Order> GetOrdersByWebinar(int webinarId)

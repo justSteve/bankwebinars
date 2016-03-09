@@ -493,7 +493,8 @@ function getOrderStatusHtml() {
                "mData": "RegistrationType",
                "mRender": function (data, type, full) {
 
-                   var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
+                   //var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
+                   var orderToEdit = full.idOrder;
 
                    var flatOff = 0;
                    var percentOff = 0;
@@ -539,7 +540,8 @@ function getOrderStatusHtml() {
                 "mData": "",
                 "mRender": function (data, type, full) {
 
-                    var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
+                    var orderToEdit = full.idOrder;
+                    //var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
                     var statusHtml = full.OrderDateString;
                     var resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendOrderConfirmationButton btn btn-mini\">Confirmation</button>";
                     if (full.Webinar_IsActive) {
@@ -559,7 +561,8 @@ function getOrderStatusHtml() {
 
                     // setup a Bootstrap dropdown (http://getbootstrap.com/2.3.2/javascript.html#dropdowns) with the current order status "selected"
 
-                    var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
+                    var orderToEdit = full.idOrder;
+                    //var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
 
                     // the dropdown's HTML gets built one time on the server via ajax via a partial view and RenderViewToString
                     //  magic strings [ORDERSTATUS] and [ORDERID] are hand-/hard-coded in the partial View

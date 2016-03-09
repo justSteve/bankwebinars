@@ -297,12 +297,50 @@ namespace CUWebinars.Web.Controllers
         [HttpPost]
         public JsonResult importorder4ACS(ImportOrderForAcsModel _importedOrder)
         {
-            _logger.Info("Incoming Values: " + JsonConvert.SerializeObject(_importedOrder, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+            _logger.Info("importorder4ACS Incoming Values: " + JsonConvert.SerializeObject(_importedOrder, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
             if (ModelState.IsValid)
             {
+                var idRegType = _webinarManagementService.GetRegTypeByACS(_importedOrder.DeliveryType,  Convert.ToInt32(_importedOrder.BankWebID));
                 ImportOrderModel importedOrder = new ImportOrderModel
                 {
+                    idWebinar = Convert.ToInt32(_importedOrder.BankWebID),
+                    Source = "ACSGmailImportViaWebJob?Version=3",
+                    idAffiliate = 62,
+                    RegistrationType = _importedOrder.DeliveryType,
+                    OrderDate = Convert.ToDateTime(_importedOrder.DateSubmittedToACS),
+                    BillingAddress = new Address
+                    {
+                        AddressType = "Billing",
+                        City = _importedOrder.City,
+                        Country = "US",
+                        Name = _importedOrder.FirstName + " " + _importedOrder.LastName,
+                        Phone = _importedOrder.Phone,
+                        State = _importedOrder.State_Province_Region,
+                        StreetAddress = _importedOrder.StreetorP_O_Box,
+                        StreetAddress2 = "",
+                        Zip = _importedOrder.Zip_PostalCode
+                    },
+                    ShippingAddress = new Address
+                    {
+                        AddressType = "Shipping",
+                        City = _importedOrder.City,
+                        Country = "US",
+                        Name = _importedOrder.FirstName + " " + _importedOrder.LastName,
+                        Phone = _importedOrder.Phone,
+                        State = _importedOrder.State_Province_Region,
+                        StreetAddress = _importedOrder.StreetorP_O_Box,
+                        StreetAddress2 = "",
+                        Zip = _importedOrder.Zip_PostalCode
+                    },
+                    Institution = _importedOrder.Company,
+                    Title = _importedOrder.Title,
+                    FirstName = _importedOrder.FirstName,
+                    LastName = _importedOrder.LastName,
                     
+                    AdditionalLocationsString = _importedOrder.AdditionalLocationsString,
+                    Email = _importedOrder.Email
+
+
                 };
                 int idOfLastOrder = default(int);
                 string verificationKey = string.Empty;
@@ -313,17 +351,8 @@ namespace CUWebinars.Web.Controllers
                     var myError = ProcessModelStateErrors();
                     return Json(new { Result = WebUiConstants.Fail, Error = myError });
                 }
-                int idRegType;
-                if (importedOrder.Source == "ACSGmailImportViaWebJob?Version=3")
-                {
-                    _logger.Info("ACS EmailParser Posted: " + JsonConvert.SerializeObject(importedOrder, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
-                    idRegType = Convert.ToInt32(importedOrder.RegistrationType);
-                }
-                else
-                {
-                    return Json(new { Result = 0 }, JsonRequestBehavior.AllowGet);
-                }
-
+                _logger.Info("ACS EmailParser Input: " + JsonConvert.SerializeObject(importedOrder, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                
                 if (idRegType == 0)
                 {
                     _logger.Fatal(string.Format("idRegType comes up 0. RegType = {0}; email = {1}; orderDate = {2};",
@@ -339,54 +368,11 @@ namespace CUWebinars.Web.Controllers
                 importedOrder.RegistrationType = idRegType.ToString();
                 importedOrder.OrderDate = importedOrder.OrderDate;
 
-                ImportOrderModel importedOrderConvert = new ImportOrderModel
-                {
-                    idWebinar = importedOrder.idWebinar,
-                    Source = importedOrder.Source,
-                    idAffiliate = 62,
-                    RegistrationType = importedOrder.RegistrationType,
-                    OrderDate = importedOrder.OrderDate,
-                    BillingAddress = new Address
-                    {
-                        AddressType = "Billing",
-                        City = _importedOrder.City,
-                        Country = "US",
-                        Name = importedOrder.FirstName + " " + importedOrder.LastName,
-                        Phone = _importedOrder.Phone,
-                        State = _importedOrder.State_Province_Region,
-                        StreetAddress = _importedOrder.StreetorP_O_Box,
-                        StreetAddress2 = "",
-                        Zip = _importedOrder.Zip_PostalCode
-                    },
-                    ShippingAddress = new Address
-                    {
-                        AddressType = "Shipping",
-                        City = _importedOrder.City,
-                        Country = "US",
-                        Name = importedOrder.FirstName + " " + importedOrder.LastName,
-                        Phone = _importedOrder.Phone,
-                        State = _importedOrder.State_Province_Region,
-                        StreetAddress = _importedOrder.StreetorP_O_Box,
-                        StreetAddress2 = "",
-                        Zip = _importedOrder.Zip_PostalCode
-                    },
-                    Institution = importedOrder.Institution,
-                    Title = importedOrder.Title,
-                    FirstName = importedOrder.FirstName,
-                    LastName = importedOrder.LastName,
-                    AdditionalLocations = importedOrder.AdditionalLocations,
-                    AdditionalLocationsString = importedOrder.AdditionalLocationsString,
-                    Email = importedOrder.Email
-                };
-
                 try
                 {
+                    //_logger.Info("Begin import: " + JsonConvert.SerializeObject(importedOrder, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
 
-
-                    _logger.Info("Begin import: " + JsonConvert.SerializeObject(importedOrder, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
-
-                    var importQueryResult = _orderControllerOrchestrator.GetPreparatoryDataForImporter(importedOrderConvert
-                        , importedOrder.Email.Trim());
+                    var importQueryResult = _orderControllerOrchestrator.GetPreparatoryDataForImporter(importedOrder, importedOrder.Email.Trim());
 
                     bool userAlreadyExists = true;
 
@@ -398,7 +384,7 @@ namespace CUWebinars.Web.Controllers
                             userAlreadyExists = false;
 
                             importQueryResult.WebUser =
-                                _orderControllerOrchestrator.ImportUser(importedOrderConvert, importedOrder.Email.Trim());
+                                _orderControllerOrchestrator.ImportUser(importedOrder, importedOrder.Email.Trim());
 
                             verificationKey = _orderControllerOrchestrator.GetVerificationKeyForNewUserAccount();
 
@@ -418,7 +404,7 @@ namespace CUWebinars.Web.Controllers
                         }
                     }
 
-                    idOfLastOrder = _orderControllerOrchestrator.ImportOrder(importedOrderConvert, importedOrder.Email.Trim(),
+                    idOfLastOrder = _orderControllerOrchestrator.ImportOrder(importedOrder, importedOrder.Email.Trim(),
                         importQueryResult, verificationKey, confirmChangeEmailUrl, userAlreadyExists);
 
                     var newOrder = _orderManagementService.GetOrderById(idOfLastOrder);
@@ -438,18 +424,24 @@ namespace CUWebinars.Web.Controllers
                     }
 
                     newOrder.OrderDate = importedOrder.OrderDate;
+                    newOrder.OrderStatus = OrderStatus.AwaitingVerification;
+
+                    //if (_importedOrder.PaymentMethod == "Credit Card")
+                    //{
+                    //    newOrder.OrderStatus = OrderStatus.Paid;
+                    //}
+                    newOrder.AuditInfo = "'ACSImporter: '+{" + JsonConvert.SerializeObject(_importedOrder) + "}";
+                    
                     _orderManagementService.SaveChanges();
 
-
-                    _logger.Info(string.Format("ImportOrder from {0} produced: {1}",
-                        importedOrder.Source + "-" + importedOrder.Version, idOfLastOrder));
+                    _logger.Info(string.Format("ImportOrder from {0} produced: {1}", importedOrder.Source, idOfLastOrder));
                     return Json(new { Result = idOfLastOrder.ToString() }, JsonRequestBehavior.AllowGet);
                 }
                 catch (Exception exception)
                 {
                     var errString = string.Format("ImportOrder from {3} failed on {0} - {1} with msg: {2}",
                         importedOrder.Email, importedOrder.idWebinar, exception.Message,
-                        importedOrder.Source + "-" + importedOrder.Version);
+                        importedOrder.Source);
                     Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                     _logger.ErrorException(errString, exception);
 

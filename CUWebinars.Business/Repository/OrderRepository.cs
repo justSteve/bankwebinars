@@ -128,6 +128,8 @@ namespace CUWebinars.Business.Repository
 
                 newOrderRow.Webinar = webinar;
                 newOrderRow.RegistrationType = registrationType;
+                newOrderRow.idRegType = registrationType.idRegType;
+
                 newOrderRow.RowStatus = OrderRowStatus.Active;
                 newOrderRow.TtsJoinUrl = RandomHelpers.GetUniqueCode(5);
                 newOrderRow.OnDemandCode = RandomHelpers.GetUniqueCode(5);

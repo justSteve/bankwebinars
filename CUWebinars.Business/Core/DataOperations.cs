@@ -74,6 +74,8 @@ namespace CUWebinars.Business.Core
                                                       " Exception.Message: " + ex.Message);
                     }
 
+
+
                     return returnLable;
 
                 }
@@ -826,8 +828,9 @@ namespace CUWebinars.Business.Core
             {
                 foreach (var addLoc in myRow.AdditionalLocation)
                 {
-                    addLocString = addLoc.Email + ", ";
+                    addLocString = addLoc.Email + ",";
                 }
+                addLocString = addLocString.TrimEnd(',');
             }
 
             var PostForm = "";

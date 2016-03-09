@@ -2085,15 +2085,13 @@ namespace CUWebinars.Business.Services
             {
                 orderDate = row.Order.OrderDate;
             }
-            var orderRow = row;
-            // let exception be thrown if there is not a single 
-
-            var regType = GetRegTypeOfOrderRow(orderRow.idRegType);
+            
+            var regType = GetRegTypeOfOrderRow(row.idRegType);
 
 
             //establish order date as starting point
             DateTime expryDate = orderDate.AddMonths(6);
-            var webinar = _webinarRepository.FindById(orderRow.idWebinar);
+            var webinar = _webinarRepository.FindById(row.idWebinar);
 
             //if order's placed before event - override starting point
             if (webinar.Date > orderDate)

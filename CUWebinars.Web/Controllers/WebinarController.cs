@@ -308,17 +308,7 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult ConnectionDetails(int id)
         {
-
-            var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id);
-
-            if (webinar == null) return HttpNotFound();
-
-            var model = new WebinarDetailsViewModel()
-            {
-                Webinar = webinar,
-                WebinarFiles = webinar.WebinarFiles.ToList()
-            };
-            return null;
+            return RedirectToAction("ClickToJoin", new { joinCode = "0000", idWebinar = id });
         }
 
 
@@ -1498,7 +1488,7 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
-        public ActionResult ClickToJoin(string joinCode)
+        public ActionResult ClickToJoin(string joinCode, int? idWebinar)
         {
             var webinar = _orderManagementService.GetWebinarByJoinCode(joinCode);
 
@@ -1508,6 +1498,19 @@ namespace CUWebinars.Web.Controllers
                 RedirectLinkText = _globalConfig.TenantURL + "/" + joinCode,
                 Webinar = webinar
             };
+
+            if (idWebinar.HasValue)
+            {
+                webinar = _orderManagementService.GetWebinarById(idWebinar.Value);
+
+                clickToJoinViewModel = new ClickToJoinViewModel
+               {
+                   JoinCode = joinCode,
+                   RedirectLinkText = _globalConfig.TenantURL + "/" + webinar.CitrixRegisterUrl,
+                   Webinar = webinar
+               };
+
+            }
 
             if (_stateService.HasValue(WebUiConstants.WebinarFromCode))
                 _stateService.ClearValue(WebUiConstants.WebinarFromCode);

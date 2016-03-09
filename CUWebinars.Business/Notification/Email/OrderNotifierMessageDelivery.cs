@@ -42,7 +42,7 @@ namespace CUWebinars.Business.Notification.Email
             //notificationMessage.To = order.idAffiliate == 62 ? "steve@ttstrain.com" : order.BillingEmail;
 
             notificationMessage.To = order.BillingEmail;
-            notificationMessage.Bcc = order.Affiliate.ContactEmail + ";steve@ttstrain.com";
+            notificationMessage.Bcc = order.Affiliate.ContactEmail;
             
             SendMessage(notificationMessage);
         }
