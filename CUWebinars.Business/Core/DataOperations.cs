@@ -1979,5 +1979,68 @@ namespace CUWebinars.Business.Core
                 return result;
             }
         }
+
+        public string UpdateOrderStatusOnLegacy(int idWebinar, string email, int orderStatus)
+        {
+            var result = "";
+            using (var sqlConnection = new SqlConnection(TtsConfig.LegacyConnectionString))
+            {
+                sqlConnection.Open();
+                using (var synchLegacyUser
+                    = new SqlCommand("UpdateOrderStatusOnLegacy", sqlConnection))
+                {
+                    try
+                    {
+                        synchLegacyUser.Connection = sqlConnection;
+                        synchLegacyUser.CommandType = CommandType.StoredProcedure;
+
+                        var newEmailParm = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.VarChar,
+                            ParameterName = "@email",
+                            Value = email
+                        };
+                        synchLegacyUser.Parameters.Add(newEmailParm);
+
+                        var orderStatusParm = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.Int,
+                            ParameterName = "@orderStatus",
+                            Value = orderStatus
+                        };
+                        synchLegacyUser.Parameters.Add(orderStatusParm);
+
+                        var idWebinarParm = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.Int,
+                            ParameterName = "@idWebinar",
+                            Value = idWebinar
+                        };
+                        synchLegacyUser.Parameters.Add(idWebinarParm);
+
+
+                        result = synchLegacyUser.ExecuteScalar().ToString();
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
+                            errorLogger.CommandText += "'UpdateRegTypeOnLegacy' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'UpdateRegTypeOnLegacy', 9 ,";
+                            errorLogger.CommandText += "'error at UpdateRegTypeOnLegacy " +
+                                                       ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+                        }
+
+                        throw;
+                    }
+                }
+                return result;
+            }
+        }
     }
 }

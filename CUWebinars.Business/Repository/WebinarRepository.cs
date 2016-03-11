@@ -319,7 +319,10 @@ namespace CUWebinars.Business.Repository
                         webinarId
                         && (o.OrderStatus == OrderStatus.Billed
                             || o.OrderStatus == OrderStatus.Paid
-                            || o.OrderStatus == OrderStatus.Submitted))
+                            || o.OrderStatus == OrderStatus.Submitted
+                            || o.OrderStatus == OrderStatus.AwaitingVerification
+                            )
+                            )
                 .Include(o => o.Affiliate)
                 .Include(o => o.WebUser)
                 .Include(o => o.OrderRows);
