@@ -46,6 +46,11 @@ namespace CUWebinars.Web.Infrastructure
                     authorizationProcessor = new AdminFunctionAuthorizationProcessor();
                     return ProcessAuthorizationRequest(context, authorizationProcessor, action);
                 }
+                //case IdentityConstants.AffiliateFunction:
+                //{
+                //    authorizationProcessor = new AffiliateFunctionAuthorizationProcessor();
+                //    return ProcessAuthorizationRequest(context, authorizationProcessor, action);
+                //}
                 case IdentityConstants.BatchPasswordResetFeature:
                 {
                     authorizationProcessor = new BatchPasswordResetAuthorizationProcessor();

@@ -90,9 +90,12 @@ namespace CUWebinars.Web.Controllers.Admin
 
         //
         // GET: /Admin/
+        //[ClaimsAuthorize(IdentityConstants.Access, IdentityConstants.AffiliateFunction)]
         public ActionResult Index()
         {
             var aff = _affiliateManagementService.FindById(19);
+
+            ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
             var model = new AdminDTO
             {
                 UserDetailsViewModel = new UserDetailsViewModel()
@@ -100,9 +103,22 @@ namespace CUWebinars.Web.Controllers.Admin
                     Affiliate = aff,
                     UserIsAdmin = true
                 }
-            }
-                ;
+            };
 
+            if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
+            {
+                var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+
+                model = new AdminDTO
+                {
+                    UserDetailsViewModel = new UserDetailsViewModel()
+                    {
+                        Affiliate = affiliate,
+                        UserIsAdmin = false
+                    }
+                };
+            }
 
             return View("~/Views/Admin/Home/Index.cshtml", model);
         }
@@ -481,7 +497,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             if (ModelState.IsValid)
             {
-                
+
                 try
                 {
                     var order = _orderManagementService.GetOrderById(model.Id);
@@ -489,8 +505,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
 
-                    var UpdateOrderStatusOnLegacy = dataOperations.UpdateOrderStatusOnLegacy(order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).idWebinar, order.BillingEmail, Convert.ToInt32( model.DisplayRowPriceViewModel.OrderStatus));
-            
+                    var UpdateOrderStatusOnLegacy = dataOperations.UpdateOrderStatusOnLegacy(order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).idWebinar, order.BillingEmail, Convert.ToInt32(model.DisplayRowPriceViewModel.OrderStatus));
+
                     order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus; // the only field that we are updating at this time
 
                     _orderManagementService.UpdateOrderByAdmin(order);
@@ -783,7 +799,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     //_membershipService.AddClaim(
                     // _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, _globalConfig.TenantEmail)
                     // ,CUWebinars.Business.Constants.ClaimTypes.CommentAdmin, JsonConvert.SerializeObject(createdByExpressCheckout, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore })
-                       
+
                     //    );
 
                     expressOrder.OrderStatus = OrderStatus.Submitted;
@@ -2222,15 +2238,15 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             else
             {
-                 var manageOrderEditModel = new ManageOrderEditModel
-                {
-                    AdditionalLocations = null
-                };
+                var manageOrderEditModel = new ManageOrderEditModel
+               {
+                   AdditionalLocations = null
+               };
 
                 var addLocEmails = "UpdateAdditionalLocations | Removed : " + orderRow.idOrder;
-                
+
                 _logger.Info(addLocEmails.TrimEnd(','));
-                SyncAdditionalLocations(manageOrderEditModel, orderRow);               
+                SyncAdditionalLocations(manageOrderEditModel, orderRow);
             }
 
 

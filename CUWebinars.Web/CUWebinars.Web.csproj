@@ -2105,6 +2105,9 @@
     <Content Include="Views\Cart\ExpressCheckout.cshtml" />
     <Content Include="Views\Shared\_DiscountPartial.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DataTablesEditorTemplates\AffRevenueSummary_Compact.cshtml" />
+    <Content Include="Views\Shared\Admin\_Webinars.cshtml" />
+    <Content Include="Views\Shared\Admin\_Reports.cshtml" />
+    <Content Include="Views\Shared\Admin\_AffAccount.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

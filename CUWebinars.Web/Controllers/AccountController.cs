@@ -298,10 +298,11 @@ namespace CUWebinars.Web.Controllers
                     (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
                 {
                     var claimTTSDomain =
-                        claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate)
-                            .First()
-                            .Value;
+                        claimsIdentityOfAuthenticatedUser.Claims
+                        .Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate)
+                            .First().Value;
                     _stateService.SetValue(WebUiConstants.CurrentAffiliate, _affiliateRepository.LoadByTTSDomain(claimTTSDomain));
+                    return RedirectToAction("Index", "Admin");
 
                 }
                 var discountModel = _accountControllerOrchestrator.BuildDiscountModel();

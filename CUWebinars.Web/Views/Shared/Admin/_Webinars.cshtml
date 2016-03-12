@@ -1,0 +1,25 @@
+﻿
+@using System.Linq
+@using CUWebinars.Web.Core
+@using CUWebinars.Web.Helpers
+@using CUWebinars.Web.Models.JsonModels
+@using Newtonsoft.Json
+
+@{
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+
+    var nfi = new CultureInfo("en-US", false).NumberFormat;
+    nfi.CurrencyDecimalDigits = 0;
+
+}
+
+<div class="container">
+    <!--begin main content-->
+    <div class="row-fluid">
+        <!--begin row-fluid-->
+        <div class="span12">
+        </div>
+    </div>
+</div>
+
+

@@ -10,6 +10,7 @@ namespace CUWebinars.Web.Helpers
         //  Resources
         public const string Account = "Account";
         public const string AdminFunction = "AdminFunction";
+        public const string AffiliateFunction = "AffiliateFunction";
         public const string BatchPasswordResetFeature = "BatchPasswordResetFeature";
         public const string GetOrdersByLastNameFeature = "GetOrdersByLastNameFeature";
         public const string ImpersonateFeature = "ImpersonateFeature";
