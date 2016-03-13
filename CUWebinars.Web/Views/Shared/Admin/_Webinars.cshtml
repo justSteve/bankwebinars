@@ -1,25 +1,30 @@
-﻿
-@using System.Linq
-@using CUWebinars.Web.Core
-@using CUWebinars.Web.Helpers
-@using CUWebinars.Web.Models.JsonModels
-@using Newtonsoft.Json
+﻿@using System.Linq
+@model  AdminDTO
 
 @{
-    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
-    var nfi = new CultureInfo("en-US", false).NumberFormat;
-    nfi.CurrencyDecimalDigits = 0;
 
-}
+    @section scripts{
+        @Scripts.Render("~/bundles/display-webinars")
+        @Scripts.Render("~/bundles/dataTables")
+    }
+    @Styles.Render("~/Content/data-tables")
 
-<div class="container">
-    <!--begin main content-->
-    <div class="row-fluid">
-        <!--begin row-fluid-->
-        <div class="span12">
+    <div id="page">
+        <div class="container visible-phone">
+            <p class="right"><a class="btn btn-primary scrollto" href="#secondary-nav">Page Menu &nbsp;<i class="icon-align-justify"></i></a></p>
+        </div>
+        <div class="hero-unit">
+            <div class="container">
+                <h1 id="PageTitle">Search Results</h1>
+            </div>
+        </div>
+        <div class="container clearfix" id="main-content">
+            <!--begin main content-->
+            
+            @Html.Partial("~/Views/Webinar/Partials/SearchResultsGrid2.cshtml", Model.ShowWebinarsViewModel)
+            <!--close main content-->
         </div>
     </div>
-</div>
 
-
+}

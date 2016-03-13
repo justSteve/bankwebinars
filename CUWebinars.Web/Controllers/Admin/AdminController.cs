@@ -94,10 +94,18 @@ namespace CUWebinars.Web.Controllers.Admin
         public ActionResult Index()
         {
             var aff = _affiliateManagementService.FindById(19);
+            //uncomment to use Updated DataTable code
+            string searchTerm = Request["searchTerm"];
+            ShowWebinarsViewModel gridModel = new ShowWebinarsViewModel
+            {
+                SearchTerm = searchTerm
+            };
+            ViewBag.Title = "Search Results";
 
             ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
             var model = new AdminDTO
             {
+                ShowWebinarsViewModel = gridModel,
                 UserDetailsViewModel = new UserDetailsViewModel()
                 {
                     Affiliate = aff,
@@ -2379,8 +2387,7 @@ namespace CUWebinars.Web.Controllers.Admin
                             }
                             else
                             {
-                                _logger.Info("UPDATE dbo.OrderRow SET OnDemandCode = '{0}' WHERE idOrder ={1}",
-       RandomHelpers.GetUniqueCode(4), order.idOrder);
+                                _logger.Info("UPDATE dbo.OrderRow SET OnDemandCode = '{0}' WHERE idOrder ={1}",RandomHelpers.GetUniqueCode(4), order.idOrder);
                             }
                         }
                     }
@@ -2403,8 +2410,8 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 AffiliateInvoiceDTO model = _affiliateManagementService.GetAffiliateInvoice(idWebinar.Value, aff);
 
-                JsonResult jsonresult = Json(model.Rows);
-                jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
+                //JsonResult jsonresult = Json(model.Rows);
+                //jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
                 string html = "";
 
                 try
@@ -2424,6 +2431,31 @@ namespace CUWebinars.Web.Controllers.Admin
 
             }
             return null;
+        }
+
+        
+        public JsonResult getorderscompact(int? idWebinar)
+        {
+            string html = "";
+
+            try
+            {
+                var orders = _orderManagementService.GetOrdersByWebinar(idWebinar.Value);
+
+                SummaryOfOrdersPerWebinar model = new SummaryOfOrdersPerWebinar();
+
+                html = ViewHelpers.RenderViewToString(ControllerContext,
+                        "~/Views/Shared/DisplayTemplates/DataTablesDisplayTemplates/GetOrders_Compact.cshtml",
+                        orders, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("GetOrderCompact error on " + idWebinar, ex);
+            }
+
+            return Json(new { html = html });
+
+
         }
 
         [HandleAjaxException]

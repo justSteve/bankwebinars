@@ -33,7 +33,7 @@
     }
     if (!ReferenceEquals(row.TtsJoinUrl, null))
     {
-        ttsJoinURL = _globalConfig.TenantURL + "/j/" + row.TtsJoinUrl;
+        ttsJoinURL = "To Join Webinar: " + _globalConfig.TenantURL + "/j/" + row.TtsJoinUrl;
     }
     var certificate = _globalConfig.TenantURL + "/Account/MyCertificate?orderID=" + row.idOrder;
 
@@ -92,6 +92,7 @@
                                         </td>
                                     </tr>
                                 </table>
+                                <span>Repair URL: https://www.@_globalConfig.TenantURL/cart/InsertOnDemandClaim?orderid=@Model.EditFields.Order.idOrder</span>
                             </p>
                         }
                     }

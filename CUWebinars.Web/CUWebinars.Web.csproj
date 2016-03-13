@@ -547,6 +547,7 @@
     <Compile Include="ViewModel\ShareNotisViewModel.cs" />
     <Compile Include="ViewModel\ShowOrdersViewModel.cs" />
     <Compile Include="ViewModel\ShowWebinarsViewModel.cs" />
+    <Compile Include="ViewModel\SummaryOfOrdersPerWebinar.cs" />
     <Compile Include="ViewModel\UserDetailsViewModel.cs" />
     <Compile Include="ViewModel\WebinarEditModel.cs" />
     <Compile Include="ViewModel\WebinarFileViewModel.cs" />
@@ -1749,6 +1750,7 @@
     <Content Include="Scripts\app\admin\edit-forms-in-grid.js" />
     <Content Include="Scripts\app\admin\session-checker.js" />
     <Content Include="Scripts\app\admin\display-orders.js" />
+    <Content Include="Scripts\app\admin\show-webinars-child-row.js" />
     <Content Include="Scripts\app\cart\register-during-checkoutByAffiliate.js" />
     <Content Include="Scripts\app\client-logger.js" />
     <Content Include="Scripts\app\mywebinars\share-notis.js" />
@@ -2108,6 +2110,9 @@
     <Content Include="Views\Shared\Admin\_Webinars.cshtml" />
     <Content Include="Views\Shared\Admin\_Reports.cshtml" />
     <Content Include="Views\Shared\Admin\_AffAccount.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\DataTablesDisplayTemplates\GetOrders_Compact.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\DataTablesDisplayTemplates\GetWebinarDetails_Compact.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\DataTablesDisplayTemplates\GetPresenter_Compact.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

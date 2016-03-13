@@ -361,26 +361,26 @@ namespace CUWebinars.Web.Controllers
             {
                 ViewBag.PageStyleType = "two-columns-right-sidebar";
                 ViewBag.TopicCaption = " ";
-                string searchTerm = Request["searchTerm"];
-
-                var unionOfResultSets = _webinarControllerOrchestrator.SearchWebinars(searchTerm);
-                ShowWebinarsViewModel model = new ShowWebinarsViewModel
-                {
-                    SearchTerm = searchTerm
-                };
-                ViewBag.Title = "Search Results";
-
-                return View(unionOfResultSets);
-
-                //uncomment to use Updated DataTable code
                 //string searchTerm = Request["searchTerm"];
+
+                //var unionOfResultSets = _webinarControllerOrchestrator.SearchWebinars(searchTerm);
                 //ShowWebinarsViewModel model = new ShowWebinarsViewModel
                 //{
                 //    SearchTerm = searchTerm
                 //};
                 //ViewBag.Title = "Search Results";
 
-                //return View(model);
+                //return View(unionOfResultSets);
+
+                //uncomment to use Updated DataTable code
+                string searchTerm = Request["searchTerm"];
+                ShowWebinarsViewModel model = new ShowWebinarsViewModel
+                {
+                    SearchTerm = searchTerm
+                };
+                ViewBag.Title = "Search Results";
+
+                return View(model);
             }
             catch (Exception exception)
             {
@@ -581,7 +581,54 @@ namespace CUWebinars.Web.Controllers
             return View(identifyModel);
         }
 
-        public ActionResult Details(int? id)
+        public ActionResult GetWebinarDetailsCompact(int? id)
+        {
+                var html = "";
+            if (id.HasValue)
+            {
+                var webinar = _webinarManagementService.GetWebinar(id.Value);
+
+                if (webinar == null) return HttpNotFound();
+                var model = new WebinarDetailsViewModel()
+                {
+                    Webinar = webinar,
+                    WebinarFiles = webinar.WebinarFiles.ToList()
+                };
+
+                html = ViewHelpers.RenderViewToString(ControllerContext,
+                        "~/Views/Shared/DisplayTemplates/DataTablesDisplayTemplates/GetWebinarDetails_Compact.cshtml",
+                        model, true);
+            }
+
+            return Json(new { html = html });
+
+        }
+
+        public ActionResult GetPresenterCompact(int? id)
+        {
+                var html = "";
+            if (id.HasValue)
+            {
+                var webinar = _webinarManagementService.GetWebinar(id.Value);
+
+                if (webinar == null) return HttpNotFound();
+                var model = new WebinarDetailsViewModel()
+                {
+                    Webinar = webinar,
+                    WebinarFiles = webinar.WebinarFiles.ToList()
+                };
+
+                html = ViewHelpers.RenderViewToString(ControllerContext,
+                        "~/Views/Shared/DisplayTemplates/DataTablesDisplayTemplates/GetPresenter_Compact.cshtml",
+                        model, true);
+            }
+
+            return Json(new { html = html });
+
+        }
+
+        public
+            ActionResult Details(int? id)
         {
             if (id.HasValue)
             {

@@ -117,6 +117,16 @@ namespace CUWebinars.Business.Repository
         {
             var stronglyTypedContext = (TTSWebinarsContext)db;
 
+            if (string.IsNullOrEmpty(searchTerm))
+            {
+                var noSearch = stronglyTypedContext.Webinars
+                    .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
+                    .Include(w => w.Presenter.WebUser)
+                    ;
+                return noSearch.ToList();
+            }
+
+
             // 1st get all topics with the topicDescription
             var topicsOfSearch = stronglyTypedContext.Topics
                 .Include(t => t.WebinarTopicXrefs.Select(wtx => wtx.Webinar))
