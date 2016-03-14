@@ -60,12 +60,9 @@
         </div>
     </div>
 }
-
+ @*why no show: cgelormino@lakelandbank.com*@
 @if (
-Model.DiscountCode.StartsWith("BZ") ||
-Model.DiscountCode.StartsWith("SL") ||
-Model.DiscountCode.StartsWith("GD") ||
-Model.DiscountCode.StartsWith("PL")
+Model.TypeOfDiscount == DiscountType.Subscription
     )
 {
     <div class="row-fluid">

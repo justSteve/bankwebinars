@@ -42,5 +42,7 @@ namespace CUWebinars.Business.Repository
         double[] GetCostOfUpgrades(int idWebinar);
         Webinar GetWebinarByJoinCode(string joinCode);
         IList<Webinar> GetSearchDTO(string searchTerm);
+
+        IList<int> GetV3OrdersIdsByWebinar(int idWebinar);
     }
 }

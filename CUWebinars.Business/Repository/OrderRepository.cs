@@ -17,6 +17,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices.WindowsRuntime;
 using CUWebinars.Business.Services;
 using FluentValidation.Results;
 
@@ -63,7 +64,7 @@ namespace CUWebinars.Business.Repository
 
             if (validationResult.Errors.FirstOrDefault().ErrorMessage.Contains("already has"))
             {
-                if (origin == "Imported" || origin == "Migrator")
+                if (origin == "Imported" || origin == "Migrator" || origin == "AcsImporter")
                 {
                     //instead of throwing error - passback the pre-existing order id
                     return FindOrderForUserByWebinarID(newOrder.idUser, webinar.idWebinar);
@@ -75,38 +76,38 @@ namespace CUWebinars.Business.Repository
             var errors = ValidationHelper.GetMessagesAsXmlElement(validationResult.Errors);
             throw new Exception(errors.ToString());
         }
-        public Order CreateOrder(int affiliateId, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null)
-        {
+        //public Order CreateOrder(int affiliateId, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null)
+        //{
 
-            var newOrder = items.Create();
-            newOrder.OrderDate = DomainConstants.BuildUtcNowAsCts;
-            newOrder.OrderStatus = OrderStatus.InProcess;
-            newOrder.idAffiliate = affiliateId;
-            newOrder.BillingEmail = webUser.email;
-            newOrder.idUser = webUser.idUser;
-            newOrder.Origin = origin;
+        //    var newOrder = items.Create();
+        //    newOrder.OrderDate = DomainConstants.BuildUtcNowAsCts;
+        //    newOrder.OrderStatus = OrderStatus.InProcess;
+        //    newOrder.idAffiliate = affiliateId;
+        //    newOrder.BillingEmail = webUser.email;
+        //    newOrder.idUser = webUser.idUser;
+        //    newOrder.Origin = origin;
 
-            newOrder = AssignWebUserToOrder(webUser, newOrder);
-            //if (newOrder.Affiliate == null) { }
-            // reconcile orderRow with order relationship
-            ((TTSWebinarsContext)db).OrderRows.Add(orderRow);
-            orderRow.Order = newOrder;
-            newOrder.OrderRows = new List<OrderRow> { orderRow };
+        //    newOrder = AssignWebUserToOrder(webUser, newOrder);
+        //    //if (newOrder.Affiliate == null) { }
+        //    // reconcile orderRow with order relationship
+        //    ((TTSWebinarsContext)db).OrderRows.Add(orderRow);
+        //    orderRow.Order = newOrder;
+        //    newOrder.OrderRows = new List<OrderRow> { orderRow };
 
-            //if (webUser.idSubscriptionDiscount != null && webUser.idSubscriptionDiscount > 0)
-            //{
-            //    orderRow.Discount = GetUserDiscount(webUser.idUser);
-            //}
-
-
-            Add(newOrder);
-
-            return newOrder;
+        //    //if (webUser.idSubscriptionDiscount != null && webUser.idSubscriptionDiscount > 0)
+        //    //{
+        //    //    orderRow.Discount = GetUserDiscount(webUser.idUser);
+        //    //}
 
 
-            //var errors = ValidationHelper.GetMessagesAsXmlElement(validationResult.Errors);
-            //throw new Exception(errors.ToString());
-        }
+        //    Add(newOrder);
+
+        //    return newOrder;
+
+
+        //    //var errors = ValidationHelper.GetMessagesAsXmlElement(validationResult.Errors);
+        //    //throw new Exception(errors.ToString());
+        //}
 
         public OrderRow CreateOrderRow(Webinar webinar,
             IList<AdditionalLocation> additionalLocations,
@@ -114,17 +115,24 @@ namespace CUWebinars.Business.Repository
         {
             try
             {
+
                 var strongTypedContext = (TTSWebinarsContext)db;
 
                 var newOrderRow = strongTypedContext.OrderRows.Create();
 
                 if (additionalLocations != null)
+                {
                     newOrderRow.AdditionalLocation = additionalLocations;
+
+                }
 
                 newOrderRow.Webinar = webinar;
                 newOrderRow.RegistrationType = registrationType;
+                newOrderRow.idRegType = registrationType.idRegType;
+
                 newOrderRow.RowStatus = OrderRowStatus.Active;
                 newOrderRow.TtsJoinUrl = RandomHelpers.GetUniqueCode(5);
+                newOrderRow.OnDemandCode = RandomHelpers.GetUniqueCode(5);
 
                 // The RowPrice is just the starting point. The full price for an 
                 // order is calculated in CalculateOrderCost of the OrderManagementService
@@ -153,10 +161,10 @@ namespace CUWebinars.Business.Repository
 
         public void DeleteOrder(Order order)
         {
-            
+
 
             //order.OrderStatus = OrderStatus.Canceled;
-            
+
             //SaveChanges();
             Remove(order);
         }
@@ -331,17 +339,9 @@ namespace CUWebinars.Business.Repository
 
         public int MigrateOrderFromV3(Order order)
         {
-
             var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
-            return dataOperations.MigrateOrderFromV3(order);
-        }
-
-        public Order FindExpressCheckoutOrderByOrderId(int q11Orderid)
-        {
-            return items
-                .Include(o => o.WebUser)
-                .Include(o => o.OrderRows)
-                .FirstOrDefault(order => order.idOrder == q11Orderid);
+            var result = dataOperations.MigrateOrderFromV3(order);
+            return result;
         }
 
         public void SynchIds(int lOrder, int vOrder)
@@ -363,7 +363,7 @@ namespace CUWebinars.Business.Repository
             var orders = ((TTSWebinarsContext)db).OrderRows
                 .Include(or => or.Order)
                 .Where(or => or.RegistrationType.ShowRecordingNotifications == "Yes")
-                .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Submitted)
+                .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Billed || o.Order.OrderStatus == OrderStatus.Submitted)
                 .Where(or => or.Webinar.Status == WebinarStatus.Recorded)
                 .Select(o => o.Order);
             return GetLoadedEntitiesForOrder(orders);
@@ -456,7 +456,7 @@ namespace CUWebinars.Business.Repository
                 .Where(or => or.idWebinar == idWebinar)
                 .Where(or => or.RegistrationType.ShowLiveNotifications == "Yes")
                 .Where(or => or.RowStatus == OrderRowStatus.Active)
-                .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Submitted)
+                .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Billed || o.Order.OrderStatus == OrderStatus.Submitted)
                 .Select(o => o.Order);
 
             return GetLoadedEntitiesForOrder(orders);
@@ -496,7 +496,7 @@ namespace CUWebinars.Business.Repository
                 .Include(or => or.Order)
                 .Where(or => or.idWebinar == idWebinar)
                 .Where(or => or.RegistrationType.ShowRecordingNotifications == "Yes")
-                .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Submitted)
+                .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Billed || o.Order.OrderStatus == OrderStatus.Submitted)
                 .Select(o => o.Order);
             return GetLoadedEntitiesForOrder(orders);
         }
@@ -697,17 +697,41 @@ namespace CUWebinars.Business.Repository
 
             foreach (var order in orders)
             {
-                order.ShippingFirstName  = shippingAddress.Name.Split(' ')[0];
+                order.ShippingFirstName = shippingAddress.Name.Split(' ')[0];
                 order.ShippingLastName = shippingAddress.Name.Split(' ')[1];
                 order.ShippingAddress = shippingAddress.StreetAddress;
                 order.ShippingAddress2 = shippingAddress.StreetAddress2;
                 order.ShippingCity = shippingAddress.City;
                 order.ShippingState = shippingAddress.State;
                 order.ShippingZip = shippingAddress.Zip;
-                
+
             }
             db.SaveChanges();
         }
+
+        public bool OnDemandCodeIsUnique(string onDemandCode)
+        {
+            var result = items.Where(o => o.OrderRows.Any(r => r.OnDemandCode == onDemandCode));
+            if (result.Any())
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public IList<Order> GetOrdersByWebinar(int idWebinar)
+        {
+            var orders = ((TTSWebinarsContext)db).OrderRows
+            .Include(or => or.Order)
+            .Include(row => row.Webinar)
+            .Where(or => or.idWebinar == idWebinar)
+            .Where(or => or.RowStatus == OrderRowStatus.Active)
+            .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Billed || o.Order.OrderStatus == OrderStatus.Submitted)
+            .Select(o => o.Order);
+
+            return GetLoadedEntitiesForOrder(orders);
+        }
+
 
         public Discount FindDiscountByUser(WebUser currentUser)
         {

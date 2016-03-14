@@ -28,14 +28,14 @@ namespace CUWebinars.Web.App_Start
                 new Log4NetLogger(typeof(OrderManagementService)),
                 (TtsConfiguration)GlobalConfiguration.Configuration.DependencyResolver.GetService(typeof(TtsConfiguration))
                 );
-            var monitorAffiliateFilter = new MonitorAffiliateFilter(_orderManagementService, (IStateService)GlobalConfiguration.Configuration.DependencyResolver.GetService(typeof(IStateService)));
+            //var monitorAffiliateFilter = new MonitorAffiliateFilter(_orderManagementService, (IStateService)GlobalConfiguration.Configuration.DependencyResolver.GetService(typeof(IStateService)));
 
-            switch (GlobalConfig.GlobalConfigSingleton.Tenant)
-            {
-                case DomainConstants.BankWebinars: filters.Add(monitorAffiliateFilter); break;
-                case DomainConstants.CUWebinars: break;
-                default:break;
-            }
+            //switch (GlobalConfig.GlobalConfigSingleton.Tenant)
+            //{
+            //    case DomainConstants.BankWebinars: filters.Add(monitorAffiliateFilter); break;
+            //    case DomainConstants.CUWebinars: break;
+            //    default:break;
+            //}
 
             //filters.Add(new HandleErrorAttribute());
         }

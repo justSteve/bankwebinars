@@ -185,6 +185,8 @@
     <Compile Include="CQS\QueryHandlers\OrderManagementQueryHandlers.cs" />
     <Compile Include="CQS\QueryProcessor.cs" />
     <Compile Include="Models\AdditionalLocationsLookupPrice.cs" />
+    <Compile Include="Models\AffiliateInvoiceDTO.cs" />
+    <Compile Include="Models\AffiliateReportDTO.cs" />
     <Compile Include="Models\DiscountType.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -204,6 +206,7 @@
     <Compile Include="Models\Mapping\WebUserLegacy.cs" />
     <Compile Include="Models\Option.cs" />
     <Compile Include="Models\OrderDTO.cs" />
+    <Compile Include="Models\OrderRowModel.cs" />
     <Compile Include="Models\Question.cs" />
     <Compile Include="Models\QuestionType.cs" />
     <Compile Include="Models\QuestionWithOption.cs" />
@@ -211,6 +214,7 @@
     <Compile Include="Models\QuizUserAnswer.cs" />
     <Compile Include="Models\QuizUserOrder.cs" />
     <Compile Include="Models\QuizWithQuestion.cs" />
+    <Compile Include="Models\Royalty.cs" />
     <Compile Include="Models\SearchDTO.cs" />
     <Compile Include="Models\TimeLimit.cs" />
     <Compile Include="Models\UserDTO.cs" />

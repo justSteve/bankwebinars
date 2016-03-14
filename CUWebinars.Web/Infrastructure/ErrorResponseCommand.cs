@@ -48,8 +48,7 @@ namespace CUWebinars.Web.Infrastructure
                         Elmah.ErrorSignal.FromCurrentContext().Raise(new Exception(string.Format("ErrorResponseCommand finds Null Controller {1} | {0} ", actionNameOfOriginalRequest, controllerNameOfOriginalRequest)));
                     }
                 }
-                //Elmah.ErrorSignal.FromCurrentContext().Raise(new Exception(string.Format("ErrorResponseCommand finds Null Controller {1} | {0} ", actionNameOfOriginalRequest, controllerNameOfOriginalRequest)));
-                    
+ 
             }
 
             // Re-route execution to the relevant StaticContentController's Action method based on status code.

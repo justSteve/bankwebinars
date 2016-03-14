@@ -9,23 +9,19 @@
     var url = "";
     if (@ConfigurationManager.AppSettings["Tenant"] == "CUWebinars")
     {
-        url = "/cart/ExpressCheckout4IE1CU";
+        url = "/cart/ExpressCheckout";
     }
 
     if (@ConfigurationManager.AppSettings["Tenant"] == "BankWebinars")
     {
-        url = "/cart/ExpressCheckout4IE1";
+        url = "/cart/ExpressCheckout";
     }
 }
 
 <script language="javascript" type="text/javascript">
-    var idWebinar = cartStateManager.getWebinarId();
-
+    
     function openECWindow() {
-        window.location.href = "@url?idWebinar=" + idWebinar + "&idAffiliate=19";
-        //window.open('@url' + 'affiliateid15=19&webinarTitle=' + pagetitle + '&email5=' + $('#Email1').val() + '&webinarid=' + idWebinar + '',"_blank", 'scrollbars=yes,toolbar=no,width=700,height=500');
-        //okToLeave = true;
-        //location.reload(true);
+        window.location.href = "@url?idOrder=" + cartStateManager.getOrderId() + "&idWebinar=" + cartStateManager.getWebinarId() + "&idAffiliate=" + currentAffiliate + "&email=" + $('#Email1').val();
     }
 </script>
 
@@ -272,15 +268,8 @@
     </div>
     <div id="UserHasAccount" class="modal-body">
         <p>
-            Try our <i>Express Me!</i> button when all you want to do is place an order without logging in.
-            If you need instant access to your account you can login here or use the Reset Password button.
-            @if (globalConfig.Tenant == "BankWebinars")
-            {
-                <span>
-                    Or login to your original
-                    account at http://legacy.bankwebinars.com.
-                </span>
-            }
+            Use our <i>Express Me!</i> button for guest checkout.
+            If you need instant access to your account use the <i>'Continue to Login'</i> button.
         </p>
 
 

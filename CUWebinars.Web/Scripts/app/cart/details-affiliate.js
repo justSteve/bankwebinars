@@ -244,7 +244,7 @@ OCA.initializeFunctions = function () {
                 BillingAddress: $('#AdjustUserDetailsPanel_BillingAddress').val(),
                 ShippingAddress: $('#AdjustUserDetailsPanel_Shipping').val()
             };
-            alert($("#AdjustUserDetailsPanel_Email").val());
+
             $.ajax({
                 type: 'POST',
                 contentType: constants.JsonContentType,
@@ -370,7 +370,7 @@ OCA.initializeFunctions = function () {
     };
 
     OCA.applyAdditionalLocations = function (e) {
-
+//this handler only applies to shopping cart AddLoc control - for grid editor see edit-forms-in-child-row
         e.preventDefault();
 
         var self = $(this);
@@ -651,7 +651,7 @@ OCA.wireUpHandlers = function () {
 
     /* Submit event for the big GREEN SignUp button */
     OCA.signUpForm.on('submit', function (e) {
-        
+
         e.preventDefault();
         $('#users').collapse('hide');
         $('#createNewUserButton').html("<b>processing...</b>");
@@ -667,7 +667,7 @@ OCA.wireUpHandlers = function () {
         //  value converted to a Boolean in isShippingAddressRequired function
         //  value comes from a hidden input in the radio btn list next to the relevant radio button (previous-sibling)
         OCA.shippingAddressRequired = OCA.isShippingAddressRequired($('#RegistrationType > dl dt input:checked').prev());
-        
+
 
         var data = OCA.signUpForm.serialize();
 
@@ -684,55 +684,121 @@ OCA.wireUpHandlers = function () {
             // So the user IS LOGGED IN
             $.post(OCA.signUpForm.attr('action'), data, function (response, status, xhr) {
                 if (status !== 'error') {
-                    if (xhr.responseJSON['success']) {
-                        OCA.cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
-                        OCA.cartStateManager.setOrderId(xhr.responseJSON['orderId']);
-                        OCA.cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
-                        $('#createNewUserButton').html("New User");
-                        $('#createNewUserButton').hide();
+                    switch (xhr.responseJSON['success']) {
+                        case "AlreadySubmitted":
 
-                        confirmationForAffiliateDiv.load('/cart/CheckoutConfirmForAffiliate/' + OCA.cartStateManager.getOrderId(), function (response, status, xhr) {
 
-                            if (status === 'error') {
-                                $(this).html('<div class="text-error">There has been an error at the server, please use our Help & Feedback button (lower right corner)  for immediate assistance.</div>');
-                                $('#loadingSpinner').remove();
-                                $('#confirmationTabForAffiliate a').tab('show');
-                            } else {
+                            //if (xhr.responseJSON['success'] == "AlreadySubmitted") {
+                            OCA.cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
+                            OCA.cartStateManager.setOrderId(xhr.responseJSON['orderId']);
+                            OCA.cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
+                            $('#createNewUserButton').html("New User");
+                            $('#createNewUserButton').hide();
+                            $('#regTabs').html('<div class="text-error">A registration already exists for that email.</div>');
+                            $('#regTabs').show();
+                            break;
+                        case "WasCanceled":
+                        case "InProcess":
+                            OCA.cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
+                            OCA.cartStateManager.setOrderId(xhr.responseJSON['orderId']);
+                            OCA.cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
+                            $('#createNewUserButton').html("New User");
+                            $('#createNewUserButton').hide();
 
-                                $('#confirmationTabForAffiliate a').tab('show');
+                            confirmationForAffiliateDiv.load('/cart/CheckoutConfirmForAffiliate/' + OCA.cartStateManager.getOrderId(), function (response, status, xhr) {
 
-                                $('#AdjustOrder').hide();
+                                if (status === 'error') {
+                                    $(this).html('<div class="text-error">There has been an error at the server, please use our Help & Feedback button (lower right corner)  for immediate assistance.</div>');
+                                    $('#loadingSpinner').remove();
+                                    $('#confirmationTabForAffiliate a').tab('show');
+                                } else {
 
-                                if (OCA.shippingAddressRequired
-                                    && !OCA.cartStateManager.getAddressVerified(addressVerified)) {
-                                    OCA.displayModal($('#UserDetailsModal'));
+                                    $('#confirmationTabForAffiliate a').tab('show');
+
+                                    $('#AdjustOrder').hide();
+
+                                    if (OCA.shippingAddressRequired
+                                        && !OCA.cartStateManager.getAddressVerified(addressVerified)) {
+                                        OCA.displayModal($('#UserDetailsModal'));
+                                    }
+
+                                    OCA.hookUpChangeTypeLogic($('#RegType'));
+
+                                    OCA.checkoutConfirm.initialize();
+
+                                    OCA.wireUpMainButtonsOn3rdTab();
+
+                                    OCA.setUpEditButtons();
+
+                                    $('#EmailOrderButton').on('click', OCA.emailOrderButtonHandler);
+
+                                    beigeFormArea.height(confirmationForAffiliateDiv.height() + 25);
+
+                                    $('#showSetAssignedAffiliate').removeAttr('disabled');
                                 }
 
-                                OCA.hookUpChangeTypeLogic($('#RegType'));
+                                spinner.remove();
 
-                                OCA.checkoutConfirm.initialize();
+                            }, constants.HtmlDataType);
+                            break;
+                        case "success":
 
-                                OCA.wireUpMainButtonsOn3rdTab();
+                            OCA.cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
+                            OCA.cartStateManager.setOrderId(xhr.responseJSON['orderId']);
+                            OCA.cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
+                            $('#createNewUserButton').html("New User");
+                            $('#createNewUserButton').hide();
 
-                                OCA.setUpEditButtons();
+                            confirmationForAffiliateDiv.load('/cart/CheckoutConfirmForAffiliate/'
+                                + OCA.cartStateManager.getOrderId(), function (response, status, xhr) {
 
-                                $('#EmailOrderButton').on('click', OCA.emailOrderButtonHandler);
+                                    if (status === 'error') {
+                                        $(this).html('<div class="text-error">There has been an error at the server, please use our Help & Feedback button (lower right corner)  for immediate assistance.</div>');
+                                        $('#loadingSpinner').remove();
+                                        $('#confirmationTabForAffiliate a').tab('show');
+                                    } else {
 
-                                beigeFormArea.height(confirmationForAffiliateDiv.height() + 25);
+                                        $('#confirmationTabForAffiliate a').tab('show');
 
-                                $('#showSetAssignedAffiliate').removeAttr('disabled');
+                                        $('#AdjustOrder').hide();
+
+                                        if (OCA.shippingAddressRequired
+                                            && !OCA.cartStateManager.getAddressVerified(addressVerified)) {
+                                            OCA.displayModal($('#UserDetailsModal'));
+                                        }
+
+                                        OCA.hookUpChangeTypeLogic($('#RegType'));
+
+                                        OCA.checkoutConfirm.initialize();
+
+                                        OCA.wireUpMainButtonsOn3rdTab();
+
+                                        OCA.setUpEditButtons();
+
+                                        $('#EmailOrderButton').on('click', OCA.emailOrderButtonHandler);
+
+                                        beigeFormArea.height(confirmationForAffiliateDiv.height() + 25);
+
+                                        $('#showSetAssignedAffiliate').removeAttr('disabled');
+                                    }
+
+                                    spinner.remove();
+
+                                }, constants.HtmlDataType);
+                            break;
+
+                        default:
+                            if (xhr.responseJSON['Result'] === 'Fail') {
+                                $('#AttendRegTypes').before('<div id="errorAtServer" class="text-error">' + xhr.responseJSON['Msg'] + '.</div>');
+                                $('#signUpSpinnerInButton').remove();
+                            } else if (xhr.responseJSON['isSuccessful'] === false) {
+                                formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
+                                $('#AddToCart').removeAttr('disabled');
                             }
-
-                            spinner.remove();
-
-                        }, constants.HtmlDataType);
-                    } else if (xhr.responseJSON['Result'] === 'Fail') {
-                        $('#AttendRegTypes').before('<div id="errorAtServer" class="text-error">' + xhr.responseJSON['Msg'] + '.</div>');
-                        $('#signUpSpinnerInButton').remove();
-                    } else if (xhr.responseJSON['isSuccessful'] === false) {
-                        formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
-                        $('#AddToCart').removeAttr('disabled');
+                            //    default code block
                     }
+                    //} else
+
                     spinner.remove();
                 } else {
                     confirmationForAffiliateDiv.html('<div class="text-error">There has been an error at the server, please use our Help & Feedback button (lower right corner)  for immediate assistance.</div>');
@@ -923,7 +989,7 @@ OCA.wireUpHandlers = function () {
     };
 
     OCA.showSetAssignedAffiliate.on('click', function (e) {
-        
+
         e.preventDefault();
         OCA.displaySetAffiliateModal(this);
     });

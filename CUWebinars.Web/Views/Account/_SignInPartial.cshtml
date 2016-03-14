@@ -37,7 +37,7 @@
             @Html.HiddenFor(m => m.ReturnUrl)
             <div id="loginMsgLabelWrap" style="display:inline-block"></div>
         </div>
-        @Html.ValidationSummary("Please address the following login errors: ", new { id = "LoginValSummary" })
+        @Html.ValidationSummary("Error: ", new { id = "LoginValSummary" })
         <div style="margin-top: 25px;">
             <input id="registerLinkButton" type="button" class="btn-small btn btn-link" onclick="javascript: stateManager.registerView(); return false;" value="Create New Account?" />
             <span style="margin-left: 25px;"><input id="forgotPasswordLinkButton" type="button" class="btn-small btn btn-link" onclick="javascript: stateManager.passResetView(); return false;" value="Reset Password" /></span>

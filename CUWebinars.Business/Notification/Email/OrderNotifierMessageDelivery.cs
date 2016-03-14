@@ -40,22 +40,10 @@ namespace CUWebinars.Business.Notification.Email
 
 
             //notificationMessage.To = order.idAffiliate == 62 ? "steve@ttstrain.com" : order.BillingEmail;
-            if (ReferenceEquals(null, order.Affiliate.ContactEmail))
-            {
-                notificationMessage.Addresses = new List<string>
-                {
-                    order.BillingEmail
-                };
-            }
-            else
-            {
-                notificationMessage.Addresses = new List<string>
-                {
-                    order.BillingEmail,
-                    order.Affiliate.ContactEmail
-                   
-                };
-            }
+
+            notificationMessage.To = order.BillingEmail;
+            notificationMessage.Bcc = order.Affiliate.ContactEmail;
+            
             SendMessage(notificationMessage);
         }
 
@@ -68,6 +56,7 @@ namespace CUWebinars.Business.Notification.Email
             var mailMessage = new MailMessage();
             var tmpMsg = string.Empty;
             var destinationEmailAddress = notificationMessage.To;
+            var destinationEmailAddressAffiliate = notificationMessage.Bcc;
 
             if (string.IsNullOrWhiteSpace(notificationMessage.From))
             {
@@ -79,45 +68,24 @@ namespace CUWebinars.Business.Notification.Email
             //using (var smtp = new SmtpClient(ConfigurationManager.AppSettings["smtp.host"], int.Parse(ConfigurationManager.AppSettings["smtp.port"])))
             {
                 smtp.Timeout = 5000;
-                //smtp.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["smtp.userName"], ConfigurationManager.AppSettings["smtp.password"]);
-                //smtp.EnableSsl = true;
-                //smtp.UseDefaultCredentials = false;
-                //smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-
+                
                 //  Set this AppSetting in App.Config to something other than 'live' when testing i.e. notlive
-                if (ConfigurationManager.AppSettings["EmailSendingMode"] == "live")
-                {
-                    var i = 0;
-                    foreach (var address in notificationMessage.Addresses)
-                    {
-                        if (i == 0)
-                        {
-                            mailMessage.To.Add(new MailAddress(address));
-                        }
-                        else
-                        {
-                            mailMessage.Bcc.Add(new MailAddress(address));
-                        }
-
-                        _logger.Info(string.Format("Sending msg to {0}: ", address));
-
-                    }
-                }
-                else
+                if (ConfigurationManager.AppSettings["EmailSendingMode"] != "live")
                 {
                     destinationEmailAddress = ConfigurationManager.AppSettings["TestEmailAddress"];
-                    mailMessage.To.Add(new MailAddress(ConfigurationManager.AppSettings["TestEmailAddress2"]));    
+                    destinationEmailAddressAffiliate = "steve@juststeve.com";
                 }
 
                 try
                 {
                     mailMessage.From = new MailAddress(notificationMessage.From);
-                    
-                    _logger.Info(string.Format("Sending msg to {0}: ", notificationMessage.Addresses));
 
                     mailMessage.Subject = notificationMessage.Subject;
                     mailMessage.Body = notificationMessage.Body;
                     mailMessage.IsBodyHtml = true;
+                    mailMessage.To.Add(destinationEmailAddress);
+                    mailMessage.Bcc.Add(destinationEmailAddressAffiliate);
+                    _logger.Info("OrderNotification Bcc:" + mailMessage.Bcc +" value should be: "+ destinationEmailAddressAffiliate);
                     smtp.Send(mailMessage);
 
                 }
@@ -128,6 +96,7 @@ namespace CUWebinars.Business.Notification.Email
                 catch (InvalidOperationException ex)
                 {
                     tmpMsg = "WriteLine MailerInvalidOperationException: " + destinationEmailAddress;
+                    tmpMsg += " Addressee: " + notificationMessage.To;
                     tmpMsg += " Subject: " + notificationMessage.Subject;
                     tmpMsg += " WriteLineMsg: " + ex.Message;
                     tmpMsg += " Timestamp was: " + timeStamp;
@@ -137,6 +106,7 @@ namespace CUWebinars.Business.Notification.Email
                 catch (SmtpFailedRecipientsException)
                 {
                     tmpMsg = "WriteLine MailerSmtpFailedRecipientsException: " + destinationEmailAddress;
+                    tmpMsg += " Addressee: " + notificationMessage.To;
                     tmpMsg += " Subject: " + notificationMessage.Subject;
                     tmpMsg += " Timestamp was: " + timeStamp;
                     _logger.Error(tmpMsg);
@@ -146,6 +116,7 @@ namespace CUWebinars.Business.Notification.Email
                 {
                     System.Threading.Thread.Sleep(2000);
                     tmpMsg = "WriteLine MailerSmtpException: " + destinationEmailAddress;
+                    tmpMsg += " Addressee: " + notificationMessage.To;
                     tmpMsg += " Subject: " + notificationMessage.Subject;
                     tmpMsg += " WriteLineMsg: " + ex.Message;
                     tmpMsg += " Timestamp was: " + timeStamp;
@@ -155,6 +126,7 @@ namespace CUWebinars.Business.Notification.Email
                 {
                     System.Threading.Thread.Sleep(2000);
                     tmpMsg = "WriteLine Exception: " + destinationEmailAddress;
+                    tmpMsg += " Addressee: " + notificationMessage.To;
                     tmpMsg += " Subject: " + notificationMessage.Subject;
                     tmpMsg += " WriteLineMsg: " + exception.Message;
                     tmpMsg += " Timestamp was: " + timeStamp;
@@ -162,6 +134,7 @@ namespace CUWebinars.Business.Notification.Email
                 }
 
                 tmpMsg = "MailerSent: " + destinationEmailAddress;
+                tmpMsg += " Addressee: " + notificationMessage.To;
                 tmpMsg += " Subject: " + notificationMessage.Subject;
                 tmpMsg += " Timestamp was: " + timeStamp;
 

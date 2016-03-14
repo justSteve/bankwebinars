@@ -21,7 +21,7 @@ namespace CUWebinars.Business.Services
         AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullname);
 
         Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null);
-        Order CreateNewOrder(int affiliateId, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null);
+        //Order CreateNewOrder(int affiliateId, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null);
 
         OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, int registrationType);
 
@@ -97,14 +97,12 @@ namespace CUWebinars.Business.Services
         
         Discount GetDiscountById(int discount);
         IList<Order> GetV3OrdersByWebinar(int idWebinar);
-        DateTime CalculatePostEventMaterialsAccessExpiry(Order order);
+        DateTime CalculatePostEventMaterialsAccessExpiry(OrderRow row);
         //void SendOrderToLegacy(Order newOrder);
         WebUser GetWebUserWithAddressAndInstitution(int idUser);
         IEnumerable<int> GetUserIdsByPartialId(int value);
         object SearchRegistrations(int affiliateID, IList<int> excludeUserIDs, int skip, int take, string search);
         
-        string SetPostEventClaims(int webinarId);
-
         bool VerifyWebUserExists(int idUser);
         Webinar GetWebinarByJoinCode(string joinCode);
         void LoadWebinarIntoOrderRow(OrderRow newOrderRow);
@@ -129,6 +127,13 @@ namespace CUWebinars.Business.Services
         Order GetOrderByOnDemandClaim(string onDemandCode);
         void UpdateDiscountDetails(Discount discount);
         void UpdateShippingAddressDetails(Address shippingAddress, int idUser);
-        string InsertOnDemandClaim(int orderId);
+        //string InsertOnDemandClaim(int orderId);
+        string SynchOrdersWhereLegacyIsZero(int idOrderLegacy, int idOrderV3);
+        RegType GetRegTypeByLabel(string regType, int idWebinar);
+        bool OnDemandCodeIsUnique(string onDemandCode);
+        IList<int> GetV3OrdersIdsByWebinar(int idWebinar);
+        List<Order> GetOrdersByWebinar(int idWebinar);
+        void RestoreToDiscount(int newOrderRowId);
+        void RemoveFromDiscount(int newOrderRowId);
     }
 }

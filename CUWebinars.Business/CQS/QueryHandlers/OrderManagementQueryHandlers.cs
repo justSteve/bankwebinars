@@ -61,7 +61,9 @@ namespace CUWebinars.Business.CQS.QueryHandlers
             {
                 Affiliate = _orderManagementService.GetAffiliateById(query.AffiliateId),
                 WebUser = _membershipService.GetUserByEmail(query.Email),
-                Webinar = _webinarManagementService.GetWebinar(query.WebinarId)
+                Webinar = _webinarManagementService.GetWebinar(query.WebinarId),
+                OrderDate = query.OrderDate,
+                Source = query.Origin
             };
 
             return importQueryResult;

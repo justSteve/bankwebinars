@@ -97,12 +97,19 @@ namespace CUWebinars.Business.AccountService
         string FindDisplayPostEventMaterialsClaimValue(Order order);
         UserAccount GetUserAccountByVerificationKey(string key);
         ValidationResult ValidatePostEventMaterialsAccessClaimValue(string claimValue, string claimType);
-        WebUser CreateExpressCheckoutUser(string tenant, string email, string firstName, string lastName, string phone, string institution, string title);
+        
+        void AddClaimForPostEventMaterials(string email, OrderRow row, DateTime expiryDate, string tenant);
+        
+        WebUser CreateWebUserFromExpressCheckout(string city, string state, string zip, string streetAdd1,
+            string streetAdd2, string tenant, string email, string firstName, string lastName, string phone,
+            string institution, string title);
+
         Address BuildPlaceHolderAddressBilling(string email);
         Address BuildPlaceHolderAddressShipping(string email);
 
         Institution GetInstitutionById(int idInstitution);
         void UpdateInstitutionDetails(Institution saveInst);
         void UpdateUserEmail(string oldEmail, string email, string tenant);
+        string CreateUserOnLegacy(WebUser user);
     }
 }

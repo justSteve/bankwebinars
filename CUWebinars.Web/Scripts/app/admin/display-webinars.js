@@ -23,14 +23,15 @@ $(function () {
         DW.webinarsTable = $('#webinarsTable');
         DW.connInfoTable = $('#connInfoTable');
         DW.searchTermDiv = $('#searchTermDiv');
+
     };
 
     ns.wireUpHandlers = function () {
 
-
+        AttachDataTableWebinarEvents();
 
     };
-
+    var shouldShow = false;
     ns.wireUpWebinarsGrid = function () {
         DW.webinarsTable.dataTable({
             "serverSide": true,
@@ -58,34 +59,61 @@ $(function () {
             "deferRender": true,
             'columns': [
 
-                { 'data': 'Date' },
-                { 'data': 'Status' },
-                { 'data': 'Body' },
-
-                //{ 'data': null, 'orderable': false }
-                { 'data': 'RelatedTopicsString' }
+                { 'data': 'Date', 'class': 'details-control wDate' },
+                { 'data': 'Status', 'class': 'details-control edit' },
+                { 'data': 'Title', 'class': 'details-control wTitle' },
+                { 'data': 'PresenterName', 'class': 'details-control presenter' },
+                { 'data': 'RelatedTopicsString', 'class': 'details-control topicsTitles' },
+                { 'data': 'Orders', 'class': 'details-control orders' }
             ],
             "order": [0, "desc"]
 
             , // complex columns can be specified / created with mRender
             "aoColumnDefs": [
             {
-                "aTargets": [0], // Status column
+               
+                "aTargets": [0], // Date column
                 "mData": "",
+                "createdCell": function (td, cellData, rowData, row, col) {
+                    if ( cellData != null) {
+                        $(td).css('color', 'red');
+                    }
+                },
                 "mRender": function (data, type, full) {
-
+                    console.log(full);
                     var statusHtml = full.WebinarDateString;
 
                     return statusHtml;
                 }
             },
             {
-                "aTargets": [2], // Status column
+                "aTargets": [1], // Status column
                 "mData": "",
+                "visible": shouldShow,
                 "mRender": function (data, type, full) {
 
                     var statusHtml = full.Title;
 
+                    return statusHtml;
+                }
+            },
+            {
+                "aTargets": [2], // Titlecolumn
+                "mData": "Title",
+                "mRender": function (data, type, full) {
+
+                    var statusHtml = full.Title;
+
+                    return statusHtml;
+                }
+            },
+            {
+                "aTargets": [5], // Status column
+                "mData": "",
+                "orderable": false,
+                "mRender": function (data, type, full) {
+                    var numOrders = 3;
+                    var statusHtml = "<button data-webinarId=\"" + full.idWebinar + "\" class=\"ShowOrdersByWebinar btn btn-mini\">" + numOrders + "</button>";
                     return statusHtml;
                 }
             }

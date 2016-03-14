@@ -55,17 +55,19 @@ namespace CUWebinars.Web.Mapping.Configuration
                            map => map.MapFrom
                                (s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Order.WebUser.Institution.InstitutionName + "<br>"
                                + s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Order.WebUser.Institution.City + ", "
-                               + s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Order.WebUser.Institution.State ))
+                               + s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Order.WebUser.Institution.State))
                 .ForMember(d => d.TtsJoinUrl,
                            map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).TtsJoinUrl))
                 .ForMember(d => d.Discount,
                            map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Discount))
+                .ForMember(d => d.Royalty,
+                           map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Royalty))
                 .ForMember(d => d.RegistrationType,
                            map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).RegistrationType))
                 .ForMember(d => d.Webinar_IsActive,
                            map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Webinar.Status == WebinarStatus.Active))
-                   .ForMember(d => d.Webinar_IsRecorded,
-                           map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Webinar.Status == WebinarStatus.Recorded));
+                .ForMember(d => d.Webinar_IsRecorded,
+                        map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Webinar.Status == WebinarStatus.Recorded));
 
             Profile.CreateMap<WebUser, UserDTO>()
                 .ForMember(d => d.Institution,

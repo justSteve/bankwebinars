@@ -9,6 +9,13 @@ namespace CUWebinars.Web.App_Start
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+            //replicates legacy's generic connection info endpoint
+            routes.MapRoute(
+                    "WebinarConnectionDetails",
+                    "{id}",
+                    new { controller = "Webinar", action = "ConnectionDetails", id = "" },  // Parameter defaults
+                    new { id = @"\d+" }
+                );
 
             routes.MapRoute(
                 "PostBackWPS",
@@ -18,6 +25,9 @@ namespace CUWebinars.Web.App_Start
             routes.MapRoute(
                 "expresscheckout",
                 url: "expresscheckout",
+                // this should work and would be better
+                // id to the method 
+                //defaults: new { controller = "Admin", action = "ExpressCheckoutPostBack", id = 0 }
                 defaults: new { controller = "Admin", action = "ExpressCheckout", id = 0 }
             );
             //routes.MapRoute(
@@ -29,13 +39,18 @@ namespace CUWebinars.Web.App_Start
             routes.MapRoute(
                 "ccpostback",
                 url: "ccpostback",
-                defaults: new { controller = "Cart", action = "PostBackMoneris", id = 0 }
+                defaults: new { controller = "Cart", action = "PostBackMonerisDEPRICATED", id = 0 }
             );
 
             routes.MapRoute(
                 "ccpostbackbw",
                 url: "ccpostbackbw",
-                defaults: new { controller = "Cart", action = "PostBackMonerisBW", id = 0 }
+                defaults: new { controller = "Cart", action = "PostBackMonerisbwDEPRICATED", id = 0 }
+            );
+            routes.MapRoute(
+                "PostBackMoneris",
+                url: "PostBackMoneris",
+                defaults: new { controller = "Cart", action = "PostBackMoneris", id = 0 }
             );
 
             routes.MapRoute(
@@ -165,13 +180,6 @@ namespace CUWebinars.Web.App_Start
                 url: "{controller}/{action}/{email}/{password}"
             );
 
-            //replicates legacy's generic connection info endpoint
-            routes.MapRoute(
-                    "WebinarConnectionDetails",
-                    "{id}",
-                    new { controller = "Webinar", action = "ConnectionDetails", id = "" },  // Parameter defaults
-                    new { id = @"\d+" }
-                );
 
             //  Catch-all, for any routes which do not exist.
             routes.MapRoute(

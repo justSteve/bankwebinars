@@ -8,7 +8,7 @@ namespace CUWebinars.Web.Models
     {
 
         [UIHint("Discount")]
-        public DiscountDetailsModel Discount { get; set; }
+        public Discount Discount { get; set; }
 
         [HiddenInput]
         public string EditDiscountTitle { get; set; }

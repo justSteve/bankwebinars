@@ -150,7 +150,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 notificationMessage.To = sendConnectionInfoEvent.EventObject.BillingEmail;
                 notificationMessage.Addresses = ccEmailAddresses;
                 _notificationDelivery.Notify(notificationMessage);
-                _logger.Info("SendConnectionInfoEventMailer - webinarId = {0} - Email =  ", sendConnectionInfoEvent.EventObject.OrderRows.FirstOrDefault().Webinar.idWebinar, sendConnectionInfoEvent.EventObject.BillingEmail);
+                _logger.Info("SendConnectionInfoEventMailer - webinarId = {0} - Email = {1} ", sendConnectionInfoEvent.EventObject.OrderRows.FirstOrDefault().Webinar.idWebinar, sendConnectionInfoEvent.EventObject.BillingEmail);
             }
             catch (NullReferenceException nullReferenceException)
             {

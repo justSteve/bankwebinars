@@ -286,9 +286,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 }
                 else
                 {
-                    if (thisClaim.ExpiryDate > DateTime.Now)
+                    if (thisClaim.ExpiryDate.AddDays(1) > DateTime.Today.AddHours(23))
                     {
-                        playModel.AuthorizedToAccessMaterials = "This code is valid until " +
+                        playModel.AuthorizedToAccessMaterials = "This code is valid through " +
                                                                 thisClaim.ExpiryDate.ToShortDateString() + ".";
 
                         _logger.Info("AuthorizedToAccessMaterials granted to: " + webUser.email);
@@ -561,21 +561,20 @@ namespace CUWebinars.Web.Core.Orchestrators
         private void SendRecordingIsPostedNotifications(WebinarDetailsViewModel webinarDetailsViewModel, Webinar webinar)
         {
             var ordersForWebinar = _orderManagementService.GetV3OrdersByWebinar(webinar.idWebinar);
+            IList<int> orderIDsForWebinar = _orderManagementService.GetV3OrdersIdsByWebinar(webinar.idWebinar);
+            // 95336
 
-            //try
-            //{
-            //    AddNoteClaim(ordersForWebinar);
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.ErrorException(string.Format("SendRecordingIsPostedNotifications| AddNoteClaim failed {0} on idWebinar: {1}", ex.Message, webinar.idWebinar), ex);
-
-            //}
 
             try
             {
-                AddClaimForPostEventMaterials(ordersForWebinar);
+                foreach (var orderId in orderIDsForWebinar)
+                {
+                    var order = _orderManagementService.GetOrderById(orderId);
+                    _membershipService.AddClaimForPostEventMaterials(order.BillingEmail
+                        , order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active)
+                        , _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active))
+                        , _globalConfig.Tenant);
+                }
 
             }
             catch (Exception ex)
@@ -644,7 +643,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             var ordersForWebinar = _orderManagementService.GetV3OrdersByWebinarForPostEventClaims(idWebinar).ToList();
 
-            AddClaimForPostEventMaterials(ordersForWebinar);
+            //AddClaimForPostEventMaterials(ordersForWebinar);
             AddNoteClaim(ordersForWebinar);
 
             //_orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
@@ -986,53 +985,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             _webinarManagementService.UpdateWebinar(webinar);
         }
 
-        private DateTime GetPostEventMaterialsAccessExpiry(Order order)
-        {
-            return _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order);
-        }
-
-        private void AddClaimForPostEventMaterials(IEnumerable<Order> orders)
-        {
-            foreach (var order in orders)
-            {
-                var userAccountOfOrderer = _membershipService.GetUserAccountByEmail(
-                    _globalConfig.Tenant,
-                    order.WebUser.email
-                    );
-
-                var expiryDate = GetPostEventMaterialsAccessExpiry(order);
-
-                try
-                {
-                    var onDemandCode = RandomHelpers.GetUniqueCode(5);
-
-                    order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).OnDemandCode = onDemandCode;
-
-                    _orderManagementService.SaveChanges();
-
-                    var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
-                    var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, expiryDate.ToString(DomainConstants.ClaimDateFormatText));
-                    var OnDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, onDemandCode);
-
-                    var claimValue = new JObject(
-                        orderIdProperty,
-                        expiryDateProperty,
-                        OnDemandCodeProperty
-                        );
-
-                    _membershipService.AddClaim(
-                        userAccountOfOrderer, ClaimTypes.PostEventMaterials, claimValue.ToString(Formatting.None)
-                        );
-
-                    _logger.Info("AddClaimForPostEventMaterials: " + order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar + " - " + order.idOrder + "-" + onDemandCode);
-
-                }
-                catch (Exception ex)
-                {
-                    _logger.Fatal("AddClaimForPostEventMaterials| MR record not found " + order.BillingEmail + " " + ex.Message);
-                }
-            }
-        }
 
 
         private string CheckThatFileExists(string newFile)

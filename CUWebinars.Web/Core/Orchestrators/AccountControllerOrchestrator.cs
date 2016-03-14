@@ -234,6 +234,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public bool SignUserIn(SignInModel model, out string userMustVerify)
         {
+
+
             if (_membershipService.LogInUser(_globals.Tenant, model.Email, model.Password, model.RememberMe, out userMustVerify))
             {
                 if (!ReferenceEquals(_request.ApplicationPath, null) && !ReferenceEquals(_request.Url, null))
@@ -374,11 +376,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             _membershipService.UpdateUserEmail(oldEmail, email, tenant);
         }
 
-        public string InsertOnDemandClaim(int orderId)
-        {
-            return _orderManagementService.InsertOnDemandClaim(orderId);
-        }
-
         public void UpdateDiscountDetails(DiscountModel discountModel, int idUser)
         {
             var discount = new Discount
@@ -411,11 +408,12 @@ namespace CUWebinars.Web.Core.Orchestrators
             Institution saveInst = _membershipService.GetInstitutionById(model.EditFields.idInstitution);
             if (saveInst == null) throw new ArgumentNullException("saveInst");
 
-            saveInst.Address = updateFields.Address.Trim();
+            saveInst.Address = updateFields.Address ?? "";
+            if (updateFields.Address != null) saveInst.Address = updateFields.Address.Trim();
             saveInst.City = updateFields.City.Trim();
             saveInst.State = updateFields.State.Trim();
             saveInst.Zip = updateFields.Zip.Trim();
-            saveInst.Country = updateFields.Country.Trim();
+            saveInst.Country = updateFields.Country?? "US";
             saveInst.InstitutionName = updateFields.InstitutionName.Trim();
 
             if (ReferenceEquals(null, saveInst.Address))
@@ -466,7 +464,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 updateFields.Institution,
                 billingAddress,
                 shippingAddress,
-                updateFields.Title == null ? "na" : updateFields.Title.Trim(),
+                updateFields.Title == null ? "" : updateFields.Title.Trim(),
                 updateFields.SageAccountId
                 );
 
@@ -745,7 +743,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             //  if still null here, retries have exceeded RetryCount and operation aborted
             if (ReferenceEquals(userAccount, null))
             {
-                _logger.Error(string.Format("GetUserAccountByEmail ({1}) failed after {0} seconds.", _globals.RetryCount / 2), model.Email);
+                _logger.Error(string.Format("GetUserAccountByEmail ({1}) failed after {0} seconds.", _globals.RetryCount / 2, model.Email));
                 return false;
             }
             if (!userAccount.HasClaim(ClaimTypes.FullName))
@@ -777,7 +775,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
 
-            _logger.Info("verificationKey is {0}", verificationKey);
+            _logger.Info("verificationKey is {0} for {1}", verificationKey, model.Email);
 
             _stateService.ClearValue(DomainConstants.CartCreatedUserPasswordCreate);
 
@@ -963,13 +961,17 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             UserAccount userAccount = _membershipService.GetUserAccountByVerificationKey(key);
 
+            if (userAccount == null)
+            { 
+            }
             _membershipService.RemoveClaim(_globals.Tenant, userAccount.Email, ClaimTypes.HasNotVerified);
 
-            if (!_membershipService.UserHasClaim(userAccount, ClaimTypes.FullName))
-            {
-                var webUser = _membershipService.GetWebUserById(_membershipService.GetWebUserIdByEmail(userAccount.Email).Value);
-                _membershipService.AddClaim(userAccount, ClaimTypes.FullName, webUser.FirstName + " " + webUser.LastName);
-            }
+                if (!_membershipService.UserHasClaim(userAccount, ClaimTypes.FullName))
+                {
+                    var webUser = _membershipService.GetWebUserById(_membershipService.GetWebUserIdByEmail(userAccount.Email).Value);
+                    _membershipService.AddClaim(userAccount, ClaimTypes.FullName, webUser.FirstName + " " + webUser.LastName);
+                }
+            
 
             return _membershipService.ChangePasswordFromResetKey(_globals.Tenant, key, password);
         }

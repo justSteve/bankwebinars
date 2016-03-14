@@ -10,7 +10,7 @@ namespace CUWebinars.Web.Models
     public class AdminDTO
     {
         public IList<OrderRow> OrderRows = new List<OrderRow>();
-        //public IList<WebUser> Users = new List<WebUser>();
+        public ShowWebinarsViewModel ShowWebinarsViewModel = new ShowWebinarsViewModel();
         public UserDetailsViewModel  UserDetailsViewModel= new UserDetailsViewModel();
     }
 

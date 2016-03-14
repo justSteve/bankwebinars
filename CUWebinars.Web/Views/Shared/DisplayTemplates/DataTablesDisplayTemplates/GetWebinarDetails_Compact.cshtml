@@ -1,0 +1,36 @@
+﻿@using CUWebinars.Web.Core
+@model WebinarDetailsViewModel
+@{
+    //http://stackoverflow.com/questions/14580346/vertical-divider-between-two-columns-in-bootstrap
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+    <style>
+        .border-right {
+            border-right: 1px solid #ddd;
+            padding-right: 3px;
+        }
+
+        .borders {
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            margin: -1px;
+        }
+
+        .border-left {
+            border-left: 1px solid #ddd;
+        }
+    </style>
+    <div class="row-fluid">
+        <div class="span5 border-right">@Html.Raw(Model.Webinar.DescriptionLong)</div>
+        <div class="span4 ">
+            <h3>@Model.Webinar.LearnCaption</h3>
+            <div>@Html.Raw(Model.Webinar.LearnBody)</div>
+
+        </div>
+        <div class="span3">
+            <h4 style="padding-top: 20px;">Who Should Attend</h4>
+        </div><aside><span style="font-size: smaller">@Html.Raw(Model.Webinar.WhoAttend)</span></aside>
+        <div><button class="btn btn-success pull-right">(For complete details)</button></div>
+
+    </div>
+
+}

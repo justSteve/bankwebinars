@@ -11,6 +11,7 @@ namespace CUWebinars.Business.Repository
         IDictionary<RegType, bool> FindRegTypesByWebinarId(int id, bool detached);
         IDictionary<RegType, bool> FindAllPossibleRegTypesByWebinarId(int id, bool detached);
         bool IsShippingAddressRequired(int regTypeId);
-        
+
+        RegType GetRegTypeByLabel(string regType, int idWebinar);
     }
 }

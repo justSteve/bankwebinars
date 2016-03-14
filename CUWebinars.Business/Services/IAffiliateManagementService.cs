@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using CUWebinars.Business.Models;
 using System;
 using System.Collections.Generic;
+using CUWebinars.Web.Models;
 
 namespace CUWebinars.Business.Services
 {
@@ -18,6 +19,9 @@ namespace CUWebinars.Business.Services
         Affiliate LoadByTTSDomain(string ttsDomain);
         IQueryable<Order> GetOrdersByUser(int affiliateId, int userId);
         IQueryable<Order> GetOrders(int affiliateId);
-      
+
+        IList<AffiliateReportDTO> BuildAffiliateReport(List<Order> orders, int webinarId);
+        IList<AffiliateInvoiceDTO> BuildAffiliateInvoice(List<Order> orders, int webinarId);
+        AffiliateInvoiceDTO GetAffiliateInvoice(int value, string aff);
     }
 }

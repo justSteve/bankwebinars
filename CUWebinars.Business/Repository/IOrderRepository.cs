@@ -14,7 +14,7 @@ namespace CUWebinars.Business.Repository
         Order AssignWebUserToOrder(WebUser webUser, Order order);
         AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullName);
         Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null);
-        Order CreateOrder(int affiliateId, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null);
+        //Order CreateOrder(int affiliateId, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null);
         OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, RegType registrationType);
         void DeleteOrder(Order orderId);
         Order GetOrderById(int id);
@@ -50,7 +50,6 @@ namespace CUWebinars.Business.Repository
         Order FindExpressCheckoutOrder(string trim, int idWebinar);
         void ConvertLegacyOrder(Order order);
         int MigrateOrderFromV3(Order order);
-        Order FindExpressCheckoutOrderByOrderId(int q11Orderid);
         void SynchIds(int lOrder, int vOrder);
         PostEventClaim FindPostEventClaim(Order order);
         IList<Order> GetV3OrdersByOnDemandClaim();
@@ -58,5 +57,8 @@ namespace CUWebinars.Business.Repository
         Order GetOrderByIdByOnDemandCode(string onDemandCode);
         Discount GetDiscountByOrderId(int idOrder);
         void UpdateShippingAddressDetails(Address shippingAddress, int idUser);
+
+        bool OnDemandCodeIsUnique(string onDemandCode);
+        IList<Order> GetOrdersByWebinar(int idWebinar);
     }
 }

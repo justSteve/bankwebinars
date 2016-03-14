@@ -22,6 +22,8 @@ namespace CUWebinars.Web.ViewModel
         /// This property only relevant for Affiliate and Admin cart checkouts.
         /// </summary>
         [HiddenInput]
+        
+        public int idOrder { get; set; }
         public int SelectedWebUser { get; set; }
         public decimal WebinarDuration { get; set; }
         public WebinarStatus WebinarStatus { get; set; }

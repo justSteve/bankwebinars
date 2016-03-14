@@ -6,6 +6,8 @@ namespace CUWebinars.Business.Notification
     {
         string From { get; set; }
         string To { get; set; }
+        string CC { get; set; }
+        string Bcc { get; set; }
         string ReplyTo { get; set; }
         string Subject { get; set; }
         string Body { get; set; }

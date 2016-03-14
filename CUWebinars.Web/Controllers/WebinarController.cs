@@ -25,7 +25,9 @@ using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Json;
 using System.Security.Claims;
+using System.ServiceModel.Syndication;
 using System.Text;
 using System.Web.Hosting;
 using System.Web.Mvc;
@@ -306,17 +308,7 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult ConnectionDetails(int id)
         {
-
-            var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id);
-
-            if (webinar == null) return HttpNotFound();
-
-            var model = new WebinarDetailsViewModel()
-            {
-                Webinar = webinar,
-                WebinarFiles = webinar.WebinarFiles.ToList()
-            };
-            return null;
+            return RedirectToAction("ClickToJoin", new { joinCode = "0000", idWebinar = id });
         }
 
 
@@ -589,15 +581,61 @@ namespace CUWebinars.Web.Controllers
             return View(identifyModel);
         }
 
-        public ActionResult Details(int? id)
+        public ActionResult GetWebinarDetailsCompact(int? id)
+        {
+            var html = "";
+            if (id.HasValue)
+            {
+                var webinar = _webinarManagementService.GetWebinar(id.Value);
+
+                if (webinar == null) return HttpNotFound();
+                var model = new WebinarDetailsViewModel()
+                {
+                    Webinar = webinar,
+                    WebinarFiles = webinar.WebinarFiles.ToList()
+                };
+
+                html = ViewHelpers.RenderViewToString(ControllerContext,
+                        "~/Views/Shared/DisplayTemplates/DataTablesDisplayTemplates/GetWebinarDetails_Compact.cshtml",
+                        model, true);
+            }
+
+            return Json(new { html = html });
+
+        }
+
+        public ActionResult GetPresenterCompact(int? id)
+        {
+            var html = "";
+            if (id.HasValue)
+            {
+                var webinar = _webinarManagementService.GetWebinar(id.Value);
+
+                if (webinar == null) return HttpNotFound();
+                var model = new WebinarDetailsViewModel()
+                {
+                    Webinar = webinar,
+                    WebinarFiles = webinar.WebinarFiles.ToList()
+                };
+
+                html = ViewHelpers.RenderViewToString(ControllerContext,
+                        "~/Views/Shared/DisplayTemplates/DataTablesDisplayTemplates/GetPresenter_Compact.cshtml",
+                        model, true);
+            }
+
+            return Json(new { html = html });
+
+        }
+
+        public
+            ActionResult Details(int? id)
         {
             if (id.HasValue)
             {
 
-                var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id.Value);
+                var webinar = _webinarManagementService.GetWebinar(id.Value);
 
                 if (webinar == null) return HttpNotFound();
-
                 var model = new WebinarDetailsViewModel()
                 {
                     Webinar = webinar,
@@ -659,13 +697,15 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 var usersOrders = _orderManagementService.GetOrdersByUserId(model.WebUser.idUser)
-                    .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id.Value) != null);
+                                    .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id.Value) != null);
 
                 // perf tweak: ensures no multiple enumerations of usersOrders
                 var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray();
 
+
                 if (checkOrders.Any())
-                // Webinar.Status > scheduled - WebinarFiles presenter files etc. Files only exist until init or activated Webinar
+                // Webinar.Status > scheduled - WebinarFiles presenter files etc. 
+                //Files only exist until init or activated Webinar
                 {
                     foreach (var checkOrder in checkOrders) // assumption that there will be only 1 ?
                     {
@@ -807,31 +847,6 @@ namespace CUWebinars.Web.Controllers
                             DisplayRowPriceViewModel =
                                 model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel,
                             idUser = model.Order.idUser,
-                            DiscountDetailsModel = new DiscountDetailsModel()
-                            {
-                                UserId = webUser.idUser,
-                                Discount = orderRow.Discount == null
-                                    ? new DiscountModel()
-                                    : new DiscountModel()
-                                    {
-                                        //Cost = discountModel.Cost,
-                                        //DateBilled = discountModel.DateBilled,
-                                        //DateValidFrom = discountModel.DateValidFrom,
-                                        ////idUser = idUser,
-                                        //DateValidTo = discountModel.DateValidTo,
-                                        //DiscountCode = discountModel.DiscountCode,
-                                        //DiscountType = discountModel.TypeOfDiscount,
-                                        //FlatOff = discountModel.FlatOff,
-                                        //Notes = discountModel.Notes,
-                                        //PercentOff = discountModel.PercentOff,
-                                        //RenewalTerm = discountModel.RenewalTerm,
-                                        //Status = discountModel.Status,
-                                        //CreditsUsed = discountModel.CreditsUsed,
-                                        //CreditsRemain = discountModel.CreditsRemain,
-                                        ////WebUserDiscountXref = 
-                                        ////idDiscount = 
-                                    },
-                            },
                             ShippingDetailsModel = new ShippingDetailsModel()
                             {
                                 UserId = webUser.idUser,
@@ -876,9 +891,9 @@ namespace CUWebinars.Web.Controllers
 
                 if (model.WebUser.idSubscriptionDiscount != null)
                 {
-                    var discount = _orderManagementService.GetDiscountById(model.WebUser.idSubscriptionDiscount.Value);
 
-                    ViewBag.DiscountCaption = ViewHelpers.RenderDiscountCaption(discount);
+                    model.UserHasDiscount = _orderManagementService.GetDiscountById(model.WebUser.idSubscriptionDiscount.Value);
+                    ViewBag.DiscountCaption = ViewHelpers.RenderDiscountCaption(model.UserHasDiscount);
                 }
                 return View(model);
             }
@@ -920,7 +935,7 @@ namespace CUWebinars.Web.Controllers
                 additionalLocations = orderRowForOrder.AdditionalLocation.ToList();
             }
 
-            model.Topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar);
+            model.Topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar).ToList();
 
             model.WebinarFiles = _webinarManagementService.GetWebinarFilesPerWebinar(webinar.idWebinar);
             var AddLocPrice = _orderManagementService.GetPriceOfAdditionalLocation(webinar.idWebinar);
@@ -1065,12 +1080,21 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.AcceptVerbs(HttpVerbs.Get)]
         public ActionResult CalendarData()
         {
-            //IList<Webinar> webinarsList = WebinarFacade.Instance.SelectAllActiveWebinars();
+
+            //refactor according to: http://rickyrosario.com/blog/creating-an-rss-feed-in-asp-net-mvc/
             IList<Webinar> webinarsList = _webinarManagementService.GetAllActive().ToList();
 
             var dtos = new CalendarDTOAssembler().Entities2DTOs(webinarsList);
 
             TempData["ListUpcoming"] = webinarsList;
+            SyndicationFeed feed = new SyndicationFeed("Custom JSON feed", "A Syndication extensibility sample", null);
+            feed.LastUpdatedTime = DateTime.Now;
+            feed.Items = from s in new string[] { "hello", "world" }
+                         select new SyndicationItem()
+                         {
+                             Summary = SyndicationContent.CreatePlaintextContent(s)
+                         };
+
 
             return Json(dtos, JsonRequestBehavior.AllowGet);
         }
@@ -1513,7 +1537,7 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
-        public ActionResult ClickToJoin(string joinCode)
+        public ActionResult ClickToJoin(string joinCode, int? idWebinar)
         {
             var webinar = _orderManagementService.GetWebinarByJoinCode(joinCode);
 
@@ -1523,6 +1547,19 @@ namespace CUWebinars.Web.Controllers
                 RedirectLinkText = _globalConfig.TenantURL + "/" + joinCode,
                 Webinar = webinar
             };
+
+            if (idWebinar.HasValue)
+            {
+                webinar = _orderManagementService.GetWebinarById(idWebinar.Value);
+
+                clickToJoinViewModel = new ClickToJoinViewModel
+               {
+                   JoinCode = joinCode,
+                   RedirectLinkText = _globalConfig.TenantURL + "/" + webinar.CitrixRegisterUrl,
+                   Webinar = webinar
+               };
+
+            }
 
             if (_stateService.HasValue(WebUiConstants.WebinarFromCode))
                 _stateService.ClearValue(WebUiConstants.WebinarFromCode);

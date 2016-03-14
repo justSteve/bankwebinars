@@ -20,7 +20,7 @@ namespace CUWebinars.Business.Models
         public string LastName { get; set; }
         public string Institution { get; set; }
         public string BillingEmail { get; set; }
-
+        public decimal Royalty { get; set; }
         public string Affiliate_ttsDomain { get; set; } // flattened via Automapper to avoid circular reference during JSON serialization
 
 

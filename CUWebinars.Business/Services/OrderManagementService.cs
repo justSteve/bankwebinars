@@ -97,14 +97,24 @@ namespace CUWebinars.Business.Services
             return _affiliateRepository.Exists(item) ? item : _affiliateRepository.AttachItem(item);
         }
 
-        public Order CreateNewOrder(int affiliateId, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null)
+        //public Order CreateNewOrder(int affiliateId, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null)
+        //{
+        //    var order = _orderRepository.CreateOrder(GetAffiliateById(affiliateId), webUser, webinar, orderRow, origin);
+        //    var email = webUser == null ? "notauthenticated@cuwebinars.com" : webUser.email;
+
+        //    //_logger.Info("CreateNewOrder: " + email + " | " + orderRow.Webinar.Title + " | " + orderRow.RegistrationType.OptionLabel);
+        //    return order;
+
+        //}
+
+
+        public Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null)
         {
-            var order = _orderRepository.CreateOrder(affiliateId, webUser, webinar, orderRow, origin);
+            var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow, origin);
             var email = webUser == null ? "notauthenticated@cuwebinars.com" : webUser.email;
 
-            //_logger.Info("CreateNewOrder: " + email + " | " + orderRow.Webinar.Title + " | " + orderRow.RegistrationType.OptionLabel);
+            _logger.Info("CreateNewOrder: " + email + " | " + orderRow.Webinar.Title + " | " + orderRow.RegistrationType.OptionLabel);
             return order;
-
         }
 
         public OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, int registrationType)
@@ -112,6 +122,15 @@ namespace CUWebinars.Business.Services
             try
             {
                 var regType = _regTypeRepository.FindRegType(registrationType);
+
+                if (additionalLocation != null)
+                {
+                    foreach (var addLoc in additionalLocation)
+                    {
+                        addLoc.Price = GetCostOfAdditionalLocations(additionalLocation, webinar.idWebinar).Item2;
+                    }
+                }
+
                 OrderRow row = _orderRepository.CreateOrderRow(webinar, additionalLocation, regType);
 
                 return row;
@@ -228,7 +247,8 @@ namespace CUWebinars.Business.Services
 
         public Affiliate GetAffiliateByIdLoaded(int id, params Expression<Func<Affiliate, object>>[] includeProperties)
         {
-            var aff = _affiliateRepository.FindByIdWithIncluding(id, includeProperties);
+            //var aff = _affiliateRepository.FindByIdWithIncluding(id, includeProperties);
+            var aff = _affiliateRepository.FindByIdWithIncluding(id);
             if (aff == null)
             {
 
@@ -242,11 +262,11 @@ namespace CUWebinars.Business.Services
         public IDictionary<RegType, bool> GetOptionsByWebinarId(int id, bool detached)
         {
             string cachKey = "options-" + id;
-            var options = _cachingService.Get(cachKey);
+            //var options = _cachingService.Get(cachKey);
 
             //if (options == null)
             //{
-            options = _regTypeRepository.FindRegTypesByWebinarId(id, false);
+            var options = _regTypeRepository.FindRegTypesByWebinarId(id, false);
 
             //    // keeps options object in cache for 1 hour.
             //    _cachingService.Add(cachKey, options, DomainConstants.BuildUtcNowAsCts.AddHours(1));
@@ -363,7 +383,7 @@ namespace CUWebinars.Business.Services
                 if (missingFromLegacy.Count > 0)
                     foreach (var orderEmail in missingFromLegacy)
                     {
-                        var order = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
+                        var order = _orderRepository.GetOrderById(v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail).idOrder);
                         if (order != null && order.WebUser.email.EndsWith("notauthenticated.com"))
                         {
                             var user = _webUserRepository.GetWebUserByEmail(orderEmail);
@@ -489,11 +509,21 @@ namespace CUWebinars.Business.Services
 
                             }
 
+
+
                             if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType != vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType)
                             {
                                 vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType;
                                 SaveChanges();
                                 _logger.Info("SynchOrder adjusted RegType from V3 RegType = {1} to Legacy = {0} on {2} ", lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, orderEmail);
+                            }
+
+
+                            if (lOrder.OrderStatus != vOrder.OrderStatus)
+                            {
+                                vOrder.OrderStatus = lOrder.OrderStatus;
+                                SaveChanges();
+                                _logger.Info("SynchOrder adjusted OrderStatus from V3 = {1} to Legacy = {0} on {2} ", lOrder.OrderStatus  , vOrder.OrderStatus, orderEmail);
                             }
 
                             //if (vOrder.OrderDate > DateTime.Parse("01/01/2016"))
@@ -508,7 +538,7 @@ namespace CUWebinars.Business.Services
                             //            var discount = GetDiscountById(Convert.ToInt32(code));
 
                             //            ApplyDiscountCode(discount.DiscountCode, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active));
-                                        
+
                             //            _logger.Warn("SynchOrder adjusted Discount = {0} on order {1} ",
                             //                code, vOrder.idOrder);
                             //        }
@@ -518,7 +548,7 @@ namespace CUWebinars.Business.Services
                             //        _logger.ErrorException(
                             //            "SynchOrder attempt to apply discount failed: " + orderEmail, ex);
                             //    }
-//                            }
+                            //                            }
                             //PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
                             //UpdateOrderChanges(vOrder, ref pricesAndDiscounts);
 
@@ -541,7 +571,7 @@ namespace CUWebinars.Business.Services
 
         public Order FindExpressCheckoutOrderByOrderId(int q11Orderid)
         {
-            return _orderRepository.FindExpressCheckoutOrderByOrderId(q11Orderid);
+            return _orderRepository.GetOrderById(q11Orderid);
         }
 
         public IEnumerable<Order> GetV3OrdersByWebinarForPostEventClaims(int idWebinar)
@@ -628,11 +658,6 @@ namespace CUWebinars.Business.Services
         {
             return
                 _orderRepository.SearchOrders(affiliateID, excludeUserIDs, skip, take, search);
-        }
-
-        public string SetPostEventClaims(int webinarId)
-        {
-            throw new NotImplementedException();
         }
 
         public bool VerifyWebUserExists(int idUser)
@@ -740,7 +765,8 @@ namespace CUWebinars.Business.Services
         public Affiliate DetermineAffiliateByAlternativeMeans(int idUser)
         {
             string cachKey = "webUserId-" + idUser;
-            var affiliateIds = _cachingService.Get(cachKey) as IList<int>;
+            //var affiliateIds = _cachingService.Get(cachKey) as IList<int>;
+            IList<int> affiliateIds = null;
 
             if (affiliateIds == null)
             {
@@ -758,7 +784,7 @@ namespace CUWebinars.Business.Services
                                     .ToList();
 
                 // keeps affiliateIds object in cache for 1 hour.
-                _cachingService.Add(cachKey, affiliateIds, DomainConstants.BuildUtcNowAsCts.AddHours(1));
+                //_cachingService.Add(cachKey, affiliateIds, DomainConstants.BuildUtcNowAsCts.AddHours(1));
             }
 
             if (affiliateIds.Any())
@@ -804,18 +830,19 @@ namespace CUWebinars.Business.Services
 
                 }
 
-                cachKey = "affiliateId-" + affiliateIdForOrder;
+                //cachKey = "affiliateId-" + affiliateIdForOrder;
                 var affiliate = _cachingService.Get(cachKey) as Affiliate;
 
                 if (affiliate == null)
                 {
-                    affiliate = _affiliateRepository.FindByIdWithIncluding(affiliateIdForOrder, a => a.WebUser); // use the most recent
+                    affiliate = _affiliateRepository.FindByIdWithIncluding(affiliateIdForOrder); // use the most recent
+                    //affiliate = _affiliateRepository.FindByIdWithIncluding(affiliateIdForOrder, a => a.WebUser); // use the most recent
                     if (affiliate == null)
                     {
                         affiliate = GetAffiliateById(19);
                     }
                     // keeps Affiliate object in cache for 1 hour.
-                    _cachingService.Add(cachKey, affiliate, DomainConstants.BuildUtcNowAsCts.AddHours(1));
+                    //_cachingService.Add(cachKey, affiliate, DomainConstants.BuildUtcNowAsCts.AddHours(1));
                 }
 
                 return affiliate;
@@ -913,7 +940,6 @@ namespace CUWebinars.Business.Services
         }
         public PricesAndDiscounts CalculateOrderCost(Order order, decimal optionsCost)
         {
-            //how is default determined? [dar] It is same as writing PricesAndDiscounts pricesAndDiscounts; For int, it would be 'int i = 0';
             PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
             decimal totalOptionsPrice = 0M;
 
@@ -922,8 +948,6 @@ namespace CUWebinars.Business.Services
             Debug.Assert(row != null, "OrderRow object should always have a value here.");
             if (row.RegistrationType != null)
             {
-                //TODO: Figure out why Order that are retrieved via the SynchOrders method have
-                //a null reference for RegistrationType
                 row.UnitPrice = (decimal)row.RegistrationType.Price;
             }
             else
@@ -1230,6 +1254,8 @@ namespace CUWebinars.Business.Services
             {
                 Double[] i = _webinarRepository.GetCostOfUpgrades(order.OrderRows.Single().idRegType);
 
+                
+
                 Double basePrice = i[0];
                 Double cost6 = i[1];
                 Double costCD = i[2];
@@ -1253,7 +1279,7 @@ namespace CUWebinars.Business.Services
                     Order = order,
                     CostFor6month = (Convert.ToDecimal(cost6) - Convert.ToDecimal(basePrice)).ToString().Replace(".00", ""),
                     CostForCD = (Convert.ToDecimal(costCD) - Convert.ToDecimal(basePrice)).ToString().Replace(".00", ""),
-                    ExpiryDate = CalculatePostEventMaterialsAccessExpiry(order).ToShortDateString(),
+                    //ExpiryDate = CalculatePostEventMaterialsAccessExpiry(order).ToShortDateString(),
                     OrderSummaryString = orderSum
                 };
                 AddEvent(new SendRecordingPostedEvent<PostEventPublishModel>
@@ -1283,6 +1309,7 @@ namespace CUWebinars.Business.Services
             //var mySub = myRow.Order.d
 
             var webinar = myRow.Webinar;
+            var OptionLabel = GetRegTypeOfOrderRow(myRow.idRegType).OptionLabel;
 
             var sb = new StringBuilder();
             if (webinar.Title.StartsWith("Compliance Perspectives"))
@@ -1427,7 +1454,7 @@ namespace CUWebinars.Business.Services
                 sb.Append(
                     "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
                 sb.Append("            <b>");
-                sb.Append(myRow.RegistrationType.OptionLabel);
+                sb.Append(OptionLabel);
                 sb.Append("            </b>");
                 sb.Append("        </span>");
                 sb.Append("    </td>");
@@ -1458,7 +1485,7 @@ namespace CUWebinars.Business.Services
                     if (!ReferenceEquals(myRow.Discount.PercentOff, null))
                     {
                         amountToReduce = (myRow.Discount.PercentOff * 100) /
-                                         Convert.ToDecimal(string.Format("{0:0.00}", myRow.Order.Total));
+                                         Convert.ToDecimal(string.Format("{0:0.00}", myRow.UnitPrice));
 
                         sb.Append(
                             "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
@@ -1496,25 +1523,25 @@ namespace CUWebinars.Business.Services
                 sb.Append("        </span>");
                 sb.Append("    </td>");
                 sb.Append("</tr>");
-                sb.Append("<tr>");
-                sb.Append(
-                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                sb.Append("            OnDemand Access Expires:");
-                sb.Append("        </span>");
-                sb.Append("    </td>");
-                sb.Append(
-                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-                sb.Append("");
-                sb.Append(
-                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                sb.Append("            <b>");
+                //sb.Append("<tr>");
+                //sb.Append(
+                //    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                //sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                //sb.Append("            OnDemand Access Expires:");
+                //sb.Append("        </span>");
+                //sb.Append("    </td>");
+                //sb.Append(
+                //    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                //sb.Append("");
+                //sb.Append(
+                //    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                //sb.Append("            <b>");
 
-                sb.Append(CalculatePostEventMaterialsAccessExpiry(order).ToShortDateString());
-                sb.Append("            </b>");
-                sb.Append("        </span>");
-                sb.Append("    </td>");
-                sb.Append("</tr>");
+                //sb.Append(CalculatePostEventMaterialsAccessExpiry(order).ToShortDateString());
+                //sb.Append("            </b>");
+                //sb.Append("        </span>");
+                //sb.Append("    </td>");
+                //sb.Append("</tr>");
 
             }
             return sb.ToString();
@@ -1666,29 +1693,63 @@ namespace CUWebinars.Business.Services
             order.AuditInfo = "anon user is updated with " + user.email + Environment.NewLine + order.AuditInfo;
             order.idUser = userId;
 
-            var billingAddress = user.Addresses.Where(a => a.AddressType == DomainConstants.BillingAddress).Single();
-            var shippingAddress = user.Addresses.Where(a => a.AddressType == DomainConstants.ShippingAddress).Single();
+            var billingAddress = user.Addresses.Where(a => a.AddressType == DomainConstants.BillingAddress).SingleOrDefault();
+            var shippingAddress = user.Addresses.Where(a => a.AddressType == DomainConstants.ShippingAddress).SingleOrDefault();
+
+            if (ReferenceEquals(billingAddress, null))
+            {
+                billingAddress = new Address
+                {
+                    AddressType = "Billing",
+                    Country = "USA",
+                    City = "-",
+                    StreetAddress = "-",
+                    State = "-",
+                    StreetAddress2 = "-",
+                    Name = "-",
+                    Phone = "555-555-5555",
+                    Zip = "00000",
+                    idUser = userId
+                };
+            }
+            if (ReferenceEquals(shippingAddress, null))
+            {
+                shippingAddress = new Address
+                {
+                    AddressType = "Shipping",
+                    Country = "USA",
+                    City = "-",
+                    StreetAddress = "-",
+                    State = "-",
+                    StreetAddress2 = "-",
+                    Name = "-",
+                    Phone = "555-555-5555",
+                    Zip = "00000",
+                    idUser = userId
+                };
+            }
 
             order.FirstName = user.FirstName;
             order.LastName = user.LastName;
             order.Institution = user.Institution.InstitutionName;
-            order.BillingPhone = billingAddress.Phone;
+            order.BillingPhone = billingAddress.Phone ?? "";
             order.BillingEmail = user.email;
-            order.BillingAddress = billingAddress.StreetAddress;
-            order.BillingAddress2 = billingAddress.StreetAddress2;
-            order.BillingState = billingAddress.State;
-            order.BillingCity = billingAddress.City;
-            order.BillingZip = billingAddress.Zip;
+            order.BillingAddress = billingAddress.StreetAddress ?? "";
+            order.BillingAddress2 = billingAddress.StreetAddress2 ?? "";
+            order.BillingState = billingAddress.State ?? "";
+            order.BillingCity = billingAddress.City ?? "";
+            order.BillingZip = billingAddress.Zip ?? "";
 
             order.ShippingFirstName = user.FirstName;
             order.ShippingLastName = user.LastName;
-            order.ShippingPhone = shippingAddress.Phone;
-            order.ShippingAddress = shippingAddress.StreetAddress;
-            order.ShippingAddress2 = shippingAddress.StreetAddress2;
-            order.ShippingState = shippingAddress.State;
-            order.ShippingCity = shippingAddress.City;
-            order.ShippingZip = shippingAddress.Zip;
+            order.ShippingPhone = shippingAddress.Phone ?? "";
+            order.ShippingAddress = shippingAddress.StreetAddress ?? "";
+            order.ShippingAddress2 = shippingAddress.StreetAddress2 ?? "";
+            order.ShippingState = shippingAddress.State ?? "";
+            order.ShippingCity = shippingAddress.City ?? "";
+            order.ShippingZip = shippingAddress.Zip ?? "";
 
+            order.Institution = user.Institution.InstitutionName;
 
             _orderRepository.SaveOrderChanges(order, null);
         }
@@ -1801,7 +1862,24 @@ namespace CUWebinars.Business.Services
 
             foreach (var order in orders)
             {
-                order.UserComments = "Order's user was updated from " + order.BillingEmail + " on " + DateTime.Now.ToShortDateString() + ". | " + order.UserComments;
+                var changedVals = "";
+
+                if (order.FirstName != firstName) { changedVals += order.FirstName + " to " + firstName + Environment.NewLine; }
+                if (order.LastName != lastName) { changedVals += order.LastName + " to " + lastName + Environment.NewLine; }
+                if (order.BillingEmail != email) { changedVals += order.BillingEmail + " to " + email + Environment.NewLine; }
+                if (order.Institution != institution) { changedVals += order.Institution + " to " + institution + Environment.NewLine; }
+                if (order.BillingAddress != billingAddress.StreetAddress) { changedVals += order.BillingAddress + " to " + billingAddress.StreetAddress + Environment.NewLine; }
+                if (order.BillingAddress2 != billingAddress.StreetAddress2) { changedVals += order.BillingAddress2 + " to " + billingAddress.StreetAddress2 + Environment.NewLine; }
+                if (order.BillingCity != billingAddress.City) { changedVals += order.BillingCity + " to " + billingAddress.City + Environment.NewLine; }
+                if (order.BillingState != billingAddress.State) { changedVals += order.BillingState + " to " + billingAddress.State + Environment.NewLine; }
+                if (order.BillingZip != billingAddress.Zip) { changedVals += order.BillingZip + " to " + billingAddress.Zip + Environment.NewLine; }
+
+                if (order.ShippingAddress != shippingAddress.StreetAddress) { changedVals += order.ShippingAddress + " to " + shippingAddress.StreetAddress + Environment.NewLine; }
+                if (order.ShippingAddress2 != shippingAddress.StreetAddress2) { changedVals += order.ShippingAddress2 + " to " + shippingAddress.StreetAddress2 + Environment.NewLine; }
+                if (order.ShippingCity != shippingAddress.City) { changedVals += order.ShippingCity + " to " + shippingAddress.City + Environment.NewLine; }
+                if (order.ShippingState != shippingAddress.State) { changedVals += order.ShippingState + " to " + shippingAddress.State + Environment.NewLine; }
+                if (order.ShippingZip != shippingAddress.Zip) { changedVals += order.ShippingZip + " to " + shippingAddress.Zip + Environment.NewLine; }
+
                 order.FirstName = firstName;
                 order.LastName = lastName;
                 order.BillingEmail = email;
@@ -1817,10 +1895,12 @@ namespace CUWebinars.Business.Services
                 order.ShippingCity = shippingAddress.City;
                 order.ShippingState = shippingAddress.State;
                 order.ShippingZip = shippingAddress.Zip;
+                order.UserComments += "'ContactInfoUpdated': '" + changedVals + "'";
+                _logger.Info("idOrder {0} user info updated:  {1}", order.idOrder, changedVals);
 
-                _logger.Info("idOrder {0} user info updated from {1}", order.idOrder, order.BillingEmail);
-
+                SaveChanges();
             }
+
         }
 
         public string GetOnDemandClaimByCode(string onDemandCode)
@@ -1854,13 +1934,55 @@ namespace CUWebinars.Business.Services
             _orderRepository.UpdateShippingAddressDetails(shippingAddress, idUser);
         }
 
-        public string InsertOnDemandClaim(int orderId)
-        {
-            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
-            var result = dataOperations.InsertOnDemandClaim(orderId);
 
-            return result;
+        public string SynchOrdersWhereLegacyIsZero(int idOrderLegacy, int idOrderV3)
+        {
+            var oldClaim = GetOnDemandClaimById(idOrderV3);
+
+            //if (oldClaim == "duped")
+            //    return null;
+            //if (oldClaim == "none found")
+            //    return null;
+
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+            var result = dataOperations.SynchOrderIdsWithOnDemandCode(idOrderLegacy, idOrderV3, oldClaim);
+
+
+
+            return null;
+
         }
+
+        public RegType GetRegTypeByLabel(string regType, int idWebinar)
+        {
+            return _regTypeRepository.GetRegTypeByLabel(regType, idWebinar);
+        }
+
+        public bool OnDemandCodeIsUnique(string onDemandCode)
+        {
+            return _orderRepository.OnDemandCodeIsUnique(onDemandCode);
+        }
+
+        public IList<int> GetV3OrdersIdsByWebinar(int idWebinar)
+        {
+            return _webinarRepository.GetV3OrdersIdsByWebinar(idWebinar);
+        }
+
+        public List<Order> GetOrdersByWebinar(int idWebinar)
+        {
+            return _webinarRepository.GetOrdersByWebinar(idWebinar).ToList();
+        }
+
+        public void RestoreToDiscount(int newOrderRowId)
+        {
+            _logger.Fatal("logs the restoration of discount credit when addLocation is deleted.");
+        }
+
+        public void RemoveFromDiscount(int newOrderRowId)
+        {
+            _logger.Fatal("logs the decrement of discount credit when addLocation is added.");
+        }
+
 
         public IList<Order> GetV3OrdersByOnDemandClaim()
         {
@@ -1888,8 +2010,8 @@ namespace CUWebinars.Business.Services
                 if (row.RegistrationType.ShowLiveNotifications.TrimEnd().Equals("Yes", StringComparison.OrdinalIgnoreCase))
                 {
                     regKeyResponse = CreateRegistrantKey(
-                        order.FirstName,
-                        order.LastName,
+                        order.FirstName ?? " ",
+                        order.LastName ?? " ",
                         order.BillingEmail,
                         row.Webinar.idWebinar,
                         row.Webinar.WebinarKey
@@ -1901,7 +2023,7 @@ namespace CUWebinars.Business.Services
                 // This branch gets key for main Additional Locations
                 regKeyResponse = CreateRegistrantKey(
                     "c/o " + order.FirstName,
-                    order.LastName,
+                    order.LastName ?? " ",
                     additionalLocation.Email,
                     row.Webinar.idWebinar,
                     row.Webinar.WebinarKey
@@ -1962,28 +2084,24 @@ namespace CUWebinars.Business.Services
         }
 
 
-        private object CalculatePostEventMaterialsAccessExpiryFromRow(OrderRow row)
+        public DateTime CalculatePostEventMaterialsAccessExpiry(OrderRow row)
         {
-            throw new NotImplementedException();
-        }
-
-        public DateTime CalculatePostEventMaterialsAccessExpiry(Order order)
-        {
-
-            if (order == null) throw new ArgumentNullException("order");
-
-            var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-            // let exception be thrown if there is not a single 
-
-            var regType = GetRegTypeOfOrderRow(orderRow.idRegType);
+            if (row == null) throw new ArgumentNullException("order");
+            var orderDate = DateTime.Now;
+            if (row.Order != null)
+            {
+                orderDate = row.Order.OrderDate;
+            }
+            
+            var regType = GetRegTypeOfOrderRow(row.idRegType);
 
 
             //establish order date as starting point
-            DateTime expryDate = order.OrderDate.AddMonths(6);
-            var webinar = _webinarRepository.FindById(orderRow.idWebinar);
+            DateTime expryDate = orderDate.AddMonths(6);
+            var webinar = _webinarRepository.FindById(row.idWebinar);
 
             //if order's placed before event - override starting point
-            if (webinar.Date > order.OrderDate)
+            if (webinar.Date > orderDate)
                 expryDate = webinar.Date.AddMonths(6);
 
 
@@ -2073,10 +2191,10 @@ namespace CUWebinars.Business.Services
             if (!ReferenceEquals(null, thisDiscount))
             {
                 row.Discount = thisDiscount;
-
                 thisDiscount = RedeemDiscount(thisDiscount, row);
             }
 
+            _logger.Info("ApplyDiscountCode: " + row.Discount.DiscountCode + " idOrder: " + row.idOrder);
             return thisDiscount;
         }
 
@@ -2131,7 +2249,8 @@ namespace CUWebinars.Business.Services
                 //  clicked the SignUp button or the order was migrated. The notification is still sent, it is just that
                 //  it will be sent when the user clicks the "Bill Me" button on the 3rd tab of the cart. Not now.
                 if (!currentOrder.Origin.Equals("Migrator", StringComparison.OrdinalIgnoreCase) &&
-                    !currentOrder.Origin.Equals(DomainConstants.Cart, StringComparison.OrdinalIgnoreCase))
+                    !currentOrder.Origin.Equals(DomainConstants.Cart, StringComparison.OrdinalIgnoreCase) &&
+                    !currentOrder.Origin.Equals(DomainConstants.OriginImportedACS, StringComparison.OrdinalIgnoreCase))
                 {
                     _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
 
@@ -2194,11 +2313,6 @@ namespace CUWebinars.Business.Services
                 _logger.Info("Redeemed Discount On Order: " + order.idOrder);
             }
         }
-        //public virtual bool IsDiscountCodeValid(string discountCode)
-        //{
-
-        //    return true;
-        //}
 
 
         private Discount RedeemDiscount(Discount discount, OrderRow row)
@@ -2241,7 +2355,7 @@ namespace CUWebinars.Business.Services
             var regTypeLabel = GetRegTypeOfOrderRow(row.idRegType).OptionLabel;
             if (undo != null)
             {
-                forNotes.AppendFormat(Environment.NewLine + "--UnDo Usage: {0}", + row.idOrder);
+                forNotes.AppendFormat(Environment.NewLine + "--UnDo Usage: {0}", +row.idOrder);
                 if (discount.DiscountType == DiscountType.Compensation)
                 {
                     discount.CreditsRemain = discount.CreditsRemain + 1;
@@ -2257,8 +2371,8 @@ namespace CUWebinars.Business.Services
                     }
                     if (regTypeLabel == ("OnDemand Recording Only"))
                     {
-                        discount.CreditsRemain = discount.CreditsRemain + 1.25M;
-                        discount.CreditsUsed = discount.CreditsUsed - 1.25M;
+                        discount.CreditsRemain = discount.CreditsRemain + 1M;
+                        discount.CreditsUsed = discount.CreditsUsed - 1M;
                     }
                     if (regTypeLabel == ("CD-ROM and Hardcopy Handouts"))
                     {
@@ -2297,8 +2411,8 @@ namespace CUWebinars.Business.Services
                     }
                     if (regTypeLabel == ("OnDemand Recording Only"))
                     {
-                        discount.CreditsRemain = discount.CreditsRemain - 1.25M;
-                        discount.CreditsUsed = discount.CreditsUsed + 1.25M;
+                        discount.CreditsRemain = discount.CreditsRemain - 1M;
+                        discount.CreditsUsed = discount.CreditsUsed + 1M;
                     }
                     if (regTypeLabel == ("CD-ROM and Hardcopy Handouts"))
                     {
@@ -2326,15 +2440,6 @@ namespace CUWebinars.Business.Services
             orderRow.Discount.CreditsRemain++;
             //according to legacy code but can a condition exist 
             //  a non-valid discount resulted in a decrement.
-        }
-
-        public Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null)
-        {
-            var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow, origin);
-            var email = webUser == null ? "notauthenticated@cuwebinars.com" : webUser.email;
-
-            _logger.Info("CreateNewOrder: " + email + " | " + orderRow.Webinar.Title + " | " + orderRow.RegistrationType.OptionLabel);
-            return order;
         }
 
         public Discount GetDiscountById(int id)

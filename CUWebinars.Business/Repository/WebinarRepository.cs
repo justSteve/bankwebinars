@@ -117,6 +117,16 @@ namespace CUWebinars.Business.Repository
         {
             var stronglyTypedContext = (TTSWebinarsContext)db;
 
+            if (string.IsNullOrEmpty(searchTerm))
+            {
+                var noSearch = stronglyTypedContext.Webinars
+                    .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
+                    .Include(w => w.Presenter.WebUser)
+                    ;
+                return noSearch.ToList();
+            }
+
+
             // 1st get all topics with the topicDescription
             var topicsOfSearch = stronglyTypedContext.Topics
                 .Include(t => t.WebinarTopicXrefs.Select(wtx => wtx.Webinar))
@@ -159,12 +169,12 @@ namespace CUWebinars.Business.Repository
         public IQueryable<Webinar> GetUpcoming()
         {
             return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
-                .Include(w => w.Presenter.WebUser)
-                .Where(
-                    w =>
-                        (w.Status == WebinarStatus.Scheduled || w.Status == WebinarStatus.Active ||
-                         w.Status == WebinarStatus.InProgress))
-                .OrderByDescending(w => w.Date);
+                   .Include(w => w.Presenter.WebUser)
+                   .Where(
+                       w =>
+                           (w.Status == WebinarStatus.Scheduled || w.Status == WebinarStatus.Active ||
+                            w.Status == WebinarStatus.InProgress))
+                   .OrderByDescending(w => w.Date);
         }
 
         public IQueryable<RegTypesGroup> GetRegTypeGroupsForWebinars(int idWebinar)
@@ -194,6 +204,7 @@ namespace CUWebinars.Business.Repository
         {
             return items.Include(w => w.Presenter.WebUser)
                 .Include(w => w.Presenter.Webinars)
+                .Include(w => w.WebinarFiles)
                 .First(w => w.idWebinar == id);
 
             //return webinar;
@@ -264,6 +275,7 @@ namespace CUWebinars.Business.Repository
             {
                 return items.Include(w => w.Presenter.WebUser)
                     .Include(w => w.OrderRows)
+                    .Include(w => w.WebinarFiles)
                     .SingleOrDefault(w => w.idWebinar == orderRow.idWebinar);
             }
 
@@ -294,26 +306,43 @@ namespace CUWebinars.Business.Repository
                 .OrderByDescending(w => w.Date);
         }
 
+        public IList<int> GetV3OrdersIdsByWebinar(int idWebinar)
+        {
+            return ((TTSWebinarsContext)db).Orders
+                .Where(
+                    o =>
+                        o.OrderRows.FirstOrDefault(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar ==
+                        idWebinar
+                        && (o.OrderStatus == OrderStatus.Billed
+                            || o.OrderStatus == OrderStatus.Paid
+                            || o.OrderStatus == OrderStatus.Submitted
+                            || o.OrderStatus == OrderStatus.AwaitingVerification)
+                            ).Select(o => o.idOrder).ToList();
+        }
+
         public IQueryable<Order> GetOrdersByWebinar(int webinarId)
         {
-            return ((TTSWebinarsContext) db).Orders
+            return ((TTSWebinarsContext)db).Orders
                 .Where(
                     o =>
                         o.OrderRows.FirstOrDefault(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar ==
                         webinarId
                         && (o.OrderStatus == OrderStatus.Billed
                             || o.OrderStatus == OrderStatus.Paid
-                            || o.OrderStatus == OrderStatus.Submitted))
+                            || o.OrderStatus == OrderStatus.Submitted
+                            || o.OrderStatus == OrderStatus.AwaitingVerification
+                            )
+                            )
                 .Include(o => o.Affiliate)
                 .Include(o => o.WebUser)
                 .Include(o => o.OrderRows);
 
-            //.Include(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType);
+            //why is registration type not hydrated from here
         }
 
         public IEnumerable<Order> GetOrdersByWebinarForPostEventClaims(int idWebinar)
         {
-            return ((TTSWebinarsContext) db).Orders
+            return ((TTSWebinarsContext)db).Orders
                 .Where(
                     o =>
                         o.OrderRows.FirstOrDefault(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar == idWebinar
@@ -321,7 +350,7 @@ namespace CUWebinars.Business.Repository
                         && (o.OrderStatus == OrderStatus.Billed
                             || o.OrderStatus == OrderStatus.Paid
                             || o.OrderStatus == OrderStatus.Submitted))
-                            
+
                 .Include(o => o.Affiliate)
                 .Include(o => o.WebUser)
                 .Include(o => o.OrderRows);

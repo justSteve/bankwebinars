@@ -1,75 +1,116 @@
 ﻿@using CUWebinars.Web.Core
 @model CUWebinars.Web.Models.AdminDTO
 
-@{
-    ViewBag.Title = "Admin Functions";
-    Layout = "/Views/Shared/_LayoutAdmin.cshtml";
-    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
-    @section scripts{
+@section scripts{
 
-        @Scripts.Render("~/bundles/toastr")
-        @Scripts.Render("~/bundles/jqueryval")
-        @Scripts.Render("~/bundles/manage-webinar-files")
-        @Scripts.Render("~/bundles/dataTables")
-        @Scripts.Render("~/bundles/display-orders")
-        @Scripts.Render("~/bundles/admin-notifications")
-        <script src="@Url.Content("~/Scripts/app/notification-ops/order-event-notifications.js")"></script>
-        <script src="@Url.Content("~/Scripts/app/notification-ops/membership-notifications.js")"></script>
-        <script src="@Url.Content("~/Scripts/app/toastLogger.js")"></script>
-    }
-
-    @Styles.Render("~/Content/create-order-details")
-    @Styles.Render("~/Content/data-tables")
-    @Styles.Render("~/Content/notifications-ops-styles")
-
+    @Scripts.Render("~/bundles/toastr")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/manage-webinar-files")
+    @Scripts.Render("~/bundles/dataTables")
+    @Scripts.Render("~/bundles/display-orders")
+    @Scripts.Render("~/bundles/admin-notifications")
+    <script src="@Url.Content("~/Scripts/app/notification-ops/order-event-notifications.js")"></script>
+    <script src="@Url.Content("~/Scripts/app/notification-ops/membership-notifications.js")"></script>
+    <script src="@Url.Content("~/Scripts/app/toastLogger.js")"></script>
 }
 
-<section>
-    <div style="width: 1100px; margin: 30px auto">
-        <h2>Admin</h2>
+@Styles.Render("~/Content/create-order-details")
+@Styles.Render("~/Content/data-tables")
+@Styles.Render("~/Content/notifications-ops-styles")
 
-        @Html.ValidationSummary()
-        <div class="row navbar">
-            <div class="navbar-inner">
-                <a class="brand" href="#">Accounts</a>
-                <ul class="nav">
-                    <li><a id="ImpersonateUserButton">Impersonate User</a></li> @*url = '/Admin/LogInAsUser';*@
-                    <li><a id="ResetPasswordButton">Reset Password</a></li> @*url: '/Admin/ResetPassword',*@
-                    <li><a id="GetManualResetPasswordFieldsButton">Manually Reset Password</a></li> @*url: '/Admin/ManualPasswordReset',*@
-                    <li><a data-toggle="collapse" href="#users"> Users</a></li>
-                    <li><a id="AssignClaimHtmlButton" href="@Url.Content("~/Admin/ClaimsManagement")">Assign Claims</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="row navbar">
-            <div class="navbar-inner">
-                <a id="OrdersMenuHeader" class="brand" href="#">Orders</a>
-                <ul class="nav">
-                    @*<li><a id="SendShippedOrderNotificationButton">Shipped Order Notification</a></li>*@
-                    <li><a id="GetSendConnectionInfoEventHtmlButton">Connection Info Notification</a></li>
-                    @*<li><a id="GetSendReminderEventHtmlButton">Send Reminder</a></li>*@
-                    @*<li><a id="GetSendRecordingPostedEventHtmlButton">Recording Is Posted Notification</a></li>*@
-                    @*<li><a id="GetResendOrderConfirmationHtmlButton">Confirmation of Registration Resend</a></li>
-                        <li><a id="GetResendConnectionInfoHtmlButton">Connection Info Resend</a></li>*@
-                    <li><a id="GenerateClickToJoinForAdHocCaller" href="@Url.Content("~/Admin/GenerateClickToJoinForAdHocCaller")">Generate Join Code</a></li>
-                    @*<li><a id="AddQuizButton" href="@Url.Content("~/Admin/AddQuiz")">Add Quiz</a></li>*@
-                    @*<div><button id="GetAdhocEventsHtmlButton" >Ad hoc Notification</button></div>*@
 
-                    <li><a id="GetAdhocEventsHtmlButton">Adhoc Notification</a></li>
-                    @*<div class="span8"><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>*@
-                </ul>
+@{
+
+
+    ViewBag.Title = "Admin Functions";
+    Layout = "/Views/Shared/_LayoutAdmin.cshtml";
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+    if (Model.UserDetailsViewModel.UserIsAdmin)
+    {
+        <section>
+            <div style="width: 1100px; margin: 30px auto">
+                <h2>Admin</h2>
+
+                @Html.ValidationSummary()
+                <div class="row navbar">
+                    <div class="navbar-inner">
+                        <a class="brand" href="#">Accounts</a>
+                        <ul class="nav">
+                            <li><a id="ImpersonateUserButton">Impersonate User</a></li> @*url = '/Admin/LogInAsUser';*@
+                            <li><a id="ResetPasswordButton">Reset Password</a></li> @*url: '/Admin/ResetPassword',*@
+                            <li><a id="GetManualResetPasswordFieldsButton">Manually Reset Password</a></li> @*url: '/Admin/ManualPasswordReset',*@
+                            <li><a data-toggle="collapse" href="#users"> Users</a></li>
+                            <li><a id="AssignClaimHtmlButton" href="@Url.Content("~/Admin/ClaimsManagement")">Assign Claims</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row navbar">
+                    <div class="navbar-inner">
+                        <a id="OrdersMenuHeader" class="brand" href="#">Orders</a>
+                        <ul class="nav">
+                            @*<li><a id="SendShippedOrderNotificationButton">Shipped Order Notification</a></li>*@
+                            <li><a id="GetSendConnectionInfoEventHtmlButton">Connection Info Notification</a></li>
+                            @*<li><a id="GetSendReminderEventHtmlButton">Send Reminder</a></li>*@
+                            @*<li><a id="GetSendRecordingPostedEventHtmlButton">Recording Is Posted Notification</a></li>*@
+                            @*<li><a id="GetResendOrderConfirmationHtmlButton">Confirmation of Registration Resend</a></li>
+                                <li><a id="GetResendConnectionInfoHtmlButton">Connection Info Resend</a></li>*@
+                            <li><a id="GenerateClickToJoinForAdHocCaller" href="@Url.Content("~/Admin/GenerateClickToJoinForAdHocCaller")">Generate Join Code</a></li>
+                            @*<li><a id="AddQuizButton" href="@Url.Content("~/Admin/AddQuiz")">Add Quiz</a></li>*@
+                            @*<div><button id="GetAdhocEventsHtmlButton" >Ad hoc Notification</button></div>*@
+
+                            <li><a id="GetAdhocEventsHtmlButton">Adhoc Notification</a></li>
+                            @*<div class="span8"><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>*@
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                </div>
+                <div class="row">
+                    <div id="InputFormFields" class="paddTop10"></div>
+                </div>
+                @*<div id="users" class="collapse">
+                        @Html.Partial("~/Views/Admin/Partials/_ShowUsers.cshtml", Model.UserDetailsViewModel);
+                    </div>*@
             </div>
+
+
+        </section>
+    }
+}
+
+<style>
+    .nav-tabs > .active > a, .nav-tabs > .active > a:hover, .nav-tabs > .active > a:focus {
+        background-color: #555555;
+        color: white;
+    }
+
+    .nav-tabs {
+        border-bottom: 2px solid darkgray;
+    }
+</style>
+
+<div class="container">
+    <h2 class="short_headline">My Webinars</h2>
+
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#webinars" data-toggle="tab">Webinars</a></li>
+        <li><a href="#account" data-toggle="tab">Settings</a></li>
+        <li><a href="#reports" data-toggle="tab">Reports</a></li>
+    </ul>
+
+
+    <div class="tab-content" id="mywebinars">
+        <div class="tab-pane active" id="webinars">
+            @{ Html.RenderPartial("Admin/_Webinars"); }
         </div>
-        <div class="row">
+        <div class="tab-pane " id="account">
+            @{ Html.RenderPartial("Admin/_AffAccount");}
         </div>
-        <div class="row">
-            <div id="InputFormFields" class="paddTop10"></div>
+        <div class="tab-pane" id="reports">
+            @{ Html.RenderPartial("Admin/_Reports"); }
+
         </div>
-        @*<div id="users" class="collapse">
-            @Html.Partial("~/Views/Admin/Partials/_ShowUsers.cshtml", Model.UserDetailsViewModel);
-        </div>*@
+
     </div>
-
-
-</section>
+</div>

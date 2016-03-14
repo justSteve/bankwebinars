@@ -95,19 +95,43 @@ namespace CUWebinars.Web.Controllers.Admin
 
         //
         // GET: /Admin/
+        //[ClaimsAuthorize(IdentityConstants.Access, IdentityConstants.AffiliateFunction)]
         public ActionResult Index()
         {
             var aff = _affiliateManagementService.FindById(19);
+            //uncomment to use Updated DataTable code
+            string searchTerm = Request["searchTerm"];
+            ShowWebinarsViewModel gridModel = new ShowWebinarsViewModel
+            {
+                SearchTerm = searchTerm
+            };
+            ViewBag.Title = "Search Results";
+
+            ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
             var model = new AdminDTO
             {
+                ShowWebinarsViewModel = gridModel,
                 UserDetailsViewModel = new UserDetailsViewModel()
                 {
                     Affiliate = aff,
                     UserIsAdmin = true
                 }
-            }
-                ;
+            };
 
+            if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
+            {
+                var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+
+                model = new AdminDTO
+                {
+                    UserDetailsViewModel = new UserDetailsViewModel()
+                    {
+                        Affiliate = affiliate,
+                        UserIsAdmin = false
+                    }
+                };
+            }
 
             return View("~/Views/Admin/Home/Index.cshtml", model);
         }
@@ -224,10 +248,10 @@ namespace CUWebinars.Web.Controllers.Admin
         public ActionResult SetAffiliateAssignedToOrder(int? idAffiliate, int? idOrder)
         {
             var order = _orderManagementService.GetOrderByIdThin(idOrder.Value);
+            var originalAffiliate = new AffiliateRepository().FindByIdWithIncluding(order.idAffiliate);
             order.idAffiliate = idAffiliate.Value;
             //_orderManagementService.SaveChanges();
 
-            var originalAffiliate = new AffiliateRepository().FindByIdWithIncluding(order.idAffiliate);
             var newAffiliate = new AffiliateRepository().FindByIdWithIncluding(idAffiliate.Value);
             //            var orderUser = _membershipService.GetUserByEmail(order.BillingEmail);
 
@@ -236,8 +260,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                   newAffiliate.ttsDomain + " by " + User.Identity.Name +
                                   " on " + TtsConfig.UtcNowAsCts.ToShortDateString() +
                                   "</div>";
-
-            if (!ReferenceEquals(null, order))
+            try
             {
                 //following copies pattern found at WebinarController | Identify
                 JObject existingJObject = null;
@@ -270,9 +293,17 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
 
                 order.AdminComments = existingJObject.ToString(Formatting.None);
+                //_membershipService.AddClaim(_membershipService.GetUserAccountByEmail(_globalConfig.Tenant, _globalConfig.TenantEmail)
+                //                ,CUWebinars.Business.Constants.ClaimTypes.CommentAdmin, "SetAffiliateAssignedToOrder: {" + newJson + "}");
 
                 _orderManagementService.SaveChanges();
 
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("SetAffiliateAssigedToOrder: ", ex);
+                throw;
             }
 
             _logger.Info(buildMessage);
@@ -281,99 +312,99 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(new { Result = WebUiConstants.Success, NewAffiliate = newAffiliate.ttsDomain });
         }
 
-        public ActionResult ManageOrder()
-        {
-            return View();
-        }
+        //public ActionResult ManageOrder()
+        //{
+        //    return View();
+        //}
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken(Order = 0)]
-        [HandleAjaxException(Order = 1)]
-        public ActionResult ManageOrder(ManageOrderEditModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var newOrder = ApplyModelChangesToOrder(model);
-                var oldOrder = model.Order;
+        //[HttpPost]
+        //[ValidateAntiForgeryToken(Order = 0)]
+        //[HandleAjaxException(Order = 1)]
+        //public ActionResult ManageOrder(ManageOrderEditModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var newOrder = ApplyModelChangesToOrder(model);
+        //        var oldOrder = model.Order;
 
-                //var orderchanges = new OrderChanges
-                //{
+        //        //var orderchanges = new OrderChanges
+        //        //{
 
-                //}
+        //        //}
 
-                //model.PostEventAccessExpires = _membershipService.SetPostEventAccessExpireyDate(userAccount, id.Value);
+        //        //model.PostEventAccessExpires = _membershipService.SetPostEventAccessExpireyDate(userAccount, id.Value);
 
-                _orderManagementService.UpdateOrderByAdmin(newOrder);
-            }
+        //        _orderManagementService.UpdateOrderByAdmin(newOrder);
+        //    }
 
-            return Json(new { Result = WebUiConstants.Success });
-        }
+        //    return Json(new { Result = WebUiConstants.Success });
+        //}
 
-        public ActionResult ManageOrderFromDetails(int? id)
-        {
-            if (id.HasValue)
-            {
-                if (id == 0)
-                    return RedirectToAction("ManageOrder");
+        //public ActionResult ManageOrderFromDetails(int? id)
+        //{
+        //    if (id.HasValue)
+        //    {
+        //        if (id == 0)
+        //            return RedirectToAction("ManageOrder");
 
-                var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant,
-                    _orderManagementService.GetOrderById(id.Value).BillingEmail);
-                var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
+        //        var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant,
+        //            _orderManagementService.GetOrderById(id.Value).BillingEmail);
+        //        var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
 
-                var model = BuildManageOrderEditModel(id.Value);
+        //        var model = BuildManageOrderEditModel(id.Value);
 
-                if (model.Order.WebUser.email != model.Order.BillingEmail)
-                {
-                    model.Order.WebUser = _membershipService.GetUserByEmail(model.Order.BillingEmail);
-                    if (model.Order.WebUser != null)
-                        _orderManagementService.SaveChanges();
-                }
+        //        if (model.Order.WebUser.email != model.Order.BillingEmail)
+        //        {
+        //            model.Order.WebUser = _membershipService.GetUserByEmail(model.Order.BillingEmail);
+        //            if (model.Order.WebUser != null)
+        //                _orderManagementService.SaveChanges();
+        //        }
 
-                var onDemandClaim = new PostEventClaim();
-                foreach (
-                    var claim in
-                        claimsViewModel.UserClaims.Where(
-                            c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials"))
-                {
-                    var singleOrDefault = model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                    if (singleOrDefault != null && claim.Value.Contains(singleOrDefault.OnDemandCode))
-                    {
-                        var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
+        //        var onDemandClaim = new PostEventClaim();
+        //        foreach (
+        //            var claim in
+        //                claimsViewModel.UserClaims.Where(
+        //                    c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials"))
+        //        {
+        //            var singleOrDefault = model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+        //            if (singleOrDefault != null && claim.Value.Contains(singleOrDefault.OnDemandCode))
+        //            {
+        //                var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
 
-                        onDemandClaim.OrderId = model.Order.idOrder;
-                        onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
-                        onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
+        //                onDemandClaim.OrderId = model.Order.idOrder;
+        //                onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
+        //                onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
 
-                        model.ClaimByOrderViewModel = onDemandClaim;
-                    }
-                }
+        //                model.ClaimByOrderViewModel = onDemandClaim;
+        //            }
+        //        }
 
-                model.PostEventAccessExpires = onDemandClaim.ExpiryDate;
+        //        model.PostEventAccessExpires = onDemandClaim.ExpiryDate;
 
-                return View(model);
-            }
+        //        return View(model);
+        //    }
 
-            //  should never reach here as RouteConfig will not route here with anything but an integer > 0.
-            throw new NullReferenceException(
-                "Query string parameter has to be an positive integer for the ManageOrderFromDetails action.");
-        }
+        //    //  should never reach here as RouteConfig will not route here with anything but an integer > 0.
+        //    throw new NullReferenceException(
+        //        "Query string parameter has to be an positive integer for the ManageOrderFromDetails action.");
+        //}
 
-        private Order ApplyModelChangesToOrder(ManageOrderEditModel model)
-        {
-            var order = _orderManagementService.GetOrderById(model.Id);
-            var orderRow = order.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
+        //private Order ApplyModelChangesToOrder(ManageOrderEditModel model)
+        //{
+        //    var order = _orderManagementService.GetOrderById(model.Id);
+        //    var orderRow = order.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
 
-            order.Total = model.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice;
-            order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus;
+        //    order.Total = model.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice;
+        //    order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus;
 
-            orderRow.RowPrice = order.Total;
-            orderRow.UnitPrice = model.DisplayRowPriceViewModel.PricesAndDiscounts.UnitPrice;
+        //    orderRow.RowPrice = order.Total;
+        //    orderRow.UnitPrice = model.DisplayRowPriceViewModel.PricesAndDiscounts.UnitPrice;
 
-            SyncAdditionalLocations(model, orderRow);
+        //    SyncAdditionalLocations(model, orderRow);
 
-            return order;
-        }
+        //    return order;
+        //}
 
         private void SyncAdditionalLocations(ManageOrderEditModel model, OrderRow orderRow)
         {
@@ -444,12 +475,14 @@ namespace CUWebinars.Web.Controllers.Admin
         public JsonResult GetEditOrderStatusDropdownHtml()
         {
             string html = "";
-            if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
-            {
-                html = ViewHelpers.RenderViewToString(ControllerContext,
-                   "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditOrderStatus_Compact.cshtml",
-                   null, true);
-            }
+
+            _logger.Info("GetEditOrderStatusDropdownHtml called");
+            //if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
+            //{
+            html = ViewHelpers.RenderViewToString(ControllerContext,
+               "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditOrderStatus_Compact.cshtml",
+               null, true);
+            //}
 
             return Json(new { html = html });
 
@@ -471,24 +504,27 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken(Order = 0)]
-        [HandleAjaxException(Order = 1)]
+        //[ValidateAntiForgeryToken(Order = 0)]
+        [HandleAjaxException]
         public ActionResult UpdateOrderStatus(ManageOrderEditModel model)
         {
             if (ModelState.IsValid)
             {
+
                 try
                 {
                     var order = _orderManagementService.GetOrderById(model.Id);
+                    _logger.Info("Updating OrderStatus from " + order.OrderStatus + " to: " + model.DisplayRowPriceViewModel.OrderStatus + " by: " + _appHelper.GetUserAuditInfo());
+
+                    var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
+
+                    var UpdateOrderStatusOnLegacy = dataOperations.UpdateOrderStatusOnLegacy(order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).idWebinar, order.BillingEmail, Convert.ToInt32(model.DisplayRowPriceViewModel.OrderStatus));
 
                     order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus; // the only field that we are updating at this time
 
-                    // what about audit fields?
-                    // are there any order properties not populated by GetOrderById which we risk deleting?
-
                     _orderManagementService.UpdateOrderByAdmin(order);
 
-                    return Json(new { Result = WebUiConstants.Success, orderStatus = model.DisplayRowPriceViewModel.OrderStatus.ToString() });
+                    return Json(new { Result = WebUiConstants.Success, orderStatus = model.DisplayRowPriceViewModel.OrderStatus.ToString(), msgFromLegacy = UpdateOrderStatusOnLegacy });
                 }
                 catch (Exception exception)
                 {
@@ -517,20 +553,13 @@ namespace CUWebinars.Web.Controllers.Admin
 
         [HttpPost]
         [HandleAjaxException]
-        public ActionResult SetUserAssignedToOrder(int orderID, string migrateOrder, int targetUserID)
+        public ActionResult SetUserAssignedToOrder(int orderID, string migrateOrder, string targetUserEmail)
         {
             try
             {
-                if (targetUserID < 2)
-                {
-                    TempData["EditResult"] = "Invalid UserID";
-                    TempData["alertType"] = "alert-error";
-                    return RedirectToAction("Edit", new { ID = orderID });
-                }
 
                 var order = _orderManagementService.GetOrderByIdThin(orderID);
-                WebUser webUser = _membershipService.GetWebUserById(targetUserID);
-
+                var webUser = _membershipService.GetWebUserById(_membershipService.GetWebUserIdByEmail(targetUserEmail).Value);
 
                 if (ReferenceEquals(null, webUser))
                 {
@@ -540,7 +569,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 var linkToNewUser = string.Concat(
                     "/account/edituser/",
-                    targetUserID,
+                    webUser.idUser,
                     "?returnUrl=/Admin/ManageOrder/",
                     orderID
                     );
@@ -560,37 +589,18 @@ namespace CUWebinars.Web.Controllers.Admin
                     for (int j = 0; j < ordersToMove.Count; j++)
                     {
                         ordersToMove[j].BillingEmail = webUser.email;
-                        ordersToMove[j].idUser = targetUserID;
+                        ordersToMove[j].idUser = webUser.idUser;
                         ordersToMove[j].FirstName = webUser.FirstName;
                         ordersToMove[j].LastName = webUser.LastName;
+
                     }
 
                     _orderManagementService.SaveChanges();
 
-                    //var i = 0;
-                    //string numOrdersMigrated = string.Empty;
-                    //string emailOfTargetUser = string.Empty;
-                    //foreach (var order in ordersToMove)
-                    //{
-                    //    i++;
-                    //    TempData["migratingOrder"] += TempData["migratingOrder"] + "Migrating " + order.idOrder;
-                    //    //intent of next line not clear
-                    //    //if (!UserAssignedToOrder(order.idOrder, newUserID)) return RedirectToAction("Edit", new { ID = orderID });
-                    //    emailOfTargetUser = order.BillingEmail;
-                    //    TempData["migratingOrder"] += TempData["migratingOrder"] + " was successful. ";
-                    //}
-                    //if (i == 1)
-                    //{
-                    //    numOrdersMigrated = "One order was ";
-                    //}
-                    //else
-                    //{
-                    //    numOrdersMigrated = i + " orders were ";
-                    //}
                 }
                 else
                 {
-                    order.idUser = targetUserID;
+                    order.idUser = webUser.idUser;
                     order.BillingEmail = webUser.email;
                     order.FirstName = webUser.FirstName;
                     order.LastName = webUser.LastName;
@@ -732,219 +742,92 @@ namespace CUWebinars.Web.Controllers.Admin
 
         [HttpPost]
         [AllowAnonymous]
-        public void ExpressCheckout2(JotFormWebHook postback)
-        {
-            string formFields = Request.Form.ToString();
-            _logger.Info("ExpressCheckout2 all fields submitted to: " + formFields.ToString());
-
-            ExpressCheckoutModel2 form
-                = JsonConvert.DeserializeObject<ExpressCheckoutModel2>(postback.RawRequest);
-            _logger.Info("ExpressCheckout2 deserialized the fields to: " + form.ToString());
-
-
-            var user = _membershipService.GetUserByEmail(form.Email);
-            //var userFromLegacy = _membershipService.GetUserFromLegacy(form.Email);
-            bool userCreatedByCheckout = false;
-            if (ReferenceEquals(null, user))
-            {
-                userCreatedByCheckout = true;
-                _logger.Info("ExpressCheckout2 user must be created: " + form.Email);
-                user = _membershipService.CreateExpressCheckoutUser(_globalConfig.Tenant, form.Email
-                    , form.FullName.first
-                    , form.FullName.last
-                    , form.PhoneNumber.area + form.PhoneNumber.phone
-                    , form.Institution
-                    , form.Title);
-                _orderManagementService.SaveChanges();
-            }
-            Order expressOrder = _orderManagementService.FindExpressCheckoutOrder(form.Email,
-                form.WebinarId);
-
-            if (form.OrderId > 0)
-            {
-                expressOrder = _orderManagementService.FindExpressCheckoutOrderByOrderId(form.OrderId);
-            }
-
-            if (!ReferenceEquals(expressOrder, null))
-            {
-                try
-                {
-                    _logger.Info("ExpressCheckout2 webhook {0} found order: {1}", postback.FormId, expressOrder.idOrder);
-                    _orderManagementService.AssignWebUserToOrder(user, expressOrder);
-                    var forComment = new JProperty(
-                        string.Concat("ExpressCheckout2-",
-                            TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
-                        new JObject(new JProperty("ExpressCheckout2Comments", expressOrder.AdminComments))
-                        );
-                    expressOrder.OrderStatus = OrderStatus.Submitted;
-                    expressOrder.Origin = "ExpressCheckout2";
-                    expressOrder.AdminComments = forComment.ToString();
-                    expressOrder.Affiliate = _orderManagementService.GetAffiliateById(expressOrder.idAffiliate);
-                    //_orderManagementService.AttachAffiliate(_orderManagementService.GetAffiliateById(expressOrder.idAffiliate));
-                    OrderGenesis og = OrderGenesis.CreatedViaExpressCheckout;
-
-
-                    _orderManagementService.SaveOrderChanges(expressOrder, null, null, og);
-
-                    //try
-                    //{
-                    //    if (_globalConfig.Tenant == "BankWebinars")
-                    //    {
-                    //        expressOrder.idOrderLegacy = _orderManagementService.SynchExpressCheckout2Order(expressOrder);
-
-                    //        _orderManagementService.SynchIds(expressOrder);
-
-                    //        _orderManagementService.SaveChanges();
-                    //    }
-
-                    //}
-                    //catch (Exception ex)
-                    //{
-                    //    _logger.WarnException("ExpressCheckout2 blows on SynchExpressCheckout2Order", ex);
-                    //}
-
-
-                    _logger.Info("ExpressCheckout2 to Confirmation Email Handler: " + expressOrder.idOrder);
-                    _orderManagementService.FireOrderSubmittedEvent(expressOrder, userCreatedByCheckout);
-                }
-                catch (Exception ex)
-                {
-                    _logger.Fatal("ExpressCheckout2 tossed exception: " + ex.Message);
-                }
-
-            }
-            else
-            {
-                _logger.Warn("ExpressCheckout2 webhook {0} order NOT FOUND.", postback.FormId);
-
-                var idRegType = _webinarManagementService.GetRegTypeByLableAndWebinar(form.RegistrationType,
-                    form.WebinarId);
-                var newOrderRow = _orderManagementService.CreateOrderRow(null, null, idRegType);
-
-                newOrderRow.idWebinar = form.WebinarId;
-
-                newOrderRow.idRegType = idRegType;
-                _orderManagementService.LoadWebinarIntoOrderRow(newOrderRow);
-
-
-                var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
-                _orderManagementService.SetUserStatusToUnChanged(user);
-
-                Order newOrder = _orderManagementService.CreateNewOrder(
-                    affiliate.idUserAff,
-                    user,
-                    newOrderRow.Webinar,
-                    newOrderRow
-                    );
-
-                newOrderRow.Order.OrderStatus = OrderStatus.Submitted;
-
-                newOrderRow.Order.Origin = "ExpressCheckout2";
-
-                JProperty createdByExpressCheckout2 = new JProperty(
-                    JsonPropertyKeys.OrderCreatedByExpressCheckoutKey,
-                    ""
-                    );
-
-                newOrderRow.Order.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrderRow.Order.AdminComments,
-                    createdByExpressCheckout2);
-                //_orderManagementService.AttachAffiliate(affiliate);
-
-                _orderManagementService.SaveChanges();
-
-
-                newOrder.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(newOrder);
-
-                _orderManagementService.SynchIds(newOrder);
-
-                _orderManagementService.SaveChanges();
-
-                _logger.Info("ExpressCheckout2 created order: " + newOrder.idOrder);
-
-                _orderManagementService.FireOrderSubmittedEvent(newOrderRow.Order, true);
-
-                //return RedirectToAction("OrderComplete", "Account", new { id = expressOrder.idOrder });
-            }
-
-        }
-
-
-        [HttpPost]
-        [AllowAnonymous]
         public void ExpressCheckout(JotFormWebHook postback)
         {
             string formFields = Request.Form.ToString();
-            _logger.Info("ExpressPostback all fields submitted to: " + formFields.ToString());
+            _logger.Info("ExpressCheckoutPostBack all fields submitted to: " + formFields.ToString());
 
             ExpressCheckoutModel form
                 = JsonConvert.DeserializeObject<ExpressCheckoutModel>(postback.RawRequest);
-            _logger.Info("ExpressCheckout deserialized the fields to: " + form.ToString());
-
+            _logger.Info("ExpressCheckoutPostBack all fields submitted to " + form.q11_orderid + ". " + formFields.ToString());
 
             var user = _membershipService.GetUserByEmail(form.q5_email5);
-            //var userFromLegacy = _membershipService.GetUserFromLegacy(form.q5_email5);
             bool userCreatedByCheckout = false;
             if (ReferenceEquals(null, user))
             {
                 userCreatedByCheckout = true;
                 _logger.Info("ExpressCheckout user must be created: " + form.q5_email5);
-                user = _membershipService.CreateExpressCheckoutUser(_globalConfig.Tenant, form.q5_email5
+                //(string city, string state, string zip, string streetAdd1, string streetAdd2
+                //, string tenant, string email, string firstName, string lastName, string phone, string institution, string title)
+                user = _membershipService.CreateWebUserFromExpressCheckout(
+                    form.q14_address14.city
+                    , form.q14_address14.state
+                    , form.q14_address14.postal
+                    , form.q14_address14.addr_line1
+                    , form.q14_address14.addr_line2
+                    , _globalConfig.Tenant
+                    , form.q5_email5
                     , form.q4_name.first
                     , form.q4_name.last
-                    , form.q6_phoneNumber6.area + form.q6_phoneNumber6.phone
+                    , form.q6_phoneNumber6.area + "=" + form.q6_phoneNumber6.phone
                     , form.q8_institution
                     , form.q9_title);
                 _orderManagementService.SaveChanges();
             }
-            Order expressOrder = _orderManagementService.FindExpressCheckoutOrder(form.q5_email5,
-                form.q18_q_webinarid18);
 
-            if (form.q11_orderid > 0)
-            {
-                expressOrder = _orderManagementService.FindExpressCheckoutOrderByOrderId(form.q11_orderid);
-            }
+            Order expressOrder = _orderManagementService.GetOrderById(form.q11_orderid);
 
+
+            var regTypeLable = form.q10_registrationType.Replace(" (months)", "").Replace(" (days)", "");
             if (!ReferenceEquals(expressOrder, null))
             {
                 try
                 {
                     _logger.Info("ExpressCheckout webhook {0} found order: {1}", postback.FormId, expressOrder.idOrder);
                     _orderManagementService.AssignWebUserToOrder(user, expressOrder);
-                    var forComment = new JProperty(
-                        string.Concat("ExpressCheckout-",
-                            TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
-                        new JObject(new JProperty("ExpressCheckoutComments", expressOrder.AdminComments))
-                        );
+
+                    var row = expressOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+
+                    if (!ReferenceEquals(form.q20_discountCode20, ""))
+                    {
+                        var discount = _orderManagementService.GetDiscountByCode(form.q20_discountCode20);
+
+                        _orderManagementService.ApplyDiscountCode(discount.DiscountCode, row);
+
+                    }
+
+                    RegType regType = _orderManagementService.GetRegTypeByLabel(regTypeLable, form.q18_q_webinarid18);
+
+                    var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+
+                    var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(row.idWebinar);
+
+
+                    JProperty createdByExpressCheckout = new JProperty(JsonPropertyKeys.OrderCreatedByExpressCheckoutKey,
+                        "'ExpressCheckoutPostBack': {'" + postback.Pretty + "'}");
+
+                    expressOrder.AdminComments = JsonHelpers.MergeJsonWithStoredField(null,
+                        createdByExpressCheckout);
+
+                    //_membershipService.AddClaim(
+                    // _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, _globalConfig.TenantEmail)
+                    // ,CUWebinars.Business.Constants.ClaimTypes.CommentAdmin, JsonConvert.SerializeObject(createdByExpressCheckout, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore })
+
+                    //    );
+
                     expressOrder.OrderStatus = OrderStatus.Submitted;
                     expressOrder.Origin = "ExpressCheckout";
-                    expressOrder.AdminComments = forComment.ToString();
-                    expressOrder.Affiliate = _orderManagementService.GetAffiliateById(expressOrder.idAffiliate);
-                    //_orderManagementService.AttachAffiliate(_orderManagementService.GetAffiliateById(expressOrder.idAffiliate));
+
                     OrderGenesis og = OrderGenesis.CreatedViaExpressCheckout;
 
-
-                    _orderManagementService.SaveOrderChanges(expressOrder, null, null, og);
-
-                    //try
-                    //{
-                    //    if (_globalConfig.Tenant == "BankWebinars")
-                    //    {
-                    //        expressOrder.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(expressOrder);
-
-                    //        _orderManagementService.SynchIds(expressOrder);
-
-                    //        _orderManagementService.SaveChanges();
-                    //    }
-
-                    //}
-                    //catch (Exception ex)
-                    //{
-                    //    _logger.WarnException("ExpressCheckout blows on SynchExpressCheckoutOrder", ex);
-                    //}
-
-
-                    _logger.Info("ExpressCheckout to Confirmation Email Handler: " + expressOrder.idOrder);
+                    row.RegistrationType = regType;
+                    row.idRegType = regType.idRegType;
+                    _orderManagementService.CalculateOrderCost(expressOrder, additionalLocationsPricing.Single().Price);
+                    _orderManagementService.SaveChanges();
                     _orderManagementService.FireOrderSubmittedEvent(expressOrder, userCreatedByCheckout);
+
+                    expressOrder.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(expressOrder);
+                    _orderManagementService.SaveChanges();
                 }
                 catch (Exception ex)
                 {
@@ -954,57 +837,57 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             else
             {
-                _logger.Warn("ExpressCheckout webhook {0} order NOT FOUND.", postback.FormId);
+                _logger.Warn("ExpressCheckout webhook {0} order NOT FOUND: " + form.q11_orderid);
 
-                var idRegType = _webinarManagementService.GetRegTypeByLableAndWebinar(form.q10_registrationType,
-                    form.q18_q_webinarid18);
-                var newOrderRow = _orderManagementService.CreateOrderRow(null, null, idRegType);
+                //var idRegType = _webinarManagementService.GetRegTypeByLableAndWebinar(regTypeLable,
+                //    form.q18_q_webinarid18);
+                //var newOrderRow = _orderManagementService.CreateOrderRow(null, null, idRegType);
 
-                newOrderRow.idWebinar = form.q18_q_webinarid18;
+                //newOrderRow.idWebinar = form.q18_q_webinarid18;
 
-                newOrderRow.idRegType = idRegType;
-                _orderManagementService.LoadWebinarIntoOrderRow(newOrderRow);
-
-
-                var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
-                _orderManagementService.SetUserStatusToUnChanged(user);
-
-                Order newOrder = _orderManagementService.CreateNewOrder(
-                    affiliate.idUserAff,
-                    user,
-                    newOrderRow.Webinar,
-                    newOrderRow
-                    );
-
-                newOrderRow.Order.OrderStatus = OrderStatus.Submitted;
-
-                newOrderRow.Order.Origin = "ExpressCheckout";
-
-                JProperty createdByExpressCheckout = new JProperty(
-                    JsonPropertyKeys.OrderCreatedByExpressCheckoutKey,
-                    ""
-                    );
-
-                newOrderRow.Order.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrderRow.Order.AdminComments,
-                    createdByExpressCheckout);
-                //_orderManagementService.AttachAffiliate(affiliate);
-
-                _orderManagementService.SaveChanges();
+                //newOrderRow.idRegType = idRegType;
+                //_orderManagementService.LoadWebinarIntoOrderRow(newOrderRow);
 
 
-                newOrder.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(newOrder);
+                //var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+                //_orderManagementService.SetUserStatusToUnChanged(user);
 
-                _orderManagementService.SynchIds(newOrder);
+                //Order newOrder = _orderManagementService.CreateNewOrder(
+                //    affiliate.idUserAff,
+                //    user,
+                //    newOrderRow.Webinar,
+                //    newOrderRow
+                //    );
 
-                _orderManagementService.SaveChanges();
+                //newOrderRow.Order.OrderStatus = OrderStatus.Submitted;
 
-                _logger.Info("ExpressCheckout created order: " + newOrder.idOrder);
+                //newOrderRow.Order.Origin = "ExpressCheckout";
 
-                _orderManagementService.FireOrderSubmittedEvent(newOrderRow.Order, true);
+                //JProperty createdByExpressCheckout = new JProperty(
+                //    JsonPropertyKeys.OrderCreatedByExpressCheckoutKey,
+                //    ""
+                //    );
 
-                //return RedirectToAction("OrderComplete", "Account", new { id = expressOrder.idOrder });
+                //newOrderRow.Order.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrderRow.Order.AdminComments,
+                //    createdByExpressCheckout);
+                ////_orderManagementService.AttachAffiliate(affiliate);
+
+                //_orderManagementService.SaveChanges();
+
+
+                //newOrder.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(newOrder);
+
+                //_orderManagementService.SynchIds(newOrder);
+
+                //_orderManagementService.SaveChanges();
+
+                //_logger.Info("ExpressCheckout created order: " + newOrder.idOrder);
+
+                //_orderManagementService.FireOrderSubmittedEvent(newOrderRow.Order, true);
+
+
             }
-
+            //return RedirectToAction("OrderComplete", "Account", new { id = expressOrder.idOrder });
         }
 
         [HttpPost]
@@ -1043,7 +926,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
                     _orderManagementService.CreateNewOrder(
-                        affiliate.idUserAff,
+                       _orderManagementService.GetAffiliateById(affiliate.idUserAff),
                         user,
                         newOrderRow.Webinar,
                         newOrderRow
@@ -2395,36 +2278,62 @@ namespace CUWebinars.Web.Controllers.Admin
         [AllowAnonymous]
         public ActionResult UpdateAdditionalLocations(int orderRowId, IEnumerable<AdditionalLocation> additionalLocations)
         {
+            //submitted by edit-forms-in-grid.js | submitUpdateAddLocsForm
             var orderRow = _orderManagementService.GetOrderRowById(orderRowId);
 
-            var manageOrderEditModel = new ManageOrderEditModel
-            {
-                AdditionalLocations = additionalLocations
-            };
 
-            SyncAdditionalLocations(manageOrderEditModel, orderRow);
+            if (additionalLocations != null)
+            {
+                var manageOrderEditModel = new ManageOrderEditModel
+                {
+                    AdditionalLocations = additionalLocations
+                };
+
+                var addLocEmails = "UpdateAdditionalLocations: " + orderRow.idOrder;
+                foreach (var addLoc in additionalLocations)
+                {
+                    addLocEmails += addLoc.Email + ",";
+                }
+
+                _logger.Info(addLocEmails.TrimEnd(','));
+
+
+                SyncAdditionalLocations(manageOrderEditModel, orderRow);
+            }
+            else
+            {
+                var manageOrderEditModel = new ManageOrderEditModel
+               {
+                   AdditionalLocations = null
+               };
+
+                var addLocEmails = "UpdateAdditionalLocations | Removed : " + orderRow.idOrder;
+
+                _logger.Info(addLocEmails.TrimEnd(','));
+                SyncAdditionalLocations(manageOrderEditModel, orderRow);
+            }
 
 
             PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
             _orderManagementService.UpdateOrderChanges(orderRow.Order, ref pricesAndDiscounts);
 
-                    if (pricesAndDiscounts.Discount == null)
-                        pricesAndDiscounts.Discount = new Discount();
+            if (pricesAndDiscounts.Discount == null)
+                pricesAndDiscounts.Discount = new Discount();
 
-                    return
-                        Json(
-                            new
-                            {
+            return
+                Json(
+                    new
+                    {
+                        regTypeShort = orderRow.RegistrationType.OptionLabelShort,
+                        BasePrice = pricesAndDiscounts.UnitPrice,
+                        Discount = pricesAndDiscounts.TotalDiscount,
+                        OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
+                        Tax = pricesAndDiscounts.TaxAmount,
+                        Total = pricesAndDiscounts.TotalOrderPrice,
+                        FlatOff = pricesAndDiscounts.Discount.FlatOff,
+                        PercentOff = pricesAndDiscounts.Discount.PercentOff
+                    });
 
-                                BasePrice = pricesAndDiscounts.UnitPrice,
-                                Discount = pricesAndDiscounts.TotalDiscount,
-                                OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
-                                Tax = pricesAndDiscounts.TaxAmount,
-                                Total = pricesAndDiscounts.TotalOrderPrice,
-                                FlatOff = pricesAndDiscounts.Discount.FlatOff,
-                                PercentOff = pricesAndDiscounts.Discount.PercentOff
-                            });
-            return Json(new { Result = WebUiConstants.Success });
         }
 
 
@@ -2461,6 +2370,16 @@ namespace CUWebinars.Web.Controllers.Admin
         {
 
             _orderManagementService.SynchOrders(webinarId.Value);
+            return Content("Ok");
+        }
+
+
+        [AllowAnonymous]
+        [HttpGet]
+        public ActionResult SynchOrdersWhereLegacyIsZero(int idOrderLegacy, int idOrderV3)
+        {
+
+            _orderManagementService.SynchOrdersWhereLegacyIsZero(idOrderLegacy, idOrderV3);
             return Content("Ok");
         }
 
@@ -2524,8 +2443,7 @@ namespace CUWebinars.Web.Controllers.Admin
                             }
                             else
                             {
-                                _logger.Info("UPDATE dbo.OrderRow SET OnDemandCode = '{0}' WHERE idOrder ={1}",
-       RandomHelpers.GetUniqueCode(4), order.idOrder);
+                                _logger.Info("UPDATE dbo.OrderRow SET OnDemandCode = '{0}' WHERE idOrder ={1}",RandomHelpers.GetUniqueCode(4), order.idOrder);
                             }
                         }
                     }
@@ -2538,81 +2456,63 @@ namespace CUWebinars.Web.Controllers.Admin
             return Content("Ok");
         }
 
-        [HandleAjaxException]
-        [AllowAnonymous]
-        public ActionResult GenerateOnDemandCodes(int? webinarId, int? idAffiliate)
-        {
-            IList<Order> v3Orders = _orderManagementService.GetV3OrdersByWebinar(webinarId.Value);
 
-            foreach (var order in v3Orders)
+        [HandleAjaxException]
+        [HttpPost]
+        [AllowAnonymous]
+        public JsonResult BuildAffiliateInvoice(int? idWebinar, string aff)
+        {
+            if (idWebinar != null)
             {
-                var onDemandCode = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).OnDemandCode;
-                if (onDemandCode == null)
-                {
-                    onDemandCode = RandomHelpers.GetUniqueCode(4);
-                    _logger.Warn("UPDATE dbo.OrderRow SET OnDemandCode = '{0}' WHERE idOrder ={1}",
-                                onDemandCode, order.idOrder);
-                    continue;
-                }
+                AffiliateInvoiceDTO model = _affiliateManagementService.GetAffiliateInvoice(idWebinar.Value, aff);
+
+                //JsonResult jsonresult = Json(model.Rows);
+                //jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
+                string html = "";
 
                 try
                 {
-                    var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
-                    var order1 = order;
+                    WebUser editingUser = null;
 
-                    var claims =
-                        userAccount.Claims
-                            .Where(
-                                c =>
-                                    c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials"
-                                    ||
-                                    c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterialsExtended")
-                            .ToList();
-
-                    var fullMatch = claims.Where(c => c.Value.Contains(order1.idOrder.ToString()))
-                        .Where(c => c.Value.Contains(onDemandCode));
-
-                    if (fullMatch.Any())
-                    {
-                        continue;
-                    }
-
-                    var notfoundOrderId = claims.Where(c => !c.Value.Contains(order1.idOrder.ToString()))
-                        .Where(c => c.Value.Contains(onDemandCode));
-
-
-                    var notfoundCode = claims.Where(c => c.Value.Contains(order1.idOrder.ToString()))
-                        .Where(c => !c.Value.Contains(onDemandCode));
-
-                    if (notfoundCode.Any())
-                    {
-                        _logger.Warn("notfoundCode: " + onDemandCode);
-                        continue;
-                    }
-                    if (notfoundOrderId.Any())
-                    {
-                        _logger.Warn("notfoundOrderId:" + order1.idOrder);
-                        continue;
-                    }
-                    _logger.Warn("found Neither: " + order1.idOrder + "-" + onDemandCode);
-                    var expriyDate = _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order).ToShortDateString();
-
-                    //{"OrderId":91274,"ExpiryDate":"2015-12-28","OnDemandCode":"5wbf"}
-                    _logger.Info("INSERT dbo.UserClaims ( ParentKey, Type, Value ) VALUES	( (SELECT [Key] FROM dbo.UserAccounts WHERE " +
-                                 "Email = '" + order.BillingEmail + "'), 'http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials', " +
-                                 "'{\"OrderId\":" + order.idOrder + ",\"ExpiryDate\":\"" + expriyDate + "\",\"OnDemandCode\":\"" + onDemandCode + "\"}' )");
-
-
+                    html = ViewHelpers.RenderViewToString(ControllerContext,
+                            "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditOrder_Compact.cshtml",
+                            model, true);
                 }
                 catch (Exception ex)
                 {
-                    _logger.ErrorException("Checks ondemand claim failed: " + order.idOrder, ex);
+                    _logger.Fatal("GetOrderInfoForm error", ex);
                 }
 
+                return Json(new { html = html });
+
             }
-            return Content("Ok");
+            return null;
         }
 
+        
+        public JsonResult getorderscompact(int? idWebinar)
+        {
+            string html = "";
+
+            try
+            {
+                var orders = _orderManagementService.GetOrdersByWebinar(idWebinar.Value);
+
+                SummaryOfOrdersPerWebinar model = new SummaryOfOrdersPerWebinar();
+
+                html = ViewHelpers.RenderViewToString(ControllerContext,
+                        "~/Views/Shared/DisplayTemplates/DataTablesDisplayTemplates/GetOrders_Compact.cshtml",
+                        orders, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("GetOrderCompact error on " + idWebinar, ex);
+            }
+
+            return Json(new { html = html });
+
+
+        }
 
         [HandleAjaxException]
         [HttpPost]
@@ -2662,6 +2562,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     List<OrderDTO> data = new DTResultSetOrders().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtoSource, columnSearch);
                     int count = new DTResultSetOrders().Count(param.Search.Value, dtoSource, columnSearch);
+
+                    _affiliateManagementService.BuildAffiliateReport(dtsource, webinarId);
 
                     DataTableService<OrderDTO> result = new DataTableService<OrderDTO>
                     {
@@ -2843,7 +2745,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                     DateTimeHelper.FormatTime(webinar.Date) + " Central Time Zone";
                 if (webinar.Status == WebinarStatus.Recorded && webinar.idWebinar != 842)
                 {
-                    showDateValue += "<br><i>This OnDemand Webinar has <b>" + numDaysLeft + "</b> days of access remaining.</i>";
+                    //showDateValue += "<br><i>This OnDemand Webinar has <b>" + numDaysLeft + "</b> days of access remaining.</i>";
                     //if (numDaysLeft > 45)
                     //{
                     //    showDateValue = "About " + Convert.ToInt32(numDaysLeft / (365.25 / 12)) + " months of access remain.";
@@ -2912,7 +2814,7 @@ namespace CUWebinars.Web.Controllers.Admin
             IList<IDictionary<string, string>> responsePayload = new List<IDictionary<string, string>>();
             IDictionary<string, string> responsePayloadInner = new Dictionary<string, string>();
 
-            foreach (var order in orders.Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted))
+            foreach (var order in orders.Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Submitted))
             {
 
                 var orderRow = order.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
@@ -3116,6 +3018,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return null;
         }
+
+
 
     }
 }

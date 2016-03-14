@@ -23,7 +23,7 @@
     </layout>
   </appender>
 
-  <!--<appender name="AdoNetAppender" type="log4net.Appender.AdoNetAppender">
+  <appender name="AdoNetAppender" type="log4net.Appender.AdoNetAppender">
     <threshold value="INFO" />
     <bufferSize value="1" />
     <connectionType value="System.Data.SqlClient.SqlConnection, System.Data,  Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
@@ -64,9 +64,9 @@
         <conversionPattern value="%logger" />
       </layout>
     </parameter>
-  </appender>-->
+  </appender>
   <root>
-    <!--<appender-ref ref="AdoNetAppender" />-->
+    <appender-ref ref="AdoNetAppender" />
     <appender-ref ref="CsvFileAppender" />
 
     <appender-ref ref="FileAppender" />

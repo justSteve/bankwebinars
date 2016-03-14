@@ -26,7 +26,7 @@ namespace CUWebinars.Web.ViewModel
         public Affiliate Affiliate { get; set; }
         public string OptionLabel { get; set; }
         public ShippingDetailsModel ShippingDetailsModel { get; set; }
-        public DiscountDetailsModel DiscountDetailsModel { get; set; }
+        //public DiscountDetailsModel DiscountDetailsModel { get; set; }
         public DiscountModel DiscountModel { get; set; }
         public string UserComments { get; set; }
         public string UserDetails { get; set; }

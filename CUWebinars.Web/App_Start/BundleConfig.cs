@@ -136,7 +136,9 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/utilities.js",
                 "~/Scripts/app/admin/session-checker.js",
                 "~/Scripts/app/form-processor.js",
-                "~/Scripts/app/admin/edit-forms-in-child-row.js"
+                "~/Scripts/app/admin/edit-forms-in-child-row.js",
+                "~/Scripts/app/admin/show-webinars-child-row.js"
+
                 ));
 
             bundles.Add(new ScriptBundle("~/bundles/myApp").Include(
@@ -313,7 +315,7 @@ namespace CUWebinars.Web.App_Start
                         "~/Content/themes/base/jquery.ui.progressbar.css",
                         "~/Content/themes/base/jquery.ui.theme.css"));
 
-            BundleTable.EnableOptimizations = true;
+            //BundleTable.EnableOptimizations = true;
         }
     }
 }

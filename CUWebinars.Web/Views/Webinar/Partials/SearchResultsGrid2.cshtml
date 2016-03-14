@@ -14,17 +14,18 @@
         </script>
     }
 
-    var showAffColumn = Model.UserIsAdmin ? "true" : "false";
     //\Scripts\app\admin\display-webinars.js
     // WebinarController/WebinarDataHandler
 
-    <table data-aff="@showAffColumn" id="webinarsTable" class="table table-striped table-bordered dataTable no-footer" cellspacing="0" width="100%">
+    <table id="webinarsTable" class="table table-striped table-bordered dataTable no-footer" cellspacing="0" width="100%">
         <thead>
             <tr>
                 <th>WebinarDate</th>
                 <th>Status</th>
                 <th>Body</th>
+                <th>Presenter</th>
                 <th>Related Topics</th>
+                <th>Orders</th>
             </tr>
         </thead>
     </table>

@@ -78,11 +78,7 @@
         padding: 10px;
     }
 </style>
-<script language="javascript" type="text/javascript">
-    function upgrade(idOrder) {
-        alert("Please call us at with our Help & Feedback button (lower right corner)screenand ask to upgrade order @globalConfig.TenantPrefix" + idOrder);
-    }
-</script>
+
 
 <div class="container">
     <!--begin main content-->
@@ -94,9 +90,9 @@
                 foreach (var scheduled in Model.Scheduled)
                 {
                     var row = scheduled.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-                    var showDuration = Convert.ToInt32(row.Webinar.Duration);
-                    var upgradeCaption = "<a href=\"javascript:upgrade(" + row.Order.idOrder + "); \" id=\"upgrade\" class=\"btn btn-mini btn-success\">Upgrade?</a>";
-                    var builtURL = globalConfig.TenantURL + "-j-" + row.TtsJoinUrl;
+                    //var showDuration = Convert.ToInt32(row.Webinar.Duration);
+                    //var upgradeCaption = "<a href=\"javascript:upgrade(" + row.Order.idOrder + "); \" id=\"upgrade\" class=\"btn btn-mini btn-success\">Upgrade?</a>";
+                    //var builtURL = globalConfig.TenantURL + "-j-" + row.TtsJoinUrl;
 
                     TimeSpan calcDays = row.Webinar.Date - DateTime.UtcNow;
                     var numDays = Convert.ToInt32(calcDays.TotalDays);

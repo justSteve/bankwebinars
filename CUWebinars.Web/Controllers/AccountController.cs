@@ -10,6 +10,7 @@ using System.Text;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Security;
+using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
@@ -91,6 +92,47 @@ namespace CUWebinars.Web.Controllers
 
 
         [System.Web.Mvc.AllowAnonymous]
+        public string Get([FromUri] CreateWebUserModel model)
+        {
+
+            if (ModelState.IsValid)
+            {
+                var RegisterModel = new RegisterModel
+                {
+                    //    BillingAddress = 
+                };
+            }
+            return null;
+        }
+
+        public class CreateWebUserModel
+        {
+            public string UserType { get; set; }
+            public string idWebUser { get; set; }
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+            public string Institution { get; set; }
+            public string Email { get; set; }
+            public string Title { get; set; }
+            public string AccountDetailsTitle { get; set; }
+            public string BillingAddress_Name { get; set; }
+            public string BillingAddress_StreetAddress { get; set; }
+            public string BillingAddress_StreetAddress2 { get; set; }
+            public string BillingAddress_City { get; set; }
+            public string BillingAddress_State { get; set; }
+            public string BillingAddress_Zip { get; set; }
+            public string BillingAddress_Country { get; set; }
+            public string ShippingAddress_Name { get; set; }
+            public string ShippingAddress_StreetAddress { get; set; }
+            public string ShippingAddress_StreetAddress2 { get; set; }
+            public string ShippingAddress_City { get; set; }
+            public string ShippingAddress_State { get; set; }
+            public string ShippingAddress_Zip { get; set; }
+            public string ShippingAddress_Country { get; set; }
+
+        }
+
+        [System.Web.Mvc.AllowAnonymous]
         public string Get([FromUri] RegisterModel model)
         {
             if (ModelState.IsValid)
@@ -109,38 +151,38 @@ namespace CUWebinars.Web.Controllers
 
                 var myInstitution = _membershipService.ProcessInstitutionForUser(model.Institution.Trim(),
                     email,
-                    Request.QueryString["City"],
-                    Request.QueryString["State"],
+                    model.BillingAddress.City,
+                    model.BillingAddress.State,
                     "N",
                     "New",
-                    Request.QueryString["Zip"]);
+                    model.BillingAddress.Zip);
 
                 try
                 {
                     var billingAddress = new Address
                     {
                         AddressType = Enum.GetName(typeof(AddressType), 0),
-                        City = Request.QueryString["City"],
-                        Country = Request.QueryString["Country"],
+                        City = model.BillingAddress.City,
+                        Country = model.BillingAddress.Country,
                         Name = model.FirstName + ' ' + model.LastName,
-                        Phone = Request.QueryString["Phone"],
-                        State = Request.QueryString["State"],
-                        StreetAddress = Request.QueryString["StreetAddress"],
-                        StreetAddress2 = Request.QueryString["StreetAddress2"],
-                        Zip = Request.QueryString["Zip"]
+                        Phone = model.BillingAddress.Phone,
+                        State = model.BillingAddress.State,
+                        StreetAddress = model.BillingAddress.StreetAddress,
+                        StreetAddress2 = model.BillingAddress.StreetAddress2,
+                        Zip = model.BillingAddress.Zip
                     };
 
                     var shippingAddress = new Address
                     {
                         AddressType = Enum.GetName(typeof(AddressType), 1),
-                        City = Request.QueryString["City"],
-                        Country = Request.QueryString["Country"],
+                        City = model.ShippingAddress.City,
+                        Country = model.ShippingAddress.Country,
                         Name = model.FirstName + ' ' + model.LastName,
-                        Phone = Request.QueryString["Phone"],
-                        State = Request.QueryString["State"],
-                        StreetAddress = Request.QueryString["StreetAddress"],
-                        StreetAddress2 = Request.QueryString["StreetAddress2"],
-                        Zip = Request.QueryString["Zip"]
+                        Phone = model.ShippingAddress.Phone,
+                        State = model.ShippingAddress.State,
+                        StreetAddress = model.ShippingAddress.StreetAddress,
+                        StreetAddress2 = model.ShippingAddress.StreetAddress2,
+                        Zip = model.ShippingAddress.Zip
                     };
 
                     IList<Address> addresses = new List<Address> { billingAddress, shippingAddress };
@@ -229,6 +271,17 @@ namespace CUWebinars.Web.Controllers
         [HandleAjaxException]
         public PartialViewResult GetLoginPartial()
         {
+            WebUser user = new WebUser();
+            if (User.Identity.IsAuthenticated)
+            {
+                user = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
+                var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, user.email);
+                //var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
+            }
+
+
+
+
             return PartialView("_LoginPartial");
         }
 
@@ -286,10 +339,11 @@ namespace CUWebinars.Web.Controllers
                     (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
                 {
                     var claimTTSDomain =
-                        claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate)
-                            .First()
-                            .Value;
+                        claimsIdentityOfAuthenticatedUser.Claims
+                        .Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate)
+                            .First().Value;
                     _stateService.SetValue(WebUiConstants.CurrentAffiliate, _affiliateRepository.LoadByTTSDomain(claimTTSDomain));
+                    return RedirectToAction("Index", "Admin");
 
                 }
                 var discountModel = _accountControllerOrchestrator.BuildDiscountModel();
@@ -304,14 +358,6 @@ namespace CUWebinars.Web.Controllers
             return RedirectToAction("Login", "Account", new { ReturnURL = "MyWebinars" });
         }
 
-        [System.Web.Mvc.AllowAnonymous]
-        [System.Web.Mvc.HttpGet]
-        public string InsertOnDemandClaim(int orderID)
-        {
-            var result = _accountControllerOrchestrator.InsertOnDemandClaim(orderID);
-
-            return result;
-        }
 
         [System.Web.Mvc.AllowAnonymous]
         [System.Web.Mvc.HttpGet]
@@ -408,7 +454,7 @@ namespace CUWebinars.Web.Controllers
                 _logger.Info("Email is successfully verified in our system: {1} Session={0}",
                     _appHelper.GetUserAuditInfo(), model.Email);
 
-                model.ScreenMessage = "Your email is confirmed.";
+                model.ScreenMessage = "Your email (" + model.Email + " ) is confirmed.";
 
                 return View(model);
             }
@@ -613,7 +659,7 @@ namespace CUWebinars.Web.Controllers
                     editingUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
                 }
 
-                _logger.Info(string.Format("{0} is editing {1}", editingUser.email, orderId));
+                _logger.Info(string.Format("GetEditBillingForm: {0} opened {1}", editingUser.email, orderId));
                 var order = _orderManagementService.GetOrderById(orderId);
 
                 var editModel = BuildOrderInfoModel(order, "");
@@ -1048,19 +1094,35 @@ namespace CUWebinars.Web.Controllers
             if (!ReferenceEquals(null, user))
                 return Json(new { Result = WebUiConstants.Fail, EmailExists = "Yes" });
 
-            _logger.Info("Updating Email from " + oldEmail + " to: " + newEmail);
+            _logger.Info("Updating Email from " + oldEmail + " to: " + newEmail + " by: " + _appHelper.GetUserAuditInfo());
             if (ModelState.IsValid)
             {
                 try
                 {
                     _accountControllerOrchestrator.EditEmail(oldEmail, newEmail, _globalConfig.Tenant);
-                    return Json(new { Result = WebUiConstants.Success });
+
+
+                    var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
+
+                    var EditEmailAddressOnLegacy = dataOperations.EditEmailAddressOnLegacy(oldEmail, newEmail);
+
+
+
+                    return Json(new
+                    {
+                        Result = WebUiConstants.Success
+                        ,
+                        Msg = "UpdatedEmailTo: " + newEmail + " from: " + oldEmail
+                    });
+
+
                 }
                 catch (Exception exception)
                 {
                     _logger.ErrorException("In EditEmail Action: ", exception);
                     ErrorSignal.FromCurrentContext().Raise(exception);
                     return Json(new { Result = WebUiConstants.Fail });
+
                 }
             }
             return this.ModelStateJson(ModelState);
@@ -1226,6 +1288,12 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (Request.IsAuthenticated)
+                {
+                    _logger.Warn("Authenticated user was served SignIn page. SessionInfo: " + _appHelper.GetSessionStartInfo());
+                    return RedirectToAction("MyWebinars");
+                }
+
                 try
                 {
                     string userMustVerify;
@@ -1241,7 +1309,7 @@ namespace CUWebinars.Web.Controllers
                         // In such a case, we don't want to redirect back to the page where they just set their password. So send to base instead.
                         var returnUrl = string.IsNullOrWhiteSpace(model.ReturnUrl) ? @"/" :
                             model.ReturnUrl.Contains(@"ACC/APWD") ? @"/" : Server.HtmlDecode(model.ReturnUrl);
-
+                        if (returnUrl == "MyWebinars") returnUrl = "/MyWebinars";
                         return Json(new { result = LoggedInResult, returnUrl = returnUrl });
                     }
 
@@ -1463,17 +1531,33 @@ namespace CUWebinars.Web.Controllers
                         "Account.PasswordResetConfirm.POST was passed empty or null ID. Session=PasswordResetConfirm. " +
                         _appHelper.GetUserAuditInfo());
                     ModelState.AddModelError(string.Empty,
-                        "There appears to have been a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.");
+                        "There was a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.");
                 }
                 else
                 {
+                    UserAccount userAccount = _membershipService.GetUserAccountByVerificationKey(model.Key);
+                    if (ReferenceEquals(null, userAccount))
+                    {
+                        _logger.Error("PasswordResetConfirm | User not found " + model.Email + " for key:" + model.Key);
+                        return Json(new { Result = "Not Found: " + model.Email });
+                    }
+
                     try
                     {
                         if (_accountControllerOrchestrator.ChangePasswordFromResetKey(model.Key, model.Password))
                         {
                             model.ChangePasswordSucceeded = true;
-                            _logger.Info("Account.PasswordResetConfirm Success. Session=" + _appHelper.GetUserAuditInfo());
+                            _logger.Info("Account.PasswordResetConfirm Success. Session=" +
+                                         _appHelper.GetUserAuditInfo());
                             return Json(new { Result = "Success" });
+                        }
+                        else
+                        {
+                            model.ChangePasswordSucceeded = false;
+                            _logger.Info("Account.PasswordResetConfirm Failed on " + model.Email + ". Session=" +
+                                         _appHelper.GetUserAuditInfo());
+
+                            return Json(new { Result = "Fail" });
                         }
                     }
                     catch (ValidationException validationException)
@@ -2055,7 +2139,7 @@ namespace CUWebinars.Web.Controllers
         {
             var errors = ModelState.Values.SelectMany(v => v.Errors); // Get all errors flattened
 
-            _logger.Error("Invalid ModelState Detected in Register");
+
 
             foreach (var error in errors)
             {
@@ -2076,44 +2160,44 @@ namespace CUWebinars.Web.Controllers
 
 
 
-        [ValidateAntiForgeryToken(Order = 0)]
-        [HandleAjaxException(Order = 1)]
-        public ActionResult UpdateSubscriptionDetails(DiscountDetailsModel discountDetailsModel)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _accountControllerOrchestrator.UpdateDiscountDetails(discountDetailsModel.Discount,
-                        discountDetailsModel.UserId);
-                    return Json(new { Result = WebUiConstants.Success });
-                }
-                catch (DbEntityValidationException dbEntityValidationException)
-                {
-                    var stringBuilder = new StringBuilder();
+        //[ValidateAntiForgeryToken(Order = 0)]
+        //[HandleAjaxException(Order = 1)]
+        //public ActionResult UpdateSubscriptionDetails(DiscountDetailsModel discountDetailsModel)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            _accountControllerOrchestrator.UpdateDiscountDetails(discountDetailsModel.Discount,
+        //                discountDetailsModel.UserId);
+        //            return Json(new { Result = WebUiConstants.Success });
+        //        }
+        //        catch (DbEntityValidationException dbEntityValidationException)
+        //        {
+        //            var stringBuilder = new StringBuilder();
 
-                    foreach (var validationErrors in dbEntityValidationException.EntityValidationErrors)
-                    {
-                        foreach (var validationError in validationErrors.ValidationErrors)
-                        {
-                            //Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,validationError.ErrorMessage);
-                            stringBuilder.AppendFormat("Property: {0} Error: {1} ", validationError.PropertyName,
-                                validationError.ErrorMessage);
-                        }
-                    }
-                    _logger.Error("UpdateDiscountDetails dbEntityValidationException errors | {0}",
-                        stringBuilder.ToString());
-                }
+        //            foreach (var validationErrors in dbEntityValidationException.EntityValidationErrors)
+        //            {
+        //                foreach (var validationError in validationErrors.ValidationErrors)
+        //                {
+        //                    //Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,validationError.ErrorMessage);
+        //                    stringBuilder.AppendFormat("Property: {0} Error: {1} ", validationError.PropertyName,
+        //                        validationError.ErrorMessage);
+        //                }
+        //            }
+        //            _logger.Error("UpdateDiscountDetails dbEntityValidationException errors | {0}",
+        //                stringBuilder.ToString());
+        //        }
 
-                catch (Exception e)
-                {
-                    _logger.Error("UpdateDiscountDetails Catch block: {0} | Session = {1} | UserId: {2}", e.Message,
-                        _appHelper.GetUserAuditInfo(), discountDetailsModel.UserId);
-                }
-                return Json(new { Result = WebUiConstants.Fail });
-            }
-            return this.ModelStateJson(ModelState);
-        }
+        //        catch (Exception e)
+        //        {
+        //            _logger.Error("UpdateDiscountDetails Catch block: {0} | Session = {1} | UserId: {2}", e.Message,
+        //                _appHelper.GetUserAuditInfo(), discountDetailsModel.UserId);
+        //        }
+        //        return Json(new { Result = WebUiConstants.Fail });
+        //    }
+        //    return this.ModelStateJson(ModelState);
+        //}
 
         protected override void Dispose(bool disposing)
         {
@@ -2229,6 +2313,13 @@ namespace CUWebinars.Web.Controllers
                 return Json(new { Result = WebUiConstants.Fail });
             }
             return this.ModelStateJson(ModelState);
+
+        }
+
+        public ActionResult GetUserDiscount()
+        {
+            var discountModel = _accountControllerOrchestrator.BuildDiscountModel();
+            return null;
 
         }
     }

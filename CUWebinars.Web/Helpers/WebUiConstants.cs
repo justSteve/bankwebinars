@@ -40,6 +40,8 @@ namespace CUWebinars.Web.Helpers
         public const string IncludeRecorded = "IncludeRecorded";
         public const string SessionId = "SessionID";
         public const string FirstPage = "FirstPage";
+        public const string Elmah = "Elmah";
+        public const string SessionRoot = "SessionRoot";
         public const string FirstCookies = "FirstCookies";
         public const string InitialQueryString = "InitialQueryString";
         public const string SubdomainBranding = "SubdomainBranding";

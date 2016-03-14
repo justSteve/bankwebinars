@@ -5,46 +5,15 @@
 @{
     var PageStyleType = ViewBag.PageStyleType;
     IStateService stateService = new StateService();
-    
-    var currentAffiliate = stateService.GetValue<Affiliate>
 
-    (WebUiConstants.CurrentAffiliate);
+    var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
 
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
-
-
-    string currentUserAffiliateFullName = string.Empty;
-
-    if (User != null && User.Identity.IsAuthenticated)
-    {
-        ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
-
-        if (claimsIdentityOfAuthenticatedUser.HasClaim(
-            (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
-        {
-            if (currentAffiliate != null)
-            {
-                currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
-            }
-            else
-            {
-                CUWebinars.Business.Core.Tracing.Tracer.Warning("CurrentAffiliate should always have a value. Session | {0}", new AppHelper(Request, stateService).GetUserAuditInfo());
-                Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
-            }
-
-
-        }
-    }
-
-
-    var subdomainBranding = stateService.GetValue<string>
-        ("SubdomainBranding");
-    var firstPage = stateService.GetValue<string>
-        ("FirstPage");
-    var sessionID = stateService.GetValue<string>
-        (WebUiConstants.SessionId);
-    var affiliateSessionSource = stateService.GetValue<string>
-        ("AffiliateSessionSource");
+    
+    var subdomainBranding = stateService.GetValue<string>("SubdomainBranding");
+    var firstPage = stateService.GetValue<string>("FirstPage");
+    var sessionID = stateService.GetValue<string>(WebUiConstants.SessionId);
+    var affiliateSessionSource = stateService.GetValue<string>("AffiliateSessionSource");
 
 
 }
@@ -85,8 +54,8 @@
             e.parentNode.insertBefore($, e);
         })(document, "script");
     </script>
-    }
-    @if (@User.Identity.IsAuthenticated && !HttpContext.Current.IsDebuggingEnabled)
+    
+    @if (User.Identity.IsAuthenticated && !HttpContext.Current.IsDebuggingEnabled)
     {
 
         if (!Html.IsDebug())
@@ -110,12 +79,13 @@
     <!-- CSS ================ -->
     <link rel="stylesheet" href="~/Content/css/html-content-slider-flexslider.css" type="text/css" media="screen" />
 
+
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryui")
     @Scripts.Render("~/bundles/CommonModules")
     @Scripts.Render("~/bundles/myApp")
     @Styles.Render("~/Content/CrispCSS")
-
     <!-- Icons ================ -->
     <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
     <link rel="apple-touch-icon-precomposed" href="~/Content/images/BankWebinars/apple-touch-icon.png" />
@@ -149,6 +119,12 @@
         .hero-unit {
             padding-top: 20px;
             padding-bottom: 0px;
+        }
+
+        .preheader {
+            background-color: lightgray;
+            width: 100%;
+            padding-left: 25px;
         }
     </style>
 </head>
@@ -277,9 +253,6 @@
 
         @RenderBody()
 
-        @*        @{Html.RenderPartial("LoginBoxBootstrap");}
-            @{Html.RenderPartial("ShowSearchBox");}*@
-
     </div>
 
     <div id="ProgressDialogBS" class="modal hide fade">
@@ -382,7 +355,7 @@
 
     @*@Scripts.Render("~/bundles/jquery")*@
 
-    @Scripts.Render("~/bundles/jqueryui")
+    @*@Scripts.Render("~/bundles/jqueryui")*@
     @Scripts.Render("~/bundles/CrispApp")
 
 

@@ -6,6 +6,7 @@ var L = LOGGING; // create shortcut alias
 L.clientLogger = function () {
 
     var errorLevel = 'error';
+    var _logNote = '';
     var infoLevel = 'log';
 
     var log = function (logLevel, id, obj) {
@@ -40,9 +41,27 @@ L.clientLogger = function () {
                 break;
         }
     };
+    var logNote = function (logNote, id, obj) {
+
+        var logObj = {};
+        logObj[id] = obj;
+
+        if (typeof $zopim !== 'undefined') {
+            $zopim && $zopim(function () {
+
+                $zopim.livechat.appendNotes(logNote);
+                $zopim.livechat.bubble.setTitle('Question? Get Help Here!');
+            });
+
+        }
+    };
 
     var error = function (id, obj) {
         log(errorLevel, id, obj);
+    };
+    var appendNotes = function (id, obj) {
+        //alert("hit");
+        //logNote(_logNote, id, obj);
     };
 
     var info = function (id, obj) {
@@ -51,6 +70,7 @@ L.clientLogger = function () {
 
 
     return {
+        appendNotes: appendNotes,
         errorLevel: errorLevel,
         infoLevel: infoLevel,
         log: log,

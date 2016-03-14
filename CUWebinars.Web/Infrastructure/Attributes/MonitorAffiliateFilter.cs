@@ -82,6 +82,7 @@ namespace CUWebinars.Web.Infrastructure.Attributes
             }
             else
             {
+                //hardwires 'house' affiliate
                 var affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(2988);
                 _stateService.SetValue(WebUiConstants.CurrentAffiliate, affiliate);
             }

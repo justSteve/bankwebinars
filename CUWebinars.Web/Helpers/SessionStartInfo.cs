@@ -13,6 +13,7 @@ namespace CUWebinars.Web.Helpers
        public string FirstPage { get; set; }
        public string SessionID { get; set; }
        public string AffiliateSessionSource { get; set; }
-
+        public string Elmah { get; set; }
+        public string SessionRoot { get; set; }
     }
 }

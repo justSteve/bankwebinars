@@ -7,51 +7,25 @@
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     ViewBag.Title = Model.Webinar.Title + " - Presented by: " + Model.Webinar.Presenter.WebUser.FullName;
     IStateService stateService = new StateService();
-
-    var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
-    string currentUserAffiliateFullName = string.Empty;
-    if (currentAffiliate != null)
-    {
-        currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
-        ViewBag.currentAffiliateId = currentAffiliate.idUserAff;
-    }
-    else
-    {
-        CUWebinars.Business.Core.Tracing.Tracer.Warning("CurrentAffiliate should always have a value. Session | {0}", new AppHelper(Request, stateService).GetUserAuditInfo());
-        Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
-    }
-
+    var ExpressCheckoutURL = "ExpressCheckout";
 
     if (Model.UserOwnsThisEvent > 0)
     {
-        <script type="text/javascript">
-    function exprsOrder(idRegType) {
-        alert("Please send mail to support at @globalConfig.TenantEmail  and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder. For immediate assistance, use our Help & Feedback button in your lower right screen.");
 
-    };
-    function upgrade(idRegType) {
-        alert("Please send mail to support at @globalConfig.TenantEmail  and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder. For immediate assistance, use our Help & Feedback button in your lower right screen.");
-    };
+        <script type="text/javascript">
+            function exprsOrder(idRegType) {
+                alert("Please send mail to support at @globalConfig.TenantEmail  and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder. For immediate assistance, use our Help & Feedback button in your lower right screen.");
+
+            };
+            function upgrade(idRegType) {
+                alert("Please send mail to support at @globalConfig.TenantEmail  and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder. For immediate assistance, use our Help & Feedback button in your lower right screen.");
+            };
         </script>
     }
-    var ExpressCheckoutURL = "ExpressCheckout4IE1";
-    var url = "";
-    if (globalConfig.Tenant == "BankWebinars")
-    {
-        url = "http://form.jotformpro.com/form/50827231711953?feedback=";
-
-    }
-    if (globalConfig.Tenant == "CUWebinars")
-    {
-        url = "http://form.jotform.us/form/51606487629162?feedback=";
-        ExpressCheckoutURL = "ExpressCheckout4IE1CU";
-    }
-
-    if (ViewBag.DiscountCaption != null)
+    if (Model.UserHasDiscount != null)
     {
         <script language="javascript" type="text/javascript">
             $(function() {
-
                 $('#showDiscount').css('display', 'block');
                 $('#userHasDiscount').html('@Html.Raw(ViewBag.DiscountCaption)');
             });
@@ -131,8 +105,7 @@
             <div class="warnIE" style="display: none;" id="iePre10">
                 <p>
                     <b>Please note:</b> This site employs features that may cause unexpected behavior in older versions of Internet Explorer. If you experience a problem, try refreshing your screen. If this doesn't solve the problem, click on this link.
-                    <br /><a id="warnIE" class="btn btn-mini btn-success" href="/cart/@ExpressCheckoutURL?idWebinar=@Model.Webinar.idWebinar&idAffiliate=@ViewBag.currentAffiliateId">Express Checkout</a>
-
+                    <br /><a id="warnIE" class="btn btn-mini btn-success" rel="nofollow" href="/cart/@ExpressCheckoutURL?idWebinar=@Model.Webinar.idWebinar&idAffiliate=@ViewBag.currentAffiliateId&idOrder=0">Express Checkout</a>
                 </p>
                 <p>You may contact us by using the Online Chat button below or emailing Support@ttsTrain.com.  </p>
             </div>
@@ -222,8 +195,7 @@
                     var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
 
                     <div style="font-size: smaller; line-height: 1.2; text-align: center; margin-bottom: 10px;">
-                        This event was recorded on <i>@Html.DisplayDate(Model.Webinar.Date)</i> and is available for OnDemand Playback until @Html.DisplayDate(expiresDate)
-                        - @remainingDays.ToString() more days.
+                        This event was recorded on <i>@Html.DisplayDate(Model.Webinar.Date)</i>.
                     </div>
                 }
                 else

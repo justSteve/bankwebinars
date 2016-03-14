@@ -436,9 +436,11 @@ $(document).ready(function () {
         e.preventDefault();
 
         ns.updateAdditionalLocationsForm.submit();
+        
     };
 
     ns.submitUpdateAddLocsForm = function (e) {
+        
         var $item = $(e);
         var form = $item.parents("form");
         //var $form = $(form);
@@ -497,6 +499,8 @@ $(document).ready(function () {
 
                     var $childRow = $item.closest("td.child-row");
                     fireSuccessIndicator($childRow.add($parentCell)); // not auto-hiding the child row yet...  color both the child row and the originating parent
+                    $("#addLocUpSpinner").remove();
+
                 }
 
             }

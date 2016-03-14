@@ -38,9 +38,6 @@ function AttachDataTableEditEvents() {
     });
 
 
-
-
-
     // EditUser_Compact form events
     $('.dataTable').on("click", ".show-billing-address", function (e) {
         e.preventDefault();
@@ -62,7 +59,6 @@ function AttachDataTableEditEvents() {
         $(".shipping-field").removeClass("hidden"); //.show();
         $(".show-shipping-address").addClass("btn-success");
     });
-
 
 
     $('.dataTable').on("click", "#save-changes-user", function (e) {
@@ -99,7 +95,7 @@ function AttachDataTableEditEvents() {
 
 
         // form validation passed, save edited User fields to the database...
-        // could definitely use a "busy" cursor.
+        // 
 
         // the EditUser_Compact screen uses EditUserInfoModel directly, but we post
         //  it to the Account/EditUser Action as an EditUserViewModel.  both models contain an EditFields object,
@@ -113,7 +109,7 @@ function AttachDataTableEditEvents() {
             dataType: "json",
             type: "POST",
             success: function (data) {
-                console.log(data);
+                //console.log(data);
 
                 // need to update the currently displaying name (in case it changed)
 
@@ -122,7 +118,7 @@ function AttachDataTableEditEvents() {
                 fireSuccessIndicator($cell);
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                alert(textStatus);
+                alert("Update failed. Account Update User: " + textStatus);
             }
         });
     });
@@ -169,11 +165,11 @@ function AttachDataTableEditEvents() {
                 fireSuccessIndicator($cell);
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                alert(textStatus);
+                alert("/account/updatediscount: " + textStatus);
             }
         });
     });
-    
+
 
     $('.dataTable').on("click", "#save-changes-institution", function (e) {
         e.preventDefault();
@@ -214,7 +210,7 @@ function AttachDataTableEditEvents() {
                 fireSuccessIndicator($cell);
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                alert(textStatus);
+                alert("/account/updateinstitution: " + textStatus);
             }
         });
     });
@@ -227,34 +223,6 @@ function AttachDataTableEditEvents() {
         // EDIT.changeRegType(e, $(this), $(this).parent());
         updateRegType(this, $('input[name="OrderRowId"]').val(), $(this).val());
 
-    });
-
-
-    $('.dataTable').on("click", "#genMissingOnDemandCode", function(e) {
-        debugger;
-
-        var html = "";
-
-        $.ajax({
-            async: false,
-            url: "/account/insertondemandclaim?idOrder=6",
-            dataType: "json",
-            type: "GET",
-            success: function(data) {
-                html = data.html;
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
-                alert(textStatus);
-            },
-            beforeSend: function() {
-                //addIsLoadingIndicator($td, -1); // let ajax "complete" call remove
-            },
-            complete: function() {
-                //removeIsLoadingIndicator($td);
-            }
-        });
-
-        return html;
     });
 
 }
@@ -290,7 +258,7 @@ function removeIsLoadingIndicator($cell) {
 
 
 function createChildRow(cell, $td, rowData) {
-
+    
     if ($td.hasClass("edit-user-name-email")) {
         return editUserCell(cell, $td, rowData);
     }  //
@@ -304,6 +272,7 @@ function createChildRow(cell, $td, rowData) {
     }
 
     if ($td.hasClass("edit-resends")) {
+        alert("Hit");
         return editResendsCell(cell, $td, rowData);
     }
 
@@ -331,10 +300,16 @@ function editUserCell(cell, $td, rowData) {
             html = data.html;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
+            alert("/account/geteditusercompactform: " + textStatus);
+            $zopim.livechat.addTags(errorThrown);
+
+
         },
         beforeSend: function () {
             addIsLoadingIndicator($td, -1); // let ajax "complete" call remove
+            $zopim.livechat.addTags("editing: " + rowData.idUser);
+
+            L.clientLogger.appendNotes('editing', { 'responseObject': XMLHttpRequest.responseJSON, 'geteditusercompactform': rowData.idUser });
         },
         complete: function () {
             removeIsLoadingIndicator($td);
@@ -359,7 +334,7 @@ function editBillingCell(cell, $td, rowData) {
             html = data.html;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
+            alert("/account/GetEditBillingForm idOrder=" + rowData.idOrder + textStatus);
         },
         beforeSend: function () {
             addIsLoadingIndicator($td, -1); // let ajax "complete" call remove
@@ -388,7 +363,7 @@ function editInstitutionCell(cell, $td, rowData) {
             html = data.html;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
+            alert("/account/geteditinstitutionform: " + textStatus);
         },
         beforeSend: function () {
             addIsLoadingIndicator($td, -1); // let ajax "complete" call remove
@@ -416,7 +391,7 @@ function editResendsCell(cell, $td, rowData) {
             html = data.html;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
+            alert("/account/GetResendInfoForm: " + textStatus);
         },
         beforeSend: function () {
             addIsLoadingIndicator($td, -1); // let ajax "complete" call remove
@@ -452,14 +427,14 @@ function updateOrderStatus(item, orderId, newOrderStatus) {
             if (data.Result == "Success") {
                 // need to update the currently displaying status (presuming it changed)
                 $(".dropdown-toggle", $form).html(data.orderStatus + "&nbsp;<b class=\"caret\"></b>");
-
+                alert(data.msgFromLegacy);
                 var $cell = $item.parents("td");
                 fireSuccessIndicator($cell);
             }
 
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
+            alert("/admin/updateorderstatus: " + textStatus);
         }
     });
 }
@@ -495,13 +470,13 @@ function updateDiscount(item, orderId, newDiscount) {
 
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
+            alert("/admin/updateDiscount: " + textStatus);
         }
     });
 }
 
 function updateEmail(e, thatThis) {
-    
+
     e.preventDefault();
 
     var form = $(thatThis).parents("form");
@@ -515,7 +490,7 @@ function updateEmail(e, thatThis) {
     //if (!$form.valid()) {
 
     //}
-    // how can we di
+
 
     var data = $form.serialize();
     $.ajax({
@@ -524,19 +499,22 @@ function updateEmail(e, thatThis) {
         data: data,
         dataType: "json",
         type: "POST",
+
+        beforeSend: function () {
+            alert("H"); //  $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
+        }, // let ajax "complete" call remove
         success: function (data) {
-            console.log(data);
 
             var $cell = $("td.child-showing");
-            $("#edit-email").text("Edit is complete").addClass("btn btn-success");
+            $("#edit-email").text("Edit Succeeded").addClass("btn btn-success");
             $("#EditEmailModal").modal("hide");
 
             fireSuccessIndicator($cell);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            
-            console.log(data);
-            alert(textStatus);
+
+            $("#edit-email").text("Edit Failed").addClass("btn btn-danger");
+            alert("/account/editemail: " + textStatus);
         }
     });
 
@@ -564,7 +542,11 @@ function updateRegType(item, orderId, newRegTypeId) {
         data: JSON.stringify(payLoad),
         success: function (data) {
             if (data) {
-
+                if (data.updateRegTypeOnLegacy == "Order Not Found") {
+                    alert("Order at Legacy was not found");
+                } else {
+                    alert(data.updateRegTypeOnLegacy);
+                }
                 // need to update the currently displaying regType and associated costs
                 $(".dropdown-toggle", $form).html(data.regTypeShort + "&nbsp;<b class=\"caret\"></b>");
                 $("#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice").html("$" + data.BasePrice);
@@ -601,7 +583,7 @@ function updateRegType(item, orderId, newRegTypeId) {
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
+            alert("/cart/updateorderdetails: " + textStatus);
         }
     });
 }

@@ -265,7 +265,8 @@ namespace CUWebinars.Web
                 IInstitutionRepository institutionRepository = new InstitutionRepository(ttsWebinarsContext);
 
 
-                StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(AppConst.DEFAULT_AFFILIATE, a => a.WebUser));
+                StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(AppConst.DEFAULT_AFFILIATE));
+                //StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(AppConst.DEFAULT_AFFILIATE, a => a.WebUser));
                 StateService.SetValue("AValidInstitution", institutionRepository.FindFirst());
 
                 if (User != null && User.Identity.IsAuthenticated)
@@ -310,12 +311,13 @@ namespace CUWebinars.Web
 
                         if (int.TryParse(Request.QueryString[WebUiConstants.AffiliateId], out loadAff))
                         {
-                            Affiliate foundAff = affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser);
+                            //Affiliate foundAff = affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser);
+                            Affiliate foundAff = affiliateRepository.FindByIdWithIncluding(loadAff);
 
                             if (!ReferenceEquals(foundAff, null))
                             {
-                                StateService.SetValue(WebUiConstants.CurrentAffiliate,
-                                    affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser));
+                                StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(loadAff));
+                                //StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser));
                                 logger.Info(string.Format("Resolving Affiliate via query string with id {0}", loadAff));
 
                             }

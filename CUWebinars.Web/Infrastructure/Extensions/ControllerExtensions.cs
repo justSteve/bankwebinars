@@ -14,7 +14,7 @@ namespace CUWebinars.Web.Infrastructure.Extensions
                     .JoinAsString()
                 );
 
-            return controller.ModelStateJson(false, "There have been some errors.", errorsDictionary);
+            return controller.ModelStateJson(false, "Error. ", errorsDictionary);
         }
 
         public static ActionResult ModelStateJsonFromFluentValidator(this Controller controller, ModelStateDictionary state)
@@ -24,7 +24,7 @@ namespace CUWebinars.Web.Infrastructure.Extensions
                     .JoinAsString()
                 );
 
-            return controller.ModelStateJson(false, "There have been some errors.", errorsDictionary);
+            return controller.ModelStateJson(false, "Error. ", errorsDictionary);
         }
 
         public static ActionResult ModelStateJson(this IController controller, bool isSuccessful, string message = "", object data = null)

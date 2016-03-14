@@ -212,6 +212,15 @@
                     <button id="submitSynchOrders" role="button" class="btn btn-primary">Synch Orders</button>
                 }
             </div>
+            @if (Model.Webinar.Status == WebinarStatus.InProgress)
+            {
+                <div>
+                    <form>
+                        Enter Email
+                        <button id="expressReg" role="button" class="btn btn-primary hidden ">Express Registration</button>
+                    </form>
+                </div>
+            }
             @{
                 if (Model.Webinar.Status == WebinarStatus.Active)
                 {

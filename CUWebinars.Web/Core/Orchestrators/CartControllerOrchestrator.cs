@@ -189,6 +189,12 @@ namespace CUWebinars.Web.Core.Orchestrators
                             existingJObject = JObject.Parse(comments);
                             existingJObject.Add(newJson);
                         }
+                        //_membershipService.AddClaim(
+                        // _membershipService.GetUserAccountByEmail(_globalConfig.Tenant
+                        // , _globalConfig.TenantEmail)
+                        // , "SetUserAssignedToOrder",
+                        //   CUWebinars.Business.Constants.ClaimTypes.CommentAdmin
+                        //    );
 
                         order.AdminComments = existingJObject.ToString(Formatting.None);
 
@@ -223,7 +229,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                                 ShippingAddress = new AddressModel()
                                 {
 
-                                    TypeOfAddress= AddressType.Shipping,
+                                    TypeOfAddress = AddressType.Shipping,
                                     StreetAddress = order.ShippingAddress,
                                     StreetAddress2 = order.ShippingAddress2,
                                     City = order.ShippingCity,
@@ -508,7 +514,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         RowPrice = orderRow.RowPrice,
                         RegistrationType = orderRow.RegistrationType
                     };
-                    
+
                     _logger.Info("Returning BuildDisplayRowPriceViewModel price for " + orderRow.Order.idOrder);
 
                     return displayRowPriceViewModel;
@@ -531,9 +537,11 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     var orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
                     var order = orderRow.Order;
+
                     //var additionalLocations = orderRow.AdditionalLocation.ToList();
                     var webUser = order.WebUser;
                     var webinar = _webinarManagementService.GetWebinar(order.OrderRows.FirstOrDefault().idWebinar);
+
 
                     _logger.Info("BuildCheckOutViewModel for " + orderRow.Order.idOrder);
 
@@ -627,7 +635,89 @@ namespace CUWebinars.Web.Core.Orchestrators
             return null;
         }
 
+        public Order CreateOrderExpress(CheckoutOptionsViewModel formModel)
+        {
+            _stateService.SetValue(DomainConstants.CheckoutInProcess, true);
+
+            var webinar = _webinarManagementService.GetWebinar(formModel.idWebinar);
+
+            if (webinar == null)
+            {
+                _logger.Error(string.Format("Null value for Webinar {0}", formModel.idWebinar));
+                throw new NullReferenceException(string.Format("Null value for Webinar with id {0}", formModel.idWebinar));
+            }
+            try
+            {
+                var newOrderRow = CreateOrderRow(webinar,
+                               formModel.AdditionalLocations == null ? null : formModel.AdditionalLocations.ToList(),
+                               formModel.RegistrationTypeId);
+
+
+                var currentAffiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate");
+                _orderManagementService.AttachAffiliate(currentAffiliate);
+
+                // At this point, user may not be registered. So, when creating the Order, if user 
+                // does not exist, a dummy user with an email of notauthenticated@cuwebinars.com will be created.
+                WebUser webUser = formModel.SelectedWebUser > 0 ?
+                    _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.SelectedWebUser) : // if logged in as admin or affiliate
+                    _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.idUser);
+
+                return CreateNewOrder(currentAffiliate, webUser, webinar, newOrderRow, null);
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("CreateOrder", ex);
+                return null;
+
+            }
+        }
+
         public Order CreateOrder(CheckoutOptionsViewModel formModel)
+        {
+
+            _stateService.SetValue(DomainConstants.CheckoutInProcess, true);
+            Claim beingImpersonatedClaim = null;
+
+            if (Request.IsAuthenticated)
+            {
+                var user = Request.RequestContext.HttpContext.User as ClaimsPrincipal;
+                beingImpersonatedClaim = user.Claims.SingleOrDefault(c => c.Type == ClaimTypes.BeingImpersonated);
+            }
+
+            var webinar = _webinarManagementService.GetWebinar(formModel.idWebinar);
+
+            if (webinar == null)
+            {
+                _logger.Error(string.Format("Null value for Webinar {0}", formModel.idWebinar));
+                throw new NullReferenceException(string.Format("Null value for Webinar with id {0}", formModel.idWebinar));
+            }
+            try
+            {
+                var newOrderRow = CreateOrderRow(webinar,
+                               formModel.AdditionalLocations == null ? null : formModel.AdditionalLocations.ToList(),
+                               formModel.RegistrationTypeId);
+
+
+                var currentAffiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate");
+                _orderManagementService.AttachAffiliate(currentAffiliate);
+
+                // At this point, user may not be registered. So, when creating the Order, if user 
+                // does not exist, a dummy user with an email of notauthenticated@cuwebinars.com will be created.
+                WebUser webUser = formModel.SelectedWebUser > 0 ?
+                    _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.SelectedWebUser) : // if logged in as admin or affiliate
+                    _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.idUser);
+
+                return CreateNewOrder(currentAffiliate, webUser, webinar, newOrderRow, beingImpersonatedClaim);
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("CreateOrder", ex);
+                return null;
+
+            }
+        }
+
+        public Order CreateOrderByAffiliate(CheckoutOptionsViewModel formModel, Affiliate affiliate)
         {
             _stateService.SetValue(DomainConstants.CheckoutInProcess, true);
             Claim beingImpersonatedClaim = null;
@@ -645,22 +735,89 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _logger.Error(string.Format("Null value for Webinar {0}", formModel.idWebinar));
                 throw new NullReferenceException(string.Format("Null value for Webinar with id {0}", formModel.idWebinar));
             }
+            try
+            {
+                var newOrderRow = CreateOrderRow(webinar,
+                               formModel.AdditionalLocations == null ? null
+                                   : formModel.AdditionalLocations.ToList(),
+                               formModel.RegistrationTypeId);
 
-            var newOrderRow = CreateOrderRow(webinar,
-                formModel.AdditionalLocations == null ? null : formModel.AdditionalLocations.ToList(),
-                formModel.RegistrationTypeId);
+                var currentAffiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate");
+                //_orderManagementService.AttachAffiliate(currentAffiliate);
 
-            var currentAffiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate");
-            _orderManagementService.AttachAffiliate(currentAffiliate);
+                var tempAff = _orderManagementService.GetAffiliateById(19);
 
-            // At this point, user may not be registered. So, when creating the Order, if user 
-            // does not exist, a dummy user with an email of notauthenticated@cuwebinars.com will be created.
-            WebUser webUser = formModel.SelectedWebUser > 0 ?
-                _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.SelectedWebUser) : // if logged in as admin or affiliate
-                _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.idUser);
+                // At this point, user may not be registered. So, when creating the Order, if user 
+                // does not exist, a dummy user with an email of notauthenticated@cuwebinars.com will be created.
+                WebUser webUser = formModel.SelectedWebUser > 0 ?
+                    _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.SelectedWebUser) : // if logged in as admin or affiliate
+                    _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.idUser);
 
-            return CreateNewOrder(currentAffiliate, webUser, webinar, newOrderRow, beingImpersonatedClaim);
+                var order = CreateNewOrder(tempAff, webUser, webinar, newOrderRow, beingImpersonatedClaim);
+
+                order = _orderManagementService.AssignAffiliateToOrder(currentAffiliate.idUserAff, order);
+
+                //_orderManagementService.SaveChanges();
+
+                return order;
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("CreateOrder", ex);
+                return null;
+
+            }
         }
+
+        public ExpressCheckoutPostBackModel BuildExpressPostback(ExpressCheckoutPostBackModel form)
+        {
+            var user = _membershipService.GetUserByEmail(form.email5);
+            bool userCreatedByCheckout = false;
+            if (!ReferenceEquals(null, user))
+            {
+                form.UserIsConfirmed = "yes";
+            }
+
+            try
+            {
+                var expressOrder = _orderManagementService.GetOrderById(Convert.ToInt32(form.orderid));
+
+                if (!ReferenceEquals(expressOrder, null))
+                {
+                    var orderRow = expressOrder.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
+                    var displayRowPriceViewModel = _orderManagementService.CalculateOrderCost(expressOrder, 0);
+
+                    form.OrderIsConfirmed = "yes";
+                    form.Order = expressOrder;
+                    form.DisplayRowPriceViewModel = new DisplayRowPriceViewModel
+                    {
+                        PricesAndDiscounts = displayRowPriceViewModel,
+                        Discount = orderRow.Discount,
+                        //NumberOfAdditionalLocations = additionalLocationsCount,
+                        OrderStatus = expressOrder.OrderStatus,
+                        Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
+
+                        RegistrationType = orderRow.RegistrationType,
+                        RowPrice = orderRow.RowPrice
+                    };
+
+                }
+
+                //_orderManagementService.FireOrderSubmittedEvent(expressOrder, userCreatedByCheckout);
+
+                //expressOrder.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(expressOrder);
+                //_orderManagementService.SaveChanges();
+                return form;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("ExpressPostback tossed:" + ex.Message + " stacktrace: " + ex.StackTrace );
+            }
+            return null;
+        }
+
+
 
         public OrderRow GetOrderRowLoaded(int idOrderRow)
         {
@@ -674,47 +831,56 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         private Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, Claim createdByImpersonatedClaim = null)
         {
-            if (ReferenceEquals(null, webUser))
+            try
             {
-                if (!_stateService.HasValue(WebUiConstants.SessionId))
-                    _logger.Info("Session id is not in session.");
-                if (!_stateService.HasValue(WebUiConstants.SessionId))
-                    _logger.Info("AValidInstitution is not in session.");
+                if (ReferenceEquals(null, webUser))
+                {
+                    if (!_stateService.HasValue(WebUiConstants.SessionId))
+                        _logger.Info("Session id is not in session.");
+                    if (!_stateService.HasValue(WebUiConstants.SessionId))
+                        _logger.Info("AValidInstitution is not in session.");
 
-                webUser = _membershipService.CreateWebUser(
-                    _globals.Tenant,
-                    "Not",
-                    "Authenticated",
-                    string.Empty,
-                    string.Concat(_stateService.GetValue<string>(WebUiConstants.SessionId), "@notauthenticated.com"),
-                    USTimeZone.Central,
-                    UserType.Customer,
-                    _stateService.GetValue<int>("AValidInstitution"),
-                    null,
-                    "Mr",
-                    null,
-                    null);
+                    webUser = _membershipService.CreateWebUser(
+                        _globals.Tenant,
+                        "Not",
+                        "Authenticated",
+                        string.Empty,
+                        string.Concat(_stateService.GetValue<string>(WebUiConstants.SessionId), "@notauthenticated.com"),
+                        USTimeZone.Central,
+                        UserType.Customer,
+                        _stateService.GetValue<int>("AValidInstitution"),
+                        null,
+                        "Mr",
+                        null,
+                        null);
+                }
+
+                _logger.Info("WebUser id is {0}", webUser.idUser);
+
+                var newOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
+                newOrder.AuditInfo = _appHelper.GetUserAuditInfo();
+                newOrder.Origin = DomainConstants.Cart;
+
+                if (!ReferenceEquals(createdByImpersonatedClaim, null))
+                {
+                    JProperty createdByImpersonatedUserMsg = new JProperty(
+                        JsonPropertyKeys.OrderCreatedByImpersonatedUserKey,
+                        createdByImpersonatedClaim.Value
+                        );
+
+                    newOrder.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrder.AdminComments, createdByImpersonatedUserMsg);
+                }
+
+                newOrder = _orderManagementService.SaveOrderChanges(newOrder, string.Empty, string.Empty);
+
+                return newOrder;
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("CreateNewOrder", ex);
+                throw;
             }
 
-            _logger.Info("WebUser id is {0}", webUser.idUser);
-
-            var newOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
-            newOrder.AuditInfo = _appHelper.GetUserAuditInfo();
-            newOrder.Origin = DomainConstants.Cart;
-
-            if (!ReferenceEquals(createdByImpersonatedClaim, null))
-            {
-                JProperty createdByImpersonatedUserMsg = new JProperty(
-                    JsonPropertyKeys.OrderCreatedByImpersonatedUserKey,
-                    createdByImpersonatedClaim.Value
-                    );
-
-                newOrder.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrder.AdminComments, createdByImpersonatedUserMsg);
-            }
-
-            newOrder = _orderManagementService.SaveOrderChanges(newOrder, string.Empty, string.Empty);
-
-            return newOrder;
         }
 
         public RegType GetRegTypeById(int idRegType)
@@ -788,12 +954,15 @@ namespace CUWebinars.Web.Core.Orchestrators
             foreach (var newSubmittedAdditionalLocation in additionalLocations.Where(al => !existingAdditionalLocationsForOrderRow.Select(eal => eal.Email).Contains(al.Email)))
             {
                 newSubmittedAdditionalLocation.idOrderRow = newOrderRowId;
+                _orderManagementService.RemoveFromDiscount(newOrderRowId);
                 _orderManagementService.AddAdditionalLocation(newSubmittedAdditionalLocation);
             }
 
             foreach (var additionalLocationToDelete in
                 existingAdditionalLocationsForOrderRow.Where(existingEmail => !additionalLocations.Select(al => al.Email).Contains(existingEmail.Email)))
             {
+
+                _orderManagementService.RestoreToDiscount(newOrderRowId);
                 _orderManagementService.RemoveAndDeleteAdditionalLocation(additionalLocationToDelete);
             }
 
@@ -804,105 +973,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             return _orderManagementService.GetOrderById(id);
 
-        }
-
-        public void SetOrderPaidByCC(int qOrder, string s, string formFields)
-        {
-            {
-                Order order = LoadOrder(qOrder);
-
-                if (!ReferenceEquals(null, order))
-                {
-                    order.PaymentType = 2;
-
-                    //order.AdminComments = order.StoreComments + "\r\nCredit Card Order Approved: " + txApprovalCode.ToString();
-
-                    string buildMessage = "Moneris SetOrderPaidByCC: " + order.idOrder + " QueryString: " + formFields;
-                    _logger.Info(buildMessage);
-
-                    order.OrderStatus = OrderStatus.Paid;
-                    
-                    var newJson =
-                        new JProperty(
-                            string.Concat("MonerisPayByCC-",
-                                TtsConfig.UtcNowAsCts.ToString()),
-                            new JObject(new JProperty("PayByCC", buildMessage))
-                            );
-                    order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, newJson);
-
-                    _orderManagementService.SaveChanges();
-
-                    try
-                    {
-                        if (_globalConfig.Tenant == "BankWebinars")
-                        {
-
-                            order.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(order);
-
-                            _orderManagementService.SynchIds(order);
-
-                            _orderManagementService.SaveChanges();
-                        }
-
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.WarnException("ExpressCheckout blows on SynchExpressCheckoutOrder", ex);
-                    }
-
-                }
-
-            }
-        }
-
-
-        public string CreatePostEventClaim(Order order)
-        {
-
-            if (!ReferenceEquals(null, order))
-            {
-                var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-
-                if (orderRow.Webinar.Status != WebinarStatus.Recorded || orderRow.Webinar.Status != WebinarStatus.Archived ) return null;
-
-                var onDemandCode = RandomHelpers.GetUniqueCode(5).ToLower();
-                var expiryDate = orderRow.Webinar.Date.AddMonths(6);
-                if (order.OrderDate > expiryDate) expiryDate = order.OrderDate.AddMonths(6);
-                var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, order.idOrder);
-                var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, expiryDate.ToShortDateString());
-                var OnDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, onDemandCode);
-
-                var claimValue = new JObject(
-                    orderIdProperty,
-                    expiryDateProperty,
-                    OnDemandCodeProperty
-                    );
-
-                orderRow.OnDemandCode = onDemandCode;
-                _orderManagementService.SaveChanges();
-
-                var userAccountOfOrderer = _membershipService.GetUserAccountByEmail(
-                    _globalConfig.Tenant,
-                    order.WebUser.email
-                    );
-
-                _membershipService.AddClaim(
-                    userAccountOfOrderer,
-                    ClaimTypes.PostEventMaterials
-                    , claimValue.ToString(Formatting.None)
-                    );
-
-
-                //_membershipService.UpdatePostEventMaterialsClaim(
-                //    _globalConfig.Tenant,
-                //    order.BillingEmail,
-                //    DateTime.Parse(newExpiryDate),
-                //    order
-                //    );
-                _logger.Info("Added (at checkout) expiryDate claim for: {0}. Date: {1}", order.idOrder,
-                    expiryDate.ToShortDateString());
-            }
-            return null;
         }
 
         public Webinar LoadWebinar(int idWebinar)
@@ -921,49 +991,157 @@ namespace CUWebinars.Web.Core.Orchestrators
             return true;
         }
 
-        public void CheckOnDemandClaims(int? idWebinar)
+        public Order GetOrderById(int? idOrder)
+        {
+            return _orderManagementService.GetOrderById(idOrder.Value);
+        }
+
+        public Discount GetDiscountById(int value)
+        {
+            return _orderManagementService.GetDiscountById(value);
+        }
+
+        public bool AssignWebUserToOrder(Order _order)
+        {
+            var succeeded = false;
+
+            var order = _orderManagementService.AssignWebUserToOrder(_order.WebUser, _order);
+            if (order != null)
+            {
+                succeeded = true;
+            }
+
+            return succeeded;
+
+        }
+
+        public WebUser GetWebUserByEmail(string email)
         {
 
-            IList<Order> v3Orders = _orderManagementService.GetV3OrdersByWebinar(idWebinar.Value);
+            return _orderManagementService.GetWebUser(email);
+        }
 
-            foreach (var order in v3Orders)
+        public ExpressCheckoutModel ExpressCheckout(Order order, WebUser user)
+        {
+            UpdateOrderWithUserId(order.idOrder, user.idUser);
+            var row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
+
+            var addLocs = "";
+
+            if (row.AdditionalLocation != null && row.AdditionalLocation.Any())
             {
-                var onDemandCode = order.OrderRows.SingleOrDefault().OnDemandCode;
-                if (onDemandCode == null)
+                foreach (var loc in row.AdditionalLocation)
                 {
-                    onDemandCode = CreatePostEventClaim(order);
-                }
-                try
-                {
-                    var onDemandClaim = new PostEventClaim();
-
-                    var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
-                    var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
-
-                    foreach (var claim in claimsViewModel.UserClaims)
-                    {
-
-                        if (onDemandCode != null && (claim.Value != null && claim.Value.Contains(onDemandCode)))
-                        {
-                            var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
-
-                            if (thisClaim.OrderId != order.idOrder)
-                            {
-                                _logger.Info("Claim mismatch! Claim: {0} vs Order: {1}", thisClaim.OrderId, order.idOrder);
-                            }
-
-                            onDemandClaim.OrderId = order.idOrder;
-                            onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
-                            onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.ErrorException("Checks ondemand claim failed: " + order, ex);
+                    addLocs = loc.Email + Environment.NewLine;
                 }
             }
+            string justNumbers = new String(order.BillingPhone.Where(Char.IsDigit).ToArray());
+            var area = justNumbers.Substring(0, 3);
+            var phone = justNumbers.Substring(3, 3) + "-" + justNumbers.Substring(6, 4);
+            var formID = "60456422151952";
+            if (_globalConfig.Tenant == "BankWebinars")
+            {
+                formID = "52205870745961"; //production
+                //formID = "60463854157965"; //dev
+            }
+
+            var model = new ExpressCheckoutModel
+            {
+                formID = formID,
+                q18_q_webinarid18 = row.Webinar.idWebinar,
+                q15_affiliateid15 = order.idAffiliate,
+                q12_webinarTitle = row.Webinar.Title,
+                q11_orderid = order.idOrder,
+                q9_title = user.Title,
+                q14_address14 = new Q14Address14
+                {
+                    addr_line1 = order.BillingAddress,
+                    addr_line2 = order.BillingAddress2,
+                    state = order.BillingState,
+                    city = order.BillingCity,
+                    postal = order.BillingZip,
+                    country = "United States"
+                },
+                q4_name = new Q4Name { first = order.FirstName, last = order.LastName },
+                q8_institution = order.Institution,
+                q6_phoneNumber6 = new Q6PhoneNumber6 { area = area, phone = phone },
+                q5_email5 = order.BillingEmail,
+                q19_additionalLocations19 = addLocs
+            };
+
+            if (order.WebUser.idSubscriptionDiscount.HasValue)
+            {
+                var discount =
+                    GetDiscountById(order.WebUser.idSubscriptionDiscount.Value);
+                model.q20_discountCode20 = discount.DiscountCode;
+            }
+
+            return model;
         }
+
+        public RegType GetRegTypeByLabel(string livePlusFive, int? idWebinar)
+        {
+            return _orderManagementService.GetRegTypeByLabel("Live Plus Five", idWebinar: idWebinar.Value);
+        }
+
+        public void AddClaimForPostEventMaterials(string email, OrderRow row)
+        {
+            if (email == null) throw new ArgumentNullException(@"email");
+            if (row == null) throw new ArgumentNullException(@"row");
+
+            try
+            {
+                if (!OnDemandCodeIsUnique(row.OnDemandCode))
+                {
+                    var fromVal = row.OnDemandCode;
+                    while (!OnDemandCodeIsUnique(row.OnDemandCode))
+                    {
+                        row.OnDemandCode = RandomHelpers.GetUniqueCode(5);
+                    }
+                    _logger.Warn("OnDemand Order Changed " + row.idOrder + " from: " + fromVal + " to: " + row.OnDemandCode);
+                }
+
+                _orderManagementService.SaveChanges();
+                _membershipService.AddClaimForPostEventMaterials(email, row,
+                    _orderManagementService.CalculatePostEventMaterialsAccessExpiry(row), _globalConfig.Tenant);
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("AddClaimForPostEventMaterials: ", ex);
+            }
+
+        }
+
+        private bool OnDemandCodeIsUnique(string onDemandCode)
+        {
+            return _orderManagementService.OnDemandCodeIsUnique(onDemandCode);
+        }
+
+        public IList<Order> GetOrderByUserIdAndWebinar(int selectedWebUser, int idWebinar)
+        {
+            return
+                _orderManagementService.GetOrdersByUserId(selectedWebUser)
+                    .Where(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                        .Webinar.idWebinar == idWebinar).ToList();
+        }
+
+        public string InsertOnDemandClaim(int orderId)
+        {
+            var order = GetOrderById(orderId);
+
+            try
+            {
+                AddClaimForPostEventMaterials(order.BillingEmail, order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active));
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("InsertOnDemandClaim" + ex);
+            }
+
+            var result = _globalConfig.TenantURL + "/o/" + orderId + "-" + order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).OnDemandCode;
+            return result;
+        }
+
 
         public INotificationMessage GenerateMessagePreview(Order order)
         {
@@ -1003,6 +1181,10 @@ namespace CUWebinars.Web.Core.Orchestrators
 
 
         }
+        public Discount CheckDiscountCode(int idDiscount)
+        {
+            return _orderManagementService.GetDiscountById(idDiscount);
+        }
 
         public void RemoveAdditionalLocationsFromOrder(int idOrderRow)
         {
@@ -1016,6 +1198,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             return orderRow;
         }
+
+
 
         public void Dispose()
         {

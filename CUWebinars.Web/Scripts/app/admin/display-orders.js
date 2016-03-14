@@ -35,45 +35,57 @@ function getResendInfoHtml() {
 
     return html;
 }
-function getDiscountHtml() {
+//function getDiscountHtml() {
 
-    var html = "";
+//    var html = "";
 
-    $.ajax({
-        async: false,
-        url: "/admin/geteditdiscountdropdownhtml",
-        dataType: "json",
-        type: "POST",
-        success: function (data) {
+//    $.ajax({
+//        async: false,
+//        url: "/admin/geteditdiscountdropdownhtml",
+//        dataType: "json",
+//        type: "POST",
+//        success: function (data) {
 
-            html = data.html;
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
-        }
-    });
+//            html = data.html;
+//        },
+//        error: function (XMLHttpRequest, textStatus, errorThrown) {
+//            alert("geteditdiscountdropdownhtml" + textStatus);
+//        }
+//    });
 
-    return html;
-}
+//    return html;
+//}
 
 function getOrderStatusHtml() {
     // this seems a little slower than I'd like...
     var html = "";
+    html = html + '<form class=\"form-compact compact-order-status-edit-form\" novalidate=\"novalidate\">';
+    html = html + '    <input type=\"hidden\" name=\"Id\" />';
+    html = html + '    <input type=\"hidden\" name=\"DisplayRowPriceViewModel.OrderStatus\" />';
+    html = html + '    <div class=\"dropdown\">';
+    html = html + '        <a class=\"dropdown-toggle btn btn-mini\" role=\"button\" href=\"#\" data-toggle=\"dropdown\">[ORDERSTATUS]&nbsp;<b class=\"caret\"></b></a>';
+    html = html + '        <ul class=\"dropdown-menu\" role=\"menu\">';
+    html = html + '                    <li role=\"presentation\"><a tabindex=\"-1\" role=\"menuitem\" href=\"#\" onclick=\"updateOrderStatus(this, [ORDERID], \'Submitted\'); return false;\">Submitted</a></li>';
+    html = html + '                    <li role=\"presentation\"><a tabindex=\"-1\" role=\"menuitem\" href=\"#\" onclick=\"updateOrderStatus(this, [ORDERID], \'Billed\'); return false;\">Billed</a></li>';
+    html = html + '                    <li role=\"presentation\"><a tabindex=\"-1\" role=\"menuitem\" href=\"#\" onclick=\"updateOrderStatus(this, [ORDERID], \'Paid\'); return false;\">Paid</a></li>';
+    html = html + '                    <li role=\"presentation\"><a tabindex=\"-1\" role=\"menuitem\" href=\"#\" onclick=\"updateOrderStatus(this, [ORDERID], \'Canceled\'); return false;\">Canceled</a></li>';
+    html = html + '                    <li role=\"presentation\"><a tabindex=\"-1\" role=\"menuitem\" href=\"#\" onclick=\"updateOrderStatus(this, [ORDERID], \'AwaitingVerification\'); return false;\">AwaitingVerification</a></li>';
+    html = html + '        </ul>';
+    html = html + '    </div>';
+    html = html + '</form>';
+    //$.ajax({
+    //    async: false,
+    //    url: "/admin/geteditorderstatusdropdownhtml",
+    //    dataType: "json",
+    //    type: "POST",
+    //    success: function (data) {
 
-    $.ajax({
-        async: false,
-        url: "/admin/geteditorderstatusdropdownhtml",
-        dataType: "json",
-        type: "POST",
-        success: function (data) {
-
-            html = data.html;
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
-        }
-    });
-
+    //        html = data.html;
+    //    },
+    //    error: function (XMLHttpRequest, textStatus, errorThrown) {
+    //        alert(textStatus);
+    //    }
+    //});
     return html;
 }
 
@@ -102,13 +114,14 @@ function getOrderStatusHtml() {
 
     ns.primeDomVariables = function () {
         DO.ordersTable = $('#ordersTable');
+        DO.royaltiesTable = $('#royaltiesTable');
         DO.connInfoTable = $('#connInfoTable');
         DO.webinarIdDiv = $('#webinarIdDiv');
         //defined in parent page
         DO.affiliateId = affiliateId;
 
         DO.baseOrderStatusHtml = getOrderStatusHtml();  // 
-        DO.baseDiscountHtml = getDiscountHtml();  // 
+        //DO.baseDiscountHtml = getDiscountHtml();  // 
 
         DO.orderStatusFilters = [];
 
@@ -117,17 +130,56 @@ function getOrderStatusHtml() {
 
     ns.getBillingCellHtml = function (discount, regTypeLabel, total) {
         //debugger;
-        var showDiscount = discount;
+        if (discount != undefined) {
 
-        var billingHtml = regTypeLabel
-                            + showDiscount
-                            + "<br />Total: $" + (total + "").replace(".00", "");
+            var billingHtml = regTypeLabel
+                + (discount + "")
+                + "<br />Total: $" + (total + "").replace(".00", "");
+        } else {
+
+            var billingHtml = regTypeLabel
+                    + "<br />Total: $" + (total + "").replace(".00", "");
+        }
 
         return billingHtml;
 
     };
-
     ns.wireUpHandlers = function () {
+        //var mouseX;
+        //var mouseY;
+        //$(document).mousemove(function (e) {
+        //    mouseX = e.pageX;
+        //    mouseY = e.pageY;
+        //}); http://stackoverflow.com/questions/4666367/how-do-i-position-a-div-relative-to-the-mouse-pointer-using-jquery
+
+        $('.dataTable').on("mouseover", ".edit-user-name-email", function () {
+            $('#hdrCaption').text("Edit Contact");
+            //            $('#hdrCaption').css({ 'top': mouseY, 'left': mouseX }).fadeIn('slow');
+        });
+        $('.dataTable').on("mouseout", ".edit-user-name-email", function () {
+            $('#hdrCaption').text("");
+        });
+
+        $('.dataTable').on("mouseover", ".edit-institution", function () {
+            $('#hdrCaption').text("Institution Details");
+        });
+        $('.dataTable').on("mouseout", ".edit-institution", function () {
+            $('#hdrCaption').text("");
+        });
+
+        $('.dataTable').on("mouseover", ".edit-billing", function () {
+            $('#hdrCaption').text("Edit Order Details");
+        });
+        $('.dataTable').on("mouseout", ".edit-billing", function () {
+            $('#hdrCaption').text("");
+        });
+
+        $('.dataTable').on("mouseover", ".edit-resends", function () {
+            $('#hdrCaption').text("Links for User's Media");
+        });
+        $('.dataTable').on("mouseout", ".edit-resends", function () {
+            $('#hdrCaption').text("");
+        });
 
         $('.dataTable').on("click", ".ResendOrderConfirmationButton", function () {
 
@@ -162,8 +214,39 @@ function getOrderStatusHtml() {
             });
         });
 
+        $('.dataTable').on("click", ".aff-revenue-summary", function () {
 
+            var self = this;
 
+            var payload = { idWebinar: this.getAttribute('data-w'), aff: this.getAttribute('data-a') };
+
+            $.ajax({
+                type: 'POST',
+                contentType: constants.JsonContentType,
+                cache: false,
+                url: '/Admin/BuildAffiliateInvoice',
+                dataType: constants.JsonDataType,
+                data: JSON.stringify(payload),
+                beforeSend: function () {
+                    $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
+                }
+            }).done(function (data) {
+                alert("hit");
+                if (result.Result === 'Success') {
+                    $('#InputFormFields').append(successScreenMessage);
+                } else if (result.Result === 'Fail') {
+                    $('#InputFormFields').append(noOrderScreenMessage);
+                }
+                $('#spinnerLabel').remove();
+            }).fail(function (result) {
+                ns.formatAffRevTable(result);
+            }).always(function () {
+                $('#loadingSpinner').remove();
+            });
+        });
+        ns.formatAffRevTable = function (data) {
+            alert(data.InvoiceId);
+        };
 
         $('.dataTable').on("click", ".ResendConnectionInfoButton", function () {
             var self = this;
@@ -282,7 +365,7 @@ function getOrderStatusHtml() {
                     $(".os-active-group-control").removeClass("active"); // virtually "uncheck" the active category
 
                 } else if ($button.hasClass("os-inactive") && // this button is in the "inactive" category
-                           $("button.os-inactive.active").length == 0) { // there are no other "inactive" buttons selected
+                    $("button.os-inactive.active").length == 0) { // there are no other "inactive" buttons selected
 
                     $(".os-inactive-group-control").removeClass("active"); // virtually "uncheck" the inactive category
                 }
@@ -335,8 +418,8 @@ function getOrderStatusHtml() {
             }
 
         });
-
     };
+
 
     ns.wireUpDataTable = function () {
 
@@ -359,12 +442,9 @@ function getOrderStatusHtml() {
                     return data = JSON.stringify(data);
                 }
             },
-            // "dom": 'frtiS',
+
             "dom": '<ilf<t>ip>',
             "pageLength": 10,
-            //"scrollY": 500,
-            //"scrollX": true,
-            //"scrollCollapse": true,
             "scroller": {
                 loadingIndicator: false
             },
@@ -380,10 +460,10 @@ function getOrderStatusHtml() {
                 {
                     'data': 'Affiliate_ttsDomain',
                     'visible': showAffiliateColumn,
-                    'class': 'details-control'
+                    'class': 'details-control '
                 },
                 { 'data': 'OrderDate', 'class': 'details-control edit-resends' },
-                { 'data': 'OrderStatusString' }
+                { 'data': 'OrderStatusString', 'class': 'edit-status' }
             ],
             "order": [0, "asc"]
 
@@ -413,7 +493,8 @@ function getOrderStatusHtml() {
                "mData": "RegistrationType",
                "mRender": function (data, type, full) {
 
-                   var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
+                   //var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
+                   var orderToEdit = full.idOrder;
 
                    var flatOff = 0;
                    var percentOff = 0;
@@ -442,6 +523,16 @@ function getOrderStatusHtml() {
                }
            },
            // [4] Affiliate Column
+            {
+                "aTargets": [4], //
+                "mData": "Affiliate_ttsDomain",
+                "mRender": function (data, type, full) {
+
+                    var royaltyHtml = full.Royalty;
+                    return "<div class=\"aff-revenue-summary\" data-w=" + parseInt(DO.webinarIdDiv.text()) + " data-a='" + full.Affiliate_ttsDomain + "' style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</br>" + royaltyHtml + "</div>";
+                }
+            },
+
            // [5] Resends Column
             {
 
@@ -449,7 +540,8 @@ function getOrderStatusHtml() {
                 "mData": "",
                 "mRender": function (data, type, full) {
 
-                    var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
+                    var orderToEdit = full.idOrder;
+                    //var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
                     var statusHtml = full.OrderDateString;
                     var resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendOrderConfirmationButton btn btn-mini\">Confirmation</button>";
                     if (full.Webinar_IsActive) {
@@ -469,7 +561,8 @@ function getOrderStatusHtml() {
 
                     // setup a Bootstrap dropdown (http://getbootstrap.com/2.3.2/javascript.html#dropdowns) with the current order status "selected"
 
-                    var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
+                    var orderToEdit = full.idOrder;
+                    //var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
 
                     // the dropdown's HTML gets built one time on the server via ajax via a partial view and RenderViewToString
                     //  magic strings [ORDERSTATUS] and [ORDERID] are hand-/hard-coded in the partial View

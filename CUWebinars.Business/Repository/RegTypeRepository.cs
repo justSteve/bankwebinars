@@ -135,6 +135,34 @@ namespace CUWebinars.Business.Repository
 
             return regType.ShowShippedNotifications.Trim().Equals("Yes", StringComparison.OrdinalIgnoreCase);
         }
+
+        public RegType GetRegTypeByLabel(string regType, int idWebinar)
+        {
+            var stronglyTypedContext = (TTSWebinarsContext)db;
+
+            var webinars = stronglyTypedContext.Webinars
+                .Where(w => w.idWebinar == idWebinar);
+
+            // There can be only one RegTypesGroupsXrefs per webinar at any one time
+            var regTypesGroupsXrefs = webinars.SelectMany(w => w.RegTypesGroupsXref);
+
+            //when pre-event
+            //  For each of those RegTypesGroupsXrefs, get the relevant OptionGroup
+            var regtypesGroups = regTypesGroupsXrefs.Include(o => o.RegTypesGroup).Select(o => o.RegTypesGroup);
+
+            //  Get all OptionsXrefs for those RegTypesGroups
+            var regtypesXrefs = regtypesGroups.Include(o => o.RegTypesXrefs).SelectMany(opt => opt.RegTypesXrefs);
+
+            //  Finally, get the RegTypes
+            var regTypeFound =
+                regtypesXrefs.Include(o => o.RegType)
+                    .Select(o => o.RegType).Where(o => o.OptionLabel.StartsWith(regType)).SingleOrDefault();
+            return regTypeFound;
+
+
+
+
+        }
     }
 
 

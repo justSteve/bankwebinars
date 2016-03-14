@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using CUWebinars.Business.Services;
 
 namespace CUWebinars.Business.AccountService
 {
@@ -30,6 +31,7 @@ namespace CUWebinars.Business.AccountService
         private readonly FluentValidation.IValidator<Tuple<string, string>> _postEventMaterialsAccessClaimValidator;
         private readonly IDomainHelper _domainHelper;
         private readonly ILogger _logger;
+        //private readonly IOrderManagementService _orderManagementService;
         private bool _disposed;
 
         public MembershipService(IInstitutionRepository institutionRepository,
@@ -40,6 +42,7 @@ namespace CUWebinars.Business.AccountService
             FluentValidation.IValidator<Tuple<string, string>> postEventMaterialsAccessClaimValidator,
             IDomainHelper domainHelper,
             ILogger logger)
+        //,IOrderManagementService orderManagementService)
         {
             _institutionRepository = institutionRepository;
             _refDataRepository = refDataRepository;
@@ -49,6 +52,7 @@ namespace CUWebinars.Business.AccountService
             _postEventMaterialsAccessClaimValidator = postEventMaterialsAccessClaimValidator;
             _domainHelper = domainHelper;
             _logger = logger;
+            //_orderManagementService = orderManagementService;
         }
 
         public WebUser GetDetailsOfUser(string email)
@@ -92,6 +96,7 @@ namespace CUWebinars.Business.AccountService
 
         public WebUser GetWebUserById(int userId)
         {
+
             return _webUserRepository.FindByIdLoaded(userId);
         }
 
@@ -102,7 +107,13 @@ namespace CUWebinars.Business.AccountService
 
         public int? GetWebUserIdByEmail(string email)
         {
-            return _webUserRepository.GetWebUserIdByEmail(email);
+            var user = _webUserRepository.GetWebUserIdByEmail(email);
+            if (user == null)
+            {
+                var newUser = CreateBareUserFromEmail(email);
+                user = newUser.idUser;
+            }
+            return user;
         }
 
         public IEnumerable<WebUser> GetWebUsersByLastNameForAffiliate(string lastName, int idAffiliate)
@@ -115,10 +126,24 @@ namespace CUWebinars.Business.AccountService
             return _institutionRepository.GetInstitutionsByName(name);
         }
 
+        public void RemovePostEventClaimByEvent(UserAccount userAccount, int idOrder)
+        {
+
+            var claimsForOrder = userAccount.Claims
+                .Where(c => c.Value.ToLower().Contains(idOrder.ToString()))
+                .Where(c => c.Type == ClaimTypes.PostEventMaterials || c.Type == ClaimTypes.PostEventMaterialsExtended).ToList();
+            foreach (var claim in claimsForOrder)
+            {
+                // extract the date
+
+                RemoveClaim(userAccount.Tenant, userAccount.Email, ClaimTypes.PostEventMaterials, claim.Value);
+
+            }
+        }
+
         public DateTime? GetPostEventAccessExpireyDate(UserAccount userAccount, int idOrder)
         {
             if (userAccount == null || !userAccount.HasClaim(ClaimTypes.PostEventMaterials) || !userAccount.HasClaim(ClaimTypes.PostEventMaterialsExtended)) return null;
-
 
             var claimsForOrder = userAccount.Claims
                 .Where(c => c.Value.ToLower().Contains(idOrder.ToString()))
@@ -173,40 +198,6 @@ namespace CUWebinars.Business.AccountService
             return false;
         }
 
-        //public string CheckDisplayPostEventMaterials(string tenant, string email, out string messageIfFalse)
-        //{
-        //    messageIfFalse = string.Empty;
-        //    var userAccount = GetUserAccountByEmail(tenant, email);
-
-        //    if (userAccount != null)
-        //    {
-        //        var claimValue = GetDisplayPostEventMaterialsClaimValue(userAccount);
-
-        //        if (!string.IsNullOrWhiteSpace(claimValue))
-        //        {
-        //            var expiryAsString = claimValue.Substring(claimValue.IndexOf(":", StringComparison.Ordinal) + 1);
-
-        //            DateTime expiryDate;
-
-        //            if (DateTime.TryParse(expiryAsString, out expiryDate))
-        //            {
-        //                return claimValue;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            messageIfFalse = string.Format("User with email {0} is not authorised to access materials", email);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        messageIfFalse = string.Format("No UserAccount exists with the email {0}", email);
-        //    }
-
-        //    return "false";
-        //}
-
-
         public void CleanUser(string tenant, string email, string newPassword)
         {
             var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
@@ -254,6 +245,69 @@ namespace CUWebinars.Business.AccountService
 
             return account;
         }
+
+        public WebUser CreateWebUserFromExpressCheckout(string city, string state, string zip, string streetAdd1, string streetAdd2, string tenant, string email, string firstName, string lastName, string phone, string institution, string title)
+        {
+            _logger.Info("CreateWebUserFromExpressCheckout: {0}", email);
+            var institutionForUser = ProcessInstitutionForUser(institution
+                    , email
+                    , city
+                    , state
+                    , "N"
+                    , "New"
+                    , zip
+                    );
+
+            USTimeZone userTimeZone = GetTimeZoneByZip();
+
+            var addresses = new List<Address> { new Address
+            {
+                AddressType = "Billing",
+                Name = firstName + " "+lastName,
+                Phone = phone,
+                State = state,
+                StreetAddress = streetAdd1,
+                StreetAddress2 = streetAdd2,
+                Zip = zip,
+                Country = "USA",
+                City = city,
+
+            }, new Address
+            {
+                                AddressType = "Shipping",
+                Name = firstName + " "+lastName,
+                Phone = phone,
+                State = state,
+                StreetAddress = streetAdd1,
+                StreetAddress2 = streetAdd2,
+                Zip = zip,
+                Country = "USA",
+                City = city,
+            } };
+
+
+            var webUser = new WebUser
+            {
+                idUser = _refDataRepository.GetMaxWebUserId() + 1,
+                AcctStatus = DomainConstants.New,
+                UserType = UserType.Customer,
+                DateCreated = DomainConstants.BuildUtcNowAsCts,
+                FirstName = firstName,
+                LastName = lastName,
+                idUserInstitution = institutionForUser.idInstitution,
+                email = email,
+                timeZone = USTimeZone.Central,
+                generalComments = "Origin: CreatedAtExpressCheckout",
+                Addresses = addresses
+            };
+
+            _webUserRepository.Add(webUser);
+
+            CreateUserFromCart(tenant, RandomHelpers.GetUniqueCode(8), email);
+
+            return webUser;
+        }
+
 
         public WebUser CreateWebUser(
             string tenant,
@@ -491,29 +545,6 @@ namespace CUWebinars.Business.AccountService
             return _postEventMaterialsAccessClaimValidator.Validate(new Tuple<string, string>(claimType, claimValue));
         }
 
-        public WebUser CreateExpressCheckoutUser(string tenant, string email, string firstName, string lastName, string phone, string institution, string title)
-        {
-            _logger.Info("CreateExpressCheckoutUser: {0}", email);
-            var webUser = new WebUser
-            {
-                idUser = _refDataRepository.GetMaxWebUserId() + 1,
-                AcctStatus = DomainConstants.New,
-                UserType = UserType.Customer,
-                DateCreated = DomainConstants.BuildUtcNowAsCts,
-                FirstName = firstName,
-                LastName = lastName,
-                idUserInstitution = 8,
-                email = email,
-                timeZone = USTimeZone.Central,
-                generalComments = "Origin: CreatedAtExpressCheckout"
-            };
-
-            _webUserRepository.Add(webUser);
-
-            CreateUserFromCart(tenant, RandomHelpers.GetUniqueCode(8), email);
-
-            return webUser;
-        }
 
         public Address BuildPlaceHolderAddressBilling(string email)
         {
@@ -635,6 +666,15 @@ namespace CUWebinars.Business.AccountService
             //_webUserRepository.Update(user);
         }
 
+        public string CreateUserOnLegacy(WebUser user)
+        {
+
+            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
+
+            return dataOperations.CreateUserOnLegacy(user);
+
+        }
+
         public void AddAccountTypeNotVerifiedClaim(UserAccount userAccount, string accountType)
         {
             _logger.Info("AddAccountTypeNotVerifiedClaim: {0}", userAccount.Email);
@@ -666,8 +706,9 @@ namespace CUWebinars.Business.AccountService
 
                 //dataOperations.SetFieldsConsistantWithVerifiedUser(userAccount);
                 RemoveClaim(tenant, userAccount.Email, ClaimTypes.HasNotVerified);
+                var isValid = _userAccountService.ChangePasswordFromResetKey(key, newPassword);
 
-                return _userAccountService.ChangePasswordFromResetKey(key, newPassword);
+                return isValid;
             }
             catch (Exception exception)
             {
@@ -675,6 +716,43 @@ namespace CUWebinars.Business.AccountService
                 throw;
             }
         }
+
+        public void AddClaimForPostEventMaterials(string email, OrderRow row, DateTime expiryDate, string tenant)
+        {
+            var userAccountOfOrderer = GetUserAccountByEmail(tenant, email);
+            //if already exists, clear
+            RemovePostEventClaimByEvent(userAccountOfOrderer, row.idOrder);
+
+
+            if (row == null) throw new ArgumentNullException("row");
+            try
+            {
+
+                var orderIdProperty = new JProperty(JsonPropertyKeys.OrderId, row.idOrder);
+                var expiryDateProperty = new JProperty(JsonPropertyKeys.ExpiryDate, expiryDate.ToString(DomainConstants.ClaimDateFormatText));
+                if (row.OnDemandCode != null)
+                {
+                    var OnDemandCodeProperty = new JProperty(JsonPropertyKeys.OnDemandCode, row.OnDemandCode);
+
+                    var claimValue = new JObject(
+                        orderIdProperty,
+                        expiryDateProperty,
+                        OnDemandCodeProperty
+                        );
+
+                    AddClaim(userAccountOfOrderer, ClaimTypes.PostEventMaterials, claimValue.ToString(Formatting.None));
+                    _logger.Info("AddClaimForPostEventMaterials: " + row.Webinar.idWebinar + " - " + row.idOrder + "-" + row.OnDemandCode);
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("AddClaimForPostEventMaterials| MR record not found " + email + " " + ex.Message);
+            }
+
+        }
+
 
         private UserAccount GetUserAccountByVerificationKey(string tenant, string key)
         {
