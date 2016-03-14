@@ -258,7 +258,7 @@ function removeIsLoadingIndicator($cell) {
 
 
 function createChildRow(cell, $td, rowData) {
-
+    
     if ($td.hasClass("edit-user-name-email")) {
         return editUserCell(cell, $td, rowData);
     }  //
@@ -272,6 +272,7 @@ function createChildRow(cell, $td, rowData) {
     }
 
     if ($td.hasClass("edit-resends")) {
+        alert("Hit");
         return editResendsCell(cell, $td, rowData);
     }
 

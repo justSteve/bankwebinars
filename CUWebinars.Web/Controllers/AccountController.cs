@@ -92,6 +92,47 @@ namespace CUWebinars.Web.Controllers
 
 
         [System.Web.Mvc.AllowAnonymous]
+        public string Get([FromUri] CreateWebUserModel model)
+        {
+
+            if (ModelState.IsValid)
+            {
+                var RegisterModel = new RegisterModel
+                {
+                    //    BillingAddress = 
+                };
+            }
+            return null;
+        }
+
+        public class CreateWebUserModel
+        {
+            public string UserType { get; set; }
+            public string idWebUser { get; set; }
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+            public string Institution { get; set; }
+            public string Email { get; set; }
+            public string Title { get; set; }
+            public string AccountDetailsTitle { get; set; }
+            public string BillingAddress_Name { get; set; }
+            public string BillingAddress_StreetAddress { get; set; }
+            public string BillingAddress_StreetAddress2 { get; set; }
+            public string BillingAddress_City { get; set; }
+            public string BillingAddress_State { get; set; }
+            public string BillingAddress_Zip { get; set; }
+            public string BillingAddress_Country { get; set; }
+            public string ShippingAddress_Name { get; set; }
+            public string ShippingAddress_StreetAddress { get; set; }
+            public string ShippingAddress_StreetAddress2 { get; set; }
+            public string ShippingAddress_City { get; set; }
+            public string ShippingAddress_State { get; set; }
+            public string ShippingAddress_Zip { get; set; }
+            public string ShippingAddress_Country { get; set; }
+
+        }
+
+        [System.Web.Mvc.AllowAnonymous]
         public string Get([FromUri] RegisterModel model)
         {
             if (ModelState.IsValid)
@@ -110,38 +151,38 @@ namespace CUWebinars.Web.Controllers
 
                 var myInstitution = _membershipService.ProcessInstitutionForUser(model.Institution.Trim(),
                     email,
-                    Request.QueryString["City"],
-                    Request.QueryString["State"],
+                    model.BillingAddress.City,
+                    model.BillingAddress.State,
                     "N",
                     "New",
-                    Request.QueryString["Zip"]);
+                    model.BillingAddress.Zip);
 
                 try
                 {
                     var billingAddress = new Address
                     {
                         AddressType = Enum.GetName(typeof(AddressType), 0),
-                        City = Request.QueryString["City"],
-                        Country = Request.QueryString["Country"],
+                        City = model.BillingAddress.City,
+                        Country = model.BillingAddress.Country,
                         Name = model.FirstName + ' ' + model.LastName,
-                        Phone = Request.QueryString["Phone"],
-                        State = Request.QueryString["State"],
-                        StreetAddress = Request.QueryString["StreetAddress"],
-                        StreetAddress2 = Request.QueryString["StreetAddress2"],
-                        Zip = Request.QueryString["Zip"]
+                        Phone = model.BillingAddress.Phone,
+                        State = model.BillingAddress.State,
+                        StreetAddress = model.BillingAddress.StreetAddress,
+                        StreetAddress2 = model.BillingAddress.StreetAddress2,
+                        Zip = model.BillingAddress.Zip
                     };
 
                     var shippingAddress = new Address
                     {
                         AddressType = Enum.GetName(typeof(AddressType), 1),
-                        City = Request.QueryString["City"],
-                        Country = Request.QueryString["Country"],
+                        City = model.ShippingAddress.City,
+                        Country = model.ShippingAddress.Country,
                         Name = model.FirstName + ' ' + model.LastName,
-                        Phone = Request.QueryString["Phone"],
-                        State = Request.QueryString["State"],
-                        StreetAddress = Request.QueryString["StreetAddress"],
-                        StreetAddress2 = Request.QueryString["StreetAddress2"],
-                        Zip = Request.QueryString["Zip"]
+                        Phone = model.ShippingAddress.Phone,
+                        State = model.ShippingAddress.State,
+                        StreetAddress = model.ShippingAddress.StreetAddress,
+                        StreetAddress2 = model.ShippingAddress.StreetAddress2,
+                        Zip = model.ShippingAddress.Zip
                     };
 
                     IList<Address> addresses = new List<Address> { billingAddress, shippingAddress };

@@ -383,8 +383,7 @@ namespace CUWebinars.Web.Controllers
             if (ModelState.IsValid)
             {
                 _logger.Info("Signup2 Enters: " + _appHelper.GetSessionStartInfo());
-
-
+                
                 try
                 {
                     var order = _cartControllerOrchestrator.CreateOrder(
@@ -406,7 +405,8 @@ namespace CUWebinars.Web.Controllers
                         ErrorMessageConstants.ExistingNonCancelledOrderMessage,
                         StringComparison.OrdinalIgnoreCase))
                     {
-                        _logger.ErrorException(string.Format("Signup2 | {0}", _appHelper.GetUserAuditInfo()), exception);
+                        _logger.ErrorException(string.Format("Signup2 | {0}", _appHelper.GetUserAuditInfo()),
+                            exception);
                         return Json(new
                         {
                             Result = WebUiConstants.Fail,
@@ -417,14 +417,14 @@ namespace CUWebinars.Web.Controllers
                     ModelState.AddModelError(string.Empty,
                         exception.Message.Contains(ErrorMessageConstants.ExistingNonCancelledOrderMessage)
                             ? ErrorMessageConstants.ExistingNonCancelledOrderMessage
-                            : "There has been an error at the server which has been logged.");
+                            : "Error condition ." + exception.Message);
 
                     _logger.FatalException("Signup2 order died. ", exception);
 
                     ErrorSignal.FromCurrentContext().Raise(exception);
                 }
-
             }
+
             return this.ModelStateJson(ModelState);
         }
 
@@ -486,7 +486,7 @@ namespace CUWebinars.Web.Controllers
                     }
                 }
             }
-            
+
 
             try
             {
@@ -627,7 +627,7 @@ namespace CUWebinars.Web.Controllers
                     _logger.Info("EditRegTypeTo: " + newRegType + " From: " + oldRegType + " on orderId: " + model.Order.idOrder);
                     var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
-                    var updateRegTypeOnLegacy = dataOperations.UpdateRegTypeOnLegacy(idRegType.Value, model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar, model.Order.BillingEmail );
+                    var updateRegTypeOnLegacy = dataOperations.UpdateRegTypeOnLegacy(idRegType.Value, model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar, model.Order.BillingEmail);
 
                     return
                         Json(
@@ -696,6 +696,36 @@ namespace CUWebinars.Web.Controllers
             return Content("Nothing for Search Engines here!");
         }
 
+        [HttpPost]
+        public ActionResult ExpressPostback2(ExpressCheckoutModel form)
+        {
+            try
+            {
+                if (form.q11_orderid != null && form.q11_orderid > 0)
+                {
+                    var order = _cartControllerOrchestrator.GetOrderById(form.q11_orderid);
+                    //order.ShippingAddress=form.q14_address14
+                    _logger.Info("ExpressPostback " + _appHelper.GetSessionStartInfo());
+
+                    return Json(new
+                    {
+                        success = "success",
+                        orderId = order.idOrder,
+                        orderRowId = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow,
+                        webinarId = form.q18_q_webinarid18
+                    }, JsonRequestBehavior.AllowGet);
+
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("ExpressCheckoutInternalPostback tossed: " + ex.Message, ex);
+            }
+            return null;
+
+        }
 
         public ActionResult ExpressCheckout(int? idOrder, int? idWebinar, int? idAffiliate, string email)
         {
@@ -708,7 +738,10 @@ namespace CUWebinars.Web.Controllers
 
                     if (ReferenceEquals(user, null))
                     {
+                        
+                        //user = _cartControllerOrchestrator.BuildWebUserExpress(email);
                         throw new ArgumentNullException("user");
+
                     }
 
                     if (order != null)
@@ -784,12 +817,46 @@ namespace CUWebinars.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult ThankYou(ExpressCheckoutPostBackModel form)
+        public ActionResult ThankYou(FormCollection form)
         {
             string formFields = Request.Form.ToString();
             _logger.Info("ExpressCheckoutThankYou postback: " + formFields);
 
             return View();
+            //string formFields = Request.Form.ToString();
+            //_logger.Info("ExpressCheckoutThankYou postback: " + JsonConvert.SerializeObject(formFields));
+            //_logger.Info("ExpressCheckoutThankYou postback: " + formFields);
+
+            //try
+            //{
+            //    return RedirectToAction("Signup2", new CheckoutOptionsViewModel
+            //     {
+            //         idOrder = Convert.ToInt32(form.orderid),
+            //         idWebinar = Convert.ToInt32(form.q_webinarid18)
+            //     });
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.Fatal("", ex);
+            //}
+
+            //try
+            //{
+            //    form = _cartControllerOrchestrator.BuildExpressPostback(form);
+
+            //    return RedirectToAction("Signup2", new CheckoutOptionsViewModel
+            //     {
+            //         idOrder = Convert.ToInt32(form.orderid),
+            //         idWebinar = Convert.ToInt32(form.q_webinarid18)
+            //     });
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.Fatal("BuildExpressPostback toss: ", ex.Message);
+            //}
+            //return View(form);
         }
 
         [HttpPost]
@@ -802,7 +869,7 @@ namespace CUWebinars.Web.Controllers
             if (order == null) throw new ArgumentNullException("order");
 
             JProperty monerisResponse = new JProperty(JsonPropertyKeys.MonerisResponse, JsonConvert.SerializeObject(form));
-            
+
             order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, monerisResponse);
 
             _cartControllerOrchestrator.UpdateOrderPricing(order);
@@ -854,7 +921,7 @@ namespace CUWebinars.Web.Controllers
             return this.ModelStateJson(ModelState);
 
         }
-        
+
         public void PostBackWPS(FormCollection form)
         {
             //wps = webinar package subscription

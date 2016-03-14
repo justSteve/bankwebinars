@@ -509,11 +509,21 @@ namespace CUWebinars.Business.Services
 
                             }
 
+
+
                             if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType != vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType)
                             {
                                 vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType;
                                 SaveChanges();
                                 _logger.Info("SynchOrder adjusted RegType from V3 RegType = {1} to Legacy = {0} on {2} ", lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, orderEmail);
+                            }
+
+
+                            if (lOrder.OrderStatus != vOrder.OrderStatus)
+                            {
+                                vOrder.OrderStatus = lOrder.OrderStatus;
+                                SaveChanges();
+                                _logger.Info("SynchOrder adjusted OrderStatus from V3 = {1} to Legacy = {0} on {2} ", lOrder.OrderStatus  , vOrder.OrderStatus, orderEmail);
                             }
 
                             //if (vOrder.OrderDate > DateTime.Parse("01/01/2016"))
@@ -930,7 +940,6 @@ namespace CUWebinars.Business.Services
         }
         public PricesAndDiscounts CalculateOrderCost(Order order, decimal optionsCost)
         {
-            //how is default determined? [dar] It is same as writing PricesAndDiscounts pricesAndDiscounts; For int, it would be 'int i = 0';
             PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
             decimal totalOptionsPrice = 0M;
 
@@ -939,8 +948,6 @@ namespace CUWebinars.Business.Services
             Debug.Assert(row != null, "OrderRow object should always have a value here.");
             if (row.RegistrationType != null)
             {
-                //TODO: Figure out why Order that are retrieved via the SynchOrders method have
-                //a null reference for RegistrationType
                 row.UnitPrice = (decimal)row.RegistrationType.Price;
             }
             else

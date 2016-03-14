@@ -57,5 +57,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         IList<Order> GetOrderByUserIdAndWebinar(int selectedWebUser, int idWebinar);
         string InsertOnDemandClaim(int orderId);
         Order CreateOrderByAffiliate(CheckoutOptionsViewModel formModel, Affiliate affiliate);
+        ExpressCheckoutPostBackModel BuildExpressPostback(ExpressCheckoutPostBackModel form);
+        
     }
 }

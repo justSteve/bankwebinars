@@ -361,26 +361,26 @@ namespace CUWebinars.Web.Controllers
             {
                 ViewBag.PageStyleType = "two-columns-right-sidebar";
                 ViewBag.TopicCaption = " ";
-                //string searchTerm = Request["searchTerm"];
-
-                //var unionOfResultSets = _webinarControllerOrchestrator.SearchWebinars(searchTerm);
-                //ShowWebinarsViewModel model = new ShowWebinarsViewModel
-                //{
-                //    SearchTerm = searchTerm
-                //};
-                //ViewBag.Title = "Search Results";
-
-                //return View(unionOfResultSets);
-
-                //uncomment to use Updated DataTable code
                 string searchTerm = Request["searchTerm"];
+
+                var unionOfResultSets = _webinarControllerOrchestrator.SearchWebinars(searchTerm);
                 ShowWebinarsViewModel model = new ShowWebinarsViewModel
                 {
                     SearchTerm = searchTerm
                 };
                 ViewBag.Title = "Search Results";
 
-                return View(model);
+                return View(unionOfResultSets);
+
+                //uncomment to use Updated DataTable code
+                //string searchTerm = Request["searchTerm"];
+                //ShowWebinarsViewModel model = new ShowWebinarsViewModel
+                //{
+                //    SearchTerm = searchTerm
+                //};
+                //ViewBag.Title = "Search Results";
+
+                //return View(model);
             }
             catch (Exception exception)
             {
@@ -583,7 +583,7 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult GetWebinarDetailsCompact(int? id)
         {
-                var html = "";
+            var html = "";
             if (id.HasValue)
             {
                 var webinar = _webinarManagementService.GetWebinar(id.Value);
@@ -606,7 +606,7 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult GetPresenterCompact(int? id)
         {
-                var html = "";
+            var html = "";
             if (id.HasValue)
             {
                 var webinar = _webinarManagementService.GetWebinar(id.Value);
@@ -697,13 +697,15 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 var usersOrders = _orderManagementService.GetOrdersByUserId(model.WebUser.idUser)
-                    .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id.Value) != null);
+                                    .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id.Value) != null);
 
                 // perf tweak: ensures no multiple enumerations of usersOrders
                 var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray();
 
+
                 if (checkOrders.Any())
-                // Webinar.Status > scheduled - WebinarFiles presenter files etc. Files only exist until init or activated Webinar
+                // Webinar.Status > scheduled - WebinarFiles presenter files etc. 
+                //Files only exist until init or activated Webinar
                 {
                     foreach (var checkOrder in checkOrders) // assumption that there will be only 1 ?
                     {

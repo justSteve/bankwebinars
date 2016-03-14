@@ -194,7 +194,8 @@
         phone = webinar.AccessPhone;
     }
     var HeaderText = "Confirmation of Registration for<br />" + webinar.Title;
-    var BannerText = "Type: " + row.Single().RegistrationType.OptionLabel;
+    var BannerText = "Type: " + row.Single().RegistrationType.OptionLabel ;
+    //var BannerText = "Type: " + row.Single().RegistrationType.OptionLabel + "<br>" + TenantPrefix + row.Single().idOrder;
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>[@Tenant]: Confirmation of Registration for @webinar.Title</title>

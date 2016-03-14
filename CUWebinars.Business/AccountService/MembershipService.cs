@@ -96,6 +96,7 @@ namespace CUWebinars.Business.AccountService
 
         public WebUser GetWebUserById(int userId)
         {
+
             return _webUserRepository.FindByIdLoaded(userId);
         }
 
@@ -106,7 +107,13 @@ namespace CUWebinars.Business.AccountService
 
         public int? GetWebUserIdByEmail(string email)
         {
-            return _webUserRepository.GetWebUserIdByEmail(email);
+            var user = _webUserRepository.GetWebUserIdByEmail(email);
+            if (user == null)
+            {
+                var newUser = CreateBareUserFromEmail(email);
+                user = newUser.idUser;
+            }
+            return user;
         }
 
         public IEnumerable<WebUser> GetWebUsersByLastNameForAffiliate(string lastName, int idAffiliate)
