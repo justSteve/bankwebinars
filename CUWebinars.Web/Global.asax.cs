@@ -48,7 +48,7 @@ namespace CUWebinars.Web
             ViewEngines.Engines.Clear();
 
             // Registers our Razor C# specific view engine.
-            ViewEngines.Engines.Add(new RazorViewEngine());
+            ViewEngines.Engines.Add(new RazorViewEngine() { FileExtensions = new string[] { "cshtml" } });
 
             AreaRegistration.RegisterAllAreas();
 

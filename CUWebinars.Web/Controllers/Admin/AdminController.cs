@@ -65,6 +65,9 @@ namespace CUWebinars.Web.Controllers.Admin
         private readonly IStateService _stateService;
         private readonly GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
         private readonly IAffiliateManagementService _affiliateManagementService;
+
+        private readonly IFormatter _generalFormatter;
+
         //private bool _disposed;
         //
         // GET: /Admin/
@@ -76,7 +79,8 @@ namespace CUWebinars.Web.Controllers.Admin
             IOrderManagementService orderManagementService,
             IDataTablesService dataTablesService,
             IAppHelper appHelper,
-            IAffiliateManagementService affiliateManagementService)
+            IAffiliateManagementService affiliateManagementService,
+            IFormatter generalFormatter)
         {
             _membershipService = membershipService;
             _logger = logger;
@@ -86,6 +90,7 @@ namespace CUWebinars.Web.Controllers.Admin
             _dataTablesService = dataTablesService;
             _appHelper = appHelper;
             _affiliateManagementService = affiliateManagementService;
+            _generalFormatter = generalFormatter;
         }
 
         //
@@ -448,7 +453,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return Json(new { html = html });
 
-        }
+        } 
 
         [AllowAnonymous]
         public JsonResult GetEditDiscountDropdownHtml()
@@ -1676,6 +1681,29 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpPost]
         public JsonResult PromoGenerate(WebinarPromoViewModel model)
         {
+
+            model.Webinar = _webinarManagementService.GetWebinar(model.Webinar.idWebinar);
+
+            // populate the upcoming events panel
+            model.Webinars = _webinarManagementService.GetUpcomingWebinars().ToList();
+
+            var upcomingWebinars = (from w in model.Webinars.Take(5)
+                                   where w.idWebinar != model.Webinar.idWebinar && w.Date > model.SendDate
+                                   orderby w.Date
+                                   select 
+                                        "<p><a style=\"color: bisque; text-decoration: none; border-bottom: 1px dotted bisque;\" href=\"http://www.bankwebinars.com/Webinar/Details/" +
+                                        w.idWebinar + "?idaff={aff_idUserAff}\">" + w.Title +
+                                        "</a><br><font size='-3'> (" + w.Date.ToLongDateString() + ")</font></p>"
+                                   ).ToArray();
+
+            if (upcomingWebinars.Count() > 0)
+                model.UpcomingListing = "<h3>Upcoming Webinars</h3>\r\n" + String.Join("\r\n", upcomingWebinars);
+
+            model.EventBody = HttpUtility.HtmlDecode(_generalFormatter.FormatV2(model, "~/Notification/Templates/SendPerDayPromoMaster.cshtml").Body); // get Template with new method
+
+            return Json(new { masterText = model.EventBody });
+
+            // ********************************  OLD CODE, SOME WILL BE USED ********************
             model.Webinars = _webinarManagementService.GetUpcomingWebinars().ToList();
 
             var includedAffiliates = Request.Params.AllKeys
@@ -1716,10 +1744,12 @@ namespace CUWebinars.Web.Controllers.Admin
                                 "</a><br><font size='-3'> (" + a.Date.ToLongDateString() + ")</font></p>"
                         };
 
+                // a.s. looks unused
                 string wDate = "<b>" + DateTimeHelper.FormatDate(model.Webinar.Date) + "</b><br>" +
                                DateTimeHelper.FormatTimeWithDuration(model.Webinar.Date, model.TimeZone, false,
                                    model.Webinar.Duration) + "<br>";
 
+                // a.s. looks unused
                 string ceu = "";
                 if (String.IsNullOrEmpty(model.Webinar.ceu) == false)
                 {
@@ -1824,17 +1854,43 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             WebinarPromoViewModel model = new WebinarPromoViewModel()
             {
-
+                TimeZone = USTimeZone.Eastern,
+                SendDate = TtsConfig.UtcNowAsCts,
+                Webinar = _webinarManagementService.GetWebinar(id),
+                Affiliates = new AffiliateRepository().GetAffiliatesByPromoType("Daily").ToList(),
+                TemplateType = "Daily"
             };
-            model.SendDate = TtsConfig.UtcNowAsCts;
-            model.Webinars = _webinarManagementService.GetUpcomingWebinars().ToList();
-            model.Webinar = _webinarManagementService.GetWebinar(id);
-            model.TimeZone = USTimeZone.Eastern;
-            model.Affiliates = new AffiliateRepository().GetAffiliatesByPromoType("Daily").ToList();
 
+            System.Diagnostics.Debug.WriteLine("Time 0.1: " + DateTime.Now.ToString("HH:mm:ss.fff"));
+            var html = ViewHelpers.RenderViewToString(ControllerContext,
+                                   "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditOrderStatus_Compact.cshtml",
+                                   null, true);
+            System.Diagnostics.Debug.WriteLine("Time 0.2: " + DateTime.Now.ToString("HH:mm:ss.fff"));
 
             return View(model);
 
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SendSinglePromo(int affiliateId, string messageBodyHtml) // WebinarPromoViewModel model
+        {
+            //var model = null;
+            WebinarPromoViewModel model = new WebinarPromoViewModel(); // TEMP FOR INITIAL TESTING
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _orderManagementService.FireSendPerDayPromoEvent(model);
+                    return Json(new { Result = WebUiConstants.Success });
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException("SendSinglePromo action", exception);
+                }
+            }
+
+            return this.ModelStateJson(ModelState);
         }
 
         public ActionResult RssFeedOfAddedEvents()

@@ -190,3 +190,34 @@ table.dataTable thead .sorting_desc_disabled { background: url('/content/images/
 
   footer .container {padding: 0 20px;}
 }
+
+
+.form-promo-generater .container-admin
+{
+    width: 95%;
+    margin: 0 auto;
+}
+
+.form-promo-generater input,
+.form-promo-generater button
+{
+    max-width: 100%;
+    height: auto;
+}
+
+.form-promo-generater label
+{
+    margin-bottom: 0px;
+}
+
+/* wijmo overrides ? */
+.wijmo-wijeditor-container {
+    overflow: hidden;
+}
+
+.wijmo-wijeditor-container,
+.wijmo-wijsplitter-h-panel1
+.wijmo-wijsplitter-h-panel2
+{
+    width:100% !important;
+}

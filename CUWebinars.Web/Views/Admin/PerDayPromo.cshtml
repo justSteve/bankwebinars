@@ -3,199 +3,213 @@
 @using FluentDateTime
 @using CUWebinars.Web.ViewModel
 
+@using Newtonsoft.Json
+
 @model CUWebinars.Business.Notification.ViewModel.WebinarPromoViewModel
 
 @{
 
-    @*var isAff = UserFacade.Instance.GetCurrentUser();
-
-        if (isAff.UserType == UserType.Affiliate)
-        {
-            <script type="text/javascript">
-            $(document).ready(function () {
-                $("#affList").hide();
-                $("#GenButton").hide();
-
-            });
-            </script>
-        }*@
-    var webinars = Model.Webinars;
     var promoEvent = Model.Webinar;
     Layout = "/Views/Shared/_LayoutAdmin.cshtml";
 
-    string wDate = "<b>" + DateTimeHelper.FormatDate(Model.Webinar.Date) + "</b><br>";
-    wDate = wDate + DateTimeHelper.FormatTimeWithDuration(Model.Webinar.Date, Model.TimeZone, false, Model.Webinar.Duration) + "<br>";
+    string wDate = "<b>" + DateTimeHelper.FormatDate(Model.Webinar.Date) + "</b> &nbsp;";
+    wDate = wDate + DateTimeHelper.FormatTimeWithDuration(Model.Webinar.Date, Model.TimeZone, false, Model.Webinar.Duration);
 
     ViewBag.Title = "Send VR - Daily " + promoEvent.Title;
 
-    var minDay = 1.Days().Since(DomainConstants.BuildUtcNowAsCts);
-    var maxDay = DomainConstants.BuildUtcNowAsCts.NextMonth();
+    //var minDay = 1.Days().Since(DomainConstants.BuildUtcNowAsCts);
+    //var maxDay = DomainConstants.BuildUtcNowAsCts.NextMonth();
 
 }
-<script type="text/javascript" src="/Scripts/cleditor/jquery.cleditor.min.js"></script>
-<script type="text/javascript" src="/Scripts/cleditor/jquery.cleditor.xhtml.min.js"></script>
+
+<!-- TODO: some or all of the following should be moved to BundleConfig.cs -->
+
+<!--Theme-->
+<link href="/scripts/wijmoeditor/themes/arctic/jquery-wijmo.css" rel="stylesheet" type="text/css" />
+
+<!--Wijmo Widgets CSS-->
+<link href="/scripts/wijmoeditor/jquery.wijmo-pro.3.20153.84.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="http://cdn.wijmo.com/external/require.js"></script>
+
+<!-- TODO: I would like to understand why the following "require.js" stuff is needed:
+    is there an issue with BundleConfig.js?
+    does it end up loading some things (jquery, jquery-ui) twice?
+    are there pros/cons to using it / depending on it?
+-->
+
+<script type="text/javascript">
+    // load from require.js
+    requirejs.config({
+        baseUrl: "http://cdn.wijmo.com/amd-js/3.20153.83",
+        paths: {
+            "jquery": "jquery-1.11.1.min",
+            "jquery-ui": "jquery-ui-1.11.0.custom.min",
+            "jquery.ui": "jquery-ui",
+            "jquery.mousewheel": "jquery.mousewheel.min",
+            "globalize": "globalize.min"
+        }
+    });
+    // end load from require.js
+</script>
+
+<script src="/scripts/app/admin/promo-generator.js" type="text/javascript"></script>
 
 <script id="scriptInit" type="text/javascript">
-    $(document).ready(function () {
+    @{
+        var affDTO = (from Affiliate a in Model.Affiliates
+                      select new
+            {
+                ttsDomain = a.ttsDomain,
+                idUserAff = a.idUserAff,
+                ContactPerson = a.ContactPerson,
+                ContactEmail = a.ContactEmail,
+                ContactPhone = a.ContactPhone,
+                EmailFooter = a.EmailFooter.Trim()
+            }).ToList();
+    }
 
-        $("#input").cleditor();
+    var affs = @Html.Raw(Json.Encode(affDTO));
 
-        $('#calendar').fullCalendar({
-            events: "/Webinar/CalendarData",
-            timeFormat: 'h(:mm)t ',
-            allDayDefault: false,
-            weekends: false,
-            loading: function (bool) {
-                if (bool) $('#veil').show();
-                else $('#veil').hide();
-            }
+    require(["wijmo.wijeditor"], function () {
+        $(document).ready(function () {
+            $("#editorTA").wijeditor({
+                // editorMode: "split" // can default to split view if they want
+                textChanged: function (e, data) { // Set textChanged event handler function
+                    SetCopyToClipboardTextArea(false);
+                }
+            });
         });
+    });
 
-        //$("#calendar1").wijcalendar({ monthCols: 2, monthRows: 1 });
+    //$(document).ready(function () {
+    //    //$('#calendar').fullCalendar({
+    //    //    events: "/Webinar/CalendarData",
+    //    //    timeFormat: 'h(:mm)t ',
+    //    //    allDayDefault: false,
+    //    //    weekends: false,
+    //    //    loading: function (bool) {
+    //    //        if (bool) $('#veil').show();
+    //    //        else $('#veil').hide();
+    //    //    }
+    //    //});
 
-        //$("#calendar1").wijcalendar({
-        //    afterSelect: function (e, args) {
-        //        $("#SendDate").val(ISODateString(args.date));
-        //    }
-        //});
-        //$("#editor").cleditor();
+    //    //$("#calendar1").wijcalendar({ monthCols: 2, monthRows: 1 });
 
-        //$("#editor").hide();
+    //    //$("#calendar1").wijcalendar({
+    //    //    afterSelect: function (e, args) {
+    //    //        $("#SendDate").val(ISODateString(args.date));
+    //    //    }
+    //    //});
+    //});
 
+    //function ISODateString(d) {
+    //    function pad(n) { return n < 10 ? '0' + n : n; }
 
-        $("#submitGenPromoTexts").bind('click', function () {
-            GenerateMessages();
-        });
-    }
-    );
-    function GenerateMessages() {
+    //    return pad(d.getUTCMonth() + 1)
+    //        + '-' + pad(d.getUTCDate())
+    //        + '-' + d.getUTCFullYear();
+    //}
 
-        var date1 = new Date($("#SendDate").val());
-        var date2 = new Date(@(promoEvent.Date.ToShortDateString()));
+    //function SendtoAff(affID) {
+    //    $("#editor").cleditor("setText", $("#edit" + affID).html());
+    //    $('#send' + affID).text("Please Wait");
+    //    var msgBody = $("#edit" + affID).html();
+    //    //var msgBody = en(msgBody);
 
-        date1.setHours(0);
-        date1.setMinutes(0);
-        date1.setSeconds(0);
-        date1.setMilliseconds(0);
-        date2.setHours(0);
-        date2.setMinutes(0);
-        date2.setSeconds(0);
-        date2.setMilliseconds(0);
-
-        $.ajax({
-            url: '/Admin/PromoGenerate',
-            type: 'POST',
-            data: $('#mailer').serialize(),
-            dataType: "json",
-            //contentType: "application/json",
-            success: function (result) {
-                $('[id^="aff"]').hide();
-                $("#affList").show();
-                $.each(result, function (id, msg) {
-                    $("#aff" + msg.AffID).show();
-                    $("#send" + msg.AffID).show();
-                    $("#edit" + msg.AffID).html(msg.MsgBody);
-                    //alert(item.ImageUrl);
-                });
-                $("#editorDiv").show();
-
-                $("#editor").cleditor("setText", result[0].MsgBody);
-
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                alert(textStatus + " " + errorThrown);
-            }
-        });
-    }
-
-    function ISODateString(d) {
-        function pad(n) { return n < 10 ? '0' + n : n; }
-
-        return pad(d.getUTCMonth() + 1)
-            + '-' + pad(d.getUTCDate())
-            + '-' + d.getUTCFullYear();
-    }
-
-    function SendtoAff(affID) {
-        $("#editor").cleditor("setText", $("#edit" + affID).html());
-        $('#send' + affID).text("Please Wait");
-        var msgBody = $("#edit" + affID).html();
-        //var msgBody = en(msgBody);
-
-        $.ajax({
-            url: '/Admin/SendtoAff',
-            type: 'POST',
-            data: { "affID": affID, "msgBody": msgBody },
-            dataType: "json",
-            //contentType: "json",
-            success: function (result) {
-                $('#send' + affID).text("Success");
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                $('#send' + affID).text(textStatus + " " + errorThrown);
-            }
-        });
-    }
-
-    function SetEditorText(aff) {
-        $("#editor").cleditor.updateFrame();
-        //("setText", $("#edit" + aff).html());
-        //$("#editor").bind("textChanged", function (e, data) { $("#edit" + aff).html(data); });
-    }
+    //    $.ajax({
+    //        url: '/Admin/SendtoAff',
+    //        type: 'POST',
+    //        data: { "affID": affID, "msgBody": msgBody },
+    //        dataType: "json",
+    //        //contentType: "json",
+    //        success: function (result) {
+    //            $('#send' + affID).text("Success");
+    //        },
+    //        error: function (XMLHttpRequest, textStatus, errorThrown) {
+    //            $('#send' + affID).text(textStatus + " " + errorThrown);
+    //        }
+    //    });
+    //}
 
 </script>
+
+@*figure out how to get the calendar working*@
 <script src="/Scripts/fullcalendar/fullcalendar.js" type="text/javascript"></script>
 <link href="/Scripts/fullcalendar/fullcalendar.css" rel="stylesheet" type="text/css" />
 
-<p align="right">
-    <input type="button" id="GenButton" onclick="javascript: GetWeekly();" value="Gen Multiple Events" />
-</p>
-<h2>
-    @Model.Webinar.Title
-</h2>
-<p>
-    @Model.Webinar.Presenter.WebUser.FullName<br />
-    @Html.Raw(wDate)<br />
-</p>
-<div id="Daily">
-    @{
-        using (Html.BeginForm(null, null, FormMethod.Post, new { id = "mailer" }))
-        {
-            @Html.Hidden("TemplateVersion", "Daily")
-            @Html.Hidden("Webinar.idWebinar", Model.Webinar.idWebinar)
 
-            <p>Date to Send Promo: @Html.TextBox("SendDate", Model.SendDate)</p>
+@* vertical tab layout based on http://tutsme-webdesign.info/tutorials/navs/pills_stacked_panesright.html*@
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "mailer", @class = "form-inline form-promo-generater" }))
+{
+    <div class="container-admin">
+        @*<div align="right">
+                <input type="button" id="GenButton" onclick="javascript: GetWeekly();" value="Gen Multiple Events" />
+            </div>*@
+        <h2>
+            @Model.Webinar.Title
+        </h2>
+        <p>
+            @Model.Webinar.Presenter.WebUser.FullName &nbsp;
+            @Html.Raw(wDate)
+        </p>
 
-            <div id="calendar1"></div>
-            <div id="affList" name="affList">
-                <p>Please check all affiliates to be included in this promo:</p>
-                @{
-            foreach (var aff in Model.Affiliates)
-            {
-                <div id="aff@(aff.idUserAff)">
-                    <input name="cb_@(aff.idUserAff)" type="checkbox" checked="checked" />
-                    <a href='javascript:SetEditorText(@aff.idUserAff)'>@(aff.ttsDomain) </a>
-
-                    <div style="display: none;" id="send@(aff.idUserAff)"><a id="a_(@aff.idUserAff)" href="javascript:SendtoAff(@aff.idUserAff)">Send</a></div>
-                    <div style="display: none; float: left; width: 200px;" id="edit@(aff.idUserAff)">
-                    </div>
-                </div>
-
-            }
-                }
+        <div class="row-fluid">
+            <div class="span2" style="height:98%; overflow: auto;">
+                <ul class="nav nav-pills nav-stacked" style="margin: 0; padding: 0;">
+                    <li class="active"><a href="#tab_Master" data-toggle="pill" data-link-affid="0">MASTER</a></li>
+                    @foreach (var aff in Model.Affiliates)
+                    {
+                        <li><a href="#tab_@aff.idUserAff" data-toggle="pill" data-link-affid="@aff.idUserAff">@aff.ttsDomain - @aff.idUserAff</a></li>
+                    }
+                </ul>
             </div>
 
-            <input type="button" id="submitGenPromoTexts" value="Submit" />
-        }
+            <div class="span10">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab_Master" data-pane-affid="0">
+                        <h4 class="float-right">Master Markup</h4>
+                        <p>
+                            @Html.HiddenFor(m => m.TemplateType)
+                            @Html.HiddenFor(m => m.Webinar.idWebinar)
 
-    }
-    <div id="editorDiv">
-        <textarea style="width: 100%; height: 1000px;" id="editor"></textarea>
+                            <input type="button" id="resetAllAffiliates" class="button btn btn-small" value="Reset All Affiliates" />
+                            <label for="SendDate">Send date:</label> @Html.TextBoxFor(m => m.SendDate,  "{0:MM/dd/yyyy}", new { @class = "input", type = "date" })
+                            <input type="button" id="submitGenPromoTexts" class="button btn btn-success btn-small" value="Generate Master Markup" />
+
+                        </p>
+                        <p>
+                            <textarea id="editor_0" name="editor_0" style="display: none;"></textarea>
+                        </p>
+                    </div>
+
+                    @foreach (var aff in Model.Affiliates)
+                    {
+                        // create a "tab" for each Affiliate to hold affiliate-specific stuff
+                        <div class="tab-pane" id="tab_@aff.idUserAff" data-pane-affid="@aff.idUserAff">
+                            <h4 class="float-right">@aff.ttsDomain.ToUpper() Markup</h4>
+                            <p>
+                                <input type="button" class="button btn btn-small reset-to-master" value="Reset to Master" />
+                                <input type="button" class="button btn btn-small copy-markup" value="Copy to Clipboard" />
+                                @Html.TextBox("SendToList_" + @aff.idUserAff, "", new { @class = "input" })
+                                <input type="button" class="button btn btn-small send-to-affiliate" value="Send" />
+                            </p>
+                            <p>
+                                <textarea id="editor_@aff.idUserAff" name="editor_@aff.idUserAff" style="display: none;"></textarea>
+                            </p>
+                        </div>
+                    }
+
+                    <!-- the following items always show below the Affiliate-specific content above -->
+                    <p>
+                        <textarea id="editorTA" name="editorTA" style="width:98%; height:90%; margin:0; padding: 0;"></textarea>
+                        <div><input type="button" class="button btn btn-small copy-markup" value="Copy to Clipboard" /></div>
+                        <textarea id="copyToClipboard" class="disabled" style="width:98%; height:60px; margin:10px 0 0 0; padding: 5px;"></textarea>
+                    </p>
+
+                </div><!-- tab content -->
+            </div>
+        </div><!-- row-fluid -->
     </div>
-</div>
-<script>
-    $(document).ready(function () {
-        $("#editorDiv").hide();
-    });
+}
 
-</script>
