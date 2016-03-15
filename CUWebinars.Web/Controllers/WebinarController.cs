@@ -1098,6 +1098,28 @@ namespace CUWebinars.Web.Controllers
 
             return Json(dtos, JsonRequestBehavior.AllowGet);
         }
+        [System.Web.Mvc.AcceptVerbs(HttpVerbs.Get)]
+        public ActionResult CalendarRss()
+        {
+            IList<Webinar> webinarsList = _webinarManagementService.GetUpcomingWebinars().ToList();
+
+            var data = new CalendarRssDTOAssembler().Entities2DTOs(webinarsList);
+
+            //var blog = data.SingleOrDefault();
+            var postItems = data//.Where(p => p.Title = blog)
+                .OrderBy(p => p.EventDate).Take(25)
+                .Select(p => new SyndicationItem(p.Title, p.Content, new Uri(p.Url)));
+
+            var feed = new SyndicationFeed("Events from " + _globalConfig.Tenant,  _globalConfig.TenantURL + " is Webinars for the financial industry.", new Uri("http://www.bankwebinars/com/blog"), postItems)
+            {
+                //Copyright = blog.Copyright,
+                //Language = "en-US"
+                
+            };
+
+            return new FeedResult(new Rss20FeedFormatter(feed));
+        
+        }
 
         [HandleAjaxException]
         public ActionResult Clone(int? id)

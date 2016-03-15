@@ -430,6 +430,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Core\CalendarRssDTO.cs" />
+    <Compile Include="Core\CalendarRssDTOAssembler.cs" />
     <Compile Include="Models\AddOrderModel.cs" />
     <Compile Include="Controllers\HandoutsController.cs" />
     <Compile Include="Controllers\NavigationController.cs" />
@@ -529,6 +531,7 @@
     <Compile Include="Models\TTSAttendance.cs" />
     <Compile Include="Models\TTSQuiz.cs" />
     <Compile Include="Models\UserQuizEditModel.cs" />
+    <Compile Include="SyndicationFeedResult.cs" />
     <Compile Include="ViewModel\AdjustUserDetailsEditModel.cs" />
     <Compile Include="ViewModel\AffiliatesChooserModel.cs" />
     <Compile Include="ViewModel\AffPromoMsgViewModel.cs" />
@@ -2050,7 +2053,7 @@
     <Content Include="Views\Shared\Partials\_OrderSumUser.cshtml" />
     <Content Include="Views\Shared\Partials\_CheckoutFeedback.cshtml" />
     <Content Include="Views\Webinar\EditWebinarFromDetails.cshtml" />
-    <Content Include="Views\Admin\ManageOrderFromDetails.cshtml" />
+    <Content Include="Views\Admin\ManageOrderFromDetailsREADYTODELETE.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\AdjustUserDetails.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowOrders.cshtml" />
     <Content Include="Views\Shared\Partials\_ShareNotifications.cshtml" />
@@ -2113,6 +2116,7 @@
     <Content Include="Views\Shared\DisplayTemplates\DataTablesDisplayTemplates\GetOrders_Compact.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\DataTablesDisplayTemplates\GetWebinarDetails_Compact.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\DataTablesDisplayTemplates\GetPresenter_Compact.cshtml" />
+    <Content Include="Views\Webinar\EventsRss.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -74,11 +74,13 @@ namespace CUWebinars.Web.App_Start
             bundles.Add(new ScriptBundle("~/bundles/display-orders").Include(
                 "~/Scripts/app/toastLogger.js",
                 "~/Scripts/app/admin/display-orders.js",
-                "~/Scripts/app/admin/display-webinars.js"
+                "~/Scripts/app/admin/edit-forms-in-child-row.js"
+//                "~/Scripts/app/admin/display-webinars.js"
                 ));
 
             bundles.Add(new ScriptBundle("~/bundles/display-webinars").Include(
-                "~/Scripts/app/admin/display-webinars.js"
+                "~/Scripts/app/admin/display-webinars.js",
+                "~/Scripts/app/admin/show-webinars-child-row.js"
                 ));
 
             bundles.Add(new ScriptBundle("~/bundles/edit-quiz").Include(
@@ -87,12 +89,12 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/quiz/edit-quiz.js"
                 ));
 
-            bundles.Add(new ScriptBundle("~/bundles/manage-order-from-details").Include(
-                "~/Scripts/toastr.js",
-                "~/Scripts/app/toastLogger.js",
-                "~/Scripts/app/admin/manage-order-from-details.js",
-                "~/Scripts/app/admin/display-orders-by-user.js"
-                ));
+            //bundles.Add(new ScriptBundle("~/bundles/manage-order-from-details").Include(
+            //    "~/Scripts/toastr.js",
+            //    "~/Scripts/app/toastLogger.js",
+            //    //"~/Scripts/app/admin/manage-order-from-details.js",
+            //    "~/Scripts/app/admin/display-orders-by-user.js"
+            //    ));
 
 
             bundles.Add(new ScriptBundle("~/bundles/EditOrderInGrid").Include(
@@ -135,10 +137,8 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/purl.js", // excellent lib for parsing and working with the address bar content i.e. urls
                 "~/Scripts/app/utilities.js",
                 "~/Scripts/app/admin/session-checker.js",
-                "~/Scripts/app/form-processor.js",
-                "~/Scripts/app/admin/edit-forms-in-child-row.js",
-                "~/Scripts/app/admin/show-webinars-child-row.js"
-
+                "~/Scripts/app/form-processor.js"
+               
                 ));
 
             bundles.Add(new ScriptBundle("~/bundles/myApp").Include(

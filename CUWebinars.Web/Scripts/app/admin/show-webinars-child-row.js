@@ -21,24 +21,24 @@ function AttachDataTableWebinarEvents() {
         var cell = table.cell($(this));
         var $td = $(cell.node());
 
-        //if (row.child.isShown()) {
-        //    row.child.hide();
-        //    tr.removeClass('shown');
-        //    $("td", tr).removeClass("child-showing");
-        //} else {
-        //    row.child(createChildRow(cell, $td, row.data()), "child-row").show();
-        //    $td.addClass("child-showing");
-        //    tr.addClass('shown');
-        //}
         if (row.child.isShown()) {
-            row.child(createChildRow(cell, $td, row.data()), "child-row").show();
-            $td.addClass("child-showing");
-            tr.addClass('shown'); 
-        } else {
             row.child.hide();
             tr.removeClass('shown');
             $("td", tr).removeClass("child-showing");
+        } else {
+            row.child(createChildRow(cell, $td, row.data()), "child-row").show();
+            $td.addClass("child-showing");
+            tr.addClass('shown');
         }
+        //if (row.child.isShown()) {
+        //    row.child(createChildRow(cell, $td, row.data()), "child-row").show();
+        //    $td.addClass("child-showing");
+        //    tr.addClass('shown'); 
+        //} else {
+        //    row.child.hide();
+        //    tr.removeClass('shown');
+        //    $("td", tr).removeClass("child-showing");
+        //}
     });
 
     $('.dataTable').on("click", "#cancel-changes", function (e) {
