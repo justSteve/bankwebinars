@@ -296,6 +296,48 @@ namespace CUWebinars.Web.Helpers
             }
         }
 
+        public IList<string> ServerSideEmailCheck(IList<string> emails)
+        {
+            foreach (var email in emails)
+            {
+                try
+                {
+                    var addr = new System.Net.Mail.MailAddress(email);
+                    //return addr.Address == email;
+                }
+                catch
+                {
+                    emails.Remove(email);
+
+                }
+            }
+            return emails;
+        }
+
+        public IEnumerable<AdditionalLocation> CheckAdditionalLocationsForValidEmail(IEnumerable<AdditionalLocation> additionalLocations)
+        {
+            IEnumerable<AdditionalLocation> areValid = null;
+            foreach (var email in additionalLocations.ToList())
+            {
+
+            }
+            return areValid;           
+        }
+
+        public bool CheckIsEmailValid(string email)
+        {
+                 try
+                {
+                    var addr = new System.Net.Mail.MailAddress(email);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+
+        }
+
         public static string[] AddNonvalidToArray(string[] zipCentricFields)
         {
             if (zipCentricFields == null) throw new ArgumentNullException("zipCentricFields");

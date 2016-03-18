@@ -10,6 +10,8 @@ using CUWebinars.Web.Services;
 using Ninject.Extensions.Logging;
 using System;
 using System.Diagnostics;
+using System.Linq;
+using CUWebinars.Web.Helpers;
 using Newtonsoft.Json;
 
 namespace CUWebinars.Web.Core.Orchestrators
@@ -21,15 +23,18 @@ namespace CUWebinars.Web.Core.Orchestrators
         private readonly ICommandProcessor _commandProcessor;
         private readonly IStateService _stateService;
         private readonly ILogger _logger;
+        private readonly IAppHelper _appHelper;
+        
         private bool _disposed;
 
         public OrderControllerOrchestrator(IQueryProcessor queryProcessor, ICommandProcessor commandProcessor,
-            IStateService stateService, ILogger logger)
+            IStateService stateService, ILogger logger,            IAppHelper appHelper)
         {
             _queryProcessor = queryProcessor;
             _commandProcessor = commandProcessor;
             _stateService = stateService;
             _logger = logger;
+            _appHelper = appHelper;
         }
 
         public int MigrateOrder(MigrateOrderModel migrateOrderModel,
@@ -136,6 +141,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             OrderManagementQueryResult orderManagementQueryResult, string verificationKey, string confirmChangeEmailUrl,
             bool userAlreadyExists)
         {
+
+             //incomingOrderModel.AdditionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(incomingOrderModel.AdditionalLocations).ToList();
+
             var addOrderRowCommand = new AddOrderRowCommand
             {
                 AdditionalLocations = incomingOrderModel.AdditionalLocations,

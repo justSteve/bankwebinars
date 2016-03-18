@@ -382,7 +382,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                             WebinarDuration = webinarDetailsViewModel.Webinar.Duration,
                             WebinarStatus = webinarDetailsViewModel.Webinar.Status
                         },
-                        AdditionalLocations = null, //TODO: come back to
+
                         ConnectionInfoPresent = webinarDetailsViewModel.Webinar.ConnectionInfo != null,
                         WebinarDuration = webinarDetailsViewModel.Webinar.Duration,
                         idWebinar = webinarDetailsViewModel.Webinar.idWebinar,
@@ -429,7 +429,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             var order = _orderManagementService.GetOrdersByUserId(idUser).FirstOrDefault();
             OrderRow orderRow = null;
             IEnumerable<AdditionalLocation> additionalLocations = Enumerable.Empty<AdditionalLocation>();
-
+            
             if (!ReferenceEquals(null, order))
             {
                 orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
@@ -450,7 +450,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             var addAdditionalLocationViewModel = new AdditionalLocationOfferViewModel
             {
                 AdditionalLocations = additionalLocations.ToList(),
-                //AdditionalLocations = new List<AdditionalLocation>(),
+                
                 OrderExists = !ReferenceEquals(order, null),
                 Emails = order == null ? new List<string>() : additionalLocations.Select(al => al.Email).ToList(),
                 Price = priceOfAdditionalLocation,
@@ -496,10 +496,12 @@ namespace CUWebinars.Web.Core.Orchestrators
                     {
                         foreach (var addy in orderRow.AdditionalLocation)
                         {
-                            addressesForAdditionalLocations += addy.Email + "<br>";
+                            if (_appHelper.CheckIsEmailValid(addy.Email.Trim()))
+                            addressesForAdditionalLocations += addy.Email.Trim() + "<br>";
                         }
 
                         addressesForAdditionalLocations.Remove(addressesForAdditionalLocations.IndexOf('<'));
+
                     }
 
                     var displayRowPriceViewModel = new DisplayRowPriceViewModel
@@ -538,7 +540,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                     var orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
                     var order = orderRow.Order;
 
-                    //var additionalLocations = orderRow.AdditionalLocation.ToList();
                     var webUser = order.WebUser;
                     var webinar = _webinarManagementService.GetWebinar(order.OrderRows.FirstOrDefault().idWebinar);
 
@@ -589,14 +590,15 @@ namespace CUWebinars.Web.Core.Orchestrators
                     var addressesAndOptionsCost =
                         _orderManagementService.GetCostOfAdditionalLocations(orderRow.AdditionalLocation,
                             orderRow.idWebinar);
-
+                    
+                    
                     var additionalLocationsViewModel = new AdditionalLocationsViewModel
                     {
                         AdditionalLocations = orderRow.AdditionalLocation,
                         Addresses = addressesAndOptionsCost.Item1,
                         OptionsCost = addressesAndOptionsCost.Item2
                     };
-
+                    
                     return additionalLocationsViewModel;
                 }
                 catch (Exception exception)
@@ -1081,7 +1083,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public RegType GetRegTypeByLabel(string livePlusFive, int? idWebinar)
         {
-            return _orderManagementService.GetRegTypeByLabel("Live Plus Five", idWebinar: idWebinar.Value);
+            return _orderManagementService.GetRegTypeByLabel(livePlusFive, idWebinar: idWebinar.Value);
         }
 
         public void AddClaimForPostEventMaterials(string email, OrderRow row)

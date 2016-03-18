@@ -1,20 +1,27 @@
-﻿@using CUWebinars.Web.Core
+﻿@using CUWebinars.Business.Constants
+@using CUWebinars.Web.Core
 @model Order
 @{
     GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
     var myRow = Model.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
     var newUserMsg = "<div class='span7'><p>" +
-                    "An order confirmation email has been dispatched to " + Model.BillingEmail + " and includes " +
+                    "An order confirmation email has been dispatched to <b>" + Model.BillingEmail + "</b> and includes " +
                      "complete details of your registration. </p></div>";
-    if (!User.Identity.IsAuthenticated)
+    if (!User.Identity.IsAuthenticated && Model.Origin != DomainConstants.OriginExpress)
     {
         newUserMsg = "<div class='span7'><p>" +
-                     "An order confirmation email has been dispatched to " + Model.BillingEmail + " and includes " +
+                     "An order confirmation email has been dispatched to <b>" + Model.BillingEmail + "</b> and includes " +
                      "a link that will confirm your identity and activate this account. You will not be able " +
                      "to log into our website until visiting the link provided in that email. </p>" +
                      "<p>If you do not see our message in a timely fashion (and after checking your spam folder " +
-                     "for a message from " + _globalConfig.TenantEmail + ") please contact Customer Service at 800-831-0678 ext. 703.</p></div>";
+                     "for a message from " + _globalConfig.TenantEmail + ") please contact Customer Service at that same address.</p></div>";
+    }
+    if (!User.Identity.IsAuthenticated &&  Model.Origin == DomainConstants.OriginExpress)
+    {
+        newUserMsg = "<div class='span7'><p>" +
+                    "An order confirmation email has been dispatched to <b>" + Model.BillingEmail + "</b> and includes " +
+                     "complete details of your registration. </p></div>";
     }
 }
 <div id="LogInContainer" class="container">

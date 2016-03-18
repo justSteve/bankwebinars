@@ -628,7 +628,7 @@ namespace CUWebinars.Web.Controllers
         }
 
         public
-            ActionResult Details(int? id)
+            ActionResult Details(int? id, int? idOrder)
         {
             if (id.HasValue)
             {
@@ -641,8 +641,17 @@ namespace CUWebinars.Web.Controllers
                     Webinar = webinar,
                     WebinarFiles = webinar.WebinarFiles.ToList()
                 };
+                if (!idOrder.HasValue)
+                {
+                    InitializeDetailsState(webinar, model, id.Value);
+                    // form state, incl. stuff that will be posted back. 
+                }
+                else
+                {
 
-                InitializeDetailsState(webinar, model, id.Value); // form state, incl. stuff that will be posted back. 
+                    InitializeDetailsStateFromExpChcSubmit(webinar, model, id.Value, idOrder.Value);
+                    // form state, incl. stuff that will be posted back. 
+                }
                 InitializeViewCentricProperties(model);
                 // mostly just stuff that helps determine layout of the page on load. Not meant to be sent back here to Server from the View
                 if (model.Webinar == null)
@@ -903,12 +912,6 @@ namespace CUWebinars.Web.Controllers
             return RedirectToAction("allActive", new { eventsToShow = "upcoming" });
         }
 
-        /// <summary>
-        /// This method initializes state for variables which needed to be retrieved from the Database
-        /// </summary>
-        /// <param name="webinar"></param>
-        /// <param name="model"></param>
-        /// <param name="id"></param>
         private void InitializeDetailsState(Webinar webinar, WebinarDetailsViewModel model, int id)
         {
             IEnumerable<AdditionalLocation> additionalLocations = null;
@@ -932,7 +935,7 @@ namespace CUWebinars.Web.Controllers
                 orderRowForOrder = model.Order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active);
                 Debug.Assert(orderRowForOrder != null, "orderRowForOrder object should always have a value here.");
 
-                additionalLocations = orderRowForOrder.AdditionalLocation.ToList();
+                //additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(orderRowForOrder.AdditionalLocation.ToList());
             }
 
             model.Topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar).ToList();
@@ -1000,9 +1003,14 @@ namespace CUWebinars.Web.Controllers
                     };
 
                 // populate AdditionalLocationOfferViewModel and AdditionalLocationAddViewModel
-                model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Emails =
-                    model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
-                        .AdditionalLocations.Select(al => al.Email).ToArray();
+
+                if (model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
+                    .AdditionalLocations != null)
+                    model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Emails =
+                        model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
+                            .AdditionalLocations.Select(al => al.Email).ToArray();
+
+
                 model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
                     .AdditionalLocationAddViewModel = new AdditionalLocationAddViewModel
                     {
@@ -1027,6 +1035,132 @@ namespace CUWebinars.Web.Controllers
                         "' target=_blank /> Recording Playback</a>",
                     WebinarStatus = webinar.Status
                 };
+            }
+        }
+
+        /// <summary>
+        /// This method initializes state for variables which needed to be retrieved from the Database
+        /// </summary>
+        /// <param name="webinar"></param>
+        /// <param name="model"></param>
+        /// <param name="id"></param>
+        /// <param name="idOrder"></param>
+        private void InitializeDetailsStateFromExpChcSubmit(Webinar webinar, WebinarDetailsViewModel model, int id, int idOrder)
+        {
+            var order = _orderManagementService.GetOrderById(idOrder);
+            if (order != null)
+            {
+                var user = _orderManagementService.GetWebUser(order.BillingEmail);
+
+                OrderRow orderRowForOrder = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
+                IEnumerable<AdditionalLocation> additionalLocations = orderRowForOrder.AdditionalLocation.ToList(); ;
+                additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(additionalLocations);
+                model.WebUser = user;
+                model.Order = order;
+
+                var orderExists = model.Order != null;
+
+                model.Topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar).ToList();
+
+                model.WebinarFiles = _webinarManagementService.GetWebinarFilesPerWebinar(webinar.idWebinar);
+                var AddLocPrice = _orderManagementService.GetPriceOfAdditionalLocation(webinar.idWebinar);
+                model.CheckoutOptionsViewModel = new CheckoutOptionsViewModel
+                {
+                    DisplayOptionsViewModel = new DisplayOptionsViewModel
+                    {
+                        AdditionalLocationOfferViewModel = new AdditionalLocationOfferViewModel
+                        {
+                            AdditionalLocations = additionalLocations,
+                            //AdditionalLocationAddViewModel property is assigned further below as more data comes to hand. 
+                            OrderExists = orderExists,
+                            Webinar = webinar,
+                            Price = AddLocPrice
+                        },
+                        // DisplayRowPriceViewModel property is assigned further below as more data comes to hand. 
+                        EventTitle = model.Webinar.Title,
+                        idWebinar = model.Webinar.idWebinar,
+                        Options = _orderManagementService.GetOptionsByWebinarId(id, false),
+                        OrderRowExists = orderRowForOrder != null,
+                        WebinarDuration = model.Webinar.Duration,
+                        WebinarStatus = model.Webinar.Status
+                    },
+                    AdditionalLocations = additionalLocations,
+                    ConnectionInfoPresent = model.Webinar.ConnectionInfo != null,
+                    WebinarDuration = model.Webinar.Duration,
+                    idWebinar = model.Webinar.idWebinar,
+                    idUser = model.WebUser.idUser,
+                    OrderExists = orderExists,
+                    SelectedWebUser = -1,
+                    WebinarStatus = model.Webinar.Status
+                };
+
+                if (orderExists)
+                {
+                    model.CheckoutOptionsViewModel.OrderStatus = model.Order.OrderStatus;
+                    model.CheckoutOptionsViewModel.OrderHasId = model.Order.idOrder > 0;
+                    var row = orderRowForOrder;
+
+                    model.CheckoutOptionsViewModel.RegistrationType = orderRowForOrder.RegistrationType;
+
+                    var additionalLocationsPricing =
+                        _orderManagementService.GetCostOfAdditionalLocations(orderRowForOrder.AdditionalLocation,
+                            webinar.idWebinar
+                            );
+
+                    //if (orderRowForOrder.AdditionalLocation != null)
+                    //{
+                    //    orderRowForOrder.AdditionalLocation =
+                    //        _appHelper.CheckAdditionalLocationsForValidEmail(orderRowForOrder.AdditionalLocation)
+                    //            .ToList();
+                    //}
+                    // populate DisplayRowPriceViewModel of DisplayOptionsViewModel
+                    model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
+                        new DisplayRowPriceViewModel
+                        {
+                            Discount = row.Discount,
+                            NumberOfAdditionalLocations = row.AdditionalLocation.Count(),
+                            OrderStatus = row.Order.OrderStatus,
+                            Price = Convert.ToDecimal(row.RegistrationType.Price),
+                            PricesAndDiscounts =
+                                _orderManagementService.CalculateOrderCost(row.Order, additionalLocationsPricing.Item2),
+                            RowPrice = row.RowPrice,
+                            RegistrationType = row.RegistrationType
+                        };
+
+                    // populate AdditionalLocationOfferViewModel and AdditionalLocationAddViewModel
+                    model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Emails =
+                        row.AdditionalLocation.Select(al => al.Email.Trim()).ToList();
+                    
+                    //model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Emails =
+                    //    model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
+                    //        .AdditionalLocations.Select(al => al.Email).ToArray();
+
+
+                    model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
+                        .AdditionalLocationAddViewModel = new AdditionalLocationAddViewModel
+                        {
+                            AdditionalLocations = additionalLocations,
+                            Price = additionalLocationsPricing.Item2
+                        };
+                    model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Price =
+                        additionalLocationsPricing.Item2;
+
+                    // populate RegistrationSummaryViewModel and AdditionalLocationsViewModel
+                    model.RegistrationSummaryViewModel = new RegistrationSummaryViewModel
+                    {
+                        AdditionalLocationsViewModel = new AdditionalLocationsViewModel
+                        {
+                            AdditionalLocations = row.AdditionalLocation,
+                            Addresses = additionalLocationsPricing.Item1,
+                            OptionsCost = additionalLocationsPricing.Item2
+                        },
+                        OrderRow = orderRowForOrder,
+                        RecordingLink =
+                            "<a href='" + GlobalConfig.GlobalConfigSingleton.WMVRepository + webinar.RecordingUrl +
+                            "' target=_blank /> Recording Playback</a>",
+                        WebinarStatus = webinar.Status
+                    };
+                }
             }
         }
 
@@ -1110,15 +1244,15 @@ namespace CUWebinars.Web.Controllers
                 .OrderBy(p => p.EventDate).Take(25)
                 .Select(p => new SyndicationItem(p.Title, p.Content, new Uri(p.Url)));
 
-            var feed = new SyndicationFeed("Events from " + _globalConfig.Tenant,  _globalConfig.TenantURL + " is Webinars for the financial industry.", new Uri("http://www.bankwebinars/com/blog"), postItems)
+            var feed = new SyndicationFeed("Events from " + _globalConfig.Tenant, _globalConfig.TenantURL + " is Webinars for the financial industry.", new Uri("http://www.bankwebinars/com/blog"), postItems)
             {
                 //Copyright = blog.Copyright,
                 //Language = "en-US"
-                
+
             };
 
             return new FeedResult(new Rss20FeedFormatter(feed));
-        
+
         }
 
         [HandleAjaxException]

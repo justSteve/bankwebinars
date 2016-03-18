@@ -18,10 +18,13 @@ namespace CUWebinars.Business.Constants
         public const string JoinUrl = "joinUrl";
         public const string LoggerConnectionStringName = "LoggerConnection";
         public const string New = "N";
+
+        public const string CartByAffiliate = "CartByAffiliate";
         public const string OriginImported = "Imported";
         public const string OriginImportedACS = "ImportedByACS";
         public const string OriginExpress = "Express";
         public const string OriginMigrated = "Migrator";
+
         public const string RazorExtension = ".cshtml";
         public const string RegistrantKey = "registrantKey";
         public const string ResetPasswordRequested = "ResetPasswordRequested";

@@ -86,6 +86,8 @@
             <!--close aside widget-->
         </section>
         <div class="row-fluid span6">
+            @if (!Model.CheckoutInProcess)
+            {
             <div id="EventDescription">
                 @Html.Raw(Model.Webinar.DescriptionLong)
                 <h2 class="short_headline">
@@ -102,12 +104,13 @@
                 @Html.Raw(Model.Webinar.WhoAttend)
                 <hr />
             </div>
+            }
             <div class="warnIE" style="display: none;" id="iePre10">
                 <p>
                     <b>Please note:</b> This site employs features that may cause unexpected behavior in older versions of Internet Explorer. If you experience a problem, try refreshing your screen. If this doesn't solve the problem, click on this link.
                     <br /><a id="warnIE" class="btn btn-mini btn-success" rel="nofollow" href="/cart/@ExpressCheckoutURL?idWebinar=@Model.Webinar.idWebinar&idAffiliate=@ViewBag.currentAffiliateId&idOrder=0">Express Checkout</a>
                 </p>
-                <p>You may contact us by using the Online Chat button below or emailing Support@ttsTrain.com.  </p>
+                <p>You may contact us by using the Online Chat button below or emailing Support@ttsTrain.com. </p>
             </div>
             @{
                 if (Model.Webinar.idWebinar == 1952)
@@ -119,9 +122,9 @@
                 else
                 {
                     if (
-                    Model.Webinar.Status != WebinarStatus.Deleted
-                    && Model.Webinar.Status != WebinarStatus.Pending
-                    )
+                        Model.Webinar.Status != WebinarStatus.Deleted
+                        && Model.Webinar.Status != WebinarStatus.Pending
+                        )
                     {
                         if (Model.UserOwnsThisEvent < 1 || Model.CheckoutInProcess)
                         {
@@ -177,7 +180,7 @@
 
                                 </div>
                             </div>
-                        <!-- closes SignUpFormContainer div-->
+                            <!-- closes SignUpFormContainer div-->
                         }
                     }
                 }

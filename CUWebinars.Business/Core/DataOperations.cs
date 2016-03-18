@@ -1315,7 +1315,7 @@ namespace CUWebinars.Business.Core
             }
             PostEventClaim returnClaim = new PostEventClaim();
             var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(retValue.ToString());
-            if (thisClaim.OnDemandCode ==
+            if (thisClaim != null && thisClaim.OnDemandCode != null && thisClaim.OnDemandCode ==
                 order.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).OnDemandCode)
             {
                 returnClaim.OrderId = order.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idOrder;
