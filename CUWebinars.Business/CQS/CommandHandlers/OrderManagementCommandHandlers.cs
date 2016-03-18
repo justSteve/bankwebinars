@@ -29,6 +29,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
         private readonly IOrderManagementService _orderManagementService;
         private readonly IMembershipService _membershipService;
         private readonly PostCommitRegistrator _postCommitRegistrator;
+
         private bool _disposed;
 
         public OrderManagementCommandHandlers(IOrderManagementService orderManagementService,
@@ -44,7 +45,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
         {
             if (command == null) throw new ArgumentNullException("command");
             IList<AdditionalLocation> additionalLocations = new List<AdditionalLocation>();
-
+            
             if (command.AdditionalLocations != null && command.AdditionalLocations.Any())
             {
                 var priceOfAdditionalLocationListItem = GetPriceOfAdditionalLocation(command.Webinar.idWebinar).SingleOrDefault();

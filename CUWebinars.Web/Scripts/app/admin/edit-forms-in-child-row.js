@@ -272,7 +272,7 @@ function createChildRow(cell, $td, rowData) {
     }
 
     if ($td.hasClass("edit-resends")) {
-        alert("Hit");
+        //alert("Hit");
         return editResendsCell(cell, $td, rowData);
     }
 
@@ -484,15 +484,12 @@ function updateEmail(e, thatThis) {
 
     // configure the current validator to validate hidden form elements
     $.validator.unobtrusive.parse($form);
+
     $form.validate().settings.ignore = []; // so it doens't "ignore" .hidden fields
 
-    // check to see if the form is invalid
-    //if (!$form.valid()) {
-
-    //}
-
-
     var data = $form.serialize();
+    
+
     $.ajax({
         async: false,
         url: "/account/editemail",
@@ -501,7 +498,7 @@ function updateEmail(e, thatThis) {
         type: "POST",
 
         beforeSend: function () {
-            alert("H"); //  $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
+            //$(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
         }, // let ajax "complete" call remove
         success: function (data) {
 

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Text;
 using System.Web.Mvc;
+using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
@@ -32,19 +34,22 @@ namespace CUWebinars.Web.Controllers
         private readonly IAppHelper _appHelper;
         private readonly IUniversalMapper _universalMapper;
         private readonly IStateService _stateService;
+        private readonly IMembershipService _membershipService;
         private bool _disposed;
 
         public CartController(ILogger logger,
             ICartControllerOrchestrator cartControllerOrchestrator,
             IAppHelper appHelper,
             IUniversalMapper universalMapper,
-            IStateService stateService)
+            IStateService stateService,
+            IMembershipService membershipService)
         {
             _logger = logger;
             _cartControllerOrchestrator = cartControllerOrchestrator;
             _appHelper = appHelper;
             _universalMapper = universalMapper;
             _stateService = stateService;
+            _membershipService = membershipService;
         }
 
 
@@ -254,7 +259,7 @@ namespace CUWebinars.Web.Controllers
                     model.Order.OrderStatus = OrderStatus.Submitted;
                     _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email, model.Order.OrderRows.FirstOrDefault());
 
-                    model.Order.Origin = "CartByAffiliate";
+                    model.Order.Origin = DomainConstants.CartByAffiliate;
 
 
                     if (Request.IsAuthenticated && !adminCreatedWebUser.HasValue)
@@ -383,7 +388,7 @@ namespace CUWebinars.Web.Controllers
             if (ModelState.IsValid)
             {
                 _logger.Info("Signup2 Enters: " + _appHelper.GetSessionStartInfo());
-                
+
                 try
                 {
                     var order = _cartControllerOrchestrator.CreateOrder(
@@ -705,16 +710,12 @@ namespace CUWebinars.Web.Controllers
                 {
                     var order = _cartControllerOrchestrator.GetOrderById(form.q11_orderid);
                     //order.ShippingAddress=form.q14_address14
+                    order.Origin = DomainConstants.OriginExpress;
+
+
                     _logger.Info("ExpressPostback " + _appHelper.GetSessionStartInfo());
 
-                    return Json(new
-                    {
-                        success = "success",
-                        orderId = order.idOrder,
-                        orderRowId = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow,
-                        webinarId = form.q18_q_webinarid18
-                    }, JsonRequestBehavior.AllowGet);
-
+                    return RedirectToAction("Details", "Webinar", new { id = form.q18_q_webinarid18, idOrder = form.q11_orderid });
 
                 }
 
@@ -738,9 +739,9 @@ namespace CUWebinars.Web.Controllers
 
                     if (ReferenceEquals(user, null))
                     {
-                        
-                        //user = _cartControllerOrchestrator.BuildWebUserExpress(email);
-                        throw new ArgumentNullException("user");
+
+                        user = _membershipService.CreateBareUserFromEmail(email);
+                        //throw new ArgumentNullException("user");
 
                     }
 
@@ -769,15 +770,31 @@ namespace CUWebinars.Web.Controllers
                     var regTypeID =
                         _cartControllerOrchestrator.GetRegTypeByLabel("OnDemand Recording Only", idWebinar: idWebinar).idRegType;
 
+                    int selectedUser = 0;
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        var identity = ClaimsPrincipal.Current;
+
+                        if (identity != null)
+                        {
+                            if (identity.Identity.IsAuthenticated)
+                            {
+                                var userAccount = _membershipService.GetUserAccountByUserId(ClaimsExtensions.GetUserID(identity));
+
+                                selectedUser = _membershipService.GetUserByEmail(userAccount.Email).idUser;       
+                            }
+                        }
+                    }
+
                     var order = _cartControllerOrchestrator.CreateOrder(new CheckoutOptionsViewModel
                     {
                         idWebinar = idWebinar.Value,
                         RegistrationTypeId =
                             regTypeID,
-                        SelectedWebUser = 0
+                        SelectedWebUser = selectedUser
                     });
 
-
+                    ViewBag.FromEarlyID = "true";
                     _logger.Info("ExpressCheckout PREIE10 builds form for: " + order.idOrder);
                     if (order.WebUser != null)
                     {

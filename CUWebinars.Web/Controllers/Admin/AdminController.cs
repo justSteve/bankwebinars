@@ -422,7 +422,8 @@ namespace CUWebinars.Web.Controllers.Admin
                     model.AdditionalLocations.Where(
                         al => !orderRow.AdditionalLocation.Select(eal => eal.Email).Contains(al.Email)))
                 {
-                    addedAdditionalLocations.Add(additionalLocation);
+                    if (_appHelper.CheckIsEmailValid(additionalLocation.Email))
+                        addedAdditionalLocations.Add(additionalLocation);
                 }
             }
 
@@ -449,8 +450,11 @@ namespace CUWebinars.Web.Controllers.Admin
 
             foreach (var addedAdditionalLocation in addedAdditionalLocations)
             {
-                orderRow.AdditionalLocation.Add(addedAdditionalLocation);
-                _orderManagementService.AddAdditionalLocation(addedAdditionalLocation);
+                if (_appHelper.CheckIsEmailValid(addedAdditionalLocation.Email))
+                {
+                    orderRow.AdditionalLocation.Add(addedAdditionalLocation);
+                    _orderManagementService.AddAdditionalLocation(addedAdditionalLocation);
+                }
             }
         }
 
@@ -816,7 +820,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     //    );
 
                     expressOrder.OrderStatus = OrderStatus.Submitted;
-                    expressOrder.Origin = "ExpressCheckout";
+                    expressOrder.Origin = DomainConstants.OriginExpress;
 
                     OrderGenesis og = OrderGenesis.CreatedViaExpressCheckout;
 
@@ -990,6 +994,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 var order = _orderManagementService.GetOrderById(id.Value);
                 var additionalLocations =
                     order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.ToList();
+                additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(additionalLocations).ToList();
 
                 var addAdditionalLocationViewModel = new AdditionalLocationOfferViewModel
                 {
@@ -1006,30 +1011,31 @@ namespace CUWebinars.Web.Controllers.Admin
             return null;
         }
 
-        public ActionResult GetOrderDetails(int? id = null)
-        {
-            if (id.HasValue)
-            {
-                try
-                {
-                    var manageOrderEditModel = BuildManageOrderEditModel(id.Value);
+        //depreicated by editing grid
+        //public ActionResult GetOrderDetails(int? id = null)
+        //{
+        //    if (id.HasValue)
+        //    {
+        //        try
+        //        {
+        //            var manageOrderEditModel = BuildManageOrderEditModel(id.Value);
 
-                    return PartialView("~/Views/Admin/Home/_OrderEditDetails.cshtml", manageOrderEditModel);
-                }
-                catch (Exception exception)
-                {
-                    _logger.ErrorException(
-                        string.Format("GetOrderDetails | Session {0}", _appHelper.GetUserAuditInfo()), exception);
-                    return new HttpStatusCodeResult(500); // if reach here, we are in error state.
-                }
-            }
+        //            return PartialView("~/Views/Admin/Home/_OrderEditDetails.cshtml", manageOrderEditModel);
+        //        }
+        //        catch (Exception exception)
+        //        {
+        //            _logger.ErrorException(
+        //                string.Format("GetOrderDetails | Session {0}", _appHelper.GetUserAuditInfo()), exception);
+        //            return new HttpStatusCodeResult(500); // if reach here, we are in error state.
+        //        }
+        //    }
 
-            _logger.Error("The value posted to the server was not a valid interger. GetOrderDetails {0}",
-                _appHelper.GetUserAuditInfo());
+        //    _logger.Error("The value posted to the server was not a valid interger. GetOrderDetails {0}",
+        //        _appHelper.GetUserAuditInfo());
 
-            return new HttpStatusCodeResult(500, "The value posted to the server was not a valid integer.");
-            // if reach here, we are in error state.
-        }
+        //    return new HttpStatusCodeResult(500, "The value posted to the server was not a valid integer.");
+        //    // if reach here, we are in error state.
+        //}
 
         private ManageOrderEditModel BuildManageOrderEditModel(int id)
         {
@@ -1042,6 +1048,8 @@ namespace CUWebinars.Web.Controllers.Admin
                     orderRow.idWebinar
                     );
             var additionalLocations = orderRow.AdditionalLocation;
+            additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(additionalLocations).ToList();
+
             var additionalLocationsCount = additionalLocations.Count;
 
             var manageOrderEditModel = new ManageOrderEditModel
@@ -2279,6 +2287,9 @@ namespace CUWebinars.Web.Controllers.Admin
         public ActionResult UpdateAdditionalLocations(int orderRowId, IEnumerable<AdditionalLocation> additionalLocations)
         {
             //submitted by edit-forms-in-grid.js | submitUpdateAddLocsForm
+
+            additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(additionalLocations).ToList();
+
             var orderRow = _orderManagementService.GetOrderRowById(orderRowId);
 
 
@@ -2292,7 +2303,8 @@ namespace CUWebinars.Web.Controllers.Admin
                 var addLocEmails = "UpdateAdditionalLocations: " + orderRow.idOrder;
                 foreach (var addLoc in additionalLocations)
                 {
-                    addLocEmails += addLoc.Email + ",";
+                    if (_appHelper.CheckIsEmailValid(addLoc.Email.Trim()))
+                    addLocEmails += addLoc.Email.Trim() + ",";
                 }
 
                 _logger.Info(addLocEmails.TrimEnd(','));
@@ -2443,7 +2455,7 @@ namespace CUWebinars.Web.Controllers.Admin
                             }
                             else
                             {
-                                _logger.Info("UPDATE dbo.OrderRow SET OnDemandCode = '{0}' WHERE idOrder ={1}",RandomHelpers.GetUniqueCode(4), order.idOrder);
+                                _logger.Info("UPDATE dbo.OrderRow SET OnDemandCode = '{0}' WHERE idOrder ={1}", RandomHelpers.GetUniqueCode(4), order.idOrder);
                             }
                         }
                     }
@@ -2489,7 +2501,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return null;
         }
 
-        
+
         public JsonResult getorderscompact(int? idWebinar)
         {
             string html = "";

@@ -231,7 +231,7 @@ function getOrderStatusHtml() {
                     $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
                 }
             }).done(function (data) {
-                alert("hit");
+                //alert("hit");
                 if (result.Result === 'Success') {
                     $('#InputFormFields').append(successScreenMessage);
                 } else if (result.Result === 'Fail') {
@@ -422,7 +422,7 @@ function getOrderStatusHtml() {
 
 
     ns.wireUpDataTable = function () {
-
+        //alert("hit");
         DO.ordersTable.dataTable({
             "serverSide": true,
             "ajax": {
