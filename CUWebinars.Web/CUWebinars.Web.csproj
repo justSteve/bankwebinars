@@ -1483,6 +1483,7 @@
     <Content Include="Content\images\presenters\bish.jpg" />
     <Content Include="Content\images\presenters\blake.jpg" />
     <Content Include="Content\images\presenters\branch.jpg" />
+    <Content Include="Content\images\presenters\burke.jpg" />
     <Content Include="Content\images\presenters\Burke_Jennifer-1.jpg" />
     <Content Include="Content\images\presenters\CameriniSC-1.jpg" />
     <Content Include="Content\images\presenters\cole.jpg" />
@@ -1524,6 +1525,7 @@
     <Content Include="Content\images\presenters\lolley.jpg" />
     <Content Include="Content\images\presenters\mccain.jpg" />
     <Content Include="Content\images\presenters\mcguinn.jpg" />
+    <Content Include="Content\images\presenters\merrill.jpg" />
     <Content Include="Content\images\presenters\mitchell.jpg" />
     <Content Include="Content\images\presenters\morin.jpg" />
     <Content Include="Content\images\presenters\moyer.jpg" />
@@ -1546,6 +1548,7 @@
     <Content Include="Content\images\presenters\smith.jpg" />
     <Content Include="Content\images\presenters\sophiekelley.jpg" />
     <Content Include="Content\images\presenters\souther.jpg" />
+    <Content Include="Content\images\presenters\Streff.jpg" />
     <Content Include="Content\images\presenters\swartzberg.jpg" />
     <Content Include="Content\images\presenters\thomas.jpg" />
     <Content Include="Content\images\presenters\tthomas.jpg" />
@@ -1797,10 +1800,9 @@
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\placeholder.js" />
     <Content Include="Scripts\remote-list.js" />
-    <Content Include="Scripts\WijmoEditor\jquery.wijmo-open.3.20153.84.css" />
-    <Content Include="Scripts\WijmoEditor\jquery.wijmo-open.all.3.20153.84.js" />
-    <Content Include="Scripts\WijmoEditor\jquery.wijmo-pro.3.20153.84.css" />
-    <Content Include="Scripts\WijmoEditor\jquery.wijmo-pro.all.3.20153.84.js" />
+    <Content Include="Scripts\WijmoEditor\jquery.wijmo-open.3.20161.89.css" />
+    <Content Include="Scripts\WijmoEditor\jquery.wijmo-pro.3.20161.89.css" />
+    <Content Include="Scripts\WijmoEditor\jquery.wijmo-pro.all.3.20161.89.min.css" />
     <Content Include="Scripts\WijmoEditor\Themes\arctic\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Scripts\WijmoEditor\Themes\arctic\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Scripts\WijmoEditor\Themes\arctic\images\ui-bg_glass_55_fbf9ee_1x400.png" />
