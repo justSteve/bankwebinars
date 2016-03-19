@@ -903,8 +903,12 @@ namespace CUWebinars.Web.Controllers
             var additionalLocationsPricing =
                 _orderManagementService.GetCostOfAdditionalLocations(orderRow.AdditionalLocation, orderRow.idWebinar);
             var additionalLocations = orderRow.AdditionalLocation;
-            additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(additionalLocations).ToList();
-            var additionalLocationsCount = additionalLocations.Count;
+            var additionalLocationsCount = 0;
+            if (orderRow.AdditionalLocation != null && orderRow.AdditionalLocation.Count > 0)
+            {
+                additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(additionalLocations).ToList();
+                additionalLocationsCount = additionalLocations.Count;
+            }
 
             PostEventClaim postEvent = new PostEventClaim();
             var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };

@@ -316,11 +316,22 @@ namespace CUWebinars.Web.Helpers
 
         public IEnumerable<AdditionalLocation> CheckAdditionalLocationsForValidEmail(IEnumerable<AdditionalLocation> additionalLocations)
         {
-            IEnumerable<AdditionalLocation> areValid = null;
-            foreach (var email in additionalLocations.ToList())
-            {
 
-            }
+            IEnumerable<AdditionalLocation> areValid = null;
+            if (additionalLocations != null)
+                foreach (var check in additionalLocations.ToList())
+                {
+                    try
+                    {
+
+                        var addr = new System.Net.Mail.MailAddress(check.Email);
+                        areValid = areValid.Concat(new[] { check });
+                    }
+                    catch
+                    {
+                        var placeholder = "";
+                    }
+                }
             return areValid;           
         }
 
