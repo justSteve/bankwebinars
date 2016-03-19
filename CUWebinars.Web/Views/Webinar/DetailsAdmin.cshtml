@@ -53,7 +53,7 @@
 
 <div class="container clearfix" id="main-content">
     <!--begin main content-->
-    <div id="webinarOrders" data-affiliateId="19" class="collapse">
+    <div id="webinarOrders" data-affiliateid="19" class="collapse">
 
         @Html.Partial("~/Views/Admin/Partials/_ShowOrders.cshtml", Model.ShowOrdersViewModel)
 
@@ -62,8 +62,8 @@
         @Html.Partial("~/Views/Admin/Partials/_ShowUsers.cshtml", Model.ShowOrdersViewModel)
     </div>
     @*<div id="byUserWrapper" class="collapse">
-        @Html.Partial("~/Views/Admin/Partials/_ShowOrdersByUser.cshtml", Model.ShowOrdersViewModel)
-    </div>*@
+            @Html.Partial("~/Views/Admin/Partials/_ShowOrdersByUser.cshtml", Model.ShowOrdersViewModel)
+        </div>*@
 
     <div id="sendConnInfoOrders" class="collapse">
         @Html.Partial("~/Views/Admin/Partials/_ShowSendConnectionInfo.cshtml", Model.ShowOrdersViewModel)
@@ -123,7 +123,7 @@
                     <div id="SignUpFormContainer" class="row-fluid">
 
                         <div class="content span12 well">
-                            
+
                             <ul class="nav nav-tabs" id="regTabs">
                                 <li id="findUserTab" class="active"><a href="#findUserForAffiliate" data-toggle="tab">@Model.SignUpCaption</a></li>
                                 <li id="createNewUserButton"><a href="#contactInfoForAffiliate" data-toggle="tab">Create New User</a></li>
@@ -190,8 +190,8 @@
                 <div class=" pull-right label label-success">@Model.Webinar.Status.ToString()</div><br>
                 @Html.ActionLink("Manage Webinar", "EditWebinarFromDetails", "Webinar", new { id = @Model.Webinar.idWebinar }, new { @class = "pull-right btn btn-default", style = "margin-top: 5px" })
             </aside>
-            
-            
+
+
 
 
             <!-- close .widget -->
@@ -220,18 +220,14 @@
                     </form>
                 </div>
             }
-            @{
-                if (Model.Webinar.Status == WebinarStatus.Active)
-                {
-                    <div>
-                        <button data-toggle="collapse" data-target="#sendConnInfoOrders" id="submitSendConnInfo" role="button" class="btn btn-danger">Send Connection Info</button>
-                    </div>
-                    <div>
-                        <a href="/admin/perdaypromo/@Model.Webinar.idWebinar" class="btn btn-dangerx">Daily Promotional Email</a>
-                        <a href="/admin/asdf/" class="btn btn-dangerx">Weekly Promotional Email</a>
-                    </div>
-                }
-}
+            <div>
+                <button data-toggle="collapse" data-target="#sendConnInfoOrders" id="submitSendConnInfo" role="button" class="btn btn-danger">Send Connection Info</button>
+            </div>
+            <div>
+                <a href="/admin/perdaypromo/@Model.Webinar.idWebinar" class="btn btn-dangerx">Daily Promotional Email</a>
+                <a href="/admin/asdf/" class="btn btn-dangerx">Weekly Promotional Email</a>
+            </div>
+
             @*<aside class="widget">
                     <h5 class="short_headline"><span>Search</span></h5>
                     <form class="searchform" method="get">
