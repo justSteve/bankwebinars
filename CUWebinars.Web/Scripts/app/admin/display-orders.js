@@ -13,6 +13,7 @@ $(function () {
     DO.wireUpHandlers();
     DO.wireUpDataTable();
 
+
 });
 
 
@@ -119,6 +120,7 @@ function getOrderStatusHtml() {
         DO.webinarIdDiv = $('#webinarIdDiv');
         //defined in parent page
         DO.affiliateId = affiliateId;
+        DO.searchTerm = $('#searchTermDiv').text();
 
         DO.baseOrderStatusHtml = getOrderStatusHtml();  // 
         //DO.baseDiscountHtml = getDiscountHtml();  // 
@@ -145,6 +147,9 @@ function getOrderStatusHtml() {
 
     };
     ns.wireUpHandlers = function () {
+        $('#webinarOrders').on('shown', function () {
+            $('#ordersTable_filter input').focus();
+        });
         //var mouseX;
         //var mouseY;
         //$(document).mousemove(function (e) {
@@ -423,6 +428,16 @@ function getOrderStatusHtml() {
 
     ns.wireUpDataTable = function () {
         //alert("hit");
+
+        var showUserColumn = false;
+        var showWebinarColumn = true;
+
+        if (parseInt(DO.webinarIdDiv.text()) > 0) {
+            showUserColumn = true;
+            showWebinarColumn = false;
+        }
+
+
         DO.ordersTable.dataTable({
             "serverSide": true,
             "ajax": {
@@ -434,7 +449,7 @@ function getOrderStatusHtml() {
                     // additional custom filters
                     var showAllEvents = ($("#filter-buttons #showAllOrders button.active").val() == "showAllEvents");
                     var includeOrderStatuses = DO.orderStatusFilters;
-
+                    data.searchTerm = DO.searchTerm;
                     data.webinarId = parseInt(DO.webinarIdDiv.text());
                     data.affiliateId = DO.affiliateId;
                     data.showAllEvents = showAllEvents;
@@ -454,7 +469,8 @@ function getOrderStatusHtml() {
             'columns': [
                 // class names function as trigger - createChildRow
                 { 'data': 'idOrder', 'visible': false },
-                { 'data': 'LastName', 'class': 'details-control edit-user-name-email' },
+                { 'data': 'LastName','visible': showUserColumn, 'class': 'details-control edit-user-name-email' },
+                { 'data': 'WebinarDateTitleString', 'visible': showWebinarColumn,'class': 'details-control ' },
                 { 'data': 'Institution', 'class': 'details-control edit-institution' },
                 { 'data': 'RegistrationTypeString', 'class': 'details-control edit-billing' },
                 {
@@ -481,7 +497,7 @@ function getOrderStatusHtml() {
                 // link on user name should implement 'orders by user' current contorl: byUserWrapper
             },
             {
-                "aTargets": [2], // institution column  -- triggers EditInstitution.chtml
+                "aTargets": [3], // institution column  -- triggers EditInstitution.chtml
                 "mData": "",
                 "mRender": function (data, type, full) {
                     return full.Institution + "</br>";
@@ -489,7 +505,7 @@ function getOrderStatusHtml() {
                 }
             },
            {
-               "aTargets": [3], // Billing column  -- triggers EditOrder_Compact.cshtml and EditRegType_DropDown.cshtml
+               "aTargets": [4], // Billing column  -- triggers EditOrder_Compact.cshtml and EditRegType_DropDown.cshtml
                "mData": "RegistrationType",
                "mRender": function (data, type, full) {
 
@@ -522,9 +538,9 @@ function getOrderStatusHtml() {
 
                }
            },
-           // [4] Affiliate Column
+           // [5] Affiliate Column
             {
-                "aTargets": [4], //
+                "aTargets": [5], //
                 "mData": "Affiliate_ttsDomain",
                 "mRender": function (data, type, full) {
 
@@ -533,10 +549,10 @@ function getOrderStatusHtml() {
                 }
             },
 
-           // [5] Resends Column
+           // [6] Resends Column
             {
 
-                "aTargets": [5], // OrderDate column
+                "aTargets": [6], // OrderDate column
                 "mData": "",
                 "mRender": function (data, type, full) {
 
@@ -555,7 +571,7 @@ function getOrderStatusHtml() {
             },
             {
 
-                "aTargets": [6], // Status column
+                "aTargets": [7], // Status column
                 "mData": "",
                 "mRender": function (data, type, full) {
 
@@ -576,3 +592,4 @@ function getOrderStatusHtml() {
 
 
 })(DO);
+

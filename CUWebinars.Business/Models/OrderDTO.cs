@@ -12,6 +12,8 @@ namespace CUWebinars.Business.Models
         public int idOrderLegacy { get; set; }
         public int idUser { get; set; }
         public DateTime OrderDate { get; set; }
+        public Webinar Webinar { get; set; }
+        public string WebinarDateTitleString { get; set; }
         public string OrderDateString { get { return OrderDate.ToShortDateString(); } } // to ease consuption in the JS / DataTables caller
         public OrderStatus OrderStatus { get; set; }
         public string OrderStatusString { get { return OrderStatus.ToString(); } } // to ease consuption in the JS / DataTables caller

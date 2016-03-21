@@ -56,7 +56,11 @@ namespace CUWebinars.Web.Mapping.Configuration
                                (s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Order.WebUser.Institution.InstitutionName + "<br>"
                                + s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Order.WebUser.Institution.City + ", "
                                + s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Order.WebUser.Institution.State))
-                .ForMember(d => d.TtsJoinUrl,
+                .ForMember(d => d.WebinarDateTitleString,
+                           map => map.MapFrom
+                               (s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Webinar.Date.ToString().Replace(":00 ", " ").ToLower() + "<br>" 
+                           + s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Webinar.Title))
+               .ForMember(d => d.TtsJoinUrl,
                            map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).TtsJoinUrl))
                 .ForMember(d => d.Discount,
                            map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Discount))

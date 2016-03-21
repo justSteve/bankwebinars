@@ -2,28 +2,39 @@
 @model  ShowWebinarsViewModel
 
 @{
-
-
     @section scripts{
         @Scripts.Render("~/bundles/display-webinars")
         @Scripts.Render("~/bundles/dataTables")
-}
+    }
     @Styles.Render("~/Content/data-tables")
 
-<div id="page">
-    <div class="container visible-phone">
-        <p class="right"><a class="btn btn-primary scrollto" href="#secondary-nav">Page Menu &nbsp;<i class="icon-align-justify"></i></a></p>
-    </div>
-    <div class="hero-unit">
+    <style>
+        #howSearch {
+            margin: 5px;
+            padding: 5px;
+        }
+    </style>
+    <div id="page">
+        <div class="container visible-phone">
+            <p class="right"><a class="btn btn-primary scrollto" href="#secondary-nav">Page Menu &nbsp;<i class="icon-align-justify"></i></a></p>
+        </div>
         <div class="container">
-            <h1 id="PageTitle">Search Results</h1>
+            <div class="row-fluid">
+                <h1 class="span5">Search Results</h1>
+                <div id="howSearch" class="well well-small span6 pull-right">
+                    <p>Primary Search: <b>@ViewBag.SearchTerm</b></p>
+                    <p>Limit search to Title? <input id="titleOnly" type="checkbox" checked="" /></p>
+                    <span style="font-size: smaller;">
+                        Note: You can click cell contents to reveal additional details about each event. Also, you can narrow these results by entering additional terms in the filter box.
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="container clearfix" id="main-content">
+            <!--begin main content-->
+            @Html.Partial("~/Views/Webinar/Partials/SearchResultsGrid2.cshtml")
+            <!--close main content-->
         </div>
     </div>
-    <div class="container clearfix" id="main-content">
-        <!--begin main content-->
-        @Html.Partial("~/Views/Webinar/Partials/SearchResultsGrid2.cshtml")
-        <!--close main content-->
-    </div>
-</div>
 
 }

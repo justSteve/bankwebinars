@@ -139,6 +139,7 @@ namespace CUWebinars.Web.Core
     {
         public int webinarId { get; set; }
         public int? affiliateId { get; set; }
+        public string searchTerm { get; set; }
         public bool? showAllEvents { get; set; }
         public List<OrderStatus> selectedOrderStatuses { get; set; }
     }

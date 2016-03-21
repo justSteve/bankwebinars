@@ -490,7 +490,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return Json(new { html = html });
 
-        } 
+        }
 
         [AllowAnonymous]
         public JsonResult GetEditDiscountDropdownHtml()
@@ -1579,12 +1579,12 @@ namespace CUWebinars.Web.Controllers.Admin
             model.Webinars = _webinarManagementService.GetUpcomingWebinars().ToList();
 
             var upcomingWebinars = (from w in model.Webinars.Take(5)
-                                   where w.idWebinar != model.Webinar.idWebinar && w.Date > model.SendDate
-                                   orderby w.Date
-                                   select 
-                                        "<p><a style=\"color: bisque; text-decoration: none; border-bottom: 1px dotted bisque;\" href=\"http://www.bankwebinars.com/Webinar/Details/" +
-                                        w.idWebinar + "?idaff={aff_idUserAff}\">" + w.Title +
-                                        "</a><br><font size='-3'> (" + w.Date.ToLongDateString() + ")</font></p>"
+                                    where w.idWebinar != model.Webinar.idWebinar && w.Date > model.SendDate
+                                    orderby w.Date
+                                    select
+                                         "<p><a style=\"color: bisque; text-decoration: none; border-bottom: 1px dotted bisque;\" href=\"http://www.bankwebinars.com/Webinar/Details/" +
+                                         w.idWebinar + "?idaff={aff_idUserAff}\">" + w.Title +
+                                         "</a><br><font size='-3'> (" + w.Date.ToLongDateString() + ")</font></p>"
                                    ).ToArray();
 
             if (upcomingWebinars.Count() > 0)
@@ -2304,7 +2304,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 foreach (var addLoc in additionalLocations)
                 {
                     if (_appHelper.CheckIsEmailValid(addLoc.Email.Trim()))
-                    addLocEmails += addLoc.Email.Trim() + ",";
+                        addLocEmails += addLoc.Email.Trim() + ",";
                 }
 
                 _logger.Info(addLocEmails.TrimEnd(','));
@@ -2534,9 +2534,9 @@ namespace CUWebinars.Web.Controllers.Admin
             if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
             {
                 // based heavily on https://www.echosteg.com/jquery-datatables-asp.net-mvc5-server-side
-
                 int totalNumberOrders = 0;
                 int webinarId = param.webinarId;
+                string searchTerm = param.searchTerm;
                 int affiliateId = param.affiliateId ?? 19; // 19 is magic internal / house affiliate id
                 bool showAllEvents = param.showAllEvents ?? false;
 
@@ -2544,11 +2544,26 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 try
                 {
-
                     // custom filtering by Webinar Id
                     if (!showAllEvents)
                     {
-                        dtsource = _dataTablesService.GetOrdersByWebinar(webinarId, affiliateId, out totalNumberOrders).ToList();
+                        if (searchTerm != null)
+                        {
+                            int orderId = 0;
+
+                            if (searchTerm.All(Char.IsDigit))
+                            {
+                                orderId = Convert.ToInt32(searchTerm);
+                                var user = _orderManagementService.GetOrderById(orderId).WebUser;
+                                dtsource =
+                                    _dataTablesService.GetOrdersByUser(user.email, affiliateId, out totalNumberOrders)
+                                        .ToList();
+                            }
+                        }
+                        else
+                        {
+                            dtsource = _dataTablesService.GetOrdersByWebinar(webinarId, affiliateId, out totalNumberOrders).ToList();
+                        }
                     }
                     else
                     {

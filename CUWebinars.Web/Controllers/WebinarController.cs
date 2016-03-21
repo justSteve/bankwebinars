@@ -355,40 +355,78 @@ namespace CUWebinars.Web.Controllers
             return View(webinars);
         }
 
+        //
         public ActionResult Search()
         {
+            ViewBag.PageStyleType = "two-columns-right-sidebar";
+            ViewBag.TopicCaption = " ";
+            //string searchTerm = Request["searchTerm"];
+
+            //var unionOfResultSets = _webinarControllerOrchestrator.SearchWebinars(searchTerm);
+            //ShowWebinarsViewModel model = new ShowWebinarsViewModel
+            //{
+            //    SearchTerm = searchTerm
+            //};
+            //ViewBag.Title = "Search Results";
+
+            //return View(unionOfResultSets);
+
+            //uncomment to use Updated DataTable code
+
+            string searchTerm = Request["searchTerm"].Trim(' ');
+            ViewBag.SearchTerm = searchTerm;
+
             try
             {
-                ViewBag.PageStyleType = "two-columns-right-sidebar";
-                ViewBag.TopicCaption = " ";
-                string searchTerm = Request["searchTerm"];
-
-                var unionOfResultSets = _webinarControllerOrchestrator.SearchWebinars(searchTerm);
                 ShowWebinarsViewModel model = new ShowWebinarsViewModel
                 {
                     SearchTerm = searchTerm
                 };
                 ViewBag.Title = "Search Results";
 
-                return View(unionOfResultSets);
+                if (User != null)
+                {
+                    ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+                    if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                        (claim) => claim.Type == Business.Constants.ClaimTypes.Admin
+                                   || claim.Type == Business.Constants.ClaimTypes.Affiliate))
+                    {
 
-                //uncomment to use Updated DataTable code
-                //string searchTerm = Request["searchTerm"];
-                //ShowWebinarsViewModel model = new ShowWebinarsViewModel
-                //{
-                //    SearchTerm = searchTerm
-                //};
-                //ViewBag.Title = "Search Results";
+                        if (searchTerm.All(Char.IsDigit))
+                        {
 
-                //return View(model);
+                            var order =
+                                _orderManagementService.GetOrderById(Convert.ToInt32(searchTerm));
+                            if (order != null)
+                            {
+
+                                var oModel = new ShowOrdersViewModel
+                                {
+                                    Orders = new List<Order> { order },
+                                    SearchTerm = searchTerm,
+                                    //UserIsAdmin = false,
+                                    Webinar = null
+                                };
+
+                                return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
+                            }
+
+                        }
+                    }
+                }
+
+
+                return View("search2", model);
             }
             catch (Exception exception)
             {
-                _logger.ErrorException(string.Format("Search | Session {0}", _appHelper.GetUserAuditInfo()), exception);
+                _logger.ErrorException(string.Format("Search | Session {0}", _appHelper.GetUserAuditInfo()),
+                    exception);
                 ModelState.AddModelError(string.Empty, WebUiConstants.ServerErrorWithAssistNumber);
                 throw;
             }
         }
+
 
         public ActionResult AllActive(string eventsToShow, int? idAff)
         {
@@ -660,8 +698,8 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
-
-                if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.AdminFunction))
+                if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                        (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
                 {
                     int totalNumberOrders;
                     var aff = _affiliateManagementService.LoadByTTSDomain("bankwebinars");
@@ -1130,7 +1168,7 @@ namespace CUWebinars.Web.Controllers
                     // populate AdditionalLocationOfferViewModel and AdditionalLocationAddViewModel
                     model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Emails =
                         row.AdditionalLocation.Select(al => al.Email.Trim()).ToList();
-                    
+
                     //model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Emails =
                     //    model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
                     //        .AdditionalLocations.Select(al => al.Email).ToArray();

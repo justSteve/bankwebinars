@@ -10,5 +10,7 @@ namespace CUWebinars.Web.ViewModel
         public IList<Order> Orders { get; set; }
         public Affiliate Affiliate { get; set; }
         public Webinar Webinar { get; set; }
+        public string SearchTerm { get; set; }
+        public string NumOfOrders { get; set; }
     }
 }

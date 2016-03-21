@@ -1,0 +1,40 @@
+﻿@using System.Linq
+@model  ShowOrdersViewModel
+
+@{
+    ViewBag.Title = "SearchAdmin";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+
+
+    @section scripts{
+        @*@Scripts.Render("~/bundles/display-webinars")*@
+        @Scripts.Render("~/bundles/dataTables")
+        @Scripts.Render("~/bundles/display-orders")
+    }
+    @Styles.Render("~/Content/data-tables")
+    <style>
+        #howSearch {
+            margin: 5px;
+            padding: 5px;
+        }
+    </style>
+    <div id="page">
+        <div class="container visible-phone">
+            <p class="right"><a class="btn btn-primary scrollto" href="#secondary-nav">Page Menu &nbsp;<i class="icon-align-justify"></i></a></p>
+        </div>
+        <div class="hero-unit">
+            <div class="container">
+                <div class="row-fluid">
+                    <h1 class="span5">Search Results</h1>
+                    <div id="howSearch" class="well well-large span6 pull-right">Primary Search: <b>@ViewBag.SearchTerm</b> <br />Limit to title: <input id="titleOnly" type="checkbox" checked="" /></div>
+                </div>
+            </div>
+        </div>
+        <div class="container clearfix" id="main-content">
+            <!--begin main content-->
+            @Html.Partial("~/Views/Admin/Partials/SearchResultsGrid2Admin.cshtml")
+            <!--close main content-->
+        </div>
+    </div>
+
+}

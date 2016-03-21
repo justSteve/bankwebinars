@@ -126,6 +126,18 @@ namespace CUWebinars.Business.Repository
                 return noSearch.ToList();
             }
 
+            if (searchTerm.StartsWith("title:"))
+            {
+                searchTerm = searchTerm.Replace("title:", "");
+
+                var titleSearch = stronglyTypedContext.Webinars
+                    .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
+                    .Include(w => w.Presenter.WebUser)
+                    .Where(w => w.Title.Contains(searchTerm))
+                    ;
+                return titleSearch.ToList();
+            }
+
 
             // 1st get all topics with the topicDescription
             var topicsOfSearch = stronglyTypedContext.Topics

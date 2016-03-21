@@ -2451,6 +2451,8 @@
     <Content Include="Views\Shared\DisplayTemplates\DataTablesDisplayTemplates\GetWebinarDetails_Compact.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\DataTablesDisplayTemplates\GetPresenter_Compact.cshtml" />
     <Content Include="Views\Webinar\EventsRss.cshtml" />
+    <Content Include="Views\Admin\SearchAdmin.cshtml" />
+    <Content Include="Views\Admin\Partials\SearchResultsGrid2Admin.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2898,7 +2900,6 @@
     <Content Include="Views\Webinar\Partials\AdditionalLocationsView.cshtml" />
     <Content Include="Views\Webinar\Partials\DisplayOptions.cshtml" />
     <Content Include="Views\Webinar\Partials\ResultsGrid.cshtml" />
-    <Content Include="Views\Webinar\SearchWebinars.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutConfirm.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutContact.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutOptions.cshtml" />

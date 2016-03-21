@@ -18,11 +18,18 @@ $(function () {
 
 // self-invoking function for creating methods using Module pattern.
 (function (ns) {
+    $('#titleOnly').change(function () {
+        location.reload();
+    });
 
     ns.primeDomVariables = function () {
         DW.webinarsTable = $('#webinarsTable');
         DW.connInfoTable = $('#connInfoTable');
         DW.searchTermDiv = $('#searchTermDiv');
+        DW.titleOnly = "";
+        if ($("#titleOnly").prop('checked')) {
+            DW.titleOnly = "title:";
+        }
 
     };
 
@@ -33,6 +40,8 @@ $(function () {
     };
     var shouldShow = false;
     ns.wireUpWebinarsGrid = function () {
+
+
         DW.webinarsTable.dataTable({
             "serverSide": true,
             "ajax": {
@@ -40,7 +49,8 @@ $(function () {
                 "url": '/webinar/WebinarDataHandler',
                 "contentType": 'application/json; charset=utf-8',
                 'data': function (data) {
-                    data.searchTerm = DW.searchTermDiv.text();
+                    data.titleOnly = $("#titleOnly").prop('checked');
+                    data.searchTerm = DW.titleOnly + DW.searchTermDiv.text();
                     data.affiliateId = DW.affiliateId;
                     return data = JSON.stringify(data);
                 }
@@ -57,6 +67,9 @@ $(function () {
             "processing": true,
             "paging": true,
             "deferRender": true,
+            "oLanguage": {
+                "sSearch": "Filter: "
+            },
             'columns': [
 
                 { 'data': 'Date', 'class': 'details-control wDate' },
@@ -64,20 +77,20 @@ $(function () {
                 { 'data': 'Title', 'class': 'details-control wTitle' },
                 { 'data': 'PresenterName', 'class': 'details-control presenter' },
                 { 'data': 'RelatedTopicsString', 'class': 'details-control topicsTitles' },
-                { 'data': 'Orders', 'class': 'details-control orders' }
+                { 'data': 'Orders',  'visible': false, 'class': 'details-control orders' }
             ],
             "order": [0, "desc"]
 
             , // complex columns can be specified / created with mRender
             "aoColumnDefs": [
             {
-               
+
                 "aTargets": [0], // Date column
                 "mData": "",
                 "createdCell": function (td, cellData, rowData, row, col) {
-                    if ( cellData != null) {
-                        $(td).css('color', 'red');
-                    }
+                    //if (cellData != null) {
+                    //    $(td).css('color', 'red');
+                    //}
                 },
                 "mRender": function (data, type, full) {
                     console.log(full);

@@ -26,6 +26,7 @@ namespace CUWebinars.Business.Models
         public string PresenterPhotoFull { get; set; }
 
         public string RelatedTopicsString { get; set; }
-
+        public string NumOfOrders { get; set; }
+        
     }
 }
