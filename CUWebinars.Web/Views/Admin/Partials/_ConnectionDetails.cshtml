@@ -1,0 +1,35 @@
+﻿@using CUWebinars.Web.Core
+@using CUWebinars.Web.Helpers
+
+@model WebinarDetailsViewModel
+
+@{
+    ViewBag.Title = Model.Webinar.Title + " - Presented by: " + Model.Webinar.Presenter.WebUser.FullName;
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+
+}@if (Model.Webinar.Status == WebinarStatus.Scheduled)
+{
+    <h2>Event Materials are not yet published.</h2>
+}
+<div class="span4 offset1 large">
+    The following links should be considered <i>last resort access</i> to this event's resources. Properly registered users shoudn't normally need this information but it can be helpful none-the-less. Be sure to double check the orders grid for email <i>and also</i> emails from the same domain before using this link.
+</div>
+@if (Model.Webinar.Status == WebinarStatus.Active || Model.Webinar.Status == WebinarStatus.InProgress)
+{
+    <div class="span3">
+        The generic, non-indivualized connection link is:
+        <h4 align="center">@Model.Webinar.CitrixRegisterUrl</h4>
+
+
+        <h5>Listing of Event's Materials</h5>
+
+        @{ Html.RenderPartial("DisplayTemplates/HandoutsListing", Model.Webinar); }
+
+    </div>
+    if (!string.IsNullOrEmpty(Model.Webinar.RecordingUrl))
+    {
+        <div class="span3 well well-large">
+            <p>Access to the event's recording requires a valid order id exists. Please use the orders grid to find the appropriate order. Feel free to contact us if you need help locating a specific order.</p>
+        </div>
+    }
+}

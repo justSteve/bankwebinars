@@ -2453,6 +2453,7 @@
     <Content Include="Views\Webinar\EventsRss.cshtml" />
     <Content Include="Views\Admin\SearchAdmin.cshtml" />
     <Content Include="Views\Admin\Partials\SearchResultsGrid2Admin.cshtml" />
+    <Content Include="Views\Admin\Partials\_ConnectionDetails.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

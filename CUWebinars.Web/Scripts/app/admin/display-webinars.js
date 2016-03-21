@@ -88,9 +88,9 @@ $(function () {
                 "aTargets": [0], // Date column
                 "mData": "",
                 "createdCell": function (td, cellData, rowData, row, col) {
-                    //if (cellData != null) {
-                    //    $(td).css('color', 'red');
-                    //}
+                    if (cellData != null) {
+                        $(td).tooltip();
+                    }
                 },
                 "mRender": function (data, type, full) {
                     console.log(full);
