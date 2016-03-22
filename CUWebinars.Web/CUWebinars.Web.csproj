@@ -480,6 +480,7 @@
     <Compile Include="Membership\Email\TtsSmtpMessageDeliveryInert.cs" />
     <Compile Include="Membership\Email\TtsTokenizerInert.cs" />
     <Compile Include="Models\AffiliateSettingsViewModel.cs" />
+    <Compile Include="Models\CompliancePerspectivesModel.cs" />
     <Compile Include="Models\ExpressCheckoutPostBackModel.cs" />
     <Compile Include="Models\ImportOrderForAcsModel.cs" />
     <Compile Include="Models\NotificationHeaderModel.cs" />
@@ -2455,6 +2456,7 @@
     <Content Include="Views\Admin\SearchAdmin.cshtml" />
     <Content Include="Views\Admin\Partials\SearchResultsGrid2Admin.cshtml" />
     <Content Include="Views\Admin\Partials\_ConnectionDetails.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\ShowCompPerspectivesSubscription.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
