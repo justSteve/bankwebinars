@@ -16,6 +16,7 @@ namespace CUWebinars.Web.Core
         public IEnumerable MyClaims { get; set; }
         public DiscountModel Subscription { get; set; }
         public DiscountModel Package { get; set; }
+        public CompliancePerspectivesModel CompliancePerspectives { get; set; }
          
         public WebUser WebUser { get; set; }
     }

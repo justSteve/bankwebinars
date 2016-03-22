@@ -346,10 +346,12 @@ namespace CUWebinars.Web.Controllers
                     return RedirectToAction("Index", "Admin");
 
                 }
+                CompliancePerspectivesModel compPersectivesModel = _accountControllerOrchestrator.BuildCompPersectivesModel();
                 var discountModel = _accountControllerOrchestrator.BuildDiscountModel();
                 var myWebinarsDTO = _accountControllerOrchestrator.BuildMyWebinarsDTO
                     (discountModel, claimsIdentityOfAuthenticatedUser);
-
+                if (compPersectivesModel != null)
+                myWebinarsDTO.CompliancePerspectives = compPersectivesModel;
 
                 ViewBag.idUser = myWebinarsDTO.WebUser.idUser;
                 return View("MyWebinars", myWebinarsDTO);

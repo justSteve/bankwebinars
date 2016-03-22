@@ -20,6 +20,9 @@ namespace CUWebinars.Web.Mapping.Configuration
 
             Profile.CreateMap<Discount, DiscountModel>()
                 .ForMember(discountModel => discountModel.TypeOfDiscount, discount => discount.MapFrom(d => d.DiscountType));
+            
+            Profile.CreateMap<Discount, CompliancePerspectivesModel>()
+                .ForMember(discountModel => discountModel.TypeOfDiscount, discount => discount.MapFrom(d => d.DiscountType));
 
             Profile.CreateMap<Webinar, WebinarEditModel>()
                 .ForMember(webinarEditModel => webinarEditModel.PostedTopics, webinar => webinar.Ignore())

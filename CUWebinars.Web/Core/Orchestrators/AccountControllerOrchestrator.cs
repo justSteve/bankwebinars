@@ -26,6 +26,7 @@ using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 using CUWebinars.Web.Models.DataTablesModels;
+using Microsoft.Ajax.Utilities;
 using ClaimsExtensions = CUWebinars.Web.Helpers.ClaimsExtensions;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
@@ -363,7 +364,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             };
 
             _membershipService.UpdateShippingAddressDetails(shippingAddress);
-            _orderManagementService.UpdateShippingAddressDetails(shippingAddress,  idUser);
+            _orderManagementService.UpdateShippingAddressDetails(shippingAddress, idUser);
         }
         public void UpdateDiscountDetails(Discount discount)
         {
@@ -375,6 +376,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             _membershipService.UpdateUserEmail(oldEmail, email, tenant);
         }
+
 
         public void UpdateDiscountDetails(DiscountModel discountModel, int idUser)
         {
@@ -404,7 +406,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void EditInstitution(EditInstitutionInfoModel model)
         {
             var updateFields = model.EditFields;
-            
+
             Institution saveInst = _membershipService.GetInstitutionById(model.EditFields.idInstitution);
             if (saveInst == null) throw new ArgumentNullException("saveInst");
 
@@ -413,7 +415,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             saveInst.City = updateFields.City.Trim();
             saveInst.State = updateFields.State.Trim();
             saveInst.Zip = updateFields.Zip.Trim();
-            saveInst.Country = updateFields.Country?? "US";
+            saveInst.Country = updateFields.Country ?? "US";
             saveInst.InstitutionName = updateFields.InstitutionName.Trim();
 
             if (ReferenceEquals(null, saveInst.Address))
@@ -459,7 +461,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             _membershipService.UpdateUserDetails(_globals.Tenant,
                 updateFields.FirstName.Trim(),
-                updateFields.LastName.Trim(), 
+                updateFields.LastName.Trim(),
                 updateFields.Email.Trim(),
                 updateFields.Institution,
                 billingAddress,
@@ -572,7 +574,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     model.Recorded.Add(new KeyValuePair<string, Order>("na" + selectOrdersWithRecordedWebinar.idOrder, selectOrdersWithRecordedWebinar));
                 }
-                
+
             }
 
             foreach (var orderRow in model.Scheduled.Select(order => order.OrderRows
@@ -679,7 +681,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 AddressType = Enum.GetName(typeof(AddressType), shippingAddressFields.TypeOfAddress)
             };
             WebUser existingUser = GetWebUserByEmail(model.RegisterFields.Email);
-            
+
 
             _membershipService.UpdateUserDetails(_globals.Tenant,
                 updateFields.FirstName.Trim(),
@@ -837,6 +839,47 @@ namespace CUWebinars.Web.Core.Orchestrators
             return model;
         }
 
+        public CompliancePerspectivesModel BuildCompPersectivesModel()
+        {
+            var cpSubscription = new CompliancePerspectivesModel();
+            var currentUser = GetWebUserFromIPrincipal();
+            var userorders = _orderManagementService.GetOrdersByUserId(currentUser.idUser);
+
+            Discount discount = null;
+
+            foreach (var order in userorders)
+            {
+                discount = _orderManagementService.GetDiscountByOrderId(order.idOrder);
+                if (!ReferenceEquals(discount, null))
+                {
+                    break;
+                }
+
+            }
+            if (ReferenceEquals(discount, null))
+                return null;
+
+            _universalMapper.Map(discount, cpSubscription);
+
+            cpSubscription.DateValidFrom = discount.DateValidFrom;
+            cpSubscription.DateValidTo = discount.DateValidTo;
+            cpSubscription.RenewalTerm = discount.RenewalTerm;
+            cpSubscription.Status = discount.Status;
+            cpSubscription.Notes = discount.Notes;
+
+            cpSubscription.CreditsRemain = discount.CreditsRemain;
+            cpSubscription.CreditsUsed = discount.CreditsUsed;
+            cpSubscription.Cost = discount.Cost;
+            cpSubscription.DateBilled = discount.DateBilled;
+            cpSubscription.FlatOff = discount.FlatOff;
+            cpSubscription.PercentOff = discount.PercentOff;
+            cpSubscription.Status = discount.Status;
+            cpSubscription.DiscountCode = discount.DiscountCode;
+            
+            return cpSubscription;
+        }
+
+
         public DiscountModel BuildDiscountModel()
         {
             var discountModel = new DiscountModel();
@@ -962,16 +1005,16 @@ namespace CUWebinars.Web.Core.Orchestrators
             UserAccount userAccount = _membershipService.GetUserAccountByVerificationKey(key);
 
             if (userAccount == null)
-            { 
+            {
             }
             _membershipService.RemoveClaim(_globals.Tenant, userAccount.Email, ClaimTypes.HasNotVerified);
 
-                if (!_membershipService.UserHasClaim(userAccount, ClaimTypes.FullName))
-                {
-                    var webUser = _membershipService.GetWebUserById(_membershipService.GetWebUserIdByEmail(userAccount.Email).Value);
-                    _membershipService.AddClaim(userAccount, ClaimTypes.FullName, webUser.FirstName + " " + webUser.LastName);
-                }
-            
+            if (!_membershipService.UserHasClaim(userAccount, ClaimTypes.FullName))
+            {
+                var webUser = _membershipService.GetWebUserById(_membershipService.GetWebUserIdByEmail(userAccount.Email).Value);
+                _membershipService.AddClaim(userAccount, ClaimTypes.FullName, webUser.FirstName + " " + webUser.LastName);
+            }
+
 
             return _membershipService.ChangePasswordFromResetKey(_globals.Tenant, key, password);
         }

@@ -93,7 +93,7 @@ function removeIsLoadingIndicator($cell) {
 
 
 function createChildRow(cell, $td, rowData) {
-    //call is being made twice.  alert("hit createchildrow");
+
     if ($td.hasClass("wDate")) {
         return wDateCell(cell, $td, rowData);
     }  //
