@@ -122,13 +122,18 @@ namespace CUWebinars.Web.Controllers.Admin
                 (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
             {
                 var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
-
+                var user = _membershipService.GetWebUserById(affiliate.idUserAff);
                 model = new AdminDTO
                 {
                     UserDetailsViewModel = new UserDetailsViewModel()
                     {
                         Affiliate = affiliate,
                         UserIsAdmin = false
+                    },
+                    AffiliateSettingsViewModel = new AffiliateSettingsViewModel()
+                    {
+                        Affiliate = affiliate,
+                        WebUser = user
                     }
                 };
             }

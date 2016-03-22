@@ -72,7 +72,7 @@ $(function () {
             },
             'columns': [
 
-                { 'data': 'Date', 'class': 'details-control wDate' },
+                { 'data': 'Date', 'class': 'details-control' },
                 { 'data': 'Status', 'class': 'details-control edit' },
                 { 'data': 'Title', 'class': 'details-control wTitle' },
                 { 'data': 'PresenterName', 'class': 'details-control presenter' },
@@ -94,7 +94,7 @@ $(function () {
                 },
                 "mRender": function (data, type, full) {
                     console.log(full);
-                    var statusHtml = full.WebinarDateString;
+                    var statusHtml = full.WebinarDateString + "<br><a target='EventDetails' id='goToEventButton' type='button' class='btn btn-mini' href='/webinar/details/"+full.idWebinar+"' />Go to event</a>";
 
                     return statusHtml;
                 }
@@ -115,7 +115,17 @@ $(function () {
                 "mData": "Title",
                 "mRender": function (data, type, full) {
 
-                    var statusHtml = full.Title;
+                    var statusHtml = full.Title + " <a class='small' href='#'>[more...]</a>";
+
+                    return statusHtml;
+                }
+            },
+            {
+                "aTargets": [3], // Titlecolumn
+                "mData": "PresenterPresenterName",
+                "mRender": function (data, type, full) {
+
+                    var statusHtml = full.PresenterName + " <a class='small'href='#'>[bio...]</a>";
 
                     return statusHtml;
                 }
