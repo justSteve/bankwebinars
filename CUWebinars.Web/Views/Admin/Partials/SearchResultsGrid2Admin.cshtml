@@ -25,7 +25,7 @@
             alert("@Model.SearchTerm");
             //var DO = SHOWORDERS;
             SHOWORDERS.affiliateId = @Model.Affiliate.idUserAff;
-            SHOWORDERS.searchTerm = @Model.SearchTerm;
+            SHOWORDERS.searchTerm = "@Model.SearchTerm";
 
         </script>
     }
@@ -34,15 +34,14 @@
     {
         <script type="text/javascript">
 
-            alert("@Model.SearchTerm");
+
             if (SHOWORDERS === null || typeof SHOWORDERS === 'undefined') {
                 var SHOWORDERS = {};
 
             }
             //var DO = SHOWORDERS;
             SHOWORDERS.affiliateId = 19;
-            alert("@Model.SearchTerm");
-            SHOWORDERS.searchTerm = @Model.SearchTerm;
+            SHOWORDERS.searchTerm = "@Model.SearchTerm";
         </script>
     }
 

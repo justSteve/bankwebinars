@@ -2554,6 +2554,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         if (searchTerm != null)
                         {
+
                             int orderId = 0;
 
                             if (searchTerm.All(Char.IsDigit))
@@ -2563,6 +2564,16 @@ namespace CUWebinars.Web.Controllers.Admin
                                 dtsource =
                                     _dataTablesService.GetOrdersByUser(user.email, affiliateId, out totalNumberOrders)
                                         .ToList();
+                            }
+                            else if (searchTerm.Contains("@"))
+                            {
+                                dtsource =
+                                        _dataTablesService.GetOrdersByUser(searchTerm, affiliateId, out totalNumberOrders)
+                                            .ToList();
+                            }
+                            else if (searchTerm.StartsWith("aa"))
+                            {
+                                dtsource = _dataTablesService.GetOrdersByPending(affiliateId, out totalNumberOrders).ToList();
                             }
                         }
                         else

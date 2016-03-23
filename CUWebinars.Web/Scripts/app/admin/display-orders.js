@@ -551,7 +551,6 @@ function getOrderStatusHtml() {
 
            // [6] Resends Column
             {
-
                 "aTargets": [6], // OrderDate column
                 "mData": "",
                 "mRender": function (data, type, full) {
@@ -563,9 +562,7 @@ function getOrderStatusHtml() {
                     if (full.Webinar_IsActive) {
                         resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
                     }
-                    //if (full.Webinar_IsRecorded) {
-                    //    resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendPostEventMaterialButton btn btn-mini\">PostEvent Material</button>";
-                    //}
+                    
                     return "<div style=\"text-align: center\">" + statusHtml + "</br>" + resendMsg + "</div>";
                 }
             },
@@ -574,8 +571,6 @@ function getOrderStatusHtml() {
                 "aTargets": [7], // Status column
                 "mData": "",
                 "mRender": function (data, type, full) {
-
-                    // setup a Bootstrap dropdown (http://getbootstrap.com/2.3.2/javascript.html#dropdowns) with the current order status "selected"
 
                     var orderToEdit = full.idOrder;
                     //var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;

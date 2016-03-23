@@ -391,7 +391,16 @@ namespace CUWebinars.Web.Controllers
                         (claim) => claim.Type == Business.Constants.ClaimTypes.Admin
                                    || claim.Type == Business.Constants.ClaimTypes.Affiliate))
                     {
+                        var currentAffiliate = _orderManagementService.GetAffiliateById(19);
 
+                        if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                            (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
+                        {
+                            currentAffiliate =
+                                _orderManagementService.GetAffiliateByDomain(claimsIdentityOfAuthenticatedUser.Claims
+                                    .Where(c => c.Type == ClaimTypes.Affiliate).Select(c => c.Value).Single());
+                        }
+                        //searchByidOrder
                         if (searchTerm.All(Char.IsDigit))
                         {
 
@@ -399,7 +408,6 @@ namespace CUWebinars.Web.Controllers
                                 _orderManagementService.GetOrderById(Convert.ToInt32(searchTerm));
                             if (order != null)
                             {
-
                                 var oModel = new ShowOrdersViewModel
                                 {
                                     Orders = new List<Order> { order },
@@ -412,10 +420,105 @@ namespace CUWebinars.Web.Controllers
                             }
 
                         }
+
+                        //searchDomainOnly (select * where email like '%@ttstrain.com')
+                        if (searchTerm.StartsWith("@"))
+                        {
+                            IList<Order> orders =
+                                _orderManagementService.GetOrdersByDomain(searchTerm);
+                            if (orders.Count > 0)
+                            {
+                                if (currentAffiliate.idUserAff != 19)
+                                {
+                                    var oModel = new ShowOrdersViewModel
+                                    {
+                                        Orders = orders.Where(o => o.idAffiliate
+                                                                   == currentAffiliate.idUserAff).ToList(),
+                                        SearchTerm = searchTerm,
+                                        UserIsAdmin = false,
+                                        Webinar = null
+                                    };
+                                    return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
+                                }
+                                else
+                                {
+                                    var oModel = new ShowOrdersViewModel
+                                    {
+                                        Orders = orders.ToList(),
+                                        SearchTerm = searchTerm,
+                                        UserIsAdmin = true,
+                                        Webinar = null
+                                    };
+                                    return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
+                                }
+                            }
+                        }
+                        if (searchTerm.StartsWith("aa"))
+                        {
+                            //IList<Order> orders =
+                            //    _orderManagementService.GetOrdersByDomain(searchTerm);
+                            //if (orders.Count > 0)
+                            //{
+                                if (currentAffiliate.idUserAff != 19)
+                                {
+                                    var oModel = new ShowOrdersViewModel
+                                    {
+                                        //Orders = orders.Where(o => o.idAffiliate == currentAffiliate.idUserAff).ToList(),
+                                        SearchTerm = searchTerm,
+                                        UserIsAdmin = false,
+                                        Webinar = null
+                                    };
+                                    return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
+                                }
+                                else
+                                {
+                                    var oModel = new ShowOrdersViewModel
+                                    {
+                                        //Orders = orders.ToList(),
+                                        SearchTerm = searchTerm,
+                                        UserIsAdmin = true,
+                                        Webinar = null
+                                    };
+                                    return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
+                                }
+                            //}
+                        }
+
+                        //return orders of given user
+                        if (searchTerm.Contains("@"))
+                        {
+
+                            IList<Order> orders =
+                                _orderManagementService.GetOrdersByEmail(searchTerm, 19).ToList();
+                            if (orders.Count > 0)
+                            {
+                                if (currentAffiliate.idUserAff != 19)
+                                {
+                                    var oModel = new ShowOrdersViewModel
+                                    {
+                                        Orders = orders.Where(o => o.idAffiliate
+                                                                   == currentAffiliate.idUserAff).ToList(),
+                                        SearchTerm = searchTerm,
+                                        UserIsAdmin = false,
+                                        Webinar = null
+                                    };
+                                    return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
+                                }
+                                else
+                                {
+                                    var oModel = new ShowOrdersViewModel
+                                    {
+                                        Orders = orders.ToList(),
+                                        SearchTerm = searchTerm,
+                                        UserIsAdmin = true,
+                                        Webinar = null
+                                    };
+                                    return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
+                                }
+                            }
+                        }
                     }
                 }
-
-
                 return View("search2", model);
             }
             catch (Exception exception)
@@ -816,6 +919,10 @@ namespace CUWebinars.Web.Controllers
                     if (!ReferenceEquals(null, order))
                     {
 
+                        ViewBag.Order = order;
+
+                        //ViewBag.TaxAmount = _cartControllerOrchestrator.BuildCheckoutConfirmViewModel(idOrder).DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount;
+                    
                         JObject existingJObject = null;
 
                         string comments = string.Empty;

@@ -14,6 +14,7 @@ namespace CUWebinars.Business.Services
         //IEnumerable SearchWebinars(string searchTerm, int idAffiliate, out int totalNumberWebinars);
         IEnumerable<WebUser> GetWebUsers(int idAffliate, int totalNumberUsers, out int totalNumberUsers_);
         IEnumerable<Webinar> SearchWebinars(string searchTerm, int idAffiliate, out int totalNumberWebinars);
-        
+
+        IEnumerable<Order> GetOrdersByPending(int affiliateId, out int totalNumberOrders);
     }
 }

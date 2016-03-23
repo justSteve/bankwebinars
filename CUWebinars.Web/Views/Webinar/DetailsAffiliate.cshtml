@@ -47,7 +47,7 @@
                 @if (Model.Webinar.Status == WebinarStatus.Recorded)
                 {
                     <div>
-                        This event was recorded on<br /><b>@Html.DisplayDate(Model.Webinar.Date)</b> .
+                        This event was recorded on<br /><b>@Html.DisplayDate(Model.Webinar.Date)</b>.
                     </div>
                 }
                 else
@@ -63,11 +63,14 @@
             <h3 style="line-height: 1.1;">@Model.Webinar.Title</h3>
         </div>
         <div class="span4">
-            <div class="btn-group" data-toggle="buttons-checkbox">
+            <div class="btn-group pull-right" data-toggle="buttons-checkbox">
                 <button id="showOrdersButton" type="button" class="btn btn-info" data-toggle="collapse" data-target="#webinarOrders">
                     Orders Grid
                 </button>
-                <button id="showConnInfoButton" type="button" class="btn btn-info" data-toggle="collapse" data-target="#connectionDetails">Connection Info</button>
+                @if (Model.Webinar.Status == WebinarStatus.Scheduled || Model.Webinar.Status == WebinarStatus.InProgress || Model.Webinar.Status == WebinarStatus.Active)
+                {
+                    <button id="showConnInfoButton" type="button" class="btn btn-info" data-toggle="collapse" data-target="#connectionDetails">Connection Info</button>
+                }
             </div>
         </div>
     </div>
@@ -76,11 +79,12 @@
 
 <div class="container clearfix" id="main-content">
     <!--begin main content-->
-    <div id="connectionDetails" class="collapse">
-
-        @Html.Partial("~/Views/Admin/Partials/_ConnectionDetails.cshtml", Model)
-
-    </div>
+    @if (Model.Webinar.Status == WebinarStatus.Scheduled || Model.Webinar.Status == WebinarStatus.InProgress || Model.Webinar.Status == WebinarStatus.Active)
+    {
+        <div id="connectionDetails" class="collapse">
+            @Html.Partial("~/Views/Admin/Partials/_ConnectionDetails.cshtml", Model)
+        </div>
+    }
     <div id="webinarOrders" class="collapse">
 
         @Html.Partial("~/Views/Admin/Partials/_ShowOrders.cshtml", Model.ShowOrdersViewModel)
@@ -104,9 +108,7 @@
         </section>
         <div class="span6">
             @{
-                if (Model.Webinar.Status != WebinarStatus.Archived
-                                                                                                                        && Model.Webinar.Status != WebinarStatus.Deleted
-                                                                                                                        && Model.Webinar.Status != WebinarStatus.Pending)
+                if (Model.Webinar.Status != WebinarStatus.Archived && Model.Webinar.Status != WebinarStatus.Deleted && Model.Webinar.Status != WebinarStatus.Pending)
                 {
                     <div id="SignUpFormContainer" class="row-fluid">
 
@@ -176,10 +178,10 @@
                 </ul>
             </aside>
             <!--close aside .widget -->
-            <aside class="widget">
-                <h5 class="short_headline"><span>Stay Updated</span></h5>
-                @{Html.RenderPartial("Partials/_AddToMailingBox");}
-            </aside>
+            @*<aside class="widget">
+                    <h5 class="short_headline"><span>Stay Updated</span></h5>
+                    @{Html.RenderPartial("Partials/_AddToMailingBox");}
+                </aside>*@
 
         </div>
         <!--close section tertiary-column sidebar span3-->

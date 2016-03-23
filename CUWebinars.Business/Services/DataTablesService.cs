@@ -103,6 +103,42 @@ namespace CUWebinars.Business.Services
 
             return theseOrders;
         }
+        public IEnumerable<Order> GetOrdersByPending(int idAffliate, out int totalNumberOrders)
+        {
+            IList<Order> theseOrders;
+
+            if (idAffliate != 19)
+            {
+                theseOrders = _context.Orders
+
+                    .Include(o => o.WebUser)
+                    .Include(o => o.WebUser.Institution)
+                    .Include(o => o.Affiliate)
+                    .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                    .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                    .Include(o => o.OrderRows.Select(or => or.Discount))
+                    .Include(o => o.OrderRows.Select(or => or.Webinar))
+                    .Where(o => o.OrderStatus == OrderStatus.AwaitingVerification && o.idAffiliate == idAffliate)
+                    .ToList();
+            }
+            else
+            {
+                theseOrders = _context.Orders
+                    .Include(o => o.WebUser)
+                    .Include(o => o.WebUser.Institution)
+                    .Include(o => o.Affiliate)
+                    .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                    .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                    .Include(o => o.OrderRows.Select(or => or.Discount))
+                    .Include(o => o.OrderRows.Select(or => or.Webinar))
+                    .Where(o => o.OrderStatus == OrderStatus.AwaitingVerification)
+                    .ToList();
+            }
+
+            totalNumberOrders = theseOrders.Count;
+
+            return theseOrders;
+        }
 
         //public IEnumerable<Order> GetOrdersPaged(int start, int length, string orderIdFragment, out int totalNumberOrders, out int totalFilteredOrders)
         //{

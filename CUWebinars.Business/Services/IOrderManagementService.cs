@@ -135,5 +135,6 @@ namespace CUWebinars.Business.Services
         List<Order> GetOrdersByWebinar(int idWebinar);
         void RestoreToDiscount(int newOrderRowId);
         void RemoveFromDiscount(int newOrderRowId);
+        IList<Order> GetOrdersByDomain(string searchTerm);
     }
 }

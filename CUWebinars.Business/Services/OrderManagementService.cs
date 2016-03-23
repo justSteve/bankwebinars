@@ -1983,6 +1983,11 @@ namespace CUWebinars.Business.Services
             _logger.Fatal("logs the decrement of discount credit when addLocation is added.");
         }
 
+        public IList<Order> GetOrdersByDomain(string searchTerm)
+        {
+            throw new NotImplementedException();
+        }
+
 
         public IList<Order> GetV3OrdersByOnDemandClaim()
         {

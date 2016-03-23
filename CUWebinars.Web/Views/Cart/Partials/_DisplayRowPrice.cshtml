@@ -23,7 +23,7 @@
             totalDiscountElement.AddCssClass("text-error");
         }
 
-        outerSpan.InnerHtml = string.Concat("Discounted: <span style=\"color: red;\"", totalDiscountElement.ToString(TagRenderMode.Normal));
+        outerSpan.InnerHtml = string.Concat("Discounted: <span style=\"color: red;\">", totalDiscountElement.ToString(TagRenderMode.Normal));
 
         return outerSpan.ToString(TagRenderMode.Normal);
     }

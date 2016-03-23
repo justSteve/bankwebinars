@@ -1370,7 +1370,6 @@
     <Content Include="Content\images\logo_alabamabankers.png" />
     <Content Include="Content\images\logo_arkbankers.png" />
     <Content Include="Content\images\logo_auroratraining.png" />
-    <Content Include="Content\images\logo_azbankers.png" />
     <Content Include="Content\images\logo_bankwebinars.png" />
     <Content Include="Content\images\logo_calbankers.png" />
     <Content Include="Content\images\logo_cbao.png" />
@@ -2185,6 +2184,7 @@
     <Content Include="Content\images\email\tnbankers\Thumbs.db" />
     <Content Include="Content\images\email\TrainingPitstop\Thumbs.db" />
     <Content Include="Content\images\email\wabankers\Thumbs.db" />
+    <Content Include="Content\images\logo_azbankers.png" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy %282%29.pubxml" />
