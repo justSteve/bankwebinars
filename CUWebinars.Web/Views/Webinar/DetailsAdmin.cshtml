@@ -206,7 +206,7 @@
                 </aside>*@
             <!-- Close ics file widget -->
             <div>
-                @if (globalConfig.Tenant == "BankWebinars")
+                @if (globalConfig.Tenant == "BankWebinars" && !Model.Webinar.Title.StartsWith("Compliance Pers"))
                 {
                     <button id="submitSynchOrders" role="button" class="btn btn-primary">Synch Orders</button>
                 }

@@ -136,11 +136,11 @@ function getOrderStatusHtml() {
 
             var billingHtml = regTypeLabel
                 + (discount + "")
-                + "<br />Total: $" + (total + "").replace(".00", "");
+                + "<br />$" + (total + "").replace(".00", "");
         } else {
 
             var billingHtml = regTypeLabel
-                    + "<br />Total: $" + (total + "").replace(".00", "");
+                    + "<br />$" + (total + "").replace(".00", "");
         }
 
         return billingHtml;
@@ -429,13 +429,13 @@ function getOrderStatusHtml() {
     ns.wireUpDataTable = function () {
         //alert("hit");
 
-        var showUserColumn = false;
+        var showUserColumn = true;
         var showWebinarColumn = true;
 
-        if (parseInt(DO.webinarIdDiv.text()) > 0) {
-            showUserColumn = true;
-            showWebinarColumn = false;
-        }
+        //if (parseInt(DO.webinarIdDiv.text()) > 0) {
+        //    showUserColumn = true;
+        //    showWebinarColumn = false;
+        //}
 
 
         DO.ordersTable.dataTable({

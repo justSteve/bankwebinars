@@ -140,15 +140,40 @@ namespace CUWebinars.Business.Services
             return theseOrders;
         }
 
-        //public IEnumerable<Order> GetOrdersPaged(int start, int length, string orderIdFragment, out int totalNumberOrders, out int totalFilteredOrders)
-        //{
-        //    totalNumberOrders = _context.Orders.Count();
+        public IEnumerable<Order> GetOrdersByDomain(string email, int idAffliate, out int totalNumberOrders)
+        {
+            IList<Order> theseOrders;
+            if (idAffliate != 19)
+            {
+                theseOrders = _context.Orders
+                    .Include(o => o.WebUser)
+                    .Include(o => o.WebUser.Institution)
+                    .Include(o => o.Affiliate)
+                    .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                    .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                    .Include(o => o.OrderRows.Select(or => or.Discount))
+                    .Include(o => o.OrderRows.Select(or => or.Webinar))
+                    .Where(o => o.OrderRows.Any(or => or.RowStatus == OrderRowStatus.Active && o.BillingEmail.EndsWith(email)) && o.idAffiliate == idAffliate)
+                    .ToList();
+            }
+            else
+            {
+                theseOrders = _context.Orders
+                    .Include(o => o.WebUser)
+                    .Include(o => o.WebUser.Institution)
+                    .Include(o => o.Affiliate)
+                    .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                    .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                    .Include(o => o.OrderRows.Select(or => or.Discount))
+                    .Include(o => o.OrderRows.Select(or => or.Webinar))
+                    .Where(o => o.OrderRows.Any(or => or.RowStatus == OrderRowStatus.Active && o.BillingEmail.EndsWith(email)))
+                    .ToList();
+            }
 
-        //    var filteredResult = _context.Orders.Where(o => o.idOrder.ToString().ToLower().Contains(orderIdFragment));
-        //    totalFilteredOrders = filteredResult.Count();
+            totalNumberOrders = theseOrders.Count;
 
-        //    return filteredResult.OrderByDescending(order => order.idOrder).Skip(start).Take(length); ;
-        //}
+            return theseOrders;
+        }
 
         public IEnumerable<WebUser> GetWebUsers(int idAffliate, out int totalNumberUsers)
         {

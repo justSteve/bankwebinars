@@ -262,6 +262,79 @@ namespace CUWebinars.Web.Controllers
             }
 
         }
+        /// <summary>
+        /// Permits migration of legacy system.
+        /// </summary>
+        /// <param name="migrateOrderModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult MigrateOrderCompPerspectives(MigrateOrderModel migratedOrder)
+        {
+            int idOfLastOrder = default(int);
+            string verificationKey = string.Empty;
+            string confirmChangeEmailUrl = string.Empty;
+
+            if (!ModelState.IsValid)
+            {
+                var myError = ProcessModelStateErrors();
+                return Json(new { Result = WebUiConstants.Fail, Error = myError });
+            }
+
+            try
+            {
+                var email = migratedOrder.Email.Trim();
+
+                _logger.Info("Begin migrate: " + email);
+
+                var migratorQueryResult = _orderControllerOrchestrator.GetPreparatoryDataForMigrator(migratedOrder
+                    , email);
+
+                if (ReferenceEquals(null, migratorQueryResult.WebUser))
+                {
+                    try
+                    {
+                        migratorQueryResult.WebUser =
+                            _orderControllerOrchestrator.MigrateUser(migratedOrder, email);
+
+                        verificationKey = _orderControllerOrchestrator.GetVerificationKeyForNewUserAccount();
+
+                        confirmChangeEmailUrl =
+                            _orderControllerOrchestrator.GetConfirmChangeEmailLinkForNewUserAccount();
+
+                        _orderControllerOrchestrator.FinalizeMigratedRegistation(migratedOrder, verificationKey);
+
+                        _logger.Info(string.Format("MigrateOrder|CreateUser Succeeded: {0}", email));
+                    }
+                    catch (Exception exception)
+                    {
+                        _logger.ErrorException(
+                            string.Format("MigrateOrder|CreateUser failed: {0}", email), exception);
+                        Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                        throw;
+                    }
+                }
+
+                idOfLastOrder = _orderControllerOrchestrator.MigrateOrder(migratedOrder, email,
+                    migratorQueryResult, verificationKey, confirmChangeEmailUrl);
+
+                _logger.Info(string.Format("MigrateOrder|CreateNewOrder: {0}", idOfLastOrder));
+
+                //Order resultOrder = _orderManagementService.GetOrderById(idOfLastOrder);
+                //var discount =
+                //    resultOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount;
+                //_logger.Info("Discount: RedeemDiscountStarts: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}", discount.DiscountCode, discount.DateValidFrom, discount.DateValidTo, discount.CreditsUsed, discount.CreditsRemain);
+                return Json(new { Result = idOfLastOrder.ToString() }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception exception)
+            {
+                var errString = string.Format("Order creation failed on {0} - {1} with msg: {2}", migratedOrder.Email, migratedOrder.idWebinar, exception.Message);
+                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                _logger.ErrorException(errString, exception);
+
+                return Json(new { Result = errString }, JsonRequestBehavior.AllowGet);
+            }
+
+        }
 
         private string ProcessModelStateErrors()
         {

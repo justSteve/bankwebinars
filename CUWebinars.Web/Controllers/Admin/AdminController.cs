@@ -2567,11 +2567,22 @@ namespace CUWebinars.Web.Controllers.Admin
                             }
                             else if (searchTerm.Contains("@"))
                             {
-                                dtsource =
-                                        _dataTablesService.GetOrdersByUser(searchTerm, affiliateId, out totalNumberOrders)
+                                if (searchTerm.StartsWith("@"))
+                                {
+                                    dtsource =
+                                        _dataTablesService.GetOrdersByDomain(searchTerm, affiliateId,
+                                            out totalNumberOrders)
                                             .ToList();
+                                }
+                                else
+                                {
+                                    dtsource =
+                                        _dataTablesService.GetOrdersByUser(searchTerm, affiliateId,
+                                            out totalNumberOrders)
+                                            .ToList();
+                                }
                             }
-                            else if (searchTerm.StartsWith("aa"))
+                            else if (searchTerm=="aa")
                             {
                                 dtsource = _dataTablesService.GetOrdersByPending(affiliateId, out totalNumberOrders).ToList();
                             }
