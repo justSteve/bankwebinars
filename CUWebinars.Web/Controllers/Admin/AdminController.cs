@@ -108,6 +108,8 @@ namespace CUWebinars.Web.Controllers.Admin
             ViewBag.Title = "Search Results";
 
             ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+            var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+            var user = _membershipService.GetWebUserById(affiliate.idUserAff);
             var model = new AdminDTO
             {
                 ShowWebinarsViewModel = gridModel,
@@ -115,16 +117,23 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     Affiliate = aff,
                     UserIsAdmin = true
-                }
+                },
+                AffiliateSettingsViewModel = new AffiliateSettingsViewModel()
+                {
+                    Affiliate = affiliate,
+                    WebUser = user
+                },
+                DiscountSubscriptionsModel = _affiliateManagementService.GetSubscriptionsByAffiliate(62) as IList<DiscountDTO>,
+
             };
 
             if (claimsIdentityOfAuthenticatedUser.HasClaim(
                 (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
             {
-                var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
-                var user = _membershipService.GetWebUserById(affiliate.idUserAff);
+
                 model = new AdminDTO
                 {
+                    DiscountSubscriptionsModel = _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff) as IList<DiscountDTO>,
                     UserDetailsViewModel = new UserDetailsViewModel()
                     {
                         Affiliate = affiliate,
@@ -2630,6 +2639,64 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(new { NotAuthorized = true });
 
         }
+
+        //[HandleAjaxException]
+        //[HttpPost]
+        //[AllowAnonymous]
+        //public JsonResult SubscriptionsDataHandler(DTParametersSubscriptions param)
+        //{
+        //    if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
+        //    {
+        //        // based heavily on https://www.echosteg.com/jquery-datatables-asp.net-mvc5-server-side
+        //        int totalNumberOrders = 0;
+        //        int orderId = param.orderId;
+        //        string searchTerm = param.searchTerm;
+        //        int affiliateId = param.affiliateId ?? 19; // 19 is magic internal / house affiliate id
+        //        bool showAllEvents = param.showAllEvents ?? false;
+
+        //        List<Discount> dtsource = null;
+
+        //        try
+        //        {
+        //            dtsource = _orderManagementService.GetSubscriptionsAll(affiliateId, out totalNumberOrders).ToList();
+                    
+        //            // use automapper to flatten out the order records, in this specific case the data 
+        //            //  model has circular references which cause problems with JSON serialization
+        //            List<DiscountDTO> dtoSource = new List<DiscountDTO>();
+        //            Mapper.Map(dtsource, dtoSource);
+                    
+        //            List<String> columnSearch = new List<string>();
+        //            foreach (var col in param.Columns)
+        //            {
+        //                columnSearch.Add(col.Search.Value);
+        //            }
+
+        //            List<DiscountDTO> data = new DTResultSetDiscounts.GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtoSource, columnSearch);
+        //            int count = new DTResultSetDiscounts.Count(param.Search.Value, dtoSource, columnSearch);
+
+
+        //            DataTableService<Discount> result = new DataTableService<Discount>
+        //            {
+        //                draw = param.Draw,
+        //                data = data,
+        //                recordsFiltered = count,
+        //                recordsTotal = count
+        //            };
+
+        //            JsonResult jsonresult = Json(result);
+        //            jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
+
+        //            return jsonresult;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            return Json(new { error = ex.Message });
+        //        }
+        //    }
+
+        //    return Json(new { NotAuthorized = true });
+
+        //}
 
 
         [HandleAjaxException]

@@ -61,6 +61,7 @@ namespace CUWebinars.Business.Services
         IEnumerable<int> GetOrderIdsByPartialId(int id);
         IList<Order> GetOrdersByUserId(int id);
         IEnumerable<Order> GetOrdersAll(int idAffliate, out int totalNumberOrders);
+        IEnumerable<Discount> GetSubscriptionsAll(int idAffliate, out int totalNumberOrders);
         IList<Order> GetOrdersForLiveNotifications(int idWebinar);
         IList<Order> GetOrdersForRecordedNotifications(int idWebinar);
         IEnumerable<Order> GetOrdersForShippedNotification();

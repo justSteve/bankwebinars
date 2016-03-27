@@ -97,6 +97,7 @@
         <li class="active"><a href="#webinars" data-toggle="tab">Webinars</a></li>
         <li><a href="#account" data-toggle="tab">Settings</a></li>
         <li><a href="#reports" data-toggle="tab">Reports</a></li>
+        <li><a href="#subscriptions" data-toggle="tab">Subscriptions</a></li>
     </ul>
 
 
@@ -109,6 +110,9 @@
         </div>*@
         <div class="tab-pane" id="reports">
             @{ Html.RenderPartial("Admin/_Reports"); }
+
+        </div>        <div class="tab-pane" id="subscriptions">
+            @{ Html.RenderPartial("Admin/_Subscriptions"); }
 
         </div>
 

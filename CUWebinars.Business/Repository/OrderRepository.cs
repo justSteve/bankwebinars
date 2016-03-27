@@ -447,6 +447,23 @@ namespace CUWebinars.Business.Repository
 
             return orders;
         }
+        public IEnumerable<Discount> GetSubscriptionsAll(int idAffliate, out int totalNumberOrders)
+        {
+            IList<Discount> discounts = ((TTSWebinarsContext)db).Discounts
+                .Where(d => d.DiscountType == DiscountType.Subscription)
+                .ToList();
+
+            if (idAffliate != 19)
+            {
+                discounts = discounts
+                    .Where(o => o.idAffiliate == idAffliate)
+                    .ToList();
+            }
+
+            totalNumberOrders = discounts.Count;
+
+            return discounts;
+        }
 
         public IList<Order> GetOrdersForLiveEventNotifications(int idWebinar)
         {

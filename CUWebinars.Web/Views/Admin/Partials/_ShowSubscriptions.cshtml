@@ -1,0 +1,65 @@
+﻿@model DiscountDTO
+
+@{
+    ViewBag.Title = "Orders";
+
+    if (Model.Affiliate != null && !Model.UserIsAdmin)
+    {
+        <script type="text/javascript">
+            if (SHOWSUBSCRIPTIONS === null || typeof SHOWSUBSCRIPTIONS === 'undefined') {
+                var SHOWSUBSCRIPTIONS = {};
+
+            }
+            //var DO = SHOWSUBSCRIPTIONS;
+            SHOWSUBSCRIPTIONS.affiliateId = @Model.Affiliate.idUserAff;
+
+        </script>
+    }
+
+    if (Model.UserIsAdmin)
+    {
+        <script type="text/javascript">
+            if (SHOWSUBSCRIPTIONS === null || typeof SHOWSUBSCRIPTIONS === 'undefined') {
+                var SHOWSUBSCRIPTIONS = {};
+
+            }
+            //var DO = SHOWSUBSCRIPTIONS;
+            SHOWSUBSCRIPTIONS.affiliateId = 19;
+
+        </script>
+    }
+
+    //var showAffColumn = Model.UserIsAdmin ? "true" : "false";
+    //\Scripts\app\admin\display-orders.js
+    // AdminController/
+
+
+    <table id="subscriptionsTable" class="table table-striped table-bordered dataTable no-footer" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th id="hdrOrder"><br /><br />Order</th>
+                <th id="hdrUser">User</th>
+                <th id="hdrWebinar">Webinar</th>
+                <th id="hdrInstitution">Institution</th>
+                <th id="hdrBilling">Billing</th>
+                <th id="hdrAffiliate">Affiliate</th>
+                <th id="hdrLinks">Order Date</th>
+                <th id="hdrStatus">Status</th>
+            </tr>
+        </thead>
+        <tr>
+            <th>Order</th>
+            <th>User</th>
+            <th>Webinar</th>
+            <th>Institution</th>
+            <th>Billing</th>
+            <th>Affiliate</th>
+            <th>Order Date</th>
+            <th>Status</th>
+        </tr>
+
+    </table>
+
+    <div id="webinarIdDiv" class="initialHide">@Model.Webinar.idWebinar</div>
+}
+

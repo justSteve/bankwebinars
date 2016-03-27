@@ -27,6 +27,7 @@ using System.Text;
 using System.Web.UI.WebControls;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Core.Helpers;
+using CUWebinars.Web.Models;
 using IEvent = CUWebinars.NotificationSystem.Event.IEvent;
 using IEventSource = CUWebinars.NotificationSystem.Event.IEventSource;
 
@@ -704,6 +705,10 @@ namespace CUWebinars.Business.Services
         public IEnumerable<Order> GetOrdersAll(int idAffliate, out int totalNumberOrders)
         {
             return _orderRepository.GetOrdersAll(idAffliate, out totalNumberOrders);
+        }
+        public IEnumerable<Discount> GetSubscriptionsAll(int idAffliate, out int totalNumberOrders)
+        {
+            return _orderRepository.GetSubscriptionsAll(idAffliate, out totalNumberOrders);
         }
 
         public WebUser GetWebUser(int id)

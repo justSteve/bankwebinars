@@ -13,6 +13,7 @@ namespace CUWebinars.Web.Models
         public ShowWebinarsViewModel ShowWebinarsViewModel = new ShowWebinarsViewModel();
         public UserDetailsViewModel  UserDetailsViewModel= new UserDetailsViewModel();
         public AffiliateSettingsViewModel AffiliateSettingsViewModel = new AffiliateSettingsViewModel();
+        public IList<DiscountDTO> DiscountSubscriptionsModel = new List<DiscountDTO>();
     }
 
 }

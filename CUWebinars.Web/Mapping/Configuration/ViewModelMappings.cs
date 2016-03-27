@@ -20,7 +20,10 @@ namespace CUWebinars.Web.Mapping.Configuration
 
             Profile.CreateMap<Discount, DiscountModel>()
                 .ForMember(discountModel => discountModel.TypeOfDiscount, discount => discount.MapFrom(d => d.DiscountType));
-            
+
+            Profile.CreateMap<Discount, DiscountDTO>()
+                .ForMember(discountModel => discountModel.DiscountType, discount => discount.MapFrom(d => d.DiscountType));
+
             Profile.CreateMap<Discount, CompliancePerspectivesModel>()
                 .ForMember(discountModel => discountModel.TypeOfDiscount, discount => discount.MapFrom(d => d.DiscountType));
 
@@ -42,6 +45,8 @@ namespace CUWebinars.Web.Mapping.Configuration
             //  easier consumption by server-side DataTables pattern
             //  https://www.echosteg.com/jquery-datatables-asp.net-mvc5-server-side
             Profile.CreateMap<Webinar, SearchDTO>()
+
+                .ForMember(d => d.NumOfOrders, s => s.Ignore())
                 .ForMember(d => d.PresenterName,
                            map => map.MapFrom(s => s.Presenter.WebUser.FullName))
                 .ForMember(d => d.PresenterPhotoFull,
@@ -52,6 +57,7 @@ namespace CUWebinars.Web.Mapping.Configuration
 
 
             Profile.CreateMap<Order, OrderDTO>()
+                            .ForMember(d => d.Webinar, s => s.Ignore())
                 .ForMember(d => d.Affiliate_ttsDomain,
                            map => map.MapFrom(s => s.Affiliate.ttsDomain))
                 .ForMember(d => d.Institution,
@@ -61,7 +67,7 @@ namespace CUWebinars.Web.Mapping.Configuration
                                + s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Order.WebUser.Institution.State))
                 .ForMember(d => d.WebinarDateTitleString,
                            map => map.MapFrom
-                               (s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Webinar.Date.ToString().Replace(":00 ", " ").ToLower() + "<br>" 
+                               (s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Webinar.Date.ToString().Replace(":00 ", " ").ToLower() + "<br>"
                            + s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Webinar.Title))
                .ForMember(d => d.TtsJoinUrl,
                            map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).TtsJoinUrl))
