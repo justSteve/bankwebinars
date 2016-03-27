@@ -23,5 +23,6 @@ namespace CUWebinars.Business.Services
         IList<AffiliateReportDTO> BuildAffiliateReport(List<Order> orders, int webinarId);
         IList<AffiliateInvoiceDTO> BuildAffiliateInvoice(List<Order> orders, int webinarId);
         AffiliateInvoiceDTO GetAffiliateInvoice(int value, string aff);
+        IList<Discount> GetAffiliateSubscriptions(int idUserAff);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Configuration;
@@ -106,10 +107,10 @@ namespace CUWebinars.Web.Controllers.Admin
                 SearchTerm = searchTerm
             };
             ViewBag.Title = "Search Results";
-
             ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
             var model = new AdminDTO
             {
+                
                 ShowWebinarsViewModel = gridModel,
                 UserDetailsViewModel = new UserDetailsViewModel()
                 {
@@ -123,8 +124,11 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
                 var user = _membershipService.GetWebUserById(affiliate.idUserAff);
+
+                IList<Discount> subscriptions = _affiliateManagementService.GetAffiliateSubscriptions(affiliate.idUserAff);
                 model = new AdminDTO
                 {
+                    SubscriptionsViewModel = null,
                     UserDetailsViewModel = new UserDetailsViewModel()
                     {
                         Affiliate = affiliate,

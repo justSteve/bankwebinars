@@ -530,6 +530,7 @@
     <Compile Include="Models\RegisterFieldsDTO.cs" />
     <Compile Include="Models\ShippingDetailsModel.cs" />
     <Compile Include="Models\ShowMessagesModel.cs" />
+    <Compile Include="ViewModel\SubscriptionsViewModel.cs" />
     <Compile Include="Models\TTSAttendance.cs" />
     <Compile Include="Models\TTSQuiz.cs" />
     <Compile Include="Models\UserQuizEditModel.cs" />
@@ -2457,6 +2458,7 @@
     <Content Include="Views\Admin\Partials\SearchResultsGrid2Admin.cshtml" />
     <Content Include="Views\Admin\Partials\_ConnectionDetails.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\ShowCompPerspectivesSubscription.cshtml" />
+    <Content Include="Views\Shared\Admin\_Subscriptions.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

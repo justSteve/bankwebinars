@@ -310,6 +310,11 @@ namespace CUWebinars.Business.Services
             return model;
         }
 
+        public IList<Discount> GetAffiliateSubscriptions(int idUserAff)
+        {
+            return _affiliateRepository.GetSubscriptions(idUserAff);
+        }
+
         private string GetRowPercent(int ordinalHolder, byte commissionModel)
         {
             return "30%";

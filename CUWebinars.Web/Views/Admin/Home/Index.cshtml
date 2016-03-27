@@ -25,7 +25,14 @@
 
 
     ViewBag.Title = "Admin Functions";
-    Layout = "/Views/Shared/_LayoutAdmin.cshtml";
+    if (Model.UserDetailsViewModel.UserIsAdmin)
+    {
+        Layout = "/Views/Shared/_LayoutAdmin.cshtml";
+    }
+    else
+    {
+        Layout = "/Views/Shared/_LayoutAffiliate.cshtml";
+    }
     GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
     if (Model.UserDetailsViewModel.UserIsAdmin)
     {
@@ -97,6 +104,7 @@
         <li class="active"><a href="#webinars" data-toggle="tab">Webinars</a></li>
         <li><a href="#account" data-toggle="tab">Settings</a></li>
         <li><a href="#reports" data-toggle="tab">Reports</a></li>
+        <li><a href="#subscriptions" data-toggle="tab">Subscriptions</a></li>
     </ul>
 
 
@@ -104,13 +112,19 @@
         <div class="tab-pane active" id="webinars">
             @{ Html.RenderPartial("Admin/_Webinars"); }
         </div>
-        @*<div class="tab-pane " id="account">
-            @{ Html.RenderPartial("Admin/_AffAccount", Model.AffiliateSettingsViewModel);}
-        </div>*@
+        @if (!Model.UserDetailsViewModel.UserIsAdmin)
+        {
+            <div class="tab-pane " id="account">
+                @{ Html.RenderPartial("Admin/_AffAccount", Model.AffiliateSettingsViewModel);}
+            </div>
+        }
         <div class="tab-pane" id="reports">
             @{ Html.RenderPartial("Admin/_Reports"); }
 
         </div>
+        <div class="tab-pane" id="subscriptions">
+            @{ Html.RenderPartial("Admin/_Subscriptions", Model.SubscriptionsViewModel); }
 
+        </div>
     </div>
 </div>
