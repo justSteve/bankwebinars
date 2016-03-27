@@ -137,5 +137,6 @@ namespace CUWebinars.Business.Services
         void RestoreToDiscount(int newOrderRowId);
         void RemoveFromDiscount(int newOrderRowId);
         IList<Order> GetOrdersByDomain(string searchTerm);
+        string CalculateDiscountRedemption(Discount userHasDiscount, OrderRow row, int? undo);
     }
 }

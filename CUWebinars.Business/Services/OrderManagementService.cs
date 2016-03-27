@@ -762,7 +762,7 @@ namespace CUWebinars.Business.Services
 
                 order.AdminComments = existingJObject.ToString(Formatting.None);
 
-                CalculateDiscountRedemtion(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Discount, order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active), 1);
+                CalculateDiscountRedemption(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Discount, order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active), 1);
             }
             _orderRepository.DeleteOrder(order);
         }
@@ -2345,7 +2345,7 @@ namespace CUWebinars.Business.Services
                     if (discount.CreditsRemain > 0)
                     {
 
-                        forNotes.Append(CalculateDiscountRedemtion(discount, row, null));
+                        forNotes.Append(CalculateDiscountRedemption(discount, row, null));
 
                     }
                     else
@@ -2359,7 +2359,7 @@ namespace CUWebinars.Business.Services
             return discount;
         }
 
-        private string CalculateDiscountRedemtion(Discount discount, OrderRow row, int? undo)
+        public string CalculateDiscountRedemption(Discount discount, OrderRow row, int? undo)
         {
             var forNotes = new StringBuilder();
             var regTypeLabel = GetRegTypeOfOrderRow(row.idRegType).OptionLabel;
@@ -2400,7 +2400,6 @@ namespace CUWebinars.Business.Services
                         discount.CreditsUsed = discount.CreditsUsed - 1.5M;
                     }
                 }
-
             }
             else
             {
