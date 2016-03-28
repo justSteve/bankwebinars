@@ -432,6 +432,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Core\CalendarRssDTO.cs" />
     <Compile Include="Core\CalendarRssDTOAssembler.cs" />
+    <Compile Include="Core\DTResultSetDiscounts.cs" />
     <Compile Include="Models\AddOrderModel.cs" />
     <Compile Include="Controllers\HandoutsController.cs" />
     <Compile Include="Controllers\NavigationController.cs" />
@@ -544,7 +545,6 @@
     <Compile Include="ViewModel\DisplayOrdersViewModel.cs" />
     <Compile Include="ViewModel\EditUserViewModel.cs" />
     <Compile Include="ViewModel\DiscountPromotionViewModel.cs" />
-    <Compile Include="ViewModel\Discount_SubscriptionViewModel.cs" />
     <Compile Include="ViewModel\GenerateClickToJoinViewModel.cs" />
     <Compile Include="ViewModel\OrderSumUserViewModel.cs" />
     <Compile Include="ViewModel\QuizViewModel.cs" />
@@ -2457,6 +2457,8 @@
     <Content Include="Views\Admin\Partials\SearchResultsGrid2Admin.cshtml" />
     <Content Include="Views\Admin\Partials\_ConnectionDetails.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\ShowCompPerspectivesSubscription.cshtml" />
+    <Content Include="Views\Shared\Admin\_Subscriptions.cshtml" />
+    <Content Include="Views\Admin\Partials\_ShowSubscriptions.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

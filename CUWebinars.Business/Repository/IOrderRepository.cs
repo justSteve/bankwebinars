@@ -60,5 +60,6 @@ namespace CUWebinars.Business.Repository
 
         bool OnDemandCodeIsUnique(string onDemandCode);
         IList<Order> GetOrdersByWebinar(int idWebinar);
+        IEnumerable<Discount> GetSubscriptionsAll(int idAffliate, out int totalNumberOrders);
     }
 }

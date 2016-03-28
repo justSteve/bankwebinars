@@ -90,10 +90,11 @@ $(function () {
                 "createdCell": function (td, cellData, rowData, row, col) {
                     if (cellData != null) {
                         $(td).tooltip();
+                        console.log(rowData);
                     }
                 },
                 "mRender": function (data, type, full) {
-                    console.log(full);
+                    
                     var statusHtml = full.WebinarDateString + "<br><a target='EventDetails' id='goToEventButton' type='button' class='btn btn-mini' href='/webinar/details/"+full.idWebinar+"' />Go to event</a>";
 
                     return statusHtml;

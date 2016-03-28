@@ -27,6 +27,7 @@ using System.Text;
 using System.Web.UI.WebControls;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Core.Helpers;
+using CUWebinars.Web.Models;
 using IEvent = CUWebinars.NotificationSystem.Event.IEvent;
 using IEventSource = CUWebinars.NotificationSystem.Event.IEventSource;
 
@@ -705,6 +706,10 @@ namespace CUWebinars.Business.Services
         {
             return _orderRepository.GetOrdersAll(idAffliate, out totalNumberOrders);
         }
+        public IEnumerable<Discount> GetSubscriptionsAll(int idAffliate, out int totalNumberOrders)
+        {
+            return _orderRepository.GetSubscriptionsAll(idAffliate, out totalNumberOrders);
+        }
 
         public WebUser GetWebUser(int id)
         {
@@ -757,7 +762,7 @@ namespace CUWebinars.Business.Services
 
                 order.AdminComments = existingJObject.ToString(Formatting.None);
 
-                CalculateDiscountRedemtion(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Discount, order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active), 1);
+                CalculateDiscountRedemption(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Discount, order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active), 1);
             }
             _orderRepository.DeleteOrder(order);
         }
@@ -2340,7 +2345,7 @@ namespace CUWebinars.Business.Services
                     if (discount.CreditsRemain > 0)
                     {
 
-                        forNotes.Append(CalculateDiscountRedemtion(discount, row, null));
+                        forNotes.Append(CalculateDiscountRedemption(discount, row, null));
 
                     }
                     else
@@ -2354,7 +2359,7 @@ namespace CUWebinars.Business.Services
             return discount;
         }
 
-        private string CalculateDiscountRedemtion(Discount discount, OrderRow row, int? undo)
+        public string CalculateDiscountRedemption(Discount discount, OrderRow row, int? undo)
         {
             var forNotes = new StringBuilder();
             var regTypeLabel = GetRegTypeOfOrderRow(row.idRegType).OptionLabel;
@@ -2395,7 +2400,6 @@ namespace CUWebinars.Business.Services
                         discount.CreditsUsed = discount.CreditsUsed - 1.5M;
                     }
                 }
-
             }
             else
             {

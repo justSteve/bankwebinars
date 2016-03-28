@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using CUWebinars.Business.Core;
@@ -18,17 +19,20 @@ namespace CUWebinars.Business.Services
         private readonly IAffiliateRepository _affiliateRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly IWebinarRepository _webinarRepository;
+
+        private readonly TTSWebinarsContext _context;
         //private readonly IOrderRepository _orderRepository;
 
         readonly List<IEvent> _events = new List<IEvent>();
         private bool _disposed;
 
-        public AffiliateManagementService(ILogger logger, IOrderRepository orderRepository, IWebinarRepository webinarRepository, IAffiliateRepository affiliateRepository)
+        public AffiliateManagementService(ILogger logger, IOrderRepository orderRepository, IWebinarRepository webinarRepository, IAffiliateRepository affiliateRepository, TTSWebinarsContext context)
         {
             _affiliateRepository = affiliateRepository;
             _orderRepository = orderRepository;
             _webinarRepository = webinarRepository;
             _logger = logger;
+            _context = context;
         }
 
         private void ComputeRoyalty(IList<Order> orders)
@@ -308,6 +312,58 @@ namespace CUWebinars.Business.Services
 
             };
             return model;
+        }
+
+        public IList<DiscountDTO> GetSubscriptionsByAffiliate(int idUserAff)
+        {
+            IList<DiscountDTO> theseSubscriptions = new List<DiscountDTO>();
+
+            if (idUserAff != 19)
+            {
+                var theseDiscounts = _context.Discounts
+                    .Where(d => d.DiscountType == DiscountType.Subscription && d.idAffiliate == idUserAff).ToList();
+
+                foreach (var discount in theseDiscounts)
+                {
+                    var thisSub = new DiscountDTO
+                    {
+                        idAffiliate = idUserAff,
+                        idDiscount = discount.idDiscount,
+                        DateBilled = discount.DateBilled,
+                        DateValidFrom = discount.DateValidFrom,
+                        DateValidTo = discount.DateValidTo,
+                        DiscountCode = discount.DiscountCode,
+                        Notes = discount.Notes,
+                        RenewalTerm = discount.RenewalTerm,
+                        Status = discount.Status
+                    };
+                    theseSubscriptions.Add(thisSub);
+                }
+            }
+            else
+            {
+                var theseDiscounts = _context.Discounts
+                    .Where(d => d.DiscountType == DiscountType.Subscription).ToList();
+
+                foreach (var discount in theseDiscounts)
+                {
+                    var thisSub = new DiscountDTO
+                    {
+                        idAffiliate = idUserAff,
+                        idDiscount = discount.idDiscount,
+                        DateBilled = discount.DateBilled,
+                        DateValidFrom = discount.DateValidFrom,
+                        DateValidTo = discount.DateValidTo,
+                        DiscountCode = discount.DiscountCode,
+                        Notes = discount.Notes,
+                        RenewalTerm = discount.RenewalTerm,
+                        Status = discount.Status
+                    };
+                    theseSubscriptions.Add(thisSub);
+                }
+            }
+
+            return theseSubscriptions;
         }
 
         private string GetRowPercent(int ordinalHolder, byte commissionModel)

@@ -2,8 +2,10 @@
 using System.Linq.Expressions;
 using CUWebinars.Business.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using CUWebinars.Web.Models;
+
 
 namespace CUWebinars.Business.Services
 {
@@ -23,5 +25,6 @@ namespace CUWebinars.Business.Services
         IList<AffiliateReportDTO> BuildAffiliateReport(List<Order> orders, int webinarId);
         IList<AffiliateInvoiceDTO> BuildAffiliateInvoice(List<Order> orders, int webinarId);
         AffiliateInvoiceDTO GetAffiliateInvoice(int value, string aff);
+        IList<DiscountDTO> GetSubscriptionsByAffiliate(int idUserAff);
     }
 }

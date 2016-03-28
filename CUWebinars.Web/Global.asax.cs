@@ -208,7 +208,7 @@ namespace CUWebinars.Web
             // Note: in Web.config, httpErrors is as follows: <httpErrors existingResponse="PassThrough" />
             // This is required (or set existingResponse to "auto"), otherwise Response.TrySkipIisCustomErrors
             // is ignored.
-            Response.TrySkipIisCustomErrors = true;
+            ;Response.TrySkipIisCustomErrors = true;
 
             if (httpException != null)
             {

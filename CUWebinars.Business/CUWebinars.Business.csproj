@@ -187,6 +187,7 @@
     <Compile Include="Models\AdditionalLocationsLookupPrice.cs" />
     <Compile Include="Models\AffiliateInvoiceDTO.cs" />
     <Compile Include="Models\AffiliateReportDTO.cs" />
+    <Compile Include="Models\DiscountDTO.cs" />
     <Compile Include="Models\DiscountType.cs">
       <SubType>Code</SubType>
     </Compile>
