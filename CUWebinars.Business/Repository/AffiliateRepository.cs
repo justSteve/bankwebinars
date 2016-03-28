@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 using CUWebinars.Business.Models;
 using System.Data.Entity;
@@ -86,23 +85,6 @@ namespace CUWebinars.Business.Repository
         {
             return items
                 .Where(a => a.idUserAff== id).Include(u => u.WebUser).Single();
-        }
-
-        public IList<Discount> GetSubscriptions(int idUserAff)
-        {
-            IList<Discount> discount = null;
-            var orders = items.Where(a => a.idUserAff == idUserAff)
-                .Select(o => o.Orders.Where(aff => aff.idAffiliate == idUserAff)
-                ).ToList();
-            foreach (var order in orders)
-            {
-            }
-            //    var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-
-            //    OrderRow row = order.Select(o => orecrod.OrderRows.Single().RowStatus == OrderRowStatus.Active).SingleOrDefault();
-            //    //Where(r.r) ).Where()//Single().OrderRows.Where(r => r.RowStatus == OrderRowStatus.Active);
-            //}
-            return null;
         }
     }
 }
