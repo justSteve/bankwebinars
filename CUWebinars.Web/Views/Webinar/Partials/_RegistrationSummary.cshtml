@@ -6,7 +6,7 @@
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     nfi.CurrencyDecimalDigits = 0;
 
-    if (Model.UserOwnsThisEvent > 0)
+    if (Model.OrderRow != null)
     {
         RegType orderMsgs = Model.OrderRow.RegistrationType;
         var row = from orderRow in Model.OrderRow.Order.OrderRows

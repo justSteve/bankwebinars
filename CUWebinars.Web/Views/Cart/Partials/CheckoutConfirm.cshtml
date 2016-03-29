@@ -10,7 +10,7 @@
         var orderID = 0;
         if (Model.OrderRowExists && Model.OrderRowHasId)
         {
-            if (Model.OrderStatus == OrderStatus.InProcess)
+            if (Model.OrderStatus == OrderStatus.InProcess || Model.OrderStatus == OrderStatus.AwaitingVerification)
             {
                 <b>Please review this order summary and and choose billing method.</b>
 

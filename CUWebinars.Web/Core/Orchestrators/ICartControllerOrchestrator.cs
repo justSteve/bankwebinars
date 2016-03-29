@@ -58,6 +58,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         string InsertOnDemandClaim(int orderId);
         Order CreateOrderByAffiliate(CheckoutOptionsViewModel formModel, Affiliate affiliate);
         ExpressCheckoutPostBackModel BuildExpressPostback(ExpressCheckoutPostBackModel form);
-        
+
+        RegType FindRegType4ExpressPostback2(string q10RegistrationType, int q18QWebinarid18);
     }
 }

@@ -142,7 +142,7 @@
                                             <div class="tab-pane" id="contactInfo"></div>
                                             <div class="tab-pane" id="confirmation"></div>
                                         }
-                                        else if (Model.UserOwnsThisEvent > 0 && Model.CheckoutInProcess)
+                                        else if (Model.Order.OrderStatus == OrderStatus.AwaitingVerification || Model.Order.OrderStatus == OrderStatus.InProcess|| Model.Order.OrderStatus == OrderStatus.Canceled ||  Model.Order.OrderStatus == OrderStatus.Submitted )
                                         {
                                             <div class="tab-pane" id="signUp"></div>
                                             <div class="tab-pane" id="contactInfo"></div>

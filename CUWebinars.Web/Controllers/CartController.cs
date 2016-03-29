@@ -709,13 +709,18 @@ namespace CUWebinars.Web.Controllers
                 if (form.q11_orderid != null && form.q11_orderid > 0)
                 {
                     var order = _cartControllerOrchestrator.GetOrderById(form.q11_orderid);
-                    //order.ShippingAddress=form.q14_address14
+                    
                     order.Origin = DomainConstants.OriginExpress;
 
+                    order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType =
+                        //_cartControllerOrchestrator.GetRegTypeById(Convert.ToInt32(form.q10_registrationType));
 
-                    _logger.Info("ExpressPostback " + _appHelper.GetSessionStartInfo());
+                    //RegType regType =
+                        _cartControllerOrchestrator.FindRegType4ExpressPostback2(form.q10_registrationType, form.q18_q_webinarid18);
 
-                    return RedirectToAction("Details", "Webinar", new { id = form.q18_q_webinarid18, idOrder = form.q11_orderid });
+                    _logger.Info("ExpressPostback from: "+" - " + form.q11_orderid + _appHelper.GetUserAuditInfo() );
+
+                    return RedirectToAction("Details", "Webinar", new { id = form.q18_q_webinarid18, idOrder = form.q11_orderid, source = "ExpressPostback2" });
 
                 }
 

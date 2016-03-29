@@ -24,6 +24,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Web;
+using CUWebinars.Business.Repository;
 using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models.DataTablesModels;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
@@ -43,6 +44,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         private readonly IFormatter _generalFormatter;
         private readonly IOrderManagementService _orderManagementService;
         private readonly IWebinarManagementService _webinarManagementService;
+        private readonly IRegTypeRepository _regTypeRepository;
         private readonly IUniversalMapper _universalMapper;
 
         private bool _disposed;
@@ -56,6 +58,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             HttpRequestBase request,
             IAppHelper appHelper,
             IFormatter generalFormatter,
+                IRegTypeRepository regTypeRepository,
+        
             IUniversalMapper universalMapper)
         {
             Request = request;
@@ -66,7 +70,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             _orderManagementService = orderManagementService;
             _webinarManagementService = webinarManagementService;
             _stateService = stateService;
-
+            _regTypeRepository = regTypeRepository;
+        
             _universalMapper = universalMapper;
         }
 
@@ -819,6 +824,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             return null;
         }
 
+        public RegType FindRegType4ExpressPostback2(string idRegType, int q18QWebinarid18)
+        {
+            return _regTypeRepository.FindRegType4ExpressPostback2(idRegType, q18QWebinarid18);
+        }
 
 
         public OrderRow GetOrderRowLoaded(int idOrderRow)
@@ -1090,7 +1099,12 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             if (email == null) throw new ArgumentNullException(@"email");
             if (row == null) throw new ArgumentNullException(@"row");
-
+            var editingUser = "";
+            if (Request.IsAuthenticated)
+            {
+                var user = Request.RequestContext.HttpContext.User;
+                if (!ReferenceEquals(user, null)) editingUser = user.Identity.Name;
+            }
             try
             {
                 if (!OnDemandCodeIsUnique(row.OnDemandCode))
@@ -1100,7 +1114,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     {
                         row.OnDemandCode = RandomHelpers.GetUniqueCode(5);
                     }
-                    _logger.Warn("OnDemand Order Changed " + row.idOrder + " from: " + fromVal + " to: " + row.OnDemandCode);
+                    _logger.Warn("OnDemand Order Changed " + row.idOrder + " from: " + fromVal + " to: " + row.OnDemandCode + " by: " + editingUser);
                 }
 
                 _orderManagementService.SaveChanges();
