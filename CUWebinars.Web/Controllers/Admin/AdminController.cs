@@ -524,25 +524,33 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpPost]
         //[ValidateAntiForgeryToken(Order = 0)]
         [HandleAjaxException]
-        public ActionResult UpdateOrderStatus(ManageOrderEditModel model)
+        public ActionResult UpdateOrderStatus(ManageOrderEditModel model, int? discountId)
         {
+            var _discountId = 0;
+            if (discountId.HasValue)
+                _discountId = discountId.Value;
+
             if (ModelState.IsValid)
             {
-
                 try
                 {
+                    if (discountId > 0)
+                    {
+                        _orderManagementService.ApplyDiscountCode(discountId);
+                    }
                     var order = _orderManagementService.GetOrderById(model.Id);
-                    _logger.Info("Updating OrderStatus from " + order.OrderStatus + " to: " + model.DisplayRowPriceViewModel.OrderStatus + " by: " + _appHelper.GetUserAuditInfo());
+                    _logger.Info("Updating OrderStatus from " + order.OrderStatus + " to: " + model.Order.OrderStatus + " by: " + _appHelper.GetUserAuditInfo());
 
                     var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
 
-                    var UpdateOrderStatusOnLegacy = dataOperations.UpdateOrderStatusOnLegacy(order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).idWebinar, order.BillingEmail, Convert.ToInt32(model.DisplayRowPriceViewModel.OrderStatus));
+                    var UpdateOrderStatusOnLegacy = dataOperations.UpdateOrderStatusOnLegacy(order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).idWebinar, order.BillingEmail, Convert.ToInt32(model.Order.OrderStatus));
 
-                    order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus; // the only field that we are updating at this time
+                    //order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus; // the only field that we are updating at this time
+                    order.OrderStatus = model.Order.OrderStatus; // the only field that we are updating at this time
 
                     _orderManagementService.UpdateOrderByAdmin(order);
 
-                    return Json(new { Result = WebUiConstants.Success, orderStatus = model.DisplayRowPriceViewModel.OrderStatus.ToString(), msgFromLegacy = UpdateOrderStatusOnLegacy });
+                    return Json(new { Result = WebUiConstants.Success, orderStatus = model.Order.OrderStatus.ToString(), msgFromLegacy = UpdateOrderStatusOnLegacy });
                 }
                 catch (Exception exception)
                 {
@@ -1025,97 +1033,71 @@ namespace CUWebinars.Web.Controllers.Admin
             return null;
         }
 
-        //depreicated by editing grid
-        //public ActionResult GetOrderDetails(int? id = null)
+        //private ManageOrderEditModel BuildManageOrderEditModel(int id)
         //{
-        //    if (id.HasValue)
-        //    {
-        //        try
-        //        {
-        //            var manageOrderEditModel = BuildManageOrderEditModel(id.Value);
+        //    var order = _orderManagementService.GetOrderById(id);
+        //    var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+        //    var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
+        //    var additionalLocationsPricing =
+        //        _orderManagementService.GetCostOfAdditionalLocations(
+        //            orderRow.AdditionalLocation,
+        //            orderRow.idWebinar
+        //            );
+        //    var additionalLocations = orderRow.AdditionalLocation;
+        //    additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(additionalLocations).ToList();
 
-        //            return PartialView("~/Views/Admin/Home/_OrderEditDetails.cshtml", manageOrderEditModel);
-        //        }
-        //        catch (Exception exception)
+        //    var additionalLocationsCount = additionalLocations.Count;
+
+        //    var manageOrderEditModel = new ManageOrderEditModel
+        //    {
+        //        //EditOrder_Compact should look to 
+        //        AdditionalLocations = additionalLocations,
+        //        AdditionalLocationsAvailableOnLoad = false, // see below for where this is properly decided.
+        //        AdditionalLocationsRenderer = ViewHelpers.GetRendererOfAdditionalLocations(additionalLocations.Select(al => al.Email).ToList()),
+        //        CostPerAdditionalLocation = additionalLocationsPricing.Item2,
+        //        ClaimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims },
+
+        //        DisplayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
         //        {
-        //            _logger.ErrorException(
-        //                string.Format("GetOrderDetails | Session {0}", _appHelper.GetUserAuditInfo()), exception);
-        //            return new HttpStatusCodeResult(500); // if reach here, we are in error state.
+        //            Options = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.idWebinar, false),
+        //            OrderRowId = orderRow.idOrderRow,
+        //            OrderRowRegistrationType = orderRow.RegistrationType
+        //        },
+        //        DisplayRowPriceViewModel = new DisplayRowPriceViewModel
+        //        {
+        //            Discount = orderRow.Discount,
+        //            NumberOfAdditionalLocations = additionalLocationsCount,
+        //            OrderStatus = order.OrderStatus,
+        //            Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
+        //            PricesAndDiscounts =
+        //                _orderManagementService.CalculateOrderCost(order, additionalLocationsPricing.Item2),
+        //            RegistrationType = orderRow.RegistrationType,
+        //            RowPrice = orderRow.RowPrice
+        //        },
+        //        Id = order.idOrder,
+        //        AffiliateName = _appHelper.GetAffiliateName(order.idAffiliate),
+        //        JoinCode = orderRow.TtsJoinUrl,
+        //        OnDemandCode = orderRow.OnDemandCode,
+        //        Order = order,
+        //        NumberOfAdditionalLocations = additionalLocationsCount,
+        //        PhoneNumber = order.BillingPhone,
+        //        UserId = order.idUser,
+        //        WebinarId = orderRow.idWebinar,
+        //        WebUser = order.WebUser
+        //    };
+
+        //    // Need to decide whether the selected option in the DropDownList can add additional locations
+        //    var regType = manageOrderEditModel.DisplayOptionsInDropDownViewModel.OrderRowRegistrationType;
+
+        //    {
+        //        var option = CheckIfAddLocAvailable(regType.idRegType);
+        //        if (option.HasValue)
+        //        {
+        //            manageOrderEditModel.AdditionalLocationsAvailableOnLoad = option.Value;
         //        }
         //    }
-
-        //    _logger.Error("The value posted to the server was not a valid interger. GetOrderDetails {0}",
-        //        _appHelper.GetUserAuditInfo());
-
-        //    return new HttpStatusCodeResult(500, "The value posted to the server was not a valid integer.");
-        //    // if reach here, we are in error state.
+        //    return manageOrderEditModel;
         //}
-
-        private ManageOrderEditModel BuildManageOrderEditModel(int id)
-        {
-            var order = _orderManagementService.GetOrderById(id);
-            var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-            var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
-            var additionalLocationsPricing =
-                _orderManagementService.GetCostOfAdditionalLocations(
-                    orderRow.AdditionalLocation,
-                    orderRow.idWebinar
-                    );
-            var additionalLocations = orderRow.AdditionalLocation;
-            additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(additionalLocations).ToList();
-
-            var additionalLocationsCount = additionalLocations.Count;
-
-            var manageOrderEditModel = new ManageOrderEditModel
-            {
-                //EditOrder_Compact should look to 
-                AdditionalLocations = additionalLocations,
-                AdditionalLocationsAvailableOnLoad = false, // see below for where this is properly decided.
-                AdditionalLocationsRenderer = ViewHelpers.GetRendererOfAdditionalLocations(additionalLocations.Select(al => al.Email).ToList()),
-                CostPerAdditionalLocation = additionalLocationsPricing.Item2,
-                ClaimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims },
-
-                DisplayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
-                {
-                    Options = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.idWebinar, false),
-                    OrderRowId = orderRow.idOrderRow,
-                    OrderRowRegistrationType = orderRow.RegistrationType
-                },
-                DisplayRowPriceViewModel = new DisplayRowPriceViewModel
-                {
-                    Discount = orderRow.Discount,
-                    NumberOfAdditionalLocations = additionalLocationsCount,
-                    OrderStatus = order.OrderStatus,
-                    Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
-                    PricesAndDiscounts =
-                        _orderManagementService.CalculateOrderCost(order, additionalLocationsPricing.Item2),
-                    RegistrationType = orderRow.RegistrationType,
-                    RowPrice = orderRow.RowPrice
-                },
-                Id = order.idOrder,
-                AffiliateName = _appHelper.GetAffiliateName(order.idAffiliate),
-                JoinCode = orderRow.TtsJoinUrl,
-                OnDemandCode = orderRow.OnDemandCode,
-                Order = order,
-                NumberOfAdditionalLocations = additionalLocationsCount,
-                PhoneNumber = order.BillingPhone,
-                UserId = order.idUser,
-                WebinarId = orderRow.idWebinar,
-                WebUser = order.WebUser
-            };
-
-            // Need to decide whether the selected option in the DropDownList can add additional locations
-            var regType = manageOrderEditModel.DisplayOptionsInDropDownViewModel.OrderRowRegistrationType;
-
-            {
-                var option = CheckIfAddLocAvailable(regType.idRegType);
-                if (option.HasValue)
-                {
-                    manageOrderEditModel.AdditionalLocationsAvailableOnLoad = option.Value;
-                }
-            }
-            return manageOrderEditModel;
-        }
 
         public ActionResult GetOrdersByTypeahead(int? id)
         {

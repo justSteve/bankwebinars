@@ -941,12 +941,12 @@ namespace CUWebinars.Web.Controllers
                     DisplayRowPriceViewModel = new DisplayRowPriceViewModel
                     {
                         NumberOfAdditionalLocations = additionalLocationsCount,
-                        OrderStatus = order.OrderStatus,
-                        Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
+                        //OrderStatus = order.OrderStatus,
+                        //Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
                         PricesAndDiscounts =
                             _orderManagementService.CalculateOrderCost(order, additionalLocationsPricing.Item2),
                         RegistrationType = orderRow.RegistrationType,
-                        RowPrice = orderRow.RowPrice
+                        //RowPrice = orderRow.RowPrice
                     },
                     Discount = orderRow.Discount,
                     Order = order,

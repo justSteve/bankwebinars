@@ -943,7 +943,7 @@ namespace CUWebinars.Web.Controllers
                     {
                         //populate viewbag for expresscheckout viewmodel
                         ViewBag.Order = order;
-                        //ViewBag.TaxAmount = _cartControllerOrchestrator.BuildCheckoutConfirmViewModel(idOrder).DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount;
+                        
 
                         JObject existingJObject = null;
                         string comments = string.Empty;
@@ -954,7 +954,7 @@ namespace CUWebinars.Web.Controllers
 
                         var newJson =
                             new JProperty(
-                                string.Concat("LegacyCommentsInDetails-", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                                string.Concat("ReturningOrder-", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
                                     new JObject(new JProperty("LegacyComments", order.AdminComments))
                                 );
 
@@ -971,8 +971,16 @@ namespace CUWebinars.Web.Controllers
                         order.AdminComments = existingJObject.ToString(Formatting.None);
                         order.OrderDate = DateTime.Now;
 
+                        PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
+                        _orderManagementService.UpdateOrderChanges(orderRow.Order, ref pricesAndDiscounts);
 
-                        _orderManagementService.SaveChanges();
+                        if (orderRow.Discount != null)
+                        {
+                            ViewBag.DiscountCaption =
+                                _orderManagementService.CalculateDiscountRedemption(orderRow.Discount, orderRow, null, 1);
+                        }
+
+                        //_orderManagementService.SaveChanges();
 
                         model.CheckoutConfirmViewModel = new CheckoutConfirmViewModel
                         {
@@ -1156,13 +1164,13 @@ namespace CUWebinars.Web.Controllers
                 model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
                     new DisplayRowPriceViewModel
                     {
-                        Discount = row.Discount,
+                        //Discount = row.Discount,
                         NumberOfAdditionalLocations = row.AdditionalLocation.Count(),
-                        OrderStatus = row.Order.OrderStatus,
-                        Price = Convert.ToDecimal(row.RegistrationType.Price),
+                        //OrderStatus = row.Order.OrderStatus,
+                        //Price = Convert.ToDecimal(row.RegistrationType.Price),
                         PricesAndDiscounts =
                             _orderManagementService.CalculateOrderCost(row.Order, additionalLocationsPricing.Item2),
-                        RowPrice = row.RowPrice,
+                        //RowPrice = row.RowPrice,
                         RegistrationType = row.RegistrationType
                     };
 
@@ -1287,13 +1295,13 @@ namespace CUWebinars.Web.Controllers
                     model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
                         new DisplayRowPriceViewModel
                         {
-                            Discount = row.Discount,
+                            //Discount = row.Discount,
                             NumberOfAdditionalLocations = row.AdditionalLocation.Count(),
-                            OrderStatus = row.Order.OrderStatus,
-                            Price = Convert.ToDecimal(row.RegistrationType.Price),
+                            //OrderStatus = row.Order.OrderStatus,
+                            //Price = Convert.ToDecimal(row.RegistrationType.Price),
                             PricesAndDiscounts =
                                 _orderManagementService.CalculateOrderCost(row.Order, additionalLocationsPricing.Item2),
-                            RowPrice = row.RowPrice,
+                            //RowPrice = row.RowPrice,
                             RegistrationType = row.RegistrationType
                         };
 

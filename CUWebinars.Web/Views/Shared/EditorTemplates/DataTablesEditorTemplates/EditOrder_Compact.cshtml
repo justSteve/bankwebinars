@@ -81,7 +81,7 @@
             <table width="100%;">
                 <tr>
                     <td align="right">@Html.Raw(regTypeDropDownHtml)</td>
-                    <td align="right" id="DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice">@Model.EditFields.DisplayRowPriceViewModel.Price.ToString("C0")</td>
+                    <td align="right" id="DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice">@Model.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.UnitPrice.ToString("C0")</td>
                 </tr>
                 <tr>
                     <td>AddLocs:</td>
@@ -122,9 +122,9 @@
                             @Html.HiddenFor(m => m.EditFields.WebUser.idUser)
                             @Html.HiddenFor(m => m.EditFields.WebinarId)
                             @Html.HiddenFor(m => m.EditFields.NumberOfAdditionalLocations)
-                            @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.NumberOfAdditionalLocations)
-                            @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)
-                            @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)
+                            @*@Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.NumberOfAdditionalLocations)*@
+                            @*@Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)*@
+                            @*@Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)*@
                             @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions)
                             @* Required for POST. TextBoxFor won't ModelBind *@&nbsp;
                         </div>
@@ -265,8 +265,8 @@
                         @Html.HiddenFor(m => m.EditFields.Order.idOrder)
                         @Html.HiddenFor(m => m.EditFields.WebUser.idUser)
                         @Html.HiddenFor(m => m.EditFields.WebinarId)
-                        @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)
-                        @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)
+                        @*@Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)*@
+                        @*@Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)*@
                     </div>
 
                 }
@@ -300,8 +300,8 @@
                         @Html.HiddenFor(m => m.EditFields.Order.idOrder)
                         @Html.HiddenFor(m => m.EditFields.WebUser.idUser)
                         @Html.HiddenFor(m => m.EditFields.WebinarId)
-                        @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)
-                        @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)
+                        @*@Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)*@
+                        @*@Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)*@
                     </div>
                 }
             </div>

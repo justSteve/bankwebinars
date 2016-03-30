@@ -511,14 +511,14 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     var displayRowPriceViewModel = new DisplayRowPriceViewModel
                     {
-                        Discount = orderRow.Discount,
+                        //Discount = orderRow.Discount,
                         NumberOfAdditionalLocations = orderRow.AdditionalLocation.Count(),
                         AddressesForAdditionalLocations = addressesForAdditionalLocations,
-                        OrderStatus = orderRow.Order.OrderStatus,
-                        Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
+                        //OrderStatus = orderRow.Order.OrderStatus,
+                        //Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
                         PricesAndDiscounts =
                             _orderManagementService.CalculateOrderCost(orderRow.Order, optionsCost.Value),
-                        RowPrice = orderRow.RowPrice,
+                        //RowPrice = orderRow.RowPrice,
                         RegistrationType = orderRow.RegistrationType
                     };
 
@@ -799,13 +799,13 @@ namespace CUWebinars.Web.Core.Orchestrators
                     form.DisplayRowPriceViewModel = new DisplayRowPriceViewModel
                     {
                         PricesAndDiscounts = displayRowPriceViewModel,
-                        Discount = orderRow.Discount,
+                        //Discount = orderRow.Discount,
                         //NumberOfAdditionalLocations = additionalLocationsCount,
-                        OrderStatus = expressOrder.OrderStatus,
-                        Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
+                        //OrderStatus = expressOrder.OrderStatus,
+                        //Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
 
                         RegistrationType = orderRow.RegistrationType,
-                        RowPrice = orderRow.RowPrice
+                        //RowPrice = orderRow.RowPrice
                     };
 
                 }
@@ -827,6 +827,12 @@ namespace CUWebinars.Web.Core.Orchestrators
         public RegType FindRegType4ExpressPostback2(string idRegType, int q18QWebinarid18)
         {
             return _regTypeRepository.FindRegType4ExpressPostback2(idRegType, q18QWebinarid18);
+        }
+
+        public string GetDiscountCaption(Discount discount, OrderRow row, int? undo, int? previewOnly)
+        {
+           return _orderManagementService.CalculateDiscountRedemption(discount, row, null, 1);
+
         }
 
 

@@ -2459,6 +2459,7 @@
     <Content Include="Views\Shared\DisplayTemplates\ShowCompPerspectivesSubscription.cshtml" />
     <Content Include="Views\Shared\Admin\_Subscriptions.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowSubscriptions.cshtml" />
+    <Content Include="Views\Shared\Partials\_QuestionFromCheckout.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

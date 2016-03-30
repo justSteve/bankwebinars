@@ -624,21 +624,34 @@ namespace CUWebinars.Web.Controllers
 
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(idOrderRow);
                     model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType = regType;
+                    
+                    
 
                     var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
+
+                    var discountCaption = "";
                     if (pricesAndDiscounts.Discount == null)
+                    {
                         pricesAndDiscounts.Discount = new Discount();
+                    }
+                    else
+                    {
+                     discountCaption = _cartControllerOrchestrator.GetDiscountCaption(
+                            model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Discount,
+                            model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active), null, 1);
+                    }
+
+
 
                     _logger.Info("EditRegTypeTo: " + newRegType + " From: " + oldRegType + " on orderId: " + model.Order.idOrder);
-                    var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
-
-                    var updateRegTypeOnLegacy = dataOperations.UpdateRegTypeOnLegacy(idRegType.Value, model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar, model.Order.BillingEmail);
-
+                    var UpdateSuccessCaption = "Order updated to: " + newRegType ;
+                    
                     return
                         Json(
                             new
                             {
-                                updateRegTypeOnLegacy = updateRegTypeOnLegacy,
+                                DiscountCaption = discountCaption,
+                                UpdateSuccessCaption = UpdateSuccessCaption,
                                 regTypeShort = regType.OptionLabelShort,
                                 BasePrice = pricesAndDiscounts.UnitPrice,
                                 Discount = pricesAndDiscounts.TotalDiscount,
@@ -713,10 +726,9 @@ namespace CUWebinars.Web.Controllers
                     order.Origin = DomainConstants.OriginExpress;
 
                     order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType =
-                        //_cartControllerOrchestrator.GetRegTypeById(Convert.ToInt32(form.q10_registrationType));
-
-                    //RegType regType =
                         _cartControllerOrchestrator.FindRegType4ExpressPostback2(form.q10_registrationType, form.q18_q_webinarid18);
+
+                    _cartControllerOrchestrator.UpdateOrderPricing(order);
 
                     _logger.Info("ExpressPostback from: "+" - " + form.q11_orderid + _appHelper.GetUserAuditInfo() );
 

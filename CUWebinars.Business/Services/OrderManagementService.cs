@@ -524,7 +524,7 @@ namespace CUWebinars.Business.Services
                             {
                                 vOrder.OrderStatus = lOrder.OrderStatus;
                                 SaveChanges();
-                                _logger.Info("SynchOrder adjusted OrderStatus from V3 = {1} to Legacy = {0} on {2} ", lOrder.OrderStatus  , vOrder.OrderStatus, orderEmail);
+                                _logger.Info("SynchOrder adjusted OrderStatus from V3 = {1} to Legacy = {0} on {2} ", lOrder.OrderStatus, vOrder.OrderStatus, orderEmail);
                             }
 
                             //if (vOrder.OrderDate > DateTime.Parse("01/01/2016"))
@@ -762,7 +762,7 @@ namespace CUWebinars.Business.Services
 
                 order.AdminComments = existingJObject.ToString(Formatting.None);
 
-                CalculateDiscountRedemption(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Discount, order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active), 1);
+                //
             }
             _orderRepository.DeleteOrder(order);
         }
@@ -1011,7 +1011,7 @@ namespace CUWebinars.Business.Services
                 && row.RowPrice > 0
                 )
             {
-                pricesAndDiscounts.TaxAmount = Convert.ToDecimal(Convert.ToInt32(row.RowPrice) * .055);
+                pricesAndDiscounts.TaxAmount = Math.Round(row.RowPrice * Convert.ToDecimal(.055), 2);
             }
 
 
@@ -1259,7 +1259,7 @@ namespace CUWebinars.Business.Services
             {
                 Double[] i = _webinarRepository.GetCostOfUpgrades(order.OrderRows.Single().idRegType);
 
-                
+
 
                 Double basePrice = i[0];
                 Double cost6 = i[1];
@@ -2102,7 +2102,7 @@ namespace CUWebinars.Business.Services
             {
                 orderDate = row.Order.OrderDate;
             }
-            
+
             var regType = GetRegTypeOfOrderRow(row.idRegType);
 
 
@@ -2345,7 +2345,7 @@ namespace CUWebinars.Business.Services
                     if (discount.CreditsRemain > 0)
                     {
 
-                        forNotes.Append(CalculateDiscountRedemption(discount, row, null));
+                        forNotes.Append(CalculateDiscountRedemption(discount, row, null, null));
 
                     }
                     else
@@ -2359,9 +2359,10 @@ namespace CUWebinars.Business.Services
             return discount;
         }
 
-        public string CalculateDiscountRedemption(Discount discount, OrderRow row, int? undo)
+        public string CalculateDiscountRedemption(Discount discount, OrderRow row, int? undo, int? previewOnly)
         {
             var forNotes = new StringBuilder();
+            var existingDiscount = discount;
             var regTypeLabel = GetRegTypeOfOrderRow(row.idRegType).OptionLabel;
             if (undo != null)
             {
@@ -2403,7 +2404,6 @@ namespace CUWebinars.Business.Services
             }
             else
             {
-                forNotes.AppendFormat(Environment.NewLine + "Applied By: {0}", row.idOrder);
 
                 if (discount.DiscountType == DiscountType.Compensation)
                 {
@@ -2440,8 +2440,27 @@ namespace CUWebinars.Business.Services
                     }
                 }
             }
-            forNotes.AppendFormat(" Used: {0} Remain: {1}" + Environment.NewLine, discount.CreditsUsed, discount.CreditsRemain);
+            if (previewOnly != null)
+            {
+                forNotes.AppendFormat(" If applied to this order your package will have been used {0} times with: {1} remaining.", discount.CreditsUsed.ToString().Replace("-", "").Replace(".00", ""), discount.CreditsRemain.ToString().Replace(".00", ""));
+                discount.CreditsRemain = existingDiscount.CreditsRemain;
+                discount.CreditsUsed = existingDiscount.CreditsUsed;
+            }
+            else
+            {
+
+                forNotes.AppendFormat(Environment.NewLine + "Applied By: {0}", row.idOrder);
+                forNotes.AppendFormat(" Used: {0} Remain: {1}" + Environment.NewLine, discount.CreditsUsed,
+                    discount.CreditsRemain);
+
+            }
             return forNotes.ToString();
+        }
+
+        public string ApplyDiscountCode(int? discountId)
+        {
+            _logger.Fatal("not implemented: "+ discountId.Value);
+            return null;
         }
 
         private void RejectDiscount(OrderRow orderRow)

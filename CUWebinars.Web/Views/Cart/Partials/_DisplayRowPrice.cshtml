@@ -99,12 +99,14 @@
     {
         var rowAmount = new StringBuilder();
 
-        rowAmount.Append("<button id='revealOptions' class='btn btn-mini btn-default'> change?</button> " + Model.RegistrationType.OptionLabel + ": <span id='baseCost'>" + Model.PricesAndDiscounts.UnitPrice.ToString("c0") + "</span><br />");
+        rowAmount.Append("<button id='revealOptions' class='btn btn-mini btn-default'> change?</button> <span id=optionLabel>"
+            + Model.RegistrationType.OptionLabel + "</span>: <span id='baseCost'>"
+            + Model.PricesAndDiscounts.UnitPrice.ToString(CurrencyFormatToken) + "</span><br />");
 
-        if (Model.Discount == null)
+        if (Model.PricesAndDiscounts.Discount == null)
         {
-            rowAmount.Append("<button id='revealDiscountInput' class='btn btn-mini btn-default'> add discount?</button> " + GetDiscountedTextSpan() + "<br />");
-            
+            rowAmount.Append("<button id='revealDiscountInput' class='btn btn-mini btn-default'> add discount?</button> "
+                + GetDiscountedTextSpan() + "<br />");
         }
         else
         {
@@ -120,18 +122,41 @@
             rowAmount.Append(GetAdditionalLocationsTextSpan() + "<br>");
             //rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> edit?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
         }
+
+        //rowAmount.Append("<span id='showSubTotal'>Subtotal: " + Model.PricesAndDiscounts.UnitPrice.ToString(CurrencyFormatToken) + "</span><br />");
         if (Model.PricesAndDiscounts.TaxAmount > 0)
         {
-            rowAmount.Append("<span id='subTotal'>" + Model.RowPrice.ToString(CurrencyFormatToken) + "</span> <span id='tax'><br>Tax: <span id='taxAmt'>" + Model.PricesAndDiscounts.TaxAmount.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "<br></span></span>");
+            rowAmount.Append("<span  id='showTax'>Tax: <span id='taxAmt'>" + Model.PricesAndDiscounts.TaxAmount.ToString(CurrencyFormatToken) + "<br></span></span><br />");
         }
-        rowAmount.Append("<span id='totalPriceText'>Total Cost: <span id='totalPrice'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "</span></span>");
+        else
+        {
+            rowAmount.Append("<span class='hidden' id='showTax'>Tax: <span id='taxAmt'></span></span><br />");
+        }
+        rowAmount.Append("<span id='showTotalPrice'>Total Cost: <span id='totalPrice'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken) + "</span></span>");
 
         <div id="billingDetails" class="well" style="text-align: right;">
-            @Html.Raw(rowAmount.ToString())<br />
+
+            @Html.Raw(rowAmount.ToString())<br/>
 
             @{
                 @Html.Raw(GetStatusLabel(Model.OrderStatus))
             }
+            <div id="flyUpdateSuccessFlag"></div>
+            <div style="text-align: center; background-color: darkgray; color: black; padding: 10px 40px 10px 40px; width: 75%;" id="discountCaption">@ViewBag.DiscountCaption</div>
+
+        </div>
+    
+        <div>
+            <span><button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button></span> &nbsp; &nbsp; &nbsp;
+            @{
+                <span>
+                    <button data-toggle="modal" role="button" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button>
+                </span><br />
+
+            }
+            <div class="pull-right"><br /><br />
+                <div class="label label-default large" id="Canceller">Place cart on-hold/Cancel checkout</div>
+            </div>
         </div>
     }
 }

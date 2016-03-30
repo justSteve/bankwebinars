@@ -60,5 +60,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         ExpressCheckoutPostBackModel BuildExpressPostback(ExpressCheckoutPostBackModel form);
 
         RegType FindRegType4ExpressPostback2(string q10RegistrationType, int q18QWebinarid18);
+        string GetDiscountCaption(Discount discount, OrderRow single, int? undo, int? previewOnly);
     }
 }

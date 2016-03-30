@@ -71,19 +71,8 @@
                         <div id="showCartPrice">
                             @{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }
                         </div>
-                        <div style="font-size: x-small; text-align: center;">
-                            <span><button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button></span> &nbsp; &nbsp; &nbsp;
-                            @{
-                                <span>
-                                    <button data-toggle="modal" role="button" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button>
-                                </span><br />
-                                @*<span>Call 800-831-0678 to pay by credit card</span>*@
-                            }
-                        </div>
-                        <div class="pull-right">
-                            <a id="Canceller">[Cancel Checkout]</a><br />
-                            @*Sales tax may be added to orders in Wisconsin or Illinois.*@
-                        </div>
+                        
+                        
                     </div>
                 </div>
 

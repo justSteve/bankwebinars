@@ -3,7 +3,7 @@ registerDuringCheckout.institutionNames = {};
 
 
 registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, addressOptions, callback) {
-    
+
     L.clientLogger.info('registerDuringCheckout.initialize', { orderId: orderId, webinarId: webinarId, orderRowId: orderRowId, shippingAddressRequired: shippingAddressRequired });
 
     cartStateManager.setCancelOrderForm($('#cancelOrder'));
@@ -1033,17 +1033,17 @@ function hookUpChangeTypeLogic(dropDown) {
                 updatePriceOnNewSelection(valOfTypeChosenCurrent, registerDuringCheckout.totalPrice, dropDown);
             }
 
-            if (data.shippingDetailsRqrd === 'Yes') {
-                registerDuringCheckout.addressOptions['shippingAddressRequired'] = true;
-            } else {
-                registerDuringCheckout.addressOptions['shippingAddressRequired'] = false;
-            }
+            //if (data.shippingDetailsRqrd === 'Yes') {
+            //    registerDuringCheckout.addressOptions['shippingAddressRequired'] = true;
+            //} else {
+            //    registerDuringCheckout.addressOptions['shippingAddressRequired'] = false;
+            //}
         }).fail(commonFuncs.failCallBack);
     });
 }
 
 // This function's purpose is to update pricing details where the RegType DropDown has its selected value changed.
-// It also displays the Shipping Details modal form where the RegType chosen has a shipping address requirement.
+// TODO: Display 'Confirm Shipping Address' via the Shipping Details modal form where the RegType chosen has a shipping address requirement.
 function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
 
     registerDuringCheckout.gatherPricingData();
@@ -1065,11 +1065,20 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
     }).done(function (data) {
 
         if (data) {
-
-            $('#baseCost').html('$' + data.BasePrice + '.00');
-            $('#totalDiscount').html('$' + data.Discount + '.00').parent().addClass('muted');
-            $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '.00');
-            $('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + data.Total + '.00</span>');
+            if (data.Tax > 0) {
+                $('#showTax').removeClass("hidden");
+            } else {
+                $('#showTax').addClass("hidden");
+            }
+            alert(data.DiscountCaption);
+            $('#flyUpdateSuccessFlag').html(data.UpdateSuccessCaption).show();
+            $('#discountCaption').html(data.DiscountCaption);
+            $('#optionLabel').html(data.regTypeShort);
+            $('#baseCost').html('$' + data.BasePrice + '');
+            $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
+            $('#taxAmt').html(data.Tax + '');
+            $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
+            $('#totalPrice').html('Total Cost: <span id="totalPrice">$' + data.Total + '</span>');
         }
 
         dropDown.removeAttr('disabled');
