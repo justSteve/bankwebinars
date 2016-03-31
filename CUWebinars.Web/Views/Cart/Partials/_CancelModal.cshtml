@@ -1,27 +1,27 @@
-﻿<div id="CancelModal" class="modal hide fade">
+﻿<script language="javascript" type="text/javascript">
+    function openQWindow() {
+        window.open('https://form.jotform.com/60898267714974?idOrder=' + cartStateManager.getOrderRowId(), 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');
+    }
+</script>
+
+<div id="CancelModal" class="modal hide fade">
     @using (Html.BeginForm("CancelOrder", "Cart", null, FormMethod.Post, new { id = "cancelOrder" }))
     {
         <input type="hidden" name="id" id="cancelModalOrderId" />
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3 id="cancelCaption">Pause Cancel This Order?</h3>
+            <h3 id="cancelCaption">Pause or Cancel This Order?</h3>
         </div>
         <div id="cancelResult" class="modal-body">
             <p>
-                We understand it can be difficult to bring together all of the various bits of info that make up a webinar's registration. Which is the best 'type' of registration - live, recorded, or combo? Who needs to approve/attend/be notified? We want to make it easy for you to get the right mix of ingredients of our site's menu? If there's a piece of information we can provide like, the general process of attendance, what sorts of notifications and or deliverables are involved, just leave us a note below and we'll get back in touch quickly. Or maybe you just want to go share a cup of coffee with a co-worker - go ahead - we'll be ready anytime you want to resume this order!
+                We understand it can be difficult to bring together all of the various bits of info that make up a webinar's registration. If there's something we can explain better or information we can provide - just leave us a note below and we'll get back in touch quickly. Or maybe you just want to go share a cup of coffee with a co-worker - go ahead and just hit <i>Pause</i>. We'll be ready anytime you want to resume this order!
             </p>
         </div>
         <div class="modal-footer">
-            <input type="submit" id="pauseRegistration" value="Pause This Registration" class="btn btn-wa" />
+            <button class="btn btn-warning" id="pauseRegistration" onclick="javascript: openQWindow();">Pause This Registration </button>
             <a href="#" id="rtn" class="btn btn-inverse" data-dismiss="modal">Return To Checkout</a>&nbsp;&nbsp;
 
             <input type="submit" id="cancelRegistration" value="Delete This Registration" class="btn btn-danger" />
-            <div>
-                <div class="well well-small">
-                    @{Html.RenderPartial("Partials/_QuestionFromCheckout");}
-                </div>
-            </div>
         </div>
-
     }
 </div>

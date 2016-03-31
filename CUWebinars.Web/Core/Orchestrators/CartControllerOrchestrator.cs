@@ -150,7 +150,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public CheckoutConfirmViewModel BuildCheckoutConfirmViewModel(int? idOrder)
         {
-            _logger.Info("BuildCheckoutConfirmViewModel was passed: " + idOrder);
+
             if (idOrder.HasValue && idOrder.Value > 0)
             {
                 var order = _orderManagementService.GetOrderById(idOrder.Value);
@@ -194,16 +194,11 @@ namespace CUWebinars.Web.Core.Orchestrators
                             existingJObject = JObject.Parse(comments);
                             existingJObject.Add(newJson);
                         }
-                        //_membershipService.AddClaim(
-                        // _membershipService.GetUserAccountByEmail(_globalConfig.Tenant
-                        // , _globalConfig.TenantEmail)
-                        // , "SetUserAssignedToOrder",
-                        //   CUWebinars.Business.Constants.ClaimTypes.CommentAdmin
-                        //    );
 
                         order.AdminComments = existingJObject.ToString(Formatting.None);
 
                         OrderRow orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+
                         // This ViewModel is built here because it is re-used.
                         var additionalLocationsViewModel =
                             BuildAdditionalLocationsViewModel(orderRow, idOrder);

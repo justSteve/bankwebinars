@@ -40,13 +40,13 @@
                 if (!ReferenceEquals(null, ViewBag.DiscountCaption))
                 {
                     <div class="userDiscount-wrapper">
-                        @Html.Raw(ViewBag.DiscountCaption)
+                        @Html.Raw(ViewBag.DiscountStatus)
                     </div>
                 }
                 if (!ReferenceEquals(null, ViewBag.UserHasMessages))
                 {
-                    <div class="search-wrapper">
-                        @Html.Partial("_MessagesPartial")
+                    <div class="userDiscount-wrapper">
+                        @Html.Partial("_MessagesPartial/_UserHasMessage")
                     </div>
                 }
             }

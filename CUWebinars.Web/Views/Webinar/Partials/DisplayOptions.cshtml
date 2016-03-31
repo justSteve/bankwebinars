@@ -8,9 +8,19 @@
     var defaultCheck = "checked";
 
     var explainsOptionsBuilder = new StringBuilder();
-    explainsOptionsBuilder.Append("The following options are available for this webinar.<br>");
+    //explainsOptionsBuilder.Append("The following options are available for this webinar.<br>");
 }
-
+<style>
+    .modal {
+        width: 800px;
+    }
+     .regTypeDescOutdent {
+         border-top-style: dotted;
+         margin-top: 10px;
+         text-indent: -1em;
+         padding-left: 1em;
+     }
+</style>
 <div id="AttendRegTypes" class="modal hide fade">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -36,7 +46,7 @@
         else
         {
             <button type="button" class="btn-success btn pull-right" id="AddToCart"> Sign Up </button>
-        
+
             <div id="RegistrationType">
                 <dl>
                     @foreach (var myOption in Model.Options)
@@ -45,7 +55,7 @@
 
                         if (!myOption.Key.SKU.Contains("Upgrade"))
                         {
-                            explainsOptionsBuilder.Append("<span><b>" + myOption.Key.OptionLabel + "</b> - " + myOption.Key.OptionExplain + " This option costs <i>$" + myOption.Key.Price.ToString().Replace(".00", "") + "</i><br></span>");
+                            explainsOptionsBuilder.Append("<div class='regTypeDescOutdent'><span class='pull-right well well-small'> This option costs <i>$" + myOption.Key.Price.ToString().Replace(".00", "") + "</i><br></span><b>" + myOption.Key.OptionLabel.Replace(" (days)","").Replace(" (months)","") + "</b> - " + myOption.Key.OptionExplain + "</div>");
                             //font override to apply (days)
                             <dt style="font-weight: normal">
                                 @Html.Hidden(string.Concat("IsShippingRequired_", myOption.Key.idRegType), myOption.Value.ToString())

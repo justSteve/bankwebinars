@@ -325,8 +325,18 @@ namespace CUWebinars.Web.Controllers
             {
                 if (ID != null && ID > 0)
                 {
-                    ViewBag.Order = _cartControllerOrchestrator.LoadOrder(ID.Value);
-                    ViewBag.TaxAmount = model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount;
+                    var order =  _cartControllerOrchestrator.LoadOrder(ID.Value);
+                    ViewBag.Order = order;
+                    //ViewBag.TaxAmount = model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount;
+                    if ( order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).Discount != null)
+                    {
+                        ViewBag.DiscountCaption = _cartControllerOrchestrator.GetDiscountCaption(
+                            order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).Discount,
+                            order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active),
+                            null,
+                            1);
+                    }
+
                 }
                 else
                 {
