@@ -682,31 +682,6 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
         return false;
     });
 
-    //$('#RegisterFields_Institution').typeahead({
-    //    source: function(query, process) {
-    //        registerDuringCheckout.searchInstitution(query, process);
-    //    },
-
-    //    matcher: function(item) {
-    //        return true;
-    //    },
-
-    //    highlighter: function(name) {
-    //        return name;
-    //    },
-
-    //    sorter: function(items) {
-    //        return items;
-    //    },
-
-    //    updater: function(name) {
-    //        return name;
-    //    }
-
-    //});
-
-    $('#loadingSpinner').remove();
-
 };
 
 registerDuringCheckout.gatherPricingData = function () {
@@ -1070,7 +1045,7 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
             } else {
                 $('#showTax').addClass("hidden");
             }
-            alert(data.DiscountCaption);
+
             $('#flyUpdateSuccessFlag').html(data.UpdateSuccessCaption).show();
             $('#discountCaption').html(data.DiscountCaption);
             $('#optionLabel').html(data.regTypeShort);
@@ -1078,7 +1053,7 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
             $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
             $('#taxAmt').html(data.Tax + '');
             $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
-            $('#totalPrice').html('Total Cost: <span id="totalPrice">$' + data.Total + '</span>');
+            $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
         }
 
         dropDown.removeAttr('disabled');

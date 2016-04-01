@@ -2442,7 +2442,7 @@ namespace CUWebinars.Business.Services
             }
             if (previewOnly != null)
             {
-                forNotes.AppendFormat(" If applied to this order your package will have been used {0} times with: {1} remaining.", discount.CreditsUsed.ToString().Replace("-", "").Replace(".00", ""), discount.CreditsRemain.ToString().Replace(".00", ""));
+                forNotes.AppendFormat(" If applied to this order your package will have been used {0} times with {1} remaining.", discount.CreditsUsed.ToString().Replace("-", "").Replace(".00", ""), discount.CreditsRemain.ToString().Replace(".00", ""));
                 discount.CreditsRemain = existingDiscount.CreditsRemain;
                 discount.CreditsUsed = existingDiscount.CreditsUsed;
             }
