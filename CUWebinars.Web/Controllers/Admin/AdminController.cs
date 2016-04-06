@@ -768,6 +768,82 @@ namespace CUWebinars.Web.Controllers.Admin
 
         [HttpPost]
         [AllowAnonymous]
+        public String AuditDiscount(DiscountAudit posted)
+        {
+
+            Discount discount = _orderManagementService.GetDiscountById(Convert.ToInt32(posted.idDiscount));
+            Discount discountLegacy = _orderManagementService.GetDiscountByIdLegacy(Convert.ToInt32(posted.idDiscount));
+
+            IList<WebUser> users = _orderManagementService.GetWebUsersOfDiscount(discount.idDiscount);
+            IList<Order> ordersByDiscount = _orderManagementService.GetOrdersByDiscount(posted.idDiscount);
+            IList<Order> ordersWithDiscount = new List<Order>();
+
+            var sb = new StringBuilder();
+            var authUsers = new StringBuilder();
+
+            if (!ReferenceEquals(users, null) && users.Count == 1)
+            {
+                authUsers.AppendLine("The only address authorized for AutoCheckout is " + users.Single().email);
+            }
+            else
+            {
+                if (!ReferenceEquals(users, null))
+                {
+                    authUsers.AppendLine("These addresses are authorized for AutoCheckout: ");
+                    foreach (var user in users)
+                    {
+                        authUsers.AppendLine(user.email);
+                    }
+                }
+                else
+                {
+                    authUsers.AppendLine("No authorized users were found.");
+                }
+            }
+
+            try
+            {
+                sb.AppendLine("Starting Discount: " + discount.idDiscount + " Used: " + posted.CreditsUsed + " Remain: " + posted.CreditsRemain);
+                var trackUsed = posted.CreditsUsed;
+                var trackRemain = posted.CreditsRemain;
+
+                foreach (var order in ordersByDiscount)
+                {
+
+                    var DiscountCaption = _orderManagementService.CalculateDiscountRedemption(discount,
+                         order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active), null, 0);
+
+                    var thisUse = DiscountCaption.Split(',')[0];
+                    var used = DiscountCaption.Split(',')[1];
+                    var remain = DiscountCaption.Split(',')[2];
+
+                    trackUsed = trackUsed + Convert.ToDecimal(thisUse);
+                    trackRemain = trackRemain - Convert.ToDecimal(thisUse);
+
+                    sb.AppendLine("    Order " + order.idOrder + " deducts: " + thisUse);
+
+                    ordersWithDiscount.Add(order);
+                    
+                }
+                sb.AppendLine("Calculated usage = " + trackUsed + "-" + trackRemain + " Stored = " + discount.CreditsUsed + "-" + discount.CreditsRemain);
+                
+                return authUsers.ToString() +  sb.ToString();
+                //return Json(new { Result = "{" + sb.ToString() + "}" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                var errString = string.Format("Discount audit failed on {0} - {1} with msg: {2}", posted.idDiscount, posted.DiscountCode, ex.Message);
+                Elmah.ErrorSignal.FromCurrentContext().Raise(ex);
+                _logger.ErrorException(errString, ex);
+
+                return errString + sb;
+                //return Json(new { Result = errString + sb.ToString() }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+        [HttpPost]
+        [AllowAnonymous]
         public void ExpressCheckout(JotFormWebHook postback)
         {
             string formFields = Request.Form.ToString();
@@ -2284,7 +2360,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             //submitted by edit-forms-in-grid.js | submitUpdateAddLocsForm
 
-            additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(additionalLocations).ToList();
+            additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(additionalLocations.ToList()).ToList();
 
             var orderRow = _orderManagementService.GetOrderRowById(orderRowId);
 
@@ -2573,7 +2649,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                             .ToList();
                                 }
                             }
-                            else if (searchTerm=="aa")
+                            else if (searchTerm == "aa")
                             {
                                 dtsource = _dataTablesService.GetOrdersByPending(affiliateId, out totalNumberOrders).ToList();
                             }
@@ -2652,12 +2728,12 @@ namespace CUWebinars.Web.Controllers.Admin
         //        try
         //        {
         //            dtsource = _orderManagementService.GetSubscriptionsAll(affiliateId, out totalNumberOrders).ToList();
-                    
+
         //            // use automapper to flatten out the order records, in this specific case the data 
         //            //  model has circular references which cause problems with JSON serialization
         //            List<DiscountDTO> dtoSource = new List<DiscountDTO>();
         //            Mapper.Map(dtsource, dtoSource);
-                    
+
         //            List<String> columnSearch = new List<string>();
         //            foreach (var col in param.Columns)
         //            {

@@ -19,6 +19,7 @@ using System.Net.Configuration;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Http;
@@ -208,7 +209,7 @@ namespace CUWebinars.Web
             // Note: in Web.config, httpErrors is as follows: <httpErrors existingResponse="PassThrough" />
             // This is required (or set existingResponse to "auto"), otherwise Response.TrySkipIisCustomErrors
             // is ignored.
-            ;Response.TrySkipIisCustomErrors = true;
+            ; Response.TrySkipIisCustomErrors = true;
 
             if (httpException != null)
             {
@@ -257,203 +258,220 @@ namespace CUWebinars.Web
 
         private void Session_Start(object sender, EventArgs e)
         {
-
-            var ttsWebinarsContext = new TTSWebinarsContext();
-            try
+            bool iscrawler = Regex.IsMatch(Request.UserAgent,
+                @"bot|crawler|baiduspider|80legs|ia_archiver|voyager|curl|wget|yahoo! slurp|mediapartners-google",
+                RegexOptions.IgnoreCase);
+            if (!iscrawler)
             {
-                IAffiliateRepository affiliateRepository = new AffiliateRepository(ttsWebinarsContext);
-                IInstitutionRepository institutionRepository = new InstitutionRepository(ttsWebinarsContext);
-
-
-                StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(AppConst.DEFAULT_AFFILIATE));
-                //StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(AppConst.DEFAULT_AFFILIATE, a => a.WebUser));
-                StateService.SetValue("AValidInstitution", institutionRepository.FindFirst());
-
-                if (User != null && User.Identity.IsAuthenticated)
+                var ttsWebinarsContext = new TTSWebinarsContext();
+                try
                 {
-                    ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+                    IAffiliateRepository affiliateRepository = new AffiliateRepository(ttsWebinarsContext);
+                    IInstitutionRepository institutionRepository = new InstitutionRepository(ttsWebinarsContext);
 
-                    if (claimsIdentityOfAuthenticatedUser.HasClaim(
-                        (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
+
+                    StateService.SetValue(WebUiConstants.CurrentAffiliate,
+                        affiliateRepository.FindByIdWithIncluding(AppConst.DEFAULT_AFFILIATE));
+                    //StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(AppConst.DEFAULT_AFFILIATE, a => a.WebUser));
+                    StateService.SetValue("AValidInstitution", institutionRepository.FindFirst());
+
+                    if (User != null && User.Identity.IsAuthenticated)
                     {
-                        var claimTTSDomain =
-                            claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate)
-                                .First()
-                                .Value;
-                        StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.LoadByTTSDomain(claimTTSDomain));
+                        ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
 
-                    }
-                }
-
-                //This session var lets us understand the origin of the Affiliate session - 
-                //...answers the question - How was the Session Affiliate determined?
-                //Here we the initial value to 'default' ... later code will
-                // override if conditions dictate.
-                StateService.SetValue("AffiliateSessionSource", "default" + Pipe + AppConst.DEFAULT_AFFILIATE);
-                //StateService.SetValue(WebUiConstants.SubdomainBranding, ConfigurationManager.AppSettings[AppConst.TESTING_URL]);  //TODO: [dar] I think this can be deleted
-
-                //following are values to be stored for audit purposes.
-                if (HttpContext.Current != null && HttpContext.Current.Request.UrlReferrer != null)
-                    StateService.SetValue(WebUiConstants.SubdomainBranding,
-                        HttpContext.Current.Request.UrlReferrer.ToString().Trim());
-
-                if (HttpContext.Current != null)
-                {
-                    StateService.SetValue(WebUiConstants.FirstPage, HttpContext.Current.Request.Url.ToString().Trim());
-                    StateService.SetValue(WebUiConstants.InitialQueryString, Request.Url.Query);
-                    StateService.SetValue(WebUiConstants.SessionId, HttpContext.Current.Session.SessionID);
-
-                    //DETERMINE CURRENT AFFILIATE
-                    //MEHTOD 1: VIA QUERY STRING -- idAff=[idUserAff]   
-                    if (!string.IsNullOrEmpty(Request.QueryString[WebUiConstants.AffiliateId]))
-                    {
-                        int loadAff;
-
-                        if (int.TryParse(Request.QueryString[WebUiConstants.AffiliateId], out loadAff))
+                        if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                            (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
                         {
-                            //Affiliate foundAff = affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser);
-                            Affiliate foundAff = affiliateRepository.FindByIdWithIncluding(loadAff);
+                            var claimTTSDomain =
+                                claimsIdentityOfAuthenticatedUser.Claims.Where(
+                                    c => c.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate)
+                                    .First()
+                                    .Value;
+                            StateService.SetValue(WebUiConstants.CurrentAffiliate,
+                                affiliateRepository.LoadByTTSDomain(claimTTSDomain));
 
-                            if (!ReferenceEquals(foundAff, null))
+                        }
+                    }
+
+                    //This session var lets us understand the origin of the Affiliate session - 
+                    //...answers the question - How was the Session Affiliate determined?
+                    //Here we the initial value to 'default' ... later code will
+                    // override if conditions dictate.
+                    StateService.SetValue("AffiliateSessionSource", "default" + Pipe + AppConst.DEFAULT_AFFILIATE);
+                    //StateService.SetValue(WebUiConstants.SubdomainBranding, ConfigurationManager.AppSettings[AppConst.TESTING_URL]);  //TODO: [dar] I think this can be deleted
+
+                    //following are values to be stored for audit purposes.
+                    if (HttpContext.Current != null && HttpContext.Current.Request.UrlReferrer != null)
+                        StateService.SetValue(WebUiConstants.SubdomainBranding,
+                            HttpContext.Current.Request.UrlReferrer.ToString().Trim());
+
+                    if (HttpContext.Current != null)
+                    {
+                        StateService.SetValue(WebUiConstants.FirstPage,
+                            HttpContext.Current.Request.Url.ToString().Trim());
+                        StateService.SetValue(WebUiConstants.InitialQueryString, Request.Url.Query);
+                        StateService.SetValue(WebUiConstants.SessionId, HttpContext.Current.Session.SessionID);
+
+                        //DETERMINE CURRENT AFFILIATE
+                        //MEHTOD 1: VIA QUERY STRING -- idAff=[idUserAff]   
+                        if (!string.IsNullOrEmpty(Request.QueryString[WebUiConstants.AffiliateId]))
+                        {
+                            int loadAff;
+
+                            if (int.TryParse(Request.QueryString[WebUiConstants.AffiliateId], out loadAff))
                             {
-                                StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(loadAff));
-                                //StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser));
-                                logger.Info(string.Format("Resolving Affiliate via query string with id {0}", loadAff));
+                                //Affiliate foundAff = affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser);
+                                Affiliate foundAff = affiliateRepository.FindByIdWithIncluding(loadAff);
+
+                                if (!ReferenceEquals(foundAff, null))
+                                {
+                                    StateService.SetValue(WebUiConstants.CurrentAffiliate,
+                                        affiliateRepository.FindByIdWithIncluding(loadAff));
+                                    //StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser));
+                                    logger.Info(string.Format("Resolving Affiliate via query string with id {0}",
+                                        loadAff));
+
+                                }
+                                else
+                                {
+                                    logger.Info(SessionStartError + "failed to load idAff code: " +
+                                                HttpContext.Current.Request.Url);
+                                }
+                                //    tries to lighten the expense of session start by removing try/catch
+                                //try
+                                //{
+                                //    StateService.SetValue("AffiliateSessionSource", WebUiConstants.AffiliateId + Pipe + loadAff);
+                                //    // determine the current affiliate
+                                //    StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser));
+                                //    logger.Info(string.Format("Resolving Affiliate via query string with id {0}", loadAff));
+
+                                //}
+                                //catch (Exception ex)
+                                //{
+                                //    logger.Fatal(ex);
+                                //    logger.Info(SessionStartError + "failed to load idAff code: " +
+                                //                HttpContext.Current.Request.Url.ToString());
+                                //    throw;
+                                //}
+                            }
+                            else
+                            {
+                                logger.Error(SessionStartError + "Non-numeric idAff: " +
+                                             HttpContext.Current.Request.QueryString);
+                            }
+                        }
+                    }
+
+
+                    var subdomainBranding = StateService.GetValue<string>(WebUiConstants.SubdomainBranding);
+                    //METHOD 2: VIA THE DOMAIN NAME BEING RUN
+                    //e.g. http://webinars.cftws.org - means CurrentAffiliate should be 'cftws'
+                    if (!string.IsNullOrEmpty(subdomainBranding))
+                    {
+                        logger.Info(string.Format("Resolving Affiliate via subdomainBranding {0}", subdomainBranding));
+
+                        var subdomainBrandType = subdomainBranding.Split('.').FirstOrDefault();
+                        if (!string.IsNullOrEmpty(subdomainBrandType) &&
+                            subdomainBrandType.Equals(WebUiConstants.Webinars, StringComparison.OrdinalIgnoreCase))
+                        {
+                            //we discover we are running with an affiliate's subdomain
+                            string affilliateDomain =
+                                ConfigurationManager.AppSettings[AppConst.TESTING_URL].Split('.')[1];
+                            try
+                            {
+                                StateService.SetValue("AffiliateSessionSource", "Sub" + Pipe + affilliateDomain);
+                                //   the name of the property 'ttsDomain' is the abbreviated name chosen
+                                //   for use (as a shortcut or nicname) by us to refer to a given affiliate. It may or may not
+                                //   be literally the Domain Name used by the given affiliate.
+
+                                StateService.SetValue(WebUiConstants.CurrentAffiliate,
+                                    affiliateRepository.LoadByTTSDomain(affilliateDomain) ??
+                                    affiliateRepository.LoadByTTSDomain("bennett"));
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.Error(string.Format("Failed to resolving Affiliate via subdomainBranding {0}",
+                                    subdomainBranding));
+                                logger.Fatal(ex);
+                                throw;
+                            }
+                        }
+                    }
+
+                    var allCookies = new StringBuilder();
+
+                    for (var i = 0; i < Request.Cookies.Count; i++)
+                    {
+                        HttpCookie aCookie = Request.Cookies[i];
+
+                        if (i > 0) allCookies.Append(", ");
+                        if (aCookie != null)
+                        {
+
+                            allCookies.Append("\"CookieName\": \"" + aCookie.Name);
+
+                            if (aCookie.HasKeys)
+                            {
+                                NameValueCollection cookieValues = aCookie.Values;
+
+                                string[] cookieValueNames = cookieValues.AllKeys;
+                                allCookies.Append("\":  {\"SubKeys:\"");
+                                for (int j = 0; j < cookieValues.Count; j++)
+                                {
+                                    string subkeyName = Server.HtmlEncode(cookieValueNames[j]);
+                                    string subkeyValue = Server.HtmlEncode(cookieValues[j]);
+                                    if (!subkeyName.StartsWith("__") &&
+                                        !subkeyName.StartsWith("Fed")
+                                        )
+                                    {
+                                        allCookies.Append("\"SubkeyName: \"" + subkeyName);
+                                        allCookies.Append("\", \"SubkeyValue: \"" + subkeyValue);
+                                    }
+                                }
+                                allCookies.Append("\"},");
 
                             }
                             else
                             {
-                                logger.Info(SessionStartError + "failed to load idAff code: " +
-                                            HttpContext.Current.Request.Url);
+                                allCookies.Append("\", \"Value\": \"" + Server.HtmlEncode(aCookie.Value) + "\"");
                             }
-                            //    tries to lighten the expense of session start by removing try/catch
-                            //try
-                            //{
-                            //    StateService.SetValue("AffiliateSessionSource", WebUiConstants.AffiliateId + Pipe + loadAff);
-                            //    // determine the current affiliate
-                            //    StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser));
-                            //    logger.Info(string.Format("Resolving Affiliate via query string with id {0}", loadAff));
-
-                            //}
-                            //catch (Exception ex)
-                            //{
-                            //    logger.Fatal(ex);
-                            //    logger.Info(SessionStartError + "failed to load idAff code: " +
-                            //                HttpContext.Current.Request.Url.ToString());
-                            //    throw;
-                            //}
-                        }
-                        else
-                        {
-                            logger.Error(SessionStartError + "Non-numeric idAff: " + HttpContext.Current.Request.QueryString);
                         }
                     }
-                }
 
-
-                var subdomainBranding = StateService.GetValue<string>(WebUiConstants.SubdomainBranding);
-                //METHOD 2: VIA THE DOMAIN NAME BEING RUN
-                //e.g. http://webinars.cftws.org - means CurrentAffiliate should be 'cftws'
-                if (!string.IsNullOrEmpty(subdomainBranding))
-                {
-                    logger.Info(string.Format("Resolving Affiliate via subdomainBranding {0}", subdomainBranding));
-
-                    var subdomainBrandType = subdomainBranding.Split('.').FirstOrDefault();
-                    if (!string.IsNullOrEmpty(subdomainBrandType) &&
-                        subdomainBrandType.Equals(WebUiConstants.Webinars, StringComparison.OrdinalIgnoreCase))
+                    StateService.SetValue(WebUiConstants.FirstCookies, allCookies.ToString());
+                    if (User.Identity.IsAuthenticated)
                     {
-                        //we discover we are running with an affiliate's subdomain
-                        string affilliateDomain =
-                            ConfigurationManager.AppSettings[AppConst.TESTING_URL].Split('.')[1];
-                        try
-                        {
-                            StateService.SetValue("AffiliateSessionSource", "Sub" + Pipe + affilliateDomain);
-                            //   the name of the property 'ttsDomain' is the abbreviated name chosen
-                            //   for use (as a shortcut or nicname) by us to refer to a given affiliate. It may or may not
-                            //   be literally the Domain Name used by the given affiliate.
-
-                            StateService.SetValue(WebUiConstants.CurrentAffiliate,
-                                affiliateRepository.LoadByTTSDomain(affilliateDomain) ??
-                                affiliateRepository.LoadByTTSDomain("bennett"));
-                        }
-                        catch (Exception ex)
-                        {
-                            logger.Error(string.Format("Failed to resolving Affiliate via subdomainBranding {0}", subdomainBranding));
-                            logger.Fatal(ex);
-                            throw;
-                        }
+                        logger.Info("{\"Name\": \"" + User.Identity.Name
+                                    + "\", \"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
+                                    + "\", \"QueryString\": \"" +
+                                    StateService.GetValue<string>(WebUiConstants.InitialQueryString)
+                                    + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
+                                    + "\", \"FirstCookies\": {" +
+                                    StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
+                            );
                     }
-                }
-
-                var allCookies = new StringBuilder();
-
-                for (var i = 0; i < Request.Cookies.Count; i++)
-                {
-                    HttpCookie aCookie = Request.Cookies[i];
-
-                    if (i > 0) allCookies.Append(", ");
-                    if (aCookie != null)
+                    else
                     {
-
-                        allCookies.Append("\"CookieName\": \"" + aCookie.Name);
-
-                        if (aCookie.HasKeys)
-                        {
-                            NameValueCollection cookieValues = aCookie.Values;
-
-                            string[] cookieValueNames = cookieValues.AllKeys;
-                            allCookies.Append("\":  {\"SubKeys:\"");
-                            for (int j = 0; j < cookieValues.Count; j++)
-                            {
-                                string subkeyName = Server.HtmlEncode(cookieValueNames[j]);
-                                string subkeyValue = Server.HtmlEncode(cookieValues[j]);
-                                if (!subkeyName.StartsWith("__") &&
-                                    !subkeyName.StartsWith("Fed")
-                                    )
-                                {
-                                    allCookies.Append("\"SubkeyName: \"" + subkeyName);
-                                    allCookies.Append("\", \"SubkeyValue: \"" + subkeyValue);
-                                }
-                            }
-                            allCookies.Append("\"},");
-
-                        }
-                        else
-                        {
-                            allCookies.Append("\", \"Value\": \"" + Server.HtmlEncode(aCookie.Value) + "\"");
-                        }
+                        logger.Info("Anon Session Starts with: {"
+                                    + "\"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
+                                    + "\", \"QueryString\": \"" +
+                                    StateService.GetValue<string>(WebUiConstants.InitialQueryString)
+                                    + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
+                                    + "\", \"FirstCookies\": {" +
+                                    StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
+                            );
                     }
                 }
-
-                StateService.SetValue(WebUiConstants.FirstCookies, allCookies.ToString());
-                if (User.Identity.IsAuthenticated)
+                catch (Exception exception)
                 {
-                    logger.Info("{\"Name\": \"" + User.Identity.Name
-                        + "\", \"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
-                        + "\", \"QueryString\": \"" + StateService.GetValue<string>(WebUiConstants.InitialQueryString)
-                        + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
-                        + "\", \"FirstCookies\": {" + StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
-                        );
+                    logger.Fatal("SessionStart Exception!!!", exception);
+                    Console.WriteLine(exception);
                 }
-                else
+                finally
                 {
-                    logger.Info("Anon Session Starts with: {"
-                        + "\"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
-                        + "\", \"QueryString\": \"" + StateService.GetValue<string>(WebUiConstants.InitialQueryString)
-                        + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
-                        + "\", \"FirstCookies\": {" + StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
-                        );
+                    //ttsWebinarsContext.Database.Connection.Close(); --> THIS LINE PROBABLY NOT NECESSARY. DISPOSE SHOULD DO THIS FOR US.
+                    ttsWebinarsContext.Dispose();
                 }
-            }
-            catch (Exception exception)
-            {
-                logger.Fatal("SessionStart Exception!!!", exception);
-                Console.WriteLine(exception);
-            }
-            finally
-            {
-                //ttsWebinarsContext.Database.Connection.Close(); --> THIS LINE PROBABLY NOT NECESSARY. DISPOSE SHOULD DO THIS FOR US.
-                ttsWebinarsContext.Dispose();
             }
         }
     }

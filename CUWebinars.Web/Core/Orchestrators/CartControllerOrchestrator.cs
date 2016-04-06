@@ -830,6 +830,14 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         }
 
+        public string UpdateRegTypeOnLegacy(int idRegType, int idWebinar, string billingEmail)
+        {
+            var dataOp = new DataOperations(_globals.DefaultConnectionString);
+            return dataOp.UpdateRegTypeOnLegacy(idRegType, idWebinar, billingEmail)
+            ;
+
+        }
+
 
         public OrderRow GetOrderRowLoaded(int idOrderRow)
         {

@@ -180,9 +180,9 @@ namespace CUWebinars.Web.Helpers
         }
         public SessionStartInfo GetSessionStartInfo()
         {
-            
+
             HttpRequest request = HttpContext.Current.Request;
-            
+
             var info = new SessionStartInfo
             {
                 RemoteAddress = _request.ServerVariables["REMOTE_ADDR"],
@@ -192,9 +192,9 @@ namespace CUWebinars.Web.Helpers
                 UserCookie = _request.ServerVariables["HTTP_COOKIE"],
                 FirstPage = _stateService.GetValue<string>("FirstPage"),
                 Elmah = _stateService.GetValue<string>("Elmah"),
-                SessionRoot= _stateService.GetValue<string>("SessionRoot"),
+                SessionRoot = _stateService.GetValue<string>("SessionRoot"),
                 SessionID = _stateService.GetValue<string>(WebUiConstants.SessionId),
-                AffiliateSessionSource =  _stateService.GetValue<string>("AffiliateSessionSource")
+                AffiliateSessionSource = _stateService.GetValue<string>("AffiliateSessionSource")
             };
 
             return info;
@@ -314,38 +314,37 @@ namespace CUWebinars.Web.Helpers
             return emails;
         }
 
-        public IEnumerable<AdditionalLocation> CheckAdditionalLocationsForValidEmail(IEnumerable<AdditionalLocation> additionalLocations)
+        public IList<AdditionalLocation> CheckAdditionalLocationsForValidEmail(IList<AdditionalLocation> additionalLocations)
         {
 
-            IEnumerable<AdditionalLocation> areValid = null;
+            IList<AdditionalLocation> areValid = new List<AdditionalLocation>();
             if (additionalLocations != null)
-                foreach (var check in additionalLocations.ToList())
+                foreach (var check in additionalLocations)
                 {
                     try
                     {
-
                         var addr = new System.Net.Mail.MailAddress(check.Email);
-                        areValid = areValid.Concat(new[] { check });
+                        areValid.Add(check);
                     }
-                    catch
+                    catch (Exception ex)
                     {
                         var placeholder = "";
                     }
                 }
-            return areValid;           
+            return areValid;
         }
 
         public bool CheckIsEmailValid(string email)
         {
-                 try
-                {
-                    var addr = new System.Net.Mail.MailAddress(email);
-                    return true;
-                }
-                catch
-                {
-                    return false;
-                }
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
 
         }
 

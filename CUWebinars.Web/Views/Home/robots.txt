@@ -1,4 +1,4 @@
 ﻿User-agent: *
-Disallow: /cgi-bin/
-Disallow: /tmp/
-Disallow: /~joe/
+Disallow: /admin/
+Disallow: /cart/ExpressCheckout
+Disallow: /Cart/Signup2

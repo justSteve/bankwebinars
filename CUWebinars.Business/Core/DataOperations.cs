@@ -1544,30 +1544,36 @@ namespace CUWebinars.Business.Core
 
         }
 
-        public IList<RegType> FindAllPossibleRegTypesByWebinarId(int id)
+        public List<int> FindAllPossibleRegTypesByWebinarId(int id)
         {
+            List<int> regTypeIds = new List<int>();
 
-            string retClaim = "";
             using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
             {
                 sqlConnection.Open();
-
-                using (var GetOnDemandClaimByCode = new SqlCommand("GetOnDemandClaimByCode", sqlConnection))
+                //--EXEC  @idWebinar = 2016, @label = 'Live Plus Five', @findAllPossible = null
+                using (var myConn = new SqlCommand("GetRegTypeByWebinarAndLabel", sqlConnection))
                 {
                     try
                     {
-                        GetOnDemandClaimByCode.Connection = sqlConnection;
-                        GetOnDemandClaimByCode.CommandType = CommandType.StoredProcedure;
-                        var onDemandCodeParameter = new SqlParameter
+                        myConn.Connection = sqlConnection;
+                        myConn.CommandType = CommandType.StoredProcedure;
+                        var idWebinar = new SqlParameter
                         {
                             SqlDbType = SqlDbType.Int,
                             ParameterName = "@idWebinar",
                             Value = id
                         };
-                        GetOnDemandClaimByCode.Parameters.Add(onDemandCodeParameter);
-                        retClaim = GetOnDemandClaimByCode.ExecuteScalar().ToString();
+                        myConn.Parameters.Add(idWebinar);
 
-
+                        using (var reader = myConn.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var thisRegType = (Convert.ToInt32(reader[0]));
+                                regTypeIds.Add(thisRegType);
+                            }
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -1576,9 +1582,9 @@ namespace CUWebinars.Business.Core
                             errorLogger.CommandText =
                                 "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
                             errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
-                            errorLogger.CommandText += "'FindAllPostEventClaims' ,";
-                            errorLogger.CommandText += "9 ,9 ,9 ,'FindAllPostEventClaims', 9 ,";
-                            errorLogger.CommandText += "'error at FindAllPostEventClaims " +
+                            errorLogger.CommandText += "'findAllPossible' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'findAllPossible', 9 ,";
+                            errorLogger.CommandText += "'error at findAllPossible " +
                                                        ex.Message.Replace("'", "|") + "')";
 
                             errorLogger.ExecuteNonQuery();
@@ -1587,7 +1593,7 @@ namespace CUWebinars.Business.Core
                     }
                 }
             }
-            return null;
+            return regTypeIds;
 
 
 
@@ -2041,6 +2047,18 @@ namespace CUWebinars.Business.Core
                 }
                 return result;
             }
+        }
+
+        public Discount FindDiscountByIdLegacy(int id)
+        {
+            var discount = new Discount
+            {
+                idDiscount = id,
+                CreditsRemain = 0
+
+            };
+
+            return discount;
         }
     }
 }

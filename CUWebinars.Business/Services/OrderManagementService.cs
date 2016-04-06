@@ -1993,6 +1993,11 @@ namespace CUWebinars.Business.Services
             throw new NotImplementedException();
         }
 
+        public IList<Order> GetOrdersByDiscount(int idDiscount)
+        {
+            return _orderRepository.GetOrdersByDiscount(idDiscount);
+        }
+
 
         public IList<Order> GetV3OrdersByOnDemandClaim()
         {
@@ -2364,6 +2369,8 @@ namespace CUWebinars.Business.Services
             var forNotes = new StringBuilder();
             var existingDiscount = discount;
             var regTypeLabel = GetRegTypeOfOrderRow(row.idRegType).OptionLabel;
+
+            decimal thisUse = 0;
             if (undo != null)
             {
                 forNotes.AppendFormat(Environment.NewLine + "--UnDo Usage: {0}", +row.idOrder);
@@ -2404,7 +2411,6 @@ namespace CUWebinars.Business.Services
             }
             else
             {
-
                 if (discount.DiscountType == DiscountType.Compensation)
                 {
                     discount.CreditsRemain = discount.CreditsRemain - 1;
@@ -2412,29 +2418,35 @@ namespace CUWebinars.Business.Services
                 }
                 if (discount.DiscountType == DiscountType.Subscription)
                 {
+
                     // allows re-apply of discount due to canceled order
                     if (regTypeLabel.StartsWith("Live Plus Five"))
                     {
+                        thisUse = 1;
                         discount.CreditsRemain = discount.CreditsRemain - 1;
                         discount.CreditsUsed = discount.CreditsUsed + 1;
                     }
                     if (regTypeLabel == ("OnDemand Recording Only"))
                     {
+                        thisUse = 1;
                         discount.CreditsRemain = discount.CreditsRemain - 1M;
                         discount.CreditsUsed = discount.CreditsUsed + 1M;
                     }
                     if (regTypeLabel == ("CD-ROM and Hardcopy Handouts"))
                     {
+                        thisUse = 1.25M;
                         discount.CreditsRemain = discount.CreditsRemain - 1.25M;
                         discount.CreditsUsed = discount.CreditsUsed + 1.25M;
                     }
                     if (regTypeLabel.StartsWith("Live Plus Six"))
                     {
+                        thisUse = 1.25M;
                         discount.CreditsRemain = discount.CreditsRemain - 1.25M;
                         discount.CreditsUsed = discount.CreditsUsed + 1.25M;
                     }
                     if (regTypeLabel == ("Premier Package"))
                     {
+                        thisUse = 1.5M;
                         discount.CreditsRemain = discount.CreditsRemain - 1.5M;
                         discount.CreditsUsed = discount.CreditsUsed + 1.5M;
                     }
@@ -2442,7 +2454,11 @@ namespace CUWebinars.Business.Services
             }
             if (previewOnly != null)
             {
-                forNotes.AppendFormat(" If applied to this order your package will have been used {0} times with {1} remaining.", discount.CreditsUsed.ToString().Replace("-", "").Replace(".00", ""), discount.CreditsRemain.ToString().Replace(".00", ""));
+                if (previewOnly == 0)
+                {
+                    forNotes.Append(thisUse + "," + discount.CreditsUsed + "," + discount.CreditsRemain);
+                }
+                forNotes.AppendFormat(" If applied to this order, {0} will be deducted from your package. It will have been used {1} times with {2} remaining.", thisUse , discount.CreditsUsed.ToString().Replace("-", "").Replace(".00", ""), discount.CreditsRemain.ToString().Replace(".00", ""));
                 discount.CreditsRemain = existingDiscount.CreditsRemain;
                 discount.CreditsUsed = existingDiscount.CreditsUsed;
             }
@@ -2463,6 +2479,11 @@ namespace CUWebinars.Business.Services
             return null;
         }
 
+        public IList<WebUser> GetWebUsersOfDiscount(int idDiscount)
+        {
+            return _webUserRepository.GetWebUsersOfDiscount(idDiscount);
+        }
+
         private void RejectDiscount(OrderRow orderRow)
         {
             orderRow.Discount.CreditsRemain++;
@@ -2473,6 +2494,12 @@ namespace CUWebinars.Business.Services
         public Discount GetDiscountById(int id)
         {
             var discount = _orderRepository.FindDiscountById(id);
+            return discount;
+        }
+
+        public Discount GetDiscountByIdLegacy(int id)
+        {
+            var discount = _orderRepository.FindDiscountByIdLegacy(id);
             return discount;
         }
 

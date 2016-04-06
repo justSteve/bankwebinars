@@ -36,8 +36,11 @@ namespace CUWebinars.Business.Repository
         IList<Order> SelectOrdersWithArchivedWebinars(int idUser);
         IList<Order> SelectOrdersWithRecordedWebinars(int idUser);
         IList<Order> SelectOrdersWithScheduledWebinars(int idUser);
+
+        IList<Order> GetOrdersByDiscount(int idDiscount);
         int AccessToPostEventMaterials(int i, int i1);
         Discount FindDiscountById(int id);
+        Discount FindDiscountByIdLegacy(int id);
         Discount FindDiscountByCode(string discountCode);
         Discount FindDiscountByUser(WebUser currentUser);
         Order GetOrderByIdThin(int idOrder);
@@ -61,5 +64,6 @@ namespace CUWebinars.Business.Repository
         bool OnDemandCodeIsUnique(string onDemandCode);
         IList<Order> GetOrdersByWebinar(int idWebinar);
         IEnumerable<Discount> GetSubscriptionsAll(int idAffliate, out int totalNumberOrders);
+
     }
 }

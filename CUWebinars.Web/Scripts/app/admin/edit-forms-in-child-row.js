@@ -542,7 +542,7 @@ function updateRegType(item, orderId, newRegTypeId) {
                 if (data.updateRegTypeOnLegacy == "Order Not Found") {
                     alert("Order at Legacy was not found");
                 } else {
-                    alert(data.updateRegTypeOnLegacy);
+                    alert(data.UpdateSuccessCaption);
                 }
                 // need to update the currently displaying regType and associated costs
                 $(".dropdown-toggle", $form).html(data.regTypeShort + "&nbsp;<b class=\"caret\"></b>");

@@ -908,7 +908,7 @@ namespace CUWebinars.Web.Controllers
             var additionalLocationsCount = 0;
             if (orderRow.AdditionalLocation != null && orderRow.AdditionalLocation.Count > 0)
             {
-                additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(additionalLocations).ToList();
+                additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(additionalLocations.ToList());
                 additionalLocationsCount = additionalLocations.Count;
             }
 

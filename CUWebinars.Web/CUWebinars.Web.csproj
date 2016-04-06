@@ -482,6 +482,7 @@
     <Compile Include="Membership\Email\TtsTokenizerInert.cs" />
     <Compile Include="Models\AffiliateSettingsViewModel.cs" />
     <Compile Include="Models\CompliancePerspectivesModel.cs" />
+    <Compile Include="Models\DiscountAudit.cs" />
     <Compile Include="Models\ExpressCheckoutPostBackModel.cs" />
     <Compile Include="Models\ImportOrderForAcsModel.cs" />
     <Compile Include="Models\NotificationHeaderModel.cs" />

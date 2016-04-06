@@ -799,7 +799,7 @@ namespace CUWebinars.Web.Controllers
                     try
                     {
                         InitializeDetailsStateFromExpChcSubmit(webinar, model, id.Value, incomingOrder);
-                        var logModelState = JsonConvert.SerializeObject(model, Formatting.None,
+                        var logModelState = JsonConvert.SerializeObject(model.Order, Formatting.None,
                         new JsonSerializerSettings()
                         {
                             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -1226,7 +1226,7 @@ namespace CUWebinars.Web.Controllers
 
                 OrderRow orderRowForOrder = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
                 IEnumerable<AdditionalLocation> additionalLocations = orderRowForOrder.AdditionalLocation.ToList(); ;
-                additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(additionalLocations);
+                additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(additionalLocations.ToList());
                 model.WebUser = user;
                 model.Order = order;
 

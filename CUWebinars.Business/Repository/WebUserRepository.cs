@@ -88,6 +88,15 @@ namespace CUWebinars.Business.Repository
                 .FirstOrDefault(w => w.email.EndsWith(emailDomain));
         }
 
+        public IList<WebUser> GetWebUsersOfDiscount(int idDiscount)
+        {
+            var users = ((TTSWebinarsContext)db).WebUsers
+                .Where(u => u.idSubscriptionDiscount == idDiscount).ToList();
+
+            return users;
+
+        }
+
         public int? GetWebUserIdByEmail(string email)
         {
             return items.Where(w => w.email == email).Select(w => w.idUser).SingleOrDefault();
@@ -273,7 +282,7 @@ namespace CUWebinars.Business.Repository
                 newUser.FirstName = "tempFirst";
                 newUser.LastName = "tempLast";
                 newUser.UserType = UserType.Customer;
-                
+
                 Update(newUser);
 
                 return newUser;
@@ -286,7 +295,7 @@ namespace CUWebinars.Business.Repository
                 Address addBilling = new Address { AddressType = "Billing" };
                 Address addShipping = new Address { AddressType = "Shipping" };
                 addBilling.WebUser = newUser;
-                addBilling.City ="";
+                addBilling.City = "";
                 addBilling.Country = "";
                 addBilling.Name = "";
                 addBilling.Phone = "";

@@ -95,8 +95,9 @@ namespace CUWebinars.Business.Services
         void GenerateRegistrantKey(Order order, AdditionalLocation additionalLocation = null);
         int GetNumberOfOrdersPerWebinar(int id);
         void RemoveAndDeleteAdditionalLocation(AdditionalLocation deletedAdditionalLocation);
-        
+
         Discount GetDiscountById(int discount);
+        Discount GetDiscountByIdLegacy(int toInt32);
         IList<Order> GetV3OrdersByWebinar(int idWebinar);
         DateTime CalculatePostEventMaterialsAccessExpiry(OrderRow row);
         //void SendOrderToLegacy(Order newOrder);
@@ -137,7 +138,9 @@ namespace CUWebinars.Business.Services
         void RestoreToDiscount(int newOrderRowId);
         void RemoveFromDiscount(int newOrderRowId);
         IList<Order> GetOrdersByDomain(string searchTerm);
+        IList<Order> GetOrdersByDiscount(int idDiscount);
         string CalculateDiscountRedemption(Discount userHasDiscount, OrderRow row, int? undo, int? previewOnly);
         string ApplyDiscountCode(int? discountId);
+        IList<WebUser> GetWebUsersOfDiscount(int idDiscount);
     }
 }

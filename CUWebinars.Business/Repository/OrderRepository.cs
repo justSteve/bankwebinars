@@ -217,11 +217,15 @@ namespace CUWebinars.Business.Repository
 
         public IQueryable<Order> FindOrdersByBillingEmail(string email, int aff)
         {
-            if (aff > 0)
+            if (aff > 19)
             {
-                return items.Include(o => o.WebUser).Where(o => o.BillingEmail.ToLower().Contains(email.ToLower()) && o.Affiliate.idUserAff == aff);
+                return items.Include(o => o.WebUser)
+                    .Include(o => o.OrderRows.Select(or => or.Discount))
+                    .Where(o => o.BillingEmail.ToLower() == (email.ToLower()) && o.Affiliate.idUserAff == aff);
             }
-            return items.Include(o => o.WebUser).Where(o => o.BillingEmail.ToLower().Contains(email.ToLower()));
+            return items.Include(o => o.WebUser)
+                .Include(o => o.OrderRows.Select(or => or.Discount))
+                .Where(o => o.BillingEmail.ToLower() == (email.ToLower()));
         }
 
         public IQueryable<Order> FindOrdersByBillingEmailDomain(string email, int aff)
@@ -506,6 +510,19 @@ namespace CUWebinars.Business.Repository
             return GetLoadedEntitiesForOrder(orders);
         }
 
+        public IList<Order> GetOrdersByDiscount(int idDiscount)
+        {
+            //TODO: Refactor to employ Claims inspection
+            var orders = ((TTSWebinarsContext)db).OrderRows
+                .Include(or => or.Order)
+                .Where(or => or.Discount.idDiscount == idDiscount)
+                .Where(o => o.Order.OrderStatus == OrderStatus.Paid 
+                    || o.Order.OrderStatus == OrderStatus.Billed 
+                    || o.Order.OrderStatus == OrderStatus.Submitted)
+                .Select(o => o.Order);
+            return GetLoadedEntitiesForOrder(orders);
+        }
+
         public IList<Order> GetOrdersForRecordedEventNotifications(int idWebinar)
         {
             //TODO: Refactor to employ Claims inspection
@@ -664,6 +681,7 @@ namespace CUWebinars.Business.Repository
         }
 
 
+
         public int AccessToPostEventMaterials(int webinar, int user)
         {
             var a = items
@@ -686,6 +704,15 @@ namespace CUWebinars.Business.Repository
             return ((TTSWebinarsContext)db).Discounts.SingleOrDefault
                 (d => d.idDiscount == id);
 
+        }
+
+        public Discount FindDiscountByIdLegacy(int id)
+        {
+            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
+            dataOperations.FindDiscountByIdLegacy(id);
+
+
+            return null;
         }
 
         public Discount FindDiscountByCode(string discount)
