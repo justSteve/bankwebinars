@@ -143,8 +143,9 @@
     if (ViewBag.Order != null)
     {
         Html.RenderPartial("~/Views/Cart/Partials/_PayByMoneris.cshtml", (Order)ViewBag.Order);
+
+        Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml", (Order)ViewBag.Order);
     }
-    Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml");
     Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
     //Html.RenderPartial("~/Views/Cart/Partials/_DisplayAppliedDiscount.cshtml", Model.DiscountDetailsModel);
 }

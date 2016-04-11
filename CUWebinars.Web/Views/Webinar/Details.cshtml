@@ -88,22 +88,22 @@
         <div class="row-fluid span6">
             @if (!Model.CheckoutInProcess)
             {
-            <div id="EventDescription">
-                @Html.Raw(Model.Webinar.DescriptionLong)
-                <h2 class="short_headline">
-                    <span>
-                        @Html.Raw(Model.Webinar.LearnCaption)
-                    </span>
-                </h2>
-                @Html.Raw(Model.Webinar.LearnBody)
-                <h2 class="short_headline">
-                    <span>
-                        Who Should Attend?
-                    </span>
-                </h2>
-                @Html.Raw(Model.Webinar.WhoAttend)
-                <hr />
-            </div>
+                <div id="EventDescription">
+                    @Html.Raw(Model.Webinar.DescriptionLong)
+                    <h2 class="short_headline">
+                        <span>
+                            @Html.Raw(Model.Webinar.LearnCaption)
+                        </span>
+                    </h2>
+                    @Html.Raw(Model.Webinar.LearnBody)
+                    <h2 class="short_headline">
+                        <span>
+                            Who Should Attend?
+                        </span>
+                    </h2>
+                    @Html.Raw(Model.Webinar.WhoAttend)
+                    <hr />
+                </div>
             }
             <div class="warnIE" style="display: none;" id="iePre10">
                 <p>
@@ -142,7 +142,7 @@
                                             <div class="tab-pane" id="contactInfo"></div>
                                             <div class="tab-pane" id="confirmation"></div>
                                         }
-                                        else if (Model.Order.OrderStatus == OrderStatus.AwaitingVerification || Model.Order.OrderStatus == OrderStatus.InProcess|| Model.Order.OrderStatus == OrderStatus.Canceled ||  Model.Order.OrderStatus == OrderStatus.Submitted )
+                                        else if (Model.Order.OrderStatus == OrderStatus.AwaitingVerification || Model.Order.OrderStatus == OrderStatus.InProcess || Model.Order.OrderStatus == OrderStatus.Canceled || Model.Order.OrderStatus == OrderStatus.Submitted)
                                         {
                                             <div class="tab-pane" id="signUp"></div>
                                             <div class="tab-pane" id="contactInfo"></div>
@@ -179,6 +179,27 @@
                                     </form>
 
                                 </div>
+                                <div id="EventDescription_ForResume" style="display: none;">
+                                    <h2 class="short_headline">
+                                        <span>
+                                            Event Description
+                                        </span>
+                                    </h2>
+                                    @Html.Raw(Model.Webinar.DescriptionLong)
+                                    <h2 class="short_headline">
+                                        <span>
+                                            @Html.Raw(Model.Webinar.LearnCaption)
+                                        </span>
+                                    </h2>
+                                    @Html.Raw(Model.Webinar.LearnBody)
+                                    <h2 class="short_headline">
+                                        <span>
+                                            Who Should Attend?
+                                        </span>
+                                    </h2>
+                                    @Html.Raw(Model.Webinar.WhoAttend)
+                                    <hr />
+                                </div>
                             </div>
                             <!-- closes SignUpFormContainer div-->
                         }
@@ -190,6 +211,7 @@
 
         <div class="row-fluid span3">
             <aside class="widget">
+                <div id="resumeOrderStatus" class="hidden"></div>
                 <h5 class="short_headline"><span>Date/Time</span></h5>
 
                 @if (Model.Webinar.Status == WebinarStatus.Recorded)

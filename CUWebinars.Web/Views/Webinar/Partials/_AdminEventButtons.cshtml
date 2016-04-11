@@ -71,7 +71,7 @@
                                         </li>
                                         <li style="margin-top: 4px;">
                                             @{
-                            if (@Model.Webinar.RecordingUrl.IsNullOrWhiteSpace())
+                            if (Model.Webinar.RecordingUrl.IsNullOrWhiteSpace())
                             {
                                             @Html.Partial(@"Partials/_UpdateRecording")
                             }

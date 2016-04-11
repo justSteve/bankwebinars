@@ -1,6 +1,11 @@
-﻿<script language="javascript" type="text/javascript">
+﻿
+
+@model Order
+
+<script language="javascript" type="text/javascript">
     function openQWindow() {
-        window.open('https://form.jotform.com/60898267714974?idOrder=' + cartStateManager.getOrderRowId(), 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');
+        window.location.href = '/cart/CancelPauseOrder?idOrder=@Model.idOrder&email=@Model.BillingEmail' ;
+        //window.open('https://form.jotform.com/60898267714974?idOrder=' + cartStateManager.getOrderRowId(), 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');
     }
 </script>
 
@@ -14,7 +19,7 @@
         </div>
         <div id="cancelResult" class="modal-body">
             <p>
-                We understand it can be difficult to bring together all of the various bits of info that make up a webinar's registration. If there's something we can explain better or information we can provide - just leave us a note below and we'll get back in touch quickly. Or maybe you just want to go share a cup of coffee with a co-worker - go ahead and just hit <i>Pause</i>. We'll be ready anytime you want to resume this order!
+                We understand it can be difficult to bring together all of the various bits of info that make up a webinar's registration. If there's something we can explain better or information we can provide - just hit <i>Pause</i>. We'll be ready anytime you want to resume this order!
             </p>
         </div>
         <div class="modal-footer">

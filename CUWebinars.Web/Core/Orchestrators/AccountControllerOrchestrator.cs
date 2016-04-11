@@ -1262,6 +1262,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 if (returnUrl.Contains("PasswordResetConfirm") || returnUrl.Equals("/Account/Signin") || returnUrl.Equals("/Account/Login"))
                     returnUrl = "/Account/MyWebinars";
 
+                //if (returnUrl.StartsWith("/Resume"))
+                //    returnUrl = "/Resume/" + returnUrl.Split('+')[1];
+
                 loginModel.ReturnUrl = returnUrl;
                 loginModel.SignIn.ReturnUrl = returnUrl;
             }

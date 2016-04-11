@@ -539,6 +539,7 @@
     <Compile Include="ViewModel\AdjustUserDetailsEditModel.cs" />
     <Compile Include="ViewModel\AffiliatesChooserModel.cs" />
     <Compile Include="ViewModel\AffPromoMsgViewModel.cs" />
+    <Compile Include="ViewModel\CheckoutPauseViewModel.cs" />
     <Compile Include="ViewModel\ClaimsAuditViewModel.cs" />
     <Compile Include="ViewModel\ClaimsViewModel.cs" />
     <Compile Include="ViewModel\ClickToJoinViewModel.cs" />
@@ -547,6 +548,7 @@
     <Compile Include="ViewModel\EditUserViewModel.cs" />
     <Compile Include="ViewModel\DiscountPromotionViewModel.cs" />
     <Compile Include="ViewModel\GenerateClickToJoinViewModel.cs" />
+    <Compile Include="ViewModel\MonerisViewModel.cs" />
     <Compile Include="ViewModel\OrderSumUserViewModel.cs" />
     <Compile Include="ViewModel\QuizViewModel.cs" />
     <Compile Include="ViewModel\RegistrationSummaryViewModel.cs" />
@@ -2460,7 +2462,7 @@
     <Content Include="Views\Shared\DisplayTemplates\ShowCompPerspectivesSubscription.cshtml" />
     <Content Include="Views\Shared\Admin\_Subscriptions.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowSubscriptions.cshtml" />
-    <Content Include="Views\Shared\Partials\_QuestionFromCheckout.cshtml" />
+    <Content Include="Views\Shared\Partials\_Cancel_PauseOrder.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

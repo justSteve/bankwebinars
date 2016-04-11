@@ -14,6 +14,7 @@ namespace CUWebinars.Web.ViewModel
         //public decimal Tax { get; set; }
         public PricesAndDiscounts PricesAndDiscounts { get; set; }
         public RegType  RegistrationType { get; set; }
-        public decimal RowPrice { get; set; }
+        public MonerisViewModel MonerisViewModel { get; set; }
+        //public decimal RowPrice { get; set; }
     }
 }

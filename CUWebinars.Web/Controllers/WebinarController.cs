@@ -1030,7 +1030,7 @@ namespace CUWebinars.Web.Controllers
                             },
                             DisplayRowPriceViewModel =
                             model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel,
-
+                            
                             idUser = model.Order.idUser,
                             ShippingDetailsModel = new ShippingDetailsModel()
                             {
@@ -1071,6 +1071,7 @@ namespace CUWebinars.Web.Controllers
                                 "<span id='userEmailLabel'>", webUser.email, "</span>"),
                             UserFullname = userFullName,
                             UserType = UserType.Customer
+
                         };
 
                     }
@@ -1166,7 +1167,7 @@ namespace CUWebinars.Web.Controllers
                     {
                         //Discount = row.Discount,
                         NumberOfAdditionalLocations = row.AdditionalLocation.Count(),
-                        //OrderStatus = row.Order.OrderStatus,
+                        OrderStatus = row.Order.OrderStatus,
                         //Price = Convert.ToDecimal(row.RegistrationType.Price),
                         PricesAndDiscounts =
                             _orderManagementService.CalculateOrderCost(row.Order, additionalLocationsPricing.Item2),
@@ -1297,7 +1298,7 @@ namespace CUWebinars.Web.Controllers
                         {
                             //Discount = row.Discount,
                             NumberOfAdditionalLocations = row.AdditionalLocation.Count(),
-                            //OrderStatus = row.Order.OrderStatus,
+                            OrderStatus = row.Order.OrderStatus,
                             //Price = Convert.ToDecimal(row.RegistrationType.Price),
                             PricesAndDiscounts =
                                 _orderManagementService.CalculateOrderCost(row.Order, additionalLocationsPricing.Item2),

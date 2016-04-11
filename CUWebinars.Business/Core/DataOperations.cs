@@ -1552,7 +1552,7 @@ namespace CUWebinars.Business.Core
             {
                 sqlConnection.Open();
                 //--EXEC  @idWebinar = 2016, @label = 'Live Plus Five', @findAllPossible = null
-                using (var myConn = new SqlCommand("GetRegTypeByWebinarAndLabel", sqlConnection))
+                using (var myConn = new SqlCommand("GetAllPossibleRegTypesPerWebinar", sqlConnection))
                 {
                     try
                     {

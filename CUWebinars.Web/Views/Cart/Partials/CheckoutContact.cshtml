@@ -19,7 +19,7 @@
 }
 
 <script language="javascript" type="text/javascript">
-    
+
     function openECWindow() {
         window.location.href = "@url?idOrder=" + cartStateManager.getOrderId() + "&idWebinar=" + cartStateManager.getWebinarId() + "&idAffiliate=" + currentAffiliate + "&email=" + $('#Email1').val();
     }
@@ -260,7 +260,6 @@
 <div id="updateOrderWithUserIdWrapper">
     @Html.Partial("Partials/_UpdateOrderWithUserId")
 </div>
-
 <div id="modalShowExpressCheckout" class="modal hide">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -268,8 +267,8 @@
     </div>
     <div id="UserHasAccount" class="modal-body">
         <p>
-            Use our <i>Express Me!</i> button for guest checkout.
-            If you need instant access to your account use the <i>'Continue to Login'</i> button.
+            Use our <i>Express Me!</i> button for guest checkout.<br />
+            For instant access to your account use the <i>'Continue to Login'</i> button.
         </p>
 
 
