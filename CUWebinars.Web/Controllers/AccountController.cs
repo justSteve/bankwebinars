@@ -351,7 +351,7 @@ namespace CUWebinars.Web.Controllers
                 var myWebinarsDTO = _accountControllerOrchestrator.BuildMyWebinarsDTO
                     (discountModel, claimsIdentityOfAuthenticatedUser);
                 if (compPersectivesModel != null)
-                myWebinarsDTO.CompliancePerspectives = compPersectivesModel;
+                    myWebinarsDTO.CompliancePerspectives = compPersectivesModel;
 
                 ViewBag.idUser = myWebinarsDTO.WebUser.idUser;
                 return View("MyWebinars", myWebinarsDTO);
@@ -1307,11 +1307,36 @@ namespace CUWebinars.Web.Controllers
 
                     if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
                     {
+                        var webUser = _orderManagementService.GetWebUser(model.Email);
 
-                        _logger.Info("Account.SignIn. Email: {1},  Session={0}",
-                            _appHelper.GetUserAuditInfo(),
-                            model.Email
-                            );
+                        Affiliate affiliate = null;
+                        if (webUser != null)
+                        {
+                            affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser);
+                        }
+                        else
+                        {
+                            //hardwire a valid affiliate ID
+                            affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(19);
+                        }
+
+                        // if null returned, just use whatever is stored in Session for CurrentAffiliate.
+                        //      O/w, set that value.
+                        if (!ReferenceEquals(null, affiliate))
+                        {
+                            _stateService.SetValue(WebUiConstants.CurrentAffiliate, affiliate);
+                            _logger.Info("Account.SignIn. Email: {1}, Affiliate: {2},  Session: {0}",
+                              _appHelper.GetUserAuditInfo(),
+                                model.Email, affiliate.ttsDomain
+                                );
+                        }
+                        else
+                        {
+                            _logger.Warn("Account.SignIn. Email: {1}, Affiliate: null, Session: {0}",
+                                _appHelper.GetUserAuditInfo(),
+                                model.Email
+                                );
+                        }
                         // Handles an edge case where a user has been created anonymously in the cart and has just set their password.
                         // In such a case, we don't want to redirect back to the page where they just set their password. So send to base instead.
                         var returnUrl = string.IsNullOrWhiteSpace(model.ReturnUrl) ? @"/" :
@@ -1320,9 +1345,10 @@ namespace CUWebinars.Web.Controllers
                         return Json(new { result = LoggedInResult, returnUrl = returnUrl });
                     }
 
+
                     if (!string.IsNullOrEmpty(userMustVerify))
                     {
-                        _logger.Info("Account.SignIn UserMustVerify. Session={0}, Email: {1}",
+                        _logger.Info("Account.SignIn UserMustVerify. Session: {0}, Email: {1}",
                             _appHelper.GetUserAuditInfo(),
                             model.Email
                             );
@@ -1331,7 +1357,7 @@ namespace CUWebinars.Web.Controllers
                     }
 
                     // If we got this far, something failed, redisplay form
-                    _logger.Warn("Account.SignIn Failed. {0} | Session= {1}",
+                    _logger.Warn("Account.SignIn Failed. Email: {0},  Session: {1}",
                         model.Email,
                         _appHelper.GetUserAuditInfo()
                         );
@@ -1345,14 +1371,14 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     _logger.ErrorException(
-                        string.Format("Account.SignIn Failed. {0} | {1} Session= {2}", model.Email, model.Password,
-                            _appHelper.GetUserAuditInfo()), exception);
+                        string.Format("Account.SignIn Failed. Email: {0}, Session: {1}"
+                        , model.Email, _appHelper.GetUserAuditInfo()), exception);
                     ErrorSignal.FromCurrentContext().Raise(exception);
 
                     ModelState.AddModelError(
                         string.Empty,
                         // Needs to be an empty string to show up in ValidationSummary as not model-level error.
-                        "There was an error at the server which has been logged. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com."
+                        "Server Error #536: For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com."
                         );
                 }
             }

@@ -346,7 +346,14 @@ namespace CUWebinars.Business.Services
             List<string> legacyEmails = lOrders.Select(order => order.BillingEmail).ToList();
             List<string> v3Emails = v3Orders.Select(v3Order => v3Order.BillingEmail).ToList();
 
+            //foreach (var orderEmail in v3Emails)
+            //{
 
+            //    var dataOperations1 = new DataOperations(TtsConfig.DefaultConnectionString);
+            //    var EmailAlreadyRegisteredForWebinar = dataOperations1.CheckIfEmailAlreadyRegisteredForWebinar(orderEmail, webinarId);   
+            //    _logger.Info("result = " + EmailAlreadyRegisteredForWebinar);
+
+            //}
 
             var query = legacyEmails.GroupBy(x => x)
                   .Where(g => g.Count() > 1)
@@ -416,11 +423,9 @@ namespace CUWebinars.Business.Services
                             {
                                 SaveOrderChanges(order, "", "", OrderGenesis.CreatedViaCartByExistingUser);
                                 _logger.Info("SynchOrder added missing address for: ", orderEmail);
-
                             }
                             catch (Exception ex)
                             {
-
                                 _logger.FatalException("SynchOrder failed to add address for " + orderEmail, ex);
                             }
 
@@ -1464,70 +1469,70 @@ namespace CUWebinars.Business.Services
                 sb.Append("        </span>");
                 sb.Append("    </td>");
                 sb.Append("</tr>");
-                if (!ReferenceEquals(myRow.Discount, null))
-                {
-                    decimal amountToReduce;
-                    sb.Append("<tr>");
-                    if (!ReferenceEquals(myRow.Discount.FlatOff, null))
-                    {
-                        amountToReduce = Convert.ToDecimal(myRow.Order.Total) - (myRow.Discount.FlatOff);
-                        sb.Append(
-                            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                        sb.Append("            Amt. of Discount:");
-                        sb.Append("        </span>");
-                        sb.Append("    </td>");
-                        sb.Append(
-                            "    <td width='350px' style='text-align: left; color: red; background-color: #B4D1EC; padding-left: 6px;'>");
-                        sb.Append(
-                            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                        sb.Append("            <b>$");
-                        sb.Append(amountToReduce.ToString().Replace(".00", ""));
-                        sb.Append("            </b>");
-                        sb.Append("        </span>");
-                        sb.Append("    </td>");
-                    }
-                    if (!ReferenceEquals(myRow.Discount.PercentOff, null))
-                    {
-                        amountToReduce = (myRow.Discount.PercentOff * 100) /
-                                         Convert.ToDecimal(string.Format("{0:0.00}", myRow.UnitPrice));
+                //if (!ReferenceEquals(myRow.Discount, null))
+                //{
+                //    decimal amountToReduce;
+                //    sb.Append("<tr>");
+                //    if (!ReferenceEquals(myRow.Discount.FlatOff, null))
+                //    {
+                //        amountToReduce = Convert.ToDecimal(myRow.Order.Total) - (myRow.Discount.FlatOff);
+                //        sb.Append(
+                //            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                //        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                //        sb.Append("            Amt. of Discount:");
+                //        sb.Append("        </span>");
+                //        sb.Append("    </td>");
+                //        sb.Append(
+                //            "    <td width='350px' style='text-align: left; color: red; background-color: #B4D1EC; padding-left: 6px;'>");
+                //        sb.Append(
+                //            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                //        sb.Append("            <b>$");
+                //        sb.Append(amountToReduce.ToString().Replace(".00", ""));
+                //        sb.Append("            </b>");
+                //        sb.Append("        </span>");
+                //        sb.Append("    </td>");
+                //    }
+                //    if (!ReferenceEquals(myRow.Discount.PercentOff, null))
+                //    {
+                //        amountToReduce = (myRow.Discount.PercentOff * 100) /
+                //                         Convert.ToDecimal(string.Format("{0:0.00}", myRow.UnitPrice));
 
-                        sb.Append(
-                            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                        sb.Append("            Amt. of Discount:");
-                        sb.Append("        </span>");
-                        sb.Append("    </td>");
-                        sb.Append(
-                            "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-                        sb.Append(
-                            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                        sb.Append("            <b>$");
-                        sb.Append(amountToReduce.ToString().Replace(".00", ""));
-                        sb.Append("            </b>");
-                        sb.Append("        </span>");
-                        sb.Append("    </td>");
-                    }
-                    sb.Append("</tr>");
-                }
+                //        sb.Append(
+                //            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                //        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                //        sb.Append("            Amt. of Discount:");
+                //        sb.Append("        </span>");
+                //        sb.Append("    </td>");
+                //        sb.Append(
+                //            "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                //        sb.Append(
+                //            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                //        sb.Append("            <b>$");
+                //        sb.Append(amountToReduce.ToString().Replace(".00", ""));
+                //        sb.Append("            </b>");
+                //        sb.Append("        </span>");
+                //        sb.Append("    </td>");
+                //    }
+                //    sb.Append("</tr>");
+                //}
 
-                sb.Append("<tr>");
-                sb.Append(
-                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                sb.Append("            Cost:");
-                sb.Append("        </span>");
-                sb.Append("    </td>");
-                sb.Append(
-                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-                sb.Append(
-                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                sb.Append("            <b>$");
-                sb.Append(myRow.Order.Total.ToString().Replace(".00", ""));
-                sb.Append("            </b>");
-                sb.Append("        </span>");
-                sb.Append("    </td>");
-                sb.Append("</tr>");
+                //sb.Append("<tr>");
+                //sb.Append(
+                //    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                //sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                //sb.Append("            Cost:");
+                //sb.Append("        </span>");
+                //sb.Append("    </td>");
+                //sb.Append(
+                //    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                //sb.Append(
+                //    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                //sb.Append("            <b>$");
+                //sb.Append(myRow.Order.Total.ToString().Replace(".00", ""));
+                //sb.Append("            </b>");
+                //sb.Append("        </span>");
+                //sb.Append("    </td>");
+                //sb.Append("</tr>");
                 //sb.Append("<tr>");
                 //sb.Append(
                 //    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");

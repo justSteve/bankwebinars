@@ -539,18 +539,18 @@ namespace CUWebinars.Web.Controllers.Admin
                         _orderManagementService.ApplyDiscountCode(discountId);
                     }
                     var order = _orderManagementService.GetOrderById(model.Id);
-                    _logger.Info("Updating OrderStatus from " + order.OrderStatus + " to: " + model.Order.OrderStatus + " by: " + _appHelper.GetUserAuditInfo());
+                    _logger.Info("Updating OrderStatus from " + order.OrderStatus + " to: " + model.DisplayRowPriceViewModel.OrderStatus + " by: " + _appHelper.GetUserAuditInfo());
 
                     var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
 
-                    var UpdateOrderStatusOnLegacy = dataOperations.UpdateOrderStatusOnLegacy(order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).idWebinar, order.BillingEmail, Convert.ToInt32(model.Order.OrderStatus));
+                    var UpdateOrderStatusOnLegacy = dataOperations.UpdateOrderStatusOnLegacy(order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).idWebinar, order.BillingEmail, Convert.ToInt32(model.DisplayRowPriceViewModel.OrderStatus));
 
                     //order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus; // the only field that we are updating at this time
-                    order.OrderStatus = model.Order.OrderStatus; // the only field that we are updating at this time
+                    order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus; // the only field that we are updating at this time
 
                     _orderManagementService.UpdateOrderByAdmin(order);
 
-                    return Json(new { Result = WebUiConstants.Success, orderStatus = model.Order.OrderStatus.ToString(), msgFromLegacy = UpdateOrderStatusOnLegacy });
+                    return Json(new { Result = WebUiConstants.Success, orderStatus = model.DisplayRowPriceViewModel.OrderStatus.ToString(), msgFromLegacy = UpdateOrderStatusOnLegacy });
                 }
                 catch (Exception exception)
                 {

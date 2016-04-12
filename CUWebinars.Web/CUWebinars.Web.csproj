@@ -1390,6 +1390,7 @@
     <Content Include="Content\images\logo_cftws.png" />
     <Content Include="Content\images\logo_cpd.png" />
     <Content Include="Content\images\logo_ctbank.png" />
+    <Content Include="Content\images\logo_cuad.png" />
     <Content Include="Content\images\logo_cunews.png" />
     <Content Include="Content\images\logo_gabankers.png" />
     <Content Include="Content\images\logo_gregsouther.png" />
@@ -1417,6 +1418,8 @@
     <Content Include="Content\images\logo_nmbankers.png" />
     <Content Include="Content\images\logo_nvbankers.png" />
     <Content Include="Content\images\logo_nyba.png" />
+    <Content Include="Content\images\logo_obl.jpg" />
+    <Content Include="Content\images\logo_obl.png" />
     <Content Include="Content\images\logo_oregonbankers.png" />
     <Content Include="Content\images\logo_rate-watch.png" />
     <Content Include="Content\images\logo_sdba.png" />

@@ -30,5 +30,6 @@ namespace CUWebinars.Business.Repository
         WebUser GetWebUserByEmailDomain(string orderEmail);
 
         IList<WebUser> GetWebUsersOfDiscount(int idDiscount);
+        Affiliate FindAffiliateOfLastOrder(string identity);
     }
 }
