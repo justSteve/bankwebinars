@@ -51,7 +51,7 @@
             }
             <i>Total Cost:</i> <b>@Model.Total.ToString(CurrencyFormatToken).Replace(".00", "")</b>
         </div>
-        @if (Model.UserComments.StartsWith("This registration originated at cftnow.org."))
+        @if (Model.UserComments != null )
         {
 
             <div><b>Note:</b> @Model.UserComments</div>

@@ -221,6 +221,15 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
+                    if (id == null)
+                    {
+                        id = Convert.ToInt32(Request.UrlReferrer.ToString().Split('=')[1].Split('&')[0]);
+                        id =
+                            _cartControllerOrchestrator.GetOrderById(id)
+                                .OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                                .idOrderRow;
+                    }
+
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
 
                     JProperty adminMsg = new JProperty(JsonPropertyKeys.AffiliateCheckout, JsonConvert.SerializeObject(model.Order.Affiliate, Formatting.None,
@@ -359,21 +368,42 @@ namespace CUWebinars.Web.Controllers
             }
             return PartialView("Partials/CheckoutConfirm", model);
         }
+
+
         public ActionResult CheckoutConfirmForAffiliate(int? ID = null)
         {
-            var model = _cartControllerOrchestrator.BuildCheckoutConfirmViewModel(ID);
+            {
+                var model = _cartControllerOrchestrator.BuildCheckoutConfirmViewModel(ID);
+                if (model == null) throw new ArgumentNullException("model");
+                try
+                {
+                    var order = _cartControllerOrchestrator.LoadOrder(ID.Value);
 
-            if (ID != null && ID > 0)
-            {
-                ViewBag.Order = _cartControllerOrchestrator.LoadOrder(ID.Value);
-                ViewBag.TaxAmount = model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount;
+                    if (order.OrderStatus == OrderStatus.Error)
+                    {
+                        order.OrderStatus = OrderStatus.InProcess;
+                    }
+
+                    ViewBag.Order = order;
+                    //ViewBag.TaxAmount = model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount;
+                    if (order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).Discount != null)
+                    {
+                        ViewBag.DiscountCaption = _cartControllerOrchestrator.GetDiscountCaption(
+                            order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).Discount,
+                            order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active),
+                            null,
+                            1);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.Fatal("CheckoutConfirm heard: " + ex);
+                    throw;
+                }
+                return PartialView("Partials/CheckoutConfirmForAffiliate", model);
             }
-            else
-            {
-                _logger.Fatal("CheckoutConfirm was passed a null or zero value: ", new Exception("null or zero ID passed to CheckoutConfirm partial"));
-            }
-            return PartialView("Partials/CheckoutConfirmForAffiliate", model);
         }
+
         public ActionResult CheckoutDisplayRowPrice(int ID)
         {
             var model = _cartControllerOrchestrator.BuildDisplayRowPriceViewModel(null, ID);
@@ -467,7 +497,7 @@ namespace CUWebinars.Web.Controllers
                     _logger.Warn("SignupAffiliate pulls existing order: " + formModel.idUser + " " + formModel.idWebinar);
                     foreach (var order in orderAlreadyExists)
                     {
-                        if (order.OrderStatus == OrderStatus.Submitted ||
+                        if (order.OrderStatus == OrderStatus.Billed ||
                             order.OrderStatus == OrderStatus.Paid)
                         {
                             return Json(new
@@ -494,7 +524,8 @@ namespace CUWebinars.Web.Controllers
                                 webinarId = formModel.idWebinar
                             }, JsonRequestBehavior.AllowGet);
                         }
-                        if (order.OrderStatus == OrderStatus.InProcess ||
+                        if (order.OrderStatus == OrderStatus.Submitted ||
+                            order.OrderStatus == OrderStatus.InProcess ||
                             order.OrderStatus == OrderStatus.AwaitingVerification)
                         {
                             return Json(new
@@ -743,8 +774,8 @@ namespace CUWebinars.Web.Controllers
                     var order = _cartControllerOrchestrator.GetOrderById(id);
                     order.Origin = DomainConstants.OriginResume;
 
-                    _logger.Info("Resume idOrder: "+ id +" by: "+ User.Identity.Name);
-                    
+                    _logger.Info("Resume idOrder: " + id + " by: " + User.Identity.Name);
+
                     return RedirectToAction("Details", "Webinar", new
                     {
                         id = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
@@ -754,9 +785,10 @@ namespace CUWebinars.Web.Controllers
                     });
 
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    
+                    _logger.FatalException("Resume " + id, ex);
+
                     throw;
                 }
 
@@ -893,22 +925,19 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult ComplianceSchoolCheckout()
         {
+            var _idAffiliate = 19;
+            var id = Convert.ToInt32(Request.UrlReferrer.ToString().Split('=')[1]);
+            if (!ReferenceEquals(id, null))
+            {
+                _idAffiliate = id;
+            }
 
-            //var webinar = _cartControllerOrchestrator.LoadWebinar(idWebinar);
-            //var _idAffiliate = 19;
-            //if (!ReferenceEquals(idAffiliate, null))
-            //{
-            //    _idAffiliate = idAffiliate.Value;
-            //}
+            var model = new ExpressCheckoutModel
+            {
+                q15_affiliateid15 = _idAffiliate
+            };
 
-            //var model = new ExpressCheckoutModel
-            //{
-            //    q18_q_webinarid18 = idWebinar,
-            //    q15_affiliateid15 = _idAffiliate,
-            //    q12_webinarTitle = webinar.Title
-            //};
-
-            return View();
+            return View(model);
 
         }
 

@@ -2035,12 +2035,12 @@ namespace CUWebinars.Web.Controllers
                     var usershipping =
                         _accountControllerOrchestrator.GetWebUserById(shippingDetailsModel.UserId)
                             .Addresses.Where(a => a.AddressType == "Shipping");
-                    if (shippingDetailsModel.ShippingAddress != usershipping)
-                    {
-                        _logger.Info("Shipping details were updated by: " + _appHelper.GetUserAuditInfo());
-                        _accountControllerOrchestrator.UpdateShippingAddressDetails(
-                            shippingDetailsModel.ShippingAddress, shippingDetailsModel.UserId);
-                    }
+                    //if (shippingDetailsModel.ShippingAddress != usershipping)
+                    //{
+                    //    _logger.Info("Shipping details were updated by: " + _appHelper.GetUserAuditInfo());
+                    //    _accountControllerOrchestrator.UpdateShippingAddressDetails(
+                    //        shippingDetailsModel.ShippingAddress, shippingDetailsModel.UserId);
+                    //}
                     _accountControllerOrchestrator.AddShippingAddressVerifiedClaim(shippingDetailsModel.UserId);
 
                     return Json(new { Result = WebUiConstants.Success });

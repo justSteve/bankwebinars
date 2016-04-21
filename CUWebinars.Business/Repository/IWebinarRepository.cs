@@ -44,5 +44,6 @@ namespace CUWebinars.Business.Repository
         IList<Webinar> GetSearchDTO(string searchTerm);
 
         IList<int> GetV3OrdersIdsByWebinar(int idWebinar);
+        int? GetNextCompliancePerspectives();
     }
 }

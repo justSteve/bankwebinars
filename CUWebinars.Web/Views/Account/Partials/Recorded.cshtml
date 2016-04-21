@@ -23,6 +23,11 @@
             {
                 var row = recorded.Value.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
 
+                if (row.Webinar.Title.EndsWith("Series"))
+                {
+                   continue;
+                }
+
                 var onDemandClaim = new PostEventClaim();
                 var onDemandClaimUrl = "Live Plus Five access is expired.";
                 var showMedia = false;

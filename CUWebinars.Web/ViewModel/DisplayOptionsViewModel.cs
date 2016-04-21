@@ -13,5 +13,6 @@ namespace CUWebinars.Web.ViewModel
         public bool OrderRowExists { get; set; }
         public decimal WebinarDuration { get; set; }
         public WebinarStatus WebinarStatus { get; set; }
+        public int IsResumedCheckout { get; set; }
     }
 }

@@ -2460,11 +2460,22 @@ namespace CUWebinars.Business.Services
             }
             if (previewOnly != null)
             {
-                if (previewOnly == 0)
-                {
-                    forNotes.Append(thisUse + "," + discount.CreditsUsed + "," + discount.CreditsRemain);
-                }
-                forNotes.AppendFormat(" If applied to this order, {0} will be deducted from your package. It will have been used {1} times with {2} remaining.", thisUse , discount.CreditsUsed.ToString().Replace("-", "").Replace(".00", ""), discount.CreditsRemain.ToString().Replace(".00", ""));
+                //if (previewOnly == 0)
+                //{
+                    if (discount.DiscountType == DiscountType.Subscription)
+                    {
+                        forNotes.Append(thisUse + "," + discount.CreditsUsed + "," + discount.CreditsRemain);
+                        forNotes.AppendFormat(" If applied to this order, {0} will be deducted from your package. It will have been used {1} times with {2} remaining.", thisUse, discount.CreditsUsed.ToString().Replace("-", "").Replace(".00", ""), discount.CreditsRemain.ToString().Replace(".00", ""));
+                    }
+                    if (discount.DiscountType == DiscountType.Compensation)
+                    {
+                        forNotes.AppendFormat("Applying disount code: {0}", discount.DiscountCode);
+                    }
+                    if (discount.DiscountType == DiscountType.Promo)
+                    {
+                        forNotes.AppendFormat("Applying disount code: {0}", discount.DiscountCode);
+                    }
+                //}
                 discount.CreditsRemain = existingDiscount.CreditsRemain;
                 discount.CreditsUsed = existingDiscount.CreditsUsed;
             }
@@ -2481,7 +2492,7 @@ namespace CUWebinars.Business.Services
 
         public string ApplyDiscountCode(int? discountId)
         {
-            _logger.Fatal("not implemented: "+ discountId.Value);
+            _logger.Fatal("not implemented: " + discountId.Value);
             return null;
         }
 

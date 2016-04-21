@@ -43,6 +43,8 @@ namespace CUWebinars.Web.Models
     public enum AddressType
     {
         Billing = 0,
-        Shipping = 1
+        Shipping = 1,
+        BillingConfirmed = 2,
+        ShippingConfirmed = 3
     }
 }

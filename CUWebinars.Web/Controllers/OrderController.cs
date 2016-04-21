@@ -537,9 +537,9 @@ namespace CUWebinars.Web.Controllers
                         cftTitleString = "The title of this event at cftnow.org is: " + cftTitleString;
                     }
 
-                    newOrder.UserComments = "This registration originated at cftnow.org. " + cftTitleString;
+                    newOrder.UserComments = "{'ASCImporter': '{This registration originated at cftnow.org. " + cftTitleString + "'}'}";
 
-                    newOrder.AuditInfo = "'ACSImporter': {" + JsonConvert.SerializeObject(_importedOrder) + "}";
+                    newOrder.AuditInfo = "{'ACSImporter': '{" + JsonConvert.SerializeObject(_importedOrder) + "}'}";
 
                     _orderManagementService.SaveChanges();
 

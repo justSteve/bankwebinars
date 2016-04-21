@@ -3,7 +3,10 @@
 @model ExpressCheckoutModel
 @{
 
-    ViewBag.Title = "Express Checkout";
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+
+
+    ViewBag.Title = "Compliance School Signup";
     Layout = "~/Views/Shared/_LayoutJotForm.cshtml";
 
 }
@@ -462,7 +465,5 @@
     <script type="text/javascript">
         document.getElementById("si" + "mple" + "_spc").value = "52806593512962-52806593512962";
     </script>
-    <input type="hidden" class="form-hidden" value="" id="input_11" name="q11_orderid" />
-    <input type="hidden" class="form-hidden" value="" id="input_18" name="q18_webinarid18" />
-    <input type="hidden" class="form-hidden" value="" id="input_15" name="q15_affiliateid15" />
+    <input type="hidden" class="form-hidden" id="input_15" name="affiliateid15" value="@Model.q15_affiliateid15" />
 </form>
