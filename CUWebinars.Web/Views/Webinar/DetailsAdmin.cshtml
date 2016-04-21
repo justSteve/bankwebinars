@@ -129,39 +129,55 @@
                                 <li id="createNewUserButton"><a href="#contactInfoForAffiliate" data-toggle="tab">Create New User</a></li>
                                 <li id="confirmationTabForAffiliate"><a href="#confirmationForAffiliate" data-toggle="tab">@Model.ConfirmationCaption</a></li>
                             </ul>
-
-                            <div class="tab-content">
-                                <div class="tab-pane active" id="findUserForAffiliate">
-                                    <button type="button" class="btn-success btn pull-right" id="AddToCart"> Add Order</button>
-                                    @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptionsForAffiliate.cshtml", model: Model.CheckoutOptionsViewModel)
+                            @if (Model.UserOwnsThisEvent < 1)
+                            {
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="findUserForAffiliate">
+                                        <button type="button" class="btn-success btn pull-right" id="AddToCart"> Add Order</button>
+                                        @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptionsForAffiliate.cshtml", model: Model.CheckoutOptionsViewModel)
+                                    </div>
+                                    <div class="tab-pane" id="contactInfoForAffiliate"></div>
+                                    <div class="tab-pane" id="confirmationForAffiliate"></div>
                                 </div>
-                                <div class="tab-pane" id="contactInfoForAffiliate"></div>
-                                <div class="tab-pane" id="confirmationForAffiliate"></div>
-                            </div>
+                            }
+                            else if (Model.Order.OrderStatus == OrderStatus.AwaitingVerification || Model.Order.OrderStatus == OrderStatus.InProcess || Model.Order.OrderStatus == OrderStatus.Canceled || Model.Order.OrderStatus == OrderStatus.Submitted)
+                            {
+                                <div class="tab-content">
+                                    <div class="tab-pane " id="findUserForAffiliate">
+                                        <button type="button" class="btn-success btn pull-right" id="AddToCart"> Add Order</button>
+                                        
+                                    </div>
+                                    <div class="tab-pane" id="contactInfoForAffiliate"></div>
+                                    <div class="tab-paneactive" id="confirmationForAffiliate">
+                                        @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutConfirmForAffiliate.cshtml", model: Model.CheckoutConfirmViewModel)
+                                    </div>
+
+                                </div>
+                            }
                         </div>
                         <!-- The following forms are positioned here so that they are not nested in the form in the CheckoutOptions View. -->
-                        @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
-                        {
-                            @Html.AntiForgeryToken()
+                        @*@using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
+                            {
+                                @Html.AntiForgeryToken()
 
-                            <input id="loginEmail" name="Email" type="hidden" value="">
-                            <input id="loginPassword" name="Password" type="hidden">
-                            <input id="loginRememberMe" type="hidden" value="true" name="RememberMe">
-                            <input type="hidden" name="returnUrl" value="/Webinar/Details/@Model.Webinar.idWebinar" />
-                        }
+                                <input id="loginEmail" name="Email" type="hidden" value="">
+                                <input id="loginPassword" name="Password" type="hidden">
+                                <input id="loginRememberMe" type="hidden" value="true" name="RememberMe">
+                                <input type="hidden" name="returnUrl" value="/Webinar/Details/@Model.Webinar.idWebinar" />
+                            }
 
-                        @using (Html.BeginForm("ResetPassword", "Account", FormMethod.Post, new { id = "ResetPasswordForm" }))
-                        {
-                            @Html.AntiForgeryToken()
-                            <input id="ResetPassEmail" name="emailForReset" type="hidden" value="">
-                        }
-                        <form id="checkEmail">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="emailChecker" id="emailChecker" />
-                        </form>
-                        <form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>
-                        <form id="nonUSForm"><input type="hidden" name="AddressText" id="AddressText" /></form>
-                        <form id="checkInstitution"><input type="hidden" name="InstitutionChecker" id="InstitutionChecker" /></form>
+                            @using (Html.BeginForm("ResetPassword", "Account", FormMethod.Post, new { id = "ResetPasswordForm" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <input id="ResetPassEmail" name="emailForReset" type="hidden" value="">
+                            }
+                            <form id="checkEmail">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="emailChecker" id="emailChecker" />
+                            </form>
+                            <form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>
+                            <form id="nonUSForm"><input type="hidden" name="AddressText" id="AddressText" /></form>
+                            <form id="checkInstitution"><input type="hidden" name="InstitutionChecker" id="InstitutionChecker" /></form>*@
 
                     </div> <!-- closes SignUpFormContainer div-->
                 }
@@ -211,15 +227,7 @@
                     <button id="submitSynchOrders" role="button" class="btn btn-primary">Synch Orders</button>
                 }
             </div>
-            @if (Model.Webinar.Status == WebinarStatus.InProgress)
-            {
-                <div>
-                    <form>
-                        Enter Email
-                        <button id="expressReg" role="button" class="btn btn-primary hidden ">Express Registration</button>
-                    </form>
-                </div>
-            }
+
             <div>
                 <button data-toggle="collapse" data-target="#sendConnInfoOrders" id="submitSendConnInfo" role="button" class="btn btn-danger">Send Connection Info</button>
             </div>

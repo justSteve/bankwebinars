@@ -87,7 +87,7 @@
                     <div class="offset2 span9 ">
                         <div id="RegTypeChanger" class="clear pull-right">
                             @{
-                Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel);
+                                Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel);
                             }
                         </div>
                     </div>
@@ -95,18 +95,7 @@
                 <div class="row">
                     <div id="inProcCart" class="well text-center">
                         <div id="showCartPrice">
-                            @{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPriceForAffiliate.cshtml", Model.DisplayRowPriceViewModel); }
-                        </div>
-                        <div style="font-size: x-small; text-align: center;">
-                            <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button><br />
-                            @{
-                                <span>
-                                    <button data-toggle="modal" role="button" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button>
-                                </span><br />
-
-                            }
-                            <a class="btn" id="Canceller">Cancel Registration</a><br />
-                            Sales tax may be added to orders in Wisconsin or Illinois.
+                            @{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }
                         </div>
                     </div>
                 </div>
@@ -155,9 +144,10 @@
     {
         ViewBag.NoteVersion = "03";
         Html.RenderPartial("~/Views/Cart/Partials/_PayByMoneris.cshtml", (Order)ViewBag.Order);
+
+        Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml", (Order)ViewBag.Order);
     }
-    Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml");
-    Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
+    //Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
 }
 
 <script type="text/javascript">

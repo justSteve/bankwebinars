@@ -5,10 +5,10 @@
     .form-horizontal .control-group {
         margin-bottom: 0;
     }
-     .control-group{
-         margin-bottom: 0;
 
-     }
+    .control-group {
+        margin-bottom: 0;
+    }
 </style>
 @using (Html.BeginForm("SignupAffiliate", "Cart", FormMethod.Post, new { id = "affiliateSignUpForm" }))
 {
@@ -22,30 +22,14 @@
     @Html.HiddenFor(model => model.WebinarStatus)
     @Html.HiddenFor(model => model.DisplayOptionsViewModel.EventTitle)
 
-    if (Model.OrderExists && Model.OrderHasId)
+    if (Model.OrderExists && Model.idOrder > 0)
     {
-        if (Model.OrderStatus == OrderStatus.Submitted
-            || Model.OrderStatus == OrderStatus.Paid
-            || Model.OrderStatus == OrderStatus.Billed)
-        {
-            if (Model.ConnectionInfoPresent)
-            {
-                <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn btn-success well">@Model.RegistrationType.OptionExplain.Replace(" Only", " ") </blockquote>
-            }
-            else
-            {
-                <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn btn-success well">@Model.RegistrationType.OptionExplain.Replace(" Only", " ") </blockquote>
-            }
-        }
-        else
-        {
-            <span>We show a pending order for this event & user. Please confirmation or cancel before continuing.</span>
-            @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptionsAffiliate.cshtml", model: Model.DisplayOptionsViewModel)
-        }
+        Model.DisplayOptionsViewModel.IsResumedCheckout = Model.idOrder;
+        @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptionsAffiliate.cshtml", model: Model.DisplayOptionsViewModel)
     }
     else
     {
-        <div>Select Registration Type and click Signup to start User Search. </div>
+        <div>Select Registration Type and click <i>Add Order</i> to start User Search. </div>
         @Html.HiddenFor(m => m.SelectedWebUser)
         @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptionsAffiliate.cshtml", model: Model.DisplayOptionsViewModel)
     }

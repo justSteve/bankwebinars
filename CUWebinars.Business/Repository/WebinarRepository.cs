@@ -332,6 +332,18 @@ namespace CUWebinars.Business.Repository
                             ).Select(o => o.idOrder).ToList();
         }
 
+        public int? GetNextCompliancePerspectives()
+        {
+            var item = items.Where(w => w.Status == WebinarStatus.Scheduled
+                                           || w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress)
+                                          .Where(w => w.Title.StartsWith("Compliance Perspectives"))
+                .OrderBy(w => w.Date).First().idWebinar;
+
+
+            return item;
+
+        }
+
         public IQueryable<Order> GetOrdersByWebinar(int webinarId)
         {
             return ((TTSWebinarsContext)db).Orders

@@ -1,4 +1,5 @@
-﻿@model DisplayRowPriceViewModel
+﻿@using OpenQA.Selenium
+@model DisplayRowPriceViewModel
 
 @functions {
     private const string CurrencyFormatToken = "c";
@@ -70,7 +71,12 @@
         {
             case OrderStatus.InProcess:
                 statusLabelSpan.AddCssClass("label-warning");
-                statusLabelSpan.SetInnerText(@OrderStatus.InProcess.ToString());
+                statusLabelSpan.SetInnerText(OrderStatus.InProcess.ToString());
+                break;
+
+            case OrderStatus.Error:
+                statusLabelSpan.AddCssClass("label-warning");
+                statusLabelSpan.SetInnerText(OrderStatus.InProcess.ToString());
                 break;
 
             case OrderStatus.Submitted:
@@ -86,6 +92,11 @@
             case OrderStatus.AwaitingVerification:
                 statusLabelSpan.AddCssClass("label-warning");
                 statusLabelSpan.SetInnerText(@OrderStatus.AwaitingVerification.ToString());
+                break;
+
+            case OrderStatus.Canceled:
+                statusLabelSpan.AddCssClass("label-warning");
+                statusLabelSpan.SetInnerText(@OrderStatus.Canceled.ToString());
                 break;
         }
 
@@ -134,29 +145,47 @@
         }
         rowAmount.Append("<span id='showTotalPrice'>Total Cost: <span id='totalPrice'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken) + "</span></span>");
 
-        <div id="billingDetails" class="well" style="text-align: right;">
+        <div id="billingDetails" style="text-align: right;">
 
-            @Html.Raw(rowAmount.ToString())<br/>
+            @Html.Raw(rowAmount.ToString())
 
-            @{
+            <div style="padding-top: 10px;">
+                Order Status:
                 @Html.Raw(GetStatusLabel(Model.OrderStatus))
-            }
+            </div>
+
             <div id="flyUpdateSuccessFlag"></div>
-            <div style="text-align: center; background-color: darkgray; color: black; padding: 10px 40px 10px 40px; width: 75%;" 
-                 id="discountCaption">@ViewBag.DiscountCaption</div>
-
-        </div>
-    
-        <div>
-            <span><button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button></span> &nbsp; &nbsp; &nbsp;
-            @{
-                <span>
-                    <button data-toggle="modal" role="button" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button>
-                </span><br />
-
+            @if (!string.IsNullOrWhiteSpace(ViewBag.DiscountCaption))
+            {
+                <div style="margin: 8px; text-align: center; background-color: darkgray; color: black; padding: 10px 40px 10px 40px; width: 75%;"
+                     id="discountCaption">@ViewBag.DiscountCaption</div>
             }
-            <div class="pull-right"><br /><br />
-                <div class="label label-default large" id="Canceller">Place cart on-hold/Cancel checkout</div>
+
+            <div style="text-align: center;">
+                @if (Model.OrderStatus != OrderStatus.Paid || Model.OrderStatus != OrderStatus.Submitted || Model.OrderStatus != OrderStatus.Billed)
+                {
+                    <span>
+                        <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button>
+                        &nbsp;
+                        &nbsp;
+                        &nbsp;
+                    </span>
+                }
+                @if (Model.OrderStatus != OrderStatus.Paid)
+                {
+                    <span>
+                        <button data-toggle="modal" role="button" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button>
+                    </span>
+                    <br />
+
+
+                }
+
+                <div class="pull-right">
+                    <br /><br />
+                    <div class="label label-default large" id="Canceller">Place cart on-hold/Cancel checkout</div>
+                </div>
+
             </div>
         </div>
     }

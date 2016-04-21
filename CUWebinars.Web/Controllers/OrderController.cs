@@ -373,7 +373,7 @@ namespace CUWebinars.Web.Controllers
             _logger.Info("importorder4ACS Incoming Values: " + JsonConvert.SerializeObject(_importedOrder, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
             if (ModelState.IsValid)
             {
-                var idRegType = _webinarManagementService.GetRegTypeByACS(_importedOrder.DeliveryType,  Convert.ToInt32(_importedOrder.BankWebID));
+                var idRegType = _webinarManagementService.GetRegTypeByACS(_importedOrder.DeliveryType, Convert.ToInt32(_importedOrder.BankWebID));
                 ImportOrderModel importedOrder = new ImportOrderModel
                 {
                     idWebinar = Convert.ToInt32(_importedOrder.BankWebID),
@@ -409,7 +409,7 @@ namespace CUWebinars.Web.Controllers
                     Title = _importedOrder.Title,
                     FirstName = _importedOrder.FirstName,
                     LastName = _importedOrder.LastName,
-                    
+
                     AdditionalLocationsString = _importedOrder.AdditionalLocationsString,
                     Email = _importedOrder.Email
 
@@ -425,7 +425,7 @@ namespace CUWebinars.Web.Controllers
                     return Json(new { Result = WebUiConstants.Fail, Error = myError });
                 }
                 _logger.Info("ACS EmailParser Input: " + JsonConvert.SerializeObject(importedOrder, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
-                
+
                 if (idRegType == 0)
                 {
                     _logger.Fatal(string.Format("idRegType comes up 0. RegType = {0}; email = {1}; orderDate = {2};",
@@ -466,7 +466,8 @@ namespace CUWebinars.Web.Controllers
 
                             _orderControllerOrchestrator.FinalizeImportedRegistation(verificationKey);
 
-                            _logger.Info(string.Format("ImportOrder|CreateUser Succeeded: {0}", importedOrder.Email.Trim()));
+                            _logger.Info(string.Format("ImportOrder|CreateUser Succeeded: {0}",
+                                importedOrder.Email.Trim()));
                         }
                         catch (Exception exception)
                         {
@@ -475,6 +476,31 @@ namespace CUWebinars.Web.Controllers
                             Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                             throw;
                         }
+                    }
+                    else
+                    {
+                        // send address info
+                        var billingAdd = importQueryResult.WebUser.Addresses.Where(a => a.AddressType == "Billing").SingleOrDefault();
+                        var shippingAdd = importQueryResult.WebUser.Addresses.Where(a => a.AddressType == "Shipping").SingleOrDefault();
+                        if (!ReferenceEquals(null, billingAdd))
+                        {
+                            billingAdd.City = _importedOrder.City;
+                            billingAdd.StreetAddress = _importedOrder.StreetorP_O_Box;
+                            billingAdd.Phone = _importedOrder.Phone;
+                            billingAdd.State = _importedOrder.State_Province_Region;
+                            billingAdd.Zip = _importedOrder.Zip_PostalCode;
+                            billingAdd.Name = _importedOrder.FirstName + " " + _importedOrder.LastName;
+                        }
+                        if (!ReferenceEquals(null, shippingAdd))
+                        {
+                            shippingAdd.City = _importedOrder.City;
+                            shippingAdd.StreetAddress = _importedOrder.StreetorP_O_Box;
+                            shippingAdd.Phone = _importedOrder.Phone;
+                            shippingAdd.State = _importedOrder.State_Province_Region;
+                            shippingAdd.Zip = _importedOrder.Zip_PostalCode;
+                            shippingAdd.Name = _importedOrder.FirstName + " " + _importedOrder.LastName;
+                        }
+                        //_orderControllerOrchestrator.U
                     }
 
                     idOfLastOrder = _orderControllerOrchestrator.ImportOrder(importedOrder, importedOrder.Email.Trim(),
@@ -499,12 +525,22 @@ namespace CUWebinars.Web.Controllers
                     newOrder.OrderDate = importedOrder.OrderDate;
                     newOrder.OrderStatus = OrderStatus.AwaitingVerification;
 
-                    //if (_importedOrder.PaymentMethod == "Credit Card")
-                    //{
-                    //    newOrder.OrderStatus = OrderStatus.Paid;
-                    //}
-                    newOrder.AuditInfo = "'ACSImporter: '+{" + JsonConvert.SerializeObject(_importedOrder) + "}";
-                    
+                    var cftTitleString = _importedOrder.AffiliateComments;
+
+                    if (cftTitleString ==
+                        newOrder.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title)
+                    {
+                        cftTitleString = "";
+                    }
+                    else
+                    {
+                        cftTitleString = "The title of this event at cftnow.org is: " + cftTitleString;
+                    }
+
+                    newOrder.UserComments = "{'ASCImporter': '{This registration originated at cftnow.org. " + cftTitleString + "'}'}";
+
+                    newOrder.AuditInfo = "{'ACSImporter': '{" + JsonConvert.SerializeObject(_importedOrder) + "}'}";
+
                     _orderManagementService.SaveChanges();
 
                     _logger.Info(string.Format("ImportOrder from {0} produced: {1}", importedOrder.Source, idOfLastOrder));

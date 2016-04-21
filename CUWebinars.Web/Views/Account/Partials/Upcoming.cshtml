@@ -97,9 +97,14 @@
                     TimeSpan calcDays = row.Webinar.Date - DateTime.UtcNow;
                     var numDays = Convert.ToInt32(calcDays.TotalDays);
                     string remainingDays;
-
-                    remainingDays = " in " + Convert.ToInt32(calcDays.TotalDays).ToString() + " days on <i>" + @Html.DisplayDate(row.Webinar.Date) + "</i>";
-
+                    if (numDays == 0)
+                    {
+                        remainingDays = " today - <i> " + @Html.DisplayDate(row.Webinar.Date) + "</i>";
+                    }
+                    else
+                    {
+                        remainingDays = " in " + Convert.ToInt32(calcDays.TotalDays).ToString() + " days on <i>" + @Html.DisplayDate(row.Webinar.Date) + "</i>";
+                    }
                     <div class=" container-fluid">
                         <div class="row-fluid well well-large">
                             <div style="border-top-color: black;border-top: 10px;">

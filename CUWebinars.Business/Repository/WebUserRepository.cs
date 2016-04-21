@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using CUWebinars.Business.Core;
 
@@ -14,7 +15,7 @@ namespace CUWebinars.Business.Repository
     {
         private readonly ILogger _logger;
 
-        public WebUserRepository()
+        public WebUserRepository(TTSWebinarsContext ttsWebinarsContext)
         {
 
         }
@@ -95,6 +96,16 @@ namespace CUWebinars.Business.Repository
 
             return users;
 
+        }
+
+        public Affiliate FindAffiliateOfLastOrder(string identity)
+        {
+            var aff = ((TTSWebinarsContext)db).Orders
+                .Where(o => o.BillingEmail == identity)
+                .OrderByDescending(o => o.OrderDate)
+                .Include(u => u.WebUser)
+                .Select(o => o.Affiliate).FirstOrDefault();
+            return aff;
         }
 
         public int? GetWebUserIdByEmail(string email)

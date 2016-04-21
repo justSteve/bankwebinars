@@ -54,5 +54,6 @@ namespace CUWebinars.Business.Services
         int CloneQuizForWebinar(Webinar webinar, int existingQuizId);
         int GetQuizIdByWebinarId(int idWebinar);
         IList<Webinar> GetSearchDTO(string searchTerm);
+        int? GetNextCompliancePerspectives();
     }
 }

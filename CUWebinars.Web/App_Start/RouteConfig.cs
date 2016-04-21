@@ -23,6 +23,12 @@ namespace CUWebinars.Web.App_Start
                 defaults: new { controller = "Cart", action = "PostBackWPS", id = 0 }
             );
             routes.MapRoute(
+                name: "ResumeCheckout",
+                url: "Resume/{id}",
+               defaults: new { controller = "Cart", action = "Resume", id = 0 }
+
+            );
+            routes.MapRoute(
                 "expresscheckout",
                 url: "expresscheckout",
                 // this should work and would be better
@@ -80,28 +86,28 @@ namespace CUWebinars.Web.App_Start
 
             );
 
-            
+
             routes.MapRoute(
                 "OnDemandPlaybackLegacy",
                 url: "Webinar/OnDemandPlayback/{args}",
                 defaults: new { controller = "Webinar", action = "RedirectLegacyRecordings" }
             );
 
-            
+
             routes.MapRoute(
                 "DirSeriesCerts",
                 url: "Admin/registrations/CertificateOfCompletionDS",
                 defaults: new { controller = "Admin", action = "CertificateOfCompletionDS" }
             );
 
-                  
+
             routes.MapRoute(
                 "Recorded",
                 url: "Webinar/Recorded",
                 defaults: new { controller = "Webinar", action = "Recorded" }
             );
 
-                  
+
             routes.MapRoute(
                 "Upcoming",
                 url: "Webinar/Upcoming",
@@ -112,7 +118,7 @@ namespace CUWebinars.Web.App_Start
             routes.MapRoute(
                 "RedirectLegacyRecordings",
                 url: "Recordings/{recordingURL}",
-                defaults: new { controller = "Webinar", action = "RedirectLegacyRecordings"}
+                defaults: new { controller = "Webinar", action = "RedirectLegacyRecordings" }
             );
 
             routes.MapRoute(

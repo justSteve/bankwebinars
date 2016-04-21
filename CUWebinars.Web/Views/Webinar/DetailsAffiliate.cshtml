@@ -120,14 +120,31 @@
                                 <li id="confirmationTabForAffiliate"><a href="#confirmationForAffiliate" data-toggle="tab">@Model.ConfirmationCaption</a></li>
                             </ul>
 
-                            <div class="tab-content">
-                                <div class="tab-pane active" id="findUserForAffiliate">
-                                    <button type="button" class="btn-success btn pull-right" id="AddToCart"> Add Order </button>
-                                    @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptionsForAffiliate.cshtml", model: Model.CheckoutOptionsViewModel)
+                            @if (Model.UserOwnsThisEvent < 1)
+                            {
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="findUserForAffiliate">
+                                        <button type="button" class="btn-success btn pull-right" id="AddToCart"> Add Order</button>
+                                        @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptionsForAffiliate.cshtml", model: Model.CheckoutOptionsViewModel)
+                                    </div>
+                                    <div class="tab-pane" id="contactInfoForAffiliate"></div>
+                                    <div class="tab-pane" id="confirmationForAffiliate"></div>
                                 </div>
-                                <div class="tab-pane" id="contactInfoForAffiliate"></div>
-                                <div class="tab-pane" id="confirmationForAffiliate"></div>
-                            </div>
+                            }
+                            else if (Model.Order.OrderStatus == OrderStatus.AwaitingVerification || Model.Order.OrderStatus == OrderStatus.InProcess || Model.Order.OrderStatus == OrderStatus.Canceled || Model.Order.OrderStatus == OrderStatus.Submitted)
+                            {
+                                <div class="tab-content">
+                                    <div class="tab-pane " id="findUserForAffiliate">
+                                        <button type="button" class="btn-success btn pull-right" id="AddToCart"> Add Order</button>
+
+                                    </div>
+                                    <div class="tab-pane" id="contactInfoForAffiliate"></div>
+                                    <div class="tab-paneactive" id="confirmationForAffiliate">
+                                        @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutConfirmForAffiliate.cshtml", model: Model.CheckoutConfirmViewModel)
+                                    </div>
+
+                                </div>
+                            }
                         </div>
 
 

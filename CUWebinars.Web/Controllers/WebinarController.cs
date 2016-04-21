@@ -779,6 +779,11 @@ namespace CUWebinars.Web.Controllers
             }
             if (id.HasValue)
             {
+                if (id.Value == 883)
+                {
+                    id = _webinarManagementService.GetNextCompliancePerspectives();
+
+                }
                 var webinar = _webinarManagementService.GetWebinar(id.Value);
 
                 if (webinar == null) return HttpNotFound();
@@ -834,6 +839,11 @@ namespace CUWebinars.Web.Controllers
                     //    out totalNumberOrders
                     //    );
 
+                    if (model.CheckoutInProcess)
+                    {
+                        CheckoutResumeByAdmin(id, model);
+                    }
+
                     model.ShowOrdersViewModel = new ShowOrdersViewModel
                     {
                         Affiliate = aff,
@@ -841,6 +851,7 @@ namespace CUWebinars.Web.Controllers
                         UserIsAdmin = true,
                         Webinar = model.Webinar
                     };
+                    BuildConfirmOrderView(model);
 
                     return PartialView("DetailsAdmin", model);
                 }
@@ -857,6 +868,10 @@ namespace CUWebinars.Web.Controllers
 
                     var aff = _affiliateManagementService.LoadByTTSDomain(ttsDomain);
 
+                    if (model.CheckoutInProcess)
+                    {
+                        CheckoutResumeByAdmin(id, model);
+                    }
                     model.ShowOrdersViewModel = new ShowOrdersViewModel
                     {
                         Affiliate = aff,
@@ -864,6 +879,8 @@ namespace CUWebinars.Web.Controllers
                         UserIsAdmin = false,
                         Webinar = model.Webinar
                     };
+
+                    BuildConfirmOrderView(model);
                     return PartialView("DetailsAffiliate", model);
                 }
 
@@ -921,160 +938,7 @@ namespace CUWebinars.Web.Controllers
                 /*****************************************************************************************/
                 /* Significance of next 'if': must complete cart transaction before commencing a new one.*/
                 /*****************************************************************************************/
-                if (model.UserHasOpenOrder > 0)
-                {
-
-                    model.CheckoutInProcess = true;
-                    model.MessageOrderStatus =
-                        "<div align=\"center\" class=\"label-warning label\">Your order is InProcess and needs to be confirmed or canceled.</div>";
-
-                    var additionalLocationsViewModel =
-                        model.RegistrationSummaryViewModel.AdditionalLocationsViewModel;
-                    var orderRow = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-                    var order = orderRow.Order;
-                    var webUser = orderRow.Order.WebUser;
-                    var userFullName = string.Concat(webUser.FirstName, " ", webUser.LastName);
-                    var addresses = webUser.Addresses.ToArray();
-                    var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
-                    var shippingAddress = addresses.FirstOrDefault(a => a.AddressType == WebUiConstants.ShippingAddress);
-                    //var CheckoutDiscount = orderRow.Discount == null ? string.Empty : _orderManagementService.GetDiscountByCode()
-
-                    if (!ReferenceEquals(null, order))
-                    {
-                        //populate viewbag for expresscheckout viewmodel
-                        ViewBag.Order = order;
-                        
-
-                        JObject existingJObject = null;
-                        string comments = string.Empty;
-                        if (!ReferenceEquals(null, order.AdminComments))
-                        {
-                            comments = order.AdminComments.Trim();
-                        }
-
-                        var newJson =
-                            new JProperty(
-                                string.Concat("ReturningOrder-", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
-                                    new JObject(new JProperty("LegacyComments", order.AdminComments))
-                                );
-
-                        if (string.IsNullOrWhiteSpace(comments))
-                        {
-                            existingJObject = new JObject(newJson);
-                        }
-                        else
-                        {
-                            existingJObject = JObject.Parse(comments);
-                            existingJObject.Add(newJson);
-                        }
-
-                        order.AdminComments = existingJObject.ToString(Formatting.None);
-                        order.OrderDate = DateTime.Now;
-
-                        PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
-                        _orderManagementService.UpdateOrderChanges(orderRow.Order, ref pricesAndDiscounts);
-
-                        if (orderRow.Discount != null)
-                        {
-                            ViewBag.DiscountCaption =
-                                _orderManagementService.CalculateDiscountRedemption(orderRow.Discount, orderRow, null, 1);
-                        }
-
-                        //_orderManagementService.SaveChanges();
-
-                        model.CheckoutConfirmViewModel = new CheckoutConfirmViewModel
-                        {
-                            AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
-                            AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
-                            {
-                                Email = webUser.email,
-                                FirstName = webUser.FirstName,
-                                idUser = webUser.idUser,
-                                LastName = webUser.LastName,
-                                Title = webUser.Title,
-                                Institution = orderRow.Order.Institution,
-                                BillingAddress = new AddressModel()
-                                {
-                                    TypeOfAddress = AddressType.Billing,
-                                    StreetAddress = order.BillingAddress,
-                                    StreetAddress2 = order.BillingAddress2,
-                                    City = order.BillingCity,
-                                    Name = order.FirstName + ' ' + order.LastName,
-                                    Phone = order.BillingPhone,
-                                    State = order.BillingState,
-                                    Zip = order.BillingZip
-                                },
-                                ShippingAddress = new AddressModel()
-                                {
-                                    TypeOfAddress = AddressType.Shipping,
-                                    StreetAddress = order.ShippingAddress,
-                                    StreetAddress2 = order.ShippingAddress2,
-                                    City = order.ShippingCity,
-                                    Name = order.FirstName + ' ' + order.LastName,
-                                    Phone = order.ShippingPhone,
-                                    State = order.ShippingState,
-                                    Zip = order.ShippingZip
-                                }
-                            },
-                            Affiliate = order.Affiliate,
-                            AdminComments = order.AdminComments,
-                            //AffiliateComments = model.Order.AffiliateComments,
-                            //CCUserDetails = "",
-                            CheckoutDiscountCode =
-                                orderRow.Discount == null ? string.Empty : orderRow.Discount.DiscountCode,
-                            DisplayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
-                            {
-                                Options = _orderManagementService.GetOptionsByWebinarId(orderRow.idWebinar, true),
-                                OrderRowId = orderRow.idOrderRow,
-                                OrderRowRegistrationType = orderRow.RegistrationType
-                            },
-                            DisplayRowPriceViewModel =
-                            model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel,
-
-                            idUser = model.Order.idUser,
-                            ShippingDetailsModel = new ShippingDetailsModel()
-                            {
-                                UserId = webUser.idUser,
-                                ShippingAddress = shippingAddress == null
-                                    ? new AddressModel()
-                                    : new AddressModel
-                                    {
-                                        City = shippingAddress.City,
-                                        Country = shippingAddress.Country,
-                                        StreetAddress = shippingAddress.StreetAddress,
-                                        StreetAddress2 = shippingAddress.StreetAddress2,
-                                        State = shippingAddress.State,
-                                        Zip = shippingAddress.Zip,
-                                        Phone = shippingAddress.Phone,
-                                        Name = shippingAddress.Name,
-                                        TypeOfAddress = AddressType.Shipping
-                                    },
-                            },
-                            OptionLabel = orderRow.RegistrationType.OptionLabel,
-                            OrderExists = true,
-                            AdditionalLocationsViewModel = new AdditionalLocationsViewModel
-                            {
-                                AdditionalLocations =
-                                    model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
-                                        .AdditionalLocation,
-                                Addresses = additionalLocationsViewModel.Addresses,
-                                OptionsCost = additionalLocationsViewModel.OptionsCost,
-                            },
-                            OrderRowExists = true,
-                            OrderRowHasId = true,
-                            OrderStatus = OrderStatus.InProcess,
-                            Origin = model.Order.Origin,
-
-                            UserComments = model.Order.UserComments,
-                            UserDetails = string.Concat("<span id='userFullnameLabel'>", userFullName,
-                                "</span> - <span id='userInstitutionLabel'>", orderRow.Order.Institution, "</span><br>",
-                                "<span id='userEmailLabel'>", webUser.email, "</span>"),
-                            UserFullname = userFullName,
-                            UserType = UserType.Customer
-                        };
-
-                    }
-                }
+                BuildConfirmOrderView(model);
 
                 return View(model);
             }
@@ -1082,6 +946,196 @@ namespace CUWebinars.Web.Controllers
             _logger.Error("Details Action invoked with null 'id' parameter");
 
             return RedirectToAction("allActive", new { eventsToShow = "upcoming" });
+        }
+
+        private void CheckoutResumeByAdmin(int? id, WebinarDetailsViewModel model)
+        {
+            var row = model.Order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
+
+            if (row.idWebinar == id)
+            {
+                //var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, checkOrder.WebUser.email);
+                if (model.Order.OrderStatus == OrderStatus.Billed
+                    || model.Order.OrderStatus == OrderStatus.Paid
+                    || model.Order.OrderStatus == OrderStatus.Submitted)
+                {
+                    if (_orderManagementService.FindPostEventClaimByOnDemandCode(model.Order).ExpiryDate >= DateTime.Today)
+                        model.RegistrationSummaryViewModel.DisplayPostEventMaterials = model.Order.idOrder;
+                }
+
+                //model.RegistrationSummaryViewModel.WebinarFiles = webinarFiles;
+                model.UserOwnsThisEvent = model.Order.idOrder;
+                model.Order = model.Order;
+            }
+
+            if ((model.Order.OrderStatus == OrderStatus.AwaitingVerification
+                 || model.Order.OrderStatus == OrderStatus.InProcess) && row.idWebinar == id)
+            {
+                //var newJson =
+                //    new JProperty(
+                //        string.Concat("PendingReturnsToCheckoutBy-" + currentUser, TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                //            new JObject(new JProperty("LegacyComments", model.Order.AdminComments))
+                //        );
+
+                //model.Order.AdminComments = newJson +", 'Prior Comments ': {" + model.Order.AdminComments + "}";
+                model.UserHasOpenOrder = model.Order.idOrder;
+            }
+        }
+
+        private void BuildConfirmOrderView(WebinarDetailsViewModel model)
+        {
+            if (model.UserHasOpenOrder > 0)
+            {
+                model.CheckoutInProcess = true;
+                model.MessageOrderStatus =
+                    "<div align=\"center\" class=\"label-warning label\">Your order is InProcess and needs to be confirmed or canceled.</div>";
+
+                var additionalLocationsViewModel =
+                    model.RegistrationSummaryViewModel.AdditionalLocationsViewModel;
+                var orderRow = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+                var order = orderRow.Order;
+                var webUser = orderRow.Order.WebUser;
+                var userFullName = string.Concat(webUser.FirstName, " ", webUser.LastName);
+                var addresses = webUser.Addresses.ToArray();
+                var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
+                var shippingAddress = addresses.FirstOrDefault(a => a.AddressType == WebUiConstants.ShippingAddress);
+                //var CheckoutDiscount = orderRow.Discount == null ? string.Empty : _orderManagementService.GetDiscountByCode()
+
+                if (!ReferenceEquals(null, order))
+                {
+                    //populate viewbag for expresscheckout viewmodel
+                    ViewBag.Order = order;
+
+
+                    JObject existingJObject = null;
+                    string comments = string.Empty;
+                    if (!ReferenceEquals(null, order.AdminComments))
+                    {
+                        comments = order.AdminComments.Trim();
+                    }
+
+                    var newJson =
+                        new JProperty(
+                            string.Concat("ReturningOrder-", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                            new JObject(new JProperty("LegacyComments", order.AdminComments))
+                            );
+
+                    if (string.IsNullOrWhiteSpace(comments))
+                    {
+                        existingJObject = new JObject(newJson);
+                    }
+                    else
+                    {
+                        existingJObject = JObject.Parse(comments);
+                        existingJObject.Add(newJson);
+                    }
+
+                    order.AdminComments = existingJObject.ToString(Formatting.None);
+                    order.OrderDate = DateTime.Now;
+
+                    PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
+                    _orderManagementService.UpdateOrderChanges(orderRow.Order, ref pricesAndDiscounts);
+
+                    if (orderRow.Discount != null)
+                    {
+                        ViewBag.DiscountCaption =
+                            _orderManagementService.CalculateDiscountRedemption(orderRow.Discount, orderRow, null, 1);
+
+
+                    }
+
+                    //_orderManagementService.SaveChanges();
+
+                    model.CheckoutConfirmViewModel = new CheckoutConfirmViewModel
+                    {
+                        AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
+                        AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
+                        {
+                            Email = webUser.email,
+                            FirstName = webUser.FirstName,
+                            idUser = webUser.idUser,
+                            LastName = webUser.LastName,
+                            Title = webUser.Title,
+                            Institution = orderRow.Order.Institution,
+                            BillingAddress = new AddressModel()
+                            {
+                                TypeOfAddress = AddressType.Billing,
+                                StreetAddress = order.BillingAddress,
+                                StreetAddress2 = order.BillingAddress2,
+                                City = order.BillingCity,
+                                Name = order.FirstName + ' ' + order.LastName,
+                                Phone = order.BillingPhone,
+                                State = order.BillingState,
+                                Zip = order.BillingZip
+                            },
+                            ShippingAddress = new AddressModel()
+                            {
+                                TypeOfAddress = AddressType.Shipping,
+                                StreetAddress = order.ShippingAddress,
+                                StreetAddress2 = order.ShippingAddress2,
+                                City = order.ShippingCity,
+                                Name = order.FirstName + ' ' + order.LastName,
+                                Phone = order.ShippingPhone,
+                                State = order.ShippingState,
+                                Zip = order.ShippingZip
+                            }
+                        },
+                        Affiliate = order.Affiliate,
+                        AdminComments = order.AdminComments,
+                        //AffiliateComments = model.Order.AffiliateComments,
+                        //CCUserDetails = "",
+                        CheckoutDiscountCode =
+                            orderRow.Discount == null ? string.Empty : orderRow.Discount.DiscountCode,
+                        DisplayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
+                        {
+                            Options = _orderManagementService.GetOptionsByWebinarId(orderRow.idWebinar, true),
+                            OrderRowId = orderRow.idOrderRow,
+                            OrderRowRegistrationType = orderRow.RegistrationType
+                        },
+                        DisplayRowPriceViewModel =
+                            model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel,
+                        idUser = model.Order.idUser,
+                        ShippingDetailsModel = new ShippingDetailsModel()
+                        {
+                            UserId = webUser.idUser,
+                            ShippingAddress = shippingAddress == null
+                                ? new AddressModel()
+                                : new AddressModel
+                                {
+                                    City = shippingAddress.City,
+                                    Country = shippingAddress.Country,
+                                    StreetAddress = shippingAddress.StreetAddress,
+                                    StreetAddress2 = shippingAddress.StreetAddress2,
+                                    State = shippingAddress.State,
+                                    Zip = shippingAddress.Zip,
+                                    Phone = shippingAddress.Phone,
+                                    Name = shippingAddress.Name,
+                                    TypeOfAddress = AddressType.Shipping
+                                },
+                        },
+                        OptionLabel = orderRow.RegistrationType.OptionLabel,
+                        OrderExists = true,
+                        AdditionalLocationsViewModel = new AdditionalLocationsViewModel
+                        {
+                            AdditionalLocations =
+                                model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
+                                    .AdditionalLocation,
+                            Addresses = additionalLocationsViewModel.Addresses,
+                            OptionsCost = additionalLocationsViewModel.OptionsCost,
+                        },
+                        OrderRowExists = true,
+                        OrderRowHasId = true,
+                        OrderStatus = OrderStatus.InProcess,
+                        Origin = model.Order.Origin,
+                        UserComments = model.Order.UserComments,
+                        UserDetails = string.Concat("<span id='userFullnameLabel'>", userFullName,
+                            "</span> - <span id='userInstitutionLabel'>", orderRow.Order.Institution, "</span><br>",
+                            "<span id='userEmailLabel'>", webUser.email, "</span>"),
+                        UserFullname = userFullName,
+                        UserType = UserType.Customer
+                    };
+                }
+            }
         }
 
         private void InitializeDetailsState(Webinar webinar, WebinarDetailsViewModel model, int id)
@@ -1166,7 +1220,7 @@ namespace CUWebinars.Web.Controllers
                     {
                         //Discount = row.Discount,
                         NumberOfAdditionalLocations = row.AdditionalLocation.Count(),
-                        //OrderStatus = row.Order.OrderStatus,
+                        OrderStatus = row.Order.OrderStatus,
                         //Price = Convert.ToDecimal(row.RegistrationType.Price),
                         PricesAndDiscounts =
                             _orderManagementService.CalculateOrderCost(row.Order, additionalLocationsPricing.Item2),
@@ -1229,6 +1283,7 @@ namespace CUWebinars.Web.Controllers
                 additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(additionalLocations.ToList());
                 model.WebUser = user;
                 model.Order = order;
+                model.CheckoutInProcess = true;
 
                 if (model.WebUser.idSubscriptionDiscount != null)
                 {
@@ -1269,6 +1324,7 @@ namespace CUWebinars.Web.Controllers
                     idUser = model.WebUser.idUser,
                     OrderExists = orderExists,
                     SelectedWebUser = -1,
+                    idOrder = model.Order.idOrder,
                     WebinarStatus = model.Webinar.Status
                 };
 
@@ -1297,7 +1353,7 @@ namespace CUWebinars.Web.Controllers
                         {
                             //Discount = row.Discount,
                             NumberOfAdditionalLocations = row.AdditionalLocation.Count(),
-                            //OrderStatus = row.Order.OrderStatus,
+                            OrderStatus = row.Order.OrderStatus,
                             //Price = Convert.ToDecimal(row.RegistrationType.Price),
                             PricesAndDiscounts =
                                 _orderManagementService.CalculateOrderCost(row.Order, additionalLocationsPricing.Item2),
@@ -1352,7 +1408,8 @@ namespace CUWebinars.Web.Controllers
             ViewBag.PageStyleType = "holy-grail-three-columns";
             model.UserHasOpenOrder = 0;
             model.UserOwnsThisEvent = 0;
-            model.CheckoutInProcess = false;
+
+            if (!model.CheckoutInProcess) model.CheckoutInProcess = false;
 
             ViewBag.metaDesc = string.Empty;
             ViewBag.metaKeywords = string.Empty;

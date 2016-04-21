@@ -24,6 +24,7 @@ namespace CUWebinars.Business.Constants
         public const string OriginImportedACS = "ImportedByACS";
         public const string OriginExpress = "Express";
         public const string OriginMigrated = "Migrator";
+        public const string OriginResume = "Resume";
 
         public const string RazorExtension = ".cshtml";
         public const string RegistrantKey = "registrantKey";
@@ -54,6 +55,7 @@ namespace CUWebinars.Business.Constants
                 return TimeZoneInfo.ConvertTimeFromUtc(timeUtc, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
             }
         }
+
 
         public const string CreationModeImported = "imported";
         public const string CreationModeMigrated = "migrated";

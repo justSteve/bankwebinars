@@ -258,15 +258,16 @@ namespace CUWebinars.Web
 
         private void Session_Start(object sender, EventArgs e)
         {
-            bool iscrawler = Regex.IsMatch(Request.UserAgent,
-                @"bot|crawler|baiduspider|80legs|ia_archiver|voyager|curl|wget|yahoo! slurp|mediapartners-google",
-                RegexOptions.IgnoreCase);
-            if (!iscrawler)
-            {
+            //bool iscrawler = Regex.IsMatch(Request.UserAgent,
+            //    @"bot|crawler|baiduspider|80legs|ia_archiver|voyager|curl|wget|yahoo! slurp|mediapartners-google",
+            //    RegexOptions.IgnoreCase);
+            //if (!iscrawler)
+            //{
                 var ttsWebinarsContext = new TTSWebinarsContext();
                 try
                 {
                     IAffiliateRepository affiliateRepository = new AffiliateRepository(ttsWebinarsContext);
+                    IWebUserRepository webUserRepository = new WebUserRepository(ttsWebinarsContext);
                     IInstitutionRepository institutionRepository = new InstitutionRepository(ttsWebinarsContext);
 
 
@@ -289,7 +290,18 @@ namespace CUWebinars.Web
                                     .Value;
                             StateService.SetValue(WebUiConstants.CurrentAffiliate,
                                 affiliateRepository.LoadByTTSDomain(claimTTSDomain));
+                        }
+                        else
+                        {
+                            StateService.SetValue(WebUiConstants.CurrentAffiliate,
+                                webUserRepository.FindAffiliateOfLastOrder(User.Identity.Name));                            
+                        }                        
+                        if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                            (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Admin))
+                        {
 
+                            StateService.SetValue(WebUiConstants.CurrentAffiliate,
+                                affiliateRepository.LoadById(19));
                         }
                     }
 
@@ -472,8 +484,7 @@ namespace CUWebinars.Web
                     //ttsWebinarsContext.Database.Connection.Close(); --> THIS LINE PROBABLY NOT NECESSARY. DISPOSE SHOULD DO THIS FOR US.
                     ttsWebinarsContext.Dispose();
                 }
-            }
+            //}//ends attempt to filter bots
         }
     }
-
 }
