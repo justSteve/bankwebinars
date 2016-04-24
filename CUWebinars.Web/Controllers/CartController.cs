@@ -926,10 +926,27 @@ namespace CUWebinars.Web.Controllers
         public ActionResult ComplianceSchoolCheckout()
         {
             var _idAffiliate = 19;
-            var id = Convert.ToInt32(Request.UrlReferrer.ToString().Split('=')[1]);
-            if (!ReferenceEquals(id, null))
+
+            try
             {
-                _idAffiliate = id;
+                int id;
+                if (Request.UrlReferrer.ToString().Contains("&"))
+                {
+                    id = Convert.ToInt32(Request.UrlReferrer.ToString().Split('&')[1].Split('=')[1]);
+                }
+                else
+                {
+                    id = Convert.ToInt32(Request.UrlReferrer.ToString().Split('=')[1]);
+                }
+                if (!ReferenceEquals(id, null))
+                {
+                    _idAffiliate = id;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _logger.FatalException("ComplianceSchoolCheckoutreferrer " + Request.UrlReferrer.ToString(), ex);
             }
 
             var model = new ExpressCheckoutModel
@@ -938,7 +955,6 @@ namespace CUWebinars.Web.Controllers
             };
 
             return View(model);
-
         }
 
         [HttpPost]

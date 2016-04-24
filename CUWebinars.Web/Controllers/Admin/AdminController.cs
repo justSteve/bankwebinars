@@ -823,11 +823,11 @@ namespace CUWebinars.Web.Controllers.Admin
                     sb.AppendLine("    Order " + order.idOrder + " deducts: " + thisUse);
 
                     ordersWithDiscount.Add(order);
-                    
+
                 }
                 sb.AppendLine("Calculated usage = " + trackUsed + "-" + trackRemain + " Stored = " + discount.CreditsUsed + "-" + discount.CreditsRemain);
-                
-                return authUsers.ToString() +  sb.ToString();
+
+                return authUsers.ToString() + sb.ToString();
                 //return Json(new { Result = "{" + sb.ToString() + "}" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)

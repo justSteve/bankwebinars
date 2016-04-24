@@ -262,6 +262,51 @@ namespace CUWebinars.Web.Controllers
             }
 
         }
+
+        public void MigrateCompliancePerspectivesOrders()
+        {
+            IList<Order> orders =
+                _orderManagementService.GetOrdersByWebinar(842).Where(o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Paid).ToList();
+
+            var nextCPId = _webinarManagementService.GetNextCompliancePerspectives();
+
+            foreach (var o in orders)
+            {
+                var row = o.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
+                var addLocString = "";
+                if (row.AdditionalLocation != null)
+                {
+                    foreach (var addLoc in row.AdditionalLocation)
+                    {
+                        addLocString += addLoc.Email + ",";
+                    }
+                }
+
+                var thisOrder = new MigrateOrderModel
+                {
+                    idWebinar = nextCPId.Value,
+                    idAffiliate = o.idAffiliate,
+                    Email = o.BillingEmail,
+                    Title = o.WebUser.Title,
+                    Status = o.OrderStatus,
+                    AdditionalLocationsString = addLocString.TrimEnd(','),
+                    idOrderLegacy = 0,
+                    idRegType = row.idRegType,
+                    OrderDate = DateTime.Now,
+                    Total = o.Total,
+                    //BillingAddress = o.WebUser.Addresses.Where(a => a.AddressType == AddressType.Billing).SingleOrDefault(),
+                    //ShippingAddress = o.WebUser.Addresses.Where(a => a.AddressType == AddressType.Shipping).SingleOrDefault(),
+                    Institution = o.Institution,
+                    DiscountCode = null,
+                    AdminComments = "",
+                    FirstName = o.FirstName,
+                    LastName = o.LastName,
+                    Origin = o.Origin,
+                    LegacyRegType = 0,
+                    SendNotification = false
+                };
+            }
+        }
         /// <summary>
         /// Permits migration of legacy system.
         /// </summary>

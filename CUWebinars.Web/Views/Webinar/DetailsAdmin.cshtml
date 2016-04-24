@@ -156,7 +156,7 @@
                             }
                         </div>
                         <!-- The following forms are positioned here so that they are not nested in the form in the CheckoutOptions View. -->
-                        @*@using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
+                        @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
                             {
                                 @Html.AntiForgeryToken()
 
@@ -177,7 +177,7 @@
                             </form>
                             <form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>
                             <form id="nonUSForm"><input type="hidden" name="AddressText" id="AddressText" /></form>
-                            <form id="checkInstitution"><input type="hidden" name="InstitutionChecker" id="InstitutionChecker" /></form>*@
+                            <form id="checkInstitution"><input type="hidden" name="InstitutionChecker" id="InstitutionChecker" /></form>
 
                     </div> <!-- closes SignUpFormContainer div-->
                 }
