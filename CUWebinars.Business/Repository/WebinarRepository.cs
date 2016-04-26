@@ -337,6 +337,7 @@ namespace CUWebinars.Business.Repository
             var item = items.Where(w => w.Status == WebinarStatus.Scheduled
                                            || w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress)
                                           .Where(w => w.Title.StartsWith("Compliance Perspectives"))
+                                          .Where(w => w.idWebinar != 883)
                 .OrderBy(w => w.Date).First().idWebinar;
 
 
@@ -359,6 +360,7 @@ namespace CUWebinars.Business.Repository
                             )
                 .Include(o => o.Affiliate)
                 .Include(o => o.WebUser)
+                .Include(o => o.WebUser.Addresses)
                 .Include(o => o.OrderRows);
 
             //why is registration type not hydrated from here

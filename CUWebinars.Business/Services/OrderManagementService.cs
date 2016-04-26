@@ -391,6 +391,7 @@ namespace CUWebinars.Business.Services
                 if (missingFromLegacy.Count > 0)
                     foreach (var orderEmail in missingFromLegacy)
                     {
+                        _logger.Info("SynchOrderToLegacy starts: " + orderEmail);
                         var order = _orderRepository.GetOrderById(v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail).idOrder);
                         if (order != null && order.WebUser.email.EndsWith("notauthenticated.com"))
                         {
@@ -454,6 +455,7 @@ namespace CUWebinars.Business.Services
                 if (missingFromV3.Count > 0)
                     foreach (var orderEmail in missingFromV3)
                     {
+                        _logger.Info("SynchOrderToV3 starts: " + orderEmail);
                         var order = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
                         try
                         {
@@ -498,7 +500,7 @@ namespace CUWebinars.Business.Services
                         var vOrder = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
                         try
                         {
-                            //_logger.Info("SynchOrder CommonToBoth {0} of {1} - {2} ", i, commonEmails.Count(), orderEmail);
+                            _logger.Info("SynchOrder CommonToBoth {0} of {1} - {2} ", i, commonEmails.Count(), orderEmail);
                             if (vOrder.idOrder != vOrder.idOrderLegacy)
                             {
                                 _orderRepository.SynchIds(vOrder.idOrderLegacy, vOrder.idOrder);

@@ -2168,21 +2168,30 @@ namespace CUWebinars.Web.Controllers
         }
 
         #endregion
-        private void ProcessModelStateErrors()
+        private string ProcessModelStateErrors()
         {
-            var errors = ModelState.Values.SelectMany(v => v.Errors); // Get all errors flattened
+            //Please use this general pattern when logging ModelState errors.
+            var myErr = "ProcessModelStateErrors found errors.";
 
-
-
-            foreach (var error in errors)
+            foreach (ModelState modelState in ViewData.ModelState.Values)
             {
-                Debug.WriteLine(error.ErrorMessage);
-
-                _logger.Error("Account.Register ModelError: {0} | Session={1}",
-                    error.ErrorMessage,
-                    _appHelper.GetUserAuditInfo()
-                    );
+                foreach (ModelError error in modelState.Errors)
+                {
+                    myErr += error.ErrorMessage + Environment.NewLine;
+                }
             }
+            myErr += "Session Info: " + Environment.NewLine;
+            myErr += _appHelper.GetUserAuditInfo();
+
+            //a better implementation:
+            //http://stackoverflow.com/questions/2845852/asp-net-mvc-how-to-convert-modelstate-errors-to-json
+            var errorList = ModelState.Where(kvp => kvp.Value.Errors.Count > 0)
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(e => e.ErrorMessage)
+                    .ToArray()
+            );
+
+            _logger.Error(errorList.ToString());
+            return myErr;
         }
 
 

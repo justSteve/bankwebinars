@@ -266,12 +266,13 @@ namespace CUWebinars.Web.Controllers
         public void MigrateCompliancePerspectivesOrders()
         {
             IList<Order> orders =
-                _orderManagementService.GetOrdersByWebinar(842).Where(o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Paid).ToList();
-
+                _orderManagementService.GetOrdersByWebinar(842).Where(o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Submitted || o.OrderStatus == OrderStatus.Paid).ToList();
+            _logger.Info("CPMigrator found " + orders.Count + " orders to process.");
             var nextCPId = _webinarManagementService.GetNextCompliancePerspectives();
 
             foreach (var o in orders)
             {
+                _logger.Info("CPMigrator begins: " + o.BillingEmail);
                 var row = o.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
                 var addLocString = "";
                 if (row.AdditionalLocation != null)
@@ -281,30 +282,62 @@ namespace CUWebinars.Web.Controllers
                         addLocString += addLoc.Email + ",";
                     }
                 }
-
-                var thisOrder = new MigrateOrderModel
+                try
                 {
-                    idWebinar = nextCPId.Value,
-                    idAffiliate = o.idAffiliate,
-                    Email = o.BillingEmail,
-                    Title = o.WebUser.Title,
-                    Status = o.OrderStatus,
-                    AdditionalLocationsString = addLocString.TrimEnd(','),
-                    idOrderLegacy = 0,
-                    idRegType = row.idRegType,
-                    OrderDate = DateTime.Now,
-                    Total = o.Total,
-                    //BillingAddress = o.WebUser.Addresses.Where(a => a.AddressType == AddressType.Billing).SingleOrDefault(),
-                    //ShippingAddress = o.WebUser.Addresses.Where(a => a.AddressType == AddressType.Shipping).SingleOrDefault(),
-                    Institution = o.Institution,
-                    DiscountCode = null,
-                    AdminComments = "",
-                    FirstName = o.FirstName,
-                    LastName = o.LastName,
-                    Origin = o.Origin,
-                    LegacyRegType = 0,
-                    SendNotification = false
-                };
+                    var thisOrder = new MigrateOrderModel
+                    {
+                        idWebinar = nextCPId.Value,
+                        idAffiliate = o.idAffiliate,
+                        Email = o.BillingEmail,
+                        Title = o.WebUser.Title ?? "",
+                        Status = o.OrderStatus,
+                        AdditionalLocationsString = addLocString.TrimEnd(','),
+                        idOrderLegacy = 0,
+                        idRegType = row.idRegType,
+                        OrderDate = DateTime.Now,
+                        Total = o.Total,
+                        BillingAddress = new Address
+                        {
+                            StreetAddress = o.BillingAddress,
+                            StreetAddress2 = o.BillingAddress2,
+                            City = o.BillingCity,
+                            State = o.BillingState,
+                            AddressType = "0",
+                            Phone = o.BillingPhone,
+                            Name = o.WebUser.FullName,
+                            Zip = o.BillingZip
+                        },
+                        ShippingAddress = new Address
+                        {
+                            StreetAddress = o.ShippingAddress,
+                            StreetAddress2 = o.ShippingAddress2,
+                            City = o.ShippingCity,
+                            State = o.ShippingState,
+                            AddressType = "1",
+                            Phone = o.ShippingPhone,
+                            Name = o.WebUser.FullName,
+                            Zip = o.ShippingZip
+                        },
+
+                        Institution = o.Institution,
+                        DiscountCode = null,
+                        AdminComments = "",
+                        FirstName = o.FirstName,
+                        LastName = o.LastName,
+                        Origin = o.Origin,
+                        LegacyRegType = 0,
+                        SendNotification = false
+                    };
+
+                    var makeCPOrder = MigrateOrderCompPerspectivesPost(thisOrder);
+                    _logger.Info(JsonConvert.DeserializeObject(makeCPOrder.ToString()).ToString());
+
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.Fatal("migrating CP failed on: " + o.idOrder + "  with: " + ex.Message);
+                }
             }
         }
         /// <summary>
@@ -312,8 +345,8 @@ namespace CUWebinars.Web.Controllers
         /// </summary>
         /// <param name="migrateOrderModel"></param>
         /// <returns></returns>
-        [HttpPost]
-        public JsonResult MigrateOrderCompPerspectives(MigrateOrderModel migratedOrder)
+
+        public JsonResult MigrateOrderCompPerspectivesPost(MigrateOrderModel migratedOrder)
         {
             int idOfLastOrder = default(int);
             string verificationKey = string.Empty;
@@ -384,7 +417,7 @@ namespace CUWebinars.Web.Controllers
         private string ProcessModelStateErrors()
         {
             //Please use this general pattern when logging ModelState errors.
-            var myErr = "ProcessModelStateErrors found errors.";
+            var myErr = "ProcessModelStateErrors found errors. ";
 
             foreach (ModelState modelState in ViewData.ModelState.Values)
             {
@@ -393,18 +426,18 @@ namespace CUWebinars.Web.Controllers
                     myErr += error.ErrorMessage + Environment.NewLine;
                 }
             }
-            myErr += "Session Info: " + Environment.NewLine;
+            myErr += " Session Info: " + Environment.NewLine;
             myErr += _appHelper.GetUserAuditInfo();
 
             //a better implementation:
             //http://stackoverflow.com/questions/2845852/asp-net-mvc-how-to-convert-modelstate-errors-to-json
-            //var errorList = ModelState.ToDictionary(
-            //    kvp => kvp.Key,
-            //    kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
-            //);
+            var errorList = ModelState.Where(kvp => kvp.Value.Errors.Count > 0)
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(e => e.ErrorMessage)
+                    .ToArray()
+            );
 
-            _logger.Error(myErr);
-            return myErr;
+            _logger.Error(errorList.ToString());
+            return myErr.ToString();
         }
 
         /// <summary>
