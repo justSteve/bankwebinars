@@ -349,12 +349,13 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             //client.DownloadFile(model.ManageURL, filename);
 
+            var webinar = _webinarManagementService.GetWebinar(connectionInfoModel.idWebinar);
             var doc = new HtmlAgilityPack.HtmlDocument();
             //doc.Load(filename);
             doc.LoadHtml(connectionInfoModel.ManageURL);
 
             var root = doc.DocumentNode;
-            var audioNode = root.SelectNodes("//*[text()[contains(., 'Access')]]");
+            var audioNode = root.SelectNodes("//span[contains(@class, 'audio-role-bold')]/parent::p");
 
             var citrixRegisterUrl = "";
             var accessCodeAttendee = "";
@@ -365,7 +366,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             webinarKey = root.SelectSingleNode("//span[contains(@id,'WebinarInfoID')]").InnerHtml;
             webinarKey = webinarKey.Replace("-", "").Trim();
-            accessPhone = root.SelectSingleNode("//*[text()[contains(., 'Toll-')]]").InnerHtml;
+            accessPhone = root.SelectSingleNode("//p[contains(@id, 'audioInstructions')]/following::p[1]//span[1]").InnerHtml;
+            //accessPhone = root.SelectSingleNode("//p[text()[starts-with(., 'Toll-')]]").InnerHtml;
             //accessPhone = Regex.Split(accessPhone, @"\<br\>")[1].Replace("Toll-free: 1 ", "").Trim().Replace(" ", "-");
             // element at [1] not present starting 7/6/2015
             accessPhone = Regex.Split(accessPhone, @":")[1].Replace("Toll-free: 1 ", "").Trim().Replace(" ", "-");
@@ -396,7 +398,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                 }
             }
 
-            var webinar = _webinarManagementService.GetWebinar(connectionInfoModel.idWebinar);
             webinar.AccessCodeAttendee = accessCodeAttendee;
             webinar.AccessCodeOrganizer = accessCodeOrganizer;
             webinar.AccessCodePresenter = accessCodePresenter;
@@ -406,33 +407,20 @@ namespace CUWebinars.Web.Core.Orchestrators
             webinar.OrganizerKey = connectionInfoModel.OrganizerKey;
             webinar.WebinarKey = webinarKey.Trim();
 
-
-            if (webinar.CitrixRegisterUrl == "" ||
-                webinar.AccessCodeAttendee == "" ||
-                webinar.AccessCodePresenter == "" ||
-                webinar.AccessCodeOrganizer == "" ||
-                webinar.WebinarKey == "" ||
-                webinar.AccessPhone == "")
+            if (webinar.WebinarFiles != null || webinar.WebinarFiles.Count < 1)
             {
-                detailsValid = false;
+                webinar.Status = WebinarStatus.Active;
+
+                var changeString = PublishStateChange(webinar.Status.ToString() + " to " + "Active", webinar);
+
+                webinar.ConnectionInfo = changeString;
             }
-            else
-            {
-
-                if (webinar.WebinarFiles != null || webinar.WebinarFiles.Count < 1)
-                {
-                    webinar.Status = WebinarStatus.Active;
-
-                    var changeString = PublishStateChange(webinar.Status.ToString() + " to " + "Active", webinar);
-
-                    webinar.ConnectionInfo = changeString;
-                }
 
 
-                UpdateWebinar(webinar);
+            UpdateWebinar(webinar);
 
-                detailsValid = true;
-            }
+            detailsValid = true;
+
 
             return webinar;
         }
@@ -642,11 +630,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void SendRecordingIsPostedBatch(int idWebinar)
         {
             var ordersForWebinar = _orderManagementService.GetV3OrdersByWebinarForPostEventClaims(idWebinar).ToList();
-
-            //AddClaimForPostEventMaterials(ordersForWebinar);
             AddNoteClaim(ordersForWebinar);
-
-            //_orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
 
         }
 
