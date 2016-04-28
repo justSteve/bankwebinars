@@ -20,7 +20,14 @@
                 JToken addresses = null;
                 if (!ReferenceEquals(Model.UserComments, null))
                 {
-                    addresses = JObject.Parse(Model.UserComments).GetValue(JsonPropertyKeys.CarbonCopy);
+                    try
+                    {
+                        addresses = JObject.Parse(Model.UserComments).GetValue(JsonPropertyKeys.CarbonCopy);
+                    }
+                    catch (Exception)
+                    {
+                        var aHolder = 1;
+                    }
                 }
 
                 if (!ReferenceEquals(null, addresses))
@@ -28,35 +35,35 @@
                     ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(addresses.ToString());
                     if (!ReferenceEquals(null, ccEmailAddresses))
                     {
-                <span>You are currently sharing this order's notifications with @ccEmailAddresses[0].ToString()</span>
+                        <span>You are currently sharing this order's notifications with @ccEmailAddresses[0].ToString()</span>
                     }
                     else
                     {
                         using (Html.BeginForm("ShareNotifications", "Account", FormMethod.Post, new { id = "shareInfoForm_" + Model.idOrder, @class = "form-horizontal" }))
                         {
-                <span class="input-append">
-                    <input type="text" id="addresses_@Model.idOrder" placeholder="Email Address" class="span9" name="addresses" />
-                    <input type="hidden" value="@Model.idOrder" name="idOrder" />
-                    <button id="submitThis_@Model.idOrder" class="submitThis btn btn-primary">Submit</button>
-                </span>
-                <div id="caption1" style="text-align: center;">
-                    Enter the address you would like to send a copy of all notifications on this order.
-                </div>
+                            <span class="input-append">
+                                <input type="text" id="addresses_@Model.idOrder" placeholder="Email Address" class="span9" name="addresses" />
+                                <input type="hidden" value="@Model.idOrder" name="idOrder" />
+                                <button id="submitThis_@Model.idOrder" class="submitThis btn btn-primary">Submit</button>
+                            </span>
+                            <div id="caption1" style="text-align: center;">
+                                Enter the address you would like to send a copy of all notifications on this order.
+                            </div>
                         }
                     }
                 }
                 else
                 {
-                    using (Html.BeginForm("ShareNotifications", "Account", FormMethod.Post, new { id = "shareInfoForm_"+Model.idOrder, @class = "form-horizontal" }))
+                    using (Html.BeginForm("ShareNotifications", "Account", FormMethod.Post, new { id = "shareInfoForm_" + Model.idOrder, @class = "form-horizontal" }))
                     {
-                <span class="input-append">
-                    <input type="text" id="getEmail" placeholder="Email Address" class="span9" name="addresses" />
-                    <input type="hidden" value="@Model.idOrder" name="idOrder" />
-                    <button id="submitThis_@Model.idOrder" class="submitThis btn btn-primary">Send</button>
-                </span>
-                <div id="caption" style="text-align: center;">
-                    Enter the address you would like to send a copy of all notifications on this order.
-                </div>
+                        <span class="input-append">
+                            <input type="text" id="getEmail" placeholder="Email Address" class="span9" name="addresses" />
+                            <input type="hidden" value="@Model.idOrder" name="idOrder" />
+                            <button id="submitThis_@Model.idOrder" class="submitThis btn btn-primary">Send</button>
+                        </span>
+                        <div id="caption" style="text-align: center;">
+                            Enter the address you would like to send a copy of all notifications on this order.
+                        </div>
                     }
                 }
             }

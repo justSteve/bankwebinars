@@ -32,6 +32,19 @@
         <button type="button" class="btn btn-success" data-dismiss="modal" aria-hidden="true">Finished</button>
     </div>
 </div>
+<div id="IsOrderForCoWorker" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 id="confirmCaption">Ordering for a co-worker?</h3>
+    </div>
+    <div id="confirmResult" class="modal-body">
+        <p>The primary email will always see all notifications related to the order. But if you need to include someone else in the notifications look for this textbox on the summary page after you've checked out.<br/><img src="~/Content/images/textBoxForCC.jpg"/>   </p>
+    </div>
+    <div class="modal-footer">
+        <a href="#" id="confirmTypeChange" role="button" class="btn btn-success">Continue</a>
+        <button id="cancelTypeChange" class="btn" data-dismiss="modal">Cancel</button>
+    </div>
+</div>
 <div id="ShowsOptions">
     @{
         if (Model.OrderRowExists)
@@ -91,8 +104,10 @@
                         defaultCheck = string.Empty;
                     }
                 </dl>
-                <a href="#AttendRegTypes" class="btn btn-mini pull-right" data-toggle="modal">attendance options explained</a>
-            </div>
+                <div style="text-align: right;" class="pull-right">
+                    <a href="#IsOrderForCoWorker" class="btn btn-mini " data-toggle="modal">ordering for a co-worker?</a><br />
+                    <a href="#AttendRegTypes" class="btn btn-mini " data-toggle="modal">attendance options explained</a>
+                </div></div>
             <script type="text/javascript" language="javascript">
                 $(document).ready(function () {
                     $("#ExplainRegistrationOptions").html("@Html.Raw(explainsOptionsBuilder.ToString())");

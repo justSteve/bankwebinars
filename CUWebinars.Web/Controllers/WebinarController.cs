@@ -772,6 +772,8 @@ namespace CUWebinars.Web.Controllers
             ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
             var currentUser = User.Identity.Name ?? "anon";
 
+            //if (currentUser.)
+
             int incomingOrder = 0;
             if (idOrder != null)
             {
@@ -935,10 +937,10 @@ namespace CUWebinars.Web.Controllers
                 }
 
 
-                /*****************************************************************************************/
-                /* Significance of next 'if': must complete cart transaction before commencing a new one.*/
-                /*****************************************************************************************/
-                BuildConfirmOrderView(model);
+
+                    BuildConfirmOrderView(model);
+
+
 
                 return View(model);
             }
@@ -984,6 +986,7 @@ namespace CUWebinars.Web.Controllers
 
         private void BuildConfirmOrderView(WebinarDetailsViewModel model)
         {
+
             if (model.UserHasOpenOrder > 0)
             {
                 model.CheckoutInProcess = true;
@@ -1016,7 +1019,8 @@ namespace CUWebinars.Web.Controllers
 
                     var newJson =
                         new JProperty(
-                            string.Concat("ReturningOrder-", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                            string.Concat("ReturningOrder-",
+                                TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
                             new JObject(new JProperty("LegacyComments", order.AdminComments))
                             );
 
@@ -1431,6 +1435,9 @@ namespace CUWebinars.Web.Controllers
                                           true) + "<br /></i>";
 
             model.CeuShort = string.Empty;
+            if (model.WebUser.idSubscriptionDiscount != null)
+                model.UserHasDiscount = _orderManagementService.GetDiscountByUser(model.WebUser);
+
             model.CeuStatement = string.Empty;
 
             if (!string.IsNullOrEmpty(model.Webinar.ceu))

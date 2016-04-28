@@ -2179,7 +2179,7 @@ namespace CUWebinars.Business.Services
             if (!ReferenceEquals(null, tuple))
                 optionsPrice = tuple.Price;
 
-            ProcessDiscountCodes(currentOrder);
+            //ProcessDiscountCodes(currentOrder);
             CalculateOrderCost(currentOrder, optionsPrice);
 
             try
@@ -2273,16 +2273,16 @@ namespace CUWebinars.Business.Services
             return _orderRepository.AccessToPostEventMaterials(w, u);
         }
 
-        private void ProcessDiscountCodes(Order order)
-        {
-            var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-            //
-            if (row.Discount != null)
-            {
-                RedeemDiscount(row.Discount, row);
-                _logger.Info("Redeemed Discount On Order: " + order.idOrder);
-            }
-        }
+        //private void ProcessDiscountCodes(Order order)
+        //{
+        //    var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+        //    //
+        //    if (row.Discount != null)
+        //    {
+        //        RedeemDiscount(row.Discount, row);
+        //        _logger.Info("Redeemed Discount On Order: " + order.idOrder);
+        //    }
+        //}
 
 
         private Discount RedeemDiscount(Discount discount, OrderRow row)
@@ -2387,6 +2387,12 @@ namespace CUWebinars.Business.Services
                         discount.CreditsRemain = discount.CreditsRemain - 1M;
                         discount.CreditsUsed = discount.CreditsUsed + 1M;
                     }
+                    if (regTypeLabel == ("6-Month OnDemand Weblink"))
+                    {
+                        thisUse = 1;
+                        discount.CreditsRemain = discount.CreditsRemain - 1M;
+                        discount.CreditsUsed = discount.CreditsUsed + 1M;
+                    }
                     if (regTypeLabel == ("CD-ROM and Hardcopy Handouts"))
                     {
                         thisUse = 1.25M;
@@ -2411,26 +2417,26 @@ namespace CUWebinars.Business.Services
             {
                 //if (previewOnly == 0)
                 //{
-                    if (discount.DiscountType == DiscountType.Subscription)
-                    {
-                        forNotes.Append(thisUse + "," + discount.CreditsUsed + "," + discount.CreditsRemain);
-                        forNotes.AppendFormat(" If applied to this order, {0} will be deducted from your package. It will have been used {1} times with {2} remaining.", thisUse, discount.CreditsUsed.ToString().Replace("-", "").Replace(".00", ""), discount.CreditsRemain.ToString().Replace(".00", ""));
-                    }
-                    if (discount.DiscountType == DiscountType.Compensation)
-                    {
-                        forNotes.AppendFormat("Applying disount code: {0}", discount.DiscountCode);
-                    }
-                    if (discount.DiscountType == DiscountType.Promo)
-                    {
-                        forNotes.AppendFormat("Applying disount code: {0}", discount.DiscountCode);
-                    }
+                if (discount.DiscountType == DiscountType.Subscription)
+                {
+                    forNotes.AppendFormat(" If applied to this order, {0} will be deducted from your package. It will have been used {1} times with {2} remaining.", thisUse, discount.CreditsUsed.ToString().Replace("-", "").Replace(".00", ""), discount.CreditsRemain.ToString().Replace(".00", ""));
+                }
+                if (discount.DiscountType == DiscountType.Compensation)
+                {
+                    forNotes.AppendFormat("Applying disount code: {0}", discount.DiscountCode);
+                }
+                if (discount.DiscountType == DiscountType.Promo)
+                {
+                    forNotes.AppendFormat("Applying disount code: {0}", discount.DiscountCode);
+                }
                 //}
-                discount.CreditsRemain = existingDiscount.CreditsRemain;
-                discount.CreditsUsed = existingDiscount.CreditsUsed;
+
             }
             else
             {
 
+                discount.CreditsRemain = existingDiscount.CreditsRemain;
+                discount.CreditsUsed = existingDiscount.CreditsUsed;
                 forNotes.AppendFormat(Environment.NewLine + "Applied By: {0}", row.idOrder);
                 forNotes.AppendFormat(" Used: {0} Remain: {1}" + Environment.NewLine, discount.CreditsUsed,
                     discount.CreditsRemain);

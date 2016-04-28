@@ -51,11 +51,9 @@
             }
             <i>Total Cost:</i> <b>@Model.Total.ToString(CurrencyFormatToken).Replace(".00", "")</b>
         </div>
-        @if (Model.UserComments != null )
+        @if (Model.Affiliate.idUserAff == 62)
         {
-
-            <div><b>Note:</b> @Model.UserComments</div>
-
+            <div><b>Note:</b> This order originated from Center For Financial Training<br/><br/></div>
         }
 
     </div>

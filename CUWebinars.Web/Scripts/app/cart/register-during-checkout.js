@@ -921,7 +921,7 @@ function hookUpEditUserLogic(button, shippingAddressRequired) {
 
 function hookUpChangeTypeLogic(dropDown) {
 
-    //var changeTypeConfirmModal = $('#changeTypeConfirmModal');
+    var changeTypeConfirmModal = $('#changeTypeConfirmModal');
     var chosenRegTypeLabel = $('#chosenRegType');
     var position,
         typeChosenCurrent,

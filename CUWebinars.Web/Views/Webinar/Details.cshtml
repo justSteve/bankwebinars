@@ -129,6 +129,8 @@
                         if (Model.UserOwnsThisEvent < 1 || Model.CheckoutInProcess)
                         {
                             <div id="SignUpFormContainer">
+
+
                                 <div style="margin-bottom: 0; padding: 0 5px 0 8px;" class="well">
                                     <ul class="nav nav-tabs" id="regTabs">
                                         <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@Model.SignUpCaption</a></li>
@@ -141,6 +143,20 @@
                                             <div class="tab-pane active" id="signUp">@Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)</div>
                                             <div class="tab-pane" id="contactInfo"></div>
                                             <div class="tab-pane" id="confirmation"></div>
+                                            if (Model.UserHasDiscount != null)
+                                            {
+                                                if (Model.UserHasDiscount.CreditsRemain > 0)
+                                                {
+                                                    if (Model.UserHasDiscount.CreditsRemain == 1)
+                                                    {
+                                                        <span class="label large label-success">Your Webinar Subscription Package has one credit available for your next order!</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class=" pull-right label label-success">&nbsp;<span style="font-weight: normal">Your Webinar Subscription Package has @Model.UserHasDiscount.CreditsRemain credits available for your next order!&nbsp;</span></span>
+                                                    }
+                                                }
+                                            }
                                         }
                                         else if (Model.Order.OrderStatus == OrderStatus.AwaitingVerification || Model.Order.OrderStatus == OrderStatus.InProcess || Model.Order.OrderStatus == OrderStatus.Canceled || Model.Order.OrderStatus == OrderStatus.Submitted)
                                         {
@@ -148,6 +164,7 @@
                                             <div class="tab-pane" id="contactInfo"></div>
                                             <div class="tab-pane active" id="confirmation">@Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutConfirm.cshtml", model: Model.CheckoutConfirmViewModel)</div>
                                         }
+
                                     </div>
                                     <!-- The following forms are positioned here so that they are not nested in the form in the CheckoutOptions View. -->
                                     @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))

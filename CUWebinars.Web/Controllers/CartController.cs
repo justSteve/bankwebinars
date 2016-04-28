@@ -153,7 +153,15 @@ namespace CUWebinars.Web.Controllers
                 var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
                 try
                 {
+                    if (model.Order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).Discount != null)
+                    {
+                        _cartControllerOrchestrator.ApplyDiscountCode(
+                            model.Order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active)
+                                .Discount.DiscountCode,
+                            model.Order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active));
+                    }
                     model.Order.OrderStatus = OrderStatus.Submitted;
+
                     _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email, model.Order.OrderRows.FirstOrDefault());
 
 
@@ -177,6 +185,8 @@ namespace CUWebinars.Web.Controllers
                 try
                 {
                     _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
+                    if (model.Order.Total == 0) model.Order.OrderStatus = OrderStatus.Paid;
+
                 }
                 catch (Exception exception)
                 {

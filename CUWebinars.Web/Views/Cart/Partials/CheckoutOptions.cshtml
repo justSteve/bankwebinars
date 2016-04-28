@@ -28,17 +28,13 @@
                <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn btn-success well">@Model.RegistrationType.OptionExplain.Replace(" Only", " ") </blockquote>
             }
         }
-        @*else
-        {
-            <span>Our logs indicate you have a pending order for this event. Please either confirm or cancel it.</span>
-            @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutConfirm.cshtml", model: Model)
-        }*@
     }
     else
     {
         @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model.DisplayOptionsViewModel)
     }
 }
+
 
 <div id="changeTypeConfirmModal" class="modal hide fade">
     <div class="modal-header">

@@ -1610,6 +1610,7 @@
     <Content Include="Content\images\tall-logo-desktop.png" />
     <Content Include="Content\images\tall-logo-mobile.png" />
     <Content Include="Content\images\tempMenuCap.jpg" />
+    <Content Include="Content\images\textBoxForCC.jpg" />
     <Content Include="Content\images\toolbar.gif" />
     <Content Include="Content\images\top.png" />
     <Content Include="Content\images\trans.gif" />
