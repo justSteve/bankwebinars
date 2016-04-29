@@ -308,10 +308,10 @@ namespace CUWebinars.Business.Services
             return order;
         }
 
-        public IEnumerable<Order> GetOrdersByEmailDomain(string email, int aff)
-        {
-            return _orderRepository.FindOrdersByBillingEmailDomain(email.Trim(), aff);
-        }
+        //public IEnumerable<Order> GetOrdersByEmailDomain(string email, int aff)
+        //{
+        //    return _orderRepository.FindOrdersByBillingEmailDomain(email.Trim(), aff);
+        //}
 
         public void SendAdhocNotification(string emails, string subject, string body)
         {

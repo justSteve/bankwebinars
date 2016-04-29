@@ -110,7 +110,7 @@ namespace CUWebinars.Business.Services
         void LoadWebinarIntoOrderRow(OrderRow newOrderRow);
         void SetUserStatusToUnChanged(WebUser user);
         void SetAffiliateStatusToUnChanged(Affiliate affiliate);
-        IEnumerable<Order> GetOrdersByEmailDomain(string email, int aff);
+        //IEnumerable<Order> GetOrdersByEmailDomain(string email, int aff);
         void SendAdhocNotification(string emails, string subject, string body);
         OrderRow GetLegacyOrder(Order order);
         void SynchOrders(int webinarId);

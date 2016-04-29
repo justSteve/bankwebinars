@@ -228,14 +228,14 @@ namespace CUWebinars.Business.Repository
                 .Where(o => o.BillingEmail.ToLower() == (email.ToLower()));
         }
 
-        public IQueryable<Order> FindOrdersByBillingEmailDomain(string email, int aff)
-        {
-            if (aff > 0)
-            {
-                return items.Include(o => o.WebUser).Where(o => o.BillingEmail.ToLower().Contains(email.ToLower()) && o.Affiliate.idUserAff == aff);
-            }
-            return items.Include(o => o.WebUser).Where(o => o.BillingEmail.ToLower().Contains(email.ToLower()));
-        }
+        //public IQueryable<Order> FindOrdersByBillingEmailDomain(string email, int aff)
+        //{
+        //    if (aff > 0)
+        //    {
+        //        return items.Include(o => o.WebUser).Where(o => o.BillingEmail.ToLower().Contains(email.ToLower()) && o.Affiliate.idUserAff == aff);
+        //    }
+        //    return items.Include(o => o.WebUser).Where(o => o.BillingEmail.ToLower().Contains(email.ToLower()));
+        //}
 
         public IQueryable<Order> FindOrdersByLastName(string lastName, int idAffiliate)
         {

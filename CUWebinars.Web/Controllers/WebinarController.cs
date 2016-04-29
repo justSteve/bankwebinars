@@ -424,47 +424,11 @@ namespace CUWebinars.Web.Controllers
                         //searchDomainOnly (select * where email like '%@ttstrain.com')
                         if (searchTerm.StartsWith("@"))
                         {
-                            IList<Order> orders =
-                                _orderManagementService.GetOrdersByEmailDomain(searchTerm, currentAffiliate.idUserAff).ToList();
-                            if (orders.Count > 0)
-                            {
-                                if (currentAffiliate.idUserAff != 19)
-                                {
-                                    var oModel = new ShowOrdersViewModel
-                                    {
-                                        Orders = orders.Where(o => o.idAffiliate
-                                                                   == currentAffiliate.idUserAff).ToList(),
-                                        SearchTerm = searchTerm,
-                                        UserIsAdmin = false,
-                                        Webinar = null
-                                    };
-                                    return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
-                                }
-                                else
-                                {
-                                    var oModel = new ShowOrdersViewModel
-                                    {
-                                        Orders = orders.ToList(),
-                                        SearchTerm = searchTerm,
-                                        UserIsAdmin = true,
-                                        Webinar = null
-                                    };
-                                    return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
-                                }
-                            }
-                        }
 
-                        if (searchTerm.StartsWith("aa"))
-                        {
-                            //IList<Order> orders =
-                            //    _orderManagementService.GetOrdersByDomain(searchTerm);
-                            //if (orders.Count > 0)
-                            //{
                             if (currentAffiliate.idUserAff != 19)
                             {
                                 var oModel = new ShowOrdersViewModel
                                 {
-                                    //Orders = orders.Where(o => o.idAffiliate == currentAffiliate.idUserAff).ToList(),
                                     SearchTerm = searchTerm,
                                     UserIsAdmin = false,
                                     Webinar = null
@@ -475,28 +439,46 @@ namespace CUWebinars.Web.Controllers
                             {
                                 var oModel = new ShowOrdersViewModel
                                 {
-                                    //Orders = orders.ToList(),
                                     SearchTerm = searchTerm,
                                     UserIsAdmin = true,
                                     Webinar = null
                                 };
                                 return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
                             }
-                            //}
+
+                        }
+
+                        if (searchTerm.StartsWith("aa"))
+                        {
+                            if (currentAffiliate.idUserAff != 19)
+                            {
+                                var oModel = new ShowOrdersViewModel
+                                {
+                                    SearchTerm = searchTerm,
+                                    UserIsAdmin = false,
+                                    Webinar = null
+                                };
+                                return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
+                            }
+                            else
+                            {
+                                var oModel = new ShowOrdersViewModel
+                                {
+                                    SearchTerm = searchTerm,
+                                    UserIsAdmin = true,
+                                    Webinar = null
+                                };
+                                return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
+                            }
                         }
 
 
                         if (searchTerm.StartsWith("inprocess"))
                         {
-                            //IList<Order> orders =
-                            //    _orderManagementService.GetOrdersByDomain(searchTerm);
-                            //if (orders.Count > 0)
-                            //{
                             if (currentAffiliate.idUserAff != 19)
                             {
                                 var oModel = new ShowOrdersViewModel
                                 {
-                                    //Orders = orders.Where(o => o.idAffiliate == currentAffiliate.idUserAff).ToList(),
                                     SearchTerm = searchTerm,
                                     UserIsAdmin = false,
                                     Webinar = null
@@ -507,47 +489,36 @@ namespace CUWebinars.Web.Controllers
                             {
                                 var oModel = new ShowOrdersViewModel
                                 {
-                                    //Orders = orders.ToList(),
                                     SearchTerm = searchTerm,
                                     UserIsAdmin = true,
                                     Webinar = null
                                 };
                                 return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
                             }
-                            //}
                         }
 
                         //return orders of given user
                         if (searchTerm.Contains("@"))
                         {
-
-                            IList<Order> orders =
-                                _orderManagementService.GetOrdersByEmail(searchTerm, 19).ToList();
-                            if (orders.Count > 0)
+                            if (currentAffiliate.idUserAff != 19)
                             {
-                                if (currentAffiliate.idUserAff != 19)
+                                var oModel = new ShowOrdersViewModel
                                 {
-                                    var oModel = new ShowOrdersViewModel
-                                    {
-                                        Orders = orders.Where(o => o.idAffiliate
-                                                                   == currentAffiliate.idUserAff).ToList(),
-                                        SearchTerm = searchTerm,
-                                        UserIsAdmin = false,
-                                        Webinar = null
-                                    };
-                                    return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
-                                }
-                                else
+                                    SearchTerm = searchTerm,
+                                    UserIsAdmin = false,
+                                    Webinar = null
+                                };
+                                return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
+                            }
+                            else
+                            {
+                                var oModel = new ShowOrdersViewModel
                                 {
-                                    var oModel = new ShowOrdersViewModel
-                                    {
-                                        Orders = orders.ToList(),
-                                        SearchTerm = searchTerm,
-                                        UserIsAdmin = true,
-                                        Webinar = null
-                                    };
-                                    return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
-                                }
+                                    SearchTerm = searchTerm,
+                                    UserIsAdmin = true,
+                                    Webinar = null
+                                };
+                                return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
                             }
                         }
                     }
@@ -971,7 +942,7 @@ namespace CUWebinars.Web.Controllers
 
 
 
-                    BuildConfirmOrderView(model);
+                BuildConfirmOrderView(model);
 
 
 
