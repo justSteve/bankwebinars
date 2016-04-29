@@ -1824,12 +1824,6 @@ namespace CUWebinars.Web.Controllers.Admin
                 TemplateType = "Daily"
             };
 
-            System.Diagnostics.Debug.WriteLine("Time 0.1: " + DateTime.Now.ToString("HH:mm:ss.fff"));
-            var html = ViewHelpers.RenderViewToString(ControllerContext,
-                                   "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditOrderStatus_Compact.cshtml",
-                                   null, true);
-            System.Diagnostics.Debug.WriteLine("Time 0.2: " + DateTime.Now.ToString("HH:mm:ss.fff"));
-
             return View(model);
 
         }
