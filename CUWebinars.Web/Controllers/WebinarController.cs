@@ -425,7 +425,7 @@ namespace CUWebinars.Web.Controllers
                         if (searchTerm.StartsWith("@"))
                         {
                             IList<Order> orders =
-                                _orderManagementService.GetOrdersByDomain(searchTerm);
+                                _orderManagementService.GetOrdersByEmailDomain(searchTerm, currentAffiliate.idUserAff).ToList();
                             if (orders.Count > 0)
                             {
                                 if (currentAffiliate.idUserAff != 19)
@@ -453,7 +453,40 @@ namespace CUWebinars.Web.Controllers
                                 }
                             }
                         }
+
                         if (searchTerm.StartsWith("aa"))
+                        {
+                            //IList<Order> orders =
+                            //    _orderManagementService.GetOrdersByDomain(searchTerm);
+                            //if (orders.Count > 0)
+                            //{
+                            if (currentAffiliate.idUserAff != 19)
+                            {
+                                var oModel = new ShowOrdersViewModel
+                                {
+                                    //Orders = orders.Where(o => o.idAffiliate == currentAffiliate.idUserAff).ToList(),
+                                    SearchTerm = searchTerm,
+                                    UserIsAdmin = false,
+                                    Webinar = null
+                                };
+                                return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
+                            }
+                            else
+                            {
+                                var oModel = new ShowOrdersViewModel
+                                {
+                                    //Orders = orders.ToList(),
+                                    SearchTerm = searchTerm,
+                                    UserIsAdmin = true,
+                                    Webinar = null
+                                };
+                                return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
+                            }
+                            //}
+                        }
+
+
+                        if (searchTerm.StartsWith("inprocess"))
                         {
                             //IList<Order> orders =
                             //    _orderManagementService.GetOrdersByDomain(searchTerm);

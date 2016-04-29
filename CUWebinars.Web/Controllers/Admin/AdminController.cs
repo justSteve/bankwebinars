@@ -2652,6 +2652,10 @@ namespace CUWebinars.Web.Controllers.Admin
                             else if (searchTerm == "aa")
                             {
                                 dtsource = _dataTablesService.GetOrdersByPending(affiliateId, out totalNumberOrders).ToList();
+                            }                            
+                            else if (searchTerm == "inprocess")
+                            {
+                                dtsource = _dataTablesService.GetOrdersByInProcess(affiliateId, out totalNumberOrders).ToList();
                             }
                         }
                         else
