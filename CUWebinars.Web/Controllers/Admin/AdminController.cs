@@ -47,6 +47,14 @@ using ClaimTypes1 = CUWebinars.Business.Constants.ClaimTypes;
 using DateTimeHelper = CUWebinars.Web.Helpers.DateTimeHelper;
 using Formatting = Newtonsoft.Json.Formatting;
 
+// would be needed if we add PromoGenerateForAffiliate action
+//using Newtonsoft.Json.Converters;
+//using System.Dynamic;
+
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
+
 namespace CUWebinars.Web.Controllers.Admin
 {
 
@@ -1611,6 +1619,96 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
 
+        //[HttpPost]
+        //[AllowAnonymous]
+        //public JsonResult PromoGenerateForAffiliate(WebinarPromoViewModel model)
+        //{
+
+        //    // this method could be just an "if affiliate id" block in the main method...
+        //    //  would save on the JSON / object expander complexity
+
+        //    JsonResult ret = PromoGenerate(model);
+        //    string json = ret.Data.ToJsonNet();
+        //    //var x = JsonConvert.DeserializeObject<xobj>(json);
+        //    //System.Diagnostics.Debug.WriteLine(x.masterText);
+
+        //    var converter = new ExpandoObjectConverter();
+        //    dynamic x = JsonConvert.DeserializeObject<ExpandoObject>(json, converter);
+        //    string masterMarkup = x.masterText;
+        //    System.Diagnostics.Debug.WriteLine(masterMarkup);
+
+        //    // do affiliate substitution
+        //    Affiliate aff = new AffiliateRepository().FindByIdWithIncluding(model.Affiliate.idUserAff);
+        //    string affiliateMarkup = replaceMasterTokensForAffiliate(masterMarkup, aff);
+
+        //    // return complete affiliate-specific version
+        //    return Json(new { result = WebUiConstants.Success, affiliateCopy = affiliateMarkup });
+        //}
+
+        ////private class xobj
+        ////{
+        ////    public string masterText { get; set; }
+        ////}
+
+        //// unforatunately there is a client-side version of this function in the promo-generator.js file as well...
+        //private string replaceMasterTokensForAffiliate(string masterCopy, Affiliate aff)
+        //{
+        //    StringBuilder copy = new StringBuilder(masterCopy);
+
+        //    copy.Replace("{aff_ttsdomain}", aff.ttsDomain);
+        //    copy.Replace("{aff_idUserAff}", aff.idUserAff.ToString());
+        //    copy.Replace("{aff_ContactPerson}", aff.ContactPerson);
+        //    copy.Replace("{aff_ContactEmail}", aff.ContactEmail);
+        //    copy.Replace("{aff_ContactPhone}", aff.ContactPhone);
+        //    copy.Replace("{aff_EmailFooter}", aff.EmailFooter);
+
+        //    return copy.ToString();
+
+        //}
+
+        [HttpPost]
+        public JsonResult WritePromoToStorage(WebinarPromoViewModel model)
+        {
+            string eventBodyText = System.Uri.UnescapeDataString(model.EventBody);
+            byte[] byteArray = Encoding.UTF8.GetBytes(eventBodyText);
+            
+            // based on CUMailer\CUWebinars.Azure.OrderConfirmNotifier\CUWebinars.Azure.OrderConfirmNotifier\OrderConfirmationHandler.cs
+
+            // almost certainly should be extracted to a function in the Business project
+            var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName, _globalConfig.StorageAccessKey);
+            var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
+            CloudBlobClient blobClient = cloudStorageAccount.CreateCloudBlobClient();
+
+            // Retrieve reference to a previously created container.
+            CloudBlobContainer container = blobClient.GetContainerReference("v3generator");
+            container.CreateIfNotExists();
+
+            CloudBlockBlob blob = null;
+            string webinarTitleEnc = Server.UrlEncode(model.Webinar.Title);
+            string strAffId = model.Affiliate.idUserAff.ToString();
+            string filenameBase = string.Concat(strAffId, "/", model.Webinar.idWebinar, "/", webinarTitleEnc);
+
+            // Create the blobs
+            using (var memoryStream = new MemoryStream(byteArray))
+            {
+                string filename = string.Concat(filenameBase, ".html");
+                _logger.Info(string.Format("Persisting blob now. Named: {0}", filename));
+                blob = container.GetBlockBlobReference(filename);
+                blob.UploadFromStream(memoryStream);
+                _logger.Info("Blob successfully persisted");
+
+                memoryStream.Position = 0; // need to reset it in order to reuse the same data for a .txt file
+                filename = string.Concat(filenameBase, ".txt");
+                _logger.Info(string.Format("Persisting blob now. Named: {0}", filename));
+                blob = container.GetBlockBlobReference(filename);
+                blob.UploadFromStream(memoryStream);
+                _logger.Info("Blob successfully persisted");
+
+            }
+
+            return Json(new { result = WebUiConstants.Success });
+        }
+
         [HttpPost]
         public JsonResult PromoGenerate(WebinarPromoViewModel model)
         {
@@ -1633,6 +1731,8 @@ namespace CUWebinars.Web.Controllers.Admin
                 model.UpcomingListing = "<h3>Upcoming Webinars</h3>\r\n" + String.Join("\r\n", upcomingWebinars);
 
             model.EventBody = HttpUtility.HtmlDecode(_generalFormatter.FormatV2(model, "~/Notification/Templates/SendPerDayPromoMaster.cshtml").Body); // get Template with new method
+
+            // IF AffiliateId provided, do content replacements?
 
             return Json(new { masterText = model.EventBody });
 
@@ -1793,12 +1893,6 @@ namespace CUWebinars.Web.Controllers.Admin
                 Affiliates = new AffiliateRepository().GetAffiliatesByPromoType("Daily").ToList(),
                 TemplateType = "Daily"
             };
-
-            System.Diagnostics.Debug.WriteLine("Time 0.1: " + DateTime.Now.ToString("HH:mm:ss.fff"));
-            var html = ViewHelpers.RenderViewToString(ControllerContext,
-                                   "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditOrderStatus_Compact.cshtml",
-                                   null, true);
-            System.Diagnostics.Debug.WriteLine("Time 0.2: " + DateTime.Now.ToString("HH:mm:ss.fff"));
 
             return View(model);
 

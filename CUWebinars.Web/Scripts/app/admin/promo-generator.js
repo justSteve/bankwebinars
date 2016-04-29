@@ -1,7 +1,7 @@
 ﻿$(document).ready(function () {
 
     // event documentation from http://getbootstrap.com/javascript/#tabs
-    $('a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
+    $('a[data-toggle="pill"]').on('shown.bs.tab', function (e) { // was "shown.bs.tab" but that stopped firing?? switch to show.bs.tab, it worked, switch back to shown and *that* worked??
         //e.target // newly activated tab/pill
         //e.relatedTarget // previous active tab/pill
 
@@ -28,7 +28,7 @@
 
     $("#submitGenPromoTexts").on('click', function (e) {
         e.preventDefault();
-        GetMasterMarkupAJAX(this);
+        GetMasterMarkupAJAX($(this));
     });
 
     $("#resetAllAffiliates").on("click", function (e) {
@@ -57,7 +57,14 @@
 
     $(".send-to-affiliate").on("click", function (e) {
         var affiliateId = $(this).closest(".tab-pane").data("pane-affid");
-        SendtoAff(affiliateId);
+        SendToAff(affiliateId);
+    });
+
+    $(".write-markup-to-storage").on("click", function (e) {
+        e.preventDefault();
+        var $btn = $(this);
+        var affiliateId = $btn.closest(".tab-pane").data("pane-affid");
+        WriteMarkupToStorageAJAX($btn, affiliateId);
     });
 
     $(".reset-to-master").on("click", function (e) {
@@ -144,7 +151,7 @@ function SetEditorTabForAffiliate(affiliateId, affiliateCopy)
 
 }
 
-function GetMasterMarkupAJAX(btn) {
+function GetMasterMarkupAJAX($btn) {
 
     $.ajax({
         url: '/Admin/PromoGenerate',
@@ -153,8 +160,7 @@ function GetMasterMarkupAJAX(btn) {
         dataType: "json",
         //contentType: "application/json",
         beforeSend: function () {
-            // ask Steve about "loading" button
-            // self.append('<span id="submitSpinWrapper">&nbsp;<span class="label label-info"><i id="spinner" class="icon-spinner icon-spin"></i>&nbsp;loading...</span></span>');
+            $btn.append('<span id="submitSpinWrapper">&nbsp;<span class=""><i id="spinner" class="icon-spinner icon-spin"></i></span></span>');
         },
         success: function (result) {
 
@@ -162,16 +168,56 @@ function GetMasterMarkupAJAX(btn) {
 
             $editorTA.wijeditor("setText", result.masterText);
             $editorTA.focus();
+            $("#editor_0").val(result.masterText); // 0 is master, store it right away
             SetCopyToClipboardTextArea(false);
 
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert(textStatus + " " + errorThrown);
         }
+    }).done(function (result) {
+        $('#submitSpinWrapper').remove();
+        $btn.blur();
     });
 }
 
-function SendtoAff(affiliateId) {
+function WriteMarkupToStorageAJAX($btn, affiliateId) {
+
+    var currCopy = GetCurrentEditorCopy();
+    currCopyEnc = encodeURIComponent(currCopy);
+    var origBtnText = $btn.text();
+
+    $.ajax({
+        url: '/Admin/WritePromoToStorage',
+        type: 'POST',
+        data: {
+            "Affiliate.idUserAff": affiliateId,
+            "Webinar.idWebinar": $("#Webinar_idWebinar").val(),
+            "Webinar.Title": $("#Webinar_Title").val(),
+            "SendDate": $("#SendDate").val(),
+            "EventBody": currCopyEnc
+        },
+        dataType: "json",
+        //contentType: "application/json",
+        beforeSend: function () {
+            $btn.text("Saving...");
+            $btn.append('<span id="submitSpinWrapper">&nbsp;<span class=""><i id="spinner" class="icon-spinner icon-spin"></i></span></span>');
+        },
+        success: function (result) {
+            //alert('test: ' + result.result);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus + " " + errorThrown);
+        }
+    }).done(function (result) {
+        $btn.text("Saved!");
+        $('#submitSpinWrapper').remove();
+        setTimeout(function () { $btn.text(origBtnText); }, 2000);
+        $btn.blur();
+    });
+}
+
+function SendToAff(affiliateId) {
 
     //alert($("#SendToList_" + affiliateId).val());
     var currCopy = GetCurrentEditorCopy();
@@ -196,6 +242,7 @@ function SendtoAff(affiliateId) {
     });
 }
 
+// unforatunately there is a server-side version of this function in the AdminController file as well...
 function replaceMasterTokensForAffiliate(aff)
 {
     var copy = $("#editor_0").val(); // 0 is master
