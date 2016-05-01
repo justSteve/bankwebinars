@@ -177,7 +177,7 @@
             @@tip Set the background color and top border for your email.
             */
         body, #bodyTable {
-            /*@@editable*/ background-color: #232b2e;
+            /*@@editable*/ background-color: #ffffff;
         }
         /*
             @@tab Page
@@ -347,7 +347,7 @@
             #templateSidebar .mcnTextContent, #templateSidebar .mcnTextContent p {
                 /*@@editable*/ color: #ffe4c4;
                 /*@@editable*/ font-family: Helvetica;
-                /*@@editable*/ font-size: 12px;
+                /*@@editable*/ font-size: 13px;
                 /*@@editable*/ line-height: 125%;
                 /*@@editable*/ text-align: left;
             }
@@ -691,7 +691,7 @@
                                 <table class="mcnTextBlock" style="min-width: 100%;" width="100%" border="0" cellpadding="0" cellspacing="0">
                                     <tbody class="mcnTextBlockOuter">
                                         <tr>
-                                            <td class="mcnTextBlockInner" valign="top">
+                                            <td class="mcnTextBlockInner" bgcolor="#4c5966" style="padding:0px 0 10px 15px;" valign="top">
                                                 <!--[if mso]>
                                                     <table align="left" border="0" cellspacing="0" cellpadding="0" width="100%" style="width: 100%;">
                                                     <tr>
@@ -702,10 +702,10 @@
                                                 <table width="100%" align="center" cellpadding="0" cellspacing="0">
                                                     <tbody>
                                                         <tr>
-                                                            <td bgcolor="#4c5966" style="padding: 10px; font-size: 12px; text-align: center; color: bisque;  font-family: Arial, Helvetica, sans-serif">
+                                                            <td bgcolor="4c5966" style="padding: 10px; font-size: 12px; text-align: center; color: bisque; font-family: Arial, Helvetica, sans-serif">
                                                                 @webinar.Description
                                                             </td>
-                                                            <td width="280" align="right" bgcolor="#232B2E">
+                                                            <td width="280" align="center" bgcolor="#232B2E">
                                                                 <div style="font-size: 12px; color: #ffffff; font-weight: normal; font-family: Arial, Helvetica, sans-serif">
                                                                     <a href="*|ARCHIVE|*" style="mso-line-height-rule: exactly; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: bisque; font-weight: normal; text-decoration: none; text-align: right;" target="_blank">View this email in your browser</a>
                                                                 </div>
@@ -728,7 +728,7 @@
                         </tr>
                         <tr>
                             <td valign="top" id="templateHeader">
-                                <table class="mcnImageBlock" style="min-width: 100%;" width="100%" border="0" cellpadding="0" cellspacing="0">
+                                <table class="mcnImageBlock" style="min-width: 100%;" width="100%" border="1" cellpadding="0" cellspacing="0">
                                     <tbody class="mcnImageBlockOuter">
                                         <tr>
                                             <td style="padding: 0px" class="mcnImageBlockInner" valign="top">
@@ -764,7 +764,7 @@
                                             <table align="left" bgcolor=" #FAFAFA" border="0" cellpadding="0" cellspacing="0" width="520" id="templateBody">
                                                 <tr>
                                                     <td>
-                                                        <table class="mcnTextBlock" style="min-width: 100%;" width="100%" border="0" cellpadding="0" cellspacing="0">
+                                                        <table class="mcnTextBlock" style="min-width: 100%;" width="100%" border="1"  cellpadding="0" cellspacing="0">
                                                             <tbody class="mcnTextBlockOuter">
                                                                 <tr>
                                                                     <td class="mcnTextBlockInner" style="padding-top: 9px;" valign="top">
@@ -802,10 +802,12 @@
                                                                                                                         <table class="mcnCaptionRightTextContentContainer" style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;" width="246" align="center" border="0" cellpadding="0" cellspacing="0">
                                                                                                                             <tbody>
                                                                                                                                 <tr>
-                                                                                                                                    <td class="mcnTextContent" style="text-align: center; mso-line-height-rule: exactly; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #202020; font-family: Helvetica; font-size: 16px; line-height: 115%; " valign="middle">
+                                                                                                                                    <td class="mcnTextContent" style="text-align: center; mso-line-height-rule: exactly; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #202020; font-family: Helvetica; font-size: 16px; line-height: 115%;" valign="middle">
+                                                                                                                                       @webinar.Date.ToLongDateString()<br/>
+                                                                                                                                        @Model.FormattedDateTime<br />
                                                                                                                                         Presented by @webinar.Presenter.WebUser.FullName<br>
-                                                                                                                                        @webinar.Date<br>
-                                                                                                                                        <a href="http://www.BankWebinars.com" style="mso-line-height-rule: exactly; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #2BAADF; font-weight: normal; text-decoration: underline;" target="_blank">Click here to sign up!</a>
+
+                                                                                                                                        <a href="http://www.BankWebinars.com/webinar/details/@Model.Webinar.idWebinar?idaff={aff_idUserAff}" style="mso-line-height-rule: exactly; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #2BAADF; font-weight: normal; text-decoration: underline;" target="_blank">Click here to sign up!</a>
                                                                                                                                     </td>
                                                                                                                                 </tr>
                                                                                                                             </tbody>
@@ -830,9 +832,9 @@
                                                                                                         <span style="padding-left: 14px;">@webinar.WhoAttend</span>
 
                                                                                                         <h3>@Model.Webinar.Presenter.WebUser.FullName</h3>
-                                                                                                        <span>@webinar.Presenter.BiographyLong</span><br>
+                                                                                                        <span>@Model.PresenterW_OutPic</span><br>
                                                                                                         $265 + optional extras<br>
-                                                                                                        <a href="http://www.BankWebinars.com" target="_blank">Click here to sign up</a>
+                                                                                                        <a href="http://www.BankWebinars.com/webinar/details/@Model.Webinar.idWebinar?idaff={aff_idUserAff}" target="_blank">Click here to sign up</a>
                                                                                                     </td>
                                                                                                 </tr>
                                                                                             </tbody>
@@ -880,7 +882,6 @@
                                                                                     <td class="mcnTextContent" style="padding-top: 0; padding-right: 18px; padding-bottom: 9px; padding-left: 18px;" valign="top">
 
                                                                                         <h3 style="color: bisque">Upcoming Webinars</h3>
-                                                                                        (upcoming)
                                                                                         @Model.UpcomingListing
                                                                                     </td>
                                                                                 </tr>

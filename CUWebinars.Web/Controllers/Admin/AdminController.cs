@@ -36,6 +36,7 @@ using CUWebinars.Web.Models.DataTablesModels;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Elmah;
+using HtmlAgilityPack;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
@@ -1665,13 +1666,13 @@ namespace CUWebinars.Web.Controllers.Admin
         //    return copy.ToString();
 
         //}
-
+        [ValidateInput(false)]
         [HttpPost]
         public JsonResult WritePromoToStorage(WebinarPromoViewModel model)
         {
             string eventBodyText = System.Uri.UnescapeDataString(model.EventBody);
             byte[] byteArray = Encoding.UTF8.GetBytes(eventBodyText);
-            
+
             // based on CUMailer\CUWebinars.Azure.OrderConfirmNotifier\CUWebinars.Azure.OrderConfirmNotifier\OrderConfirmationHandler.cs
 
             // almost certainly should be extracted to a function in the Business project
@@ -1716,7 +1717,32 @@ namespace CUWebinars.Web.Controllers.Admin
             model.Webinar = _webinarManagementService.GetWebinar(model.Webinar.idWebinar);
 
             // populate the upcoming events panel
-            model.Webinars = _webinarManagementService.GetUpcomingWebinars().ToList();
+            model.Webinars = _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).ToList();
+            
+            
+
+            model.FormattedDateTime= "<i>" + DateTimeHelper.FormatTime(model.Webinar.Date, model.TimeZone, false) +
+                                      " - " +
+                                      DateTimeHelper.FormatTime(
+                                          model.Webinar.Date.AddHours((double)model.Webinar.Duration), model.TimeZone,
+                                          true) + "<br /></i>";
+
+            var doc = new HtmlAgilityPack.HtmlDocument();
+            //doc.Load(filename);
+            doc.LoadHtml(model.Webinar.Presenter.BiographyLong);
+            //var nodesToRemove = doc.DocumentNode
+            //    .SelectNodes("//img")
+            //    .ToList();
+
+            //foreach (var node in nodesToRemove)
+            //    doc.DocumentNode.RemoveChild(node);
+//                node.Remove();
+            var root = doc.DocumentNode;
+            root.SelectSingleNode("(//img)[1]").Remove();
+
+
+
+            model.PresenterW_OutPic = root.InnerHtml;
 
             var upcomingWebinars = (from w in model.Webinars.Take(5)
                                     where w.idWebinar != model.Webinar.idWebinar && w.Date > model.SendDate
@@ -1724,11 +1750,11 @@ namespace CUWebinars.Web.Controllers.Admin
                                     select
                                          "<p><a style=\"color: bisque; text-decoration: none; border-bottom: 1px dotted bisque;\" href=\"http://www.bankwebinars.com/Webinar/Details/" +
                                          w.idWebinar + "?idaff={aff_idUserAff}\">" + w.Title +
-                                         "</a><br><font size='-3'> (" + w.Date.ToLongDateString() + ")</font></p>"
+                                         "</a><br>&nbsp;&nbsp;<span class=\"DateString\"> " + w.Date.ToLongDateString() + "</font></p>"
                                    ).ToArray();
 
             if (upcomingWebinars.Count() > 0)
-                model.UpcomingListing = "<h3>Upcoming Webinars</h3>\r\n" + String.Join("\r\n", upcomingWebinars);
+                model.UpcomingListing = String.Join("\r\n", upcomingWebinars);
 
             model.EventBody = HttpUtility.HtmlDecode(_generalFormatter.FormatV2(model, "~/Notification/Templates/SendPerDayPromoMaster.cshtml").Body); // get Template with new method
 
@@ -2716,7 +2742,7 @@ namespace CUWebinars.Web.Controllers.Admin
                             else if (searchTerm == "aa")
                             {
                                 dtsource = _dataTablesService.GetOrdersByPending(affiliateId, out totalNumberOrders).ToList();
-                            }                            
+                            }
                             else if (searchTerm == "inprocess")
                             {
                                 dtsource = _dataTablesService.GetOrdersByInProcess(affiliateId, out totalNumberOrders).ToList();

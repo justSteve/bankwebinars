@@ -182,7 +182,7 @@ function GetMasterMarkupAJAX($btn) {
 }
 
 function WriteMarkupToStorageAJAX($btn, affiliateId) {
-
+    
     var currCopy = GetCurrentEditorCopy();
     currCopyEnc = encodeURIComponent(currCopy);
     var origBtnText = $btn.text();
@@ -247,6 +247,7 @@ function replaceMasterTokensForAffiliate(aff)
 {
     var copy = $("#editor_0").val(); // 0 is master
 
+    copy = copy.replace(/\{aff_EmailBanner\}/gi, aff.EmailBanner);
     copy = copy.replace(/\{aff_ttsdomain\}/gi, aff.ttsDomain);
     copy = copy.replace(/\{aff_idUserAff\}/gi, aff.idUserAff);
     copy = copy.replace(/\{aff_ContactPerson\}/gi, aff.ContactPerson);
