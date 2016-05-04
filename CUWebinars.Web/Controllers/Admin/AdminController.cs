@@ -1672,8 +1672,9 @@ namespace CUWebinars.Web.Controllers.Admin
         public JsonResult WritePromoToStorage(WebinarPromoViewModel model)
         {
             string eventBodyText = System.Uri.UnescapeDataString(model.EventBody);
-            byte[] byteArray = Encoding.UTF8.GetBytes(eventBodyText);
-
+            byte[] byteArrayHTML = Encoding.UTF8.GetBytes(eventBodyText);
+            byte[] byteArrayTXT = Encoding.UTF8.GetBytes(eventBodyText.Replace("<br>", "\r\n")); // decidedly NOT robust, yet!!
+            
             // based on CUMailer\CUWebinars.Azure.OrderConfirmNotifier\CUWebinars.Azure.OrderConfirmNotifier\OrderConfirmationHandler.cs
 
             // almost certainly should be extracted to a function in the Business project
@@ -1691,16 +1692,19 @@ namespace CUWebinars.Web.Controllers.Admin
             string filenameBase = string.Concat(strAffId, "/", model.Webinar.idWebinar, "/", webinarTitleEnc);
 
             // Create the blobs
-            using (var memoryStream = new MemoryStream(byteArray))
+            using (var memoryStream = new MemoryStream(byteArrayHTML))
             {
                 string filename = string.Concat(filenameBase, ".html");
                 _logger.Info(string.Format("Persisting blob now. Named: {0}", filename));
                 blob = container.GetBlockBlobReference(filename);
                 blob.UploadFromStream(memoryStream);
                 _logger.Info("Blob successfully persisted");
-
+            }
+            
+            using (var memoryStream = new MemoryStream(byteArrayTXT))
+            {
                 memoryStream.Position = 0; // need to reset it in order to reuse the same data for a .txt file
-                filename = string.Concat(filenameBase, ".txt");
+                string filename = string.Concat(filenameBase, ".txt");
                 _logger.Info(string.Format("Persisting blob now. Named: {0}", filename));
                 blob = container.GetBlockBlobReference(filename);
                 blob.UploadFromStream(memoryStream);

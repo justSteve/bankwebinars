@@ -67,6 +67,14 @@
         WriteMarkupToStorageAJAX($btn, affiliateId);
     });
 
+    $("#writeAllAffMarkupToStorage").on("click", function (e) {
+        e.preventDefault();
+        var $btn = $(this);
+        $btn.blur();
+
+        WriteAllAffMarkupToStorageAJAX($btn);
+    });
+
     $(".reset-to-master").on("click", function (e) {
         var affiliateId = $(this).closest(".tab-pane").data("pane-affid");
         SetEditorTabForAffiliate(affiliateId, ""); // blank for copy will cause it to revert to current master
@@ -99,12 +107,36 @@ function GetCurrentEditorCopy()
     var $editorTA = $("#editorTA");
     var currCopy = $.trim($editorTA.wijeditor("getText"));
 
-    var staticComment = "<!--WIJ-NULL-->";
-    // if it starts with an empty comment (staticComment / <!--WIJ-NULL-->) remove that
-    if (currCopy.indexOf(staticComment) == 0)
-        currCopy = currCopy.substr(staticComment.length);
+    currCopy = stripWijNull(currCopy);
+    return currCopy;
 
     return currCopy;
+}
+
+function GetAffiliateCopy(affiliateId, isActive) {
+
+    var currCopy = "";
+
+    // is this affiliate currently showing?  if so, grab Editor value rather than hidden text area
+    if (isActive)
+        currCopy = $.trim($("#editorTA").wijeditor("getText"));
+    else
+        currCopy = $.trim($("#editor_" + affiliateId).val());
+    
+    currCopy = stripWijNull(currCopy);
+    return currCopy;
+}
+
+function stripWijNull(copy)
+{
+    var ret = copy;
+
+    var staticComment = "<!--WIJ-NULL-->";
+    // if it starts with an empty comment (staticComment / <!--WIJ-NULL-->) remove that
+    if (ret.indexOf(staticComment) == 0)
+        ret = ret.substr(staticComment.length);
+
+    return ret;
 }
 
 function SetCopyToClipboardTextArea(selectText)
@@ -181,12 +213,104 @@ function GetMasterMarkupAJAX($btn) {
     });
 }
 
-function WriteMarkupToStorageAJAX($btn, affiliateId) {
-    
-    var currCopy = GetCurrentEditorCopy();
-    currCopyEnc = encodeURIComponent(currCopy);
+function WriteAllAffMarkupToStorageAJAX($btn) {
+
+    // save time...
+    var tStart = (new Date()).getTime();
+
+    // setup UI for user feedback
     var origBtnText = $btn.text();
-    
+    $btn.text("Saving...");
+    $btn.append('<span id="submitSpinWrapper">&nbsp;<span class=""><i id="spinner" class="icon-spinner icon-spin"></i></span></span>');
+
+    var errorAffs = [];
+    var callsNeeded = $(".tab-pane").length - 1; // don't count Master tab, we're skipping that one
+    var callsComplete = 0;
+
+    // loop through all tabs...
+    $(".tab-pane").each(function (idx) {
+        var $tab = $(this);
+        var affid = $tab.data("pane-affid");
+
+        if (affid == 0) // skip the Master tab, although, conceivably, we could store that in a special file and use it for something...
+            return;
+
+        // get affiliate specific copy
+        var isActive = $tab.hasClass("active"); // should ALWAYS be false in this method, as the Save All button is only on the master tab
+        var currCopy = GetAffiliateCopy(affid, isActive);
+        if (currCopy == "")     // if they don't have customized copy we'll need to create it
+        {
+            // generate from master...
+            var affObj = arrayLookup(affs, "idUserAff", affid);
+            if (affObj != null) {
+                currCopy = replaceMasterTokensForAffiliate(affObj); // always pulls from editor_0 (master)
+                // could save it to affiliate text area, since we have it?
+            }
+        }
+
+        // send to server for additional processing and eventual storage
+        if (currCopy != "") // can't store nothing...
+        {
+            var currCopyEnc = encodeURIComponent(currCopy);
+
+            $.ajax({
+                url: '/Admin/WritePromoToStorage',
+                type: 'POST',
+                // async: false, // ?? blast the target w/ requests or do one at a time? seems to work fine asynchronously, make sure to deal with errors!
+                data: {
+                    "Affiliate.idUserAff": affid,
+                    "Webinar.idWebinar": $("#Webinar_idWebinar").val(),
+                    "Webinar.Title": $("#Webinar_Title").val(),
+                    "SendDate": $("#SendDate").val(),
+                    "EventBody": currCopyEnc
+                },
+                dataType: "json",
+                //contentType: "application/json",
+                beforeSend: function () {
+                },
+                success: function (result) {
+                    // console.log(idx + ": affiliate " + affid + " saved");
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log("Error occurred during the Save of Affiliate (" + affid + "): " + errorThrown + ".");
+                    errorAffs.push(affid);
+                }
+            }).done(function (result) {
+                callsComplete++;
+                // console.log("done with: " + callsComplete);
+
+                // figure out if this was the "last one" so we can clean up the UI, report errors, etc.
+                if (callsComplete >= callsNeeded)
+                {
+                    if (errorAffs.length) {
+                        var errorMsg = "Errors encountered during the save of the following affiliates, please review: " + errorAffs.join(",");
+                        console.log(errorMsg)
+                        alert(errorMsg);
+                    }
+
+                    // print elapsed time...
+                    var tEnd = (new Date()).getTime();
+                    console.log((tEnd - tStart) + " ms");
+
+                    // remove spinner
+                    $('#submitSpinWrapper').remove();
+                    $btn.text("Saved!");
+
+                    setTimeout(function () { $btn.text(origBtnText); }, 2000);
+                }
+
+            });
+        }
+    });
+}
+
+
+function WriteMarkupToStorageAJAX($btn, affiliateId) {
+
+    var currCopy = GetCurrentEditorCopy();
+    var currCopyEnc = encodeURIComponent(currCopy);
+    var origBtnText = $btn.text();
+
     $.ajax({
         url: '/Admin/WritePromoToStorage',
         type: 'POST',
