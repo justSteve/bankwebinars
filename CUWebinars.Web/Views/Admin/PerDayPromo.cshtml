@@ -15,7 +15,7 @@
     string wDate = "<b>" + DateTimeHelper.FormatDate(Model.Webinar.Date) + "</b> &nbsp;";
     wDate = wDate + DateTimeHelper.FormatTimeWithDuration(Model.Webinar.Date, Model.TimeZone, false, Model.Webinar.Duration);
 
-    ViewBag.Title = "Send VR - Daily " + promoEvent.Title;
+    ViewBag.Title = "Generate Promo Emails - Daily" + promoEvent.Title;
 
     //var minDay = 1.Days().Since(DomainConstants.BuildUtcNowAsCts);
     //var maxDay = DomainConstants.BuildUtcNowAsCts.NextMonth();
@@ -23,7 +23,6 @@
 }
 
 <!-- TODO: some or all of the following should be moved to BundleConfig.cs -->
-
 <!--Theme-->
 <link href="/scripts/wijmoeditor/themes/arctic/jquery-wijmo.css" rel="stylesheet" type="text/css" />
 
@@ -62,6 +61,7 @@
             {
                 ttsDomain = a.ttsDomain,
                 idUserAff = a.idUserAff,
+                EmailBanner = a.EmailBanner,
                 ContactPerson = a.ContactPerson,
                 ContactEmail = a.ContactEmail,
                 ContactPhone = a.ContactPhone,
@@ -134,10 +134,10 @@
 
 </script>
 
-@*figure out how to get the calendar working*@
-<script src="/Scripts/fullcalendar/fullcalendar.js" type="text/javascript"></script>
-<link href="/Scripts/fullcalendar/fullcalendar.css" rel="stylesheet" type="text/css" />
-
+@*figure out how to get the calendar working
+    <script src="/Scripts/fullcalendar/fullcalendar.js" type="text/javascript"></script>
+    <link href="/Scripts/fullcalendar/fullcalendar.css" rel="stylesheet" type="text/css" />
+*@
 
 @* vertical tab layout based on http://tutsme-webdesign.info/tutorials/navs/pills_stacked_panesright.html*@
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "mailer", @class = "form-inline form-promo-generater" }))
@@ -175,8 +175,21 @@
                             @Html.HiddenFor(m => m.Webinar.Title)
 
                             <input type="button" id="resetAllAffiliates" class="button btn btn-small" value="Reset All Affiliates" />
-                            <label for="SendDate">Send date:</label>@Html.TextBoxFor(m => m.SendDate,  "{0:MM/dd/yyyy}", new { @class = "input", type = "date" })
+                            <label for="SendDate">Send date:</label>@Html.TextBoxFor(m => m.SendDate, "{0:MM/dd/yyyy}", new { @class = "input", type = "date" })
                             <button id="submitGenPromoTexts" class="button btn btn-success btn-small">Generate Master Markup</button>
+                            @*@if (TempData["ListOfWebinarsForUpcoming"] != null)
+                            {
+                                <a id="pickWebinars" href="#" data-toggle="collapse" data-target="#ListForUpcoming" class="button btn btn-info btn-small">Pick Webinars for Upcoming</a>
+                                <div id="ListForUpcoming" class="collapse out">
+                                    <div>
+
+                                        <input type="hidden" name="id" value=@Model.Webinar.idWebinar />
+                                        @Html.DropDownList("ListOfWebinarsForUpcoming", (MultiSelectList)TempData["ListOfWebinarsForUpcoming"], new { multiple = "multiple" })
+                                        <br />
+                                    </div>
+
+                                </div>
+                            }*@
 
                         </p>
                         <p>

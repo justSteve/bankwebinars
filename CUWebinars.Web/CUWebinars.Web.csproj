@@ -1752,8 +1752,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Infrastructure\LogConfigs\DARLog4net.xml" />
-    <Content Include="Notification\Templates\SendPerDayPromo.cshtml" />
-    <Content Include="Notification\Templates\SendPerWeekPromo.cshtml">
+    <Content Include="Notification\Templates\SendPerWeekPromoMaster.cshtml">
       <SubType>Code</SubType>
     </Content>
     <Content Include="Scripts\app\admin\discounts-management.js" />

@@ -186,7 +186,7 @@ function WriteMarkupToStorageAJAX($btn, affiliateId) {
     var currCopy = GetCurrentEditorCopy();
     currCopyEnc = encodeURIComponent(currCopy);
     var origBtnText = $btn.text();
-
+    
     $.ajax({
         url: '/Admin/WritePromoToStorage',
         type: 'POST',

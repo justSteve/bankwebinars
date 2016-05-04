@@ -353,7 +353,7 @@ namespace CUWebinars.Business.Core
                 //PreEvent_Series3
                 case 211:
                     return 49;
-                //On-Demand Recording Only ;
+                //OnDemand Recording Only ;
                 //PreEvent_Series3
                 case 213:
                     return 50;

@@ -112,9 +112,14 @@
         {
             infoPhrase.Clear();
             infoPhrase.Append("<p>Dear " + Model.Order.FirstName + ",<br /><br />We hope you enjoyed this month's edition of the Compliance Perspectives.  </p>");
-
-            onDemandLink.Append("<p>This event's materials is valid until next month's edition and may be shared with associates within your organization:</p><p><b>" + TenantURL + "/o/" + Model.Order.idOrder + "-" + myRow.OnDemandCode + "</b></p>Subscription Summary:");
-
+            if (notiRecordingPosted == "No")
+            {
+                onDemandLink.Append("<p>This event's materials is valid until next month's edition and may be shared with associates within your organization:</p><p><b>" + TenantURL + "/o/" + Model.Order.idOrder + "-" + myRow.OnDemandCode + "</b></p>");
+            }
+            else
+            {
+                onDemandLink.Append("<p>This event's materials is valid for 6 months and may be shared with associates within your organization:</p><p><b>" + TenantURL + "/o/" + Model.Order.idOrder + "-" + myRow.OnDemandCode + "</b></p>Subscription Summary:");
+            }
         }
         else
         {

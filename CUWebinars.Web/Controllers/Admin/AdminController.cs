@@ -13,6 +13,7 @@ using System.ServiceModel.Syndication;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
 using System.Xml;
 using AutoMapper;
 using BrockAllen.MembershipReboot;
@@ -1714,195 +1715,127 @@ namespace CUWebinars.Web.Controllers.Admin
         public JsonResult PromoGenerate(WebinarPromoViewModel model)
         {
 
-            model.Webinar = _webinarManagementService.GetWebinar(model.Webinar.idWebinar);
-
-            // populate the upcoming events panel
-            model.Webinars = _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).ToList();
-            
-            
-
-            model.FormattedDateTime= "<i>" + DateTimeHelper.FormatTime(model.Webinar.Date, model.TimeZone, false) +
-                                      " - " +
-                                      DateTimeHelper.FormatTime(
-                                          model.Webinar.Date.AddHours((double)model.Webinar.Duration), model.TimeZone,
-                                          true) + "<br /></i>";
-
-            var doc = new HtmlAgilityPack.HtmlDocument();
-            //doc.Load(filename);
-            doc.LoadHtml(model.Webinar.Presenter.BiographyLong);
-            //var nodesToRemove = doc.DocumentNode
-            //    .SelectNodes("//img")
-            //    .ToList();
-
-            //foreach (var node in nodesToRemove)
-            //    doc.DocumentNode.RemoveChild(node);
-//                node.Remove();
-            var root = doc.DocumentNode;
-            root.SelectSingleNode("(//img)[1]").Remove();
-
-
-
-            model.PresenterW_OutPic = root.InnerHtml;
-
-            var upcomingWebinars = (from w in model.Webinars.Take(5)
-                                    where w.idWebinar != model.Webinar.idWebinar && w.Date > model.SendDate
-                                    orderby w.Date
-                                    select
-                                         "<p><a style=\"color: bisque; text-decoration: none; border-bottom: 1px dotted bisque;\" href=\"http://www.bankwebinars.com/Webinar/Details/" +
-                                         w.idWebinar + "?idaff={aff_idUserAff}\">" + w.Title +
-                                         "</a><br>&nbsp;&nbsp;<span class=\"DateString\"> " + w.Date.ToLongDateString() + "</font></p>"
-                                   ).ToArray();
-
-            if (upcomingWebinars.Count() > 0)
-                model.UpcomingListing = String.Join("\r\n", upcomingWebinars);
-
-            model.EventBody = HttpUtility.HtmlDecode(_generalFormatter.FormatV2(model, "~/Notification/Templates/SendPerDayPromoMaster.cshtml").Body); // get Template with new method
-
-            // IF AffiliateId provided, do content replacements?
-
-            return Json(new { masterText = model.EventBody });
-
-            // ********************************  OLD CODE, SOME WILL BE USED ********************
-            model.Webinars = _webinarManagementService.GetUpcomingWebinars().ToList();
-
-            var includedAffiliates = Request.Params.AllKeys
-                .Where(x => x.StartsWith("cb_"))
-                .Where(x => Request.Params[x] != null && Request.Params[x].ToString().Length > 0)
-                .Select(x => new { key = x.Replace(@"cb_", ""), value = Request.Params[x] })
-                .ToDictionary(x => int.Parse(x.key), x => x.value);
-
-
-            int i = model.Webinar.idWebinar;
-            model.SendDate = Convert.ToDateTime(model.SendDate);
-
-            //model.GeneratedMessages = new List<AffPromoMsgViewModel>();
-            foreach (var aff in includedAffiliates)
+            if (model.TemplateType == "Daily")
             {
-                if (aff.Value != "on") break;
+                model.Webinar = _webinarManagementService.GetWebinar(model.Webinar.idWebinar);
 
-                model.TimeZone = USTimeZone.Central; // UserFacade.Instance.Load(aff.Key).TimeZone;
-                model.Affiliate = new AffiliateRepository().FindByIdWithIncluding(Convert.ToInt32(aff.Key));
-                model.Webinar = _webinarManagementService.GetWebinar(i);
-                model.From = model.Affiliate.ContactEmail;
-                model.Affiliates = new List<Affiliate>();
+                // populate the dropdown selector (not currently implemented)
+                TempData["ListOfWebinarsForUpcoming"] =
+                    _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(10).ToList();
 
-                IEnumerable<int> featured1 = AppHelper.StringToIntList(Request.Form["listOfEvents"]);
 
-                StringBuilder upcoming = new StringBuilder();
-                int i1 = 0;
-
-                var q = from a in model.Webinars.Take(15)
-                        where a.idWebinar != model.Webinar.idWebinar && a.Date > model.SendDate
-                        //where !(list2.Any(item2 => item2.Email == item1.Email))
-                        orderby a.Date
-                        select new
-                        {
-                            featuredItem =
-                                "<p><a style=\"color: bisque; text-decoration: none; border-bottom: 1px dotted bisque;\" href=\"http://www.bankwebinars.com/Webinar/Details/" +
-                                a.idWebinar + "?idaff=" + model.Affiliate.idUserAff + "\">" + a.Title +
-                                "</a><br><font size='-3'> (" + a.Date.ToLongDateString() + ")</font></p>"
-                        };
-
-                // a.s. looks unused
-                string wDate = "<b>" + DateTimeHelper.FormatDate(model.Webinar.Date) + "</b><br>" +
-                               DateTimeHelper.FormatTimeWithDuration(model.Webinar.Date, model.TimeZone, false,
-                                   model.Webinar.Duration) + "<br>";
-
-                // a.s. looks unused
-                string ceu = "";
-                if (String.IsNullOrEmpty(model.Webinar.ceu) == false)
+                if (model.ListOfWebinarsForUpcoming == null)
                 {
-                    string[] ceufull = model.Webinar.ceu.Split('|');
-                    ceu = ceufull[0].ToString();
+                    model.ListOfWebinarsForUpcoming =
+                   _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(10).Select(w => w.idWebinar).ToArray();
                 }
 
-                IEnumerable<int> featured = AppHelper.StringToIntList(model.UpcomingListing);
-                StringBuilder upcomingDetail = new StringBuilder();
+                var doc = new HtmlDocument();
+                doc.LoadHtml(model.Webinar.Presenter.BiographyLong);
 
-                if (Request.Form["TemplateVersion"] == "Daily")
+                var root = doc.DocumentNode;
+                root.SelectSingleNode("(//img)[1]").Remove();
+
+                model.PresenterW_OutPic = root.InnerHtml;
+
+                var upcomingWebinars = (from w in _webinarManagementService.GetUpcomingWebinars().Take(5)
+                                        where w.idWebinar != model.Webinar.idWebinar && w.Date > model.SendDate
+                                        orderby w.Date
+                                        select
+                                            "<p><a style=\"color: bisque; text-decoration: none; border-bottom: 1px dotted bisque;\" href=\"http://www.bankwebinars.com/Webinar/Details/" +
+                             w.idWebinar + "?idaff={aff_idUserAff}\">" + w.Title + "</a><br><font size='-3'>" +
+                             w.Date.ToLongDateString() + "</font></p>"
+                    ).ToArray();
+
+                if (upcomingWebinars.Count() > 0)
+                    model.ListOfWebinarsUpcomingRendered = String.Join("\r\n", upcomingWebinars);
+
+                model.EventBody =
+                    HttpUtility.HtmlDecode(
+                        _generalFormatter.FormatV2(model, "~/Notification/Templates/SendPerDayPromoMaster.cshtml").Body);
+                // get Template with new method
+                return Json(new { masterText = model.EventBody });
+            }
+            else
+            {
+                List<int> featureWebinarIDs = new List<int>();
+                var upcomingDetail = new StringBuilder();
+                if (TempData["ListOfWebinarsForWeekly"] != null)
                 {
-                    foreach (var ID in q)
+                    foreach (var webinar in (IList<Webinar>) TempData["ListOfWebinarsForWeekly"])
                     {
-                        if (i1 < 5)
-                        {
-                            upcoming.Append(ID.featuredItem.ToString());
-                        }
-                        i1++;
+
+                        featureWebinarIDs.Add(webinar.idWebinar);
+
+                        string eDate = "<b>" + DateTimeHelper.FormatDate(webinar.Date) + "</b><br />";
+                        eDate = eDate +
+                                DateTimeHelper.FormatTimeWithDuration(webinar.Date, model.TimeZone, false,
+                                    webinar.Duration) + "<br />";
+
+                        upcomingDetail.Append(
+                            "<p style='font-size:20px; font-weight:bold; font-family:trebuchet ms;'><a href=\"http://www.bankwebinars.com/Webinar/Details/" +
+                            webinar.idWebinar + "?idaff={aff_idUserAff}\">" + webinar.Title + "</a><br />");
+                        upcomingDetail.Append("<span style='font-size:12px'>" + eDate + "</span></p>");
+                        upcomingDetail.Append("<div style='font-family:trebuchet ms;'>" + webinar.Description + "</div>");
+                        upcomingDetail.Append("<p style='font-family:trebuchet ms;'><b>" +
+                                              webinar.Presenter.WebUser.FullName + "</b></p>");
+                        upcomingDetail.Append(
+                            "<p font-family:trebuchet ms;'><a href='http://www.bankwebinars.com/Webinar/Details/" +
+                            webinar.idWebinar + "?idaff={aff_idUserAff}'>Click here for more info!</a></p>");
+                        upcomingDetail.Append("<hr style='width:50%; height: 10px;' />");
                     }
-
-                    model.UpcomingListing = "<h3>Upcoming Webinars</h3>" + upcoming.ToString();
-
-                    model.EventBody = model.Webinar.DescriptionLong + "<h2>" + model.Webinar.LearnCaption + "</h2>" +
-                                      model.Webinar.LearnBody + "<h2>Who Should Attend</h2>" + model.Webinar.WhoAttend +
-                                      "<h2>" + "About " + model.Webinar.Presenter.WebUser.FullName + "</h2>" +
-                                      model.Webinar.Presenter.BiographyLong;
-
-                    _orderManagementService.FireSendPerDayPromoEvent(model);
-                    var genMsg = new AffPromoMsgViewModel(model.Affiliate.idUserAff, "string here");
-                    //if (model.GeneratedMessages != null) model.GeneratedMessages.Add(genMsg);
                 }
-                //else
-                //{
-                //    List<int> featureWebinarIDs = new List<int>();
+                var q = _webinarManagementService.GetUpcomingWebinars().Where(a => a.idWebinar != model.Webinar.idWebinar && a.Date > model.SendDate).Where(
+                         a => !(featureWebinarIDs.Any(item2 => item2 == a.idWebinar))).OrderBy(a => a.Date).Take(12).Select(a =>
+                         new
+                         {
+                             featuredItem =
+                             "<p><a style=\"color: bisque; text-decoration: none; border-bottom: 1px dotted bisque;\" href=\"http://www.bankwebinars.com/Webinar/Details/" +
+                             a.idWebinar + "?idaff={aff_idUserAff}\">" + a.Title + "</a><br><font size='-3'>" +
+                             a.Date.ToLongDateString() + "</font></p>"
+                         });
+                int i1 = 0;
+                var upcoming = new StringBuilder();
+                foreach (var ID in q)
+                {
+                    if (i1 < 5)
+                    {
+                        upcoming.Append(ID.featuredItem.ToString());
+                    }
+                    i1++;
+                }
+                model.ListOfWebinarsUpcomingRendered = "" + upcoming.ToString();
 
-                //    foreach (int w in featured)
-                //    {
-                //        var webinar = _webinarManagementService.GetWebinar(w);
-                //        featureWebinarIDs.Add(webinar.idWebinar);
-                //        string eDate = "<b>" + DateTimeHelper.FormatDate(webinar.Date) + "</b><br />";
-                //        eDate = eDate + DateTimeHelper.FormatTimeWithDuration(webinar.Date, model.TimeZone, false, webinar.Duration) + "<br />";
+                model.EventBody = upcomingDetail.ToString();
 
-                //        upcomingDetail.Append("<p style='font-size:20px; font-weight:bold; font-family:trebuchet ms;'><a href='http://www.bankwebinars.com/Webinar/Details/" + webinar.idWebinar + "?idaff=" + model.Affiliate.idUserAff + "'>" + webinar.Title + "</a><br />");
-                //        upcomingDetail.Append("<span style='font-size:12px'>" + eDate + "</span></p>");
-                //        upcomingDetail.Append("<div style='font-family:trebuchet ms;'>" + webinar.Description + "</div>");
-                //        upcomingDetail.Append("<p style='font-family:trebuchet ms;'><b>" + webinar.Presenter.WebUser.FullName + "</b></p>");
-                //        upcomingDetail.Append("<p font-family:trebuchet ms;'><a href='http://www.bankwebinars.com/Webinar/Details/" + webinar.idWebinar + "?idaff=" + model.Affiliate.idUserAff + "'>Click here for more info!</a></p>");
-                //        upcomingDetail.Append("<hr style='width:50%; height: 10px;' />");
-                //    }
+                model.EventBody =
+                    HttpUtility.HtmlDecode(
+                        _generalFormatter.FormatV2(model, "~/Notification/Templates/SendPerWeekPromoMaster.cshtml").Body);
 
-                //    q = model.Webinars.Where(a => a.idWebinar != model.Webinar.idWebinar && a.Date > model.SendDate).Where(
-                //            a => !(featureWebinarIDs.Any(item2 => item2 == a.idWebinar))).OrderBy(a => a.Date).Take(12).Select(a =>
-                //            new
-                //            {
-                //                featuredItem =
-                //                "<p><a style=\"color: bisque; text-decoration: none; border-bottom: 1px dotted bisque;\" href=\"http://www.bankwebinars.com/Webinar/Details/" +
-                //                a.idWebinar + "?idaff=" + model.Affiliate.idUserAff + "\">" + a.Title + "</a><br><font size='-3'> (" +
-                //                a.Date.ToLongDateString() + ")</font></p>"
-                //            });
-
-                //    foreach (var ID in q)
-                //    {
-                //        if (i1 < 5)
-                //        {
-                //            upcoming.Append(ID.featuredItem.ToString());
-                //        }
-                //        i1++;
-                //    }
-                //    model.UpcomingListing = "<h3>Upcoming Webinars</h3>" + upcoming.ToString();
-
-                //    model.EventBody = upcomingDetail.ToString();
-                //    var genMsg = new AffPromoMsgViewModel(model.Affiliate.idUserAff, "mail msg");
-                //    if (model.GeneratedMessages != null) model.GeneratedMessages.Add(genMsg);
-                //}
+                return Json(new { masterText = model.EventBody });
             }
             return null;
         }
 
-        [HttpGet]
-        public ActionResult PerWeekPromo(int id, List<int> includedEvents)
+        [HttpPost]
+        public ActionResult PerWeekPromo(WebinarPromoViewModel model)
         {
-            //barebones starting point.
-            WebinarPromoViewModel model = new WebinarPromoViewModel()
+            IList<Webinar> webinars = new List<Webinar>();
+            //
+            foreach (var _id in model.ListOfWebinarsForWeekly)
             {
+                webinars.Add(_webinarManagementService.GetWebinar(_id));
+            }
+            TempData["ListOfWebinarsForWeekly"] = webinars;
 
-            };
+            //
+            TempData["ListOfWebinarsForUpcoming"] =
+                _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(10).ToList();
             model.SendDate = TtsConfig.UtcNowAsCts;
-            //Webinars is the user selected list of webinars to include in main body of 'weekly' version.
-            // not the list that shows in the sidebar.
-            //model.Webinars = _webinarManagementService.GetUpcomingWebinars().Where(w => w.idWebinar ).ToList();
-            model.Webinar = _webinarManagementService.GetWebinar(id);
-            model.TimeZone = USTimeZone.Eastern;
+            model.Webinar = _webinarManagementService.GetWebinar(Convert.ToInt32(Request["idWebinar"]));
+            model.TimeZone = USTimeZone.Central;
             model.Affiliates = new AffiliateRepository().GetAffiliatesByPromoType("Weekly").ToList();
+            model.TemplateType = "Weekly";
 
             return View(model);
 
@@ -1911,6 +1844,11 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpGet]
         public ActionResult PerDayPromo(int id)
         {
+
+            var webinarsForUpcoming = _webinarManagementService.GetUpcomingWebinars().Take(15).OrderBy(w => w.Date);
+
+            TempData["ListOfWebinarsForWeekly"] = webinarsForUpcoming;
+
             WebinarPromoViewModel model = new WebinarPromoViewModel()
             {
                 TimeZone = USTimeZone.Eastern,

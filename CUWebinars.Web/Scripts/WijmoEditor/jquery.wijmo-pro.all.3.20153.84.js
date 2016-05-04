@@ -99468,7 +99468,7 @@ var wijmo;
                     return [h, s, l];
                 };
 
-                // Install mousedown handler (the others are set on the document on-demand)
+                // Install mousedown handler (the others are set on the document OnDemand)
                 $('*', e).mousedown(fb.mousedown);
 
                 // Init color

@@ -13,13 +13,14 @@ namespace CUWebinars.Business.Notification.ViewModel
         public IList<Affiliate> Affiliates { get; set; }
         public string From { get; set; }
         public Webinar Webinar { get; set; }
-        public IList<Webinar> Webinars { get; set; }
         public DateTime SendDate { get; set; }
         public string EventBody { get; set; }
         public string FormattedDateTime { get; set; }
-        public string UpcomingListing { get; set; }
+        public int[] ListOfWebinarsForWeekly { get; set; }
+        public int[] ListOfWebinarsForUpcoming { get; set; }
         public string PresenterW_OutPic { get; set; }
 
         public USTimeZone TimeZone { get; set; }
+        public string ListOfWebinarsUpcomingRendered { get; set; }
     }
 }

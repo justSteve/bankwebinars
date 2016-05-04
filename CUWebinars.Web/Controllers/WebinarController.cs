@@ -836,14 +836,18 @@ namespace CUWebinars.Web.Controllers
                 if (claimsIdentityOfAuthenticatedUser.HasClaim(
                         (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
                 {
-                    int totalNumberOrders;
-                    var aff = _affiliateManagementService.LoadByTTSDomain("bankwebinars");
+                    var webinars = _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(15);
+                    //int totalNumberOrders;
+                    //var ListOfUpcomingEvents =
+                    //    webinars.Select(x => new 
+                    //    {
+                    //        idWebinar = x.idWebinar.ToString(),
+                    //        Title = x.Title
+                    //    }).ToList();
 
-                    //var orders = _dataTablesService.GetOrdersByWebinar(
-                    //    model.Webinar.idWebinar,
-                    //    19,
-                    //    out totalNumberOrders
-                    //    );
+                    ViewBag.ListOfWebinars = new MultiSelectList(webinars, "idWebinar", "Title");
+
+                    var aff = _affiliateManagementService.LoadByTTSDomain("bankwebinars");
 
                     if (model.CheckoutInProcess)
                     {

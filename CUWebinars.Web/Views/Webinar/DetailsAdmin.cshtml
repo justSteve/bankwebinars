@@ -1,5 +1,6 @@
 ﻿@using CUWebinars.Web.Core
 @using CUWebinars.Web.Helpers
+@using Newtonsoft.Json
 
 @model WebinarDetailsViewModel
 
@@ -18,6 +19,7 @@
 
 
 <script type="text/javascript">
+
     var checkoutInProcess = @(Model.CheckoutInProcess ? "true" : "false");
     var isUserLoggedIn = @(@Model.UserIsLoggedIn ? "true" : "false");
     var currentWebinarId = @(@Model.Webinar.idWebinar);
@@ -27,6 +29,8 @@
     var orderRowId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow : 0);
     var orderId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.idOrder : 0);
     var addressVerified = @(@Model.UserAddressVerified ? "true" : "false");
+
+
 </script>
 
 @section scripts{
@@ -145,7 +149,7 @@
                                 <div class="tab-content">
                                     <div class="tab-pane " id="findUserForAffiliate">
                                         <button type="button" class="btn-success btn pull-right" id="AddToCart"> Add Order</button>
-                                        
+
                                     </div>
                                     <div class="tab-pane" id="contactInfoForAffiliate"></div>
                                     <div class="tab-paneactive" id="confirmationForAffiliate">
@@ -157,27 +161,27 @@
                         </div>
                         <!-- The following forms are positioned here so that they are not nested in the form in the CheckoutOptions View. -->
                         @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
-                            {
-                                @Html.AntiForgeryToken()
+                        {
+                            @Html.AntiForgeryToken()
 
-                                <input id="loginEmail" name="Email" type="hidden" value="">
-                                <input id="loginPassword" name="Password" type="hidden">
-                                <input id="loginRememberMe" type="hidden" value="true" name="RememberMe">
-                                <input type="hidden" name="returnUrl" value="/Webinar/Details/@Model.Webinar.idWebinar" />
-                            }
+                            <input id="loginEmail" name="Email" type="hidden" value="">
+                            <input id="loginPassword" name="Password" type="hidden">
+                            <input id="loginRememberMe" type="hidden" value="true" name="RememberMe">
+                            <input type="hidden" name="returnUrl" value="/Webinar/Details/@Model.Webinar.idWebinar" />
+                        }
 
-                            @using (Html.BeginForm("ResetPassword", "Account", FormMethod.Post, new { id = "ResetPasswordForm" }))
-                            {
-                                @Html.AntiForgeryToken()
-                                <input id="ResetPassEmail" name="emailForReset" type="hidden" value="">
-                            }
-                            <form id="checkEmail">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="emailChecker" id="emailChecker" />
-                            </form>
-                            <form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>
-                            <form id="nonUSForm"><input type="hidden" name="AddressText" id="AddressText" /></form>
-                            <form id="checkInstitution"><input type="hidden" name="InstitutionChecker" id="InstitutionChecker" /></form>
+                        @using (Html.BeginForm("ResetPassword", "Account", FormMethod.Post, new { id = "ResetPasswordForm" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input id="ResetPassEmail" name="emailForReset" type="hidden" value="">
+                        }
+                        <form id="checkEmail">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="emailChecker" id="emailChecker" />
+                        </form>
+                        <form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>
+                        <form id="nonUSForm"><input type="hidden" name="AddressText" id="AddressText" /></form>
+                        <form id="checkInstitution"><input type="hidden" name="InstitutionChecker" id="InstitutionChecker" /></form>
 
                     </div> <!-- closes SignUpFormContainer div-->
                 }
@@ -233,9 +237,21 @@
             </div>
             <div>
                 <a href="/admin/perdaypromo/@Model.Webinar.idWebinar" class="btn btn-dangerx">Daily Promotional Email</a>
-                <a href="/admin/asdf/" class="btn btn-dangerx">Weekly Promotional Email</a>
+                <a href="#" data-toggle="collapse" data-target="#ListOfEvents" class="btn btn-dangerx">Weekly Promotional Email</a>
+                @*<a href="/admin/PerWeekPromo?id=2060&includedEventsIds=2060,2078,2071,2072" class="btn btn-dangerx">Weekly Promotional Email</a>*@
             </div>
 
+            <div id="ListOfEvents" class="collapse out">
+                @using (Html.BeginForm("perweekpromo", "Admin", FormMethod.Post, new { id = "PickWebinars", @class = "form-horizontal" }))
+                {
+                    <div>
+                        <input type="hidden" name="idWebinar" value=@Model.Webinar.idWebinar />
+                        @Html.DropDownList("ListOfWebinarsForWeekly", (MultiSelectList)ViewBag.ListOfWebinars, new { multiple = "multiple" })
+                        <br />
+                        <input type="submit" value="submit" />
+                    </div>
+                }
+            </div>
             @*<aside class="widget">
                     <h5 class="short_headline"><span>Search</span></h5>
                     <form class="searchform" method="get">

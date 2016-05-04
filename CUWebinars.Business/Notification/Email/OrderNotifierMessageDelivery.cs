@@ -43,7 +43,9 @@ namespace CUWebinars.Business.Notification.Email
 
             notificationMessage.To = order.BillingEmail;
             notificationMessage.Bcc = order.Affiliate.ContactEmail;
-            
+
+            if (order.Affiliate.idUserAff == 17430) notificationMessage.Bcc = "nloppnow@wisbank.com";
+
             SendMessage(notificationMessage);
         }
 
@@ -68,7 +70,7 @@ namespace CUWebinars.Business.Notification.Email
             //using (var smtp = new SmtpClient(ConfigurationManager.AppSettings["smtp.host"], int.Parse(ConfigurationManager.AppSettings["smtp.port"])))
             {
                 smtp.Timeout = 5000;
-                
+
                 //  Set this AppSetting in App.Config to something other than 'live' when testing i.e. notlive
                 if (ConfigurationManager.AppSettings["EmailSendingMode"] != "live")
                 {
@@ -85,7 +87,7 @@ namespace CUWebinars.Business.Notification.Email
                     mailMessage.IsBodyHtml = true;
                     mailMessage.To.Add(destinationEmailAddress);
                     mailMessage.Bcc.Add(destinationEmailAddressAffiliate);
-                    _logger.Info("OrderNotification Bcc:" + mailMessage.Bcc +" value should be: "+ destinationEmailAddressAffiliate);
+                    _logger.Info("OrderNotification Bcc:" + mailMessage.Bcc + " value should be: " + destinationEmailAddressAffiliate);
                     smtp.Send(mailMessage);
 
                 }

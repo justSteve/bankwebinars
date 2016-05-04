@@ -20,7 +20,9 @@
         border-radius: 4px;
         height: 20px;
     }
-
+    .modal {
+        width: 400px;
+    }
     #UpdateWebinarRecordingModal {
         margin: 0;
     }
@@ -51,13 +53,13 @@
                 @Html.ValidationSummary("Error:", new { id = "updateWebinarRecordingValSummary" })
 
                 <div id="manageRecordingsWrapper">
-                        <div id="LivePlusFive" class=" pull-left">
+                        <div id="LivePlusFive">
                             <span class="control-label">Live Plus Five:&nbsp;</span>
                             @Html.TextBoxFor(m => m.Webinar.LivePlusFiveValue)
 
                         </div>
 
-                        <div id="fileLocationDiv_" class=" pull-left">
+                        <div id="fileLocationDiv_">
                             <span class="control-label">File Name:&nbsp;</span>
                             @Html.TextBoxFor(m => m.Webinar.RecordingUrl)
                         </div>

@@ -59,6 +59,14 @@
     <title>*|MC:SUBJECT|*</title>
 
     <style type="text/css">
+        .DateString {
+            font-size: smaller;
+        }
+        
+        #AffiliateFooter {
+             font-family: Helvetica;
+        }
+
         p {
             margin: 10px 0;
             padding: 0;
@@ -92,9 +100,6 @@
             padding: 0;
         }
 
-        #AffiliateFooter {
-             font-family: Helvetica;
-        }
         img {
             -ms-interpolation-mode: bicubic;
         }
@@ -729,11 +734,7 @@
                                                     <tbody>
                                                         <tr>
                                                             <td class="mcnImageContent" style="padding-right: 0px; padding-left: 0px; padding-top: 0; padding-bottom: 0; text-align: center;" valign="top">
-
-
                                                                 {aff_EmailBanner}
-
-
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -774,67 +775,7 @@
 
                                                                                     <td class="mcnTextContent" style="padding-top: 0; padding-right: 18px; padding-bottom: 9px; padding-left: 18px;" valign="top">
 
-                                                                                        <h1>@webinar.Title</h1>
-
-                                                                                        <table class="mcnCaptionBlock" id="presenterDateContainer" style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;" width="100%" border="0" cellpadding="0" cellspacing="0">
-                                                                                            <tbody class="mcnCaptionBlockOuter">
-                                                                                                <tr>
-                                                                                                    <td class="mcnCaptionBlockInner" style="padding: 9px; mso-line-height-rule: exactly; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;" valign="top">
-                                                                                                        <table class="mcnCaptionRightContentOuter" style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;" width="100%" border="0" cellpadding="0" cellspacing="0">
-                                                                                                            <tbody>
-                                                                                                                <tr>
-                                                                                                                    <td class="mcnCaptionRightContentInner" style="padding: 0 9px; mso-line-height-rule: exactly; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;" valign="top">
-                                                                                                                        <table class="mcnCaptionRightImageContentContainer" style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;" align="left" border="0" cellpadding="0" cellspacing="0">
-                                                                                                                            <tbody>
-                                                                                                                                <tr>
-                                                                                                                                    <td class="mcnCaptionRightImageContent" style="mso-line-height-rule: exactly; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;" valign="top"><img alt="" class="mcnImage" src="@webinar.Presenter.PhotoThumb" style="max-width: 140px; border: 0; height: auto; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; vertical-align: bottom;" width="82"></td>
-                                                                                                                                </tr>
-                                                                                                                            </tbody>
-                                                                                                                        </table>
-
-                                                                                                                        <table class="mcnCaptionRightTextContentContainer" style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;" width="246" align="center" border="0" cellpadding="0" cellspacing="0">
-                                                                                                                            <tbody>
-                                                                                                                                <tr>
-                                                                                                                                    <td  style="width: 100%; text-align: center; mso-line-height-rule: exactly; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #202020; font-family: Helvetica; font-size: 16px; line-height: 115%;" valign="middle">
-                                                                                                                                        @webinar.Date.ToLongDateString()<br />
-                                                                                                                                        @Model.FormattedDateTime<br />
-                                                                                                                                        Presented by @webinar.Presenter.WebUser.FullName<br>
-
-                                                                                                                                        <a href="http://www.BankWebinars.com/webinar/details/@Model.Webinar.idWebinar?idaff={aff_idUserAff}" style="mso-line-height-rule: exactly; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #2BAADF; font-weight: normal; text-decoration: underline;" target="_blank">Click here to sign up!</a><br/><br/>
-
-                                                                                                                                        <span style="font-size: xx-small; line-height: 100%"><i>*Can't attend? OnDemand playback included with your registration.</i></span> 
-
-                                                                                                                                    </td>
-                                                                                                                                </tr>
-                                                                                                                            </tbody>
-                                                                                                                        </table>
-                                                                                                                    </td>
-                                                                                                                </tr>
-                                                                                                            </tbody>
-                                                                                                        </table>
-                                                                                                    </td>
-                                                                                                </tr>
-                                                                                            </tbody>
-                                                                                        </table>
-                                                                                        <table>
-                                                                                            <tbody>
-                                                                                                <tr>
-                                                                                                    <td>
-                                                                                                        <span>@webinar.DescriptionLong</span>
-                                                                                                        <h3>@Model.Webinar.LearnCaption</h3>
-                                                                                                        <span>@webinar.LearnBody</span>
-
-                                                                                                        <h3>Who Should Attend</h3>
-                                                                                                        <span style="padding-left: 14px;">@webinar.WhoAttend</span>
-
-                                                                                                        <h3>@Model.Webinar.Presenter.WebUser.FullName</h3>
-                                                                                                        <span>@Model.PresenterW_OutPic</span><br>
-                                                                                                        $265 + optional extras<br>
-                                                                                                        <a href="http://www.BankWebinars.com/webinar/details/@Model.Webinar.idWebinar?idaff={aff_idUserAff}" target="_blank">Click here to sign up</a>
-                                                                                                    </td>
-                                                                                                </tr>
-                                                                                            </tbody>
-                                                                                        </table>
+                                                                                        @Model.EventBody
                                                                                     </td>
                                                                                 </tr>
                                                                             </tbody>
@@ -899,11 +840,11 @@
                                                                     <td class="mcnDividerBlockInner" style="min-width: 100%; padding: 9px 18px;">
                                                                         <table class="mcnDividerContent" style="min-width: 100%; border-top: 2px solid #EAEAEA;" width="100%" border="0" cellpadding="0" cellspacing="0">
                                                                             <tbody>
-                                                                            <tr>
-                                                                                <td>
-                                                                                    <span></span>
-                                                                                </td>
-                                                                            </tr>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <span></span>
+                                                                                    </td>
+                                                                                </tr>
                                                                             </tbody>
                                                                         </table>
                                                                     </td>
@@ -965,7 +906,8 @@
                                                                     </td>
                                                                 </tr>
                                                             </tbody>
-                                                        </table><table class="mcnTextBlock" style="min-width: 100%;" width="100%" border="0" cellpadding="0" cellspacing="0">
+                                                        </table>
+                                                        <table id="OnDemandContainer" class="mcnTextBlock" style="min-width: 100%;" width="100%" border="0" cellpadding="0" cellspacing="0">
                                                             <tbody class="mcnTextBlockOuter">
                                                                 <tr>
                                                                     <td class="mcnTextBlockInner" style="padding-top: 9px;" valign="top">
