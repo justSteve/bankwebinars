@@ -1729,6 +1729,9 @@ namespace CUWebinars.Web.Controllers.Admin
                     model.ListOfWebinarsForUpcoming =
                    _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(10).Select(w => w.idWebinar).ToArray();
                 }
+                
+                var _upcoming= _webinarManagementService.GetUpcomingWebinars().Where(w => w.Date > model.SendDate && w.idWebinar != model.Webinar.idWebinar).OrderBy(w => w.Date).Take(5);
+
 
                 var doc = new HtmlDocument();
                 doc.LoadHtml(model.Webinar.Presenter.BiographyLong);
@@ -1738,13 +1741,10 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 model.PresenterW_OutPic = root.InnerHtml;
 
-                var upcomingWebinars = (from w in _webinarManagementService.GetUpcomingWebinars().Take(5)
-                                        where w.idWebinar != model.Webinar.idWebinar && w.Date > model.SendDate
-                                        orderby w.Date
-                                        select
-                                            "<p><a style=\"color: bisque; text-decoration: none; border-bottom: 1px dotted bisque;\" href=\"http://www.bankwebinars.com/Webinar/Details/" +
-                             w.idWebinar + "?idaff={aff_idUserAff}\">" + w.Title + "</a><br><font size='-3'>" +
-                             w.Date.ToLongDateString() + "</font></p>"
+                var upcomingWebinars = (from w in _upcoming select
+                                            "<p style=\"color: bisque; text-decoration: none; \" ><a style=\"border-bottom: 1px dotted bisque;\" href=\"http://www.bankwebinars.com/Webinar/Details/" +
+                             w.idWebinar + "?idaff={aff_idUserAff}\">" + w.Title + "</a><br>" +
+                             w.Date.ToLongDateString() + "</p>"
                     ).ToArray();
 
                 if (upcomingWebinars.Count() > 0)
@@ -1762,7 +1762,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 var upcomingDetail = new StringBuilder();
                 if (TempData["ListOfWebinarsForWeekly"] != null)
                 {
-                    foreach (var webinar in (IList<Webinar>) TempData["ListOfWebinarsForWeekly"])
+                    foreach (var webinar in (IList<Webinar>)TempData["ListOfWebinarsForWeekly"])
                     {
 
                         featureWebinarIDs.Add(webinar.idWebinar);
@@ -1790,9 +1790,9 @@ namespace CUWebinars.Web.Controllers.Admin
                          new
                          {
                              featuredItem =
-                             "<p><a style=\"color: bisque; text-decoration: none; border-bottom: 1px dotted bisque;\" href=\"http://www.bankwebinars.com/Webinar/Details/" +
-                             a.idWebinar + "?idaff={aff_idUserAff}\">" + a.Title + "</a><br><font size='-3'>" +
-                             a.Date.ToLongDateString() + "</font></p>"
+                             "<p style=\"color: bisque; text-decoration: none; \"><a  href=\"http://www.bankwebinars.com/Webinar/Details/" +
+                             a.idWebinar + "?idaff={aff_idUserAff}\">" + a.Title + "</a><br>" +
+                             a.Date.ToLongDateString() + "</p>"
                          });
                 int i1 = 0;
                 var upcoming = new StringBuilder();

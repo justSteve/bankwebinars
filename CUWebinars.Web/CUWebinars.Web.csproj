@@ -1024,6 +1024,7 @@
     <Content Include="Content\images\email\bannerCaption.png" />
     <Content Include="Content\images\email\BannerLogo.jpg" />
     <Content Include="Content\images\email\BannerOrg.png" />
+    <Content Include="Content\images\email\BannerTTS.png" />
     <Content Include="Content\images\email\bennett\addressCenter.jpg" />
     <Content Include="Content\images\email\bennett\addressLeft.jpg" />
     <Content Include="Content\images\email\bennett\addressRight.jpg" />
