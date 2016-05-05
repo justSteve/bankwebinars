@@ -177,6 +177,8 @@
                             <input type="button" id="resetAllAffiliates" class="button btn btn-small" value="Reset All Affiliates" />
                             <label for="SendDate">Send date:</label>@Html.TextBoxFor(m => m.SendDate, "{0:MM/dd/yyyy}", new { @class = "input", type = "date" })
                             <button id="submitGenPromoTexts" class="button btn btn-success btn-small">Generate Master Markup</button>
+			                <button id="writeAllAffMarkupToStorage" class="button btn btn-small">Save All</button>
+
                             @*@if (TempData["ListOfWebinarsForUpcoming"] != null)
                             {
                                 <a id="pickWebinars" href="#" data-toggle="collapse" data-target="#ListForUpcoming" class="button btn btn-info btn-small">Pick Webinars for Upcoming</a>
