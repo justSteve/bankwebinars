@@ -7,6 +7,8 @@
     IStateService stateService = new StateService();
 
     var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+    var ShowWebinarColumn = "false";
+
 
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     
@@ -24,11 +26,14 @@
 <!--[if gt IE 8]><!-->
 <html class="no-js" lang="en" dir="ltr">
 <!--<![endif]-->
+
 <head>
 
     <script type="text/javascript">
         var affiliateId = @currentAffiliate.idUserAff;
         var showAffiliateColumn = false;
+        var showWebinarColumn = @ShowWebinarColumn;
+        var showRoyaltyColumn = "true";
         var currentAffiliateId = "@currentAffiliate.idUserAff";
         var currentAffiliateDisplayTitle = "@currentAffiliate.DisplayTitle";
     </script>

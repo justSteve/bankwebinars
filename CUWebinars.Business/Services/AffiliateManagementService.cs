@@ -220,7 +220,8 @@ namespace CUWebinars.Business.Services
                 {
 
                     BuildAffiliateInvoice(orders.Where(o => o.idAffiliate == affiliate.idUserAff
-                        && o.OrderStatus == OrderStatus.Billed && o.OrderStatus == OrderStatus.Paid && o.OrderStatus == OrderStatus.Submitted).ToList(), webinarID);
+                        && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted))
+                        .ToList(), webinarID);
                 }
 
 

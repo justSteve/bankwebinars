@@ -8,8 +8,14 @@
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
     var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
-   
+    var ShowWebinarColumn = "false";
+    if (ViewBag.SearchTerm != null)
+    {
+        ShowWebinarColumn = "true";
+    }
     <script type="text/javascript">
+        var showWebinarColumn = @ShowWebinarColumn;
+        var showRoyaltyColumn = false;
         var affiliateId = @currentAffiliate.idUserAff;
         var showAffiliateColumn = true;
         var currentAffiliateId = "@currentAffiliate.idUserAff";
@@ -46,8 +52,8 @@
 
         window.$zopim || (function (d, s) {
             var z = window.$zopim = function (c) {
-                z._.push(c);
-            },
+                    z._.push(c);
+                },
                 $ = z.s = d.createElement(s),
                 e = d.getElementsByTagName(s)[0];
 

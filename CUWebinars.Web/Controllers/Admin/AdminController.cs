@@ -2651,7 +2651,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         if (searchTerm != null)
                         {
-
+                            ViewBag.IsSearchResult = true;
                             int orderId = 0;
 
                             if (searchTerm.All(Char.IsDigit))

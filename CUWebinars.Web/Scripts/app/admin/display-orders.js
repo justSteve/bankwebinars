@@ -427,22 +427,6 @@ function getOrderStatusHtml() {
 
 
     ns.wireUpDataTable = function () {
-        
-        var showUserColumn = true;
-        var showWebinarColumn = true;
-
-
-        var payload = { idWebinar: parseInt(DO.webinarIdDiv.text()), aff: DO.affiliateId };
-
-        //$.ajax({
-        //    type: 'POST',
-        //    contentType: constants.JsonContentType,
-        //    cache: false,
-        //    url: '/Admin/BuildAffiliateInvoice',
-        //    dataType: constants.JsonDataType,
-        //    data: JSON.stringify(payload)
-            
-        //});
 
         DO.ordersTable.dataTable({
             "serverSide": true,
@@ -475,7 +459,7 @@ function getOrderStatusHtml() {
             'columns': [
                 // class names function as trigger - createChildRow
                 { 'data': 'idOrder', 'visible': false },
-                { 'data': 'LastName','visible': showUserColumn, 'class': 'details-control edit-user-name-email' },
+                { 'data': 'LastName', 'class': 'details-control edit-user-name-email' },
                 { 'data': 'WebinarDateTitleString', 'visible': showWebinarColumn,'class': 'details-control ' },
                 { 'data': 'Institution', 'class': 'details-control edit-institution' },
                 { 'data': 'RegistrationTypeString', 'class': 'details-control edit-billing' },
@@ -486,7 +470,7 @@ function getOrderStatusHtml() {
                 },
                 {
                     'data': 'Royalty',
-                    'visible': showRoyaltyColumn,
+                    'visible': false,
                     'class': 'details-control '
                 },
                 { 'data': 'OrderDate', 'class': 'details-control edit-resends' },
@@ -560,15 +544,15 @@ function getOrderStatusHtml() {
                 }
             },
            // [6] Royalty Column
-            {
-                "aTargets": [6], //
-                "mData": "Royalty",
-                "mRender": function (data, type, full) {
+            //{
+            //    "aTargets": [6], //
+            //    "mData": "Royalty",
+            //    "mRender": function (data, type, full) {
 
-                    var royaltyHtml = full.Royalty;
-                    return "<div class=\"aff-revenue-summary\" data-w=" + parseInt(DO.webinarIdDiv.text()) + " data-a='" + full.Affiliate_ttsDomain + "' style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</br>" + royaltyHtml + "</div>";
-                }
-            },
+            //        var royaltyHtml = full.Royalty;
+            //        return "<div class=\"aff-revenue-summary\" data-w=" + parseInt(DO.webinarIdDiv.text()) + " data-a='" + full.Affiliate_ttsDomain + "' style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</br>" + royaltyHtml + "</div>";
+            //    }
+            //},
 
            // [7] Resends Column
             {
