@@ -210,8 +210,27 @@ namespace CUWebinars.Business.Services
 
         public IList<AffiliateReportDTO> BuildAffiliateReport(List<Order> orders, int webinarID)
         {
-            var reportData =
-                orders.Where(o => o.Affiliate != null)
+            try
+            {
+                var listofAffiliates = orders.OrderBy(o => o.OrderDate)
+                       .GroupBy(o => o.Affiliate)
+                       .Select(o => o.Key).ToList();
+
+                foreach (var affiliate in listofAffiliates)
+                {
+
+                    BuildAffiliateInvoice(orders.Where(o => o.idAffiliate == affiliate.idUserAff
+                        && o.OrderStatus == OrderStatus.Billed && o.OrderStatus == OrderStatus.Paid && o.OrderStatus == OrderStatus.Submitted).ToList(), webinarID);
+                }
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return orders.Where(o => o.Affiliate != null)
                     .OrderBy(o => o.OrderDate)
                     .GroupBy(o => o.Affiliate)
                     .Select(u => new AffiliateReportDTO
@@ -221,15 +240,14 @@ namespace CUWebinars.Business.Services
                         Orders = u.ToList(),
                     }).ToList();
 
-            //ComputeAffiliateRevenuesAndComissions(reportData);
-
-            return reportData;
         }
 
 
 
         public IList<AffiliateInvoiceDTO> BuildAffiliateInvoice(List<Order> orders, int webinarID)
         {
+            ComputeRoyalty(orders);
+
             IList<AffiliateInvoiceDTO> reportData = orders.Where(o => o.Affiliate != null)
                     .OrderBy(o => o.idOrder)
                     .GroupBy(o => o.Affiliate)
@@ -241,19 +259,18 @@ namespace CUWebinars.Business.Services
                     }).ToList();
 
 
-            CalculateAffiliateRoyalties(reportData);
-
             return reportData;
         }
 
         public AffiliateInvoiceDTO GetAffiliateInvoice(int idWebinar, string aff)
         {
+
             decimal _totalDue = 0;
             decimal _totalOnBilled = 0;
             decimal _totalDiscounts = 0;
             decimal _totalOnPaid = 0;
             decimal _totalRoyalties = 0;
-            int idAffiliate = LoadByTTSDomain(aff).idUserAff;
+            int idAffiliate = Convert.ToInt32(aff);
             Webinar webinar = _webinarRepository.FindById(idWebinar);
             var orders = _orderRepository.GetOrdersByWebinar(idWebinar).Where(a => a.idAffiliate == idAffiliate).ToList();
             IList<OrderRowModel> rows = new List<OrderRowModel>();
@@ -296,12 +313,13 @@ namespace CUWebinars.Business.Services
 
             var model = new AffiliateInvoiceDTO
             {
-                Affiliate = null,
-                AffiliateName = LoadByTTSDomain(aff).DisplayTitle,
+                Affiliate = _affiliateRepository.FindById(idAffiliate),
+                AffiliateName = _affiliateRepository.FindById(idAffiliate).DisplayTitle,
                 InoviceDate = DateTime.Now.ToShortDateString(),
                 InvoiceId = "Invoice #: " + idAffiliate + '-' + idWebinar,
                 WebinarTitle = webinar.Title,
                 WebinarDate = webinar.Date.ToShortDateString(),
+                WebinarID = webinar.idWebinar,
                 Orders = orders,
                 Rows = rows,
                 TotalDiscounts = _totalDiscounts,

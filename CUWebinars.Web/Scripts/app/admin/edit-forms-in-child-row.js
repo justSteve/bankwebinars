@@ -586,37 +586,6 @@ function updateRegType(item, orderId, newRegTypeId) {
 }
 
 
-//function editOrderStatusCell(cell, $td, rowData) {
-
-//    // could definitely use a "busy" cursor.
-
-//    var html = "";
-//    var orderToEdit = (rowData.idOrderLegacy != 0) ? rowData.idOrderLegacy : rowData.idOrder;
-
-//    $.ajax({
-//        async: false,
-//        url: "/admin/geteditorderstatuscompactform",
-//        data: ({ id: orderToEdit }),
-//        dataType: "json",
-//        type: "POST",
-//        success: function (data) {
-//            html = data.html;
-//        },
-//        error: function (XMLHttpRequest, textStatus, errorThrown) {
-//            alert(textStatus);
-//        },
-//beforeSend: function () {
-//    addIsLoadingIndicator($td, -1); // let ajax "complete" call remove
-//},
-//complete: function () {
-//    removeIsLoadingIndicator($td);
-//}
-//    });
-
-//    return html;
-//}
-
-
 
 //function createChildRow(rowData)
 //{

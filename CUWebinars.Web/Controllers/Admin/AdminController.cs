@@ -1674,7 +1674,7 @@ namespace CUWebinars.Web.Controllers.Admin
             string eventBodyText = System.Uri.UnescapeDataString(model.EventBody);
             byte[] byteArrayHTML = Encoding.UTF8.GetBytes(eventBodyText);
             byte[] byteArrayTXT = Encoding.UTF8.GetBytes(eventBodyText.Replace("<br>", "\r\n")); // decidedly NOT robust, yet!!
-            
+
             // based on CUMailer\CUWebinars.Azure.OrderConfirmNotifier\CUWebinars.Azure.OrderConfirmNotifier\OrderConfirmationHandler.cs
 
             // almost certainly should be extracted to a function in the Business project
@@ -1700,7 +1700,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 blob.UploadFromStream(memoryStream);
                 _logger.Info("Blob successfully persisted");
             }
-            
+
             using (var memoryStream = new MemoryStream(byteArrayTXT))
             {
                 memoryStream.Position = 0; // need to reset it in order to reuse the same data for a .txt file
@@ -1733,8 +1733,8 @@ namespace CUWebinars.Web.Controllers.Admin
                     model.ListOfWebinarsForUpcoming =
                    _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(10).Select(w => w.idWebinar).ToArray();
                 }
-                
-                var _upcoming= _webinarManagementService.GetUpcomingWebinars().Where(w => w.Date > model.SendDate && w.idWebinar != model.Webinar.idWebinar).OrderBy(w => w.Date).Take(5);
+
+                var _upcoming = _webinarManagementService.GetUpcomingWebinars().Where(w => w.Date > model.SendDate && w.idWebinar != model.Webinar.idWebinar).OrderBy(w => w.Date).Take(5);
 
 
                 var doc = new HtmlDocument();
@@ -1745,10 +1745,11 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 model.PresenterW_OutPic = root.InnerHtml;
 
-                var upcomingWebinars = (from w in _upcoming select
+                var upcomingWebinars = (from w in _upcoming
+                                        select
                                             "<p style=\"color: bisque; text-decoration: none; \" ><a style=\"border-bottom: 1px dotted bisque;\" href=\"http://www.bankwebinars.com/Webinar/Details/" +
-                             w.idWebinar + "?idaff={aff_idUserAff}\">" + w.Title + "</a><br>" +
-                             w.Date.ToLongDateString() + "</p>"
+                                            w.idWebinar + "?idaff={aff_idUserAff}\">" + w.Title + "</a><br>" +
+                                            w.Date.ToLongDateString() + "</p>"
                     ).ToArray();
 
                 if (upcomingWebinars.Count() > 0)
@@ -1771,22 +1772,20 @@ namespace CUWebinars.Web.Controllers.Admin
 
                         featureWebinarIDs.Add(webinar.idWebinar);
 
-                        string eDate = "<b>" + DateTimeHelper.FormatDate(webinar.Date) + "</b><br />";
-                        eDate = eDate +
-                                DateTimeHelper.FormatTimeWithDuration(webinar.Date, model.TimeZone, false,
-                                    webinar.Duration) + "<br />";
+                        string eDate = "<b>" + DateTimeHelper.FormatDate(webinar.Date) + " - " + DateTimeHelper.FormatTimeWithDuration(webinar.Date, model.TimeZone, false,
+                                    webinar.Duration) + "</b><br />";
 
                         upcomingDetail.Append(
-                            "<p style='font-size:20px; font-weight:bold; font-family:trebuchet ms;'><a href=\"http://www.bankwebinars.com/Webinar/Details/" +
-                            webinar.idWebinar + "?idaff={aff_idUserAff}\">" + webinar.Title + "</a><br />");
-                        upcomingDetail.Append("<span style='font-size:12px'>" + eDate + "</span></p>");
+                            "<p><span style='font-size:20px; font-weight:bold; font-family:trebuchet ms;'><a href=\"http://www.bankwebinars.com/Webinar/Details/" + webinar.idWebinar + "?idaff={aff_idUserAff}\">" + webinar.Title + "</a></span><br />");
+                        upcomingDetail.Append("<span style='font-family:trebuchet ms;'><b>" +
+                      webinar.Presenter.WebUser.FullName + "</b><br /></span>");
+                        upcomingDetail.Append("<span style='font-size:12px;'>" + eDate + "</span></p>");
                         upcomingDetail.Append("<div style='font-family:trebuchet ms;'>" + webinar.Description + "</div>");
-                        upcomingDetail.Append("<p style='font-family:trebuchet ms;'><b>" +
-                                              webinar.Presenter.WebUser.FullName + "</b></p>");
+
                         upcomingDetail.Append(
                             "<p font-family:trebuchet ms;'><a href='http://www.bankwebinars.com/Webinar/Details/" +
                             webinar.idWebinar + "?idaff={aff_idUserAff}'>Click here for more info!</a></p>");
-                        upcomingDetail.Append("<hr style='width:50%; height: 10px;' />");
+                        upcomingDetail.Append("<hr style='width:50%; ' />");
                     }
                 }
                 var q = _webinarManagementService.GetUpcomingWebinars().Where(a => a.idWebinar != model.Webinar.idWebinar && a.Date > model.SendDate).Where(
@@ -2576,7 +2575,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [HandleAjaxException]
         [HttpPost]
         [AllowAnonymous]
-        public JsonResult BuildAffiliateInvoice(int? idWebinar, string aff)
+        public void BuildAffiliateInvoice(int? idWebinar, string aff)
         {
             if (idWebinar != null)
             {
@@ -2584,25 +2583,24 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 //JsonResult jsonresult = Json(model.Rows);
                 //jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
-                string html = "";
+                //string html = "";
 
-                try
-                {
-                    WebUser editingUser = null;
+                //try
+                //{
+                //    WebUser editingUser = null;
 
-                    html = ViewHelpers.RenderViewToString(ControllerContext,
-                            "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditOrder_Compact.cshtml",
-                            model, true);
-                }
-                catch (Exception ex)
-                {
-                    _logger.Fatal("GetOrderInfoForm error", ex);
-                }
+                //    html = ViewHelpers.RenderViewToString(ControllerContext,
+                //            "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditOrder_Compact.cshtml",
+                //            model, true);
+                //}
+                //catch (Exception ex)
+                //{
+                //    _logger.Fatal("GetOrderInfoForm error", ex);
+                //}
 
-                return Json(new { html = html });
+                //return Json(new { success = "success" });
 
             }
-            return null;
         }
 
 
@@ -2694,6 +2692,8 @@ namespace CUWebinars.Web.Controllers.Admin
                         {
                             dtsource = _dataTablesService.GetOrdersByWebinar(webinarId, affiliateId, out totalNumberOrders).ToList();
                         }
+                        _affiliateManagementService.BuildAffiliateReport(dtsource, webinarId);
+
                     }
                     else
                     {
@@ -2709,6 +2709,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     if (param.selectedOrderStatuses != null)
                     {
                         dtoSource = dtoSource.Where(x => param.selectedOrderStatuses.Contains(x.OrderStatus)).ToList();
+
                     }
 
                     List<String> columnSearch = new List<string>();
@@ -2720,8 +2721,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     List<OrderDTO> data = new DTResultSetOrders().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtoSource, columnSearch);
                     int count = new DTResultSetOrders().Count(param.Search.Value, dtoSource, columnSearch);
 
-                    _affiliateManagementService.BuildAffiliateReport(dtsource, webinarId);
-
+                    
                     DataTableService<OrderDTO> result = new DataTableService<OrderDTO>
                     {
                         draw = param.Draw,

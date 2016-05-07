@@ -13,6 +13,7 @@
             //var DO = SHOWORDERS;
             SHOWORDERS.affiliateId = @Model.Affiliate.idUserAff;
 
+            var showRoyaltyColumn = true;
         </script>
     }
 
@@ -25,7 +26,8 @@
             }
             //var DO = SHOWORDERS;
             SHOWORDERS.affiliateId = 19;
-
+            
+            var showRoyaltyColumn = false;
         </script>
     }
 
@@ -61,6 +63,7 @@
                 <th id="hdrInstitution">Institution</th>
                 <th id="hdrBilling">Billing</th>
                 <th id="hdrAffiliate">Affiliate</th>
+                <th id="hdrRoyalty">Royalty</th>
                 <th id="hdrLinks">Order Date</th>
                 <th id="hdrStatus">Status</th>
             </tr>
@@ -72,10 +75,10 @@
             <th>Institution</th>
             <th>Billing</th>
             <th>Affiliate</th>
+            <th>Royalty</th>
             <th>Order Date</th>
             <th>Status</th>
         </tr>
-
     </table>
 
     <div id="webinarIdDiv" class="initialHide">@Model.Webinar.idWebinar</div>

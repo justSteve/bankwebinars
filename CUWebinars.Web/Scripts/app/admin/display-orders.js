@@ -219,39 +219,39 @@ function getOrderStatusHtml() {
             });
         });
 
-        $('.dataTable').on("click", ".aff-revenue-summary", function () {
+        //$('.dataTable').on("click", ".aff-revenue-summary", function () {
 
-            var self = this;
+        //    var self = this;
 
-            var payload = { idWebinar: this.getAttribute('data-w'), aff: this.getAttribute('data-a') };
+        //    var payload = { idWebinar: this.getAttribute('data-w'), aff: this.getAttribute('data-a') };
 
-            $.ajax({
-                type: 'POST',
-                contentType: constants.JsonContentType,
-                cache: false,
-                url: '/Admin/BuildAffiliateInvoice',
-                dataType: constants.JsonDataType,
-                data: JSON.stringify(payload),
-                beforeSend: function () {
-                    $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
-                }
-            }).done(function (data) {
-                //alert("hit");
-                if (result.Result === 'Success') {
-                    $('#InputFormFields').append(successScreenMessage);
-                } else if (result.Result === 'Fail') {
-                    $('#InputFormFields').append(noOrderScreenMessage);
-                }
-                $('#spinnerLabel').remove();
-            }).fail(function (result) {
-                ns.formatAffRevTable(result);
-            }).always(function () {
-                $('#loadingSpinner').remove();
-            });
-        });
-        ns.formatAffRevTable = function (data) {
-            alert(data.InvoiceId);
-        };
+        //    $.ajax({
+        //        type: 'POST',
+        //        contentType: constants.JsonContentType,
+        //        cache: false,
+        //        url: '/Admin/BuildAffiliateInvoice',
+        //        dataType: constants.JsonDataType,
+        //        data: JSON.stringify(payload),
+        //        beforeSend: function () {
+        //            $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
+        //        }
+        //    }).done(function (data) {
+        //        //alert("hit");
+        //        if (result.Result === 'Success') {
+        //            $('#InputFormFields').append(successScreenMessage);
+        //        } else if (result.Result === 'Fail') {
+        //            $('#InputFormFields').append(noOrderScreenMessage);
+        //        }
+        //        $('#spinnerLabel').remove();
+        //    }).fail(function (result) {
+        //        ns.formatAffRevTable(result);
+        //    }).always(function () {
+        //        $('#loadingSpinner').remove();
+        //    });
+        //});
+        //ns.formatAffRevTable = function (data) {
+        //    alert(data.InvoiceId);
+        //};
 
         $('.dataTable').on("click", ".ResendConnectionInfoButton", function () {
             var self = this;
@@ -427,16 +427,22 @@ function getOrderStatusHtml() {
 
 
     ns.wireUpDataTable = function () {
-        //alert("hit");
-
+        
         var showUserColumn = true;
         var showWebinarColumn = true;
 
-        //if (parseInt(DO.webinarIdDiv.text()) > 0) {
-        //    showUserColumn = true;
-        //    showWebinarColumn = false;
-        //}
 
+        var payload = { idWebinar: parseInt(DO.webinarIdDiv.text()), aff: DO.affiliateId };
+
+        //$.ajax({
+        //    type: 'POST',
+        //    contentType: constants.JsonContentType,
+        //    cache: false,
+        //    url: '/Admin/BuildAffiliateInvoice',
+        //    dataType: constants.JsonDataType,
+        //    data: JSON.stringify(payload)
+            
+        //});
 
         DO.ordersTable.dataTable({
             "serverSide": true,
@@ -476,6 +482,11 @@ function getOrderStatusHtml() {
                 {
                     'data': 'Affiliate_ttsDomain',
                     'visible': showAffiliateColumn,
+                    'class': 'details-control '
+                },
+                {
+                    'data': 'Royalty',
+                    'visible': showRoyaltyColumn,
                     'class': 'details-control '
                 },
                 { 'data': 'OrderDate', 'class': 'details-control edit-resends' },
@@ -548,10 +559,20 @@ function getOrderStatusHtml() {
                     return "<div class=\"aff-revenue-summary\" data-w=" + parseInt(DO.webinarIdDiv.text()) + " data-a='" + full.Affiliate_ttsDomain + "' style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</br>" + royaltyHtml + "</div>";
                 }
             },
-
-           // [6] Resends Column
+           // [6] Royalty Column
             {
-                "aTargets": [6], // OrderDate column
+                "aTargets": [6], //
+                "mData": "Royalty",
+                "mRender": function (data, type, full) {
+
+                    var royaltyHtml = full.Royalty;
+                    return "<div class=\"aff-revenue-summary\" data-w=" + parseInt(DO.webinarIdDiv.text()) + " data-a='" + full.Affiliate_ttsDomain + "' style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</br>" + royaltyHtml + "</div>";
+                }
+            },
+
+           // [7] Resends Column
+            {
+                "aTargets": [7], // OrderDate column
                 "mData": "",
                 "mRender": function (data, type, full) {
 
@@ -568,7 +589,7 @@ function getOrderStatusHtml() {
             },
             {
 
-                "aTargets": [7], // Status column
+                "aTargets": [8], // Status column
                 "mData": "",
                 "mRender": function (data, type, full) {
 
