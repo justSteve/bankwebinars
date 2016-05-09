@@ -12,7 +12,7 @@ $(function () {
     DO.primeDomVariables();
     DO.wireUpHandlers();
     DO.wireUpDataTable();
-
+    DO.wireUpDataTableForRoyalties();
 
 });
 
@@ -426,6 +426,130 @@ function getOrderStatusHtml() {
     };
 
 
+    ns.wireUpDataTableForRoyalties = function () {
+
+        DO.royaltiesTable.dataTable({
+            "footerCallback": function (row, data, start, end, display) {
+                var api = this.api(), data;
+
+                // Remove the formatting to get integer data for summation
+                var intVal = function (i) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '') * 1 :
+                        typeof i === 'number' ?
+                        i : 0;
+                };
+
+                // Total over all pages
+                total = api
+                    .column(3)
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Total over this page
+                pageTotal = api
+                    .column(3, { page: 'current' })
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Update footer
+                $(api.column(3).footer()).html(
+                    '$' + pageTotal + ' ( $' + total + ' total)'
+                );
+            },
+            "serverSide": true,
+            'buttons': ['copy', 'excel', 'pdf', 'print'],
+            "ajax": {
+                "type": "POST",
+                "url": '/admin/OrdersRoyaltySummaryDataHandler',
+                "contentType": 'application/json; charset=utf-8',
+                'data': function (data) {
+                    // additional custom filters
+                    var showAllEvents = ($("#filter-buttons #showAllOrders button.active").val() == "showAllEvents");
+                    var includeOrderStatuses = DO.orderStatusFilters;
+                    data.searchTerm = DO.searchTerm;
+                    data.webinarId = parseInt(DO.webinarIdDiv.text());
+                    data.affiliateId = DO.affiliateId;
+                    data.showAllEvents = showAllEvents;
+                    data.selectedOrderStatuses = includeOrderStatuses;
+                    return data = JSON.stringify(data);
+                }
+            },
+
+            "dom": '<Bilf<t>ip>',
+            "pageLength": 10,
+            "scroller": {
+                loadingIndicator: false
+            },
+            "processing": true,
+            "paging": true,
+            "deferRender": true,
+            'columns': [
+                { "orderable": false, 'data': 'idOrder', 'visible': false },
+                { "orderable": false, 'data': 'LastName' },
+                { "orderable": false, 'data': 'RegistrationTypeString' },
+                { "orderable": false, 'data': 'Royalty' },
+                { "orderable": false, 'data': 'OrderDate' }
+            ],
+            "order": [4, "asc"]
+
+            , // complex columns can be specified / created with mRender
+            "aoColumnDefs": [
+            {
+                // [0] idOrder column is hidden
+
+                "aTargets": [1], // User column  -- 
+                "mData": "",
+                "mRender": function (data, type, full) {
+                    return full.LastName + ", " + full.FirstName + "<br>" + full.BillingEmail + "<br>" + full.Institution;
+
+                }
+            },
+            {
+                "aTargets": [2], // Billing column  -- 
+                "mData": "RegistrationType",
+                "mRender": function (data, type, full) {
+
+                    var flatOff = 0;
+                    var percentOff = 0;
+
+                    if (full.Discount != null) {
+                        flatOff = full.Discount.FlatOff;
+                        percentOff = full.Discount.PercentOff;
+
+                    };
+                    var showDiscount = "";
+                    if (flatOff > 0) {
+                        showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: $" + flatOff + "</span>";
+                    }
+
+                    if (percentOff > 0) {
+                        showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: " + percentOff + "%</span>";
+                    }
+
+
+                    var newBillingHtml = ns.getBillingCellHtml(showDiscount,
+                        full.RegistrationType.OptionLabelShort,
+                        full.Total);
+
+                    return newBillingHtml;
+                }
+            },
+           {
+               "aTargets": [4], // OrderDate column
+               "mData": "",
+               "mRender": function (data, type, full) {
+                   var statusHtml = full.OrderDateString;
+                   return "<div style=\"text-align: center\">" + statusHtml + "</br></div>";
+               }
+           }]
+        });
+    };
+
     ns.wireUpDataTable = function () {
 
         DO.ordersTable.dataTable({
@@ -460,7 +584,7 @@ function getOrderStatusHtml() {
                 // class names function as trigger - createChildRow
                 { 'data': 'idOrder', 'visible': false },
                 { 'data': 'LastName', 'class': 'details-control edit-user-name-email' },
-                { 'data': 'WebinarDateTitleString', 'visible': showWebinarColumn,'class': 'details-control ' },
+                { 'data': 'WebinarDateTitleString', 'visible': showWebinarColumn, 'class': 'details-control ' },
                 { 'data': 'Institution', 'class': 'details-control edit-institution' },
                 { 'data': 'RegistrationTypeString', 'class': 'details-control edit-billing' },
                 {
@@ -567,7 +691,7 @@ function getOrderStatusHtml() {
                     if (full.Webinar_IsActive) {
                         resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
                     }
-                    
+
                     return "<div style=\"text-align: center\">" + statusHtml + "</br>" + resendMsg + "</div>";
                 }
             },

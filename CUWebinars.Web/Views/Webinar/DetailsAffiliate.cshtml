@@ -16,7 +16,7 @@
     var checkoutInProcess = @(Model.CheckoutInProcess ? "true" : "false");
     var isUserLoggedIn = @(@Model.UserIsLoggedIn ? "true" : "false");
     var webinarId = @(@Model.Webinar.idWebinar);
-    
+
     var notificationsTesting = @(GlobalConfig.GlobalConfigSingleton.NotificationsTesting ? "true" : "false");
     var orderRowId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow : 0);
     var orderId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.idOrder : 0);
@@ -38,6 +38,7 @@
 
 @Styles.Render("~/Content/create-order-details")
 @Styles.Render("~/Content/data-tables")
+
 
 <div class="hero-unit">
     <div id="webinarTitle" class="container">
@@ -65,7 +66,10 @@
         <div class="span4">
             <div class="btn-group pull-right" data-toggle="buttons-checkbox">
                 <button id="showOrdersButton" type="button" class="btn btn-info" data-toggle="collapse" data-target="#webinarOrders">
-                    Orders Grid
+                    Orders
+                </button>
+                <button id="showRoyaltiesButton" type="button" class="btn btn-info" data-toggle="collapse" data-target="#revenueReport">
+                    Revenue Report
                 </button>
                 @if (Model.Webinar.Status == WebinarStatus.Scheduled || Model.Webinar.Status == WebinarStatus.InProgress || Model.Webinar.Status == WebinarStatus.Active)
                 {
@@ -89,6 +93,10 @@
 
         @Html.Partial("~/Views/Admin/Partials/_ShowOrders.cshtml", Model.ShowOrdersViewModel)
 
+    </div>
+
+    <div id="revenueReport" class="collapse">
+        @Html.Partial("~/Views/Admin/Partials/_ShowRevenueReport.cshtml", Model.ShowOrdersViewModel)
     </div>
     <div id="users" class="collapse">
         @Html.Partial("~/Views/Admin/Partials/_ShowUsers.cshtml", Model.ShowOrdersViewModel)

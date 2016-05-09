@@ -2628,6 +2628,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
         }
 
+
+
         [HandleAjaxException]
         [HttpPost]
         [AllowAnonymous]
@@ -2692,7 +2694,6 @@ namespace CUWebinars.Web.Controllers.Admin
                         {
                             dtsource = _dataTablesService.GetOrdersByWebinar(webinarId, affiliateId, out totalNumberOrders).ToList();
                         }
-                        _affiliateManagementService.BuildAffiliateReport(dtsource, webinarId);
 
                     }
                     else
@@ -2721,7 +2722,74 @@ namespace CUWebinars.Web.Controllers.Admin
                     List<OrderDTO> data = new DTResultSetOrders().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtoSource, columnSearch);
                     int count = new DTResultSetOrders().Count(param.Search.Value, dtoSource, columnSearch);
 
-                    
+
+                    DataTableService<OrderDTO> result = new DataTableService<OrderDTO>
+                    {
+                        draw = param.Draw,
+                        data = data,
+                        recordsFiltered = count,
+                        recordsTotal = count
+                    };
+
+                    JsonResult jsonresult = Json(result);
+                    jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
+
+                    return jsonresult;
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { error = ex.Message });
+                }
+            }
+
+            return Json(new { NotAuthorized = true });
+
+        }
+
+
+        [HandleAjaxException]
+        [HttpPost]
+        [AllowAnonymous]
+        public JsonResult OrdersRoyaltySummaryDataHandler(DTParametersOrders param)
+        {
+            if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
+            {
+                // based heavily on https://www.echosteg.com/jquery-datatables-asp.net-mvc5-server-side
+                int totalNumberOrders = 0;
+                int webinarId = param.webinarId;
+                string searchTerm = param.searchTerm;
+                int affiliateId = param.affiliateId ?? 19; // 19 is magic internal / house affiliate id
+                bool showAllEvents = param.showAllEvents ?? false;
+
+                List<Order> dtsource = null;
+
+                try
+                {
+                    dtsource = _dataTablesService.GetOrdersByWebinar(webinarId, affiliateId, out totalNumberOrders).OrderBy(o => o.OrderDate).ToList();
+
+                    // use automapper to flatten out the order records, in this specific case the data 
+                    //  model has circular references which cause problems with JSON serialization
+                    List<OrderDTO> dtoSource = new List<OrderDTO>();
+                    Mapper.Map(dtsource, dtoSource);
+
+                    // custom filtering by Order Status
+                    if (param.selectedOrderStatuses != null)
+                    {
+                        dtoSource = dtoSource.Where(x => param.selectedOrderStatuses.Contains(x.OrderStatus)).ToList();
+
+                    }
+                    _affiliateManagementService.BuildAffiliateReport(dtsource, webinarId);
+
+                    List<String> columnSearch = new List<string>();
+                    foreach (var col in param.Columns)
+                    {
+                        columnSearch.Add(col.Search.Value);
+                    }
+
+                    List<OrderDTO> data = new DTResultSetOrders().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtoSource, columnSearch);
+                    int count = new DTResultSetOrders().Count(param.Search.Value, dtoSource, columnSearch);
+
+
                     DataTableService<OrderDTO> result = new DataTableService<OrderDTO>
                     {
                         draw = param.Draw,

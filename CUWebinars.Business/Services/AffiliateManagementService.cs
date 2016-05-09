@@ -218,9 +218,8 @@ namespace CUWebinars.Business.Services
 
                 foreach (var affiliate in listofAffiliates)
                 {
-
                     BuildAffiliateInvoice(orders.Where(o => o.idAffiliate == affiliate.idUserAff
-                        && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted))
+                        && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted)).OrderBy(o => o.OrderDate)
                         .ToList(), webinarID);
                 }
 

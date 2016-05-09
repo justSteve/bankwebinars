@@ -857,7 +857,7 @@ namespace CUWebinars.Web.Controllers
                     model.ShowOrdersViewModel = new ShowOrdersViewModel
                     {
                         Affiliate = aff,
-                        Orders = null,
+                        Orders = _orderManagementService.GetOrdersByWebinar(id.Value),
                         UserIsAdmin = true,
                         Webinar = model.Webinar
                     };
@@ -885,7 +885,7 @@ namespace CUWebinars.Web.Controllers
                     model.ShowOrdersViewModel = new ShowOrdersViewModel
                     {
                         Affiliate = aff,
-                        Orders = null,
+                        Orders = _orderManagementService.GetOrdersByWebinar(id.Value).Where(o => o.idAffiliate == aff.idUserAff).ToList(),
                         UserIsAdmin = false,
                         Webinar = model.Webinar
                     };

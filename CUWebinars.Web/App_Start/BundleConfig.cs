@@ -22,7 +22,15 @@ namespace CUWebinars.Web.App_Start
 
             bundles.Add(new ScriptBundle("~/bundles/dataTables").Include(
                         "~/Scripts/DataTables/jquery.dataTables.min.js",
-                        "~/Scripts/DataTables/datetime-moment.js"
+                        "~/Scripts/DataTables/datetime-moment.js",
+                        "~/Scripts/DataTables/dataTables.buttons.min.js",
+                        "~/Scripts/DataTables/buttons.html5.min.js",
+                        //"~/Scripts/DataTables/buttons.flash.min.js",
+                        "~/Scripts/DataTables/jszip.min.js",
+                        "~/Scripts/DataTables/pdfmake.min.js",
+                        "~/Scripts/DataTables/vfs_fonts.js",
+                        "~/Scripts/DataTables/buttons.print.js"
+
                         )
                     );
 

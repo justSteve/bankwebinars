@@ -41,8 +41,8 @@
     <script type="text/javascript">
         window.$zopim || (function(d, s) {
             var z = window.$zopim = function(c) {
-                z._.push(c);
-            },
+                    z._.push(c);
+                },
                 $ = z.s = d.createElement(s),
                 e = d.getElementsByTagName(s)[0];
 
@@ -59,7 +59,7 @@
             e.parentNode.insertBefore($, e);
         })(document, "script");
     </script>
-    
+
     @if (User.Identity.IsAuthenticated && !HttpContext.Current.IsDebuggingEnabled)
     {
 
@@ -77,12 +77,12 @@
 
     <title>@ViewBag.Title</title>
     <!-- Meta Data ================ -->
-    <meta charset="UTF-8" />
-    <meta name="description" content="Affiliate Pages" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta charset="UTF-8"/>
+    <meta name="description" content="Affiliate Pages"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
     <!-- CSS ================ -->
-    <link rel="stylesheet" href="~/Content/css/html-content-slider-flexslider.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="~/Content/css/html-content-slider-flexslider.css" type="text/css" media="screen"/>
 
 
     @Scripts.Render("~/bundles/modernizr")
@@ -93,28 +93,29 @@
     @Styles.Render("~/Content/CrispCSS")
     <!-- Icons ================ -->
     <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
-    <link rel="apple-touch-icon-precomposed" href="~/Content/images/BankWebinars/apple-touch-icon.png" />
+    <link rel="apple-touch-icon-precomposed" href="~/Content/images/BankWebinars/apple-touch-icon.png"/>
     <!-- For first- and second-generation iPad: -->
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="~/Content/images/BankWebinars/apple-touch-icon-72x72-precomposed.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="~/Content/images/BankWebinars/apple-touch-icon-72x72-precomposed.png"/>
     <!-- For iPhone with high-resolution Retina display: -->
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="~/Content/images/BankWebinars/apple-touch-icon-114x114-precomposed.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="~/Content/images/BankWebinars/apple-touch-icon-114x114-precomposed.png"/>
     <!-- For third-generation iPad with high-resolution Retina display: -->
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="~/Content/images/BankWebinars/apple-touch-icon-144x144-precomposed.png" />
-    <link rel="shortcut icon" href="~/Content/images/BankWebinars/favicon.ico" />
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="~/Content/images/BankWebinars/apple-touch-icon-144x144-precomposed.png"/>
+    <link rel="shortcut icon" href="~/Content/images/BankWebinars/favicon.ico"/>
     <!-- Open Graph for facebook
     http://graph.facebook.com/[UserName] replace [UserName]
     with yours and get your fb:admis content information where the XXXX goes.
     ================================================== -->
-    <meta property="og:title" content="" />
-    <meta property="og:type" content="" />
-    <meta property="og:url" content="" />
-    <meta property="og:image" content="" />
-    <meta property="og:site_name" content="" />
-    <meta property="fb:admins" content="XXXXX" />
-    <meta property="og:locale" content="en_us" />
-    <meta property="og:description" content="CUWebinars is Webinars For Credit Unions." />
+    <meta property="og:title" content=""/>
+    <meta property="og:type" content=""/>
+    <meta property="og:url" content=""/>
+    <meta property="og:image" content=""/>
+    <meta property="og:site_name" content=""/>
+    <meta property="fb:admins" content="XXXXX"/>
+    <meta property="og:locale" content="en_us"/>
+    <meta property="og:description" content="CUWebinars is Webinars For Credit Unions."/>
 
     @RenderSection("Styles", required: false)
+    
     <style>
         table td {
             border: none;
