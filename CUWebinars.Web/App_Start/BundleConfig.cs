@@ -25,11 +25,12 @@ namespace CUWebinars.Web.App_Start
                         "~/Scripts/DataTables/datetime-moment.js",
                         "~/Scripts/DataTables/dataTables.buttons.min.js",
                         "~/Scripts/DataTables/buttons.html5.min.js",
-                        //"~/Scripts/DataTables/buttons.flash.min.js",
+                //"~/Scripts/DataTables/buttons.flash.min.js",
                         "~/Scripts/DataTables/jszip.min.js",
                         "~/Scripts/DataTables/pdfmake.min.js",
                         "~/Scripts/DataTables/vfs_fonts.js",
-                        "~/Scripts/DataTables/buttons.print.js"
+                        "~/Scripts/DataTables/buttons.print.js",
+                        "~/Scripts/app/admin/affiliateReport.js"
 
                         )
                     );
@@ -83,7 +84,7 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/toastLogger.js",
                 "~/Scripts/app/admin/display-orders.js",
                 "~/Scripts/app/admin/edit-forms-in-child-row.js"
-//                "~/Scripts/app/admin/display-webinars.js"
+                //                "~/Scripts/app/admin/display-webinars.js"
                 ));
 
             bundles.Add(new ScriptBundle("~/bundles/display-webinars").Include(
@@ -146,17 +147,17 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/utilities.js",
                 "~/Scripts/app/admin/session-checker.js",
                 "~/Scripts/app/form-processor.js"
-               
+
                 ));
 
             bundles.Add(new ScriptBundle("~/bundles/myApp").Include(
-                
+
                         "~/Scripts/bootstrap.js",
                         "~/Scripts/bootstrap-modal.js",
                         "~/Scripts/bootstrap-modalmanager.js"
 
                         //"~/Content/js/jquery-plugins/dataTables/media/js/jquery.dataTables.js",
-                        //"~/Content/js/jquery-plugins/dataTables/plugins/fnSetFilteringDelay.js"
+                //"~/Content/js/jquery-plugins/dataTables/plugins/fnSetFilteringDelay.js"
                         ));
 
             bundles.Add(new ScriptBundle("~/bundles/create-order").Include(
@@ -304,9 +305,9 @@ namespace CUWebinars.Web.App_Start
             bundles.Add(new StyleBundle("~/Content/data-tables").Include(
                 "~/Content/DataTables/css/jquery.dataTables.css",
                 "~/Content/DataTables/css/dataTables.bootstrap.css",
-                "~/Content/css/bootstrapOverrides.css",
-                "~/Content/DataTables/css/dataTables.tableTools.css")
-
+                "~/Content/DataTables/css/buttons.dataTables.min.css",
+                "~/Content/css/bootstrapOverrides.css"
+            )
                 );
 
             bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(

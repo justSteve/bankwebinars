@@ -1,4 +1,11 @@
-﻿[class^="icon-"],
+﻿.dtButton {
+    margin: 5px;
+    background-color: darkslategray;
+    color: white;
+    font-weight: bold;
+    padding: 5px;
+}
+[class^="icon-"],
 [class*=" icon-"] {
   display: inline-block;
   width: 14px;

@@ -2714,12 +2714,13 @@ namespace CUWebinars.Web.Controllers.Admin
                         {
                             dtsource = _dataTablesService.GetOrdersByWebinar(webinarId, affiliateId, out totalNumberOrders).ToList();
                         }
-
                     }
                     else
                     {
                         dtsource = _orderManagementService.GetOrdersAll(affiliateId, out totalNumberOrders).ToList();
                     }
+
+                    _affiliateManagementService.BuildAffiliateReport(dtsource, webinarId);
 
                     // use automapper to flatten out the order records, in this specific case the data 
                     //  model has circular references which cause problems with JSON serialization
@@ -2755,6 +2756,75 @@ namespace CUWebinars.Web.Controllers.Admin
                     jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
 
                     return jsonresult;
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { error = ex.Message });
+                }
+            }
+
+            return Json(new { NotAuthorized = true });
+
+        }
+
+
+
+
+        [HandleAjaxException]
+        [HttpPost]
+        [AllowAnonymous]
+        public JsonResult AffiliateReportDataHandler(int idWebinar)
+        {
+            if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
+            {
+                // based heavily on https://www.echosteg.com/jquery-datatables-asp.net-mvc5-server-side
+                int totalNumberOrders = 0;
+
+
+                IList<Order> dtsource = null;
+
+                try
+                {
+
+                    dtsource = _dataTablesService.GetOrdersByWebinarForRevenueReport(idWebinar, out totalNumberOrders).ToList();
+
+                    var registrations =
+                        from r in dtsource
+                        where r.Affiliate != null
+                        orderby r.OrderDate
+                        group r by r.Affiliate into u
+                        select new AffiliateReportDTO
+                        {
+                            WebinarId = idWebinar,
+                            Affiliate = u.Key,
+                            Orders = u.ToList()
+                        };
+
+                    // use automapper to flatten out the order records, in this specific case the data 
+                    //  model has circular references which cause problems with JSON serialization
+                    List<AffiliateReportDTO> dtoSource = new List<AffiliateReportDTO>();
+                    Mapper.Map(dtsource, dtoSource);
+
+
+                    List<AffiliateReportDTO> data = registrations.ToList<AffiliateReportDTO>();
+
+                    //List<AffiliateReportDTO> data = new DTResultSetAffiliates().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtoSource, columnSearch);
+                    int count = 10;
+
+
+                    DataTableService<AffiliateReportDTO> result = new DataTableService<AffiliateReportDTO>
+                    {
+                        draw = 10,
+                        data = data,
+                        recordsFiltered = count,
+                        recordsTotal = count
+                    };
+
+                    JsonResult jsonresult = Json(result);
+                    jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
+
+
+                    return Json(result, JsonRequestBehavior.AllowGet);
                 }
                 catch (Exception ex)
                 {

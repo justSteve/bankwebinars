@@ -13,6 +13,7 @@ $(function () {
     DO.wireUpHandlers();
     DO.wireUpDataTable();
     DO.wireUpDataTableForRoyalties();
+    DO.wireUpDataTableForAffiliatesListing();
 
 });
 
@@ -116,6 +117,7 @@ function getOrderStatusHtml() {
     ns.primeDomVariables = function () {
         DO.ordersTable = $('#ordersTable');
         DO.royaltiesTable = $('#royaltiesTable');
+        DO.affiliatesTable = $('#affiliatesTable');
         DO.connInfoTable = $('#connInfoTable');
         DO.webinarIdDiv = $('#webinarIdDiv');
         //defined in parent page
@@ -426,6 +428,86 @@ function getOrderStatusHtml() {
     };
 
 
+    ns.wireUpDataTableForAffiliatesListing = function () {
+        
+       DO.affiliatesTable.dataTable({
+            "serverSide": true,
+            'buttons': [{
+                extend: 'print',
+                className: 'dtButton',
+                text: 'Print current page ',
+                exportOptions: {
+                    stripHtml: false
+                }
+            }, {
+                extend: 'pdf',
+                text: ' Save PDF',
+                className: 'dtButton',
+                exportOptions: {
+                    stripNewlines: false
+                }
+            }
+            ],
+            "ajax": {
+                "type": "POST",
+                "url": '/admin/AffiliateReportDataHandler',
+                "contentType": 'application/json; charset=utf-8',
+                'data': function (data) {
+
+                    data.idWebinar = parseInt(DO.webinarIdDiv.text());
+                    return data = JSON.stringify(data);
+                }
+            },
+
+            "dom": '<Bilf<t>ip>',
+            "pageLength": 10,
+            "scroller": {
+                loadingIndicator: false
+            },
+            "processing": true,
+            "paging": true,
+            "deferRender": true,
+            //'columns': [
+            //    { "orderable": false, 'data': 'idAffiliate', 'visible': false },
+            //    { "orderable": false, 'data': 'LastName' },
+            //    { "orderable": false, 'data': 'RegistrationTypeString' },
+            //    { "orderable": false, 'data': 'Royalty' },
+            //    { "orderable": false, 'data': 'OrderDate' }
+            //]
+
+            //, // complex columns can be specified / created with mRender
+            "aoColumnDefs": [
+                        { "sWidth": "5%", "bSortable": false },
+            {
+                "bSortable": false, "sWidth": "5%"
+                //"fnRender": function (obj) {
+                //    var orderData = obj.aData[obj.iDataColumn];
+
+                //    listOfAffiliates.push(orderData.affiliateID);
+
+                //    idWebinar = orderData.webinarID;
+                //    return '<button name="sendReportTo ' + orderData.affiliateID + '" onclick="sendReport(' + orderData.webinarID + ', ' + orderData.affiliateID + '); return false;">Send</button>';
+                //}
+            },
+            { "sWidth": "45%", "bSortable": false },
+            { "sWidth": "10%", "bSortable": false },
+            { "sWidth": "25%", "bSortable": false },
+            {
+                "sWidth": "5%",
+                //"fnRender": function (obj) {
+                //    var html = obj.aData[obj.iDataColumn];
+                //    if (obj.aData[obj.iDataColumn] != "0")
+                //        html += "&nbsp;<img src='/content/images/add.png' class='toggleRegistrations' id='toggleRegistrations" + obj.aData[0] + "' />";
+
+                //    return html;
+                //},
+                "bSortable": false
+            }
+            ]
+        });
+    };
+
+
     ns.wireUpDataTableForRoyalties = function () {
 
         DO.royaltiesTable.dataTable({
@@ -462,7 +544,22 @@ function getOrderStatusHtml() {
                 );
             },
             "serverSide": true,
-            'buttons': ['copy', 'excel', 'pdf', 'print'],
+            'buttons': [{
+                extend: 'print',
+                className: 'dtButton',
+                text: 'Print current page ',
+                exportOptions: {
+                    stripHtml: false
+                }
+            }, {
+                extend: 'pdf',
+                text: ' Save PDF',
+                className: 'dtButton',
+                exportOptions: {
+                    stripNewlines: false
+                }
+            }
+            ],
             "ajax": {
                 "type": "POST",
                 "url": '/admin/OrdersRoyaltySummaryDataHandler',
@@ -505,7 +602,7 @@ function getOrderStatusHtml() {
                 "aTargets": [1], // User column  -- 
                 "mData": "",
                 "mRender": function (data, type, full) {
-                    return full.LastName + ", " + full.FirstName + "<br>" + full.BillingEmail + "<br>" + full.Institution;
+                    return full.LastName + ", " + full.FirstName + "<br>\n" + full.BillingEmail + "<br>\n" + full.Institution;
 
                 }
             },
@@ -540,13 +637,22 @@ function getOrderStatusHtml() {
                 }
             },
            {
+               "aTargets": [3], // OrderDate column
+               "mData": "",
+               "mRender": function (data, type, full) {
+                   var royalty = data;
+                   return "<div style=\"text-align: right\"> $" + (royalty + "").replace(".5", ".50") + "</br></div>";
+               }
+           },
+           {
                "aTargets": [4], // OrderDate column
                "mData": "",
                "mRender": function (data, type, full) {
                    var statusHtml = full.OrderDateString;
                    return "<div style=\"text-align: center\">" + statusHtml + "</br></div>";
                }
-           }]
+           }
+            ]
         });
     };
 
