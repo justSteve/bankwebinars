@@ -1672,8 +1672,8 @@ namespace CUWebinars.Web.Controllers.Admin
         public JsonResult WritePromoToStorage(WebinarPromoViewModel model)
         {
             string eventBodyText = System.Uri.UnescapeDataString(model.EventBody);
-            byte[] byteArrayHTML = Encoding.UTF8.GetBytes(eventBodyText);
-            byte[] byteArrayTXT = Encoding.UTF8.GetBytes(eventBodyText.Replace("<br>", "\r\n")); // decidedly NOT robust, yet!!
+
+            // refactor??? don't want to create a new connection to azure for each file though...
 
             // based on CUMailer\CUWebinars.Azure.OrderConfirmNotifier\CUWebinars.Azure.OrderConfirmNotifier\OrderConfirmationHandler.cs
 
@@ -1686,33 +1686,53 @@ namespace CUWebinars.Web.Controllers.Admin
             CloudBlobContainer container = blobClient.GetContainerReference("v3generator");
             container.CreateIfNotExists();
 
-            CloudBlockBlob blob = null;
             string webinarTitleEnc = Server.UrlEncode(model.Webinar.Title);
             string strAffId = model.Affiliate.idUserAff.ToString();
             string filenameBase = string.Concat(strAffId, "/", model.Webinar.idWebinar, "/", webinarTitleEnc);
 
             // Create the blobs
-            using (var memoryStream = new MemoryStream(byteArrayHTML))
+            string filename = "";
+            string ret = "";
+            bool overwriteFlag = false; // do we want to think of a way to let the user tell us we should (or should not) overwrite?
+
+            // html file
+            filename = string.Concat(filenameBase, ".html");
+            byte[] byteArrayHTML = Encoding.UTF8.GetBytes(eventBodyText); // "full" markup from WIJMO editor, may want to add doctype and body tags...
+            ret += UploadToAzure(container, filename, byteArrayHTML, overwriteFlag);
+
+            // text file
+            filename = string.Concat(filenameBase, ".txt");
+            byte[] byteArrayTXT = Encoding.UTF8.GetBytes(eventBodyText.Replace("<br>", "\r\n")); // decidedly NOT robust, yet!!
+            ret += UploadToAzure(container, filename, byteArrayTXT, overwriteFlag);
+
+            return Json(new { 
+                result = (string.IsNullOrWhiteSpace(ret) ? WebUiConstants.Success : WebUiConstants.Fail), 
+                returnMessage = ret 
+            });
+        }
+
+        private string UploadToAzure(CloudBlobContainer container, string filename, byte[] content, bool overwriteIfExists)
+        {
+            string ret = "";
+
+            using (var memoryStream = new MemoryStream(content))
             {
-                string filename = string.Concat(filenameBase, ".html");
                 _logger.Info(string.Format("Persisting blob now. Named: {0}", filename));
-                blob = container.GetBlockBlobReference(filename);
-                blob.UploadFromStream(memoryStream);
-                _logger.Info("Blob successfully persisted");
+                CloudBlockBlob blob = container.GetBlockBlobReference(filename);
+                if (!overwriteIfExists &&
+                    blob.Exists())
+                {
+                    ret = string.Format("File exists and overwrite flag was false ({0}).\r\n\r\n", filename);
+                    _logger.Info(ret);
+                }
+                else
+                {
+                    blob.UploadFromStream(memoryStream);
+                    _logger.Info("Blob successfully persisted");
+                }
             }
 
-            using (var memoryStream = new MemoryStream(byteArrayTXT))
-            {
-                memoryStream.Position = 0; // need to reset it in order to reuse the same data for a .txt file
-                string filename = string.Concat(filenameBase, ".txt");
-                _logger.Info(string.Format("Persisting blob now. Named: {0}", filename));
-                blob = container.GetBlockBlobReference(filename);
-                blob.UploadFromStream(memoryStream);
-                _logger.Info("Blob successfully persisted");
-
-            }
-
-            return Json(new { result = WebUiConstants.Success });
+            return ret;
         }
 
         [HttpPost]

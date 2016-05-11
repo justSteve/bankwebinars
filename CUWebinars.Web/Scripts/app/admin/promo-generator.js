@@ -226,6 +226,7 @@ function WriteAllAffMarkupToStorageAJAX($btn) {
     var errorAffs = [];
     var callsNeeded = $(".tab-pane").length - 1; // don't count Master tab, we're skipping that one
     var callsComplete = 0;
+    var messages = [];
 
     // loop through all tabs...
     $(".tab-pane").each(function (idx) {
@@ -279,24 +280,37 @@ function WriteAllAffMarkupToStorageAJAX($btn) {
                 callsComplete++;
                 // console.log("done with: " + callsComplete);
 
+                // record the returned messages, just record ones that don't totally succeed (non-blank) for now
+                if (result.returnMessage != null &&
+                    result.returnMessage != "") {
+                    messages.push(result.returnMessage);
+                }
+
                 // figure out if this was the "last one" so we can clean up the UI, report errors, etc.
                 if (callsComplete >= callsNeeded)
                 {
+                    // print elapsed time...
+                    var tEnd = (new Date()).getTime();
+                    console.log((tEnd - tStart) + " ms");
+
+                    // technical issues, errors, ajax, etc.
                     if (errorAffs.length) {
                         var errorMsg = "Errors encountered during the save of the following affiliates, please review: " + errorAffs.join(",");
                         console.log(errorMsg)
                         alert(errorMsg);
                     }
 
-                    // print elapsed time...
-                    var tEnd = (new Date()).getTime();
-                    console.log((tEnd - tStart) + " ms");
+                    // no technical issues, but some business logic messaging...
+                    if (messages.length) {
+                        alert(messages.join("")); // modal? div on page? has a good chance of being a long message
+                    }
 
                     // remove spinner
                     $('#submitSpinWrapper').remove();
                     $btn.text("Saved!");
 
                     setTimeout(function () { $btn.text(origBtnText); }, 2000);
+
                 }
 
             });
@@ -304,7 +318,7 @@ function WriteAllAffMarkupToStorageAJAX($btn) {
     });
 }
 
-
+// should be pretty (very!) similar to the above "WriteAllAffMarkupToStorageAJAX" function
 function WriteMarkupToStorageAJAX($btn, affiliateId) {
 
     var currCopy = GetCurrentEditorCopy();
@@ -334,7 +348,14 @@ function WriteMarkupToStorageAJAX($btn, affiliateId) {
             alert(textStatus + " " + errorThrown);
         }
     }).done(function (result) {
-        $btn.text("Saved!");
+
+        if (result.returnMessage != null &&
+            result.returnMessage != "") {
+            alert(result.returnMessage);
+        } else {
+            $btn.text("Saved!");
+        }
+
         $('#submitSpinWrapper').remove();
         setTimeout(function () { $btn.text(origBtnText); }, 2000);
         $btn.blur();
