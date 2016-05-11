@@ -8,6 +8,7 @@ namespace CUWebinars.Business.Services
     {
         IEnumerable<Order> GetAllOrders();
         IEnumerable<Order> GetOrdersByWebinar(int idWebinar, int idAffliate, out int totalNumberOrders);
+        IEnumerable<Order> GetOrdersByWebinarForRevenueReport(int idWebinar, out int totalNumberOrders);
         IEnumerable<Order> GetOrdersByUser(string email, int idAffliate, out int totalNumberOrders);
         //IEnumerable<Order> GetOrdersPaged(int start, int length, string orderIdFragment, out int totalNumberOrders, out int totalFilteredOrders);
         IEnumerable<WebUser> GetWebUsers(int idAffliate, out int totalNumberUsers);

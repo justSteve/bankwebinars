@@ -30,6 +30,25 @@ namespace CUWebinars.Business.Services
             return _context.WebUsers;
         }
 
+        public IEnumerable<Order> GetOrdersByWebinarForRevenueReport(int idWebinar, out int totalNumberOrders)
+        {
+            IList<Order> theseOrders;
+            theseOrders = _context.Orders
+                            .Include(o => o.WebUser)
+                            .Include(o => o.WebUser.Institution)
+                            .Include(o => o.Affiliate)
+                            .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                            .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                            .Include(o => o.OrderRows.Select(or => or.Discount))
+                            .Include(o => o.OrderRows.Select(or => or.Webinar))
+                            .Where(o => o.OrderRows.Any(or => or.RowStatus == OrderRowStatus.Active && or.idWebinar == idWebinar)
+                                && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted))
+                            .ToList();
+            totalNumberOrders = theseOrders.Count;
+
+            return theseOrders;
+        }
+
         public IEnumerable<Order> GetOrdersByWebinar(int idWebinar, int idAffliate, out int totalNumberOrders)
         {
             IList<Order> theseOrders;
@@ -66,7 +85,7 @@ namespace CUWebinars.Business.Services
 
             return theseOrders;
         }
-        //ErrorResponseCMD logs Controller: images | Action: sidebar-list-icon.png
+
         public IEnumerable<Order> GetOrdersByUser(string email, int idAffliate, out int totalNumberOrders)
         {
             IList<Order> theseOrders;

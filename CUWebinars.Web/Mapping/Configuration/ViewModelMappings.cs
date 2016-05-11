@@ -55,6 +55,13 @@ namespace CUWebinars.Web.Mapping.Configuration
                            map => map.MapFrom(s => string.Join(", ", s.WebinarTopicXrefs.Select(x => x.Topic.topicDesc).ToList())))
                            ;
 
+            Profile.CreateMap<Order, AffiliateReportDTO>()
+
+                .ForMember(d => d.NumOfOrders, s => s.Ignore())
+                 .ForMember(d => d.Affiliate_ttsDomain,
+                           map => map.MapFrom(s => s.Affiliate.ttsDomain))
+                ;
+
 
             Profile.CreateMap<Order, OrderDTO>()
                             .ForMember(d => d.Webinar, s => s.Ignore())
@@ -62,7 +69,7 @@ namespace CUWebinars.Web.Mapping.Configuration
                            map => map.MapFrom(s => s.Affiliate.ttsDomain))
                 .ForMember(d => d.Institution,
                            map => map.MapFrom
-                               (s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Order.WebUser.Institution.InstitutionName + "<br>"
+                               (s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Order.WebUser.Institution.InstitutionName + "<br>\n"
                                + s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Order.WebUser.Institution.City + ", "
                                + s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Order.WebUser.Institution.State))
                 .ForMember(d => d.WebinarDateTitleString,

@@ -432,6 +432,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Core\CalendarRssDTO.cs" />
     <Compile Include="Core\CalendarRssDTOAssembler.cs" />
+    <Compile Include="Core\DTResultSetAffiliates.cs" />
     <Compile Include="Core\DTResultSetDiscounts.cs" />
     <Compile Include="Models\AddOrderModel.cs" />
     <Compile Include="Controllers\HandoutsController.cs" />
@@ -578,6 +579,7 @@
     <Content Include="Content\DataTables\css\dataTables.jqueryui.css" />
     <Content Include="Content\DataTables\css\dataTables.keyTable.css" />
     <Content Include="Content\DataTables\css\dataTables.keyTable.min.css" />
+    <Content Include="Content\DataTables\css\dataTables.min.css" />
     <Content Include="Content\DataTables\css\dataTables.responsive.css" />
     <Content Include="Content\DataTables\css\dataTables.scroller.css" />
     <Content Include="Content\DataTables\css\dataTables.scroller.min.css" />
@@ -2210,6 +2212,7 @@
     <Content Include="Scripts\calendarview.js" />
     <None Include="Properties\PublishProfiles\devtts - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\devtts - Web Deploy.pubxml" />
+    <Content Include="Scripts\DataTables\pdfmake.min.js.map" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\app\webinar\manage-webinar-from-details.js" />
     <Content Include="Scripts\bootstrap-filestyle.min.js" />
@@ -2474,6 +2477,7 @@
     <Content Include="Views\Shared\Admin\_Subscriptions.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowSubscriptions.cshtml" />
     <Content Include="Views\Shared\Partials\_Cancel_PauseOrder.cshtml" />
+    <Content Include="Views\Admin\Partials\_ShowRevenueReportAdmin.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2678,7 +2682,7 @@
     <Content Include="Content\img\glyphicons-halflings-white.png" />
     <Content Include="Content\img\glyphicons-halflings.png" />
     <Content Include="Content\js\affiliateCheckout.js" />
-    <Content Include="Content\js\affiliateReport.js" />
+    <Content Include="Scripts\app\admin\affiliateReport.js" />
     <Content Include="Content\js\affiliateReport4Kyle.js" />
     <Content Include="Content\js\anytime.js" />
     <Content Include="Content\js\BootstrapTemplates\bootstrap.js" />

@@ -22,6 +22,10 @@ namespace CUWebinars.Web.Models
 		public decimal DueOnBilledTotal { get; set; }
 		public decimal RoyaltyOnPaidTotal { get; set; }
 		public decimal NetDueTTSTotal { get; set; }
+        public string NumOfOrders { get; set; }
+        public string Affiliate_ttsDomain { get; set; } // flattened via Automapper to avoid circular reference during JSON serialization
+
+
 
 	}
 }
