@@ -55,13 +55,21 @@ namespace CUWebinars.Web.Mapping.Configuration
                            map => map.MapFrom(s => string.Join(", ", s.WebinarTopicXrefs.Select(x => x.Topic.topicDesc).ToList())))
                            ;
 
-            Profile.CreateMap<Order, AffiliateReportDTO>()
-
-                .ForMember(d => d.NumOfOrders, s => s.Ignore())
-                 .ForMember(d => d.Affiliate_ttsDomain,
+            Profile.CreateMap<AffiliateReportDTO, AffiliateReportDTO>()
+                .ForMember(d => d.Affiliate, s => s.Ignore())
+                .ForMember(d => d.Orders, s => s.Ignore())
+                .ForMember(d => d.NumOfOrders,
+                            map => map.MapFrom(s => s.Orders.Count))
+                .ForMember(d => d.TotalRevenues,
+                           map => map.MapFrom(s => s.Orders.Select(o => o.Total).Sum()))
+                .ForMember(d => d.TotalCommissions,
+                           map => map.MapFrom(s => s.Orders.Select(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Royalty).Sum()))
+                .ForMember(d => d.Affiliate_ttsDomain,
                            map => map.MapFrom(s => s.Affiliate.ttsDomain))
-                ;
-
+                 .ForMember(d => d.Affiliate_ContactName,
+                           map => map.MapFrom(s => s.Affiliate.ContactPerson + " " + s.Affiliate.ttsDomain))
+                 .ForMember(d => d.idAff,
+                           map => map.MapFrom(s => s.Affiliate.idUserAff));
 
             Profile.CreateMap<Order, OrderDTO>()
                             .ForMember(d => d.Webinar, s => s.Ignore())

@@ -429,25 +429,25 @@ function getOrderStatusHtml() {
 
 
     ns.wireUpDataTableForAffiliatesListing = function () {
-        
-       DO.affiliatesTable.dataTable({
+
+        DO.affiliatesTable.dataTable({
             "serverSide": true,
-            'buttons': [{
-                extend: 'print',
-                className: 'dtButton',
-                text: 'Print current page ',
-                exportOptions: {
-                    stripHtml: false
-                }
-            }, {
-                extend: 'pdf',
-                text: ' Save PDF',
-                className: 'dtButton',
-                exportOptions: {
-                    stripNewlines: false
-                }
-            }
-            ],
+            //'buttons': [{
+            //    extend: 'print',
+            //    className: 'dtButton',
+            //    text: 'Print current page ',
+            //    exportOptions: {
+            //        stripHtml: false
+            //    }
+            //}, {
+            //    extend: 'pdf',
+            //    text: ' Save PDF',
+            //    className: 'dtButton',
+            //    exportOptions: {
+            //        stripNewlines: false
+            //    }
+            //}
+            //],
             "ajax": {
                 "type": "POST",
                 "url": '/admin/AffiliateReportDataHandler',
@@ -459,7 +459,7 @@ function getOrderStatusHtml() {
                 }
             },
 
-            "dom": '<Bilf<t>ip>',
+            "dom": '<ilf<t>ip>',
             "pageLength": 10,
             "scroller": {
                 loadingIndicator: false
@@ -467,42 +467,45 @@ function getOrderStatusHtml() {
             "processing": true,
             "paging": true,
             "deferRender": true,
-            //'columns': [
-            //    { "orderable": false, 'data': 'idAffiliate', 'visible': false },
-            //    { "orderable": false, 'data': 'LastName' },
-            //    { "orderable": false, 'data': 'RegistrationTypeString' },
-            //    { "orderable": false, 'data': 'Royalty' },
-            //    { "orderable": false, 'data': 'OrderDate' }
-            //]
-
+            'columns': [
+                { "orderable": false, 'data': 'idAff' },
+                { "orderable": false, 'data': 'idAff' },
+                { "orderable": false, 'data': 'Affiliate_ContactName' },
+                { "orderable": false, 'data': 'TotalRevenues' },
+                { "orderable": false, 'data': 'TotalCommissions' },
+                { "orderable": false, 'data': 'NumOfOrders' }
+            ],
+            "order": [5, "asc"],
             //, // complex columns can be specified / created with mRender
             "aoColumnDefs": [
-                        { "sWidth": "5%", "bSortable": false },
-            {
-                "bSortable": false, "sWidth": "5%"
-                //"fnRender": function (obj) {
-                //    var orderData = obj.aData[obj.iDataColumn];
 
-                //    listOfAffiliates.push(orderData.affiliateID);
-
-                //    idWebinar = orderData.webinarID;
-                //    return '<button name="sendReportTo ' + orderData.affiliateID + '" onclick="sendReport(' + orderData.webinarID + ', ' + orderData.affiliateID + '); return false;">Send</button>';
-                //}
-            },
-            { "sWidth": "45%", "bSortable": false },
-            { "sWidth": "10%", "bSortable": false },
-            { "sWidth": "25%", "bSortable": false },
-            {
-                "sWidth": "5%",
-                //"fnRender": function (obj) {
-                //    var html = obj.aData[obj.iDataColumn];
-                //    if (obj.aData[obj.iDataColumn] != "0")
-                //        html += "&nbsp;<img src='/content/images/add.png' class='toggleRegistrations' id='toggleRegistrations" + obj.aData[0] + "' />";
-
-                //    return html;
-                //},
-                "bSortable": false
-            }
+                {
+                    "aTargets": [1], // Send Rpt column  -- 
+                    "mData": "idAff",
+                    "mRender": function (data, type, full) {
+                        return '<button name="sendReportTo ' + full.idAff + '" onclick="sendReport(' + full.WebinarId + ', ' + full.idAff + '); return false;">Send</button>';
+                    }
+                },
+                {
+                    "aTargets": [3], // Total Revs column  -- 
+                    "mData": "TotalRevenues",
+                    "mRender": function (data, type, full) {
+                        return ('<div class="float-right">$' + full.TotalRevenues + '</div>').replace(".5", ".50");
+                    }
+                },
+{
+                    "aTargets": [4], // Total Revs column  -- 
+                    "mData": "TotalCommissions",
+                    "mRender": function (data, type, full) {
+                        return ('<div class="float-right">$' + full.TotalCommissions + '</div>').replace(".5", ".50");
+                    }
+                },{
+                    "aTargets": [5], // Total Revs column  -- 
+                    "mData": "NumOfOrders",
+                    "mRender": function (data, type, full) {
+                        return ('<div class="float-right">' + full.NumOfOrders + '</div>').replace(".5", ".50");
+                    }
+                }
             ]
         });
     };

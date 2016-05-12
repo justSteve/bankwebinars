@@ -195,18 +195,18 @@ namespace CUWebinars.Business.Services
             return reportData[0];
         }
 
-        //public virtual AffiliateReportDTO AffiliateReport(int webinarID, int affiliateID)
-        //{
-        //    List<Order> orders = _webinarRepository.GetOrdersByWebinar(webinarID).ToList();
+        public virtual AffiliateReportDTO AffiliateReport(int webinarID, int affiliateID)
+        {
+            List<Order> orders = _webinarRepository.GetOrdersByWebinar(webinarID).ToList();
 
-        //    IList<AffiliateReportDTO> reportData = BuildAffiliateReport(orders, webinarID);
-        //    if (reportData.Count == 0)
-        //    {
-        //        return new AffiliateReportDTO { WebinarId = webinarID, Affiliate = FindById(affiliateID) };
-        //    }
+            IList<AffiliateReportDTO> reportData = BuildAffiliateReport(orders, webinarID);
+            if (reportData.Count == 0)
+            {
+                return new AffiliateReportDTO { WebinarId = webinarID, Affiliate = FindById(affiliateID) };
+            }
 
-        //    return reportData[0];
-        //}
+            return reportData[0];
+        }
 
         public IList<AffiliateReportDTO> BuildAffiliateReport(List<Order> orders, int webinarID)
         {

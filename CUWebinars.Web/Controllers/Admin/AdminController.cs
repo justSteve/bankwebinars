@@ -2783,10 +2783,10 @@ namespace CUWebinars.Web.Controllers.Admin
                     // use automapper to flatten out the order records, in this specific case the data 
                     //  model has circular references which cause problems with JSON serialization
                     List<AffiliateReportDTO> dtoSource = new List<AffiliateReportDTO>();
-                    Mapper.Map(dtsource, dtoSource);
+                    Mapper.Map(registrations, dtoSource);
 
 
-                    List<AffiliateReportDTO> data = registrations.ToList<AffiliateReportDTO>();
+                    List<AffiliateReportDTO> data = dtoSource.ToList<AffiliateReportDTO>();
 
                     //List<AffiliateReportDTO> data = new DTResultSetAffiliates().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtoSource, columnSearch);
                     int count = 10;
@@ -2804,7 +2804,8 @@ namespace CUWebinars.Web.Controllers.Admin
                     jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
 
 
-                    return Json(result, JsonRequestBehavior.AllowGet);
+                    //return Json("result");
+                    return Json(result);
                 }
                 catch (Exception ex)
                 {
