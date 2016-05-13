@@ -1719,16 +1719,16 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 _logger.Info(string.Format("Persisting blob now. Named: {0}", filename));
                 CloudBlockBlob blob = container.GetBlockBlobReference(filename);
-                if (!overwriteIfExists &&
-                    blob.Exists())
-                {
-                    ret = string.Format("File exists and overwrite flag was false ({0}).\r\n\r\n", filename);
-                    _logger.Info(ret);
-                }
-                else
+                if (overwriteIfExists ||
+                    !blob.Exists())
                 {
                     blob.UploadFromStream(memoryStream);
                     _logger.Info("Blob successfully persisted");
+                }
+                else
+                {
+                    ret = string.Format("File exists and overwrite flag was false ({0}).\r\n\r\n", filename);
+                    _logger.Info(ret);
                 }
             }
 
