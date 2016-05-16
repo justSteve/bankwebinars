@@ -496,7 +496,7 @@ namespace CUWebinars.Business.AccountService
         public void RemoveClaim(string tenant, string email, string claim, string claimValue = null)
         {
             var userAccount = GetUserAccountByEmail(tenant, email);
-
+            
             if (string.IsNullOrWhiteSpace(claimValue))
                 _userAccountService.RemoveClaim(userAccount.ID, claim);
             else
@@ -507,6 +507,7 @@ namespace CUWebinars.Business.AccountService
         {
             try
             {
+                RemoveClaim(tenant, email, ClaimTypes.HasNotVerified);
                 _userAccountService.ResetPassword(tenant, email);
             }
             catch (Exception exception)

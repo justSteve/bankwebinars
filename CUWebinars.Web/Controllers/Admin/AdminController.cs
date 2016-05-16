@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Security.Claims;
 using System.ServiceModel.Syndication;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
@@ -34,6 +35,7 @@ using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Models.DataTablesModels;
+
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Elmah;
@@ -1747,7 +1749,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 var upcomingWebinars = (from w in _upcoming
                                         select
-                                            "<p style=\"color: bisque; text-decoration: none; \" ><a style=\"border-bottom: 1px dotted bisque;\" href=\"http://www.bankwebinars.com/Webinar/Details/" +
+                                            "<p style=\"color: bisque; text-decoration: none; \" ><a style=\" color: bisque; border-bottom: 1px dotted bisque;\" href=\"http://www.bankwebinars.com/Webinar/Details/" +
                                             w.idWebinar + "?idaff={aff_idUserAff}\">" + w.Title + "</a><br>" +
                                             w.Date.ToLongDateString() + "</p>"
                     ).ToArray();
@@ -1759,6 +1761,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     HttpUtility.HtmlDecode(
                         _generalFormatter.FormatV2(model, "~/Notification/Templates/SendPerDayPromoMaster.cshtml").Body);
                 // get Template with new method
+
                 return Json(new { masterText = model.EventBody });
             }
             else
@@ -1769,7 +1772,6 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     foreach (var webinar in (IList<Webinar>)TempData["ListOfWebinarsForWeekly"])
                     {
-
                         featureWebinarIDs.Add(webinar.idWebinar);
 
                         string eDate = "<b>" + DateTimeHelper.FormatDate(webinar.Date) + " - " + DateTimeHelper.FormatTimeWithDuration(webinar.Date, model.TimeZone, false,
@@ -1793,7 +1795,7 @@ namespace CUWebinars.Web.Controllers.Admin
                          new
                          {
                              featuredItem =
-                             "<p style=\"color: bisque; text-decoration: none; \"><a  href=\"http://www.bankwebinars.com/Webinar/Details/" +
+                             "<p style=\"color: bisque; text-decoration: none; \"><a style=\"color: bisque; \" href=\"http://www.bankwebinars.com/Webinar/Details/" +
                              a.idWebinar + "?idaff={aff_idUserAff}\">" + a.Title + "</a><br>" +
                              a.Date.ToLongDateString() + "</p>"
                          });
@@ -1984,7 +1986,8 @@ namespace CUWebinars.Web.Controllers.Admin
                     if (userAccount.HasClaim(Business.Constants.ClaimTypes.HasNotVerified))
                     {
                         _membershipService.RemoveClaim(_globalConfig.Tenant, model.Email,
-                            Business.Constants.ClaimTypes.HasNotVerified, ClaimValues.ManualRegistration);
+                            Business.Constants.ClaimTypes.HasNotVerified);
+                        
                     }
                 }
                 catch (Exception exception)

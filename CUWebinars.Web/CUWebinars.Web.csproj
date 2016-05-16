@@ -159,6 +159,10 @@
     <Reference Include="log4net.Appender.Azure">
       <HintPath>..\packages\log4net.Appender.Azure.1.1.1.0\lib\net45\log4net.Appender.Azure.dll</HintPath>
     </Reference>
+    <Reference Include="Mandrill.net, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mandrill.net.3.0.0\lib\net45\Mandrill.net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.ApplicationServer.Caching.Client, Version=101.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\WindowsAzure.Caching.1.7.0.0\lib\net35-full\Microsoft.ApplicationServer.Caching.Client.dll</HintPath>
@@ -237,9 +241,9 @@
     <Reference Include="NewRelic.Api.Agent">
       <HintPath>..\packages\NewRelic.Azure.WebSites.x64.3.10.43.0\lib\NewRelic.Api.Agent.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.7\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -427,6 +431,7 @@
     <Compile Include="App_Start\NinjectResolver.cs" />
     <Compile Include="App_Start\NinjectScope.cs" />
     <Compile Include="App_Start\NinjectWebCommon.cs" />
+    <Compile Include="Controllers\Admin\Mandrill.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
@@ -536,6 +541,7 @@
     <Compile Include="Models\TTSAttendance.cs" />
     <Compile Include="Models\TTSQuiz.cs" />
     <Compile Include="Models\UserQuizEditModel.cs" />
+    <Compile Include="Models\WebUserOverviewModel.cs" />
     <Compile Include="SyndicationFeedResult.cs" />
     <Compile Include="ViewModel\AdjustUserDetailsEditModel.cs" />
     <Compile Include="ViewModel\AffiliatesChooserModel.cs" />
