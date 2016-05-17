@@ -13,8 +13,12 @@ $(function () {
     DO.wireUpHandlers();
     DO.wireUpDataTable();
     DO.wireUpDataTableForRoyalties();
-    DO.wireUpDataTableForAffiliatesListing();
+    //DO.wireUpDataTableForAffiliatesListing();
 
+    $("#revenueReport").on('shown', function () {
+        DO.wireUpDataTableForAffiliatesListing();
+    }
+    );
 });
 
 
@@ -113,7 +117,14 @@ function getOrderStatusHtml() {
 
 // self-invoking function for creating methods using Module pattern.
 (function (ns) {
+    SendReport = function (WebinarId, idAff) {
+        ns.wireUpDataTableForRoyalties(idAff);
 
+        $('#revenueReport').collapse('hide');
+
+        $('#revenueReportByAffiliate').collapse('show');
+
+    };
     ns.primeDomVariables = function () {
         DO.ordersTable = $('#ordersTable');
         DO.royaltiesTable = $('#royaltiesTable');
@@ -137,12 +148,12 @@ function getOrderStatusHtml() {
         if (discount != undefined) {
 
             var billingHtml = regTypeLabel
-                + (discount + "")
-                + "<br />$" + (total + "").replace(".00", "");
+                + (discount + "\n")
+                + "<br />\n$" + (total + "").replace(".00", "");
         } else {
 
             var billingHtml = regTypeLabel
-                    + "<br />$" + (total + "").replace(".00", "");
+                    + "<br />\n$" + (total + "").replace(".00", "");
         }
 
         return billingHtml;
@@ -152,6 +163,9 @@ function getOrderStatusHtml() {
         $('#webinarOrders').on('shown', function () {
             $('#ordersTable_filter input').focus();
         });
+
+
+
         //var mouseX;
         //var mouseY;
         //$(document).mousemove(function (e) {
@@ -431,26 +445,33 @@ function getOrderStatusHtml() {
     ns.wireUpDataTableForAffiliatesListing = function () {
 
         DO.affiliatesTable.dataTable({
-            "serverSide": true,
-            //'buttons': [{
-            //    extend: 'print',
-            //    className: 'dtButton',
-            //    text: 'Print current page ',
-            //    exportOptions: {
-            //        stripHtml: false
-            //    }
-            //}, {
-            //    extend: 'pdf',
-            //    text: ' Save PDF',
-            //    className: 'dtButton',
-            //    exportOptions: {
-            //        stripNewlines: false
-            //    }
-            //}
-            //],
+            destroy: true, "serverSide": true,
+            'buttons': [{
+                extend: 'print',
+                className: 'dtButton',
+                text: 'Print current page ',
+                exportOptions: {
+                    stripHtml: false
+                }
+            }, {
+                extend: 'pdf',
+                text: ' Save PDF',
+                className: 'dtButton',
+                exportOptions: {
+                    stripNewlines: false
+                }
+            }, {
+                extend: 'excel',
+                text: ' Export to Excel',
+                className: 'dtButton',
+                exportOptions: {
+                    stripNewlines: false
+                }
+            }
+            ],
             "ajax": {
                 "type": "POST",
-                "url": '/admin/AffiliateReportDataHandler',
+                "url": '/admin/DTDataHandlerAffiliateReport',
                 "contentType": 'application/json; charset=utf-8',
                 'data': function (data) {
 
@@ -459,7 +480,7 @@ function getOrderStatusHtml() {
                 }
             },
 
-            "dom": '<ilf<t>ip>',
+            "dom": '<Bilf<t>ip>',
             "pageLength": 10,
             "scroller": {
                 loadingIndicator: false
@@ -483,7 +504,7 @@ function getOrderStatusHtml() {
                     "aTargets": [1], // Send Rpt column  -- 
                     "mData": "idAff",
                     "mRender": function (data, type, full) {
-                        return '<button name="sendReportTo ' + full.idAff + '" onclick="sendReport(' + full.WebinarId + ', ' + full.idAff + '); return false;">Send</button>';
+                        return '<button name="sendReportTo ' + full.idAff + '" onclick="SendReport(' + full.WebinarId + ', ' + full.idAff + '); return false;">Send</button>';
                     }
                 },
                 {
@@ -494,26 +515,32 @@ function getOrderStatusHtml() {
                     }
                 },
 {
-                    "aTargets": [4], // Total Revs column  -- 
-                    "mData": "TotalCommissions",
-                    "mRender": function (data, type, full) {
-                        return ('<div class="float-right">$' + full.TotalCommissions + '</div>').replace(".5", ".50");
-                    }
-                },{
-                    "aTargets": [5], // Total Revs column  -- 
-                    "mData": "NumOfOrders",
-                    "mRender": function (data, type, full) {
-                        return ('<div class="float-right">' + full.NumOfOrders + '</div>').replace(".5", ".50");
-                    }
-                }
+    "aTargets": [4], // Total Revs column  -- 
+    "mData": "TotalCommissions",
+    "mRender": function (data, type, full) {
+        return ('<div class="float-right">$' + full.TotalCommissions + '</div>').replace(".5", ".50");
+    }
+}, {
+    "aTargets": [5], // Total Revs column  -- 
+    "mData": "NumOfOrders",
+    "mRender": function (data, type, full) {
+        return ('<div class="float-right">' + full.NumOfOrders + '</div>').replace(".5", ".50");
+    }
+}
             ]
         });
     };
 
 
-    ns.wireUpDataTableForRoyalties = function () {
+    ns.wireUpDataTableForRoyalties = function (idAffiliate) {
+        var targetAffiliate = DO.affiliateId;
+
+        if (idAffiliate != 'undefined' && idAffiliate != null) {
+            targetAffiliate = idAffiliate;
+        }
 
         DO.royaltiesTable.dataTable({
+            destroy: true,
             "footerCallback": function (row, data, start, end, display) {
                 var api = this.api(), data;
 
@@ -561,11 +588,18 @@ function getOrderStatusHtml() {
                 exportOptions: {
                     stripNewlines: false
                 }
+            }, {
+                extend: 'excel',
+                text: ' Export to Excel',
+                className: 'dtButton',
+                exportOptions: {
+                    stripNewlines: false
+                }
             }
             ],
             "ajax": {
                 "type": "POST",
-                "url": '/admin/OrdersRoyaltySummaryDataHandler',
+                "url": '/admin/DTDataHandlerRoyaltySummary',
                 "contentType": 'application/json; charset=utf-8',
                 'data': function (data) {
                     // additional custom filters
@@ -573,7 +607,7 @@ function getOrderStatusHtml() {
                     var includeOrderStatuses = DO.orderStatusFilters;
                     data.searchTerm = DO.searchTerm;
                     data.webinarId = parseInt(DO.webinarIdDiv.text());
-                    data.affiliateId = DO.affiliateId;
+                    data.affiliateId = targetAffiliate;
                     data.showAllEvents = showAllEvents;
                     data.selectedOrderStatuses = includeOrderStatuses;
                     return data = JSON.stringify(data);
@@ -662,10 +696,63 @@ function getOrderStatusHtml() {
     ns.wireUpDataTable = function () {
 
         DO.ordersTable.dataTable({
+            destroy: true, "footerCallback": function (row, data, start, end, display) {
+                var api = this.api(), data;
+
+                // Remove the formatting to get integer data for summation
+                var intVal = function (i) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '') * 1 :
+                        typeof i === 'number' ?
+                        i : 0;
+                };
+
+                // Total over all pages
+                total = api
+                    .column(3)
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Total over this page
+                pageTotal = api
+                    .column(3, { page: 'current' })
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Update footer
+                $(api.column(3).footer()).html(
+                    '$' + pageTotal + ' ( $' + total + ' total)'
+                );
+            }, 'buttons': [{
+                extend: 'print',
+                className: 'dtButton',
+                text: 'Print current page ',
+                exportOptions: {
+                    stripHtml: false
+                }
+            }, {
+                extend: 'pdf',
+                text: ' Save PDF',
+                className: 'dtButton',
+                exportOptions: {
+                    stripNewlines: false
+                }
+            }, {
+                extend: 'excel',
+                text: ' Export to Excel',
+                className: 'dtButton',
+                exportOptions: {
+                    stripNewlines: false
+                }
+            }],
             "serverSide": true,
             "ajax": {
                 "type": "POST",
-                "url": '/admin/OrdersDataHandler',
+                "url": '/admin/DTHandlerOrders',
                 "contentType": 'application/json; charset=utf-8',
                 'data': function (data) {
 
@@ -681,7 +768,7 @@ function getOrderStatusHtml() {
                 }
             },
 
-            "dom": '<ilf<t>ip>',
+            "dom": '<Bilf<t>ip>',
             "pageLength": 10,
             "scroller": {
                 loadingIndicator: false

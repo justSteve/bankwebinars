@@ -2656,7 +2656,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [HandleAjaxException]
         [HttpPost]
         [AllowAnonymous]
-        public JsonResult OrdersDataHandler(DTParametersOrders param)
+        public JsonResult DTHandlerOrders(DTParametersOrders param)
         {
             if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
             {
@@ -2776,7 +2776,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [HandleAjaxException]
         [HttpPost]
         [AllowAnonymous]
-        public JsonResult AffiliateReportDataHandler(int idWebinar)
+        public JsonResult DTDataHandlerAffiliateReport(int idWebinar)
         {
             if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
             {
@@ -2844,7 +2844,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [HandleAjaxException]
         [HttpPost]
         [AllowAnonymous]
-        public JsonResult OrdersRoyaltySummaryDataHandler(DTParametersOrders param)
+        public JsonResult DTDataHandlerRoyaltySummary(DTParametersOrders param)
         {
             if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
             {

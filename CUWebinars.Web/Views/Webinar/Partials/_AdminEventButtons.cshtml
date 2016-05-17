@@ -52,6 +52,7 @@
         padding-right: 0px;
     }
 </style>
+
 <section>
     <div id="AdminButtonsContainer">
         <div><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>
@@ -73,11 +74,11 @@
                                             @{
                             if (Model.Webinar.RecordingUrl.IsNullOrWhiteSpace())
                             {
-                                            @Html.Partial(@"Partials/_UpdateRecording")
+                                @Html.Partial(@"Partials/_UpdateRecording")
                             }
                             else
                             {
-                                            @Html.Raw(recordingLink)
+                                @Html.Raw(recordingLink)
                             }
                                             }
                                         </li>
