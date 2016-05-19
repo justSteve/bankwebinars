@@ -17,6 +17,8 @@ $(function () {
 
     $("#revenueReport").on('shown', function () {
         DO.wireUpDataTableForAffiliatesListing();
+
+        $('#webinarOrders').collapse('hide');
     }
     );
 });
@@ -95,25 +97,6 @@ function getOrderStatusHtml() {
     return html;
 }
 
-//function getRegTypeDropDownHtml() {
-//    // this seems a little slower than I'd like...
-//    var html = "";
-
-//    $.ajax({
-//        async: false,
-//        url: "/admin/GetRegTypeDropdownHtml",
-//        dataType: "json",
-//        type: "POST",
-//        success: function (data) {
-//            html = data.html;
-//        },
-//        error: function (XMLHttpRequest, textStatus, errorThrown) {
-//            alert(textStatus);
-//        }
-//    });
-
-//    return html;
-//}
 
 // self-invoking function for creating methods using Module pattern.
 (function (ns) {
@@ -121,6 +104,7 @@ function getOrderStatusHtml() {
         ns.wireUpDataTableForRoyalties(idAff);
 
         $('#revenueReport').collapse('hide');
+        $('#webinarOrders').collapse('hide');
 
         $('#revenueReportByAffiliate').collapse('show');
 
@@ -696,6 +680,7 @@ function getOrderStatusHtml() {
     ns.wireUpDataTable = function () {
 
         DO.ordersTable.dataTable({
+
             destroy: true, "footerCallback": function (row, data, start, end, display) {
                 var api = this.api(), data;
 
@@ -749,6 +734,7 @@ function getOrderStatusHtml() {
                     stripNewlines: false
                 }
             }],
+
             "serverSide": true,
             "ajax": {
                 "type": "POST",

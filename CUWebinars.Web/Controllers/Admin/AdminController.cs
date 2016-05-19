@@ -1707,9 +1707,10 @@ namespace CUWebinars.Web.Controllers.Admin
             byte[] byteArrayTXT = Encoding.UTF8.GetBytes(eventBodyText.Replace("<br>", "\r\n")); // decidedly NOT robust, yet!!
             ret += UploadToAzure(container, filename, byteArrayTXT, overwriteFlag);
 
-            return Json(new { 
-                result = (string.IsNullOrWhiteSpace(ret) ? WebUiConstants.Success : WebUiConstants.Fail), 
-                returnMessage = ret 
+            return Json(new
+            {
+                result = (string.IsNullOrWhiteSpace(ret) ? WebUiConstants.Success : WebUiConstants.Fail),
+                returnMessage = ret
             });
         }
 
@@ -2007,7 +2008,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         _membershipService.RemoveClaim(_globalConfig.Tenant, model.Email,
                             Business.Constants.ClaimTypes.HasNotVerified);
-                        
+
                     }
                 }
                 catch (Exception exception)
@@ -2506,8 +2507,24 @@ namespace CUWebinars.Web.Controllers.Admin
         [AllowAnonymous]
         public ActionResult SynchOrdersBatch(int? webinarId, int? idAffiliate)
         {
+            var totalNumberOrders = 0;
 
             _orderManagementService.SynchOrders(webinarId.Value);
+
+            return Content("Ok");
+        }
+
+
+        [HandleAjaxException]
+        [AllowAnonymous]
+        public ActionResult GenerateRoyaltiesBatch(int? webinarId, int? idAffiliate)
+        {
+            var totalNumberOrders = 0;
+            
+            var dtsource = _orderManagementService.GetOrdersByWebinar(webinarId.Value).ToList();
+            
+            _affiliateManagementService.BuildAffiliateReport(dtsource, webinarId.Value);
+
             return Content("Ok");
         }
 
@@ -2671,11 +2688,13 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 try
                 {
+                    var shouldBuildAffRpt = true;
                     // custom filtering by Webinar Id
                     if (!showAllEvents)
                     {
                         if (searchTerm != null)
                         {
+                            shouldBuildAffRpt = false;
                             ViewBag.IsSearchResult = true;
                             int orderId = 0;
 
@@ -2708,6 +2727,11 @@ namespace CUWebinars.Web.Controllers.Admin
                             {
                                 dtsource = _dataTablesService.GetOrdersByPending(affiliateId, out totalNumberOrders).ToList();
                             }
+                            else if (searchTerm.StartsWith("l "))
+                            {
+                                dtsource = _orderManagementService.GetOrdersAll(affiliateId, out totalNumberOrders).Where(o => String.Equals(o.LastName, searchTerm.Replace("l ", ""), StringComparison.CurrentCultureIgnoreCase))
+                                            .ToList();
+                            }
                             else if (searchTerm == "inprocess")
                             {
                                 dtsource = _dataTablesService.GetOrdersByInProcess(affiliateId, out totalNumberOrders).ToList();
@@ -2722,7 +2746,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         dtsource = _orderManagementService.GetOrdersAll(affiliateId, out totalNumberOrders).ToList();
                     }
-
+                    if (shouldBuildAffRpt)
                     _affiliateManagementService.BuildAffiliateReport(dtsource, webinarId);
 
                     // use automapper to flatten out the order records, in this specific case the data 
@@ -2734,7 +2758,6 @@ namespace CUWebinars.Web.Controllers.Admin
                     if (param.selectedOrderStatuses != null)
                     {
                         dtoSource = dtoSource.Where(x => param.selectedOrderStatuses.Contains(x.OrderStatus)).ToList();
-
                     }
 
                     List<String> columnSearch = new List<string>();

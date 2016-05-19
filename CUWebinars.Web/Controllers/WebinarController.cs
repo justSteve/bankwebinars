@@ -473,6 +473,31 @@ namespace CUWebinars.Web.Controllers
                         }
 
 
+                        if (searchTerm.StartsWith("l "))
+                        {
+                            if (currentAffiliate.idUserAff != 19)
+                            {
+                                var oModel = new ShowOrdersViewModel
+                                {
+                                    SearchTerm = searchTerm,
+                                    UserIsAdmin = false,
+                                    Webinar = null
+                                };
+                                return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
+                            }
+                            else
+                            {
+                                var oModel = new ShowOrdersViewModel
+                                {
+                                    SearchTerm = searchTerm,
+                                    UserIsAdmin = true,
+                                    Webinar = null
+                                };
+                                return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
+                            }
+                        }
+
+
                         if (searchTerm.StartsWith("inprocess"))
                         {
                             if (currentAffiliate.idUserAff != 19)

@@ -433,6 +433,7 @@ namespace CUWebinars.Business.Repository
         {
             IList<Order> orders = items
                 .Include(o => o.WebUser)
+                .Include(o => o.WebUser.Institution)
                 .Include(o => o.Affiliate)
                 .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
                 .Include(o => o.OrderRows.Select(or => or.RegistrationType))
