@@ -1879,10 +1879,30 @@ namespace CUWebinars.Web.Controllers.Admin
                 TimeZone = USTimeZone.Eastern,
                 SendDate = TtsConfig.UtcNowAsCts,
                 Webinar = _webinarManagementService.GetWebinar(id),
-                Affiliates = new AffiliateRepository().GetAffiliatesByPromoType("Daily").ToList(),
                 TemplateType = "Daily"
             };
 
+
+            // check for Admins vs Affiliates and limit if Affiliate
+            ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+            if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
+            {
+                model.Affiliates = new AffiliateRepository().GetAffiliatesByPromoType("Daily").ToList();
+            }
+            else
+            {
+                // limit affiliates (non-admins)...
+                int affId = -1;
+                var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+                if (affiliate != null)
+                {
+                    model.Affiliate = affiliate; // used on View to manipulate displayed verbiage
+                    affId = affiliate.idUserAff;
+                }
+                
+                model.Affiliates = new AffiliateRepository().GetAffiliatesByPromoType("Daily").Where(a => a.idUserAff == affId).ToList();
+            }
+            
             return View(model);
 
         }

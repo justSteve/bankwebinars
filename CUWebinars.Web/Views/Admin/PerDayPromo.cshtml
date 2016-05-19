@@ -20,6 +20,8 @@
     //var minDay = 1.Days().Since(DomainConstants.BuildUtcNowAsCts);
     //var maxDay = DomainConstants.BuildUtcNowAsCts.NextMonth();
 
+    bool hasAffiliates = Model.Affiliates.Count > 0;
+    bool isAffiliateRestricted = Model.Affiliate != null;
 }
 
 <!-- TODO: some or all of the following should be moved to BundleConfig.cs -->
@@ -174,11 +176,15 @@
                             @Html.HiddenFor(m => m.Webinar.idWebinar)
                             @Html.HiddenFor(m => m.Webinar.Title)
 
-                            <input type="button" id="resetAllAffiliates" class="button btn btn-small" value="Reset All Affiliates" />
+                            @if (hasAffiliates) { 
+                                <input type="button" id="resetAllAffiliates" class="button btn btn-small" value="Reset@(isAffiliateRestricted ? " Affiliate" : " All Affiliates")" />
+                            }
                             <label for="SendDate">Send date:</label>@Html.TextBoxFor(m => m.SendDate, "{0:MM/dd/yyyy}", new { @class = "input", type = "date" })
                             <button id="submitGenPromoTexts" class="button btn btn-success btn-small">Generate Master Markup</button>
-			                <button id="writeAllAffMarkupToStorage" class="button btn btn-small">Save All</button>
-
+                            @if (hasAffiliates)
+                            {
+                                <button id="writeAllAffMarkupToStorage" class="button btn btn-small">Save@(isAffiliateRestricted ? " Affiliate" : " All")</button>
+                            }
                             @*@if (TempData["ListOfWebinarsForUpcoming"] != null)
                             {
                                 <a id="pickWebinars" href="#" data-toggle="collapse" data-target="#ListForUpcoming" class="button btn btn-info btn-small">Pick Webinars for Upcoming</a>
