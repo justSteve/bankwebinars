@@ -2001,9 +2001,10 @@ namespace CUWebinars.Web.Controllers.Admin
             model.Email = model.Email.Trim();
             if (ModelState.IsValid)
             {
+                var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, model.Email.Trim());
+                    
                 try
                 {
-                    var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, model.Email.Trim());
                     if (userAccount.HasClaim(Business.Constants.ClaimTypes.HasNotVerified))
                     {
                         _membershipService.RemoveClaim(_globalConfig.Tenant, model.Email,
@@ -2022,7 +2023,10 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     _membershipService.CleanUser(_globalConfig.Tenant, model.Email, model.NewPassword);
                     _logger.Info("Manual Password Reset for {0} by: {1}. ", model.Email, _appHelper.GetUserAuditInfo());
-                    return Json(new { Result = WebUiConstants.Success });
+
+                    var resetKey = _globalConfig.TenantURL + "/Account/PasswordResetConfirm/" + userAccount.VerificationKey;
+
+                    return Json(new { Result = WebUiConstants.Success, ResetKey = resetKey });
 
                 }
                 catch (NullReferenceException nullReferenceException)
@@ -2069,12 +2073,19 @@ namespace CUWebinars.Web.Controllers.Admin
             try
             {
                 var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, email);
+                if (userAccount.HasClaim(Business.Constants.ClaimTypes.HasNotVerified))
+                {
+                    _membershipService.RemoveClaim(_globalConfig.Tenant, email,
+                        Business.Constants.ClaimTypes.HasNotVerified);
 
+                }
                 dataOperations.SetFieldsConsistantWithVerifiedUser(userAccount);
 
                 _membershipService.ResetPassword(globals.Tenant, email);
 
-                return Json(new { Result = WebUiConstants.Success });
+                var resetKey = globals.TenantURL + "/Account/PasswordResetConfirm/" + userAccount.VerificationKey;
+
+                return Json(new { Result = WebUiConstants.Success, ResetKey = resetKey });
             }
             catch (Exception exception)
             {
@@ -2520,9 +2531,9 @@ namespace CUWebinars.Web.Controllers.Admin
         public ActionResult GenerateRoyaltiesBatch(int? webinarId, int? idAffiliate)
         {
             var totalNumberOrders = 0;
-            
+
             var dtsource = _orderManagementService.GetOrdersByWebinar(webinarId.Value).ToList();
-            
+
             _affiliateManagementService.BuildAffiliateReport(dtsource, webinarId.Value);
 
             return Content("Ok");
@@ -2747,7 +2758,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         dtsource = _orderManagementService.GetOrdersAll(affiliateId, out totalNumberOrders).ToList();
                     }
                     if (shouldBuildAffRpt)
-                    _affiliateManagementService.BuildAffiliateReport(dtsource, webinarId);
+                        _affiliateManagementService.BuildAffiliateReport(dtsource, webinarId);
 
                     // use automapper to flatten out the order records, in this specific case the data 
                     //  model has circular references which cause problems with JSON serialization

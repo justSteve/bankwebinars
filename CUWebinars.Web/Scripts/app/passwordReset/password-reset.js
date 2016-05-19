@@ -16,7 +16,7 @@ $(function () {
     });
 
     $('form#ResetPasswordForm').submit(function (e) {
-        
+
         e.preventDefault();
         
         var normalResetPasswordButtonClicked = normalResetPasswordButton.data('clicked');
