@@ -2,8 +2,9 @@
     margin: 5px;
     background-color: darkslategray;
     color: white;
-    font-weight: bold;
+    font-size: small;
     padding: 5px;
+    display: inline-table;
 }
 [class^="icon-"],
 [class*=" icon-"] {

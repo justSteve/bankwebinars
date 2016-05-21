@@ -464,7 +464,7 @@ function getOrderStatusHtml() {
                 }
             },
 
-            "dom": '<Bilf<t>ip>',
+            "dom": '<ilfB<t>ipB>',
             "pageLength": 10,
             "scroller": {
                 loadingIndicator: false
@@ -598,7 +598,7 @@ function getOrderStatusHtml() {
                 }
             },
 
-            "dom": '<Bilf<t>ip>',
+            "dom": '<ilfB<t>ipB>',
             "pageLength": 10,
             "scroller": {
                 loadingIndicator: false
@@ -678,7 +678,6 @@ function getOrderStatusHtml() {
     };
 
     ns.wireUpDataTable = function () {
-
         DO.ordersTable.dataTable({
 
             destroy: true, "footerCallback": function (row, data, start, end, display) {
@@ -754,7 +753,7 @@ function getOrderStatusHtml() {
                 }
             },
 
-            "dom": '<Bilf<t>ip>',
+            "dom": '<ilfB<t>ipB>',
             "pageLength": 10,
             "scroller": {
                 loadingIndicator: false

@@ -391,6 +391,7 @@ namespace CUWebinars.Web.Controllers
                         (claim) => claim.Type == Business.Constants.ClaimTypes.Admin
                                    || claim.Type == Business.Constants.ClaimTypes.Affiliate))
                     {
+
                         var currentAffiliate = _orderManagementService.GetAffiliateById(19);
 
                         if (claimsIdentityOfAuthenticatedUser.HasClaim(
@@ -400,6 +401,13 @@ namespace CUWebinars.Web.Controllers
                                 _orderManagementService.GetAffiliateByDomain(claimsIdentityOfAuthenticatedUser.Claims
                                     .Where(c => c.Type == ClaimTypes.Affiliate).Select(c => c.Value).Single());
                         }
+                        var oModel = new ShowOrdersViewModel
+                        {
+                            Affiliate = currentAffiliate,
+                            SearchTerm = searchTerm,
+                            UserIsAdmin = false,
+                            Webinar = null
+                        };
                         //searchByidOrder
                         if (searchTerm.All(Char.IsDigit))
                         {
@@ -408,13 +416,7 @@ namespace CUWebinars.Web.Controllers
                                 _orderManagementService.GetOrderById(Convert.ToInt32(searchTerm));
                             if (order != null)
                             {
-                                var oModel = new ShowOrdersViewModel
-                                {
-                                    Orders = new List<Order> { order },
-                                    SearchTerm = searchTerm,
-                                    //UserIsAdmin = false,
-                                    Webinar = null
-                                };
+                                oModel.Orders = new List<Order> { order };
 
                                 return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
                             }
@@ -422,129 +424,20 @@ namespace CUWebinars.Web.Controllers
                         }
 
                         //searchDomainOnly (select * where email like '%@ttstrain.com')
-                        if (searchTerm.StartsWith("@"))
+                        if (searchTerm.StartsWith("@") || searchTerm.StartsWith("aa") || searchTerm.StartsWith("l ") || searchTerm.StartsWith("inprocess") || searchTerm.Contains("@") || searchTerm.StartsWith("inprocess"))
                         {
 
                             if (currentAffiliate.idUserAff != 19)
                             {
-                                var oModel = new ShowOrdersViewModel
-                                {
-                                    SearchTerm = searchTerm,
-                                    UserIsAdmin = false,
-                                    Webinar = null
-                                };
+                                oModel.UserIsAdmin = false;
                                 return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
                             }
                             else
                             {
-                                var oModel = new ShowOrdersViewModel
-                                {
-                                    SearchTerm = searchTerm,
-                                    UserIsAdmin = true,
-                                    Webinar = null
-                                };
+                                oModel.UserIsAdmin = true;
                                 return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
                             }
 
-                        }
-
-                        if (searchTerm.StartsWith("aa"))
-                        {
-                            if (currentAffiliate.idUserAff != 19)
-                            {
-                                var oModel = new ShowOrdersViewModel
-                                {
-                                    SearchTerm = searchTerm,
-                                    UserIsAdmin = false,
-                                    Webinar = null
-                                };
-                                return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
-                            }
-                            else
-                            {
-                                var oModel = new ShowOrdersViewModel
-                                {
-                                    SearchTerm = searchTerm,
-                                    UserIsAdmin = true,
-                                    Webinar = null
-                                };
-                                return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
-                            }
-                        }
-
-
-                        if (searchTerm.StartsWith("l "))
-                        {
-                            if (currentAffiliate.idUserAff != 19)
-                            {
-                                var oModel = new ShowOrdersViewModel
-                                {
-                                    SearchTerm = searchTerm,
-                                    UserIsAdmin = false,
-                                    Webinar = null
-                                };
-                                return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
-                            }
-                            else
-                            {
-                                var oModel = new ShowOrdersViewModel
-                                {
-                                    SearchTerm = searchTerm,
-                                    UserIsAdmin = true,
-                                    Webinar = null
-                                };
-                                return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
-                            }
-                        }
-
-
-                        if (searchTerm.StartsWith("inprocess"))
-                        {
-                            if (currentAffiliate.idUserAff != 19)
-                            {
-                                var oModel = new ShowOrdersViewModel
-                                {
-                                    SearchTerm = searchTerm,
-                                    UserIsAdmin = false,
-                                    Webinar = null
-                                };
-                                return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
-                            }
-                            else
-                            {
-                                var oModel = new ShowOrdersViewModel
-                                {
-                                    SearchTerm = searchTerm,
-                                    UserIsAdmin = true,
-                                    Webinar = null
-                                };
-                                return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
-                            }
-                        }
-
-                        //return orders of given user
-                        if (searchTerm.Contains("@"))
-                        {
-                            if (currentAffiliate.idUserAff != 19)
-                            {
-                                var oModel = new ShowOrdersViewModel
-                                {
-                                    SearchTerm = searchTerm,
-                                    UserIsAdmin = false,
-                                    Webinar = null
-                                };
-                                return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
-                            }
-                            else
-                            {
-                                var oModel = new ShowOrdersViewModel
-                                {
-                                    SearchTerm = searchTerm,
-                                    UserIsAdmin = true,
-                                    Webinar = null
-                                };
-                                return View("~/Views/Admin/SearchAdmin.cshtml", oModel);
-                            }
                         }
                     }
                 }
