@@ -787,6 +787,10 @@ namespace CUWebinars.Web.Controllers
                 if (claimsIdentityOfAuthenticatedUser.HasClaim(
                         (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
                 {
+                    var webinars = _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(15);
+                    
+                    ViewBag.ListOfWebinars = new MultiSelectList(webinars, "idWebinar", "Title");
+
 
                     // Get the claims values
                     var ttsDomain = claimsIdentityOfAuthenticatedUser.Claims

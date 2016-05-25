@@ -2777,6 +2777,10 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         dtsource = _orderManagementService.GetOrdersAll(affiliateId, out totalNumberOrders).ToList();
                     }
+                    if (param.Search.Value != null)
+                    {
+                        shouldBuildAffRpt = false;
+                    }
                     if (shouldBuildAffRpt)
                         _affiliateManagementService.BuildAffiliateReport(dtsource, webinarId);
 
