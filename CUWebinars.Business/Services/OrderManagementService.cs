@@ -1822,22 +1822,22 @@ namespace CUWebinars.Business.Services
             foreach (var order in orders)
             {
                 var changedVals = "";
+                if (order.FirstName != firstName) { changedVals += " First Name: " + order.FirstName + "  to " + firstName; }
+                if (order.LastName != lastName) { changedVals += " Last Name: " + order.LastName + "  to " + lastName; }
+                if (order.BillingEmail != email) { changedVals += " Email: " + order.BillingEmail + "  to " + email; }
+                if (order.Institution != institution) { changedVals += " Institution: " + order.Institution + "  to " + institution; }
+                if (order.BillingAddress != billingAddress.StreetAddress) { changedVals += " Street Address: " + order.BillingAddress + "  to " + billingAddress.StreetAddress; }
+                if (order.BillingAddress2 != billingAddress.StreetAddress2) { changedVals += " Street Address2: " + order.BillingAddress2 + "  to " + billingAddress.StreetAddress2; }
+                if (order.BillingCity != billingAddress.City) { changedVals += " City: " + order.BillingCity + "  to " + billingAddress.City; }
+                if (order.BillingState != billingAddress.State) { changedVals += " State: " + order.BillingState + "  to " + billingAddress.State; }
+                if (order.BillingZip != billingAddress.Zip) { changedVals += " Zip: " + order.BillingZip + "  to " + billingAddress.Zip; }
 
-                if (order.FirstName != firstName) { changedVals += order.FirstName + " to " + firstName + Environment.NewLine; }
-                if (order.LastName != lastName) { changedVals += order.LastName + " to " + lastName + Environment.NewLine; }
-                if (order.BillingEmail != email) { changedVals += order.BillingEmail + " to " + email + Environment.NewLine; }
-                if (order.Institution != institution) { changedVals += order.Institution + " to " + institution + Environment.NewLine; }
-                if (order.BillingAddress != billingAddress.StreetAddress) { changedVals += order.BillingAddress + " to " + billingAddress.StreetAddress + Environment.NewLine; }
-                if (order.BillingAddress2 != billingAddress.StreetAddress2) { changedVals += order.BillingAddress2 + " to " + billingAddress.StreetAddress2 + Environment.NewLine; }
-                if (order.BillingCity != billingAddress.City) { changedVals += order.BillingCity + " to " + billingAddress.City + Environment.NewLine; }
-                if (order.BillingState != billingAddress.State) { changedVals += order.BillingState + " to " + billingAddress.State + Environment.NewLine; }
-                if (order.BillingZip != billingAddress.Zip) { changedVals += order.BillingZip + " to " + billingAddress.Zip + Environment.NewLine; }
+                if (order.ShippingAddress != shippingAddress.StreetAddress) { changedVals += " Shipping Address: " + order.ShippingAddress + "  to " + shippingAddress.StreetAddress; }
+                if (order.ShippingAddress2 != shippingAddress.StreetAddress2) { changedVals += " Shipping Address2: " + order.ShippingAddress2 + "  to " + shippingAddress.StreetAddress2; }
+                if (order.ShippingCity != shippingAddress.City) { changedVals += " Shipping City: " + order.ShippingCity + "  to " + shippingAddress.City; }
+                if (order.ShippingState != shippingAddress.State) { changedVals += " Shipping State: " + order.ShippingState + "  to " + shippingAddress.State; }
+                if (order.ShippingZip != shippingAddress.Zip) { changedVals += " Shipping Zip: " + order.ShippingZip + "  to " + shippingAddress.Zip; }
 
-                if (order.ShippingAddress != shippingAddress.StreetAddress) { changedVals += order.ShippingAddress + " to " + shippingAddress.StreetAddress + Environment.NewLine; }
-                if (order.ShippingAddress2 != shippingAddress.StreetAddress2) { changedVals += order.ShippingAddress2 + " to " + shippingAddress.StreetAddress2 + Environment.NewLine; }
-                if (order.ShippingCity != shippingAddress.City) { changedVals += order.ShippingCity + " to " + shippingAddress.City + Environment.NewLine; }
-                if (order.ShippingState != shippingAddress.State) { changedVals += order.ShippingState + " to " + shippingAddress.State + Environment.NewLine; }
-                if (order.ShippingZip != shippingAddress.Zip) { changedVals += order.ShippingZip + " to " + shippingAddress.Zip + Environment.NewLine; }
 
                 order.FirstName = firstName;
                 order.LastName = lastName;
@@ -1854,7 +1854,7 @@ namespace CUWebinars.Business.Services
                 order.ShippingCity = shippingAddress.City;
                 order.ShippingState = shippingAddress.State;
                 order.ShippingZip = shippingAddress.Zip;
-                order.UserComments += "'ContactInfoUpdated': '" + changedVals + "'";
+                order.UserComments += "{'ContactInfoUpdated': '" + changedVals + "'}";
                 _logger.Info("idOrder {0} user info updated:  {1}", order.idOrder, changedVals);
 
                 SaveChanges();

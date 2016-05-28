@@ -376,8 +376,14 @@ namespace CUWebinars.Business.AccountService
                 if ((userAccount.HasClaim(ClaimTypes.HasNotVerified, ClaimValues.OrderImportRegistration) ||
                     userAccount.HasClaim(ClaimTypes.HasNotVerified, ClaimValues.CartRegistration)))
                 {
-                    userMustVerify = "User Must Verify";
-                    return false;
+                    //userMustVerify = "User Must Verify";
+                    //return false;
+
+                    _logger.Info("Manually removing NotVerify claim for: " + emailAddress);
+                    //Given the problems caused by a system that demands that user Must Verify
+                    // we now just acknowledge that an attempt to log in is suffienct to 
+                    // verify the account.
+                    RemoveClaim(tenant, emailAddress, ClaimTypes.HasNotVerified);
                 }
 
                 if (!userAccount.HasClaim(ClaimTypes.FullName))

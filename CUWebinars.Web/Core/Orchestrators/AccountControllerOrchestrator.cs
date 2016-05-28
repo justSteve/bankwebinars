@@ -16,6 +16,7 @@ using Microsoft.WindowsAzure.Storage.Queue;
 using Newtonsoft.Json;
 using Ninject.Extensions.Logging;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
@@ -239,6 +240,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 if (!ReferenceEquals(_request.ApplicationPath, null) && !ReferenceEquals(_request.Url, null))
                 {
+                    if (model.ReturnUrl.Contains("/acc/apwd/"))
+                        model.ReturnUrl = "/";
+
                     var retUrl = model.ReturnUrl.Replace(
                             string.Format(@"{0}://{1}{2}/",
                             _request.Url.Scheme,
@@ -555,15 +559,30 @@ namespace CUWebinars.Web.Core.Orchestrators
             model.Recorded = new Dictionary<string, Order>(ordersForRecordedWebinars.Count, StringComparer.OrdinalIgnoreCase);
             model.Archived = _orderManagementService.SelectOrdersWithArchivedWebinars(currentUser.idUser);
 
+            IEnumerable myClaims = model.MyClaims as IList<object> ?? model.MyClaims.Cast<object>().ToList();
             foreach (var selectOrdersWithRecordedWebinar in ordersForRecordedWebinars.OrderByDescending(o => o.OrderRows.SingleOrDefault().Webinar.Date))
             {
                 var myRow =
                     selectOrdersWithRecordedWebinar.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
                 var quiz =
                     _webinarManagementService.GetQuizByWebinarId(myRow.idWebinar);
-                //var playbackURL =
-                //    _orderManagementService.GetAccessToRecording(myRow.Order);
+                var rowFoundClaim = false;
+                foreach (var claim in myClaims)
+                {
+                    var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.ToString());
+                    if (thisClaim.OnDemandCode == myRow.OnDemandCode)
+                    {
+                        rowFoundClaim = true;
+                    }
 
+                }
+                if (!rowFoundClaim)
+                {
+                    _logger.Info("missing OD claim detected: " + myRow.idOrder);
+
+                    var userAcct = _membershipService.GetUserAccountByEmail(_globals.Tenant, claimsIdentityOfAuthenticatedUser.Name);
+                    _membershipService.SignIn(userAcct, true);
+                }
                 if (!ReferenceEquals(null, quiz))
                 {
                     model.Recorded.Add(new KeyValuePair<string, Order>(quiz.QuizCode, selectOrdersWithRecordedWebinar));
@@ -873,7 +892,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             cpSubscription.PercentOff = discount.PercentOff;
             cpSubscription.Status = discount.Status;
             cpSubscription.DiscountCode = discount.DiscountCode;
-            
+
             return cpSubscription;
         }
 

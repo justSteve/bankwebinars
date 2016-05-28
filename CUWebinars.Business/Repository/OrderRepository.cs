@@ -756,7 +756,7 @@ namespace CUWebinars.Business.Repository
 
         public bool OnDemandCodeIsUnique(string onDemandCode)
         {
-            var result = items.Where(o => o.OrderRows.Any(r => r.OnDemandCode == onDemandCode));
+            var result = items.Where(o => o.OrderRows.Any(r => r.OnDemandCode == onDemandCode && r.OnDemandCode != onDemandCode));
             if (result.Any())
             {
                 return false;
