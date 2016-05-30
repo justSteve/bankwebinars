@@ -258,12 +258,13 @@ function removeIsLoadingIndicator($cell) {
 
 
 function createChildRow(cell, $td, rowData) {
-    
+    console.log(cell);
     if ($td.hasClass("edit-user-name-email")) {
         return editUserCell(cell, $td, rowData);
     }  //
 
     if ($td.hasClass("edit-institution")) {
+        
         return editInstitutionCell(cell, $td, rowData);
     }
 
@@ -572,7 +573,7 @@ function updateRegType(item, orderId, newRegTypeId) {
                 }
 
                 //  Reuse logic already in display-orders.js for when the datatables.net gets created...
-                var parentHtml = DO.getBillingCellHtml(showDiscount, data.regTypeShort, data.Total);
+                var parentHtml = DO.getBillingCellHtml(showDiscount, data.regTypeShort, data.Total, full.ShippedDateString);
                 $parentCell.html(parentHtml);
 
                 var $childRow = $item.closest("td.child-row");

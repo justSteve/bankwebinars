@@ -1,9 +1,6 @@
-﻿.dtButton {
+﻿.dt-Button {
     margin: 5px;
-    background-color: darkslategray;
-    color: white;
-    font-size: small;
-    padding: 5px;
+
     display: inline-table;
 }
 [class^="icon-"],
@@ -24,7 +21,8 @@
   .hero-unit {padding: 10px 0;margin: 0;margin-bottom: 15px;}
   .dataTables_length {
       margin-left: 15px;
-      margin-top: 2px;   
+      margin-top: 2px;
+      margin-right: 20px;   
   }
 
   

@@ -10,6 +10,7 @@
         @*@Scripts.Render("~/bundles/display-webinars")*@
         @Scripts.Render("~/bundles/dataTables")
         @Scripts.Render("~/bundles/display-orders")
+        @Scripts.Render("~/bundles/jqueryval")
     }
     @Styles.Render("~/Content/data-tables")
     <style>
@@ -35,8 +36,7 @@
         </div>
         <div class="container clearfix" id="main-content">
             <!--begin main content-->
-            
-                  @Html.Partial("~/Views/Admin/Partials/SearchResultsGrid2Admin.cshtml")
+            @Html.Partial("~/Views/Admin/Partials/SearchResultsGrid2Admin.cshtml")
             <!--close main content-->
         </div>
     </div>

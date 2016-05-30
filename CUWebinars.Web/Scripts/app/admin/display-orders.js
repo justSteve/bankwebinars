@@ -123,22 +123,30 @@ function getOrderStatusHtml() {
         //DO.baseDiscountHtml = getDiscountHtml();  // 
 
         DO.orderStatusFilters = [];
-
-
     };
 
-    ns.getBillingCellHtml = function (discount, regTypeLabel, total) {
+    ns.getBillingCellHtml = function (discount, regTypeLabel, total, shippedDate) {
         //debugger;
+
+        if (shippedDate != '1/1') {
+            shippedDate = "<br />\n<span style=\"font-size: xx-small;\">Shipped: " + shippedDate + "</span>";
+        } else {
+            shippedDate = '';
+        }
+        var billingHtml = "";
         if (discount != undefined) {
 
-            var billingHtml = regTypeLabel
+            billingHtml = regTypeLabel
                 + (discount + "\n")
                 + "<br />\n$" + (total + "").replace(".00", "");
         } else {
 
-            var billingHtml = regTypeLabel
+            billingHtml = regTypeLabel
                     + "<br />\n$" + (total + "").replace(".00", "");
         }
+
+        billingHtml = billingHtml + shippedDate;
+
 
         return billingHtml;
 
@@ -432,7 +440,7 @@ function getOrderStatusHtml() {
             destroy: true, "serverSide": true,
             'buttons': [{
                 extend: 'print',
-                className: 'dtButton',
+                className: 'btn btn-mini',
                 text: 'Print current page ',
                 exportOptions: {
                     stripHtml: false
@@ -440,14 +448,14 @@ function getOrderStatusHtml() {
             }, {
                 extend: 'pdf',
                 text: ' Save PDF',
-                className: 'dtButton',
+                className: 'btn btn-mini',
                 exportOptions: {
                     stripNewlines: false
                 }
             }, {
                 extend: 'excel',
                 text: ' Export to Excel',
-                className: 'dtButton',
+                className: 'btn btn-mini',
                 exportOptions: {
                     stripNewlines: false
                 }
@@ -560,7 +568,7 @@ function getOrderStatusHtml() {
             "serverSide": true,
             'buttons': [{
                 extend: 'print',
-                className: 'dtButton',
+                className: 'btn btn-mini',
                 text: 'Print current page ',
                 exportOptions: {
                     stripHtml: false
@@ -568,14 +576,14 @@ function getOrderStatusHtml() {
             }, {
                 extend: 'pdf',
                 text: ' Save PDF',
-                className: 'dtButton',
+                className: 'btn btn-mini',
                 exportOptions: {
                     stripNewlines: false
                 }
             }, {
                 extend: 'excel',
                 text: ' Export to Excel',
-                className: 'dtButton',
+                className: 'btn btn-mini',
                 exportOptions: {
                     stripNewlines: false
                 }
@@ -652,7 +660,7 @@ function getOrderStatusHtml() {
 
                     var newBillingHtml = ns.getBillingCellHtml(showDiscount,
                         full.RegistrationType.OptionLabelShort,
-                        full.Total);
+                        full.Total, full.ShippedDateString);
 
                     return newBillingHtml;
                 }
@@ -680,7 +688,8 @@ function getOrderStatusHtml() {
     ns.wireUpDataTable = function () {
         DO.ordersTable.dataTable({
 
-            destroy: true, "footerCallback": function (row, data, start, end, display) {
+            //destroy: true, 
+"footerCallback": function (row, data, start, end, display) {
                 var api = this.api(), data;
 
                 // Remove the formatting to get integer data for summation
@@ -713,7 +722,7 @@ function getOrderStatusHtml() {
                 );
             }, 'buttons': [{
                 extend: 'print',
-                className: 'dtButton',
+                className: 'btn btn-mini',
                 text: 'Print current page ',
                 exportOptions: {
                     stripHtml: false
@@ -721,14 +730,14 @@ function getOrderStatusHtml() {
             }, {
                 extend: 'pdf',
                 text: ' Save PDF',
-                className: 'dtButton',
+                className: 'btn btn-mini',
                 exportOptions: {
                     stripNewlines: false
                 }
             }, {
                 extend: 'excel',
                 text: ' Export to Excel',
-                className: 'dtButton',
+                className: 'btn btn-mini',
                 exportOptions: {
                     stripNewlines: false
                 }
@@ -770,8 +779,8 @@ function getOrderStatusHtml() {
                 { 'data': 'RegistrationTypeString', 'class': 'details-control edit-billing' },
                 {
                     'data': 'Affiliate_ttsDomain',
-                    'visible': showAffiliateColumn,
-                    'class': 'details-control '
+                    'visible': showAffiliateColumn
+                    //'class': 'details-control '
                 },
                 {
                     'data': 'Royalty',
@@ -832,7 +841,7 @@ function getOrderStatusHtml() {
 
                    var newBillingHtml = ns.getBillingCellHtml(showDiscount,
                                                            full.RegistrationType.OptionLabelShort,
-                                                           full.Total);
+                                                           full.Total, full.ShippedDateString);
 
                    return newBillingHtml;
 
@@ -844,8 +853,10 @@ function getOrderStatusHtml() {
                 "mData": "Affiliate_ttsDomain",
                 "mRender": function (data, type, full) {
 
-                    var royaltyHtml = full.Royalty;
-                    return "<div class=\"aff-revenue-summary\" data-w=" + parseInt(DO.webinarIdDiv.text()) + " data-a='" + full.Affiliate_ttsDomain + "' style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</br>" + royaltyHtml + "</div>";
+                    //var royaltyHtml = full.Royalty;
+                    //return "<div class=\"aff-revenue-summary\" data-w=" + parseInt(DO.webinarIdDiv.text()) + " data-a='" + full.Affiliate_ttsDomain + "' style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</br>" + royaltyHtml + "</div>";
+                    
+                    return "<div class=\"aff-revenue-summary\" data-w=" + parseInt(DO.webinarIdDiv.text()) + " data-a='" + full.Affiliate_ttsDomain + "' style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</div>";
                 }
             },
            // [6] Royalty Column

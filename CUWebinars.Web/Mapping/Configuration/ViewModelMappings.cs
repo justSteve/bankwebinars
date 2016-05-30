@@ -83,13 +83,17 @@ namespace CUWebinars.Web.Mapping.Configuration
                 .ForMember(d => d.WebinarDateTitleString,
                            map => map.MapFrom
                                (s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Webinar.Title + "\n<br><span style=\"font-size: smaller; font-style: italic;\" >" +
-                                     "(" + s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Webinar.Date.ToString().Replace(":00 ", " ").ToLower()+" CT)</span>"))
+                                     "(" + s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Webinar.Date.ToString().Replace(":00 ", " ").ToLower() + " CT)</span>"))
                .ForMember(d => d.TtsJoinUrl,
                            map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).TtsJoinUrl))
                 .ForMember(d => d.Discount,
                            map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Discount))
                 .ForMember(d => d.Royalty,
                            map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Royalty))
+                .ForMember(d => d.ShippedDate,
+                           map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).ShipmentDate))
+                .ForMember(d => d.ShippedDateString,
+                           map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).ShipmentDate))
                 .ForMember(d => d.RegistrationType,
                            map => map.MapFrom(s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).RegistrationType))
                 .ForMember(d => d.Webinar_IsActive,

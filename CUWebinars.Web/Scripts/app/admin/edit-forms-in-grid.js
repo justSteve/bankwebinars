@@ -302,7 +302,7 @@ $(document).ready(function () {
                         }
 
                         //  Reuse logic already in display-orders.js for when the datatables.net gets created...
-                        var parentHtml = DO.getBillingCellHtml(showDiscount, data.regTypeShort, data.Total);
+                        var parentHtml = DO.getBillingCellHtml(showDiscount, data.regTypeShort, data.Total, full.ShippedDateString);
                         $parentCell.html(parentHtml);
 
                         var $childRow = $item.closest("td.child-row");
@@ -494,7 +494,7 @@ $(document).ready(function () {
                     var $parentCell = $("td.child-showing");
 
                     //  Reuse logic already in display-orders.js for when the datatables.net gets created...
-                    var parentHtml = DO.getBillingCellHtml(data.discount, data.regTypeShort, data.Total);
+                    var parentHtml = DO.getBillingCellHtml(data.discount, data.regTypeShort, data.Total, full.ShippedDateString);
                     $parentCell.html(parentHtml);
 
                     var $childRow = $item.closest("td.child-row");
@@ -627,7 +627,7 @@ $(document).ready(function () {
 
     ns.changeUserOrder = function (e) {
         e.preventDefault();
-
+        alert("hit");
         var self = this;
 
         var url = $('#frmSetUserAssignedToOrder').attr('action');

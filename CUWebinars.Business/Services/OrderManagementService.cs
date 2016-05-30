@@ -516,8 +516,12 @@ namespace CUWebinars.Business.Services
                                 _logger.Warn("UPDATE dbo.[Order] SET idAffiliate = {0} WHERE idOrder = {1}", lOrder.idAffiliate, vOrder.idOrder);
 
                             }
-
-
+                            if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).ShipmentDate != null
+                                && vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).ShipmentDate != null)
+                            {
+                                vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).ShipmentDate = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).ShipmentDate;
+                                SaveChanges();
+                            }
 
                             if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType != vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType)
                             {
@@ -1088,7 +1092,7 @@ namespace CUWebinars.Business.Services
                 var baseUri = new Uri(string.Concat(url.Scheme, @"://", url.Authority), UriKind.Absolute);
                 addPasswordUrl = new Uri(
                     baseUri,
-                    string.Concat(@"acc/apwd/", order.WebUser.email)
+                    string.Concat(@"acc/apwd/", order.idOrder)
                     ).ToString();
             }
 

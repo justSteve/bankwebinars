@@ -730,6 +730,7 @@ namespace CUWebinars.Business.Core
                                     newOrder.OrderStatus = setStatus;
 
                                     newOrderRow.RowStatus = OrderRowStatus.Active;
+                                    newOrderRow.ShipmentDate = reader.GetDateTime(30);
                                     orders.Add(newOrder);
                                 }
                                 catch (Exception ex)

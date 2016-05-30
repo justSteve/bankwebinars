@@ -1705,6 +1705,14 @@ namespace CUWebinars.Web.Controllers
         public ActionResult AddPasswordForCartCreatedUser(string email)
         {
 
+
+            int idOrder = 0;
+            string s = email;
+            bool result = int.TryParse(s, out idOrder);
+
+            if (result)
+            email = _orderManagementService.GetOrderById(idOrder).BillingEmail;
+
             if (string.IsNullOrWhiteSpace(email))
                 return View();
 
