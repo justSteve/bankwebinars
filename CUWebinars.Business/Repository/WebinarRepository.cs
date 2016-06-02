@@ -355,7 +355,7 @@ namespace CUWebinars.Business.Repository
                         && (o.OrderStatus == OrderStatus.Billed
                             || o.OrderStatus == OrderStatus.Paid
                             || o.OrderStatus == OrderStatus.Submitted
-                            || o.OrderStatus == OrderStatus.AwaitingVerification
+                        //|| o.OrderStatus == OrderStatus.AwaitingVerification
                             )
                             )
                 .Include(o => o.Affiliate)

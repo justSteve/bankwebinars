@@ -496,15 +496,26 @@ namespace CUWebinars.Business.Services
                 if (commonEmails.Count > 0)
                     foreach (var orderEmail in commonEmails)
                     {
-                        var lOrder = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
-                        var vOrder = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
+                        if (v3Orders.Where(o => o.BillingEmail == orderEmail).Count() > 1)
+                        {
+                            _logger.Warn("SynchOrder duped Legacy registration for " + orderEmail + " in " + webinarId);
+                        }
+                        if (lOrders.Where(o => o.BillingEmail == orderEmail).Count() > 1)
+                        {
+                            _logger.Warn("SynchOrder duped V3 registration for " + orderEmail + " in " + webinarId);
+                        }
+
                         try
                         {
+                            var lOrder = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
+                            var vOrder = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
+                        
                             _logger.Info("SynchOrder CommonToBoth {0} of {1} - {2} ", i, commonEmails.Count(), orderEmail);
                             if (vOrder.idOrder != vOrder.idOrderLegacy)
                             {
                                 _orderRepository.SynchIds(vOrder.idOrderLegacy, vOrder.idOrder);
                             }
+
                             if (lOrder.Total != vOrder.Total)
                             {
                                 _logger.Info("SynchOrder Legacy Total = {0} vs. V3 Total = {1} on {2} ", lOrder.Total, vOrder.Total, orderEmail);
@@ -513,64 +524,68 @@ namespace CUWebinars.Business.Services
                             {
                                 //_logger.Info("SynchOrder AFFILIATE MISMATCH Legacy={0} - V3={1}", lOrder.idAffiliate, vOrder.idAffiliate);
                                 //vOrder.idAffiliate = lOrder.idAffiliate;
-                                _logger.Warn("UPDATE dbo.[Order] SET idAffiliate = {0} WHERE idOrder = {1}", lOrder.idAffiliate, vOrder.idOrder);
+                                _logger.Warn("UPDATE dbo.[Orders] SET idAffiliate = {0} WHERE idOrder = {1}", lOrder.idAffiliate, lOrder.idOrder);
 
                             }
-                            if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).ShipmentDate != null
-                                && vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).ShipmentDate != null)
+                            try
                             {
-                                vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).ShipmentDate = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).ShipmentDate;
-                                SaveChanges();
-                            }
+                                if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).ShipmentDate != null
+                                && vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).ShipmentDate == null)
+                                {
+                                    var lShippedDate =
+                                        lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
+                                            .ShipmentDate.Value;
+                                    if (lShippedDate > DateTime.Parse( "01/01/1900"))
+                                    {
+                                        vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
+                                            .ShipmentDate =
+                                            lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
+                                                .ShipmentDate;
+                                        SaveChanges();
+                                    }
+                                }
 
-                            if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType != vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType)
+                            }
+                            catch (Exception ex)
                             {
-                                vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType;
-                                SaveChanges();
-                                _logger.Info("SynchOrder adjusted RegType from V3 RegType = {1} to Legacy = {0} on {2} ", lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, orderEmail);
+                                _logger.ErrorException("SynchOrder save shipped date failed: " + orderEmail, ex);
                             }
 
-
-                            if (lOrder.OrderStatus != vOrder.OrderStatus)
+                            try
                             {
-                                vOrder.OrderStatus = lOrder.OrderStatus;
-                                SaveChanges();
-                                _logger.Info("SynchOrder adjusted OrderStatus from V3 = {1} to Legacy = {0} on {2} ", lOrder.OrderStatus, vOrder.OrderStatus, orderEmail);
+                                if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType != vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType)
+                                {
+                                    vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType;
+                                    SaveChanges();
+                                    _logger.Info("SynchOrder adjusted RegType from V3 RegType = {1} to Legacy = {0} on {2} ", lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, orderEmail);
+                                }
+
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.ErrorException("SynchOrder save regtype failed: " + orderEmail, ex);
                             }
 
-                            //if (vOrder.OrderDate > DateTime.Parse("01/01/2016"))
-                            //{
-                            //    try
-                            //    {
-                            //        if (!ReferenceEquals(null, lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount) 
-                            //            && ReferenceEquals(null, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount))
-                            //        {
-                            //            var code = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount.DiscountCode;
+                            try
+                            {
+                                if (lOrder.OrderStatus != vOrder.OrderStatus)
+                                {
+                                    vOrder.OrderStatus = lOrder.OrderStatus;
+                                    SaveChanges();
+                                    _logger.Info("SynchOrder adjusted OrderStatus from V3 = {1} to Legacy = {0} on {2} ", lOrder.OrderStatus, vOrder.OrderStatus, orderEmail);
+                                }
 
-                            //            var discount = GetDiscountById(Convert.ToInt32(code));
-
-                            //            ApplyDiscountCode(discount.DiscountCode, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active));
-
-                            //            _logger.Warn("SynchOrder adjusted Discount = {0} on order {1} ",
-                            //                code, vOrder.idOrder);
-                            //        }
-                            //    }
-                            //    catch (Exception ex)
-                            //    {
-                            //        _logger.ErrorException(
-                            //            "SynchOrder attempt to apply discount failed: " + orderEmail, ex);
-                            //    }
-                            //                            }
-                            //PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
-                            //UpdateOrderChanges(vOrder, ref pricesAndDiscounts);
-
-                            i++;
-                        }
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.ErrorException("SynchOrder save orderstatus failed: " + orderEmail, ex);
+                            }
+                        } 
                         catch (Exception ex)
                         {
-                            _logger.Warn("EXEC dbo.FindDupeEmailPerWebinarAndRemove @idWebinar =  " + webinarId);
-                            _logger.ErrorException("SynchOrder checks common orders to V3 failed: " + orderEmail, ex);
+                            _logger.ErrorException("SELECT email, (SELECT ttsDomain FROM dbo.Affiliate WHERE idUser = o.idAffiliate), idOrder, (SELECT status FROM dbo.OrdersRows WHERE idOrder = o.idOrder) from Orders o where email = '" + orderEmail + "' and idOrder in (SELECT idOrder FROM dbo.OrdersRows WHERE idWebinar =	" + webinarId + ")", ex);
                         }
+                        i++;
                     }
             }
             catch (Exception ex)
