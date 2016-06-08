@@ -1,0 +1,20 @@
+﻿@model GenerateWeeklyInvoicesViewModel
+
+<div style="width: 1100px; margin: 30px auto">
+    <h2>Generates Weekly Invoices</h2>
+
+    @using (Html.BeginForm("GenerateWeeklyInvoicesEvent", "Admin", FormMethod.Get, new { id = "GenerateWeeklyInvoicesForm", @class = "form-horizontal " }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="control-group">
+            <label class="control-label" >StartDate</label>
+            <div class="controls">
+                <input type="date" name="startDate" id="startDate"/>
+                <input type="submit" id="submitStartDate" />
+            </div>
+        </div>
+
+
+    }
+</div>

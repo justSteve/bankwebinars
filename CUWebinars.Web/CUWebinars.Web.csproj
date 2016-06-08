@@ -130,6 +130,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\FluentValidation.5.5.0.0\lib\Net40\FluentValidation.dll</HintPath>
     </Reference>
+    <Reference Include="GemBox.Document, Version=25.3.30.1167, Culture=neutral, PublicKeyToken=b1b72c69714d4847, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\GemBox Software\GemBox.Document 2.5\Bin\GemBox.Document.dll</HintPath>
+    </Reference>
     <Reference Include="Glimpse.AspNet, Version=1.9.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Glimpse.AspNet.1.9.2\lib\net45\Glimpse.AspNet.dll</HintPath>
       <Private>True</Private>
@@ -555,6 +559,7 @@
     <Compile Include="ViewModel\EditUserViewModel.cs" />
     <Compile Include="ViewModel\DiscountPromotionViewModel.cs" />
     <Compile Include="ViewModel\GenerateClickToJoinViewModel.cs" />
+    <Compile Include="ViewModel\GenerateWeeklyInvoicesViewModel.cs" />
     <Compile Include="ViewModel\MonerisViewModel.cs" />
     <Compile Include="ViewModel\OrderSumUserViewModel.cs" />
     <Compile Include="ViewModel\QuizViewModel.cs" />
@@ -2208,6 +2213,8 @@
     <Content Include="Content\images\email\TrainingPitstop\Thumbs.db" />
     <Content Include="Content\images\email\wabankers\Thumbs.db" />
     <Content Include="Content\images\logo_azbankers.png" />
+    <Content Include="Content\mergeTemplates\WeeklyInvoice.docx" />
+    <Content Include="App_Data\mergeTemplates\WeeklyInvoice1.docx" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy %282%29.pubxml" />
@@ -2484,6 +2491,8 @@
     <Content Include="Views\Admin\Partials\_ShowSubscriptions.cshtml" />
     <Content Include="Views\Shared\Partials\_Cancel_PauseOrder.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowRevenueReportAdmin.cshtml" />
+    <Content Include="Views\Admin\Home\_generateWeeklyInvoices.cshtml" />
+    <Content Include="Views\Admin\GenerateWeeklyInvoices.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

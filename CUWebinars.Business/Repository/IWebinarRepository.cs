@@ -45,5 +45,6 @@ namespace CUWebinars.Business.Repository
 
         IList<int> GetV3OrdersIdsByWebinar(int idWebinar);
         int? GetNextCompliancePerspectives();
+        IList<Webinar> GetWebinarsForWeeklyInvoice(DateTime startDate);
     }
 }

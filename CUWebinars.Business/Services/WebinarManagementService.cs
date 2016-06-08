@@ -385,6 +385,12 @@ namespace CUWebinars.Business.Services
             return _webinarRepository.GetNextCompliancePerspectives();
         }
 
+        public IList<Webinar> GetWebinarsForWeeklyInvoices(DateTime startDate)
+        {
+
+            return _webinarRepository.GetWebinarsForWeeklyInvoice(startDate);
+        }
+
         public Quiz GetQuizByOrderId(int idOrder)
         {
             return _quizRepository.GetQuizFromOrder(idOrder);

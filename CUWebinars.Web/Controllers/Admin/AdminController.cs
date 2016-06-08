@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Configuration;
+using System.Data;
 using System.Data.Entity.Validation;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -39,6 +41,8 @@ using CUWebinars.Web.Models.DataTablesModels;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Elmah;
+using GemBox.Document;
+using GemBox.Document.Tables;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -58,6 +62,8 @@ using Formatting = Newtonsoft.Json.Formatting;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Calendar = System.Web.UI.WebControls.Calendar;
+using Table = GemBox.Document.Tables.Table;
 
 namespace CUWebinars.Web.Controllers.Admin
 {
@@ -2828,9 +2834,166 @@ namespace CUWebinars.Web.Controllers.Admin
 
         }
 
+        [HandleAjaxException]
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult GenerateWeeklyInvoicesEvent(DateTime startDate)
+        {
+            DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
+            DateTime date1 = startDate;
+            System.Globalization.Calendar cal = dfi.Calendar;
+
+            var weekNumber = cal.GetWeekOfYear(date1, dfi.CalendarWeekRule,
+                                                dfi.FirstDayOfWeek);
+            var endDate = startDate.AddDays(7);
+
+            IList<Webinar> webinars = _webinarManagementService.GetWebinarsForWeeklyInvoices(startDate);
 
 
 
+            var affiliates = _affiliateManagementService.GetAffiliates();
+
+            int totalNumberOrders = 0;
+
+            foreach (var affiliate in affiliates)
+            {
+
+                var hadOrder = false;
+                int thisAffiliate = affiliate.idUserAff;
+
+                //DocumentModel document = new DocumentModel();
+                DocumentModel document = DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoice1.docx"));
+
+                GemBox.Document.Tables.Table headTable = new Table(document);
+
+                headTable.TableFormat.PreferredWidth = new TableWidth(100, TableWidthUnit.Percentage);
+                // Document contains 4 tables. Each table contains some set of information.
+                var dataSource = new { invoiceNumber = weekNumber + "-" + affiliate.idUserAff, DateRange = startDate.ToShortDateString() + " - " + endDate.ToShortDateString(), DisplayTitle = affiliate.DisplayTitle };
+
+                document.MailMerge.Execute(dataSource);
+
+
+                foreach (var webinar in webinars)
+                {
+                    var dtsource = _dataTablesService.GetOrdersByWebinarForRevenueReport(webinar.idWebinar, out totalNumberOrders).ToList();
+
+                    var registrations =
+                        from r in dtsource
+                        where r.Affiliate != null
+                        orderby r.OrderDate
+                        group r by r.Affiliate into u
+                        select new AffiliateReportDTO
+                        {
+                            WebinarId = webinar.idWebinar,
+                            Affiliate = u.Key,
+                            Orders = u.ToList()
+                        };
+                    if (registrations.Count() > 0)
+                        hadOrder = true;
+                    // use automapper to flatten out the order records, in this specific case the data 
+                    //  model has circular references which cause problems with JSON serialization
+                    List<AffiliateReportDTO> orders = new List<AffiliateReportDTO>();
+                    Mapper.Map(registrations, orders);
+
+                    // Create data source
+
+                    DataSet ds = new DataSet();
+
+                    DataTable webinarsPerAff = new DataTable("Webinars");
+
+                    webinarsPerAff.Columns.Add("Id", typeof(int));
+                    webinarsPerAff.Columns.Add("Title", typeof(string));
+                    webinarsPerAff.Columns.Add("WebinarDate", typeof(DateTime));
+                    ds.Tables.Add(webinarsPerAff);
+
+                    //orders
+                    DataTable ordersPerAff = new DataTable("Orders");
+                    ordersPerAff.Columns.Add("Id", typeof(int));
+                    ordersPerAff.Columns.Add("Name", typeof(string));
+                    ordersPerAff.Columns.Add("Email", typeof(string));
+                    ordersPerAff.Columns.Add("Company", typeof(string));
+                    ordersPerAff.Columns.Add("Price", typeof(double));
+                    ordersPerAff.Columns.Add("Percent", typeof(double));
+                    ordersPerAff.Columns.Add("Royalty", typeof(double));
+                    ordersPerAff.Columns.Add("OrderID", typeof(int));
+                    ordersPerAff.Columns.Add("Status", typeof(string));
+                    ds.Tables.Add(ordersPerAff);
+
+                    webinarsPerAff.Rows.Add(webinar.idWebinar, webinar.Title, webinar.Date.ToShortDateString());
+                    // Add parent-child relation 
+
+                    ds.Relations.Add("Items", webinarsPerAff.Columns["Id"], ordersPerAff.Columns["Id"]);
+
+
+                    foreach (var _orders in orders.Where(a => a.Affiliate.idUserAff == thisAffiliate).ToList())
+                    {
+                        foreach (var order in _orders.Orders)
+                        {
+                            var row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                            //
+                            webinarsPerAff.Rows.Add(webinar.idWebinar, order.FirstName + ' ' + order.LastName
+                            , order.BillingEmail
+                            , order.Institution
+                            , order.Total
+                            , row.Royalty
+                            , order.OrderStatus
+                            , order.idOrder
+                            );
+                        }
+                    }
+
+                    // Execute nested mail merge.
+
+                    document.MailMerge.Execute(ds, null);
+
+                    document.Save(Server.MapPath(@"~/App_Data/mergeTemplates/" + weekNumber + "-" + affiliate.idUserAff + ".pdf"));
+                }
+
+                //Table[] tables = document.GetChildElements(true, ElementType.Table).Cast<Table>().ToArray();
+
+                //TableRow row = new TableRow(document);
+
+                //headTable.Rows.Add(row);
+
+                //Paragraph invoiceNumber = new Paragraph(document, "Invoice Number: " + weekNumber + "-" + affiliate.idUserAff);
+                //Paragraph dateRange = new Paragraph(document, startDate.ToShortDateString() +" - " +  endDate.ToShortDateString());
+
+
+                //row.Cells.Add(new TableCell(document, invoiceNumber));
+                //row.Cells.Add(new TableCell(document, dateRange));
+
+                //document.Sections.Add(new Section(document, headTable));
+
+                IList<Order> postEventOrders = _orderManagementService.GetOrdersAll(19, out totalNumberOrders)
+                    .Where(o => o.OrderDate > startDate && o.OrderDate < endDate)
+                    .Where(o => o.OrderStatus != OrderStatus.Abandoned || o.OrderStatus != OrderStatus.AwaitingVerification || o.OrderStatus != OrderStatus.Canceled || o.OrderStatus != OrderStatus.InProcess || o.OrderStatus != OrderStatus.Error)
+                    .Where(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Date < startDate)
+                    .Where(o => o.idAffiliate == affiliate.idUserAff).ToList();
+
+                document.Save(Server.MapPath(@"~/App_Data/mergeTemplates/" + weekNumber + "-" + affiliate.idUserAff + ".pdf"));
+
+            }
+
+            var model = new GenerateWeeklyInvoicesViewModel
+            {
+                Webinars = webinars,
+                Affiliates = affiliates.ToList(),
+                PosteventOrders = null,
+                AdjustedtOrders = null
+            };
+            return View("~/Views/Admin/GenerateWeeklyInvoices.cshtml", model);
+        }
+
+
+        public PartialViewResult GetWeeklyInvoicesEvent()
+        {
+            var model = new GenerateWeeklyInvoicesViewModel();
+            {
+
+            };
+
+            return PartialView("~/Views/Admin/Home/_generateWeeklyInvoices.cshtml", model);
+        }
         [HandleAjaxException]
         [HttpPost]
         [AllowAnonymous]

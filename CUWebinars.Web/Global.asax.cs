@@ -30,6 +30,7 @@ using AutoMapper;
 using ClaimTypes = System.IdentityModel.Claims.ClaimTypes;
 using System.IdentityModel.Services;
 using System.IdentityModel.Tokens;
+using GemBox.Document;
 
 namespace CUWebinars.Web
 {
@@ -50,6 +51,7 @@ namespace CUWebinars.Web
             // Clears all previously registered view engines.
             ViewEngines.Engines.Clear();
 
+            ComponentInfo.SetLicense("DUZ7-YWDS-BDTM-7Z5I");
             // Registers our Razor C# specific view engine.
             ViewEngines.Engines.Add(new RazorViewEngine() { FileExtensions = new string[] { "cshtml" } });
 

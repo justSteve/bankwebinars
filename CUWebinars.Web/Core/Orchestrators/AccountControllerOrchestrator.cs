@@ -569,6 +569,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 var rowFoundClaim = false;
                 foreach (var claim in myClaims)
                 {
+
+                    //are you seeing intellisense errors on the next 2 lines?
                     var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.ToString());
                     if (thisClaim.OnDemandCode == myRow.OnDemandCode)
                     {

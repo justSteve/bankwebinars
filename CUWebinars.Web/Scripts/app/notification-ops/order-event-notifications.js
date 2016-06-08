@@ -1,6 +1,7 @@
 ﻿var adhocNotificationForm,
     failedScreenMessage,
     getAdhocEventsHtmlButton,
+    generateWeeklyInvoicesHtmlButton,
     noOrderScreenMessage,
     noOrdersScreenMessage,
     getRecipientsButton,
@@ -8,6 +9,7 @@
     resendOrderConfirmationUrl,
     selectedUpcomingWebinarId,
     sendAdhocEventUrl,
+    generateWeeklyInvoicesEventUrl,
     sendConnectionInfoUrl,
     sendOrderShippedUrl,
     sendRecordingPostedUrl,
@@ -22,12 +24,14 @@ $(function () {
     //var toastLogger = new Common.Logger(); // for toast notifications
 
     getAdhocEventsHtmlButton = $('#GetAdhocEventsHtmlButton');
+    generateWeeklyInvoicesHtmlButton = $('#GenerateWeeklyInvoicesHtmlButton');
 
     failedScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-information">&nbsp;&nbsp;Event Firing Has Failed</span>';
     noOrdersScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-information">&nbsp;&nbsp;There were no orders for that webinar</span>';
     noOrderScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-information">&nbsp;&nbsp;There is no order which matches that Order Id</span>';
     successScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-success">&nbsp;The Orders have been sent.</span>';
     sendAdhocEventUrl = '/Admin/SendAdhocEvent';
+    generateWeeklyInvoicesEventUrl = '/Admin/GenerateWeeklyInvoicesEvent';
     sendConnectionInfoUrl = '/Admin/SendConnectionInfo';
     sendReminderUrl = '/Admin/SendReminder';
     sendRecordingPostedUrl = '/Admin/SendRecordingPosted';
@@ -42,7 +46,7 @@ $(function () {
         eventArgs.preventDefault();
 
         $('#OrdersMenuHeader').after('<i id="getHtmlSpinner" class="icon-spinner icon-spin"></i>');
-        
+
         $('#InputFormFields').empty().load(resendConnectionInfoUrl, function () {
 
             $('#ResendConnectionInfoButton').on('click', function () {
@@ -100,9 +104,9 @@ $(function () {
         eventArgs.preventDefault();
 
         $('#OrdersMenuHeader').after('<i id="getHtmlSpinner" class="icon-spinner icon-spin"></i>');
-        
+
         $('#InputFormFields').empty().load(sendRecordingPostedUrl, function () {
-        //$('#InputFormFields').empty().load(resendConnectionInfoUrl, function () {
+            //$('#InputFormFields').empty().load(resendConnectionInfoUrl, function () {
 
             $('#ResendPostEventMaterialButton').on('click', function () {
 
@@ -148,13 +152,13 @@ $(function () {
         });
 
     });
-            
+
     $('#GetResendOrderConfirmationHtmlButton').on('click', function (eventArgs) {
 
         eventArgs.preventDefault();
 
         $('#OrdersMenuHeader').after('<i id="getHtmlSpinner" class="icon-spinner icon-spin"></i>');
-        
+
         $('#InputFormFields').empty().load(resendOrderConfirmationUrl, function () {
 
             $('#ResendOrderConfirmationButton').on('click', function () {
@@ -180,10 +184,10 @@ $(function () {
                     url: resendOrderConfirmationUrl,
                     dataType: constants.JsonDataType,
                     data: JSON.stringify(payload),
-                    beforeSend: function() {
+                    beforeSend: function () {
                         $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
                     }
-                }).done(function(result) {
+                }).done(function (result) {
 
                     if (result.Result === 'Success') {
                         $('#InputFormFields').append(successScreenMessage);
@@ -192,9 +196,9 @@ $(function () {
                     }
                     $('#spinnerLabel').remove();
                     //Rollbar.info({ 'oen-#4': { 'result': result }});
-                }).fail(function() {
+                }).fail(function () {
                     //Rollbar.error({ 'oen-#5': { 'fail-result': 'no data' } });
-                }).always(function() {
+                }).always(function () {
                     //$('#loadingSpinner').remove();
                 });
             });
@@ -202,13 +206,13 @@ $(function () {
             $('#getHtmlSpinner').remove();
         });
 
-       
+
     });
 
     getAdhocEventsHtmlButton.on('click', function (eventArgs) {
 
         eventArgs.preventDefault();
-        
+
         $('#InputFormFields').empty().load(sendAdhocEventUrl, function () {
             $('#RegTypesCheckBoxes').hide();
             adhocNotificationForm = $('#AdhocNotificationForm');
@@ -287,7 +291,7 @@ $(function () {
                             regTypesCheckBoxesDiv.append('<textarea cols="40" data-val="true" data-val-required="The NotificationBody field is required." id="NotificationBody" name="NotificationBody" rows="2" placeholder="Enter the body of the notification" style="width:100%;margin-top:10px;clear:left"></textarea>');
                             regTypesCheckBoxesDiv.append('<button id="SendNotificationButton" class="btn btn-primary" style="margin-top:10px;">Send Notification</button>');
 
-                            $('#SendNotificationButton').on('click', function(e) {
+                            $('#SendNotificationButton').on('click', function (e) {
 
                                 e.preventDefault();
 
@@ -348,16 +352,64 @@ $(function () {
         });
     });
 
-    
+
+    generateWeeklyInvoicesHtmlButton.on('click', function (eventArgs) {
+
+        eventArgs.preventDefault();
+
+        $('#InputFormFields').empty().load("/admin/GetWeeklyInvoicesEvent", function () {
+
+
+            submitStartDate.on('click', function (args) {
+                selectedUpcomingWebinarId = $(this).val();
+
+                var payload = { startDate: $("startDate").val() };
+
+                $.ajax({
+                    type: 'POST',
+                    contentType: constants.JsonContentType,
+                    cache: false,
+                    url: sendAdhocEventUrl,
+                    dataType: constants.JsonDataType,
+                    data: JSON.stringify({ webinarId: generateWeeklyInvoicesEventUrl }),
+                    beforeSend: function () {
+                        // this is where we append a loading image
+                    }
+                }).done(function (data) {
+
+                    // successful request; do something with the data
+                    regTypesCheckBoxesDiv = $('#RegTypesCheckBoxes').find('.controls');
+
+                    $.each(data, function (idx, value) {
+                        regTypesCheckBoxesDiv.append('<label class="checkbox-inline"><input type="checkbox" id="inlineCheckbox_' + idx + '" value="' + value["Value"] + '">' + value["Text"] + '</label>');
+                    });
+
+                    regTypesCheckBoxesDiv.append('<button id="GetRecipientsButton" class="btn" style="margin-top:10px;">Get Recipients</button>');
+                    getRecipientsButton = $('#GetRecipientsButton');
+
+                    //Rollbar.info({ 'oen-#7': { 'result': data } });
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    // failed request; give feedback to user
+                    //Rollbar.error({ 'oen-#14': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
+                    //Rollbar.error({ 'oen-#15': { 'errorThrown': errorThrown } });
+
+                }).always(function () {
+
+                });
+            });
+        });
+    });
+
+
     $('#SendShippedOrderNotificationButton').on('click', function (evtArgs) {
 
         evtArgs.preventDefault();
 
         $('#OrdersMenuHeader').after('<i id="getHtmlSpinner" class="icon-spinner icon-spin"></i>');
-        
+
         $('#InputFormFields').empty().load(sendOrderShippedUrl, function () {
 
-            var selectedOrderId = $('#SelectedOrderId'); 
+            var selectedOrderId = $('#SelectedOrderId');
 
             $('#GetSendShippedOrderNotificationButton').on('click', function (eventArgs) {
 
@@ -380,7 +432,7 @@ $(function () {
                     dataType: constants.JsonDataType,
                     data: JSON.stringify({ orderId: payload }),
                     beforeSend: function () {
-                        
+
                     }
                 }).done(function (result) {
 
@@ -395,7 +447,7 @@ $(function () {
                 }).fail(function (jqXHR, textStatus, errorThrown) {
                     labelCheckRemove();
                     $('#InputFormFields').append(failedScreenMessage);
-                    
+
                     //Rollbar.error({ 'oen-#12': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
                     //Rollbar.error({ 'oen-#13': { 'errorThrown': errorThrown } });
                 }).always(function () {
@@ -423,7 +475,7 @@ $(function () {
 
 
                 $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-                
+
                 var that = this;
 
                 var url = '/Admin/PreviewShippedOrder/' + selectedOrderIdVal;
@@ -434,7 +486,7 @@ $(function () {
                         backdrop: 'static',
                         show: true
                     };
-                
+
                 $.get(url, function (data) {
                     $('#emailContent').html(data);
                     $('#loadingSpinner').remove();
@@ -525,12 +577,12 @@ $(function () {
             var webinarsDropdownList = $('#SelectedWebinarId');
 
             $('#SendConnectionInfoRecipientsButton').on('click', function (eventArgs) {
-                
+
                 var webinarsDropdownListVal = webinarsDropdownList.val();
                 var payload = { webinarId: webinarsDropdownListVal };
 
                 //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-                
+
                 //var logStartOperation = toastLogger.getLogFn('SendConnectionInfo');
                 //logStartOperation("Sending ConnectionInfo", null, true);
 
@@ -678,16 +730,17 @@ $(function () {
     });
 
     $('#GetSendRecordingPostedEventHtmlButton').on('click', function (eventArgs) {
+        
         eventArgs.preventDefault();
 
         $('#OrdersMenuHeader').after('<i id="getHtmlSpinner" class="icon-spinner icon-spin"></i>');
-        
+
         $('#InputFormFields').empty().load(sendRecordingPostedUrl, function () {
 
             var webinarsDropdownList = $('#SelectedWebinarId');
-            
+
             $('#SendRecordingPostedButton').on('click', function (eventArgs) {
-                
+
                 var webinarsDropdownListVal = webinarsDropdownList.val();
                 var payload = { webinarId: webinarsDropdownListVal };
 
@@ -712,7 +765,7 @@ $(function () {
                     } else if (result.Result === 'No Orders to send for that webinar') {
                         $('#InputFormFields').append(noOrdersScreenMessage);
                     }
-                    
+
 
                 }).fail(function (jqXHR, textStatus, errorThrown) {
                     labelCheckRemove();
@@ -831,10 +884,10 @@ $(function () {
 
             $('#getHtmlSpinner').remove();
         });
-        
+
     });
 
-    var labelCheckRemove = function() {
+    var labelCheckRemove = function () {
         if ($('#ScreenMessageSpan').length > 0) {
             $('#ScreenMessageSpan').siblings('br').remove();
             $('#ScreenMessageSpan').remove();

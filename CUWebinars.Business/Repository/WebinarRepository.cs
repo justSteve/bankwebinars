@@ -345,6 +345,13 @@ namespace CUWebinars.Business.Repository
 
         }
 
+        public IList<Webinar> GetWebinarsForWeeklyInvoice(DateTime startDate)
+        {
+
+            var endDate = startDate.AddDays(7);
+            return ((TTSWebinarsContext)db).Webinars.Where(w => w.Date > startDate && w.Date < endDate).ToList();
+        }
+
         public IQueryable<Order> GetOrdersByWebinar(int webinarId)
         {
             return ((TTSWebinarsContext)db).Orders
