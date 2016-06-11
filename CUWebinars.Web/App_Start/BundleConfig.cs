@@ -137,6 +137,29 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/webinar/manage-webinar-from-details.js"
                 ));
 
+            // from here: http://wijmo.com/docs/wijmo/EditorDependencies.html
+            bundles.Add(new ScriptBundle("~/bundles/wijmo-editor-scripts").Include(
+                "~/Scripts/jquery-1.11.1.js",
+                "~/Scripts/jquery-ui-1.11.0.custom.min.js",
+                "~/Scripts/jquery-ui-1.11.1.js",
+                "~/scripts/wijmoeditor/jquery.mousewheel.js",
+                "~/scripts/wijmoeditor/jquery.bgiframe.js",
+                "~/scripts/wijmoeditor/jquery.cookie.js",
+                "~/scripts/wijmoeditor/globalize.min.js",
+                "~/scripts/wijmoeditor/jquery.wijmo.wijutil.js",
+                "~/scripts/wijmoeditor/jquery.wijmo.wijtouchutil.js",
+                "~/scripts/wijmoeditor/jquery.wijmo.widget.js",
+                "~/scripts/wijmoeditor/jquery.wijmo.wijsplitter.js",
+                "~/scripts/wijmoeditor/jquery.wijmo.wijdialog.js",
+                "~/scripts/wijmoeditor/jquery.wijmo.wijsuperpanel.js",
+                "~/scripts/wijmoeditor/jquery.wijmo.wijtabs.js",
+                "~/scripts/wijmoeditor/jquery.wijmo.wijmenu.js",
+                "~/scripts/wijmoeditor/jquery.wijmo.wijribbon.js",
+                "~/scripts/wijmoeditor/jquery.wijmo.wijeditor.js",
+                // "~/scripts/wijmoeditor/jquery.wijmo-pro.all.3.20161.90.js", // seems like it should work but has an error... and it's HUGE
+                "~/scripts/app/admin/promo-generator.js"
+                ));
+
             bundles.Add(new ScriptBundle("~/bundles/CommonModules").Include(
                 "~/Scripts/app/constants.js",
                 "~/Scripts/toastr.js",
@@ -301,6 +324,23 @@ namespace CUWebinars.Web.App_Start
             bundles.Add(new StyleBundle("~/Content/rich-editor").Include(
                 "~/Scripts/cleditor/jquery.cleditor.css")
                 );
+
+
+            // from here: http://wijmo.com/docs/wijmo/EditorDependencies.html
+            bundles.Add(new StyleBundle("~/bundles/wijmo-editor-styles").Include(
+                "~/scripts/wijmoeditor/themes/arctic/jquery-wijmo.css",
+                "~/scripts/wijmoeditor/bootstrap-wijmo.css",
+                "~/scripts/wijmoeditor/jquery.wijmo.wijutil.css",
+                "~/scripts/wijmoeditor/jquery.wijmo.wijsplitter.css",
+                "~/scripts/wijmoeditor/jquery.wijmo.wijdialog.css",
+                "~/scripts/wijmoeditor/jquery.wijmo.wijsuperpanel.css",
+                "~/scripts/wijmoeditor/jquery.wijmo.wijtabs.css",
+                "~/scripts/wijmoeditor/jquery.wijmo.wijmenu.css",
+                "~/scripts/wijmoeditor/jquery.wijmo.wijribbon.css",
+                "~/scripts/wijmoeditor/jquery.wijmo.wijeditor.css"
+                //"~/scripts/wijmoeditor/jquery.wijmo-pro.all.3.20161.90.min.css"
+                ));
+
 
             bundles.Add(new StyleBundle("~/Content/data-tables").Include(
                 "~/Content/DataTables/css/jquery.dataTables.css",
