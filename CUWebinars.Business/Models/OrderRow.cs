@@ -29,7 +29,6 @@ namespace CUWebinars.Business.Models
         public virtual Order Order { get; set; }
         public virtual Webinar Webinar { get; set; }
         public virtual ICollection<AdditionalLocation> AdditionalLocation { get; set; }
-        
-        
+        public decimal PercentPaid { get; set; }
     }
 }

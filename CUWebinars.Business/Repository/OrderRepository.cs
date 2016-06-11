@@ -803,6 +803,16 @@ namespace CUWebinars.Business.Repository
 
         }
 
+        public int GetNumberOfOrdersPerWebinarByAffiliate(int id, int idAffiliate)
+        {
+            return items.Count(o => o.OrderRows.FirstOrDefault().RowStatus == OrderRowStatus.Active
+                && o.idAffiliate == idAffiliate && (o.OrderStatus == OrderStatus.Submitted
+                || o.OrderStatus == OrderStatus.Paid
+                || o.OrderStatus == OrderStatus.Billed
+                ));
+
+        }
+
         public void RemoveAndDeleteAdditionalLocation(AdditionalLocation deletedAdditionalLocation)
         {
             ((TTSWebinarsContext)db).AdditionalLocation.Remove(deletedAdditionalLocation);

@@ -35,165 +35,170 @@ namespace CUWebinars.Business.Services
             _context = context;
         }
 
-        private void ComputeRoyalty(IList<Order> orders)
+        private AffiliateInvoiceDTO ComputeRoyalty(IList<Order> orders, int idAffiliate, bool generatingWeeklyReport)
         {
-            //Calculate total revenues
-            // saves that calculation to Row.Royalty
+            AffiliateInvoiceDTO invoice = new AffiliateInvoiceDTO();
 
-            //NoCommission = 0,
-            //Sliding4TierNoCCBreak =1,
-            //Sliding4TierPlusCC30 = 5, 
-            //Flat35plusCC30 = 2,
-            //Flat40 = 3,
-            //Flat35 = 4
+            invoice.Affiliate = FindById(idAffiliate);
 
-            //Calculate total commissions
-            foreach (var registration in orders)
+
+            switch (invoice.Affiliate.CommissionModel)
             {
-                switch (registration.Affiliate.CommissionModel)
-                {
-                    case 1: // Sliding4TierNoCCBreak:
-                        int numberOfRegistrations = 0;
-                        foreach (Order order in orders.OrderBy(o => o.OrderDate))
+                case 1: // Sliding4TierNoCCBreak:
+                    int numberOfRegistrations = 0;
+
+                    foreach (Order order in orders.OrderBy(o => o.OrderDate))
+                    {
+                        numberOfRegistrations++;
+                        decimal commissionPercent;
+                        var row = IniInvoice(order, invoice);
+                        if (numberOfRegistrations >= 16)
                         {
-                            OrderRow row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
-                            decimal commissionPercent = 0.0M;
-                            numberOfRegistrations++;
-                            if (numberOfRegistrations >= 16)
-                            {
-                                commissionPercent = 0.45M;
-                            }
-                            else if (numberOfRegistrations >= 11)
-                            {
-                                commissionPercent = 0.4M;
-                            }
-                            else if (numberOfRegistrations >= 6)
-                            {
-                                commissionPercent = 0.35M;
-                            }
-                            else //nonCreditCardPayments < 6
-                            {
-                                commissionPercent = 0.3M;
-                            }
-                            row.Royalty = row.RowPrice * commissionPercent;
-                            //registration.TotalCommissions += row.Royalty;
+                            commissionPercent = 0.45M;
                         }
-                        break;
-
-                    case 3:// CommissionModel.Flat40:
-                        foreach (Order order in orders.OrderBy(o => o.OrderDate))
+                        else if (numberOfRegistrations >= 11)
                         {
-                            OrderRow row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
-                            decimal commissionPercent = 0.0M;
-
                             commissionPercent = 0.4M;
-
-                            row.Royalty = row.RowPrice * commissionPercent;
-                            //registration.TotalCommissions += row.Royalty;
                         }
-                        break;
-                    case 4:// CommissionModel.Flat35:
-                        foreach (Order order in orders.OrderBy(o => o.OrderDate))
+                        else if (numberOfRegistrations >= 6)
                         {
-                            OrderRow row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
-                            decimal commissionPercent = 0.35M;
-
-                            row.Royalty = row.RowPrice * commissionPercent;
-                            //registration.TotalCommissions += row.Royalty;
+                            commissionPercent = 0.35M;
                         }
-                        break;
+                        else //nonCreditCardPayments < 6
+                        {
+                            commissionPercent = 0.3M;
+                        }
 
-                    default:
-                        throw new TTSException("Invalid commission model " +
-                            registration.Affiliate.CommissionModel);
+                        if (order.OrderStatus == OrderStatus.Paid) commissionPercent = 0.3M;
 
-                    //:not currently in use
-                    #region not currently in use
-                    //case 2:// CommissionModel.Flat35plusCC30:
-                    //    foreach (OrderRow row in registration.OrderRows)
-                    //    {
-                    //        decimal commissionPercent = 0.0M;
-                    //        if (row.Order.PaymentType == PaymentType.CreditCard)
-                    //        {
-                    //            commissionPercent = 0.3M;
-                    //        }
-                    //        else
-                    //        {
-                    //            commissionPercent = 0.35M;
-                    //        }
+                        row.Royalty = order.Total * commissionPercent;
+                        row.PercentPaid = commissionPercent;
+                        invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
+                    }
+                    break;
 
-                    //        row.Royalty = row.RowPrice * commissionPercent;
-                    //        registration.TotalCommissions += row.Royalty;
-                    //    }
-                    //    break;
-                    //case 5:// CommissionModel.Sliding4TierPlusCC30:
-                    //    int nonCreditCardPayments = 0;
-                    //    foreach (OrderRow row in registration.OrderRows)
-                    //    {
-                    //        decimal commissionPercent = 0.0M;
-                    //        if (row.Order.PaymentType == 0)
-                    //        {
-                    //            commissionPercent = 0.3M;
-                    //        }
-                    //        else
-                    //        {
-                    //            nonCreditCardPayments++;
-                    //            if (nonCreditCardPayments >= 16)
-                    //            {
-                    //                commissionPercent = 0.45M;
-                    //            }
-                    //            else if (nonCreditCardPayments >= 11)
-                    //            {
-                    //                commissionPercent = 0.4M;
-                    //            }
-                    //            else if (nonCreditCardPayments >= 6)
-                    //            {
-                    //                commissionPercent = 0.35M;
-                    //            }
-                    //            else //nonCreditCardPayments < 6
-                    //            {
-                    //                commissionPercent = 0.3M;
-                    //            }
-                    //        }
-                    //        //if (row.Webinar.IsSubscriptionWebinar)
-                    //        //{
-                    //        //    commissionPercent = 0.35M;
-                    //        //}
-                    //        row.Royalty = row.RowPrice * commissionPercent;
-                    //        registration.TotalCommissions += row.Royalty;
-                    //    }
-                    //    break; 
-                    #endregion
+                case 3: // CommissionModel.Flat40
 
+                    numberOfRegistrations = 0;
+
+                    foreach (Order order in orders.OrderBy(o => o.OrderDate))
+                    {
+                        decimal commissionPercent;
+                        var row = IniInvoice(order, invoice);
+                        commissionPercent = 0.4M;
+
+                        row.Royalty = order.Total * commissionPercent;
+                        //row.Royalty = row.RowPrice * commissionPercent;
+                        row.PercentPaid = commissionPercent;
+                        invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
+                    }
+                    break;
+                case 4: // CommissionModel.Flat35:
+                    foreach (Order order in orders.OrderBy(o => o.OrderDate))
+                    {
+
+                        var row = IniInvoice(order, invoice);
+                        decimal commissionPercent = 0.35M;
+
+                        row.Royalty = order.Total * commissionPercent;
+                        //row.Royalty = row.RowPrice * commissionPercent;
+                        row.PercentPaid = commissionPercent;
+                        invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
+
+                    }
+                    break;
+                case 5: // CommissionModel.Flat25
+
+
+                    foreach (Order order in orders.OrderBy(o => o.OrderDate))
+                    {
+                        decimal commissionPercent = 0.25M;
+
+                        var row = IniInvoice(order, invoice);
+                        row.Royalty = order.Total * commissionPercent;
+                        //row.Royalty = row.RowPrice * commissionPercent;
+                        row.PercentPaid = commissionPercent;
+                        invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
+                    }
+                    break;
+
+                default:
+                    throw new TTSException("Invalid commission model ");
+            }
+
+            if (invoice.Affiliate.BillingModel == "aff")
+            {
+                invoice.TotalNetDue = (invoice.TotalOnBilled + invoice.TotalOnPaid - invoice.TotalDiscounts) - invoice.TotalRoyalties;
+            }
+            if (invoice.Affiliate.BillingModel == "billed")
+            {
+                invoice.TotalNetDue = (invoice.TotalOnBilled - invoice.TotalRoyalties) - (decimal)((double)invoice.TotalOnPaid * .03);
+            }
+            //When we bill:
+            // (TotalOnBilled +  "TotalOnPaid" - TotalDiscount ) - TotalRoyalties = NetDueTTS
+
+            //When Aff Bills
+            //TotalOnBilled -  TotalRoyalties - ( "TotalOnPaid" * .03 )  = NetDueTTS
+
+            return invoice;
+
+
+        }
+
+        private OrderRow IniInvoice(Order order, AffiliateInvoiceDTO invoice)
+        {
+
+            OrderRow row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+            if (row == null) throw new ArgumentNullException("row");
+            if (order.OrderStatus == OrderStatus.Paid)
+            {
+                invoice.TotalOnPaid = invoice.TotalOnPaid + order.Total;
+            }
+            if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed)
+            {
+                invoice.TotalOnBilled = invoice.TotalOnBilled + order.Total;
+                _logger.Info("TotalOnBilled =  " + invoice.TotalOnBilled);
+                order.OrderStatus = OrderStatus.Billed;
+            }
+
+            if (row.Discount != null)
+            {
+                if (row.Discount.PercentOff > 0)
+                {
+                    invoice.TotalDiscounts = invoice.TotalDiscounts + (row.UnitPrice * ((row.Discount.PercentOff) / 100));
+                }
+                if (row.Discount.FlatOff > 0)
+                {
+                    invoice.TotalDiscounts = invoice.TotalDiscounts + row.UnitPrice - row.Discount.FlatOff;
                 }
             }
-
-            _orderRepository.SaveChanges();
-        }
-
-        public virtual IList<AffiliateReportDTO> AffiliateReport(int webinarID)
-        {
-            List<Order> orders = _webinarRepository.GetOrdersByWebinar(webinarID).ToList();
-
-            IList<AffiliateReportDTO> reportData = BuildAffiliateReport(orders, webinarID);
-            return reportData;
+            return row;
         }
 
 
-        public virtual AffiliateInvoiceDTO AffiliateInvoice(int webinarID, int affiliateID)
-        {
-            List<Order> orders = _webinarRepository.GetOrdersByWebinar(webinarID)
-                .Where(o => o.idAffiliate == affiliateID).ToList();
+        //public virtual IList<AffiliateReportDTO> AffiliateReport(int webinarID)
+        //{
+        //    List<Order> orders = _webinarRepository.GetOrdersByWebinar(webinarID).ToList();
+
+        //    IList<AffiliateReportDTO> reportData = BuildAffiliateReport(orders, webinarID);
+        //    return reportData;
+        //}
 
 
-            IList<AffiliateInvoiceDTO> reportData = BuildAffiliateInvoice(orders, webinarID);
-            if (reportData.Count == 0)
-            {
-                return new AffiliateInvoiceDTO { WebinarID = webinarID, Affiliate = FindById(affiliateID) };
-            }
+        //public virtual AffiliateInvoiceDTO AffiliateInvoice(int webinarID, int affiliateID)
+        //{
+        //    List<Order> orders = _webinarRepository.GetOrdersByWebinar(webinarID)
+        //        .Where(o => o.idAffiliate == affiliateID).ToList();
 
-            return reportData[0];
-        }
+
+        //    AffiliateInvoiceDTO reportData = BuildAffiliateInvoice(orders, webinarID, affiliateID);
+        //    if (reportData != null)
+        //    {
+        //        return new AffiliateInvoiceDTO { WebinarID = webinarID, Affiliate = FindById(affiliateID) };
+        //    }
+
+        //    return reportData;
+        //}
 
         public virtual AffiliateReportDTO AffiliateReport(int webinarID, int affiliateID)
         {
@@ -220,15 +225,15 @@ namespace CUWebinars.Business.Services
                 {
                     BuildAffiliateInvoice(orders.Where(o => o.idAffiliate == affiliate.idUserAff
                         && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted)).OrderBy(o => o.OrderDate)
-                        .ToList(), webinarID);
+                        .ToList(), webinarID, affiliate.idUserAff);
                 }
 
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                _logger.ErrorException("BuildAffiliateReport tossed ex: ", ex);
             }
             return orders.Where(o => o.Affiliate != null)
                     .OrderBy(o => o.OrderDate)
@@ -244,22 +249,127 @@ namespace CUWebinars.Business.Services
 
 
 
-        public IList<AffiliateInvoiceDTO> BuildAffiliateInvoice(List<Order> orders, int webinarID)
+        public AffiliateInvoiceDTO BuildAffiliateInvoice(List<Order> orders, int webinarID, int affiliateID)
         {
-            ComputeRoyalty(orders);
+            return ComputeRoyalty(orders, affiliateID, true);
+        }
+        public AffiliateInvoiceDTO BuildAffiliateInvoiceForPostEventOrders(List<Order> orders, int affiliateID)
+        {
 
-            IList<AffiliateInvoiceDTO> reportData = orders.Where(o => o.Affiliate != null)
-                    .OrderBy(o => o.idOrder)
-                    .GroupBy(o => o.Affiliate)
-                    .Select(u => new AffiliateInvoiceDTO()
+            return ComputeRoyaltyForPostEventOrders(orders, affiliateID, true);
+        }
+
+        private AffiliateInvoiceDTO ComputeRoyaltyForPostEventOrders(List<Order> orders, int affiliateId, bool b)
+        {
+            AffiliateInvoiceDTO invoice = new AffiliateInvoiceDTO();
+
+            invoice.Affiliate = FindById(affiliateId);
+
+
+            switch (invoice.Affiliate.CommissionModel)
+            {
+                case 1: // Sliding4TierNoCCBreak:
+                    int numberOfRegistrations = 0;
+
+                    foreach (Order order in orders.OrderBy(o => o.OrderDate))
                     {
-                        WebinarID = webinarID,
-                        Affiliate = u.Key,
-                        Orders = u.ToList<Order>(),
-                    }).ToList();
+                        numberOfRegistrations =
+                            _orderRepository.GetNumberOfOrdersPerWebinarByAffiliate(
+                                order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar,
+                                affiliateId);
+                        decimal commissionPercent;
+                        var row = IniInvoice(order, invoice);
+                        if (numberOfRegistrations >= 16)
+                        {
+                            commissionPercent = 0.45M;
+                        }
+                        else if (numberOfRegistrations >= 11)
+                        {
+                            commissionPercent = 0.4M;
+                        }
+                        else if (numberOfRegistrations >= 6)
+                        {
+                            commissionPercent = 0.35M;
+                        }
+                        else //nonCreditCardPayments < 6
+                        {
+                            commissionPercent = 0.3M;
+                        }
+
+                        if (order.OrderStatus == OrderStatus.Paid) commissionPercent = 0.3M;
+
+                        row.Royalty = order.Total * commissionPercent;
+                        row.PercentPaid = commissionPercent;
+                        invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
+                    }
+                    break;
+
+                case 3: // CommissionModel.Flat40
+
+                    numberOfRegistrations = 0;
+
+                    foreach (Order order in orders.OrderBy(o => o.OrderDate))
+                    {
+                        decimal commissionPercent;
+                        var row = IniInvoice(order, invoice);
+                        commissionPercent = 0.4M;
+
+                        row.Royalty = order.Total * commissionPercent;
+                        //row.Royalty = row.RowPrice * commissionPercent;
+                        row.PercentPaid = commissionPercent;
+                        invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
+                    }
+                    break;
+                case 4: // CommissionModel.Flat35:
+                    foreach (Order order in orders.OrderBy(o => o.OrderDate))
+                    {
+
+                        var row = IniInvoice(order, invoice);
+                        decimal commissionPercent = 0.35M;
+
+                        row.Royalty = order.Total * commissionPercent;
+                        //row.Royalty = row.RowPrice * commissionPercent;
+                        row.PercentPaid = commissionPercent;
+                        invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
+
+                    }
+                    break;
+                case 5: // CommissionModel.Flat25
 
 
-            return reportData;
+                    foreach (Order order in orders.OrderBy(o => o.OrderDate))
+                    {
+                        decimal commissionPercent = 0.25M;
+
+                        var row = IniInvoice(order, invoice);
+                        row.Royalty = order.Total * commissionPercent;
+                        //row.Royalty = row.RowPrice * commissionPercent;
+                        row.PercentPaid = commissionPercent;
+                        invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
+                    }
+                    break;
+
+                default:
+                    throw new TTSException("Invalid commission model ");
+            }
+
+            if (invoice.Affiliate.BillingModel == "aff")
+            {
+                invoice.TotalNetDue = (invoice.TotalOnBilled + invoice.TotalOnPaid - invoice.TotalDiscounts) - invoice.TotalRoyalties;
+            }
+            if (invoice.Affiliate.BillingModel == "billed")
+            {
+                invoice.TotalNetDue = (invoice.TotalOnBilled - invoice.TotalRoyalties) - (decimal)((double)invoice.TotalOnPaid * .03);
+            }
+            //When we bill:
+            // (TotalOnBilled +  "TotalOnPaid" - TotalDiscount ) - TotalRoyalties = NetDueTTS
+
+            //When Aff Bills
+            //TotalOnBilled -  TotalRoyalties - ( "TotalOnPaid" * .03 )  = NetDueTTS
+
+            return invoice;
+
+
         }
 
         public AffiliateInvoiceDTO GetAffiliateInvoice(int idWebinar, string aff)
@@ -275,7 +385,7 @@ namespace CUWebinars.Business.Services
             var orders = _orderRepository.GetOrdersByWebinar(idWebinar).Where(a => a.idAffiliate == idAffiliate).ToList();
             IList<OrderRowModel> rows = new List<OrderRowModel>();
 
-            ComputeRoyalty(orders);
+            ComputeRoyalty(orders, idAffiliate, false);
 
             var ordinalHolder = 0;
             foreach (var order in orders)
@@ -315,13 +425,12 @@ namespace CUWebinars.Business.Services
             {
                 Affiliate = _affiliateRepository.FindById(idAffiliate),
                 AffiliateName = _affiliateRepository.FindById(idAffiliate).DisplayTitle,
-                InoviceDate = DateTime.Now.ToShortDateString(),
-                InvoiceId = "Invoice #: " + idAffiliate + '-' + idWebinar,
+
                 WebinarTitle = webinar.Title,
                 WebinarDate = webinar.Date.ToShortDateString(),
                 WebinarID = webinar.idWebinar,
                 Orders = orders,
-                Rows = rows,
+
                 TotalDiscounts = _totalDiscounts,
                 TotalNetDue = _totalDue,
                 TotalOnBilled = _totalOnBilled,
@@ -383,6 +492,7 @@ namespace CUWebinars.Business.Services
 
             return theseSubscriptions;
         }
+
 
         private string GetRowPercent(int ordinalHolder, byte commissionModel)
         {

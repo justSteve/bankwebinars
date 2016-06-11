@@ -133,7 +133,7 @@ namespace CUWebinars.Business.Repository
                 var titleSearch = stronglyTypedContext.Webinars
                     .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
                     .Include(w => w.Presenter.WebUser)
-                    .Where(w => w.Title.Contains(searchTerm))
+                    .Where(w => w.Title.Contains(searchTerm) && w.Status != WebinarStatus.Archived || w.Status != WebinarStatus.Pending)
                     ;
                 return titleSearch.ToList();
             }
@@ -349,7 +349,7 @@ namespace CUWebinars.Business.Repository
         {
 
             var endDate = startDate.AddDays(7);
-            return ((TTSWebinarsContext)db).Webinars.Where(w => w.Date > startDate && w.Date < endDate).ToList();
+            return ((TTSWebinarsContext)db).Webinars.Where(w => w.Date > startDate && w.Date < endDate && w.Status == WebinarStatus.Recorded).ToList();
         }
 
         public IQueryable<Order> GetOrdersByWebinar(int webinarId)

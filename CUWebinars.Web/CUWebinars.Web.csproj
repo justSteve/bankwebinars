@@ -2215,15 +2215,10 @@
     <Content Include="Content\images\logo_azbankers.png" />
     <Content Include="Content\mergeTemplates\WeeklyInvoice.docx" />
     <Content Include="App_Data\mergeTemplates\WeeklyInvoice1.docx" />
-    <None Include="Properties\PublishProfiles\BankWebinars33 - FTP %282%29.pubxml" />
-    <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev.pubxml" />
-    <None Include="Properties\PublishProfiles\CUWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars33 - Web Deploy.pubxml" />
     <Content Include="Scripts\calendarview.js" />
-    <None Include="Properties\PublishProfiles\devtts - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\devtts - Web Deploy.pubxml" />
     <Content Include="Scripts\DataTables\pdfmake.min.js.map" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
@@ -2502,13 +2497,7 @@
     <None Include="Web.CUWebinars33 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <None Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
     <None Include="Web.devtts - Web Deploy.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>

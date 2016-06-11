@@ -45,6 +45,7 @@ namespace CUWebinars.Business.Repository
         Discount FindDiscountByUser(WebUser currentUser);
         Order GetOrderByIdThin(int idOrder);
         int GetNumberOfOrdersPerWebinar(int id);
+        int GetNumberOfOrdersPerWebinarByAffiliate(int id, int idAffiliate);
         void RemoveAndDeleteAdditionalLocation(AdditionalLocation deletedAdditionalLocation);
         
         IList<int> FindUserIdsByPartialId(int value);
