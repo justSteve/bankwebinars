@@ -328,7 +328,7 @@ namespace CUWebinars.Web.App_Start
 
             // from here: http://wijmo.com/docs/wijmo/EditorDependencies.html
             bundles.Add(new StyleBundle("~/bundles/wijmo-editor-styles").Include(
-                "~/scripts/wijmoeditor/themes/arctic/jquery-wijmo.css",
+                //"~/scripts/wijmoeditor/themes/arctic/jquery-wijmo.css",
                 "~/scripts/wijmoeditor/bootstrap-wijmo.css",
                 "~/scripts/wijmoeditor/jquery.wijmo.wijutil.css",
                 "~/scripts/wijmoeditor/jquery.wijmo.wijsplitter.css",

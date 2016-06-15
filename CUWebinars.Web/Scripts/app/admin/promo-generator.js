@@ -1,10 +1,10 @@
 ﻿$(document).ready(function () {
 
     // event documentation from http://getbootstrap.com/javascript/#tabs
-    $('a[data-toggle="pill"]').on('shown.bs.tab', function (e) { // was "shown.bs.tab" but that stopped firing?? switch to show.bs.tab, it worked, switch back to shown and *that* worked??
+    $('a[data-toggle="pill"]').on('shown', function (e) { // was "shown.bs.tab" but that stopped firing?? switch to show.bs.tab, it worked, switch back to shown and *that* worked??
         //e.target // newly activated tab/pill
         //e.relatedTarget // previous active tab/pill
-
+        alert("hit");
         var currentAffId = $(e.target).data("link-affid");
         var formerAffId = $(e.relatedTarget).data("link-affid");
         
@@ -116,7 +116,6 @@ function GetCurrentEditorCopy()
 function GetAffiliateCopy(affiliateId, isActive) {
 
     var currCopy = "";
-
     // is this affiliate currently showing?  if so, grab Editor value rather than hidden text area
     if (isActive)
         currCopy = $.trim($("#editorTA").wijeditor("getText"));

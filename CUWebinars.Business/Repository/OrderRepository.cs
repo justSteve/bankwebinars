@@ -805,11 +805,13 @@ namespace CUWebinars.Business.Repository
 
         public int GetNumberOfOrdersPerWebinarByAffiliate(int id, int idAffiliate)
         {
-            return items.Count(o => o.OrderRows.FirstOrDefault().RowStatus == OrderRowStatus.Active
-                && o.idAffiliate == idAffiliate && (o.OrderStatus == OrderStatus.Submitted
+            return items.Where(o => o.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                .Webinar.idWebinar == id
+                && o.Affiliate.idUserAff == idAffiliate
+                && (o.OrderStatus == OrderStatus.Submitted
                 || o.OrderStatus == OrderStatus.Paid
                 || o.OrderStatus == OrderStatus.Billed
-                ));
+                )).ToList().Count;
 
         }
 

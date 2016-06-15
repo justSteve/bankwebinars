@@ -436,11 +436,11 @@ $(document).ready(function () {
         e.preventDefault();
 
         ns.updateAdditionalLocationsForm.submit();
-        
+
     };
 
     ns.submitUpdateAddLocsForm = function (e) {
-        
+
         var $item = $(e);
         var form = $item.parents("form");
         //var $form = $(form);
@@ -627,7 +627,7 @@ $(document).ready(function () {
 
     ns.changeUserOrder = function (e) {
         e.preventDefault();
-        alert("hit");
+
         var self = this;
 
         var url = $('#frmSetUserAssignedToOrder').attr('action');
@@ -649,10 +649,11 @@ $(document).ready(function () {
         }).done(function (data) {
 
             if (data.Result === 'Success') {
-                $('#editUserLink').attr('href', data.NewHref);
-                $('#UserEmail').val(data.Email);
-                $('#FullName').val(data.FullName);
-                $('#Phone ').val(data.Phone);
+                $('#SetUserAssignedToOrder-modal-body').html("<p>" + data.message + "</p>");
+                $('#changeUserOrdersButton').hide();
+                $('#changeUserOrderButton').hide();
+            } else {
+                $("<p>" + data.Reason + "</p>").insertAfter($('#targetUserEmail'));
             }
             $('#changeUserSpinner').remove();
             $(self).removeAttr('disabled');
@@ -685,10 +686,15 @@ $(document).ready(function () {
         }).done(function (data) {
 
             if (data.Result === 'Success') {
-                $('#editUserLink').attr('href', data.NewHref);
-                $('#UserEmail').val(data.Email);
-                $('#FullName').val(data.FullName);
-                $('#Phone ').val(data.Phone);
+                alert(data.message);
+                $('#SetUserAssignedToOrder-modal-body').html("<p>" + data.message + "</p>");
+                $('#changeUserOrdersButton').hide();
+                $('#changeUserOrderButton').hide();
+
+            } else {
+
+
+                $("<p>" + data.Reason + "</p>").insertAfter($('#targetUserEmail'));
             }
             $('#changeUserSpinner').remove();
             $(self).removeAttr('disabled');

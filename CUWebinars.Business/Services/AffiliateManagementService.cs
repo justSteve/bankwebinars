@@ -52,21 +52,38 @@ namespace CUWebinars.Business.Services
                         numberOfRegistrations++;
                         decimal commissionPercent;
                         var row = IniInvoice(order, invoice);
-                        if (numberOfRegistrations >= 16)
+
+                        //if (numberOfRegistrations >= 16)
+                        //{
+                        //    commissionPercent = 0.45M;
+                        //}
+                        //else if (numberOfRegistrations >= 11)
+                        //{
+                        //    commissionPercent = 0.4M;
+                        //}
+                        //else if (numberOfRegistrations >= 6)
+                        //{
+                        //    commissionPercent = 0.35M;
+                        //}
+                        //else //nonCreditCardPayments < 6
+                        //{
+                        //    commissionPercent = 0.3M;
+                        //}
+                        if (numberOfRegistrations < 7)
                         {
-                            commissionPercent = 0.45M;
+                            commissionPercent = 0.3M;
                         }
-                        else if (numberOfRegistrations >= 11)
-                        {
-                            commissionPercent = 0.4M;
-                        }
-                        else if (numberOfRegistrations >= 6)
+                        else if (numberOfRegistrations < 12)
                         {
                             commissionPercent = 0.35M;
                         }
-                        else //nonCreditCardPayments < 6
+                        else if (numberOfRegistrations < 17)
                         {
-                            commissionPercent = 0.3M;
+                            commissionPercent = 0.4M;
+                        }
+                        else //
+                        {
+                            commissionPercent = 0.45M;
                         }
 
                         if (order.OrderStatus == OrderStatus.Paid) commissionPercent = 0.3M;
@@ -166,10 +183,13 @@ namespace CUWebinars.Business.Services
                 if (row.Discount.PercentOff > 0)
                 {
                     invoice.TotalDiscounts = invoice.TotalDiscounts + (row.UnitPrice * ((row.Discount.PercentOff) / 100));
+                    _logger.Info(invoice.Affiliate.idUserAff + "-" + row.idOrder + "-" + (row.UnitPrice * ((row.Discount.PercentOff) / 100)));
+
                 }
                 if (row.Discount.FlatOff > 0)
                 {
                     invoice.TotalDiscounts = invoice.TotalDiscounts + row.UnitPrice - row.Discount.FlatOff;
+                    _logger.Info(invoice.Affiliate.idUserAff + "-" + row.idOrder + "-" + (row.UnitPrice * ((row.Discount.PercentOff) / 100)));
                 }
             }
             return row;
@@ -194,7 +214,7 @@ namespace CUWebinars.Business.Services
         //    AffiliateInvoiceDTO reportData = BuildAffiliateInvoice(orders, webinarID, affiliateID);
         //    if (reportData != null)
         //    {
-        //        return new AffiliateInvoiceDTO { WebinarID = webinarID, Affiliate = FindById(affiliateID) };
+        //        return new AffiliateInvoiceDTO { idWebinar = webinarID, Affiliate = FindById(affiliateID) };
         //    }
 
         //    return reportData;
@@ -265,11 +285,11 @@ namespace CUWebinars.Business.Services
 
             invoice.Affiliate = FindById(affiliateId);
 
+            int numberOfRegistrations = 0;
 
             switch (invoice.Affiliate.CommissionModel)
             {
                 case 1: // Sliding4TierNoCCBreak:
-                    int numberOfRegistrations = 0;
 
                     foreach (Order order in orders.OrderBy(o => o.OrderDate))
                     {
@@ -279,22 +299,24 @@ namespace CUWebinars.Business.Services
                                 affiliateId);
                         decimal commissionPercent;
                         var row = IniInvoice(order, invoice);
-                        if (numberOfRegistrations >= 16)
-                        {
-                            commissionPercent = 0.45M;
-                        }
-                        else if (numberOfRegistrations >= 11)
-                        {
-                            commissionPercent = 0.4M;
-                        }
-                        else if (numberOfRegistrations >= 6)
-                        {
-                            commissionPercent = 0.35M;
-                        }
-                        else //nonCreditCardPayments < 6
+
+                        if (numberOfRegistrations < 7)
                         {
                             commissionPercent = 0.3M;
                         }
+                        else if (numberOfRegistrations < 12)
+                        {
+                            commissionPercent = 0.35M;
+                        }
+                        else if (numberOfRegistrations < 17)
+                        {
+                            commissionPercent = 0.4M;
+                        }
+                        else //
+                        {
+                            commissionPercent = 0.45M;
+                        }
+
 
                         if (order.OrderStatus == OrderStatus.Paid) commissionPercent = 0.3M;
 
@@ -366,7 +388,10 @@ namespace CUWebinars.Business.Services
 
             //When Aff Bills
             //TotalOnBilled -  TotalRoyalties - ( "TotalOnPaid" * .03 )  = NetDueTTS
-
+            
+            
+            //temply stored so the line item can show total being calculated
+            invoice.InvoiceBody = numberOfRegistrations.ToString();
             return invoice;
 
 
