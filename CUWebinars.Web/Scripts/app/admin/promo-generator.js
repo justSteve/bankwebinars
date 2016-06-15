@@ -1,16 +1,25 @@
-﻿$(document).ready(function () {
+﻿// refactoring to be a little more basic as I had trouble with the reliability of the bootstrap tab events (1 of 3)
+var currentAffId = 0; // initial tab is the master (0)
+var formerAffId = 0;
 
+$(document).ready(function () {
+
+    // refactoring to be a little more basic as I had trouble with the reliability of the bootstrap tab events (2 of 3)
     // event documentation from http://getbootstrap.com/javascript/#tabs
-    $('a[data-toggle="pill"]').on('shown', function (e) { // was "shown.bs.tab" but that stopped firing?? switch to show.bs.tab, it worked, switch back to shown and *that* worked??
+    //$('a[data-toggle="pill"]').on('shown.bs.tab', function (e) { // was "shown.bs.tab" but that stopped firing?? switch to show.bs.tab, it worked, switch back to shown and *that* worked??
+    $('a[data-toggle="pill"]').on('click', function (e) { // handle click event instead of built-in "tab shown" event
         //e.target // newly activated tab/pill
         //e.relatedTarget // previous active tab/pill
-        alert("hit");
-        var currentAffId = $(e.target).data("link-affid");
-        var formerAffId = $(e.relatedTarget).data("link-affid");
+
+        // refactoring to be a little more basic as I had trouble with the reliability of the bootstrap tab events (3 of 3)
+        //var currentAffId = $(e.target).data("link-affid");
+        //var formerAffId = $(e.relatedTarget).data("link-affid");
+        formerAffId = currentAffId;
+        currentAffId = $(this).data("link-affid");
         
         var $editorTA = $("#editorTA");
 
-        // start by retrieving current
+        // start by retrieving what is in the editor now
         var currCopy = $.trim($editorTA.wijeditor("getText"));
 
         // if it starts with our special comment (<!--WIJ-NULL-->) remove that
