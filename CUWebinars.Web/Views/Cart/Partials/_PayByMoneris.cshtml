@@ -6,6 +6,28 @@
 
 
 }
+<script type="text/javascript" language="javascript">
+    $(function() {
+        var idOrder = @Model.idOrder;
+        var updatedTotal = @Model.Total;
+        $('#PayByCCModal').on('show', function () {
+
+            $.ajax({
+                
+                datatype: "text/plain",
+                type: "GET",
+                url: '/cart/IniMonerisModal?idOrder='+idOrder,
+                cache: false,
+                success: function (data) {
+                 $("input[name='amount']").val( data.total);
+                 $("input[name='li_price1']").val( data.total);
+                }
+            });
+        });
+        //
+    });
+
+</script>
 @{
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     var TaxAmount = Convert.ToDecimal(ViewBag.TaxAmount);

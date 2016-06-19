@@ -608,7 +608,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 if (ReferenceEquals(null, webUser))
                 {
                     return
-                        Json(new { Result = WebUiConstants.Fail, Reason = targetUserEmail +  " was not found." });
+                        Json(new { Result = WebUiConstants.Fail, Reason = targetUserEmail + " was not found." });
                 }
 
                 Debug.Assert(webUser.Addresses.Single(a => a.AddressType == WebUiConstants.BillingAddress) != null,
@@ -1195,6 +1195,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(new { Error = WebUiConstants.NullValueParameter });
         }
 
+
         public ActionResult GetOrdersByEmailTypeahead(string email)
         {
             if (!string.IsNullOrWhiteSpace(email))
@@ -1699,46 +1700,6 @@ namespace CUWebinars.Web.Controllers.Admin
             filename = string.Concat(filenameBase, ".txt");
             byte[] byteArrayTXT = Encoding.UTF8.GetBytes(eventBodyText.Replace("<br>", "\r\n")); // decidedly NOT robust, yet!!
             ret += UploadToAzure(container, filename, byteArrayTXT, overwriteFlag);
-
-            return Json(new
-            {
-                result = (string.IsNullOrWhiteSpace(ret) ? WebUiConstants.Success : WebUiConstants.Fail),
-                returnMessage = ret
-            });
-        }
-        [ValidateInput(false)]
-        [HttpPost]
-        public JsonResult WriteWeeklyAffiliateReportsToStorage(AffiliateInvoiceDTO model)
-        {
-            string eventBodyText = System.Uri.UnescapeDataString(model.InvoiceBody);
-
-            // refactor??? don't want to create a new connection to azure for each file though...
-
-            // based on CUMailer\CUWebinars.Azure.OrderConfirmNotifier\CUWebinars.Azure.OrderConfirmNotifier\OrderConfirmationHandler.cs
-
-            // almost certainly should be extracted to a function in the Business project
-            var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName, _globalConfig.StorageAccessKey);
-            var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
-            CloudBlobClient blobClient = cloudStorageAccount.CreateCloudBlobClient();
-
-            // Retrieve reference to a previously created container.
-            CloudBlobContainer container = blobClient.GetContainerReference("affiliateinvoices");
-            container.CreateIfNotExists();
-
-            //string webinarTitleEnc = Server.UrlEncode(model.Webinar.Title);
-            string strAffId = model.Affiliate.idUserAff.ToString();
-            string filenameBase = string.Concat(strAffId, "/", model.InvoiceID);
-
-            // Create the blobs
-            string filename = "";
-            string ret = "";
-            bool overwriteFlag = false; // do we want to think of a way to let the user tell us we should (or should not) overwrite?
-
-            // html file
-            filename = string.Concat(filenameBase, ".pdf");
-            byte[] byteArrayHTML = Encoding.UTF8.GetBytes(eventBodyText); // "full" markup from WIJMO editor, may want to add doctype and body tags...
-            ret += UploadToAzure(container, filename, byteArrayHTML, overwriteFlag);
-
 
             return Json(new
             {
@@ -2875,26 +2836,31 @@ namespace CUWebinars.Web.Controllers.Admin
             var endDate = startDate.AddDays(7);
 
             IList<Webinar> webinars = _webinarManagementService.GetWebinarsForWeeklyInvoices(startDate);
-            
+
             var affiliates = _affiliateManagementService.GetAffiliates();
-            
+
             foreach (var affiliate in affiliates)
             {
                 int totalNumberOrders = 0;
-                int totalNumberDiscounts = 0;
+                int totalNumberDiscounts = 1;
                 AffiliateInvoiceDTO invoice = new AffiliateInvoiceDTO
                 {
                     Affiliate = affiliate,
                     InvoiceID = weekNumber + "-" + affiliate.idUserAff,
                     RoyaltyTier = affiliate.CommissionModel
-                    
+
                 };
                 StringBuilder discountNotes = new StringBuilder();
 
-                var hadOrder = false;
+                //had webinar orders or postevent orders ini
+                var hadWOrder = false;
+                var hadPOrder = false;
+                var hadDiscount = false;
+
                 int thisAffiliate = affiliate.idUserAff;
 
-                DocumentModel document = DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoice1.docx"));
+                DocumentModel document =
+                    DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoice1.docx"));
 
 
                 decimal GrandTotalOnBilled = 0;
@@ -2902,7 +2868,14 @@ namespace CUWebinars.Web.Controllers.Admin
                 decimal GrandTotalDiscounts = 0;
                 decimal GrandTotalRoyalties = 0;
                 decimal GrandTotalNetDue = 0;
-                var dataSource = new {RoyaltyTier = invoice.RoyaltyTier, invoice.InvoiceID , DateRange = startDate.ToShortDateString() + " - " + endDate.ToShortDateString(), DisplayTitle = affiliate.DisplayTitle };
+                var dataSource =
+                    new
+                    {
+                        RoyaltyTier = invoice.RoyaltyTier,
+                        invoice.InvoiceID,
+                        DateRange = startDate.ToShortDateString() + " - " + endDate.ToShortDateString(),
+                        DisplayTitle = affiliate.DisplayTitle
+                    };
 
                 document.MailMerge.Execute(dataSource);
 
@@ -2913,12 +2886,12 @@ namespace CUWebinars.Web.Controllers.Admin
                 DataTable webinarsPerAff = new DataTable("Webinars");
 
                 webinarsPerAff.Columns.Add("Title", typeof(string));
-                webinarsPerAff.Columns.Add("WebinarDate", typeof(DateTime));
-                webinarsPerAff.Columns.Add("TotalOnBilled", typeof(double));
-                webinarsPerAff.Columns.Add("TotalOnPaid", typeof(double));
-                webinarsPerAff.Columns.Add("TotalDiscounts", typeof(double));
-                webinarsPerAff.Columns.Add("TotalRoyalties", typeof(double));
-                webinarsPerAff.Columns.Add("TotalNetDue", typeof(double));
+                webinarsPerAff.Columns.Add("WebinarDate", typeof(string));
+                webinarsPerAff.Columns.Add("TotalOnBilled", typeof(string));
+                webinarsPerAff.Columns.Add("TotalOnPaid", typeof(string));
+                webinarsPerAff.Columns.Add("TotalDiscounts", typeof(string));
+                webinarsPerAff.Columns.Add("TotalRoyalties", typeof(string));
+                webinarsPerAff.Columns.Add("TotalNetDue", typeof(string));
                 webinarsPerAff.Columns.Add("Id", typeof(int));
                 ds.Tables.Add(webinarsPerAff);
 
@@ -2926,11 +2899,11 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 postEventOrders.Columns.Add("Title", typeof(string));
                 postEventOrders.Columns.Add("WebinarDate", typeof(DateTime));
-                postEventOrders.Columns.Add("TotalOnBilled", typeof(double));
-                postEventOrders.Columns.Add("TotalOnPaid", typeof(double));
-                postEventOrders.Columns.Add("TotalDiscounts", typeof(double));
-                postEventOrders.Columns.Add("TotalRoyalties", typeof(double));
-                postEventOrders.Columns.Add("TotalNetDue", typeof(double));
+                postEventOrders.Columns.Add("TotalOnBilled", typeof(string));
+                postEventOrders.Columns.Add("TotalOnPaid", typeof(string));
+                postEventOrders.Columns.Add("TotalDiscounts", typeof(string));
+                postEventOrders.Columns.Add("TotalRoyalties", typeof(string));
+                postEventOrders.Columns.Add("TotalNetDue", typeof(string));
                 postEventOrders.Columns.Add("Id", typeof(int));
                 ds1.Tables.Add(postEventOrders);
 
@@ -2940,10 +2913,10 @@ namespace CUWebinars.Web.Controllers.Admin
                 ordersPerAff.Columns.Add("RowNumber", typeof(int));
                 ordersPerAff.Columns.Add("Name", typeof(string));
                 ordersPerAff.Columns.Add("Email", typeof(string));
-                ordersPerAff.Columns.Add("Institution", typeof(string));
+                ordersPerAff.Columns.Add("Address", typeof(string));
                 ordersPerAff.Columns.Add("Price", typeof(string));
-                ordersPerAff.Columns.Add("Percent", typeof(double));
-                ordersPerAff.Columns.Add("Royalty", typeof(double));
+                ordersPerAff.Columns.Add("Percent", typeof(string));
+                ordersPerAff.Columns.Add("Royalty", typeof(string));
                 ordersPerAff.Columns.Add("Status", typeof(string));
                 ordersPerAff.Columns.Add("OrderID", typeof(int));
                 ordersPerAff.Columns.Add("Id", typeof(int));
@@ -2956,10 +2929,10 @@ namespace CUWebinars.Web.Controllers.Admin
                 pOrders.Columns.Add("RowNumber", typeof(int));
                 pOrders.Columns.Add("Name", typeof(string));
                 pOrders.Columns.Add("Email", typeof(string));
-                pOrders.Columns.Add("Institution", typeof(string));
+                pOrders.Columns.Add("Address", typeof(string));
                 pOrders.Columns.Add("Price", typeof(string));
-                pOrders.Columns.Add("Percent", typeof(double));
-                pOrders.Columns.Add("Royalty", typeof(double));
+                pOrders.Columns.Add("Percent", typeof(string));
+                pOrders.Columns.Add("Royalty", typeof(string));
                 pOrders.Columns.Add("Status", typeof(string));
                 pOrders.Columns.Add("OrderID", typeof(int));
                 pOrders.Columns.Add("WebinarTitle", typeof(string));
@@ -2969,7 +2942,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 ds.Relations.Add("Orders", webinarsPerAff.Columns["Id"], ordersPerAff.Columns["Id"]);
                 ds1.Relations.Add("pOrders", postEventOrders.Columns["Id"], pOrders.Columns["Id"]);
-                
+
                 foreach (var webinar in webinars)
                 {
                     try
@@ -2980,17 +2953,18 @@ namespace CUWebinars.Web.Controllers.Admin
                                 .ToList();
                         if (theseOrders.Any())
                         {
-                            hadOrder = true;
-                            invoice = _affiliateManagementService.BuildAffiliateInvoice(theseOrders, webinar.idWebinar, thisAffiliate);
+                            hadWOrder = true;
+                            invoice = _affiliateManagementService.BuildAffiliateInvoice(invoice, theseOrders, webinar.idWebinar,
+                                thisAffiliate);
                             int rowNumber = 0;
                             webinarsPerAff.Rows.Add(
                                 webinar.Title
                                 , webinar.Date.ToShortDateString()
-                                , invoice.TotalOnBilled
-                                , invoice.TotalOnPaid
-                                , invoice.TotalDiscounts
-                                , invoice.TotalRoyalties
-                                , invoice.TotalNetDue
+                                , invoice.TotalOnBilled.ToString("C").Replace(".00", "")
+                                , invoice.TotalOnPaid.ToString("C").Replace(".00", "")
+                                , invoice.TotalDiscounts.ToString("C").Replace(".00", "")
+                                , invoice.TotalRoyalties.ToString("C").Replace(".00", "")
+                                , invoice.TotalNetDue.ToString("C").Replace(".00", "")
                                 , webinar.idWebinar
                                 );
 
@@ -3000,12 +2974,17 @@ namespace CUWebinars.Web.Controllers.Admin
                                 string _price = order.Total.ToString("C");
                                 var row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                                 rowNumber++;
+
+                                string _percent = (row.PercentPaid * 100).ToString().Replace(".00", "").Replace(".0", "") + "%";
                                 var totalToShow = order.Total.ToString("c");
                                 if (row.Discount != null)
                                 {
+                                    hadDiscount = true;
                                     var discount = row.Discount;
-                                    _price = "See Notes: " + totalNumberDiscounts;
-                                    discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode + ": (" + discount.DiscountType.ToString().Replace("DiscountType.", "")+") ");
+                                    _price = "See Note #" + totalNumberDiscounts;
+                                    discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode + ": (" +
+                                                         discount.DiscountType.ToString().Replace("DiscountType.", "") +
+                                                         ") ");
 
                                     totalNumberDiscounts++;
                                     var discountAmount = "";
@@ -3017,16 +2996,19 @@ namespace CUWebinars.Web.Controllers.Admin
                                     {
                                         discountAmount = (row.UnitPrice - row.Discount.FlatOff).ToString("C");
                                     }
+                                    //discountNotes.Append(discountAmount);
                                     discountNotes.Append(Environment.NewLine);
                                 }
                                 ordersPerAff.Rows.Add(
-                                     rowNumber
+                                    rowNumber
                                     , order.FirstName + ' ' + order.LastName
                                     , order.BillingEmail
-                                    , order.Institution
+                                    ,
+                                    order.Institution + Environment.NewLine + order.BillingAddress + Environment.NewLine +
+                                    order.BillingCity + ", " + order.BillingState + " " + order.BillingZip
                                     , _price
-                                    , row.PercentPaid
-                                    , row.Royalty
+                                    , _percent
+                                    , row.Royalty.ToString("C").Replace(".00", "")
                                     , order.OrderStatus
                                     , order.idOrder
                                     , webinar.idWebinar
@@ -3048,49 +3030,81 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 try
                 {
+
                     List<Order> theseOrders =
                         _orderManagementService.GetOrdersAll(thisAffiliate, out totalNumberOrders)
                             .Where(o => o.idAffiliate == thisAffiliate)
-                            .Where(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Date < startDate && o.OrderDate > startDate && o.OrderDate < endDate )
+                            .Where(
+                                o =>
+                                    o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Date <
+                                    startDate && o.OrderDate > startDate && o.OrderDate < endDate)
                             .ToList();
 
                     if (theseOrders.Count() > 0)
                     {
-                        hadOrder = true;
-                        invoice = _affiliateManagementService.BuildAffiliateInvoiceForPostEventOrders(theseOrders, thisAffiliate);
+                        hadPOrder = true;
+
+                        invoice = _affiliateManagementService.BuildAffiliateInvoiceForPostEventOrders(invoice, theseOrders,
+                            thisAffiliate);
                         int rowNumber = 0;
                         postEventOrders.Rows.Add(
                             "Post Event Orders"
                             , startDate
-                            , invoice.TotalOnBilled
-                            , invoice.TotalOnPaid
-                            , invoice.TotalDiscounts
-                            , invoice.TotalRoyalties
-                            , invoice.TotalNetDue
+                            , invoice.TotalOnBilled.ToString("C").Replace(".00", "")
+                            , invoice.TotalOnPaid.ToString("C").Replace(".00", "")
+                            , invoice.TotalDiscounts.ToString("C").Replace(".00", "")
+                            , invoice.TotalRoyalties.ToString("C").Replace(".00", "")
+                            , invoice.TotalNetDue.ToString("C").Replace(".00", "")
                             , 99
                             );
 
 
                         foreach (var order in theseOrders)
                         {
+
+                            string _price = order.Total.ToString("C");
                             var row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                             rowNumber++;
+                            string _percent = (row.PercentPaid * 100).ToString().Replace(".00", "").Replace(".0", "") + "%";
+                            if (row.Discount != null)
+                            {
+                                hadDiscount = true;
+                                var discount = row.Discount;
+                                _price = "See Note #" + totalNumberDiscounts;
+                                discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode + ": (" +
+                                                     discount.DiscountType.ToString().Replace("DiscountType.", "") +
+                                                     ") ");
 
+                                totalNumberDiscounts++;
+                                var discountAmount = "";
+                                if (row.Discount.PercentOff > 0)
+                                {
+                                    discountAmount = (row.UnitPrice * (row.Discount.PercentOff / 100)).ToString("c");
+                                }
+                                if (row.Discount.FlatOff > 0)
+                                {
+                                    discountAmount = (row.UnitPrice - row.Discount.FlatOff).ToString("C");
+                                }
+                                //discountNotes.Append(discountAmount);
+                                discountNotes.Append(Environment.NewLine);
+                            }
                             pOrders.Rows.Add(
-                                 rowNumber
+                                rowNumber
                                 , order.FirstName + ' ' + order.LastName
                                 , order.BillingEmail
-                                , order.Institution
-                                , order.Total
-                                , row.PercentPaid
-                                , row.Royalty
+                                , order.Institution + Environment.NewLine + order.BillingAddress + Environment.NewLine +
+                                order.BillingCity + ", " + order.BillingState + " " + order.BillingZip
+                                , _price
+                                , _percent
+                                , row.Royalty.ToString("C").Replace(".00", "")
                                 , order.OrderStatus
                                 , order.idOrder
-                                , row.Webinar.Title + " - " + invoice.InvoiceBody
+                                , row.Webinar.Title
                                 , 99
                                 );
 
                         }
+
                         GrandTotalOnBilled = GrandTotalOnBilled + invoice.TotalOnBilled;
                         GrandTotalOnPaid = GrandTotalOnPaid + invoice.TotalOnPaid;
                         GrandTotalDiscounts = GrandTotalDiscounts + invoice.TotalDiscounts;
@@ -3122,7 +3136,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                             case "Royalty":
 
-                                ((Run)e.Inline).Text = ((double)e.Value).ToString("0.00");
+                                //((Run)e.Inline).Text = ((double)e.Value).ToString("0.00");
 
                                 break;
 
@@ -3142,38 +3156,74 @@ namespace CUWebinars.Web.Controllers.Admin
                     }
 
                 };
+                if (!hadWOrder)
+                {
+
+                }
+
+                if (!hadPOrder)
+                {
+                    postEventOrders.Rows.Add(
+                        "Post Event Orders"
+                        , startDate
+                        , ""
+                        , ""
+                        , ""
+                        , ""
+                        , ""
+                        , 99
+                        );
+                    pOrders.Rows.Add(
+                        0
+                        , "No Orders Found"
+                        , ""
+                        , ""
+                        , ""
+                        , ""
+                        , ""
+                        , ""
+                        , 0
+                        , ""
+                        , 99
+                        );
+                }
+
                 document.MailMerge.Execute(ds, null);
                 document.MailMerge.Execute(ds1, null);
 
                 var grandTotalSource = new
-                {
-                    GrandTotalOnBilled,
-                    GrandTotalOnPaid,
-                    GrandTotalDiscounts,
-                    GrandTotalRoyalties,
-                    GrandTotalNetDue,
-                    DiscountNotes = discountNotes.ToString()
-                };
+                    {
+                        GrandTotalOnBilled = GrandTotalOnBilled.ToString("C").Replace(".00", ""),
+                        GrandTotalOnPaid = GrandTotalOnPaid.ToString("C").Replace(".00", ""),
+                        GrandTotalDiscounts = GrandTotalDiscounts.ToString("C").Replace(".00", ""),
+                        GrandTotalRoyalties = GrandTotalRoyalties.ToString("C").Replace(".00", ""),
+                        GrandTotalNetDue = GrandTotalNetDue.ToString("C").Replace(".00", ""),
+                        DiscountNotes = discountNotes.ToString()
+                    };
 
                 document.MailMerge.Execute(grandTotalSource);
 
 
-                if (hadOrder)
+                if (hadWOrder || hadPOrder)
                 {
                     _logger.Info("begins write to file: " + invoice.InvoiceID);
                     document.Save(
-                        Server.MapPath(@"~/App_Data/mergeTemplates/" + weekNumber + "-" + affiliate.idUserAff + ".pdf"));
+                        Server.MapPath(@"~/App_Data/mergeTemplates/" + invoice.InvoiceID + ".pdf"));
                     //document.Save(
                     //    Server.MapPath(@"~/App_Data/mergeTemplates/" + weekNumber + "-" + affiliate.idUserAff + ".html"));
 
 
-                    // Create output file's stream.
+                    var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName, _globalConfig.StorageAccessKey);
+                    var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
+                    CloudBlobClient blobClient = cloudStorageAccount.CreateCloudBlobClient();
 
-                    //FileStream output = System.IO.File.Create(Server.MapPath(@"~/App_Data/mergeTemplates/Output.pdf"));
-                    //// Save output file to stream.
-                    //invoice.InvoiceBody = output.ToString();
-                    
-                    //WriteWeeklyAffiliateReportsToStorage(invoice);
+                    // Retrieve reference to a previously created container.
+                    CloudBlobContainer container = blobClient.GetContainerReference("affiliateinvoices");
+                    container.CreateIfNotExists();
+
+                    CloudBlockBlob blob = container.GetBlockBlobReference(startDate.ToShortDateString().Replace("/", "-") + "/" + invoice.InvoiceID + ".pdf");
+                    blob.UploadFromFile(Server.MapPath(@"~/App_Data/mergeTemplates/" + invoice.InvoiceID + ".pdf"), FileMode.Open);
+
                 }
             }
 

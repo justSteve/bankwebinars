@@ -23,9 +23,9 @@ namespace CUWebinars.Business.Services
         IQueryable<Order> GetOrders(int affiliateId);
 
         IList<AffiliateReportDTO> BuildAffiliateReport(List<Order> orders, int webinarId);
-        AffiliateInvoiceDTO BuildAffiliateInvoice(List<Order> orders, int webinarId, int affiliateId);
+        AffiliateInvoiceDTO BuildAffiliateInvoice(AffiliateInvoiceDTO invoice, List<Order> orders, int webinarId, int affiliateId);
+        AffiliateInvoiceDTO BuildAffiliateInvoiceForPostEventOrders(AffiliateInvoiceDTO invoice, List<Order> theseOrders, int thisAffiliate);
         AffiliateInvoiceDTO GetAffiliateInvoice(int value, string aff);
         IList<DiscountDTO> GetSubscriptionsByAffiliate(int idUserAff);
-        AffiliateInvoiceDTO BuildAffiliateInvoiceForPostEventOrders(List<Order> theseOrders, int thisAffiliate);
     }
 }

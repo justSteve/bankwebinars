@@ -440,6 +440,39 @@ namespace CUWebinars.Web.Controllers
             return PartialView("~/Views/cart/Partials/_UpdateOrderWithUserId.cshtml");
         }
 
+        [HttpGet]
+        public JsonResult IniMonerisModal(int idOrder)
+        {
+            //ensures that the price passed to moneris reflects order price with discount applied.
+            var updatedTotal = _cartControllerOrchestrator.GetOrderById(idOrder).Total;
+            return Json(new
+            {
+                success = "success",
+                total = updatedTotal
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [AllowAnonymous]
+        [AcceptVerbs(HttpVerbs.Post),  ValidateInput(false)]
+        public void Incoming(FormCollection fc)
+        {
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (var key in fc.AllKeys)
+                {
+                    sb.AppendLine(fc[key]);
+                }
+                _logger.Info("builder = " + sb);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Info("ex:" + ex);
+            }
+        }
+
 
         [HttpPost]
         public ActionResult Signup2(CheckoutOptionsViewModel formModel)

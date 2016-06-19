@@ -35,12 +35,10 @@ namespace CUWebinars.Business.Services
             _context = context;
         }
 
-        private AffiliateInvoiceDTO ComputeRoyalty(IList<Order> orders, int idAffiliate, bool generatingWeeklyReport)
+        private AffiliateInvoiceDTO ComputeRoyalty(AffiliateInvoiceDTO invoice, IList<Order> orders, int idAffiliate, bool generatingWeeklyReport)
         {
-            AffiliateInvoiceDTO invoice = new AffiliateInvoiceDTO();
 
             invoice.Affiliate = FindById(idAffiliate);
-
 
             switch (invoice.Affiliate.CommissionModel)
             {
@@ -53,31 +51,15 @@ namespace CUWebinars.Business.Services
                         decimal commissionPercent;
                         var row = IniInvoice(order, invoice);
 
-                        //if (numberOfRegistrations >= 16)
-                        //{
-                        //    commissionPercent = 0.45M;
-                        //}
-                        //else if (numberOfRegistrations >= 11)
-                        //{
-                        //    commissionPercent = 0.4M;
-                        //}
-                        //else if (numberOfRegistrations >= 6)
-                        //{
-                        //    commissionPercent = 0.35M;
-                        //}
-                        //else //nonCreditCardPayments < 6
-                        //{
-                        //    commissionPercent = 0.3M;
-                        //}
-                        if (numberOfRegistrations < 7)
+                        if (numberOfRegistrations < 6)
                         {
                             commissionPercent = 0.3M;
                         }
-                        else if (numberOfRegistrations < 12)
+                        else if (numberOfRegistrations < 11)
                         {
                             commissionPercent = 0.35M;
                         }
-                        else if (numberOfRegistrations < 17)
+                        else if (numberOfRegistrations < 16)
                         {
                             commissionPercent = 0.4M;
                         }
@@ -143,11 +125,11 @@ namespace CUWebinars.Business.Services
                     throw new TTSException("Invalid commission model ");
             }
 
-            if (invoice.Affiliate.BillingModel == "aff")
+            if (invoice.Affiliate.BillingModel.Trim(' ') == "aff")
             {
                 invoice.TotalNetDue = (invoice.TotalOnBilled + invoice.TotalOnPaid - invoice.TotalDiscounts) - invoice.TotalRoyalties;
             }
-            if (invoice.Affiliate.BillingModel == "billed")
+            if (invoice.Affiliate.BillingModel.Trim(' ') == "billed")
             {
                 invoice.TotalNetDue = (invoice.TotalOnBilled - invoice.TotalRoyalties) - (decimal)((double)invoice.TotalOnPaid * .03);
             }
@@ -243,7 +225,7 @@ namespace CUWebinars.Business.Services
 
                 foreach (var affiliate in listofAffiliates)
                 {
-                    BuildAffiliateInvoice(orders.Where(o => o.idAffiliate == affiliate.idUserAff
+                    BuildAffiliateInvoice(new AffiliateInvoiceDTO() , orders.Where(o => o.idAffiliate == affiliate.idUserAff
                         && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted)).OrderBy(o => o.OrderDate)
                         .ToList(), webinarID, affiliate.idUserAff);
                 }
@@ -269,20 +251,19 @@ namespace CUWebinars.Business.Services
 
 
 
-        public AffiliateInvoiceDTO BuildAffiliateInvoice(List<Order> orders, int webinarID, int affiliateID)
+        public AffiliateInvoiceDTO BuildAffiliateInvoice(AffiliateInvoiceDTO invoice, List<Order> orders, int webinarID, int affiliateID)
         {
-            return ComputeRoyalty(orders, affiliateID, true);
+            return ComputeRoyalty(invoice, orders, affiliateID, true);
         }
-        public AffiliateInvoiceDTO BuildAffiliateInvoiceForPostEventOrders(List<Order> orders, int affiliateID)
+        public AffiliateInvoiceDTO BuildAffiliateInvoiceForPostEventOrders(AffiliateInvoiceDTO invoice, List<Order> orders, int affiliateID)
         {
 
-            return ComputeRoyaltyForPostEventOrders(orders, affiliateID, true);
+            return ComputeRoyaltyForPostEventOrders(invoice, orders, affiliateID, true);
         }
 
-        private AffiliateInvoiceDTO ComputeRoyaltyForPostEventOrders(List<Order> orders, int affiliateId, bool b)
+        private AffiliateInvoiceDTO ComputeRoyaltyForPostEventOrders(AffiliateInvoiceDTO invoice, List<Order> orders, int affiliateId, bool b)
         {
-            AffiliateInvoiceDTO invoice = new AffiliateInvoiceDTO();
-
+            
             invoice.Affiliate = FindById(affiliateId);
 
             int numberOfRegistrations = 0;
@@ -300,15 +281,15 @@ namespace CUWebinars.Business.Services
                         decimal commissionPercent;
                         var row = IniInvoice(order, invoice);
 
-                        if (numberOfRegistrations < 7)
+                        if (numberOfRegistrations < 6)
                         {
                             commissionPercent = 0.3M;
                         }
-                        else if (numberOfRegistrations < 12)
+                        else if (numberOfRegistrations < 11)
                         {
                             commissionPercent = 0.35M;
                         }
-                        else if (numberOfRegistrations < 17)
+                        else if (numberOfRegistrations < 16)
                         {
                             commissionPercent = 0.4M;
                         }
@@ -410,7 +391,7 @@ namespace CUWebinars.Business.Services
             var orders = _orderRepository.GetOrdersByWebinar(idWebinar).Where(a => a.idAffiliate == idAffiliate).ToList();
             IList<OrderRowModel> rows = new List<OrderRowModel>();
 
-            ComputeRoyalty(orders, idAffiliate, false);
+            ComputeRoyalty(new AffiliateInvoiceDTO(), orders, idAffiliate, false);
 
             var ordinalHolder = 0;
             foreach (var order in orders)
