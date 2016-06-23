@@ -128,11 +128,16 @@ namespace CUWebinars.Business.Notification.Handlers
                 IList<string> ccEmailAddresses = null;
 
 
-                if (!string.IsNullOrWhiteSpace(order.UserComments))
+                if (!string.IsNullOrWhiteSpace(order.UserComments) && order.UserComments.Contains("CarbonCopy"))
                 {
-                    var addresses = JObject.Parse(order.UserComments).GetValue(JsonPropertyKeys.CarbonCopy);
+                    var addresses = JToken.Parse(order.UserComments);
+                    var isCC = "";
+                    foreach (JProperty prop in addresses.Children<JObject>().SelectMany(content => content.Properties().Where(prop => prop.Name == JsonPropertyKeys.CarbonCopy)))
+                    {
+                        isCC = prop.Value.ToString();
+                    }
 
-                    if (!ReferenceEquals(null, addresses))
+                    if (!ReferenceEquals(null, isCC))
                     {
                         ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(addresses.ToString());
                     }

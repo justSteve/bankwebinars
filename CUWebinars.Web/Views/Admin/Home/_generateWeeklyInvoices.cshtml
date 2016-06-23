@@ -1,5 +1,86 @@
 ﻿@model GenerateWeeklyInvoicesViewModel
+@{
 
+    StringBuilder listAff = new StringBuilder();
+    foreach (var aff in Model.Affiliates)
+    {
+        listAff.Append(aff.idUserAff + ",");
+    }
+}
+<script language="javascript" type="text/javascript">
+    $(function () {
+        $("#div4Accounts").hide();
+        $("#div4Orders").hide();
+        $("#div4Webinars").hide();
+    });
+    var arryAff = [@listAff];
+    var readyForNext = true;
+    function FireGenerator(iterator) {
+        //for ( var i = iterator; i < arryAff.length; i++) {
+        var i = iterator;
+        var affId = arryAff[i];
+        alert(affId);
+        var startDate = $("#startDate").val();
+        /// GenerateWeeklyInvoicesEvent(DateTime startDate, int idAffiliate)
+        var payload = { startDate: startDate, _idAffiliate: affId };
+
+
+
+        var holder = 1;
+
+        while (!readyForNext) {
+            holder++;
+            setTimeout(function () {
+                FireGenerator(affId);
+            }, 1000);
+        }
+        SendRequest(payload);
+        readyForNext = false;
+        i++;
+        console.log("holder exited at: " + holder);
+        //}
+
+    }
+
+
+    function SendRequest(payload) {
+        //  Check if the label is already in existance (user may hit the button twice - for some odd reason). If not, create it.
+        var crunchingLabel = $('#crunchingLabel');
+        if (crunchingLabel.length < 1)
+            crunchingLabel = $("#SendRptCheckBoxes").before('<div id="crunchingLabel" style="display:inline-block; margin-left:5px">here</div>');
+
+        $.ajax({
+            type: 'GET',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: "Admin/GenerateWeeklyInvoicesEvent?startDate=" + payload.startDate + "&_idAffiliate=" + payload.idAffiliate,
+            dataType: constants.JsonDataType,
+            //data: JSON.stringify(payload),
+            beforeSend: function () {
+                crunchingLabel.html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Processing...</span>');
+            }
+        }).done(function (data) {
+            readyForNext = true;
+            // successful request; do something with the data
+            var sendRptCheckBoxesDiv = $('#SendRptCheckBoxes').find('.controls');
+            //AffiliateLabel = affiliate.DisplayTitle + " ("+affiliate.ttsDomain +" - "+affiliate.idUserAff+ ")",
+            //Link = blob,
+            //GrandTotalOnBilled,
+            //GrandTotalOnPaid,
+            //GrandTotalDiscounts,
+            //GrandTotalRoyalties,
+            //GrandTotalNetDue
+            sendRptCheckBoxesDiv.append('<label class="checkbox-inline"><input type="checkbox" id="inlineCheckbox_' + payload.idAffiliate + '" value="' + data.AffiliateLabel + '">' + data.AffiliateLabel + '</label>');
+            sendRptCheckBoxesDiv.append('<a href="' + data.Link + '" _target=_new />View Report</a>');
+
+            crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin ">');
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            // failed request; give feedback to user
+            alert("problem with " + payload.idAffiliate + " -- " + errorThrown);
+            crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin ">');
+        });
+    }
+</script>
 <div style="width: 1100px; margin: 30px auto">
     <h2>Generates Weekly Invoices</h2>
 
@@ -7,14 +88,23 @@
     {
         @Html.AntiForgeryToken()
 
-        <div class="control-group">
-            <label class="control-label" >StartDate</label>
+        <div id="frmStartDate" class="control-group">
+            <label class="control-label">StartDate</label>
             <div class="controls">
-                <input type="date" name="startDate" id="startDate"/>
-                <input type="submit" id="submitStartDate" />
+                <input type="date" name="startDate" id="startDate" />
+                <input type="button" id="submitStartDate" />
             </div>
         </div>
-
-
     }
+    @using (Html.BeginForm("SendWeeklyInvoicesEvent", "Admin", FormMethod.Get, new { id = "SendWeeklyInvoicesForm", @class = "form-horizontal " }))
+    {
+
+        <div id="SendRptCheckBoxes" class="control-group">
+            <label class="control-label" for="inputEmail">Send Report</label>
+            <div class="controls">
+
+            </div>
+        </div>
+    }
+
 </div>

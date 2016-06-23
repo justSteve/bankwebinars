@@ -14,47 +14,48 @@
 
     string wDate = "<b>" + DateTimeHelper.FormatDate(Model.Webinar.Date) + "</b> &nbsp;";
     wDate = wDate + DateTimeHelper.FormatTimeWithDuration(Model.Webinar.Date, Model.TimeZone, false, Model.Webinar.Duration);
-    //TempData["Webinars"] = Model.Webinars;
-    ViewBag.Title = "Generate Promo Emails - Weekly " + promoEvent.Title;
+
+    ViewBag.Title = "Generate Promo Emails - Daily" + promoEvent.Title;
 
     //var minDay = 1.Days().Since(DomainConstants.BuildUtcNowAsCts);
     //var maxDay = DomainConstants.BuildUtcNowAsCts.NextMonth();
 
+    bool hasAffiliates = Model.Affiliates.Count > 0;
+    bool isAffiliateRestricted = Model.Affiliate != null;
 }
 
-<link type="text/css" href="~/Scripts/WijmoEditor/Themes/arctic/jquery-wijmo.css" rel="stylesheet" />
-@Scripts.Render("~/bundles/wijmo-editor-scripts")
-@Styles.Render("~/bundles/wijmo-editor-styles")
+    <link type="text/css" href="~/Scripts/WijmoEditor/Themes/arctic/jquery-wijmo.css" rel="stylesheet" />
+    @Scripts.Render("~/bundles/wijmo-editor-scripts")
+    <link type="text/css" href="~/Scripts/WijmoEditor/Themes/arctic/jquery-wijmo.css" rel="stylesheet" />
+    @Styles.Render("~/bundles/wijmo-editor-styles")
 
 
-
-<script id="scriptInit" type="text/javascript">
-    @{
-        var affDTO = (from Affiliate a in Model.Affiliates
-                      select new
-            {
-                ttsDomain = a.ttsDomain,
-                idUserAff = a.idUserAff,
-                ContactPerson = a.ContactPerson,
-                EmailBanner= a.EmailBanner,
-                ContactEmail = a.ContactEmail,
-                ContactPhone = a.ContactPhone,
-                EmailFooter = a.EmailFooter.Trim()
-            }).ToList();
+    <script id="scriptInit" type="text/javascript">
+        @{
+            var affDTO = (from Affiliate a in Model.Affiliates
+                          select new
+        {
+                    ttsDomain = a.ttsDomain,
+            idUserAff = a.idUserAff,
+            EmailBanner = a.EmailBanner,
+            ContactPerson = a.ContactPerson,
+            ContactEmail = a.ContactEmail,
+            ContactPhone = a.ContactPhone,
+            EmailFooter = a.EmailFooter.Trim()
+        }).ToList();
     }
 
     var affs = @Html.Raw(Json.Encode(affDTO));
 
-    require(["wijmo.wijeditor"], function () {
-        $(document).ready(function () {
-            $("#editorTA").wijeditor({
-                // editorMode: "split" // can default to split view if they want
-                textChanged: function (e, data) { // Set textChanged event handler function
-                    SetCopyToClipboardTextArea(false);
-                }
-            });
+    $(document).ready(function () {
+        $("#editorTA").wijeditor({
+            // editorMode: "split" // can default to split view if they want
+            textChanged: function (e, data) { // Set textChanged event handler function
+                SetCopyToClipboardTextArea(false);
+            }
         });
     });
+
 
     //$(document).ready(function () {
     //    //$('#calendar').fullCalendar({

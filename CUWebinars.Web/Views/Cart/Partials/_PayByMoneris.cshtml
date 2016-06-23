@@ -13,14 +13,22 @@
         $('#PayByCCModal').on('show', function () {
 
             $.ajax({
-                
+
                 datatype: "text/plain",
                 type: "GET",
                 url: '/cart/IniMonerisModal?idOrder='+idOrder,
                 cache: false,
                 success: function (data) {
-                 $("input[name='amount']").val( data.total);
-                 $("input[name='li_price1']").val( data.total);
+
+                    //moneris requires that cents are included:
+
+                    var amount2Charge = data.total;
+                    if (amount2Charge.indexOf(".") == -1) {
+                        amount2Charge = amount2Charge + ".00";
+                    }
+
+                    $("input[name='amount']").val( amount2Charge);
+                    $("input[name='li_price1']").val( amount2Charge);
                 }
             });
         });
@@ -31,8 +39,8 @@
 @{
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     var TaxAmount = Convert.ToDecimal(ViewBag.TaxAmount);
-    
-    var note = globalConfig.Tenant + " thanks you! Watch your email for complete details. " +ViewBag.NoteVersion;
+
+    var note = globalConfig.Tenant + " thanks you! Watch your email for complete details. " + ViewBag.NoteVersion;
 
     if (ReferenceEquals(TaxAmount, null))
     {
@@ -46,7 +54,7 @@
 
     var myRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
     var RowPrice = Convert.ToDecimal(myRow.RowPrice);
-    
+
     var regTypeDesc = myRow.RegistrationType.OptionLabel;
 
     var title = myRow.Webinar.Title;

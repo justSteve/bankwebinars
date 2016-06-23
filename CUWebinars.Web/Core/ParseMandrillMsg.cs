@@ -21,7 +21,7 @@ namespace CUWebinars.Web.Core
             _logger = logger;
         }
 
-        public Dictionary<string, string> ParseAcs(string _doc, string orderDate)
+        public static Dictionary<string, string> ParseAcs(string _doc, string orderDate)
         {
             HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
 
@@ -112,14 +112,15 @@ namespace CUWebinars.Web.Core
                                     {
                                         ACSOrderDictionary["AdditionalLocationsString"] += value + ",";
                                     }
-                                    _logger.Warn("Keyname not known: " + name + " value:" + value);
+                                    //_logger.Warn("Keyname not known: " + name + " value:" + value);
                                 }
                                 values[i] = value;
                                 names[i] = name;
                             }
                             if (flag != "")
                             {
-                                _logger.Warn("WebJob.EmailParser importer error: " + flag + ACSOrderDictionary["email"]);
+                                var aHolder = "";
+                                //_logger.Warn("WebJob.EmailParser importer error: " + flag + ACSOrderDictionary["email"]);
                             }
                             else
                             {
@@ -129,17 +130,17 @@ namespace CUWebinars.Web.Core
                                 }
                             }
 
-                            _logger.Info(JsonConvert.SerializeObject(sb.ToString(), Formatting.None,
-                                new JsonSerializerSettings
-                                {
-                                    MaxDepth = 1,
-                                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                                }
-                                ));
+                            //_logger.Info(JsonConvert.SerializeObject(sb.ToString(), Formatting.None,
+                            //    new JsonSerializerSettings
+                            //    {
+                            //        MaxDepth = 1,
+                            //        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                            //    }
+                            //    ));
                         }
                         catch (Exception ex)
                         {
-                            _logger.Warn("ERROR Parsing Importer Loop: " + ex);
+                            //_logger.Warn("ERROR Parsing Importer Loop: " + ex);
                         }
                         return ACSOrderDictionary;
                     }

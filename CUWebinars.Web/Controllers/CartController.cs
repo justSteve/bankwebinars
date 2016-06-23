@@ -11,6 +11,7 @@ using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
+using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
@@ -455,21 +456,21 @@ namespace CUWebinars.Web.Controllers
 
         [AllowAnonymous]
         [AcceptVerbs(HttpVerbs.Post),  ValidateInput(false)]
-        public void Incoming(FormCollection fc)
+        public void Incoming(FormCollection form)
         {
             try
             {
                 StringBuilder sb = new StringBuilder();
-                foreach (var key in fc.AllKeys)
-                {
-                    sb.AppendLine(fc[key]);
-                }
-                _logger.Info("builder = " + sb);
+                var msg = form.GetValue("mandrill_events").AttemptedValue;
+                var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(form.ToString());
+                
+                _logger.Info("builder = " + form.ToString());
+                var parsedOrder =   ParseMandrillMsg.ParseAcs(msgHtml.msg.html,"06/21/2016");
 
             }
             catch (Exception ex)
             {
-                _logger.Info("ex:" + ex);
+                _logger.Info("ex: " + ex);
             }
         }
 

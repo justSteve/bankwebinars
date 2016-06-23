@@ -90,7 +90,7 @@ $(function () {
                 "createdCell": function (td, cellData, rowData, row, col) {
                     if (cellData != null) {
                         $(td).tooltip();
-                        console.log(rowData);
+                        //console.log(rowData);
                     }
                 },
                 "mRender": function (data, type, full) {
