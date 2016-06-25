@@ -40,7 +40,7 @@ namespace CUWebinars.Business.Services
 
             invoice.Affiliate = FindById(idAffiliate);
 
-            switch (invoice.Affiliate.CommissionModel)
+          switch (invoice.Affiliate.CommissionModel)
             {
                 case 1: // Sliding4TierNoCCBreak:
                     int numberOfRegistrations = 0;
@@ -49,6 +49,7 @@ namespace CUWebinars.Business.Services
                     {
                         numberOfRegistrations++;
                         decimal commissionPercent;
+                        
                         var row = IniInvoice(order, invoice);
 
                         if (numberOfRegistrations < 6)

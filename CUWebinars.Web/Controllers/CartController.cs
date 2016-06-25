@@ -455,23 +455,24 @@ namespace CUWebinars.Web.Controllers
 
 
         [AllowAnonymous]
-        [AcceptVerbs(HttpVerbs.Post),  ValidateInput(false)]
-        public void Incoming(FormCollection form)
+        [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
+        public ActionResult Incoming(FormCollection form)
         {
             try
             {
                 StringBuilder sb = new StringBuilder();
-                var msg = form.GetValue("mandrill_events").AttemptedValue;
-                var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(form.ToString());
                 
-                _logger.Info("builder = " + form.ToString());
-                var parsedOrder =   ParseMandrillMsg.ParseAcs(msgHtml.msg.html,"06/21/2016");
+                var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(form[0]);
 
+                var parsedOrder = ParseMandrillMsg.ParseAcs("<html><body>" + msgHtml.msg.html + "</body></html>", "06/21/2016");
+                RedirectToAction("Importorder4Acs", "Order", parsedOrder);
             }
             catch (Exception ex)
             {
                 _logger.Info("ex: " + ex);
+                return null;
             }
+            return null;
         }
 
 

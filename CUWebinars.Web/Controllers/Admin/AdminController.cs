@@ -3160,39 +3160,16 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
 
             };
-            //if (!hadWOrder)
-            //{
-            //}
-
-            if (!hadPOrder)
+            if (hadWOrder)
             {
-                postEventOrders.Rows.Add(
-                    "Post Event Orders"
-                    , startDate
-                    , ""
-                    , ""
-                    , ""
-                    , ""
-                    , ""
-                    , 99
-                    );
-                pOrders.Rows.Add(
-                    0
-                    , "No Orders Found"
-                    , ""
-                    , ""
-                    , ""
-                    , ""
-                    , ""
-                    , ""
-                    , 0
-                    , ""
-                    , 99
-                    );
+                document.MailMerge.Execute(ds, null);
             }
 
-            document.MailMerge.Execute(ds, null);
-            document.MailMerge.Execute(ds1, null);
+            if (hadPOrder)
+            {
+                document.MailMerge.Execute(ds1, null);
+            }
+
 
             var grandTotalSource = new
             {

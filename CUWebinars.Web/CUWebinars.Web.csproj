@@ -496,7 +496,7 @@
     <Compile Include="Models\CompliancePerspectivesModel.cs" />
     <Compile Include="Models\DiscountAudit.cs" />
     <Compile Include="Models\ExpressCheckoutPostBackModel.cs" />
-    <Compile Include="Models\ImportOrderForAcsModel.cs" />
+    <Compile Include="Models\Importers\ImportOrderForAcsModel.cs" />
     <Compile Include="Models\MandrillIncomingMsg.cs" />
     <Compile Include="Models\NotificationHeaderModel.cs" />
     <Compile Include="Models\AddClaimInputModel.cs" />
@@ -1101,6 +1101,7 @@
     <Content Include="Content\images\logo_ncbankers.png" />
     <Content Include="Content\images\logo_ndba.png" />
     <Content Include="Content\images\logo_nebankers.png" />
+    <Content Include="Content\images\logo_nebrcul.png" />
     <Content Include="Content\images\logo_newswatchmedia.png" />
     <Content Include="Content\images\logo_nhbankers.png" />
     <Content Include="Content\images\logo_njbankers.png" />
