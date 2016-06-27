@@ -1883,6 +1883,7 @@
     <Content Include="Content\images\logo_azbankers.png" />
     <Content Include="App_Data\mergeTemplates\WeeklyInvoice1.docx" />
     <Content Include="Content\images\email\emailBannerBase.xcf" />
+    <Content Include="App_Data\mergeTemplates\WeeklyInvoiceForFlatPercent.docx" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars33 - Web Deploy.pubxml" />

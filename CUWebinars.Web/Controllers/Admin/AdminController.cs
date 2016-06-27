@@ -42,6 +42,7 @@ using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Elmah;
 using GemBox.Document;
+using GemBox.Document.MailMerging;
 using GemBox.Document.Tables;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
@@ -2844,7 +2845,9 @@ namespace CUWebinars.Web.Controllers.Admin
 
             DocumentModel document =
                 DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoice1.docx"));
-
+            document.MailMerge.ClearOptions = MailMergeClearOptions.RemoveEmptyRanges;
+            //if (affiliate.CommissionModel != 1)
+            //    document = DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoiceForFlatPercent.docx"));
 
             var InvoiceID = weekNumber + "-" + affiliate.idUserAff;
             var RoyaltyTier = affiliate.CommissionModel;
@@ -2863,71 +2866,13 @@ namespace CUWebinars.Web.Controllers.Admin
                     DisplayTitle = affiliate.DisplayTitle
                 };
 
-            document.MailMerge.Execute(dataSource);
 
-
-            DataSet ds = new DataSet();
-            DataSet ds1 = new DataSet();
-
-            DataTable webinarsPerAff = new DataTable("Webinars");
-
-            webinarsPerAff.Columns.Add("Title", typeof(string));
-            webinarsPerAff.Columns.Add("WebinarDate", typeof(string));
-            webinarsPerAff.Columns.Add("TotalOnBilled", typeof(string));
-            webinarsPerAff.Columns.Add("TotalOnPaid", typeof(string));
-            webinarsPerAff.Columns.Add("TotalDiscounts", typeof(string));
-            webinarsPerAff.Columns.Add("TotalRoyalties", typeof(string));
-            webinarsPerAff.Columns.Add("TotalNetDue", typeof(string));
-            webinarsPerAff.Columns.Add("Id", typeof(int));
-            ds.Tables.Add(webinarsPerAff);
-
-            DataTable postEventOrders = new DataTable("PostEventOrders");
-
-            postEventOrders.Columns.Add("Title", typeof(string));
-            postEventOrders.Columns.Add("WebinarDate", typeof(DateTime));
-            postEventOrders.Columns.Add("TotalOnBilled", typeof(string));
-            postEventOrders.Columns.Add("TotalOnPaid", typeof(string));
-            postEventOrders.Columns.Add("TotalDiscounts", typeof(string));
-            postEventOrders.Columns.Add("TotalRoyalties", typeof(string));
-            postEventOrders.Columns.Add("TotalNetDue", typeof(string));
-            postEventOrders.Columns.Add("Id", typeof(int));
-            ds1.Tables.Add(postEventOrders);
-
-            //orders
-            DataTable ordersPerAff = new DataTable("Orders");
-
-            ordersPerAff.Columns.Add("RowNumber", typeof(int));
-            ordersPerAff.Columns.Add("Name", typeof(string));
-            ordersPerAff.Columns.Add("Email", typeof(string));
-            ordersPerAff.Columns.Add("Address", typeof(string));
-            ordersPerAff.Columns.Add("Price", typeof(string));
-            ordersPerAff.Columns.Add("Percent", typeof(string));
-            ordersPerAff.Columns.Add("Royalty", typeof(string));
-            ordersPerAff.Columns.Add("Status", typeof(string));
-            ordersPerAff.Columns.Add("OrderID", typeof(int));
-            ordersPerAff.Columns.Add("Id", typeof(int));
-            ds.Tables.Add(ordersPerAff);
-
-
-            //orders
-            DataTable pOrders = new DataTable("pOrders");
-
-            pOrders.Columns.Add("RowNumber", typeof(int));
-            pOrders.Columns.Add("Name", typeof(string));
-            pOrders.Columns.Add("Email", typeof(string));
-            pOrders.Columns.Add("Address", typeof(string));
-            pOrders.Columns.Add("Price", typeof(string));
-            pOrders.Columns.Add("Percent", typeof(string));
-            pOrders.Columns.Add("Royalty", typeof(string));
-            pOrders.Columns.Add("Status", typeof(string));
-            pOrders.Columns.Add("OrderID", typeof(int));
-            pOrders.Columns.Add("WebinarTitle", typeof(string));
-            pOrders.Columns.Add("Id", typeof(int));
-            ds1.Tables.Add(pOrders);
-            // Add parent-child relation 
-
-            ds.Relations.Add("Orders", webinarsPerAff.Columns["Id"], ordersPerAff.Columns["Id"]);
-            ds1.Relations.Add("pOrders", postEventOrders.Columns["Id"], pOrders.Columns["Id"]);
+            DataSet ds1;
+            DataTable webinarsPerAff;
+            DataTable postEventOrders;
+            DataTable ordersPerAff;
+            DataTable pOrders;
+            var ds = IniDataTables(out ds1, out webinarsPerAff, out postEventOrders, out ordersPerAff, out pOrders);
 
             foreach (var webinar in webinars)
             {
@@ -2958,6 +2903,7 @@ namespace CUWebinars.Web.Controllers.Admin
                             , invoice.TotalDiscounts.ToString("C").Replace(".00", "")
                             , invoice.TotalRoyalties.ToString("C").Replace(".00", "")
                             , invoice.TotalNetDue.ToString("C").Replace(".00", "")
+                            , "Total Net Due: "
                             , webinar.idWebinar
                             );
 
@@ -2987,11 +2933,11 @@ namespace CUWebinars.Web.Controllers.Admin
                                 var discountAmount = "";
                                 if (row.Discount.PercentOff > 0)
                                 {
-                                    discountAmount = (row.UnitPrice * (row.Discount.PercentOff / 100)).ToString("c");
+                                    discountAmount = (row.RowPrice * (row.Discount.PercentOff / 100)).ToString("c");
                                 }
                                 if (row.Discount.FlatOff > 0)
                                 {
-                                    discountAmount = (row.UnitPrice - row.Discount.FlatOff).ToString("C");
+                                    discountAmount = (row.RowPrice - row.Discount.FlatOff).ToString("C");
                                 }
                                 //discountNotes.Append(discountAmount);
                                 discountNotes.Append(Environment.NewLine);
@@ -3058,6 +3004,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         , invoice.TotalDiscounts.ToString("C").Replace(".00", "")
                         , invoice.TotalRoyalties.ToString("C").Replace(".00", "")
                         , invoice.TotalNetDue.ToString("C").Replace(".00", "")
+                        , "Total Net Due: "
                         , 99
                         );
 
@@ -3126,6 +3073,20 @@ namespace CUWebinars.Web.Controllers.Admin
                 if (e.IsValueFound)
                 {
 
+                    if (e.RangeName == "Webinars" && e.FieldName == "TotalNetDue")
+                    {
+                        if (affiliate.BillingModel == "aff")
+                        {
+                            ((Run)e.Inline).Text = "";
+                        }
+                    }
+                    if (e.RangeName == "Webinars" && e.FieldName == "TotalNetDueLabel")
+                    {
+                        if (affiliate.BillingModel == "aff")
+                        {
+                            ((Run)e.Inline).Text = "";
+                        }
+                    }
                     switch (e.FieldName)
                     {
 
@@ -3148,28 +3109,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 }
 
-                else if (e.RangeName == "Webinars" && e.FieldName == "TotalPrice")
-                {
-
-                    // For each project calculate Total.
-
-                    //e.Inline = new Run(e.Document, ds.Tables[e.RangeName].Rows[e.RecordNumber - 1].GetChildRows("Items").Sum(item => (double)item["Total"]).ToString("0.00"));
-
-                    e.Cancel = false;
-
-                }
 
             };
-            if (hadWOrder)
-            {
-                document.MailMerge.Execute(ds, null);
-            }
-
-            if (hadPOrder)
-            {
-                document.MailMerge.Execute(ds1, null);
-            }
-
 
             var grandTotalSource = new
             {
@@ -3181,52 +3122,133 @@ namespace CUWebinars.Web.Controllers.Admin
                 DiscountNotes = discountNotes.ToString()
             };
 
+
+            document.MailMerge.Execute(dataSource);
+            document.MailMerge.Execute(ds, null);
+            document.MailMerge.Execute(ds1, null);
             document.MailMerge.Execute(grandTotalSource);
 
-
-            if (hadWOrder || hadPOrder)
+            try
             {
-                _logger.Info("begins write to file: " + InvoiceID);
-                document.Save(
-                    Server.MapPath(@"~/App_Data/mergeTemplates/" + InvoiceID + ".pdf"));
-                //document.Save(
-                //    Server.MapPath(@"~/App_Data/mergeTemplates/" + weekNumber + "-" + affiliate.idUserAff + ".html"));
 
-
-                var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName,
-                    _globalConfig.StorageAccessKey);
-                var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
-                CloudBlobClient blobClient = cloudStorageAccount.CreateCloudBlobClient();
-
-                // Retrieve reference to a previously created container.
-                CloudBlobContainer container = blobClient.GetContainerReference("affiliateinvoices");
-                container.CreateIfNotExists();
-
-                CloudBlockBlob blob =
-                    container.GetBlockBlobReference(startDate.ToShortDateString().Replace("/", "-") + "/" +
-                                                    InvoiceID + ".pdf");
-                blob.UploadFromFile(Server.MapPath(@"~/App_Data/mergeTemplates/" + InvoiceID + ".pdf"),
-                    FileMode.Open);
-
-
-                return Json(new
+                if (hadWOrder || hadPOrder)
                 {
-                    AffiliateLabel = affiliate.DisplayTitle + " (" + affiliate.ttsDomain + " - " + affiliate.idUserAff + ")",
-                    Link = blob.StorageUri,
-                    GrandTotalOnBilled = GrandTotalOnBilled.ToString("c"),
-                    GrandTotalOnPaid = GrandTotalOnPaid.ToString("c"),
-                    GrandTotalDiscounts = GrandTotalDiscounts.ToString("c"),
-                    GrandTotalRoyalties = GrandTotalRoyalties.ToString("c"),
-                    GrandTotalNetDue = GrandTotalNetDue.ToString("c")
+                    _logger.Info("begins write to file: " + InvoiceID);
+                    document.Save(
+                        Server.MapPath(@"~/App_Data/mergeTemplates/" + InvoiceID + ".html"));
 
-                }, JsonRequestBehavior.AllowGet);
+                    var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName,
+                        _globalConfig.StorageAccessKey);
+                    var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
+                    CloudBlobClient blobClient = cloudStorageAccount.CreateCloudBlobClient();
+
+                    // Retrieve reference to a previously created container.
+                    CloudBlobContainer container = blobClient.GetContainerReference("affiliateinvoices");
+                    container.CreateIfNotExists();
+
+                    CloudBlockBlob blob =
+                        container.GetBlockBlobReference(startDate.ToShortDateString().Replace("/", "-") + "/" +
+                                                        InvoiceID + ".html");
+                    blob.UploadFromFile(Server.MapPath(@"~/App_Data/mergeTemplates/" + InvoiceID + ".html"),
+                        FileMode.Open);
+
+                    return Json(new
+                    {
+                        AffiliateLabel = affiliate.DisplayTitle + " (" + affiliate.ttsDomain + " - " + affiliate.idUserAff + ")",
+                        Link = blob.StorageUri,
+                        GrandTotalOnBilled = GrandTotalOnBilled.ToString("c"),
+                        GrandTotalOnPaid = GrandTotalOnPaid.ToString("c"),
+                        GrandTotalDiscounts = GrandTotalDiscounts.ToString("c"),
+                        GrandTotalRoyalties = GrandTotalRoyalties.ToString("c"),
+                        GrandTotalNetDue = GrandTotalNetDue.ToString("c")
+
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { OrdersFound = "none" }, JsonRequestBehavior.AllowGet);
+                }
+
             }
-            else
+            catch (Exception ex)
             {
-                return Json(new { OrdersFound = "none" }, JsonRequestBehavior.AllowGet);
+
+                _logger.ErrorException("building Invoice: " + InvoiceID, ex);
             }
 
-            return Json(new { OrdersFound = "none" }, JsonRequestBehavior.AllowGet);
+            return Json(new { OrdersFound = "error writing file" }, JsonRequestBehavior.AllowGet);
+        }
+
+
+
+        private static DataSet IniDataTables(out DataSet ds1, out DataTable webinarsPerAff, out DataTable postEventOrders,
+            out DataTable ordersPerAff, out DataTable pOrders)
+        {
+            DataSet ds = new DataSet();
+            ds1 = new DataSet();
+
+            webinarsPerAff = new DataTable("Webinars");
+
+            webinarsPerAff.Columns.Add("Title", typeof(string));
+            webinarsPerAff.Columns.Add("WebinarDate", typeof(string));
+            webinarsPerAff.Columns.Add("TotalOnBilled", typeof(string));
+            webinarsPerAff.Columns.Add("TotalOnPaid", typeof(string));
+            webinarsPerAff.Columns.Add("TotalDiscounts", typeof(string));
+            webinarsPerAff.Columns.Add("TotalRoyalties", typeof(string));
+            webinarsPerAff.Columns.Add("TotalNetDue", typeof(string));
+            webinarsPerAff.Columns.Add("TotalNetDueLabel", typeof(string));
+            webinarsPerAff.Columns.Add("Id", typeof(int));
+            ds.Tables.Add(webinarsPerAff);
+
+            postEventOrders = new DataTable("PostEventOrders");
+
+            postEventOrders.Columns.Add("Title", typeof(string));
+            postEventOrders.Columns.Add("WebinarDate", typeof(DateTime));
+            postEventOrders.Columns.Add("TotalOnBilled", typeof(string));
+            postEventOrders.Columns.Add("TotalOnPaid", typeof(string));
+            postEventOrders.Columns.Add("TotalDiscounts", typeof(string));
+            postEventOrders.Columns.Add("TotalRoyalties", typeof(string));
+            postEventOrders.Columns.Add("TotalNetDue", typeof(string));
+            postEventOrders.Columns.Add("TotalNetDueLabel", typeof(string));
+            postEventOrders.Columns.Add("Id", typeof(int));
+            ds1.Tables.Add(postEventOrders);
+
+            //orders
+            ordersPerAff = new DataTable("Orders");
+
+            ordersPerAff.Columns.Add("RowNumber", typeof(int));
+            ordersPerAff.Columns.Add("Name", typeof(string));
+            ordersPerAff.Columns.Add("Email", typeof(string));
+            ordersPerAff.Columns.Add("Address", typeof(string));
+            ordersPerAff.Columns.Add("Price", typeof(string));
+            ordersPerAff.Columns.Add("Percent", typeof(string));
+            ordersPerAff.Columns.Add("Royalty", typeof(string));
+            ordersPerAff.Columns.Add("Status", typeof(string));
+            ordersPerAff.Columns.Add("OrderID", typeof(int));
+            ordersPerAff.Columns.Add("Id", typeof(int));
+            ds.Tables.Add(ordersPerAff);
+
+
+            //orders
+            pOrders = new DataTable("pOrders");
+
+            pOrders.Columns.Add("RowNumber", typeof(int));
+            pOrders.Columns.Add("Name", typeof(string));
+            pOrders.Columns.Add("Email", typeof(string));
+            pOrders.Columns.Add("Address", typeof(string));
+            pOrders.Columns.Add("Price", typeof(string));
+            pOrders.Columns.Add("Percent", typeof(string));
+            pOrders.Columns.Add("Royalty", typeof(string));
+            pOrders.Columns.Add("Status", typeof(string));
+            pOrders.Columns.Add("OrderID", typeof(int));
+            pOrders.Columns.Add("WebinarTitle", typeof(string));
+            pOrders.Columns.Add("Id", typeof(int));
+            ds1.Tables.Add(pOrders);
+            // Add parent-child relation 
+
+            ds.Relations.Add("Orders", webinarsPerAff.Columns["Id"], ordersPerAff.Columns["Id"]);
+            ds1.Relations.Add("pOrders", postEventOrders.Columns["Id"], pOrders.Columns["Id"]);
+            return ds;
         }
 
 
