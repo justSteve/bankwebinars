@@ -2882,7 +2882,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             DocumentModel document =
                 DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoice1.docx"));
-            document.MailMerge.ClearOptions = MailMergeClearOptions.RemoveEmptyRanges;
+            //document.MailMerge.ClearOptions = MailMergeClearOptions.RemoveEmptyRanges;
             //if (affiliate.CommissionModel != 1)
             //    document = DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoiceForFlatPercent.docx"));
 
@@ -3186,6 +3186,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     CloudBlockBlob blob =
                         container.GetBlockBlobReference(startDate.ToShortDateString().Replace("/", "-") + "/" +
                                                         InvoiceID + ".html");
+
                     blob.UploadFromFile(Server.MapPath(@"~/App_Data/mergeTemplates/" + InvoiceID + ".html"),
                         FileMode.Open);
 
@@ -3221,10 +3222,10 @@ namespace CUWebinars.Web.Controllers.Admin
         private static DataSet IniDataTables(out DataSet ds1, out DataTable webinarsPerAff, out DataTable postEventOrders,
             out DataTable ordersPerAff, out DataTable pOrders)
         {
-            DataSet ds = new DataSet();
-            ds1 = new DataSet();
+            DataSet ds = new DataSet("Orders"); // dataset name doesn't seem to play a role in nested scenario, although example had same name as data relation
+            ds1 = new DataSet("pOrders"); // dataset name doesn't seem to play a role in nested scenario, although example had same name as data relation
 
-            webinarsPerAff = new DataTable("Webinars");
+            webinarsPerAff = new DataTable("Webinars"); // parent table name needs to match outer range name in doc
 
             webinarsPerAff.Columns.Add("Title", typeof(string));
             webinarsPerAff.Columns.Add("WebinarDate", typeof(string));
@@ -3237,7 +3238,7 @@ namespace CUWebinars.Web.Controllers.Admin
             webinarsPerAff.Columns.Add("Id", typeof(int));
             ds.Tables.Add(webinarsPerAff);
 
-            postEventOrders = new DataTable("PostEventOrders");
+            postEventOrders = new DataTable("PostEventOrders"); // parent table name needs to match outer range name in doc
 
             postEventOrders.Columns.Add("Title", typeof(string));
             postEventOrders.Columns.Add("WebinarDate", typeof(DateTime));
@@ -3251,7 +3252,7 @@ namespace CUWebinars.Web.Controllers.Admin
             ds1.Tables.Add(postEventOrders);
 
             //orders
-            ordersPerAff = new DataTable("Orders");
+            ordersPerAff = new DataTable("dtOrders"); // inner range, but don't want to have a name conflict with relation below
 
             ordersPerAff.Columns.Add("RowNumber", typeof(int));
             ordersPerAff.Columns.Add("Name", typeof(string));
@@ -3267,7 +3268,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
             //orders
-            pOrders = new DataTable("pOrders");
+            pOrders = new DataTable("dtPEOrders"); // inner range, but don't want to have a name conflict with relation below
 
             pOrders.Columns.Add("RowNumber", typeof(int));
             pOrders.Columns.Add("Name", typeof(string));
@@ -3283,8 +3284,8 @@ namespace CUWebinars.Web.Controllers.Admin
             ds1.Tables.Add(pOrders);
             // Add parent-child relation 
 
-            ds.Relations.Add("Orders", webinarsPerAff.Columns["Id"], ordersPerAff.Columns["Id"]);
-            ds1.Relations.Add("pOrders", postEventOrders.Columns["Id"], pOrders.Columns["Id"]);
+            ds.Relations.Add("Orders", webinarsPerAff.Columns["Id"], ordersPerAff.Columns["Id"]); // relation name needs to match nested range name in doc
+            ds1.Relations.Add("pOrders", postEventOrders.Columns["Id"], pOrders.Columns["Id"]); // relation name needs to match nested range name in doc
             return ds;
         }
 
