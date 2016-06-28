@@ -23,8 +23,7 @@ $(document).ready(function () {
         var currCopy = $.trim($editorTA.wijeditor("getText"));
 
         // if it starts with our special comment (<!--WIJ-NULL-->) remove that
-        if (currCopy.indexOf("<!--WIJ-NULL-->") == 0)
-            currCopy = currCopy.substr(15);
+        currCopy = stripWijNull(currCopy);
 
         // store it in the proper textarea
         $("#editor_" + formerAffId).val(currCopy);
@@ -43,7 +42,10 @@ $(document).ready(function () {
     $("#resetAllAffiliates").on("click", function (e) {
         if (confirm("Are you sure?"))
         {
-            $("#editor_0").val(GetCurrentEditorCopy()); // store what is in the editor as the latest and greatest for use by replaceMasterTokensForAffiliate
+            // check to see if we are on the master, we should be, since this button should only be on the master
+            if (currentAffId == 0) {
+                $("#editor_0").val(GetCurrentEditorCopy()); // store what is in the editor as the latest and greatest for use by replaceMasterTokensForAffiliate
+            }
 
             $(".tab-pane").each(function (index) {
                 var $tab = $(this);
@@ -80,6 +82,11 @@ $(document).ready(function () {
         e.preventDefault();
         var $btn = $(this);
         $btn.blur();
+
+        // check to see if we are on the master, we should be, since this button should only be on the master
+        if (currentAffId == 0) {
+            $("#editor_0").val(GetCurrentEditorCopy()); // store what is in the editor as the latest and greatest for use by replaceMasterTokensForAffiliate
+        }
 
         WriteAllAffMarkupToStorageAJAX($btn);
     });
@@ -138,14 +145,8 @@ function GetAffiliateCopy(affiliateId, isActive) {
 
 function stripWijNull(copy)
 {
-    var ret = copy;
-
-    var staticComment = "<!--WIJ-NULL-->";
-    // if it starts with an empty comment (staticComment / <!--WIJ-NULL-->) remove that
-    if (ret.indexOf(staticComment) == 0)
-        ret = ret.substr(staticComment.length);
-
-    return ret;
+    // if it contains our special empty comment (staticComment / <!--WIJ-NULL-->) remove that
+    return copy.replace(/<!--WIJ-NULL-->/g, "");
 }
 
 function SetCopyToClipboardTextArea(selectText)
@@ -240,96 +241,103 @@ function WriteAllAffMarkupToStorageAJAX($btn) {
     // loop through all tabs...
     $(".tab-pane").each(function (idx) {
         var $tab = $(this);
-        var affid = $tab.data("pane-affid");
+        var affiliateId = $tab.data("pane-affid");
 
-        if (affid == 0) // skip the Master tab, although, conceivably, we could store that in a special file and use it for something...
+        if (affiliateId == 0) // skip the Master tab, although, conceivably, we could store that in a special file and use it for something...
             return;
 
         // get affiliate specific copy
         var isActive = $tab.hasClass("active"); // should ALWAYS be false in this method, as the Save All button is only on the master tab
-        var currCopy = GetAffiliateCopy(affid, isActive);
+        var currCopy = GetAffiliateCopy(affiliateId, isActive);
         if (currCopy == "")     // if they don't have customized copy we'll need to create it
         {
             // generate from master...
-            var affObj = arrayLookup(affs, "idUserAff", affid);
+            var affObj = arrayLookup(affs, "idUserAff", affiliateId);
             if (affObj != null) {
                 currCopy = replaceMasterTokensForAffiliate(affObj); // always pulls from editor_0 (master)
                 // could save it to affiliate text area, since we have it?
+
+                // deal with the SendToList_XYZ textbox
+                var $sendTo = $("#SendToList_" + affiliateId);
+                if ($.trim($sendTo.val()) == "") {
+                    $sendTo.val(affObj.ContactEmail);
+                }
             }
         }
 
         // send to server for additional processing and eventual storage
-        if (currCopy != "") // can't store nothing...
-        {
-            var currCopyEnc = encodeURIComponent(currCopy);
+        var currCopyEnc = encodeURIComponent(currCopy);
 
-            $.ajax({
-                url: '/Admin/WritePromoToStorage',
-                type: 'POST',
-                // async: false, // ?? blast the target w/ requests or do one at a time? seems to work fine asynchronously, make sure to deal with errors!
-                data: {
-                    "Affiliate.idUserAff": affid,
-                    "Webinar.idWebinar": $("#Webinar_idWebinar").val(),
-                    "Webinar.Title": $("#Webinar_Title").val(),
-                    "SendDate": $("#SendDate").val(),
-                    "EventBody": currCopyEnc
-                },
-                dataType: "json",
-                //contentType: "application/json",
-                beforeSend: function () {
-                },
-                success: function (result) {
-                    // console.log(idx + ": affiliate " + affid + " saved");
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    console.log("Error occurred during the Save of Affiliate (" + affid + "): " + errorThrown + ".");
-                    errorAffs.push(affid);
-                }
-            }).done(function (result) {
-                callsComplete++;
-                // console.log("done with: " + callsComplete);
+        $.ajax({
+            url: '/Admin/WritePromoToStorage',
+            type: 'POST',
+            // async: false, // ?? blast the target w/ requests or do one at a time? seems to work fine asynchronously, make sure to deal with errors!
+            data: {
+                "Affiliate.idUserAff": affiliateId,
+                "Affiliate.ContactEmail": $("#SendToList_" + affiliateId).val(),
+                "Affiliate.ttsDomain": $("#ttsDomain_" + affiliateId).val(),
+                "Webinar.idWebinar": $("#Webinar_idWebinar").val(),
+                "Webinar.Title": $("#Webinar_Title").val(),
+                "SendDate": $("#SendDate").val(),
+                "EventBody": currCopyEnc
+            },
+            dataType: "json",
+            //contentType: "application/json",
+            beforeSend: function () {
+            },
+            success: function (result) {
+                // console.log(idx + ": affiliate " + affiliateId + " saved");
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log("Error occurred during the Save of Affiliate (" + affiliateId + "): " + errorThrown + ".");
+                errorAffs.push(affiliateId);
+            }
+        }).done(function (result) {
+            callsComplete++;
+            // console.log("done with: " + callsComplete);
 
-                // record the returned messages, just record ones that don't totally succeed (non-blank) for now
-                if (result.returnMessage != null &&
-                    result.returnMessage != "") {
-                    messages.push(result.returnMessage);
-                }
+            // record the returned messages, just record ones that don't totally succeed (non-blank) for now
+            if (result.returnMessage != null &&
+                result.returnMessage != "") {
+                messages.push(result.returnMessage);
+            }
 
-                // figure out if this was the "last one" so we can clean up the UI, report errors, etc.
-                if (callsComplete >= callsNeeded)
-                {
-                    // print elapsed time...
-                    var tEnd = (new Date()).getTime();
-                    console.log((tEnd - tStart) + " ms");
+            // figure out if this was the "last one" so we can clean up the UI, report errors, etc.
+            if (callsComplete >= callsNeeded)
+            {
+                // print elapsed time...
+                var tEnd = (new Date()).getTime();
+                console.log("Time taken for all (" + callsComplete + ") AJAX calls: " + (tEnd - tStart) + " ms");
 
-                    // technical issues, errors, ajax, etc.
-                    if (errorAffs.length) {
-                        var errorMsg = "Errors encountered during the save of the following affiliates, please review: " + errorAffs.join(",");
-                        console.log(errorMsg)
-                        alert(errorMsg);
-                    }
-
-                    // no technical issues, but some business logic messaging...
-                    if (messages.length) {
-                        alert(messages.join("")); // modal? div on page? has a good chance of being a long message
-                    }
-
-                    // remove spinner
-                    $('#submitSpinWrapper').remove();
-                    $btn.text("Saved!");
-
-                    setTimeout(function () { $btn.text(origBtnText); }, 2000);
-
+                // technical issues, errors, ajax, etc.
+                if (errorAffs.length) {
+                    var errorMsg = "Errors encountered during the save of the following affiliates, please review: " + errorAffs.join(",");
+                    console.log(errorMsg)
+                    alert(errorMsg);
                 }
 
-            });
-        }
+                // no technical issues, but some business logic messaging...
+                if (messages.length) {
+                    alert(messages.join("")); // modal? div on page? has a good chance of being a long message
+                }
+
+                // remove spinner
+                $('#submitSpinWrapper').remove();
+                $btn.text("Saved!");
+
+                setTimeout(function () { $btn.text(origBtnText); }, 2000);
+
+            }
+
+        });
+        
     });
 }
 
 // should be pretty (very!) similar to the above "WriteAllAffMarkupToStorageAJAX" function
 function WriteMarkupToStorageAJAX($btn, affiliateId) {
 
+    // send to server for additional processing and eventual storage
     var currCopy = GetCurrentEditorCopy();
     var currCopyEnc = encodeURIComponent(currCopy);
     var origBtnText = $btn.text();
@@ -339,6 +347,8 @@ function WriteMarkupToStorageAJAX($btn, affiliateId) {
         type: 'POST',
         data: {
             "Affiliate.idUserAff": affiliateId,
+            "Affiliate.ContactEmail": $("#SendToList_" + affiliateId).val(),
+            "Affiliate.ttsDomain": $("#ttsDomain_" + affiliateId).val(),
             "Webinar.idWebinar": $("#Webinar_idWebinar").val(),
             "Webinar.Title": $("#Webinar_Title").val(),
             "SendDate": $("#SendDate").val(),
@@ -376,7 +386,7 @@ function SendToAff(affiliateId) {
     //alert($("#SendToList_" + affiliateId).val());
     var currCopy = GetCurrentEditorCopy();
     //alert(currCopy);
-    alert('Not quite implemented yet...');
+    alert('Not quite implemented yet... mostly covered by Save');
     return;
 
     $.ajax({

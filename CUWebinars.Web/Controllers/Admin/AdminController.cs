@@ -1679,6 +1679,16 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpPost]
         public JsonResult WritePromoToStorage(WebinarPromoViewModel model)
         {
+            if (string.IsNullOrWhiteSpace(model.EventBody))
+            {
+                // TODO: zzz ALS think about this.  It shouldn't ever happen, but do we want/need to know if it does?
+                return Json(new
+                {
+                    result = WebUiConstants.Success,
+                    returnMessage = "" // could return a message that would show in alert on client
+                });
+            }
+
             string eventBodyText = System.Uri.UnescapeDataString(model.EventBody);
 
             // refactor??? don't want to create a new connection to azure for each file though...
@@ -1690,13 +1700,16 @@ namespace CUWebinars.Web.Controllers.Admin
             var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
             CloudBlobClient blobClient = cloudStorageAccount.CreateCloudBlobClient();
 
-            // Retrieve reference to a previously created container.
-            CloudBlobContainer container = blobClient.GetContainerReference("v3generator");
+            // Retrieve reference to desired Azure storage container.
+            string containerRoot = "v3generator"; // could also be configuration-driven, so we could have different spots for dev/qa, etc. if we wanted
+            CloudBlobContainer container = blobClient.GetContainerReference(containerRoot);
             container.CreateIfNotExists();
 
             string webinarTitleEnc = Server.UrlEncode(model.Webinar.Title);
             string strAffId = model.Affiliate.idUserAff.ToString();
             string filenameBase = string.Concat(strAffId, "/", model.Webinar.idWebinar, "/", webinarTitleEnc);
+
+            List<string> hrefsForEmail = new List<string>();
 
             // Create the blobs
             string filename = "";
@@ -1707,11 +1720,35 @@ namespace CUWebinars.Web.Controllers.Admin
             filename = string.Concat(filenameBase, ".html");
             byte[] byteArrayHTML = Encoding.UTF8.GetBytes(eventBodyText); // "full" markup from WIJMO editor, may want to add doctype and body tags...
             ret += UploadToAzure(container, filename, byteArrayHTML, overwriteFlag);
+            if (string.IsNullOrWhiteSpace(ret)) // no error, add to list for email
+                hrefsForEmail.Add(string.Format("https://siteroot/mypromos/{0}/{1}", containerRoot, filename)); // configuration-driven pattern??
 
             // text file
             filename = string.Concat(filenameBase, ".txt");
             byte[] byteArrayTXT = Encoding.UTF8.GetBytes(eventBodyText.Replace("<br>", "\r\n")); // decidedly NOT robust, yet!!
             ret += UploadToAzure(container, filename, byteArrayTXT, overwriteFlag);
+            if (string.IsNullOrWhiteSpace(ret)) // no error, add to list for email
+                hrefsForEmail.Add(string.Format("https://siteroot/mypromos/{0}/{1}", containerRoot, filename)); // configuration-driven pattern??
+
+            ////// TODO: zzz ALS always trigger message to "To" address on form (if filled in)?
+            ////// TODO: zzz ALS how about we build a function we can use separately from saving even if that won't be 100% natural?
+            ////if (!string.IsNullOrWhiteSpace(model.Affiliate.ContactEmail))
+            ////{
+
+            ////    // we can hijack the model.eventbody property, right? we are done with the promo markup...
+            ////    // where to store this markup?  View/model/FormatV2?  Mailchip or mandrill? <- doesn't seem to support list/looping, so links might be a non-starter, although could format in here...
+
+            ////    model.EventBody = HttpUtility.HtmlDecode(
+            ////            _generalFormatter.FormatV2(new SendPromoLinksViewModel()
+            ////            {
+            ////                Subject = "Do we have the subject here?", // not really creating the actual email message yet...
+            ////                FileLinks = hrefsForEmail
+            ////            }, "~/Notification/Templates/SendPromoLinks.cshtml").Body
+            ////        );
+
+            ////    // is there any risk of this not working and us needing to deal with problems?
+            ////    _orderManagementService.FireSendPerDayPromoEvent(model);
+            ////}
 
             return Json(new
             {
