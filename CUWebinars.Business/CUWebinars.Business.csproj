@@ -300,6 +300,7 @@
     <Compile Include="Notification\INotificationDelivery.cs" />
     <Compile Include="Notification\INotificationMessage.cs" />
     <Compile Include="Notification\TemplateResolver.cs" />
+    <Compile Include="Notification\ViewModel\SendPromoLinksViewModel.cs" />
     <Compile Include="Notification\ViewModel\AdhocNotificationSubmittedViewModel.cs" />
     <Compile Include="Notification\ViewModel\OrderSubmittedAdditionalLocationViewModel.cs" />
     <Compile Include="Notification\ViewModel\OrderSubmittedViewModel.cs" />

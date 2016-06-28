@@ -48,7 +48,13 @@ namespace CUWebinars.Business.Notification
             return null;
 
         }
-
-
+        public string GetPromoEmailFromAddress()
+        {
+            return ConfigurationManager.AppSettings["PromoEmailFromAddress"];
+        }
+        public string GetPromoEmailSubject()
+        {
+            return ConfigurationManager.AppSettings["PromoEmailSubject"];
+        }
     }
 }

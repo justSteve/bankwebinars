@@ -1655,6 +1655,16 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpPost]
         public JsonResult WritePromoToStorage(WebinarPromoViewModel model)
         {
+            if (string.IsNullOrWhiteSpace(model.EventBody))
+            {
+                // TODO: zzz ALS think about this.  It shouldn't ever happen, but do we want/need to know if it does?
+                return Json(new
+                {
+                    result = WebUiConstants.Success,
+                    returnMessage = "" // could return a message that would show in alert on client
+                });
+            }
+
             string eventBodyText = System.Uri.UnescapeDataString(model.EventBody);
 
             // refactor??? don't want to create a new connection to azure for each file though...
@@ -1666,13 +1676,16 @@ namespace CUWebinars.Web.Controllers.Admin
             var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
             CloudBlobClient blobClient = cloudStorageAccount.CreateCloudBlobClient();
 
-            // Retrieve reference to a previously created container.
-            CloudBlobContainer container = blobClient.GetContainerReference("v3generator");
+            // Retrieve reference to desired Azure storage container.
+            string containerRoot = "v3generator"; // could also be configuration-driven, so we could have different spots for dev/qa, etc. if we wanted
+            CloudBlobContainer container = blobClient.GetContainerReference(containerRoot);
             container.CreateIfNotExists();
 
             string webinarTitleEnc = Server.UrlEncode(model.Webinar.Title);
             string strAffId = model.Affiliate.idUserAff.ToString();
             string filenameBase = string.Concat(strAffId, "/", model.Webinar.idWebinar, "/", webinarTitleEnc);
+
+            List<string> hrefsForEmail = new List<string>();
 
             // Create the blobs
             string filename = "";
@@ -1683,11 +1696,35 @@ namespace CUWebinars.Web.Controllers.Admin
             filename = string.Concat(filenameBase, ".html");
             byte[] byteArrayHTML = Encoding.UTF8.GetBytes(eventBodyText); // "full" markup from WIJMO editor, may want to add doctype and body tags...
             ret += UploadToAzure(container, filename, byteArrayHTML, overwriteFlag);
+            if (string.IsNullOrWhiteSpace(ret)) // no error, add to list for email
+                hrefsForEmail.Add(string.Format("https://siteroot/mypromos/{0}/{1}", containerRoot, filename)); // configuration-driven pattern??
 
             // text file
             filename = string.Concat(filenameBase, ".txt");
             byte[] byteArrayTXT = Encoding.UTF8.GetBytes(eventBodyText.Replace("<br>", "\r\n")); // decidedly NOT robust, yet!!
             ret += UploadToAzure(container, filename, byteArrayTXT, overwriteFlag);
+            if (string.IsNullOrWhiteSpace(ret)) // no error, add to list for email
+                hrefsForEmail.Add(string.Format("https://siteroot/mypromos/{0}/{1}", containerRoot, filename)); // configuration-driven pattern??
+
+            ////// TODO: zzz ALS always trigger message to "To" address on form (if filled in)?
+            ////// TODO: zzz ALS how about we build a function we can use separately from saving even if that won't be 100% natural?
+            ////if (!string.IsNullOrWhiteSpace(model.Affiliate.ContactEmail))
+            ////{
+
+            ////    // we can hijack the model.eventbody property, right? we are done with the promo markup...
+            ////    // where to store this markup?  View/model/FormatV2?  Mailchip or mandrill? <- doesn't seem to support list/looping, so links might be a non-starter, although could format in here...
+
+            ////    model.EventBody = HttpUtility.HtmlDecode(
+            ////            _generalFormatter.FormatV2(new SendPromoLinksViewModel()
+            ////            {
+            ////                Subject = "Do we have the subject here?", // not really creating the actual email message yet...
+            ////                FileLinks = hrefsForEmail
+            ////            }, "~/Notification/Templates/SendPromoLinks.cshtml").Body
+            ////        );
+
+            ////    // is there any risk of this not working and us needing to deal with problems?
+            ////    _orderManagementService.FireSendPerDayPromoEvent(model);
+            ////}
 
             return Json(new
             {
@@ -2844,8 +2881,8 @@ namespace CUWebinars.Web.Controllers.Admin
             int thisAffiliate = affiliate.idUserAff;
 
             DocumentModel document =
-                DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoice.docx"));
-            document.MailMerge.ClearOptions = MailMergeClearOptions.RemoveEmptyRanges;
+                DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoice1.docx"));
+            //document.MailMerge.ClearOptions = MailMergeClearOptions.RemoveEmptyRanges;
             //if (affiliate.CommissionModel != 1)
             //    document = DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoiceForFlatPercent.docx"));
 
@@ -2867,114 +2904,12 @@ namespace CUWebinars.Web.Controllers.Admin
                 };
 
 
-                        DataSet dsWebinars = new DataSet
-            {
-                DataSetName = "dsWebinars"
-            };
-
-            //Webinars range
-            DataTable webinarsPerWeek = new DataTable("Webinars");
-            DataTable ordersPerWebinar = new DataTable("WOrders");
-          
-            webinarsPerWeek.Columns.Add("Title", typeof(string));
-            webinarsPerWeek.Columns.Add("WebinarDate", typeof(string));
-            webinarsPerWeek.Columns.Add("TotalOnBilled", typeof(string));
-            webinarsPerWeek.Columns.Add("TotalOnPaid", typeof(string));
-            webinarsPerWeek.Columns.Add("TotalDiscounts", typeof(string));
-            webinarsPerWeek.Columns.Add("TotalRoyalties", typeof(string));
-            webinarsPerWeek.Columns.Add("TotalNetDue", typeof(string));
-            webinarsPerWeek.Columns.Add("TotalNetDueLabel", typeof(string));
-            webinarsPerWeek.Columns.Add("Id", typeof(int));
-            
-
-            ordersPerWebinar.Columns.Add("RowNumber", typeof(int));
-            ordersPerWebinar.Columns.Add("Name", typeof(string));
-            ordersPerWebinar.Columns.Add("Email", typeof(string));
-            ordersPerWebinar.Columns.Add("Address", typeof(string));
-            ordersPerWebinar.Columns.Add("Price", typeof(string));
-            ordersPerWebinar.Columns.Add("Percent", typeof(string));
-            ordersPerWebinar.Columns.Add("Royalty", typeof(string));
-            ordersPerWebinar.Columns.Add("Status", typeof(string));
-            ordersPerWebinar.Columns.Add("OrderID", typeof(int));
-            ordersPerWebinar.Columns.Add("Id", typeof(int));
-            
-            dsWebinars.Tables.Add(webinarsPerWeek);
-            dsWebinars.Tables.Add(ordersPerWebinar);
-
-            dsWebinars.Relations.Add("Orders", webinarsPerWeek.Columns["Id"], ordersPerWebinar.Columns["Id"]);
-            
-            
-            DataSet dsPostEventOrders = new DataSet
-            {
-                DataSetName = "dsPostEventOrders"
-            };
-            //postEvent range
-            DataTable postEventOrders = new DataTable("PostEventOrders");
-            DataTable pOrders = new DataTable("POrders");
-
-            postEventOrders.Columns.Add("Title", typeof(string));
-            postEventOrders.Columns.Add("WebinarDate", typeof(DateTime));
-            postEventOrders.Columns.Add("TotalOnBilled", typeof(string));
-            postEventOrders.Columns.Add("TotalOnPaid", typeof(string));
-            postEventOrders.Columns.Add("TotalDiscounts", typeof(string));
-            postEventOrders.Columns.Add("TotalRoyalties", typeof(string));
-            postEventOrders.Columns.Add("TotalNetDue", typeof(string));
-            postEventOrders.Columns.Add("TotalNetDueLabel", typeof(string));
-            postEventOrders.Columns.Add("Id", typeof(int));
-
-            pOrders.Columns.Add("RowNumber", typeof(int));
-            pOrders.Columns.Add("Name", typeof(string));
-            pOrders.Columns.Add("Email", typeof(string));
-            pOrders.Columns.Add("Address", typeof(string));
-            pOrders.Columns.Add("Price", typeof(string));
-            pOrders.Columns.Add("Percent", typeof(string));
-            pOrders.Columns.Add("Royalty", typeof(string));
-            pOrders.Columns.Add("Status", typeof(string));
-            pOrders.Columns.Add("OrderID", typeof(int));
-            pOrders.Columns.Add("WebinarTitle", typeof(string));
-            pOrders.Columns.Add("Id", typeof(int));
-
-            dsPostEventOrders.Tables.Add(postEventOrders);
-            dsPostEventOrders.Tables.Add(pOrders);
-            // Add parent-child relation 
-
-            dsPostEventOrders.Relations.Add("pOrders", postEventOrders.Columns["Id"], pOrders.Columns["Id"]);
-
-            //Upgrades range
-            DataSet dsUpgrades = new DataSet
-            {
-                DataSetName = "UpgradeOrders"
-            };
-            DataTable upgradedOrders = new DataTable("UpgradedOrders");
-            DataTable uOrders = new DataTable("UOrders");
-
-            upgradedOrders.Columns.Add("Title", typeof(string));
-            upgradedOrders.Columns.Add("WebinarDate", typeof(DateTime));
-            upgradedOrders.Columns.Add("TotalOnBilled", typeof(string));
-            upgradedOrders.Columns.Add("TotalOnPaid", typeof(string));
-            upgradedOrders.Columns.Add("TotalDiscounts", typeof(string));
-            upgradedOrders.Columns.Add("TotalRoyalties", typeof(string));
-            upgradedOrders.Columns.Add("TotalNetDue", typeof(string));
-            upgradedOrders.Columns.Add("TotalNetDueLabel", typeof(string));
-            upgradedOrders.Columns.Add("Id", typeof(int));
-
-            uOrders.Columns.Add("RowNumber", typeof(int));
-            uOrders.Columns.Add("Name", typeof(string));
-            uOrders.Columns.Add("Email", typeof(string));
-            uOrders.Columns.Add("Address", typeof(string));
-            uOrders.Columns.Add("Price", typeof(string));
-            uOrders.Columns.Add("Percent", typeof(string));
-            uOrders.Columns.Add("Royalty", typeof(string));
-            uOrders.Columns.Add("Status", typeof(string));
-            uOrders.Columns.Add("OrderID", typeof(int));
-            uOrders.Columns.Add("WebinarTitle", typeof(string));
-            uOrders.Columns.Add("Id", typeof(int));
-
-            dsUpgrades.Tables.Add(upgradedOrders);
-            dsUpgrades.Tables.Add(uOrders);
-            // Add parent-child relation 
-
-            dsUpgrades.Relations.Add("uOrders", upgradedOrders.Columns["Id"], uOrders.Columns["Id"]);
+            DataSet ds1;
+            DataTable webinarsPerAff;
+            DataTable postEventOrders;
+            DataTable ordersPerAff;
+            DataTable pOrders;
+            var ds = IniDataTables(out ds1, out webinarsPerAff, out postEventOrders, out ordersPerAff, out pOrders);
 
             foreach (var webinar in webinars)
             {
@@ -2997,7 +2932,7 @@ namespace CUWebinars.Web.Controllers.Admin
                             webinar.idWebinar,
                             thisAffiliate);
                         int rowNumber = 0;
-                        webinarsPerWeek.Rows.Add(
+                        webinarsPerAff.Rows.Add(
                             webinar.Title
                             , webinar.Date.ToShortDateString()
                             , invoice.TotalOnBilled.ToString("C").Replace(".00", "")
@@ -3044,7 +2979,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                 //discountNotes.Append(discountAmount);
                                 discountNotes.Append(Environment.NewLine);
                             }
-                            ordersPerWebinar.Rows.Add(
+                            ordersPerAff.Rows.Add(
                                 rowNumber
                                 , order.FirstName + ' ' + order.LastName
                                 , order.BillingEmail
@@ -3226,8 +3161,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
             document.MailMerge.Execute(dataSource);
-            document.MailMerge.Execute(dsWebinars, null);
-            document.MailMerge.Execute(dsPostEventOrders, null);
+            document.MailMerge.Execute(ds, null);
+            document.MailMerge.Execute(ds1, null);
             //document.MailMerge.Execute(dsUpgrades, null);
             document.MailMerge.Execute(grandTotalSource);
 
@@ -3287,10 +3222,10 @@ namespace CUWebinars.Web.Controllers.Admin
         private static DataSet IniDataTables(out DataSet ds1, out DataTable webinarsPerAff, out DataTable postEventOrders,
             out DataTable ordersPerAff, out DataTable pOrders)
         {
-            DataSet ds = new DataSet();
-            ds1 = new DataSet();
+            DataSet ds = new DataSet("Orders"); // dataset name doesn't seem to play a role in nested scenario, although example had same name as data relation
+            ds1 = new DataSet("pOrders"); // dataset name doesn't seem to play a role in nested scenario, although example had same name as data relation
 
-            webinarsPerAff = new DataTable("Webinars");
+            webinarsPerAff = new DataTable("Webinars"); // parent table name needs to match outer range name in doc
 
             webinarsPerAff.Columns.Add("Title", typeof(string));
             webinarsPerAff.Columns.Add("WebinarDate", typeof(string));
@@ -3303,7 +3238,7 @@ namespace CUWebinars.Web.Controllers.Admin
             webinarsPerAff.Columns.Add("Id", typeof(int));
             ds.Tables.Add(webinarsPerAff);
 
-            postEventOrders = new DataTable("PostEventOrders");
+            postEventOrders = new DataTable("PostEventOrders"); // parent table name needs to match outer range name in doc
 
             postEventOrders.Columns.Add("Title", typeof(string));
             postEventOrders.Columns.Add("WebinarDate", typeof(DateTime));
@@ -3317,7 +3252,7 @@ namespace CUWebinars.Web.Controllers.Admin
             ds1.Tables.Add(postEventOrders);
 
             //orders
-            ordersPerAff = new DataTable("Orders");
+            ordersPerAff = new DataTable("dtOrders"); // inner range, but don't want to have a name conflict with relation below
 
             ordersPerAff.Columns.Add("RowNumber", typeof(int));
             ordersPerAff.Columns.Add("Name", typeof(string));
@@ -3333,7 +3268,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
             //orders
-            pOrders = new DataTable("pOrders");
+            pOrders = new DataTable("dtPEOrders"); // inner range, but don't want to have a name conflict with relation below
 
             pOrders.Columns.Add("RowNumber", typeof(int));
             pOrders.Columns.Add("Name", typeof(string));
@@ -3349,8 +3284,8 @@ namespace CUWebinars.Web.Controllers.Admin
             ds1.Tables.Add(pOrders);
             // Add parent-child relation 
 
-            ds.Relations.Add("Orders", webinarsPerAff.Columns["Id"], ordersPerAff.Columns["Id"]);
-            ds1.Relations.Add("pOrders", postEventOrders.Columns["Id"], pOrders.Columns["Id"]);
+            ds.Relations.Add("Orders", webinarsPerAff.Columns["Id"], ordersPerAff.Columns["Id"]); // relation name needs to match nested range name in doc
+            ds1.Relations.Add("pOrders", postEventOrders.Columns["Id"], pOrders.Columns["Id"]); // relation name needs to match nested range name in doc
             return ds;
         }
 

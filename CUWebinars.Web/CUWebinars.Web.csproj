@@ -1882,6 +1882,7 @@
     <Content Include="Content\images\aff\azbankers\Thumbs.db" />
     <Content Include="Content\images\logo_azbankers.png" />
     <Content Include="App_Data\mergeTemplates\WeeklyInvoice1.docx" />
+    <Content Include="Notification\Templates\SendPromoLinks.cshtml" />
     <Content Include="Content\images\email\emailBannerBase.xcf" />
     <Content Include="App_Data\mergeTemplates\WeeklyInvoiceForFlatPercent.docx" />
     <Content Include="App_Data\mergeTemplates\WeeklyInvoice.docx" />

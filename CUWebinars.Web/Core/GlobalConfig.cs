@@ -40,6 +40,8 @@ namespace CUWebinars.Web.Core
         public string TraceLevel { get; private set; }
         public bool UseAzureWebjobs { get; private set; }
         public string WMVRepository { get; private set; }
+        public string PromoEmailFromAddress { get; private set; }
+        public string PromoEmailSubject { get; private set; }
 
         private GlobalConfig()
         {
@@ -77,6 +79,8 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.TraceLevel = GetTraceLevel();
                 UniqueInstance.UseAzureWebjobs = bool.Parse(ApplicationSettingsSection["UseAzureWebjobs"]);
                 UniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
+                UniqueInstance.PromoEmailFromAddress = ApplicationSettingsSection["PromoEmailFromAddress"];
+                UniqueInstance.PromoEmailSubject = ApplicationSettingsSection["PromoEmailSubject"];
 
                 ConnectionStringSettingsCollection ConnectionStringSettings = WebConfigurationManager.ConnectionStrings;
 

@@ -24,7 +24,6 @@
     bool isAffiliateRestricted = Model.Affiliate != null;
 }
 
-<link type="text/css" href="~/Scripts/WijmoEditor/Themes/arctic/jquery-wijmo.css" rel="stylesheet" />
 @Scripts.Render("~/bundles/wijmo-editor-scripts")
 <link type="text/css" href="~/Scripts/WijmoEditor/Themes/arctic/jquery-wijmo.css" rel="stylesheet" />
 @Styles.Render("~/bundles/wijmo-editor-styles")
@@ -186,6 +185,7 @@
                                 <input type="button" class="button btn btn-small reset-to-master" value="Reset to Master" />
                                 <input type="button" class="button btn btn-small copy-markup" value="Copy to Clipboard" />
                                 @Html.TextBox("SendToList_" + @aff.idUserAff, "", new { @class = "input" })
+                                @Html.HiddenFor(m => aff.ttsDomain, new { id = "ttsDomain_" + @aff.idUserAff })
                                 <input type="button" class="button btn btn-small send-to-affiliate" value="Send" />
                                 <button class="button btn btn-small write-markup-to-storage">Save</button>
                             </p>
