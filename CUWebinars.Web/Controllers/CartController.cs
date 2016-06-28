@@ -11,6 +11,7 @@ using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
+using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
@@ -438,6 +439,40 @@ namespace CUWebinars.Web.Controllers
         public PartialViewResult UpdateOrderWithUserIdForm()
         {
             return PartialView("~/Views/cart/Partials/_UpdateOrderWithUserId.cshtml");
+        }
+
+        [HttpGet]
+        public JsonResult IniMonerisModal(int idOrder)
+        {
+            //ensures that the price passed to moneris reflects order price with discount applied.
+            var updatedTotal = _cartControllerOrchestrator.GetOrderById(idOrder).Total;
+            return Json(new
+            {
+                success = "success",
+                total = updatedTotal
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [AllowAnonymous]
+        [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
+        public ActionResult Incoming(FormCollection form)
+        {
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                
+                var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(form[0]);
+
+                var parsedOrder = ParseMandrillMsg.ParseAcs("<html><body>" + msgHtml.msg.html + "</body></html>", "06/21/2016");
+                RedirectToAction("Importorder4Acs", "Order", parsedOrder);
+            }
+            catch (Exception ex)
+            {
+                _logger.Info("ex: " + ex);
+                return null;
+            }
+            return null;
         }
 
 

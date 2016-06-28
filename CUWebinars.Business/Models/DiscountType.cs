@@ -8,8 +8,9 @@ namespace CUWebinars.Business.Models
         Package = 4,
         ComplianceSeries = 5,
         DirectorSeries = 6,
-        ThreePart = 7,
-        FourPart = 8, 
-        FivePart = 9
+        TwoPart = 7,
+        ThreePart = 8,
+        FourPart = 9, 
+        FivePart = 10
     }
 }

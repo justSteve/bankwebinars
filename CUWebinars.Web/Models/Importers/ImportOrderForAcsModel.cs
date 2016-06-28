@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using CUWebinars.Business.Models;
-
-namespace CUWebinars.Web.Models
+﻿namespace CUWebinars.Web.Models.Importers
 {
     public class ImportOrderForAcsModel
     {
+
+        public string LoggerNotes { get; set; }
         public string AdditionalLocationsString { get; set; }
 
         public string AffiliateComments { get; set; }

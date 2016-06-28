@@ -357,47 +357,13 @@ $(function () {
 
         eventArgs.preventDefault();
 
-        $('#InputFormFields').empty().load("/admin/GetWeeklyInvoicesEvent", function () {
-
-
-            submitStartDate.on('click', function (args) {
-                selectedUpcomingWebinarId = $(this).val();
-
-                var payload = { startDate: $("startDate").val() };
-
-                $.ajax({
-                    type: 'POST',
-                    contentType: constants.JsonContentType,
-                    cache: false,
-                    url: sendAdhocEventUrl,
-                    dataType: constants.JsonDataType,
-                    data: JSON.stringify({ webinarId: generateWeeklyInvoicesEventUrl }),
-                    beforeSend: function () {
-                        // this is where we append a loading image
-                    }
-                }).done(function (data) {
-
-                    // successful request; do something with the data
-                    regTypesCheckBoxesDiv = $('#RegTypesCheckBoxes').find('.controls');
-
-                    $.each(data, function (idx, value) {
-                        regTypesCheckBoxesDiv.append('<label class="checkbox-inline"><input type="checkbox" id="inlineCheckbox_' + idx + '" value="' + value["Value"] + '">' + value["Text"] + '</label>');
-                    });
-
-                    regTypesCheckBoxesDiv.append('<button id="GetRecipientsButton" class="btn" style="margin-top:10px;">Get Recipients</button>');
-                    getRecipientsButton = $('#GetRecipientsButton');
-
-                    //Rollbar.info({ 'oen-#7': { 'result': data } });
-                }).fail(function (jqXHR, textStatus, errorThrown) {
-                    // failed request; give feedback to user
-                    //Rollbar.error({ 'oen-#14': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
-                    //Rollbar.error({ 'oen-#15': { 'errorThrown': errorThrown } });
-
-                }).always(function () {
-
+        $('#InputFormFields').empty()
+            .load("/admin/GetWeeklyInvoicesEvent", function() {
+                
+                $('#submitStartDate').on('click', function(args) {
+                    FireGenerator(19);
                 });
             });
-        });
     });
 
 

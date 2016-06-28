@@ -9,78 +9,59 @@
 
 @{
 
+//a.      Need an option to select past events
+//i.     E.g. sending 5 most popular webinars from previous month
+//b.      Can’t see the webinar date
+//i.     E.g. sending webinars for a given week, would need to know dates
+//c.      The scroll arrows don’t work when you click them
+//d.      Can you update the default text color of “This Week's Featured Events!” to #000000?
     var promoEvent = Model.Webinar;
     Layout = "/Views/Shared/_LayoutAdmin.cshtml";
 
     string wDate = "<b>" + DateTimeHelper.FormatDate(Model.Webinar.Date) + "</b> &nbsp;";
     wDate = wDate + DateTimeHelper.FormatTimeWithDuration(Model.Webinar.Date, Model.TimeZone, false, Model.Webinar.Duration);
-    //TempData["Webinars"] = Model.Webinars;
-    ViewBag.Title = "Generate Promo Emails - Weekly " + promoEvent.Title;
+
+    ViewBag.Title = "Generate Promo Emails - Daily" + promoEvent.Title;
 
     //var minDay = 1.Days().Since(DomainConstants.BuildUtcNowAsCts);
     //var maxDay = DomainConstants.BuildUtcNowAsCts.NextMonth();
 
+    bool hasAffiliates = Model.Affiliates.Count > 0;
+    bool isAffiliateRestricted = Model.Affiliate != null;
 }
 
-<!-- TODO: some or all of the following should be moved to BundleConfig.cs -->
-<!--Theme-->
-<link href="/scripts/wijmoeditor/themes/arctic/jquery-wijmo.css" rel="stylesheet" type="text/css" />
+    <link type="text/css" href="~/Scripts/WijmoEditor/Themes/arctic/jquery-wijmo.css" rel="stylesheet" />
+    @Scripts.Render("~/bundles/wijmo-editor-scripts")
+    <link type="text/css" href="~/Scripts/WijmoEditor/Themes/arctic/jquery-wijmo.css" rel="stylesheet" />
+    @Styles.Render("~/bundles/wijmo-editor-styles")
 
-<!--Wijmo Widgets CSS-->
-<link href="/scripts/wijmoeditor/jquery.wijmo-pro.3.20153.84.css" rel="stylesheet" type="text/css" />
 
-<script type="text/javascript" src="http://cdn.wijmo.com/external/require.js"></script>
-
-<!-- TODO: I would like to understand why the following "require.js" stuff is needed:
-    is there an issue with BundleConfig.js?
-    does it end up loading some things (jquery, jquery-ui) twice?
-    are there pros/cons to using it / depending on it?
--->
-
-<script type="text/javascript">
-    // load from require.js
-    requirejs.config({
-        baseUrl: "http://cdn.wijmo.com/amd-js/3.20153.83",
-        paths: {
-            "jquery": "jquery-1.11.1.min",
-            "jquery-ui": "jquery-ui-1.11.0.custom.min",
-            "jquery.ui": "jquery-ui",
-            "jquery.mousewheel": "jquery.mousewheel.min",
-            "globalize": "globalize.min"
-        }
-    });
-    // end load from require.js
-</script>
-
-<script src="/scripts/app/admin/promo-generator.js" type="text/javascript"></script>
-
-<script id="scriptInit" type="text/javascript">
-    @{
-        var affDTO = (from Affiliate a in Model.Affiliates
-                      select new
-            {
-                ttsDomain = a.ttsDomain,
-                idUserAff = a.idUserAff,
-                ContactPerson = a.ContactPerson,
-                EmailBanner= a.EmailBanner,
-                ContactEmail = a.ContactEmail,
-                ContactPhone = a.ContactPhone,
-                EmailFooter = a.EmailFooter.Trim()
-            }).ToList();
+    <script id="scriptInit" type="text/javascript">
+        @{
+            var affDTO = (from Affiliate a in Model.Affiliates
+                          select new
+        {
+                    ttsDomain = a.ttsDomain,
+            idUserAff = a.idUserAff,
+            EmailBanner = a.EmailBanner,
+            ContactPerson = a.ContactPerson,
+            ContactEmail = a.ContactEmail,
+            ContactPhone = a.ContactPhone,
+            EmailFooter = a.EmailFooter.Trim()
+        }).ToList();
     }
 
     var affs = @Html.Raw(Json.Encode(affDTO));
 
-    require(["wijmo.wijeditor"], function () {
-        $(document).ready(function () {
-            $("#editorTA").wijeditor({
-                // editorMode: "split" // can default to split view if they want
-                textChanged: function (e, data) { // Set textChanged event handler function
-                    SetCopyToClipboardTextArea(false);
-                }
-            });
+    $(document).ready(function () {
+        $("#editorTA").wijeditor({
+            // editorMode: "split" // can default to split view if they want
+            textChanged: function (e, data) { // Set textChanged event handler function
+                SetCopyToClipboardTextArea(false);
+            }
         });
     });
+
 
     //$(document).ready(function () {
     //    //$('#calendar').fullCalendar({

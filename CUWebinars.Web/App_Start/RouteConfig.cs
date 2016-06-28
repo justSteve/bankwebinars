@@ -23,6 +23,11 @@ namespace CUWebinars.Web.App_Start
                 defaults: new { controller = "Cart", action = "PostBackWPS", id = 0 }
             );
             routes.MapRoute(
+                "Incoming",
+                url: "Incoming",
+                defaults: new { controller = "Cart", action = "Incoming" }
+            );
+            routes.MapRoute(
                 name: "ResumeCheckout",
                 url: "Resume/{id}",
                defaults: new { controller = "Cart", action = "Resume", id = 0 }

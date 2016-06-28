@@ -35,12 +35,10 @@ namespace CUWebinars.Business.Services
             _context = context;
         }
 
-        private AffiliateInvoiceDTO ComputeRoyalty(IList<Order> orders, int idAffiliate, bool generatingWeeklyReport)
+        private AffiliateInvoiceDTO ComputeRoyalty(AffiliateInvoiceDTO invoice, IList<Order> orders, int idAffiliate, bool generatingWeeklyReport)
         {
-            AffiliateInvoiceDTO invoice = new AffiliateInvoiceDTO();
 
             invoice.Affiliate = FindById(idAffiliate);
-
 
             switch (invoice.Affiliate.CommissionModel)
             {
@@ -51,27 +49,31 @@ namespace CUWebinars.Business.Services
                     {
                         numberOfRegistrations++;
                         decimal commissionPercent;
+
                         var row = IniInvoice(order, invoice);
-                        if (numberOfRegistrations >= 16)
-                        {
-                            commissionPercent = 0.45M;
-                        }
-                        else if (numberOfRegistrations >= 11)
-                        {
-                            commissionPercent = 0.4M;
-                        }
-                        else if (numberOfRegistrations >= 6)
-                        {
-                            commissionPercent = 0.35M;
-                        }
-                        else //nonCreditCardPayments < 6
+
+                        if (numberOfRegistrations < 6)
                         {
                             commissionPercent = 0.3M;
                         }
+                        else if (numberOfRegistrations < 11)
+                        {
+                            commissionPercent = 0.35M;
+                        }
+                        else if (numberOfRegistrations < 16)
+                        {
+                            commissionPercent = 0.4M;
+                        }
+                        else //
+                        {
+                            commissionPercent = 0.45M;
+                        }
 
-                        if (order.OrderStatus == OrderStatus.Paid) commissionPercent = 0.3M;
+                        //if (order.OrderStatus == OrderStatus.Paid) commissionPercent = 0.3M;
 
-                        row.Royalty = order.Total * commissionPercent;
+                        row.Royalty = row.RowPrice * commissionPercent;
+                        //taxes should not be included
+                        //row.Royalty = order.Total * commissionPercent;
                         row.PercentPaid = commissionPercent;
                         invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
                     }
@@ -87,8 +89,8 @@ namespace CUWebinars.Business.Services
                         var row = IniInvoice(order, invoice);
                         commissionPercent = 0.4M;
 
-                        row.Royalty = order.Total * commissionPercent;
-                        //row.Royalty = row.RowPrice * commissionPercent;
+                        //row.Royalty = order.Total * commissionPercent;
+                        row.Royalty = row.RowPrice * commissionPercent;
                         row.PercentPaid = commissionPercent;
                         invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
                     }
@@ -100,8 +102,8 @@ namespace CUWebinars.Business.Services
                         var row = IniInvoice(order, invoice);
                         decimal commissionPercent = 0.35M;
 
-                        row.Royalty = order.Total * commissionPercent;
-                        //row.Royalty = row.RowPrice * commissionPercent;
+                        //row.Royalty = order.Total * commissionPercent;
+                        row.Royalty = row.RowPrice * commissionPercent;
                         row.PercentPaid = commissionPercent;
                         invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
 
@@ -115,8 +117,8 @@ namespace CUWebinars.Business.Services
                         decimal commissionPercent = 0.25M;
 
                         var row = IniInvoice(order, invoice);
-                        row.Royalty = order.Total * commissionPercent;
-                        //row.Royalty = row.RowPrice * commissionPercent;
+                        //row.Royalty = order.Total * commissionPercent;
+                        row.Royalty = row.RowPrice * commissionPercent;
                         row.PercentPaid = commissionPercent;
                         invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
                     }
@@ -126,11 +128,11 @@ namespace CUWebinars.Business.Services
                     throw new TTSException("Invalid commission model ");
             }
 
-            if (invoice.Affiliate.BillingModel == "aff")
+            if (invoice.Affiliate.BillingModel.Trim(' ') == "aff")
             {
                 invoice.TotalNetDue = (invoice.TotalOnBilled + invoice.TotalOnPaid - invoice.TotalDiscounts) - invoice.TotalRoyalties;
             }
-            if (invoice.Affiliate.BillingModel == "billed")
+            if (invoice.Affiliate.BillingModel.Trim(' ') == "billed")
             {
                 invoice.TotalNetDue = (invoice.TotalOnBilled - invoice.TotalRoyalties) - (decimal)((double)invoice.TotalOnPaid * .03);
             }
@@ -152,11 +154,11 @@ namespace CUWebinars.Business.Services
             if (row == null) throw new ArgumentNullException("row");
             if (order.OrderStatus == OrderStatus.Paid)
             {
-                invoice.TotalOnPaid = invoice.TotalOnPaid + order.Total;
+                invoice.TotalOnPaid = invoice.TotalOnPaid + row.RowPrice;
             }
             if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed)
             {
-                invoice.TotalOnBilled = invoice.TotalOnBilled + order.Total;
+                invoice.TotalOnBilled = invoice.TotalOnBilled + row.RowPrice;
                 _logger.Info("TotalOnBilled =  " + invoice.TotalOnBilled);
                 order.OrderStatus = OrderStatus.Billed;
             }
@@ -166,10 +168,13 @@ namespace CUWebinars.Business.Services
                 if (row.Discount.PercentOff > 0)
                 {
                     invoice.TotalDiscounts = invoice.TotalDiscounts + (row.UnitPrice * ((row.Discount.PercentOff) / 100));
+                    _logger.Info(invoice.Affiliate.idUserAff + "-" + row.idOrder + "-" + (row.UnitPrice * ((row.Discount.PercentOff) / 100)));
+
                 }
                 if (row.Discount.FlatOff > 0)
                 {
                     invoice.TotalDiscounts = invoice.TotalDiscounts + row.UnitPrice - row.Discount.FlatOff;
+                    _logger.Info(invoice.Affiliate.idUserAff + "-" + row.idOrder + "-" + (row.UnitPrice * ((row.Discount.PercentOff) / 100)));
                 }
             }
             return row;
@@ -194,7 +199,7 @@ namespace CUWebinars.Business.Services
         //    AffiliateInvoiceDTO reportData = BuildAffiliateInvoice(orders, webinarID, affiliateID);
         //    if (reportData != null)
         //    {
-        //        return new AffiliateInvoiceDTO { WebinarID = webinarID, Affiliate = FindById(affiliateID) };
+        //        return new AffiliateInvoiceDTO { idWebinar = webinarID, Affiliate = FindById(affiliateID) };
         //    }
 
         //    return reportData;
@@ -223,7 +228,7 @@ namespace CUWebinars.Business.Services
 
                 foreach (var affiliate in listofAffiliates)
                 {
-                    BuildAffiliateInvoice(orders.Where(o => o.idAffiliate == affiliate.idUserAff
+                    BuildAffiliateInvoice(new AffiliateInvoiceDTO(), orders.Where(o => o.idAffiliate == affiliate.idUserAff
                         && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted)).OrderBy(o => o.OrderDate)
                         .ToList(), webinarID, affiliate.idUserAff);
                 }
@@ -249,27 +254,26 @@ namespace CUWebinars.Business.Services
 
 
 
-        public AffiliateInvoiceDTO BuildAffiliateInvoice(List<Order> orders, int webinarID, int affiliateID)
+        public AffiliateInvoiceDTO BuildAffiliateInvoice(AffiliateInvoiceDTO invoice, List<Order> orders, int webinarID, int affiliateID)
         {
-            return ComputeRoyalty(orders, affiliateID, true);
+            return ComputeRoyalty(invoice, orders, affiliateID, true);
         }
-        public AffiliateInvoiceDTO BuildAffiliateInvoiceForPostEventOrders(List<Order> orders, int affiliateID)
+        public AffiliateInvoiceDTO BuildAffiliateInvoiceForPostEventOrders(AffiliateInvoiceDTO invoice, List<Order> orders, int affiliateID)
         {
 
-            return ComputeRoyaltyForPostEventOrders(orders, affiliateID, true);
+            return ComputeRoyaltyForPostEventOrders(invoice, orders, affiliateID, true);
         }
 
-        private AffiliateInvoiceDTO ComputeRoyaltyForPostEventOrders(List<Order> orders, int affiliateId, bool b)
+        private AffiliateInvoiceDTO ComputeRoyaltyForPostEventOrders(AffiliateInvoiceDTO invoice, List<Order> orders, int affiliateId, bool b)
         {
-            AffiliateInvoiceDTO invoice = new AffiliateInvoiceDTO();
 
             invoice.Affiliate = FindById(affiliateId);
 
+            int numberOfRegistrations = 0;
 
             switch (invoice.Affiliate.CommissionModel)
             {
                 case 1: // Sliding4TierNoCCBreak:
-                    int numberOfRegistrations = 0;
 
                     foreach (Order order in orders.OrderBy(o => o.OrderDate))
                     {
@@ -279,26 +283,28 @@ namespace CUWebinars.Business.Services
                                 affiliateId);
                         decimal commissionPercent;
                         var row = IniInvoice(order, invoice);
-                        if (numberOfRegistrations >= 16)
-                        {
-                            commissionPercent = 0.45M;
-                        }
-                        else if (numberOfRegistrations >= 11)
-                        {
-                            commissionPercent = 0.4M;
-                        }
-                        else if (numberOfRegistrations >= 6)
-                        {
-                            commissionPercent = 0.35M;
-                        }
-                        else //nonCreditCardPayments < 6
+
+                        if (numberOfRegistrations < 6)
                         {
                             commissionPercent = 0.3M;
                         }
+                        else if (numberOfRegistrations < 11)
+                        {
+                            commissionPercent = 0.35M;
+                        }
+                        else if (numberOfRegistrations < 16)
+                        {
+                            commissionPercent = 0.4M;
+                        }
+                        else //
+                        {
+                            commissionPercent = 0.45M;
+                        }
+
 
                         if (order.OrderStatus == OrderStatus.Paid) commissionPercent = 0.3M;
 
-                        row.Royalty = order.Total * commissionPercent;
+                        row.Royalty = row.RowPrice * commissionPercent;
                         row.PercentPaid = commissionPercent;
                         invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
                     }
@@ -314,7 +320,7 @@ namespace CUWebinars.Business.Services
                         var row = IniInvoice(order, invoice);
                         commissionPercent = 0.4M;
 
-                        row.Royalty = order.Total * commissionPercent;
+                        row.Royalty = row.RowPrice * commissionPercent;
                         //row.Royalty = row.RowPrice * commissionPercent;
                         row.PercentPaid = commissionPercent;
                         invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
@@ -327,7 +333,7 @@ namespace CUWebinars.Business.Services
                         var row = IniInvoice(order, invoice);
                         decimal commissionPercent = 0.35M;
 
-                        row.Royalty = order.Total * commissionPercent;
+                        row.Royalty = row.RowPrice * commissionPercent;
                         //row.Royalty = row.RowPrice * commissionPercent;
                         row.PercentPaid = commissionPercent;
                         invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
@@ -342,7 +348,7 @@ namespace CUWebinars.Business.Services
                         decimal commissionPercent = 0.25M;
 
                         var row = IniInvoice(order, invoice);
-                        row.Royalty = order.Total * commissionPercent;
+                        row.Royalty = row.RowPrice * commissionPercent;
                         //row.Royalty = row.RowPrice * commissionPercent;
                         row.PercentPaid = commissionPercent;
                         invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
@@ -367,6 +373,9 @@ namespace CUWebinars.Business.Services
             //When Aff Bills
             //TotalOnBilled -  TotalRoyalties - ( "TotalOnPaid" * .03 )  = NetDueTTS
 
+
+            //temply stored so the line item can show total being calculated
+            invoice.InvoiceBody = numberOfRegistrations.ToString();
             return invoice;
 
 
@@ -385,7 +394,7 @@ namespace CUWebinars.Business.Services
             var orders = _orderRepository.GetOrdersByWebinar(idWebinar).Where(a => a.idAffiliate == idAffiliate).ToList();
             IList<OrderRowModel> rows = new List<OrderRowModel>();
 
-            ComputeRoyalty(orders, idAffiliate, false);
+            ComputeRoyalty(new AffiliateInvoiceDTO(), orders, idAffiliate, false);
 
             var ordinalHolder = 0;
             foreach (var order in orders)

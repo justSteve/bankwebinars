@@ -16,7 +16,7 @@ $(document).ready(function () {
         //var formerAffId = $(e.relatedTarget).data("link-affid");
         formerAffId = currentAffId;
         currentAffId = $(this).data("link-affid");
-
+        
         var $editorTA = $("#editorTA");
 
         // start by retrieving what is in the editor now

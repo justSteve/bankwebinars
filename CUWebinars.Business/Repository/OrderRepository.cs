@@ -76,39 +76,6 @@ namespace CUWebinars.Business.Repository
             var errors = ValidationHelper.GetMessagesAsXmlElement(validationResult.Errors);
             throw new Exception(errors.ToString());
         }
-        //public Order CreateOrder(int affiliateId, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null)
-        //{
-
-        //    var newOrder = items.Create();
-        //    newOrder.OrderDate = DomainConstants.BuildUtcNowAsCts;
-        //    newOrder.OrderStatus = OrderStatus.InProcess;
-        //    newOrder.idAffiliate = affiliateId;
-        //    newOrder.BillingEmail = webUser.email;
-        //    newOrder.idUser = webUser.idUser;
-        //    newOrder.Origin = origin;
-
-        //    newOrder = AssignWebUserToOrder(webUser, newOrder);
-        //    //if (newOrder.Affiliate == null) { }
-        //    // reconcile orderRow with order relationship
-        //    ((TTSWebinarsContext)db).OrderRows.Add(orderRow);
-        //    orderRow.Order = newOrder;
-        //    newOrder.OrderRows = new List<OrderRow> { orderRow };
-
-        //    //if (webUser.idSubscriptionDiscount != null && webUser.idSubscriptionDiscount > 0)
-        //    //{
-        //    //    orderRow.Discount = GetUserDiscount(webUser.idUser);
-        //    //}
-
-
-        //    Add(newOrder);
-
-        //    return newOrder;
-
-
-        //    //var errors = ValidationHelper.GetMessagesAsXmlElement(validationResult.Errors);
-        //    //throw new Exception(errors.ToString());
-        //}
-
         public OrderRow CreateOrderRow(Webinar webinar,
             IList<AdditionalLocation> additionalLocations,
             RegType registrationType)
@@ -805,11 +772,13 @@ namespace CUWebinars.Business.Repository
 
         public int GetNumberOfOrdersPerWebinarByAffiliate(int id, int idAffiliate)
         {
-            return items.Count(o => o.OrderRows.FirstOrDefault().RowStatus == OrderRowStatus.Active
-                && o.idAffiliate == idAffiliate && (o.OrderStatus == OrderStatus.Submitted
+            return items.Where(o => o.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                .Webinar.idWebinar == id
+                && o.Affiliate.idUserAff == idAffiliate
+                && (o.OrderStatus == OrderStatus.Submitted
                 || o.OrderStatus == OrderStatus.Paid
                 || o.OrderStatus == OrderStatus.Billed
-                ));
+                )).ToList().Count;
 
         }
 

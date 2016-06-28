@@ -8,9 +8,9 @@
 </script>
 @{
     var isAffiliate = true;
-    
+
     var row = Model.EditFields.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-    
+
     if (User != null && User.Identity.IsAuthenticated)
     {
         ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
@@ -141,10 +141,10 @@
                             </div>
                             @Html.Raw(Model.EditFields.AdditionalLocationsRenderer.ToString())
                         </div>
-    <div id="UpdateAddLocsButtonWrapper" class="control-group">
-        @*@Html.TextBoxFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions, new { id = "TotalCostOfOptionsText", disabled = "disabled" })*@
-        <button id="UpdateAddLocsButton" class="btn btn-primary btn-mini">Submit</button>
-    </div>
+                        <div id="UpdateAddLocsButtonWrapper" class="control-group">
+                            @*@Html.TextBoxFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions, new { id = "TotalCostOfOptionsText", disabled = "disabled" })*@
+                            <button id="UpdateAddLocsButton" class="btn btn-primary btn-mini">Submit</button>
+                        </div>
 
                     }
                 </div>
@@ -316,16 +316,16 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h3>Change User Assigned To Order:</h3>
                 </div>
-                <div class="modal-body">
+                <div id="SetUserAssignedToOrder-modal-body" class="modal-body">
 
                     <input type="hidden" name="orderID" value="@Model.EditFields.Order.idOrder" />
                     <input type="hidden" name="migrateOrder" value="one" />
-                    @*<input type="text" id="targetUserID" name="targetUserID" placeholder="Targeted User ID" />*@
-                    <input type="text" id="targetUserID" name="targetUserID" placeholder="Targeted User ID" />
+
+                    <input type="text" id="targetUserEmail" name="targetUserEmail" placeholder="Targeted User Email" />
 
                 </div>
                 <div class="modal-footer">
-                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                    <button class="btn" data-dismiss="modal" id="SetUserAssignedToOrder-close" aria-hidden="true">Close</button>
                     <button id="changeUserOrderButton" name="moveOne" class="btn btn-primary">Just This Order</button>
                     <button id="changeUserOrdersButton" name="moveAll" class="btn btn-primary">Change All</button>
                 </div>

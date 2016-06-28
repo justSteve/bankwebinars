@@ -31,7 +31,7 @@ $(function () {
                 crunchingLabel.html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Submitting password...</span>');
             }
         }).done(function (data) {
-
+            
             if (data.Result === 'Success') {
                 form.fadeOut(500, function() {
                     formParent.append('<div class="legendImitator">Password Reset</div><div style="margin-bottom: 25px"><span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp; Password reset succeeded!</span><p>You have successfully changed your password and can click the <i>Login</i> link in the upper left corner of this page.</p></div>');
@@ -42,16 +42,17 @@ $(function () {
                 });
                 //Rollbar.info("#699. reset succeeded");
             } else if (data.isSuccessful === false) {
-                formProcessor.lightUpValidationSummary('valSummaryResetPwdForm', "Reset code expired. Please contact us with our online chat (lower right corner of this page) to get a new code.");
+                
+                formProcessor.lightUpValidationSummary('valSummaryResetPwdForm', data);
 
                 crunchingLabel.remove();
             } else {
-                crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;<strong>Oops!</strong>Connection Error #545. Please refresh the page and try again. In case of continued problems, please contact us with our online chat (lower right corner of this page).</span>');
+                crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #545. Please refresh the page and try again. In case of continued problems, please contact us with our online chat (lower right corner of this page).</span>');
                 //Rollbar.error("#698 fail ");
             }
         }).fail(function (jqXHR, textStatus, errorThrown) {
             //Rollbar.error("#697 fail ");
-            crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;<strong>Oops!</strong>Connection Error #547. Please refresh the page and try again. In case of continued problems, please contact us with our online chat (lower right corner of this page).</span>');
+            crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #547. Please refresh the page and try again. In case of continued problems, please contact us with our online chat (lower right corner of this page).</span>');
         });
 
         return false;

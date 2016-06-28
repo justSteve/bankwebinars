@@ -18,6 +18,7 @@ using System.Web;
 using System.Web.Mvc;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
+using CUWebinars.Web.Models.Importers;
 
 namespace CUWebinars.Web.Controllers
 {
@@ -440,13 +441,16 @@ namespace CUWebinars.Web.Controllers
             return myErr.ToString();
         }
 
+
         /// <summary>
         /// Imports orders based on form submissions from Affiliate Import Sheets.
         /// </summary>
         /// <param name="ImportOrderModel"></param>
         /// <returns></returns>
+        /// 
+        [AllowAnonymous]
         [HttpPost]
-        public JsonResult importorder4ACS(ImportOrderForAcsModel _importedOrder)
+        public JsonResult Importorder4Acs(ImportOrderForAcsModel _importedOrder)
         {
             _logger.Info("importorder4ACS Incoming Values: " + JsonConvert.SerializeObject(_importedOrder, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
             if (ModelState.IsValid)
@@ -615,7 +619,7 @@ namespace CUWebinars.Web.Controllers
                         cftTitleString = "The title of this event at cftnow.org is: " + cftTitleString;
                     }
 
-                    newOrder.UserComments = "{'ACSImporter': 'This registration originated at cftnow.org. " + cftTitleString + "'}";
+                    newOrder.UserComments = "{\"ACSImporter\": \"This registration originated at cftnow.org. " + cftTitleString + "\"}";
 
                     newOrder.AuditInfo = "{'ACSImporter': {'" + JsonConvert.SerializeObject(_importedOrder) + "'}}";
 

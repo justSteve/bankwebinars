@@ -11,6 +11,7 @@ namespace CUWebinars.Business.Models
         }
 
         public int WebinarID { get; set; }
+        public string InvoiceID { get; set; }
         
         public String AffiliateName { get; set; }
         public String WebinarTitle { get; set; }
@@ -24,5 +25,9 @@ namespace CUWebinars.Business.Models
 
         public string WebinarDate { get; set; }
         public int RowNumber { get; set; }
+
+
+        public String InvoiceBody { get; set; }
+        public int RoyaltyTier { get; set; }
     }
 }

@@ -35,6 +35,8 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
     $('body').on('click', 'input:button', (function (e, data) {
 
+
+
         if (e.currentTarget.value === 'Create New Account?') // called directly in the razor partial view
             return false;
 
@@ -1071,7 +1073,7 @@ function ShowModalForShippingDetails(shippingDetailsRqrd) {
 }
 
 function hookUpApplyDiscountLogic(btn, orderRowId) {
-
+    
     btn.on('click', function (e) {
         var $item = $(e);
         var form = $item.parents("form");
@@ -1111,12 +1113,21 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
                 alert("The discount code " + $('#CheckoutDiscountCode').val() + " was not found. Try again or use our Help & Feedback button (lower right corner)  for assistance.");
             } else {
 
+                //regTypeShort = row.RegistrationType.OptionLabelShort,
+                //BasePrice = pricesAndDiscounts.UnitPrice,
+                //Discount = pricesAndDiscounts.TotalDiscount,
+                //OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
+                //Tax = pricesAndDiscounts.TaxAmount,
+                //Total = pricesAndDiscounts.TotalOrderPrice,
+                //FlatOff = pricesAndDiscounts.Discount.FlatOff,
+                //PercentOff = pricesAndDiscounts.Discount.PercentOff
+
                 var flatOff = data.FlatOff;
                 var percentOff = data.PercentOff;
-
+                console.log(data);
                 var showDiscount = "";
                 if (flatOff > 0) {
-
+                    alert("flatOff" + flatOff);
                     var amount2Discount = data.Discount.replace(".00%", "") / 100;
                     registerDuringCheckout.totalDiscount = registerDuringCheckout.totalPrice * amount2Discount;
                 }
@@ -1125,17 +1136,21 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
                     registerDuringCheckout.totalDiscount = data.Discount;
                 }
 
-                var newTotalPrice = registerDuringCheckout.totalPrice - registerDuringCheckout.totalDiscount;
+                //eliminate calculations here in js -- rely on server
+                //var newTotalPrice = registerDuringCheckout.totalPrice - registerDuringCheckout.totalDiscount;
+
+                var newTotalPrice = data.Total;
 
                 $("#amount").val(newTotalPrice);
 
                 if (newTotalPrice < 0)
                     newTotalPrice = 0;
-
+                
                 $('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 3.').addClass('text-info');
 
-                $('#discountedText').html('Discounted: <span id="totalDiscount">$' + registerDuringCheckout.totalDiscount + '</span>').removeClass('muted');
-                $('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
+                $('#discountedText').html(' <span id="totalDiscount">Discounted:$' + registerDuringCheckout.totalDiscount + '</span>').removeClass('muted');
+                //original -- what changed this? $('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
+                $('#showTotalPrice').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
 
                 $('#discountSpinner').remove();
             }
