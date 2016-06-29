@@ -2880,12 +2880,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
             int thisAffiliate = affiliate.idUserAff;
 
-            DocumentModel document =
-                DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoice1.docx"));
-            //document.MailMerge.ClearOptions = MailMergeClearOptions.RemoveEmptyRanges;
-            //if (affiliate.CommissionModel != 1)
-            //    document = DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoiceForFlatPercent.docx"));
-
             var InvoiceID = weekNumber + "-" + affiliate.idUserAff;
             var RoyaltyTier = affiliate.CommissionModel;
 
@@ -3105,6 +3099,23 @@ namespace CUWebinars.Web.Controllers.Admin
                 _logger.ErrorException("GenerateWeeklyInvoicesEvent", ex);
             }
 
+            var grandTotalSource = new
+            {
+                GrandTotalOnBilled = GrandTotalOnBilled.ToString("C").Replace(".00", ""),
+                GrandTotalOnPaid = GrandTotalOnPaid.ToString("C").Replace(".00", ""),
+                GrandTotalDiscounts = GrandTotalDiscounts.ToString("C").Replace(".00", ""),
+                GrandTotalRoyalties = GrandTotalRoyalties.ToString("C").Replace(".00", ""),
+                GrandTotalNetDue = GrandTotalNetDue.ToString("C").Replace(".00", ""),
+                DiscountNotes = discountNotes.ToString()
+            };
+
+
+            DocumentModel document = DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoice1.docx"));
+
+            //if (affiliate.CommissionModel != 1)
+            //    document = DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoiceForFlatPercent.docx"));
+
+
             document.MailMerge.FieldMerging += (sender, e) =>
             {
                 if (e.IsValueFound)
@@ -3149,20 +3160,14 @@ namespace CUWebinars.Web.Controllers.Admin
 
             };
 
-            var grandTotalSource = new
-            {
-                GrandTotalOnBilled = GrandTotalOnBilled.ToString("C").Replace(".00", ""),
-                GrandTotalOnPaid = GrandTotalOnPaid.ToString("C").Replace(".00", ""),
-                GrandTotalDiscounts = GrandTotalDiscounts.ToString("C").Replace(".00", ""),
-                GrandTotalRoyalties = GrandTotalRoyalties.ToString("C").Replace(".00", ""),
-                GrandTotalNetDue = GrandTotalNetDue.ToString("C").Replace(".00", ""),
-                DiscountNotes = discountNotes.ToString()
-            };
-
-
             document.MailMerge.Execute(dataSource);
-            document.MailMerge.Execute(ds, null);
-            document.MailMerge.Execute(ds1, null);
+            document.MailMerge.Execute(ds, null); // needs to be explicitly set to null since we are using a dataset
+            document.MailMerge.Execute(ds1, null); // needs to be explicitly set to null since we are using a dataset
+
+            // ONLY set this RemoveEmptyRanges option before the final merge execution or it 
+            //  causes problems (blank docs, probably due to the ranges getting removed before they are populated)
+            //  see also: http://www.gemboxsoftware.com/support-center/kb/articles/9-how-does-mailmergeclearoptions-removeemptyranges-work
+            document.MailMerge.ClearOptions = MailMergeClearOptions.RemoveEmptyRanges;
             document.MailMerge.Execute(grandTotalSource);
 
             try
@@ -3171,11 +3176,14 @@ namespace CUWebinars.Web.Controllers.Admin
                 if (hadWOrder || hadPOrder)
                 {
                     _logger.Info("begins write to file: " + InvoiceID);
-                    document.Save(
-                        Server.MapPath(@"~/App_Data/mergeTemplates/" + InvoiceID + ".html"));
+
+                    //// SAVE LOCALLY if needed for easier testing
+                    //document.Save(
+                    //    Server.MapPath(@"~/App_Data/mergeTemplates/" + InvoiceID + ".html"), SaveOptions.HtmlDefault);
 
                     var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName,
                         _globalConfig.StorageAccessKey);
+
                     var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
                     CloudBlobClient blobClient = cloudStorageAccount.CreateCloudBlobClient();
 
@@ -3187,8 +3195,12 @@ namespace CUWebinars.Web.Controllers.Admin
                         container.GetBlockBlobReference(startDate.ToShortDateString().Replace("/", "-") + "/" +
                                                         InvoiceID + ".html");
 
-                    blob.UploadFromFile(Server.MapPath(@"~/App_Data/mergeTemplates/" + InvoiceID + ".html"),
-                        FileMode.Open);
+                    using (MemoryStream output = new MemoryStream())
+                    {
+                        document.Save(output, SaveOptions.HtmlDefault);
+                        output.Position = 0; // reset to beginning so Upload operation can work correctly
+                        blob.UploadFromStream(output);
+                    }
 
                     return Json(new
                     {
@@ -3222,8 +3234,8 @@ namespace CUWebinars.Web.Controllers.Admin
         private static DataSet IniDataTables(out DataSet ds1, out DataTable webinarsPerAff, out DataTable postEventOrders,
             out DataTable ordersPerAff, out DataTable pOrders)
         {
-            DataSet ds = new DataSet("Orders"); // dataset name doesn't seem to play a role in nested scenario, although example had same name as data relation
-            ds1 = new DataSet("pOrders"); // dataset name doesn't seem to play a role in nested scenario, although example had same name as data relation
+            DataSet ds = new DataSet("dsWebinars"); // dataset name doesn't play an active role in nested scenario, although example had same name as data relation
+            ds1 = new DataSet("dsPEOrders"); // dataset name doesn't seem to play an active role in nested scenario, although example had same name as data relation
 
             webinarsPerAff = new DataTable("Webinars"); // parent table name needs to match outer range name in doc
 
