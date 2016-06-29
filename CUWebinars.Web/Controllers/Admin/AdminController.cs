@@ -3096,7 +3096,7 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             catch (Exception ex)
             {
-                _logger.ErrorException("GenerateWeeklyInvoicesEvent", ex);
+                _logger.ErrorException("GenerateWeeklyInvoicesEvent: ", ex);
             }
 
             var grandTotalSource = new
@@ -3163,6 +3163,7 @@ namespace CUWebinars.Web.Controllers.Admin
             document.MailMerge.Execute(dataSource);
             document.MailMerge.Execute(ds, null); // needs to be explicitly set to null since we are using a dataset
             document.MailMerge.Execute(ds1, null); // needs to be explicitly set to null since we are using a dataset
+            //document.MailMerge.Execute(dsUpgrades, null);
 
             // ONLY set this RemoveEmptyRanges option before the final merge execution or it 
             //  causes problems (blank docs, probably due to the ranges getting removed before they are populated)
@@ -3193,11 +3194,11 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     CloudBlockBlob blob =
                         container.GetBlockBlobReference(startDate.ToShortDateString().Replace("/", "-") + "/" +
-                                                        InvoiceID + ".html");
+                                                        InvoiceID + ".pdf");
 
                     using (MemoryStream output = new MemoryStream())
                     {
-                        document.Save(output, SaveOptions.HtmlDefault);
+                        document.Save(output, SaveOptions.PdfDefault);
                         output.Position = 0; // reset to beginning so Upload operation can work correctly
                         blob.UploadFromStream(output);
                     }
