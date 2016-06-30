@@ -1789,7 +1789,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 var upcomingWebinars = (from w in _upcoming
                                         select
-                                            "<p style=\"color: bisque; text-decoration: none; \" ><a style=\" color: bisque; border-bottom: 1px dotted bisque;\" href=\"http://www.bankwebinars.com/Webinar/Details/" +
+                                            "<p style=\"color: bisque; text-decoration: none; \" ><a style=\" color: bisque; border-bottom: 1px dotted bisque;\" href=\"" + _globalConfig.TenantURL + "/Webinar/Details/" +
                                             w.idWebinar + "?idaff={aff_idUserAff}\">" + w.Title + "</a><br>" +
                                             w.Date.ToLongDateString() + "</p>"
                     ).ToArray();
@@ -1818,14 +1818,14 @@ namespace CUWebinars.Web.Controllers.Admin
                                     webinar.Duration) + "</b><br />";
 
                         upcomingDetail.Append(
-                            "<p><span style='font-size:20px; font-weight:bold; font-family:trebuchet ms;'><a href=\"http://www.bankwebinars.com/Webinar/Details/" + webinar.idWebinar + "?idaff={aff_idUserAff}\">" + webinar.Title + "</a></span><br />");
+                            "<p><span style='font-size:20px; font-weight:bold; font-family:trebuchet ms;'><a href=\"" + _globalConfig.TenantURL + "/Webinar/Details/" + webinar.idWebinar + "?idaff={aff_idUserAff}\">" + webinar.Title + "</a></span><br />");
                         upcomingDetail.Append("<span style='font-family:trebuchet ms;'><b>" +
                       webinar.Presenter.WebUser.FullName + "</b><br /></span>");
                         upcomingDetail.Append("<span style='font-size:12px;'>" + eDate + "</span></p>");
                         upcomingDetail.Append("<div style='font-family:trebuchet ms;'>" + webinar.Description + "</div>");
 
                         upcomingDetail.Append(
-                            "<p font-family:trebuchet ms;'><a href='http://www.bankwebinars.com/Webinar/Details/" +
+                            "<p font-family:trebuchet ms;'><a href='" + _globalConfig.TenantURL + "/Webinar/Details/" +
                             webinar.idWebinar + "?idaff={aff_idUserAff}'>Click here for more info!</a></p>");
                         upcomingDetail.Append("<hr style='width:50%; ' />");
                     }
@@ -1835,7 +1835,7 @@ namespace CUWebinars.Web.Controllers.Admin
                          new
                          {
                              featuredItem =
-                             "<p style=\"color: bisque; text-decoration: none; \"><a style=\"color: bisque; \" href=\"http://www.bankwebinars.com/Webinar/Details/" +
+                             "<p style=\"color: bisque; text-decoration: none; \"><a style=\"color: bisque; \" href=\"" + _globalConfig.TenantURL + "/Webinar/Details/" +
                              a.idWebinar + "?idaff={aff_idUserAff}\">" + a.Title + "</a><br>" +
                              a.Date.ToLongDateString() + "</p>"
                          });
@@ -2932,6 +2932,7 @@ namespace CUWebinars.Web.Controllers.Admin
                             webinar.idWebinar,
                             thisAffiliate);
                         int rowNumber = 0;
+
                         webinarsPerAff.Rows.Add(
                             webinar.Title
                             , webinar.Date.ToShortDateString()
@@ -2941,21 +2942,24 @@ namespace CUWebinars.Web.Controllers.Admin
                             , invoice.TotalRoyalties.ToString("C").Replace(".00", "")
                             , invoice.TotalNetDue.ToString("C").Replace(".00", "")
                             , "Total Net Due: "
+                            , "Total Royalties: "
+                            , "Total Revenue Paid: "
+                            , "Total Revenue Billed: "
                             , webinar.idWebinar
                             );
 
 
                         foreach (var order in theseOrders)
                         {
-                            //string _price = order.Total.ToString("C");
                             var row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
 
-                            string _price = row.RowPrice.ToString("C");
+                            string _price = row.RowPrice.ToString("C").Replace(".00", "");
                             rowNumber++;
 
                             string _percent =
                                 (row.PercentPaid * 100).ToString().Replace(".00", "").Replace(".0", "") +
                                 "%";
+
                             var totalToShow = order.Total.ToString("c");
                             if (row.Discount != null)
                             {
@@ -2994,11 +2998,12 @@ namespace CUWebinars.Web.Controllers.Admin
                                 , webinar.idWebinar
                                 );
                         }
-                        GrandTotalOnBilled = GrandTotalOnBilled + invoice.TotalOnBilled;
-                        GrandTotalOnPaid = GrandTotalOnPaid + invoice.TotalOnPaid;
-                        GrandTotalDiscounts = GrandTotalDiscounts + invoice.TotalDiscounts;
-                        GrandTotalRoyalties = GrandTotalRoyalties + invoice.TotalRoyalties;
-                        GrandTotalNetDue = GrandTotalNetDue + invoice.TotalNetDue;
+
+                        GrandTotalOnBilled += invoice.TotalOnBilled;
+                        GrandTotalOnPaid += invoice.TotalOnPaid;
+                        GrandTotalDiscounts += invoice.TotalDiscounts;
+                        GrandTotalRoyalties += invoice.TotalRoyalties;
+                        GrandTotalNetDue += invoice.TotalNetDue;
                     }
                 }
                 catch (Exception ex)
@@ -3042,6 +3047,9 @@ namespace CUWebinars.Web.Controllers.Admin
                         , invoice.TotalRoyalties.ToString("C").Replace(".00", "")
                         , invoice.TotalNetDue.ToString("C").Replace(".00", "")
                         , "Total Net Due: "
+                            , "Total Royalties: "
+                            , "Total Revenue Paid: "
+                            , "Total Revenue Billed: "
                         , 99
                         );
 
@@ -3049,7 +3057,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     foreach (var order in theseOrders)
                     {
 
-                        string _price = order.Total.ToString("C");
+                        string _price = order.Total.ToString("C").Replace(".00", "");
                         var row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                         rowNumber++;
                         string _percent = (row.PercentPaid * 100).ToString().Replace(".00", "").Replace(".0", "") +
@@ -3093,11 +3101,11 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     }
 
-                    GrandTotalOnBilled = GrandTotalOnBilled + invoice.TotalOnBilled;
-                    GrandTotalOnPaid = GrandTotalOnPaid + invoice.TotalOnPaid;
-                    GrandTotalDiscounts = GrandTotalDiscounts + invoice.TotalDiscounts;
-                    GrandTotalRoyalties = GrandTotalRoyalties + invoice.TotalRoyalties;
-                    GrandTotalNetDue = GrandTotalNetDue + invoice.TotalNetDue;
+                    GrandTotalOnBilled += invoice.TotalOnBilled;
+                    GrandTotalOnPaid += invoice.TotalOnPaid;
+                    GrandTotalDiscounts += invoice.TotalDiscounts;
+                    GrandTotalRoyalties += invoice.TotalRoyalties;
+                    GrandTotalNetDue += invoice.TotalNetDue;
                 }
             }
             catch (Exception ex)
@@ -3107,23 +3115,26 @@ namespace CUWebinars.Web.Controllers.Admin
 
             document.MailMerge.FieldMerging += (sender, e) =>
             {
+                if (affiliate.BillingModel == "aff")
+                {
+                    if (e.FieldName == "TotalRevenueBilledLabel")
+                        ((Run)e.Inline).Text = "";
+                    if (e.FieldName == "TotaOnBilled")
+                        ((Run)e.Inline).Text = "";
+                    if (e.FieldName == "TotalOnPaid")
+                        ((Run)e.Inline).Text = "";
+                    if (e.FieldName == "TotalRevenuePaidLabel")
+                        ((Run)e.Inline).Text = "";
+                    if (e.FieldName == "TotalNetDueLabel")
+                        ((Run)e.Inline).Text = "";
+                    if (e.FieldName == "TotalNetDue")
+                        ((Run)e.Inline).Text = "";
+                }
+
                 if (e.IsValueFound)
                 {
 
-                    if (e.RangeName == "Webinars" && e.FieldName == "TotalNetDue")
-                    {
-                        if (affiliate.BillingModel == "aff")
-                        {
-                            ((Run)e.Inline).Text = "";
-                        }
-                    }
-                    if (e.RangeName == "Webinars" && e.FieldName == "TotalNetDueLabel")
-                    {
-                        if (affiliate.BillingModel == "aff")
-                        {
-                            ((Run)e.Inline).Text = "";
-                        }
-                    }
+
                     switch (e.FieldName)
                     {
 
@@ -3155,6 +3166,9 @@ namespace CUWebinars.Web.Controllers.Admin
                 GrandTotalOnPaid = GrandTotalOnPaid.ToString("C").Replace(".00", ""),
                 GrandTotalDiscounts = GrandTotalDiscounts.ToString("C").Replace(".00", ""),
                 GrandTotalRoyalties = GrandTotalRoyalties.ToString("C").Replace(".00", ""),
+                GrandTotalNetDueLabel = "Grand Total Net Due: ",
+                GrandTotalRevenueBilledLabel = "Grand Total Revenue Billed: ",
+                GrandTotalRevenuePaidLabel = "Grand Total Revenue Paid: ",
                 GrandTotalNetDue = GrandTotalNetDue.ToString("C").Replace(".00", ""),
                 DiscountNotes = discountNotes.ToString()
             };
@@ -3163,12 +3177,12 @@ namespace CUWebinars.Web.Controllers.Admin
             document.MailMerge.Execute(dataSource);
             document.MailMerge.Execute(ds, null);
             document.MailMerge.Execute(ds1, null);
-            //document.MailMerge.Execute(dsUpgrades, null);
+            document.MailMerge.ClearOptions = MailMergeClearOptions.RemoveEmptyRanges;
             document.MailMerge.Execute(grandTotalSource);
+
 
             try
             {
-
                 if (hadWOrder || hadPOrder)
                 {
                     _logger.Info("begins write to file: " + InvoiceID);
@@ -3235,6 +3249,9 @@ namespace CUWebinars.Web.Controllers.Admin
             webinarsPerAff.Columns.Add("TotalRoyalties", typeof(string));
             webinarsPerAff.Columns.Add("TotalNetDue", typeof(string));
             webinarsPerAff.Columns.Add("TotalNetDueLabel", typeof(string));
+            webinarsPerAff.Columns.Add("Total RoyaltiesLabel", typeof(string));
+            webinarsPerAff.Columns.Add("TotalRevenueBilledLabel", typeof(string));
+            webinarsPerAff.Columns.Add("TotalRevenuePaidLabel", typeof(string));
             webinarsPerAff.Columns.Add("Id", typeof(int));
             ds.Tables.Add(webinarsPerAff);
 
@@ -3248,6 +3265,9 @@ namespace CUWebinars.Web.Controllers.Admin
             postEventOrders.Columns.Add("TotalRoyalties", typeof(string));
             postEventOrders.Columns.Add("TotalNetDue", typeof(string));
             postEventOrders.Columns.Add("TotalNetDueLabel", typeof(string));
+            postEventOrders.Columns.Add("Total RoyaltiesLabel", typeof(string));
+            postEventOrders.Columns.Add("TotalRevenueBilledLabel", typeof(string));
+            postEventOrders.Columns.Add("TotalRevenuePaidLabel", typeof(string));
             postEventOrders.Columns.Add("Id", typeof(int));
             ds1.Tables.Add(postEventOrders);
 

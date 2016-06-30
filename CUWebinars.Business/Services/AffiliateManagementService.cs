@@ -39,6 +39,9 @@ namespace CUWebinars.Business.Services
         {
 
             invoice.Affiliate = FindById(idAffiliate);
+            decimal totalBilledRevenue = 0M;
+            decimal totalBilledRoyalty = 0M;
+            decimal totalPaidRoyalty = 0M;
 
             switch (invoice.Affiliate.CommissionModel)
             {
@@ -69,13 +72,19 @@ namespace CUWebinars.Business.Services
                             commissionPercent = 0.45M;
                         }
 
-                        //if (order.OrderStatus == OrderStatus.Paid) commissionPercent = 0.3M;
-
                         row.Royalty = row.RowPrice * commissionPercent;
-                        //taxes should not be included
-                        //row.Royalty = order.Total * commissionPercent;
+
+                        if (order.OrderStatus == OrderStatus.Paid)
+                        {
+                            totalPaidRoyalty += row.Royalty;
+                        }
+                        else
+                        {
+                            totalBilledRevenue += row.RowPrice;
+                            totalBilledRoyalty += row.Royalty;
+                        }
                         row.PercentPaid = commissionPercent;
-                        invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
+                        invoice.TotalRoyalties += row.Royalty;
                     }
                     break;
 
@@ -93,6 +102,17 @@ namespace CUWebinars.Business.Services
                         row.Royalty = row.RowPrice * commissionPercent;
                         row.PercentPaid = commissionPercent;
                         invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
+
+
+                        if (order.OrderStatus == OrderStatus.Paid)
+                        {
+                            totalPaidRoyalty += row.Royalty;
+                        }
+                        else
+                        {
+                            totalBilledRevenue += row.RowPrice;
+                            totalBilledRoyalty += row.Royalty;
+                        }
                     }
                     break;
                 case 4: // CommissionModel.Flat35:
@@ -106,6 +126,17 @@ namespace CUWebinars.Business.Services
                         row.Royalty = row.RowPrice * commissionPercent;
                         row.PercentPaid = commissionPercent;
                         invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
+
+
+                        if (order.OrderStatus == OrderStatus.Paid)
+                        {
+                            totalPaidRoyalty += row.Royalty;
+                        }
+                        else
+                        {
+                            totalBilledRevenue += row.RowPrice;
+                            totalBilledRoyalty += row.Royalty;
+                        }
 
                     }
                     break;
@@ -121,6 +152,17 @@ namespace CUWebinars.Business.Services
                         row.Royalty = row.RowPrice * commissionPercent;
                         row.PercentPaid = commissionPercent;
                         invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
+
+
+                        if (order.OrderStatus == OrderStatus.Paid)
+                        {
+                            totalPaidRoyalty += row.Royalty;
+                        }
+                        else
+                        {
+                            totalBilledRevenue += row.RowPrice;
+                            totalBilledRoyalty += row.Royalty;
+                        }
                     }
                     break;
 
@@ -134,13 +176,8 @@ namespace CUWebinars.Business.Services
             }
             if (invoice.Affiliate.BillingModel.Trim(' ') == "billed")
             {
-                invoice.TotalNetDue = (invoice.TotalOnBilled - invoice.TotalRoyalties) - (decimal)((double)invoice.TotalOnPaid * .03);
+                invoice.TotalNetDue = totalBilledRevenue - totalBilledRoyalty - totalPaidRoyalty;
             }
-            //When we bill:
-            // (TotalOnBilled +  "TotalOnPaid" - TotalDiscount ) - TotalRoyalties = NetDueTTS
-
-            //When Aff Bills
-            //TotalOnBilled -  TotalRoyalties - ( "TotalOnPaid" * .03 )  = NetDueTTS
 
             return invoice;
 
@@ -154,11 +191,11 @@ namespace CUWebinars.Business.Services
             if (row == null) throw new ArgumentNullException("row");
             if (order.OrderStatus == OrderStatus.Paid)
             {
-                invoice.TotalOnPaid = invoice.TotalOnPaid + row.RowPrice;
+                invoice.TotalOnPaid += row.RowPrice;
             }
             if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed)
             {
-                invoice.TotalOnBilled = invoice.TotalOnBilled + row.RowPrice;
+                invoice.TotalOnBilled += row.RowPrice;
                 _logger.Info("TotalOnBilled =  " + invoice.TotalOnBilled);
                 order.OrderStatus = OrderStatus.Billed;
             }

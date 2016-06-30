@@ -368,7 +368,10 @@ namespace CUWebinars.Business.Repository
                 .Include(o => o.Affiliate)
                 .Include(o => o.WebUser)
                 .Include(o => o.WebUser.Addresses)
-                .Include(o => o.OrderRows);
+                .Include(o => o.OrderRows)
+                .Include(o => o.OrderRows.Select(or => or.Discount))
+                
+                ;
 
             //why is registration type not hydrated from here
         }
