@@ -2876,15 +2876,10 @@ namespace CUWebinars.Web.Controllers.Admin
             //had webinar orders or postevent orders ini
             var hadWOrder = false;
             var hadPOrder = false;
+            var hadUOrder = false;
             var hadDiscount = false;
 
             int thisAffiliate = affiliate.idUserAff;
-
-            DocumentModel document =
-                DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoice1.docx"));
-            //document.MailMerge.ClearOptions = MailMergeClearOptions.RemoveEmptyRanges;
-            //if (affiliate.CommissionModel != 1)
-            //    document = DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoiceForFlatPercent.docx"));
 
             var InvoiceID = weekNumber + "-" + affiliate.idUserAff;
             var RoyaltyTier = affiliate.CommissionModel;
@@ -2905,11 +2900,14 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
             DataSet ds1;
+            DataSet dsUpgradedOrders;
             DataTable webinarsPerAff;
-            DataTable postEventOrders;
+            DataTable PostEventOrders;
+            DataTable upgradedOrders;
             DataTable ordersPerAff;
             DataTable pOrders;
-            var ds = IniDataTables(out ds1, out webinarsPerAff, out postEventOrders, out ordersPerAff, out pOrders);
+            DataTable uOrders;
+            var ds = IniDataTables(out ds1, out webinarsPerAff, out PostEventOrders, out ordersPerAff, out pOrders, out upgradedOrders, out uOrders, out dsUpgradedOrders);
 
             foreach (var webinar in webinars)
             {
@@ -3012,7 +3010,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
 
             }
-
+            //Post Event Orders
             try
             {
 
@@ -3022,10 +3020,11 @@ namespace CUWebinars.Web.Controllers.Admin
                         .Where(
                             o =>
                                 o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Date <
-                                startDate && o.OrderDate > startDate && o.OrderDate < endDate)
+                                startDate && o.OrderDate > startDate && o.OrderDate < endDate
+                                && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted))
                         .ToList();
 
-                if (theseOrders.Count() > 0)
+                if (theseOrders.Any())
                 {
                     hadPOrder = true;
                     AffiliateInvoiceDTO invoice = new AffiliateInvoiceDTO
@@ -3038,7 +3037,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         theseOrders,
                         thisAffiliate);
                     int rowNumber = 0;
-                    postEventOrders.Rows.Add(
+                    PostEventOrders.Rows.Add(
                         "Post Event Orders"
                         , startDate
                         , invoice.TotalOnBilled.ToString("C").Replace(".00", "")
@@ -3110,24 +3109,130 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             catch (Exception ex)
             {
-                _logger.ErrorException("GenerateWeeklyInvoicesEvent: ", ex);
+                _logger.ErrorException("GenerateWeeklyInvoicesEvent | Post Event Orders: ", ex);
             }
+
+            //Upgraded Orders
+            try
+            {
+                List<Order> theseOrders =
+                    _orderManagementService.GetOrdersAll(thisAffiliate, out totalNumberOrders)
+                        .Where(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Date <
+                                startDate && o.OrderDate > startDate && o.OrderDate < endDate 
+                                && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted)
+                                && o.AdminComments != null && o.AdminComments.Contains("Updated")
+                                )
+                        .ToList();
+                
+                if (theseOrders.Any())
+                {
+                    hadUOrder = true;
+                    AffiliateInvoiceDTO invoice = new AffiliateInvoiceDTO
+                    {
+                        Affiliate = affiliate,
+                        InvoiceID = weekNumber + "-" + affiliate.idUserAff,
+                        RoyaltyTier = affiliate.CommissionModel
+                    };
+                    invoice = _affiliateManagementService.BuildAffiliateInvoiceForPostEventOrders(invoice,
+                        theseOrders,
+                        thisAffiliate);
+                    int rowNumber = 0;
+                    upgradedOrders.Rows.Add(
+                        "Adjusted Orders"
+                        , startDate
+                        , invoice.TotalOnBilled.ToString("C").Replace(".00", "")
+                        , invoice.TotalOnPaid.ToString("C").Replace(".00", "")
+                        , invoice.TotalDiscounts.ToString("C").Replace(".00", "")
+                        , invoice.TotalRoyalties.ToString("C").Replace(".00", "")
+                        , invoice.TotalNetDue.ToString("C").Replace(".00", "")
+                        , "Total Net Due: "
+                            , "Total Royalties: "
+                            , "Total Revenue Paid: "
+                            , "Total Revenue Billed: "
+                        , 99
+                        );
+
+
+                    foreach (var order in theseOrders)
+                    {
+                        string _price = order.Total.ToString("C").Replace(".00", "");
+                        var row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                        rowNumber++;
+                        string _percent = (row.PercentPaid * 100).ToString().Replace(".00", "").Replace(".0", "") +
+                                          "%";
+                        if (row.Discount != null)
+                        {
+                            hadDiscount = true;
+                            var discount = row.Discount;
+                            _price = "See Note #" + totalNumberDiscounts;
+                            discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode + ": (" +
+                                                 discount.DiscountType.ToString().Replace("DiscountType.", "") +
+                                                 ") ");
+
+                            totalNumberDiscounts++;
+                            var discountAmount = "";
+                            if (row.Discount.PercentOff > 0)
+                            {
+                                discountAmount = (row.UnitPrice * (row.Discount.PercentOff / 100)).ToString("c");
+                            }
+                            if (row.Discount.FlatOff > 0)
+                            {
+                                discountAmount = (row.UnitPrice - row.Discount.FlatOff).ToString("C");
+                            }
+                            //discountNotes.Append(discountAmount);
+                            discountNotes.Append(Environment.NewLine);
+                        }
+                        uOrders.Rows.Add(
+                            rowNumber
+                            , order.FirstName + ' ' + order.LastName
+                            , order.BillingEmail
+                            , order.Institution + Environment.NewLine + order.BillingAddress + Environment.NewLine +
+                              order.BillingCity + ", " + order.BillingState + " " + order.BillingZip
+                            , _price
+                            , _percent
+                            , row.Royalty.ToString("C").Replace(".00", "")
+                            , order.OrderStatus
+                            , order.idOrder
+                            , row.Webinar.Title
+                            , 99
+                            );
+
+                    }
+
+                    GrandTotalOnBilled += invoice.TotalOnBilled;
+                    GrandTotalOnPaid += invoice.TotalOnPaid;
+                    GrandTotalDiscounts += invoice.TotalDiscounts;
+                    GrandTotalRoyalties += invoice.TotalRoyalties;
+                    GrandTotalNetDue += invoice.TotalNetDue;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorException("GenerateWeeklyInvoicesEvent | Upgrades: ", ex);
+            }
+
+
+            DocumentModel document = DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoice1.docx"));
+
+            //if (affiliate.CommissionModel != 1)
+            //    document = DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoiceForFlatPercent.docx"));
+
 
             document.MailMerge.FieldMerging += (sender, e) =>
             {
                 if (affiliate.BillingModel == "aff")
                 {
-                    if (e.FieldName == "TotalRevenueBilledLabel")
+                    if (e.Inline != null && e.FieldName == "TotalRevenueBilledLabel")
                         ((Run)e.Inline).Text = "";
-                    if (e.FieldName == "TotaOnBilled")
+                    if (e.Inline != null && e.FieldName == "TotalOnBilled")
                         ((Run)e.Inline).Text = "";
-                    if (e.FieldName == "TotalOnPaid")
+                    if (e.Inline != null && e.FieldName == "TotalOnPaid")
                         ((Run)e.Inline).Text = "";
-                    if (e.FieldName == "TotalRevenuePaidLabel")
+                    if (e.Inline != null && e.FieldName == "TotalRevenuePaidLabel")
                         ((Run)e.Inline).Text = "";
-                    if (e.FieldName == "TotalNetDueLabel")
+                    if (e.Inline != null && e.FieldName == "TotalNetDueLabel")
                         ((Run)e.Inline).Text = "";
-                    if (e.FieldName == "TotalNetDue")
+                    if (e.Inline != null && e.FieldName == "TotalNetDue")
                         ((Run)e.Inline).Text = "";
                 }
 
@@ -3175,22 +3280,31 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
             document.MailMerge.Execute(dataSource);
-            document.MailMerge.Execute(ds, null);
-            document.MailMerge.Execute(ds1, null);
+            document.MailMerge.Execute(ds, null); // needs to be explicitly set to null since we are using a dataset
+            document.MailMerge.Execute(ds1, null); // needs to be explicitly set to null since we are using a dataset
+            document.MailMerge.Execute(dsUpgradedOrders, null); // needs to be explicitly set to null since we are using a dataset
+            //document.MailMerge.Execute(dsUpgrades, null);
+
+            // ONLY set this RemoveEmptyRanges option before the final merge execution or it 
+            //  causes problems (blank docs, probably due to the ranges getting removed before they are populated)
+            //  see also: http://www.gemboxsoftware.com/support-center/kb/articles/9-how-does-mailmergeclearoptions-removeemptyranges-work
             document.MailMerge.ClearOptions = MailMergeClearOptions.RemoveEmptyRanges;
             document.MailMerge.Execute(grandTotalSource);
 
 
             try
             {
-                if (hadWOrder || hadPOrder)
+                if (hadWOrder || hadPOrder || hadUOrder)
                 {
                     _logger.Info("begins write to file: " + InvoiceID);
-                    document.Save(
-                        Server.MapPath(@"~/App_Data/mergeTemplates/" + InvoiceID + ".pdf"));
+
+                    //// SAVE LOCALLY if needed for easier testing
+                    //document.Save(
+                    //    Server.MapPath(@"~/App_Data/mergeTemplates/" + InvoiceID + ".html"), SaveOptions.HtmlDefault);
 
                     var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName,
                         _globalConfig.StorageAccessKey);
+
                     var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
                     CloudBlobClient blobClient = cloudStorageAccount.CreateCloudBlobClient();
 
@@ -3201,8 +3315,13 @@ namespace CUWebinars.Web.Controllers.Admin
                     CloudBlockBlob blob =
                         container.GetBlockBlobReference(startDate.ToShortDateString().Replace("/", "-") + "/" +
                                                         InvoiceID + ".pdf");
-                    blob.UploadFromFile(Server.MapPath(@"~/App_Data/mergeTemplates/" + InvoiceID + ".pdf"),
-                        FileMode.Open);
+
+                    using (MemoryStream output = new MemoryStream())
+                    {
+                        document.Save(output, SaveOptions.PdfDefault);
+                        output.Position = 0; // reset to beginning so Upload operation can work correctly
+                        blob.UploadFromStream(output);
+                    }
 
                     return Json(new
                     {
@@ -3234,10 +3353,45 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
         private static DataSet IniDataTables(out DataSet ds1, out DataTable webinarsPerAff, out DataTable postEventOrders,
-            out DataTable ordersPerAff, out DataTable pOrders)
+            out DataTable ordersPerAff, out DataTable pOrders, out DataTable upgradedOrders, out DataTable uOrders, out DataSet dsUpgradedOrders)
         {
-            DataSet ds = new DataSet("Orders"); // dataset name doesn't seem to play a role in nested scenario, although example had same name as data relation
-            ds1 = new DataSet("pOrders"); // dataset name doesn't seem to play a role in nested scenario, although example had same name as data relation
+            DataSet ds = new DataSet("dsWebinars"); // dataset name doesn't play an active role in nested scenario, although example had same name as data relation
+            ds1 = new DataSet("dsPEOrders"); // dataset name doesn't seem to play an active role in nested scenario, although example had same name as data relation
+            dsUpgradedOrders = new DataSet("dsUpgradedOrders"); // dataset name doesn't seem to play an active role in nested scenario, although example had same name as data relation
+
+
+            upgradedOrders = new DataTable("Upgrades"); // parent table name needs to match outer range name in doc
+
+            upgradedOrders.Columns.Add("Title", typeof(string));
+            upgradedOrders.Columns.Add("WebinarDate", typeof(string));
+            upgradedOrders.Columns.Add("TotalOnBilled", typeof(string));
+            upgradedOrders.Columns.Add("TotalOnPaid", typeof(string));
+            upgradedOrders.Columns.Add("TotalDiscounts", typeof(string));
+            upgradedOrders.Columns.Add("TotalRoyalties", typeof(string));
+            upgradedOrders.Columns.Add("TotalNetDue", typeof(string));
+            upgradedOrders.Columns.Add("TotalNetDueLabel", typeof(string));
+            upgradedOrders.Columns.Add("TotalRoyaltiesLabel", typeof(string));
+            upgradedOrders.Columns.Add("TotalRevenueBilledLabel", typeof(string));
+            upgradedOrders.Columns.Add("TotalRevenuePaidLabel", typeof(string));
+            upgradedOrders.Columns.Add("Id", typeof(int));
+            dsUpgradedOrders.Tables.Add(upgradedOrders);
+
+            uOrders = new DataTable("dtUpgradeOrders"); // inner range, but don't want to have a name conflict with relation below
+
+            uOrders.Columns.Add("RowNumber", typeof(int));
+            uOrders.Columns.Add("Name", typeof(string));
+            uOrders.Columns.Add("Email", typeof(string));
+            uOrders.Columns.Add("Address", typeof(string));
+            uOrders.Columns.Add("Price", typeof(string));
+            uOrders.Columns.Add("Percent", typeof(string));
+            uOrders.Columns.Add("Royalty", typeof(string));
+            uOrders.Columns.Add("Status", typeof(string));
+            uOrders.Columns.Add("OrderID", typeof(int));
+            uOrders.Columns.Add("WebinarTitle", typeof(string));
+            uOrders.Columns.Add("Id", typeof(int));
+            dsUpgradedOrders.Tables.Add(uOrders);
+
+
 
             webinarsPerAff = new DataTable("Webinars"); // parent table name needs to match outer range name in doc
 
@@ -3249,13 +3403,13 @@ namespace CUWebinars.Web.Controllers.Admin
             webinarsPerAff.Columns.Add("TotalRoyalties", typeof(string));
             webinarsPerAff.Columns.Add("TotalNetDue", typeof(string));
             webinarsPerAff.Columns.Add("TotalNetDueLabel", typeof(string));
-            webinarsPerAff.Columns.Add("Total RoyaltiesLabel", typeof(string));
+            webinarsPerAff.Columns.Add("TotalRoyaltiesLabel", typeof(string));
             webinarsPerAff.Columns.Add("TotalRevenueBilledLabel", typeof(string));
             webinarsPerAff.Columns.Add("TotalRevenuePaidLabel", typeof(string));
             webinarsPerAff.Columns.Add("Id", typeof(int));
             ds.Tables.Add(webinarsPerAff);
 
-            postEventOrders = new DataTable("PostEventOrders"); // parent table name needs to match outer range name in doc
+            postEventOrders = new DataTable("PostEvent"); // parent table name needs to match outer range name in doc
 
             postEventOrders.Columns.Add("Title", typeof(string));
             postEventOrders.Columns.Add("WebinarDate", typeof(DateTime));
@@ -3265,7 +3419,7 @@ namespace CUWebinars.Web.Controllers.Admin
             postEventOrders.Columns.Add("TotalRoyalties", typeof(string));
             postEventOrders.Columns.Add("TotalNetDue", typeof(string));
             postEventOrders.Columns.Add("TotalNetDueLabel", typeof(string));
-            postEventOrders.Columns.Add("Total RoyaltiesLabel", typeof(string));
+            postEventOrders.Columns.Add("TotalRoyaltiesLabel", typeof(string));
             postEventOrders.Columns.Add("TotalRevenueBilledLabel", typeof(string));
             postEventOrders.Columns.Add("TotalRevenuePaidLabel", typeof(string));
             postEventOrders.Columns.Add("Id", typeof(int));
@@ -3306,6 +3460,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             ds.Relations.Add("Orders", webinarsPerAff.Columns["Id"], ordersPerAff.Columns["Id"]); // relation name needs to match nested range name in doc
             ds1.Relations.Add("pOrders", postEventOrders.Columns["Id"], pOrders.Columns["Id"]); // relation name needs to match nested range name in doc
+            dsUpgradedOrders.Relations.Add("uOrders", upgradedOrders.Columns["Id"], uOrders.Columns["Id"]); // relation name needs to match nested range name in doc
             return ds;
         }
 
