@@ -20,6 +20,23 @@ namespace CUWebinars.Business.Core.Helpers
 
         //newOrder.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrder.AdminComments, createdByImpersonatedUserMsg);
 
+        public static string IsValidObjectSingle(string existingJson)
+        {
+            JObject objectToValidate;
+            try
+            {
+
+                objectToValidate = JObject.Parse(existingJson);
+                return "isSingle";
+            }
+            catch (Exception e)
+            {
+                return "error";
+
+            }
+            
+        }
+
         public static string MergeJsonWithStoredField(string existingJson, JProperty newJson)
         {
             JObject jObject;
@@ -33,26 +50,18 @@ namespace CUWebinars.Business.Core.Helpers
                 JObject objectToValidate;
                 try
                 {
-                    if (existingJson.Contains("moneris"))
-                        existingJson = existingJson.Replace("moneris", "MonerisDupeTx");
                     
-                    //when moneris tx already exists (but why would that be?)
-                    //code execution does not step into catch block - wtf.
-
-                    //does this enlighten?
-                    //http://stackoverflow.com/questions/29830198/newtonsoft-jobject-parse-throws-base-exception-how-to-handle
-
                     objectToValidate = JObject.Parse(existingJson);
                 }
                 catch (Exception e)
                 {
-                    if (e.GetType().IsSubclassOf(typeof (Exception)))
-                        newJson = null;
+                    //if (e.GetType().IsSubclassOf(typeof (Exception)))
+                    //    newJson = null;
 
                     //Handle the case when e is the base Exception
                     objectToValidate = JObject.FromObject(new
                     {
-                        existing = existingJson,
+                        existing = "wrapped Json="+ existingJson,
                         exceptionMsg = e.Message,
                         exceptionStack = e.StackTrace
                     });

@@ -142,5 +142,6 @@ namespace CUWebinars.Business.Services
         string CalculateDiscountRedemption(Discount userHasDiscount, OrderRow row, int? undo, int? previewOnly);
         string ApplyDiscountCode(int? discountId);
         IList<WebUser> GetWebUsersOfDiscount(int idDiscount);
+        string CheckOrderComments();
     }
 }

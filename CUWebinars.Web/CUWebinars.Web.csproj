@@ -2157,8 +2157,9 @@
     <Content Include="Views\Admin\Partials\_ShowSubscriptions.cshtml" />
     <Content Include="Views\Shared\Partials\_Cancel_PauseOrder.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowRevenueReportAdmin.cshtml" />
-    <Content Include="Views\Admin\Home\_generateWeeklyInvoices.cshtml" />
+    <Content Include="Views\Admin\Home\GenerateWeeklyInvoices.cshtml" />
     <Content Include="Views\Admin\GenerateWeeklyInvoices.cshtml" />
+    <Content Include="Views\Admin\Home\_sendWeeklyInvoicesEvent.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

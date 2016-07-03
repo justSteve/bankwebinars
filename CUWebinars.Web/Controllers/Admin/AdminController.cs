@@ -2567,6 +2567,18 @@ namespace CUWebinars.Web.Controllers.Admin
 
         [HandleAjaxException]
         [AllowAnonymous]
+        public ActionResult CheckOrderCommentsBatch()
+        {
+            var totalNumberOrders = 0;
+
+          string result =  _orderManagementService.CheckOrderComments();
+
+            return Content("Ok");
+        }
+
+
+        [HandleAjaxException]
+        [AllowAnonymous]
         public ActionResult GenerateRoyaltiesBatch(int? webinarId, int? idAffiliate)
         {
             var totalNumberOrders = 0;
@@ -2851,8 +2863,14 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpGet]
         //[AuthorizeHeaders]  
         [AllowAnonymous]
-        public JsonResult GenerateWeeklyInvoicesEvent(DateTime startDate, int _idAffiliate)
+        public JsonResult GenerateWeeklyInvoicesEvent(DateTime startDate, int? _idAffiliate)
         {
+            if (!_idAffiliate.HasValue)
+            {
+
+                return Json(new { OrdersFound = "none" }, JsonRequestBehavior.AllowGet);
+            }
+            int idAffiliate = _idAffiliate.Value;
             DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
             DateTime date1 = startDate;
             System.Globalization.Calendar cal = dfi.Calendar;
@@ -2864,7 +2882,7 @@ namespace CUWebinars.Web.Controllers.Admin
             IList<Webinar> webinars = _webinarManagementService.GetWebinarsForWeeklyInvoices(startDate);
 
             //var affiliates = _affiliateManagementService.GetAffiliates();
-            var affiliate = _affiliateManagementService.FindById(_idAffiliate);
+            var affiliate = _affiliateManagementService.FindById(idAffiliate);
 
 
             //var affiliate = _affiliateManagementService.FindById(affiliate.idUserAff);
@@ -2889,7 +2907,7 @@ namespace CUWebinars.Web.Controllers.Admin
             decimal GrandTotalDiscounts = 0;
             decimal GrandTotalRoyalties = 0;
             decimal GrandTotalNetDue = 0;
-            var dataSource =
+            var dsHeader =
                 new
                 {
                     RoyaltyTier = RoyaltyTier,
@@ -2899,7 +2917,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 };
 
 
-            DataSet ds1;
+            DataSet dsPostEvent;
             DataSet dsUpgradedOrders;
             DataTable webinarsPerAff;
             DataTable PostEventOrders;
@@ -2907,7 +2925,7 @@ namespace CUWebinars.Web.Controllers.Admin
             DataTable ordersPerAff;
             DataTable pOrders;
             DataTable uOrders;
-            var ds = IniDataTables(out ds1, out webinarsPerAff, out PostEventOrders, out ordersPerAff, out pOrders, out upgradedOrders, out uOrders, out dsUpgradedOrders);
+            var dsWebinars = IniDataTables(out dsPostEvent, out webinarsPerAff, out PostEventOrders, out ordersPerAff, out pOrders, out upgradedOrders, out uOrders, out dsUpgradedOrders);
 
             foreach (var webinar in webinars)
             {
@@ -3019,9 +3037,12 @@ namespace CUWebinars.Web.Controllers.Admin
                         .Where(o => o.idAffiliate == thisAffiliate)
                         .Where(
                             o =>
-                                o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Date <
-                                startDate && o.OrderDate > startDate && o.OrderDate < endDate
-                                && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted))
+                            {
+                                var row = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                                return row != null && (row.Webinar.Date <
+                                                                        startDate && o.OrderDate > startDate && o.OrderDate < endDate
+                                                                        && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted));
+                            })
                         .ToList();
 
                 if (theseOrders.Any())
@@ -3117,13 +3138,17 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 List<Order> theseOrders =
                     _orderManagementService.GetOrdersAll(thisAffiliate, out totalNumberOrders)
-                        .Where(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Date <
-                                startDate && o.OrderDate > startDate && o.OrderDate < endDate 
-                                && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted)
-                                && o.AdminComments != null && o.AdminComments.Contains("Updated")
-                                )
-                        .ToList();
+                        .Where(o =>
+                        {
+                            var row = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                            return row != null && (o.OrderRows.Any() && row.Webinar.Date <
+                                                                           startDate && o.OrderDate > startDate && o.OrderDate < endDate
+                                                                           && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted));
+                        }).ToList();
                 
+                theseOrders = theseOrders
+                        .Where(o => o.AdminComments != null && o.AdminComments.Contains("Updated")).ToList();
+
                 if (theseOrders.Any())
                 {
                     hadUOrder = true;
@@ -3265,7 +3290,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             };
 
-            var grandTotalSource = new
+            var dsGrandTotals = new
             {
                 GrandTotalOnBilled = GrandTotalOnBilled.ToString("C").Replace(".00", ""),
                 GrandTotalOnPaid = GrandTotalOnPaid.ToString("C").Replace(".00", ""),
@@ -3279,17 +3304,20 @@ namespace CUWebinars.Web.Controllers.Admin
             };
 
 
-            document.MailMerge.Execute(dataSource);
-            document.MailMerge.Execute(ds, null); // needs to be explicitly set to null since we are using a dataset
-            document.MailMerge.Execute(ds1, null); // needs to be explicitly set to null since we are using a dataset
-            document.MailMerge.Execute(dsUpgradedOrders, null); // needs to be explicitly set to null since we are using a dataset
+            document.MailMerge.Execute(dsHeader);
+            if (hadWOrder)
+                document.MailMerge.Execute(dsWebinars, null); // needs to be explicitly set to null since we are using a dataset
+            if (hadPOrder)
+                document.MailMerge.Execute(dsPostEvent, null); // needs to be explicitly set to null since we are using a dataset
+            if (hadUOrder)
+                document.MailMerge.Execute(dsUpgradedOrders, null); // needs to be explicitly set to null since we are using a dataset
             //document.MailMerge.Execute(dsUpgrades, null);
 
             // ONLY set this RemoveEmptyRanges option before the final merge execution or it 
             //  causes problems (blank docs, probably due to the ranges getting removed before they are populated)
             //  see also: http://www.gemboxsoftware.com/support-center/kb/articles/9-how-does-mailmergeclearoptions-removeemptyranges-work
             document.MailMerge.ClearOptions = MailMergeClearOptions.RemoveEmptyRanges;
-            document.MailMerge.Execute(grandTotalSource);
+            document.MailMerge.Execute(dsGrandTotals);
 
 
             try
@@ -3352,11 +3380,11 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
 
-        private static DataSet IniDataTables(out DataSet ds1, out DataTable webinarsPerAff, out DataTable postEventOrders,
+        private static DataSet IniDataTables(out DataSet dsPostEvent, out DataTable webinarsPerAff, out DataTable postEventOrders,
             out DataTable ordersPerAff, out DataTable pOrders, out DataTable upgradedOrders, out DataTable uOrders, out DataSet dsUpgradedOrders)
         {
-            DataSet ds = new DataSet("dsWebinars"); // dataset name doesn't play an active role in nested scenario, although example had same name as data relation
-            ds1 = new DataSet("dsPEOrders"); // dataset name doesn't seem to play an active role in nested scenario, although example had same name as data relation
+            DataSet dsWebinars = new DataSet("dsWebinars"); // dataset name doesn't play an active role in nested scenario, although example had same name as data relation
+            dsPostEvent = new DataSet("dsPEOrders"); // dataset name doesn't seem to play an active role in nested scenario, although example had same name as data relation
             dsUpgradedOrders = new DataSet("dsUpgradedOrders"); // dataset name doesn't seem to play an active role in nested scenario, although example had same name as data relation
 
 
@@ -3407,7 +3435,7 @@ namespace CUWebinars.Web.Controllers.Admin
             webinarsPerAff.Columns.Add("TotalRevenueBilledLabel", typeof(string));
             webinarsPerAff.Columns.Add("TotalRevenuePaidLabel", typeof(string));
             webinarsPerAff.Columns.Add("Id", typeof(int));
-            ds.Tables.Add(webinarsPerAff);
+            dsWebinars.Tables.Add(webinarsPerAff);
 
             postEventOrders = new DataTable("PostEvent"); // parent table name needs to match outer range name in doc
 
@@ -3423,7 +3451,7 @@ namespace CUWebinars.Web.Controllers.Admin
             postEventOrders.Columns.Add("TotalRevenueBilledLabel", typeof(string));
             postEventOrders.Columns.Add("TotalRevenuePaidLabel", typeof(string));
             postEventOrders.Columns.Add("Id", typeof(int));
-            ds1.Tables.Add(postEventOrders);
+            dsPostEvent.Tables.Add(postEventOrders);
 
             //orders
             ordersPerAff = new DataTable("dtOrders"); // inner range, but don't want to have a name conflict with relation below
@@ -3438,7 +3466,7 @@ namespace CUWebinars.Web.Controllers.Admin
             ordersPerAff.Columns.Add("Status", typeof(string));
             ordersPerAff.Columns.Add("OrderID", typeof(int));
             ordersPerAff.Columns.Add("Id", typeof(int));
-            ds.Tables.Add(ordersPerAff);
+            dsWebinars.Tables.Add(ordersPerAff);
 
 
             //orders
@@ -3455,17 +3483,17 @@ namespace CUWebinars.Web.Controllers.Admin
             pOrders.Columns.Add("OrderID", typeof(int));
             pOrders.Columns.Add("WebinarTitle", typeof(string));
             pOrders.Columns.Add("Id", typeof(int));
-            ds1.Tables.Add(pOrders);
+            dsPostEvent.Tables.Add(pOrders);
             // Add parent-child relation 
 
-            ds.Relations.Add("Orders", webinarsPerAff.Columns["Id"], ordersPerAff.Columns["Id"]); // relation name needs to match nested range name in doc
-            ds1.Relations.Add("pOrders", postEventOrders.Columns["Id"], pOrders.Columns["Id"]); // relation name needs to match nested range name in doc
+            dsWebinars.Relations.Add("Orders", webinarsPerAff.Columns["Id"], ordersPerAff.Columns["Id"]); // relation name needs to match nested range name in doc
+            dsPostEvent.Relations.Add("pOrders", postEventOrders.Columns["Id"], pOrders.Columns["Id"]); // relation name needs to match nested range name in doc
             dsUpgradedOrders.Relations.Add("uOrders", upgradedOrders.Columns["Id"], uOrders.Columns["Id"]); // relation name needs to match nested range name in doc
-            return ds;
+            return dsWebinars;
         }
 
 
-        public PartialViewResult GetWeeklyInvoicesEvent()
+        public PartialViewResult SendWeeklyInvoicesEvent()
         {
             var model = new GenerateWeeklyInvoicesViewModel
             {
@@ -3473,7 +3501,18 @@ namespace CUWebinars.Web.Controllers.Admin
 
             };
 
-            return PartialView("~/Views/Admin/Home/_generateWeeklyInvoices.cshtml", model);
+            return PartialView("~/Views/Admin/Home/_sendWeeklyInvoicesEvent.cshtml", model);
+        }
+
+        public ActionResult GetWeeklyInvoicesEvent()
+        {
+            var model = new GenerateWeeklyInvoicesViewModel
+            {
+                Affiliates = _affiliateManagementService.GetAffiliates().ToList()
+
+            };
+
+            return View("~/Views/Admin/Home/GenerateWeeklyInvoices.cshtml", model);
         }
         [HandleAjaxException]
         [HttpPost]

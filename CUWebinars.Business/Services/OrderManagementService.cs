@@ -2475,6 +2475,42 @@ namespace CUWebinars.Business.Services
             return _webUserRepository.GetWebUsersOfDiscount(idDiscount);
         }
 
+        public string CheckOrderComments()
+        {
+            int totalNumberOrders = 0;
+            List<Order> orders = _orderRepository.GetOrdersAll(19, out totalNumberOrders).ToList();
+
+            foreach (var order in orders)
+            {
+                if (order.AdminComments != null && !order.AdminComments.StartsWith("["))
+                {
+                    var AdminResult = JsonHelpers.IsValidObjectSingle(order.AdminComments);
+                    if (AdminResult != "isSingle")
+                    {
+                        _logger.Warn("invalid Json on Admin: " + order.idOrder + " | " + order.AdminComments);
+                    }
+                }
+                if (order.AffiliateComments != null && !order.AffiliateComments.StartsWith("["))
+                {
+                    var AffResult = JsonHelpers.IsValidObjectSingle(order.AffiliateComments);
+                    if (AffResult != "isSingle")
+                    {
+                        _logger.Warn("invalid Json on Aff: " + order.idOrder + " | " + order.AffiliateComments);
+                    }
+                }                
+                if (order.UserComments != null && !order.UserComments.StartsWith("["))
+                {
+                    var UserResult = JsonHelpers.IsValidObjectSingle(order.UserComments);
+                    if (UserResult != "isSingle")
+                    {
+                        _logger.Warn("invalid Json on User: " + order.idOrder + " | " + order.UserComments);
+                    }
+                }
+            }
+
+            return null;
+        }
+
         private void RejectDiscount(OrderRow orderRow)
         {
             orderRow.Discount.CreditsRemain++;

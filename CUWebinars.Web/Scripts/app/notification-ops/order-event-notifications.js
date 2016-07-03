@@ -1,7 +1,6 @@
 ﻿var adhocNotificationForm,
     failedScreenMessage,
     getAdhocEventsHtmlButton,
-    generateWeeklyInvoicesHtmlButton,
     noOrderScreenMessage,
     noOrdersScreenMessage,
     getRecipientsButton,
@@ -24,7 +23,6 @@ $(function () {
     //var toastLogger = new Common.Logger(); // for toast notifications
 
     getAdhocEventsHtmlButton = $('#GetAdhocEventsHtmlButton');
-    generateWeeklyInvoicesHtmlButton = $('#GenerateWeeklyInvoicesHtmlButton');
 
     failedScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-information">&nbsp;&nbsp;Event Firing Has Failed</span>';
     noOrdersScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-information">&nbsp;&nbsp;There were no orders for that webinar</span>';
@@ -352,19 +350,6 @@ $(function () {
         });
     });
 
-
-    generateWeeklyInvoicesHtmlButton.on('click', function (eventArgs) {
-
-        eventArgs.preventDefault();
-
-        $('#InputFormFields').empty()
-            .load("/admin/GetWeeklyInvoicesEvent", function() {
-                
-                $('#submitStartDate').on('click', function(args) {
-                    FireGenerator(19);
-                });
-            });
-    });
 
 
     $('#SendShippedOrderNotificationButton').on('click', function (evtArgs) {

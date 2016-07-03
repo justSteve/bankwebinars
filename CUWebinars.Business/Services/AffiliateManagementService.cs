@@ -5,10 +5,13 @@ using System.Linq;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using System.Net;
+using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Repository;
 using CUWebinars.NotificationSystem.Event;
 using CUWebinars.Web.Models;
 using FluentValidation;
+using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Business.Services
@@ -199,6 +202,16 @@ namespace CUWebinars.Business.Services
                 _logger.Info("TotalOnBilled =  " + invoice.TotalOnBilled);
                 order.OrderStatus = OrderStatus.Billed;
             }
+
+            var newJson = new JProperty(string.Concat("OrderIsInvoice-",
+                            TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                new JObject(
+                    new JProperty("InvoiceId", invoice.InvoiceID),
+                    new JProperty("Amount", row.RowPrice)
+            ));
+
+
+            order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, newJson);
 
             if (row.Discount != null)
             {
