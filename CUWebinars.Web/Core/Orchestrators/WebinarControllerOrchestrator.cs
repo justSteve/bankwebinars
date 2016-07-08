@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
@@ -14,6 +15,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
+
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
@@ -27,9 +29,11 @@ using CUWebinars.Web.Models.JsonModels;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using FluentValidation;
+using Glimpse.AspNet.Tab;
 using Microsoft.VisualBasic.ApplicationServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 using Ninject.Extensions.Logging;
 using WebGrease.Css.Extensions;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
@@ -109,20 +113,81 @@ namespace CUWebinars.Web.Core.Orchestrators
                 UserAudit = _appHelper.GetUserAuditInfo()
             };
 
-            var validationResultUser = _jsonValidator.Validate(new ValidationString(order.UserComments));
+            try
+            {
+                string schemaJson = @"{
+                          '$schema': 'http://json-schema.org/draft-04/schema#',
+                          'description': 'PostEventMaterialsWereAccessed',
+                          'type': 'object',
+                          'properties': {
+                            'DateAdded': {
+                              'type': [
+                                'string'
+                              ]
+                            },
+                            'OnDemandCode': {
+                              'type': [
+                                'string'
+                              ]
+                            },
+                            'UserEmail': {
+                              'type': [
+                                'string'
+                              ]
+                            },
+                            'UserName': {
+                              'type': [
+                                'string'
+                              ]
+                            },
+                            'UserAudit': {
+                              'type': [
+                                'object'
+                              ]
+                            }
+                          }
+                        }";
+                //using (StreamReader file = File.OpenText(HttpContext.Current.Server.MapPath("~/App_Data/JsonSchemaStore/PostEventMaterialsWereAccessed.json")))
+                //using (JsonTextReader reader = new JsonTextReader(file))
+                //{
+                //JSchema schema = JSchema.Load(reader);
 
-            if (validationResultUser.IsValid || string.IsNullOrWhiteSpace(order.UserComments))
-            {
+                StringWriter stringWriter = new StringWriter();
+                JsonTextWriter writer = new JsonTextWriter(stringWriter);
+
+                JSchemaValidatingWriter validatingWriter = new JSchemaValidatingWriter(writer);
+                validatingWriter.Schema = JSchema.Parse(schemaJson);
+
+                IList<string> messages = new List<string>();
+                validatingWriter.ValidationEventHandler += (o, a) => messages.Add(a.Message);
+
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(validatingWriter, fieldsToComments);
+
+                if (messages != null)
+                {
+                    foreach (var msg in messages)
+                    {
+                        _logger.Warn("Ondemand|Identify: " + msg);
+                    }
+                }
+
                 string updatedUserComments = JsonHelpers.AddObjectToJsonArray(
-                    order.UserComments,
-                    JsonPropertyKeys.PostEventMaterialsWereAccessedKey,
-                    fieldsToComments
-                    );
+                   order.UserComments,
+                   JsonPropertyKeys.PostEventMaterialsWereAccessedKey,
+                   fieldsToComments
+                   );
                 order.UserComments = updatedUserComments;
+
+                //}
+
+
             }
-            else
+            catch (Exception)
             {
+
                 _logger.Warn("UserComments for OnDemand access failed to save: {0}", order.UserComments);
+                throw;
             }
 
             try

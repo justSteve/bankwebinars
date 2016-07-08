@@ -41,6 +41,7 @@ namespace CUWebinars.Business.Models
         public string AuditInfo { get; set; }
         public string AffiliateComments { get; set; }
         public string AdminComments { get; set; }
+        public string InvoiceDetail { get; set; }
         public bool TaxExempt { get; set; }
         public string Origin { get; set; }
         public virtual Affiliate Affiliate { get; set; }

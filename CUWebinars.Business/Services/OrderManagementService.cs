@@ -509,7 +509,7 @@ namespace CUWebinars.Business.Services
                         {
                             var lOrder = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
                             var vOrder = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
-                        
+
                             _logger.Info("SynchOrder CommonToBoth {0} of {1} - {2} ", i, commonEmails.Count(), orderEmail);
                             if (vOrder.idOrder != vOrder.idOrderLegacy)
                             {
@@ -535,7 +535,7 @@ namespace CUWebinars.Business.Services
                                     var lShippedDate =
                                         lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
                                             .ShipmentDate.Value;
-                                    if (lShippedDate > DateTime.Parse( "01/01/1900"))
+                                    if (lShippedDate > DateTime.Parse("01/01/1900"))
                                     {
                                         vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
                                             .ShipmentDate =
@@ -580,7 +580,7 @@ namespace CUWebinars.Business.Services
                             {
                                 _logger.ErrorException("SynchOrder save orderstatus failed: " + orderEmail, ex);
                             }
-                        } 
+                        }
                         catch (Exception ex)
                         {
                             _logger.ErrorException("SELECT email, (SELECT ttsDomain FROM dbo.Affiliate WHERE idUser = o.idAffiliate), idOrder, (SELECT status FROM dbo.OrdersRows WHERE idOrder = o.idOrder) from Orders o where email = '" + orderEmail + "' and idOrder in (SELECT idOrder FROM dbo.OrdersRows WHERE idWebinar =	" + webinarId + ")", ex);
@@ -1642,9 +1642,39 @@ namespace CUWebinars.Business.Services
 
                 pricesAndDiscounts = CalculateOrderCost(currentOrder, additionalLocationsPricing.Single().Price);
 
-                var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, (int)currentOrder.OrderStatus);
-
+                
                 _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
+                try
+                {
+                    if (currentOrder.InvoiceDetail != null)
+                    {
+                        var toJson = JObject.Parse(currentOrder.InvoiceDetail);
+                        var nullChecked = toJson.Properties().FirstOrDefault(p => p.Name.StartsWith("OrderIsInvoiced"));
+                        //var nullChecked = toJson.Properties().FirstOrDefault(p => p.Name.StartsWith("OrderIsInvoiced")).SelectToken("$.Amount.Value");
+                        if (nullChecked != null)
+                        {
+
+                            var newJson4Invoice = new JProperty(
+                                string.Concat("ChangedOrderNeedsNewInvoice-",
+                                    TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                                new JObject(
+                                    new JProperty("PriorAmount",  nullChecked.First()["AmountOfOrder"].ToString())
+                                    ));
+
+
+                            currentOrder.InvoiceDetail = JsonHelpers.MergeJsonWithStoredField(
+                                currentOrder.InvoiceDetail, newJson4Invoice);
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.Fatal("UpdateOrderChanged Json Merge");
+                }
+
+
+                _orderRepository.SaveOrderChanges(currentOrder, (int)currentOrder.OrderStatus);
 
                 Clear();
                 return "success";
@@ -2497,7 +2527,7 @@ namespace CUWebinars.Business.Services
                     {
                         _logger.Warn("invalid Json on Aff: " + order.idOrder + " | " + order.AffiliateComments);
                     }
-                }                
+                }
                 if (order.UserComments != null && !order.UserComments.StartsWith("["))
                 {
                     var UserResult = JsonHelpers.IsValidObjectSingle(order.UserComments);

@@ -1,0 +1,32 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "PostEventMaterialsWereAccessed",
+  "type": "object",
+  "properties": {
+    "DateAdded": {
+      "type": [
+        "string"
+      ]
+    },
+    "OnDemandCode": {
+      "type": [
+        "string"
+      ]
+    },
+    "UserEmail": {
+      "type": [
+        "string"
+      ]
+    },
+    "UserName": {
+      "type": [
+        "string"
+      ]
+    },
+    "UserAudit": {
+      "type": [
+        "object"
+      ]
+    }
+  }
+}

@@ -207,7 +207,7 @@ $(function () {
 
                     if (response.Result === 'Success') {
                         
-                        $('#OperationMessage').html('<span class="label label-success">&nbsp;&nbsp;Reset Request has been issued. (\n' + response.ResetKey + '\n) </span>');
+                        $('#OperationMessage').html('<span class="label label-success">&nbsp;&nbsp;Reset Request has been issued. </span>');
                     } else if (response.Result === 'Fail') {
                         $('#OperationMessage').html('<span class="label label-important"><strong>&nbsp;&nbsp;There was an error at the server. The new user has not been created.</strong></span>');
                     }

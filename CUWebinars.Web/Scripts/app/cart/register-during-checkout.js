@@ -1126,13 +1126,14 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
                 var percentOff = data.PercentOff;
                 console.log(data);
                 var showDiscount = "";
-                if (flatOff > 0) {
-                    alert("flatOff" + flatOff);
-                    var amount2Discount = data.Discount.replace(".00%", "") / 100;
-                    registerDuringCheckout.totalDiscount = registerDuringCheckout.totalPrice * amount2Discount;
+                if (percentOff> 0) {
+                    //alert("flatOff" + data.Discount);
+
+                    var amount2Discount = data.Discount;
+                    registerDuringCheckout.totalDiscount = amount2Discount;
                 }
 
-                if (percentOff > 0) {
+                if (flatOff > 0) {
                     registerDuringCheckout.totalDiscount = data.Discount;
                 }
 
@@ -1146,11 +1147,10 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
                 if (newTotalPrice < 0)
                     newTotalPrice = 0;
                 
-                $('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 3.').addClass('text-info');
-
+                
                 $('#discountedText').html(' <span id="totalDiscount">Discounted:$' + registerDuringCheckout.totalDiscount + '</span>').removeClass('muted');
                 //original -- what changed this? $('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
-                $('#showTotalPrice').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
+                $('#showTotalPrice').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '</span>');
 
                 $('#discountSpinner').remove();
             }

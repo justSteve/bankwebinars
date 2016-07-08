@@ -3,7 +3,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace CUWebinars.Business.Core.Helpers
@@ -34,7 +36,7 @@ namespace CUWebinars.Business.Core.Helpers
                 return "error";
 
             }
-            
+
         }
 
         public static string MergeJsonWithStoredField(string existingJson, JProperty newJson)
@@ -50,8 +52,14 @@ namespace CUWebinars.Business.Core.Helpers
                 JObject objectToValidate;
                 try
                 {
-                    
+
                     objectToValidate = JObject.Parse(existingJson);
+
+                    IList<string> keys = objectToValidate.Properties().Select(p => p.Name).ToList();
+                    foreach (var myKey in keys)
+                    {
+                        Debug.WriteLine(myKey);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -61,7 +69,7 @@ namespace CUWebinars.Business.Core.Helpers
                     //Handle the case when e is the base Exception
                     objectToValidate = JObject.FromObject(new
                     {
-                        existing = "wrapped Json="+ existingJson,
+                        existing = "wrapped Json=" + existingJson,
                         exceptionMsg = e.Message,
                         exceptionStack = e.StackTrace
                     });
@@ -105,7 +113,20 @@ namespace CUWebinars.Business.Core.Helpers
             }
 
             // ************* if we got here, we need to now process the existing stored json as an input *************
-            existingStoredJsonObject = JObject.Parse(jsonAsString);
+            try
+            {
+                existingStoredJsonObject = JObject.Parse(jsonAsString);
+
+            }
+            catch (Exception e)
+            {
+               existingStoredJsonObject = JObject.FromObject(new
+                    {
+                        existing = "wrapped Json=" + jsonAsString,
+                        exceptionMsg = e.Message,
+                        exceptionStack = e.StackTrace
+                    });
+            }
 
             // 1st, see if valid json is stored at all
             if (!ReferenceEquals(null, existingStoredJsonObject))

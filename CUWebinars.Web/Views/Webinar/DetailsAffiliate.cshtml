@@ -68,9 +68,9 @@
                 <button id="showOrdersButton" type="button" class="btn btn-info" data-toggle="collapse" data-target="#webinarOrders">
                     Orders
                 </button>
-                <button id="showRoyaltiesButton" type="button" class="btn btn-info" data-toggle="collapse" data-target="#revenueReport">
+                @*<button id="showRoyaltiesButton" type="button" class="btn btn-info" data-toggle="collapse" data-target="#revenueReport">
                     Revenue Report
-                </button>
+                </button>*@
                 @if (Model.Webinar.Status == WebinarStatus.Scheduled || Model.Webinar.Status == WebinarStatus.InProgress || Model.Webinar.Status == WebinarStatus.Active)
                 {
                     <button id="showConnInfoButton" type="button" class="btn btn-info" data-toggle="collapse" data-target="#connectionDetails">Connection Info</button>
@@ -95,9 +95,9 @@
 
     </div>
 
-    <div id="revenueReport" class="collapse">
+    @*<div id="revenueReport" class="collapse">
         @Html.Partial("~/Views/Admin/Partials/_ShowRevenueReport.cshtml", Model.ShowOrdersViewModel)
-    </div>
+    </div>*@
     <div id="users" class="collapse">
         @Html.Partial("~/Views/Admin/Partials/_ShowUsers.cshtml", Model.ShowOrdersViewModel)
     </div>

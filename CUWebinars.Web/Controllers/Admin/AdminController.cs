@@ -317,6 +317,30 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
                 order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, newJson);
+
+                if (order.InvoiceDetail != null)
+                {
+                    var newJson4Invoice =
+    new JProperty(
+        string.Concat("ChangeInvoicedAffiliate-",
+            TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+        new JObject(
+            new JProperty("ChangeAffiliateFrom", originalAffiliate.ttsDomain),
+            new JProperty("ChangeAffiliateTo", newAffiliate.ttsDomain),
+            new JProperty("Details", buildMessage)
+            ));
+
+
+                    order.InvoiceDetail = JsonHelpers.MergeJsonWithStoredField(order.InvoiceDetail, newJson4Invoice);
+
+                }
+
+                _orderManagementService.SaveChanges();
+
+                _logger.Info(buildMessage);
+
+
+                return Json(new { Result = WebUiConstants.Success, NewAffiliate = newAffiliate.ttsDomain });
             }
             catch (Exception ex)
             {
@@ -324,12 +348,6 @@ namespace CUWebinars.Web.Controllers.Admin
                 throw;
             }
 
-            _orderManagementService.SaveChanges();
-
-            _logger.Info(buildMessage);
-
-
-            return Json(new { Result = WebUiConstants.Success, NewAffiliate = newAffiliate.ttsDomain });
         }
 
         //public ActionResult ManageOrder()
@@ -2571,7 +2589,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             var totalNumberOrders = 0;
 
-          string result =  _orderManagementService.CheckOrderComments();
+            string result = _orderManagementService.CheckOrderComments();
 
             return Content("Ok");
         }
@@ -3104,6 +3122,8 @@ namespace CUWebinars.Web.Controllers.Admin
                             //discountNotes.Append(discountAmount);
                             discountNotes.Append(Environment.NewLine);
                         }
+
+
                         pOrders.Rows.Add(
                             rowNumber
                             , order.FirstName + ' ' + order.LastName
@@ -3138,16 +3158,7 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 List<Order> theseOrders =
                     _orderManagementService.GetOrdersAll(thisAffiliate, out totalNumberOrders)
-                        .Where(o =>
-                        {
-                            var row = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                            return row != null && (o.OrderRows.Any() && row.Webinar.Date <
-                                                                           startDate && o.OrderDate > startDate && o.OrderDate < endDate
-                                                                           && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted));
-                        }).ToList();
-                
-                theseOrders = theseOrders
-                        .Where(o => o.AdminComments != null && o.AdminComments.Contains("Updated")).ToList();
+                        .Where(o => o.InvoiceDetail != null && o.InvoiceDetail.Contains("Change")).ToList();
 
                 if (theseOrders.Any())
                 {
@@ -3158,7 +3169,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         InvoiceID = weekNumber + "-" + affiliate.idUserAff,
                         RoyaltyTier = affiliate.CommissionModel
                     };
-                    invoice = _affiliateManagementService.BuildAffiliateInvoiceForPostEventOrders(invoice,
+                    invoice = _affiliateManagementService.BuildAffiliateInvoiceForAdjustedOrders(invoice,
                         theseOrders,
                         thisAffiliate);
                     int rowNumber = 0;
@@ -3180,9 +3191,22 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     foreach (var order in theseOrders)
                     {
-                        string _price = order.Total.ToString("C").Replace(".00", "");
+                        var obj = (JObject)JsonConvert.DeserializeObject(order.InvoiceDetail);
+                        var dict = obj.First.First.Children().Cast<JProperty>().ToDictionary(p => p.Name, p => p.Value);
+
+                        var invoiceId = dict["InvoiceId"];
+                        var AmountOfOrder = (decimal)dict["AmountOfOrder"];
+                        var AmountOfRoyalty = (decimal)dict["AmountOfRoyalty"];
+                        var Affiliate = dict["Affiliate"];
+
+                        var adjustedPrice = order.Total - AmountOfOrder;
+                        string _price = adjustedPrice.ToString("C").Replace(".00", "");
                         var row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                         rowNumber++;
+
+                        var _adjustedRoyalty = row.Royalty - AmountOfRoyalty;
+
+
                         string _percent = (row.PercentPaid * 100).ToString().Replace(".00", "").Replace(".0", "") +
                                           "%";
                         if (row.Discount != null)
@@ -3213,9 +3237,9 @@ namespace CUWebinars.Web.Controllers.Admin
                             , order.BillingEmail
                             , order.Institution + Environment.NewLine + order.BillingAddress + Environment.NewLine +
                               order.BillingCity + ", " + order.BillingState + " " + order.BillingZip
-                            , _price
+                            , "Original Total:" + Environment.NewLine + AmountOfOrder.ToString("C").Replace(".00", "") + Environment.NewLine + "Diff From Original:" + Environment.NewLine + _price
                             , _percent
-                            , row.Royalty.ToString("C").Replace(".00", "")
+                            , "Original Royalty:" + Environment.NewLine + AmountOfRoyalty.ToString("C").Replace(".00", "") + Environment.NewLine + "Adjusted Amt:" + Environment.NewLine + _adjustedRoyalty.ToString("C").Replace(".00", "")
                             , order.OrderStatus
                             , order.idOrder
                             , row.Webinar.Title
@@ -3582,71 +3606,71 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
 
-        [HandleAjaxException]
-        [HttpPost]
-        [AllowAnonymous]
-        public JsonResult DTDataHandlerRoyaltySummary(DTParametersOrders param)
-        {
-            if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
-            {
-                // based heavily on https://www.echosteg.com/jquery-datatables-asp.net-mvc5-server-side
-                int totalNumberOrders = 0;
-                int webinarId = param.webinarId;
-                string searchTerm = param.searchTerm;
-                int affiliateId = param.affiliateId ?? 19; // 19 is magic internal / house affiliate id
-                bool showAllEvents = param.showAllEvents ?? false;
+        //[HandleAjaxException]
+        //[HttpPost]
+        //[AllowAnonymous]
+        //public JsonResult DTDataHandlerRoyaltySummary(DTParametersOrders param)
+        //{
+        //    if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
+        //    {
+        //        // based heavily on https://www.echosteg.com/jquery-datatables-asp.net-mvc5-server-side
+        //        int totalNumberOrders = 0;
+        //        int webinarId = param.webinarId;
+        //        string searchTerm = param.searchTerm;
+        //        int affiliateId = param.affiliateId ?? 19; // 19 is magic internal / house affiliate id
+        //        bool showAllEvents = param.showAllEvents ?? false;
 
-                List<Order> dtsource = null;
+        //        List<Order> dtsource = null;
 
-                try
-                {
-                    dtsource = _dataTablesService.GetOrdersByWebinar(webinarId, affiliateId, out totalNumberOrders).OrderBy(o => o.OrderDate).ToList();
+        //        try
+        //        {
+        //            dtsource = _dataTablesService.GetOrdersByWebinar(webinarId, affiliateId, out totalNumberOrders).OrderBy(o => o.OrderDate).ToList();
 
-                    // use automapper to flatten out the order records, in this specific case the data 
-                    //  model has circular references which cause problems with JSON serialization
-                    List<OrderDTO> dtoSource = new List<OrderDTO>();
-                    Mapper.Map(dtsource, dtoSource);
+        //            // use automapper to flatten out the order records, in this specific case the data 
+        //            //  model has circular references which cause problems with JSON serialization
+        //            List<OrderDTO> dtoSource = new List<OrderDTO>();
+        //            Mapper.Map(dtsource, dtoSource);
 
-                    // custom filtering by Order Status
-                    if (param.selectedOrderStatuses != null)
-                    {
-                        dtoSource = dtoSource.Where(x => param.selectedOrderStatuses.Contains(x.OrderStatus)).ToList();
+        //            // custom filtering by Order Status
+        //            if (param.selectedOrderStatuses != null)
+        //            {
+        //                dtoSource = dtoSource.Where(x => param.selectedOrderStatuses.Contains(x.OrderStatus)).ToList();
 
-                    }
-                    _affiliateManagementService.BuildAffiliateReport(dtsource, webinarId);
+        //            }
+        //            _affiliateManagementService.BuildAffiliateReport(dtsource, webinarId);
 
-                    List<String> columnSearch = new List<string>();
-                    foreach (var col in param.Columns)
-                    {
-                        columnSearch.Add(col.Search.Value);
-                    }
+        //            List<String> columnSearch = new List<string>();
+        //            foreach (var col in param.Columns)
+        //            {
+        //                columnSearch.Add(col.Search.Value);
+        //            }
 
-                    List<OrderDTO> data = new DTResultSetOrders().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtoSource, columnSearch);
-                    int count = new DTResultSetOrders().Count(param.Search.Value, dtoSource, columnSearch);
+        //            List<OrderDTO> data = new DTResultSetOrders().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtoSource, columnSearch);
+        //            int count = new DTResultSetOrders().Count(param.Search.Value, dtoSource, columnSearch);
 
 
-                    DataTableService<OrderDTO> result = new DataTableService<OrderDTO>
-                    {
-                        draw = param.Draw,
-                        data = data,
-                        recordsFiltered = count,
-                        recordsTotal = count
-                    };
+        //            DataTableService<OrderDTO> result = new DataTableService<OrderDTO>
+        //            {
+        //                draw = param.Draw,
+        //                data = data,
+        //                recordsFiltered = count,
+        //                recordsTotal = count
+        //            };
 
-                    JsonResult jsonresult = Json(result);
-                    jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
+        //            JsonResult jsonresult = Json(result);
+        //            jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
 
-                    return jsonresult;
-                }
-                catch (Exception ex)
-                {
-                    return Json(new { error = ex.Message });
-                }
-            }
+        //            return jsonresult;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            return Json(new { error = ex.Message });
+        //        }
+        //    }
 
-            return Json(new { NotAuthorized = true });
+        //    return Json(new { NotAuthorized = true });
 
-        }
+        //}
 
         //[HandleAjaxException]
         //[HttpPost]
