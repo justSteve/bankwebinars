@@ -229,6 +229,7 @@
     <Compile Include="Notification\Email\AdhocNotificationDelivery.cs" />
     <Compile Include="Notification\Email\AzureAdhocNotificationDelivery.cs" />
     <Compile Include="Notification\Email\AdhocNotificationMessage.cs" />
+    <Compile Include="Notification\Email\AzureWeeklyInvoiceWebJobSmtpMessageDelivery.cs" />
     <Compile Include="Notification\Email\AzureCuwWebJobSmtpMessageDelivery.cs" />
     <Compile Include="Notification\Email\AzureOrderConfirmedForAdditionalLocationDelivery.cs" />
     <Compile Include="Notification\Email\AzureOrderNotifierMessageDelivery.cs" />
@@ -238,7 +239,9 @@
     <Compile Include="Notification\Email\OrderConfirmedForAdditionalLocationDelivery.cs" />
     <Compile Include="Notification\Email\OrderNotifierMessageDelivery.cs" />
     <Compile Include="Notification\Events\AdhocNotificationEvent.cs" />
+    <Compile Include="Notification\Events\SendWeeklyInvoiceEvent.cs" />
     <Compile Include="Notification\Handlers\AdhocNotificationHandler.cs" />
+    <Compile Include="Notification\Handlers\SendWeeklyInvoiceHandler.cs" />
     <Compile Include="Notification\IAdhocNotificationDelivery.cs" />
     <Compile Include="Notification\IAdhocNotificationMessage.cs" />
     <Compile Include="Notification\Email\OrderSynchMessage.cs" />
@@ -304,6 +307,7 @@
     <Compile Include="Notification\INotificationDelivery.cs" />
     <Compile Include="Notification\INotificationMessage.cs" />
     <Compile Include="Notification\TemplateResolver.cs" />
+    <Compile Include="Notification\ViewModel\SendWeeklyInvoiceViewModel.cs" />
     <Compile Include="Notification\ViewModel\SendPromoLinksViewModel.cs" />
     <Compile Include="Notification\ViewModel\AdhocNotificationSubmittedViewModel.cs" />
     <Compile Include="Notification\ViewModel\OrderSubmittedAdditionalLocationViewModel.cs" />

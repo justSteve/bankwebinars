@@ -2923,10 +2923,25 @@ namespace CUWebinars.Web.Controllers.Admin
         [AllowAnonymous]
         public JsonResult GenerateWeeklyInvoicesEvent(DateTime startDate, int? _idAffiliate)
         {
+            ////System.Diagnostics.Debug.WriteLine(_idAffiliate + " Time: " + DateTime.Now.ToString("HH:mm:ss.fff"));
+            ////var xaffiliate = _affiliateManagementService.FindById(_idAffiliate.Value);
+            //////System.Threading.Thread.Sleep(2000);
+            ////System.Diagnostics.Debug.WriteLine("Complete time: " + DateTime.Now.ToString("HH:mm:ss.fff"));
+            ////return Json(new
+            ////{
+            ////    OrdersFound = true,
+            ////    InvoiceId = "asdfx-" + xaffiliate.idUserAff,
+            ////    AffiliateId = xaffiliate.idUserAff,
+            ////    AffiliateContactEmail = xaffiliate.ContactEmail,
+            ////    AffiliateLabel = xaffiliate.DisplayTitle + " (" + xaffiliate.ttsDomain + " - " + xaffiliate.idUserAff + ")",
+            ////    Link = new { PrimaryUri = "http://fakeurl.com/" + xaffiliate.idUserAff },
+            ////}, JsonRequestBehavior.AllowGet);
+
+
             if (!_idAffiliate.HasValue)
             {
 
-                return Json(new { OrdersFound = "none" }, JsonRequestBehavior.AllowGet);
+                return Json(new { Result = WebUiConstants.Fail, OrdersFound = "false" }, JsonRequestBehavior.AllowGet);
             }
             int idAffiliate = _idAffiliate.Value;
             DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
@@ -3413,13 +3428,19 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         document.Save(output, SaveOptions.PdfDefault);
                         output.Position = 0; // reset to beginning so Upload operation can work correctly
-                        blob.UploadFromStream(output);
+                        //TEMP-ALS blob.UploadFromStream(output);
                     }
 
                     return Json(new
                     {
+                        Result = WebUiConstants.Success,
+                        OrdersFound = true,
+                        AffiliateId = affiliate.idUserAff,
+                        InvoiceId = InvoiceID,
+                        AffiliateContactEmail = affiliate.ContactEmail,
                         AffiliateLabel = affiliate.DisplayTitle + " (" + affiliate.ttsDomain + " - " + affiliate.idUserAff + ")",
-                        Link = blob.StorageUri,
+                        //TEMP-ALS Link = new { PrimaryUri = blob.StorageUri },
+                        Link = new { PrimaryUri = "http://fakeurl.com/" + affiliate.idUserAff }, //TEMP:ALS
                         GrandTotalOnBilled = GrandTotalOnBilled.ToString("c"),
                         GrandTotalOnPaid = GrandTotalOnPaid.ToString("c"),
                         GrandTotalDiscounts = GrandTotalDiscounts.ToString("c"),
@@ -3430,7 +3451,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
                 else
                 {
-                    return Json(new { OrdersFound = "none" }, JsonRequestBehavior.AllowGet);
+                    return Json(new { Result = WebUiConstants.Fail, OrdersFound = "false" }, JsonRequestBehavior.AllowGet);
                 }
 
             }
@@ -3440,7 +3461,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 _logger.ErrorException("building Invoice: " + InvoiceID, ex);
             }
 
-            return Json(new { OrdersFound = "error writing file" }, JsonRequestBehavior.AllowGet);
+            return Json(new { Result = WebUiConstants.Fail, OrdersFound = "error writing file" }, JsonRequestBehavior.AllowGet);
         }
 
 
@@ -3567,6 +3588,46 @@ namespace CUWebinars.Web.Controllers.Admin
             };
 
             return PartialView("~/Views/Admin/Home/_sendWeeklyInvoicesEvent.cshtml", model);
+        }
+
+        [HandleAjaxException]
+        [HttpPost]
+        //[AuthorizeHeaders]  
+        [AllowAnonymous]
+        public JsonResult SendWeeklyInvoicesEvent(List<SendWeeklyInvoiceViewModel> model)
+        {
+            int emailsQueued = 0;
+
+            // all necessary data has been populated via MVC / form post
+            foreach (SendWeeklyInvoiceViewModel invoiceData in model)
+            {
+                // model automatically populated by data from UI via MVC, just fire the event, which queues the message to azure, which triggers the webjob on azure, which sends the email via mandrill/mailchimp
+
+                // business project:
+                //<Compile Include="Notification\Email\AzureWeeklyInvoiceWebJobSmtpMessageDelivery.cs" />
+                //<Compile Include="Notification\Events\SendWeeklyInvoiceEvent.cs" />
+                //<Compile Include="Notification\Handlers\SendWeeklyInvoiceHandler.cs" />
+                //<Compile Include="Notification\ViewModel\SendWeeklyInvoiceViewModel.cs" />
+
+                // web project:
+                //<Content Include="Notification\Templates\SendWeeklyInvoice.cshtml" />
+                // new FROM address and subject in web.config (and GlobalConfir.cs and TtsConfigHelper.cs)
+
+                System.Diagnostics.Debug.WriteLine(string.Format("Queuing email for affiliate {0} | invoice {1} | url {2}", invoiceData.Affiliate.idUserAff, invoiceData.InvoiceId, invoiceData.InvoiceStorageUri));
+                
+                // email will be sent to Affiliate.ContactEmail, any reason to override here?
+                invoiceData.Subject = _globalConfig.WeeklyInvoiceEmailSubject; // or in event handler / web.config?
+                invoiceData.EmailBody = HttpUtility.HtmlDecode(
+                    _generalFormatter.FormatV2(invoiceData, "~/Notification/Templates/SendWeeklyInvoice.cshtml").Body
+                    );
+
+                // is there any risk of this not working and us needing to deal with problems?
+                _orderManagementService.FireSendWeeklyInvoiceEvent(invoiceData);
+                emailsQueued++;
+
+            }
+
+            return Json(new { Result = WebUiConstants.Success, EmailsQueued = emailsQueued });
         }
 
         public ActionResult GetWeeklyInvoicesEvent()

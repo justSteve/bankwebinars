@@ -31,7 +31,6 @@ $(function () {
         
         $("#titleOnly").prop('checked', true);
         DW.searchTermDiv.text(DW.searchTermDiv.text().replace("title:"));
-        DW.searchTermDiv.text(DW.searchTermDiv.text().replace("title:"));
         $("#search-box").val(DW.searchTermDiv.text());
     }
 

@@ -42,6 +42,8 @@ namespace CUWebinars.Web.Core
         public string WMVRepository { get; private set; }
         public string PromoEmailFromAddress { get; private set; }
         public string PromoEmailSubject { get; private set; }
+        public string WeeklyInvoiceEmailFromAddress { get; private set; }
+        public string WeeklyInvoiceEmailSubject { get; private set; }
 
         private GlobalConfig()
         {
@@ -81,6 +83,8 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
                 UniqueInstance.PromoEmailFromAddress = ApplicationSettingsSection["PromoEmailFromAddress"];
                 UniqueInstance.PromoEmailSubject = ApplicationSettingsSection["PromoEmailSubject"];
+                UniqueInstance.WeeklyInvoiceEmailFromAddress = ApplicationSettingsSection["WeeklyInvoiceEmailFromAddress"];
+                UniqueInstance.WeeklyInvoiceEmailSubject = ApplicationSettingsSection["WeeklyInvoiceEmailSubject"];
 
                 ConnectionStringSettingsCollection ConnectionStringSettings = WebConfigurationManager.ConnectionStrings;
 

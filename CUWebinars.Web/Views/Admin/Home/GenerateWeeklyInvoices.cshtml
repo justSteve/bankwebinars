@@ -1,6 +1,10 @@
 ﻿@using CUWebinars.Web.Core
 
 @model GenerateWeeklyInvoicesViewModel
+@section scripts{
+    @Scripts.Render("~/bundles/admin-notifications")
+}
+
 
 @{
 
@@ -10,11 +14,18 @@
         listAff.Append(aff.idUserAff + ",");
     }
     Layout = "/Views/Shared/_LayoutAdmin.cshtml";
-
+    
 }
 
-
 <script language="javascript" type="text/javascript">
+
+    //var arryAff = [@listAff];
+    var arryAff = [62, 2988];
+
+    // recursion control variables
+    var callsNeeded = arryAff.length;
+    var callsComplete = 0;
+
     $(function () {
 
         sendRptCheckBoxesDiv = $('#SendRptCheckBoxes').find('.controls');
@@ -22,99 +33,50 @@
 
         $('#sendRpt').hide();
         $('#submitStartDate').on('click', function (args) {
-
             args.preventDefault();
-            FireGenerator();
+            
+            // disable button?
+            $('#sendRpt').hide();
+            sendRptCheckBoxesDiv.html(''); // clear any old results out
+            callsComplete = 0; // reset itorator / recursion control variable
+            FireGenerator(); // call recursive function
         });
-    });
-    //var arryAff = [@listAff];
-    var arryAff = [62];
-    var iterator = 0;
 
-    function FireGenerator() {
-        //
+        $('#sendRpt').on('click', function (args) {
+        
+            args.preventDefault();
 
-        var affId = arryAff[iterator];
+            // disable button?
 
-
-        var payload = { startDate: $("#startDate").val(), _idAffiliate: affId };
-
-        $.ajax({
-            type: 'GET',
-            contentType: constants.JsonContentType,
-            cache: false,
-            async: false,
-            timeout: 3000,
-            url: "/Admin/GenerateWeeklyInvoicesEvent?startDate=" + payload.startDate + "&_idAffiliate=" + payload._idAffiliate,
-            dataType: constants.JsonDataType,
-            //data: JSON.stringify(payload),
-            beforeSend: function () {
-                crunchingLabel.html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Processing ' + (iterator + 1) + ' of ' + arryAff.length + '</span>');
-            }
-        }).done(function (data) {
-
-            if (data.OrdersFound) {
-                sendRptCheckBoxesDiv.append('<p>No orders found for ' + payload._idAffiliate + '</p>');
-            } else {
-                console.log(data);
-                var parsedInvoice = data.Link.PrimaryUri.replace('http://storeforbw.blob.core.windows.net/affiliateinvoices/', '').replace('.pdf', '');
-                // successful request; do something with the data
-                //// Values being returned
-                //AffiliateLabel = affiliate.DisplayTitle + " ("+affiliate.ttsDomain +" - "+affiliate.idUserAff+ ")",
-                //Link = blob, ?? How to drill to URL
-                //GrandTotalOnBilled,
-                //GrandTotalOnPaid,
-                //GrandTotalDiscounts,
-                //GrandTotalRoyalties,
-                //GrandTotalNetDue
-                sendRptCheckBoxesDiv.append('<p class="checkbox-inline"><input type="checkbox" checked="Checked" id="inlineCheckbox_' + parsedInvoice + '" value="' + data.AffiliateLabel + '">' + data.AffiliateLabel + '<a href="' + data.Link.PrimaryUri + '" _target=_new> View Report</a></p>');
-            }
-            crunchingLabel.html('');
-            iterator++;
-            if (iterator < arryAff.length) {
-                console.log(iterator + ": " + arryAff.length);
-                FireGenerator();
-            } else {
-                $('#sendRpt').show();
-            }
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            // failed request; give feedback to user
-            alert("problem with " + payload._idAffiliate + " -- " + errorThrown);
-            iterator++;
-
-            if (iterator < arryAff) {
-                FireGenerator(iterator);
-            }
-            crunchingLabel.html('');
+            SendInvoices();
         });
-    }
+        });
 </script>
+
 <div style="width: 1100px; margin: 30px auto">
     <h2>Generates Weekly Invoices</h2>
-    <div id="crunchingLabel"></div>
+    
     @using (Html.BeginForm("GenerateWeeklyInvoicesEvent", "Admin", FormMethod.Get, new { id = "GenerateWeeklyInvoicesForm", @class = "form-horizontal " }))
     {
         @Html.AntiForgeryToken()
-
         <div id="frmStartDate">
+            <p>It can take awhile to compile the invoices, please be patient and do not click Cancel or Refresh.</p>
             <p>Start Date</p>
             <div>
-                <input type="date" name="startDate" id="startDate" />
-                <button id="submitStartDate">Submit</button>
+                <input type="date" name="startDate" id="startDate" style="margin-bottom: 0px;" />
+                <button id="submitStartDate">Submit</button> &nbsp;<span id="crunchingLabel">&nbsp;</span>
             </div>
-
-        </div>
+            </div>
     }
     @using (Html.BeginForm("SendWeeklyInvoicesEvent", "Admin", FormMethod.Get, new { id = "SendWeeklyInvoicesForm", @class = "form-horizontal " }))
     {
-        <div id="SendRptCheckBoxes" class="control-group">
-            <button id="sendRpt">Send Report</button>
-            <div class="controls">
+            <div id="SendRptCheckBoxes" class="control-group">
+            <button id="sendRpt" style="display:none;">Send Reports</button>
+                <div class="controls">
 
 
+                </div>
             </div>
-        </div>
-
     }
 
 </div>

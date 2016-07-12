@@ -509,7 +509,7 @@ namespace CUWebinars.Business.Services
                         {
                             var lOrder = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
                             var vOrder = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
-
+                        
                             _logger.Info("SynchOrder CommonToBoth {0} of {1} - {2} ", i, commonEmails.Count(), orderEmail);
                             if (vOrder.idOrder != vOrder.idOrderLegacy)
                             {
@@ -580,7 +580,7 @@ namespace CUWebinars.Business.Services
                             {
                                 _logger.ErrorException("SynchOrder save orderstatus failed: " + orderEmail, ex);
                             }
-                        }
+                        } 
                         catch (Exception ex)
                         {
                             _logger.ErrorException("SELECT email, (SELECT ttsDomain FROM dbo.Affiliate WHERE idUser = o.idAffiliate), idOrder, (SELECT status FROM dbo.OrdersRows WHERE idOrder = o.idOrder) from Orders o where email = '" + orderEmail + "' and idOrder in (SELECT idOrder FROM dbo.OrdersRows WHERE idWebinar =	" + webinarId + ")", ex);
@@ -1630,7 +1630,21 @@ namespace CUWebinars.Business.Services
             int numRows = _orderRepository.SaveChanges();
         }
 
-        public string UpdateOrderChanges(Order newOrder, ref PricesAndDiscounts pricesAndDiscounts)
+        public void FireSendWeeklyInvoiceEvent(SendWeeklyInvoiceViewModel weeklyInvoiceViewModel)
+        {
+            AddEvent(new SendWeeklyInvoiceEvent<SendWeeklyInvoiceViewModel> { EventObject = weeklyInvoiceViewModel });
+
+            foreach (var evt in GetEvents().OfType<SendWeeklyInvoiceEvent<SendWeeklyInvoiceViewModel>>())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            Clear();
+
+            // int rowsUpdated = _orderRepository.SaveChanges(); // TODO: zzz ALS confirm we can remove, then remove
+        }
+
+        public string UpdateOrderChanges(Order currentOrder, ref PricesAndDiscounts pricesAndDiscounts)
         {
             try
             {
@@ -2573,7 +2587,7 @@ namespace CUWebinars.Business.Services
                     {
                         _logger.Warn("invalid Json on Aff: " + order.idOrder + " | " + order.AffiliateComments);
                     }
-                }
+                }                
                 if (order.UserComments != null && !order.UserComments.StartsWith("["))
                 {
                     var UserResult = JsonHelpers.IsValidObjectSingle(order.UserComments);
