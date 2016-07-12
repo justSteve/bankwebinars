@@ -1630,51 +1630,97 @@ namespace CUWebinars.Business.Services
             int numRows = _orderRepository.SaveChanges();
         }
 
-        public string UpdateOrderChanges(Order currentOrder, ref PricesAndDiscounts pricesAndDiscounts)
+        public string UpdateOrderChanges(Order newOrder, ref PricesAndDiscounts pricesAndDiscounts)
         {
             try
             {
+
+                var originalOrder = GetOrderById(newOrder.idOrder);
                 var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
                 var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(
-                    currentOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar
+                    newOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar
                     );
 
-                pricesAndDiscounts = CalculateOrderCost(currentOrder, additionalLocationsPricing.Single().Price);
+                string preSaveValues = dataOperations.GetPreSaveValues(newOrder.idOrder);
 
-                
-                _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
+                pricesAndDiscounts = CalculateOrderCost(newOrder, additionalLocationsPricing.Single().Price);
+
+
+                _logger.Info("Adding Event for Order {0}", newOrder.idOrder);
                 try
                 {
-                    if (currentOrder.InvoiceDetail != null)
+                    if (newOrder.InvoiceDetail != null)
                     {
-                        var toJson = JObject.Parse(currentOrder.InvoiceDetail);
+
+                        var toJson = JObject.Parse(newOrder.InvoiceDetail);
                         var nullChecked = toJson.Properties().FirstOrDefault(p => p.Name.StartsWith("OrderIsInvoiced"));
-                        //var nullChecked = toJson.Properties().FirstOrDefault(p => p.Name.StartsWith("OrderIsInvoiced")).SelectToken("$.Amount.Value");
+
                         if (nullChecked != null)
                         {
+                            //properties saved when invoiced:
+                            //"InvoiceId", invoice.InvoiceID),
+                            //"DateOfInvoice", TtsConfig.UtcNowAsCts,
+                            //"AmountOfOrder", order.Total),
+                            //"AmountOfRoyalty", row.Royalty),
+                            //"PercentPaid", row.PercentPaid),
+                            //"Affiliate", _affiliateRepository.FindById(order.idAffiliate).ttsDomain)
+                            var row = newOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                            //
+                            row.Royalty = row.RowPrice * (decimal)nullChecked.First()["PercentPaid"];
+                            if (newOrder.Total == (decimal)nullChecked.First()["AmountOfOrder"] && newOrder.InvoiceDetail.Contains("ChangedOrderNeedsNewInvoice"))
+                            {
+                                newOrder.InvoiceDetail = JsonHelpers.RemoveJObject(newOrder.InvoiceDetail, "ChangedOrderNeedsNewInvoice");
+                            }
+                            else
+                            {
+                                var regTypeShortened = preSaveValues.Split(',')[0].Replace(" Package", "").Replace("Live Plus Six", "Live+6").Replace(" and Hardcopy Handouts", "").Replace(" Recording Only", "").Replace(" Plus Five", "+5");
+                                StringBuilder sb = new StringBuilder();
 
-                            var newJson4Invoice = new JProperty(
-                                string.Concat("ChangedOrderNeedsNewInvoice-",
-                                    TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
-                                new JObject(
-                                    new JProperty("PriorAmount",  nullChecked.First()["AmountOfOrder"].ToString())
-                                    ));
+                                sb.Append("Original order attendance type " +
+                                          regTypeShortened);
+                                sb.Append(" (" + preSaveValues.Split(',')[1].ToString().Replace(".0000", "").Replace(".00","") + ") was changed to " +
+                                          row.RegistrationType.OptionLabelShort + " (" + row.RowPrice.ToString("C").Replace(".00", "") + ").");
 
+                                var adustmentAmount = row.Royalty - (decimal)nullChecked.First()["AmountOfRoyalty"];
 
-                            currentOrder.InvoiceDetail = JsonHelpers.MergeJsonWithStoredField(
-                                currentOrder.InvoiceDetail, newJson4Invoice);
+                                //set default direction
+                                var adjustmentDirection = "Royalty is increased";
+                                if (newOrder.Total < (decimal)nullChecked.First()["AmountOfOrder"])
+                                {
+                                    //over ride 
+                                    adustmentAmount = (decimal)nullChecked.First()["AmountOfRoyalty"] - row.Royalty;
+                                    adjustmentDirection = "Royalty is decreased";
+                                }
+
+                                sb.Append(adjustmentDirection + " by $" + adustmentAmount);
+
+                                var newJson4Invoice = new JProperty(
+                                    "ChangedOrderNeedsNewInvoice",
+                                    new JObject(
+                                        new JProperty("OriginalTotal", nullChecked.First()["AmountOfOrder"].ToString()),
+                                        new JProperty("OriginalRoyaltyPaid",
+                                            nullChecked.First()["AmountOfRoyalty"].ToString()),
+                                        new JProperty(adjustmentDirection, adustmentAmount),
+                                        new JProperty("DateOfChange",
+                                            TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat),
+                                            new JProperty("Message", sb.ToString())
+                                            )));
+
+                                newOrder.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(
+                                    newOrder.InvoiceDetail, newJson4Invoice, "ChangedOrderNeedsNewInvoice");
+                            }
                         }
                     }
 
                 }
                 catch (Exception ex)
                 {
-                    _logger.Fatal("UpdateOrderChanged Json Merge");
+                    _logger.Fatal("UpdateOrderChanged Json Merge: ", ex);
                 }
 
 
-                _orderRepository.SaveOrderChanges(currentOrder, (int)currentOrder.OrderStatus);
+                _orderRepository.SaveOrderChanges(newOrder, (int)newOrder.OrderStatus);
 
                 Clear();
                 return "success";

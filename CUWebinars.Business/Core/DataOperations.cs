@@ -2116,5 +2116,40 @@ namespace CUWebinars.Business.Core
                 return result;
             }
         }
+
+        public string GetPreSaveValues(int idOrder)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var getPricingsCommand = new SqlCommand())
+                {
+                    var orderIdParameter = new SqlParameter
+                    {
+                        SqlDbType = SqlDbType.Int,
+                        ParameterName = "@idOrder",
+                        Value = idOrder
+                    };
+
+                    getPricingsCommand.Connection = sqlConnection;
+                    getPricingsCommand.CommandType = CommandType.Text;
+                    getPricingsCommand.Parameters.Add(orderIdParameter);
+                    getPricingsCommand.CommandText =
+                        "SELECT r.RowPrice, (SELECT RegTypeLabel FROM dbo.RegType WHERE idRegType =  r.idRegType) FROM dbo.OrderRow r  WHERE idOrder = @idOrder;";
+                    string getPreSaveValues = "";
+
+                    using (var reader = getPricingsCommand.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            getPreSaveValues = reader[0] + "," + reader[1] ;
+                        }
+                    }
+
+                    return getPreSaveValues;
+                }
+            }
+        }
     }
 }

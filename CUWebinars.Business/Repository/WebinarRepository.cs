@@ -133,7 +133,7 @@ namespace CUWebinars.Business.Repository
                 var titleSearch = stronglyTypedContext.Webinars
                     .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
                     .Include(w => w.Presenter.WebUser)
-                    .Where(w => w.Title.Contains(searchTerm) && w.Status != WebinarStatus.Archived || w.Status != WebinarStatus.Pending)
+                    .Where(w => w.Title.Contains(searchTerm) && (w.Status != WebinarStatus.Archived || w.Status != WebinarStatus.Pending))
                     ;
                 return titleSearch.ToList();
             }

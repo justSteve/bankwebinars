@@ -10,22 +10,41 @@ var DW = DISPLAYWEBINARS; // alias for code brevity
 
 // document.ready function
 $(function () {
+    $('#titleOnly').change(function () {
+        // location.reload();
+        //alert(DW.searchTermDiv.text());
+
+        DW.titleOnly = "";
+        if ($("#titleOnly").prop('checked') == true) {
+            DW.titleOnly = "title:";
+        }
+        $("#search-box").val(DW.titleOnly + DW.searchTermDiv.text());
+        $('.search').submit();
+    });
+
 
     DW.primeDomVariables();
     DW.wireUpHandlers();
     DW.wireUpWebinarsGrid();
+
+    if (DW.searchTermDiv.text().match(/^title:/)) {
+        
+        $("#titleOnly").prop('checked', true);
+        DW.searchTermDiv.text(DW.searchTermDiv.text().replace("title:"));
+        DW.searchTermDiv.text(DW.searchTermDiv.text().replace("title:"));
+        $("#search-box").val(DW.searchTermDiv.text());
+    }
+
 });
 
 // self-invoking function for creating methods using Module pattern.
 (function (ns) {
-    $('#titleOnly').change(function () {
-        location.reload();
-    });
 
     ns.primeDomVariables = function () {
         DW.webinarsTable = $('#webinarsTable');
         DW.connInfoTable = $('#connInfoTable');
         DW.searchTermDiv = $('#searchTermDiv');
+        //DW.titleOnlyCheckboxState = titleOnlyCheckboxState;
         DW.titleOnly = "";
         if ($("#titleOnly").prop('checked')) {
             DW.titleOnly = "title:";
@@ -77,7 +96,7 @@ $(function () {
                 { 'data': 'Title', 'class': 'details-control wTitle' },
                 { 'data': 'PresenterName', 'class': 'details-control presenter' },
                 { 'data': 'RelatedTopicsString', 'class': 'details-control topicsTitles' },
-                { 'data': 'Orders',  'visible': false, 'class': 'details-control orders' }
+                { 'data': 'Orders', 'visible': false, 'class': 'details-control orders' }
             ],
             "order": [0, "desc"]
 
@@ -94,8 +113,8 @@ $(function () {
                     }
                 },
                 "mRender": function (data, type, full) {
-                    
-                    var statusHtml = full.WebinarDateString + "<br><a target='EventDetails' id='goToEventButton' type='button' class='btn btn-mini' href='/webinar/details/"+full.idWebinar+"' />Go to event</a>";
+
+                    var statusHtml = full.WebinarDateString + "<br><a target='EventDetails' id='goToEventButton' type='button' class='btn btn-mini' href='/webinar/details/" + full.idWebinar + "' />Go to event</a>";
 
                     return statusHtml;
                 }

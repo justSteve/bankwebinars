@@ -51,45 +51,68 @@ namespace CUWebinars.Business.Services
 
 
 
-                    foreach (Order order in orders.OrderBy(o => o.OrderDate))
+            foreach (Order order in orders.OrderBy(o => o.OrderDate))
+            {
+                var obj = (JObject)JsonConvert.DeserializeObject(order.InvoiceDetail);
+                var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                //var dict = obj.First.First.Children().Cast<JProperty>().ToDictionary(p => p.Name, p => p.Value);
+
+                if (row.Discount != null)
+                    _logger.Warn("Invoice Warning! While recalculating adjusted order a discount code was found on on idOrder: " + order.idOrder);
+                try
+                {
+                    var dict = obj.Properties().FirstOrDefault(p => p.Name.StartsWith("ChangedOrderNeedsNewInvoice")).Cast<JProperty>().ToDictionary(p => p.Name, p => p.Value);
+                    //values saved at point of edit
+                    //"ChangedOrderNeedsNewInvoice",
+                    //OriginalTotal", nullChecked.First()["AmountOfOrder"]),
+                    //OriginalRoyaltyPaid", nullChecked.First()["AmountOfRoyalty"].ToString()),
+                    //adjustmentDirection, adustmentAmount),
+                    //DateOfChange", 
+
+                    var AmountOfOrder = (decimal)dict["AmountOfOrder"];
+                    var AmountOfRoyalty = (decimal)dict["AmountOfRoyalty"];
+                    var adjustmentDirection = dict["adjustmentDirection"];
+                    var adustmentAmount = (decimal)dict["adustmentAmount"];
+                    var Affiliate = dict["Affiliate"];
+
+                    decimal adjustedRoyalty = adustmentAmount;
+
+                    //now increment/decriment the subtotals on 'Adjusted Orders' section.
+                    if (adjustmentDirection.Contains("Increase"))
                     {
-                        var nullCheck = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                        if (nullCheck != null)
-                            numberOfRegistrations =
-                                _orderRepository.GetNumberOfOrdersPerWebinarByAffiliate(
-                                    nullCheck.idWebinar,
-                                    affiliateId);
-                        var obj = (JObject)JsonConvert.DeserializeObject(order.InvoiceDetail);
-                        var dict = obj.First.First.Children().Cast<JProperty>().ToDictionary(p => p.Name, p => p.Value);
-
-                        var invoiceId = dict["InvoiceId"];
-                        var AmountOfOrder = (decimal)dict["AmountOfOrder"];
-                        var AmountOfRoyalty = (decimal)dict["AmountOfRoyalty"];
-                        var PercentPaid = (decimal)dict["PercentPaid"];
-                        var Affiliate = dict["Affiliate"];
-
-                        var row = IniInvoice(order, invoice);
-
-                        decimal commissionPercent = PercentPaid;
-                        row.Royalty = row.RowPrice * commissionPercent;
-                        decimal adjustedRoyalty = GetAdjustedRoyalty(order, invoice);
-
-                        if (row.Discount != null && row.Discount.PercentOff == 100) numberOfRegistrations--;
-
                         if (order.OrderStatus == OrderStatus.Paid)
                         {
-                            totalPaidRoyalty += row.Royalty - adjustedRoyalty;
+                            totalPaidRoyalty += adjustedRoyalty;
                         }
                         else
                         {
                             totalBilledRevenue += row.RowPrice - AmountOfOrder;
-                            totalBilledRoyalty += row.Royalty - adjustedRoyalty;
+                            totalBilledRoyalty += adjustedRoyalty;
                         }
-                        
+
                         invoice.TotalRoyalties += row.Royalty - adjustedRoyalty;
+                    }
+                    else
+                    {
+                        if (order.OrderStatus == OrderStatus.Paid)
+                        {
+                            totalPaidRoyalty += adjustedRoyalty;
+                        }
+                        else
+                        {
+                            totalBilledRevenue += row.RowPrice - AmountOfOrder;
+                            totalBilledRoyalty += adjustedRoyalty;
+                        }
 
+                        invoice.TotalRoyalties += row.Royalty - adjustedRoyalty;
+                    }
+                    order.InvoiceDetail = order.InvoiceDetail.Replace("ChangedOrderNeedsNewInvoice", "AdjustedOrderWasReinvoiced");
 
-                        StoreInvoiceDetail(order, invoice);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Fatal("ReInvoice attempt on " + order.idOrder + " tosses: ", ex);
+                }
             }
 
 
@@ -104,31 +127,6 @@ namespace CUWebinars.Business.Services
             return invoice;
 
 
-        }
-
-        private decimal GetAdjustedRoyalty(Order order, AffiliateInvoiceDTO invoice)
-        {
-            var adjustedRoyalty = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Royalty;
-            var obj = (JObject)JsonConvert.DeserializeObject(order.InvoiceDetail);
-            var dict = obj.First.First.Children().Cast<JProperty>().ToDictionary(p => p.Name, p => p.Value);
-
-            var invoiceId = dict["InvoiceId"];
-            var AmountOfOrder = (decimal)dict["AmountOfOrder"];
-            var AmountOfRoyalty = (decimal)dict["AmountOfRoyalty"];
-            var Affiliate = dict["Affiliate"];
-
-            if (AmountOfOrder == order.Total) return 0M;
-            if (AmountOfOrder > order.Total)
-            {
-                adjustedRoyalty = adjustedRoyalty - AmountOfRoyalty;
-            }
-            else
-            {
-
-                adjustedRoyalty = adjustedRoyalty - AmountOfRoyalty;
-            }
-
-            return adjustedRoyalty;
         }
 
         private AffiliateInvoiceDTO ComputeRoyaltyForPostEventOrders(AffiliateInvoiceDTO invoice, List<Order> orders, int affiliateId, bool b)
@@ -452,20 +450,25 @@ namespace CUWebinars.Business.Services
 
         private void StoreInvoiceDetail(Order order, AffiliateInvoiceDTO invoice)
         {
-            var newJson = new JProperty(string.Concat("OrderIsInvoiced-",
-                TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
-    new JObject(
-        new JProperty("InvoiceId", invoice.InvoiceID),
-        new JProperty("AmountOfOrder", order.Total),
-        new JProperty("AmountOfRoyalty", order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Royalty),
-        new JProperty("PercentPaid", order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).PercentPaid),
-        new JProperty("Affiliate", _affiliateRepository.FindById(order.idAffiliate).ttsDomain)
-));
+            var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+            if (!ReferenceEquals(row, null))
+            {
+                var newJson = new JProperty("OrderIsInvoiced",
+
+                new JObject(
+                    new JProperty("InvoiceId", invoice.InvoiceID),
+                    new JProperty("DateOfInvoice", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                    new JProperty("AmountOfOrder", order.Total),
+                    new JProperty("AmountOfRoyalty", row.Royalty),
+                    new JProperty("PercentPaid", row.PercentPaid),
+                    new JProperty("Affiliate", _affiliateRepository.FindById(order.idAffiliate).ttsDomain)
+                    ));
 
 
-            order.InvoiceDetail = JsonHelpers.MergeJsonWithStoredField(order.InvoiceDetail, newJson);
+                order.InvoiceDetail = JsonHelpers.MergeJsonWithStoredField(order.InvoiceDetail, newJson);
 
-            _orderRepository.SaveChanges();
+                _orderRepository.SaveChanges();
+            }
         }
 
         private OrderRow IniInvoice(Order order, AffiliateInvoiceDTO invoice)
@@ -588,19 +591,8 @@ namespace CUWebinars.Business.Services
         public AffiliateInvoiceDTO BuildAffiliateInvoiceForAdjustedOrders(AffiliateInvoiceDTO invoice, List<Order> theseOrders,
             int thisAffiliate)
         {
-            AffiliateInvoiceDTO _invoice = new AffiliateInvoiceDTO();
-
-            foreach (var order in theseOrders)
-            {
-                if (order.InvoiceDetail.Contains("ChangedOrderNeedsNewInvoice"))
-                {
-                    IniInvoice(order, invoice);
-
-                }
-            }
-
             return ComputeRoyaltyForAdjustedOrders(invoice, theseOrders, thisAffiliate, true);
-            return _invoice;
+
         }
 
 

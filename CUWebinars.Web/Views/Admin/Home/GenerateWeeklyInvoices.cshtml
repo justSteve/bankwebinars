@@ -54,7 +54,7 @@
         }).done(function (data) {
 
             if (data.OrdersFound) {
-                sendRptCheckBoxesDiv.append('<p>none found</p>');
+                sendRptCheckBoxesDiv.append('<p>No orders found for ' + payload._idAffiliate + '</p>');
             } else {
                 console.log(data);
                 var parsedInvoice = data.Link.PrimaryUri.replace('http://storeforbw.blob.core.windows.net/affiliateinvoices/', '').replace('.pdf', '');
@@ -108,7 +108,7 @@
     @using (Html.BeginForm("SendWeeklyInvoicesEvent", "Admin", FormMethod.Get, new { id = "SendWeeklyInvoicesForm", @class = "form-horizontal " }))
     {
         <div id="SendRptCheckBoxes" class="control-group">
-            <button id="sendRpt" >Send Report</button>
+            <button id="sendRpt">Send Report</button>
             <div class="controls">
 
 

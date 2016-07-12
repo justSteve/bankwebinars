@@ -563,7 +563,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         _orderManagementService.ApplyDiscountCode(discountId);
                     }
                     var order = _orderManagementService.GetOrderById(model.Id);
-                    _logger.Info("Updating OrderStatus from " + order.OrderStatus + " to: " + model.DisplayRowPriceViewModel.OrderStatus + " by: " + _appHelper.GetUserAuditInfo());
+                    _logger.Info("Updating OrderStatus from: " + order.OrderStatus + " to: " + model.DisplayRowPriceViewModel.OrderStatus + " by: " + _appHelper.GetUserAuditInfo());
 
                     var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
 
@@ -571,6 +571,46 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     //order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus; // the only field that we are updating at this time
                     order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus; // the only field that we are updating at this time
+                    try
+                {
+                    if (order.InvoiceDetail != null && order.OrderStatus == OrderStatus.Canceled)
+                    {
+                        _logger.Info("Invoiced Order is canceled: " + order.idOrder);
+                        var toJson = JObject.Parse(order.InvoiceDetail);
+                        var nullChecked = toJson.Properties().FirstOrDefault(p => p.Name.StartsWith("OrderIsInvoiced"));
+                        
+                        if (nullChecked != null)
+                        {
+                            //properties saved when invoiced:
+                            //"InvoiceId", invoice.InvoiceID),
+                            //"DateOfInvoice", TtsConfig.UtcNowAsCts,
+                            //"AmountOfOrder", order.Total),
+                            //"AmountOfRoyalty", row.Royalty),
+                            //"PercentPaid", row.PercentPaid),
+                            //"Affiliate", _affiliateRepository.FindById(order.idAffiliate).ttsDomain)
+                            var adustmentAmount = (decimal)nullChecked.First()["AmountOfRoyalty"] ;
+                            var adjustmentDirection = "RoyaltyIsDecreased";
+                            
+
+                            var newJson4Invoice = new JProperty("ChangedOrderNeedsNewInvoice",
+                                new JObject(
+                                    new JProperty("OriginalTotal",  nullChecked.First()["AmountOfOrder"]),
+                                    new JProperty("OriginalRoyaltyPaid",  nullChecked.First()["AmountOfRoyalty"].ToString()),
+                                    new JProperty(adjustmentDirection,  adustmentAmount),
+                                    new JProperty("DateOfChange",  TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat))
+                                    ));
+
+
+                            order.InvoiceDetail = JsonHelpers.MergeJsonWithStoredField(
+                                order.InvoiceDetail, newJson4Invoice);
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.Fatal("UpdateOrderChanged Json Merge: ", ex);
+                }
 
                     _orderManagementService.UpdateOrderByAdmin(order);
 
@@ -3158,7 +3198,7 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 List<Order> theseOrders =
                     _orderManagementService.GetOrdersAll(thisAffiliate, out totalNumberOrders)
-                        .Where(o => o.InvoiceDetail != null && o.InvoiceDetail.Contains("Change")).ToList();
+                        .Where(o => o.InvoiceDetail != null && o.InvoiceDetail.Contains("ChangedOrderNeedsNewInvoice")).ToList();
 
                 if (theseOrders.Any())
                 {
@@ -3191,6 +3231,9 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     foreach (var order in theseOrders)
                     {
+                        var row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                        rowNumber++;
+
                         var obj = (JObject)JsonConvert.DeserializeObject(order.InvoiceDetail);
                         var dict = obj.First.First.Children().Cast<JProperty>().ToDictionary(p => p.Name, p => p.Value);
 
@@ -3201,8 +3244,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
                         var adjustedPrice = order.Total - AmountOfOrder;
                         string _price = adjustedPrice.ToString("C").Replace(".00", "");
-                        var row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                        rowNumber++;
 
                         var _adjustedRoyalty = row.Royalty - AmountOfRoyalty;
 

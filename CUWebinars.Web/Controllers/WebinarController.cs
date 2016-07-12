@@ -409,7 +409,7 @@ namespace CUWebinars.Web.Controllers
                             Webinar = null
                         };
                         //searchByidOrder
-                        if (searchTerm.All(Char.IsDigit))
+                        if (searchTerm != "" && searchTerm.All(Char.IsDigit))
                         {
 
                             var order =
@@ -439,6 +439,9 @@ namespace CUWebinars.Web.Controllers
                             }
 
                         }
+
+                        
+                        //model.Webinars = _webinarControllerOrchestrator.SearchWebinars(searchTerm).ToList();
                     }
                 }
                 return View("search2", model);

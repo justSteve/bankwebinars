@@ -82,6 +82,51 @@ namespace CUWebinars.Business.Core.Helpers
         }
 
 
+        public static string ReplaceJsonWithStoredField(string existingJson, JProperty newJson, string propToReplace)
+        {
+            JObject jObject;
+
+            if (string.IsNullOrWhiteSpace(existingJson))
+            {
+                jObject = new JObject(newJson);
+            }
+            else
+            {
+                JObject objectToValidate;
+                try
+                {
+
+                    objectToValidate = JObject.Parse(existingJson);
+
+                    IList<string> keys = objectToValidate.Properties().Select(p => p.Name).ToList();
+                    foreach (var myKey in keys)
+                    {
+                        Debug.WriteLine(myKey);
+                    }
+                }
+                catch (Exception e)
+                {
+                    //if (e.GetType().IsSubclassOf(typeof (Exception)))
+                    //    newJson = null;
+
+                    //Handle the case when e is the base Exception
+                    objectToValidate = JObject.FromObject(new
+                    {
+                        existing = "wrapped Json=" + existingJson,
+                        exceptionMsg = e.Message,
+                        exceptionStack = e.StackTrace
+                    });
+                }
+                jObject = JObject.Parse(objectToValidate.ToString());
+
+                jObject.Remove(propToReplace);
+                jObject.Add(newJson);
+            }
+
+            return jObject.ToString(Formatting.None);
+        }
+
+
         public static IEnumerable<JProperty> CreateJsonPropertiesFromObject(Object objectToJsonify)
         {
             ICollection<JProperty> properties = new List<JProperty>();
@@ -164,5 +209,53 @@ namespace CUWebinars.Business.Core.Helpers
             return outObject;
         }
 
+        public static string RemoveJObject(string hostObject, string objToRemove)
+        {
+
+            JArray jArray;
+            JObject jPropHost;
+            JObject jPropRemove;
+            // convert object to a json object
+            try
+            {
+                 jPropHost = JObject.Parse(hostObject);
+
+            }
+            catch (Exception ex)
+            {
+                return "failed to parse hostObject: " + ex;
+            }
+            
+
+            // ************* if we got here, we need to now remove the existing prop *************
+            try
+            {
+                jPropRemove = JObject.Parse(objToRemove);
+
+            }
+            catch (Exception ex)
+            {
+                return "failed to parse objToRemove: " + ex;
+            }
+
+            // 1st, see if valid json is stored at all
+            if (!ReferenceEquals(null, jPropRemove))
+            {
+                JToken jToken;
+
+                // 2nd, see if the array which we are augmenting already exists
+                if (jPropHost.TryGetValue(objToRemove, StringComparison.OrdinalIgnoreCase, out jToken))
+                {
+                    jArray = jToken.Value<JArray>();
+                    jArray.Remove(jPropRemove);
+
+                    return jPropHost.ToString(Formatting.None);
+                }
+
+                return "failed to find jPropRemove";
+            }
+
+            return "failed";
+        }
     }
 }

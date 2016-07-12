@@ -145,10 +145,15 @@ namespace CUWebinars.Business.Notification.Handlers
                     {
                         isCC = prop.Value.ToString();
                     }
-                    
-                    if (!ReferenceEquals(null, isCC))
+
+                    if (isCC != "")
                     {
-                        ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(addresses.ToString());
+                        ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(isCC);
+                    }
+                    else
+                    {
+                        var _addresses = JObject.Parse(sendConnectionInfoEvent.EventObject.UserComments).GetValue(JsonPropertyKeys.CarbonCopy).Value<string>();
+                        ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(_addresses);
                     }
                 }
 
