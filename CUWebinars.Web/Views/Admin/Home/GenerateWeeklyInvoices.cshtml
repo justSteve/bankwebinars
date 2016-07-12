@@ -2,23 +2,8 @@
 
 @model GenerateWeeklyInvoicesViewModel
 @section scripts{
-
-    @Scripts.Render("~/bundles/toastr")
-    @Scripts.Render("~/bundles/jqueryval")
-    @Scripts.Render("~/bundles/manage-webinar-files")
-    @Scripts.Render("~/bundles/dataTables")
-    @Scripts.Render("~/bundles/display-webinars")
-    @*@Scripts.Render("~/bundles/display-orders")*@
     @Scripts.Render("~/bundles/admin-notifications")
-    <script src="@Url.Content("~/Scripts/app/notification-ops/order-event-notifications.js")"></script>
-    <script src="@Url.Content("~/Scripts/app/notification-ops/membership-notifications.js")"></script>
-    <script src="@Url.Content("~/Scripts/app/toastLogger.js")"></script>
 }
-
-@Styles.Render("~/Content/create-order-details")
-@Styles.Render("~/Content/data-tables")
-@Styles.Render("~/Content/notifications-ops-styles")
-
 
 
 @{
@@ -29,107 +14,68 @@
         listAff.Append(aff.idUserAff + ",");
     }
     Layout = "/Views/Shared/_LayoutAdmin.cshtml";
-    
+
 }
 
-
 <script language="javascript" type="text/javascript">
+
+    //var arryAff = [@listAff];
+    var arryAff = [62, 2988];
+
+    // recursion control variables
+    var callsNeeded = arryAff.length;
+    var callsComplete = 0;
+
     $(function () {
 
         sendRptCheckBoxesDiv = $('#SendRptCheckBoxes').find('.controls');
         crunchingLabel = $('#crunchingLabel');
 
         $('#submitStartDate').on('click', function (args) {
-            FireGenerator();
+            args.preventDefault();
+            
+            // disable button?
+            $('#sendRpt').hide();
+            sendRptCheckBoxesDiv.html(''); // clear any old results out
+            callsComplete = 0; // reset itorator / recursion control variable
+            FireGenerator(); // call recursive function
+        });
+
+        $('#sendRpt').on('click', function (args) {
+
+            args.preventDefault();
+
+            // disable button?
+
+            SendInvoices();
         });
     });
-    //var arryAff = [@listAff];
-    var arryAff = [62, 2988];
-    var iterator = 0;
-
-    function FireGenerator() {
-        //
-        var affId = arryAff[iterator];
-        
-
-        var payload = { startDate: $("#startDate").val(), _idAffiliate: affId };
-
-       $.ajax({
-            type: 'GET',
-            contentType: constants.JsonContentType,
-            cache: false,
-            async: false,
-            timeout: 3000,
-            url: "/Admin/GenerateWeeklyInvoicesEvent?startDate=" + payload.startDate + "&_idAffiliate=" + payload._idAffiliate,
-            dataType: constants.JsonDataType,
-            //data: JSON.stringify(payload),
-            beforeSend: function () {
-                crunchingLabel.html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Processing...</span>');
-            }
-        }).done(function (data) {
-
-            if (data.OrdersFound) {
-
-                sendRptCheckBoxesDiv.append('<p>none found now</p>');
-            } else {
-                console.log(data);
-                // successful request; do something with the data
-                //// Values being returned
-                //AffiliateLabel = affiliate.DisplayTitle + " ("+affiliate.ttsDomain +" - "+affiliate.idUserAff+ ")",
-                //Link = blob, ?? How to drill to URL
-                //GrandTotalOnBilled,
-                //GrandTotalOnPaid,
-                //GrandTotalDiscounts,
-                //GrandTotalRoyalties,
-                //GrandTotalNetDue
-
-                sendRptCheckBoxesDiv.append('<label class="checkbox-inline"><input type="checkbox" checked="Checked" id="inlineCheckbox_' + payload._idAffiliate + '" value="' + data.AffiliateLabel + '">' + data.AffiliateLabel + '</label>');
-                sendRptCheckBoxesDiv.append('<a href="' + data.Link.PrimaryUri + '" _target=_new>View Report</a>');
-            }
-            crunchingLabel.html('');
-            iterator++;
-            if (iterator < arryAff.length-1) {
-                console.log(iterator + ": " + arryAff.length);
-                FireGenerator();
-            }
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            // failed request; give feedback to user
-            alert("problem with " + payload._idAffiliate + " -- " + errorThrown);
-            iterator++;
-
-            if (iterator < arryAff) {
-                FireGenerator(iterator);
-            }
-            crunchingLabel.html('');
-        });
-    }
 </script>
+
 <div style="width: 1100px; margin: 30px auto">
     <h2>Generates Weekly Invoices</h2>
-
-    @*@using (Html.BeginForm("GenerateWeeklyInvoicesEvent", "Admin", FormMethod.Get, new { id = "GenerateWeeklyInvoicesForm", @class = "form-horizontal " }))
-    {*@
+    
+    @using (Html.BeginForm("GenerateWeeklyInvoicesEvent", "Admin", FormMethod.Get, new { id = "GenerateWeeklyInvoicesForm", @class = "form-horizontal " }))
+    {
         @Html.AntiForgeryToken()
-
-        <div id="frmStartDate" class="control-group">
-            <label class="control-label">StartDate</label>
-            <div class="controls">
-                <input type="date" name="startDate" id="startDate" />
-                <button id="submitStartDate">Submit</button>
-            </div>
-            <div id="SendRptCheckBoxes" class="control-group">
-                <label class="control-label" for="inputEmail">Send Report</label>
-                <div class="controls">
-
-
-                </div>
+        <div id="frmStartDate">
+            <p>It can take awhile to compile the invoices, please be patient and do not click Cancel or Refresh.</p>
+            <p>Start Date</p>
+            <div>
+                <input type="date" name="startDate" id="startDate" style="margin-bottom: 0px;" />
+                <button id="submitStartDate">Submit</button> &nbsp;<span id="crunchingLabel">&nbsp;</span>
             </div>
         </div>
-    @*}*@
+    }
     @using (Html.BeginForm("SendWeeklyInvoicesEvent", "Admin", FormMethod.Get, new { id = "SendWeeklyInvoicesForm", @class = "form-horizontal " }))
     {
+        <div id="SendRptCheckBoxes" class="control-group">
+            <button id="sendRpt" style="display:none;">Send Reports</button>
+            <div class="controls">
 
 
+            </div>
+        </div>
     }
 
 </div>

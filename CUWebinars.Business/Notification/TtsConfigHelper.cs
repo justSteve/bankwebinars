@@ -56,5 +56,14 @@ namespace CUWebinars.Business.Notification
         {
             return ConfigurationManager.AppSettings["PromoEmailSubject"];
         }
+
+        public string GetWeeklyInvoiceEmailFromAddress()
+        {
+            return ConfigurationManager.AppSettings["WeeklyInvoiceEmailFromAddress"];
+        }
+        public string GetWeeklyInvoiceEmailSubject()
+        {
+            return ConfigurationManager.AppSettings["WeeklyInvoiceEmailSubject"];
+        }
     }
 }

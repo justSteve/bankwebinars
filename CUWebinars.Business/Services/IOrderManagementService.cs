@@ -43,6 +43,8 @@ namespace CUWebinars.Business.Services
         void FireSendPerDayPromoEvent(WebinarPromoViewModel webinarPromoViewModel);
         void FireSendPerWeekPromoEvent(IList<Affiliate> affiliates, Webinar webinar);
         void FireSendReminderNotificationEvent(IList<Order> orders);
+        void FireSendWeeklyInvoiceEvent(SendWeeklyInvoiceViewModel weeklyInvoiceViewModel);
+
         IEnumerable<AdditionalLocation> GetAdditionalLocationsForOrderRow(int idOrderRow);
         IDictionary<int, string> GetAffiliatesForDisplayList();
         Tuple<string, decimal> GetCostOfAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations,

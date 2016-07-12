@@ -1630,6 +1630,20 @@ namespace CUWebinars.Business.Services
             int numRows = _orderRepository.SaveChanges();
         }
 
+        public void FireSendWeeklyInvoiceEvent(SendWeeklyInvoiceViewModel weeklyInvoiceViewModel)
+        {
+            AddEvent(new SendWeeklyInvoiceEvent<SendWeeklyInvoiceViewModel> { EventObject = weeklyInvoiceViewModel });
+
+            foreach (var evt in GetEvents().OfType<SendWeeklyInvoiceEvent<SendWeeklyInvoiceViewModel>>())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            Clear();
+
+            // int rowsUpdated = _orderRepository.SaveChanges(); // TODO: zzz ALS confirm we can remove, then remove
+        }
+
         public string UpdateOrderChanges(Order currentOrder, ref PricesAndDiscounts pricesAndDiscounts)
         {
             try

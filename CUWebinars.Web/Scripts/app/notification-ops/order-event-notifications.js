@@ -845,3 +845,117 @@ $(function () {
         }
     };
 });
+
+
+function FireGenerator() { // used recursively!!!
+
+    console.log("Starting: " + callsComplete);
+
+    // can't use beforeSend as async: false blocks UI
+    crunchingLabel.html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Processing ' + (callsComplete + 1) + ' of ' + callsNeeded + '</span>');
+
+    var payload = { startDate: $("#startDate").val(), _idAffiliate: arryAff[callsComplete] };
+
+    window.setTimeout(function () { // "window" seems to be required...
+        $.ajax({
+            type: 'GET',
+            contentType: constants.JsonContentType,
+            cache: false,
+            async: false,
+            // timeout: 3000, // I don't think this is a good idea, maybe though...
+            url: "/Admin/GenerateWeeklyInvoicesEvent?startDate=" + payload.startDate + "&_idAffiliate=" + payload._idAffiliate,
+            dataType: constants.JsonDataType,
+            beforeSend: function () {
+                //crunchingLabel.html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Processing ' + (callsComplete + 1) + ' of ' + arryAff.length + '</span>');
+            }
+        }).done(function (data) {
+
+            if (data.OrdersFound) { // CAN WE GET THE NUMBER OF ORDERS FROM THE CONTROLLER AND compare to 0? (Not easily)
+                // successful request; do something with the data
+                // console.log(data);
+
+                var parsedInvoice = 0;
+                if (data.InvoiceId) {
+                    parsedInvoice = data.InvoiceId;
+                }
+
+                // dynamically create / add checkboxes with the information returned
+                sendRptCheckBoxesDiv.append('<p class="checkbox-inline">' +
+                    '<label style="display:inline"><input type="checkbox" checked="Checked" ' +
+                    'id="inlineCheckbox_' + parsedInvoice + '" ' +
+                    'data-affid="' + data.AffiliateId + '" ' +
+                    'data-invoiceid="' + data.InvoiceId + '" ' +
+                    'data-invoiceurl="' + data.Link.PrimaryUri + '" ' +
+                    'data-affiliatecontactemail="' + data.AffiliateContactEmail + '" ' +
+                    'value="' + data.AffiliateLabel + '">'
+                    + data.AffiliateLabel +
+                    '</label> ' +
+                    '<a href="' + data.Link.PrimaryUri + '" _target=_new>View Report</a></p>');
+
+            } else {
+                console.log("NO INVOICE DATA: " + payload._idAffiliate);
+                sendRptCheckBoxesDiv.append('<p>none found</p>');
+            }
+
+            console.log("Done: " + callsComplete);
+
+
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+
+            // failed request; give feedback to user
+            alert("Problem with " + payload._idAffiliate + " (iteration " + callsComplete + ") -- " + errorThrown);
+
+            console.log("Error on iteration " + callsComplete);
+
+        }).always(function () {
+            callsComplete++;
+            // figure out if this was the "last one" so we can clean up the UI, report errors, etc.
+            if (callsComplete >= callsNeeded) {
+                crunchingLabel.html('Processing complete')
+                setTimeout(function () { crunchingLabel.html('&nbsp;') }, 2000);
+                $('#sendRpt').show();
+            } else {
+                FireGenerator(); // Call ourself
+            }
+        });
+    }, 1);
+}
+
+function SendInvoices() {
+
+    var payload = [];
+
+    // add each of the checked invoices to the payload for posting to controller
+    $("#SendRptCheckBoxes input[id^='inlineCheckbox_']:checked").each(function (idx, item) {
+        var $item = $(item);
+        payload[idx] = { "Affiliate.idUserAff": $item.data("affid"), "Affiliate.ContactEmail": $item.data("affiliatecontactemail"), "InvoiceId": $item.data("invoiceid"), "InvoiceStorageUri": $item.data("invoiceurl") };
+    });
+
+    console.log(payload);
+
+    if (payload.length == 0)
+        return;
+
+    // post the list to the action / controller
+    $.ajax({
+        type: 'POST',
+        contentType: constants.JsonContentType,
+        cache: false,
+        url: "/Admin/SendWeeklyInvoicesEvent",
+        dataType: constants.JsonDataType,
+        data: JSON.stringify(payload),
+        beforeSend: function () {
+            crunchingLabel.html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Processing ' + payload.length + ' notifications...</span>');
+        }
+    }).done(function (data) {
+
+        console.log(data);
+        crunchingLabel.html('Processing complete.  ' + data.EmailsQueued + ' emails queued.');
+        setTimeout(function () { crunchingLabel.html('&nbsp;') }, 2000);
+
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        // failed request; give feedback to user
+        alert("problem encountered -- " + errorThrown);
+        crunchingLabel.html('');
+    });
+}
