@@ -2956,7 +2956,7 @@ namespace CUWebinars.Web.Controllers.Admin
             if (!_idAffiliate.HasValue)
             {
 
-                return Json(new { Result = WebUiConstants.Fail, OrdersFound = "false" }, JsonRequestBehavior.AllowGet);
+                return Json(new { Result = WebUiConstants.Fail, OrdersFound = false }, JsonRequestBehavior.AllowGet);
             }
             int idAffiliate = _idAffiliate.Value;
             DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
@@ -3493,7 +3493,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
                 else
                 {
-                    return Json(new { Result = WebUiConstants.Fail, OrdersFound = "false" }, JsonRequestBehavior.AllowGet);
+                    return Json(new { Result = WebUiConstants.Fail, OrdersFound = false }, JsonRequestBehavior.AllowGet);
                 }
 
             }
@@ -3502,7 +3502,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 _logger.ErrorException("building Invoice: " + InvoiceID, ex);
             }
 
-            return Json(new { Result = WebUiConstants.Fail, OrdersFound = "error writing file" }, JsonRequestBehavior.AllowGet);
+            return Json(new { Result = WebUiConstants.Fail, OrdersFound = false, ErrorMsg = "error writing file" }, JsonRequestBehavior.AllowGet);
         }
 
 
