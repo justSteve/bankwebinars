@@ -509,7 +509,7 @@ namespace CUWebinars.Business.Services
                         {
                             var lOrder = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
                             var vOrder = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
-                        
+
                             _logger.Info("SynchOrder CommonToBoth {0} of {1} - {2} ", i, commonEmails.Count(), orderEmail);
                             if (vOrder.idOrder != vOrder.idOrderLegacy)
                             {
@@ -550,6 +550,25 @@ namespace CUWebinars.Business.Services
                             {
                                 _logger.ErrorException("SynchOrder save shipped date failed: " + orderEmail, ex);
                             }
+                            try
+                            {
+                                if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).ShipmentDate == null
+                                && vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).ShipmentDate != null)
+                                {
+                                    var shippedDate =
+                                        vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
+                                            .ShipmentDate;
+                                    if (shippedDate > DateTime.Parse("01/01/1900"))
+                                    {
+                                        _orderRepository.SetLegacyShippedDate(lOrder.idOrder, shippedDate);
+                                    }
+                                }
+
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.ErrorException("SynchOrder save shipped date from V3 to Legacy failed: " + orderEmail, ex);
+                            }
 
                             try
                             {
@@ -580,7 +599,7 @@ namespace CUWebinars.Business.Services
                             {
                                 _logger.ErrorException("SynchOrder save orderstatus failed: " + orderEmail, ex);
                             }
-                        } 
+                        }
                         catch (Exception ex)
                         {
                             _logger.ErrorException("SELECT email, (SELECT ttsDomain FROM dbo.Affiliate WHERE idUser = o.idAffiliate), idOrder, (SELECT status FROM dbo.OrdersRows WHERE idOrder = o.idOrder) from Orders o where email = '" + orderEmail + "' and idOrder in (SELECT idOrder FROM dbo.OrdersRows WHERE idWebinar =	" + webinarId + ")", ex);
@@ -983,7 +1002,7 @@ namespace CUWebinars.Business.Services
             }
             else
             {
-
+                _logger.Warn("CalculateOrderCost did not find row when processing " + order.idOrder);
                 var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
                 var regTypePricing = dataOperations.GetCostOfRegtype(row.idRegType);
@@ -1644,7 +1663,7 @@ namespace CUWebinars.Business.Services
             // int rowsUpdated = _orderRepository.SaveChanges(); // TODO: zzz ALS confirm we can remove, then remove
         }
 
-        public string UpdateOrderChanges(Order currentOrder, ref PricesAndDiscounts pricesAndDiscounts)
+        public string UpdateOrderChanges(Order newOrder, ref PricesAndDiscounts pricesAndDiscounts)
         {
             try
             {
@@ -1664,7 +1683,7 @@ namespace CUWebinars.Business.Services
                 _logger.Info("Adding Event for Order {0}", newOrder.idOrder);
                 try
                 {
-                    if (newOrder.InvoiceDetail != null)
+                    if (newOrder.InvoiceDetail != null && newOrder.InvoiceDetail != "")
                     {
 
                         var toJson = JObject.Parse(newOrder.InvoiceDetail);
@@ -1673,11 +1692,11 @@ namespace CUWebinars.Business.Services
                         if (nullChecked != null)
                         {
                             //properties saved when invoiced:
-                            //"InvoiceId", invoice.InvoiceID),
-                            //"DateOfInvoice", TtsConfig.UtcNowAsCts,
+                            //"", invoice.InvoiceID),
+                            //"", TtsConfig.UtcNowAsCts,
                             //"AmountOfOrder", order.Total),
                             //"AmountOfRoyalty", row.Royalty),
-                            //"PercentPaid", row.PercentPaid),
+                            //"", row.PercentPaid),
                             //"Affiliate", _affiliateRepository.FindById(order.idAffiliate).ttsDomain)
                             var row = newOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                             //
@@ -1688,41 +1707,50 @@ namespace CUWebinars.Business.Services
                             }
                             else
                             {
-                                var regTypeShortened = preSaveValues.Split(',')[0].Replace(" Package", "").Replace("Live Plus Six", "Live+6").Replace(" and Hardcopy Handouts", "").Replace(" Recording Only", "").Replace(" Plus Five", "+5");
+                                var regTypeShortened = preSaveValues.Split(',')[1].Replace(" Package", "").Replace("Live Plus Six", "Live+6").Replace(" and Hardcopy Handouts", "").Replace(" Recording Only", "").Replace(" Plus Five", "+5");
+                                
                                 StringBuilder sb = new StringBuilder();
 
-                                sb.Append("Original order attendance type " +
-                                          regTypeShortened);
-                                sb.Append(" (" + preSaveValues.Split(',')[1].ToString().Replace(".0000", "").Replace(".00","") + ") was changed to " +
-                                          row.RegistrationType.OptionLabelShort + " (" + row.RowPrice.ToString("C").Replace(".00", "") + ").");
+                                sb.Append("Original order was " + regTypeShortened);
+                                sb.Append(" ($" + preSaveValues.Split(',')[0].ToString().Replace(".0000", "").Replace(".00", "") + " on InvoiceID " + nullChecked.First()["InvoiceId"] + ") and changed to " +
+                                          row.RegistrationType.OptionLabelShort + " (" + row.RowPrice.ToString("C").Replace(".00", "") + "). ");
 
-                                var adustmentAmount = row.Royalty - (decimal)nullChecked.First()["AmountOfRoyalty"];
-
-                                //set default direction
+                                decimal adustmentAmount;
                                 var adjustmentDirection = "Royalty is increased";
-                                if (newOrder.Total < (decimal)nullChecked.First()["AmountOfOrder"])
+                                
+                                if ((decimal)nullChecked.First()["AmountOfRoyalty"] < row.Royalty)
                                 {
-                                    //over ride 
-                                    adustmentAmount = (decimal)nullChecked.First()["AmountOfRoyalty"] - row.Royalty;
+                                    adustmentAmount = row.Royalty - (decimal)nullChecked.First()["AmountOfRoyalty"];
+                                    sb.Append(adjustmentDirection + " by " + adustmentAmount.ToString("C").Replace(".00", ""));
+
+                                }
+                                else
+                                {
+
                                     adjustmentDirection = "Royalty is decreased";
+                                    adustmentAmount = row.Royalty - (decimal)nullChecked.First()["AmountOfRoyalty"];
+                                    sb.Append(adjustmentDirection + " by " + adustmentAmount.ToString("C").Replace(".00", ""));
+
                                 }
 
-                                sb.Append(adjustmentDirection + " by $" + adustmentAmount);
 
                                 var newJson4Invoice = new JProperty(
-                                    "ChangedOrderNeedsNewInvoice",
-                                    new JObject(
-                                        new JProperty("OriginalTotal", nullChecked.First()["AmountOfOrder"].ToString()),
-                                        new JProperty("OriginalRoyaltyPaid",
-                                            nullChecked.First()["AmountOfRoyalty"].ToString()),
-                                        new JProperty(adjustmentDirection, adustmentAmount),
-                                        new JProperty("DateOfChange",
-                                            TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat),
-                                            new JProperty("Message", sb.ToString())
-                                            )));
+                                                                "ChangedOrderNeedsNewInvoice",
+                                                                new JObject(
+                                                                    new JProperty("OriginalInvoice", nullChecked.First()["InvoiceId"].ToString()),
+                                                                    new JProperty("OriginalDateOfInvoice", nullChecked.First()["DateOfInvoice"].ToString()),
+                                                                    new JProperty("OriginalTotal", nullChecked.First()["AmountOfOrder"].ToString()),
+                                                                    new JProperty("OriginalPercentPaid", nullChecked.First()["PercentPaid"].ToString()),
+                                                                    new JProperty("OriginalRoyaltyPaid", nullChecked.First()["AmountOfRoyalty"].ToString()),
+                                                                    new JProperty("OriginalAffiliate", nullChecked.First()["Affiliate"].ToString()),
+                                                                    new JProperty(adjustmentDirection, adustmentAmount),
+                                                                    new JProperty("DateOfChange", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
+                                                                    new JProperty("Message", sb.ToString())
+                                                                    ));
+
 
                                 newOrder.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(
-                                    newOrder.InvoiceDetail, newJson4Invoice, "ChangedOrderNeedsNewInvoice");
+                                    newOrder.InvoiceDetail, newJson4Invoice, "OrderIsInvoiced");
                             }
                         }
                     }
@@ -2587,7 +2615,7 @@ namespace CUWebinars.Business.Services
                     {
                         _logger.Warn("invalid Json on Aff: " + order.idOrder + " | " + order.AffiliateComments);
                     }
-                }                
+                }
                 if (order.UserComments != null && !order.UserComments.StartsWith("["))
                 {
                     var UserResult = JsonHelpers.IsValidObjectSingle(order.UserComments);

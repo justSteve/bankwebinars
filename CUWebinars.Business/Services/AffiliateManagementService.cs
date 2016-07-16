@@ -53,59 +53,83 @@ namespace CUWebinars.Business.Services
 
             foreach (Order order in orders.OrderBy(o => o.OrderDate))
             {
-                var obj = (JObject)JsonConvert.DeserializeObject(order.InvoiceDetail);
+
+                var obj = JObject.Parse(order.InvoiceDetail);
                 var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                //var dict = obj.First.First.Children().Cast<JProperty>().ToDictionary(p => p.Name, p => p.Value);
+                var dict = obj.First.First.Children().Cast<JProperty>().ToDictionary(p => p.Name, p => p.Value);
 
                 if (row.Discount != null)
                     _logger.Warn("Invoice Warning! While recalculating adjusted order a discount code was found on on idOrder: " + order.idOrder);
                 try
                 {
-                    var dict = obj.Properties().FirstOrDefault(p => p.Name.StartsWith("ChangedOrderNeedsNewInvoice")).Cast<JProperty>().ToDictionary(p => p.Name, p => p.Value);
-                    //values saved at point of edit
-                    //"ChangedOrderNeedsNewInvoice",
-                    //OriginalTotal", nullChecked.First()["AmountOfOrder"]),
-                    //OriginalRoyaltyPaid", nullChecked.First()["AmountOfRoyalty"].ToString()),
-                    //adjustmentDirection, adustmentAmount),
-                    //DateOfChange", 
 
-                    var AmountOfOrder = (decimal)dict["AmountOfOrder"];
-                    var AmountOfRoyalty = (decimal)dict["AmountOfRoyalty"];
-                    var adjustmentDirection = dict["adjustmentDirection"];
-                    var adustmentAmount = (decimal)dict["adustmentAmount"];
-                    var Affiliate = dict["Affiliate"];
-
-                    decimal adjustedRoyalty = adustmentAmount;
-
-                    //now increment/decriment the subtotals on 'Adjusted Orders' section.
-                    if (adjustmentDirection.Contains("Increase"))
+                        //{ChangedOrderNeedsNewInvoice:{OriginalInvoice:27-2016-62
+                            //OriginalDateOfInvoice:07-13-2016
+                            //OriginalTotal:295
+                            //OriginalPercentPaid:0.3
+                            //OriginalRoyaltyPaid:88.5
+                            //OriginalAffiliate:cftnow
+                    //Royalty is increased:21.00000  // note that we are saving the full royalty amount, not as is suggested by Key name, the adjusted amount
+                            //DateOfChange:07-13-2016
+                            //Message:
+                                
+                    var adjustmentDirection = "Royalty is increased";
+                    decimal adustmentAmount;
+                    decimal adjustedRoyalty;
+                    if (order.InvoiceDetail.Contains("decreased"))
                     {
-                        if (order.OrderStatus == OrderStatus.Paid)
-                        {
-                            totalPaidRoyalty += adjustedRoyalty;
-                        }
-                        else
-                        {
-                            totalBilledRevenue += row.RowPrice - AmountOfOrder;
-                            totalBilledRoyalty += adjustedRoyalty;
-                        }
-
-                        invoice.TotalRoyalties += row.Royalty - adjustedRoyalty;
+                        adjustmentDirection = "Royalty is decreased";
+                        adustmentAmount = -(decimal) dict[adjustmentDirection];
+                        adjustedRoyalty = (decimal) dict["OriginalRoyaltyPaid"] - adustmentAmount;
                     }
                     else
                     {
+                        adustmentAmount = (decimal)dict[adjustmentDirection];
+                        adjustedRoyalty = (decimal) dict["OriginalRoyaltyPaid"] + adustmentAmount;
+
+                    }
+
+
+                    //now increment/decriment the subtotals on 'Adjusted Orders' section.
+                   
                         if (order.OrderStatus == OrderStatus.Paid)
                         {
                             totalPaidRoyalty += adjustedRoyalty;
                         }
                         else
                         {
-                            totalBilledRevenue += row.RowPrice - AmountOfOrder;
+                            totalBilledRevenue += adustmentAmount; // 
                             totalBilledRoyalty += adjustedRoyalty;
                         }
 
-                        invoice.TotalRoyalties += row.Royalty - adjustedRoyalty;
-                    }
+                        if (order.OrderStatus == OrderStatus.Paid)
+                        {
+                            invoice.TotalOnPaid += adustmentAmount;
+                        }
+                        if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed)
+                        {
+                            invoice.TotalOnBilled += adustmentAmount;
+                        }
+
+
+                        //if (row.Discount != null)
+                        //{
+                        //    if (row.Discount.PercentOff > 0)
+                        //    {
+                        //        invoice.TotalDiscounts = invoice.TotalDiscounts + (row.UnitPrice * ((row.Discount.PercentOff) / 100));
+                        //        _logger.Info(invoice.Affiliate.idUserAff + "-" + row.idOrder + "-" + (row.UnitPrice * ((row.Discount.PercentOff) / 100)));
+
+                        //    }
+                        //    if (row.Discount.FlatOff > 0)
+                        //    {
+                        //        invoice.TotalDiscounts = invoice.TotalDiscounts + row.UnitPrice - row.Discount.FlatOff;
+                        //        _logger.Info(invoice.Affiliate.idUserAff + "-" + row.idOrder + "-" + (row.UnitPrice * ((row.Discount.PercentOff) / 100)));
+                        //    }
+                        //}
+
+                        invoice.TotalRoyalties += adjustedRoyalty;
+                   
+
                     order.InvoiceDetail = order.InvoiceDetail.Replace("ChangedOrderNeedsNewInvoice", "AdjustedOrderWasReinvoiced");
 
                 }
@@ -450,26 +474,33 @@ namespace CUWebinars.Business.Services
 
         private void StoreInvoiceDetail(Order order, AffiliateInvoiceDTO invoice)
         {
-            var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-            if (!ReferenceEquals(row, null))
+            try
             {
-                var newJson = new JProperty("OrderIsInvoiced",
+                var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                if (!ReferenceEquals(row, null))
+                {
+                    var newJson = new JProperty("OrderIsInvoiced",
 
-                new JObject(
-                    new JProperty("InvoiceId", invoice.InvoiceID),
-                    new JProperty("DateOfInvoice", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
-                    new JProperty("AmountOfOrder", order.Total),
-                    new JProperty("AmountOfRoyalty", row.Royalty),
-                    new JProperty("PercentPaid", row.PercentPaid),
-                    new JProperty("Affiliate", _affiliateRepository.FindById(order.idAffiliate).ttsDomain)
-                    ));
+                        new JObject(
+                            new JProperty("InvoiceId", invoice.InvoiceID),
+                            new JProperty("DateOfInvoice",
+                                TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
+                            new JProperty("AmountOfOrder", order.Total),
+                            new JProperty("AmountOfRoyalty", row.Royalty),
+                            new JProperty("PercentPaid", row.PercentPaid),
+                            new JProperty("Affiliate", _affiliateRepository.FindById(order.idAffiliate).ttsDomain)
+                            ));
 
-
-                order.InvoiceDetail = JsonHelpers.MergeJsonWithStoredField(order.InvoiceDetail, newJson);
-
-                _orderRepository.SaveChanges();
+                    order.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(order.InvoiceDetail, newJson, "OrderIsInvoiced");
+                }
             }
-        }
+            catch (Exception ex)
+            {
+                _logger.FatalException("StoreInvoiceDetail on idOrder: " + order.idOrder, ex);
+            }
+            _orderRepository.SaveChanges();
+            }
+        
 
         private OrderRow IniInvoice(Order order, AffiliateInvoiceDTO invoice)
         {

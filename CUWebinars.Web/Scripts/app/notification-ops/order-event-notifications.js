@@ -894,7 +894,7 @@ function FireGenerator() { // used recursively!!!
 
             } else {
                 console.log("NO INVOICE DATA: " + payload._idAffiliate);
-                sendRptCheckBoxesDiv.append('<p>none found</p>');
+                sendRptCheckBoxesDiv.append('<p>No orders found for </p>' + payload._idAffiliate);
             }
 
             console.log("Done: " + callsComplete);

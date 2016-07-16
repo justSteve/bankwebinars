@@ -280,13 +280,11 @@ namespace CUWebinars.Web.Controllers.Admin
 
         public ActionResult SetAffiliateAssignedToOrder(int? idAffiliate, int? idOrder)
         {
-            var order = _orderManagementService.GetOrderByIdThin(idOrder.Value);
+            var order = _orderManagementService.GetOrderById(idOrder.Value);
             var originalAffiliate = new AffiliateRepository().FindByIdWithIncluding(order.idAffiliate);
             order.idAffiliate = idAffiliate.Value;
-            //_orderManagementService.SaveChanges();
 
             var newAffiliate = new AffiliateRepository().FindByIdWithIncluding(idAffiliate.Value);
-            //            var orderUser = _membershipService.GetUserByEmail(order.BillingEmail);
 
             string buildMessage = "<div class=\"affiliateChanged\">Affiliate changed for order " + order.idOrder +
                                   " from " + originalAffiliate.ttsDomain + " to " +
@@ -295,59 +293,47 @@ namespace CUWebinars.Web.Controllers.Admin
                                   "</div>";
             try
             {
-                //following copies pattern found at WebinarController | Identify
-                JObject existingJObject = null;
-
-                string comments = string.Empty;
-
-
-                if (!ReferenceEquals(null, order.AdminComments))
+                if (order.InvoiceDetail != null && order.InvoiceDetail.Contains("OrderIsInvoiced"))
                 {
-                    comments = order.AdminComments.Trim();
+                    _logger.Info("Affiliate is reassigned: " + order.idOrder);
+
+                    var toJson = JObject.Parse(order.InvoiceDetail);
+                    var nullChecked = toJson.Properties().FirstOrDefault(p => p.Name.StartsWith("OrderIsInvoiced"));
+
+                    if (nullChecked != null)
+                    {
+                        //properties saved when invoiced:
+                        //"", invoice.InvoiceID),
+                        //"", TtsConfig.UtcNowAsCts,
+                        //"AmountOfOrder", order.Total),
+                        //"AmountOfRoyalty", row.Royalty),
+                        //"", row.PercentPaid),
+                        //"Affiliate", _affiliateRepository.FindById(order.idAffiliate).ttsDomain)
+                        var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                        //
+                        var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
+                        string preSaveValues = dataOperations.GetPreSaveValues(order.idOrder);
+
+                        row.Royalty = row.RowPrice * (decimal)nullChecked.First()["PercentPaid"];
+                        if (order.Affiliate.idUserAff != originalAffiliate.idUserAff)
+                        {
+                            //order will be re-invoiced when processed as via the postevent-orders branch
+                            order.InvoiceDetail = "AffiliateReassignedNeedsNewInvoice";
+                        }
+                    }
                 }
 
-                var newJson =
-                    new JProperty(
-                        string.Concat("ChangeAffiliate-",
-                            TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
-                        new JObject(
-                            new JProperty("ChangeAffiliateTo", newAffiliate.ttsDomain),
-                            new JProperty("Details", buildMessage)
-                            ));
-
-
-                order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, newJson);
-
-                if (order.InvoiceDetail != null)
-                {
-                    var newJson4Invoice =
-    new JProperty(
-        string.Concat("ChangeInvoicedAffiliate-",
-            TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
-        new JObject(
-            new JProperty("ChangeAffiliateFrom", originalAffiliate.ttsDomain),
-            new JProperty("ChangeAffiliateTo", newAffiliate.ttsDomain),
-            new JProperty("Details", buildMessage)
-            ));
-
-
-                    order.InvoiceDetail = JsonHelpers.MergeJsonWithStoredField(order.InvoiceDetail, newJson4Invoice);
-
-                }
-
-                _orderManagementService.SaveChanges();
-
-                _logger.Info(buildMessage);
-
-
-                return Json(new { Result = WebUiConstants.Success, NewAffiliate = newAffiliate.ttsDomain });
             }
             catch (Exception ex)
             {
-                _logger.Fatal("SetAffiliateAssigedToOrder: ", ex);
-                throw;
+                _logger.Fatal("SetAffiliateAssignedToOrder Json Merge: ", ex);
             }
 
+            _orderManagementService.SaveChanges();
+
+            _logger.Info(buildMessage);
+
+            return Json(new { Result = WebUiConstants.Success, NewAffiliate = newAffiliate.ttsDomain });
         }
 
         //public ActionResult ManageOrder()
@@ -564,53 +550,82 @@ namespace CUWebinars.Web.Controllers.Admin
                     }
                     var order = _orderManagementService.GetOrderById(model.Id);
                     _logger.Info("Updating OrderStatus from: " + order.OrderStatus + " to: " + model.DisplayRowPriceViewModel.OrderStatus + " by: " + _appHelper.GetUserAuditInfo());
-
                     var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
 
                     var UpdateOrderStatusOnLegacy = dataOperations.UpdateOrderStatusOnLegacy(order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).idWebinar, order.BillingEmail, Convert.ToInt32(model.DisplayRowPriceViewModel.OrderStatus));
+                    var dataOperationsV3 = new DataOperations(TtsConfig.DefaultConnectionString);
 
-                    //order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus; // the only field that we are updating at this time
+                    string preSaveValues = dataOperationsV3.GetPreSaveValues(order.idOrder);
+
                     order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus; // the only field that we are updating at this time
                     try
-                {
-                    if (order.InvoiceDetail != null && order.OrderStatus == OrderStatus.Canceled)
                     {
-                        _logger.Info("Invoiced Order is canceled: " + order.idOrder);
-                        var toJson = JObject.Parse(order.InvoiceDetail);
-                        var nullChecked = toJson.Properties().FirstOrDefault(p => p.Name.StartsWith("OrderIsInvoiced"));
-                        
-                        if (nullChecked != null)
+                        if (order.InvoiceDetail != null && order.OrderStatus == OrderStatus.Canceled)
                         {
-                            //properties saved when invoiced:
-                            //"InvoiceId", invoice.InvoiceID),
-                            //"DateOfInvoice", TtsConfig.UtcNowAsCts,
-                            //"AmountOfOrder", order.Total),
-                            //"AmountOfRoyalty", row.Royalty),
-                            //"PercentPaid", row.PercentPaid),
-                            //"Affiliate", _affiliateRepository.FindById(order.idAffiliate).ttsDomain)
-                            var adustmentAmount = (decimal)nullChecked.First()["AmountOfRoyalty"] ;
-                            var adjustmentDirection = "RoyaltyIsDecreased";
-                            
 
-                            var newJson4Invoice = new JProperty("ChangedOrderNeedsNewInvoice",
-                                new JObject(
-                                    new JProperty("OriginalTotal",  nullChecked.First()["AmountOfOrder"]),
-                                    new JProperty("OriginalRoyaltyPaid",  nullChecked.First()["AmountOfRoyalty"].ToString()),
-                                    new JProperty(adjustmentDirection,  adustmentAmount),
-                                    new JProperty("DateOfChange",  TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat))
-                                    ));
+                            _logger.Info("Invoiced Order is canceled: " + order.idOrder);
+
+                            var toJson = JObject.Parse(order.InvoiceDetail);
+                            var nullChecked = toJson.Properties().FirstOrDefault(p => p.Name.StartsWith("OrderIsInvoiced"));
+
+                            if (nullChecked != null)
+                            {
+                                //properties saved when invoiced:
+                                //"", invoice.InvoiceID),
+                                //"", TtsConfig.UtcNowAsCts,
+                                //"AmountOfOrder", order.Total),
+                                //"AmountOfRoyalty", row.Royalty),
+                                //"", row.PercentPaid),
+                                //"Affiliate", _affiliateRepository.FindById(order.idAffiliate).ttsDomain)
+                                var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                                //
+                                row.Royalty = row.RowPrice * (decimal)nullChecked.First()["PercentPaid"];
+                                if (order.Total == (decimal)nullChecked.First()["AmountOfOrder"] && order.InvoiceDetail.Contains("ChangedOrderNeedsNewInvoice"))
+                                {
+                                    order.InvoiceDetail = JsonHelpers.RemoveJObject(order.InvoiceDetail, "ChangedOrderNeedsNewInvoice");
+                                }
+                                else
+                                {
+                                    var regTypeShortened = preSaveValues.Split(',')[1].Replace(" Package", "").Replace("Live Plus Six", "Live+6").Replace(" and Hardcopy Handouts", "").Replace(" Recording Only", "").Replace(" Plus Five", "+5");
+                                    StringBuilder sb = new StringBuilder();
+
+                                    sb.Append("Original invoice was " + nullChecked.First()["InvoiceId"] + " from " + nullChecked.First()["DateOfInvoice"] + " for " + regTypeShortened + "($" + preSaveValues.Split(',')[0].ToString().Replace(".0000", "").Replace(".00", "") + ") ");
+                                    sb.Append(" but was canceled " + TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat) + ". ");
+
+                                    var adustmentAmount = (decimal)nullChecked.First()["AmountOfRoyalty"];
+
+                                    //set default direction
+                                    var adjustmentDirection = "Royalty is decreased";
+
+                                    sb.Append(adjustmentDirection + " by " + adustmentAmount.ToString("C").Replace(".00", ""));
+
+                                    var newJson4Invoice = new JProperty(
+                                                                    "ChangedOrderNeedsNewInvoice",
+                                                                    new JObject(
+                                                                        new JProperty("OriginalInvoice", nullChecked.First()["InvoiceId"].ToString()),
+                                                                        new JProperty("OriginalDateOfInvoice", nullChecked.First()["DateOfInvoice"].ToString()),
+                                                                        new JProperty("OriginalTotal", nullChecked.First()["AmountOfOrder"].ToString()),
+                                                                        new JProperty("OriginalPercentPaid", nullChecked.First()["PercentPaid"].ToString()),
+                                                                        new JProperty("OriginalRoyaltyPaid", nullChecked.First()["AmountOfRoyalty"].ToString()),
+                                                                        new JProperty("OriginalAffiliate", nullChecked.First()["Affiliate"].ToString()),
+                                                                        new JProperty(adjustmentDirection, adustmentAmount),
+                                                                        new JProperty("DateOfChange", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
+                                                                        new JProperty("Message", sb.ToString())
+                                                                        ));
 
 
-                            order.InvoiceDetail = JsonHelpers.MergeJsonWithStoredField(
-                                order.InvoiceDetail, newJson4Invoice);
+                                    order.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(
+                                        order.InvoiceDetail, newJson4Invoice, "OrderIsInvoiced");
+                                }
+                            }
                         }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Fatal("UpdateOrderChanged Json Merge: ", ex);
                     }
 
-                }
-                catch (Exception ex)
-                {
-                    _logger.Fatal("UpdateOrderChanged Json Merge: ", ex);
-                }
 
                     _orderManagementService.UpdateOrderByAdmin(order);
 
@@ -3025,15 +3040,15 @@ namespace CUWebinars.Web.Controllers.Admin
                         webinarsPerAff.Rows.Add(
                             webinar.Title
                             , webinar.Date.ToShortDateString()
-                            , invoice.TotalOnBilled.ToString("C").Replace(".00", "")
-                            , invoice.TotalOnPaid.ToString("C").Replace(".00", "")
-                            , invoice.TotalDiscounts.ToString("C").Replace(".00", "")
-                            , invoice.TotalRoyalties.ToString("C").Replace(".00", "")
-                            , invoice.TotalNetDue.ToString("C").Replace(".00", "")
+                            , invoice.TotalOnBilled.ToString("C").Replace(".00", "") + Environment.NewLine
+                            , invoice.TotalOnPaid.ToString("C").Replace(".00", "") + Environment.NewLine
+                            , invoice.TotalDiscounts.ToString("C").Replace(".00", "") + Environment.NewLine
+                            , invoice.TotalRoyalties.ToString("C").Replace(".00", "") + Environment.NewLine
+                            , invoice.TotalNetDue.ToString("C").Replace(".00", "") + Environment.NewLine
                             , "Total Net Due: "
                             , "Total Royalties: "
-                            , "Total Revenue Paid: "
                             , "Total Revenue Billed: "
+                            , "Total Revenue Paid: "
                             , webinar.idWebinar
                             );
 
@@ -3114,7 +3129,8 @@ namespace CUWebinars.Web.Controllers.Admin
                                 var row = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                                 return row != null && (row.Webinar.Date <
                                                                         startDate && o.OrderDate > startDate && o.OrderDate < endDate
-                                                                        && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted));
+                                                                        && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted))
+                                                                        || o.InvoiceDetail.Contains("AffiliateReassignedNeedsNewInvoice");
                             })
                         .ToList();
 
@@ -3134,15 +3150,15 @@ namespace CUWebinars.Web.Controllers.Admin
                     PostEventOrders.Rows.Add(
                         "Post Event Orders"
                         , startDate
-                        , invoice.TotalOnBilled.ToString("C").Replace(".00", "")
-                        , invoice.TotalOnPaid.ToString("C").Replace(".00", "")
-                        , invoice.TotalDiscounts.ToString("C").Replace(".00", "")
-                        , invoice.TotalRoyalties.ToString("C").Replace(".00", "")
-                        , invoice.TotalNetDue.ToString("C").Replace(".00", "")
+                        , invoice.TotalOnBilled.ToString("C").Replace(".00", "") + Environment.NewLine
+                        , invoice.TotalOnPaid.ToString("C").Replace(".00", "") + Environment.NewLine
+                        , invoice.TotalDiscounts.ToString("C").Replace(".00", "") + Environment.NewLine
+                        , invoice.TotalRoyalties.ToString("C").Replace(".00", "") + Environment.NewLine
+                        , invoice.TotalNetDue.ToString("C").Replace(".00", "") + Environment.NewLine
                         , "Total Net Due: "
                             , "Total Royalties: "
-                            , "Total Revenue Paid: "
                             , "Total Revenue Billed: "
+                            , "Total Revenue Paid: "
                         , 99
                         );
 
@@ -3213,6 +3229,7 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 List<Order> theseOrders =
                     _orderManagementService.GetOrdersAll(thisAffiliate, out totalNumberOrders)
+                    .Where(o => o.idAffiliate == thisAffiliate)
                         .Where(o => o.InvoiceDetail != null && o.InvoiceDetail.Contains("ChangedOrderNeedsNewInvoice")).ToList();
 
                 if (theseOrders.Any())
@@ -3231,15 +3248,15 @@ namespace CUWebinars.Web.Controllers.Admin
                     upgradedOrders.Rows.Add(
                         "Adjusted Orders"
                         , startDate
-                        , invoice.TotalOnBilled.ToString("C").Replace(".00", "")
-                        , invoice.TotalOnPaid.ToString("C").Replace(".00", "")
-                        , invoice.TotalDiscounts.ToString("C").Replace(".00", "")
-                        , invoice.TotalRoyalties.ToString("C").Replace(".00", "")
-                        , invoice.TotalNetDue.ToString("C").Replace(".00", "")
-                        , "Total Net Due: "
-                            , "Total Royalties: "
-                            , "Total Revenue Paid: "
-                            , "Total Revenue Billed: "
+                        , invoice.TotalOnBilled.ToString("C").Replace(".00", "") + Environment.NewLine
+                        , invoice.TotalOnPaid.ToString("C").Replace(".00", "") + Environment.NewLine
+                        , invoice.TotalDiscounts.ToString("C").Replace(".00", "") + Environment.NewLine
+                        , invoice.TotalRoyalties.ToString("C").Replace(".00", "") + Environment.NewLine
+                        , invoice.TotalNetDue.ToString("C").Replace(".00", "") + Environment.NewLine
+                        , "Adjusted Net Due: "
+                        , "Adjusted Royalties: "
+                        , "Adjusted Billed: "
+                        , "Adjusted Paid: "
                         , 99
                         );
 
@@ -3252,24 +3269,30 @@ namespace CUWebinars.Web.Controllers.Admin
                         var obj = (JObject)JsonConvert.DeserializeObject(order.InvoiceDetail);
                         var dict = obj.First.First.Children().Cast<JProperty>().ToDictionary(p => p.Name, p => p.Value);
 
-                        var invoiceId = dict["InvoiceId"];
-                        var AmountOfOrder = (decimal)dict["AmountOfOrder"];
-                        var AmountOfRoyalty = (decimal)dict["AmountOfRoyalty"];
-                        var Affiliate = dict["Affiliate"];
+                        var message = (string)dict["Message"];
+                        var adjustmentDirection = "Royalty is increased";
 
-                        var adjustedPrice = order.Total - AmountOfOrder;
-                        string _price = adjustedPrice.ToString("C").Replace(".00", "");
+                        if (order.InvoiceDetail.Contains("Royalty is decreased"))
+                        {
+                            adjustmentDirection = "Royalty is decreased";
+                        }
 
-                        var _adjustedRoyalty = row.Royalty - AmountOfRoyalty;
+                        //var adjustedTotal = row.RowPrice - (decimal)dict["OriginalTotal"];
 
+                        var adustmentAmount = (decimal)dict[adjustmentDirection];
+                        decimal adjustedRoyalty = adustmentAmount;
 
-                        string _percent = (row.PercentPaid * 100).ToString().Replace(".00", "").Replace(".0", "") +
-                                          "%";
+                        if (order.InvoiceDetail.Contains("decreased"))
+                        {
+                            adustmentAmount = -adustmentAmount;
+                            adjustedRoyalty = -adjustedRoyalty;
+                        }
+
                         if (row.Discount != null)
                         {
                             hadDiscount = true;
                             var discount = row.Discount;
-                            _price = "See Note #" + totalNumberDiscounts;
+                            //_price = "See Note #" + totalNumberDiscounts;
                             discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode + ": (" +
                                                  discount.DiscountType.ToString().Replace("DiscountType.", "") +
                                                  ") ");
@@ -3287,15 +3310,16 @@ namespace CUWebinars.Web.Controllers.Admin
                             //discountNotes.Append(discountAmount);
                             discountNotes.Append(Environment.NewLine);
                         }
+
                         uOrders.Rows.Add(
                             rowNumber
                             , order.FirstName + ' ' + order.LastName
                             , order.BillingEmail
                             , order.Institution + Environment.NewLine + order.BillingAddress + Environment.NewLine +
                               order.BillingCity + ", " + order.BillingState + " " + order.BillingZip
-                            , "Original Total:" + Environment.NewLine + AmountOfOrder.ToString("C").Replace(".00", "") + Environment.NewLine + "Diff From Original:" + Environment.NewLine + _price
-                            , _percent
-                            , "Original Royalty:" + Environment.NewLine + AmountOfRoyalty.ToString("C").Replace(".00", "") + Environment.NewLine + "Adjusted Amt:" + Environment.NewLine + _adjustedRoyalty.ToString("C").Replace(".00", "")
+                            , adustmentAmount
+                            , adjustedRoyalty
+                            , message
                             , order.OrderStatus
                             , order.idOrder
                             , row.Webinar.Title
@@ -3317,7 +3341,7 @@ namespace CUWebinars.Web.Controllers.Admin
             }
 
 
-            DocumentModel document = DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoice1.docx"));
+            DocumentModel document = DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoice.docx"));
 
             //if (affiliate.CommissionModel != 1)
             //    document = DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoiceForFlatPercent.docx"));
@@ -3329,15 +3353,33 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     if (e.Inline != null && e.FieldName == "TotalRevenueBilledLabel")
                         ((Run)e.Inline).Text = "";
-                    if (e.Inline != null && e.FieldName == "TotalOnBilled")
-                        ((Run)e.Inline).Text = "";
-                    if (e.Inline != null && e.FieldName == "TotalOnPaid")
-                        ((Run)e.Inline).Text = "";
                     if (e.Inline != null && e.FieldName == "TotalRevenuePaidLabel")
                         ((Run)e.Inline).Text = "";
                     if (e.Inline != null && e.FieldName == "TotalNetDueLabel")
                         ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "TotalAdjustedRevenueBilledLabel")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "TotalAdjustedRevenuePaidLabel")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "TotalAdjustedNetDueLabel")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "TotalOnBilled")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "TotalOnPaid")
+                        ((Run)e.Inline).Text = "";
                     if (e.Inline != null && e.FieldName == "TotalNetDue")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "GrandTotalOnBilled")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "GrandTotalOnPaid")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "GrandTotalNetDue")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "GrandTotalRevenueBilledLabel")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "GrandTotalRevenuePaidLabel")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "GrandTotalNetDueLabel")
                         ((Run)e.Inline).Text = "";
                 }
 
@@ -3372,14 +3414,14 @@ namespace CUWebinars.Web.Controllers.Admin
 
             var dsGrandTotals = new
             {
-                GrandTotalOnBilled = GrandTotalOnBilled.ToString("C").Replace(".00", ""),
-                GrandTotalOnPaid = GrandTotalOnPaid.ToString("C").Replace(".00", ""),
-                GrandTotalDiscounts = GrandTotalDiscounts.ToString("C").Replace(".00", ""),
-                GrandTotalRoyalties = GrandTotalRoyalties.ToString("C").Replace(".00", ""),
+                GrandTotalOnBilled = GrandTotalOnBilled.ToString("C").Replace(".00", "") + Environment.NewLine,
+                GrandTotalOnPaid = GrandTotalOnPaid.ToString("C").Replace(".00", "") + Environment.NewLine,
+                GrandTotalDiscounts = GrandTotalDiscounts.ToString("C").Replace(".00", "") + Environment.NewLine,
+                GrandTotalRoyalties = GrandTotalRoyalties.ToString("C").Replace(".00", "") + Environment.NewLine,
                 GrandTotalNetDueLabel = "Grand Total Net Due: ",
                 GrandTotalRevenueBilledLabel = "Grand Total Revenue Billed: ",
                 GrandTotalRevenuePaidLabel = "Grand Total Revenue Paid: ",
-                GrandTotalNetDue = GrandTotalNetDue.ToString("C").Replace(".00", ""),
+                GrandTotalNetDue = GrandTotalNetDue.ToString("C").Replace(".00", "") + Environment.NewLine,
                 DiscountNotes = discountNotes.ToString()
             };
 
@@ -3407,8 +3449,8 @@ namespace CUWebinars.Web.Controllers.Admin
                     _logger.Info("begins write to file: " + InvoiceID);
 
                     //// SAVE LOCALLY if needed for easier testing
-                    //document.Save(
-                    //    Server.MapPath(@"~/App_Data/mergeTemplates/" + InvoiceID + ".html"), SaveOptions.HtmlDefault);
+                    document.Save(
+                        Server.MapPath(@"~/App_Data/mergeTemplates/" + InvoiceID + ".pdf"), SaveOptions.PdfDefault);
 
                     var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName,
                         _globalConfig.StorageAccessKey);
@@ -3428,7 +3470,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         document.Save(output, SaveOptions.PdfDefault);
                         output.Position = 0; // reset to beginning so Upload operation can work correctly
-                        //TEMP-ALS blob.UploadFromStream(output);
+                        blob.UploadFromStream(output);
                     }
 
                     return Json(new
@@ -3439,8 +3481,8 @@ namespace CUWebinars.Web.Controllers.Admin
                         InvoiceId = InvoiceID,
                         AffiliateContactEmail = affiliate.ContactEmail,
                         AffiliateLabel = affiliate.DisplayTitle + " (" + affiliate.ttsDomain + " - " + affiliate.idUserAff + ")",
-                        //TEMP-ALS Link = new { PrimaryUri = blob.StorageUri },
-                        Link = new { PrimaryUri = "http://fakeurl.com/" + affiliate.idUserAff }, //TEMP:ALS
+                        Link = new { PrimaryUri = blob.StorageUri.PrimaryUri },
+                        //Link = new { PrimaryUri = "http://fakeurl.com/" + affiliate.idUserAff }, //TEMP:ALS
                         GrandTotalOnBilled = GrandTotalOnBilled.ToString("c"),
                         GrandTotalOnPaid = GrandTotalOnPaid.ToString("c"),
                         GrandTotalDiscounts = GrandTotalDiscounts.ToString("c"),
@@ -3457,7 +3499,6 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             catch (Exception ex)
             {
-
                 _logger.ErrorException("building Invoice: " + InvoiceID, ex);
             }
 
@@ -3483,10 +3524,10 @@ namespace CUWebinars.Web.Controllers.Admin
             upgradedOrders.Columns.Add("TotalDiscounts", typeof(string));
             upgradedOrders.Columns.Add("TotalRoyalties", typeof(string));
             upgradedOrders.Columns.Add("TotalNetDue", typeof(string));
-            upgradedOrders.Columns.Add("TotalNetDueLabel", typeof(string));
-            upgradedOrders.Columns.Add("TotalRoyaltiesLabel", typeof(string));
-            upgradedOrders.Columns.Add("TotalRevenueBilledLabel", typeof(string));
-            upgradedOrders.Columns.Add("TotalRevenuePaidLabel", typeof(string));
+            upgradedOrders.Columns.Add("TotalAdjustedNetDueLabel", typeof(string));
+            upgradedOrders.Columns.Add("TotalAdjustedRoyaltiesLabel", typeof(string));
+            upgradedOrders.Columns.Add("TotalAdjustedRevenueBilledLabel", typeof(string));
+            upgradedOrders.Columns.Add("TotalAdjustedRevenuePaidLabel", typeof(string));
             upgradedOrders.Columns.Add("Id", typeof(int));
             dsUpgradedOrders.Tables.Add(upgradedOrders);
 
@@ -3496,9 +3537,9 @@ namespace CUWebinars.Web.Controllers.Admin
             uOrders.Columns.Add("Name", typeof(string));
             uOrders.Columns.Add("Email", typeof(string));
             uOrders.Columns.Add("Address", typeof(string));
-            uOrders.Columns.Add("Price", typeof(string));
-            uOrders.Columns.Add("Percent", typeof(string));
-            uOrders.Columns.Add("Royalty", typeof(string));
+            uOrders.Columns.Add("AdjustedPrice", typeof(string));
+            uOrders.Columns.Add("AdjustedRoyalty", typeof(string));
+            uOrders.Columns.Add("Message", typeof(string));
             uOrders.Columns.Add("Status", typeof(string));
             uOrders.Columns.Add("OrderID", typeof(int));
             uOrders.Columns.Add("WebinarTitle", typeof(string));
@@ -3614,7 +3655,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 // new FROM address and subject in web.config (and GlobalConfir.cs and TtsConfigHelper.cs)
 
                 System.Diagnostics.Debug.WriteLine(string.Format("Queuing email for affiliate {0} | invoice {1} | url {2}", invoiceData.Affiliate.idUserAff, invoiceData.InvoiceId, invoiceData.InvoiceStorageUri));
-                
+
                 // email will be sent to Affiliate.ContactEmail, any reason to override here?
                 invoiceData.Subject = _globalConfig.WeeklyInvoiceEmailSubject; // or in event handler / web.config?
                 invoiceData.EmailBody = HttpUtility.HtmlDecode(

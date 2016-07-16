@@ -440,7 +440,6 @@
     <Compile Include="App_Start\NinjectScope.cs" />
     <Compile Include="App_Start\NinjectWebCommon.cs" />
     <Compile Include="AuthorizeHeadersAttribute.cs" />
-    <Compile Include="Controllers\Admin\Mandrill.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
@@ -552,7 +551,6 @@
     <Compile Include="Models\TTSAttendance.cs" />
     <Compile Include="Models\TTSQuiz.cs" />
     <Compile Include="Models\UserQuizEditModel.cs" />
-    <Compile Include="Models\WebUserOverviewModel.cs" />
     <Compile Include="SyndicationFeedResult.cs" />
     <Compile Include="ViewModel\AdjustUserDetailsEditModel.cs" />
     <Compile Include="ViewModel\AffiliatesChooserModel.cs" />
@@ -1889,8 +1887,6 @@
     <Content Include="App_Data\mergeTemplates\WeeklyInvoice1.docx" />
     <Content Include="Notification\Templates\SendPromoLinks.cshtml" />
     <Content Include="Content\images\email\emailBannerBase.xcf" />
-    <Content Include="App_Data\mergeTemplates\WeeklyInvoiceForFlatPercent.docx" />
-    <Content Include="App_Data\mergeTemplates\WeeklyInvoice.docx" />
     <Content Include="Notification\Templates\SendWeeklyInvoice.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev.pubxml" />

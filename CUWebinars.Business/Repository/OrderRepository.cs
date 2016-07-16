@@ -437,6 +437,13 @@ namespace CUWebinars.Business.Repository
             return discounts;
         }
 
+        public void SetLegacyShippedDate(int idOrder, DateTime? shippedDate)
+        {
+            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
+            dataOperations.SetLegacyShippedDate(idOrder, shippedDate);
+
+        }
+
         public IList<Order> GetOrdersForLiveEventNotifications(int idWebinar)
         {
             var orders = ((TTSWebinarsContext)db).OrderRows

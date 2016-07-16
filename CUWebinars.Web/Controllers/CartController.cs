@@ -356,7 +356,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     var order = _cartControllerOrchestrator.LoadOrder(ID.Value);
                     ViewBag.Order = order;
-                    //ViewBag.TaxAmount = model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount;
+                    ViewBag.TaxAmount = model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount;
                     if (order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).Discount != null)
                     {
                         ViewBag.DiscountCaption = _cartControllerOrchestrator.GetDiscountCaption(
@@ -396,7 +396,7 @@ namespace CUWebinars.Web.Controllers
                     }
 
                     ViewBag.Order = order;
-                    //ViewBag.TaxAmount = model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount;
+                    ViewBag.TaxAmount = model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount;
                     if (order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).Discount != null)
                     {
                         ViewBag.DiscountCaption = _cartControllerOrchestrator.GetDiscountCaption(

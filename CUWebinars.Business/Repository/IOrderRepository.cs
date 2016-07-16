@@ -66,5 +66,6 @@ namespace CUWebinars.Business.Repository
         IList<Order> GetOrdersByWebinar(int idWebinar);
         IEnumerable<Discount> GetSubscriptionsAll(int idAffliate, out int totalNumberOrders);
 
+        void SetLegacyShippedDate(int idOrder, DateTime? shippedDate);
     }
 }

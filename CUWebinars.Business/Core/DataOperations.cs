@@ -2136,7 +2136,11 @@ namespace CUWebinars.Business.Core
                     getPricingsCommand.CommandType = CommandType.Text;
                     getPricingsCommand.Parameters.Add(orderIdParameter);
                     getPricingsCommand.CommandText =
-                        "SELECT r.RowPrice, (SELECT RegTypeLabel FROM dbo.RegType WHERE idRegType =  r.idRegType) FROM dbo.OrderRow r  WHERE idOrder = @idOrder;";
+                        "SELECT r.RowPrice" +
+                        ", r.Discount_idDiscount " +
+                        ", (SELECT Email FROM dbo.AdditionalLocation WHERE idOrderRow = r.idOrderRow)" +
+                        ", (SELECT RegTypeLabel FROM dbo.RegType WHERE idRegType =  r.idRegType)" +
+                        " FROM	dbo.[Order] o INNER JOIN dbo.OrderRow r ON r.idOrder = o.idOrder WHERE idOrder = @idOrder;";
                     string getPreSaveValues = "";
 
                     using (var reader = getPricingsCommand.ExecuteReader())
@@ -2148,6 +2152,40 @@ namespace CUWebinars.Business.Core
                     }
 
                     return getPreSaveValues;
+                }
+            }
+        }
+
+        public void SetLegacyShippedDate(int idOrder, DateTime? shippedDate)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var updateShippedDate = new SqlCommand())
+                {
+                    var orderIdParameter = new SqlParameter
+                    {
+                        SqlDbType = SqlDbType.Int,
+                        ParameterName = "@idOrder",
+                        Value = idOrder
+                    };
+                    var shippedDateParameter = new SqlParameter
+                    {
+                        SqlDbType = SqlDbType.Int,
+                        ParameterName = "@shippedDate",
+                        Value = shippedDate.Value
+                    };
+
+                    updateShippedDate.Connection = sqlConnection;
+                    updateShippedDate.CommandType = CommandType.Text;
+                    updateShippedDate.Parameters.Add(orderIdParameter);
+                    updateShippedDate.Parameters.Add(shippedDateParameter);
+                    updateShippedDate.CommandText =
+                        "UPDATE dbo.OrdersRows SET shipmentDate = @shippedDate  WHERE idOrder = @idOrder;";
+                    string getPreSaveValues = "";
+
+                    updateShippedDate.ExecuteNonQuery();
                 }
             }
         }
