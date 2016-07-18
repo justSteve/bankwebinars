@@ -887,6 +887,7 @@ function FireGenerator() { // used recursively!!!
                     'data-invoiceid="' + data.InvoiceId + '" ' +
                     'data-invoiceurl="' + data.Link.PrimaryUri + '" ' +
                     'data-affiliatecontactemail="' + data.AffiliateContactEmail + '" ' +
+                    'data-daterange="' + data.DateRange + '" ' +
                     'value="' + data.AffiliateLabel + '">'
                     + data.AffiliateLabel +
                     '</label> ' +
@@ -894,7 +895,7 @@ function FireGenerator() { // used recursively!!!
 
             } else {
                 console.log("NO INVOICE DATA: " + payload._idAffiliate);
-                sendRptCheckBoxesDiv.append('<p>No orders found for </p>' + payload._idAffiliate);
+                sendRptCheckBoxesDiv.append('<p>No orders found for '+ payload._idAffiliate +'</p>');
             }
 
             console.log("Done: " + callsComplete);
@@ -928,7 +929,7 @@ function SendInvoices() {
     // add each of the checked invoices to the payload for posting to controller
     $("#SendRptCheckBoxes input[id^='inlineCheckbox_']:checked").each(function (idx, item) {
         var $item = $(item);
-        payload[idx] = { "Affiliate.idUserAff": $item.data("affid"), "Affiliate.ContactEmail": $item.data("affiliatecontactemail"), "InvoiceId": $item.data("invoiceid"), "InvoiceStorageUri": $item.data("invoiceurl") };
+        payload[idx] = { "Affiliate.idUserAff": $item.data("affid"), "Affiliate.ContactEmail": $item.data("affiliatecontactemail"), "InvoiceId": $item.data("invoiceid"), "InvoiceStorageUri": $item.data("invoiceurl") , "DateRange": $item.data("daterange") };
     });
 
     console.log(payload);

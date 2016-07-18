@@ -38,7 +38,7 @@ namespace CUWebinars.Business.Notification.Email
 
             var cloudQueueMessage = new CloudQueueMessage(JsonConvert.SerializeObject(notificationMessage));
             cloudQueue.EncodeMessage = true;
-            //TEMP-ALS cloudQueue.AddMessage(cloudQueueMessage);
+            cloudQueue.AddMessage(cloudQueueMessage);
 
             _logger.Info(string.Format("Queued WeeklyInvoice message to: {0}, message is: {1} ", notificationMessage.To, notificationMessage.Body));
         }

@@ -49,8 +49,7 @@ namespace CUWebinars.Business.Services
 
             int numberOfRegistrations = 0;
 
-
-
+            
             foreach (Order order in orders.OrderBy(o => o.OrderDate))
             {
 
@@ -63,74 +62,68 @@ namespace CUWebinars.Business.Services
                 try
                 {
 
-                        //{ChangedOrderNeedsNewInvoice:{OriginalInvoice:27-2016-62
-                            //OriginalDateOfInvoice:07-13-2016
-                            //OriginalTotal:295
-                            //OriginalPercentPaid:0.3
-                            //OriginalRoyaltyPaid:88.5
-                            //OriginalAffiliate:cftnow
+                    //{ChangedOrderNeedsNewInvoice:{OriginalInvoice:27-2016-62
+                    //OriginalDateOfInvoice:07-13-2016
+                    //OriginalTotal:295
+                    //OriginalPercentPaid:0.3
+                    //OriginalRoyaltyPaid:88.5
+                    //OriginalAffiliate:cftnow
                     //Royalty is increased:21.00000  // note that we are saving the full royalty amount, not as is suggested by Key name, the adjusted amount
-                            //DateOfChange:07-13-2016
-                            //Message:
-                                
+                    //DateOfChange:07-13-2016
+                    //Message:
+
                     var adjustmentDirection = "Royalty is increased";
-                    decimal adustmentAmount;
-                    decimal adjustedRoyalty;
+
                     if (order.InvoiceDetail.Contains("decreased"))
                     {
                         adjustmentDirection = "Royalty is decreased";
-                        adustmentAmount = -(decimal) dict[adjustmentDirection];
-                        adjustedRoyalty = (decimal) dict["OriginalRoyaltyPaid"] - adustmentAmount;
+                    }
+
+                    var adjustedTotal = row.RowPrice - (decimal)dict["OriginalTotal"];
+                    var adjustedRoyalty = (decimal)dict[adjustmentDirection];
+
+                    //now increment/decriment the subtotals on 'Adjusted Orders' section.
+
+                    if (order.OrderStatus == OrderStatus.Paid)
+                    {
+                        totalPaidRoyalty += adjustedRoyalty;
                     }
                     else
                     {
-                        adustmentAmount = (decimal)dict[adjustmentDirection];
-                        adjustedRoyalty = (decimal) dict["OriginalRoyaltyPaid"] + adustmentAmount;
+                        totalBilledRevenue += adjustedTotal; // 
+                        totalBilledRoyalty += adjustedRoyalty;
+                    }
 
+                    if (order.OrderStatus == OrderStatus.Paid)
+                    {
+                        invoice.TotalOnPaid += adjustedTotal;
+                    }
+                    if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed)
+                    {
+                        invoice.TotalOnBilled += adjustedTotal;
                     }
 
 
-                    //now increment/decriment the subtotals on 'Adjusted Orders' section.
-                   
-                        if (order.OrderStatus == OrderStatus.Paid)
-                        {
-                            totalPaidRoyalty += adjustedRoyalty;
-                        }
-                        else
-                        {
-                            totalBilledRevenue += adustmentAmount; // 
-                            totalBilledRoyalty += adjustedRoyalty;
-                        }
+                    //if (row.Discount != null)
+                    //{
+                    //    if (row.Discount.PercentOff > 0)
+                    //    {
+                    //        invoice.TotalDiscounts = invoice.TotalDiscounts + (row.UnitPrice * ((row.Discount.PercentOff) / 100));
+                    //        _logger.Info(invoice.Affiliate.idUserAff + "-" + row.idOrder + "-" + (row.UnitPrice * ((row.Discount.PercentOff) / 100)));
 
-                        if (order.OrderStatus == OrderStatus.Paid)
-                        {
-                            invoice.TotalOnPaid += adustmentAmount;
-                        }
-                        if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed)
-                        {
-                            invoice.TotalOnBilled += adustmentAmount;
-                        }
+                    //    }
+                    //    if (row.Discount.FlatOff > 0)
+                    //    {
+                    //        invoice.TotalDiscounts = invoice.TotalDiscounts + row.UnitPrice - row.Discount.FlatOff;
+                    //        _logger.Info(invoice.Affiliate.idUserAff + "-" + row.idOrder + "-" + (row.UnitPrice * ((row.Discount.PercentOff) / 100)));
+                    //    }
+                    //}
 
+                    invoice.TotalRoyalties += adjustedRoyalty;
 
-                        //if (row.Discount != null)
-                        //{
-                        //    if (row.Discount.PercentOff > 0)
-                        //    {
-                        //        invoice.TotalDiscounts = invoice.TotalDiscounts + (row.UnitPrice * ((row.Discount.PercentOff) / 100));
-                        //        _logger.Info(invoice.Affiliate.idUserAff + "-" + row.idOrder + "-" + (row.UnitPrice * ((row.Discount.PercentOff) / 100)));
-
-                        //    }
-                        //    if (row.Discount.FlatOff > 0)
-                        //    {
-                        //        invoice.TotalDiscounts = invoice.TotalDiscounts + row.UnitPrice - row.Discount.FlatOff;
-                        //        _logger.Info(invoice.Affiliate.idUserAff + "-" + row.idOrder + "-" + (row.UnitPrice * ((row.Discount.PercentOff) / 100)));
-                        //    }
-                        //}
-
-                        invoice.TotalRoyalties += adjustedRoyalty;
-                   
 
                     order.InvoiceDetail = order.InvoiceDetail.Replace("ChangedOrderNeedsNewInvoice", "AdjustedOrderWasReinvoiced");
+                    //_orderRepository.SaveChanges();
 
                 }
                 catch (Exception ex)
@@ -499,8 +492,8 @@ namespace CUWebinars.Business.Services
                 _logger.FatalException("StoreInvoiceDetail on idOrder: " + order.idOrder, ex);
             }
             _orderRepository.SaveChanges();
-            }
-        
+        }
+
 
         private OrderRow IniInvoice(Order order, AffiliateInvoiceDTO invoice)
         {

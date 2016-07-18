@@ -128,7 +128,7 @@ function getOrderStatusHtml() {
     ns.getBillingCellHtml = function (discount, regTypeLabel, total, shippedDate) {
         //debugger;
 
-        if (shippedDate != '1/1') {
+        if (shippedDate != '1/1' && shippedDate != '') {
             shippedDate = "<br />\n<span style=\"font-size: xx-small;\">Shipped: " + shippedDate + "</span>";
         } else {
             shippedDate = '';

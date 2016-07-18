@@ -2137,17 +2137,18 @@ namespace CUWebinars.Business.Core
                     getPricingsCommand.Parameters.Add(orderIdParameter);
                     getPricingsCommand.CommandText =
                         "SELECT r.RowPrice" +
-                        ", r.Discount_idDiscount " +
-                        ", (SELECT Email FROM dbo.AdditionalLocation WHERE idOrderRow = r.idOrderRow)" +
+                        ", o.OrderStatus " +
+                        ", ISNULL(r.Discount_idDiscount, 0) " +
+                        ", ISNULL((SELECT Sum(Price) FROM dbo.AdditionalLocation WHERE idOrderRow = r.idOrderRow), 0) " +
                         ", (SELECT RegTypeLabel FROM dbo.RegType WHERE idRegType =  r.idRegType)" +
-                        " FROM	dbo.[Order] o INNER JOIN dbo.OrderRow r ON r.idOrder = o.idOrder WHERE idOrder = @idOrder;";
+                        " FROM	dbo.[Order] o INNER JOIN dbo.OrderRow r ON r.idOrder = o.idOrder WHERE o.idOrder = @idOrder;";
                     string getPreSaveValues = "";
 
                     using (var reader = getPricingsCommand.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            getPreSaveValues = reader[0] + "," + reader[1] ;
+                            getPreSaveValues = reader[0] + "," + reader[1] + "," + reader[2] + "," + reader[3] + "," + reader[4];
                         }
                     }
 

@@ -295,7 +295,8 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 if (order.InvoiceDetail != null && order.InvoiceDetail.Contains("OrderIsInvoiced"))
                 {
-                    _logger.Info("Affiliate is reassigned: " + order.idOrder);
+                    _logger.Warn("Invoiced Order is changes affiliate: " + order.idOrder + " from " + originalAffiliate.ttsDomain + " to " +
+                                  newAffiliate.ttsDomain);
 
                     var toJson = JObject.Parse(order.InvoiceDetail);
                     var nullChecked = toJson.Properties().FirstOrDefault(p => p.Name.StartsWith("OrderIsInvoiced"));
@@ -552,7 +553,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     _logger.Info("Updating OrderStatus from: " + order.OrderStatus + " to: " + model.DisplayRowPriceViewModel.OrderStatus + " by: " + _appHelper.GetUserAuditInfo());
                     var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
 
-                    var UpdateOrderStatusOnLegacy = dataOperations.UpdateOrderStatusOnLegacy(order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).idWebinar, order.BillingEmail, Convert.ToInt32(model.DisplayRowPriceViewModel.OrderStatus));
+                    //var UpdateOrderStatusOnLegacy = dataOperations.UpdateOrderStatusOnLegacy(order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).idWebinar, order.BillingEmail, Convert.ToInt32(model.DisplayRowPriceViewModel.OrderStatus));
                     var dataOperationsV3 = new DataOperations(TtsConfig.DefaultConnectionString);
 
                     string preSaveValues = dataOperationsV3.GetPreSaveValues(order.idOrder);
@@ -560,10 +561,10 @@ namespace CUWebinars.Web.Controllers.Admin
                     order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus; // the only field that we are updating at this time
                     try
                     {
-                        if (order.InvoiceDetail != null && order.OrderStatus == OrderStatus.Canceled)
+                        if (order.InvoiceDetail != null && order.InvoiceDetail != "" && order.OrderStatus == OrderStatus.Canceled)
                         {
 
-                            _logger.Info("Invoiced Order is canceled: " + order.idOrder);
+                            _logger.Warn("Invoiced Order is canceled: " + order.idOrder);
 
                             var toJson = JObject.Parse(order.InvoiceDetail);
                             var nullChecked = toJson.Properties().FirstOrDefault(p => p.Name.StartsWith("OrderIsInvoiced"));
@@ -579,44 +580,40 @@ namespace CUWebinars.Web.Controllers.Admin
                                 //"Affiliate", _affiliateRepository.FindById(order.idAffiliate).ttsDomain)
                                 var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                                 //
-                                row.Royalty = row.RowPrice * (decimal)nullChecked.First()["PercentPaid"];
-                                if (order.Total == (decimal)nullChecked.First()["AmountOfOrder"] && order.InvoiceDetail.Contains("ChangedOrderNeedsNewInvoice"))
-                                {
-                                    order.InvoiceDetail = JsonHelpers.RemoveJObject(order.InvoiceDetail, "ChangedOrderNeedsNewInvoice");
-                                }
-                                else
-                                {
-                                    var regTypeShortened = preSaveValues.Split(',')[1].Replace(" Package", "").Replace("Live Plus Six", "Live+6").Replace(" and Hardcopy Handouts", "").Replace(" Recording Only", "").Replace(" Plus Five", "+5");
-                                    StringBuilder sb = new StringBuilder();
+                                row.Royalty = 0;
 
-                                    sb.Append("Original invoice was " + nullChecked.First()["InvoiceId"] + " from " + nullChecked.First()["DateOfInvoice"] + " for " + regTypeShortened + "($" + preSaveValues.Split(',')[0].ToString().Replace(".0000", "").Replace(".00", "") + ") ");
-                                    sb.Append(" but was canceled " + TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat) + ". ");
+                                var regTypeShortened = preSaveValues.Split(',')[4].Replace(" Package", "").Replace("Live Plus Six", "Live+6").Replace(" and Hardcopy Handouts", "").Replace(" Recording Only", "").Replace(" Plus Five", "+5");
+                                StringBuilder sb = new StringBuilder();
 
-                                    var adustmentAmount = (decimal)nullChecked.First()["AmountOfRoyalty"];
+                                sb.Append(order.idOrder + " was first invoiced on " + nullChecked.First()["InvoiceId"] + " as type '" + regTypeShortened + "' for $" + preSaveValues.Split(',')[0].ToString().Replace(".0000", "").Replace(".00", "") + ") ");
+                                sb.Append(" but was canceled " + TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat) + ". ");
 
-                                    //set default direction
-                                    var adjustmentDirection = "Royalty is decreased";
+                                var adustmentAmount = 0 - (decimal)nullChecked.First()["AmountOfRoyalty"];
 
-                                    sb.Append(adjustmentDirection + " by " + adustmentAmount.ToString("C").Replace(".00", ""));
+                                //set default direction
+                                var adjustmentDirection = "Royalty is decreased";
 
-                                    var newJson4Invoice = new JProperty(
-                                                                    "ChangedOrderNeedsNewInvoice",
-                                                                    new JObject(
-                                                                        new JProperty("OriginalInvoice", nullChecked.First()["InvoiceId"].ToString()),
-                                                                        new JProperty("OriginalDateOfInvoice", nullChecked.First()["DateOfInvoice"].ToString()),
-                                                                        new JProperty("OriginalTotal", nullChecked.First()["AmountOfOrder"].ToString()),
-                                                                        new JProperty("OriginalPercentPaid", nullChecked.First()["PercentPaid"].ToString()),
-                                                                        new JProperty("OriginalRoyaltyPaid", nullChecked.First()["AmountOfRoyalty"].ToString()),
-                                                                        new JProperty("OriginalAffiliate", nullChecked.First()["Affiliate"].ToString()),
-                                                                        new JProperty(adjustmentDirection, adustmentAmount),
-                                                                        new JProperty("DateOfChange", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
-                                                                        new JProperty("Message", sb.ToString())
-                                                                        ));
+                                sb.Append(adjustmentDirection + " by " + adustmentAmount.ToString("C").Replace(".00", ""));
+
+                                row.RowPrice = 0;
+                                var newJson4Invoice = new JProperty(
+                                                                "ChangedOrderNeedsNewInvoice",
+                                                                new JObject(
+                                                                    new JProperty("OriginalInvoice", nullChecked.First()["InvoiceId"].ToString()),
+                                                                    new JProperty("OriginalDateOfInvoice", nullChecked.First()["DateOfInvoice"].ToString()),
+                                                                    new JProperty("OriginalTotal", nullChecked.First()["AmountOfOrder"].ToString()),
+                                                                    new JProperty("OriginalPercentPaid", nullChecked.First()["PercentPaid"].ToString()),
+                                                                    new JProperty("OriginalRoyaltyPaid", nullChecked.First()["AmountOfRoyalty"].ToString()),
+                                                                    new JProperty("OriginalAffiliate", nullChecked.First()["Affiliate"].ToString()),
+                                                                    new JProperty(adjustmentDirection, adustmentAmount),
+                                                                    new JProperty("DateOfChange", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
+                                                                    new JProperty("Message", sb.ToString())
+                                                                    ));
 
 
-                                    order.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(
-                                        order.InvoiceDetail, newJson4Invoice, "OrderIsInvoiced");
-                                }
+                                order.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(
+                                    order.InvoiceDetail, newJson4Invoice, "OrderIsInvoiced");
+
                             }
                         }
 
@@ -629,7 +626,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     _orderManagementService.UpdateOrderByAdmin(order);
 
-                    return Json(new { Result = WebUiConstants.Success, orderStatus = model.DisplayRowPriceViewModel.OrderStatus.ToString(), msgFromLegacy = UpdateOrderStatusOnLegacy });
+                    return Json(new { Result = WebUiConstants.Success, orderStatus = model.DisplayRowPriceViewModel.OrderStatus.ToString(), msgFromLegacy = "not currently implemented" });
                 }
                 catch (Exception exception)
                 {
@@ -2581,7 +2578,14 @@ namespace CUWebinars.Web.Controllers.Admin
 
             if (pricesAndDiscounts.Discount == null)
                 pricesAndDiscounts.Discount = new Discount();
-
+            var ShippedDate =
+                orderRow.ShipmentDate;
+            string shippDateString = "";
+            if (ShippedDate != null)
+            {
+                shippDateString = ShippedDate.Value.Month
+                + "/" + ShippedDate.Value.Day;
+            }
             return
                 Json(
                     new
@@ -2593,6 +2597,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         Tax = pricesAndDiscounts.TaxAmount,
                         Total = pricesAndDiscounts.TotalOrderPrice,
                         FlatOff = pricesAndDiscounts.Discount.FlatOff,
+                        ShippedDateString = shippDateString,
                         PercentOff = pricesAndDiscounts.Discount.PercentOff
                     });
 
@@ -3117,6 +3122,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
             }
             //Post Event Orders
+            _logger.Info("At start of ComputeRoyaltyForAdjustedOrders subtotals are: ");
+
             try
             {
 
@@ -3223,8 +3230,11 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 _logger.ErrorException("GenerateWeeklyInvoicesEvent | Post Event Orders: ", ex);
             }
-
-            //Upgraded Orders
+            _logger.Info("At start of ComputeRoyaltyForAdjustedOrders: GrandTotalOnBilled" + GrandTotalOnBilled);
+            _logger.Info("At start of ComputeRoyaltyForAdjustedOrders: GrandTotalOnPaid" + GrandTotalOnPaid);
+            _logger.Info("At start of ComputeRoyaltyForAdjustedOrders: GrandTotalDiscounts" + GrandTotalDiscounts);
+            _logger.Info("At start of ComputeRoyaltyForAdjustedOrders: GrandTotalRoyalties" + GrandTotalRoyalties);
+            _logger.Info("At start of ComputeRoyaltyForAdjustedOrders: GrandTotalNetDue" + GrandTotalNetDue);
             try
             {
                 List<Order> theseOrders =
@@ -3277,16 +3287,9 @@ namespace CUWebinars.Web.Controllers.Admin
                             adjustmentDirection = "Royalty is decreased";
                         }
 
-                        //var adjustedTotal = row.RowPrice - (decimal)dict["OriginalTotal"];
-
-                        var adustmentAmount = (decimal)dict[adjustmentDirection];
-                        decimal adjustedRoyalty = adustmentAmount;
-
-                        if (order.InvoiceDetail.Contains("decreased"))
-                        {
-                            adustmentAmount = -adustmentAmount;
-                            adjustedRoyalty = -adjustedRoyalty;
-                        }
+                        var adjustedTotal = row.RowPrice - (decimal)dict["OriginalTotal"];
+                        var adjustedRoyalty = (decimal)dict[adjustmentDirection];
+                        //decimal adjustedRoyalty = adustmentAmount;
 
                         if (row.Discount != null)
                         {
@@ -3317,7 +3320,7 @@ namespace CUWebinars.Web.Controllers.Admin
                             , order.BillingEmail
                             , order.Institution + Environment.NewLine + order.BillingAddress + Environment.NewLine +
                               order.BillingCity + ", " + order.BillingState + " " + order.BillingZip
-                            , adustmentAmount
+                            , adjustedTotal
                             , adjustedRoyalty
                             , message
                             , order.OrderStatus
@@ -3339,6 +3342,13 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 _logger.ErrorException("GenerateWeeklyInvoicesEvent | Upgrades: ", ex);
             }
+
+
+            _logger.Info("At end  of ComputeRoyaltyForAdjustedOrders: GrandTotalOnBilled" + GrandTotalOnBilled);
+            _logger.Info("At end  of ComputeRoyaltyForAdjustedOrders: GrandTotalOnPaid" + GrandTotalOnPaid);
+            _logger.Info("At end  of ComputeRoyaltyForAdjustedOrders: GrandTotalDiscounts" + GrandTotalDiscounts);
+            _logger.Info("At end  of ComputeRoyaltyForAdjustedOrders: GrandTotalRoyalties" + GrandTotalRoyalties);
+            _logger.Info("At end  of ComputeRoyaltyForAdjustedOrders: GrandTotalNetDue" + GrandTotalNetDue);
 
 
             DocumentModel document = DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoice.docx"));
@@ -3480,6 +3490,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         AffiliateId = affiliate.idUserAff,
                         InvoiceId = InvoiceID,
                         AffiliateContactEmail = affiliate.ContactEmail,
+                        DateRange = startDate.ToShortDateString() + " thru " + endDate.ToShortDateString(),
                         AffiliateLabel = affiliate.DisplayTitle + " (" + affiliate.ttsDomain + " - " + affiliate.idUserAff + ")",
                         Link = new { PrimaryUri = blob.StorageUri.PrimaryUri },
                         //Link = new { PrimaryUri = "http://fakeurl.com/" + affiliate.idUserAff }, //TEMP:ALS
@@ -3526,8 +3537,8 @@ namespace CUWebinars.Web.Controllers.Admin
             upgradedOrders.Columns.Add("TotalNetDue", typeof(string));
             upgradedOrders.Columns.Add("TotalAdjustedNetDueLabel", typeof(string));
             upgradedOrders.Columns.Add("TotalAdjustedRoyaltiesLabel", typeof(string));
-            upgradedOrders.Columns.Add("TotalAdjustedRevenueBilledLabel", typeof(string));
-            upgradedOrders.Columns.Add("TotalAdjustedRevenuePaidLabel", typeof(string));
+            upgradedOrders.Columns.Add("TotalAdjustedBilledLabel", typeof(string));
+            upgradedOrders.Columns.Add("TotalAdjustedPaidLabel", typeof(string));
             upgradedOrders.Columns.Add("Id", typeof(int));
             dsUpgradedOrders.Tables.Add(upgradedOrders);
 

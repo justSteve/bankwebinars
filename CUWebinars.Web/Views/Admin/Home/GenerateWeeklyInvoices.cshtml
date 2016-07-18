@@ -14,13 +14,13 @@
         listAff.Append(aff.idUserAff + ",");
     }
     Layout = "/Views/Shared/_LayoutAdmin.cshtml";
-    
+
 }
 
 <script language="javascript" type="text/javascript">
 
-    //var arryAff = [@listAff];
-    var arryAff = [62,2988];
+    var arryAff = [@listAff];
+    //var arryAff = [62];
 
     // recursion control variables
     var callsNeeded = arryAff.length;
@@ -34,7 +34,7 @@
         $('#sendRpt').hide();
         $('#submitStartDate').on('click', function (args) {
             args.preventDefault();
-            
+
             // disable button?
             $('#sendRpt').hide();
             sendRptCheckBoxesDiv.html(''); // clear any old results out
@@ -43,19 +43,19 @@
         });
 
         $('#sendRpt').on('click', function (args) {
-        
+
             args.preventDefault();
 
             // disable button?
 
             SendInvoices();
         });
-        });
+    });
 </script>
 
 <div style="width: 1100px; margin: 30px auto">
     <h2>Generates Weekly Invoices</h2>
-    
+
     @using (Html.BeginForm("GenerateWeeklyInvoicesEvent", "Admin", FormMethod.Get, new { id = "GenerateWeeklyInvoicesForm", @class = "form-horizontal " }))
     {
         @Html.AntiForgeryToken()
@@ -66,17 +66,17 @@
                 <input type="date" name="startDate" id="startDate" style="margin-bottom: 0px;" />
                 <button id="submitStartDate">Submit</button> &nbsp;<span id="crunchingLabel">&nbsp;</span>
             </div>
-            </div>
+        </div>
     }
     @using (Html.BeginForm("SendWeeklyInvoicesEvent", "Admin", FormMethod.Get, new { id = "SendWeeklyInvoicesForm", @class = "form-horizontal " }))
     {
-            <div id="SendRptCheckBoxes" class="control-group">
+        <div id="SendRptCheckBoxes" class="control-group">
             <button id="sendRpt" style="display:none;">Send Reports</button>
-                <div class="controls">
+            <div class="controls">
 
 
-                </div>
             </div>
+        </div>
     }
 
 </div>

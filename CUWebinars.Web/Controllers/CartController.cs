@@ -736,11 +736,18 @@ namespace CUWebinars.Web.Controllers
                                model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active), null, 1);
                     }
 
-                    _cartControllerOrchestrator.UpdateRegTypeOnLegacy(idRegType.Value, model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar, model.Order.BillingEmail);
+                    //_cartControllerOrchestrator.UpdateRegTypeOnLegacy(idRegType.Value, model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar, model.Order.BillingEmail);
 
                     _logger.Info("EditRegTypeTo: " + newRegType + " From: " + oldRegType + " on orderId: " + model.Order.idOrder);
                     var UpdateSuccessCaption = "Order updated to: " + newRegType;
-
+                    var ShippedDate =
+                        model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).ShipmentDate;
+                    string shippDateString = "";
+                    if (ShippedDate != null)
+                    {
+                        shippDateString = ShippedDate.Value.Month
+                        +"/" + ShippedDate.Value.Day;
+                    }
                     return
                         Json(
                             new
@@ -754,6 +761,7 @@ namespace CUWebinars.Web.Controllers
                                 Tax = pricesAndDiscounts.TaxAmount,
                                 Total = pricesAndDiscounts.TotalOrderPrice,
                                 FlatOff = pricesAndDiscounts.Discount.FlatOff,
+                                ShippedDateString = shippDateString,
                                 PercentOff = pricesAndDiscounts.Discount.PercentOff
                             });
                 }
