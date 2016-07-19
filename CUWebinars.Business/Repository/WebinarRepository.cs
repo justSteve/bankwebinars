@@ -129,7 +129,7 @@ namespace CUWebinars.Business.Repository
             if (searchTerm.StartsWith("title:"))
             {
                 searchTerm = searchTerm.Replace("title:", "");
-
+                
                 var titleSearch = stronglyTypedContext.Webinars
                     .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
                     .Include(w => w.Presenter.WebUser)
@@ -138,6 +138,17 @@ namespace CUWebinars.Business.Repository
                 return titleSearch.ToList();
             }
 
+            var check4Speaker = stronglyTypedContext.Webinars
+                .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
+                .Include(w => w.Presenter.WebUser)
+                .Where(w => w.Presenter.WebUser.LastName == searchTerm
+                            && (w.Status != WebinarStatus.Archived || w.Status != WebinarStatus.Pending));
+
+            if (check4Speaker.Any())
+            {
+                return check4Speaker.ToList();
+            }
+                    
 
             // 1st get all topics with the topicDescription
             var topicsOfSearch = stronglyTypedContext.Topics

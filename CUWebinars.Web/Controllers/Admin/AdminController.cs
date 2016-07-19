@@ -16,6 +16,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Xml;
 using AutoMapper;
@@ -1771,7 +1772,18 @@ namespace CUWebinars.Web.Controllers.Admin
 
             // text file
             filename = string.Concat(filenameBase, ".txt");
-            byte[] byteArrayTXT = Encoding.UTF8.GetBytes(eventBodyText.Replace("<br>", "\r\n")); // decidedly NOT robust, yet!!
+            string htmlContents = new System.IO.StreamReader(eventBodyText, Encoding.UTF8, true).ReadToEnd();
+
+            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(htmlContents);
+            if (doc == null) return null;
+
+            string output = "";
+            foreach (var node in doc.DocumentNode.ChildNodes)
+            {
+                output += node.InnerText;
+            }
+            byte[] byteArrayTXT = Encoding.UTF8.GetBytes(output); // as per http://stackoverflow.com/questions/785715/how-can-i-strip-html-tags-from-a-string-in-asp-net
             ret += UploadToAzure(container, filename, byteArrayTXT, overwriteFlag);
             if (string.IsNullOrWhiteSpace(ret)) // no error, add to list for email
                 hrefsForEmail.Add(string.Format("https://siteroot/mypromos/{0}/{1}", containerRoot, filename)); // configuration-driven pattern??
@@ -1990,7 +2002,8 @@ namespace CUWebinars.Web.Controllers.Admin
                     affId = affiliate.idUserAff;
                 }
 
-                model.Affiliates = new AffiliateRepository().GetAffiliatesByPromoType("Daily").Where(a => a.idUserAff == affId).ToList();
+                model.Affiliates = new AffiliateRepository().GetAffiliatesByPromoType("Daily")
+                    .Where(a => a.idUserAff == affId).ToList();
             }
 
             return View(model);

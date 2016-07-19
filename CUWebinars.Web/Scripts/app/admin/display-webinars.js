@@ -11,8 +11,6 @@ var DW = DISPLAYWEBINARS; // alias for code brevity
 // document.ready function
 $(function () {
     $('#titleOnly').change(function () {
-        // location.reload();
-        //alert(DW.searchTermDiv.text());
 
         DW.titleOnly = "";
         if ($("#titleOnly").prop('checked') == true) {
@@ -27,10 +25,10 @@ $(function () {
     DW.wireUpHandlers();
     DW.wireUpWebinarsGrid();
 
-    if (DW.searchTermDiv.text().match(/^title:/)) {
-        
+    if (DW.searchTermDiv.text().indexOf('title:') > -1) {
+
         $("#titleOnly").prop('checked', true);
-        DW.searchTermDiv.text(DW.searchTermDiv.text().replace("title:"));
+        DW.searchTermDiv.text(DW.searchTermDiv.text().replace("title:", ""));
         $("#search-box").val(DW.searchTermDiv.text());
     }
 
