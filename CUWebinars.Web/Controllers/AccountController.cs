@@ -1403,7 +1403,24 @@ namespace CUWebinars.Web.Controllers
                     {
                         _logger.Info("Account.SignIn Post Success in cart.{1} Session={0}", _appHelper.GetUserAuditInfo(), model.Email);
                         WebUser webUser = _accountControllerOrchestrator.GetWebUserByEmail(model.Email);
-
+                        var affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser);
+                        // if null returned, just use whatever is stored in Session for CurrentAffiliate.
+                        //      O/w, set that value.
+                        if (!ReferenceEquals(null, affiliate))
+                        {
+                            _stateService.SetValue(WebUiConstants.CurrentAffiliate, affiliate);
+                            _logger.Info("Account.SignIn. Email: {1}, Affiliate: {2},  Session: {0}",
+                              _appHelper.GetUserAuditInfo(),
+                                model.Email, affiliate.ttsDomain
+                                );
+                        }
+                        else
+                        {
+                            _logger.Warn("Account.SignInFromCartDidNotFindExistingAffiliate. Email: {1}, Affiliate: null, Session: {0}",
+                                _appHelper.GetUserAuditInfo(),
+                                model.Email
+                                );
+                        }
                         return Json(new { result = LoggedInResult, UserId = webUser.idUser });
                     }
                 }

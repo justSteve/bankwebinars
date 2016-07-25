@@ -461,15 +461,15 @@ namespace CUWebinars.Web.Controllers
             try
             {
                 StringBuilder sb = new StringBuilder();
-                
+                _logger.Info("Incoming from Mandrill: " + form[0]);
                 var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(form[0]);
-
+                
                 var parsedOrder = ParseMandrillMsg.ParseAcs("<html><body>" + msgHtml.msg.html + "</body></html>", "06/21/2016");
                 RedirectToAction("Importorder4Acs", "Order", parsedOrder);
             }
             catch (Exception ex)
             {
-                _logger.Info("ex: " + ex);
+                _logger.Warn("ex: " + ex);
                 return null;
             }
             return null;

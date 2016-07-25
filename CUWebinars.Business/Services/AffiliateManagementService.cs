@@ -49,81 +49,76 @@ namespace CUWebinars.Business.Services
 
             int numberOfRegistrations = 0;
 
-            
+
             foreach (Order order in orders.OrderBy(o => o.OrderDate))
             {
-
-                var obj = JObject.Parse(order.InvoiceDetail);
-                var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                var dict = obj.First.First.Children().Cast<JProperty>().ToDictionary(p => p.Name, p => p.Value);
-
-                if (row.Discount != null)
-                    _logger.Warn("Invoice Warning! While recalculating adjusted order a discount code was found on on idOrder: " + order.idOrder);
                 try
                 {
 
-                    //{ChangedOrderNeedsNewInvoice:{OriginalInvoice:27-2016-62
-                    //OriginalDateOfInvoice:07-13-2016
-                    //OriginalTotal:295
-                    //OriginalPercentPaid:0.3
-                    //OriginalRoyaltyPaid:88.5
-                    //OriginalAffiliate:cftnow
-                    //Royalty is increased:21.00000  // note that we are saving the full royalty amount, not as is suggested by Key name, the adjusted amount
-                    //DateOfChange:07-13-2016
-                    //Message:
 
-                    var adjustmentDirection = "Royalty is increased";
+                    var obj = JObject.Parse(order.InvoiceDetail);
+                    var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                    var dict = obj.First.First.Children().Cast<JProperty>().ToDictionary(p => p.Name, p => p.Value);
 
-                    if (order.InvoiceDetail.Contains("decreased"))
+                    if (row.Discount != null)
+                        _logger.Warn("Invoice Warning! While recalculating adjusted order a discount code was found on on idOrder: " + order.idOrder);
+                    try
                     {
-                        adjustmentDirection = "Royalty is decreased";
+
+                        //{ChangedOrderNeedsNewInvoice:{OriginalInvoice:27-2016-62
+                        //OriginalDateOfInvoice:07-13-2016
+                        //OriginalTotal:295
+                        //OriginalPercentPaid:0.3
+                        //OriginalRoyaltyPaid:88.5
+                        //OriginalAffiliate:cftnow
+                        //Royalty is increased:21.00000  // note that we are saving the full royalty amount, not as is suggested by Key name, the adjusted amount
+                        //DateOfChange:07-13-2016
+                        //Message:
+
+                        var adjustmentDirection = "Royalty is increased";
+
+                        if (order.InvoiceDetail.Contains("decreased"))
+                        {
+                            adjustmentDirection = "Royalty is decreased";
+                        }
+
+                        var adjustedTotal = row.RowPrice - (decimal)dict["OriginalTotal"];
+                        var adjustedRoyalty = (decimal)dict[adjustmentDirection];
+
+                        //now increment/decriment the subtotals on 'Adjusted Orders' section.
+
+                        if (order.OrderStatus == OrderStatus.Paid)
+                        {
+                            totalPaidRoyalty += adjustedRoyalty;
+                        }
+                        else
+                        {
+                            totalBilledRevenue += adjustedTotal; // 
+                            totalBilledRoyalty += adjustedRoyalty;
+                        }
+
+                        if (order.OrderStatus == OrderStatus.Paid)
+                        {
+                            invoice.TotalOnPaid += adjustedTotal;
+                        }
+                        if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed)
+                        {
+                            invoice.TotalOnBilled += adjustedTotal;
+                        }
+
+
+                        invoice.TotalRoyalties += adjustedRoyalty;
+
+                        order.InvoiceDetail = JsonHelpers.RemoveJObject(order.InvoiceDetail, "ChangedOrderNeedsNewInvoice");
+
+                        StoreInvoiceDetail(order, invoice);
+                        //order.InvoiceDetail = order.InvoiceDetail.Replace("ChangedOrderNeedsNewInvoice", "AdjustedOrderWasReinvoiced");
+                        _orderRepository.SaveChanges();
                     }
-
-                    var adjustedTotal = row.RowPrice - (decimal)dict["OriginalTotal"];
-                    var adjustedRoyalty = (decimal)dict[adjustmentDirection];
-
-                    //now increment/decriment the subtotals on 'Adjusted Orders' section.
-
-                    if (order.OrderStatus == OrderStatus.Paid)
+                    catch (Exception ex)
                     {
-                        totalPaidRoyalty += adjustedRoyalty;
+                        _logger.Fatal("ComputRoyaltyforAdjustedOrders: " + order.idOrder, ex);
                     }
-                    else
-                    {
-                        totalBilledRevenue += adjustedTotal; // 
-                        totalBilledRoyalty += adjustedRoyalty;
-                    }
-
-                    if (order.OrderStatus == OrderStatus.Paid)
-                    {
-                        invoice.TotalOnPaid += adjustedTotal;
-                    }
-                    if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed)
-                    {
-                        invoice.TotalOnBilled += adjustedTotal;
-                    }
-
-
-                    //if (row.Discount != null)
-                    //{
-                    //    if (row.Discount.PercentOff > 0)
-                    //    {
-                    //        invoice.TotalDiscounts = invoice.TotalDiscounts + (row.UnitPrice * ((row.Discount.PercentOff) / 100));
-                    //        _logger.Info(invoice.Affiliate.idUserAff + "-" + row.idOrder + "-" + (row.UnitPrice * ((row.Discount.PercentOff) / 100)));
-
-                    //    }
-                    //    if (row.Discount.FlatOff > 0)
-                    //    {
-                    //        invoice.TotalDiscounts = invoice.TotalDiscounts + row.UnitPrice - row.Discount.FlatOff;
-                    //        _logger.Info(invoice.Affiliate.idUserAff + "-" + row.idOrder + "-" + (row.UnitPrice * ((row.Discount.PercentOff) / 100)));
-                    //    }
-                    //}
-
-                    invoice.TotalRoyalties += adjustedRoyalty;
-
-
-                    order.InvoiceDetail = order.InvoiceDetail.Replace("ChangedOrderNeedsNewInvoice", "AdjustedOrderWasReinvoiced");
-                    //_orderRepository.SaveChanges();
 
                 }
                 catch (Exception ex)
@@ -162,50 +157,60 @@ namespace CUWebinars.Business.Services
 
                     foreach (Order order in orders.OrderBy(o => o.OrderDate))
                     {
-                        var nullCheck = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                        if (nullCheck != null)
-                            numberOfRegistrations =
-                                _orderRepository.GetNumberOfOrdersPerWebinarByAffiliate(
-                                    nullCheck.idWebinar,
-                                    affiliateId);
-                        decimal commissionPercent;
-                        var row = IniInvoice(order, invoice);
-
-                        if (numberOfRegistrations < 6)
+                        try
                         {
-                            commissionPercent = 0.3M;
+
+                            var nullCheck = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                            if (nullCheck != null)
+                                numberOfRegistrations =
+                                    _orderRepository.GetNumberOfOrdersPerWebinarByAffiliate(
+                                        nullCheck.idWebinar,
+                                        affiliateId);
+                            decimal commissionPercent;
+                            var row = IniInvoice(order, invoice);
+
+                            if (numberOfRegistrations < 6)
+                            {
+                                commissionPercent = 0.3M;
+                            }
+                            else if (numberOfRegistrations < 11)
+                            {
+                                commissionPercent = 0.35M;
+                            }
+                            else if (numberOfRegistrations < 16)
+                            {
+                                commissionPercent = 0.4M;
+                            }
+                            else //
+                            {
+                                commissionPercent = 0.45M;
+                            }
+
+                            row.Royalty = row.RowPrice * commissionPercent;
+
+                            if (row.Discount != null && row.Discount.PercentOff == 100) numberOfRegistrations--;
+
+                            if (order.OrderStatus == OrderStatus.Paid)
+                            {
+                                totalPaidRoyalty += row.Royalty;
+                            }
+                            else
+                            {
+                                totalBilledRevenue += row.RowPrice;
+                                totalBilledRoyalty += row.Royalty;
+                            }
+                            row.PercentPaid = commissionPercent;
+                            invoice.TotalRoyalties += row.Royalty;
+
+
+                            StoreInvoiceDetail(order, invoice);
                         }
-                        else if (numberOfRegistrations < 11)
+                        catch (Exception ex)
                         {
-                            commissionPercent = 0.35M;
-                        }
-                        else if (numberOfRegistrations < 16)
-                        {
-                            commissionPercent = 0.4M;
-                        }
-                        else //
-                        {
-                            commissionPercent = 0.45M;
+                            _logger.Fatal("ComputRoyaltyForPostEventOrders Sliding4TierNoCCBreak " + order.idOrder, ex);
+
                         }
 
-                        row.Royalty = row.RowPrice * commissionPercent;
-
-                        if (row.Discount != null && row.Discount.PercentOff == 100) numberOfRegistrations--;
-
-                        if (order.OrderStatus == OrderStatus.Paid)
-                        {
-                            totalPaidRoyalty += row.Royalty;
-                        }
-                        else
-                        {
-                            totalBilledRevenue += row.RowPrice;
-                            totalBilledRoyalty += row.Royalty;
-                        }
-                        row.PercentPaid = commissionPercent;
-                        invoice.TotalRoyalties += row.Royalty;
-
-
-                        StoreInvoiceDetail(order, invoice);
                     }
                     break;
 
@@ -213,50 +218,67 @@ namespace CUWebinars.Business.Services
                     numberOfRegistrations = 0;
                     foreach (Order order in orders.OrderBy(o => o.OrderDate))
                     {
-                        decimal commissionPercent;
-                        var row = IniInvoice(order, invoice);
-                        commissionPercent = 0.4M;
-                        row.Royalty = row.RowPrice * commissionPercent;
-
-                        if (order.OrderStatus == OrderStatus.Paid)
+                        try
                         {
-                            totalPaidRoyalty += row.Royalty;
+
+                            decimal commissionPercent;
+                            var row = IniInvoice(order, invoice);
+                            commissionPercent = 0.4M;
+                            row.Royalty = row.RowPrice * commissionPercent;
+
+                            if (order.OrderStatus == OrderStatus.Paid)
+                            {
+                                totalPaidRoyalty += row.Royalty;
+                            }
+                            else
+                            {
+                                totalBilledRevenue += row.RowPrice;
+                                totalBilledRoyalty += row.Royalty;
+                            }
+                            row.PercentPaid = commissionPercent;
+                            invoice.TotalRoyalties += row.Royalty;
+
+
+                            StoreInvoiceDetail(order, invoice);
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            totalBilledRevenue += row.RowPrice;
-                            totalBilledRoyalty += row.Royalty;
+                            _logger.Fatal("ComputRoyaltyForPostEventOrders Flat40 " + order.idOrder, ex);
                         }
-                        row.PercentPaid = commissionPercent;
-                        invoice.TotalRoyalties += row.Royalty;
 
-
-                        StoreInvoiceDetail(order, invoice);
                     }
                     break;
                 case 4: // CommissionModel.Flat35:
                     foreach (Order order in orders.OrderBy(o => o.OrderDate))
                     {
-
-                        var row = IniInvoice(order, invoice);
-                        decimal commissionPercent = 0.35M;
-
-                        row.Royalty = row.RowPrice * commissionPercent;
-
-                        if (order.OrderStatus == OrderStatus.Paid)
+                        try
                         {
-                            totalPaidRoyalty += row.Royalty;
+
+                            var row = IniInvoice(order, invoice);
+                            decimal commissionPercent = 0.35M;
+
+                            row.Royalty = row.RowPrice * commissionPercent;
+
+                            if (order.OrderStatus == OrderStatus.Paid)
+                            {
+                                totalPaidRoyalty += row.Royalty;
+                            }
+                            else
+                            {
+                                totalBilledRevenue += row.RowPrice;
+                                totalBilledRoyalty += row.Royalty;
+                            }
+                            row.PercentPaid = commissionPercent;
+                            invoice.TotalRoyalties += row.Royalty;
+
+
+                            StoreInvoiceDetail(order, invoice);
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            totalBilledRevenue += row.RowPrice;
-                            totalBilledRoyalty += row.Royalty;
+                            _logger.Fatal("ComputRoyaltyForPostEventOrders Flat35 " + order.idOrder, ex);
                         }
-                        row.PercentPaid = commissionPercent;
-                        invoice.TotalRoyalties += row.Royalty;
 
-
-                        StoreInvoiceDetail(order, invoice);
 
                     }
                     break;
@@ -265,25 +287,34 @@ namespace CUWebinars.Business.Services
 
                     foreach (Order order in orders.OrderBy(o => o.OrderDate))
                     {
-                        decimal commissionPercent = 0.25M;
-
-                        var row = IniInvoice(order, invoice);
-                        row.Royalty = row.RowPrice * commissionPercent;
-
-                        if (order.OrderStatus == OrderStatus.Paid)
+                        try
                         {
-                            totalPaidRoyalty += row.Royalty;
+                            decimal commissionPercent = 0.25M;
+
+                            var row = IniInvoice(order, invoice);
+                            row.Royalty = row.RowPrice * commissionPercent;
+
+                            if (order.OrderStatus == OrderStatus.Paid)
+                            {
+                                totalPaidRoyalty += row.Royalty;
+                            }
+                            else
+                            {
+                                totalBilledRevenue += row.RowPrice;
+                                totalBilledRoyalty += row.Royalty;
+                            }
+                            row.PercentPaid = commissionPercent;
+                            invoice.TotalRoyalties += row.Royalty;
+
+
+                            StoreInvoiceDetail(order, invoice);
+
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            totalBilledRevenue += row.RowPrice;
-                            totalBilledRoyalty += row.Royalty;
+
+                            _logger.Fatal("ComputRoyaltyForPostEventOrders Flat25 " + order.idOrder, ex);
                         }
-                        row.PercentPaid = commissionPercent;
-                        invoice.TotalRoyalties += row.Royalty;
-
-
-                        StoreInvoiceDetail(order, invoice);
 
                     }
                     break;
@@ -321,45 +352,54 @@ namespace CUWebinars.Business.Services
 
                     foreach (Order order in orders.OrderBy(o => o.OrderDate))
                     {
-                        numberOfRegistrations++;
-                        decimal commissionPercent;
-
-                        var row = IniInvoice(order, invoice);
-
-                        if (numberOfRegistrations < 6)
+                        try
                         {
-                            commissionPercent = 0.3M;
+
+                            numberOfRegistrations++;
+                            decimal commissionPercent;
+
+                            var row = IniInvoice(order, invoice);
+
+                            if (numberOfRegistrations < 6)
+                            {
+                                commissionPercent = 0.3M;
+                            }
+                            else if (numberOfRegistrations < 11)
+                            {
+                                commissionPercent = 0.35M;
+                            }
+                            else if (numberOfRegistrations < 16)
+                            {
+                                commissionPercent = 0.4M;
+                            }
+                            else //
+                            {
+                                commissionPercent = 0.45M;
+                            }
+
+                            row.Royalty = row.RowPrice * commissionPercent;
+
+                            if (row.Discount != null && row.Discount.PercentOff == 100) numberOfRegistrations--;
+
+                            if (order.OrderStatus == OrderStatus.Paid)
+                            {
+                                totalPaidRoyalty += row.Royalty;
+                            }
+                            else
+                            {
+                                totalBilledRevenue += row.RowPrice;
+                                totalBilledRoyalty += row.Royalty;
+                            }
+                            row.PercentPaid = commissionPercent;
+                            invoice.TotalRoyalties += row.Royalty;
+
+                            StoreInvoiceDetail(order, invoice);
                         }
-                        else if (numberOfRegistrations < 11)
+                        catch (Exception ex)
                         {
-                            commissionPercent = 0.35M;
-                        }
-                        else if (numberOfRegistrations < 16)
-                        {
-                            commissionPercent = 0.4M;
-                        }
-                        else //
-                        {
-                            commissionPercent = 0.45M;
+                            _logger.Fatal("ComputRoyalty Sliding4TierNoCCBreak " + order.idOrder, ex);
                         }
 
-                        row.Royalty = row.RowPrice * commissionPercent;
-
-                        if (row.Discount != null && row.Discount.PercentOff == 100) numberOfRegistrations--;
-
-                        if (order.OrderStatus == OrderStatus.Paid)
-                        {
-                            totalPaidRoyalty += row.Royalty;
-                        }
-                        else
-                        {
-                            totalBilledRevenue += row.RowPrice;
-                            totalBilledRoyalty += row.Royalty;
-                        }
-                        row.PercentPaid = commissionPercent;
-                        invoice.TotalRoyalties += row.Royalty;
-
-                        StoreInvoiceDetail(order, invoice);
                     }
                     break;
 
@@ -369,53 +409,68 @@ namespace CUWebinars.Business.Services
 
                     foreach (Order order in orders.OrderBy(o => o.OrderDate))
                     {
-                        decimal commissionPercent;
-                        var row = IniInvoice(order, invoice);
-                        commissionPercent = 0.4M;
-
-                        //row.Royalty = order.Total * commissionPercent;
-                        row.Royalty = row.RowPrice * commissionPercent;
-                        row.PercentPaid = commissionPercent;
-                        invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
-
-
-                        if (order.OrderStatus == OrderStatus.Paid)
+                        try
                         {
-                            totalPaidRoyalty += row.Royalty;
-                        }
-                        else
-                        {
-                            totalBilledRevenue += row.RowPrice;
-                            totalBilledRoyalty += row.Royalty;
-                        }
 
-                        StoreInvoiceDetail(order, invoice);
+                            decimal commissionPercent;
+                            var row = IniInvoice(order, invoice);
+                            commissionPercent = 0.4M;
+
+                            //row.Royalty = order.Total * commissionPercent;
+                            row.Royalty = row.RowPrice * commissionPercent;
+                            row.PercentPaid = commissionPercent;
+                            invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
+
+
+                            if (order.OrderStatus == OrderStatus.Paid)
+                            {
+                                totalPaidRoyalty += row.Royalty;
+                            }
+                            else
+                            {
+                                totalBilledRevenue += row.RowPrice;
+                                totalBilledRoyalty += row.Royalty;
+                            }
+
+                            StoreInvoiceDetail(order, invoice);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.Fatal("ComputRoyalty Flat40 " + order.idOrder, ex);
+                        }
                     }
                     break;
                 case 4: // CommissionModel.Flat35:
                     foreach (Order order in orders.OrderBy(o => o.OrderDate))
                     {
-
-                        var row = IniInvoice(order, invoice);
-                        decimal commissionPercent = 0.35M;
-
-                        //row.Royalty = order.Total * commissionPercent;
-                        row.Royalty = row.RowPrice * commissionPercent;
-                        row.PercentPaid = commissionPercent;
-                        invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
-
-
-                        if (order.OrderStatus == OrderStatus.Paid)
+                        try
                         {
-                            totalPaidRoyalty += row.Royalty;
-                        }
-                        else
-                        {
-                            totalBilledRevenue += row.RowPrice;
-                            totalBilledRoyalty += row.Royalty;
-                        }
 
-                        StoreInvoiceDetail(order, invoice);
+                            var row = IniInvoice(order, invoice);
+                            decimal commissionPercent = 0.35M;
+
+                            //row.Royalty = order.Total * commissionPercent;
+                            row.Royalty = row.RowPrice * commissionPercent;
+                            row.PercentPaid = commissionPercent;
+                            invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
+
+
+                            if (order.OrderStatus == OrderStatus.Paid)
+                            {
+                                totalPaidRoyalty += row.Royalty;
+                            }
+                            else
+                            {
+                                totalBilledRevenue += row.RowPrice;
+                                totalBilledRoyalty += row.Royalty;
+                            }
+
+                            StoreInvoiceDetail(order, invoice);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.Fatal("ComputRoyalty Flat35 " + order.idOrder, ex);
+                        }
 
                     }
                     break;
@@ -424,26 +479,36 @@ namespace CUWebinars.Business.Services
 
                     foreach (Order order in orders.OrderBy(o => o.OrderDate))
                     {
-                        decimal commissionPercent = 0.25M;
-
-                        var row = IniInvoice(order, invoice);
-                        //row.Royalty = order.Total * commissionPercent;
-                        row.Royalty = row.RowPrice * commissionPercent;
-                        row.PercentPaid = commissionPercent;
-                        invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
-
-
-                        if (order.OrderStatus == OrderStatus.Paid)
+                        try
                         {
-                            totalPaidRoyalty += row.Royalty;
+
+                            decimal commissionPercent = 0.25M;
+
+                            var row = IniInvoice(order, invoice);
+                            //row.Royalty = order.Total * commissionPercent;
+                            row.Royalty = row.RowPrice * commissionPercent;
+                            row.PercentPaid = commissionPercent;
+                            invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
+
+
+                            if (order.OrderStatus == OrderStatus.Paid)
+                            {
+                                totalPaidRoyalty += row.Royalty;
+                            }
+                            else
+                            {
+                                totalBilledRevenue += row.RowPrice;
+                                totalBilledRoyalty += row.Royalty;
+                            }
+
+                            StoreInvoiceDetail(order, invoice);
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            totalBilledRevenue += row.RowPrice;
-                            totalBilledRoyalty += row.Royalty;
+                            _logger.Fatal("ComputRoyalty Sliding4TierNoCCBreak " + order.idOrder, ex);
+
                         }
 
-                        StoreInvoiceDetail(order, invoice);
                     }
                     break;
 

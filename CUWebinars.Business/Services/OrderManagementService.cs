@@ -1676,208 +1676,208 @@ namespace CUWebinars.Business.Services
                     );
 
                 string preSaveValues = dataOperations.GetPreSaveValues(newOrder.idOrder);
-                //r.RowPrice" +
-                //       ", r.Discount_idDiscount " +
-                //       ", (SELECT Email FROM dbo.AdditionalLocation WHERE idOrderRow = r.idOrderRow)" +
-                //       ", (SELECT RegTypeLabel FROM dbo.RegType WHERE idRegType =  r.idRegType)" +
+                string pRowPrice = preSaveValues.Split(',')[0];
+                string pOrderStatus = preSaveValues.Split(',')[1];
+                string pDiscount_idDiscount = preSaveValues.Split(',')[2];
+                string pAddLocsPrice = preSaveValues.Split(',')[3];
+                string regTypeShortened =
+                    preSaveValues.Split(',')[4].Replace(" Package", "")
+                        .Replace("Live Plus Six", "Live+6")
+                        .Replace(" and Hardcopy Handouts", "")
+                        .Replace(" Recording Only", "")
+                        .Replace(" Plus Five", "+5");
+                int idRegTypeOfOrg = Convert.ToInt32(preSaveValues.Split(',')[5]);
+
                 pricesAndDiscounts = CalculateOrderCost(newOrder, additionalLocationsPricing.Single().Price);
 
-
-                _logger.Info("Adding Event for Order {0}", newOrder.idOrder);
-                try
+                if (newOrder.OrderRows != null)
                 {
-                    if (newOrder.InvoiceDetail != null && newOrder.InvoiceDetail != "")
+
+                    if (
+                        newOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
+                            .RegistrationType.idRegType != idRegTypeOfOrg)
                     {
+                        _logger.Info("UpdateOrderChanges: {0} went from: {1} - {2} to: {3} - {4}", newOrder.idOrder,
+                            regTypeShortened, pRowPrice,
+                            newOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
+                                .RegistrationType.OptionLabel,
+                            newOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RowPrice);
 
-                        _logger.Warn("Invoiced Order is updated: " + newOrder.idOrder);
 
-                        var toJson = JObject.Parse(newOrder.InvoiceDetail);
-                        var orgInvoiceDetails = toJson.Properties().FirstOrDefault(p => p.Name.StartsWith("OrderIsInvoiced"));
-
-                        if (orgInvoiceDetails != null)
+                        try
                         {
-
-                            //properties saved when invoiced:
-                            //"", invoice.InvoiceID),
-                            //"", TtsConfig.UtcNowAsCts,
-                            //"AmountOfOrder", order.Total),
-                            //"AmountOfRoyalty", row.Royalty),
-                            //"", row.PercentPaid),
-                            //"Affiliate", _affiliateRepository.FindById(order.idAffiliate).ttsDomain)
-                            //    r.RowPrice" +
-                            //", o.OrderStatus " +
-                            //", r.Discount_idDiscount " +
-                            //", (SELECT sum(Price) FROM dbo.AdditionalLocation WHERE idOrderRow = r.idOrderRow)" +
-                            //", (SELECT RegTypeLabel FROM dbo.RegType WHERE idRegType =  r.idRegType)" +
-                            string pRowPrice = preSaveValues.Split(',')[0];
-                            string pOrderStatus = preSaveValues.Split(',')[1];
-                            string pDiscount_idDiscount = preSaveValues.Split(',')[2];
-                            string pAddLocsPrice = preSaveValues.Split(',')[3];
-                            string regTypeShortened =
-                                preSaveValues.Split(',')[4].Replace(" Package", "")
-                                    .Replace("Live Plus Six", "Live+6")
-                                    .Replace(" and Hardcopy Handouts", "")
-                                    .Replace(" Recording Only", "")
-                                    .Replace(" Plus Five", "+5");
-
-                            var row = newOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                            //
-                            Debug.Assert(row != null, "row != null");
-                            row.Royalty = row.RowPrice * (decimal)orgInvoiceDetails.First()["PercentPaid"];
-
-                            StringBuilder sb = new StringBuilder();
-
-                            sb.Append(newOrder.idOrder + " was " + regTypeShortened);
-                            sb.Append(" ($" + pRowPrice.ToString().Replace(".0000", "").Replace(".00", "") +
-                                      ") on InvoiceID " + orgInvoiceDetails.First()["InvoiceId"] +
-                                      " but changed to " +
-                                      row.RegistrationType.OptionLabelShort + " (" +
-                                      row.RowPrice.ToString("C").Replace(".00", "") + "). ");
-
-                            decimal adustmentAmount;
-                            var adjustmentDirection = "Royalty is increased";
-
-                            if ((decimal)orgInvoiceDetails.First()["AmountOfRoyalty"] < row.Royalty)
+                            if (!string.IsNullOrEmpty(newOrder.InvoiceDetail) && newOrder.InvoiceDetail.Contains("OrderIsInvoiced"))
                             {
-                                adustmentAmount = row.Royalty -
-                                                  (decimal)orgInvoiceDetails.First()["AmountOfRoyalty"];
-                                sb.Append(adjustmentDirection + " by " +
-                                          adustmentAmount.ToString("C").Replace(".00", ""));
+                                _logger.Warn("Invoiced Order is updated: " + newOrder.idOrder);
+
+                                var toJson = JObject.Parse(newOrder.InvoiceDetail);
+                                var orgInvoiceDetails =
+                                    toJson.Properties().FirstOrDefault(p => p.Name.StartsWith("OrderIsInvoiced"));
+
+                                if (orgInvoiceDetails != null)
+                                {
+                                    var row =
+                                        newOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                                    //
+                                    Debug.Assert(row != null, "row != null");
+                                    row.Royalty = row.RowPrice*(decimal) orgInvoiceDetails.First()["PercentPaid"];
+
+                                    StringBuilder sb = new StringBuilder();
+
+                                    sb.Append(newOrder.idOrder + " was " + regTypeShortened);
+                                    sb.Append(" ($" + pRowPrice.ToString().Replace(".0000", "").Replace(".00", "") +
+                                              ") on InvoiceID " + orgInvoiceDetails.First()["InvoiceId"] +
+                                              " but changed to " +
+                                              row.RegistrationType.OptionLabelShort + " (" +
+                                              row.RowPrice.ToString("C").Replace(".00", "") + "). ");
+
+                                    decimal adustmentAmount;
+                                    var adjustmentDirection = "Royalty is increased";
+
+                                    if ((decimal) orgInvoiceDetails.First()["AmountOfRoyalty"] < row.Royalty)
+                                    {
+                                        adustmentAmount = row.Royalty -
+                                                          (decimal) orgInvoiceDetails.First()["AmountOfRoyalty"];
+                                        sb.Append(adjustmentDirection + " by " +
+                                                  adustmentAmount.ToString("C").Replace(".00", ""));
+
+                                    }
+                                    else
+                                    {
+                                        adjustmentDirection = "Royalty is decreased";
+                                        adustmentAmount = row.Royalty -
+                                                          (decimal) orgInvoiceDetails.First()["AmountOfRoyalty"];
+                                        sb.Append(adjustmentDirection + " by " +
+                                                  (-adustmentAmount).ToString("C").Replace(".00", ""));
+                                    }
+
+
+                                    var newJson4Invoice = new JProperty(
+                                        "ChangedOrderNeedsNewInvoice",
+                                        new JObject(
+                                            new JProperty("OriginalInvoice",
+                                                orgInvoiceDetails.First()["InvoiceId"].ToString()),
+                                            new JProperty("OriginalDateOfInvoice",
+                                                orgInvoiceDetails.First()["DateOfInvoice"].ToString()),
+                                            new JProperty("OriginalTotal",
+                                                orgInvoiceDetails.First()["AmountOfOrder"].ToString()),
+                                            new JProperty("OriginalPercentPaid",
+                                                orgInvoiceDetails.First()["PercentPaid"].ToString()),
+                                            new JProperty("OriginalRoyaltyPaid",
+                                                orgInvoiceDetails.First()["AmountOfRoyalty"].ToString()),
+                                            new JProperty("OriginalAffiliate",
+                                                orgInvoiceDetails.First()["Affiliate"].ToString()),
+                                            new JProperty(adjustmentDirection, adustmentAmount),
+                                            new JProperty("DateOfChange",
+                                                TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
+                                            new JProperty("Message", sb.ToString())
+                                            ));
+
+
+                                    newOrder.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(
+                                        newOrder.InvoiceDetail, newJson4Invoice, "OrderIsInvoiced");
+
+                                }
+                                else
+                                {
+                                    orgInvoiceDetails =
+                                        toJson.Properties()
+                                            .FirstOrDefault(p => p.Name.StartsWith("ChangedOrderNeedsNewInvoice"));
+                                    //properties saved when updated:
+                                    //{ChangedOrderNeedsNewInvoice:{
+                                    //OriginalInvoice
+                                    //OriginalDateOfInvoice
+                                    //OriginalTotal
+                                    //OriginalPercentPaid
+                                    //OriginalRoyaltyPaid
+                                    //OriginalAffiliate
+                                    //Royalty is increased
+                                    //DateOfChange
+
+                                    Debug.Assert(orgInvoiceDetails != null, "orgInvoiceDetails != null");
+                                    string[] tokens = orgInvoiceDetails.First()["Message"].ToString().Split(' ');
+                                    string retVal = tokens[0] + " " + tokens[4];
+
+                                    pRowPrice = orgInvoiceDetails.First()["OriginalTotal"].ToString();
+                                    //string pOrderStatus = preSaveValues.Split(',')[1];
+                                    //string pDiscount_idDiscount = ""; //TODO account for subscription orders;
+                                    //string pAddLocsPrice = ""; //TODO: account for addLoc prices
+                                    regTypeShortened = tokens[3];
+                                    //string regTypeShortened = orgInvoiceDetails.First()["Message"].ToString().Substring(19,  retVal.Length);
+
+                                    var row =
+                                        newOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                                    //
+                                    row.Royalty = row.RowPrice*
+                                                  (decimal) orgInvoiceDetails.First()["OriginalPercentPaid"];
+
+                                    StringBuilder sb = new StringBuilder();
+
+                                    sb.Append(newOrder.idOrder + " was " + regTypeShortened);
+                                    sb.Append(" ($" + pRowPrice.ToString().Replace(".0000", "").Replace(".00", "") +
+                                              ") on InvoiceID " + orgInvoiceDetails.First()["InvoiceId"] +
+                                              " but changed to " +
+                                              row.RegistrationType.OptionLabelShort + " (" +
+                                              row.RowPrice.ToString("C").Replace(".00", "") + "). ");
+
+
+                                    decimal adustmentAmount;
+                                    var adjustmentDirection = "Royalty is increased";
+
+                                    if ((decimal) orgInvoiceDetails.First()["OriginalRoyaltyPaid"] < row.Royalty)
+                                    {
+                                        adustmentAmount = row.Royalty -
+                                                          (decimal) orgInvoiceDetails.First()["OriginalRoyaltyPaid"];
+                                        sb.Append(adjustmentDirection + " by " +
+                                                  adustmentAmount.ToString("C").Replace(".00", ""));
+
+                                    }
+                                    else
+                                    {
+
+                                        adjustmentDirection = "Royalty is decreased";
+                                        adustmentAmount = row.Royalty -
+                                                          (decimal) orgInvoiceDetails.First()["OriginalRoyaltyPaid"];
+                                        sb.Append(adjustmentDirection + " by " +
+                                                  (adustmentAmount).ToString("C").Replace(".00", ""));
+                                    }
+
+                                    var newJson4Invoice = new JProperty(
+                                        "ChangedOrderNeedsNewInvoice",
+                                        new JObject(
+                                            new JProperty("OriginalInvoice",
+                                                orgInvoiceDetails.First()["OriginalInvoice"].ToString()),
+                                            new JProperty("OriginalDateOfInvoice",
+                                                orgInvoiceDetails.First()["OriginalDateOfInvoice"].ToString()),
+                                            new JProperty("OriginalTotal",
+                                                orgInvoiceDetails.First()["OriginalTotal"].ToString()),
+                                            new JProperty("OriginalPercentPaid",
+                                                orgInvoiceDetails.First()["OriginalPercentPaid"].ToString()),
+                                            new JProperty("OriginalRoyaltyPaid",
+                                                orgInvoiceDetails.First()["OriginalRoyaltyPaid"].ToString()),
+                                            new JProperty("OriginalAffiliate",
+                                                orgInvoiceDetails.First()["OriginalAffiliate"].ToString()),
+                                            new JProperty(adjustmentDirection, adustmentAmount),
+                                            new JProperty("DateOfChange",
+                                                TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
+                                            new JProperty("Message", sb.ToString())
+                                            ));
+
+
+                                    newOrder.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(
+                                        newOrder.InvoiceDetail, newJson4Invoice, "ChangedOrderNeedsNewInvoice");
+                                }
 
                             }
-                            else
-                            {
 
-                                adjustmentDirection = "Royalty is decreased";
-                                adustmentAmount = row.Royalty -
-                                                  (decimal)orgInvoiceDetails.First()["AmountOfRoyalty"];
-                                sb.Append(adjustmentDirection + " by " +
-                                          (-adustmentAmount).ToString("C").Replace(".00", ""));
-
-                            }
-
-
-                            var newJson4Invoice = new JProperty(
-                                "ChangedOrderNeedsNewInvoice",
-                                new JObject(
-                                    new JProperty("OriginalInvoice",
-                                        orgInvoiceDetails.First()["InvoiceId"].ToString()),
-                                    new JProperty("OriginalDateOfInvoice",
-                                        orgInvoiceDetails.First()["DateOfInvoice"].ToString()),
-                                    new JProperty("OriginalTotal",
-                                        orgInvoiceDetails.First()["AmountOfOrder"].ToString()),
-                                    new JProperty("OriginalPercentPaid",
-                                        orgInvoiceDetails.First()["PercentPaid"].ToString()),
-                                    new JProperty("OriginalRoyaltyPaid",
-                                        orgInvoiceDetails.First()["AmountOfRoyalty"].ToString()),
-                                    new JProperty("OriginalAffiliate",
-                                        orgInvoiceDetails.First()["Affiliate"].ToString()),
-                                    new JProperty(adjustmentDirection, adustmentAmount),
-                                    new JProperty("DateOfChange",
-                                        TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
-                                    new JProperty("Message", sb.ToString())
-                                    ));
-
-
-                            newOrder.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(
-                                newOrder.InvoiceDetail, newJson4Invoice, "OrderIsInvoiced");
 
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            orgInvoiceDetails = toJson.Properties().FirstOrDefault(p => p.Name.StartsWith("ChangedOrderNeedsNewInvoice"));
-                            //properties saved when updated:
-                            //                            {ChangedOrderNeedsNewInvoice:{
-                            //OriginalInvoice
-                            //OriginalDateOfInvoice
-                            //OriginalTotal
-                            //OriginalPercentPaid
-                            //OriginalRoyaltyPaid
-                            //OriginalAffiliate
-                            //Royalty is increased
-                            //DateOfChange
-
-                            Debug.Assert(orgInvoiceDetails != null, "orgInvoiceDetails != null");
-                            string[] tokens = orgInvoiceDetails.First()["Message"].ToString().Split(' ');
-                            string retVal = tokens[0] + " " + tokens[4];
-
-                            string pRowPrice = orgInvoiceDetails.First()["OriginalTotal"].ToString();
-                            //string pOrderStatus = preSaveValues.Split(',')[1];
-                            //string pDiscount_idDiscount = ""; //TODO account for subscription orders;
-                            //string pAddLocsPrice = ""; //TODO: account for addLoc prices
-                            string regTypeShortened = tokens[3];
-                            //string regTypeShortened = orgInvoiceDetails.First()["Message"].ToString().Substring(19,  retVal.Length);
-
-                            var row = newOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                            //
-                            row.Royalty = row.RowPrice * (decimal)orgInvoiceDetails.First()["OriginalPercentPaid"];
-
-                            StringBuilder sb = new StringBuilder();
-
-                            sb.Append(newOrder.idOrder + " was " + regTypeShortened);
-                            sb.Append(" ($" + pRowPrice.ToString().Replace(".0000", "").Replace(".00", "") +
-                                      ") on InvoiceID " + orgInvoiceDetails.First()["InvoiceId"] +
-                                      " but changed to " +
-                                      row.RegistrationType.OptionLabelShort + " (" +
-                                      row.RowPrice.ToString("C").Replace(".00", "") + "). ");
-
-
-                            decimal adustmentAmount;
-                            var adjustmentDirection = "Royalty is increased";
-
-                            if ((decimal)orgInvoiceDetails.First()["OriginalRoyaltyPaid"] < row.Royalty)
-                            {
-                                adustmentAmount = row.Royalty -
-                                                  (decimal)orgInvoiceDetails.First()["OriginalRoyaltyPaid"];
-                                sb.Append(adjustmentDirection + " by " +
-                                          adustmentAmount.ToString("C").Replace(".00", ""));
-
-                            }
-                            else
-                            {
-
-                                adjustmentDirection = "Royalty is decreased";
-                                adustmentAmount = row.Royalty -
-                                                  (decimal)orgInvoiceDetails.First()["OriginalRoyaltyPaid"];
-                                sb.Append(adjustmentDirection + " by " +
-                                          (adustmentAmount).ToString("C").Replace(".00", ""));
-                            }
-
-                            var newJson4Invoice = new JProperty(
-                                "ChangedOrderNeedsNewInvoice",
-                                new JObject(
-                                    new JProperty("OriginalInvoice",
-                                        orgInvoiceDetails.First()["OriginalInvoice"].ToString()),
-                                    new JProperty("OriginalDateOfInvoice",
-                                        orgInvoiceDetails.First()["OriginalDateOfInvoice"].ToString()),
-                                    new JProperty("OriginalTotal",
-                                        orgInvoiceDetails.First()["OriginalTotal"].ToString()),
-                                    new JProperty("OriginalPercentPaid",
-                                        orgInvoiceDetails.First()["OriginalPercentPaid"].ToString()),
-                                    new JProperty("OriginalRoyaltyPaid",
-                                        orgInvoiceDetails.First()["OriginalRoyaltyPaid"].ToString()),
-                                    new JProperty("OriginalAffiliate",
-                                        orgInvoiceDetails.First()["OriginalAffiliate"].ToString()),
-                                    new JProperty(adjustmentDirection, adustmentAmount),
-                                    new JProperty("DateOfChange",
-                                        TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
-                                    new JProperty("Message", sb.ToString())
-                                    ));
-
-
-                            newOrder.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(
-                                newOrder.InvoiceDetail, newJson4Invoice, "ChangedOrderNeedsNewInvoice");
+                            _logger.Fatal("UpdateOrderChanged Json Merge: ", ex);
                         }
-
                     }
-
-
                 }
-                catch (Exception ex)
-                {
-                    _logger.Fatal("UpdateOrderChanged Json Merge: ", ex);
-                }
-
 
                 _orderRepository.SaveOrderChanges(newOrder, (int)newOrder.OrderStatus);
 
@@ -1886,7 +1886,7 @@ namespace CUWebinars.Business.Services
             }
             catch (Exception exception)
             {
-                _logger.ErrorException(string.Format("SaveOrderChanges method: {0}", exception.Message), exception);
+                _logger.ErrorException(string.Format("SaveOrderChanges method: {0} - {1}", newOrder.idOrder, exception.Message), exception);
             }
             return "failed";
         }

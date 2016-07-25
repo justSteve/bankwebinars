@@ -47,7 +47,7 @@ namespace CUWebinars.Business.Repository
 
         public IQueryable<Affiliate> GetAffiliatesByPromoType(string promoType)
         {
-            var found = items.Where(a => a.EmailPromo == promoType || a.EmailPromo == "Both");
+            var found = items.Where(a => a.EmailPromo == promoType || a.EmailPromo == "Both").OrderBy(a => a.ttsDomain);
             return found;
 
         }

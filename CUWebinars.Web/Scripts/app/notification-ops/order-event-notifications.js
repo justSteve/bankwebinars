@@ -681,7 +681,7 @@ $(function () {
     });
 
     $('#GetSendRecordingPostedEventHtmlButton').on('click', function (eventArgs) {
-        
+
         eventArgs.preventDefault();
 
         $('#OrdersMenuHeader').after('<i id="getHtmlSpinner" class="icon-spinner icon-spin"></i>');
@@ -869,35 +869,71 @@ function FireGenerator() { // used recursively!!!
                 //crunchingLabel.html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Processing ' + (callsComplete + 1) + ' of ' + arryAff.length + '</span>');
             }
         }).done(function (data) {
-
-            if (data.OrdersFound) { // CAN WE GET THE NUMBER OF ORDERS FROM THE CONTROLLER AND compare to 0? (Not easily)
-                // successful request; do something with the data
-                // console.log(data);
+            if (data.InvoicesFound) {
 
                 var parsedInvoice = 0;
                 if (data.InvoiceId) {
                     parsedInvoice = data.InvoiceId;
                 }
-
                 // dynamically create / add checkboxes with the information returned
                 sendRptCheckBoxesDiv.append('<p class="checkbox-inline">' +
                     '<label style="display:inline"><input type="checkbox" checked="Checked" ' +
-                    'id="inlineCheckbox_' + parsedInvoice + '" ' +
-                    'data-affid="' + data.AffiliateId + '" ' +
-                    'data-invoiceid="' + data.InvoiceId + '" ' +
-                    'data-invoiceurl="' + data.Link.PrimaryUri + '" ' +
-                    'data-affiliatecontactemail="' + data.AffiliateContactEmail + '" ' +
-                    'data-daterange="' + data.DateRange + '" ' +
-                    'value="' + data.AffiliateLabel + '">'
-                    + data.AffiliateLabel +
+                    'id="inlineCheckbox_' +
+                    parsedInvoice +
+                    '" ' +
+                    'data-affid="' +
+                    data.AffiliateId +
+                    '" ' +
+                    'data-invoiceid="' +
+                    data.InvoiceId +
+                    '" ' +
+                    'data-invoiceurl="' +
+                    data.Link.PrimaryUri +
+                    '" ' +
+                    'data-affiliatecontactemail="' +
+                    data.AffiliateContactEmail +
+                    '" ' +
+                    'data-daterange="' +
+                    data.DateRange +
+                    '" ' +
+                    'value="' +
+                    data.AffiliateLabel +
+                    '">' +
+                    data.AffiliateLabel +
                     '</label> ' +
-                    '<a href="' + data.Link.PrimaryUri + '" _target=_new>View Report</a></p>');
-
+                    '<a href="' +
+                    data.Link.PrimaryUri +
+                    '" _target=_new>View Report</a></p>');
             } else {
-                console.log("NO INVOICE DATA: " + payload._idAffiliate);
-                sendRptCheckBoxesDiv.append('<p>No orders found for '+ payload._idAffiliate +'</p>');
-            }
+                if (data
+                    .OrdersFound) {
 
+                    // successful request; do something with the data
+                    // console.log(data);
+
+                    var parsedInvoice = 0;
+                    if (data.InvoiceId) {
+                        parsedInvoice = data.InvoiceId;
+                    }
+
+                    // dynamically create / add checkboxes with the information returned
+                    sendRptCheckBoxesDiv.append('<p class="checkbox-inline">' +
+                        '<label style="display:inline"><input type="checkbox" checked="Checked" ' +
+                        'id="inlineCheckbox_' + parsedInvoice + '" ' +
+                        'data-affid="' + data.AffiliateId + '" ' +
+                        'data-invoiceid="' + data.InvoiceId + '" ' +
+                        'data-invoiceurl="' + data.Link.PrimaryUri + '" ' +
+                        'data-affiliatecontactemail="' + data.AffiliateContactEmail + '" ' +
+                        'data-daterange="' + data.DateRange + '" ' +
+                        'value="' + data.AffiliateLabel + '">' +
+                        data.AffiliateLabel + '</label> ' + '<a href="' + data.Link.PrimaryUri + '" _target=_new>View Report</a></p>');
+
+                } else {
+
+                    console.log("NO INVOICE DATA: " + payload._idAffiliate);
+                    sendRptCheckBoxesDiv.append('<p>No orders found for ' + data.AffiliateLabel + '</p>');
+                }
+            }
             console.log("Done: " + callsComplete);
 
 
@@ -929,7 +965,7 @@ function SendInvoices() {
     // add each of the checked invoices to the payload for posting to controller
     $("#SendRptCheckBoxes input[id^='inlineCheckbox_']:checked").each(function (idx, item) {
         var $item = $(item);
-        payload[idx] = { "Affiliate.idUserAff": $item.data("affid"), "Affiliate.ContactEmail": $item.data("affiliatecontactemail"), "InvoiceId": $item.data("invoiceid"), "InvoiceStorageUri": $item.data("invoiceurl") , "DateRange": $item.data("daterange") };
+        payload[idx] = { "Affiliate.idUserAff": $item.data("affid"), "Affiliate.ContactEmail": $item.data("affiliatecontactemail"), "InvoiceId": $item.data("invoiceid"), "InvoiceStorageUri": $item.data("invoiceurl"), "DateRange": $item.data("daterange") };
     });
 
     console.log(payload);

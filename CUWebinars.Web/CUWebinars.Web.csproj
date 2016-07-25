@@ -448,6 +448,8 @@
     <Compile Include="Core\DTResultSetAffiliates.cs" />
     <Compile Include="Core\DTResultSetDiscounts.cs" />
     <Compile Include="Core\ParseMandrillMsg.cs" />
+    <Compile Include="Helpers\AzureStoreHelpers.cs" />
+    <Compile Include="Helpers\BlobHelper.cs" />
     <Compile Include="Models\AddOrderModel.cs" />
     <Compile Include="Controllers\HandoutsController.cs" />
     <Compile Include="Controllers\NavigationController.cs" />
@@ -1256,6 +1258,7 @@
     <Content Include="Content\images\presenters\upcomingwebinars.jpg" />
     <Content Include="Content\images\presenters\vassallo.jpg" />
     <Content Include="Content\images\presenters\void.jpg" />
+    <Content Include="Content\images\presenters\waldman.jpg" />
     <Content Include="Content\images\presenters\waldorf.jpg" />
     <Content Include="Content\images\presenters\zorbini.jpg" />
     <Content Include="Content\images\print-logo.png" />
@@ -1888,6 +1891,7 @@
     <Content Include="Notification\Templates\SendPromoLinks.cshtml" />
     <Content Include="Content\images\email\emailBannerBase.xcf" />
     <Content Include="Notification\Templates\SendWeeklyInvoice.cshtml" />
+    <Content Include="App_Data\mergeTemplates\WeeklyInvoice.docx" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars33 - Web Deploy.pubxml" />

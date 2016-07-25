@@ -428,7 +428,7 @@ function updateOrderStatus(item, orderId, newOrderStatus) {
             if (data.Result == "Success") {
                 // need to update the currently displaying status (presuming it changed)
                 $(".dropdown-toggle", $form).html(data.orderStatus + "&nbsp;<b class=\"caret\"></b>");
-                alert(data.msgFromLegacy);
+                //alert(data.msgFromLegacy);
                 var $cell = $item.parents("td");
                 fireSuccessIndicator($cell);
             }
