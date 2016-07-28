@@ -294,7 +294,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                   "</div>";
             try
             {
-                if (order.InvoiceDetail != null && order.InvoiceDetail.Contains("OrderIsInvoiced"))
+                if (order.InvoiceDetail != null && order.InvoiceDetail.StartsWith("{\"OrderIsInvoiced"))
                 {
                     _logger.Warn("Invoiced Order is changes affiliate: " + order.idOrder + " from " + originalAffiliate.ttsDomain + " to " +
                                   newAffiliate.ttsDomain);
@@ -313,14 +313,14 @@ namespace CUWebinars.Web.Controllers.Admin
                         //"Affiliate", _affiliateRepository.FindById(order.idAffiliate).ttsDomain)
                         var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                         //
-                        var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
+                        var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
                         string preSaveValues = dataOperations.GetPreSaveValues(order.idOrder);
 
                         row.Royalty = row.RowPrice * (decimal)nullChecked.First()["PercentPaid"];
-                        if (order.Affiliate.idUserAff != originalAffiliate.idUserAff)
+                        if (order.idAffiliate != originalAffiliate.idUserAff)
                         {
                             //order will be re-invoiced when processed as via the postevent-orders branch
-                            order.InvoiceDetail = "AffiliateReassignedNeedsNewInvoice";
+                            order.InvoiceDetail = order.InvoiceDetail.Replace("OrderIsInvoiced", "AffiliateReassignedNeedsNewInvoice");
                         }
                     }
                 }
@@ -328,7 +328,7 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             catch (Exception ex)
             {
-                _logger.Fatal("SetAffiliateAssignedToOrder Json Merge: ", ex);
+                _logger.FatalException("SetAffiliateAssignedToOrder Json Merge: ", ex);
             }
 
             _orderManagementService.SaveChanges();
@@ -621,7 +621,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     }
                     catch (Exception ex)
                     {
-                        _logger.Fatal("UpdateOrderChanged Json Merge: ", ex);
+                        _logger.FatalException("UpdateOrderChanged Json Merge: ", ex);
                     }
 
 
@@ -811,7 +811,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
                 catch (Exception ex)
                 {
-                    _logger.Fatal("ClaimsManagement error on " + model.UserEmail + " " + ex);
+                    _logger.FatalException("ClaimsManagement error on " + model.UserEmail, ex);
                 }
             }
 
@@ -997,7 +997,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
                 catch (Exception ex)
                 {
-                    _logger.Fatal("ExpressCheckout tossed exception: " + ex.Message);
+                    _logger.FatalException("ExpressCheckout tossed exception: ", ex);
                 }
 
             }
@@ -2801,7 +2801,7 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             catch (Exception ex)
             {
-                _logger.Fatal("GetOrderCompact error on " + idWebinar, ex);
+                _logger.FatalException("GetOrderCompact error on " + idWebinar, ex);
             }
 
             return Json(new { html = html });
@@ -3183,12 +3183,28 @@ namespace CUWebinars.Web.Controllers.Admin
                                                                                         o.OrderStatus ==
                                                                                         OrderStatus.Paid ||
                                                                                         o.OrderStatus ==
-                                                                                        OrderStatus.Submitted))
-                                                                       ||
-                                                                       o.InvoiceDetail.StartsWith(
-                                                                           "AffiliateReassignedNeedsNewInvoice"));
+                                                                                        OrderStatus.Submitted)));
                                 })
                             .ToList();
+                    List<Order> postEventOrders1 =
+                        _orderManagementService.GetOrdersAll(thisAffiliate, out totalNumberOrders)
+                            .Where(o => o.idAffiliate == thisAffiliate)
+                            .Where(
+                                o =>
+                                {
+                                    var row = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                                    return o.InvoiceDetail != null && (row != null && o.InvoiceDetail.StartsWith(
+                                                                           "{\"AffiliateReassignedNeedsNewInvoice"));
+                                })
+                            .ToList();
+
+                    if (postEventOrders1 != null)
+                    {
+                        foreach (var order in postEventOrders1)
+                        {
+                            postEventOrders.Add(order);
+                        }
+                    }
 
                     if (postEventOrders.Any())
                     {
@@ -3294,7 +3310,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         _orderManagementService.GetOrdersAll(thisAffiliate, out totalNumberOrders)
                             .Where(o => o.idAffiliate == thisAffiliate)
                             .Where(
-                                o => o.InvoiceDetail != null && o.InvoiceDetail.StartsWith("ChangedOrderNeedsNewInvoice"))
+                                o => o.InvoiceDetail != null && o.InvoiceDetail.StartsWith("{\"ChangedOrderNeedsNewInvoice"))
                             .ToList();
 
                     if (adjustedOrders.Any())
@@ -3328,20 +3344,20 @@ namespace CUWebinars.Web.Controllers.Admin
 
                         foreach (var order in adjustedOrders)
                         {
+
+                            var row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                            rowNumber++;
+
+                            var obj = (JObject)JsonConvert.DeserializeObject(order.InvoiceDetail);
+                            var dict = obj.First.First.Children()
+                                .Cast<JProperty>()
+                                .ToDictionary(p => p.Name, p => p.Value);
+
+                            var message = (string)dict["Message"];
+                            var adjustmentDirection = "Royalty is increased";
                             try
                             {
 
-
-                                var row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                                rowNumber++;
-
-                                var obj = (JObject)JsonConvert.DeserializeObject(order.InvoiceDetail);
-                                var dict = obj.First.First.Children()
-                                    .Cast<JProperty>()
-                                    .ToDictionary(p => p.Name, p => p.Value);
-
-                                var message = (string)dict["Message"];
-                                var adjustmentDirection = "Royalty is increased";
 
                                 if (order.InvoiceDetail.Contains("Royalty is decreased"))
                                 {
@@ -3600,13 +3616,13 @@ namespace CUWebinars.Web.Controllers.Admin
                 System.Globalization.Calendar cal = dfi.Calendar;
 
 
-               var blobTest = BlobHelper.GetBlob("affiliateinvoices/", startDate, weekNumber + "-" + idAffiliate + ".pdf");
+                var blobTest = BlobHelper.GetBlob("affiliateinvoices/", startDate, weekNumber + "-" + idAffiliate + ".pdf");
                 if (blobTest != null)
                     blob = blobTest.BlobUri;
             }
             catch (Exception ex)
             {
-                _logger.Fatal("CheckForExistingInvoice: ", ex);
+                _logger.FatalException("CheckForExistingInvoice: ", ex);
             }
             return blob;
         }

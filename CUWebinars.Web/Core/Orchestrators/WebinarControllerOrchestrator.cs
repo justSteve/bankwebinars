@@ -681,7 +681,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 //how to get this ex to detail the tossed error? Inner ex is null.
                 catch (Exception ex)
                 {
-                    _logger.Fatal("AddClaimForOrderNote| MR record not found " + order.BillingEmail + " " + ex.Message);
+                    _logger.FatalException("AddClaimForOrderNote| MR record not found " + order.BillingEmail + " " , ex);
                 }
             }
 

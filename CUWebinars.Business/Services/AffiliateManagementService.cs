@@ -109,21 +109,20 @@ namespace CUWebinars.Business.Services
 
                         invoice.TotalRoyalties += adjustedRoyalty;
 
-                        order.InvoiceDetail = JsonHelpers.RemoveJObject(order.InvoiceDetail, "ChangedOrderNeedsNewInvoice");
-
+                        
                         StoreInvoiceDetail(order, invoice);
-                        //order.InvoiceDetail = order.InvoiceDetail.Replace("ChangedOrderNeedsNewInvoice", "AdjustedOrderWasReinvoiced");
+                        
                         _orderRepository.SaveChanges();
                     }
                     catch (Exception ex)
                     {
-                        _logger.Fatal("ComputRoyaltyforAdjustedOrders: " + order.idOrder, ex);
+                        _logger.FatalException("ComputRoyaltyforAdjustedOrders: " + order.idOrder, ex);
                     }
 
                 }
                 catch (Exception ex)
                 {
-                    _logger.Fatal("ReInvoice attempt on " + order.idOrder + " tosses: ", ex);
+                    _logger.FatalException("ReInvoice attempt on " + order.idOrder + " tosses: ", ex);
                 }
             }
 
@@ -207,7 +206,7 @@ namespace CUWebinars.Business.Services
                         }
                         catch (Exception ex)
                         {
-                            _logger.Fatal("ComputRoyaltyForPostEventOrders Sliding4TierNoCCBreak " + order.idOrder, ex);
+                            _logger.FatalException("ComputRoyaltyForPostEventOrders Sliding4TierNoCCBreak " + order.idOrder, ex);
 
                         }
 
@@ -243,7 +242,7 @@ namespace CUWebinars.Business.Services
                         }
                         catch (Exception ex)
                         {
-                            _logger.Fatal("ComputRoyaltyForPostEventOrders Flat40 " + order.idOrder, ex);
+                            _logger.FatalException("ComputRoyaltyForPostEventOrders Flat40 " + order.idOrder, ex);
                         }
 
                     }
@@ -276,7 +275,7 @@ namespace CUWebinars.Business.Services
                         }
                         catch (Exception ex)
                         {
-                            _logger.Fatal("ComputRoyaltyForPostEventOrders Flat35 " + order.idOrder, ex);
+                            _logger.FatalException("ComputRoyaltyForPostEventOrders Flat35 " + order.idOrder, ex);
                         }
 
 
@@ -313,7 +312,7 @@ namespace CUWebinars.Business.Services
                         catch (Exception ex)
                         {
 
-                            _logger.Fatal("ComputRoyaltyForPostEventOrders Flat25 " + order.idOrder, ex);
+                            _logger.FatalException("ComputRoyaltyForPostEventOrders Flat25 " + order.idOrder, ex);
                         }
 
                     }
@@ -397,7 +396,7 @@ namespace CUWebinars.Business.Services
                         }
                         catch (Exception ex)
                         {
-                            _logger.Fatal("ComputRoyalty Sliding4TierNoCCBreak " + order.idOrder, ex);
+                            _logger.FatalException("ComputRoyalty Sliding4TierNoCCBreak " + order.idOrder, ex);
                         }
 
                     }
@@ -436,7 +435,7 @@ namespace CUWebinars.Business.Services
                         }
                         catch (Exception ex)
                         {
-                            _logger.Fatal("ComputRoyalty Flat40 " + order.idOrder, ex);
+                            _logger.FatalException("ComputRoyalty Flat40 " + order.idOrder, ex);
                         }
                     }
                     break;
@@ -469,7 +468,7 @@ namespace CUWebinars.Business.Services
                         }
                         catch (Exception ex)
                         {
-                            _logger.Fatal("ComputRoyalty Flat35 " + order.idOrder, ex);
+                            _logger.FatalException("ComputRoyalty Flat35 " + order.idOrder, ex);
                         }
 
                     }
@@ -505,7 +504,7 @@ namespace CUWebinars.Business.Services
                         }
                         catch (Exception ex)
                         {
-                            _logger.Fatal("ComputRoyalty Sliding4TierNoCCBreak " + order.idOrder, ex);
+                            _logger.FatalException("ComputRoyalty Sliding4TierNoCCBreak " + order.idOrder, ex);
 
                         }
 
@@ -549,7 +548,8 @@ namespace CUWebinars.Business.Services
                             new JProperty("Affiliate", _affiliateRepository.FindById(order.idAffiliate).ttsDomain)
                             ));
 
-                    order.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(order.InvoiceDetail, newJson, "OrderIsInvoiced");
+                    order.InvoiceDetail = JsonHelpers.MergeJsonWithStoredField(order.InvoiceDetail, newJson);
+
                 }
             }
             catch (Exception ex)

@@ -755,7 +755,7 @@ namespace CUWebinars.Business.AccountService
             }
             catch (Exception ex)
             {
-                _logger.Fatal("AddClaimForPostEventMaterials| MR record not found " + email + " " + ex.Message);
+                _logger.FatalException("AddClaimForPostEventMaterials| MR record not found " + email , ex);
             }
 
         }

@@ -337,7 +337,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (Exception ex)
                 {
-                    _logger.Fatal("migrating CP failed on: " + o.idOrder + "  with: " + ex.Message);
+                    _logger.FatalException("migrating CP failed on: " + o.idOrder + "  with: ",ex);
                 }
             }
         }
@@ -601,7 +601,7 @@ namespace CUWebinars.Web.Controllers
                     }
                     catch (Exception ex)
                     {
-                        _logger.Fatal("Attempt to seriealize order failed: " + newOrder.idOrder, ex);
+                        _logger.FatalException("Attempt to seriealize order failed: " + newOrder.idOrder, ex);
                     }
 
                     newOrder.OrderDate = importedOrder.OrderDate;

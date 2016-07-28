@@ -641,7 +641,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Fatal("GetResendInfoForm error on " + orderId, ex);
+                _logger.FatalException("GetResendInfoForm error on " + orderId, ex);
             }
 
             return Json(new { html = html });
@@ -672,7 +672,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Fatal("GetOrderInfoForm error on " + orderId, ex);
+                _logger.FatalException("GetOrderInfoForm error on " + orderId, ex);
             }
 
             return Json(new { html = html });
@@ -702,7 +702,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Fatal("GetOrderInfoForm error on " + orderId, ex);
+                _logger.FatalException("GetOrderInfoForm error on " + orderId, ex);
             }
 
             return Json(new { html = html });
@@ -741,7 +741,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Fatal("GetEditUserCompactForm error on " + id.Value, ex);
+                _logger.FatalException("GetEditUserCompactForm error on " + id.Value, ex);
             }
 
             return Json(new { html = html });
@@ -779,7 +779,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Fatal("EditInstitution error on " + id.Value, ex);
+                _logger.FatalException("EditInstitution error on " + id.Value, ex);
             }
 
             return Json(new { html = html });

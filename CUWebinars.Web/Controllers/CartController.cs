@@ -369,12 +369,12 @@ namespace CUWebinars.Web.Controllers
                 }
                 else
                 {
-                    _logger.Fatal("CheckoutConfirm was passed a null or zero value: ", new Exception("null or zero ID passed to CheckoutConfirm partial"));
+                    _logger.FatalException("CheckoutConfirm was passed a null or zero value: ", new Exception("null or zero ID passed to CheckoutConfirm partial"));
                 }
             }
             catch (Exception ex)
             {
-                _logger.Fatal("CheckoutConfirm heard: " + ex);
+                _logger.FatalException("CheckoutConfirm heard: " , ex);
                 throw;
             }
             return PartialView("Partials/CheckoutConfirm", model);
@@ -408,7 +408,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (Exception ex)
                 {
-                    _logger.Fatal("CheckoutConfirm heard: " + ex);
+                    _logger.FatalException("CheckoutConfirm heard: " , ex);
                     throw;
                 }
                 return PartialView("Partials/CheckoutConfirmForAffiliate", model);
@@ -1135,7 +1135,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Fatal("UpdateAdditionalLocations", ex);
+                _logger.FatalException("UpdateAdditionalLocations", ex);
                 return Json(new { Result = WebUiConstants.Fail });
             }
         }

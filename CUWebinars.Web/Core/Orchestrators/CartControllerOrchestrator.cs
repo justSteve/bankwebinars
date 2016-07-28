@@ -829,7 +829,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
             catch (Exception ex)
             {
-                _logger.Fatal("ExpressPostback tossed:" + ex.Message + " stacktrace: " + ex.StackTrace);
+                _logger.FatalException("ExpressPostback tossed:"  , ex);
             }
             return null;
         }
@@ -1147,7 +1147,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
             catch (Exception ex)
             {
-                _logger.Fatal("AddClaimForPostEventMaterials: ", ex);
+                _logger.FatalException("AddClaimForPostEventMaterials: ", ex);
             }
 
         }
@@ -1175,7 +1175,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
             catch (Exception ex)
             {
-                _logger.Fatal("InsertOnDemandClaim" + ex);
+                _logger.FatalException("InsertOnDemandClaim" , ex);
             }
 
             var result = _globalConfig.TenantURL + "/o/" + orderId + "-" + order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).OnDemandCode;

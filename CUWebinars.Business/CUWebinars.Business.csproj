@@ -235,7 +235,6 @@
     <Compile Include="Notification\Email\AzureOrderNotifierMessageDelivery.cs" />
     <Compile Include="Notification\Email\ConfirmAdditionalLocationsOrderMessage.cs" />
     <Compile Include="Notification\Email\ConfirmOrderMessage.cs" />
-    <Compile Include="Notification\Email\MailGunDelivery.cs" />
     <Compile Include="Notification\Email\OrderConfirmedForAdditionalLocationDelivery.cs" />
     <Compile Include="Notification\Email\OrderNotifierMessageDelivery.cs" />
     <Compile Include="Notification\Events\AdhocNotificationEvent.cs" />

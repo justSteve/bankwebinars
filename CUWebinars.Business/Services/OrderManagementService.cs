@@ -1874,7 +1874,7 @@ namespace CUWebinars.Business.Services
                         }
                         catch (Exception ex)
                         {
-                            _logger.Fatal("UpdateOrderChanged Json Merge: ", ex);
+                            _logger.FatalException("UpdateOrderChanged Json Merge: ", ex);
                         }
                     }
                 }
