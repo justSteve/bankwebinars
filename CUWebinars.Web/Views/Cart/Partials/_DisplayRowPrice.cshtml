@@ -4,7 +4,7 @@
 @functions {
     private const string CurrencyFormatToken = "c";
     private const string DotAndTwoDecimals = ".00";
-
+    
     private string GetDiscountedTextSpan()
     {
         var outerSpan = new TagBuilder("span");
@@ -108,6 +108,8 @@
 @{
     if (Model != null)
     {
+        var confirmButtonLabel = "Bill Me!";
+        var displayCCButton = "true";
         var rowAmount = new StringBuilder();
 
         rowAmount.Append("<button id='revealOptions' class='btn btn-mini btn-default'> change?</button> <span id=optionLabel>"
@@ -122,6 +124,8 @@
         else
         {
             rowAmount.Append(GetDiscountedTextSpan() + "<br />");
+            confirmButtonLabel = "Submit Order";
+            displayCCButton = "false";
         }
 
         //if (Model.NumberOfAdditionalLocations == 0)
@@ -157,7 +161,7 @@
             <div id="flyUpdateSuccessFlag"></div>
             @if (!string.IsNullOrWhiteSpace(ViewBag.DiscountCaption))
             {
-                <div style="margin: 8px; text-align: center; background-color: darkgray; color: black; padding: 10px 40px 10px 40px; width: 75%;"
+                <div class="label label-success" style="margin: 8px; text-align: center; padding: 7px 40px 7px 40px; width: 75%;"
                      id="discountCaption">@ViewBag.DiscountCaption</div>
             }
 
@@ -165,13 +169,13 @@
                 @if (Model.OrderStatus != OrderStatus.Paid || Model.OrderStatus != OrderStatus.Submitted || Model.OrderStatus != OrderStatus.Billed)
                 {
                     <span>
-                        <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button>
+                        <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">@confirmButtonLabel</button>
                         &nbsp;
                         &nbsp;
                         &nbsp;
                     </span>
                 }
-                @if (Model.OrderStatus != OrderStatus.Paid)
+                @if (Model.OrderStatus != OrderStatus.Paid && displayCCButton == "true")
                 {
                     <span>
                         <button data-toggle="modal" role="button" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br/>`

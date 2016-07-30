@@ -1148,7 +1148,7 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
                     newTotalPrice = 0;
                 
                 
-                $('#discountedText').html(' <span id="totalDiscount">Discounted:$' + registerDuringCheckout.totalDiscount + '</span>').removeClass('muted');
+                $('#discountedText').html(' <span id="totalDiscount">Discounted: $' + registerDuringCheckout.totalDiscount + '</span>').removeClass('muted');
                 //original -- what changed this? $('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
                 $('#showTotalPrice').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '</span>');
 

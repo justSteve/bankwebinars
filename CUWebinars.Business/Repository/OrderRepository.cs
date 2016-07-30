@@ -490,6 +490,7 @@ namespace CUWebinars.Business.Repository
             //TODO: Refactor to employ Claims inspection
             var orders = ((TTSWebinarsContext)db).OrderRows
                 .Include(or => or.Order)
+                .Include(r => r.RegistrationType)
                 .Where(or => or.Discount.idDiscount == idDiscount)
                 .Where(o => o.Order.OrderStatus == OrderStatus.Paid
                     || o.Order.OrderStatus == OrderStatus.Billed

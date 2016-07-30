@@ -34,6 +34,7 @@ namespace CUWebinars.Business.Models
                 //}
             }
         }
+        public decimal CreditCost { get; set; }
         public double Price { get; set; }
         public Nullable<bool> TaxExempt { get; set; }
         public int SortOrder { get; set; }

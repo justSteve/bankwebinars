@@ -24,7 +24,7 @@
 @Html.HiddenFor(model => model.DiscountCode)
 
 
- @*why no show: cgelormino@lakelandbank.com*@
+@*why no show: cgelormino@lakelandbank.com*@
 @if (
 Model.TypeOfDiscount == DiscountType.Subscription
     )
@@ -34,19 +34,37 @@ Model.TypeOfDiscount == DiscountType.Subscription
             <div>
                 @if (Model.CreditsRemain > 0)
                 {
+                    if (Model.DateValidTo > Model.DateValidFrom)
+                    {
+                        <p style="font-size: larger">
+                            Your subscription will expire on @Model.DateValidTo.ToShortDateString()
+                        </p>
+                    }
+                    else
+                    {
+                        <p style="font-size: larger">
+                            Your subscription (@Model.DiscountCode) has <b>@Model.CreditsRemain.ToString().Replace(".00", "")</b> remaining.
+                        </p>
+                    }
+                }
+                else
+                {
+
+                    <p style="font-size: larger; color: red;">
+                        Your subscription package has expired.
+                    </p>
+                }
+                @if (Model.DateValidTo > Model.DateValidFrom)
+                {
                     <p style="font-size: larger">
-                        Your subscription (@Model.DiscountCode) has <b>@Model.CreditsRemain.ToString().Replace(".00", "")</b> remaining.
+                        <a class="btn btn-success pull-right" href="javascript:void( window.open('http://form.jotformpro.com/form/51916745818971', 'blank','scrollbars=yes,toolbar=no,width=700,height=500'))">Click here to Renew!</a>
                     </p>
                 }
                 else
                 {
-                    <p style="font-size: larger; color: red;">
-                        Your subscription package has expired. It has been used <b> @Model.CreditsUsed.ToString().Replace(".00", "")</b> times.
-                    </p>
-                }
-                <div style="margin-top: 6px;">
-                    <a class="btn btn-success pull-right" href="javascript:void( window.open('http://form.jotformpro.com/form/51916745818971', 'blank','scrollbars=yes,toolbar=no,width=700,height=500'))">Click here to add more credits!</a>
-                </div>
+                    <div style="margin-top: 6px;">
+                        <a class="btn btn-success pull-right" href="javascript:void( window.open('http://form.jotformpro.com/form/51916745818971', 'blank','scrollbars=yes,toolbar=no,width=700,height=500'))">Click here to add more credits!</a>
+                    </div>}
             </div>
         </div>
 

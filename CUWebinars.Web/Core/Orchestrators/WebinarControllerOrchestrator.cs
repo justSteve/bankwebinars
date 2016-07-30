@@ -459,7 +459,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 if (aNode.InnerHtml.Contains("Attendee"))
                 {
-                    accessCodeAttendee = aNode.ParentNode.OuterHtml.Split(':')[1].Trim().Split(' ')[0];
+                    accessCodeAttendee = aNode.ParentNode.OuterHtml.Split(':')[1].Trim().Split(' ')[0].Replace("</span>","");
                 }
             }
 
