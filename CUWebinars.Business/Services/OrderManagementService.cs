@@ -27,6 +27,7 @@ using System.Text;
 using System.Web.UI.WebControls;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Core.Helpers;
+using CUWebinars.Business.Notification;
 using CUWebinars.Web.Models;
 using IEvent = CUWebinars.NotificationSystem.Event.IEvent;
 using IEventSource = CUWebinars.NotificationSystem.Event.IEventSource;
@@ -1030,10 +1031,35 @@ namespace CUWebinars.Business.Services
 
             //Calculate discount. 
             decimal discountTotal = 0;
+            TtsConfigHelper ttsConfigHelper = new TtsConfigHelper();
+            
 
             if (row.Discount != null && row.Discount.PercentOff != 0.0M)
             {
-                discountTotal = row.RowPrice * row.Discount.PercentOff / 100;
+                var creditsRemain = CalculateCreditsRemain(row.Discount);
+                if (row.Discount.DiscountType == DiscountType.Subscription)
+                {
+                    if (creditsRemain > row.RegistrationType.CreditCost)
+                    {
+                        discountTotal = row.RowPrice * row.Discount.PercentOff / 100;
+                    }
+                    else
+                    {
+                        if (creditsRemain > 0)
+                        {
+                            discountTotal = 265 * creditsRemain;
+                            //discountTotal = Convert.ToDecimal( ttsConfigHelper.DiscountCreditUnitCost )* creditsRemain;
+                        }
+                        else
+                        {
+                            discountTotal = 0;
+                        }
+                    }
+                }
+                else
+                {
+                    discountTotal = row.RowPrice * row.Discount.PercentOff / 100;
+                }
             }
             else if (row.Discount != null && row.Discount.FlatOff != 0.0M)
             {
@@ -1068,6 +1094,8 @@ namespace CUWebinars.Business.Services
 
             return pricesAndDiscounts;
         }
+
+        public decimal DiscountCreditUnitCost { get; private set; }
 
         //public virtual decimal CalculateOptionsPrice(OrderRow row)
         //{
@@ -1720,7 +1748,7 @@ namespace CUWebinars.Business.Services
                                         newOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                                     //
                                     Debug.Assert(row != null, "row != null");
-                                    row.Royalty = row.RowPrice*(decimal) orgInvoiceDetails.First()["PercentPaid"];
+                                    row.Royalty = row.RowPrice * (decimal)orgInvoiceDetails.First()["PercentPaid"];
 
                                     StringBuilder sb = new StringBuilder();
 
@@ -1734,10 +1762,10 @@ namespace CUWebinars.Business.Services
                                     decimal adustmentAmount;
                                     var adjustmentDirection = "Royalty is increased";
 
-                                    if ((decimal) orgInvoiceDetails.First()["AmountOfRoyalty"] < row.Royalty)
+                                    if ((decimal)orgInvoiceDetails.First()["AmountOfRoyalty"] < row.Royalty)
                                     {
                                         adustmentAmount = row.Royalty -
-                                                          (decimal) orgInvoiceDetails.First()["AmountOfRoyalty"];
+                                                          (decimal)orgInvoiceDetails.First()["AmountOfRoyalty"];
                                         sb.Append(adjustmentDirection + " by " +
                                                   adustmentAmount.ToString("C").Replace(".00", ""));
 
@@ -1746,7 +1774,7 @@ namespace CUWebinars.Business.Services
                                     {
                                         adjustmentDirection = "Royalty is decreased";
                                         adustmentAmount = row.Royalty -
-                                                          (decimal) orgInvoiceDetails.First()["AmountOfRoyalty"];
+                                                          (decimal)orgInvoiceDetails.First()["AmountOfRoyalty"];
                                         sb.Append(adjustmentDirection + " by " +
                                                   (-adustmentAmount).ToString("C").Replace(".00", ""));
                                     }
@@ -1808,8 +1836,8 @@ namespace CUWebinars.Business.Services
                                     var row =
                                         newOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                                     //
-                                    row.Royalty = row.RowPrice*
-                                                  (decimal) orgInvoiceDetails.First()["OriginalPercentPaid"];
+                                    row.Royalty = row.RowPrice *
+                                                  (decimal)orgInvoiceDetails.First()["OriginalPercentPaid"];
 
                                     StringBuilder sb = new StringBuilder();
 
@@ -1824,10 +1852,10 @@ namespace CUWebinars.Business.Services
                                     decimal adustmentAmount;
                                     var adjustmentDirection = "Royalty is increased";
 
-                                    if ((decimal) orgInvoiceDetails.First()["OriginalRoyaltyPaid"] < row.Royalty)
+                                    if ((decimal)orgInvoiceDetails.First()["OriginalRoyaltyPaid"] < row.Royalty)
                                     {
                                         adustmentAmount = row.Royalty -
-                                                          (decimal) orgInvoiceDetails.First()["OriginalRoyaltyPaid"];
+                                                          (decimal)orgInvoiceDetails.First()["OriginalRoyaltyPaid"];
                                         sb.Append(adjustmentDirection + " by " +
                                                   adustmentAmount.ToString("C").Replace(".00", ""));
 
@@ -1837,7 +1865,7 @@ namespace CUWebinars.Business.Services
 
                                         adjustmentDirection = "Royalty is decreased";
                                         adustmentAmount = row.Royalty -
-                                                          (decimal) orgInvoiceDetails.First()["OriginalRoyaltyPaid"];
+                                                          (decimal)orgInvoiceDetails.First()["OriginalRoyaltyPaid"];
                                         sb.Append(adjustmentDirection + " by " +
                                                   (adustmentAmount).ToString("C").Replace(".00", ""));
                                     }
@@ -2637,7 +2665,7 @@ namespace CUWebinars.Business.Services
                 {
                     forNotes.AppendFormat("Applying discount code: {0}", discount.DiscountCode);
                 }
-                
+
             }
             else
             {
@@ -2684,11 +2712,6 @@ namespace CUWebinars.Business.Services
             return credits;
         }
 
-        public string ApplyDiscountCode(int? discountId)
-        {
-            _logger.Fatal("not implemented: " + discountId.Value);
-            return null;
-        }
 
         public IList<WebUser> GetWebUsersOfDiscount(int idDiscount)
         {

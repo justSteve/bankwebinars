@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 
 namespace CUWebinars.Business.Notification
 {
@@ -43,8 +44,8 @@ namespace CUWebinars.Business.Notification
 
         public string OrderHasAdditionalLocations(int idOrder)
         {
-            
-            
+
+
             return null;
 
         }
@@ -65,5 +66,10 @@ namespace CUWebinars.Business.Notification
         {
             return ConfigurationManager.AppSettings["WeeklyInvoiceEmailSubject"];
         }
+        public string DiscountCreditUnitCost()
+        {
+            return ConfigurationManager.AppSettings["DiscountCreditUnitCost"];
+        }
+
     }
 }

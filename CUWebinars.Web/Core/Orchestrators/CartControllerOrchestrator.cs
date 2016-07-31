@@ -197,16 +197,16 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                         order.AdminComments = existingJObject.ToString(Formatting.None);
 
-                        OrderRow orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+                        OrderRow row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
 
                         // This ViewModel is built here because it is re-used.
                         var additionalLocationsViewModel =
-                            BuildAdditionalLocationsViewModel(orderRow, idOrder);
+                            BuildAdditionalLocationsViewModel(row, idOrder);
 
                         var checkoutConfirmViewModel = new CheckoutConfirmViewModel
                         {
                             //Order = order,
-                            AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
+                            AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(row),
                             AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
                             {
                                 Email = webUser.email,
@@ -246,9 +246,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                             //    "None <a href=\"#AddCCModal\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Add?</a> ", // CC user removed at request
                             DiscountModel = BuildDiscountModel(webUser),
                             DisplayOptionsInDropDownViewModel =
-                                BuildDisplayOptionsInDropDownViewModel(orderRow, idOrder),
+                                BuildDisplayOptionsInDropDownViewModel(row, idOrder),
                             DisplayRowPriceViewModel =
-                                BuildDisplayRowPriceViewModel(orderRow, idOrder,
+                                BuildDisplayRowPriceViewModel(row, idOrder,
                                     additionalLocationsViewModel.OptionsCost),
                             idUser = order.WebUser.idUser,
                             ShippingDetailsModel = new ShippingDetailsModel()
@@ -269,7 +269,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                                         TypeOfAddress = AddressType.Shipping
                                     }
                             },
-                            OrderExists = orderRow.Order != null,
+                            OrderExists = row.Order != null,
                             AdditionalLocationsViewModel = additionalLocationsViewModel,
                             OrderRowExists = true,
                             OrderRowHasId = true,
@@ -287,11 +287,11 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                         if (checkoutConfirmViewModel.OrderRowExists)
                         {
-                            if (orderRow.idOrder > 0)
+                            if (row.idOrder > 0)
                                 checkoutConfirmViewModel.OrderRowHasId = true;
 
                             if (checkoutConfirmViewModel.OrderRowHasId)
-                                checkoutConfirmViewModel.OptionLabel = orderRow.RegistrationType.OptionLabel;
+                                checkoutConfirmViewModel.OptionLabel = row.RegistrationType.OptionLabel;
                         }
 
                         if (Request["referred"] != null &&
