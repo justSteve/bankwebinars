@@ -546,10 +546,7 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 try
                 {
-                    if (discountId > 0)
-                    {
-                        _orderManagementService.ApplyDiscountCode(discountId);
-                    }
+
                     var order = _orderManagementService.GetOrderById(model.Id);
                     _logger.Info("Updating OrderStatus " + order.idOrder + " from: " + order.OrderStatus + " to: " + model.DisplayRowPriceViewModel.OrderStatus + " by: " + _appHelper.GetUserAuditInfo());
                     var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
@@ -887,9 +884,9 @@ namespace CUWebinars.Web.Controllers.Admin
                     sb.AppendLine("    Order " + order.idOrder + " deducts: " + thisUse);
 
                     ordersWithDiscount.Add(order);
+                    sb.AppendLine("Calculated usage = " + trackUsed + "-" + trackRemain + " Stored = " + used + "-" + remain);
 
                 }
-                sb.AppendLine("Calculated usage = " + trackUsed + "-" + trackRemain + " Stored = " + discount.CreditsUsed + "-" + discount.CreditsRemain);
 
                 return authUsers.ToString() + sb.ToString();
                 //return Json(new { Result = "{" + sb.ToString() + "}" }, JsonRequestBehavior.AllowGet);
@@ -958,7 +955,8 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         var discount = _orderManagementService.GetDiscountByCode(form.q20_discountCode20);
 
-                        _orderManagementService.ApplyDiscountCode(discount.DiscountCode, row);
+                        //should no longer be attempting to persist discount tally
+                        //_orderManagementService.ApplyDiscountCode(discount.DiscountCode, row);
 
                     }
 
@@ -1871,7 +1869,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 var upcomingWebinars = (from w in _upcoming
                                         select
-                                            "<p style=\"color: bisque; text-decoration: none; \" ><a style=\" color: bisque; border-bottom: 1px dotted bisque;\" href=\"" + _globalConfig.TenantURL + "/Webinar/Details/" +
+                                            "<p style=\"color: whitesmoke; text-decoration: none; \" ><a style=\" color: whitesmoke; border-bottom: 1px dotted bisque;\" href=\"" + _globalConfig.TenantURL + "/Webinar/Details/" +
                                             w.idWebinar + "?idaff={aff_idUserAff}\">" + w.Title + "</a><br>" +
                                             w.Date.ToLongDateString() + "</p>"
                     ).ToArray();
@@ -1917,7 +1915,7 @@ namespace CUWebinars.Web.Controllers.Admin
                          new
                          {
                              featuredItem =
-                             "<p style=\"color: bisque; text-decoration: none; \"><a style=\"color: bisque; \" href=\"" + _globalConfig.TenantURL + "/Webinar/Details/" +
+                             "<p style=\"color: whitesmoke; text-decoration: none; \"><a style=\"color: whitesmoke; \" href=\"" + _globalConfig.TenantURL + "/Webinar/Details/" +
                              a.idWebinar + "?idaff={aff_idUserAff}\">" + a.Title + "</a><br>" +
                              a.Date.ToLongDateString() + "</p>"
                          });
@@ -3063,6 +3061,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         List<Order> webinarsOrders =
                             _orderManagementService.GetOrdersByWebinar(webinar.idWebinar)
                                 .Where(o => o.idAffiliate == thisAffiliate)
+                                .Where(o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed)
                                 .ToList();
                         if (webinarsOrders.Any())
                         {
@@ -3196,6 +3195,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                     return o.InvoiceDetail != null && (row != null && o.InvoiceDetail.StartsWith(
                                                                            "{\"AffiliateReassignedNeedsNewInvoice"));
                                 })
+                                .Where( o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed)
                             .ToList();
 
                     if (postEventOrders1 != null)
@@ -3310,7 +3310,9 @@ namespace CUWebinars.Web.Controllers.Admin
                         _orderManagementService.GetOrdersAll(thisAffiliate, out totalNumberOrders)
                             .Where(o => o.idAffiliate == thisAffiliate)
                             .Where(
-                                o => o.InvoiceDetail != null && o.InvoiceDetail.StartsWith("{\"ChangedOrderNeedsNewInvoice"))
+                                o => o.InvoiceDetail != null && o.InvoiceDetail.StartsWith("{\"ChangedOrderNeedsNewInvoice")
+                                && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed)
+                                )
                             .ToList();
 
                     if (adjustedOrders.Any())

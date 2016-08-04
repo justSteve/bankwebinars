@@ -145,5 +145,7 @@ namespace CUWebinars.Business.Services
         string ApplyDiscountCode(int? discountId);
         IList<WebUser> GetWebUsersOfDiscount(int idDiscount);
         string CheckOrderComments();
+        decimal CalculateCreditsRemain(Discount userDiscount);
+        decimal CalculateCreditsUsed(Discount userDiscount);
     }
 }

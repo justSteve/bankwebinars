@@ -42,9 +42,18 @@ Model.TypeOfDiscount == DiscountType.Subscription
                     }
                     else
                     {
-                        <p style="font-size: larger">
-                            Your subscription (@Model.DiscountCode) has <b>@Model.CreditsRemain.ToString().Replace(".00", "")</b> remaining.
-                        </p>
+                        if (Model.CreditsRemain < 1.1M)
+                        {
+                            <p style="font-size: larger">
+                                Your subscription (@Model.DiscountCode) has <b>@Model.CreditsRemain.ToString().Replace(".00", "")</b> credit remaining.
+                            </p>
+                        }
+                        else
+                        {
+                            <p style="font-size: larger">
+                                Your subscription (@Model.DiscountCode) has <b>@Model.CreditsRemain.ToString().Replace(".00", "")</b> credits remaining.
+                            </p>
+                        }
                     }
                 }
                 else

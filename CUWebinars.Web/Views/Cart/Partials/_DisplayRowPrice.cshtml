@@ -108,8 +108,18 @@
 @{
     if (Model != null)
     {
+        string discountCaption = "";
+        if (!ReferenceEquals(ViewBag.DiscountCaption, null))
+        {
+            discountCaption = ViewBag.DiscountCaption.ToString();
+        }
+        var discResult = "success";
+        if (discountCaption != "" && discountCaption.Contains("Insufficient"))
+        {
+            discResult = "danger";
+        }
         var confirmButtonLabel = "Bill Me!";
-        var displayCCButton = "true";
+        
         var rowAmount = new StringBuilder();
 
         rowAmount.Append("<button id='revealOptions' class='btn btn-mini btn-default'> change?</button> <span id=optionLabel>"
@@ -124,8 +134,8 @@
         else
         {
             rowAmount.Append(GetDiscountedTextSpan() + "<br />");
-            confirmButtonLabel = "Submit Order";
-            displayCCButton = "false";
+            confirmButtonLabel = "Use My Credits!";
+            
         }
 
         //if (Model.NumberOfAdditionalLocations == 0)
@@ -161,8 +171,8 @@
             <div id="flyUpdateSuccessFlag"></div>
             @if (!string.IsNullOrWhiteSpace(ViewBag.DiscountCaption))
             {
-                <div class="label label-success" style="margin: 8px; text-align: center; padding: 7px 40px 7px 40px; width: 75%;"
-                     id="discountCaption">@ViewBag.DiscountCaption</div>
+                <div class="label label-danger @discResult" style="margin: 8px; text-align: center; padding: 7px 40px 7px 40px; width: 75%;"
+                     id="discountCaption">@Html.Raw(ViewBag.DiscountCaption.ToString())</div>
             }
 
             <div style="text-align: center;">
@@ -175,7 +185,7 @@
                         &nbsp;
                     </span>
                 }
-                @if (Model.OrderStatus != OrderStatus.Paid && displayCCButton == "true")
+                @if (Model.OrderStatus != OrderStatus.Paid)
                 {
                     <span>
                         <button data-toggle="modal" role="button" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br/>`
@@ -184,7 +194,7 @@
 
                 <div class="pull-right">
                     <br />
-                    <div class="label label-default large" id="Canceller">Place cart on-hold/Cancel checkout</div>
+                    <div class="label label-warning large" role="button" id="Canceller"><span style="color: black"> &nbsp;&nbsp;Place cart on-hold or<br /> <i>Cancel</i> this checkout &nbsp;&nbsp;</span></div>
                 </div>
 
             </div>

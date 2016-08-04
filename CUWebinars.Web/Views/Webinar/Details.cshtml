@@ -152,7 +152,7 @@
                                                 <div class="tab-pane active" id="signUp">@Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)</div>
                                                 <div class="tab-pane" id="contactInfo"></div>
                                                 <div class="tab-pane" id="confirmation"></div>
-                                                if (Model.UserHasDiscount != null)
+                                                @*if (Model.UserHasDiscount != null)
                                                 {
                                                     if (Model.UserHasDiscount.CreditsRemain > 0)
                                                     {
@@ -174,7 +174,7 @@
                                                             }
                                                         }
                                                     }
-                                                }
+                                                }*@
                                             }
                                             else if (Model.Order.OrderStatus == OrderStatus.AwaitingVerification || Model.Order.OrderStatus == OrderStatus.InProcess || Model.Order.OrderStatus == OrderStatus.Canceled || Model.Order.OrderStatus == OrderStatus.Submitted)
                                             {

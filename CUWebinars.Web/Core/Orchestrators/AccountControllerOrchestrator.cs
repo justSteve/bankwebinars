@@ -396,8 +396,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 PercentOff = discountModel.PercentOff,
                 RenewalTerm = discountModel.RenewalTerm,
                 Status = discountModel.Status,
-                CreditsUsed = discountModel.CreditsUsed,
-                CreditsRemain = discountModel.CreditsRemain,
+                //CreditsUsed = discountModel.CreditsUsed,
+                //CreditsRemain = discountModel.CreditsRemain,
                 //WebUserDiscountXref = 
                 //idDiscount = 
             };
@@ -890,8 +890,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             cpSubscription.Status = discount.Status;
             cpSubscription.Notes = discount.Notes;
 
-            cpSubscription.CreditsRemain = discount.CreditsRemain;
-            cpSubscription.CreditsUsed = discount.CreditsUsed;
+            cpSubscription.CreditsRemain = CalculateCreditsRemain(discount);
+            cpSubscription.CreditsUsed = CalculateCreditsUsed(discount);
             cpSubscription.Cost = discount.Cost;
             cpSubscription.DateBilled = discount.DateBilled;
             cpSubscription.FlatOff = discount.FlatOff;
@@ -921,12 +921,14 @@ namespace CUWebinars.Web.Core.Orchestrators
             discountModel.CreditsRemain = CalculateCreditsRemain(userDiscount);
             discountModel.CreditsUsed = CalculateCreditsUsed(userDiscount);
             discountModel.Cost = userDiscount.Cost;
+            discountModel.TotalCount = userDiscount.TotalCount;
             discountModel.DateBilled = userDiscount.DateBilled;
             discountModel.FlatOff = userDiscount.FlatOff;
             discountModel.PercentOff = userDiscount.PercentOff;
             discountModel.Status = userDiscount.Status;
             discountModel.DiscountCode = userDiscount.DiscountCode;
 
+            
             return discountModel;
         }
 

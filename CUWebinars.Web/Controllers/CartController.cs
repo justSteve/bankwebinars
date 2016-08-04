@@ -130,17 +130,17 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        public PartialViewResult GetAdditionalLocationByOrderId(int webinarId, int? webUserId = null)
-        {
-            if (webUserId.HasValue)
-            {
-                return PartialView(
-                    "~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml",
-                    _cartControllerOrchestrator.BuildAdditionalLocationOfferViewModel(webUserId.Value, webinarId)
-                    );
-            }
-            return null;
-        }
+        //public PartialViewResult GetAdditionalLocationByOrderId(int webinarId, int? webUserId = null)
+        //{
+        //    if (webUserId.HasValue)
+        //    {
+        //        return PartialView(
+        //            "~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml",
+        //            _cartControllerOrchestrator.BuildAdditionalLocationOfferViewModel(webUserId.Value, webinarId)
+        //            );
+        //    }
+        //    return null;
+        //}
 
 
         [HttpPost]
@@ -154,13 +154,13 @@ namespace CUWebinars.Web.Controllers
                 var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
                 try
                 {
-                    if (model.Order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).Discount != null)
-                    {
-                        _cartControllerOrchestrator.ApplyDiscountCode(
-                            model.Order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active)
-                                .Discount.DiscountCode,
-                            model.Order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active));
-                    }
+                    //if (model.Order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).Discount != null)
+                    //{
+                    //    _cartControllerOrchestrator.ApplyDiscountCode(
+                    //        model.Order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active)
+                    //            .Discount.DiscountCode,
+                    //        model.Order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active));
+                    //}
                     model.Order.OrderStatus = OrderStatus.Submitted;
 
                     _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email, model.Order.OrderRows.FirstOrDefault());

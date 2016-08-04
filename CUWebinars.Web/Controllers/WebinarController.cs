@@ -870,7 +870,6 @@ namespace CUWebinars.Web.Controllers
                 }
 
 
-
                 BuildConfirmOrderView(model);
 
 

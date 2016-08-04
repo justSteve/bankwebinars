@@ -2055,7 +2055,7 @@ namespace CUWebinars.Business.Core
             var discount = new Discount
             {
                 idDiscount = id,
-                CreditsRemain = 0
+                //CreditsRemain = 0
 
             };
 

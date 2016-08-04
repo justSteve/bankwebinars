@@ -126,7 +126,7 @@ OCA.initializeFunctions = function () {
     OCA.hookUpApplyDiscountLogic = function (btn, orderRowId) {
 
         btn.on('click', function (e) {
-
+            alert("Hit hook");
             e.preventDefault();
 
             registerDuringCheckout.gatherPricingData();
@@ -170,12 +170,13 @@ OCA.initializeFunctions = function () {
                     //PercentOff = pricesAndDiscounts.Discount.PercentOff
                 if (data.PercentOff > 0) {
 
-                    registerDuringCheckout.totalDiscount = data.TotalDiscount;
+                    registerDuringCheckout.totalDiscount = data.Discount;
                 } else {
-                    registerDuringCheckout.totalDiscount = data.TotalDiscount;
+                    registerDuringCheckout.totalDiscount = data.Discount;
                 }
 
-                var newTotalPrice = data.TotalOrderPrice;
+                console.log(data);
+                var newTotalPrice = data.Total;
 
                 $("#amount").val(newTotalPrice);
 
@@ -185,7 +186,8 @@ OCA.initializeFunctions = function () {
                 $('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 3.').addClass('text-info');
 
                 $('#discountedText').html('Discounted: <span id="totalDiscount">$' + registerDuringCheckout.totalDiscount + '</span>').removeClass('muted');
-                $('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
+                $('#showTotalPrice').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
+                //$('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
 
                 $('#discountSpinner').remove();
 

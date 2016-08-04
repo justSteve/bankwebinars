@@ -334,14 +334,15 @@ namespace CUWebinars.Web.Core.Orchestrators
             discountModel.Status = userDiscount.Status;
             discountModel.Notes = userDiscount.Notes;
 
-            discountModel.CreditsRemain = userDiscount.CreditsRemain;
-            discountModel.CreditsUsed = userDiscount.CreditsUsed;
+            discountModel.CreditsRemain = _orderManagementService.CalculateCreditsRemain(userDiscount);
+            discountModel.CreditsUsed = _orderManagementService.CalculateCreditsUsed(userDiscount);
             discountModel.Cost = userDiscount.Cost;
             discountModel.DateBilled = userDiscount.DateBilled;
             discountModel.FlatOff = userDiscount.FlatOff;
             discountModel.PercentOff = userDiscount.PercentOff;
             discountModel.Status = userDiscount.Status;
             discountModel.DiscountCode = userDiscount.DiscountCode;
+            discountModel.TotalCount = userDiscount.TotalCount;
 
             return discountModel;
         }

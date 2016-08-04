@@ -19,12 +19,18 @@ namespace CUWebinars.Web.Mapping.Configuration
             /*  Initialize all individual mappings here */
 
             Profile.CreateMap<Discount, DiscountModel>()
+                .ForMember(d => d.CreditsUsed, s => s.Ignore())
+                .ForMember(d => d.CreditsRemain, s => s.Ignore())
                 .ForMember(discountModel => discountModel.TypeOfDiscount, discount => discount.MapFrom(d => d.DiscountType));
 
             Profile.CreateMap<Discount, DiscountDTO>()
+                                .ForMember(d => d.CreditsUsed, s => s.Ignore())
+                .ForMember(d => d.CreditsRemain, s => s.Ignore())
                 .ForMember(discountModel => discountModel.DiscountType, discount => discount.MapFrom(d => d.DiscountType));
 
             Profile.CreateMap<Discount, CompliancePerspectivesModel>()
+                                .ForMember(d => d.CreditsUsed, s => s.Ignore())
+                .ForMember(d => d.CreditsRemain, s => s.Ignore())
                 .ForMember(discountModel => discountModel.TypeOfDiscount, discount => discount.MapFrom(d => d.DiscountType));
 
             Profile.CreateMap<Webinar, WebinarEditModel>()
