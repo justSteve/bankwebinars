@@ -1044,7 +1044,7 @@ namespace CUWebinars.Business.Services
                 var creditsRemain = CalculateCreditsRemain(row.Discount);
                 if (row.Discount.DiscountType == DiscountType.Subscription)
                 {
-                    if (creditsRemain > row.RegistrationType.CreditCost)
+                    if (creditsRemain >= row.RegistrationType.CreditCost)
                     {
                         discountTotal = row.RowPrice * row.Discount.PercentOff / 100;
                     }
@@ -2609,14 +2609,21 @@ namespace CUWebinars.Business.Services
 
         public string CalculateDiscountRedemption(Discount discount, OrderRow row, int? undo, int? previewOnly)
         {
+            if (discount.Status != "Active")
+            {
+                _logger.Warn("Discount redemtion attempted on: " + discount.idDiscount + " - " + row.idOrder);
+                return ("This Discount Code " + discount.DiscountCode + " is not activated. For more info contact us by using the Online Chat button below or emailing Support@ttsTrain.com.");
+            }
             var forNotes = new StringBuilder();
             var existingDiscount = discount;
             var regTypeLabel = GetRegTypeOfOrderRow(row.idRegType).OptionLabel;
             decimal creditsRemain = CalculateCreditsRemain(discount);
             decimal creditsUsed = CalculateCreditsUsed(discount);
 
+
+
             decimal thisUse = GetRegTypeOfOrderRow(row.idRegType).CreditCost;
-            
+
             if (previewOnly != null)
             {
                 //if (previewOnly == 0)
@@ -2633,19 +2640,20 @@ namespace CUWebinars.Business.Services
                         forNotes.AppendFormat(" Your subscription expired on " +
                                               discount.DateValidTo.ToShortDateString());
                     }
-                    else if (creditsRemain > 0 && creditsRemain > thisUse)
+                    else if (creditsRemain > 0 && creditsRemain >= thisUse)
                     {
+                        var remainsAfterThisUse = creditsRemain - thisUse;
                         if (thisUse > 1)
                         {
                             forNotes.AppendFormat(
                                 " If applied to this order, {0} credits will be deducted <br>from your package with {1} remaining.",
-                                thisUse.ToString().Replace(".00", ""), creditsRemain.ToString().Replace(".00", ""));
+                                thisUse.ToString().Replace(".00", ""), remainsAfterThisUse.ToString().Replace(".00", ""));
                         }
                         else
                         {
                             forNotes.AppendFormat(
                                 " If applied to this order, {0} credit will be deducted <br>from your package with {1} remaining.",
-                                thisUse.ToString().Replace(".00", ""), creditsRemain.ToString().Replace(".00", ""));
+                                thisUse.ToString().Replace(".00", ""), remainsAfterThisUse.ToString().Replace(".00", ""));
                         }
                     }
                     else
@@ -2680,7 +2688,9 @@ namespace CUWebinars.Business.Services
         public decimal CalculateCreditsRemain(Discount userDiscount)
         {
             var ordersWithDiscount = GetOrdersByDiscount(userDiscount.idDiscount)
-                .Where(o => o.OrderDate > userDiscount.DateVerified);
+                .Where(o => o.OrderDate > userDiscount.DateVerified)
+                ;
+            ;
             var creditsUsed = 0M;
 
             if (ordersWithDiscount.Any())

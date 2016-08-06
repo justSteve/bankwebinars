@@ -1124,7 +1124,7 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
 
                 var flatOff = data.FlatOff;
                 var percentOff = data.PercentOff;
-                console.log(data);
+                //console.log(data);
                 var showDiscount = "";
                 if (percentOff> 0) {
                     //alert("flatOff" + data.Discount);
@@ -1136,9 +1136,6 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
                 if (flatOff > 0) {
                     registerDuringCheckout.totalDiscount = data.Discount;
                 }
-
-                //eliminate calculations here in js -- rely on server
-                //var newTotalPrice = registerDuringCheckout.totalPrice - registerDuringCheckout.totalDiscount;
 
                 var newTotalPrice = data.Total;
 

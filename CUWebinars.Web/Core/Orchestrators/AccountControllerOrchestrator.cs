@@ -902,6 +902,36 @@ namespace CUWebinars.Web.Core.Orchestrators
             return cpSubscription;
         }
 
+        public DiscountModel BuildDiscountModel(Discount discount, int idUser)
+        {
+            var discountModel = new DiscountModel();
+            var currentUser = GetWebUserById(idUser);
+            var userDiscount = _orderManagementService.GetDiscountByUser(currentUser);
+            if (ReferenceEquals(userDiscount, null))
+                return null;
+            _universalMapper.Map(userDiscount, discountModel);
+
+            discountModel.DateValidFrom = userDiscount.DateValidFrom;
+            discountModel.DateValidTo = userDiscount.DateValidTo;
+            discountModel.RenewalTerm = userDiscount.RenewalTerm;
+            discountModel.Status = userDiscount.Status;
+            discountModel.Notes = userDiscount.Notes;
+
+            discountModel.CreditsRemain = CalculateCreditsRemain(userDiscount);
+            discountModel.CreditsUsed = CalculateCreditsUsed(userDiscount);
+            discountModel.Cost = userDiscount.Cost;
+            discountModel.TotalCount = userDiscount.TotalCount;
+            discountModel.DateBilled = userDiscount.DateBilled;
+            discountModel.FlatOff = userDiscount.FlatOff;
+            discountModel.PercentOff = userDiscount.PercentOff;
+            discountModel.Status = userDiscount.Status;
+            discountModel.DiscountCode = userDiscount.DiscountCode;
+
+
+            return discountModel;
+
+        }
+
 
         public DiscountModel BuildDiscountModel()
         {
@@ -928,22 +958,27 @@ namespace CUWebinars.Web.Core.Orchestrators
             discountModel.Status = userDiscount.Status;
             discountModel.DiscountCode = userDiscount.DiscountCode;
 
-            
+
             return discountModel;
         }
 
         private decimal CalculateCreditsRemain(Discount userDiscount)
         {
             var ordersWithDiscount = _orderManagementService.GetOrdersByDiscount(userDiscount.idDiscount)
-                .Where(o => o.OrderDate > userDiscount.DateVerified);
+                .Where(o => o.OrderDate > userDiscount.DateVerified)
+                ;
+
             var creditsUsed = 0M;
 
             if (ordersWithDiscount.Any())
                 foreach (var order in ordersWithDiscount)
                 {
-                    creditsUsed +=
-                        order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
-                            .RegistrationType.CreditCost;
+
+                    {
+                        creditsUsed +=
+                            order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                                .RegistrationType.CreditCost;
+                    }
                 }
             return userDiscount.TotalCount - creditsUsed;
         }

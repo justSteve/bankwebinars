@@ -61,5 +61,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         void EditEmail(string oldEmail, string email, string tenant);
 
         CompliancePerspectivesModel BuildCompPersectivesModel();
+        DiscountModel BuildDiscountModel(Discount discount, int idUser);
     }
 }

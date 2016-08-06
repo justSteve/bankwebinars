@@ -423,7 +423,7 @@ function updateOrderStatus(item, orderId, newOrderStatus) {
         dataType: "json",
         type: "POST",
         success: function (data) {
-            console.log(data);
+            //console.log(data);
 
             if (data.Result == "Success") {
                 // need to update the currently displaying status (presuming it changed)

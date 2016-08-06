@@ -926,7 +926,7 @@ namespace CUWebinars.Web.Controllers
             ViewBag.RegTypeDropDownHtml = ViewHelpers.RenderViewToString(ControllerContext,
                                         "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditRegType_DropDown.cshtml",
                                         regTypeDD, true);
-
+            var discount = _accountControllerOrchestrator.BuildDiscountModel(orderRow.Discount, order.idUser);
             var editModel = new EditOrderInfoModel
             {
                 EditFields = new EditOrderModel
@@ -948,7 +948,8 @@ namespace CUWebinars.Web.Controllers
                         RegistrationType = orderRow.RegistrationType,
                         //RowPrice = orderRow.RowPrice
                     },
-                    Discount = orderRow.Discount,
+                    Discount = discount,
+//                    Discount = orderRow.Discount,
                     Order = order,
                     WebUser = order.WebUser,
                     WebinarId = orderRow.Webinar.idWebinar,

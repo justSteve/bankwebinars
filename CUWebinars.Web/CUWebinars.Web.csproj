@@ -2166,6 +2166,7 @@
     <Content Include="Views\Admin\Home\GenerateWeeklyInvoices.cshtml" />
     <Content Include="Views\Admin\GenerateWeeklyInvoices.cshtml" />
     <Content Include="Views\Admin\Home\_sendWeeklyInvoicesEvent.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\ShowOrdersByDiscount.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

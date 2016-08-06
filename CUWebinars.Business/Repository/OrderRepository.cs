@@ -487,7 +487,7 @@ namespace CUWebinars.Business.Repository
 
         public IList<Order> GetOrdersByDiscount(int idDiscount)
         {
-            //TODO: Refactor to employ Claims inspection
+
             var orders = ((TTSWebinarsContext)db).OrderRows
                 .Include(or => or.Order)
                 .Include(r => r.RegistrationType)

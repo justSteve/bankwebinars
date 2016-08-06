@@ -1,4 +1,5 @@
-﻿@model DiscountModel
+﻿
+@model DiscountModel
 
 <style>
     .form-horizontal .control-group {
@@ -75,7 +76,7 @@ Model.TypeOfDiscount == DiscountType.Subscription
                         <a class="btn btn-success pull-right" href="javascript:void( window.open('http://form.jotformpro.com/form/51916745818971', 'blank','scrollbars=yes,toolbar=no,width=700,height=500'))">Click here to add more credits!</a>
                     </div>}
             </div>
-            @*<div>@Html.RenderPartial("DisplayTemplates/ShowOrdersByDiscount", Model);</div>*@
+            <div>@Html.RenderPartial("DisplayTemplates/ShowOrdersByDiscount", Model);</div>
         </div>
 
         <div class="span4 offset1 ">
