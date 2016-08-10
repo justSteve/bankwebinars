@@ -867,6 +867,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 SelectedRegTypeGroups = regTypeGroupsForWebinars,
                 SelectedTopics = topicIdsForWebinar,
                 SelectedStatus = (int)webinar.Status,
+                SeriesInfo = webinar.SeriesInfo,
                 Statuses = statuses,
                 Topics = topics
             };

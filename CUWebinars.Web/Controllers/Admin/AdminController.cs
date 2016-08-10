@@ -1845,6 +1845,14 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 model.Webinar = _webinarManagementService.GetWebinar(model.Webinar.idWebinar);
 
+                model.SubscriptionPackURL = "http://ttstrain.com/webinar-subscription-packages-for-credit-unions/";
+
+                if (_globalConfig.Tenant == "BankWebinars")
+                    model.SubscriptionPackURL = "http://ttstrain.com/webinar-subscription-packages-for-banks/";
+                
+                model.BasePrice = "$265";
+                if (model.Webinar.Duration == 1) 
+                    model.BasePrice = "$165";
                 // populate the dropdown selector (not currently implemented)
                 TempData["ListOfWebinarsForUpcoming"] =
                     _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(10).ToList();
@@ -3061,7 +3069,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         List<Order> webinarsOrders =
                             _orderManagementService.GetOrdersByWebinar(webinar.idWebinar)
                                 .Where(o => o.idAffiliate == thisAffiliate)
-                                .Where(o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed)
+                                .Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted || o.OrderStatus == OrderStatus.Billed)
                                 .ToList();
                         if (webinarsOrders.Any())
                         {
@@ -3171,20 +3179,14 @@ namespace CUWebinars.Web.Controllers.Admin
                             .Where(
                                 o =>
                                 {
+                                    Debug.Assert(o.OrderRows != null, "o.OrderRows != null");
                                     var row = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                                    return o.InvoiceDetail != null && (row != null && (row.Webinar.Date <
-                                                                                       startDate &&
-                                                                                       o.OrderDate > startDate &&
-                                                                                       o.OrderDate < endDate
-                                                                                       &&
-                                                                                       (o.OrderStatus ==
-                                                                                        OrderStatus.Billed ||
-                                                                                        o.OrderStatus ==
-                                                                                        OrderStatus.Paid ||
-                                                                                        o.OrderStatus ==
-                                                                                        OrderStatus.Submitted)));
+                                    return row != null && (row.Webinar.Date < startDate && o.OrderDate > startDate && o.OrderDate < endDate
+                                                   && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted));
                                 })
                             .ToList();
+
+
                     List<Order> postEventOrders1 =
                         _orderManagementService.GetOrdersAll(thisAffiliate, out totalNumberOrders)
                             .Where(o => o.idAffiliate == thisAffiliate)
@@ -3195,7 +3197,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                     return o.InvoiceDetail != null && (row != null && o.InvoiceDetail.StartsWith(
                                                                            "{\"AffiliateReassignedNeedsNewInvoice"));
                                 })
-                                .Where( o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed)
+                                .Where(o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed)
                             .ToList();
 
                     if (postEventOrders1 != null)

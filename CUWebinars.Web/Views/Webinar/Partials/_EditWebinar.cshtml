@@ -69,13 +69,23 @@
             <div class="control-group span2">
                 <div class="control-label">RecordingUrl</div>
                 <div class="controls">
-                    @Html.TextBoxFor(model => model.RecordingUrl, new { style = "width: 50px" })
+                    @Html.TextBoxFor(model => model.RecordingUrl, new {style = "width: 50px"})
                 </div>
-            </div>           
+            </div>
             <div class="control-group span2">
                 <div class="control-label">Additional Locations $</div>
                 <div class="controls">
-                    @Html.TextBoxFor(model => model.AdditionalLocationsPrice, new { style = "width: 50px" })
+                    @Html.TextBoxFor(model => model.AdditionalLocationsPrice, new {style = "width: 50px"})
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="control-group">
+                <div class="control-label">
+                    @Html.LabelFor(m => m.SeriesInfo)
+                </div>
+                <div class="controls">
+                    @Html.TextBoxFor(m => m.SeriesInfo, new { style = "width: 200px" })
                 </div>
             </div>
         </div>
@@ -96,6 +106,7 @@
                 @Html.TextAreaFor(m => m.ceu, new { cols = 40 })
             </div>
         </div>
+
         <div class="control-group">
             <div class="control-label">
                 @Html.LabelFor(m => m.DescriptionLong, "Description Long")

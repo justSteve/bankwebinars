@@ -449,7 +449,8 @@ namespace CUWebinars.Web.Controllers
         /// <returns></returns>
         /// 
         [AllowAnonymous]
-        //[HttpPost]
+        [HttpPost]
+        [ValidateInput(false)]
         public JsonResult Importorder4Acs(ImportOrderForAcsModel _importedOrder)
         {
             _logger.Info("importorder4ACS Incoming Values: " + JsonConvert.SerializeObject(_importedOrder, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
