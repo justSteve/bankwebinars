@@ -757,6 +757,12 @@ namespace CUWebinars.Business.Services
         {
             return _orderRepository.GetOrdersAll(idAffliate, out totalNumberOrders);
         }
+
+        public IEnumerable<Order> GetOrdersAllForInvoice(int idAffliate, out int totalNumberOrders)
+        {
+            return _orderRepository.GetOrdersAllForInvoice(idAffliate, out totalNumberOrders);
+        }
+
         public IEnumerable<Discount> GetSubscriptionsAll(int idAffliate, out int totalNumberOrders)
         {
             return _orderRepository.GetSubscriptionsAll(idAffliate, out totalNumberOrders);
@@ -1725,18 +1731,16 @@ namespace CUWebinars.Business.Services
 
                 if (newOrder.OrderRows != null)
                 {
-
                     if (
                         newOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
                             .RegistrationType.idRegType != idRegTypeOfOrg)
                     {
+                        // tracked by sproc: EXEC OrderIsUpdated
                         _logger.Info("UpdateOrderChanges: {0} went from: {1} - {2} to: {3} - {4}", newOrder.idOrder,
                             regTypeShortened, pRowPrice,
                             newOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
                                 .RegistrationType.OptionLabel,
                             newOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RowPrice);
-
-
                         try
                         {
                             if (!string.IsNullOrEmpty(newOrder.InvoiceDetail) && newOrder.InvoiceDetail.Contains("OrderIsInvoiced"))
@@ -1788,21 +1792,14 @@ namespace CUWebinars.Business.Services
                                     var newJson4Invoice = new JProperty(
                                         "ChangedOrderNeedsNewInvoice",
                                         new JObject(
-                                            new JProperty("OriginalInvoice",
-                                                orgInvoiceDetails.First()["InvoiceId"].ToString()),
-                                            new JProperty("OriginalDateOfInvoice",
-                                                orgInvoiceDetails.First()["DateOfInvoice"].ToString()),
-                                            new JProperty("OriginalTotal",
-                                                orgInvoiceDetails.First()["AmountOfOrder"].ToString()),
-                                            new JProperty("OriginalPercentPaid",
-                                                orgInvoiceDetails.First()["PercentPaid"].ToString()),
-                                            new JProperty("OriginalRoyaltyPaid",
-                                                orgInvoiceDetails.First()["AmountOfRoyalty"].ToString()),
-                                            new JProperty("OriginalAffiliate",
-                                                orgInvoiceDetails.First()["Affiliate"].ToString()),
+                                            new JProperty("OriginalInvoice", orgInvoiceDetails.First()["InvoiceId"].ToString()),
+                                            new JProperty("OriginalDateOfInvoice", orgInvoiceDetails.First()["DateOfInvoice"].ToString()),
+                                            new JProperty("OriginalTotal", orgInvoiceDetails.First()["AmountOfOrder"].ToString()),
+                                            new JProperty("OriginalPercentPaid", orgInvoiceDetails.First()["PercentPaid"].ToString()),
+                                            new JProperty("OriginalRoyaltyPaid", orgInvoiceDetails.First()["AmountOfRoyalty"].ToString()),
+                                            new JProperty("OriginalAffiliate", orgInvoiceDetails.First()["Affiliate"].ToString()),
                                             new JProperty(adjustmentDirection, adustmentAmount),
-                                            new JProperty("DateOfChange",
-                                                TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
+                                            new JProperty("DateOfChange", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
                                             new JProperty("Message", sb.ToString())
                                             ));
 
@@ -1826,6 +1823,7 @@ namespace CUWebinars.Business.Services
                                     //OriginalAffiliate
                                     //Royalty is increased
                                     //DateOfChange
+                                    _logger.Warn("ChangedOrderNeedsNewInvoice: " + orgInvoiceDetails);
 
                                     Debug.Assert(orgInvoiceDetails != null, "orgInvoiceDetails != null");
                                     string[] tokens = orgInvoiceDetails.First()["Message"].ToString().Split(' ');
@@ -1878,21 +1876,14 @@ namespace CUWebinars.Business.Services
                                     var newJson4Invoice = new JProperty(
                                         "ChangedOrderNeedsNewInvoice",
                                         new JObject(
-                                            new JProperty("OriginalInvoice",
-                                                orgInvoiceDetails.First()["OriginalInvoice"].ToString()),
-                                            new JProperty("OriginalDateOfInvoice",
-                                                orgInvoiceDetails.First()["OriginalDateOfInvoice"].ToString()),
-                                            new JProperty("OriginalTotal",
-                                                orgInvoiceDetails.First()["OriginalTotal"].ToString()),
-                                            new JProperty("OriginalPercentPaid",
-                                                orgInvoiceDetails.First()["OriginalPercentPaid"].ToString()),
-                                            new JProperty("OriginalRoyaltyPaid",
-                                                orgInvoiceDetails.First()["OriginalRoyaltyPaid"].ToString()),
-                                            new JProperty("OriginalAffiliate",
-                                                orgInvoiceDetails.First()["OriginalAffiliate"].ToString()),
+                                            new JProperty("OriginalInvoice", orgInvoiceDetails.First()["OriginalInvoice"].ToString()),
+                                            new JProperty("OriginalDateOfInvoice", orgInvoiceDetails.First()["OriginalDateOfInvoice"].ToString()),
+                                            new JProperty("OriginalTotal", orgInvoiceDetails.First()["OriginalTotal"].ToString()),
+                                            new JProperty("OriginalPercentPaid", orgInvoiceDetails.First()["OriginalPercentPaid"].ToString()),
+                                            new JProperty("OriginalRoyaltyPaid", orgInvoiceDetails.First()["OriginalRoyaltyPaid"].ToString()),
+                                            new JProperty("OriginalAffiliate", orgInvoiceDetails.First()["OriginalAffiliate"].ToString()),
                                             new JProperty(adjustmentDirection, adustmentAmount),
-                                            new JProperty("DateOfChange",
-                                                TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
+                                            new JProperty("DateOfChange", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
                                             new JProperty("Message", sb.ToString())
                                             ));
 
@@ -1900,10 +1891,7 @@ namespace CUWebinars.Business.Services
                                     newOrder.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(
                                         newOrder.InvoiceDetail, newJson4Invoice, "ChangedOrderNeedsNewInvoice");
                                 }
-
                             }
-
-
                         }
                         catch (Exception ex)
                         {

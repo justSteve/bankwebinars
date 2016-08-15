@@ -3174,12 +3174,12 @@ namespace CUWebinars.Web.Controllers.Admin
                 try
                 {
                     List<Order> postEventOrders =
-                        _orderManagementService.GetOrdersAll(thisAffiliate, out totalNumberOrders)
+                        _orderManagementService.GetOrdersAllForInvoice(thisAffiliate, out totalNumberOrders)
                             .Where(o => o.idAffiliate == thisAffiliate)
                             .Where(
                                 o =>
                                 {
-                                    Debug.Assert(o.OrderRows != null, "o.OrderRows != null");
+                                    //Debug.Assert(o.OrderRows != null, "o.OrderRows != null");
                                     var row = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                                     return row != null && (row.Webinar.Date < startDate && o.OrderDate > startDate && o.OrderDate < endDate
                                                    && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted));
@@ -3188,7 +3188,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
                     List<Order> postEventOrders1 =
-                        _orderManagementService.GetOrdersAll(thisAffiliate, out totalNumberOrders)
+                        _orderManagementService.GetOrdersAllForInvoice(thisAffiliate, out totalNumberOrders)
                             .Where(o => o.idAffiliate == thisAffiliate)
                             .Where(
                                 o =>
@@ -3303,13 +3303,13 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
                 catch (Exception ex)
                 {
-                    _logger.ErrorException("GenerateWeeklyInvoicesEvent | PostEventOrders: ", ex);
+                    _logger.ErrorException("GenerateWeeklyInvoicesEvent | PostEventOrders: " + idAffiliate, ex);
                 }
 
                 try
                 {
                     List<Order> adjustedOrders =
-                        _orderManagementService.GetOrdersAll(thisAffiliate, out totalNumberOrders)
+                        _orderManagementService.GetOrdersAllForInvoice(thisAffiliate, out totalNumberOrders)
                             .Where(o => o.idAffiliate == thisAffiliate)
                             .Where(
                                 o => o.InvoiceDetail != null && o.InvoiceDetail.StartsWith("{\"ChangedOrderNeedsNewInvoice")

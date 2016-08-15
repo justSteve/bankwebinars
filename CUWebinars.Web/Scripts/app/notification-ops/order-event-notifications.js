@@ -528,7 +528,7 @@ $(function () {
             var webinarsDropdownList = $('#SelectedWebinarId');
 
             $('#SendConnectionInfoRecipientsButton').on('click', function (eventArgs) {
-
+                //console.log(sendConnectionInfoUrl);
                 var webinarsDropdownListVal = webinarsDropdownList.val();
                 var payload = { webinarId: webinarsDropdownListVal };
 

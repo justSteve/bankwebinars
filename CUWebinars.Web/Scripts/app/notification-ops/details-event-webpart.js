@@ -43,7 +43,7 @@ $(function () {
 
             resetButton = $('#ResetButton');
             resetButton.hide();
-
+            //console.log(sendConnectionInfoUrl);
             $('#FireSendConnInfoButton').on('click', function (eventArgs) {
                 
                 var selectedWebinarId = $('#SelectedWebinarId').val();
