@@ -1682,7 +1682,7 @@ namespace CUWebinars.Web.Controllers.Admin
         //    // this method could be just an "if affiliate id" block in the main method...
         //    //  would save on the JSON / object expander complexity
 
-        //    JsonResult ret = PromoGenerate(model);
+        //    JsonResult ret = GeneratePromo(model);
         //    string json = ret.Data.ToJsonNet();
         //    //var x = JsonConvert.DeserializeObject<xobj>(json);
         //    //System.Diagnostics.Debug.WriteLine(x.masterText);
@@ -1838,7 +1838,7 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
         [HttpPost]
-        public JsonResult PromoGenerate(WebinarPromoViewModel model)
+        public JsonResult GeneratePromo(WebinarPromoViewModel model)
         {
 
             if (model.TemplateType == "Daily")
@@ -1884,7 +1884,16 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 if (upcomingWebinars.Count() > 0)
                     model.ListOfWebinarsUpcomingRendered = String.Join("\r\n", upcomingWebinars);
-
+                //TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(model.Webinar.Date, model.TimeZone, false) +
+                //                      " - " +
+                //                      DateTimeHelper.FormatTime(
+                //                          model.Webinar.Date.AddHours((double)model.Webinar.Duration), model.TimeZone,
+                //                          true) + "<br /></i>";
+                model.TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(model.Webinar.Date, model.TimeZone, false) +
+                                      " - " +
+                                      DateTimeHelper.FormatTime(
+                                          model.Webinar.Date.AddHours((double)model.Webinar.Duration), model.TimeZone,
+                                          true) + "<br /></i>";
                 model.EventBody =
                     HttpUtility.HtmlDecode(
                         _generalFormatter.FormatV2(model, "~/Notification/Templates/SendPerDayPromoMaster.cshtml").Body);
@@ -1955,9 +1964,10 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             IList<Webinar> webinars = new List<Webinar>();
             //
-            foreach (var _id in model.ListOfWebinarsForWeekly)
+            var listOfIds = model.sListOfWebinarsForWeekly.Split(',');
+            foreach (var _id in listOfIds)
             {
-                webinars.Add(_webinarManagementService.GetWebinar(_id));
+                webinars.Add(_webinarManagementService.GetWebinar(Convert.ToInt32(_id)));
             }
             TempData["ListOfWebinarsForWeekly"] = webinars;
 
@@ -3175,38 +3185,44 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     List<Order> postEventOrders =
                         _orderManagementService.GetOrdersAllForInvoice(thisAffiliate, out totalNumberOrders)
-                            .Where(o => o.idAffiliate == thisAffiliate)
-                            .Where(
-                                o =>
-                                {
-                                    //Debug.Assert(o.OrderRows != null, "o.OrderRows != null");
-                                    var row = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                                    return row != null && (row.Webinar.Date < startDate && o.OrderDate > startDate && o.OrderDate < endDate
-                                                   && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted));
-                                })
+                            .Where(o => o.idAffiliate == thisAffiliate
+                            && (o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Date < startDate && o.OrderDate > startDate && o.OrderDate < endDate)
+                            && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed)
+                            && (o.InvoiceDetail != null && (o.InvoiceDetail.StartsWith("\"AffiliateReassignedNeedsNewInvoice"))))
+
+
+                            //.Where(
+                            //    o =>
+                            //    {
+                            //        //Debug.Assert(o.OrderRows != null, "o.OrderRows != null");
+                            //        var row = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                            //        return row != null && (row.Webinar.Date < startDate && o.OrderDate > startDate && o.OrderDate < endDate
+                            //                       && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted));
+                            //    })
+                            
                             .ToList();
 
 
-                    List<Order> postEventOrders1 =
-                        _orderManagementService.GetOrdersAllForInvoice(thisAffiliate, out totalNumberOrders)
-                            .Where(o => o.idAffiliate == thisAffiliate)
-                            .Where(
-                                o =>
-                                {
-                                    var row = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                                    return o.InvoiceDetail != null && (row != null && o.InvoiceDetail.StartsWith(
-                                                                           "{\"AffiliateReassignedNeedsNewInvoice"));
-                                })
-                                .Where(o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed)
-                            .ToList();
+                    //List<Order> postEventOrders1 =
+                    //    _orderManagementService.GetOrdersAllForInvoice(thisAffiliate, out totalNumberOrders)
+                    //        .Where(o => o.idAffiliate == thisAffiliate)
+                    //        .Where(
+                    //            o =>
+                    //            {
+                    //                var row = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                    //                return o.InvoiceDetail != null && (row != null && o.InvoiceDetail.StartsWith(
+                    //                                                       "{\"AffiliateReassignedNeedsNewInvoice"));
+                    //            })
+                    //            .Where(o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed)
+                    //        .ToList();
 
-                    if (postEventOrders1 != null)
-                    {
-                        foreach (var order in postEventOrders1)
-                        {
-                            postEventOrders.Add(order);
-                        }
-                    }
+                    //if (postEventOrders1 != null)
+                    //{
+                    //    foreach (var order in postEventOrders1)
+                    //    {
+                    //        postEventOrders.Add(order);
+                    //    }
+                    //}
 
                     if (postEventOrders.Any())
                     {

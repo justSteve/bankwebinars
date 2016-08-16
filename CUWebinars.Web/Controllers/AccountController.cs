@@ -926,7 +926,12 @@ namespace CUWebinars.Web.Controllers
             ViewBag.RegTypeDropDownHtml = ViewHelpers.RenderViewToString(ControllerContext,
                                         "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditRegType_DropDown.cshtml",
                                         regTypeDD, true);
+
             var discount = _accountControllerOrchestrator.BuildDiscountModel(orderRow.Discount, order.idUser);
+            if (orderRow.Webinar.Title.StartsWith("Compliance Perspectives"))
+            {
+                discount =  _accountControllerOrchestrator.BuildCPSubscriptionModel(orderRow.Discount, order.idUser);
+            }
             var editModel = new EditOrderInfoModel
             {
                 EditFields = new EditOrderModel

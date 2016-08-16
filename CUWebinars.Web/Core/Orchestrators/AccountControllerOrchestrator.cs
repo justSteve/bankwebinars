@@ -932,6 +932,36 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         }
 
+        public DiscountModel BuildCPSubscriptionModel(Discount discount, int idUser)
+        {
+            var discountModel = new DiscountModel();
+
+            var userDiscount = discount;
+            if (ReferenceEquals(userDiscount, null))
+                return null;
+            _universalMapper.Map(userDiscount, discountModel);
+
+            discountModel.DateValidFrom = userDiscount.DateValidFrom;
+            discountModel.DateValidTo = userDiscount.DateValidTo;
+            discountModel.RenewalTerm = userDiscount.RenewalTerm;
+            discountModel.Status = userDiscount.Status;
+            discountModel.Notes = userDiscount.Notes;
+
+            discountModel.CreditsRemain = -1 * (((DateTime.Now.Year - discountModel.DateValidTo.Year) * 12) + DateTime.Now.Month - discountModel.DateValidTo.Month);
+            
+            discountModel.CreditsUsed = CalculateCreditsUsed(userDiscount);
+            discountModel.Cost = userDiscount.Cost;
+            discountModel.TotalCount = userDiscount.TotalCount;
+            discountModel.DateBilled = userDiscount.DateBilled;
+            discountModel.FlatOff = userDiscount.FlatOff;
+            discountModel.PercentOff = userDiscount.PercentOff;
+            discountModel.Status = userDiscount.Status;
+            discountModel.DiscountCode = userDiscount.DiscountCode;
+
+
+            return discountModel;
+        }
+
 
         public DiscountModel BuildDiscountModel()
         {

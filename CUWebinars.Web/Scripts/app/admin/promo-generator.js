@@ -196,7 +196,7 @@ function SetEditorTabForAffiliate(affiliateId, affiliateCopy)
 function GetMasterMarkupAJAX($btn) {
 
     $.ajax({
-        url: '/Admin/PromoGenerate',
+        url: '/Admin/GeneratePromo',
         type: 'POST',
         data: $('#mailer').serialize(),
         dataType: "json",

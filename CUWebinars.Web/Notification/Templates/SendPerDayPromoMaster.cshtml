@@ -794,7 +794,7 @@
                                                                                                                                 <tr>
                                                                                                                                     <td style="width: 100%; text-align: center; mso-line-height-rule: exactly; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #202020; font-family: Helvetica; font-size: 16px; line-height: 115%;" valign="middle">
                                                                                                                                         @webinar.Date.ToLongDateString()<br />
-                                                                                                                                        @Model.FormattedDateTime<br />
+                                                                                                                                        @Model.TimeFormatDisplay<br />
                                                                                                                                         Presented by @webinar.Presenter.WebUser.FullName<br>
 
                                                                                                                                         <a href="@TenantURL/webinar/details/@Model.Webinar.idWebinar?idaff={aff_idUserAff}" style="mso-line-height-rule: exactly; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #2BAADF; font-weight: normal; text-decoration: underline;" target="_blank">Click here to sign up!</a><br /><br />

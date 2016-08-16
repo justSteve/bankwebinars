@@ -16,8 +16,8 @@ namespace CUWebinars.Business.Notification.ViewModel
         public Webinar Webinar { get; set; }
         public DateTime SendDate { get; set; }
         public string EventBody { get; set; }
-        public string FormattedDateTime { get; set; }
-        public int[] ListOfWebinarsForWeekly { get; set; }
+        public string TimeFormatDisplay { get; set; }
+        public string sListOfWebinarsForWeekly { get; set; }
         public int[] ListOfWebinarsForUpcoming { get; set; }
         public string PresenterW_OutPic { get; set; }
 

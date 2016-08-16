@@ -253,7 +253,9 @@
                 {
                     <div>
                         <input type="hidden" name="idWebinar" value=@Model.Webinar.idWebinar />
-                        @Html.DropDownList("ListOfWebinarsForWeekly", (MultiSelectList)ViewBag.ListOfWebinars, new { multiple = "multiple" })
+                        <input type="text" name="sListOfWebinarsForWeekly" />
+                        @*@Html.DropDownList("ListOfWebinarsForWeekly", (MultiSelectList)ViewBag.ListOfWebinars, new { multiple = "multiple" })*@
+                        
                         <br />
                         <input type="submit" value="submit" />
                     </div>

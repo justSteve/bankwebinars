@@ -166,7 +166,7 @@
                             <button id="renewCPSubscriptionButton" class="btn btn-default btn-mini btn-success ">Renew Subscription</button>
 
                             <div class="controls">
-                                Expires on: @Model.EditFields.Discount.DateValidTo.ToShortDateString()
+                                Expires on: @Model.EditFields.Discount.DateValidTo.ToShortDateString() (@Model.EditFields.Discount.CreditsRemain more months)
                                 <br />
                                 Billing Date: @Model.EditFields.Discount.DateBilled.ToString().Split(' ')[0]
                             </div><br />

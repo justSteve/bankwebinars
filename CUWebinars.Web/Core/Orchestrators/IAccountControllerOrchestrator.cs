@@ -62,5 +62,6 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         CompliancePerspectivesModel BuildCompPersectivesModel();
         DiscountModel BuildDiscountModel(Discount discount, int idUser);
+        DiscountModel BuildCPSubscriptionModel(Discount discount, int idUser);
     }
 }
