@@ -109,9 +109,9 @@ namespace CUWebinars.Business.Services
 
                         invoice.TotalRoyalties += adjustedRoyalty;
 
-                        
+
                         StoreInvoiceDetail(order, invoice);
-                        
+
                         _orderRepository.SaveChanges();
                     }
                     catch (Exception ex)
@@ -554,7 +554,7 @@ namespace CUWebinars.Business.Services
             }
             catch (Exception ex)
             {
-                _logger.FatalException("StoreInvoiceDetail on idOrder: " + order.idOrder, ex);
+                _logger.FatalException("GenerateWeeklyInvoicesEvent | StoreInvoiceDetail on idOrder: " + order.idOrder, ex);
             }
             _orderRepository.SaveChanges();
         }
@@ -572,7 +572,7 @@ namespace CUWebinars.Business.Services
             if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed)
             {
                 invoice.TotalOnBilled += row.RowPrice;
-                _logger.Info("TotalOnBilled =  " + invoice.TotalOnBilled);
+                //_logger.Info("TotalOnBilled =  " + invoice.TotalOnBilled);
                 order.OrderStatus = OrderStatus.Billed;
             }
 
@@ -582,13 +582,13 @@ namespace CUWebinars.Business.Services
                 if (row.Discount.PercentOff > 0)
                 {
                     invoice.TotalDiscounts = invoice.TotalDiscounts + (row.UnitPrice * ((row.Discount.PercentOff) / 100));
-                    _logger.Info(invoice.Affiliate.idUserAff + "-" + row.idOrder + "-" + (row.UnitPrice * ((row.Discount.PercentOff) / 100)));
+                    _logger.Info("GenerateWeeklyInvoicesEvent | IniOrder | Discount" + invoice.Affiliate.idUserAff + "-" + row.idOrder + "-" + (row.UnitPrice * ((row.Discount.PercentOff) / 100)));
 
                 }
                 if (row.Discount.FlatOff > 0)
                 {
                     invoice.TotalDiscounts = invoice.TotalDiscounts + row.UnitPrice - row.Discount.FlatOff;
-                    _logger.Info(invoice.Affiliate.idUserAff + "-" + row.idOrder + "-" + (row.UnitPrice * ((row.Discount.PercentOff) / 100)));
+                    _logger.Info("GenerateWeeklyInvoicesEvent | IniOrder | Discount" + invoice.Affiliate.idUserAff + "-" + row.idOrder + "-" + (row.UnitPrice * ((row.Discount.PercentOff) / 100)));
                 }
             }
             return row;

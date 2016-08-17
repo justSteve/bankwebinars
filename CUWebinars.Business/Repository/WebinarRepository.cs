@@ -129,7 +129,7 @@ namespace CUWebinars.Business.Repository
             if (searchTerm.StartsWith("title:"))
             {
                 searchTerm = searchTerm.Replace("title:", "");
-                
+
                 var titleSearch = stronglyTypedContext.Webinars
                     .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
                     .Include(w => w.Presenter.WebUser)
@@ -148,7 +148,7 @@ namespace CUWebinars.Business.Repository
             {
                 return check4Speaker.ToList();
             }
-                    
+
 
             // 1st get all topics with the topicDescription
             var topicsOfSearch = stronglyTypedContext.Topics
@@ -358,11 +358,36 @@ namespace CUWebinars.Business.Repository
 
         public IList<Webinar> GetWebinarsForWeeklyInvoice(DateTime startDate)
         {
-
             var endDate = startDate.AddDays(7);
-            return ((TTSWebinarsContext)db).Webinars.Where(w => w.Date > startDate && w.Date < endDate && w.Status == WebinarStatus.Recorded).ToList();
+            return ((TTSWebinarsContext)db).Webinars
+                .Where(w => w.Date > startDate && w.Date < endDate && w.Status == WebinarStatus.Recorded 
+                    && (w.SeriesInfo != null && !w.SeriesInfo.StartsWith("RequiredParent")
+                    && !w.Title.StartsWith("Compliance Perspectives"))
+                )
+                .ToList();
         }
 
+        public IQueryable<Order> GetOrdersByWebinarForInvoice(int webinarId)
+        {
+            return ((TTSWebinarsContext)db).Orders
+                .Where(
+                    o =>
+                        o.OrderRows.FirstOrDefault(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar ==
+                        webinarId
+                        && (o.OrderStatus == OrderStatus.Billed
+                            || o.OrderStatus == OrderStatus.Paid
+                            || o.OrderStatus == OrderStatus.Submitted
+                        //|| o.OrderStatus == OrderStatus.AwaitingVerification
+                            )
+                            )
+                //.Include(o => o.Affiliate)
+                //.Include(o => o.WebUser)
+                //.Include(o => o.WebUser.Addresses)
+                .Include(o => o.OrderRows)
+                .Include(o => o.OrderRows.Select(or => or.Discount))
+                ;
+
+        }
         public IQueryable<Order> GetOrdersByWebinar(int webinarId)
         {
             return ((TTSWebinarsContext)db).Orders
@@ -381,7 +406,7 @@ namespace CUWebinars.Business.Repository
                 .Include(o => o.WebUser.Addresses)
                 .Include(o => o.OrderRows)
                 .Include(o => o.OrderRows.Select(or => or.Discount))
-                
+
                 ;
 
             //why is registration type not hydrated from here

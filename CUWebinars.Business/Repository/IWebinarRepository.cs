@@ -22,6 +22,7 @@ namespace CUWebinars.Business.Repository
         IQueryable<Webinar> GetAllActive();
         IQueryable<Topic> GetAllTopics();
         IQueryable<Order> GetOrdersByWebinar(int webinarId);
+        IQueryable<Order> GetOrdersByWebinarForInvoice(int webinarId);
         IEnumerable<Order> GetOrdersByWebinarForPostEventClaims(int idWebinar);
         IQueryable<Order> GetAllOrdersByWebinarForUser(int webinarId, int userId);
         IQueryable<Webinar> GetByTopic(int topicId);
@@ -46,5 +47,6 @@ namespace CUWebinars.Business.Repository
         IList<int> GetV3OrdersIdsByWebinar(int idWebinar);
         int? GetNextCompliancePerspectives();
         IList<Webinar> GetWebinarsForWeeklyInvoice(DateTime startDate);
+        
     }
 }

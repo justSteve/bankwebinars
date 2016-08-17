@@ -1837,7 +1837,6 @@
     <Content Include="Notification\Templates\Partials\_GeneralFooter.cshtml" />
     <Content Include="Notification\Templates\SendPerDayPromoMaster.cshtml" />
     <Content Include="Content\images\logo_azbankers.png" />
-    <Content Include="App_Data\mergeTemplates\WeeklyInvoice1.docx" />
     <Content Include="Notification\Templates\SendPromoLinks.cshtml" />
     <Content Include="Notification\Templates\SendWeeklyInvoice.cshtml" />
     <Content Include="App_Data\mergeTemplates\WeeklyInvoice.docx" />

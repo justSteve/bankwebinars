@@ -2207,6 +2207,13 @@ namespace CUWebinars.Business.Services
             return _webinarRepository.GetOrdersByWebinar(idWebinar).ToList();
         }
 
+        public List<Order> GetOrdersByWebinarForInvoice(int idWebinar)
+        {
+            
+            return _webinarRepository.GetOrdersByWebinarForInvoice(idWebinar).ToList();
+            
+        }
+
         public void RestoreToDiscount(int newOrderRowId)
         {
             _logger.Fatal("logs the restoration of discount credit when addLocation is deleted.");

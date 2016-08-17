@@ -1849,9 +1849,9 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 if (_globalConfig.Tenant == "BankWebinars")
                     model.SubscriptionPackURL = "http://ttstrain.com/webinar-subscription-packages-for-banks/";
-                
+
                 model.BasePrice = "$265";
-                if (model.Webinar.Duration == 1) 
+                if (model.Webinar.Duration == 1)
                     model.BasePrice = "$165";
                 // populate the dropdown selector (not currently implemented)
                 TempData["ListOfWebinarsForUpcoming"] =
@@ -2962,6 +2962,8 @@ namespace CUWebinars.Web.Controllers.Admin
         [AllowAnonymous]
         public JsonResult GenerateWeeklyInvoicesEvent(DateTime startDate, int? _idAffiliate)
         {
+            Stopwatch openingCall = new Stopwatch();
+            openingCall.Start();
             ////System.Diagnostics.Debug.WriteLine(_idAffiliate + " Time: " + DateTime.Now.ToString("HH:mm:ss.fff"));
             ////var xaffiliate = _affiliateManagementService.FindById(_idAffiliate.Value);
             //////System.Threading.Thread.Sleep(2000);
@@ -3063,26 +3065,39 @@ namespace CUWebinars.Web.Controllers.Admin
                 DataTable ordersPerAff;
                 DataTable pOrders;
                 DataTable uOrders;
+
                 var dsWebinars = IniDataTables(out dsPostEvent, out webinarsPerAff, out PostEventOrders,
                     out ordersPerAff, out pOrders, out upgradedOrders, out uOrders, out dsUpgradedOrders);
-
+                Stopwatch webinarGroup = new Stopwatch();
+                webinarGroup.Start();
                 foreach (var webinar in webinars)
                 {
+
                     AffiliateInvoiceDTO invoice = new AffiliateInvoiceDTO
                     {
                         Affiliate = affiliate,
                         InvoiceID = weekNumber + "-" + affiliate.idUserAff,
                         RoyaltyTier = affiliate.CommissionModel
                     };
+
                     try
                     {
+                        Stopwatch wLooper = new Stopwatch();
+                        wLooper.Start();
+
                         List<Order> webinarsOrders =
-                            _orderManagementService.GetOrdersByWebinar(webinar.idWebinar)
+                            _orderManagementService.GetOrdersByWebinarForInvoice(webinar.idWebinar)
                                 .Where(o => o.idAffiliate == thisAffiliate)
-                                .Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted || o.OrderStatus == OrderStatus.Billed)
+                            // filter is already applied .Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted || o.OrderStatus == OrderStatus.Billed)
                                 .ToList();
                         if (webinarsOrders.Any())
                         {
+                            TimeSpan ts = wLooper.Elapsed;
+                            _logger.Info("elapsedTimeToEnterOrderProcessing: " + String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10));
+                            foreach (var o in webinarsOrders)
+                            {
+                                o.InvoiceDetail = null;
+                            }
                             hadWOrder = true;
                             invoice = _affiliateManagementService.BuildAffiliateInvoice(invoice, webinarsOrders,
                                 webinar.idWebinar,
@@ -3109,6 +3124,8 @@ namespace CUWebinars.Web.Controllers.Admin
                             {
                                 try
                                 {
+                                    _logger.Info("GenerateWeeklyInvoicesEventClocker starting " + order.idOrder + ":  " + String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10));
+
 
                                     var row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
 
@@ -3119,7 +3136,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                         (row.PercentPaid * 100).ToString().Replace(".00", "").Replace(".0", "") +
                                         "%";
 
-                                    var totalToShow = order.Total.ToString("c");
+                                    //var totalToShow = order.Total.ToString("c");
                                     if (row.Discount != null)
                                     {
                                         hadDiscount = true;
@@ -3154,15 +3171,16 @@ namespace CUWebinars.Web.Controllers.Admin
                                         , _price
                                         , _percent
                                         , row.Royalty.ToString("C").Replace(".00", "")
-                                        , order.OrderStatus
+                                        , abbrevRegType(row.idRegType) + Environment.NewLine + order.OrderStatus
                                         , order.idOrder
                                         , webinar.idWebinar
                                         );
                                 }
                                 catch (Exception ex)
                                 {
+                                    wLooper.Stop();
                                     _logger.ErrorException(
-                                        "GenerateWeeklyInvoicesEvent | WebinarsOrders looper: " + order.idOrder, ex);
+                                        "GenerateWeeklyInvoicesEvent | WebinarsOrders looper: " + order.idOrder + " elapsed: " + String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10), ex);
                                 }
                             }
 
@@ -3172,60 +3190,71 @@ namespace CUWebinars.Web.Controllers.Admin
                             GrandTotalRoyalties += invoice.TotalRoyalties;
                             GrandTotalNetDue += invoice.TotalNetDue;
                         }
+                        wLooper.Stop();
+
+                        TimeSpan ts1 = wLooper.Elapsed;
+                        _logger.Info("GenerateWeeklyInvoicesEvent | ends processing: " + webinar.idWebinar + " elapsed: " + String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts1.Hours, ts1.Minutes, ts1.Seconds, ts1.Milliseconds / 10));
                     }
+
                     catch (Exception ex)
                     {
                         _logger.ErrorException("GenerateWeeklyInvoicesEvent", ex);
                     }
 
                 }
+                webinarGroup.Stop();
+
+                TimeSpan tsWG = webinarGroup.Elapsed;
+                _logger.Info("GenerateWeeklyInvoicesEvent | ends processing WebinarGroup  elapsed: " + String.Format("{0:00}:{1:00}:{2:00}.{3:00}", tsWG.Hours, tsWG.Minutes, tsWG.Seconds, tsWG.Milliseconds / 10));
+
                 //Post Event Orders
 
                 try
                 {
                     List<Order> postEventOrders =
                         _orderManagementService.GetOrdersAllForInvoice(thisAffiliate, out totalNumberOrders)
-                            .Where(o => o.idAffiliate == thisAffiliate
-                            && (o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Date < startDate && o.OrderDate > startDate && o.OrderDate < endDate)
-                            && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed)
-                            && (o.InvoiceDetail != null && (o.InvoiceDetail.StartsWith("\"AffiliateReassignedNeedsNewInvoice"))))
+                            .Where(o => o.idAffiliate == thisAffiliate)
+                            .Where(
+                            o =>
+                            {
+                                //Debug.Assert(o.OrderRows != null, "o.OrderRows != null");
+                                var row = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                                return row != null && (row.Webinar.Date < startDate && o.OrderDate > startDate && o.OrderDate < endDate
+                                               && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted));
+                            })
 
-
-                            //.Where(
-                            //    o =>
-                            //    {
-                            //        //Debug.Assert(o.OrderRows != null, "o.OrderRows != null");
-                            //        var row = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                            //        return row != null && (row.Webinar.Date < startDate && o.OrderDate > startDate && o.OrderDate < endDate
-                            //                       && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted));
-                            //    })
-                            
                             .ToList();
 
 
-                    //List<Order> postEventOrders1 =
-                    //    _orderManagementService.GetOrdersAllForInvoice(thisAffiliate, out totalNumberOrders)
-                    //        .Where(o => o.idAffiliate == thisAffiliate)
-                    //        .Where(
-                    //            o =>
-                    //            {
-                    //                var row = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                    //                return o.InvoiceDetail != null && (row != null && o.InvoiceDetail.StartsWith(
-                    //                                                       "{\"AffiliateReassignedNeedsNewInvoice"));
-                    //            })
-                    //            .Where(o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed)
-                    //        .ToList();
+                    List<Order> postEventOrders1 =
+                        _orderManagementService.GetOrdersAllForInvoice(thisAffiliate, out totalNumberOrders)
+                            .Where(o => o.idAffiliate == thisAffiliate)
+                            .Where(
+                                o =>
+                                {
+                                    var row = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                                    return o.InvoiceDetail != null && (row != null && o.InvoiceDetail.StartsWith(
+                                                                           "{\"AffiliateReassignedNeedsNewInvoice"));
+                                })
+                                .Where(o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed)
+                            .ToList();
 
-                    //if (postEventOrders1 != null)
-                    //{
-                    //    foreach (var order in postEventOrders1)
-                    //    {
-                    //        postEventOrders.Add(order);
-                    //    }
-                    //}
+                    if (postEventOrders1 != null)
+                    {
+                        foreach (var order in postEventOrders1)
+                        {
+                            postEventOrders.Add(order);
+                        }
+                    }
 
                     if (postEventOrders.Any())
                     {
+                        _logger.Info("GenerateWeeklyInvoices found " + postEventOrders.Count + " for " + idAffiliate + " on ");
+                        foreach (var postEventOrder in postEventOrders)
+                        {
+                            _logger.Info("Webinar order " + postEventOrder.idOrder + " for " + idAffiliate);
+                            postEventOrder.InvoiceDetail = null;
+                        }
                         hadPOrder = true;
                         AffiliateInvoiceDTO invoice = new AffiliateInvoiceDTO
                         {
@@ -3297,7 +3326,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                     , _price
                                     , _percent
                                     , row.Royalty.ToString("C").Replace(".00", "")
-                                    , order.OrderStatus
+                                    , abbrevRegType(row.idRegType) + Environment.NewLine + order.OrderStatus
                                     , order.idOrder
                                     , row.Webinar.Title
                                     , 99
@@ -3622,6 +3651,13 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             return Json(new { Result = WebUiConstants.Fail, OrdersFound = false, ErrorMsg = "error writing file" },
                     JsonRequestBehavior.AllowGet);
+
+        }
+
+        private string abbrevRegType(int idRegType)
+        {
+            return _orderManagementService.GetRegTypeOfOrderRow(idRegType).OptionLabelShort;
+
 
         }
 
