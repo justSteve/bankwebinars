@@ -719,12 +719,12 @@ namespace CUWebinars.Business.Repository
         public Discount FindDiscountByCode(string discount)
         {
             var code = ((TTSWebinarsContext)db).Discounts.SingleOrDefault
-                (d => d.DiscountCode.EndsWith(discount));
+                (d => d.DiscountCode.EndsWith(discount) && d.Status.StartsWith("A"));
 
             if (ReferenceEquals(code, null))
             {
                 code = ((TTSWebinarsContext)db).Discounts.SingleOrDefault
-                (d => d.DiscountCode == (discount));
+                (d => d.DiscountCode == (discount) && d.Status.StartsWith("A"));
             }
             return code;
         }

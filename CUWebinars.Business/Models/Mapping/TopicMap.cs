@@ -23,7 +23,7 @@ namespace CUWebinars.Business.Models.Mapping
             ToTable("Topic");
             Property(t => t.idTopic).HasColumnName("idTopic");
             Property(t => t.topicDesc).HasColumnName("topicDesc");
-            Property(t => t.idParentTopic).HasColumnName("idParentTopic");
+            //Property(t => t.idParentTopic).HasColumnName("idParentTopic");
             Property(t => t.topicHTML).HasColumnName("topicHTML");
             Property(t => t.sortOrder).HasColumnName("sortOrder");
 
@@ -32,9 +32,9 @@ namespace CUWebinars.Business.Models.Mapping
 
             
             // Relationships
-            HasOptional(t => t.Topic2)
-                            .WithMany(t => t.Topic1)
-                            .HasForeignKey(d => d.idParentTopic);
+            //HasOptional(t => t.Topic2)
+            //                .WithMany(t => t.Topic1)
+            //                .HasForeignKey(d => d.idParentTopic);
 
         }
     }

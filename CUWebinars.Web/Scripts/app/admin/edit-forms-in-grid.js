@@ -55,7 +55,6 @@ $(document).ready(function () {
     };
 
     ns.deleteItem = function (e) {
-
         e.preventDefault();
 
         ns.numberOfAdditionalLocations -= 1;
@@ -236,7 +235,7 @@ $(document).ready(function () {
         var form = $item.parents("form");
         var $form = $(form);
 
-
+        //console.log(e);
         e.preventDefault();
 
         // initialization code currently commented out
@@ -271,7 +270,7 @@ $(document).ready(function () {
                 if (data) {
                     if (data.Result == 0) {
 
-                        alert("The discount code " + data.Code + " was not found." +
+                        alert("There was an error detected while attempting to locate discount code " + data.Code + ". " +
                             " Try again or use our Help & Feedback button (lower right corner)  for assistance.");
                     } else {
                         // need to update the currently displaying regType and associated costs
@@ -279,6 +278,7 @@ $(document).ready(function () {
                         $("#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice").html("$" + data.BasePrice);
                         $("#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions").html("$" + data.OptionsPrice);
                         $("#DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount").html("$" + data.Discount);
+                        $("#DisplayRowPriceViewModel_PricesAndDiscounts_CreditsRemain").html("$" + data.CreditsRemain);
 
                         $("#DisplayRowPriceViewModel_PricesAndDiscounts_Tax").html("$" + data.Tax);
                         if (data.Tax > 0)
@@ -302,7 +302,7 @@ $(document).ready(function () {
                         }
 
                         //  Reuse logic already in display-orders.js for when the datatables.net gets created...
-                        var parentHtml = DO.getBillingCellHtml(showDiscount, data.regTypeShort, data.Total, full.ShippedDateString);
+                        var parentHtml = DO.getBillingCellHtml(showDiscount, data.regTypeShort, data.Total, data.ShippedDateString);
                         $parentCell.html(parentHtml);
 
                         var $childRow = $item.closest("td.child-row");

@@ -55,21 +55,18 @@ namespace CUWebinars.Business.Core.Helpers
 
                     objectToValidate = JObject.Parse(existingJson);
 
-                    IList<string> keys = objectToValidate.Properties().Select(p => p.Name).ToList();
-                    foreach (var myKey in keys)
-                    {
-                        Debug.WriteLine(myKey);
-                    }
+
                 }
                 catch (Exception e)
                 {
                     //if (e.GetType().IsSubclassOf(typeof (Exception)))
                     //    newJson = null;
 
+                    Debug.WriteLine(e.Message);
                     //Handle the case when e is the base Exception
                     objectToValidate = JObject.FromObject(new
                     {
-                        existing = "wrapped Json=" + existingJson,
+                        existing = "wrapped Json by MergeJsonWithStoredField = " + existingJson,
                         exceptionMsg = e.Message,
                         exceptionStack = e.StackTrace
                     });
@@ -86,13 +83,13 @@ namespace CUWebinars.Business.Core.Helpers
         {
             JObject jObject;
 
+            JObject objectToValidate = null;
             if (string.IsNullOrWhiteSpace(existingJson))
             {
                 jObject = new JObject(newJson);
             }
             else
             {
-                JObject objectToValidate;
                 try
                 {
 
@@ -106,16 +103,20 @@ namespace CUWebinars.Business.Core.Helpers
                 }
                 catch (Exception e)
                 {
-                    //if (e.GetType().IsSubclassOf(typeof (Exception)))
-                    //    newJson = null;
-
-                    //Handle the case when e is the base Exception
-                    objectToValidate = JObject.FromObject(new
+                    try
                     {
-                        existing = "wrapped Json=" + existingJson,
-                        exceptionMsg = e.Message,
-                        exceptionStack = e.StackTrace
-                    });
+                        existingJson = existingJson.TrimStart('[').TrimEnd(']');
+                        objectToValidate = JObject.Parse(existingJson);
+                    }
+                    catch
+                    { //Handle the case when e is the base Exception
+                        objectToValidate = JObject.FromObject(new
+                        {
+                            existing = "wrapped Json by ReplaceJsonWIthStoredField =" + existingJson,
+                            exceptionMsg = e.Message,
+                            exceptionStack = e.StackTrace
+                        });
+                    }
                 }
                 jObject = JObject.Parse(objectToValidate.ToString());
 
@@ -165,12 +166,12 @@ namespace CUWebinars.Business.Core.Helpers
             }
             catch (Exception e)
             {
-               existingStoredJsonObject = JObject.FromObject(new
-                    {
-                        existing = "wrapped Json=" + jsonAsString,
-                        exceptionMsg = e.Message,
-                        exceptionStack = e.StackTrace
-                    });
+                existingStoredJsonObject = JObject.FromObject(new
+                     {
+                         existing = "wrapped Json by AddObjectToJsonArray =" + jsonAsString,
+                         exceptionMsg = e.Message,
+                         exceptionStack = e.StackTrace
+                     });
             }
 
             // 1st, see if valid json is stored at all
@@ -218,14 +219,14 @@ namespace CUWebinars.Business.Core.Helpers
             // convert object to a json object
             try
             {
-                 jPropHost = JObject.Parse(hostObject);
+                jPropHost = JObject.Parse(hostObject);
 
             }
             catch (Exception ex)
             {
                 return "failed to parse hostObject: " + ex;
             }
-            
+
 
             // ************* if we got here, we need to now remove the existing prop *************
             try

@@ -178,23 +178,32 @@
                         <div class="control-group">
                             <br />
                             <div class="controls">
-                                @Model.EditFields.Discount.DiscountCode<br />
-                                Credits Used: @Model.EditFields.Discount.CreditsUsed
-                                <br />
-                                Credits Remain: @Model.EditFields.Discount.CreditsRemain
-                            </div><br />
+                                @Model.EditFields.Discount.DiscountCode (@Model.EditFields.Discount.idDiscount)<br />
+
+                                <span id="DisplayRowPriceViewModel_PricesAndDiscounts_CreditsRemain"> Credits Remain: @Model.EditFields.Discount.CreditsRemain</span>
+
+                            </div>
                         </div>
+                        if (row.Discount == null)
+                        {
+
+                            <div class="control-group">
+                                @Html.TextBoxFor(m => m.EditFields.Discount.DiscountCode, new { placeholder = "Enter code", @class = "input input-small" })
+                                <button id="applyDiscountButton" class="btn btn-mini btn-success">Apply Code</button>
+                            </div>
+
+                        }
                     }
                     if (Model.EditFields.Discount.TypeOfDiscount == DiscountType.Promo)
                     {
                         <div class="control-group">
                             <br />
                             <div class="controls">
-                                @Model.EditFields.Discount.DiscountCode<br />
+                                @Model.EditFields.Discount.DiscountCode (@Model.EditFields.Discount.idDiscount )<br />
                                 @*Credits Used: @Model.EditFields.Discount.CreditsUsed
                                     <br />
                                     Credits Remain: @Model.EditFields.Discount.CreditsRemain*@
-                            </div><br />
+                            </div>
                         </div>
                     }
                 }

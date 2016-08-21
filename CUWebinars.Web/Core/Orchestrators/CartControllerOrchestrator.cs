@@ -764,8 +764,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 var order = CreateNewOrder(tempAff, webUser, webinar, newOrderRow, beingImpersonatedClaim);
 
                 order = _orderManagementService.AssignAffiliateToOrder(currentAffiliate.idUserAff, order);
-                
-                JProperty adminMsg = new JProperty(JsonPropertyKeys.AffiliateCheckout, JsonConvert.SerializeObject("Order created by: "+ order.Affiliate.DisplayTitle + " - " + user.Identity.Name, Formatting.None,
+
+                JProperty adminMsg = new JProperty(JsonPropertyKeys.AffiliateCheckout, JsonConvert.SerializeObject("Order created by: " + order.Affiliate.DisplayTitle + " - " + user.Identity.Name, Formatting.None,
                         new JsonSerializerSettings()
                         {
                             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -774,7 +774,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, adminMsg);
                 order.AffiliateComments = JsonHelpers.MergeJsonWithStoredField(order.AffiliateComments, adminMsg);
                 order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, adminMsg);
-                
+
                 _orderManagementService.SaveChanges();
 
                 return order;
@@ -830,7 +830,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
             catch (Exception ex)
             {
-                _logger.FatalException("ExpressPostback tossed:"  , ex);
+                _logger.FatalException("ExpressPostback tossed:", ex);
             }
             return null;
         }
@@ -852,6 +852,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             return dataOp.UpdateRegTypeOnLegacy(idRegType, idWebinar, billingEmail)
             ;
 
+        }
+
+        public string CalculateCreditsRemaining(Discount myDiscount)
+        {
+            return _orderManagementService.CalculateCreditsRemain(myDiscount).ToString();
         }
 
 
@@ -1176,7 +1181,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
             catch (Exception ex)
             {
-                _logger.FatalException("InsertOnDemandClaim" , ex);
+                _logger.FatalException("InsertOnDemandClaim", ex);
             }
 
             var result = _globalConfig.TenantURL + "/o/" + orderId + "-" + order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).OnDemandCode;

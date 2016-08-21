@@ -25,10 +25,13 @@ using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Runtime.Serialization.Json;
 using System.Security.Claims;
 using System.ServiceModel.Syndication;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web.Hosting;
 using System.Web.Mvc;
 using Thinktecture.IdentityModel.Authorization;
@@ -360,21 +363,11 @@ namespace CUWebinars.Web.Controllers
         {
             ViewBag.PageStyleType = "two-columns-right-sidebar";
             ViewBag.TopicCaption = " ";
-            //string searchTerm = Request["searchTerm"];
 
-            //var unionOfResultSets = _webinarControllerOrchestrator.SearchWebinars(searchTerm);
-            //ShowWebinarsViewModel model = new ShowWebinarsViewModel
-            //{
-            //    SearchTerm = searchTerm
-            //};
-            //ViewBag.Title = "Search Results";
-
-            //return View(unionOfResultSets);
-
-            //uncomment to use Updated DataTable code
 
             string searchTerm = Request["searchTerm"].Trim(' ');
             ViewBag.SearchTerm = searchTerm;
+            _logger.Info("Searching on: " + searchTerm + " by: " + _appHelper.GetUserAuditInfo());
 
             try
             {
@@ -440,7 +433,7 @@ namespace CUWebinars.Web.Controllers
 
                         }
 
-                        
+
                         //model.Webinars = _webinarControllerOrchestrator.SearchWebinars(searchTerm).ToList();
                     }
                 }
@@ -791,7 +784,7 @@ namespace CUWebinars.Web.Controllers
                         (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
                 {
                     var webinars = _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(15);
-                    
+
                     ViewBag.ListOfWebinars = new MultiSelectList(webinars, "idWebinar", "Title");
 
 
@@ -1677,6 +1670,82 @@ namespace CUWebinars.Web.Controllers
         }
 
 
+        [System.Web.Mvc.HttpGet]
+        [ValidateJsonAntiForgeryToken]
+        public async Task<JsonResult> CreateCitrixWebinar(int idWebinar)
+        {
+
+            var webinar = _webinarManagementService.GetWebinar(idWebinar);
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://api.citrixonline.com/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("XSTKNP6aEhMCsDghZZW2fvEABYFG");
+                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(webinar.OrganizerOAuthKey);
+
+
+                var endTime = webinar.Date.AddHours((double)webinar.Duration);
+                var desc = webinar.Description.Replace("\n", String.Empty);
+                desc = desc.Replace("\r", String.Empty);
+
+
+                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(desc);
+                string output = "";
+                foreach (var node in doc.DocumentNode.ChildNodes)
+                {
+                    output += node.InnerText;
+                }
+
+                var createWebinarPost = new StringContent("{\"subject\": \"Tester - " + webinar.Title + "\",\"description\": \"" + output + "\",\"times\": [{\"startTime\": \"" + webinar.Date.ToString("o").Replace(".0000000", "Z") + "\",\"endTime\": \"" + endTime.ToString("o").Replace(".0000000", "Z") + "\"}],\"type\": \"single_session\",\"isPasswordProtected\": false}", Encoding.UTF8, "application/json");
+                // New code:
+                HttpResponseMessage responseCreate = await client.PostAsync("G2W/rest/organizers/" + webinar.OrganizerKey + "/webinars", createWebinarPost);
+                try
+                {
+                    if (responseCreate.IsSuccessStatusCode)
+                    {
+                        var cWebinar = await responseCreate.Content.ReadAsAsync<CitrixWebinarModel>();
+                        webinar.CitrixRegisterUrl = cWebinar.WebinarKey;
+
+                        //var addOrg = new StringContent("[{\"external\": false,\"organizerKey\": \"922930\",\"givenName\": \"Steve Hueners\",\"email\": \"steve@ttstrain.com\"}]", Encoding.UTF8, "application/json");
+
+                        //HttpResponseMessage responseAddOrg = await client.PostAsync("G2W/rest/organizers/" + webinar.OrganizerKey + "/webinars/" + cWebinar.WebinarKey + "/coorganizers/", addOrg);
+
+                        //if (responseAddOrg.IsSuccessStatusCode)
+                        //{
+                        //    var cOrg = await responseCreate.Content.ReadAsAsync<CitrixOrganizersModel>();
+
+                        //}
+                        var addPresenter = new StringContent("[{\"email\": \"tester@testing.com\",\"name\": \"test name\"}]", Encoding.UTF8, "application/json");
+
+                        HttpResponseMessage responseAddPresenter = await client.PostAsync("G2W/rest/organizers/" + webinar.OrganizerKey + "/webinars/" + cWebinar.WebinarKey + "/panelists/", addPresenter);
+
+                        if (responseAddPresenter.IsSuccessStatusCode)
+                        {
+                            var cOrg = await responseCreate.Content.ReadAsAsync<CitrixPresenterModel>();
+
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+
+            var result = new
+                        {
+                        };
+
+            JsonResult jsonresult = Json(result);
+            jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
+
+            return jsonresult;
+        }
+
         [System.Web.Mvc.HttpPost]
         [ValidateJsonAntiForgeryToken]
         public ActionResult UpdateConnectionInfo(ConnectionInfoEditModel connectionInfoModel)
@@ -1956,5 +2025,9 @@ namespace CUWebinars.Web.Controllers
             }
             return this.ModelStateJson(ModelState);
         }
+    }
+
+    public class CitrixPresenterModel
+    {
     }
 }

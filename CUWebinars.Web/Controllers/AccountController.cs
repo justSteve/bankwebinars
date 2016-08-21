@@ -36,16 +36,6 @@ using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
-namespace CUWebinars.Web.Infrastructure
-{
-    public enum ManageMessageId
-    {
-        ChangePasswordSuccess,
-        SetPasswordSuccess,
-        RemoveLoginSuccess,
-    }
-}
-
 namespace CUWebinars.Web.Controllers
 {
     [ElmahHandleError]
@@ -2395,14 +2385,5 @@ namespace CUWebinars.Web.Controllers
             return null;
 
         }
-    }
-
-    public class CertOfCompletionDSViewModel
-    {
-        public Webinar Webinar { get; set; }
-        public string DisplayName { get; set; }
-        public string CeuShort { get; set; }
-        public string CeuStatement { get; set; }
-        public string DisplayInst { get; set; }
     }
 }

@@ -158,7 +158,7 @@ OCA.initializeFunctions = function () {
             }).done(function (data) {
 
                 if (data.Result == 0) {
-                    alert("The discount code " + $('#CheckoutDiscountCode').val() + " was not found. Try again or use our Help & Feedback button (lower right corner)  for assistance.");
+                    alert("The discount code " + $('#CheckoutDiscountCode').val() + " was not found or had an error that prevented usage. Try again or use our Help & Feedback button (lower right corner)  for assistance.");
                 }
                     //                regTypeShort = row.RegistrationType.OptionLabelShort,
                     //BasePrice = pricesAndDiscounts.UnitPrice,

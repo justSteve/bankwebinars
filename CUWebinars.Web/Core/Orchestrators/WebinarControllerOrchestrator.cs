@@ -183,10 +183,10 @@ namespace CUWebinars.Web.Core.Orchestrators
 
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                _logger.Warn("UserComments for OnDemand access failed to save: {0}", order.UserComments);
+                _logger.FatalException("UserComments for OnDemand access failed to save and threw: " + order.UserComments, ex);
                 throw;
             }
 
@@ -201,7 +201,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     stringBuilder.AppendFormat("Property: {0} Error: {1} ", error.PropertyName, error.ErrorMessage);
                 }
-                _logger.Warn("Identify | OnDemand claim processing: " + stringBuilder.ToString());
+                _logger.FatalException("Identify | OnDemand claim processing: " + stringBuilder.ToString(), dbEntityValidationException);
                 Trace.TraceInformation(stringBuilder.ToString());
             }
 

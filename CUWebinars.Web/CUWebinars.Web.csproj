@@ -443,6 +443,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\CertOfCompletionDSViewModel.cs" />
+    <Compile Include="Controllers\ManageMessageId.cs" />
     <Compile Include="Core\CalendarRssDTO.cs" />
     <Compile Include="Core\CalendarRssDTOAssembler.cs" />
     <Compile Include="Core\DTResultSetAffiliates.cs" />
@@ -498,6 +500,9 @@
     <Compile Include="Membership\Email\TtsSmtpMessageDeliveryInert.cs" />
     <Compile Include="Membership\Email\TtsTokenizerInert.cs" />
     <Compile Include="Models\AffiliateSettingsViewModel.cs" />
+    <Compile Include="Models\CitrixOrganizerModel.cs" />
+    <Compile Include="Models\CitrixOrganizersModel.cs" />
+    <Compile Include="Models\CitrixWebinar.cs" />
     <Compile Include="Models\CompliancePerspectivesModel.cs" />
     <Compile Include="Models\DiscountAudit.cs" />
     <Compile Include="Models\ExpressCheckoutPostBackModel.cs" />

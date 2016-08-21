@@ -2683,9 +2683,9 @@ namespace CUWebinars.Business.Services
         public decimal CalculateCreditsRemain(Discount userDiscount)
         {
             var ordersWithDiscount = GetOrdersByDiscount(userDiscount.idDiscount)
-                .Where(o => o.OrderDate > userDiscount.DateVerified)
-                ;
-            ;
+                .Where(o => o.OrderDate > userDiscount.DateVerified
+                || (o.InvoiceDetail.Contains("DiscountIsApplied") && o.InvoiceDetail.Contains(userDiscount.idDiscount.ToString())));
+
             var creditsUsed = 0M;
 
             if (ordersWithDiscount.Any())

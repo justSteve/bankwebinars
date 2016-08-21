@@ -22,7 +22,8 @@
         AccessCodeOrganizer = Model.Webinar.AccessCodeOrganizer,
         CitrixRegisterURL = Model.Webinar.CitrixRegisterUrl,
         AccessPhone = Model.Webinar.AccessPhone,
-        AccessCodePresenter = Model.Webinar.AccessCodePresenter
+        AccessCodePresenter = Model.Webinar.AccessCodePresenter,
+        WebinarStatus = Model.Webinar.Status
     };
 
     var postEventInfoModel = new PostEventInfoModel
@@ -127,7 +128,9 @@
                                 <div class="navbar-inner">
                                     <ul class="nav">
                                         <li class="active">
-                                            @Html.Partial(@"Partials/_UpdateConnectionInfo", connectionInfoEditModel)
+                                                <button id="CreateCitrixWebinar" style="margin-top: 0;" class="btn btn-success">Create Citrix Webinar</button>
+
+                                            @*@Html.Partial(@"Partials/_UpdateConnectionInfo", connectionInfoEditModel)*@
                                         </li>
                                         <li>
                                             @Html.Partial(@"Partials/_UpdateWebinarFiles", editWebinarFiles)

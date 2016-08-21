@@ -98,6 +98,14 @@ namespace CUWebinars.Web.Controllers
                 if (!ReferenceEquals(myDiscount, null))
                 {
                     _cartControllerOrchestrator.UpdateOrderPricing(row.Order);
+                    var newJson = new JProperty(
+                        "DiscountIsApplied",
+                        new JObject(new JProperty("DiscountID", myDiscount.idDiscount)
+                            , new JProperty("By", _appHelper.GetUserAuditInfo())));
+
+
+                    row.Order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(row.Order.AdminComments, newJson, "DiscountIsApplied");
+                    //row.Order.AffiliateComments = JsonHelpers.AddObjectToJsonArray(row.Order.AffiliateComments, newJson);
 
                     var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(row.Order);
 
@@ -112,7 +120,8 @@ namespace CUWebinars.Web.Controllers
                                 Tax = pricesAndDiscounts.TaxAmount,
                                 Total = pricesAndDiscounts.TotalOrderPrice,
                                 FlatOff = pricesAndDiscounts.Discount.FlatOff,
-                                PercentOff = pricesAndDiscounts.Discount.PercentOff
+                                PercentOff = pricesAndDiscounts.Discount.PercentOff,
+                                CreditsRemain = _cartControllerOrchestrator.CalculateCreditsRemaining(myDiscount)
                             });
                 }
                 else
@@ -123,24 +132,24 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception exception)
             {
-                ModelState.AddModelError(string.Empty, "Code Not Found.");
+                //ModelState.AddModelError(string.Empty, "Code Not Found.");
                 _logger.ErrorException("ApplyDiscountCode|ApplyDiscountCode failed ", exception);
-                return this.ModelStateJson(ModelState);
+                return Json(new { Result = 0, Code = code, Order = orderRowId });
             }
         }
 
 
-        //public PartialViewResult GetAdditionalLocationByOrderId(int webinarId, int? webUserId = null)
-        //{
-        //    if (webUserId.HasValue)
-        //    {
-        //        return PartialView(
-        //            "~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml",
-        //            _cartControllerOrchestrator.BuildAdditionalLocationOfferViewModel(webUserId.Value, webinarId)
-        //            );
-        //    }
-        //    return null;
-        //}
+        public PartialViewResult GetAdditionalLocationByOrderId(int webinarId, int? webUserId = null)
+        {
+            if (webUserId.HasValue)
+            {
+                return PartialView(
+                    "~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml",
+                    _cartControllerOrchestrator.BuildAdditionalLocationOfferViewModel(webUserId.Value, webinarId)
+                    );
+            }
+            return null;
+        }
 
 
         [HttpPost]
