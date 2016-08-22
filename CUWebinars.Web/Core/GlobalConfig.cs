@@ -10,6 +10,18 @@ namespace CUWebinars.Web.Core
 {
     public class GlobalConfig
     {
+        public string CitrixAuthMark { get; private set; }
+        public string CitrixOrgKeyMark { get; private set; }
+        public string CitrixAuthKyle { get; private set; }
+        public string CitrixOrgKeyKyle { get; private set; }
+        public string CitrixAuthSteve { get; private set; }
+        public string CitrixOrgKeySteve { get; private set; }
+        public string CitrixAuthWesley { get; private set; }
+        public string CitrixOrgKeyWesley { get; private set; }
+        public string CitrixAuthDan { get; private set; }
+        public string CitrixOrgKeyDan { get; private set; }
+        public string CitrixAuthLaura { get; private set; }
+        public string CitrixOrgKeyLaura { get; private set; }
 
         public string CcPaymentProcessingUrlKey { get; private set; }
         public string CreateUserQueueName { get; private set; }
@@ -55,6 +67,18 @@ namespace CUWebinars.Web.Core
             static GlobalConfigSingletonCreator()
             {
                 NameValueCollection ApplicationSettingsSection = WebConfigurationManager.AppSettings;
+                UniqueInstance.CitrixAuthMark = ApplicationSettingsSection["CitrixAuthMark"];
+                UniqueInstance.CitrixOrgKeyMark = ApplicationSettingsSection["CitrixOrgKeyMark"];
+                UniqueInstance.CitrixAuthKyle = ApplicationSettingsSection["CitrixAuthKyle"];
+                UniqueInstance.CitrixOrgKeyKyle = ApplicationSettingsSection["CitrixOrgKeyKyle"];
+                UniqueInstance.CitrixAuthSteve = ApplicationSettingsSection["CitrixAuthSteve"];
+                UniqueInstance.CitrixOrgKeySteve = ApplicationSettingsSection["CitrixOrgKeySteve"];
+                UniqueInstance.CitrixAuthWesley = ApplicationSettingsSection["CitrixAuthWesley"];
+                UniqueInstance.CitrixOrgKeyWesley = ApplicationSettingsSection["CitrixOrgKeyWesley"];
+                UniqueInstance.CitrixAuthDan = ApplicationSettingsSection["CitrixAuthDan"];
+                UniqueInstance.CitrixOrgKeyDan = ApplicationSettingsSection["CitrixOrgKeyDan"];
+                UniqueInstance.CitrixAuthLaura = ApplicationSettingsSection["CitrixAuthLaura"];
+                UniqueInstance.CitrixOrgKeyLaura = ApplicationSettingsSection["CitrixOrgKeyLaura"];
 
                 UniqueInstance.CcPaymentProcessingUrlKey = ApplicationSettingsSection["CcPaymentProcessingUrlKey"];
                 UniqueInstance.CreateUserQueueName = ApplicationSettingsSection["CreateUserQueueName"];
@@ -102,7 +126,7 @@ namespace CUWebinars.Web.Core
                 Debug.Assert(sources != null, "Web.config must contain a Tracing section.");
 
                 return (
-                    from ConfigurationElement source in sources 
+                    from ConfigurationElement source in sources
                     select source.ElementInformation.Properties["switchValue"].Value.ToString())
                     .FirstOrDefault();
             }

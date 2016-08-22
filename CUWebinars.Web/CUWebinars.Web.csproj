@@ -500,8 +500,10 @@
     <Compile Include="Membership\Email\TtsSmtpMessageDeliveryInert.cs" />
     <Compile Include="Membership\Email\TtsTokenizerInert.cs" />
     <Compile Include="Models\AffiliateSettingsViewModel.cs" />
+    <Compile Include="Models\CitrixAudioModel.cs" />
     <Compile Include="Models\CitrixOrganizerModel.cs" />
     <Compile Include="Models\CitrixOrganizersModel.cs" />
+    <Compile Include="Models\CitrixPresenterModel.cs" />
     <Compile Include="Models\CitrixWebinar.cs" />
     <Compile Include="Models\CompliancePerspectivesModel.cs" />
     <Compile Include="Models\DiscountAudit.cs" />

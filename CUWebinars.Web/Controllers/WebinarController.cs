@@ -1684,6 +1684,8 @@ namespace CUWebinars.Web.Controllers
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("XSTKNP6aEhMCsDghZZW2fvEABYFG");
                 //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(webinar.OrganizerOAuthKey);
+                webinar.OrganizerKey = _globalConfig.CitrixOrgKeySteve;
+                webinar.OrganizerOAuthKey = _globalConfig.CitrixOrgKeySteve;
 
 
                 var endTime = webinar.Date.AddHours((double)webinar.Duration);
@@ -1693,11 +1695,7 @@ namespace CUWebinars.Web.Controllers
 
                 HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
                 doc.LoadHtml(desc);
-                string output = "";
-                foreach (var node in doc.DocumentNode.ChildNodes)
-                {
-                    output += node.InnerText;
-                }
+                string output = doc.DocumentNode.ChildNodes.Aggregate("", (current, node) => current + node.InnerText);
 
                 var createWebinarPost = new StringContent("{\"subject\": \"Tester - " + webinar.Title + "\",\"description\": \"" + output + "\",\"times\": [{\"startTime\": \"" + webinar.Date.ToString("o").Replace(".0000000", "Z") + "\",\"endTime\": \"" + endTime.ToString("o").Replace(".0000000", "Z") + "\"}],\"type\": \"single_session\",\"isPasswordProtected\": false}", Encoding.UTF8, "application/json");
                 // New code:
@@ -1709,27 +1707,78 @@ namespace CUWebinars.Web.Controllers
                         var cWebinar = await responseCreate.Content.ReadAsAsync<CitrixWebinarModel>();
                         webinar.CitrixRegisterUrl = cWebinar.WebinarKey;
 
-                        //var addOrg = new StringContent("[{\"external\": false,\"organizerKey\": \"922930\",\"givenName\": \"Steve Hueners\",\"email\": \"steve@ttstrain.com\"}]", Encoding.UTF8, "application/json");
+                        for (var i = 0; i < 5; i++)
+                        {
+                            var orgEmail = "";
+                            var orgKey = "";
+                            var orgName = "";
+                            switch (i)
+                            {
+                                case 1:
+                                    orgEmail = "_Kyle@ttstrain.com";
+                                    orgKey = "627967751291160077";
+                                    orgName = "Kyle Bennett";
+                                    break;
+                                case 2:
+                                    orgEmail = "_Kyle@ttstrain.com";
+                                    orgKey = "627967751291160077";
+                                    orgName = "Kyle Bennett";
+                                    break;
+                                case 3:
+                                    orgEmail = "_Kyle@ttstrain.com";
+                                    orgKey = "627967751291160077";
+                                    orgName = "Kyle Bennett";
+                                    break;
+                                case 4:
+                                    orgEmail = "_Kyle@ttstrain.com";
+                                    orgKey = "627967751291160077";
+                                    orgName = "Kyle Bennett";
+                                    break;
+                                case 5:
+                                    orgEmail = "_Kyle@ttstrain.com";
+                                    orgKey = "627967751291160077";
+                                    orgName = "Kyle Bennett";
+                                    break;
+                            }
+                            var addOrg =
+                                new StringContent(
+                                    "[{\"external\": false,\"organizerKey\": \"" + orgKey + "\",\"givenName\": \"" + orgName + "\",\"email\": \"" + orgEmail + "\"}]",
+                                    Encoding.UTF8, "application/json");
 
-                        //HttpResponseMessage responseAddOrg = await client.PostAsync("G2W/rest/organizers/" + webinar.OrganizerKey + "/webinars/" + cWebinar.WebinarKey + "/coorganizers/", addOrg);
+                            HttpResponseMessage responseAddOrg =
+                                await
+                                    client.PostAsync(
+                                        "G2W/rest/organizers/" + webinar.OrganizerKey + "/webinars/" +
+                                        cWebinar.WebinarKey + "/coorganizers", addOrg);
 
-                        //if (responseAddOrg.IsSuccessStatusCode)
-                        //{
-                        //    var cOrg = await responseCreate.Content.ReadAsAsync<CitrixOrganizersModel>();
+                            if (responseAddOrg.IsSuccessStatusCode)
+                            {
+                                var cOrg = await responseCreate.Content.ReadAsAsync<CitrixOrganizersModel>();
 
-                        //}
+                            }
+                        }
                         var addPresenter = new StringContent("[{\"email\": \"tester@testing.com\",\"name\": \"test name\"}]", Encoding.UTF8, "application/json");
+                        //HttpResponseMessage responseCreate =     await client.PostAsync("G2W/rest/organizers/" + webinar.OrganizerKey + "/webinars", createWebinarPost);
 
-                        HttpResponseMessage responseAddPresenter = await client.PostAsync("G2W/rest/organizers/" + webinar.OrganizerKey + "/webinars/" + cWebinar.WebinarKey + "/panelists/", addPresenter);
+                        HttpResponseMessage responseAddPresenter = await client.PostAsync("G2W/rest/organizers/" + webinar.OrganizerKey + "/webinars/" + cWebinar.WebinarKey + "/panelists", addPresenter);
 
                         if (responseAddPresenter.IsSuccessStatusCode)
                         {
-                            var cOrg = await responseCreate.Content.ReadAsAsync<CitrixPresenterModel>();
-
+                            
+                            HttpResponseMessage getAudio = await client.GetAsync("G2W/rest/organizers/" + webinar.OrganizerKey + "/webinars/" + cWebinar.WebinarKey + "/audio");
+                            if (getAudio.IsSuccessStatusCode)
+                            {
+                                var audio = getAudio.Content.ReadAsAsync<CitrixAudioModel>();
+                                webinar.AccessCodeAttendee = audio.Result.ConfCallNumbers.AccessCodes.Attendee;
+                                webinar.AccessCodePresenter = audio.Result.ConfCallNumbers.AccessCodes.Panelist;
+                                webinar.AccessCodeOrganizer = audio.Result.ConfCallNumbers.AccessCodes.Organizer;
+                                webinar.AccessPhone = audio.Result.ConfCallNumbers.TollFree;
+                            }
+                            _webinarControllerOrchestrator.UpdateWebinar(_webinarManagementService.GetWebinar(idWebinar));
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
 
                     throw;
@@ -2025,9 +2074,5 @@ namespace CUWebinars.Web.Controllers
             }
             return this.ModelStateJson(ModelState);
         }
-    }
-
-    public class CitrixPresenterModel
-    {
     }
 }
