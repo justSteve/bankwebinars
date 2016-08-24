@@ -133,7 +133,7 @@ namespace CUWebinars.Business.Repository
                 var titleSearch = stronglyTypedContext.Webinars
                     .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
                     .Include(w => w.Presenter.WebUser)
-                    .Where(w => w.Title.Contains(searchTerm) && (w.Status != WebinarStatus.Archived || w.Status != WebinarStatus.Pending))
+                    .Where(w => w.Title.Contains(searchTerm) && (w.Status != WebinarStatus.Archived || w.Status != WebinarStatus.Pending || w.Status != WebinarStatus.Deleted))
                     ;
                 return titleSearch.ToList();
             }
@@ -142,7 +142,7 @@ namespace CUWebinars.Business.Repository
                 .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
                 .Include(w => w.Presenter.WebUser)
                 .Where(w => w.Presenter.WebUser.LastName == searchTerm
-                            && (w.Status != WebinarStatus.Archived || w.Status != WebinarStatus.Pending));
+                            && (w.Status != WebinarStatus.Archived || w.Status != WebinarStatus.Pending || w.Status != WebinarStatus.Deleted));
 
             if (check4Speaker.Any())
             {
@@ -360,7 +360,9 @@ namespace CUWebinars.Business.Repository
         {
             var endDate = startDate.AddDays(7);
             return ((TTSWebinarsContext)db).Webinars
-                .Where(w => w.Date > startDate && w.Date < endDate && w.Status == WebinarStatus.Recorded 
+                .Where(w => w.Date > startDate
+                    && w.Date < endDate
+                    && w.Status == WebinarStatus.Recorded
                     && (w.SeriesInfo != null && !w.SeriesInfo.StartsWith("RequiredParent")
                     && !w.Title.StartsWith("Compliance Perspectives"))
                 )

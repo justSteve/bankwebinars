@@ -2191,5 +2191,64 @@ namespace CUWebinars.Business.Core
                 }
             }
         }
+
+        public bool CheckForAnyOrders(DateTime startDate, int idAffiliate)
+        {
+            var result = "";
+
+            var endDate = startDate.AddDays(7);
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+                using (
+                    var checkForAnyOrders = new SqlCommand("CheckForAnyOrders", sqlConnection))
+                {
+                    try
+                    {
+                        checkForAnyOrders.Connection = sqlConnection;
+                        checkForAnyOrders.CommandType = CommandType.StoredProcedure;
+
+                        var startDateParam = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.VarChar,
+                            ParameterName = "@StartDate",
+                            Value = startDate
+                        };
+                        checkForAnyOrders.Parameters.Add(startDateParam);
+
+                        var idWebinarParm = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.Int,
+                            ParameterName = "@idAffiliate",
+                            Value = idAffiliate
+                        };
+                        checkForAnyOrders.Parameters.Add(idWebinarParm);
+
+
+                        result = checkForAnyOrders.ExecuteScalar().ToString();
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
+                            errorLogger.CommandText += "'CheckForAnyOrders' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'CheckForAnyOrders', 9 ,";
+                            errorLogger.CommandText += "'error at CheckForAnyOrders " +
+                                                       ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+                        }
+
+                        throw;
+                    }
+                }
+                if (result != "0") return true;
+                return false;
+            }
+
+        }
     }
 }

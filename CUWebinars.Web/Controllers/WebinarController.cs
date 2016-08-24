@@ -1707,27 +1707,31 @@ namespace CUWebinars.Web.Controllers
                         var cWebinar = await responseCreate.Content.ReadAsAsync<CitrixWebinarModel>();
                         webinar.CitrixRegisterUrl = cWebinar.WebinarKey;
 
-                        for (var i = 0; i < 5; i++)
+                        for (var i = 1; i < 3; i++)
                         {
                             var orgEmail = "";
                             var orgKey = "";
                             var orgName = "";
+                            var external = "";
                             switch (i)
                             {
                                 case 1:
                                     orgEmail = "_Kyle@ttstrain.com";
-                                    orgKey = "627967751291160077";
+                                    orgKey = _globalConfig.CitrixOrgKeyKyle;
                                     orgName = "Kyle Bennett";
+                                    external = "false";
                                     break;
                                 case 2:
-                                    orgEmail = "_Kyle@ttstrain.com";
-                                    orgKey = "627967751291160077";
-                                    orgName = "Kyle Bennett";
+                                    orgEmail = "_Mark@ttstrain.com";
+                                    orgKey = _globalConfig.CitrixOrgKeyMark;
+                                    orgName = "Mark Bennett";
+                                    external = "false";
                                     break;
                                 case 3:
                                     orgEmail = "_Kyle@ttstrain.com";
-                                    orgKey = "627967751291160077";
+                                    orgKey = "";
                                     orgName = "Kyle Bennett";
+                                    external = "true";
                                     break;
                                 case 4:
                                     orgEmail = "_Kyle@ttstrain.com";
@@ -1742,7 +1746,7 @@ namespace CUWebinars.Web.Controllers
                             }
                             var addOrg =
                                 new StringContent(
-                                    "[{\"external\": false,\"organizerKey\": \"" + orgKey + "\",\"givenName\": \"" + orgName + "\",\"email\": \"" + orgEmail + "\"}]",
+                                    "[{\"external\": \""+external+"\",\"organizerKey\": \"" + orgKey + "\",\"givenName\": \"" + orgName + "\",\"email\": \"" + orgEmail + "\"}]",
                                     Encoding.UTF8, "application/json");
 
                             HttpResponseMessage responseAddOrg =

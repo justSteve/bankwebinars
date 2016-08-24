@@ -49,17 +49,16 @@
             <div class="form-horizontal">
                 @Html.ValidationSummary("Error: ", new { id = "updateConnInfoValSummary" })
                 <div class="form-group">
-
-                    @*Paste Citrix Page Source
+                    Paste Citrix Page Source
                         <div>
                             @Html.EditorFor(model => model.ManageURL, new { htmlAttributes = new { @class = "form-control" } })
                             @Html.ValidationMessageFor(model => model.ManageURL)
-                        </div>*@
+                        </div>
                 </div>
                 @if (Model.WebinarKey != null || Model.WebinarKey != "")
                 {
                     <div class="form-group">
-                        Phone:
+                        @Html.LabelFor(model => model.AccessPhone, htmlAttributes: new { @class = "control-label " })
                         <div>
                             @Html.EditorFor(model => model.AccessPhone, new { htmlAttributes = new { @class = "form-control" } })
                             @Html.ValidationMessageFor(model => model.AccessPhone)
