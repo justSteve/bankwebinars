@@ -1786,16 +1786,23 @@ namespace CUWebinars.Web.Controllers
                                     await
                                         client.GetAsync("G2W/rest/organizers/" + webinar.OrganizerKey + "/webinars/" +
                                                         cWebinar.WebinarKey + "/audio");
+
                                 if (getAudio.IsSuccessStatusCode)
                                 {
                                     string audioJson = await getAudio.Content.ReadAsStringAsync();
 
-                                    var audio = JsonConvert.DeserializeObject<CitrixAudioModel>(audioJson);
-                                    webinar.AccessCodeAttendee = audio.ConfCallNumbers.AccessCodes.Attendee;
-                                    webinar.AccessCodePresenter = audio.ConfCallNumbers.AccessCodes.Panelist;
-                                    webinar.AccessCodeOrganizer = audio.ConfCallNumbers.AccessCodes.Organizer;
-                                    webinar.AccessPhone = audio.ConfCallNumbers.TollFree;
+	                                var audio = JsonConvert.DeserializeObject<CitrixAudioModel>(audioJson);
+	                                if (audio.ConfCallNumbers != null &&
+                                        audio.ConfCallNumbers.US != null)
+	                                {
+	                                    webinar.AccessCodeAttendee = audio.ConfCallNumbers.US.AccessCodes.Attendee;
+                                        webinar.AccessCodePresenter = audio.ConfCallNumbers.US.AccessCodes.Panelist;
+                                        webinar.AccessCodeOrganizer = audio.ConfCallNumbers.US.AccessCodes.Organizer;
+                                        webinar.AccessPhone = audio.ConfCallNumbers.US.TollFree;
+									}
                                 }
+								
+	                            // make sure this is called "outside" enough so updates above are retained							
                                 _webinarControllerOrchestrator.UpdateWebinar(
                                     _webinarManagementService.GetWebinar(idWebinar));
                             }
