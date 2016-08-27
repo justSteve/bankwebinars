@@ -2192,16 +2192,16 @@ namespace CUWebinars.Business.Core
             }
         }
 
-        public bool CheckForAnyOrders(DateTime startDate, int idAffiliate)
+        public string CheckForAnyOrders(DateTime startDate, int idAffiliate)
         {
-            var result = "";
+            SqlDataReader reader;
 
             var endDate = startDate.AddDays(7);
             using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
             {
                 sqlConnection.Open();
                 using (
-                    var checkForAnyOrders = new SqlCommand("CheckForAnyOrders", sqlConnection))
+                    var checkForAnyOrders = new SqlCommand("CheckForAllOrders", sqlConnection))
                 {
                     try
                     {
@@ -2222,10 +2222,9 @@ namespace CUWebinars.Business.Core
                             ParameterName = "@idAffiliate",
                             Value = idAffiliate
                         };
+
                         checkForAnyOrders.Parameters.Add(idWebinarParm);
-
-
-                        result = checkForAnyOrders.ExecuteScalar().ToString();
+                        reader = checkForAnyOrders.ExecuteReader();
                     }
                     catch (Exception ex)
                     {
@@ -2245,8 +2244,37 @@ namespace CUWebinars.Business.Core
                         throw;
                     }
                 }
-                if (result != "0") return true;
-                return false;
+
+
+                StringBuilder sb = new StringBuilder();
+                StringBuilder sbWO = new StringBuilder();
+                StringBuilder sbPEO = new StringBuilder();
+                sb.Append(idAffiliate + Environment.NewLine);
+                if (reader.HasRows)
+                {
+                    while (reader.HasRows)
+                    {
+                        sb.Append(reader.GetName(0) + Environment.NewLine);
+
+                        while (reader.Read())
+                        {
+                            if (reader.GetName(0) == "WebinarOrders")
+                                sbWO.Append(reader.GetInt32(0) + ",");
+                            if (reader.GetName(0) == "PostEventOrders")
+                                sbPEO.Append(reader.GetInt32(0) + ",");
+                        }
+
+                        reader.NextResult();
+                    }
+                }
+                else
+                {
+                    return "none found";
+                }
+
+
+
+                return sb.ToString() + " WebinarOrders: " + sbWO.ToString().TrimEnd(',') + " PostEventOrders: " + sbPEO;
             }
 
         }

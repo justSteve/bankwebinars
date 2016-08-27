@@ -299,7 +299,7 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 if (order.InvoiceDetail != null && order.InvoiceDetail.StartsWith("{\"OrderIsInvoiced"))
                 {
-                    _logger.Warn("Invoiced Order is changes affiliate: " + order.idOrder + " from " +
+                    _logger.Warn("Invoiced Order is changed affiliate: " + order.idOrder + " from " +
                                  originalAffiliate.ttsDomain + " to " +
                                  newAffiliate.ttsDomain);
 
@@ -707,7 +707,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Discount =
                     _orderManagementService.GetDiscountById(idDiscount);
 
-                JProperty createdByExpressCheckout = new JProperty(JsonPropertyKeys.PriceAdjusted,"'PriceAdjusted': {'" + _appHelper.GetUserAuditInfo() + "'}");
+                JProperty createdByExpressCheckout = new JProperty(JsonPropertyKeys.PriceAdjusted, "'PriceAdjusted': {'" + _appHelper.GetUserAuditInfo() + "'}");
 
                 order.AdminComments = JsonHelpers.MergeJsonWithStoredField(null,
                     createdByExpressCheckout);
@@ -716,6 +716,12 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
                 msg = order.idOrder + " update price " + targetPrice + " via Discount: " + idDiscount;
+
+
+                if (order.InvoiceDetail != null && order.InvoiceDetail != "")
+                {
+
+                }
                 _orderManagementService.SaveChanges();
 
 
@@ -727,18 +733,19 @@ namespace CUWebinars.Web.Controllers.Admin
                             message = msg
                         });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                _logger.FatalException("SetPriceOfOrder", ex);
+                Json(
+                    new
+                    {
+                        Result = WebUiConstants.Fail,
+                        Reason =
+                            "Server Error on SetPriceOfOrder"
+                    });
                 throw;
             }
-            Json(
-                new
-                {
-                    Result = WebUiConstants.Fail,
-                    Reason =
-                        "Server Error - Set user assigned to Order: For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com."
-                });
+
         }
 
         [HttpPost]
@@ -3093,20 +3100,6 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             Stopwatch openingCall = new Stopwatch();
             openingCall.Start();
-            ////System.Diagnostics.Debug.WriteLine(_idAffiliate + " Time: " + DateTime.Now.ToString("HH:mm:ss.fff"));
-            ////var xaffiliate = _affiliateManagementService.FindById(_idAffiliate.Value);
-            //////System.Threading.Thread.Sleep(2000);
-            ////System.Diagnostics.Debug.WriteLine("Complete time: " + DateTime.Now.ToString("HH:mm:ss.fff"));
-            ////return Json(new
-            ////{
-            ////    OrdersFound = true,
-            ////    InvoiceId = "asdfx-" + xaffiliate.idUserAff,
-            ////    AffiliateId = xaffiliate.idUserAff,
-            ////    AffiliateContactEmail = xaffiliate.ContactEmail,
-            ////    AffiliateLabel = xaffiliate.DisplayTitle + " (" + xaffiliate.ttsDomain + " - " + xaffiliate.idUserAff + ")",
-            ////    Link = new { PrimaryUri = "http://fakeurl.com/" + xaffiliate.idUserAff },
-            ////}, JsonRequestBehavior.AllowGet);
-
 
             if (!_idAffiliate.HasValue)
             {
@@ -3151,14 +3144,27 @@ namespace CUWebinars.Web.Controllers.Admin
             {
 
                 IList<Webinar> webinars = _webinarManagementService.GetWebinarsForWeeklyInvoices(startDate);
-                bool affiliateHasAnyOrders = CheckForAnyOrders(startDate, idAffiliate);
-                if (affiliateHasAnyOrders)
+                var affiliateHasAnyOrders = CheckForAnyOrders(startDate, idAffiliate);
+                var affiliate = _affiliateManagementService.FindById(idAffiliate);
+
+                _logger.Info("GenerateWeeklyInvoicesEvent " + affiliateHasAnyOrders);
+
+                if (affiliateHasAnyOrders == "none found")
                 {
-                    //var affiliates = _affiliateManagementService.GetAffiliates();
-                    var affiliate = _affiliateManagementService.FindById(idAffiliate);
-
-
-                    //var affiliate = _affiliateManagementService.FindById(affiliate.idUserAff);
+                    
+                    return Json(new
+                    {
+                        Result = WebUiConstants.Fail,
+                        OrdersFound = false,
+                        AffiliateLabel =
+                            affiliate.DisplayTitle + " (" + affiliate.ttsDomain + " - " + affiliate.idUserAff + ")",
+                        ErrorMsg = "Found no orders: " + affiliate.DisplayTitle + " (" + affiliate.ttsDomain + " - " + affiliate.idUserAff + ")"
+                    },
+                        JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    // clears the has any orders hurdle - 
                     int totalNumberOrders = 0;
                     int totalNumberDiscounts = 1;
 
@@ -3820,12 +3826,19 @@ namespace CUWebinars.Web.Controllers.Admin
                         _logger.ErrorException("building Invoice: " + InvoiceID, ex);
                     }
                 }
-                return Json(new { Result = WebUiConstants.Fail, OrdersFound = false, ErrorMsg = "error writing file" },
-                        JsonRequestBehavior.AllowGet);
+                return Json(new
+                {
+                    Result = WebUiConstants.Fail,
+                    OrdersFound = false,
+                    AffiliateLabel =
+                        affiliate.DisplayTitle + " (" + affiliate.ttsDomain + " - " + affiliate.idUserAff + ")",
+                    ErrorMsg = "Error processing " + affiliate.DisplayTitle + " (" + affiliate.ttsDomain + " - " + affiliate.idUserAff + ")"
+                },
+    JsonRequestBehavior.AllowGet);
             }
         }
 
-        private bool CheckForAnyOrders(DateTime startDate, int idAffiliate)
+        private string CheckForAnyOrders(DateTime startDate, int idAffiliate)
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
