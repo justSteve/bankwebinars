@@ -258,7 +258,7 @@ function removeIsLoadingIndicator($cell) {
 
 
 function createChildRow(cell, $td, rowData) {
-    console.log(cell);
+    //console.log(cell);
     if ($td.hasClass("edit-user-name-email")) {
         return editUserCell(cell, $td, rowData);
     }  //

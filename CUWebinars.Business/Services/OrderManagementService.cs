@@ -1048,6 +1048,7 @@ namespace CUWebinars.Business.Services
             if (row.Discount != null && row.Discount.PercentOff != 0.0M)
             {
                 var creditsRemain = CalculateCreditsRemain(row.Discount);
+
                 if (row.Discount.DiscountType == DiscountType.Subscription)
                 {
                     if (creditsRemain >= row.RegistrationType.CreditCost)
@@ -2209,9 +2210,9 @@ namespace CUWebinars.Business.Services
 
         public List<Order> GetOrdersByWebinarForInvoice(int idWebinar)
         {
-            
+
             return _webinarRepository.GetOrdersByWebinarForInvoice(idWebinar).ToList();
-            
+
         }
 
         public void RestoreToDiscount(int newOrderRowId)
@@ -2604,7 +2605,7 @@ namespace CUWebinars.Business.Services
 
         public string CalculateDiscountRedemption(Discount discount, OrderRow row, int? undo, int? previewOnly)
         {
-            if (discount.Status != "Active")
+            if (!discount.Status.ToLower().StartsWith("a"))
             {
                 _logger.Warn("Discount redemtion attempted on: " + discount.idDiscount + " - " + row.idOrder);
                 return ("This Discount Code " + discount.DiscountCode + " is not activated. For more info contact us by using the Online Chat button below or emailing Support@ttsTrain.com.");
@@ -2625,12 +2626,13 @@ namespace CUWebinars.Business.Services
                 //{
                 if (discount.DiscountType == DiscountType.Subscription)
                 {
+
                     if (discount.DateValidTo > discount.DateValidFrom)
                     {
                         forNotes.AppendFormat(" Your subscription will expire on " +
                                               discount.DateValidTo.ToShortDateString() + ".");
                     }
-                    if (discount.DateValidTo < discount.DateValidFrom)
+                    else if (discount.DateValidTo < discount.DateValidFrom)
                     {
                         forNotes.AppendFormat(" Your subscription expired on " +
                                               discount.DateValidTo.ToShortDateString());
@@ -2682,6 +2684,8 @@ namespace CUWebinars.Business.Services
 
         public decimal CalculateCreditsRemain(Discount userDiscount)
         {
+            if (userDiscount.DiscountType == DiscountType.Subscription &&
+                userDiscount.DateValidTo > userDiscount.DateValidFrom) return 100;
             var ordersWithDiscount = GetOrdersByDiscount(userDiscount.idDiscount)
                 .Where(o => o.OrderDate > userDiscount.DateVerified
                 || (o.InvoiceDetail.Contains("DiscountIsApplied") && o.InvoiceDetail.Contains(userDiscount.idDiscount.ToString())));

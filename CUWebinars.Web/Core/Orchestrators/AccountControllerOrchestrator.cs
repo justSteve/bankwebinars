@@ -994,6 +994,10 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         private decimal CalculateCreditsRemain(Discount userDiscount)
         {
+
+            if (userDiscount.DiscountType == DiscountType.Subscription &&
+                userDiscount.DateValidTo > userDiscount.DateValidFrom) return 100;
+
             var ordersWithDiscount = _orderManagementService.GetOrdersByDiscount(userDiscount.idDiscount)
                 .Where(o => o.OrderDate > userDiscount.DateVerified)
                 ;

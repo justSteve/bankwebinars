@@ -2250,5 +2250,90 @@ namespace CUWebinars.Business.Core
             }
 
         }
+
+        public int CreateAdjustmentDiscount(string note, string amtToDiscount, int orderId)
+        {
+            var result = 0;
+
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+                using (
+                    var createDiscount = new SqlCommand("CreateDiscountCode", sqlConnection))
+                {
+                    try
+                    {
+                        createDiscount.Connection = sqlConnection;
+                        createDiscount.CommandType = CommandType.StoredProcedure;
+
+
+                        var NotesParam = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.VarChar,
+                            ParameterName = "@Notes",
+                            Value = note
+                        };
+
+                        var AmountOfDiscountParam = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.VarChar,
+                            ParameterName = "@AmountOfDiscount",
+                            Value = amtToDiscount
+                        };
+
+                        var TypeOfDiscountParam = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.Decimal,
+                            ParameterName = "@TypeOfDiscount",
+                            Value = 3
+                        };
+
+
+                        //var TotalCountParam = new SqlParameter
+                        //{
+                        //    SqlDbType = SqlDbType.Decimal,
+                        //    ParameterName = "@TotalCount",
+                        //    Value = 0
+                        //};
+
+
+                        var DiscountCodeParam = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.VarChar,
+                            ParameterName = "@DiscountCode",
+                            Value = "adj" + orderId
+                        };
+
+                        //createDiscount.Parameters.Add(TotalCountParam);
+                        createDiscount.Parameters.Add(DiscountCodeParam);
+                        createDiscount.Parameters.Add(TypeOfDiscountParam);
+                        createDiscount.Parameters.Add(AmountOfDiscountParam);
+                        createDiscount.Parameters.Add(NotesParam);
+
+                        result = (int)createDiscount.ExecuteScalar();
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
+                            errorLogger.CommandText += "'CreateAdjustmentDiscount' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'CreateAdjustmentDiscount', 9 ,";
+                            errorLogger.CommandText += "'error at CreateAdjustmentDiscount " +
+                                                       ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+                        }
+
+                        throw;
+                    }
+                }
+                return result;
+
+            }
+        }
     }
 }

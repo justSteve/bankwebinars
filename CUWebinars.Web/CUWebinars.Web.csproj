@@ -1189,6 +1189,7 @@
     <Content Include="Content\images\presenters\laboda.jpg" />
     <Content Include="Content\images\presenters\lacy.jpg" />
     <Content Include="Content\images\presenters\lange.jpg" />
+    <Content Include="Content\images\presenters\larger.jpg" />
     <Content Include="Content\images\presenters\lolley.jpg" />
     <Content Include="Content\images\presenters\mccain.jpg" />
     <Content Include="Content\images\presenters\mcguinn.jpg" />
@@ -1437,7 +1438,6 @@
     <Content Include="Scripts\app\admin\add-quiz.js" />
     <Content Include="Scripts\app\admin\click-to-join.js" />
     <Content Include="Scripts\app\admin\claims-management.js" />
-    <Content Include="Scripts\app\admin\manage-order-from-details.js" />
     <Content Include="Scripts\app\cart\add-password.js" />
     <Content Include="Scripts\app\cart\details-affiliate.js" />
     <Content Include="Scripts\app\cart\update-connection-info.js" />

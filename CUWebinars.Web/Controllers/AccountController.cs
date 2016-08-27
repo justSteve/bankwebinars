@@ -944,7 +944,6 @@ namespace CUWebinars.Web.Controllers
                         //RowPrice = orderRow.RowPrice
                     },
                     Discount = discount,
-//                    Discount = orderRow.Discount,
                     Order = order,
                     WebUser = order.WebUser,
                     WebinarId = orderRow.Webinar.idWebinar,

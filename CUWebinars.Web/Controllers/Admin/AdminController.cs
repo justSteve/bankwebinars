@@ -683,6 +683,66 @@ namespace CUWebinars.Web.Controllers.Admin
 
         [HttpPost]
         [HandleAjaxException]
+        public ActionResult SetPriceOfOrder(int orderID, string note, string targetPrice)
+        {
+            _logger.Info("SetPriceOfOrder: " + orderID + " note: " + note + " to: " + targetPrice);
+            var order = _orderManagementService.GetOrderById(orderID);
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+            var amtToDiscount = "";
+            if (targetPrice == "0")
+            {
+                amtToDiscount = "100%";
+            }
+            else
+            {
+                amtToDiscount = (order.Total - Convert.ToInt32(targetPrice)).ToString(CultureInfo.CurrentCulture);
+            }
+
+            int idDiscount = dataOperations.CreateAdjustmentDiscount(note, amtToDiscount, orderID);
+
+            try
+            {
+
+                var msg = "";
+                order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Discount =
+                    _orderManagementService.GetDiscountById(idDiscount);
+
+                JProperty createdByExpressCheckout = new JProperty(JsonPropertyKeys.PriceAdjusted,"'PriceAdjusted': {'" + _appHelper.GetUserAuditInfo() + "'}");
+
+                order.AdminComments = JsonHelpers.MergeJsonWithStoredField(null,
+                    createdByExpressCheckout);
+
+                _orderManagementService.SaveOrderChanges(order, string.Empty, string.Empty);
+
+
+                msg = order.idOrder + " update price " + targetPrice + " via Discount: " + idDiscount;
+                _orderManagementService.SaveChanges();
+
+
+                return
+                    Json(
+                        new
+                        {
+                            Result = WebUiConstants.Success,
+                            message = msg
+                        });
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            Json(
+                new
+                {
+                    Result = WebUiConstants.Fail,
+                    Reason =
+                        "Server Error - Set user assigned to Order: For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com."
+                });
+        }
+
+        [HttpPost]
+        [HandleAjaxException]
         public ActionResult SetUserAssignedToOrder(int orderID, string migrateOrder, string targetUserEmail)
         {
             try

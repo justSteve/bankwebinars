@@ -92,6 +92,7 @@ $(document).ready(function () {
         ns.addAdditionalLocationsButton = $('#addLocationsButton');
         ns.adInfinitumButton = $('#AdInfinitumButton');
         ns.changeUserOrderButton = $('#changeUserOrderButton');
+        ns.setPriceOfOrderButton = $('#setPriceOfOrderButton');
         ns.changeUserOrdersButton = $('#changeUserOrdersButton');
         ns.editDiscountNotesButton = $('#editDiscountNotesButton');
         ns.extendEventAccessButton = $('#extendEventAccessButton');
@@ -112,7 +113,9 @@ $(document).ready(function () {
         ns.showExtendAccessButton = $('#showExtendAccessButton');
         ns.showExtendAccess = $('#showExtendAccess');
         ns.showChangeUser = $('#showChangeUser');
+        ns.showChangePrice = $('#showChangePrice');
         ns.changeAssignedUser = $('#changeAssignedUser');
+        ns.changePrice = $('#changePrice');
         ns.PayByMonerisModal = $('#PayByMonerisModal');
         ns.listOfRegTypes = $('#listOfRegTypes');
 
@@ -202,7 +205,26 @@ $(document).ready(function () {
             });
         });
 
+        ns.showChangePrice.on('click', function (e) {
+
+            e.preventDefault();
+
+            var modalFormOptions = {
+                keyboard: true,
+                backdrop: 'static',
+                show: true
+            };
+
+            ns.changePrice.modal(modalFormOptions);
+
+            ns.changePrice.on('hidden', function () {
+                modalFormOptions = null;
+            });
+        });
+
         ns.changeUserOrderButton.on('click', ns.changeUserOrder);
+
+        ns.setPriceOfOrderButton.on('click', ns.setPriceOfOrder);
 
         ns.changeUserOrdersButton.on('click', ns.changeUserOrders);
 
@@ -624,7 +646,40 @@ $(document).ready(function () {
         });
 
     };
+    ns.setPriceOfOrder = function (e) {
+        e.preventDefault();
+        alert("hit");
+        var self = this;
 
+        var url = $('#frmSetPriceOfOrder').attr('action');
+
+        var tabInputs = formProcessor.getApplicableInputs('frmSetPriceOfOrder');
+        var payload = formProcessor.processInputs(tabInputs);
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: url,
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payload),
+            beforeSend: function () {
+                $(self).append('<span id="changePriceSpinner"><i class="icon-spinner icon-spin"></i>&nbsp;</span>');
+                $(self).attr('disabled', 'disabled');
+            }
+        }).done(function (data) {
+
+            if (data.Result === 'Success') {
+                $('#SetUserAssignedToOrder-modal-body').html("<p>" + data.message + "</p>");
+                
+            } else {
+                $("<p>" + data.Reason + "</p>").insertAfter($('#targetPrice'));
+            }
+            $('#changePriceSpinner').remove();
+            $(self).removeAttr('disabled');
+
+        });
+    };
     ns.changeUserOrder = function (e) {
         e.preventDefault();
 

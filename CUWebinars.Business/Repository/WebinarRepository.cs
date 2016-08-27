@@ -133,7 +133,8 @@ namespace CUWebinars.Business.Repository
                 var titleSearch = stronglyTypedContext.Webinars
                     .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
                     .Include(w => w.Presenter.WebUser)
-                    .Where(w => w.Title.Contains(searchTerm) && (w.Status != WebinarStatus.Archived || w.Status != WebinarStatus.Pending || w.Status != WebinarStatus.Deleted))
+                    .Where(w => w.Title.Contains(searchTerm)
+                        && (w.Status != WebinarStatus.Archived || w.Status != WebinarStatus.Pending || w.Status != WebinarStatus.Deleted))
                     ;
                 return titleSearch.ToList();
             }
@@ -174,11 +175,10 @@ namespace CUWebinars.Business.Repository
                         || w.Title.ToLower().Contains(searchTerm)
                     || w.WhoAttend.ToLower().Contains(searchTerm)
                     || w.LearnBody.ToLower().Contains(searchTerm)
-                    && w.Status != WebinarStatus.Archived
-                    && w.Status != WebinarStatus.Deleted
-                    && w.Status != WebinarStatus.Pending
-
-                    );
+                    )
+                    .Where(w => w.Status != WebinarStatus.Archived
+                    || w.Status != WebinarStatus.Deleted
+                    || w.Status != WebinarStatus.Pending);
 
             var result = searchTopics.Union(searchDesc).ToList();
             return result;

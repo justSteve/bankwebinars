@@ -29,5 +29,6 @@ namespace CUWebinars.Business.Constants
         public static readonly string DiscountRedeemed = "DiscountRedeemed";
         public static readonly string MonerisDupeTx = "MonerisDupeTx";
         public static readonly string DiscountIsApplied = "DiscountIsApplied";
+        public static readonly string PriceAdjusted = "PriceAdjusted";
     }
 }

@@ -64,6 +64,7 @@
                     <div class="dropdown">
                         <a class="dropdown-toggle btn btn-info btn-small" data-toggle="dropdown" href="#">Change Order</a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                            <li><a tabindex="-1" href="#" id="showChangePrice">Apply Price Adjustment</a></li>
                             <li><a tabindex="-1" href="#" id="showChangeUser">Assign to Different User</a></li>
                             <li><a tabindex="-1" href="#" id="showChangeAssignedAffiliate">Change Credited Affiliate (<span id="affiliateNameText">@Model.EditFields.Order.Affiliate.ttsDomain</span>)</a></li>
                             @*<li><a tabindex="-1" href="#" id="showMonerisModal">Submit Payment</a></li>*@
@@ -179,19 +180,22 @@
                             <br />
                             <div class="controls">
                                 @Model.EditFields.Discount.DiscountCode (@Model.EditFields.Discount.idDiscount)<br />
-
-                                <span id="DisplayRowPriceViewModel_PricesAndDiscounts_CreditsRemain"> Credits Remain: @Model.EditFields.Discount.CreditsRemain</span>
-
+                                @if (Model.EditFields.Discount.DateValidTo > Model.EditFields.Discount.DateValidFrom)
+                                {
+                                    <span id="DisplayRowPriceViewModel_PricesAndDiscounts_SubExpiry"> Subscription will expire @Model.EditFields.Discount.DateValidTo.ToShortDateString()</span>
+                                }
+                                else
+                                {
+                                    <span id="DisplayRowPriceViewModel_PricesAndDiscounts_CreditsRemain"> Credits Remain: @Model.EditFields.Discount.CreditsRemain</span>
+                                }
                             </div>
                         </div>
                         if (row.Discount == null)
                         {
-
                             <div class="control-group">
                                 @Html.TextBoxFor(m => m.EditFields.Discount.DiscountCode, new { placeholder = "Enter code", @class = "input input-small" })
                                 <button id="applyDiscountButton" class="btn btn-mini btn-success">Apply Code</button>
                             </div>
-
                         }
                     }
                     if (Model.EditFields.Discount.TypeOfDiscount == DiscountType.Promo)
@@ -316,6 +320,32 @@
             </div>
         }
 
+        <div id="changePrice" class="modal hide fade">
+            @using (Html.BeginForm("SetPriceOfOrder", "Admin", FormMethod.Post, new { id = "frmSetPriceOfOrder" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3>Change Price of Order:</h3>
+                </div>
+                <div id="SetUserAssignedToOrder-modal-body" class="modal-body">
+
+                    <input type="hidden" name="orderID" value="@Model.EditFields.Order.idOrder" />
+                    <input type="hidden" name="migrateOrder" value="one" />
+
+                    <div>
+                        <input type="text" id="targetPrice" name="targetPrice" placeholder="Enter Total Price" />
+                    </div>
+                    <div><input type="textarea" id="note" name="note" placeholder="Reason" /></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" id="SetPriceOfOrder-close" aria-hidden="true">Close</button>
+                    <button id="SetPriceOfOrderButton" name="moveOne" class="btn btn-primary">Submit</button>
+                </div>
+            }
+        </div>
+
         <div id="changeAssignedUser" class="modal hide fade">
             @using (Html.BeginForm("SetUserAssignedToOrder", "Admin", FormMethod.Post, new { id = "frmSetUserAssignedToOrder" }))
             {
@@ -400,27 +430,6 @@
             }
         </div>
 
-        <div id="DiscountModal" class="modal hide fade">
-            @using (Html.BeginForm("EditDiscount", "Admin", FormMethod.Post, new { id = "frmEditDiscount" }))
-            {
-                @Html.AntiForgeryToken()
-                @Html.ValidationSummary("Error.", new { id = "editDiscountSummary" })
-
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h3>Enter Expiration Date:</h3>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" name="orderID" value="@Model.EditFields.Order.idOrder" />
-                    <input type="text" id="newExpiryDate" name="newExpiryDate" placeholder="Expires On" /> <span class="text text-info">Insert Date to Expire</span>
-
-                </div>
-                <div class="modal-footer">
-                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                    <button id="editDiscountButton" class="btn btn-primary">Submit</button>
-                </div>
-            }
-        </div>
 
         <div id="PayByMonerisModal" class="modal hide fade">
 
