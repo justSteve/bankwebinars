@@ -787,40 +787,6 @@ namespace CUWebinars.Business.Services
         {
             var order = GetOrderById(orderId);
 
-            if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Discount != null)
-            {
-
-                JObject existingJObject = null;
-
-                string comments = string.Empty;
-
-
-                if (!ReferenceEquals(null, order.AdminComments))
-                {
-                    comments = order.AdminComments.Trim();
-                }
-
-                var newJson =
-                    new JProperty(
-                        string.Concat("DiscountRestored-",
-                            TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
-                        new JObject(new JProperty("CanceledOrder", order.AdminComments))
-                        );
-
-                if (string.IsNullOrWhiteSpace(comments))
-                {
-                    existingJObject = new JObject(newJson);
-                }
-                else
-                {
-                    existingJObject = JObject.Parse(comments);
-                    existingJObject.Add(newJson);
-                }
-
-                order.AdminComments = existingJObject.ToString(Formatting.None);
-
-                //
-            }
             _orderRepository.DeleteOrder(order);
         }
 
@@ -2716,6 +2682,35 @@ namespace CUWebinars.Business.Services
                 }
 
             return credits;
+        }
+
+        public void CreateTestRegistration(Webinar webinar)
+        {
+            var idRegType = GetAllPossibleOptionsByWebinarId(webinar.idWebinar, false);
+
+            var live_id = 0;
+
+            foreach (var _regType in idRegType)
+            {
+                if (_regType.Key.OptionLabel.Contains("Five"))
+                    live_id = _regType.Key.idRegType;
+                    ;
+            }
+
+            var row = CreateOrderRow(webinar, null, live_id);
+            var orders = new List<Order>();
+            var order = CreateNewOrder(_affiliateRepository.FindById(19), GetWebUser(1), webinar, row, "testing");
+
+            AssignWebUserToOrder(GetWebUser(1), order);
+            AssignAffiliateToOrder(19, order);
+            
+            order.OrderStatus = OrderStatus.Submitted;
+            
+            orders.Add(order);
+
+            FireSendConnectionInfoNotificationEvent(orders, false); // this is where a single email is specified
+
+            DeleteOrder(order.idOrder);
         }
 
 

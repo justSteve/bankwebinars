@@ -16,12 +16,6 @@ namespace CUWebinars.Web.Core
         public string CitrixOrgKeyKyle { get; private set; }
         public string CitrixAuthSteve { get; private set; }
         public string CitrixOrgKeySteve { get; private set; }
-        public string CitrixAuthWesley { get; private set; }
-        public string CitrixOrgKeyWesley { get; private set; }
-        public string CitrixAuthDan { get; private set; }
-        public string CitrixOrgKeyDan { get; private set; }
-        public string CitrixAuthLaura { get; private set; }
-        public string CitrixOrgKeyLaura { get; private set; }
 
         public string CcPaymentProcessingUrlKey { get; private set; }
         public string CreateUserQueueName { get; private set; }
@@ -73,12 +67,6 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.CitrixOrgKeyKyle = ApplicationSettingsSection["CitrixOrgKeyKyle"];
                 UniqueInstance.CitrixAuthSteve = ApplicationSettingsSection["CitrixAuthSteve"];
                 UniqueInstance.CitrixOrgKeySteve = ApplicationSettingsSection["CitrixOrgKeySteve"];
-                UniqueInstance.CitrixAuthWesley = ApplicationSettingsSection["CitrixAuthWesley"];
-                UniqueInstance.CitrixOrgKeyWesley = ApplicationSettingsSection["CitrixOrgKeyWesley"];
-                UniqueInstance.CitrixAuthDan = ApplicationSettingsSection["CitrixAuthDan"];
-                UniqueInstance.CitrixOrgKeyDan = ApplicationSettingsSection["CitrixOrgKeyDan"];
-                UniqueInstance.CitrixAuthLaura = ApplicationSettingsSection["CitrixAuthLaura"];
-                UniqueInstance.CitrixOrgKeyLaura = ApplicationSettingsSection["CitrixOrgKeyLaura"];
 
                 UniqueInstance.CcPaymentProcessingUrlKey = ApplicationSettingsSection["CcPaymentProcessingUrlKey"];
                 UniqueInstance.CreateUserQueueName = ApplicationSettingsSection["CreateUserQueueName"];

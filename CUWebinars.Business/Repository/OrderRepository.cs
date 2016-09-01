@@ -43,6 +43,7 @@ namespace CUWebinars.Business.Repository
             newOrder.BillingEmail = webUser.email;
             newOrder.idUser = webUser.idUser;
             newOrder.Origin = origin;
+            newOrder.InvoiceDetail = "";
 
             newOrder = AssignWebUserToOrder(webUser, newOrder);
 
@@ -122,6 +123,7 @@ namespace CUWebinars.Business.Repository
                             validationError.ErrorMessage);
                     }
                 }
+                
                 throw new Exception(stringBuilder.ToString());
             }
         }

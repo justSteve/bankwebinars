@@ -902,7 +902,36 @@ namespace CUWebinars.Web.Core.Orchestrators
             return cpSubscription;
         }
 
-        public DiscountModel BuildDiscountModel(Discount discount, int idUser)
+        public DiscountModel BuildDiscountModelForOrder(OrderRow row, int idUser)
+        {
+            var discountModel = new DiscountModel();
+            //var currentUser = GetWebUserById(idUser);
+            var orderDiscount = row.Discount;
+            if (ReferenceEquals(orderDiscount, null))
+                return null;
+            _universalMapper.Map(orderDiscount, discountModel);
+
+            discountModel.DateValidFrom = orderDiscount.DateValidFrom;
+            discountModel.DateValidTo = orderDiscount.DateValidTo;
+            discountModel.RenewalTerm = orderDiscount.RenewalTerm;
+            discountModel.Status = orderDiscount.Status;
+            discountModel.Notes = orderDiscount.Notes;
+
+            discountModel.CreditsRemain = CalculateCreditsRemain(orderDiscount);
+            discountModel.CreditsUsed = CalculateCreditsUsed(orderDiscount);
+            discountModel.Cost = orderDiscount.Cost;
+            discountModel.TotalCount = orderDiscount.TotalCount;
+            discountModel.DateBilled = orderDiscount.DateBilled;
+            discountModel.FlatOff = orderDiscount.FlatOff;
+            discountModel.PercentOff = orderDiscount.PercentOff;
+            discountModel.Status = orderDiscount.Status;
+            discountModel.DiscountCode = orderDiscount.DiscountCode;
+
+
+            return discountModel;
+
+        }
+        public DiscountModel BuildDiscountModelForUser(Discount discount, int idUser)
         {
             var discountModel = new DiscountModel();
             var currentUser = GetWebUserById(idUser);
@@ -963,7 +992,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         }
 
 
-        public DiscountModel BuildDiscountModel()
+        public DiscountModel BuildDiscountModelForUser()
         {
             var discountModel = new DiscountModel();
             var currentUser = GetWebUserFromIPrincipal();
@@ -1045,7 +1074,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             var addresses = user.Addresses.ToArray();
             var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
             var shippingAddress = addresses.First(a => a.AddressType == WebUiConstants.ShippingAddress);
-
             manageModel.RegisterFields = new RegisterModel
             {
                 BillingAddress = new AddressModel

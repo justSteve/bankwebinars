@@ -1279,6 +1279,7 @@
     <Content Include="Content\images\trans.gif" />
     <Content Include="Content\images\TTS-logo.jpg" />
     <Content Include="Content\images\TTS-logoPreHeader.jpg" />
+    <Content Include="Content\images\TTS-logoPreHeaderReverse.png" />
     <Content Include="Content\images\TTSLogo.gif" />
     <Content Include="Content\images\upcomingwebinars.jpg" />
     <Content Include="Content\images\upcomingwebinars1.jpg" />

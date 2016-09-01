@@ -337,7 +337,7 @@ namespace CUWebinars.Web.Controllers
 
                 }
                 CompliancePerspectivesModel compPersectivesModel = _accountControllerOrchestrator.BuildCompPersectivesModel();
-                var discountModel = _accountControllerOrchestrator.BuildDiscountModel();
+                var discountModel = _accountControllerOrchestrator.BuildDiscountModelForUser();
                 var myWebinarsDTO = _accountControllerOrchestrator.BuildMyWebinarsDTO
                     (discountModel, claimsIdentityOfAuthenticatedUser);
                 if (compPersectivesModel != null)
@@ -917,7 +917,13 @@ namespace CUWebinars.Web.Controllers
                                         "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditRegType_DropDown.cshtml",
                                         regTypeDD, true);
 
-            var discount = _accountControllerOrchestrator.BuildDiscountModel(orderRow.Discount, order.idUser);
+            var discount = _accountControllerOrchestrator.BuildDiscountModelForUser(orderRow.Discount, order.idUser);
+
+            if (orderRow.Discount != null)
+            {
+                discount=_accountControllerOrchestrator.BuildDiscountModelForOrder(orderRow, order.idUser);
+            }
+
             if (orderRow.Webinar.Title.StartsWith("Compliance Perspectives"))
             {
                 discount =  _accountControllerOrchestrator.BuildCPSubscriptionModel(orderRow.Discount, order.idUser);
@@ -2378,11 +2384,11 @@ namespace CUWebinars.Web.Controllers
 
         }
 
-        public ActionResult GetUserDiscount()
-        {
-            var discountModel = _accountControllerOrchestrator.BuildDiscountModel();
-            return null;
+        //public ActionResult GetUserDiscount()
+        //{
+        //    var discountModel = _accountControllerOrchestrator.BuildDiscountModelForUser();
+        //    return discountModel;
 
-        }
+        //}
     }
 }

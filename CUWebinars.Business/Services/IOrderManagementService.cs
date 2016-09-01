@@ -151,5 +151,6 @@ namespace CUWebinars.Business.Services
         decimal CalculateCreditsRemain(Discount userDiscount);
         decimal CalculateCreditsUsed(Discount userDiscount);
 
+        void CreateTestRegistration(Webinar webinar);
     }
 }

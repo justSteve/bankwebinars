@@ -385,9 +385,7 @@ function SendToAff(affiliateId) {
 
     //alert($("#SendToList_" + affiliateId).val());
     var currCopy = GetCurrentEditorCopy();
-    //alert(currCopy);
-    alert('Not quite implemented yet... mostly covered by Save');
-    return;
+
 
     $.ajax({
         url: '/Admin/SendSinglePromo',

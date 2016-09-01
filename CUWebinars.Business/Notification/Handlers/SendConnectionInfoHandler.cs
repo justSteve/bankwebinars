@@ -87,7 +87,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 sendConnectionInfoEvent.EventObject.NotificationStorage =
                     notificationStorage.ToString(Formatting.None);
 
-                if (isAdditionalLocation.Any())
+                if (isAdditionalLocation != null && isAdditionalLocation.Any())
                 {
                     string tmpNameStorage = sendConnectionInfoEvent.EventObject.FirstName;
 

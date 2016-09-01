@@ -52,8 +52,8 @@
 
         window.$zopim || (function (d, s) {
             var z = window.$zopim = function (c) {
-                    z._.push(c);
-                },
+                z._.push(c);
+            },
                 $ = z.s = d.createElement(s),
                 e = d.getElementsByTagName(s)[0];
 
@@ -107,9 +107,15 @@
         }
 
         .preheader {
-            background-color: lightgray;
+            background-color: black;
             width: 100%;
             padding-left: 25px;
+
+        }
+        
+        #preheaderIcon {
+            padding-top: 5px;
+            margin-top: 5px;
         }
     </style>
 
@@ -132,7 +138,7 @@
 
 
             <ul class="social">
-                @*<li><a class="socicon small rss" href="#" data-placement="bottom" title="Subscribe to our RSS feed"></a></li>*@
+                <li><span><a href="http://www.ttstrain.com?from=tenant" target="_blank" data-placement="bottom" title="A TTS Production"><img id="preheaderIcon" src="~/Content/images/TTS-logoPreHeaderReverse.png" /></a></span></li>
                 <li><a class="socicon small facebook" href="http://www.facebook.com/home.php#!/pages/Total-Training-Solutions/300546163412" target="_blank" data-placement="bottom" title="Follow us on Facebook"></a></li>
                 <li><a class="socicon small twitterbird" href="http://twitter.com/#!/ttstrain" target="_blank" data-placement="bottom" title="Follow us on Twitter"></a></li>
                 <li><a class="socicon small linkedin" href="https://www.linkedin.com/company/bankwebinars.com" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>

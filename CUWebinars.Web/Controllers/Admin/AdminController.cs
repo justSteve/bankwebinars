@@ -299,7 +299,7 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 if (order.InvoiceDetail != null && order.InvoiceDetail.StartsWith("{\"OrderIsInvoiced"))
                 {
-                    _logger.Warn("Invoiced Order is changed affiliate: " + order.idOrder + " from " +
+                    _logger.Warn("Invoiced Order changed affiliate: " + order.idOrder + " from " +
                                  originalAffiliate.ttsDomain + " to " +
                                  newAffiliate.ttsDomain);
 
@@ -2157,11 +2157,17 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
+             [ValidateInput(false)]
         public ActionResult SendSinglePromo(int affiliateId, string messageBodyHtml) // WebinarPromoViewModel model
         {
             //var model = null;
-            WebinarPromoViewModel model = new WebinarPromoViewModel(); // TEMP FOR INITIAL TESTING
+            WebinarPromoViewModel model = new WebinarPromoViewModel
+            {
+                Affiliate = _affiliateManagementService.FindById(affiliateId),
+                EventBody = messageBodyHtml
+                
+            };
             if (ModelState.IsValid)
             {
                 try
@@ -3530,8 +3536,8 @@ namespace CUWebinars.Web.Controllers.Admin
                                         o.InvoiceDetail != null &&
                                         o.InvoiceDetail.StartsWith("{\"ChangedOrderNeedsNewInvoice")
                                         &&
-                                        (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed ||
-                                         o.OrderStatus == OrderStatus.Billed)
+                                        (o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Billed ||
+                                         o.OrderStatus == OrderStatus.Submitted)
                                 )
                                 .ToList();
 

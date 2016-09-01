@@ -351,7 +351,6 @@ namespace CUWebinars.Business.Repository
                                           .Where(w => w.idWebinar != 883)
                 .OrderBy(w => w.Date).First().idWebinar;
 
-
             return item;
 
         }
@@ -363,8 +362,8 @@ namespace CUWebinars.Business.Repository
                 .Where(w => w.Date > startDate
                     && w.Date < endDate
                     && w.Status == WebinarStatus.Recorded
-                    && (w.SeriesInfo != null && !w.SeriesInfo.StartsWith("RequiredParent")
-                    && !w.Title.StartsWith("Compliance Perspectives"))
+                    && !w.SeriesInfo.StartsWith("RequiredParent")
+                    && !w.Title.StartsWith("Compliance Perspectives")
                 )
                 .ToList();
         }
