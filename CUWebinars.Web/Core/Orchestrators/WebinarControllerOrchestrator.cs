@@ -833,7 +833,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             var topicIdsForWebinar = _webinarManagementService.GetTopicsPerWebinar(idWebinar).ToList();
             var upcomingRegTypeGroups = _webinarManagementService.GetUpcomingRegTypesForWebinars().ToList();
             var regTypeGroupsForWebinars = _webinarManagementService.GetRegTypeGroupsForWebinars(idWebinar).ToList();
-            var presenters = _webinarManagementService.GetAllPresenters()
+            var presenters = _webinarManagementService.GetAllPresenters().OrderBy(p => p.WebUser.LastName)
                 .Select(presenter => new SelectListItem
                 {
                     Text = presenter.WebUser.FullName,

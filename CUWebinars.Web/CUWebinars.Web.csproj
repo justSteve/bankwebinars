@@ -1162,6 +1162,7 @@
     <Content Include="Content\images\presenters\c_crawford.jpg" />
     <Content Include="Content\images\presenters\danasummer.jpg" />
     <Content Include="Content\images\presenters\Daum_Tim-1.jpg" />
+    <Content Include="Content\images\presenters\decesare.jpg" />
     <Content Include="Content\images\presenters\demaio.jpg" />
     <Content Include="Content\images\presenters\demarino.jpg" />
     <Content Include="Content\images\presenters\dicara.jpg" />
@@ -1185,12 +1186,14 @@
     <Content Include="Content\images\presenters\kasel.jpg" />
     <Content Include="Content\images\presenters\kavelaris.jpg" />
     <Content Include="Content\images\presenters\kelly.jpg" />
+    <Content Include="Content\images\presenters\knutson.jpg" />
     <Content Include="Content\images\presenters\konarik.jpg" />
     <Content Include="Content\images\presenters\laboda.jpg" />
     <Content Include="Content\images\presenters\lacy.jpg" />
     <Content Include="Content\images\presenters\lange.jpg" />
     <Content Include="Content\images\presenters\larger.jpg" />
     <Content Include="Content\images\presenters\lolley.jpg" />
+    <Content Include="Content\images\presenters\malzahn.jpg" />
     <Content Include="Content\images\presenters\mccain.jpg" />
     <Content Include="Content\images\presenters\mcguinn.jpg" />
     <Content Include="Content\images\presenters\merrill.jpg" />
@@ -1218,6 +1221,7 @@
     <Content Include="Content\images\presenters\souther.jpg" />
     <Content Include="Content\images\presenters\Streff.jpg" />
     <Content Include="Content\images\presenters\swartzberg.jpg" />
+    <Content Include="Content\images\presenters\tatlock.jpg" />
     <Content Include="Content\images\presenters\thomas.jpg" />
     <Content Include="Content\images\presenters\tthomas.jpg" />
     <Content Include="Content\images\presenters\turner.jpg" />

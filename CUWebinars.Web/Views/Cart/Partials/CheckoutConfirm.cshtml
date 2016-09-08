@@ -48,12 +48,15 @@
                 <div id="AdjustAddLoc" class="row initialHide">
                     <div class="offset2 span9 ">
                         <div id="additionalLocationsCaption" class="clear pull-right">
-                            Additional Locations: <button id="addAnotherAddLoc" class="btn btn-mini">add</button>
+                            Additional Locations: @Model.AdditionalLocationsViewModel.OptionsCost.ToString("c") will be added to the cost of registration for each additional seat.
+
+                            <button id="addAnotherAddLoc" class="btn btn-mini">add</button>
 
                             @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new { id = "AdjustAddLocsForm" }))
                             {
                                 <div id="additionalLocationsList"></div>
                             }
+
                         </div>
                     </div>
                 </div>
@@ -71,8 +74,8 @@
                         <div id="showCartPrice">
                             @{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }
                         </div>
-                        
-                        
+
+
                     </div>
                 </div>
 
@@ -108,8 +111,8 @@
                     @if (Model.OrderStatus != OrderStatus.Paid)
                     {
 
-                        <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>
-                        <br />
+                    <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>
+                    <br />
                     }
                 </div>
                 <div class="row">

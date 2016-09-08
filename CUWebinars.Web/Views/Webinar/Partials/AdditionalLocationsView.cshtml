@@ -1,4 +1,9 @@
 @model AdditionalLocationOfferViewModel
+<script type="text/javascript">
+    var ADDLOC = {};
+    ADDLOC.price = @Model.Price;
+    
+</script>
 @{
     if (Model.Webinar.Status == WebinarStatus.Scheduled
         || Model.Webinar.Status == WebinarStatus.Active
@@ -60,7 +65,3 @@
         @* modal content goes here *@
     </div><!-- /.modal-content -->
 </div>
-<script type="text/javascript">
-    var ADDLOC = {};
-    ADDLOC.price = @Model.Price;
-</script>

@@ -45,10 +45,6 @@
         {
             outerSpan.InnerHtml = "";
         }
-        else if (Model.NumberOfAdditionalLocations == 1)
-        {
-            outerSpan.InnerHtml = string.Concat("One Additional Location: ", additionalLocsPriceElement.ToString(TagRenderMode.Normal), "<br>", Model.AddressesForAdditionalLocations);
-        }
         else
         {
             outerSpan.InnerHtml = string.Concat(Model.NumberOfAdditionalLocations, " Additional Locations: ", additionalLocsPriceElement.ToString(TagRenderMode.Normal));
@@ -138,14 +134,14 @@
             
         }
 
-        //if (Model.NumberOfAdditionalLocations == 0)
-        //{
-        //    rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> add?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
-        //}
+        if (Model.NumberOfAdditionalLocations == 0)
+        {
+            rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> Need an Additional Location?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
+        }
         if (Model.NumberOfAdditionalLocations > 0)
         {
-            rowAmount.Append(GetAdditionalLocationsTextSpan() + "<br>");
-            //rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> edit?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
+            //rowAmount.Append(GetAdditionalLocationsTextSpan() + "<br>");
+            rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> change?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
         }
 
         //rowAmount.Append("<span id='showSubTotal'>Subtotal: " + Model.PricesAndDiscounts.UnitPrice.ToString(CurrencyFormatToken) + "</span><br />");

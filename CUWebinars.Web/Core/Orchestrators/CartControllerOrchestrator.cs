@@ -710,7 +710,16 @@ namespace CUWebinars.Web.Core.Orchestrators
                     _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.SelectedWebUser) : // if logged in as admin or affiliate
                     _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.idUser);
 
-                return CreateNewOrder(currentAffiliate, webUser, webinar, newOrderRow, beingImpersonatedClaim);
+                var order = CreateNewOrder(currentAffiliate, webUser, webinar, newOrderRow, beingImpersonatedClaim);
+
+                if (formModel.CCEmail != null)
+                {
+                    var newJson = new JProperty(string.Concat(JsonPropertyKeys.CarbonCopy), formModel.CCEmail);
+                    order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, newJson);
+                    _orderManagementService.SaveChanges();
+                }
+
+                return order;
             }
             catch (Exception ex)
             {
@@ -991,22 +1000,37 @@ namespace CUWebinars.Web.Core.Orchestrators
             var existingAdditionalLocationsForOrderRow =
                 _orderManagementService.GetAdditionalLocationsForOrderRow(newOrderRowId);
 
-
-            foreach (var newSubmittedAdditionalLocation in additionalLocations.Where(al => !existingAdditionalLocationsForOrderRow.Select(eal => eal.Email).Contains(al.Email)))
+            if (additionalLocations == null)
             {
-                newSubmittedAdditionalLocation.idOrderRow = newOrderRowId;
-                _orderManagementService.RemoveFromDiscount(newOrderRowId);
-                _orderManagementService.AddAdditionalLocation(newSubmittedAdditionalLocation);
-            }
+                foreach (var additionalLocationToDelete in
+                    existingAdditionalLocationsForOrderRow)
+                {
 
-            foreach (var additionalLocationToDelete in
-                existingAdditionalLocationsForOrderRow.Where(existingEmail => !additionalLocations.Select(al => al.Email).Contains(existingEmail.Email)))
+                    //_orderManagementService.RestoreToDiscount(newOrderRowId);
+                    _orderManagementService.RemoveAndDeleteAdditionalLocation(additionalLocationToDelete);
+                }
+            }
+            else
             {
+                foreach (
+                    var newSubmittedAdditionalLocation in
+                        additionalLocations.Where(
+                            al => !existingAdditionalLocationsForOrderRow.Select(eal => eal.Email).Contains(al.Email)))
+                {
+                    newSubmittedAdditionalLocation.idOrderRow = newOrderRowId;
+                    //_orderManagementService.RemoveFromDiscount(newOrderRowId);
+                    _orderManagementService.AddAdditionalLocation(newSubmittedAdditionalLocation);
+                }
 
-                _orderManagementService.RestoreToDiscount(newOrderRowId);
-                _orderManagementService.RemoveAndDeleteAdditionalLocation(additionalLocationToDelete);
+                foreach (var additionalLocationToDelete in
+                    existingAdditionalLocationsForOrderRow.Where(
+                        existingEmail => !additionalLocations.Select(al => al.Email).Contains(existingEmail.Email)))
+                {
+
+                    //_orderManagementService.RestoreToDiscount(newOrderRowId);
+                    _orderManagementService.RemoveAndDeleteAdditionalLocation(additionalLocationToDelete);
+                }
             }
-
             _orderManagementService.SaveChanges();
         }
 

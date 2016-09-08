@@ -982,6 +982,7 @@ function hookUpChangeTypeLogic(dropDown) {
                         if (data.Result === 'Success') {
                             // This next variable is initially set in the CheckoutConfirm.cshtml razor view
                             anyAddLocs = false;
+                            
                             $('#additionalLocationsCaption').html('None');
 
                             $('#addlocSpiel').text('To add additional locations for this order, please use our Help & Feedback button (lower right corner)  for immediate assistance').addClass('text-info');
