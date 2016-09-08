@@ -47,7 +47,6 @@
     var orderRowId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow : 0);
     var orderId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.idOrder : 0);
     var addressVerified = @(@Model.UserAddressVerified ? "true" : "false");
-
 </script>
 
 @section scripts{
@@ -112,136 +111,9 @@
                 </p>
                 <p>You may contact us by using the Online Chat button below or emailing Support@ttsTrain.com. </p>
             </div>
-            @{
-                if (Model.Webinar.idWebinar == 2109)
-                {
-                    <a id="CompSchoolSignUp" class="btn btn-mini btn-success" href="/cart/ComplianceSchoolCheckout">
-                        <div id="AddToCartCompSchool" class="btn-success btn pull-right" type="button" value="Sign Up"> Sign Up </div>
-                    </a>
-                }
-                else
-                {
-                    if (
-                        Model.Webinar.idWebinar != 2215 &&
-                        Model.Webinar.idWebinar != 2216 &&
-                        Model.Webinar.idWebinar != 2217 &&
-                        Model.Webinar.idWebinar != 2218 &&
-                        Model.Webinar.idWebinar != 2219
-                        )
-                    {
-                        if (
-                            Model.Webinar.Status != WebinarStatus.Deleted
-                            && Model.Webinar.Status != WebinarStatus.Pending
-                            )
-                        {
-                            if (Model.UserOwnsThisEvent < 1 || Model.CheckoutInProcess
-                                )
-                            {
-                                <div id="SignUpFormContainer">
 
+            @Html.Partial(partialViewName: "~/Views/Webinar/Partials/_ShoppingCart.cshtml", model: Model)
 
-                                    <div style="margin-bottom: 0; padding: 0 5px 0 8px;" class="well">
-                                        <ul class="nav nav-tabs" id="regTabs">
-                                            <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@Model.SignUpCaption</a></li>
-                                            <li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
-                                            <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@Model.ConfirmationCaption</a></li>
-                                        </ul>
-                                        <div class="tab-content">
-                                            @if (Model.UserOwnsThisEvent < 1)
-                                            {
-                                                <div class="tab-pane active" id="signUp">@Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)</div>
-                                                <div class="tab-pane" id="contactInfo"></div>
-                                                <div class="tab-pane" id="confirmation"></div>
-                                                @*if (Model.UserHasDiscount != null)
-                                                {
-                                                    if (Model.UserHasDiscount.CreditsRemain > 0)
-                                                    {
-                                                        if (Model.UserHasDiscount.DateValidTo > Model.UserHasDiscount.DateValidFrom)
-                                                        {
-                                                            <span class="label large label-success">
-                                                                Your subscription will expire on @Model.UserHasDiscount.DateValidTo.ToShortDateString()<text>.</text>
-                                                            </span>
-                                                        }
-                                                        else
-                                                        {
-                                                            if (Model.UserHasDiscount.CreditsRemain == 1)
-                                                            {
-                                                                <span class="label large label-success">Your Webinar Subscription Package has one credit available for your next order!</span>
-                                                            }
-                                                            else
-                                                            {
-                                                                <span class=" pull-right label label-success">&nbsp;<span style="font-weight: normal">Your Webinar Subscription Package has @Model.UserHasDiscount.CreditsRemain.ToString().Replace(".00", "") credits available for your next order!&nbsp;</span></span>
-                                                            }
-                                                        }
-                                                    }
-                                                }*@
-                                            }
-                                            else if (Model.Order.OrderStatus == OrderStatus.AwaitingVerification || Model.Order.OrderStatus == OrderStatus.InProcess || Model.Order.OrderStatus == OrderStatus.Canceled || Model.Order.OrderStatus == OrderStatus.Submitted)
-                                            {
-                                                <div class="tab-pane" id="signUp"></div>
-                                                <div class="tab-pane" id="contactInfo"></div>
-                                                <div class="tab-pane active" id="confirmation">@Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutConfirm.cshtml", model: Model.CheckoutConfirmViewModel)</div>
-                                            }
-
-                                        </div>
-                                        <!-- The following forms are positioned here so that they are not nested in the form in the CheckoutOptions View. -->
-                                        @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
-                                        {
-                                            @Html.AntiForgeryToken()
-
-                                            <input id="loginEmail" name="Email" type="hidden" value="">
-                                            <input id="loginPassword" name="Password" type="hidden">
-                                            <input id="loginRememberMe" type="hidden" value="true" name="RememberMe">
-                                            <input type="hidden" name="returnUrl" value="/Webinar/Details/@Model.Webinar.idWebinar" />
-                                        }
-                                        @using (Html.BeginForm("ResetPassword", "Account", FormMethod.Post, new { id = "ResetPasswordForm" }))
-                                        {
-                                            @Html.AntiForgeryToken()
-                                            <input id="ResetPassEmail" name="emailForReset" type="hidden" value="">
-                                        }
-                                        <form id="checkEmail">
-                                            @Html.AntiForgeryToken()
-                                            <input type="hidden" name="emailChecker" id="emailChecker" />
-                                        </form>
-                                        <form id="checkZip">
-                                            <input type="hidden" name="ZipChecker" id="ZipChecker" />
-                                        </form>
-                                        <form id="nonUSForm">
-                                            <input type="hidden" name="AddressText" id="AddressText" />
-                                        </form>
-                                        <form id="checkInstitution">
-                                            <input type="hidden" name="InstitutionChecker" id="InstitutionChecker" />
-                                        </form>
-
-                                    </div>
-                                    <div id="EventDescription_ForResume" style="display: none;">
-                                        <h2 class="short_headline">
-                                            <span>
-                                                Event Description
-                                            </span>
-                                        </h2>
-                                        @Html.Raw(Model.Webinar.DescriptionLong)
-                                        <h2 class="short_headline">
-                                            <span>
-                                                @Html.Raw(Model.Webinar.LearnCaption)
-                                            </span>
-                                        </h2>
-                                        @Html.Raw(Model.Webinar.LearnBody)
-                                        <h2 class="short_headline">
-                                            <span>
-                                                Who Should Attend?
-                                            </span>
-                                        </h2>
-                                        @Html.Raw(Model.Webinar.WhoAttend)
-                                        <hr />
-                                    </div>
-                                </div>
-                                <!-- closes SignUpFormContainer div-->
-                            }
-                        }
-                    }
-                }
-            }
         </div>
         <!-- opens Container div-->
 

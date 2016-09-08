@@ -662,6 +662,48 @@ namespace CUWebinars.Web.Controllers
 
         }
 
+        public ActionResult GetAddToCartJSON(int? id)
+        {
+            var html = "";
+            html = "<div>test</div>";
+
+            // ok, this is going to be a bit, ah, complicated, perhaps...
+            // we want to show the "cart", which is a stack of partial views supported by a variety of models
+            // what do we need to instantiate so we can feed the view(s) the right things?
+
+            // Details method below has much of the same processing
+
+            if (id.HasValue)
+            {
+                // move logic into routine shared by Details and GetAddToCartJSON?
+
+                var webinar = _webinarManagementService.GetWebinar(id.Value);
+
+                if (webinar == null) return HttpNotFound();
+                var model = new WebinarDetailsViewModel()
+                {
+                    Webinar = webinar,
+                    WebinarFiles = webinar.WebinarFiles.ToList()
+                    // TODO: zzzALS can we look this up? , UserOwnsThisEvent = incomingOrder
+                };
+
+                // Incoming Order?
+                InitializeDetailsState(webinar, model, id.Value);
+                InitializeViewCentricProperties(model);
+                BuildConfirmOrderView(model);
+
+                // user, in-process, owns?
+
+                html = ViewHelpers.RenderViewToString(ControllerContext,
+                        "~/Views/Webinar/Partials/_ShoppingCart.cshtml",
+                        model, true);
+            }
+
+            return Json(new { html = html });
+
+        }
+
+
         public ActionResult GetPresenterCompact(int? id)
         {
             var html = "";
@@ -687,6 +729,7 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Details(int? id, int? idOrder)
         {
+            // move logic into routine shared by Details and GetAddToCartJSON?
             ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
             var currentUser = User.Identity.Name ?? "anon";
 

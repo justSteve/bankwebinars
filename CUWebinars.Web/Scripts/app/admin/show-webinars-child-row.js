@@ -3,7 +3,9 @@ function AttachDataTableWebinarEvents() {
 
     // user wants to edit a cell
     $('.dataTable').on('click', 'td.details-control', function () {
-        
+
+        //console.log("show-webinars-child-row td.details-control.click");
+
         // check to see if there is already an edit in progress.  we are going to close it so they 
         //  can browse around, when they re-open it though, it will re-populate the form fields from the server,
         //  any unsaved changes will be "lost".
@@ -97,6 +99,10 @@ function createChildRow(cell, $td, rowData) {
     if ($td.hasClass("wDate")) {
         return wDateCell(cell, $td, rowData);
     }  //
+
+    if ($td.hasClass("wAddToCart")) {
+        return wAddToCartCell(cell, $td, rowData);
+    }
 
     if ($td.hasClass("wTitle")) {
         return wTitleCell(cell, $td, rowData);
@@ -228,6 +234,34 @@ function wTitleCell(cell, $td, rowData) {
         },
         beforeSend: function () {
             addIsLoadingIndicator($td, -1); // let ajax "complete" call remove
+        },
+        complete: function () {
+            removeIsLoadingIndicator($td);
+        }
+    });
+
+    return html;
+}
+
+
+function wAddToCartCell(cell, $td, rowData) {
+
+    var html = "";
+
+    $.ajax({
+        async: false,
+        url: "/webinar/getaddtocartjson",
+        data: ({ id: rowData.idWebinar }),
+        dataType: "json",
+        type: "POST",
+        success: function (data) {
+            html = data.html;
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert("/account/getaddtocartjson: " + textStatus);
+        },
+        beforeSend: function () {
+            addIsLoadingIndicator($td, -1); // let the ajax "complete" call (below) remove loading indicator
         },
         complete: function () {
             removeIsLoadingIndicator($td);
