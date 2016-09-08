@@ -3386,6 +3386,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                         return row != null &&
                                                (row.Webinar.Date < startDate && o.OrderDate > startDate &&
                                                 o.OrderDate < endDate
+                                                && !row.Webinar.SeriesInfo.Contains("Parent")
                                                 &&
                                                 (o.OrderStatus == OrderStatus.Billed ||
                                                  o.OrderStatus == OrderStatus.Paid ||

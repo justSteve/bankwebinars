@@ -1160,7 +1160,42 @@ namespace CUWebinars.Web.Controllers
             try
             {
                 _cartControllerOrchestrator.UpdateAdditionalLocationsForOrderRow(additionalLocations, newOrderRowId.Value);
-                return Json(new { Result = WebUiConstants.Success });
+
+                var model = _cartControllerOrchestrator.BuildCheckOutViewModel(newOrderRowId.Value);
+
+                var UpdateSuccessCaption = "Updated Additional Locations";
+
+                var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
+
+                var discountCaption = "";
+                if (pricesAndDiscounts.Discount == null)
+                {
+                    pricesAndDiscounts.Discount = new Discount();
+                }
+                else
+                {
+                    discountCaption = _cartControllerOrchestrator.GetDiscountCaption(
+                           model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Discount,
+                           model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active), null, 1);
+                }
+
+                return
+                    Json(
+                        new
+                        {
+                            Result = WebUiConstants.Success ,
+                            DiscountCaption = discountCaption,
+                            UpdateSuccessCaption = UpdateSuccessCaption,
+                            //regTypeShort = regType.OptionLabelShort,
+                            BasePrice = pricesAndDiscounts.UnitPrice,
+                            Discount = pricesAndDiscounts.TotalDiscount,
+                            OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
+                            Tax = pricesAndDiscounts.TaxAmount,
+                            Total = pricesAndDiscounts.TotalOrderPrice,
+                            FlatOff = pricesAndDiscounts.Discount.FlatOff,
+                            //ShippedDateString = shippDateString,
+                            PercentOff = pricesAndDiscounts.Discount.PercentOff
+                        });
             }
             catch (Exception ex)
             {

@@ -1,16 +1,16 @@
 ﻿
 $(document).ready(function () {
 
-    //var modalFormOptions = {
-    //    keyboard: true,
-    //    show: true,
-    //    remote: '/Webinar/GetAdditionalLocationByOrderId'
-    //};
+    var modalFormOptions = {
+        keyboard: true,
+        show: true,
+        remote: '/Webinar/GetAdditionalLocationByOrderId'
+    };
 
-    //$('#LoadAddLocationsModalButton').on('click', function () {
-    //    modalFormOptions.remote = modalFormOptions.remote + '/' + $('#CheckoutOptionsViewModel_Order_idOrder').val();
-    //    $('#SignupModal').modal(modalFormOptions);
-    //});
+    $('#LoadAddLocationsModalButton').on('click', function () {
+        modalFormOptions.remote = modalFormOptions.remote + '/' + $('#CheckoutOptionsViewModel_Order_idOrder').val();
+        $('#SignupModal').modal(modalFormOptions);
+    });
 
 function CheckEmails() {
     $('[name^="Email"]').each(function (nr) {
