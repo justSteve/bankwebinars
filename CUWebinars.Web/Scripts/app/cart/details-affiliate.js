@@ -160,14 +160,14 @@ OCA.initializeFunctions = function () {
                 if (data.Result == 0) {
                     alert("The discount code " + $('#CheckoutDiscountCode').val() + " was not found or had an error that prevented usage. Try again or use our Help & Feedback button (lower right corner)  for assistance.");
                 }
-                    //                regTypeShort = row.RegistrationType.OptionLabelShort,
-                    //BasePrice = pricesAndDiscounts.UnitPrice,
-                    //Discount = pricesAndDiscounts.TotalDiscount,
-                    //OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
-                    //Tax = pricesAndDiscounts.TaxAmount,
-                    //Total = pricesAndDiscounts.TotalOrderPrice,
-                    //FlatOff = pricesAndDiscounts.Discount.FlatOff,
-                    //PercentOff = pricesAndDiscounts.Discount.PercentOff
+                //                regTypeShort = row.RegistrationType.OptionLabelShort,
+                //BasePrice = pricesAndDiscounts.UnitPrice,
+                //Discount = pricesAndDiscounts.TotalDiscount,
+                //OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
+                //Tax = pricesAndDiscounts.TaxAmount,
+                //Total = pricesAndDiscounts.TotalOrderPrice,
+                //FlatOff = pricesAndDiscounts.Discount.FlatOff,
+                //PercentOff = pricesAndDiscounts.Discount.PercentOff
                 if (data.PercentOff > 0) {
 
                     registerDuringCheckout.totalDiscount = data.Discount;
@@ -355,14 +355,14 @@ OCA.initializeFunctions = function () {
 
             if (OCA.numberOfAdditionalLocationsTab3 == 0) {
 
-                additionalLocationsList.after($('<button>',
+                $("#additionalLocationsList").after($('<button>',
                 {
                     id: 'applyAdditionalLocationsButton',
                     text: 'apply',
                     'class': 'btn btn-mini btn-primary'
                 }));
 
-                $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
+                $('#applyAdditionalLocationsButton').on('click', OCA.applyAdditionalLocations);
 
                 newId = 0;
             } else {
@@ -373,8 +373,8 @@ OCA.initializeFunctions = function () {
                 var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
                 newId = id + 1;
             }
-            additionalLocationsList.append('<span id="' + locationsSpanPrefix + newId + '"><input id="AdditionalLocationEmail_' + newId + '" name="AdditionalLocations[' + newId + '].Email" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + newId + '-AdditionLocationEmail-delete"></i></span> <br id="' + newId + breakSuffix + '">');
-            additionalLocationsList.find('i#' + newId + '-AdditionLocationEmail-delete').on('click', OCA.deleteAddLocInputTabb3);
+            $("#additionalLocationsList").append('<span id="' + locationsSpanPrefix + newId + '"><input id="AdditionalLocationEmail_' + newId + '" name="AdditionalLocations[' + newId + '].Email" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + newId + '-AdditionLocationEmail-delete"></i></span> <br id="' + newId + breakSuffix + '">');
+            $("#additionalLocationsList").find('i#' + newId + '-AdditionLocationEmail-delete').on('click', OCA.deleteAddLocInputTabb3);
             $('#AdditionalLocationEmail_' + newId).focus();
             OCA.numberOfAdditionalLocationsTab3++;
         });
@@ -395,22 +395,22 @@ OCA.initializeFunctions = function () {
 
         addLocsOn1stTabContainer.remove();
 
-        var additionalLocationsList = $('#additionalLocationsList');
+        //var additionalLocationsList = $('#additionalLocationsList');
 
-        additionalLocationsList.append('<input id="newOrderRowId" name="newOrderRowId"  type="hidden" value=' + cartStateManager.getOrderRowId() + ' data-val="true" data-val-number="The field newOrderRowId must be a number." data-val-required="The newOrderRowId field is required."/>');
-        additionalLocationsList.append(copyOfLocations);
+        $('#additionalLocationsList').append('<input id="newOrderRowId" name="newOrderRowId"  type="hidden" value=' + OCA.cartStateManager.getOrderRowId() + ' data-val="true" data-val-number="The field newOrderRowId must be a number." data-val-required="The newOrderRowId field is required."/>');
+        $('#additionalLocationsList').append(copyOfLocations);
 
         if (OCA.numberOfAdditionalLocationsTab3 > 0) {
-            additionalLocationsList.after($('<button>',
+            $("#additionalLocationsList").after($('<button>',
             {
                 id: 'applyAdditionalLocationsButton',
                 text: 'apply',
                 'class': 'btn btn-mini btn-primary'
             }));
 
-            $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
+            $('#applyAdditionalLocationsButton').on('click', OCA.applyAdditionalLocations);
 
-            var trashCans = additionalLocationsList.find('i');
+            var trashCans = $('#additionalLocationsList').find('i');
 
             $.each(trashCans, function (idx, i) {
                 $(i).on('click', OCA.deleteAddLocInputTabb3);
@@ -456,27 +456,50 @@ OCA.initializeFunctions = function () {
             $(value).attr('name', 'AdditionalLocations[' + idx + '].Email');
         });
 
+        $('#additionalLocationsList').append('<input id="newOrderRowId" name="newOrderRowId"  type="hidden" value=' + OCA.cartStateManager.getOrderRowId() + ' data-val="true" data-val-number="The field newOrderRowId must be a number." data-val-required="The newOrderRowId field is required."/>');
+
         var formData = adjustAddLocsForm.serialize();
 
+        console.log(formData);
         $.ajax({
             type: 'POST',
-            contentType: RegistrationInCart.Constants.FormPostContentType,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             cache: false,
             url: url,
-            dataType: RegistrationInCart.Constants.JsonDataType,
+            dataType: 'json',
             data: formData,
             beforeSend: function () {
                 self.append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
             }
         }).done(function (data) {
+            console.log(data);
+
             if (data.Result === 'Success') {
+
                 var infoLabel = $('#addLocsText');
-                var newText = numberOfAdditionalLocationsTab3 + $.trim(infoLabel.html()).slice(1);
+                var newText = $("#numberOfAdditionalLocationsTab3") + $.trim(infoLabel.html()).slice(1);
 
                 infoLabel.fadeOut(200, function () {
                     infoLabel.html(newText);
                     infoLabel.fadeIn(200);
                 });
+
+
+                if (data.Tax > 0) {
+                    $('#showTax').removeClass("hidden");
+                } else {
+                    $('#showTax').addClass("hidden");
+                }
+
+                $('#flyUpdateSuccessFlag').html(data.UpdateSuccessCaption).show();
+                $('#discountCaption').html(data.DiscountCaption);
+                //$('#optionLabel').html(data.regTypeShort);
+                $('#baseCost').html('$' + data.BasePrice + '');
+                $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
+                $('#taxAmt').html(data.Tax + '');
+                $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
+                $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
+                $('#additionalLocationsCaption').addClass("hidden");
 
             } else {
                 console.error('Failed to post order');
@@ -537,11 +560,11 @@ OCA.initializeFunctions = function () {
 
     /* This function gets invoked when the 3rd tab is loaded and an existing user is using the cart */
     OCA.checkoutConfirm.initialize = function (userId) {
-        
+
         OCA.cartStateManager.setCancelOrderForm($('#cancelOrder'));
         OCA.cartStateManager.setConfirmOrderForm($('#confirmOrderForAffiliateForm'));
         var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
-        
+
         OCA.cartStateManager.getConfirmOrderForm().on('submit', function (e) {
 
             e.preventDefault();
@@ -697,11 +720,12 @@ OCA.initializeState = function () {
     OCA.numberOfAdditionalLocationsTab3 = 0;
 
     OCA.utilities = new Common.Utilities();
+
 };
 
 
 OCA.wireUpHandlers = function () {
-    
+
     OCA.wireUpMainButtonsOn3rdTab();
 
     /* Click event for the big GREEN SignUp button */
@@ -711,8 +735,10 @@ OCA.wireUpHandlers = function () {
 
     });
 
-
     OCA.setUpEditButtons();
+
+    OCA.populateAdditionalLocationsOn3rdTab();
+
     OCA.AddOrder = function (e, idUser) {
 
         $('#idUser').val(idUser);
