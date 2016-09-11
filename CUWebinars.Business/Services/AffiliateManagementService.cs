@@ -61,19 +61,9 @@ namespace CUWebinars.Business.Services
                     var dict = obj.First.First.Children().Cast<JProperty>().ToDictionary(p => p.Name, p => p.Value);
 
                     if (row.Discount != null)
-                        _logger.Warn("Invoice Warning! While recalculating adjusted order a discount code was found on on idOrder: " + order.idOrder);
+                        _logger.Warn("GenerateWeeklyInvoicesEvent | Invoice Warning! While recalculating adjusted order a discount code was found on on idOrder: " + order.idOrder);
                     try
                     {
-
-                        //{ChangedOrderNeedsNewInvoice:{OriginalInvoice:27-2016-62
-                        //OriginalDateOfInvoice:07-13-2016
-                        //OriginalTotal:295
-                        //OriginalPercentPaid:0.3
-                        //OriginalRoyaltyPaid:88.5
-                        //OriginalAffiliate:cftnow
-                        //Royalty is increased:21.00000  // note that we are saving the full royalty amount, not as is suggested by Key name, the adjusted amount
-                        //DateOfChange:07-13-2016
-                        //Message:
 
                         var adjustmentDirection = "Royalty is increased";
 

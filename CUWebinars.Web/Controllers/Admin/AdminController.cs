@@ -2158,7 +2158,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
         [HttpPost]
         //[ValidateAntiForgeryToken]
-             [ValidateInput(false)]
+        [ValidateInput(false)]
         public ActionResult SendSinglePromo(int affiliateId, string messageBodyHtml) // WebinarPromoViewModel model
         {
             //var model = null;
@@ -2166,7 +2166,7 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 Affiliate = _affiliateManagementService.FindById(affiliateId),
                 EventBody = messageBodyHtml
-                
+
             };
             if (ModelState.IsValid)
             {
@@ -3109,7 +3109,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
             if (!_idAffiliate.HasValue)
             {
-
                 return Json(new { Result = WebUiConstants.Fail, OrdersFound = false }, JsonRequestBehavior.AllowGet);
             }
             int idAffiliate = _idAffiliate.Value;
@@ -3157,7 +3156,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 if (affiliateHasAnyOrders == "none found")
                 {
-                    
+
                     return Json(new
                     {
                         Result = WebUiConstants.Fail,
@@ -3637,6 +3636,10 @@ namespace CUWebinars.Web.Controllers.Admin
                                         , row.Webinar.Title
                                         , 99
                                         );
+
+                                    order.InvoiceDetail = order.InvoiceDetail.Replace("ChangedOrderNeedsNewInvoice",
+                                        "ChangedOrderWasReinvoiced-" + InvoiceID);
+
                                 }
                                 catch (Exception ex)
                                 {
