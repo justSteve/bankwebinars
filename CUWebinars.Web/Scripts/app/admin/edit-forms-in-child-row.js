@@ -27,6 +27,7 @@ function AttachDataTableEditEvents() {
             $("td", tr).removeClass("child-showing");
         } else {
             row.child(createChildRow(cell, $td, row.data()), "child-row").show();
+
             $td.addClass("child-showing");
             tr.addClass('shown');
         }
@@ -264,7 +265,7 @@ function createChildRow(cell, $td, rowData) {
     }  //
 
     if ($td.hasClass("edit-institution")) {
-        
+
         return editInstitutionCell(cell, $td, rowData);
     }
 
@@ -333,6 +334,15 @@ function editBillingCell(cell, $td, rowData) {
         type: "POST",
         success: function (data) {
             html = data.html;
+
+
+            var e = '<div id="browser" class="jsonbrowser"></div>';
+            $('#notesPanel').append(e);
+            
+            console.log(cell);
+            console.log($td);
+            console.log(rowData);
+
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert("/account/GetEditBillingForm idOrder=" + rowData.idOrder + textStatus);
@@ -342,6 +352,10 @@ function editBillingCell(cell, $td, rowData) {
         },
         complete: function () {
             removeIsLoadingIndicator($td);
+
+            $('#notesPanel').html("<br>");
+            console.log($("#notesPanel").html());
+
         }
     });
 
@@ -489,7 +503,7 @@ function updateEmail(e, thatThis) {
     $form.validate().settings.ignore = []; // so it doens't "ignore" .hidden fields
 
     var data = $form.serialize();
-    
+
 
     $.ajax({
         async: false,

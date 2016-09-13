@@ -641,6 +641,7 @@ namespace CUWebinars.Web.Controllers
         public JsonResult GetEditBillingForm(int orderId)
         {
             string html = "";
+                var order = _orderManagementService.GetOrderById(orderId);
 
             try
             {
@@ -652,7 +653,6 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 _logger.Info(string.Format("GetEditBillingForm: {0} opened {1}", editingUser.email, orderId));
-                var order = _orderManagementService.GetOrderById(orderId);
 
                 var editModel = BuildOrderInfoModel(order, "");
 
@@ -665,7 +665,7 @@ namespace CUWebinars.Web.Controllers
                 _logger.FatalException("GetOrderInfoForm error on " + orderId, ex);
             }
 
-            return Json(new { html = html });
+            return Json(new { html = html, adminComments = order.AdminComments});
 
         }
         public JsonResult GetEditDiscountForm(int orderId)

@@ -119,7 +119,6 @@ $(document).ready(function () {
         ns.PayByMonerisModal = $('#PayByMonerisModal');
         ns.listOfRegTypes = $('#listOfRegTypes');
 
-        console.log($('#showChangePrice'));
         //the following 2 values are loaded at EditOrder_Compact.cshtml so as to pull the value directly from the server.
         ns.orderRowId = idOrderRowFromDTEOC;
         ns.idOrder = idOrderFromDTEOC;

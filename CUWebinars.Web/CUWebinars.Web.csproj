@@ -589,6 +589,7 @@
     <Content Include="Content\claims-mment.css" />
     <Content Include="Content\common.css" />
     <Content Include="Content\css\bootstrapOverrides.css" />
+    <Content Include="Content\css\jquery.jsonbrowser.css" />
     <Content Include="Content\DataTables\css\dataTables.autoFill.css" />
     <Content Include="Content\DataTables\css\dataTables.autoFill.min.css" />
     <Content Include="Content\DataTables\css\dataTables.bootstrap.css" />
@@ -1471,6 +1472,7 @@
     <Content Include="Scripts\jquery-dateFormat.min.js" />
     <Content Include="Scripts\jquery.cleditor.js" />
     <Content Include="Scripts\jquery.cleditor.min.js" />
+    <Content Include="Scripts\jquery.jsonbrowser.min.js" />
     <Content Include="Scripts\jquery.print-preview.js" />
     <Content Include="Scripts\moment-with-locales.js" />
     <Content Include="Scripts\moment-with-locales.min.js" />

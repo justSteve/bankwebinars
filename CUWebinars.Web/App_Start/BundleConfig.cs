@@ -30,6 +30,7 @@ namespace CUWebinars.Web.App_Start
                         "~/Scripts/DataTables/pdfmake.min.js",
                         "~/Scripts/DataTables/vfs_fonts.js",
                         "~/Scripts/DataTables/buttons.print.js",
+                        "~/Scripts/jquery.jsonbrowser.min.js",
                         "~/Scripts/app/admin/affiliateReport.js"
 
                         )
@@ -346,6 +347,7 @@ namespace CUWebinars.Web.App_Start
                 "~/Content/DataTables/css/jquery.dataTables.css",
                 "~/Content/DataTables/css/dataTables.bootstrap.css",
                 "~/Content/DataTables/css/buttons.dataTables.min.css",
+                "~/Content/css/jquery.jsonbrowser.css",
                 "~/Content/css/bootstrapOverrides.css"
             )
                 );

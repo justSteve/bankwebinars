@@ -1,10 +1,24 @@
 ﻿@using CUWebinars.Web.Core
 
 @model  CUWebinars.Web.Models.DataTablesModels.EditOrderInfoModel
-
+@{
+    var str = Model.EditFields.Order.AdminComments;
+    
+}
 <script type="text/javascript">
     var idOrderFromDTEOC = @Model.EditFields.Order.idOrder;
-    var idOrderRowFromDTEOC = @Model.EditFields.Order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow;
+    var idOrderRowFromDTEOC =
+        @Model.EditFields.Order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow;
+
+    $(function () {
+        // Need to init a bunch of JS stuff
+        var str = "@str";
+        
+        console.log(str.replace(/&quot;/g, '"'));
+
+        //alert("@Model.EditFields.Order.AdminComments");
+        $( "#browser" ).jsonbrowser(str.replace(/&quot;/g, '"'));
+    });
 </script>
 @{
     var isAffiliate = true;
@@ -215,7 +229,8 @@
         </div>
         <div class="span5">
             <div id="notesPanel">
-                <textarea class="form-control" style="min-width: 100%">"@Model.EditFields.Order.AdminComments</textarea>
+                <div id="browser" class="jsonbrowser">here</div>
+                @*<textarea class="form-control" style="min-width: 100%">"@Model.EditFields.Order.AdminComments</textarea>*@
             </div>
             @if (Model.EditFields.Discount != null && Model.EditFields.Discount.Notes != null)
             {
