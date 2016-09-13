@@ -89,7 +89,8 @@ $(function () {
             'columns': [
 
                 { 'data': 'Date', 'class': 'details-control' },
-                { 'data': 'Status', 'class': 'details-control edit' },
+                { 'data': 'Status', 'visible': shouldShow, 'class': 'details-control edit' },
+                { 'data': 'yXy', 'class': 'details-control wAddToCart', 'orderable': false },
                 { 'data': 'Title', 'class': 'details-control wTitle' },
                 { 'data': 'PresenterName', 'class': 'details-control presenter' },
                 { 'data': 'RelatedTopicsString', 'class': 'details-control topicsTitles' },
@@ -100,7 +101,6 @@ $(function () {
             , // complex columns can be specified / created with mRender
             "aoColumnDefs": [
             {
-
                 "aTargets": [0], // Date column
                 "mData": "",
                 "createdCell": function (td, cellData, rowData, row, col) {
@@ -128,7 +128,17 @@ $(function () {
                 }
             },
             {
-                "aTargets": [2], // Titlecolumn
+                "aTargets": [2], // Add to Cart
+                "mData": "",
+                "mRender": function (data, type, full) {
+
+                    var statusHtml = "<input type='checkbox'>";
+
+                    return statusHtml;
+                }
+            },
+            {
+                "aTargets": [3], // Titlecolumn
                 "mData": "Title",
                 "mRender": function (data, type, full) {
 
@@ -138,7 +148,7 @@ $(function () {
                 }
             },
             {
-                "aTargets": [3], // Titlecolumn
+                "aTargets": [4], // Titlecolumn
                 "mData": "PresenterPresenterName",
                 "mRender": function (data, type, full) {
 
@@ -148,7 +158,7 @@ $(function () {
                 }
             },
             {
-                "aTargets": [5], // Status column
+                "aTargets": [6], // Status column
                 "mData": "",
                 "orderable": false,
                 "mRender": function (data, type, full) {
