@@ -1,4 +1,5 @@
-﻿@model WebinarDetailsViewModel
+﻿@using CUWebinars.Web.Core
+@model WebinarDetailsViewModel
 
 
 @*
@@ -7,12 +8,31 @@
     user / in-process
     *@
 
-
 <script language="javascript" type="text/javascript">
-    $(function() {
-        // alert('@Model.Webinar.idWebinar');
+    $(function () {
+        // could initialize JS if needed
+        //console.log('init JS for @Model.Webinar.idWebinar');
     });
+
+    var checkoutInProcess = @(Model.CheckoutInProcess ? "true" : "false");
+    var isUserLoggedIn = @(@Model.UserIsLoggedIn ? "true" : "false");
+    var webinarId = @(@Model.Webinar.idWebinar);
+    var notificationsTesting = @(GlobalConfig.GlobalConfigSingleton.NotificationsTesting ? "true" : "false");
+    var orderRowId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow : 0);
+    var orderId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.idOrder : 0);
+    var addressVerified = @(@Model.UserAddressVerified ? "true" : "false");
+
+    var locationsSpanPrefix = 'LocationSpan-';
 </script>
+
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/create-order")
+@*@Scripts.Render("~/bundles/manage-webinar-files")*@
+
+@Styles.Render("~/Content/create-order-details")
+
+
+
 
 @{
     if (Model.Webinar.idWebinar == 2109)
@@ -80,9 +100,19 @@
                                 }
                                 else if (Model.Order.OrderStatus == OrderStatus.AwaitingVerification || Model.Order.OrderStatus == OrderStatus.InProcess || Model.Order.OrderStatus == OrderStatus.Canceled || Model.Order.OrderStatus == OrderStatus.Submitted)
                                 {
-                                    <div class="tab-pane" id="signUp"></div>
-                                    <div class="tab-pane" id="contactInfo"></div>
-                                    <div class="tab-pane active" id="confirmation">@Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutConfirm.cshtml", model: Model.CheckoutConfirmViewModel)</div>
+                                    if (Request.Url.PathAndQuery.Contains("/webinar/getaddtocartjson")) // i don't love this as our logic gate, is there something else we can use / invent?
+                                    {
+                                        //should only happen if they are viewing the "buy column" child row on the search results page and have an order in process
+                                        <div>
+                                            An order (@Model.Order.idOrder) for this event is In Process. If you are ready to complete your order, please <a target='EventDetails' href="/webinar/details/@Model.Webinar.idWebinar">continue to checkout</a>.
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="tab-pane" id="signUp"></div>
+                                        <div class="tab-pane" id="contactInfo"></div>
+                                        <div class="tab-pane active" id="confirmation">@Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutConfirm.cshtml", model: Model.CheckoutConfirmViewModel)</div>
+                                    }
                                 }
 
                             </div>
@@ -138,6 +168,11 @@
                             <hr />
                         </div>
                     </div><!-- closes SignUpFormContainer div-->
+                }
+                else
+                { 
+                    // user owns or is in process...
+                    @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
                 }
             }
         }

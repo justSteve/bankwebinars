@@ -100,6 +100,9 @@ input[type="checkbox"] {
 #webinarOrders #ordersTable td.loading {
     background-color: #fcf8e3;
 }
+#webinarsTable td.wAddToCart.loading {
+    background-color: #fcf8e3;
+}
 td.save-bg-transition
 {
     transition: background-color ease .5s;

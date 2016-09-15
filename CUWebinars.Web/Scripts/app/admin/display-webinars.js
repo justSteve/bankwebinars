@@ -88,7 +88,7 @@ $(function () {
             },
             'columns': [
 
-                { 'data': 'Date', 'class': 'details-control' },
+                { 'data': 'Date' },
                 { 'data': 'Status', 'visible': shouldShow, 'class': 'details-control edit' },
                 { 'data': 'yXy', 'class': 'details-control wAddToCart', 'orderable': false },
                 { 'data': 'Title', 'class': 'details-control wTitle' },
@@ -132,7 +132,7 @@ $(function () {
                 "mData": "",
                 "mRender": function (data, type, full) {
 
-                    var statusHtml = "<input type='checkbox'>";
+                    var statusHtml = "<input type='checkbox' class='chkShowChild'>";
 
                     return statusHtml;
                 }

@@ -27,10 +27,12 @@ function AttachDataTableWebinarEvents() {
             row.child.hide();
             tr.removeClass('shown');
             $("td", tr).removeClass("child-showing");
+            fireChildRowRemoved(cell, $td, row.data());
         } else {
             row.child(createChildRow(cell, $td, row.data()), "child-row").show();
             $td.addClass("child-showing");
             tr.addClass('shown');
+            fireChildRowCreated(cell, $td, row.data());
         }
         //if (row.child.isShown()) {
         //    row.child(createChildRow(cell, $td, row.data()), "child-row").show();
@@ -127,6 +129,18 @@ function createChildRow(cell, $td, rowData) {
 
     return "Row " + cell.index().row + ", Col " + cell.index().column;
 
+}
+
+function fireChildRowCreated(cell, $td, rowData) {
+    if ($td.hasClass("wAddToCart")) {
+        $(".chkShowChild", $td).prop('checked', true);
+    }
+}
+
+function fireChildRowRemoved(cell, $td, rowData) {
+    if ($td.hasClass("wAddToCart")) {
+        $(".chkShowChild", $td).prop('checked', false);
+    }
 }
 
 
@@ -261,10 +275,15 @@ function wAddToCartCell(cell, $td, rowData) {
             alert("/account/getaddtocartjson: " + textStatus);
         },
         beforeSend: function () {
+            // IE and Chrome don't time this stuff very well due to the async=false... :/
+            $td.append('<div id="loadingSpinnerContainer"><i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;</div>');
             addIsLoadingIndicator($td, -1); // let the ajax "complete" call (below) remove loading indicator
         },
         complete: function () {
+            // IE and Chrome don't time this stuff very well due to the async=false... :/
             removeIsLoadingIndicator($td);
+            $('#loadingSpinnerContainer', $td).fadeOut();
+            setTimeout(function () { $('#loadingSpinnerContainer', $td).remove(); }, 1000);
         }
     });
 

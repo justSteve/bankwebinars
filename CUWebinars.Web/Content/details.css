@@ -84,6 +84,18 @@ blockquote {
     overflow-y: auto;
 }
 
+/* when shown on Search Results */
+td.child-row #SignUpFormContainer {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* when shown on Search Results */
+td.child-row #OrderSummary {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
 a {
     cursor: pointer;
 }

@@ -662,37 +662,37 @@ namespace CUWebinars.Web.Controllers
 
         }
 
-        public ActionResult GetAddToCartJSON(int? id)
+        public ActionResult GetAddToCartJson(int? id)
         {
             var html = "";
-            html = "<div>test</div>";
 
             // ok, this is going to be a bit, ah, complicated, perhaps...
             // we want to show the "cart", which is a stack of partial views supported by a variety of models
-            // what do we need to instantiate so we can feed the view(s) the right things?
+            // what do we need to instantiate model(s) so we can feed the (nested) partial view the right things
 
-            // Details method below has much of the same processing
+            // Details method below has much of the same processing / uses many of the same routines
 
             if (id.HasValue)
             {
-                // move logic into routine shared by Details and GetAddToCartJSON?
+                Webinar webinar = null;
+                WebinarDetailsViewModel model = null;
 
-                var webinar = _webinarManagementService.GetWebinar(id.Value);
+                InitializeDetailsWebinar(id.Value, out webinar);
 
                 if (webinar == null) return HttpNotFound();
-                var model = new WebinarDetailsViewModel()
-                {
-                    Webinar = webinar,
-                    WebinarFiles = webinar.WebinarFiles.ToList()
-                    // TODO: zzzALS can we look this up? , UserOwnsThisEvent = incomingOrder
-                };
 
-                // Incoming Order?
+                InitializeDetailsModel(webinar, out model);
+
+                // Incoming Order?  (Express checkout?)
+                // for the time-being we are going to punt on in-process orders.  there is code in the _ShoppingCart view to show the use alterative content in the Search results grid
+
                 InitializeDetailsState(webinar, model, id.Value);
-                InitializeViewCentricProperties(model);
-                BuildConfirmOrderView(model);
 
-                // user, in-process, owns?
+                InitializeViewCentricProperties(model);
+
+                InitializeInProcessProperties(id.Value, model, webinar);
+
+                BuildConfirmOrderView(model);
 
                 html = ViewHelpers.RenderViewToString(ControllerContext,
                         "~/Views/Webinar/Partials/_ShoppingCart.cshtml",
@@ -729,7 +729,7 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Details(int? id, int? idOrder)
         {
-            // move logic into routine shared by Details and GetAddToCartJSON?
+
             ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
             var currentUser = User.Identity.Name ?? "anon";
 
@@ -740,23 +740,19 @@ namespace CUWebinars.Web.Controllers
             {
                 incomingOrder = idOrder.Value;
             }
+
             if (id.HasValue)
             {
-                if (id.Value == 883)
-                {
-                    id = _webinarManagementService.GetNextCompliancePerspectives();
 
-                }
-                var webinar = _webinarManagementService.GetWebinar(id.Value);
+                Webinar webinar = null;
+                WebinarDetailsViewModel model = null;
+
+                InitializeDetailsWebinar(id.Value, out webinar);
 
                 if (webinar == null) return HttpNotFound();
-                var model = new WebinarDetailsViewModel()
-                {
-                    Webinar = webinar,
-                    WebinarFiles = webinar.WebinarFiles.ToList(),
-                    UserOwnsThisEvent = incomingOrder
 
-                };
+                InitializeDetailsModel(webinar, out model, incomingOrder);
+
                 if (incomingOrder == 0)
                 {
                     InitializeDetailsState(webinar, model, id.Value);
@@ -855,60 +851,9 @@ namespace CUWebinars.Web.Controllers
                     return PartialView("DetailsAffiliate", model);
                 }
 
-                var usersOrders = _orderManagementService.GetOrdersByUserId(model.WebUser.idUser)
-                                    .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id.Value) != null);
-
-                // perf tweak: ensures no multiple enumerations of usersOrders
-                var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray();
-
-
-                if (checkOrders.Any())
-                // we know user has order in some state
-                {
-                    foreach (var checkOrder in checkOrders)
-                    {
-                        var row = checkOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-
-                        var webinarFiles = webinar.WebinarFiles
-                            .Select(f => f.fileDesc + "|" + f.fileLocation)
-                            .ToArray();
-
-                        if (row.idWebinar == id)
-                        {
-                            //var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, checkOrder.WebUser.email);
-                            if (checkOrder.OrderStatus == OrderStatus.Billed
-                                    || checkOrder.OrderStatus == OrderStatus.Paid
-                                    || checkOrder.OrderStatus == OrderStatus.Submitted)
-                            {
-                                if (_orderManagementService.FindPostEventClaimByOnDemandCode(checkOrder).ExpiryDate >= DateTime.Today)
-                                    model.RegistrationSummaryViewModel.DisplayPostEventMaterials = checkOrder.idOrder;
-                            }
-
-                            model.RegistrationSummaryViewModel.WebinarFiles = webinarFiles;
-                            model.UserOwnsThisEvent = checkOrder.idOrder;
-
-                            model.Order = checkOrder;
-                        }
-
-                        if ((checkOrder.OrderStatus == OrderStatus.AwaitingVerification
-                            || checkOrder.OrderStatus == OrderStatus.InProcess) && row.idWebinar == id)
-                        {
-                            //var newJson =
-                            //    new JProperty(
-                            //        string.Concat("PendingReturnsToCheckoutBy-" + currentUser, TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
-                            //            new JObject(new JProperty("LegacyComments", checkOrder.AdminComments))
-                            //        );
-
-                            //checkOrder.AdminComments = newJson +", 'Prior Comments ': {" + checkOrder.AdminComments + "}";
-                            model.UserHasOpenOrder = checkOrder.idOrder;
-                        }
-                    }
-                }
-
-
+                InitializeInProcessProperties(id.Value, model, webinar);
+                
                 BuildConfirmOrderView(model);
-
-
 
                 return View(model);
             }
@@ -1106,6 +1051,91 @@ namespace CUWebinars.Web.Controllers
                         UserFullname = userFullName,
                         UserType = UserType.Customer
                     };
+                }
+            }
+        }
+
+
+        private void InitializeDetailsWebinar(int webinarId, out Webinar webinar)
+        {
+            webinar = null;
+
+            if (webinarId == 883)
+            {
+                webinarId = _webinarManagementService.GetNextCompliancePerspectives() ?? -1;
+            }
+
+            webinar = _webinarManagementService.GetWebinar(webinarId);
+        }
+
+        private void InitializeDetailsModel(Webinar webinar, out WebinarDetailsViewModel model, int incomingOrder = -1)
+        {
+            model = null;
+
+            if (webinar == null) 
+                return;
+
+            model = new WebinarDetailsViewModel()
+            {
+                Webinar = webinar,
+                WebinarFiles = webinar.WebinarFiles.ToList()
+            };
+
+            if (incomingOrder != -1)
+            {
+                model.UserOwnsThisEvent = incomingOrder;
+            }
+        }
+
+        public void InitializeInProcessProperties(int webinarId, WebinarDetailsViewModel model, Webinar webinar)
+        {
+
+            // does use have on in-process or do they own it already?
+            var usersOrders = _orderManagementService.GetOrdersByUserId(model.WebUser.idUser)
+                .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == webinarId) != null);
+
+            // perf tweak: ensures no multiple enumerations of usersOrders
+            var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray();
+
+            if (checkOrders.Any())  // we know user has order in some state
+            {
+                foreach (var checkOrder in checkOrders)
+                {
+                    var row = checkOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+
+                    var webinarFiles = webinar.WebinarFiles
+                        .Select(f => f.fileDesc + "|" + f.fileLocation)
+                        .ToArray();
+
+                    if (row.idWebinar == webinarId)
+                    {
+                        //var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, checkOrder.WebUser.email);
+                        if (checkOrder.OrderStatus == OrderStatus.Billed
+                            || checkOrder.OrderStatus == OrderStatus.Paid
+                            || checkOrder.OrderStatus == OrderStatus.Submitted)
+                        {
+                            if (_orderManagementService.FindPostEventClaimByOnDemandCode(checkOrder).ExpiryDate >= DateTime.Today)
+                                model.RegistrationSummaryViewModel.DisplayPostEventMaterials = checkOrder.idOrder;
+                        }
+
+                        model.RegistrationSummaryViewModel.WebinarFiles = webinarFiles;
+                        model.UserOwnsThisEvent = checkOrder.idOrder;
+
+                        model.Order = checkOrder;
+
+                        if (checkOrder.OrderStatus == OrderStatus.AwaitingVerification
+                            || checkOrder.OrderStatus == OrderStatus.InProcess)
+                        {
+                            //var newJson =
+                            //    new JProperty(
+                            //        string.Concat("PendingReturnsToCheckoutBy-" + currentUser, TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                            //            new JObject(new JProperty("LegacyComments", checkOrder.AdminComments))
+                            //        );
+
+                            //checkOrder.AdminComments = newJson +", 'Prior Comments ': {" + checkOrder.AdminComments + "}";
+                            model.UserHasOpenOrder = checkOrder.idOrder;
+                        }
+                    }
                 }
             }
         }
