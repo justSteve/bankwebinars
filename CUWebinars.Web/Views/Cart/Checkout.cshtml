@@ -1,0 +1,38 @@
+﻿@using CUWebinars.Web.Core
+@model List<RegistrationSummaryViewModel>
+
+@{
+    ViewBag.Title = "Checkout";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+
+    <div id="LogInContainer" class="container">
+        <div id="reset">
+
+            <div class="legendImitator">
+                <b>Below are pending orders</b>
+            </div>
+
+            @foreach (RegistrationSummaryViewModel registrationSummaryViewModel in Model)
+            {
+                <div id="OrderSummaryContainer_@registrationSummaryViewModel.OrderRow.idOrder">
+                    @Html.Partial("~/Views/Webinar/Partials/_RegistrationSummary.cshtml", registrationSummaryViewModel)
+                </div>
+            }
+
+            @*<div id="FeedbackContainer" class="span6">
+                <section>
+                    <h4>Feedback</h4>
+                    @{ Html.RenderPartial("Partials/_CheckoutFeedback"); }
+                </section>
+            </div>*@
+        </div>
+    </div>
+}
+
+@section scripts{
+    @*@Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/create-order")
+    @Scripts.Render("~/bundles/manage-webinar-files")*@
+}
+
+@Styles.Render("~/Content/create-order-details")
