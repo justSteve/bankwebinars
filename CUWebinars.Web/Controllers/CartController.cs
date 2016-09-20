@@ -1153,6 +1153,60 @@ namespace CUWebinars.Web.Controllers
 
         }
 
+ 
+        // not allow anonymous...
+        public ActionResult Checkout()
+        {
+            // _logger.Info("CancelPauseOrder called email: " + email + " idOrder: " + idOrder);
+
+            // get list of order Ids for signed in user
+            // use existing BuildCheckoutConfirmViewModel method to populate our list
+            // feed to view
+            //   feeds to partial
+
+            List<RegistrationSummaryViewModel> model = new List<RegistrationSummaryViewModel>();
+
+            if (User.Identity.IsAuthenticated)
+            {
+
+                List<Order> orders = _cartControllerOrchestrator.GetOrdersByUser(User.Identity.Name)
+                    .Where(o => o.OrderStatus == OrderStatus.InProcess).ToList();
+
+                foreach (Order order in orders)
+                {
+                    OrderRow orderRowForOrder = order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active);
+                    if (orderRowForOrder == null)
+                        continue;
+
+                    if (orderRowForOrder.AdditionalLocation == null)
+                        orderRowForOrder.AdditionalLocation = new List<AdditionalLocation>();
+
+                    if (orderRowForOrder.Webinar == null)
+                        orderRowForOrder.Webinar = _cartControllerOrchestrator.LoadWebinar(orderRowForOrder.idWebinar);
+
+                    if (orderRowForOrder.RegistrationType == null)
+                        orderRowForOrder.RegistrationType =  _cartControllerOrchestrator.GetRegTypeById(orderRowForOrder.idRegType);
+
+                    if (orderRowForOrder.Order.Affiliate == null)
+                        orderRowForOrder.Order.Affiliate = _cartControllerOrchestrator.GetAffiliateById(orderRowForOrder.Order.idAffiliate);
+                    
+                    RegistrationSummaryViewModel registrationSummaryViewModel = new RegistrationSummaryViewModel
+                    {
+                        AdditionalLocationsViewModel = _cartControllerOrchestrator.BuildAdditionalLocationsViewModel(orderRowForOrder, orderRowForOrder.idOrder),
+                        OrderRow = order.OrderRows.FirstOrDefault(),
+                        RecordingLink =
+                            "<a href='" + GlobalConfig.GlobalConfigSingleton.WMVRepository + orderRowForOrder.Webinar.RecordingUrl +
+                            "' target=_blank /> Recording Playback</a>",
+                        WebinarStatus = orderRowForOrder.Webinar.Status
+                    };
+
+                    model.Add(registrationSummaryViewModel);
+                }
+
+            } // else they will see the sign-in page and come back here, probably
+
+            return View(model);
+        }
 
         [HttpPost]
         public ActionResult UpdateAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations, int? newOrderRowId)

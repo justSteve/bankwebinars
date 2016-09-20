@@ -63,5 +63,8 @@ namespace CUWebinars.Web.Core.Orchestrators
         string GetDiscountCaption(Discount discount, OrderRow single, int? undo, int? previewOnly);
         string UpdateRegTypeOnLegacy(int idRegType, int idWebinar, string billingEmail);
         string  CalculateCreditsRemaining(Discount myDiscount);
+        List<Order> GetOrdersByUser(string identityName);
+        Affiliate GetAffiliateById(int affiliateId);
+
     }
 }

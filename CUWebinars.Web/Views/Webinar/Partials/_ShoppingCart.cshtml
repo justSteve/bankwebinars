@@ -117,32 +117,32 @@
 
                             </div>
                             <!-- The following forms are positioned here so that they are not nested in the form in the CheckoutOptions View. -->
-                            @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
+                            @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new {id = "frmSignIn", name = "signIn"}))
                             {
                                 @Html.AntiForgeryToken()
 
                                 <input id="loginEmail" name="Email" type="hidden" value="">
                                 <input id="loginPassword" name="Password" type="hidden">
                                 <input id="loginRememberMe" type="hidden" value="true" name="RememberMe">
-                                <input type="hidden" name="returnUrl" value="/Webinar/Details/@Model.Webinar.idWebinar" />
+                                <input type="hidden" name="returnUrl" value="/Webinar/Details/@Model.Webinar.idWebinar"/>
                             }
-                            @using (Html.BeginForm("ResetPassword", "Account", FormMethod.Post, new { id = "ResetPasswordForm" }))
+                            @using (Html.BeginForm("ResetPassword", "Account", FormMethod.Post, new {id = "ResetPasswordForm"}))
                             {
                                 @Html.AntiForgeryToken()
                                 <input id="ResetPassEmail" name="emailForReset" type="hidden" value="">
                             }
                             <form id="checkEmail">
                                 @Html.AntiForgeryToken()
-                                <input type="hidden" name="emailChecker" id="emailChecker" />
+                                <input type="hidden" name="emailChecker" id="emailChecker"/>
                             </form>
                             <form id="checkZip">
-                                <input type="hidden" name="ZipChecker" id="ZipChecker" />
+                                <input type="hidden" name="ZipChecker" id="ZipChecker"/>
                             </form>
                             <form id="nonUSForm">
-                                <input type="hidden" name="AddressText" id="AddressText" />
+                                <input type="hidden" name="AddressText" id="AddressText"/>
                             </form>
                             <form id="checkInstitution">
-                                <input type="hidden" name="InstitutionChecker" id="InstitutionChecker" />
+                                <input type="hidden" name="InstitutionChecker" id="InstitutionChecker"/>
                             </form>
 
                         </div>
@@ -165,14 +165,18 @@
                                 </span>
                             </h2>
                             @Html.Raw(Model.Webinar.WhoAttend)
-                            <hr />
+                            <hr/>
                         </div>
-                    </div><!-- closes SignUpFormContainer div-->
+                    </div>
+                    <!-- closes SignUpFormContainer div-->
                 }
                 else
-                { 
-                    // user owns or is in process...
-                    @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
+                {
+                    if (Request.Url.PathAndQuery.Contains("/webinar/getaddtocartjson")) // i don't love this as our logic gate, is there something else we can use / invent?
+                    {
+                        // user owns or is in process...
+                        @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
+                    }
                 }
             }
         }

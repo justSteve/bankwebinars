@@ -1086,6 +1086,17 @@ namespace CUWebinars.Web.Core.Orchestrators
             return _orderManagementService.GetWebUser(email);
         }
 
+        public Affiliate GetAffiliateById(int affiliateId)
+        {
+            return _orderManagementService.GetAffiliateById(affiliateId);
+        }
+
+
+        public List<Order> GetOrdersByUser(string email)
+        {
+            return _orderManagementService.GetOrdersByEmail(email, 19).ToList();
+        }
+
         public ExpressCheckoutModel ExpressCheckout(Order order, WebUser user)
         {
             UpdateOrderWithUserId(order.idOrder, user.idUser);
