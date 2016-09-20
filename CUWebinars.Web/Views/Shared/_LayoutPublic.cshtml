@@ -339,7 +339,14 @@
                         @{
                             if (currentAffiliate.idUserAff > 19)
                             {
-                                <p style="margin-top: 10px;" align="center">This site is managed for @currentAffiliate.DisplayTitle by @globalConfig.TenantDomain and Total Training Solutions - TTSTrain.com.</p>
+                                if (@currentAffiliate.DisplayTitle == "Total Training Solutions")
+                                {
+                                    <p style="margin-top: 10px;" align="center">This site is brought to you by @globalConfig.TenantDomain and Total Training Solutions - TTSTrain.com.</p>
+                                }
+                                else
+                                {
+                                    <p style="margin-top: 10px;" align="center">This site is managed for @currentAffiliate.DisplayTitle by @globalConfig.TenantDomain and Total Training Solutions - TTSTrain.com.</p>
+                                }
                             }
                         }
                     </section>

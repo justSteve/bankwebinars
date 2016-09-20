@@ -64,7 +64,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 if (addressess.Count > 0)
                 {
                     //notificationMessage.To = addressess[0];
-                    notificationMessage.To = "steve@ttstrain.com";
+                    notificationMessage.To = ttsConfigHelper.TenantEmail();
 
                     if (addressess.Count > 1)
                     {

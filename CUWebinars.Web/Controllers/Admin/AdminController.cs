@@ -4054,7 +4054,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             var model = new GenerateWeeklyInvoicesViewModel
             {
-                Affiliates = _affiliateManagementService.GetAffiliates().ToList()
+                Affiliates = _affiliateManagementService.GetAffiliates().Where(a => a.idUserAff != 379 || a.idUserAff != 380 || a.idUserAff != 384 || a.idUserAff != 395 || a.idUserAff != 396 || a.idUserAff != 963).ToList()
 
             };
 
