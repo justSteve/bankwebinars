@@ -62,7 +62,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         RegType FindRegType4ExpressPostback2(string q10RegistrationType, int q18QWebinarid18);
         string GetDiscountCaption(Discount discount, OrderRow single, int? undo, int? previewOnly);
         string UpdateRegTypeOnLegacy(int idRegType, int idWebinar, string billingEmail);
-        string  CalculateCreditsRemaining(Discount myDiscount);
+        decimal  CalculateCreditsRemaining(Discount myDiscount);
         List<Order> GetOrdersByUser(string identityName);
         Affiliate GetAffiliateById(int affiliateId);
 

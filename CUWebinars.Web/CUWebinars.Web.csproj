@@ -577,6 +577,7 @@
     <Compile Include="ViewModel\MonerisViewModel.cs" />
     <Compile Include="ViewModel\OrderSumUserViewModel.cs" />
     <Compile Include="ViewModel\QuizViewModel.cs" />
+    <Compile Include="ViewModel\RegistrationSummaryMultiViewModel.cs" />
     <Compile Include="ViewModel\RegistrationSummaryViewModel.cs" />
     <Compile Include="ViewModel\ShareNotisViewModel.cs" />
     <Compile Include="ViewModel\ShowOrdersViewModel.cs" />

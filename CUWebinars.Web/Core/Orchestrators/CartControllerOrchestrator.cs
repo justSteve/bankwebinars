@@ -863,9 +863,9 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         }
 
-        public string CalculateCreditsRemaining(Discount myDiscount)
+        public decimal CalculateCreditsRemaining(Discount myDiscount)
         {
-            return _orderManagementService.CalculateCreditsRemain(myDiscount).ToString();
+            return _orderManagementService.CalculateCreditsRemain(myDiscount);
         }
 
 

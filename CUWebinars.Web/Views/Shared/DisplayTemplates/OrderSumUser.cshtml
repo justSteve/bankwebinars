@@ -1,12 +1,12 @@
 ﻿@using CUWebinars.Web.Core
-@model Order
+@model RegistrationSummaryViewModel
 @functions {
     private const string CurrencyFormatToken = "c";
     private const string DotAndTwoDecimals = ".00";
 }
 @{
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
-    var myRow = Model.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+    var myRow = Model.OrderRow;
     NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
     nfi.CurrencyDecimalDigits = 2;
 
@@ -15,13 +15,16 @@
 
 
 
-    <div id="odrSum-@Model.idOrder" >
+    <div id="odrSum-@myRow.idOrder">
 
-        <div style="font-size: small;" class="well well-small">
-
-            <i>Order ID:</i><b> @globalConfig.TenantPrefix@Model.idOrder</b><br/>
-            <i>Date Ordered:</i><b> @Model.OrderDate.ToShortDateString()</b><br/>
-            <i>Registration:</i><b> @myRow.RegistrationType.OptionLabel.Replace(" Only", "")</b><br/>
+        <div class="well well-small">
+            @if (Request.Url.PathAndQuery.Contains("/Cart/Checkout")) // i don't love this as our logic gate, is there something else we can use / invent?
+            {
+                <h4>@myRow.Webinar.Title</h4>
+            }
+            <i>Order ID:</i><b> @globalConfig.TenantPrefix@myRow.idOrder</b><br />
+            <i>Date Ordered:</i><b> @myRow.Order.OrderDate.ToShortDateString()</b><br />
+            <i>Registration:</i><b> @myRow.RegistrationType.OptionLabel.Replace(" Only", "")</b><br />
             @if (!ReferenceEquals(myRow.AdditionalLocation, null) && myRow.AdditionalLocation.Count > 0)
             {
                 <i>Additional Locations:</i>
@@ -39,21 +42,26 @@
             @if (!ReferenceEquals(myRow.Discount, null) && myRow.Discount.PercentOff > 0)
             {
 
-                amtToReduce = myRow.UnitPrice*((myRow.Discount.PercentOff)/100);
+                amtToReduce = myRow.UnitPrice * ((myRow.Discount.PercentOff) / 100);
                 <i>Amt. of Discount:</i>
-                <span style="color: red;">@amtToReduce.ToString(CurrencyFormatToken).Replace(".00", "")</span><br/>
+                <span style="color: red;">@amtToReduce.ToString(CurrencyFormatToken).Replace(".00", "")</span>
+
+                if (myRow.Discount.DiscountType == DiscountType.Subscription)
+                {<text>(</text> @Model.DiscountCaption <text>)</text>
+                }
+                <br />
             }
             @if (!ReferenceEquals(myRow.Discount, null) && myRow.Discount.FlatOff > 0)
             {
                 amtToReduce = Convert.ToDecimal(myRow.Order.Total) - myRow.UnitPrice;
                 <i>Amt. of Discount:</i>
-                <span style="color: red;">@amtToReduce.ToString().Replace(".00", "")</span><br/>
+                <span style="color: red;">@amtToReduce.ToString().Replace(".00", "")</span><br />
             }
-            <i>Total Cost:</i> <b>@Model.Total.ToString(CurrencyFormatToken).Replace(".00", "")</b>
+            <i>Total Cost:</i> <b>@myRow.Order.Total.ToString(CurrencyFormatToken).Replace(".00", "")</b>
         </div>
-        @if (Model.Affiliate.idUserAff == 62)
+        @if (myRow.Order.Affiliate.idUserAff == 62)
         {
-            <div><b>Note:</b> This order originated from Center For Financial Training<br/><br/></div>
+            <div><b>Note:</b> This order originated from Center For Financial Training<br /><br /></div>
         }
 
     </div>
