@@ -109,8 +109,8 @@
                         <div class="row-fluid well well-large">
                             <div style="border-top-color: black;border-top: 10px;">
                                 <div class="pull-right span4" id="orderSum-@row.idWebinar">
-                                    @{ Html.RenderPartial("DisplayTemplates/OrderSumUser", row.Order); }
-
+                                    @*@{ Html.RenderPartial("DisplayTemplates/OrderSumUser", row.Order); }*@
+                                    @Html.Partial("~/Views/Shared/Partials/_OrderSumUser.cshtml", scheduled)
                                     <aside class="widget">
                                         <h5 class="short_headline"><span>Share Connection Info</span></h5>
                                         @{Html.RenderPartial("Partials/_ShareNotifications", row.Order);}

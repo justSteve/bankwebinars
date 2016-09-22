@@ -577,6 +577,7 @@
     <Compile Include="ViewModel\MonerisViewModel.cs" />
     <Compile Include="ViewModel\OrderSumUserViewModel.cs" />
     <Compile Include="ViewModel\QuizViewModel.cs" />
+    <Compile Include="ViewModel\RegistrationSummaryMultiViewModel.cs" />
     <Compile Include="ViewModel\RegistrationSummaryViewModel.cs" />
     <Compile Include="ViewModel\ShareNotisViewModel.cs" />
     <Compile Include="ViewModel\ShowOrdersViewModel.cs" />
@@ -1026,6 +1027,7 @@
     <Content Include="Content\images\logo_alabamabankers.png" />
     <Content Include="Content\images\logo_arkbankers.png" />
     <Content Include="Content\images\logo_auroratraining.png" />
+    <Content Include="Content\images\logo_azbankers_cjfbe.png" />
     <Content Include="Content\images\logo_bankwebinars.png" />
     <Content Include="Content\images\logo_calbankers.png" />
     <Content Include="Content\images\logo_cbao.png" />

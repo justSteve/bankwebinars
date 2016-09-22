@@ -9,11 +9,11 @@
     if (Model.OrderRow != null)
     {
         RegType orderMsgs = Model.OrderRow.RegistrationType;
-        var row = from orderRow in Model.OrderRow.Order.OrderRows
-                  where orderRow.RowStatus == OrderRowStatus.Active
-                  select orderRow;
+        //var row = from orderRow in Model.OrderRow.Order.OrderRows
+        //          where orderRow.RowStatus == OrderRowStatus.Active
+        //          select orderRow;
 
-        var myRow = row.Single();
+        //var myRow = row.Single();
 
         Order order = Model.OrderRow.Order;
         var showShipped = string.Empty;
@@ -50,7 +50,7 @@
 
                 <h5 class="short_headline"><span>Order Summary</span></h5>
                 <div id="orderSum-@Model.OrderRow.idWebinar">
-                    @{Html.RenderPartial("DisplayTemplates/OrderSumUser", Model.OrderRow.Order);}
+                    @{Html.RenderPartial("DisplayTemplates/OrderSumUser", Model);}
 
                 </div>
             </aside>
@@ -145,11 +145,11 @@
     if (Model.OrderRow != null && Model.OrderRow.Order.OrderStatus == OrderStatus.InProcess)
     {
         // same markup as above
-        <aside style="width: 100%" class="widget clearfix">
+        <aside style="width: 80%" class="widget clearfix">
 
-            <h5 class="short_headline"><span>Order Summary</span></h5>
+            @*<h5 class="short_headline"><span>Order Summary</span></h5>*@
             <div id="orderSum-@Model.OrderRow.idWebinar">
-                @{Html.RenderPartial("DisplayTemplates/OrderSumUser", Model.OrderRow.Order);}
+                @{Html.RenderPartial("DisplayTemplates/OrderSumUser", Model);}
             </div>
         </aside>
     }

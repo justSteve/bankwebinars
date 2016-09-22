@@ -121,7 +121,7 @@ namespace CUWebinars.Web.Controllers
                                 Total = pricesAndDiscounts.TotalOrderPrice,
                                 FlatOff = pricesAndDiscounts.Discount.FlatOff,
                                 PercentOff = pricesAndDiscounts.Discount.PercentOff,
-                                CreditsRemain = _cartControllerOrchestrator.CalculateCreditsRemaining(myDiscount)
+                                CreditsRemain = _cartControllerOrchestrator.CalculateCreditsRemaining(myDiscount).ToString()
                             });
                 }
                 else
@@ -1153,7 +1153,7 @@ namespace CUWebinars.Web.Controllers
 
         }
 
- 
+
         // not allow anonymous...
         public ActionResult Checkout()
         {
@@ -1164,13 +1164,20 @@ namespace CUWebinars.Web.Controllers
             // feed to view
             //   feeds to partial
 
-            List<RegistrationSummaryViewModel> model = new List<RegistrationSummaryViewModel>();
+            RegistrationSummaryMultiViewModel model = new RegistrationSummaryMultiViewModel();
 
             if (User.Identity.IsAuthenticated)
             {
-
+                var grandTotal = 0m;
                 List<Order> orders = _cartControllerOrchestrator.GetOrdersByUser(User.Identity.Name)
                     .Where(o => o.OrderStatus == OrderStatus.InProcess).ToList();
+                var TotalCostInCredits = 0M;
+                Discount subDiscount = null;
+                var discountTotal = 0M;
+                var creditsRemain = 0M;
+                var notEnoughCreditsCaption = "";
+
+                model.RegistrationSummaryViewModels = new List<RegistrationSummaryViewModel>();
 
                 foreach (Order order in orders)
                 {
@@ -1185,25 +1192,64 @@ namespace CUWebinars.Web.Controllers
                         orderRowForOrder.Webinar = _cartControllerOrchestrator.LoadWebinar(orderRowForOrder.idWebinar);
 
                     if (orderRowForOrder.RegistrationType == null)
-                        orderRowForOrder.RegistrationType =  _cartControllerOrchestrator.GetRegTypeById(orderRowForOrder.idRegType);
+                        orderRowForOrder.RegistrationType = _cartControllerOrchestrator.GetRegTypeById(orderRowForOrder.idRegType);
 
                     if (orderRowForOrder.Order.Affiliate == null)
                         orderRowForOrder.Order.Affiliate = _cartControllerOrchestrator.GetAffiliateById(orderRowForOrder.Order.idAffiliate);
-                    
+
                     RegistrationSummaryViewModel registrationSummaryViewModel = new RegistrationSummaryViewModel
                     {
                         AdditionalLocationsViewModel = _cartControllerOrchestrator.BuildAdditionalLocationsViewModel(orderRowForOrder, orderRowForOrder.idOrder),
-                        OrderRow = order.OrderRows.FirstOrDefault(),
+                        OrderRow = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active),
                         RecordingLink =
                             "<a href='" + GlobalConfig.GlobalConfigSingleton.WMVRepository + orderRowForOrder.Webinar.RecordingUrl +
                             "' target=_blank /> Recording Playback</a>",
                         WebinarStatus = orderRowForOrder.Webinar.Status
                     };
+                    grandTotal += order.Total;
 
-                    model.Add(registrationSummaryViewModel);
+
+                    if (orderRowForOrder.Discount != null)
+                    {
+                        if (orderRowForOrder.Discount.DiscountType == DiscountType.Subscription)
+                        {
+                            registrationSummaryViewModel.DiscountCaption = "WSP Credit Cost: " +
+                                                                           orderRowForOrder.RegistrationType.CreditCost
+                                                                               .ToString().Replace(".00", "");
+                            TotalCostInCredits += orderRowForOrder.RegistrationType.CreditCost;
+                            subDiscount = orderRowForOrder.Discount;
+                            creditsRemain = _cartControllerOrchestrator.CalculateCreditsRemaining(subDiscount);
+
+                            if (creditsRemain >= TotalCostInCredits)
+                            {
+                                discountTotal = orderRowForOrder.RowPrice * orderRowForOrder.Discount.PercentOff / 100;
+                            }
+                            else
+                            {
+                                if (creditsRemain > 0)
+                                {
+                                    discountTotal = 265 * creditsRemain;
+                                    notEnoughCreditsCaption = "The credits available to your Webinar Subscription Package do not completely cover the required cost of your orders. We've pro-rated the total amount required to" + discountTotal + ".";
+                                }
+                                else
+                                {
+                                    discountTotal = 0;
+                                }
+                            }
+                        }
+                    }
+
+
+                    //registrationSummaryViewModel.WebinarTitle = orderRowForOrder.Webinar.T
+                    model.RegistrationSummaryViewModels.Add(registrationSummaryViewModel);
                 }
 
+                model.DiscountCaptionMulti = "Your subscription package has " + creditsRemain + " credits. This cart uses " +
+                                             TotalCostInCredits + ". " + notEnoughCreditsCaption;
+
+
             } // else they will see the sign-in page and come back here, probably
+
 
             return View(model);
         }
@@ -1237,7 +1283,7 @@ namespace CUWebinars.Web.Controllers
                     Json(
                         new
                         {
-                            Result = WebUiConstants.Success ,
+                            Result = WebUiConstants.Success,
                             DiscountCaption = discountCaption,
                             UpdateSuccessCaption = UpdateSuccessCaption,
                             //regTypeShort = regType.OptionLabelShort,

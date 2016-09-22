@@ -9,10 +9,11 @@
 }
 <style>
     #ExplainRegistrationOptions {
-        width: 800px;
+        width: 540px;
     }
      .regTypeDescOutdent {
          border-top-style: dotted;
+         border-top-color: gray;
          margin-top: 10px;
          text-indent: -1em;
          padding-left: 1em;
@@ -66,7 +67,7 @@
 
                         if (!myOption.Key.SKU.Contains("Upgrade"))
                         {
-                            explainsOptionsBuilder.Append("<div class='regTypeDescOutdent'><span class='pull-right well well-small'> This option costs <i>$" + myOption.Key.Price.ToString().Replace(".00", "") + "</i><br></span><b>" + myOption.Key.OptionLabel.Replace(" (days)","").Replace(" (months)","") + "</b> - " + myOption.Key.OptionExplain + "</div>");
+                            explainsOptionsBuilder.Append("<div class='regTypeDescOutdent'><b>" + myOption.Key.OptionLabel.Replace(" (days)", "").Replace(" (months)", "") + "</b> (<i>$" + myOption.Key.Price.ToString().Replace(".00", "") + "</i>) - " + myOption.Key.OptionExplain + "</div>");
                             //font override to apply (days)
                             <dt style="font-weight: normal">
                                 @Html.Hidden(string.Concat("IsShippingRequired_", myOption.Key.idRegType), myOption.Value.ToString())

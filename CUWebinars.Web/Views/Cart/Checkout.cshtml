@@ -1,5 +1,5 @@
 ﻿@using CUWebinars.Web.Core
-@model List<RegistrationSummaryViewModel>
+@model RegistrationSummaryMultiViewModel
 
 @{
     ViewBag.Title = "Checkout";
@@ -11,8 +11,12 @@
             <div class="legendImitator">
                 <b>Below are pending orders</b>
             </div>
+            @if (Model.DiscountCaptionMulti != null)
+            {
+                <div id="discountCaption">@Model.DiscountCaptionMulti</div>
+            }
 
-            @foreach (RegistrationSummaryViewModel registrationSummaryViewModel in Model)
+            @foreach (RegistrationSummaryViewModel registrationSummaryViewModel in Model.RegistrationSummaryViewModels)
             {
                 <div id="OrderSummaryContainer_@registrationSummaryViewModel.OrderRow.idOrder">
                     @Html.Partial("~/Views/Webinar/Partials/_RegistrationSummary.cshtml", registrationSummaryViewModel)

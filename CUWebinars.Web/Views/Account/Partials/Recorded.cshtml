@@ -88,7 +88,8 @@
                             </div>
                         </div>
                         <div class="span3 offset1 " id="orderSum-@row.idWebinar">
-                            @{Html.RenderPartial("DisplayTemplates/OrderSumUser", row.Order);}
+                            
+                            @Html.Partial("~/Views/Shared/Partials/_OrderSumUser.cshtml", row.Order)
                         </div>
                     </div>
 

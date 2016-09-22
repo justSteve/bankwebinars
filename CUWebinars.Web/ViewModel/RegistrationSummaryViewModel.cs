@@ -11,5 +11,6 @@ namespace CUWebinars.Web.ViewModel
         public int DisplayPostEventMaterials { get; set; }
         public IEnumerable<string> WebinarFiles { get; set; }
         public WebinarStatus WebinarStatus { get; set; }
+        public string DiscountCaption { get; set; }
     }
 }
