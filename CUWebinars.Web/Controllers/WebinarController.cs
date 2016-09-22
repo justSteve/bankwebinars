@@ -662,6 +662,7 @@ namespace CUWebinars.Web.Controllers
 
         }
 
+        [Route("webinar/geteditincartjson")]
         public ActionResult GetAddToCartJson(int? id)
         {
             var html = "";

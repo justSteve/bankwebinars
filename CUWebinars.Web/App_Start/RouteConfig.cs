@@ -9,6 +9,9 @@ namespace CUWebinars.Web.App_Start
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+            
+            routes.MapMvcAttributeRoutes(); // enable attribute routing
+
             //replicates legacy's generic connection info endpoint
             routes.MapRoute(
                     "WebinarConnectionDetails",

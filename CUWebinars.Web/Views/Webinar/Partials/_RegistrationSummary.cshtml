@@ -142,7 +142,7 @@
             </aside>
         }*@
 
-    if (Model.OrderRow.Order.OrderStatus == OrderStatus.InProcess)
+    if (Model.OrderRow != null && Model.OrderRow.Order.OrderStatus == OrderStatus.InProcess)
     {
         // same markup as above
         <aside style="width: 100%" class="widget clearfix">

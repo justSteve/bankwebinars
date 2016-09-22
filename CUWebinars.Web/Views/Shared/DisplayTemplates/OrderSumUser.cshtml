@@ -15,13 +15,13 @@
 
 
 
-    <div id="odrSum-@Model.idOrder" >
+    <div id="odrSum-@Model.idOrder" data-order-id="@Model.idOrder" data-webinar-id="@Model.OrderRows.FirstOrDefault(or => or.RowStatus == OrderRowStatus.Active).idWebinar">
 
         <div style="font-size: small;" class="well well-small">
 
-            <i>Order ID:</i><b> @globalConfig.TenantPrefix@Model.idOrder</b><br/>
-            <i>Date Ordered:</i><b> @Model.OrderDate.ToShortDateString()</b><br/>
-            <i>Registration:</i><b> @myRow.RegistrationType.OptionLabel.Replace(" Only", "")</b><br/>
+            <i>Order ID:</i><b> @globalConfig.TenantPrefix@Model.idOrder</b><br />
+            <i>Date Ordered:</i><b> @Model.OrderDate.ToShortDateString()</b><br />
+            <i>Registration:</i><b> @myRow.RegistrationType.OptionLabel.Replace(" Only", "")</b><br />
             @if (!ReferenceEquals(myRow.AdditionalLocation, null) && myRow.AdditionalLocation.Count > 0)
             {
                 <i>Additional Locations:</i>
@@ -39,21 +39,33 @@
             @if (!ReferenceEquals(myRow.Discount, null) && myRow.Discount.PercentOff > 0)
             {
 
-                amtToReduce = myRow.UnitPrice*((myRow.Discount.PercentOff)/100);
+                amtToReduce = myRow.UnitPrice * ((myRow.Discount.PercentOff) / 100);
                 <i>Amt. of Discount:</i>
-                <span style="color: red;">@amtToReduce.ToString(CurrencyFormatToken).Replace(".00", "")</span><br/>
+                <span style="color: red;">@amtToReduce.ToString(CurrencyFormatToken).Replace(".00", "")</span><br />
             }
             @if (!ReferenceEquals(myRow.Discount, null) && myRow.Discount.FlatOff > 0)
             {
                 amtToReduce = Convert.ToDecimal(myRow.Order.Total) - myRow.UnitPrice;
                 <i>Amt. of Discount:</i>
-                <span style="color: red;">@amtToReduce.ToString().Replace(".00", "")</span><br/>
+                <span style="color: red;">@amtToReduce.ToString().Replace(".00", "")</span><br />
             }
             <i>Total Cost:</i> <b>@Model.Total.ToString(CurrencyFormatToken).Replace(".00", "")</b>
+            @if (Request.Url != null &&
+                 Request.Url.PathAndQuery.Contains("/checkout")) // i don't love this as our logic gate, is there something else we can use / invent?
+            {
+                <div>
+                    <div class="float-right">
+                        <button class="btn btn-small btn-warning edit-order">Edit</button>
+                        <button class="btn btn-small btn-danger remove-order">Remove</button>
+                    </div>
+                    <div style="clear: both;"></div>
+                </div>
+                <div id="edit-order-form-@Model.idOrder" style="margin-top: 5px; display: none;">fill this div via ajax? needs js, etc, and modals that all work</div>
+            }
         </div>
         @if (Model.Affiliate.idUserAff == 62)
         {
-            <div><b>Note:</b> This order originated from Center For Financial Training<br/><br/></div>
+            <div><b>Note:</b> This order originated from Center For Financial Training<br /><br /></div>
         }
 
     </div>

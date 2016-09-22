@@ -1435,6 +1435,7 @@
     <Content Include="Scripts\app\admin\session-checker.js" />
     <Content Include="Scripts\app\admin\display-orders.js" />
     <Content Include="Scripts\app\admin\show-webinars-child-row.js" />
+    <Content Include="Scripts\app\cart\checkout.js" />
     <Content Include="Scripts\app\cart\register-during-checkoutByAffiliate.js" />
     <Content Include="Scripts\app\client-logger.js" />
     <Content Include="Scripts\app\mywebinars\share-notis.js" />

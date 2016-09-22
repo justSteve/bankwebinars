@@ -170,30 +170,33 @@
                 <div class="label label-danger @discResult" style="margin: 8px; text-align: center; padding: 7px 40px 7px 40px; width: 75%;"
                      id="discountCaption">@Html.Raw(ViewBag.DiscountCaption.ToString())</div>
             }
-
-            <div style="text-align: center;">
-                @if (Model.OrderStatus != OrderStatus.Paid || Model.OrderStatus != OrderStatus.Submitted || Model.OrderStatus != OrderStatus.Billed)
-                {
-                    <span>
+            
+            @if (!Request.Url.PathAndQuery.Contains("/webinar/geteditincartjson")) // i don't love this as our logic gate, is there something else we can use / invent?
+            {
+                <div style="text-align: center;">
+                    @if (Model.OrderStatus != OrderStatus.Paid || Model.OrderStatus != OrderStatus.Submitted || Model.OrderStatus != OrderStatus.Billed)
+                    {
+                        <span>
                         <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">@confirmButtonLabel</button>
                         &nbsp;
                         &nbsp;
                         &nbsp;
                     </span>
-                }
-                @if (Model.OrderStatus != OrderStatus.Paid)
-                {
-                    <span>
+                    }
+                    @if (Model.OrderStatus != OrderStatus.Paid)
+                    {
+                        <span>
                         <button data-toggle="modal" role="button" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br/>`
                     </span>
-                }
+                    }
 
-                <div class="pull-right">
-                    <br />
-                    <div class="label label-warning large" role="button" id="Canceller"><span style="color: black"> &nbsp;&nbsp;Place cart on-hold or<br /> <i>Cancel</i> this checkout &nbsp;&nbsp;</span></div>
+                    <div class="pull-right">
+                        <br/>
+                        <div class="label label-warning large" role="button" id="Canceller"><span style="color: black"> &nbsp;&nbsp;Place cart on-hold or<br /> <i>Cancel</i> this checkout &nbsp;&nbsp;</span></div>
+                    </div>
+
                 </div>
-
-            </div>
+            }
         </div>
     }
 }

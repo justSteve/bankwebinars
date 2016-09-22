@@ -111,28 +111,36 @@
                     @if (Model.OrderStatus != OrderStatus.Paid)
                     {
 
-                    <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>
-                    <br />
+                        <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>
+                        <br/>
                     }
                 </div>
                 <div class="row">
                     <div class="span2 offset1 alignright">
-                        Primary Contact:<br />
-                        <br />
+                        Primary Contact:<br/>
+                        <br/>
 
-                        Type:<br />
+                        Type:<br/>
 
                     </div>
                     <div class="span4">
-                        @Html.Raw(@Model.UserDetails)<br />
+                        @Html.Raw(@Model.UserDetails)<br/>
 
-                        @Model.OptionLabel<br />
-                        Additional Locations:<br />@Html.Raw(Model.AdditionalLocationCaption)
+                        @Model.OptionLabel<br/>
+                        Additional Locations:<br/>@Html.Raw(Model.AdditionalLocationCaption)
                     </div>
                 </div>
                 <div class="row">
                     <div class="pull-right">
                         <a class="btn btn-mini btn-success" href="#ResendConfirmationModal" data-toggle="modal" id="ConfirmationResender">Resend/Forward Order Summary</a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="row">
+                    <div class="pull-right">
+                        <button class="btn btn-small btn-success cancel-edit-order">Cancel Edit</button>
                     </div>
                 </div>
             }
