@@ -555,7 +555,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     var order = _orderManagementService.GetOrderById(model.Id);
                     _logger.Info("Updating OrderStatus " + order.idOrder + " from: " + order.OrderStatus + " to: " +
                                  model.DisplayRowPriceViewModel.OrderStatus + " by: " + _appHelper.GetUserAuditInfo());
-                    var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
+                    //var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
 
                     //var UpdateOrderStatusOnLegacy = dataOperations.UpdateOrderStatusOnLegacy(order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).idWebinar, order.BillingEmail, Convert.ToInt32(model.DisplayRowPriceViewModel.OrderStatus));
                     var dataOperationsV3 = new DataOperations(TtsConfig.DefaultConnectionString);
@@ -925,84 +925,6 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
 
-        [HttpPost]
-        [AllowAnonymous]
-        public String AuditDiscount(DiscountAudit posted)
-        {
-
-            Discount discount = _orderManagementService.GetDiscountById(Convert.ToInt32(posted.idDiscount));
-            Discount discountLegacy = _orderManagementService.GetDiscountByIdLegacy(Convert.ToInt32(posted.idDiscount));
-
-            IList<WebUser> users = _orderManagementService.GetWebUsersOfDiscount(discount.idDiscount);
-            IList<Order> ordersByDiscount = _orderManagementService.GetOrdersByDiscount(posted.idDiscount);
-            IList<Order> ordersWithDiscount = new List<Order>();
-
-            var sb = new StringBuilder();
-            var authUsers = new StringBuilder();
-
-            if (!ReferenceEquals(users, null) && users.Count == 1)
-            {
-                authUsers.AppendLine("The only address authorized for AutoCheckout is " + users.Single().email);
-            }
-            else
-            {
-                if (!ReferenceEquals(users, null))
-                {
-                    authUsers.AppendLine("These addresses are authorized for AutoCheckout: ");
-                    foreach (var user in users)
-                    {
-                        authUsers.AppendLine(user.email);
-                    }
-                }
-                else
-                {
-                    authUsers.AppendLine("No authorized users were found.");
-                }
-            }
-
-            try
-            {
-                sb.AppendLine("Starting Discount: " + discount.idDiscount + " Used: " + posted.CreditsUsed + " Remain: " +
-                              posted.CreditsRemain);
-                var trackUsed = posted.CreditsUsed;
-                var trackRemain = posted.CreditsRemain;
-
-                foreach (var order in ordersByDiscount)
-                {
-
-                    var DiscountCaption = _orderManagementService.CalculateDiscountRedemption(discount,
-                        order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active), null, 0);
-
-                    var thisUse = DiscountCaption.Split(',')[0];
-                    var used = DiscountCaption.Split(',')[1];
-                    var remain = DiscountCaption.Split(',')[2];
-
-                    trackUsed = trackUsed + Convert.ToDecimal(thisUse);
-                    trackRemain = trackRemain - Convert.ToDecimal(thisUse);
-
-                    sb.AppendLine("    Order " + order.idOrder + " deducts: " + thisUse);
-
-                    ordersWithDiscount.Add(order);
-                    sb.AppendLine("Calculated usage = " + trackUsed + "-" + trackRemain + " Stored = " + used + "-" +
-                                  remain);
-
-                }
-
-                return authUsers.ToString() + sb.ToString();
-                //return Json(new { Result = "{" + sb.ToString() + "}" }, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
-            {
-                var errString = string.Format("Discount audit failed on {0} - {1} with msg: {2}", posted.idDiscount,
-                    posted.DiscountCode, ex.Message);
-                Elmah.ErrorSignal.FromCurrentContext().Raise(ex);
-                _logger.ErrorException(errString, ex);
-
-                return errString + sb;
-                //return Json(new { Result = errString + sb.ToString() }, JsonRequestBehavior.AllowGet);
-            }
-        }
-
 
         [HttpPost]
         [AllowAnonymous]
@@ -1085,7 +1007,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     expressOrder.OrderStatus = OrderStatus.Submitted;
                     expressOrder.Origin = DomainConstants.OriginExpress;
 
-                    OrderGenesis og = OrderGenesis.CreatedViaExpressCheckout;
+                    //OrderGenesis og = OrderGenesis.CreatedViaExpressCheckout;
 
                     row.RegistrationType = regType;
                     row.idRegType = regType.idRegType;
@@ -1093,7 +1015,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     _orderManagementService.SaveChanges();
                     _orderManagementService.FireOrderSubmittedEvent(expressOrder, userCreatedByCheckout);
 
-                    expressOrder.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(expressOrder);
+                    
                     _orderManagementService.SaveChanges();
                 }
                 catch (Exception ex)
@@ -2086,7 +2008,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 return Json(new { masterText = model.EventBody });
             }
-            return null;
+            //return null;
         }
 
         [HttpPost]
@@ -2258,14 +2180,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
         }
 
-        [HttpGet]
-        public ActionResult SynchWebinars()
-        {
-
-            _webinarManagementService.SynchToLegacy();
-
-            return View();
-        }
 
 
         [HttpPost]
@@ -2688,7 +2602,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
                 catch (Exception ex)
                 {
-                    _logger.Warn("CreateOnDemandClaimByAdjuster failed on orderId: " + order.idOrder);
+                    _logger.FatalException("CreateOnDemandClaimByAdjuster failed on orderId: " + order.idOrder, ex);
                 }
             }
             return null;
@@ -2788,30 +2702,30 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
 
-        [HandleAjaxException]
-        [AllowAnonymous]
-        public ActionResult SynchOrders(int? webinarId, int? idAffiliate)
-        {
+        //[HandleAjaxException]
+        //[AllowAnonymous]
+        //public ActionResult SynchOrders(int? webinarId, int? idAffiliate)
+        //{
 
-            _orderManagementService.SynchOrders(webinarId.Value);
-            return Json(new
-            {
-                data = webinarId,
-                affiliate = idAffiliate,
-                Success = "Success"
-            });
-        }
+        //    _orderManagementService.SynchOrders(webinarId.Value);
+        //    return Json(new
+        //    {
+        //        data = webinarId,
+        //        affiliate = idAffiliate,
+        //        Success = "Success"
+        //    });
+        //}
 
-        [HandleAjaxException]
-        [AllowAnonymous]
-        public ActionResult SynchOrdersBatch(int? webinarId, int? idAffiliate)
-        {
-            var totalNumberOrders = 0;
+        //[HandleAjaxException]
+        //[AllowAnonymous]
+        //public ActionResult SynchOrdersBatch(int? webinarId, int? idAffiliate)
+        //{
+        //    var totalNumberOrders = 0;
 
-            _orderManagementService.SynchOrders(webinarId.Value);
+        //    _orderManagementService.SynchOrders(webinarId.Value);
 
-            return Content("Ok");
-        }
+        //    return Content("Ok");
+        //}
 
 
         [HandleAjaxException]
@@ -2827,15 +2741,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
 
-
-        [AllowAnonymous]
-        [HttpGet]
-        public ActionResult SynchOrdersWhereLegacyIsZero(int idOrderLegacy, int idOrderV3)
-        {
-
-            _orderManagementService.SynchOrdersWhereLegacyIsZero(idOrderLegacy, idOrderV3);
-            return Content("Ok");
-        }
 
         [HandleAjaxException]
         [AllowAnonymous]
@@ -2987,13 +2892,13 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 try
                 {
-                    var shouldBuildAffRpt = true;
+                    
                     // custom filtering by Webinar Id
                     if (!showAllEvents)
                     {
                         if (searchTerm != null)
                         {
-                            shouldBuildAffRpt = false;
+                    
                             ViewBag.IsSearchResult = true;
                             int orderId = 0;
 
@@ -3044,10 +2949,6 @@ namespace CUWebinars.Web.Controllers.Admin
                     else
                     {
                         dtsource = _orderManagementService.GetOrdersAll(affiliateId, out totalNumberOrders).ToList();
-                    }
-                    if (param.Search.Value != null)
-                    {
-                        shouldBuildAffRpt = false;
                     }
 
                     //disabled pending stableization of affiliate reports
@@ -3179,7 +3080,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     var hadWOrder = false;
                     var hadPOrder = false;
                     var hadUOrder = false;
-                    var hadDiscount = false;
+                    
 
                     int thisAffiliate = affiliate.idUserAff;
 
@@ -3292,7 +3193,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                         //var totalToShow = order.Total.ToString("c");
                                         if (row.Discount != null)
                                         {
-                                            hadDiscount = true;
+                                            
                                             var discount = row.Discount;
                                             _price = "See Note #" + totalNumberDiscounts;
                                             discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode +
@@ -3467,7 +3368,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                         "%";
                                     if (row.Discount != null)
                                     {
-                                        hadDiscount = true;
+                                        
                                         var discount = row.Discount;
                                         _price = "See Note #" + totalNumberDiscounts;
                                         discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode + ": (" +
@@ -3598,7 +3499,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                                     if (row.Discount != null)
                                     {
-                                        hadDiscount = true;
+                                        
                                         var discount = row.Discount;
                                         //_price = "See Note #" + totalNumberDiscounts;
                                         discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode + ": (" +

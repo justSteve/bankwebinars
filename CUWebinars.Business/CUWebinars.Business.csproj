@@ -156,7 +156,6 @@
     <Compile Include="Core\Helpers\JsonHelpers.cs" />
     <Compile Include="Core\Helpers\RandomHelpers.cs" />
     <Compile Include="Core\Helpers\ValidationHelper.cs" />
-    <Compile Include="Core\MigrationOperations.cs" />
     <Compile Include="Core\OrderGenesis.cs" />
     <Compile Include="Core\PricesAndDiscounts.cs" />
     <Compile Include="Core\QuizScore.cs" />

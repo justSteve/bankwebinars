@@ -2134,6 +2134,7 @@
     <Content Include="Views\Shared\DisplayTemplates\ShowOrdersByDiscount.cshtml" />
     <Content Include="Views\Webinar\Partials\_ShoppingCart.cshtml" />
     <Content Include="Views\Cart\Checkout.cshtml" />
+    <Content Include="Views\Cart\Partials\_ContinueShopping.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

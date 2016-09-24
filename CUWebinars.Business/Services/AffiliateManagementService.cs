@@ -47,9 +47,7 @@ namespace CUWebinars.Business.Services
 
             invoice.Affiliate = FindById(affiliateId);
 
-            int numberOfRegistrations = 0;
-
-
+            
             foreach (Order order in orders.OrderBy(o => o.OrderDate))
             {
                 try

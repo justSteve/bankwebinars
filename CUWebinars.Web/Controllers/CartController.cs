@@ -650,7 +650,7 @@ namespace CUWebinars.Web.Controllers
 
             }
 
-            return this.ModelStateJson(ModelState);
+
         }
 
         public ActionResult SearchWebUsers(string lastName)
@@ -804,7 +804,7 @@ namespace CUWebinars.Web.Controllers
 
                 }
 
-                return Json(new { Result = WebUiConstants.Success });
+
             }
             return Json(new { });
         }
@@ -884,7 +884,7 @@ namespace CUWebinars.Web.Controllers
         {
             try
             {
-                if (form.q11_orderid != null && form.q11_orderid > 0)
+                if (form.q11_orderid > 0)
                 {
                     var order = _cartControllerOrchestrator.GetOrderById(form.q11_orderid);
 
@@ -1154,6 +1154,18 @@ namespace CUWebinars.Web.Controllers
         }
 
 
+        [HttpGet]
+        public JsonResult ContinueShopping(int idOrder)
+        {
+
+            return Json(new
+{
+    success = "success"
+
+}, JsonRequestBehavior.AllowGet);
+
+        }
+
         // not allow anonymous...
         public ActionResult Checkout()
         {
@@ -1239,8 +1251,6 @@ namespace CUWebinars.Web.Controllers
                         }
                     }
 
-
-                    //registrationSummaryViewModel.WebinarTitle = orderRowForOrder.Webinar.T
                     model.RegistrationSummaryViewModels.Add(registrationSummaryViewModel);
                 }
 

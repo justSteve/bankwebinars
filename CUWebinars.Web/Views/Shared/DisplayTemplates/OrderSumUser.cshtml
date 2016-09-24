@@ -18,7 +18,7 @@
     <div id="odrSum-@myRow.idOrder" data-order-id="@myRow.idOrder" data-webinar-id="@myRow.idWebinar">
 
         <div class="well well-small">
-            @if (Request.Url.PathAndQuery.Contains("/Cart/Checkout")) // i don't love this as our logic gate, is there something else we can use / invent?
+            @if (Request.Url.PathAndQuery.Contains("/Cart/Checkout"))
             {
                 <h4>@myRow.Webinar.Title</h4>
             }
@@ -30,8 +30,7 @@
                 <i>Additional Locations:</i>
                 foreach (var addy in myRow.AdditionalLocation)
                 {
-                    @addy.Email
-                    <br>
+                    @addy.Email<br>
                 }
             }
 
@@ -39,14 +38,14 @@
             {
                 <text>Shipped Date:<b>@Html.DisplayDate(myRow.ShipmentDate.Value)</b></text>
             }
-            @if (!ReferenceEquals(myRow.Discount, null) && myRow.Discount.PercentOff > 0)
+            @if (!ReferenceEquals(myRow.Discount, null) && myRow.Discount.PercentOff > 0 && !myRow.Webinar.Title.StartsWith("Compliance Per"))
             {
 
                 amtToReduce = myRow.UnitPrice * ((myRow.Discount.PercentOff) / 100);
                 <i>Amt. of Discount:</i>
                 <span style="color: red;">@amtToReduce.ToString(CurrencyFormatToken).Replace(".00", "")</span>
 
-                if (myRow.Discount.DiscountType == DiscountType.Subscription)
+                if (myRow.Discount.DiscountType == DiscountType.Subscription && Model.DiscountCaption != null )
                 {<text>(</text> @Model.DiscountCaption <text>)</text>
                 }
                 <br />
@@ -59,7 +58,7 @@
             }
             <i>Total Cost:</i> <b>@myRow.Order.Total.ToString(CurrencyFormatToken).Replace(".00", "")</b>
             @if (Request.Url != null &&
-                 Request.Url.PathAndQuery.Contains("/checkout")) // i don't love this as our logic gate, is there something else we can use / invent?
+                 Request.Url.PathAndQuery.Contains("/checkout"))
             {
                 <div>
                     <div class="float-right">

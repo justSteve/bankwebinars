@@ -72,14 +72,7 @@ namespace CUWebinars.Business.Repository
                 .Where(w => w.email == email).SingleOrDefault();
         }
 
-        public WebUser GetWebUserLegacyByEmail(string email)
-        {
-            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
-            var getWebUserLegacyByEmail = dataOperations.GetWebUserLegacyByEmail(email);
-            return null;
-
-        }
 
         public WebUser GetWebUserByEmailDomain(string emailDomain)
         {

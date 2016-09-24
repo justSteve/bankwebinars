@@ -302,28 +302,7 @@ namespace CUWebinars.Business.Repository
                     && order.OrderRows.FirstOrDefault().idWebinar == idWebinar);
         }
 
-        public void ConvertLegacyOrder(Order order)
-        {
-            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
-            dataOperations.MigrateOrderFromLegacy(order);
 
-
-        }
-
-        public int MigrateOrderFromV3(Order order)
-        {
-            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
-            var result = dataOperations.MigrateOrderFromV3(order);
-            return result;
-        }
-
-        public void SynchIds(int lOrder, int vOrder)
-        {
-            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
-            dataOperations.SynchOrderIds(lOrder, vOrder);
-
-
-        }
 
         public PostEventClaim FindPostEventClaim(Order order)
         {
@@ -464,12 +443,7 @@ namespace CUWebinars.Business.Repository
             return discounts;
         }
 
-        public void SetLegacyShippedDate(int idOrder, DateTime? shippedDate)
-        {
-            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
-            dataOperations.SetLegacyShippedDate(idOrder, shippedDate);
 
-        }
 
         public IList<Order> GetOrdersForLiveEventNotifications(int idWebinar)
         {
@@ -709,15 +683,6 @@ namespace CUWebinars.Business.Repository
 
         }
 
-        public Discount FindDiscountByIdLegacy(int id)
-        {
-            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
-            dataOperations.FindDiscountByIdLegacy(id);
-
-
-            return null;
-        }
-
         public Discount FindDiscountByCode(string discount)
         {
             var code = ((TTSWebinarsContext)db).Discounts.SingleOrDefault
@@ -900,7 +865,7 @@ namespace CUWebinars.Business.Repository
                 var discount = ((TTSWebinarsContext)db).Discounts.Where(d => d.idDiscount == usercode).SingleOrDefault();
                 return discount;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }

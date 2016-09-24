@@ -259,24 +259,11 @@ namespace CUWebinars.Business.Repository
             return db.SaveChanges();
         }
 
-        public IList<WebUser> MigrateUsersFromLegacy()
-        {
-            var dataOperations = new MigrationOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString, ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
-            return dataOperations.GetLegacyUsers();
-
-        }
-
-        public IList<Webinar> MigrateWebinarsFromLegacy()
-        {
-            var dataOperations = new MigrationOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString, ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
-            return null;
-
-        }
 
         public int GetRegTypeByACS(string registrationType, int idWebinar)
         {
             //first step is to convert ACS lables to TTS version
-            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LoggerConnection"].ConnectionString);
+            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
 
             var retVal = GetRegTypeByLableAndWebinar(dataOperations.FindRegTypeForACS(registrationType), idWebinar);
             return retVal;

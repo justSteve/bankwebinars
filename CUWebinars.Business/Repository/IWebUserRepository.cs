@@ -10,7 +10,7 @@ namespace CUWebinars.Business.Repository
         WebUser FindById(int id);
         WebUser FindByIdLoaded(int id);
         WebUser GetWebUserByEmail(string email);
-        WebUser GetWebUserLegacyByEmail(string email);
+        
         int? GetWebUserIdByEmail(string email);
         string GetWebUserFullname(string email);
         IEnumerable<WebUser> GetWebUsersByLastNameForAffiliate(string lastName, int idAffiliate);

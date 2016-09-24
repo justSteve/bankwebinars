@@ -1,0 +1,47 @@
+﻿@using CUWebinars.Web.Core
+@model Order
+@functions {
+    private const string CurrencyFormatToken = "c";
+    private const string DotAndTwoDecimals = ".00";
+
+
+}
+<script type="text/javascript" language="javascript">
+    $(function () {
+
+        $('#ContinueShoppingModal').on('show', function () {
+
+            $.ajax({
+
+                datatype: "text/plain",
+                type: "GET",
+                url: '/cart/continueshopping',
+                cache: false,
+                success: function (data) {
+                    //
+                }
+            });
+        });
+        //
+    });
+
+</script>
+@{
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+
+
+
+    <div id="ContinueShoppingModal" class="modal hide fade">
+        <div class="modal-header">
+            <h3 id="ContinueShoppingHeader"></h3>
+        </div>
+        <div id="ContinueShoppingBody" class="modal-body">
+            <div>Other Events By Speaker:</div>
+            <div>Related Events:</div>
+            <div>Search All Events:</div>
+
+        </div>
+        <div class="modal-footer">foot</div>
+    </div>
+
+}
