@@ -30,25 +30,16 @@
 
                     @if (claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.BeingImpersonated) == null)
                     {
-                    <a href="javascript:document.getElementById('logoutForm').submit()">&nbsp;&nbsp;[Log Off]</a>
+                        <a href="javascript:document.getElementById('logoutForm').submit()">&nbsp;&nbsp;[Log Off]</a>
                     }
                     else
                     {
-                    <a href="javascript:document.getElementById('logoutForm').submit()">&nbsp;&nbsp;[Release]</a>
+                        <a href="javascript:document.getElementById('logoutForm').submit()">&nbsp;&nbsp;[Release]</a>
                     }
+
+                    <span id="shoppingCartInHeader"><a id="btnLogin" href="@Url.Action("Checkout", "Cart")"><i class="icon-large icon-shopping-cart"></i></a></span> 
+
                 </div>
-                if (!ReferenceEquals(null, ViewBag.DiscountCaption))
-                {
-                    <div class="userDiscount-wrapper">
-                        @Html.Raw(ViewBag.DiscountStatus)
-                    </div>
-                }
-                if (!ReferenceEquals(null, ViewBag.UserHasMessages))
-                {
-                    <div class="userDiscount-wrapper">
-                        @Html.Partial("_MessagesPartial/_UserHasMessage")
-                    </div>
-                }
             }
             else
             {
