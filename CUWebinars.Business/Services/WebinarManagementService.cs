@@ -391,6 +391,16 @@ namespace CUWebinars.Business.Services
             return _webinarRepository.GetWebinarsForWeeklyInvoice(startDate);
         }
 
+        public IEnumerable<Webinar> GetRelated(int? idWebinar)
+        {
+            return _webinarRepository.GetRelated(idWebinar);
+        }
+
+        public IEnumerable<Webinar> GetTopicsByWebinar(int? idWebinar)
+        {
+            return _webinarRepository.GetTopicsByWebinar(idWebinar);
+        }
+
         public Quiz GetQuizByOrderId(int idOrder)
         {
             return _quizRepository.GetQuizFromOrder(idOrder);

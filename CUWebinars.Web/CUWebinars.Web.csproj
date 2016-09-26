@@ -506,6 +506,7 @@
     <Compile Include="Models\CitrixPresenterModel.cs" />
     <Compile Include="Models\CitrixWebinar.cs" />
     <Compile Include="Models\CompliancePerspectivesModel.cs" />
+    <Compile Include="Models\ContinueShoppingModel.cs" />
     <Compile Include="Models\DiscountAudit.cs" />
     <Compile Include="Models\ExpressCheckoutPostBackModel.cs" />
     <Compile Include="Models\Importers\ImportOrderForAcsModel.cs" />

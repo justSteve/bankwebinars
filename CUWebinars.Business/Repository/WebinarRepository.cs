@@ -355,6 +355,42 @@ namespace CUWebinars.Business.Repository
                 .ToList();
         }
 
+        public IEnumerable<Webinar> GetRelated(int? idWebinar)
+        {
+            var webinars = items.Include(i => i.WebinarTopicXrefs.Select(w => w.Topic))
+                .Include(i => i.Presenter.WebUser)
+                .Where(w => w.WebinarTopicXrefs
+                    .Any(t => t.idTopic == 1)
+                            &&
+                            (w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Scheduled ||
+                             w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress));
+            //Logger.Debug("TopicId=" + topicId); 
+
+            return webinars;
+        }
+
+        public IEnumerable<Webinar> GetTopicsByWebinar(int? idWebinar)
+        {
+            var webinars = new List<Webinar>();
+
+            var webinar = FindByIdLoaded(idWebinar.Value);
+            foreach (var idTopic in webinar.WebinarTopicXrefs)
+            {
+                IQueryable<Webinar> webinarsByTopic = GetByTopic(1);
+                
+            }
+            //            items.Include(i => i.WebinarTopicXrefs.Select(w => w.Topic))
+    //.Include(i => i.Presenter.WebUser)
+    //.Where(w => w.WebinarTopicXrefs
+    //    .Any(t => t.idTopic == topicId)
+    //            &&
+    //            (w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Scheduled ||
+    //             w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress));
+    //        //Logger.Debug("TopicId=" + topicId); 
+
+            return webinars;
+        }
+
         public IQueryable<Order> GetOrdersByWebinarForInvoice(int webinarId)
         {
             return ((TTSWebinarsContext)db).Orders

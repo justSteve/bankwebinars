@@ -108,11 +108,12 @@
 
 @{
     Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
+
+    Html.RenderPartial("~/Views/Cart/Partials/_ContinueShopping.cshtml");
     if (ViewBag.Order != null)
     {
         Html.RenderPartial("~/Views/Cart/Partials/_PayByMoneris.cshtml", (Order)ViewBag.Order);
         
-        Html.RenderPartial("~/Views/Cart/Partials/_ContinueShopping.cshtml", (Order)ViewBag.Order);
 
         Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml", (Order)ViewBag.Order);
     }

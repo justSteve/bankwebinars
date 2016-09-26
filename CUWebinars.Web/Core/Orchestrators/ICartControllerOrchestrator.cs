@@ -16,6 +16,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         DisplayRowPriceViewModel BuildDisplayRowPriceViewModel(OrderRow orderRow, int? idOrderRow, decimal? optionsCost = null);
         RegisterViewModel BuildRegisterViewModel();
         CheckoutConfirmViewModel BuildCheckoutConfirmViewModel(int? idOrderRow);
+        ContinueShoppingModel BuildContinueShoppingModel(int? idWebinar);
         CheckoutOptionsViewModel BuildCheckoutOptionsViewModel(
             WebinarDetailsViewModel webinarDetailsViewModel,
             int? idWebinar,

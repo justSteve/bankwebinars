@@ -56,5 +56,7 @@ namespace CUWebinars.Business.Services
         IList<Webinar> GetSearchDTO(string searchTerm);
         int? GetNextCompliancePerspectives();
         IList<Webinar> GetWebinarsForWeeklyInvoices(DateTime startDate);
+        IEnumerable<Webinar> GetRelated(int? idWebinar);
+        IEnumerable<Webinar> GetTopicsByWebinar(int? idWebinar);
     }
 }

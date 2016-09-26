@@ -1157,7 +1157,7 @@ namespace CUWebinars.Web.Controllers
         [HttpGet]
         public JsonResult ContinueShopping(int idOrder)
         {
-
+            var e = _cartControllerOrchestrator.BuildContinueShoppingModel(idOrder);
             return Json(new
 {
     success = "success"
