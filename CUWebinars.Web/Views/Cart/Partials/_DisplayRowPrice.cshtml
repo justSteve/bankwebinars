@@ -1,4 +1,5 @@
-﻿@using OpenQA.Selenium
+﻿@using CUWebinars.Business.Core.Helpers
+@using OpenQA.Selenium
 @model DisplayRowPriceViewModel
 
 @functions {
@@ -171,7 +172,7 @@
                      id="discountCaption">@Html.Raw(ViewBag.DiscountCaption.ToString())</div>
             }
 
-            @if (!Request.Url.PathAndQuery.Contains("/webinar/geteditincartjson")) // i don't love this as our logic gate, is there something else we can use / invent?
+            @if (!Request.Url.PathAndQuery.ContainsIgnoreCase("/webinar/geteditincartjson")) // i don't love this as our logic gate, is there something else we can use / invent?
             {
                 <div style="text-align: center;">
                     @if (Model.OrderStatus != OrderStatus.Paid || Model.OrderStatus != OrderStatus.Submitted || Model.OrderStatus != OrderStatus.Billed)

@@ -1,4 +1,5 @@
-﻿@using CUWebinars.Web.Core
+﻿@using CUWebinars.Business.Core.Helpers
+@using CUWebinars.Web.Core
 @model WebinarDetailsViewModel
 
 
@@ -100,7 +101,7 @@
                                 }
                                 else if (Model.Order.OrderStatus == OrderStatus.AwaitingVerification || Model.Order.OrderStatus == OrderStatus.InProcess || Model.Order.OrderStatus == OrderStatus.Canceled || Model.Order.OrderStatus == OrderStatus.Submitted)
                                 {
-                                    if (Request.Url.PathAndQuery.Contains("/webinar/getaddtocartjson")) // i don't love this as our logic gate, is there something else we can use / invent?
+                                    if (Request.Url.PathAndQuery.ContainsIgnoreCase("/webinar/getaddtocartjson")) // i don't love this as our logic gate, is there something else we can use / invent?
                                     {
                                         //should only happen if they are viewing the "buy column" child row on the search results page and have an order in process
                                         <div>
@@ -172,7 +173,7 @@
                 }
                 else
                 {
-                    if (Request.Url.PathAndQuery.Contains("/webinar/getaddtocartjson")) // i don't love this as our logic gate, is there something else we can use / invent?
+                    if (Request.Url.PathAndQuery.ContainsIgnoreCase("/webinar/getaddtocartjson")) // i don't love this as our logic gate, is there something else we can use / invent?
                     {
                         // user owns or is in process...
                         @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())

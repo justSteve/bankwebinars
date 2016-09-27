@@ -1,4 +1,5 @@
-﻿@using CUWebinars.Web.Core
+﻿@using CUWebinars.Business.Core.Helpers
+@using CUWebinars.Web.Core
 @model RegistrationSummaryViewModel
 @functions {
     private const string CurrencyFormatToken = "c";
@@ -18,7 +19,7 @@
     <div id="odrSum-@myRow.idOrder" data-order-id="@myRow.idOrder" data-webinar-id="@myRow.idWebinar">
 
         <div class="well well-small">
-            @if (Request.Url.PathAndQuery.Contains("/Cart/Checkout"))
+            @if (Request.Url.PathAndQuery.ContainsIgnoreCase("/Cart/Checkout"))
             {
                 <h4>@myRow.Webinar.Title</h4>
             }
@@ -58,7 +59,7 @@
             }
             <i>Total Cost:</i> <b>@myRow.Order.Total.ToString(CurrencyFormatToken).Replace(".00", "")</b>
             @if (Request.Url != null &&
-                 Request.Url.PathAndQuery.Contains("/checkout"))
+                 Request.Url.PathAndQuery.ContainsIgnoreCase("/Checkout"))
             {
                 <div>
                     <div class="float-right">
