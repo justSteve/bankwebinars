@@ -49,8 +49,7 @@
             <aside style="width: 100%" class="widget clearfix">
 
                 <h5 class="short_headline"><span>Order Summary</span></h5>
-                <div id="idWebinar-@Model.OrderRow.idWebinar">
-                @*<div id="orderSum-@Model.OrderRow.idWebinar">*@
+                <div id="orderSum-@Model.OrderRow.idWebinar">
                     @{Html.RenderPartial("DisplayTemplates/OrderSumUser", Model);}
 
                 </div>
@@ -141,15 +140,12 @@
                     </ul>
                 </div>
             </aside>
-        }
-    //? to Andy as to intent of this block
-    // an 'in-process' order should not show order summary on right-side panel of details.
-    // is this block used elsewhere
-        *@
+        }*@
+
     if (Model.OrderRow != null && Model.OrderRow.Order.OrderStatus == OrderStatus.InProcess)
     {
         // same markup as above
-        <aside style="width: 100%" class="widget clearfix">
+        <aside style="width: 80%" class="widget clearfix">
 
             @*<h5 class="short_headline"><span>Order Summary</span></h5>*@
             <div id="orderSum-@Model.OrderRow.idWebinar">

@@ -12,7 +12,7 @@ namespace CUWebinars.Business.Core
     public class TtsConfig
     {
         public static string DefaultConnectionString { get; private set; }
-        //public static string LegacyConnectionString { get; private set; }
+        public static string LegacyConnectionString { get; private set; }
         public static string TracingLevel { get; private set; }
         public static TtsConfiguration Create(
             string baseUrl,
@@ -125,7 +125,7 @@ namespace CUWebinars.Business.Core
             ConnectionStringSettingsCollection connectionStringSettingsCollection = ConfigurationManager.ConnectionStrings;
 
             DefaultConnectionString = connectionStringSettingsCollection["DefaultConnection"].ConnectionString;
-            //LegacyConnectionString = connectionStringSettingsCollection["LegacyConnection"].ConnectionString;
+            LegacyConnectionString = connectionStringSettingsCollection["LegacyConnection"].ConnectionString;
 
         }
 

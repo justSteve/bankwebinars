@@ -48,9 +48,9 @@ namespace CUWebinars.Business.AccountService
         UserAccount GetUserAccountByWebUserId(string tenant, int userId);
         WebUser GetUserByEmail(string email);
         WebUser GetUserByEmailLoadedWithOrdersData(string email);
-        //WebUser GetUserFromLegacy(string email); 
+        WebUser GetUserFromLegacy(string email); 
         WebUser GetWebUserById(int userId);
-        //WebUser GetWebUserByIdFromLegacy(int userId);
+        WebUser GetWebUserByIdFromLegacy(int userId);
         int? GetWebUserIdByEmail(string email);
         IEnumerable<WebUser> GetWebUsersByLastNameForAffiliate(string lastName, int idAffiliate);
         bool HasPassword(string tenant, string emailAddress);
@@ -65,7 +65,13 @@ namespace CUWebinars.Business.AccountService
             string regIdentifier,
             string institutionType,
             string zip);
-
+        Institution ProcessInstitutionForUserFromLegacy(string institutionName,
+            string email,
+            string city,
+            string state,
+            string regIdentifier,
+            string institutionType,
+            string zip);
 
         void RemoveClaim(string tenant, string email, string claim, string claimValue = null);
         void ResetPassword(string tenant, string email);
@@ -104,6 +110,6 @@ namespace CUWebinars.Business.AccountService
         Institution GetInstitutionById(int idInstitution);
         void UpdateInstitutionDetails(Institution saveInst);
         void UpdateUserEmail(string oldEmail, string email, string tenant);
-        //string CreateUserOnLegacy(WebUser user);
+        string CreateUserOnLegacy(WebUser user);
     }
 }

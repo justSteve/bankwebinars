@@ -38,6 +38,7 @@ namespace CUWebinars.Business.Repository
         WebinarTopicXref GetWebinarTopicXref(int idTopic, int idWebinar);
         int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar);
         int SaveChanges();
+        IList<Webinar> MigrateWebinarsFromLegacy();
         int GetRegTypeByACS(string registrationType, int idWebinar);
         double[] GetCostOfUpgrades(int idWebinar);
         Webinar GetWebinarByJoinCode(string joinCode);

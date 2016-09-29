@@ -56,7 +56,7 @@ namespace CUWebinars.Web.Controllers
 
         private readonly IAffiliateManagementService _affiliateManagementService;
         private readonly ILogger _logger;
-        //private bool _disposed;
+        private bool _disposed;
 
         public HandoutsController(
             IAffiliateManagementService affiliateManagementService,

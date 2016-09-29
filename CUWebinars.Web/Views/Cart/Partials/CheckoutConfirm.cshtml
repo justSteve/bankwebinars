@@ -15,6 +15,28 @@
             {
                 <b>Please review this order summary and and choose billing method.</b>
 
+                @*<div class="row">
+                        <div class="offset1 span10">Primary Contact:</div>
+                        <div id="userDetailsSummed" class="span10 offset2">
+                            <p>
+                                @Html.Raw(@Model.UserDetails)
+                                <a id="editUserDetails" role="button" class="btn btn-mini"> Edit?</a>
+                            </p>
+
+                        </div>
+                    </div>
+                    <div id="AdjustUserDetails" class="row initialHide">
+                        @using (Html.BeginForm("adjustuserdetails", "cart", FormMethod.Post, new { id = "UserDetailsAdjustForm", @class = "form form-horizontal" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.EditorFor(m => m.AdjustUserDetailsPanel)
+                            <div class="control-group">
+                                <div class="controls">
+                                    <button id="SubmitUserDetailEdits" class="btn btn-default btn-mini btn-primary">apply edits</button>
+                                </div>
+                            </div>
+                        }
+                    </div>*@
                 <div id="AdjustDiscount" class="row initialHide">
                     <div class="offset2 span9 ">
                         <div id="EnterDiscountCode" class="clear pull-right">
@@ -57,7 +79,31 @@
 
                     </div>
                 </div>
+
+                @*<div class="row">
+                        <div class="span5 offset1">
+                            <input class="input input-xlarge" type="text" placeholder="How did you hear about this webinar?" name="referred" id="tbReferred" value="" />
+
+                            @Html.Raw(Model.UserComments)
+                            @Html.Raw(Model.AffiliateComments)
+                            @if (Model.UserType == UserType.Admin)
+                            {
+                                <br />
+                                @Html.Raw(Model.AdminComments)
+                                <br />
+                                @Html.Raw(Model.Origin)
             }
+                        </div>
+                        <div class="span2 offset1">&nbsp;</div>
+                    </div>
+                    <div class="row">
+                        <div class="span5 offset1">
+                            <a href=""></a> a comment or question for our staff?<br />
+                        </div>
+                    </div>*@
+            }
+
+
 
             if (Model.OrderStatus != OrderStatus.InProcess)
             {
@@ -102,7 +148,6 @@
                     </div>
                 }
             }
-        }
 
     }
 }

@@ -890,8 +890,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             cpSubscription.Status = discount.Status;
             cpSubscription.Notes = discount.Notes;
 
-            cpSubscription.CreditsRemain = _orderManagementService.CalculateCreditsRemain(discount);
-            cpSubscription.CreditsUsed = _orderManagementService.CalculateCreditsUsed(discount);
+            cpSubscription.CreditsRemain = CalculateCreditsRemain(discount);
+            cpSubscription.CreditsUsed = CalculateCreditsUsed(discount);
             cpSubscription.Cost = discount.Cost;
             cpSubscription.DateBilled = discount.DateBilled;
             cpSubscription.FlatOff = discount.FlatOff;
@@ -917,8 +917,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             discountModel.Status = orderDiscount.Status;
             discountModel.Notes = orderDiscount.Notes;
 
-            discountModel.CreditsRemain = _orderManagementService.CalculateCreditsRemain(orderDiscount);
-            discountModel.CreditsUsed = _orderManagementService.CalculateCreditsUsed(orderDiscount);
+            discountModel.CreditsRemain = CalculateCreditsRemain(orderDiscount);
+            discountModel.CreditsUsed = CalculateCreditsUsed(orderDiscount);
             discountModel.Cost = orderDiscount.Cost;
             discountModel.TotalCount = orderDiscount.TotalCount;
             discountModel.DateBilled = orderDiscount.DateBilled;
@@ -946,8 +946,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             discountModel.Status = userDiscount.Status;
             discountModel.Notes = userDiscount.Notes;
 
-            discountModel.CreditsRemain = _orderManagementService.CalculateCreditsRemain(userDiscount);
-            discountModel.CreditsUsed = _orderManagementService.CalculateCreditsUsed(userDiscount);
+            discountModel.CreditsRemain = CalculateCreditsRemain(userDiscount);
+            discountModel.CreditsUsed = CalculateCreditsUsed(userDiscount);
             discountModel.Cost = userDiscount.Cost;
             discountModel.TotalCount = userDiscount.TotalCount;
             discountModel.DateBilled = userDiscount.DateBilled;
@@ -977,8 +977,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             discountModel.Notes = userDiscount.Notes;
 
             discountModel.CreditsRemain = -1 * (((DateTime.Now.Year - discountModel.DateValidTo.Year) * 12) + DateTime.Now.Month - discountModel.DateValidTo.Month);
-
-            discountModel.CreditsUsed = _orderManagementService.CalculateCreditsUsed(userDiscount);
+            
+            discountModel.CreditsUsed = CalculateCreditsUsed(userDiscount);
             discountModel.Cost = userDiscount.Cost;
             discountModel.TotalCount = userDiscount.TotalCount;
             discountModel.DateBilled = userDiscount.DateBilled;
@@ -1007,8 +1007,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             discountModel.Status = userDiscount.Status;
             discountModel.Notes = userDiscount.Notes;
 
-            discountModel.CreditsRemain = _orderManagementService.CalculateCreditsRemain(userDiscount);
-            discountModel.CreditsUsed = _orderManagementService.CalculateCreditsUsed(userDiscount);
+            discountModel.CreditsRemain = CalculateCreditsRemain(userDiscount);
+            discountModel.CreditsUsed = CalculateCreditsUsed(userDiscount);
             discountModel.Cost = userDiscount.Cost;
             discountModel.TotalCount = userDiscount.TotalCount;
             discountModel.DateBilled = userDiscount.DateBilled;
@@ -1021,47 +1021,46 @@ namespace CUWebinars.Web.Core.Orchestrators
             return discountModel;
         }
 
-        // refactored so that all references to CalculateCreditsxxx now point to orderManagementService
-        //private decimal CalculateCreditsRemain(Discount userDiscount)
-        //{
+        private decimal CalculateCreditsRemain(Discount userDiscount)
+        {
 
-        //    if (userDiscount.DiscountType == DiscountType.Subscription &&
-        //        userDiscount.DateValidTo > userDiscount.DateValidFrom) return 100;
+            if (userDiscount.DiscountType == DiscountType.Subscription &&
+                userDiscount.DateValidTo > userDiscount.DateValidFrom) return 100;
 
-        //    var ordersWithDiscount = _orderManagementService.GetOrdersByDiscount(userDiscount.idDiscount)
-        //        .Where(o => o.OrderDate > userDiscount.DateVerified)
-        //        ;
+            var ordersWithDiscount = _orderManagementService.GetOrdersByDiscount(userDiscount.idDiscount)
+                .Where(o => o.OrderDate > userDiscount.DateVerified)
+                ;
 
-        //    var creditsUsed = 0M;
+            var creditsUsed = 0M;
 
-        //    if (ordersWithDiscount.Any())
-        //        foreach (var order in ordersWithDiscount)
-        //        {
+            if (ordersWithDiscount.Any())
+                foreach (var order in ordersWithDiscount)
+                {
 
-        //            {
-        //                creditsUsed +=
-        //                    order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
-        //                        .RegistrationType.CreditCost;
-        //            }
-        //        }
-        //    return userDiscount.TotalCount - creditsUsed;
-        //}
+                    {
+                        creditsUsed +=
+                            order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                                .RegistrationType.CreditCost;
+                    }
+                }
+            return userDiscount.TotalCount - creditsUsed;
+        }
 
-        //private decimal CalculateCreditsUsed(Discount userDiscount)
-        //{
-        //    var ordersWithDiscount = _orderManagementService.GetOrdersByDiscount(userDiscount.idDiscount)
-        //        .Where(o => o.OrderDate > userDiscount.DateVerified);
-        //    var credits = 0M;
-        //    if (ordersWithDiscount.Any())
-        //        foreach (var order in ordersWithDiscount)
-        //        {
-        //            credits +=
-        //                order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
-        //                    .RegistrationType.CreditCost;
-        //        }
+        private decimal CalculateCreditsUsed(Discount userDiscount)
+        {
+            var ordersWithDiscount = _orderManagementService.GetOrdersByDiscount(userDiscount.idDiscount)
+                .Where(o => o.OrderDate > userDiscount.DateVerified);
+            var credits = 0M;
+            if (ordersWithDiscount.Any())
+                foreach (var order in ordersWithDiscount)
+                {
+                    credits +=
+                        order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                            .RegistrationType.CreditCost;
+                }
 
-        //    return credits;
-        //}
+            return credits;
+        }
 
         public ManageModel BuildManageModel(ManageMessageId? message)
         {
@@ -1347,10 +1346,10 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             var user = _membershipService.GetUserByEmail(email);
 
-            //if (ReferenceEquals(user, null))
-            //{
-            //    user = _membershipService.GetUserFromLegacy(email);
-            //}
+            if (ReferenceEquals(user, null))
+            {
+                user = _membershipService.GetUserFromLegacy(email);
+            }
             return user;
         }
 

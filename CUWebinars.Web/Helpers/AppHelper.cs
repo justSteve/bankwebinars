@@ -316,7 +316,7 @@ namespace CUWebinars.Web.Helpers
 
         public IList<AdditionalLocation> CheckAdditionalLocationsForValidEmail(IList<AdditionalLocation> additionalLocations)
         {
-            //TODO: this really, really needs to be finished.
+
             IList<AdditionalLocation> areValid = new List<AdditionalLocation>();
             if (additionalLocations != null)
                 foreach (var check in additionalLocations)
@@ -328,7 +328,6 @@ namespace CUWebinars.Web.Helpers
                     }
                     catch (Exception ex)
                     {
-
                         var placeholder = "";
                     }
                 }
