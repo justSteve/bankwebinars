@@ -81,26 +81,26 @@
                 </div>
 
                 @*<div class="row">
-                        <div class="span5 offset1">
-                            <input class="input input-xlarge" type="text" placeholder="How did you hear about this webinar?" name="referred" id="tbReferred" value="" />
+                                <div class="span5 offset1">
+                                    <input class="input input-xlarge" type="text" placeholder="How did you hear about this webinar?" name="referred" id="tbReferred" value="" />
 
-                            @Html.Raw(Model.UserComments)
-                            @Html.Raw(Model.AffiliateComments)
-                            @if (Model.UserType == UserType.Admin)
-                            {
-                                <br />
-                                @Html.Raw(Model.AdminComments)
-                                <br />
-                                @Html.Raw(Model.Origin)
-            }
-                        </div>
-                        <div class="span2 offset1">&nbsp;</div>
-                    </div>
-                    <div class="row">
-                        <div class="span5 offset1">
-                            <a href=""></a> a comment or question for our staff?<br />
-                        </div>
-                    </div>*@
+                                    @Html.Raw(Model.UserComments)
+                                    @Html.Raw(Model.AffiliateComments)
+                                    @if (Model.UserType == UserType.Admin)
+                                    {
+                                        <br />
+                                        @Html.Raw(Model.AdminComments)
+                                        <br />
+                                        @Html.Raw(Model.Origin)
+                    }
+                                </div>
+                                <div class="span2 offset1">&nbsp;</div>
+                            </div>
+                            <div class="row">
+                                <div class="span5 offset1">
+                                    <a href=""></a> a comment or question for our staff?<br />
+                                </div>
+                            </div>*@
             }
 
 
@@ -113,22 +113,22 @@
                     {
 
                         <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>
-                        <br/>
+                        <br />
                     }
                 </div>
                 <div class="row">
                     <div class="span2 offset1 alignright">
-                        Primary Contact:<br/>
-                        <br/>
+                        Primary Contact:<br />
+                        <br />
 
-                        Type:<br/>
+                        Type:<br />
 
                     </div>
                     <div class="span4">
-                        @Html.Raw(@Model.UserDetails)<br/>
+                        @Html.Raw(@Model.UserDetails)<br />
 
-                        @Model.OptionLabel<br/>
-                        Additional Locations:<br/>@Html.Raw(Model.AdditionalLocationCaption)
+                        @Model.OptionLabel<br />
+                        Additional Locations:<br />@Html.Raw(Model.AdditionalLocationCaption)
                     </div>
                 </div>
                 <div class="row">
@@ -149,40 +149,23 @@
                 }
             }
 
-    }
-}
-
-@{
-    Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
-
-    Html.RenderPartial("~/Views/Cart/Partials/_ContinueShopping.cshtml");
-    if (ViewBag.Order != null)
-    {
-        Html.RenderPartial("~/Views/Cart/Partials/_PayByMoneris.cshtml", (Order)ViewBag.Order);
-        
-
-        Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml", (Order)ViewBag.Order);
-    }
-    Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
-}
-
-
-
-<script type="text/javascript">var anyAddLocs = @(string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption) ? "false" : "true");</script>
-
-@*
-    @{
-        if (orderRowID > 0)
-        {
-            <div id="AddLocation_@(orderRowID)" class="modal hide fade">
-                @Html.Partial("~/Views/Shared/AddLocationsView.cshtml", row)
-            </div>
-            if (Model.Order.OrderStatus != OrderStatus.InProcess)
-            {
-                <div id="ResendConfirmationModal" class="modal hide fade">
-                    @Html.Partial("~/Views/Shared/ResendConfirmationView.cshtml", row)
-                </div>
-            }
         }
-    }*@
 
+        Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
+
+        Html.RenderPartial("~/Views/Cart/Partials/_ContinueShopping.cshtml");
+        if (ViewBag.Order != null)
+        {
+            Html.RenderPartial("~/Views/Cart/Partials/_PayByMoneris.cshtml", (Order)ViewBag.Order);
+
+
+            Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml", (Order)ViewBag.Order);
+        }
+        Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
+    }
+
+
+
+    <script type="text/javascript">var anyAddLocs = @(string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption) ? "false" : "true");</script>
+
+}
