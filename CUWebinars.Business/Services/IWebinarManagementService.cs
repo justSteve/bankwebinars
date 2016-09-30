@@ -42,7 +42,7 @@ namespace CUWebinars.Business.Services
         Webinar GetCompliancePerspectives();
 
         int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar);
-        void SynchToLegacy();
+        
         int GetRegTypeByACS(string registrationType, int idWebinar);
         void DeleteWebinarTopicXref(Webinar webinar, int exisingTopicId);
         Quiz GetQuizByCode(string quizCode);
@@ -56,5 +56,7 @@ namespace CUWebinars.Business.Services
         IList<Webinar> GetSearchDTO(string searchTerm);
         int? GetNextCompliancePerspectives();
         IList<Webinar> GetWebinarsForWeeklyInvoices(DateTime startDate);
+        IEnumerable<Webinar> GetRelated(int? idWebinar);
+        IEnumerable<Webinar> GetTopicsByWebinar(int? idWebinar);
     }
 }

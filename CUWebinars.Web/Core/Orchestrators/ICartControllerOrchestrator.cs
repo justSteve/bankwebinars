@@ -16,6 +16,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         DisplayRowPriceViewModel BuildDisplayRowPriceViewModel(OrderRow orderRow, int? idOrderRow, decimal? optionsCost = null);
         RegisterViewModel BuildRegisterViewModel();
         CheckoutConfirmViewModel BuildCheckoutConfirmViewModel(int? idOrderRow);
+        ContinueShoppingModel BuildContinueShoppingModel(int? idWebinar);
         CheckoutOptionsViewModel BuildCheckoutOptionsViewModel(
             WebinarDetailsViewModel webinarDetailsViewModel,
             int? idWebinar,
@@ -62,7 +63,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         RegType FindRegType4ExpressPostback2(string q10RegistrationType, int q18QWebinarid18);
         string GetDiscountCaption(Discount discount, OrderRow single, int? undo, int? previewOnly);
-        string UpdateRegTypeOnLegacy(int idRegType, int idWebinar, string billingEmail);
+        
         decimal  CalculateCreditsRemaining(Discount myDiscount);
         List<Order> GetOrdersByUser(string loggedInEmail);
         Affiliate GetAffiliateById(int affiliateId);

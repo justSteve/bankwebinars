@@ -385,7 +385,7 @@ namespace CUWebinars.Business.Core
 
         public void LogError(string MethodSendingError, string ErrorToLog)
         {
-            using (var sqlConnection = new SqlConnection(TtsConfig.LegacyConnectionString))
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
             {
                 sqlConnection.Open();
 
@@ -767,467 +767,6 @@ namespace CUWebinars.Business.Core
             return setStatus;
         }
 
-        public int MigrateOrderFromV3(Order order)
-        {
-            if (order == null) return 0;
-
-            var myRow = order.OrderRows.SingleOrDefault();
-            string myDiscount = "";
-            if (myRow.Discount != null)
-            {
-                myDiscount = myRow.Discount.DiscountCode;
-            }
-            var onDemandCode = "";
-
-            if (myRow.OnDemandCode != null)
-            {
-                onDemandCode = myRow.OnDemandCode;
-            }
-
-            var addLocString = "";
-
-            if (myRow.AdditionalLocation != null)
-            {
-                foreach (var addLoc in myRow.AdditionalLocation)
-                {
-                    addLocString = addLoc.Email + ",";
-                }
-                addLocString = addLocString.TrimEnd(',');
-            }
-
-            var PostForm = "";
-
-            PostForm = "affiliateId=" + order.idAffiliate;
-            PostForm += "&firstName=" + order.FirstName;
-            PostForm += "&lastName=" + order.LastName;
-            PostForm += "&phone=" + order.BillingPhone;
-            PostForm += "&address1=" + order.BillingAddress;
-            PostForm += "&address2=" + order.BillingAddress2;
-            PostForm += "&city=" + order.BillingCity;
-            PostForm += "&zip=" + order.BillingZip;
-            PostForm += "&state=" + order.BillingState;
-            PostForm += "&shippingFirstName=" + order.ShippingFirstName;
-            PostForm += "&shippingLastname=" + order.ShippingLastName;
-            PostForm += "&shippingPhone=" + order.ShippingPhone;
-            PostForm += "&shippingAddress=" + order.ShippingAddress;
-            PostForm += "&shippingCity=" + order.ShippingCity;
-            PostForm += "&shippingState=" + order.ShippingState;
-            PostForm += "&shippingZip=" + order.ShippingZip;
-            PostForm += "&Email=" + order.BillingEmail;
-            if (order.WebUser.Title != null) PostForm += "&Title=" + order.WebUser.Title;
-            PostForm += "&Institution=" + order.Institution;
-            PostForm += "&idRegType=" + myRow.idRegType;
-            PostForm += "&webinarId=" + myRow.idWebinar;
-            PostForm += "&AdditionalLocationsString=" + addLocString;
-            PostForm += "&OrderDate=" + order.OrderDate;
-            PostForm += "&DiscountCode=" + myDiscount;
-            PostForm += "&Status=" + order.OrderStatus + "&Total=" + order.Total;
-            PostForm += "&AdminComments=" + order.AdminComments;
-            PostForm += "&OrderStatus=" + (int)order.OrderStatus;
-            PostForm += "&OnDemandCode=" + onDemandCode;
-
-            var submitImporter = "http://acsimporter.bankwebinars.com/home/MigrateOrderFromV3/";
-            if (Debugger.IsAttached)
-            {
-
-                submitImporter = "http://localhost:51405/home/MigrateOrderFromV3/";
-            }
-
-            WebRequest req = WebRequest.Create(submitImporter);
-
-            byte[] send = Encoding.Default.GetBytes(PostForm);
-            req.Method = "POST";
-            req.ContentType = "application/x-www-form-urlencoded";
-            req.ContentLength = send.Length;
-
-            Stream sout = req.GetRequestStream();
-            sout.Write(send, 0, send.Length);
-            sout.Flush();
-            sout.Close();
-
-            WebResponse res = req.GetResponse();
-            StreamReader sr = new StreamReader(res.GetResponseStream());
-            string returnvalue = sr.ReadToEnd();
-
-            // Display the content.
-            //return returnvalue;
-
-            ;
-            SynchOrderIds(Convert.ToInt32(returnvalue.Split(':')[1].Replace("\"", "").Replace("}", "")), order.idOrder);
-            return Convert.ToInt32(returnvalue.Split(':')[1].Replace("\"", "").Replace("}", ""));
-
-        }
-
-        public void SynchOrderIds(int legacyOrderId, int v3OrderId)
-        {
-            //disabled
-            return;
-
-            if (legacyOrderId == v3OrderId) return;
-
-
-            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
-            {
-                sqlConnection.Open();
-                var v3idOrderParameter = new SqlParameter
-                {
-                    SqlDbType = SqlDbType.Int,
-                    ParameterName = "@idOrderV3",
-                    Value = v3OrderId
-                };
-                var idOrderParameter = new SqlParameter
-                {
-                    SqlDbType = SqlDbType.Int,
-                    ParameterName = "@idOrder",
-                    Value = legacyOrderId
-                };
-
-                if (legacyOrderId == 0)
-                {
-                    using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                    {
-                        errorLogger.CommandText =
-                            "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                        errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
-                        errorLogger.CommandText += "'LegacyIdIsZero' ,";
-                        errorLogger.CommandText += "9 ,9 ,9 ,'[SynchOrderIds found LegacyIdIsZero', 9 ,";
-                        errorLogger.CommandText += "'exec  BuildQueryToFindLegacyOrderOnZeroCondition @idOrderV3 =" +
-                                                   v3OrderId + "')";
-
-
-                        errorLogger.ExecuteNonQuery();
-
-                    }
-                    return;
-
-                }
-                using (var synchOrderIds = new SqlCommand("SynchOrderIds", sqlConnection))
-                {
-                    synchOrderIds.Parameters.Add(v3idOrderParameter);
-                    synchOrderIds.Parameters.Add(idOrderParameter);
-
-                    try
-                    {
-                        synchOrderIds.Connection = sqlConnection;
-                        synchOrderIds.CommandType = CommandType.StoredProcedure;
-
-                        synchOrderIds.ExecuteNonQuery();
-
-                    }
-                    catch (Exception ex)
-                    {
-                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                        {
-                            errorLogger.CommandText =
-                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts +
-                                                       "',";
-                            errorLogger.CommandText += "'SynchOrderIds' ,";
-                            errorLogger.CommandText += "9 ,9 ,9 ,'[SynchOrderIds]', 9 ,";
-                            errorLogger.CommandText += "'error at SynchOrderIds " + ex.Message + "')";
-
-                            errorLogger.ExecuteNonQuery();
-
-                        }
-                    }
-                }
-
-            }
-        }
-
-        public void MigrateOrderFromLegacy(Order order)
-        {
-            if (order == null) return;
-
-            var myRow = order.OrderRows.SingleOrDefault();
-            string myDiscount = "";
-            if (myRow.Discount != null)
-            {
-                myDiscount = myRow.Discount.DiscountCode;
-            }
-
-            var addLocs = "";
-
-
-            if (myRow.AdditionalLocation != null && myRow.AdditionalLocation.Count > 0)
-            {
-                foreach (var additionalLocation in myRow.AdditionalLocation)
-                {
-                    addLocs += additionalLocation.Email + ",";
-                }
-            }
-
-            var PostForm = "";
-
-            PostForm = "idAffiliate=" + order.idAffiliate + "&BillingAddress.AddressType=Billing";
-
-
-            PostForm += "&BillingAddress.Name=" + order.FirstName + " " + order.LastName;
-            PostForm += "&BillingAddress.Phone=" + order.BillingPhone;
-            PostForm += "&BillingAddress.StreetAddress=" + order.BillingAddress;
-            PostForm += "&BillingAddress.StreetAddress2=" + order.BillingAddress2;
-            PostForm += "&BillingAddress.City=" + order.BillingCity;
-            PostForm += "&BillingAddress.Zip=" + order.BillingZip;
-            PostForm += "&BillingAddress.State=" + order.BillingState;
-            PostForm += "&BillingAddress.Country=" + "US";
-            PostForm += "&ShippingAddress.AddressType=Shipping";
-            PostForm += "&ShippingAddress.Name=" + order.ShippingFirstName + " " + order.ShippingLastName;
-            PostForm += "&ShippingAddress.Phone=" + order.ShippingPhone;
-            PostForm += "&ShippingAddress.StreetAddress=" + order.ShippingAddress;
-            PostForm += "&ShippingAddress.StreetAddress2=" + "";
-            PostForm += "&ShippingAddress.City=" + order.ShippingCity;
-            PostForm += "&ShippingAddress.State=" + order.ShippingState;
-            PostForm += "&ShippingAddress.Zip=" + order.ShippingZip;
-            PostForm += "&ShippingAddress.Country=" + "US";
-            PostForm += "&Email=" + order.BillingEmail;
-            PostForm += "&Title=" + "";
-            PostForm += "&Institution=" + order.Institution;
-            PostForm += "&FirstName=" + order.FirstName;
-            PostForm += "&LastName=" + order.LastName;
-            PostForm += "&idRegType=" + myRow.idRegType;
-            PostForm += "&idWebinar=" + myRow.idWebinar;
-            PostForm += "&AdditionalLocationsString=" + addLocs.TrimEnd(' ', ',');
-            PostForm += "&idOrderLegacy=" + order.idOrderLegacy;
-            PostForm += "&OrderDate=" + order.OrderDate;
-            PostForm += "&ShippingDate=" + "";
-            PostForm += "&DiscountCode=" + myDiscount;
-            PostForm += "&Status=" + order.OrderStatus + "&Total=" + order.Total;
-            PostForm += "&AdminComments=" + order.AdminComments;
-            PostForm += "&OnDemandCode=" + myRow.OnDemandCode;
-
-            PostForm = PostForm.Replace("<br>", "");
-            var submitImporter = "https://www.bankwebinars.com/order/MigrateOrder/";
-            if (Debugger.IsAttached)
-            {
-                submitImporter = "http://localhost:3538/order/MigrateOrder/";
-            }
-            WebRequest req = WebRequest.Create(submitImporter);
-
-            byte[] send = Encoding.Default.GetBytes(PostForm);
-            req.Method = "POST";
-            req.ContentType = "application/x-www-form-urlencoded";
-            req.ContentLength = send.Length;
-
-            Stream sout = req.GetRequestStream();
-            sout.Write(send, 0, send.Length);
-            sout.Flush();
-            sout.Close();
-
-            WebResponse res = req.GetResponse();
-            StreamReader sr = new StreamReader(res.GetResponseStream());
-            string returnvalue = sr.ReadToEnd();
-
-            // Display the content.
-            //return returnvalue;
-            try
-            {
-                SynchOrderIds(order.idOrderLegacy,
-                    Convert.ToInt32(returnvalue.Split(':')[1].Replace("\"", "").Replace("}", "")));
-                ;
-
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-
-        }
-
-        public WebUser InsertWebUserFromLegacy(string email)
-        {
-            var retValue = false;
-            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
-            {
-                sqlConnection.Open();
-                var emailParameter = new SqlParameter
-                {
-                    SqlDbType = SqlDbType.VarChar,
-                    ParameterName = "@Email",
-                    Value = email
-                };
-
-                using (var insertWebUser = new SqlCommand("WebUserInsert", sqlConnection))
-                {
-                    insertWebUser.Parameters.Add(emailParameter);
-
-                    try
-                    {
-                        insertWebUser.Connection = sqlConnection;
-                        insertWebUser.CommandType = CommandType.StoredProcedure;
-
-                        var result = insertWebUser.ExecuteScalar();
-                        if (result == null)
-                            retValue = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                        {
-                            errorLogger.CommandText =
-                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
-                            errorLogger.CommandText += "'insertWebUser' ,";
-                            errorLogger.CommandText += "9 ,9 ,9 ,'[insertWebUser]', 9 ,";
-                            errorLogger.CommandText += "'error at insertWebUser " + ex.Message.Replace("'", "|") + "')";
-
-                            errorLogger.ExecuteNonQuery();
-
-                        }
-                    }
-                }
-
-            }
-            return null;
-        }
-
-        public WebUser GetWebUserFromLegacy(string email)
-        {
-            WebUser returnUser = null;
-            using (var sqlConnection = new SqlConnection(TtsConfig.LegacyConnectionString))
-            {
-                sqlConnection.Open();
-                var emailParameter = new SqlParameter
-                {
-                    SqlDbType = SqlDbType.VarChar,
-                    ParameterName = "@Email",
-                    Value = email
-                };
-
-                using (var findWebUser = new SqlCommand("GetWebUserFromLegacy", sqlConnection))
-                {
-                    findWebUser.Parameters.Add(emailParameter);
-
-                    try
-                    {
-                        findWebUser.Connection = sqlConnection;
-                        findWebUser.CommandType = CommandType.StoredProcedure;
-
-                        using (var reader = findWebUser.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                try
-                                {
-
-                                    returnUser = new WebUser
-                                    {
-                                        idUser = reader.GetInt32(0),
-                                        UserType = UserType.Customer,
-                                        AcctStatus = reader.GetString(2),
-                                        DateCreated = reader.GetDateTime(3),
-                                        FirstName = reader.GetString(4),
-                                        LastName = reader.GetString(5),
-                                        idUserInstitution = reader.GetInt32(6),
-                                        email = reader.GetString(7),
-                                        futureMail = reader.GetString(8),
-                                        idSubscriptionDiscount = reader.GetInt32(9)
-                                    };
-                                }
-                                catch (Exception ex)
-                                {
-                                    LogError("GetWebUserFromLgacy",
-                                        "findWebUser hit error on: " + reader.GetString(7) + " msg: " + ex.Message);
-                                }
-                            }
-                        }
-
-                    }
-                    catch (Exception ex)
-                    {
-                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                        {
-                            errorLogger.CommandText =
-                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
-                            errorLogger.CommandText += "'GetWebUserFromLegacy' ,";
-                            errorLogger.CommandText += "9 ,9 ,9 ,'GetWebUserFromLegacy', 9 ,";
-                            errorLogger.CommandText += "'error at GetWebUserFromLegacy " + ex.Message.Replace("'", "|") +
-                                                       "')";
-
-                            errorLogger.ExecuteNonQuery();
-
-                        }
-                    }
-                }
-
-            }
-            return null;
-        }
-
-        public WebUser GetWebUserLegacyByEmail(string email)
-        {
-            WebUser returnUser = null;
-            using (var sqlConnection = new SqlConnection(TtsConfig.LegacyConnectionString))
-            {
-                sqlConnection.Open();
-                var emailParameter = new SqlParameter
-                {
-                    SqlDbType = SqlDbType.VarChar,
-                    ParameterName = "@Email",
-                    Value = email
-                };
-
-                using (var findWebUser = new SqlCommand("GetWebUserFromLegacy", sqlConnection))
-                {
-                    findWebUser.Parameters.Add(emailParameter);
-
-                    try
-                    {
-                        findWebUser.Connection = sqlConnection;
-                        findWebUser.CommandType = CommandType.StoredProcedure;
-
-                        using (var reader = findWebUser.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                try
-                                {
-
-                                    returnUser = new WebUser
-                                    {
-                                        idUser = reader.GetInt32(0),
-                                        UserType = UserType.Customer,
-                                        AcctStatus = reader.GetString(2),
-                                        DateCreated = reader.GetDateTime(3),
-                                        FirstName = reader.GetString(4),
-                                        LastName = reader.GetString(5),
-                                        idUserInstitution = reader.GetInt32(6),
-                                        email = reader.GetString(7),
-                                        futureMail = reader.GetString(8),
-                                        idSubscriptionDiscount = reader.GetInt32(9)
-                                    };
-                                }
-                                catch (Exception ex)
-                                {
-                                    LogError("GetWebUserFromLgacy",
-                                        "findWebUser hit error on: " + reader.GetString(7) + " msg: " + ex.Message);
-                                }
-                            }
-                        }
-
-                    }
-                    catch (Exception ex)
-                    {
-                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                        {
-                            errorLogger.CommandText =
-                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
-                            errorLogger.CommandText += "'GetWebUserFromLegacy' ,";
-                            errorLogger.CommandText += "9 ,9 ,9 ,'GetWebUserFromLegacy', 9 ,";
-                            errorLogger.CommandText += "'error at GetWebUserFromLegacy " + ex.Message.Replace("'", "|") +
-                                                       "')";
-
-                            errorLogger.ExecuteNonQuery();
-
-                        }
-                    }
-                }
-
-            }
-            return null;
-        }
 
         public PostEventClaim FindPostEventClaimByOnDemandCode(Order order)
         {
@@ -1722,306 +1261,113 @@ namespace CUWebinars.Business.Core
             int resultOut;
             bool res = int.TryParse(result, out resultOut);
 
-            if (res)
-            {
-                using (var sqlConnection = new SqlConnection(TtsConfig.LegacyConnectionString))
-                {
-                    sqlConnection.Open();
-                    using (var synchLegacyOrder = new SqlCommand("InsertOrder2", sqlConnection))
-                    {
-                        try
-                        {
-                            synchLegacyOrder.Connection = sqlConnection;
-                            synchLegacyOrder.CommandType = CommandType.StoredProcedure;
-                            var idOrderNew = new SqlParameter
-                            {
-                                SqlDbType = SqlDbType.Int,
-                                ParameterName = "@idOrderNew",
-                                Value = resultOut
-                            };
-                            synchLegacyOrder.Parameters.Add(idOrderNew);
+            //if (res)
+            //{
+            //    using (var sqlConnection = new SqlConnection(TtsConfig.LegacyConnectionString))
+            //    {
+            //        sqlConnection.Open();
+            //        using (var synchLegacyOrder = new SqlCommand("InsertOrder2", sqlConnection))
+            //        {
+            //            try
+            //            {
+            //                synchLegacyOrder.Connection = sqlConnection;
+            //                synchLegacyOrder.CommandType = CommandType.StoredProcedure;
+            //                var idOrderNew = new SqlParameter
+            //                {
+            //                    SqlDbType = SqlDbType.Int,
+            //                    ParameterName = "@idOrderNew",
+            //                    Value = resultOut
+            //                };
+            //                synchLegacyOrder.Parameters.Add(idOrderNew);
 
-                            var idOrderV3Old = new SqlParameter
-                            {
-                                SqlDbType = SqlDbType.Int,
-                                ParameterName = "@idOrderOld",
-                                Value = idOrderLegacy
-                            };
-                            synchLegacyOrder.Parameters.Add(idOrderV3Old);
+            //                var idOrderV3Old = new SqlParameter
+            //                {
+            //                    SqlDbType = SqlDbType.Int,
+            //                    ParameterName = "@idOrderOld",
+            //                    Value = idOrderLegacy
+            //                };
+            //                synchLegacyOrder.Parameters.Add(idOrderV3Old);
 
-                            result = synchLegacyOrder.ExecuteScalar().ToString();
-                        }
-                        catch (Exception ex)
-                        {
-                            using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                            {
-                                errorLogger.CommandText =
-                                    "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                                errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
-                                errorLogger.CommandText += "'synchLegacyOrder' ,";
-                                errorLogger.CommandText += "9 ,9 ,9 ,'synchLegacyOrder', 9 ,";
-                                errorLogger.CommandText += "'error at synchLegacyOrder " + ex.Message.Replace("'", "|") +
-                                                           "')";
+            //                result = synchLegacyOrder.ExecuteScalar().ToString();
+            //            }
+            //            catch (Exception ex)
+            //            {
+            //                using (var errorLogger = new SqlCommand("logError", sqlConnection))
+            //                {
+            //                    errorLogger.CommandText =
+            //                        "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+            //                    errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
+            //                    errorLogger.CommandText += "'synchLegacyOrder' ,";
+            //                    errorLogger.CommandText += "9 ,9 ,9 ,'synchLegacyOrder', 9 ,";
+            //                    errorLogger.CommandText += "'error at synchLegacyOrder " + ex.Message.Replace("'", "|") +
+            //                                               "')";
 
-                                errorLogger.ExecuteNonQuery();
+            //                    errorLogger.ExecuteNonQuery();
 
-                            }
+            //                }
 
-                            throw;
-                        }
-                    }
-                }
-            }
+            //                throw;
+            //            }
+            //        }
+            //    }
+            //}
 
             return result;
         }
 
-        public string CreateUserOnLegacy(WebUser user)
-        {
-            var result = "";
-            using (var sqlConnection = new SqlConnection(TtsConfig.LegacyConnectionString))
-            {
-                sqlConnection.Open();
-                using (var synchLegacyUser
-                    = new SqlCommand("CreateUserOnLegacy", sqlConnection))
-                {
-                    try
-                    {
-                        synchLegacyUser.Connection = sqlConnection;
-                        synchLegacyUser.CommandType = CommandType.StoredProcedure;
-                        var emailParam = new SqlParameter
-                        {
-                            SqlDbType = SqlDbType.VarChar,
-                            ParameterName = "@email",
-                            Value = user.email
-                        };
-                        synchLegacyUser.Parameters.Add(emailParam);
+        //public string CreateUserOnLegacy(WebUser user)
+        //{
+        //    var result = "";
+        //    using (var sqlConnection = new SqlConnection(TtsConfig.LegacyConnectionString))
+        //    {
+        //        sqlConnection.Open();
+        //        using (var synchLegacyUser
+        //            = new SqlCommand("CreateUserOnLegacy", sqlConnection))
+        //        {
+        //            try
+        //            {
+        //                synchLegacyUser.Connection = sqlConnection;
+        //                synchLegacyUser.CommandType = CommandType.StoredProcedure;
+        //                var emailParam = new SqlParameter
+        //                {
+        //                    SqlDbType = SqlDbType.VarChar,
+        //                    ParameterName = "@email",
+        //                    Value = user.email
+        //                };
+        //                synchLegacyUser.Parameters.Add(emailParam);
 
-                        var idUserV3 = new SqlParameter
-                        {
-                            SqlDbType = SqlDbType.Int,
-                            ParameterName = "@idUser",
-                            Value = user.idUser
-                        };
-                        synchLegacyUser.Parameters.Add(idUserV3);
+        //                var idUserV3 = new SqlParameter
+        //                {
+        //                    SqlDbType = SqlDbType.Int,
+        //                    ParameterName = "@idUser",
+        //                    Value = user.idUser
+        //                };
+        //                synchLegacyUser.Parameters.Add(idUserV3);
 
-                        result = synchLegacyUser.ExecuteScalar().ToString();
-                    }
-                    catch (Exception ex)
-                    {
-                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                        {
-                            errorLogger.CommandText =
-                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
-                            errorLogger.CommandText += "'synchLegacyUser' ,";
-                            errorLogger.CommandText += "9 ,9 ,9 ,'synchLegacyUser', 9 ,";
-                            errorLogger.CommandText += "'error at synchLegacyUser " + ex.Message.Replace("'", "|") +
-                                                       "')";
+        //                result = synchLegacyUser.ExecuteScalar().ToString();
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                using (var errorLogger = new SqlCommand("logError", sqlConnection))
+        //                {
+        //                    errorLogger.CommandText =
+        //                        "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+        //                    errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
+        //                    errorLogger.CommandText += "'synchLegacyUser' ,";
+        //                    errorLogger.CommandText += "9 ,9 ,9 ,'synchLegacyUser', 9 ,";
+        //                    errorLogger.CommandText += "'error at synchLegacyUser " + ex.Message.Replace("'", "|") +
+        //                                               "')";
 
-                            errorLogger.ExecuteNonQuery();
+        //                    errorLogger.ExecuteNonQuery();
 
-                        }
+        //                }
 
-                        throw;
-                    }
-                }
-                return result;
-            }
-        }
-
-        public string EditEmailAddressOnLegacy(string oldEmail, string newEmail)
-        {
-
-            var result = "";
-            using (var sqlConnection = new SqlConnection(TtsConfig.LegacyConnectionString))
-            {
-                sqlConnection.Open();
-                using (var synchLegacyUser
-                    = new SqlCommand("EditEmailAddressOnLegacy", sqlConnection))
-                {
-                    try
-                    {
-                        synchLegacyUser.Connection = sqlConnection;
-                        synchLegacyUser.CommandType = CommandType.StoredProcedure;
-                        var oldEmailParm = new SqlParameter
-                        {
-                            SqlDbType = SqlDbType.VarChar,
-                            ParameterName = "@OldEmail",
-                            Value = oldEmail
-                        };
-                        synchLegacyUser.Parameters.Add(oldEmailParm);
-
-                        var newEmailParm = new SqlParameter
-                        {
-                            SqlDbType = SqlDbType.VarChar,
-                            ParameterName = "@NewEmail",
-                            Value = newEmail
-                        };
-                        synchLegacyUser.Parameters.Add(newEmailParm);
-
-
-                        result = synchLegacyUser.ExecuteScalar().ToString();
-                    }
-                    catch (Exception ex)
-                    {
-                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                        {
-                            errorLogger.CommandText =
-                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
-                            errorLogger.CommandText += "'EditEmailAddressOnLegacy' ,";
-                            errorLogger.CommandText += "9 ,9 ,9 ,'EditEmailAddressOnLegacy', 9 ,";
-                            errorLogger.CommandText += "'error at EditEmailAddressOnLegacy " +
-                                                       ex.Message.Replace("'", "|") + "')";
-
-                            errorLogger.ExecuteNonQuery();
-                        }
-
-                        throw;
-                    }
-                }
-                return result;
-            }
-        }
-
-        public string UpdateRegTypeOnLegacy(int idRegType, int idWebinar, string email)
-        {
-            var result = "";
-            using (var sqlConnection = new SqlConnection(TtsConfig.LegacyConnectionString))
-            {
-                sqlConnection.Open();
-                using (var synchLegacyUser
-                    = new SqlCommand("UpdateRegTypeOnLegacy", sqlConnection))
-                {
-                    try
-                    {
-                        synchLegacyUser.Connection = sqlConnection;
-                        synchLegacyUser.CommandType = CommandType.StoredProcedure;
-
-                        var newEmailParm = new SqlParameter
-                        {
-                            SqlDbType = SqlDbType.VarChar,
-                            ParameterName = "@email",
-                            Value = email
-                        };
-                        synchLegacyUser.Parameters.Add(newEmailParm);
-
-                        var regTypeParm = new SqlParameter
-                        {
-                            SqlDbType = SqlDbType.Int,
-                            ParameterName = "@regType",
-                            Value = idRegType
-                        };
-                        synchLegacyUser.Parameters.Add(regTypeParm);
-
-                        var idWebinarParm = new SqlParameter
-                                                {
-                                                    SqlDbType = SqlDbType.Int,
-                                                    ParameterName = "@idWebinar",
-                                                    Value = idWebinar
-                                                };
-                        synchLegacyUser.Parameters.Add(idWebinarParm);
-
-
-                        result = synchLegacyUser.ExecuteScalar().ToString();
-                    }
-                    catch (Exception ex)
-                    {
-                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                        {
-                            errorLogger.CommandText =
-                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
-                            errorLogger.CommandText += "'UpdateRegTypeOnLegacy' ,";
-                            errorLogger.CommandText += "9 ,9 ,9 ,'UpdateRegTypeOnLegacy', 9 ,";
-                            errorLogger.CommandText += "'error at UpdateRegTypeOnLegacy " +
-                                                       ex.Message.Replace("'", "|") + "')";
-
-                            errorLogger.ExecuteNonQuery();
-                        }
-
-                        throw;
-                    }
-                }
-                return result;
-            }
-        }
-
-        public string UpdateOrderStatusOnLegacy(int idWebinar, string email, int orderStatus)
-        {
-            var result = "";
-            using (var sqlConnection = new SqlConnection(TtsConfig.LegacyConnectionString))
-            {
-                sqlConnection.Open();
-                using (var synchLegacyUser
-                    = new SqlCommand("UpdateOrderStatusOnLegacy", sqlConnection))
-                {
-                    try
-                    {
-                        synchLegacyUser.Connection = sqlConnection;
-                        synchLegacyUser.CommandType = CommandType.StoredProcedure;
-
-                        var newEmailParm = new SqlParameter
-                        {
-                            SqlDbType = SqlDbType.VarChar,
-                            ParameterName = "@email",
-                            Value = email
-                        };
-                        synchLegacyUser.Parameters.Add(newEmailParm);
-
-                        var orderStatusParm = new SqlParameter
-                        {
-                            SqlDbType = SqlDbType.Int,
-                            ParameterName = "@orderStatus",
-                            Value = orderStatus
-                        };
-                        synchLegacyUser.Parameters.Add(orderStatusParm);
-
-                        var idWebinarParm = new SqlParameter
-                        {
-                            SqlDbType = SqlDbType.Int,
-                            ParameterName = "@idWebinar",
-                            Value = idWebinar
-                        };
-                        synchLegacyUser.Parameters.Add(idWebinarParm);
-
-
-                        result = synchLegacyUser.ExecuteScalar().ToString();
-                    }
-                    catch (Exception ex)
-                    {
-                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                        {
-                            errorLogger.CommandText =
-                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
-                            errorLogger.CommandText += "'UpdateRegTypeOnLegacy' ,";
-                            errorLogger.CommandText += "9 ,9 ,9 ,'UpdateRegTypeOnLegacy', 9 ,";
-                            errorLogger.CommandText += "'error at UpdateRegTypeOnLegacy " +
-                                                       ex.Message.Replace("'", "|") + "')";
-
-                            errorLogger.ExecuteNonQuery();
-                        }
-
-                        throw;
-                    }
-                }
-                return result;
-            }
-        }
-
-        public Discount FindDiscountByIdLegacy(int id)
-        {
-            var discount = new Discount
-            {
-                idDiscount = id,
-                //CreditsRemain = 0
-
-            };
-
-            return discount;
-        }
+        //                throw;
+        //            }
+        //        }
+        //        return result;
+        //    }
+        //}
 
         public object CheckIfEmailAlreadyRegisteredForWebinar(string orderEmail, int webinarId)
         {
@@ -2115,40 +1461,6 @@ namespace CUWebinars.Business.Core
                     }
 
                     return getPreSaveValues;
-                }
-            }
-        }
-
-        public void SetLegacyShippedDate(int idOrder, DateTime? shippedDate)
-        {
-            using (var sqlConnection = new SqlConnection(_connectionString))
-            {
-                sqlConnection.Open();
-
-                using (var updateShippedDate = new SqlCommand())
-                {
-                    var orderIdParameter = new SqlParameter
-                    {
-                        SqlDbType = SqlDbType.Int,
-                        ParameterName = "@idOrder",
-                        Value = idOrder
-                    };
-                    var shippedDateParameter = new SqlParameter
-                    {
-                        SqlDbType = SqlDbType.Int,
-                        ParameterName = "@shippedDate",
-                        Value = shippedDate.Value
-                    };
-
-                    updateShippedDate.Connection = sqlConnection;
-                    updateShippedDate.CommandType = CommandType.Text;
-                    updateShippedDate.Parameters.Add(orderIdParameter);
-                    updateShippedDate.Parameters.Add(shippedDateParameter);
-                    updateShippedDate.CommandText =
-                        "UPDATE dbo.OrdersRows SET shipmentDate = @shippedDate  WHERE idOrder = @idOrder;";
-                    string getPreSaveValues = "";
-
-                    updateShippedDate.ExecuteNonQuery();
                 }
             }
         }

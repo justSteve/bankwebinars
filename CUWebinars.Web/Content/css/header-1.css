@@ -129,6 +129,7 @@ body.tall-logo nav.user {
 .js .search input {
 	/*display: none;*/
 	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 .preheader .phone {
@@ -162,7 +163,7 @@ body.tall-logo nav.user {
 .preheader .social {
 	float: right;
 	line-height: 30px;
-	height: 45px;
+	height: 40px;
 	border-right: 1px solid #d8dfe5;
 	margin-right: 0;
 	position: relative;
@@ -514,7 +515,7 @@ body.tall-logo nav.user {
 		/***!! changed width ***/
 		right: 0;
 		top: auto;
-		margin: 0 0 0 5px;
+		/*margin: 0 0 0 5px;*/
 		font-size: 16px !important;
 		overflow-x: hidden;
 	}

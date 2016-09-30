@@ -33,7 +33,7 @@ namespace CUWebinars.Business.Core.Helpers
             }
             catch (Exception e)
             {
-                return "error";
+                return "error: " + e.Message;
 
             }
 

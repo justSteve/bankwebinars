@@ -320,6 +320,26 @@ namespace CUWebinars.Web.Core.Orchestrators
             return null;
         }
 
+        public ContinueShoppingModel BuildContinueShoppingModel(int? idWebinar)
+        {
+            Webinar webinar = LoadWebinar(idWebinar.Value);
+
+            string[] titleWords = webinar.Title.Split();
+
+            string presenterFullName = webinar.Presenter.WebUser.FullName;
+            ContinueShoppingModel model = new ContinueShoppingModel
+            {
+
+                    SelectedRelated = _webinarManagementService.GetRelated(idWebinar),
+                    SelectedPresenter = _webinarManagementService.GetWebinarByPresenterFullName(presenterFullName),
+                    SelectedTopics = _webinarManagementService.GetTopicsByWebinar(idWebinar)
+            };
+            return null;
+
+        }
+
+
+
         public DiscountModel BuildDiscountModel(WebUser currentUser)
         {
             var discountModel = new DiscountModel();
@@ -726,7 +746,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             _stateService.SetValue(DomainConstants.CheckoutInProcess, true);
             Claim beingImpersonatedClaim = null;
-            var affiliateName = "";
+
             //if (Request.IsAuthenticated)
             //{
             var user = Request.RequestContext.HttpContext.User as ClaimsPrincipal;
@@ -789,7 +809,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         public ExpressCheckoutPostBackModel BuildExpressPostback(ExpressCheckoutPostBackModel form)
         {
             var user = _membershipService.GetUserByEmail(form.email5);
-            bool userCreatedByCheckout = false;
+
             if (!ReferenceEquals(null, user))
             {
                 form.UserIsConfirmed = "yes";
@@ -845,13 +865,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         }
 
-        public string UpdateRegTypeOnLegacy(int idRegType, int idWebinar, string billingEmail)
-        {
-            var dataOp = new DataOperations(_globals.DefaultConnectionString);
-            return dataOp.UpdateRegTypeOnLegacy(idRegType, idWebinar, billingEmail)
-            ;
 
-        }
 
         public decimal CalculateCreditsRemaining(Discount myDiscount)
         {

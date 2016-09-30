@@ -259,24 +259,11 @@ namespace CUWebinars.Business.Repository
             return db.SaveChanges();
         }
 
-        public IList<WebUser> MigrateUsersFromLegacy()
-        {
-            var dataOperations = new MigrationOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString, ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
-            return dataOperations.GetLegacyUsers();
-
-        }
-
-        public IList<Webinar> MigrateWebinarsFromLegacy()
-        {
-            var dataOperations = new MigrationOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString, ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
-            return null;
-
-        }
 
         public int GetRegTypeByACS(string registrationType, int idWebinar)
         {
             //first step is to convert ACS lables to TTS version
-            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LoggerConnection"].ConnectionString);
+            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
 
             var retVal = GetRegTypeByLableAndWebinar(dataOperations.FindRegTypeForACS(registrationType), idWebinar);
             return retVal;
@@ -366,6 +353,42 @@ namespace CUWebinars.Business.Repository
                     && !w.Title.StartsWith("Compliance Perspectives")
                 )
                 .ToList();
+        }
+
+        public IEnumerable<Webinar> GetRelated(int? idWebinar)
+        {
+            var webinars = items.Include(i => i.WebinarTopicXrefs.Select(w => w.Topic))
+                .Include(i => i.Presenter.WebUser)
+                .Where(w => w.WebinarTopicXrefs
+                    .Any(t => t.idTopic == 1)
+                            &&
+                            (w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Scheduled ||
+                             w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress));
+            //Logger.Debug("TopicId=" + topicId); 
+
+            return webinars;
+        }
+
+        public IEnumerable<Webinar> GetTopicsByWebinar(int? idWebinar)
+        {
+            var webinars = new List<Webinar>();
+
+            var webinar = FindByIdLoaded(idWebinar.Value);
+            foreach (var idTopic in webinar.WebinarTopicXrefs)
+            {
+                IQueryable<Webinar> webinarsByTopic = GetByTopic(1);
+                
+            }
+            //            items.Include(i => i.WebinarTopicXrefs.Select(w => w.Topic))
+    //.Include(i => i.Presenter.WebUser)
+    //.Where(w => w.WebinarTopicXrefs
+    //    .Any(t => t.idTopic == topicId)
+    //            &&
+    //            (w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Scheduled ||
+    //             w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress));
+    //        //Logger.Debug("TopicId=" + topicId); 
+
+            return webinars;
         }
 
         public IQueryable<Order> GetOrdersByWebinarForInvoice(int webinarId)
