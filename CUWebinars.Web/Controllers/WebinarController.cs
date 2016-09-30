@@ -662,6 +662,7 @@ namespace CUWebinars.Web.Controllers
 
         }
 
+        [Route("webinar/getaddtocartjson")]
         [Route("webinar/geteditincartjson")]
         public ActionResult GetAddToCartJson(int? id)
         {
@@ -1170,7 +1171,7 @@ namespace CUWebinars.Web.Controllers
             model.Topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar).ToList();
 
             model.WebinarFiles = _webinarManagementService.GetWebinarFilesPerWebinar(webinar.idWebinar);
-            var AddLocPrice = _orderManagementService.GetPriceOfAdditionalLocation(webinar.idWebinar);
+            var AddLocPrice = _orderManagementService.GetAdditionalLocationsPricing(webinar.idWebinar);
             model.CheckoutOptionsViewModel = new CheckoutOptionsViewModel
             {
                 DisplayOptionsViewModel = new DisplayOptionsViewModel
@@ -1299,7 +1300,7 @@ namespace CUWebinars.Web.Controllers
                 model.Topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar).ToList();
 
                 model.WebinarFiles = _webinarManagementService.GetWebinarFilesPerWebinar(webinar.idWebinar);
-                var AddLocPrice = _orderManagementService.GetPriceOfAdditionalLocation(webinar.idWebinar);
+                var AddLocPrice = _orderManagementService.GetAdditionalLocationsPricing(webinar.idWebinar);
                 model.CheckoutOptionsViewModel = new CheckoutOptionsViewModel
                 {
                     DisplayOptionsViewModel = new DisplayOptionsViewModel

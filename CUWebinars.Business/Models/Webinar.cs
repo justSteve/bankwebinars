@@ -22,6 +22,7 @@ namespace CUWebinars.Business.Models
         public string AccessCodeOrganizer { get; set; }
         public string AccessCodePresenter { get; set; }
         public string AccessPhone { get; set; }
+        public decimal AdditionalLocationPrice { get; set; }
         public string ceu { get; set; }
         public string CitrixRegisterUrl { get; set; }
         public string ConnectionInfo { get; set; }

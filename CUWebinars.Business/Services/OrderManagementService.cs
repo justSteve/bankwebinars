@@ -202,7 +202,7 @@ namespace CUWebinars.Business.Services
             var addresses = new StringBuilder();
             var i = 0;
 
-            var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(idWebinar);
+            var additionalLocationsPricing = GetAdditionalLocationsPricing(idWebinar);
 
             decimal optionsCost = 0M;
 
@@ -235,9 +235,7 @@ namespace CUWebinars.Business.Services
                 }
             }
 
-            Debug.Assert(additionalLocationsPricing.Count == 1, "There should only ever be 1 value returned for the cost of an Additionalocation for a particular Webinar");
-            // Item2 of the tuple is the price value as a decimal. Item 1 is the AdditionalLocationsLookupPrice id 
-            optionsCost = additionalLocationsPricing.Single().Price;
+            optionsCost = additionalLocationsPricing;
 
             return new Tuple<string, decimal>(addresses.ToString(), optionsCost);
         }
@@ -1677,7 +1675,7 @@ namespace CUWebinars.Business.Services
                 var originalOrder = GetOrderById(newOrder.idOrder);
                 var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
-                var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(
+                var additionalLocationsPricing = GetAdditionalLocationsPricing(
                     newOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar
                     );
 
@@ -1694,7 +1692,7 @@ namespace CUWebinars.Business.Services
                         .Replace(" Plus Five", "+5");
                 int idRegTypeOfOrg = Convert.ToInt32(preSaveValues.Split(',')[5]);
 
-                pricesAndDiscounts = CalculateOrderCost(newOrder, additionalLocationsPricing.Single().Price);
+                pricesAndDiscounts = CalculateOrderCost(newOrder, additionalLocationsPricing);
 
                 if (newOrder.OrderRows != null)
                 {
@@ -1962,10 +1960,9 @@ namespace CUWebinars.Business.Services
                 _additionalLocationsRepository.DeleteAdditionalLocationsByOrderRowId(idOrderRow);
 
                 var orderRow = _orderRepository.GetOrderRowById(idOrderRow);
-                var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
-                var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(orderRow.idWebinar);
+                var additionalLocationsPricing = GetAdditionalLocationsPricing(orderRow.idWebinar);
 
-                var totalOptionsDeletedCost = additionalLocationsPricing.First().Price * orderRow.AdditionalLocation.Count;
+                var totalOptionsDeletedCost = additionalLocationsPricing * orderRow.AdditionalLocation.Count;
                 SetTotalPrice(totalOptionsDeletedCost, orderRow);
             }
             catch (Exception exception)
@@ -1999,20 +1996,12 @@ namespace CUWebinars.Business.Services
         //    return myDiscount;
         //}
 
-        public decimal GetPriceOfAdditionalLocation(int idWebinar)
+        public decimal GetAdditionalLocationsPricing(int idWebinar)
         {
-            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
-            var addLocPrice = dataOperations.GetAdditionalLocationsPricing(idWebinar);
-            var additionalLocationsPricing = addLocPrice.SingleOrDefault();
-
-            if (additionalLocationsPricing.LookupPriceId > 0) // struct equivalent of checking for null.
-            {
-                return additionalLocationsPricing.Price;
-            }
-
-            _logger.Warn("AdditionalLocation price not set for: {0}", idWebinar);
-            return 0;
+            return _webinarRepository.FindById(idWebinar).AdditionalLocationPrice;
         }
+
+
 
         public void UpdateOrderByAdmin(Order order)
         {
@@ -2418,15 +2407,7 @@ namespace CUWebinars.Business.Services
 
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink, OrderGenesis orderGenesis = OrderGenesis.ImportedForExistingUser)
         {
-
-            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
-            var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(currentOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar);
-            var tuple = additionalLocationsPricing.SingleOrDefault();
-            decimal optionsPrice = 0M;
-
-            // If no data is stored for AdditionalLocations pricing in db, price will be $0. Up to us to ensure pricing is available.
-            if (!ReferenceEquals(null, tuple))
-                optionsPrice = tuple.Price;
+            decimal optionsPrice = GetAdditionalLocationsPricing(currentOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar);
 
             //ProcessDiscountCodes(currentOrder);
             CalculateOrderCost(currentOrder, optionsPrice);
@@ -2651,7 +2632,8 @@ namespace CUWebinars.Business.Services
         public decimal CalculateCreditsRemain(Discount userDiscount)
         {
             if (userDiscount.DiscountType == DiscountType.Subscription &&
-                userDiscount.DateValidTo > userDiscount.DateValidFrom) return 100;
+                userDiscount.DateValidTo > userDiscount.DateValidFrom) return 100; // date-based subscription, # doesn't really matter
+
             var ordersWithDiscount = GetOrdersByDiscount(userDiscount.idDiscount)
                 .Where(o => o.OrderDate > userDiscount.DateVerified
                 || (o.InvoiceDetail.Contains("DiscountIsApplied") && o.InvoiceDetail.Contains(userDiscount.idDiscount.ToString())));

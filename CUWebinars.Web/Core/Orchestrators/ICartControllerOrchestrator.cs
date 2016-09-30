@@ -26,6 +26,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             int? idOrderRow);
         AdditionalLocationsViewModel BuildAdditionalLocationsViewModel(OrderRow orderRow, int? idOrderRow);
         void CancelOrder(int idOrder);
+        void SetOrderStatus(int idOrder, string loggedInEmail, OrderStatus orderStatus);
         Tuple<string, string> CheckIfAddLocShouldHide(int optionId);
         Order CreateOrder(CheckoutOptionsViewModel formModel);
         OrderRow GetOrderRowLoaded(int idOrderRow);
@@ -63,7 +64,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         string GetDiscountCaption(Discount discount, OrderRow single, int? undo, int? previewOnly);
         string UpdateRegTypeOnLegacy(int idRegType, int idWebinar, string billingEmail);
         decimal  CalculateCreditsRemaining(Discount myDiscount);
-        List<Order> GetOrdersByUser(string identityName);
+        List<Order> GetOrdersByUser(string loggedInEmail);
         Affiliate GetAffiliateById(int affiliateId);
 
     }

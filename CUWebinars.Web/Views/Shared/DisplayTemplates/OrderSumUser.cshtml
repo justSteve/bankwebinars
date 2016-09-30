@@ -15,7 +15,7 @@
 
 
 
-    <div id="odrSum-@myRow.idOrder" data-order-id="@myRow.idOrder" data-webinar-id="@myRow.idWebinar">
+    <div id="odrSum-@myRow.idOrder" data-order-id="@myRow.idOrder" data-webinar-id="@myRow.idWebinar" data-order-row-id="@myRow.idOrderRow">
 
         <div class="well well-small">
             @if (Request.Url.PathAndQuery.Contains("/Cart/Checkout")) // i don't love this as our logic gate, is there something else we can use / invent?

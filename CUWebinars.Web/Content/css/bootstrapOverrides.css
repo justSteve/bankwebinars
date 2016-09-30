@@ -256,3 +256,7 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
     margin-bottom: 0px;
     margin-left: 6px;
 }
+
+.removed-order-in-cart {
+    background-color: #eed3d7;
+}

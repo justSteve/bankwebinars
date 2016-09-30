@@ -110,45 +110,6 @@ namespace CUWebinars.Business.Core
             }
         }
 
-        public IList<AdditionalLocationsPricing> GetAdditionalLocationsPricing(int webinarId)
-        {
-            using (var sqlConnection = new SqlConnection(_connectionString))
-            {
-                sqlConnection.Open();
-
-                using (var getPricingsCommand = new SqlCommand())
-                {
-                    var webinarIdParameter = new SqlParameter
-                    {
-                        SqlDbType = SqlDbType.Int,
-                        ParameterName = "@webinarId",
-                        Value = webinarId
-                    };
-
-                    getPricingsCommand.Connection = sqlConnection;
-                    getPricingsCommand.CommandType = CommandType.Text;
-                    getPricingsCommand.Parameters.Add(webinarIdParameter);
-                    getPricingsCommand.CommandText =
-                        "SELECT id, cost FROM AdditionalLocationsLookupPrice WHERE idWebinar = @webinarId;";
-
-                    IList<AdditionalLocationsPricing> pricingInformation = new List<AdditionalLocationsPricing>();
-
-                    using (var reader = getPricingsCommand.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            pricingInformation.Add(new AdditionalLocationsPricing
-                            {
-                                LookupPriceId = reader.GetInt32(0),
-                                Price = reader.GetDecimal(1)
-                            });
-                        }
-                    }
-
-                    return pricingInformation;
-                }
-            }
-        }
 
         /// <summary>
         /// This method permits affiliates to show friendly label on importer
