@@ -9,7 +9,7 @@ namespace CUWebinars.Web.Models
 {
     public class ManageOrderEditModel
     {
-        private WebUserFromLegacy _webUserFromLegacy;
+        
         public IEnumerable<AdditionalLocation> AdditionalLocations { get; set; }
         public DisplayOptionsInDropDownViewModel DisplayOptionsInDropDownViewModel { get; set; }
         public decimal CostPerAdditionalLocation { get; set; }
