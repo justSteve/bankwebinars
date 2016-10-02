@@ -41,7 +41,7 @@ namespace CUWebinars.Business.Repository
         IList<Order> GetOrdersByDiscount(int idDiscount);
         int AccessToPostEventMaterials(int i, int i1);
         Discount FindDiscountById(int id);
-        Discount FindDiscountByIdLegacy(int id);
+        
         Discount FindDiscountByCode(string discountCode);
         Discount FindDiscountByUser(WebUser currentUser);
         Order GetOrderByIdThin(int idOrder);
@@ -53,12 +53,12 @@ namespace CUWebinars.Business.Repository
         object SearchOrders(int affiliateId, IList<int> excludeUserIDs, int skip, int take, string search);
         void LoadWebinarIntoOrderRow(OrderRow newOrderRow);
         Order FindExpressCheckoutOrder(string trim, int idWebinar);
-        void ConvertLegacyOrder(Order order);
-        int MigrateOrderFromV3(Order order);
-        void SynchIds(int lOrder, int vOrder);
+        
+        
+        
         PostEventClaim FindPostEventClaim(Order order);
         IList<Order> GetV3OrdersByOnDemandClaim();
-        Order MigrateOrderWithDiscount(Order order);
+        
         Order GetOrderByIdByOnDemandCode(string onDemandCode);
         Discount GetDiscountByOrderId(int idOrder);
         void UpdateShippingAddressDetails(Address shippingAddress, int idUser);
@@ -67,6 +67,6 @@ namespace CUWebinars.Business.Repository
         IList<Order> GetOrdersByWebinar(int idWebinar);
         IEnumerable<Discount> GetSubscriptionsAll(int idAffliate, out int totalNumberOrders);
 
-        void SetLegacyShippedDate(int idOrder, DateTime? shippedDate);
+
     }
 }

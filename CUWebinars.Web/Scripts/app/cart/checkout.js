@@ -1,20 +1,25 @@
 ﻿$(function () {
     $("button.edit-order").on("click", function() {
-        var $container = $(this).closest("div[id^='odrSum-']");
-        ShowEditOrderForm($container.data("order-id"), $container.data("webinar-id"));
+        var $this = $(this);
+        var $container = $this.closest("div[id^='odrSum-']");
+        ShowEditOrderForm($this, $container.data("order-id"), $container.data("webinar-id"));
     });
 
     $("button.remove-order").on("click", function () {
-        alert('bye');
+        var $this = $(this);
+        var $container = $this.closest("div[id^='odrSum-']");
+        if ($this.text() === "Remove") {
+            RemoveOrder($this, $container.data("order-id"), $container.data("order-row-id"));
+        } else if ($this.text() === "Undo") {
+            UndoRemoveOrder($this, $container.data("order-id"), $container.data("order-row-id"));
+        }
     });
 
 });
 
-function ShowEditOrderForm(orderId, webinarId) {
-    // deal with any open ones.  may have edits in progress... leave that for later
+function ShowEditOrderForm($button, orderId, webinarId) {
+    // deal with any open ones.  may have edits in progress... leave that for later, for now they will be lost
     $("div[id^='edit-order-form-'").hide().html("");
-
-    // very similar to what is in show-webinars-child-row.js
 
     var html = "";
     
@@ -26,30 +31,126 @@ function ShowEditOrderForm(orderId, webinarId) {
         type: "POST",
         success: function (data) {
             html = data.html;
-            var $div = $("#edit-order-form-" + orderId);
-            $div.html(html);
-            $div.show("slower");
 
+            var $editPanel = $("#edit-order-form-" + orderId);
+            $editPanel.html(html);
+            $editPanel.show("slower");
+
+            // bind button clicks
             $("button.cancel-edit-order").on("click", function () {
-                $div.hide();
-                $div.html("");
+                $editPanel.hide("slower");
+                $editPanel.html("");
             });
+
+            // somehow need to trap the actual edit that they make (if any), 
+            //  in order to refresh the primary summary
+
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert("/account/getaddtocartjson: " + textStatus);
         },
         beforeSend: function () {
-            console.log("beforesend");
-            // IE and Chrome don't time this stuff very well due to the async=false... :/
-            //$td.append('<div id="loadingSpinnerContainer"><i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;</div>');
-            //addIsLoadingIndicator($td, -1); // let the ajax "complete" call (below) remove loading indicator
+            //console.log("beforesend");
+            // add spinner to button
+            $button.append('<span id="loadingSpinnerContainer">&nbsp;<i id="loadingSpinner" class="icon-spinner icon-spin"></i></span>');
+
         },
         complete: function () {
-            console.log("complete");
-            // IE and Chrome don't time this stuff very well due to the async=false... :/
-            //removeIsLoadingIndicator($td);
-            //$('#loadingSpinnerContainer', $td).fadeOut();
-            //setTimeout(function () { $('#loadingSpinnerContainer', $td).remove(); }, 1000);
+            //console.log("complete");
+            // remove spinner
+            $('#loadingSpinnerContainer', $button).fadeOut();
+            setTimeout(function () { $('#loadingSpinnerContainer', $button).remove(); }, 1500);
+        }
+    });
+}
+
+function RemoveOrder($button, orderId, orderRowId) {
+    var message = "";
+
+    var $editPanel = $("#edit-order-form-" + orderId);
+    $editPanel.hide("slower");
+    $editPanel.html("");
+
+    $.ajax({
+        async: true,
+        url: "/cart/removeorderjson",
+        data: (
+        {
+            idOrder: orderId,
+            idOrderRow: orderRowId
+        }),
+        dataType: "json",
+        type: "POST",
+        success: function (data) {
+            console.log(data);
+            // do something w/ the UI for this order...
+            $button.text("Undo");
+            $button.toggleClass("btn-success", "btn-danger");
+
+            var $container = $button.closest(".well");
+            $container.addClass("removed-order-in-cart");
+            $(".edit-order", $container).hide("slower");
+
+            $("#discountCaptionMulti").html(data.discountCaptionMultiMsg);
+            $("#grandTotalCaptionMulti").html(data.grandTotalCaptionMultiMsg);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            console.log("/account/removeorderjson: " + textStatus + ", " + errorThrown);
+        },
+        beforeSend: function () {
+            //console.log("beforesend");
+            // add spinner to button
+            //$button.append('<span id="loadingSpinnerContainer">&nbsp;<i id="loadingSpinner" class="icon-spinner icon-spin"></i></span>');
+        },
+        complete: function () {
+            //console.log("complete");
+            // remove spinner
+            //$('#loadingSpinnerContainer', $button).fadeOut();
+            //setTimeout(function () { $('#loadingSpinnerContainer', $button).remove(); }, 1500);
+        }
+    });
+}
+
+function UndoRemoveOrder($button, orderId, orderRowId) {
+    var message = "";
+
+    $.ajax({
+        async: true,
+        url: "/cart/undoremoveorderjson",
+        data: (
+        {
+            idOrder: orderId,
+            idOrderRow: orderRowId
+        }),
+        dataType: "json",
+        type: "POST",
+        success: function (data) {
+            console.log(data);
+
+            // do something w/ the UI for this order...
+            $button.text("Remove");
+            $button.toggleClass("btn-success", "btn-danger");
+
+            var $container = $button.closest(".well");
+            $container.removeClass("removed-order-in-cart");
+            $(".edit-order", $container).show("slower");
+
+            $("#discountCaptionMulti").html(data.discountCaptionMultiMsg);
+            $("#grandTotalCaptionMulti").html(data.grandTotalCaptionMultiMsg);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            console.log("/account/removeorderjson: " + textStatus + ", " + errorThrown);
+        },
+        beforeSend: function () {
+            //console.log("beforesend");
+            // add spinner to button
+            //$button.append('<span id="loadingSpinnerContainer">&nbsp;<i id="loadingSpinner" class="icon-spinner icon-spin"></i></span>');
+        },
+        complete: function () {
+            //console.log("complete");
+            // remove spinner
+            //$('#loadingSpinnerContainer', $button).fadeOut();
+            //setTimeout(function () { $('#loadingSpinnerContainer', $button).remove(); }, 1500);
         }
     });
 }

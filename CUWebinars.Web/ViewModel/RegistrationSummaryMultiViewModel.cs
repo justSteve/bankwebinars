@@ -9,5 +9,6 @@ namespace CUWebinars.Web.ViewModel
     {
         public List<RegistrationSummaryViewModel> RegistrationSummaryViewModels { get; set; }
         public string DiscountCaptionMulti { get; set; }
+        public string GrandTotalCaptionMulti { get; set; }
     }
 }

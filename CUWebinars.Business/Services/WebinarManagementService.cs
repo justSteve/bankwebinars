@@ -423,10 +423,6 @@ namespace CUWebinars.Business.Services
             return regType;
         }
 
-        public void SynchToLegacy()
-        {
-            _webinarRepository.MigrateWebinarsFromLegacy();
-        }
 
         public int GetRegTypeByACS(string registrationType, int idWebinar)
         {

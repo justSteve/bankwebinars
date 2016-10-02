@@ -91,7 +91,7 @@ namespace CUWebinars.Business.Services
         void RemoveAdditionalLocationsForOrder(int idOrderRow);
         Discount GetDiscountByCode(string discount);
         Discount GetDiscountByOrderId(int idOrder);
-        decimal GetPriceOfAdditionalLocation(int idWebinar);
+        decimal GetAdditionalLocationsPricing(int idWebinar);
         Discount GetDiscountByUser(WebUser currentUser);
         void GetJoinUrl(OrderRow row);
         Discount ApplyDiscountCode(string code, OrderRow row);
@@ -100,7 +100,7 @@ namespace CUWebinars.Business.Services
         void RemoveAndDeleteAdditionalLocation(AdditionalLocation deletedAdditionalLocation);
 
         Discount GetDiscountById(int discount);
-        Discount GetDiscountByIdLegacy(int toInt32);
+        
         IList<Order> GetV3OrdersByWebinar(int idWebinar);
         DateTime CalculatePostEventMaterialsAccessExpiry(OrderRow row);
         //void SendOrderToLegacy(Order newOrder);
@@ -115,13 +115,12 @@ namespace CUWebinars.Business.Services
         void SetAffiliateStatusToUnChanged(Affiliate affiliate);
         //IEnumerable<Order> GetOrdersByEmailDomain(string email, int aff);
         void SendAdhocNotification(string emails, string subject, string body);
-        OrderRow GetLegacyOrder(Order order);
-        void SynchOrders(int webinarId);
+
+        //void SynchOrders(int webinarId);
         Order FindExpressCheckoutOrderByOrderId(int q11Orderid);
         IEnumerable<Order> GetV3OrdersByWebinarForPostEventClaims(int idWebinar);
         void UpdateOrderByAdmin(Order newOrder);
-        int SynchExpressCheckoutOrder(Order order);
-        void SynchIds(Order order);
+        
         PostEventClaim FindPostEventClaimByOnDemandCode(Order order);
         IList<Order> GetV3OrdersByOnDemandClaim();
         IList<PostEventClaim> FindAllPostEventClaims();
@@ -133,7 +132,7 @@ namespace CUWebinars.Business.Services
         void UpdateDiscountDetails(Discount discount);
         void UpdateShippingAddressDetails(Address shippingAddress, int idUser);
         //string InsertOnDemandClaim(int orderId);
-        string SynchOrdersWhereLegacyIsZero(int idOrderLegacy, int idOrderV3);
+        
         RegType GetRegTypeByLabel(string regType, int idWebinar);
         bool OnDemandCodeIsUnique(string onDemandCode);
         IList<int> GetV3OrdersIdsByWebinar(int idWebinar);
