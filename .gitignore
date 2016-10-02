@@ -181,3 +181,20 @@ CUWebinars.Web/App_Data/Trace/
 # Any 3rd Party Binaries Not Available on Nuget
 # =========================
 !ThirdPartyLibraries/
+/CUWebinars.Web/Content/images
+/CUWebinars.Web/WinSCPnet.dll
+/CUWebinars.Web/WinSCP.exe
+/CUWebinars.Web/Scripts/app/utilities.js.map
+/CUWebinars.Web/Scripts/app/utilities.js
+/CUWebinars.Web/Scripts/app/ToastLogger.js.map
+/CUWebinars.Web/Scripts/app/ToastLogger.js
+/CUWebinars.Web/Scripts/app/quiz/Quiz.js.map
+/CUWebinars.Web/Scripts/app/quiz/Quiz.js
+/CUWebinars.Web/Scripts/app/cart/register-user-in-cartByAffiliate.js.map
+/CUWebinars.Web/Scripts/app/cart/register-user-in-cartByAffiliate.js
+/CUWebinars.Web/Scripts/app/cart/register-user-in-cart.js.map
+/CUWebinars.Web/Scripts/app/cart/register-user-in-cart.js
+/CUWebinars.Web/Scripts/app/cart/create-order-new.js.map
+/CUWebinars.Web/Scripts/app/cart/create-order-new.js
+/CUWebinars.Web/Scripts/app/admin/question.js.map
+/CUWebinars.Web/Scripts/app/admin/question.js
