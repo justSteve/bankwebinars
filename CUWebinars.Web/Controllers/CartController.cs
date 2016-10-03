@@ -1148,9 +1148,13 @@ namespace CUWebinars.Web.Controllers
 
         }
 
-        // not allow anonymous...
         public ActionResult Checkout()
         {
+            // do not allow anonymous (it errors due to null/empty list of orders)
+            if (User == null || !User.Identity.IsAuthenticated)
+                return RedirectToAction("Login", "Account", new { ReturnURL = "/cart/checkout" });
+            
+
             // _logger.Info("CancelPauseOrder called email: " + email + " idOrder: " + idOrder);
 
             // get list of order Ids for signed in user
@@ -1160,90 +1164,191 @@ namespace CUWebinars.Web.Controllers
 
             RegistrationSummaryMultiViewModel model = new RegistrationSummaryMultiViewModel();
 
-            if (User.Identity.IsAuthenticated)
+            List<Order> orders = _cartControllerOrchestrator.GetOrdersByUser(User.Identity.Name)
+                .Where(o => o.OrderStatus == OrderStatus.InProcess).ToList();
+
+            model.RegistrationSummaryViewModels = new List<RegistrationSummaryViewModel>();
+
+            foreach (Order order in orders)
             {
-                var grandTotal = 0m;
-                List<Order> orders = _cartControllerOrchestrator.GetOrdersByUser(User.Identity.Name)
-                    .Where(o => o.OrderStatus == OrderStatus.InProcess).ToList();
-                var TotalCostInCredits = 0M;
-                Discount subDiscount = null;
-                var discountTotal = 0M;
-                var creditsRemain = 0M;
-                var notEnoughCreditsCaption = "";
+                OrderRow orderRowForOrder = order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active);
+                if (orderRowForOrder == null)
+                    continue;
 
-                model.RegistrationSummaryViewModels = new List<RegistrationSummaryViewModel>();
+                if (orderRowForOrder.AdditionalLocation == null)
+                    orderRowForOrder.AdditionalLocation = new List<AdditionalLocation>();
 
-                foreach (Order order in orders)
+                if (orderRowForOrder.Webinar == null)
+                    orderRowForOrder.Webinar = _cartControllerOrchestrator.LoadWebinar(orderRowForOrder.idWebinar);
+
+                if (orderRowForOrder.RegistrationType == null)
+                    orderRowForOrder.RegistrationType = _cartControllerOrchestrator.GetRegTypeById(orderRowForOrder.idRegType);
+
+                if (orderRowForOrder.Order.Affiliate == null)
+                    orderRowForOrder.Order.Affiliate = _cartControllerOrchestrator.GetAffiliateById(orderRowForOrder.Order.idAffiliate);
+
+                RegistrationSummaryViewModel registrationSummaryViewModel = new RegistrationSummaryViewModel
                 {
-                    OrderRow orderRowForOrder = order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active);
-                    if (orderRowForOrder == null)
-                        continue;
-
-                    if (orderRowForOrder.AdditionalLocation == null)
-                        orderRowForOrder.AdditionalLocation = new List<AdditionalLocation>();
-
-                    if (orderRowForOrder.Webinar == null)
-                        orderRowForOrder.Webinar = _cartControllerOrchestrator.LoadWebinar(orderRowForOrder.idWebinar);
-
-                    if (orderRowForOrder.RegistrationType == null)
-                        orderRowForOrder.RegistrationType = _cartControllerOrchestrator.GetRegTypeById(orderRowForOrder.idRegType);
-
-                    if (orderRowForOrder.Order.Affiliate == null)
-                        orderRowForOrder.Order.Affiliate = _cartControllerOrchestrator.GetAffiliateById(orderRowForOrder.Order.idAffiliate);
-
-                    RegistrationSummaryViewModel registrationSummaryViewModel = new RegistrationSummaryViewModel
-                    {
-                        AdditionalLocationsViewModel = _cartControllerOrchestrator.BuildAdditionalLocationsViewModel(orderRowForOrder, orderRowForOrder.idOrder),
-                        OrderRow = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active),
-                        RecordingLink =
-                            "<a href='" + GlobalConfig.GlobalConfigSingleton.WMVRepository + orderRowForOrder.Webinar.RecordingUrl +
-                            "' target=_blank /> Recording Playback</a>",
-                        WebinarStatus = orderRowForOrder.Webinar.Status
-                    };
-                    grandTotal += order.Total;
+                    AdditionalLocationsViewModel = _cartControllerOrchestrator.BuildAdditionalLocationsViewModel(orderRowForOrder, orderRowForOrder.idOrder),
+                    OrderRow = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active),
+                    RecordingLink =
+                        "<a href='" + GlobalConfig.GlobalConfigSingleton.WMVRepository + orderRowForOrder.Webinar.RecordingUrl +
+                        "' target=_blank /> Recording Playback</a>",
+                    WebinarStatus = orderRowForOrder.Webinar.Status
+                };
 
 
-                    if (orderRowForOrder.Discount != null)
-                    {
-                        if (orderRowForOrder.Discount.DiscountType == DiscountType.Subscription)
-                        {
-                            registrationSummaryViewModel.DiscountCaption = "WSP Credit Cost: " +
-                                                                           orderRowForOrder.RegistrationType.CreditCost
-                                                                               .ToString().Replace(".00", "");
-                            TotalCostInCredits += orderRowForOrder.RegistrationType.CreditCost;
-                            subDiscount = orderRowForOrder.Discount;
-                            creditsRemain = _cartControllerOrchestrator.CalculateCreditsRemaining(subDiscount);
-
-                            if (creditsRemain >= TotalCostInCredits)
-                            {
-                                discountTotal = orderRowForOrder.RowPrice * orderRowForOrder.Discount.PercentOff / 100;
-                            }
-                            else
-                            {
-                                if (creditsRemain > 0)
-                                {
-                                    discountTotal = 265 * creditsRemain;
-                                    notEnoughCreditsCaption = "The credits available to your Webinar Subscription Package do not completely cover the required cost of your orders. We've pro-rated the total amount required to" + discountTotal + ".";
-                                }
-                                else
-                                {
-                                    discountTotal = 0;
-                                }
-                            }
-                        }
-                    }
-
-                    model.RegistrationSummaryViewModels.Add(registrationSummaryViewModel);
+                if (orderRowForOrder.Discount != null &&
+                    orderRowForOrder.Discount.DiscountType == DiscountType.Subscription)
+                {
+                    registrationSummaryViewModel.DiscountCaption = "WSP Credit Cost: " +
+                                                                    orderRowForOrder.RegistrationType.CreditCost
+                                                                        .ToString().Replace(".00", "");
                 }
 
-                model.DiscountCaptionMulti = "Your subscription package has " + creditsRemain + " credits. This cart uses " +
-                                             TotalCostInCredits + ". " + notEnoughCreditsCaption;
+                model.RegistrationSummaryViewModels.Add(registrationSummaryViewModel);
+            }
 
+            string discountCaptionMultiMsg = "";
+            string grandTotalCaptionMultiMsg = "";
 
-            } // else they will see the sign-in page and come back here, probably
+            BuildCaptionsMulti(orders, out discountCaptionMultiMsg, out grandTotalCaptionMultiMsg);
 
+            model.DiscountCaptionMulti = discountCaptionMultiMsg;
+            model.GrandTotalCaptionMulti = grandTotalCaptionMultiMsg;
+
+            
 
             return View(model);
+        }
+
+
+        private void BuildCaptionsMulti(List<Order> orders, out string discountCaptionMultiMsg, out string grandTotalCaptionMultiMsg)
+        {
+            decimal totalCostInCredits = 0M;
+            decimal discountTotal = 0M;
+            decimal creditsRemain = 0M;
+            decimal grandTotal= 0M;
+            string notEnoughCreditsCaption = "";
+
+            discountCaptionMultiMsg = "";
+            grandTotalCaptionMultiMsg = "";
+
+            if (orders.Count == 0)
+                return;
+
+            foreach (Order order in orders)
+            {
+                OrderRow orderRowForOrder = order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active);
+                if (orderRowForOrder == null)
+                    continue;
+
+                grandTotal += order.Total;
+
+                System.Diagnostics.Debug.WriteLine("idOrder: {0}, idOrderRow: {1}, running grandTotal: {2}", order.idOrder, orderRowForOrder.idOrderRow, grandTotal);
+
+                // special subscription processing
+                if (orderRowForOrder.Discount != null &&
+                    orderRowForOrder.Discount.DiscountType == DiscountType.Subscription)
+                {
+
+                    System.Diagnostics.Debug.Write("Discount processing ");
+
+                    decimal creditCost = orderRowForOrder.RegistrationType.CreditCost; // occasionally null???
+                    totalCostInCredits += creditCost;
+
+                    System.Diagnostics.Debug.WriteLine("running totalCostInCredits: {0}, orderRow.CreditCost: {1}", totalCostInCredits, creditCost);
+
+                    Discount subDiscount = orderRowForOrder.Discount;
+                    creditsRemain = _cartControllerOrchestrator.CalculateCreditsRemaining(subDiscount);
+
+                    System.Diagnostics.Debug.WriteLine("creditsRemain: {0}", creditsRemain);
+                    System.Diagnostics.Debug.WriteLine("discount.PercentOff: {0}", subDiscount.PercentOff);
+
+                    if (creditsRemain >= totalCostInCredits)
+                    {
+                        decimal orderRowCost = orderRowForOrder.RowPrice*subDiscount.PercentOff/100;
+                        System.Diagnostics.Debug.WriteLine("enough credits to cover, adding on orderRow price: {0}", orderRowCost);
+
+                        discountTotal += orderRowCost;
+                        System.Diagnostics.Debug.WriteLine("running discountTotal: {0}", discountTotal);
+
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("not enough credits to cover");
+
+                        if (creditsRemain > 0)
+                        {
+                            System.Diagnostics.Debug.WriteLine("partial credits to apply: {0}", creditsRemain);
+
+                            discountTotal += 265 * creditsRemain;
+                            
+                            System.Diagnostics.Debug.WriteLine("running discountTotal: {0}", discountTotal);
+                        }
+
+                        //else
+                        //{
+                        //    discountTotal = 0;
+                        //}
+                    }
+                } // end special subscription processing
+            }
+
+
+            if (creditsRemain < 0)
+            {
+                notEnoughCreditsCaption = 
+                    "The credits available to your Webinar Subscription Package do not " +
+                    "completely cover the required cost of your orders. We've pro-rated " +
+                    "the total amount required to " +
+                    discountTotal + ".";
+
+                System.Diagnostics.Debug.WriteLine("notEnoughCreditsCaption: {0}", notEnoughCreditsCaption);
+ 
+            }
+
+            //if (orders.Count == 0)
+            //    creditsRemain = _cartControllerOrchestrator.CalculateCreditsRemaining(???);  // promote that they have credits??
+            
+
+            if (totalCostInCredits > 0)
+            {
+                discountCaptionMultiMsg =
+                    "Your subscription package has " + creditsRemain + " credits. This cart uses " +
+                    totalCostInCredits + ". " + notEnoughCreditsCaption;
+            }
+
+            System.Diagnostics.Debug.WriteLine("final discountCaptionMultiMsg: {0}", discountCaptionMultiMsg);
+
+            grandTotalCaptionMultiMsg = "Grand Total: " + grandTotal.ToString("c").Replace(".00", "");
+
+            System.Diagnostics.Debug.WriteLine("final grandTotalCaptionMultiMsg: {0}", grandTotalCaptionMultiMsg);
+            
+        }
+
+        public JsonResult RemoveOrderJson(int idOrder, int idOrderRow)
+        {
+            return UpdateOrderStatus(idOrder, idOrderRow, OrderStatus.Canceled);
+        }
+        public JsonResult UndoRemoveOrderJson(int idOrder, int idOrderRow)
+        {
+            return UpdateOrderStatus(idOrder, idOrderRow, OrderStatus.InProcess);
+        }
+
+        private JsonResult UpdateOrderStatus(int idOrder, int idOrderRow, OrderStatus orderStatus)
+        {
+            _cartControllerOrchestrator.SetOrderStatus(idOrder, User.Identity.Name, orderStatus); // validates that the user owns this orderid
+
+            List<Order> orders = _cartControllerOrchestrator.GetOrdersByUser(User.Identity.Name)
+                .Where(o => o.OrderStatus == OrderStatus.InProcess).ToList(); // used a couple of places, may want to make a function that just returns these...
+
+            string discountCaptionMultiMsg = "";
+            string grandTotalCaptionMultiMsg = "";
+
+            BuildCaptionsMulti(orders, out discountCaptionMultiMsg, out grandTotalCaptionMultiMsg);
+
+            return Json(new { Result = WebUiConstants.Success, discountCaptionMultiMsg = discountCaptionMultiMsg, grandTotalCaptionMultiMsg = grandTotalCaptionMultiMsg });            
         }
 
         [HttpPost]

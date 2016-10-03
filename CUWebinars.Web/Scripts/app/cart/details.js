@@ -615,7 +615,16 @@ var applyAdditionalLocations = function (e) {
             var infoLabel = $('#addLocsText');
 
             var priceLabel = $('#totalAdLocsPrice');
-            priceLabel.text('$' + (numberOfAdditionalLocationsTab3 * ADDLOC.price));
+
+            var addLocPrice = 0;
+
+            if (typeof ADDLOC != "undefined") {
+                addLocPrice = ADDLOC.price;
+            } else if (typeof webinarAdditionalLocationPrice != "undefined") {
+                addLocPrice = webinarAdditionalLocationPrice;
+            }
+
+            priceLabel.text('$' + (numberOfAdditionalLocationsTab3 * addLocPrice));
 
             var newText = numberOfAdditionalLocationsTab3 + $.trim(infoLabel.html()).slice(1);
 

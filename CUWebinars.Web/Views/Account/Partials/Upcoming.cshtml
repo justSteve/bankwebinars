@@ -2,22 +2,16 @@
 @using System
 @using System.Collections.Generic
 @using System.Linq
+@using CUWebinars.Business.Services
 @using CUWebinars.Web.Core
 @using CUWebinars.Web.Helpers
 
 @functions{
 
-    private Tuple<string, decimal> GetAdditionalLocationsPricing(IEnumerable<AdditionalLocation> additionalLocations, int idWebinar)
+    private Tuple<string, decimal> GetAdditionalLocationsPricing(IEnumerable<AdditionalLocation> additionalLocations, decimal additionalLocationPrice)
     {
-        var dataOperations = new CUWebinars.Business.Core.DataOperations(GlobalConfig.GlobalConfigSingleton.DefaultConnectionString);
         var addresses = new StringBuilder();
         var i = 0;
-
-        var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(idWebinar);
-        if (additionalLocationsPricing == null)
-        {
-
-        }
 
         decimal optionsCost = 0M;
 
@@ -51,11 +45,7 @@
                 }
             }
 
-            Debug.Assert(additionalLocationsPricing.Count == 1,
-                "There should only ever be 1 value returned for the cost of an Additionalocation for a particular Webinar"
-                );
-            // Item2 of the tuple is the price value as a decimal. Item 1 is the AdditionalLocationsLookupPrice id
-            optionsCost += additionalLocationsPricing.Single().Price;
+            optionsCost += additionalLocationPrice;
         }
 
         return new Tuple<string, decimal>(addresses.ToString(), optionsCost);
@@ -121,7 +111,7 @@
 
                                     <b>@row.RegistrationType.OptionLabel</b> - will be presented by @row.Webinar.Presenter.WebUser.FullName @Html.Raw(remainingDays) starting at @Html.DisplayTime(row.Webinar.Date, timeZ, true).
                                     @{
-                                        var additionalLocationsPricing = GetAdditionalLocationsPricing(row.AdditionalLocation, row.idWebinar);
+                                        var additionalLocationsPricing = GetAdditionalLocationsPricing(row.AdditionalLocation, row.Webinar.AdditionalLocationPrice);
                                         if (additionalLocationsPricing == null)
                                         {
                                             throw new ArgumentNullException("additionalLocationsPricing");

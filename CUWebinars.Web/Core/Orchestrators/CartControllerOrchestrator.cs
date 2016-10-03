@@ -457,16 +457,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 additionalLocations = orderRow.AdditionalLocation;
             }
 
-            var dataOp = new DataOperations(_globals.DefaultConnectionString);
-            var addPrice = dataOp.GetAdditionalLocationsPricing(idWebinar).SingleOrDefault();
-
-            decimal priceOfAdditionalLocation = 0M;
-
-            if (!ReferenceEquals(addPrice, null))
-            {
-                priceOfAdditionalLocation = addPrice.Price; // Item2 of the Tuple is the price
-            }
-
+            decimal priceOfAdditionalLocation = _orderManagementService.GetAdditionalLocationsPricing(idWebinar);
 
             var addAdditionalLocationViewModel = new AdditionalLocationOfferViewModel
             {
@@ -498,18 +489,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     if (!optionsCost.HasValue)
                     {
-                        var dataOperations =
-                            new Business.Core.DataOperations(GlobalConfig.GlobalConfigSingleton.DefaultConnectionString);
-                        var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(orderRow.idWebinar);
-                        if (additionalLocationsPricing == null)
-                        {
-                            _logger.Warn("AdditionalLocation lacks price on: " + orderRow.idWebinar);
-                            optionsCost = 0;
-                        }
-                        else
-                        {
-                            optionsCost = additionalLocationsPricing.Single().Price;
-                        }
+                        optionsCost = _orderManagementService.GetAdditionalLocationsPricing(orderRow.idWebinar);
                     }
 
                     string addressesForAdditionalLocations = "";
@@ -637,6 +617,16 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             _logger.Info("CancelOrder hit {0}", idOrder);
             _orderManagementService.DeleteOrder(orderId: idOrder);
+        }
+
+        public void SetOrderStatus(int idOrder, string loggedInEmail, OrderStatus orderStatus)
+        {
+            Order order = GetOrderById(idOrder);
+            if (order.BillingEmail.ToLower() == loggedInEmail.ToLower())
+            {
+                order.OrderStatus = orderStatus;
+                _orderManagementService.SaveChanges(); // less processing than SaveOrderChanges
+            } // else log this attempt? may want some visibility in case admins ever end up here
         }
 
         public Tuple<string, string> CheckIfAddLocShouldHide(int optionId)
@@ -1106,9 +1096,9 @@ namespace CUWebinars.Web.Core.Orchestrators
         }
 
 
-        public List<Order> GetOrdersByUser(string email)
+        public List<Order> GetOrdersByUser(string loggedInEmail)
         {
-            return _orderManagementService.GetOrdersByEmail(email, 19).ToList();
+            return _orderManagementService.GetOrdersByEmail(loggedInEmail, 19).ToList();
         }
 
         public ExpressCheckoutModel ExpressCheckout(Order order, WebUser user)

@@ -11,16 +11,34 @@
             <div class="legendImitator">
                 <b>Below are pending orders</b>
             </div>
-            @if (Model.DiscountCaptionMulti != null)
-            {
-                <div id="discountCaption">@Model.DiscountCaptionMulti</div>
-            }
+            
+            @{
 
-            @foreach (RegistrationSummaryViewModel registrationSummaryViewModel in Model.RegistrationSummaryViewModels)
-            {
-                <div id="OrderSummaryContainer_@registrationSummaryViewModel.OrderRow.idOrder">
-                    @Html.Partial("~/Views/Webinar/Partials/_RegistrationSummary.cshtml", registrationSummaryViewModel)
-                </div>
+                
+                if (!string.IsNullOrWhiteSpace(Model.DiscountCaptionMulti))
+                {
+                    <div id="discountCaptionMulti">@Model.DiscountCaptionMulti</div>
+                }
+
+                if (!string.IsNullOrWhiteSpace(Model.GrandTotalCaptionMulti))
+                {
+                    <p id="grandTotalCaptionMulti">@Model.GrandTotalCaptionMulti</p>
+                }
+                
+                foreach (RegistrationSummaryViewModel registrationSummaryViewModel in Model.RegistrationSummaryViewModels)
+                {
+                    <div id="OrderSummaryContainer_@registrationSummaryViewModel.OrderRow.idOrder">
+                        @Html.Partial("~/Views/Webinar/Partials/_RegistrationSummary.cshtml", registrationSummaryViewModel)
+                    </div>
+                }
+
+                if (Model.RegistrationSummaryViewModels.Count == 0)
+                {
+                    <p style="margin-top: 10px;">
+                        Your shopping cart is empty. <a href="#">Home | Search | ???</a>
+                    </p>
+                }
+
             }
 
             @*<div id="FeedbackContainer" class="span6">

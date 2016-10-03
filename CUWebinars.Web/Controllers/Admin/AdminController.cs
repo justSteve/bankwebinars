@@ -986,9 +986,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     RegType regType = _orderManagementService.GetRegTypeByLabel(regTypeLable, form.q18_q_webinarid18);
 
-                    var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
-
-                    var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(row.idWebinar);
+                    var additionalLocationsPricing = _orderManagementService.GetAdditionalLocationsPricing(row.idWebinar);
 
 
                     JProperty createdByExpressCheckout = new JProperty(
@@ -1011,7 +1009,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     row.RegistrationType = regType;
                     row.idRegType = regType.idRegType;
-                    _orderManagementService.CalculateOrderCost(expressOrder, additionalLocationsPricing.Single().Price);
+                    _orderManagementService.CalculateOrderCost(expressOrder, additionalLocationsPricing);
                     _orderManagementService.SaveChanges();
                     _orderManagementService.FireOrderSubmittedEvent(expressOrder, userCreatedByCheckout);
 
