@@ -94,7 +94,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                 try
                 {
                     int idRegType = Convert.ToInt32(command.RegistrationType);
-                    var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
+                    var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
                     command.RegistrationType = dataOperations.getLegacyOptionID(idRegType);
 
                 }

@@ -25,7 +25,9 @@ namespace CUWebinars.Web.Core
         public static ImportOrderForAcsModel ParseAcs(string _doc, string orderDate)
         {
 
-            ImportOrderForAcsModel model = new ImportOrderForAcsModel();
+            ImportOrderForAcsModel model = new ImportOrderForAcsModel();                           
+            model.DateSubmittedToACS = orderDate;
+                                        
             HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
 
             doc.LoadHtml(_doc);
@@ -58,7 +60,7 @@ namespace CUWebinars.Web.Core
                             string[] names = new string[_values.Count];
 
                             var flag = "";
-                            
+
                             for (var i = 0; i < _values.Count - 1; i++)
                             {
                                 string value = _values[i].InnerText.TrimStart().TrimEnd();
@@ -111,7 +113,7 @@ namespace CUWebinars.Web.Core
                                         model.CreditCard = value;
                                         break;
                                     case "DateSubmittedToACS":
-                                        model.DateSubmittedToACS = value;
+                                        model.DateSubmittedToACS = orderDate;
                                         break;
 
                                     case "DeliveryType":
@@ -144,10 +146,10 @@ namespace CUWebinars.Web.Core
                                     case "State":
                                         model.State = value;
                                         break;
-                                    case "State_Province_Region":
+                                    case "State/Province/Region":
                                         model.State_Province_Region = value;
                                         break;
-                                    case "StreetorP_O_Box":
+                                    case "StreetorP.O.Box":
                                         model.StreetorP_O_Box = value;
                                         break;
                                     case "Title":
@@ -162,7 +164,7 @@ namespace CUWebinars.Web.Core
                                     case "ZeroValue":
                                         model.ZeroValue = value;
                                         break;
-                                    case "Zip_PostalCode":
+                                    case "Zip/PostalCode":
                                         model.Zip_PostalCode = value;
                                         break;
                                     default:
@@ -172,7 +174,7 @@ namespace CUWebinars.Web.Core
                                         }
                                         else
                                         {
-                                            model.LoggerNotes += ("Keyname not known: " + name + " value:" + value) ;
+                                            model.LoggerNotes += ("Keyname not known: " + name + " value:" + value);
                                         }
                                         break;
 
@@ -208,7 +210,7 @@ namespace CUWebinars.Web.Core
                 }
                 else
                 {
-                    model.LoggerNotes += "ParseAcs Returned Null! " ;
+                    model.LoggerNotes += "ParseAcs Returned Null! ";
                     return null;
                 }
             }
