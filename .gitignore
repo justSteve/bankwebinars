@@ -181,3 +181,9 @@ CUWebinars.Web/App_Data/Trace/
 # Any 3rd Party Binaries Not Available on Nuget
 # =========================
 !ThirdPartyLibraries/
+/CUWebinars.Web/Scripts/WijmoEditor/jquery.wijmo.wijeditor.min.js
+/CUWebinars.Web/Scripts/WijmoEditor/jquery.wijmo.wijeditor.js
+/CUWebinars.Web/Scripts/WijmoEditor/jquery.wijmo.wijeditor.css
+/CUWebinars.Web/Scripts/WijmoEditor
+/CUWebinars.Web/Scripts/app/cart/register-user-in-cartByAffiliate.js.map
+/CUWebinars.Web/Scripts/app/cart/register-user-in-cartByAffiliate.js
