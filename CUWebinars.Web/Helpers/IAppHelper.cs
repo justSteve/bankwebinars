@@ -18,7 +18,7 @@ namespace CUWebinars.Web.Helpers
         List<string> InstitutionAutoComplete(string name, string zip);
         string GetAffiliateName(int idAffiliate);
         IList<string> ServerSideEmailCheck(IList<string> emails);
-        IEnumerable<AdditionalLocation> CheckAdditionalLocationsForValidEmail(IEnumerable<AdditionalLocation> additionalLocations);
+        IList<AdditionalLocation> CheckAdditionalLocationsForValidEmail(IList<AdditionalLocation> additionalLocations);
         bool CheckIsEmailValid(string email);
     }
 }

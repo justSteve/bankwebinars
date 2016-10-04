@@ -23,6 +23,11 @@
             {
                 var row = recorded.Value.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
 
+                if (row.Webinar.Title.EndsWith("Series"))
+                {
+                   continue;
+                }
+
                 var onDemandClaim = new PostEventClaim();
                 var onDemandClaimUrl = "Live Plus Five access is expired.";
                 var showMedia = false;
@@ -83,7 +88,8 @@
                             </div>
                         </div>
                         <div class="span3 offset1 " id="orderSum-@row.idWebinar">
-                            @{Html.RenderPartial("DisplayTemplates/OrderSumUser", row.Order);}
+                            
+                            @Html.Partial("~/Views/Shared/Partials/_OrderSumUser.cshtml", row.Order)
                         </div>
                     </div>
 
@@ -103,7 +109,7 @@
                                     {
                                         <div class="span3 well well-large">
                                             <a target="_blank" href="/webinar/GetWebinarRecording/@row.Webinar.idWebinar">
-                                                <span><i class="icon-facetime-video"> </i></span> Video Playback
+                                                <span><i class="icon-facetime-video"> </i></span> OnDemand Playback
                                             </a>
 
                                             @{Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);}

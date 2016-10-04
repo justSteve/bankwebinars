@@ -3,7 +3,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace CUWebinars.Business.Core.Helpers
@@ -20,6 +22,23 @@ namespace CUWebinars.Business.Core.Helpers
 
         //newOrder.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrder.AdminComments, createdByImpersonatedUserMsg);
 
+        public static string IsValidObjectSingle(string existingJson)
+        {
+            JObject objectToValidate;
+            try
+            {
+
+                objectToValidate = JObject.Parse(existingJson);
+                return "isSingle";
+            }
+            catch (Exception e)
+            {
+                return "error: " + e.Message;
+
+            }
+
+        }
+
         public static string MergeJsonWithStoredField(string existingJson, JProperty newJson)
         {
             JObject jObject;
@@ -33,31 +52,75 @@ namespace CUWebinars.Business.Core.Helpers
                 JObject objectToValidate;
                 try
                 {
-                    if (existingJson.Contains("moneris"))
-                        existingJson = existingJson.Replace("moneris", "MonerisDupeTx");
-                    
-                    //when moneris tx already exists (but why would that be?)
-                    //code execution does not step into catch block - wtf.
-
-                    //does this enlighten?
-                    //http://stackoverflow.com/questions/29830198/newtonsoft-jobject-parse-throws-base-exception-how-to-handle
 
                     objectToValidate = JObject.Parse(existingJson);
+
+
                 }
                 catch (Exception e)
                 {
-                    if (e.GetType().IsSubclassOf(typeof (Exception)))
-                        newJson = null;
+                    //if (e.GetType().IsSubclassOf(typeof (Exception)))
+                    //    newJson = null;
 
+                    Debug.WriteLine(e.Message);
                     //Handle the case when e is the base Exception
                     objectToValidate = JObject.FromObject(new
                     {
-                        existing = existingJson,
+                        existing = "wrapped Json by MergeJsonWithStoredField = " + existingJson,
                         exceptionMsg = e.Message,
                         exceptionStack = e.StackTrace
                     });
                 }
                 jObject = JObject.Parse(objectToValidate.ToString());
+                jObject.Add(newJson);
+            }
+
+            return jObject.ToString(Formatting.None);
+        }
+
+
+        public static string ReplaceJsonWithStoredField(string existingJson, JProperty newJson, string propToReplace)
+        {
+            JObject jObject;
+
+            JObject objectToValidate = null;
+            if (string.IsNullOrWhiteSpace(existingJson))
+            {
+                jObject = new JObject(newJson);
+            }
+            else
+            {
+                try
+                {
+
+                    objectToValidate = JObject.Parse(existingJson);
+
+                    IList<string> keys = objectToValidate.Properties().Select(p => p.Name).ToList();
+                    foreach (var myKey in keys)
+                    {
+                        Debug.WriteLine(myKey);
+                    }
+                }
+                catch (Exception e)
+                {
+                    try
+                    {
+                        existingJson = existingJson.TrimStart('[').TrimEnd(']');
+                        objectToValidate = JObject.Parse(existingJson);
+                    }
+                    catch
+                    { //Handle the case when e is the base Exception
+                        objectToValidate = JObject.FromObject(new
+                        {
+                            existing = "wrapped Json by ReplaceJsonWIthStoredField =" + existingJson,
+                            exceptionMsg = e.Message,
+                            exceptionStack = e.StackTrace
+                        });
+                    }
+                }
+                jObject = JObject.Parse(objectToValidate.ToString());
+
+                jObject.Remove(propToReplace);
                 jObject.Add(newJson);
             }
 
@@ -96,7 +159,20 @@ namespace CUWebinars.Business.Core.Helpers
             }
 
             // ************* if we got here, we need to now process the existing stored json as an input *************
-            existingStoredJsonObject = JObject.Parse(jsonAsString);
+            try
+            {
+                existingStoredJsonObject = JObject.Parse(jsonAsString);
+
+            }
+            catch (Exception e)
+            {
+                existingStoredJsonObject = JObject.FromObject(new
+                     {
+                         existing = "wrapped Json by AddObjectToJsonArray =" + jsonAsString,
+                         exceptionMsg = e.Message,
+                         exceptionStack = e.StackTrace
+                     });
+            }
 
             // 1st, see if valid json is stored at all
             if (!ReferenceEquals(null, existingStoredJsonObject))
@@ -134,5 +210,53 @@ namespace CUWebinars.Business.Core.Helpers
             return outObject;
         }
 
+        public static string RemoveJObject(string hostObject, string objToRemove)
+        {
+
+            JArray jArray;
+            JObject jPropHost;
+            JObject jPropRemove;
+            // convert object to a json object
+            try
+            {
+                jPropHost = JObject.Parse(hostObject);
+
+            }
+            catch (Exception ex)
+            {
+                return "failed to parse hostObject: " + ex;
+            }
+
+
+            // ************* if we got here, we need to now remove the existing prop *************
+            try
+            {
+                jPropRemove = JObject.Parse(objToRemove);
+
+            }
+            catch (Exception ex)
+            {
+                return "failed to parse objToRemove: " + ex;
+            }
+
+            // 1st, see if valid json is stored at all
+            if (!ReferenceEquals(null, jPropRemove))
+            {
+                JToken jToken;
+
+                // 2nd, see if the array which we are augmenting already exists
+                if (jPropHost.TryGetValue(objToRemove, StringComparison.OrdinalIgnoreCase, out jToken))
+                {
+                    jArray = jToken.Value<JArray>();
+                    jArray.Remove(jPropRemove);
+
+                    return jPropHost.ToString(Formatting.None);
+                }
+
+                return "failed to find jPropRemove";
+            }
+
+            return "failed";
+        }
     }
 }

@@ -1,0 +1,82 @@
+﻿@using CUWebinars.Web.Core
+
+@model GenerateWeeklyInvoicesViewModel
+@section scripts{
+    @Scripts.Render("~/bundles/admin-notifications")
+}
+
+
+@{
+
+    StringBuilder listAff = new StringBuilder();
+    foreach (var aff in Model.Affiliates)
+    {
+        listAff.Append(aff.idUserAff + ",");
+    }
+    Layout = "/Views/Shared/_LayoutAdmin.cshtml";
+
+}
+
+<script language="javascript" type="text/javascript">
+
+    var arryAff = [@listAff];
+    //var arryAff = [33194];
+
+    // recursion control variables
+    var callsNeeded = arryAff.length;
+    var callsComplete = 0;
+
+    $(function () {
+
+        sendRptCheckBoxesDiv = $('#SendRptCheckBoxes').find('.controls');
+        crunchingLabel = $('#crunchingLabel');
+
+        $('#sendRpt').hide();
+        $('#submitStartDate').on('click', function (args) {
+            args.preventDefault();
+
+            // disable button?
+            $('#sendRpt').hide();
+            sendRptCheckBoxesDiv.html(''); // clear any old results out
+            callsComplete = 0; // reset itorator / recursion control variable
+            FireGenerator(); // call recursive function
+        });
+
+        $('#sendRpt').on('click', function (args) {
+
+            args.preventDefault();
+
+            // disable button?
+
+            SendInvoices();
+        });
+    });
+</script>
+
+<div style="width: 1100px; margin: 30px auto">
+    <h2>Generates Weekly Invoices</h2>
+
+    @using (Html.BeginForm("GenerateWeeklyInvoicesEvent", "Admin", FormMethod.Get, new { id = "GenerateWeeklyInvoicesForm", @class = "form-horizontal " }))
+    {
+        @Html.AntiForgeryToken()
+        <div id="frmStartDate">
+            <p>It can take awhile to compile the invoices, please be patient and do not click Cancel or Refresh.</p>
+            <p>Start Date</p>
+            <div>
+                <input type="date" name="startDate" id="startDate" style="margin-bottom: 0px;" />
+                <button id="submitStartDate">Submit</button> &nbsp;<span id="crunchingLabel">&nbsp;</span>
+            </div>
+        </div>
+    }
+    @using (Html.BeginForm("SendWeeklyInvoicesEvent", "Admin", FormMethod.Get, new { id = "SendWeeklyInvoicesForm", @class = "form-horizontal " }))
+    {
+        <div id="SendRptCheckBoxes" class="control-group">
+            <button id="sendRpt" style="display:none;">Send Reports</button>
+            <div class="controls">
+
+
+            </div>
+        </div>
+    }
+
+</div>

@@ -144,6 +144,16 @@ namespace CUWebinars.Web.Core
         public List<OrderStatus> selectedOrderStatuses { get; set; }
     }
 
+    // extends the DTParameters class to allow us to pass additional parameters
+    //  up from the client-side JS, as recommended in comments https://www.echosteg.com/jquery-datatables-asp.net-mvc5-server-side
+    public class DTParametersSubscriptions : DTParameters
+    {
+        public int orderId { get; set; }
+        public int? affiliateId { get; set; }
+        public string searchTerm { get; set; }
+        public bool? showAllEvents { get; set; }
+    }
+
 
     // extends the DTParameters class to allow us to pass additional parameters
     //  up from the client-side JS, as recommended in comments https://www.echosteg.com/jquery-datatables-asp.net-mvc5-server-side

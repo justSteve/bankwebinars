@@ -8,12 +8,16 @@ namespace CUWebinars.Business.Services
     {
         IEnumerable<Order> GetAllOrders();
         IEnumerable<Order> GetOrdersByWebinar(int idWebinar, int idAffliate, out int totalNumberOrders);
+        IEnumerable<Order> GetOrdersByWebinarForRevenueReport(int idWebinar, out int totalNumberOrders);
         IEnumerable<Order> GetOrdersByUser(string email, int idAffliate, out int totalNumberOrders);
         //IEnumerable<Order> GetOrdersPaged(int start, int length, string orderIdFragment, out int totalNumberOrders, out int totalFilteredOrders);
         IEnumerable<WebUser> GetWebUsers(int idAffliate, out int totalNumberUsers);
         //IEnumerable SearchWebinars(string searchTerm, int idAffiliate, out int totalNumberWebinars);
         IEnumerable<WebUser> GetWebUsers(int idAffliate, int totalNumberUsers, out int totalNumberUsers_);
         IEnumerable<Webinar> SearchWebinars(string searchTerm, int idAffiliate, out int totalNumberWebinars);
-        
+
+        IEnumerable<Order> GetOrdersByPending(int affiliateId, out int totalNumberOrders);
+        IEnumerable<Order> GetOrdersByDomain(string searchTerm, int affiliateId, out int totalNumberOrders);
+        IEnumerable<Order> GetOrdersByInProcess(int affiliateId, out int totalNumberOrders);
     }
 }

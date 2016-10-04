@@ -43,6 +43,7 @@ namespace CUWebinars.Business.Repository
             newOrder.BillingEmail = webUser.email;
             newOrder.idUser = webUser.idUser;
             newOrder.Origin = origin;
+            newOrder.InvoiceDetail = "";
 
             newOrder = AssignWebUserToOrder(webUser, newOrder);
 
@@ -76,39 +77,6 @@ namespace CUWebinars.Business.Repository
             var errors = ValidationHelper.GetMessagesAsXmlElement(validationResult.Errors);
             throw new Exception(errors.ToString());
         }
-        //public Order CreateOrder(int affiliateId, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null)
-        //{
-
-        //    var newOrder = items.Create();
-        //    newOrder.OrderDate = DomainConstants.BuildUtcNowAsCts;
-        //    newOrder.OrderStatus = OrderStatus.InProcess;
-        //    newOrder.idAffiliate = affiliateId;
-        //    newOrder.BillingEmail = webUser.email;
-        //    newOrder.idUser = webUser.idUser;
-        //    newOrder.Origin = origin;
-
-        //    newOrder = AssignWebUserToOrder(webUser, newOrder);
-        //    //if (newOrder.Affiliate == null) { }
-        //    // reconcile orderRow with order relationship
-        //    ((TTSWebinarsContext)db).OrderRows.Add(orderRow);
-        //    orderRow.Order = newOrder;
-        //    newOrder.OrderRows = new List<OrderRow> { orderRow };
-
-        //    //if (webUser.idSubscriptionDiscount != null && webUser.idSubscriptionDiscount > 0)
-        //    //{
-        //    //    orderRow.Discount = GetUserDiscount(webUser.idUser);
-        //    //}
-
-
-        //    Add(newOrder);
-
-        //    return newOrder;
-
-
-        //    //var errors = ValidationHelper.GetMessagesAsXmlElement(validationResult.Errors);
-        //    //throw new Exception(errors.ToString());
-        //}
-
         public OrderRow CreateOrderRow(Webinar webinar,
             IList<AdditionalLocation> additionalLocations,
             RegType registrationType)
@@ -155,6 +123,7 @@ namespace CUWebinars.Business.Repository
                             validationError.ErrorMessage);
                     }
                 }
+                
                 throw new Exception(stringBuilder.ToString());
             }
         }
@@ -217,21 +186,25 @@ namespace CUWebinars.Business.Repository
 
         public IQueryable<Order> FindOrdersByBillingEmail(string email, int aff)
         {
-            if (aff > 0)
+            if (aff > 19)
             {
-                return items.Include(o => o.WebUser).Where(o => o.BillingEmail.ToLower().Contains(email.ToLower()) && o.Affiliate.idUserAff == aff);
+                return items.Include(o => o.WebUser)
+                    .Include(o => o.OrderRows.Select(or => or.Discount))
+                    .Where(o => o.BillingEmail.ToLower() == (email.ToLower()) && o.Affiliate.idUserAff == aff);
             }
-            return items.Include(o => o.WebUser).Where(o => o.BillingEmail.ToLower().Contains(email.ToLower()));
+            return items.Include(o => o.WebUser)
+                .Include(o => o.OrderRows.Select(or => or.Discount))
+                .Where(o => o.BillingEmail.ToLower() == (email.ToLower()));
         }
 
-        public IQueryable<Order> FindOrdersByBillingEmailDomain(string email, int aff)
-        {
-            if (aff > 0)
-            {
-                return items.Include(o => o.WebUser).Where(o => o.BillingEmail.ToLower().Contains(email.ToLower()) && o.Affiliate.idUserAff == aff);
-            }
-            return items.Include(o => o.WebUser).Where(o => o.BillingEmail.ToLower().Contains(email.ToLower()));
-        }
+        //public IQueryable<Order> FindOrdersByBillingEmailDomain(string email, int aff)
+        //{
+        //    if (aff > 0)
+        //    {
+        //        return items.Include(o => o.WebUser).Where(o => o.BillingEmail.ToLower().Contains(email.ToLower()) && o.Affiliate.idUserAff == aff);
+        //    }
+        //    return items.Include(o => o.WebUser).Where(o => o.BillingEmail.ToLower().Contains(email.ToLower()));
+        //}
 
         public IQueryable<Order> FindOrdersByLastName(string lastName, int idAffiliate)
         {
@@ -329,28 +302,7 @@ namespace CUWebinars.Business.Repository
                     && order.OrderRows.FirstOrDefault().idWebinar == idWebinar);
         }
 
-        public void ConvertLegacyOrder(Order order)
-        {
-            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
-            dataOperations.MigrateOrderFromLegacy(order);
 
-
-        }
-
-        public int MigrateOrderFromV3(Order order)
-        {
-            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
-            var result = dataOperations.MigrateOrderFromV3(order);
-            return result;
-        }
-
-        public void SynchIds(int lOrder, int vOrder)
-        {
-            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
-            dataOperations.SynchOrderIds(lOrder, vOrder);
-
-
-        }
 
         public PostEventClaim FindPostEventClaim(Order order)
         {
@@ -429,6 +381,7 @@ namespace CUWebinars.Business.Repository
         {
             IList<Order> orders = items
                 .Include(o => o.WebUser)
+                .Include(o => o.WebUser.Institution)
                 .Include(o => o.Affiliate)
                 .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
                 .Include(o => o.OrderRows.Select(or => or.RegistrationType))
@@ -447,6 +400,50 @@ namespace CUWebinars.Business.Repository
 
             return orders;
         }
+
+        public IEnumerable<Order> GetOrdersAllForInvoice(int idAffliate, out int totalNumberOrders)
+        {
+            IList<Order> orders = items
+                //.Include(o => o.WebUser)
+                //.Include(o => o.WebUser.Institution)
+                //.Include(o => o.Affiliate)
+                //.Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                //.Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                //.Include(o => o.OrderRows.Select(or => or.Discount))
+                .Include(o => o.OrderRows.Select(or => or.Webinar))
+            .ToList();
+
+            if (idAffliate != 19)
+            {
+                orders = orders
+                    .Where(o => o.idAffiliate == idAffliate)
+                    .ToList();
+            }
+
+            totalNumberOrders = orders.Count;
+
+            return orders;
+        }
+
+        public IEnumerable<Discount> GetSubscriptionsAll(int idAffliate, out int totalNumberOrders)
+        {
+            IList<Discount> discounts = ((TTSWebinarsContext)db).Discounts
+                .Where(d => d.DiscountType == DiscountType.Subscription)
+                .ToList();
+
+            if (idAffliate != 19)
+            {
+                discounts = discounts
+                    .Where(o => o.idAffiliate == idAffliate)
+                    .ToList();
+            }
+
+            totalNumberOrders = discounts.Count;
+
+            return discounts;
+        }
+
+
 
         public IList<Order> GetOrdersForLiveEventNotifications(int idWebinar)
         {
@@ -485,6 +482,20 @@ namespace CUWebinars.Business.Repository
                     or.Order.OrderStatus == OrderStatus.Billed ||
                     or.Order.OrderStatus == OrderStatus.Submitted
                     )
+                .Select(o => o.Order);
+            return GetLoadedEntitiesForOrder(orders);
+        }
+
+        public IList<Order> GetOrdersByDiscount(int idDiscount)
+        {
+
+            var orders = ((TTSWebinarsContext)db).OrderRows
+                .Include(or => or.Order)
+                .Include(r => r.RegistrationType)
+                .Where(or => or.Discount.idDiscount == idDiscount)
+                .Where(o => o.Order.OrderStatus == OrderStatus.Paid
+                    || o.Order.OrderStatus == OrderStatus.Billed
+                    || o.Order.OrderStatus == OrderStatus.Submitted)
                 .Select(o => o.Order);
             return GetLoadedEntitiesForOrder(orders);
         }
@@ -647,6 +658,7 @@ namespace CUWebinars.Business.Repository
         }
 
 
+
         public int AccessToPostEventMaterials(int webinar, int user)
         {
             var a = items
@@ -674,12 +686,12 @@ namespace CUWebinars.Business.Repository
         public Discount FindDiscountByCode(string discount)
         {
             var code = ((TTSWebinarsContext)db).Discounts.SingleOrDefault
-                (d => d.DiscountCode.EndsWith(discount));
+                (d => d.DiscountCode.EndsWith(discount) && d.Status.StartsWith("A"));
 
             if (ReferenceEquals(code, null))
             {
                 code = ((TTSWebinarsContext)db).Discounts.SingleOrDefault
-                (d => d.DiscountCode == (discount));
+                (d => d.DiscountCode == (discount) && d.Status.StartsWith("A"));
             }
             return code;
         }
@@ -711,7 +723,7 @@ namespace CUWebinars.Business.Repository
 
         public bool OnDemandCodeIsUnique(string onDemandCode)
         {
-            var result = items.Where(o => o.OrderRows.Any(r => r.OnDemandCode == onDemandCode));
+            var result = items.Where(o => o.OrderRows.Any(r => r.OnDemandCode == onDemandCode && r.OnDemandCode != onDemandCode));
             if (result.Any())
             {
                 return false;
@@ -758,6 +770,18 @@ namespace CUWebinars.Business.Repository
 
         }
 
+        public int GetNumberOfOrdersPerWebinarByAffiliate(int id, int idAffiliate)
+        {
+            return items.Where(o => o.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                .Webinar.idWebinar == id
+                && o.Affiliate.idUserAff == idAffiliate
+                && (o.OrderStatus == OrderStatus.Submitted
+                || o.OrderStatus == OrderStatus.Paid
+                || o.OrderStatus == OrderStatus.Billed
+                )).ToList().Count;
+
+        }
+
         public void RemoveAndDeleteAdditionalLocation(AdditionalLocation deletedAdditionalLocation)
         {
             ((TTSWebinarsContext)db).AdditionalLocation.Remove(deletedAdditionalLocation);
@@ -775,7 +799,7 @@ namespace CUWebinars.Business.Repository
                 .Include(o => o.OrderRows.Select(w => w.RegistrationType))
                 .Include(o => o.OrderRows.Select(w => w.Webinar))
                 .Where(o => o.idUser == idUser
-                                          && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Recorded
+                       && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Recorded
                 && (o.OrderStatus == OrderStatus.Submitted
                 || o.OrderStatus == OrderStatus.Paid
                 || o.OrderStatus == OrderStatus.Billed
@@ -841,7 +865,7 @@ namespace CUWebinars.Business.Repository
                 var discount = ((TTSWebinarsContext)db).Discounts.Where(d => d.idDiscount == usercode).SingleOrDefault();
                 return discount;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }

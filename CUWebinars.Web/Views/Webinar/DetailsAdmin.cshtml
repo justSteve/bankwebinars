@@ -1,5 +1,6 @@
 ﻿@using CUWebinars.Web.Core
 @using CUWebinars.Web.Helpers
+@using Newtonsoft.Json
 
 @model WebinarDetailsViewModel
 
@@ -14,19 +15,22 @@
 
     var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff;
 
+
 }
 
-
 <script type="text/javascript">
+
     var checkoutInProcess = @(Model.CheckoutInProcess ? "true" : "false");
     var isUserLoggedIn = @(@Model.UserIsLoggedIn ? "true" : "false");
     var currentWebinarId = @(@Model.Webinar.idWebinar);
-    var showAffiliateColumn = true;
+
     var affiliateId = 19;
     var notificationsTesting = @(GlobalConfig.GlobalConfigSingleton.NotificationsTesting ? "true" : "false");
     var orderRowId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow : 0);
     var orderId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.idOrder : 0);
     var addressVerified = @(@Model.UserAddressVerified ? "true" : "false");
+
+
 </script>
 
 @section scripts{
@@ -61,6 +65,13 @@
     <div id="users" class="collapse">
         @Html.Partial("~/Views/Admin/Partials/_ShowUsers.cshtml", Model.ShowOrdersViewModel)
     </div>
+
+    @*<div id="revenueReport" class="collapse">
+        @Html.Partial("~/Views/Admin/Partials/_ShowRevenueReportAdmin.cshtml", Model.ShowOrdersViewModel)
+    </div>
+    <div id="revenueReportByAffiliate" class="collapse">
+        @Html.Partial("~/Views/Admin/Partials/_ShowRevenueReport.cshtml", Model.ShowOrdersViewModel)
+    </div>*@
     @*<div id="byUserWrapper" class="collapse">
             @Html.Partial("~/Views/Admin/Partials/_ShowOrdersByUser.cshtml", Model.ShowOrdersViewModel)
         </div>*@
@@ -129,15 +140,31 @@
                                 <li id="createNewUserButton"><a href="#contactInfoForAffiliate" data-toggle="tab">Create New User</a></li>
                                 <li id="confirmationTabForAffiliate"><a href="#confirmationForAffiliate" data-toggle="tab">@Model.ConfirmationCaption</a></li>
                             </ul>
-
-                            <div class="tab-content">
-                                <div class="tab-pane active" id="findUserForAffiliate">
-                                    <button type="button" class="btn-success btn pull-right" id="AddToCart"> Add Order</button>
-                                    @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptionsForAffiliate.cshtml", model: Model.CheckoutOptionsViewModel)
+                            @if (Model.UserOwnsThisEvent < 1)
+                            {
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="findUserForAffiliate">
+                                        <button type="button" class="btn-success btn pull-right" id="AddToCart"> Add Order</button>
+                                        @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptionsForAffiliate.cshtml", model: Model.CheckoutOptionsViewModel)
+                                    </div>
+                                    <div class="tab-pane" id="contactInfoForAffiliate"></div>
+                                    <div class="tab-pane" id="confirmationForAffiliate"></div>
                                 </div>
-                                <div class="tab-pane" id="contactInfoForAffiliate"></div>
-                                <div class="tab-pane" id="confirmationForAffiliate"></div>
-                            </div>
+                            }
+                            else if (Model.Order.OrderStatus == OrderStatus.AwaitingVerification || Model.Order.OrderStatus == OrderStatus.InProcess || Model.Order.OrderStatus == OrderStatus.Canceled || Model.Order.OrderStatus == OrderStatus.Submitted)
+                            {
+                                <div class="tab-content">
+                                    <div class="tab-pane " id="findUserForAffiliate">
+                                        <button type="button" class="btn-success btn pull-right" id="AddToCart"> Add Order</button>
+
+                                    </div>
+                                    <div class="tab-pane" id="contactInfoForAffiliate"></div>
+                                    <div class="tab-paneactive" id="confirmationForAffiliate">
+                                        @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutConfirmForAffiliate.cshtml", model: Model.CheckoutConfirmViewModel)
+                                    </div>
+
+                                </div>
+                            }
                         </div>
                         <!-- The following forms are positioned here so that they are not nested in the form in the CheckoutOptions View. -->
                         @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
@@ -206,28 +233,34 @@
                 </aside>*@
             <!-- Close ics file widget -->
             <div>
-                @if (globalConfig.Tenant == "BankWebinars")
+                @if (globalConfig.Tenant == "BankWebinars" && !Model.Webinar.Title.StartsWith("Compliance Pers"))
                 {
                     <button id="submitSynchOrders" role="button" class="btn btn-primary">Synch Orders</button>
                 }
             </div>
-            @if (Model.Webinar.Status == WebinarStatus.InProgress)
-            {
-                <div>
-                    <form>
-                        Enter Email
-                        <button id="expressReg" role="button" class="btn btn-primary hidden ">Express Registration</button>
-                    </form>
-                </div>
-            }
+
             <div>
                 <button data-toggle="collapse" data-target="#sendConnInfoOrders" id="submitSendConnInfo" role="button" class="btn btn-danger">Send Connection Info</button>
             </div>
             <div>
                 <a href="/admin/perdaypromo/@Model.Webinar.idWebinar" class="btn btn-dangerx">Daily Promotional Email</a>
-                <a href="/admin/asdf/" class="btn btn-dangerx">Weekly Promotional Email</a>
+                <a href="#" data-toggle="collapse" data-target="#ListOfEvents" class="btn btn-dangerx">Weekly Promotional Email</a>
+                @*<a href="/admin/PerWeekPromo?id=2060&includedEventsIds=2060,2078,2071,2072" class="btn btn-dangerx">Weekly Promotional Email</a>*@
             </div>
 
+            <div id="ListOfEvents" class="collapse out">
+                @using (Html.BeginForm("perweekpromo", "Admin", FormMethod.Post, new { id = "PickWebinars", @class = "form-horizontal" }))
+                {
+                    <div>
+                        <input type="hidden" name="idWebinar" value=@Model.Webinar.idWebinar />
+                        <input type="text" name="sListOfWebinarsForWeekly" />
+                        @*@Html.DropDownList("ListOfWebinarsForWeekly", (MultiSelectList)ViewBag.ListOfWebinars, new { multiple = "multiple" })*@
+                        
+                        <br />
+                        <input type="submit" value="submit" />
+                    </div>
+                }
+            </div>
             @*<aside class="widget">
                     <h5 class="short_headline"><span>Search</span></h5>
                     <form class="searchform" method="get">

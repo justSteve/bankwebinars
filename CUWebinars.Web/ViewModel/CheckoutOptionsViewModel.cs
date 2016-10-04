@@ -27,5 +27,6 @@ namespace CUWebinars.Web.ViewModel
         public int SelectedWebUser { get; set; }
         public decimal WebinarDuration { get; set; }
         public WebinarStatus WebinarStatus { get; set; }
+        public string CCEmail { get; set; }
     }
 }

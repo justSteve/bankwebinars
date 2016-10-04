@@ -1,4 +1,6 @@
-﻿@model DisplayRowPriceViewModel
+﻿@using CUWebinars.Business.Core.Helpers
+@using OpenQA.Selenium
+@model DisplayRowPriceViewModel
 
 @functions {
     private const string CurrencyFormatToken = "c";
@@ -23,7 +25,7 @@
             totalDiscountElement.AddCssClass("text-error");
         }
 
-        outerSpan.InnerHtml = string.Concat("Discounted: <span style=\"color: red;\"", totalDiscountElement.ToString(TagRenderMode.Normal));
+        outerSpan.InnerHtml = string.Concat("Discounted: <span style=\"color: red;\">", totalDiscountElement.ToString(TagRenderMode.Normal), "</span>");
 
         return outerSpan.ToString(TagRenderMode.Normal);
     }
@@ -43,10 +45,6 @@
         if (Model.NumberOfAdditionalLocations == 0)
         {
             outerSpan.InnerHtml = "";
-        }
-        else if (Model.NumberOfAdditionalLocations == 1)
-        {
-            outerSpan.InnerHtml = string.Concat("One Additional Location: ", additionalLocsPriceElement.ToString(TagRenderMode.Normal), "<br>", Model.AddressesForAdditionalLocations);
         }
         else
         {
@@ -70,7 +68,12 @@
         {
             case OrderStatus.InProcess:
                 statusLabelSpan.AddCssClass("label-warning");
-                statusLabelSpan.SetInnerText(@OrderStatus.InProcess.ToString());
+                statusLabelSpan.SetInnerText(OrderStatus.InProcess.ToString());
+                break;
+
+            case OrderStatus.Error:
+                statusLabelSpan.AddCssClass("label-warning");
+                statusLabelSpan.SetInnerText(OrderStatus.InProcess.ToString());
                 break;
 
             case OrderStatus.Submitted:
@@ -87,6 +90,11 @@
                 statusLabelSpan.AddCssClass("label-warning");
                 statusLabelSpan.SetInnerText(@OrderStatus.AwaitingVerification.ToString());
                 break;
+
+            case OrderStatus.Canceled:
+                statusLabelSpan.AddCssClass("label-warning");
+                statusLabelSpan.SetInnerText(@OrderStatus.Canceled.ToString());
+                break;
         }
 
         return statusLabelSpan.ToString(TagRenderMode.Normal);
@@ -97,40 +105,102 @@
 @{
     if (Model != null)
     {
+        string discountCaption = "";
+        if (!ReferenceEquals(ViewBag.DiscountCaption, null))
+        {
+            discountCaption = ViewBag.DiscountCaption.ToString();
+        }
+        var discResult = "success";
+        if (discountCaption != "" && discountCaption.Contains("Insufficient"))
+        {
+            discResult = "danger";
+        }
+        var confirmButtonLabel = "Bill Me!";
+
         var rowAmount = new StringBuilder();
 
-        rowAmount.Append("<button id='revealOptions' class='btn btn-mini btn-default'> change?</button> " + Model.RegistrationType.OptionLabel + ": <span id='baseCost'>" + Model.PricesAndDiscounts.UnitPrice.ToString("c0") + "</span><br />");
+        rowAmount.Append("<button id='revealOptions' class='btn btn-mini btn-default'> change?</button> <span id=optionLabel>"
+            + Model.RegistrationType.OptionLabel + "</span>: <span id='baseCost'>"
+            + Model.PricesAndDiscounts.UnitPrice.ToString(CurrencyFormatToken) + "</span><br />");
 
-        if (Model.Discount == null)
+        if (Model.PricesAndDiscounts.Discount == null)
         {
-            rowAmount.Append("<button id='revealDiscountInput' class='btn btn-mini btn-default'> add discount?</button> " + GetDiscountedTextSpan() + "<br />");
-            
+            rowAmount.Append("<button id='revealDiscountInput' class='btn btn-mini btn-default'> add discount?</button> "
+                + GetDiscountedTextSpan() + "<br />");
         }
         else
         {
             rowAmount.Append(GetDiscountedTextSpan() + "<br />");
+            confirmButtonLabel = "Use My Credits!";
+
         }
 
-        //if (Model.NumberOfAdditionalLocations == 0)
-        //{
-        //    rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> add?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
-        //}
+        if (Model.NumberOfAdditionalLocations == 0)
+        {
+            rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> Need an Additional Location?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
+        }
         if (Model.NumberOfAdditionalLocations > 0)
         {
-            rowAmount.Append(GetAdditionalLocationsTextSpan() + "<br>");
-            //rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> edit?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
+            //rowAmount.Append(GetAdditionalLocationsTextSpan() + "<br>");
+            rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> change?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
         }
+
+        //rowAmount.Append("<span id='showSubTotal'>Subtotal: " + Model.PricesAndDiscounts.UnitPrice.ToString(CurrencyFormatToken) + "</span><br />");
         if (Model.PricesAndDiscounts.TaxAmount > 0)
         {
-            rowAmount.Append("<span id='subTotal'>" + Model.RowPrice.ToString(CurrencyFormatToken) + "</span> <span id='tax'><br>Tax: <span id='taxAmt'>" + Model.PricesAndDiscounts.TaxAmount.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "<br></span></span>");
+            rowAmount.Append("<span  id='showTax'>Tax: <span id='taxAmt'>" + Model.PricesAndDiscounts.TaxAmount.ToString(CurrencyFormatToken) + "<br></span></span><br />");
         }
-        rowAmount.Append("<span id='totalPriceText'>Total Cost: <span id='totalPrice'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "</span></span>");
+        else
+        {
+            rowAmount.Append("<span class='hidden' id='showTax'>Tax: <span id='taxAmt'></span></span><br />");
+        }
+        rowAmount.Append("<span id='showTotalPrice'>Total Cost: <span id='totalPrice'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken) + "</span></span>");
 
-        <div id="billingDetails" class="well" style="text-align: right;">
-            @Html.Raw(rowAmount.ToString())<br />
+        <div id="billingDetails" style="text-align: right;">
 
-            @{
+            @Html.Raw(rowAmount.ToString())
+
+            <div style="padding-top: 10px;">
+                Order Status:
                 @Html.Raw(GetStatusLabel(Model.OrderStatus))
+            </div>
+
+            <div id="flyUpdateSuccessFlag"></div>
+            @if (!string.IsNullOrWhiteSpace(ViewBag.DiscountCaption))
+            {
+                <div class="label label-danger @discResult" style="margin: 8px; text-align: center; padding: 7px 40px 7px 40px; width: 75%;"
+                     id="discountCaption">@Html.Raw(ViewBag.DiscountCaption.ToString())</div>
+            }
+
+            @if (!Request.Url.PathAndQuery.ContainsIgnoreCase("/webinar/geteditincartjson")) // i don't love this as our logic gate, is there something else we can use / invent?
+            {
+                <div style="text-align: center;">
+                    @if (Model.OrderStatus != OrderStatus.Paid || Model.OrderStatus != OrderStatus.Submitted || Model.OrderStatus != OrderStatus.Billed)
+                    {
+                        <span>
+                            <button class="btn btn-success" data-toggle="modal" role="button" data-target="#ContinueShoppingModal" id="ContinueShoppingButton">Continue Shopping</button>
+                            &nbsp;
+                            &nbsp;
+                            &nbsp;
+                            <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">@confirmButtonLabel</button>
+                            &nbsp;
+                            &nbsp;
+                            &nbsp;
+                        </span>
+                    }
+                    @if (Model.OrderStatus != OrderStatus.Paid)
+                    {
+                        <span>
+                            <button data-toggle="modal" role="button" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />`
+                        </span>
+                    }
+
+                    <div class="pull-right">
+                        <br />
+                        <div class="label label-warning large" role="button" id="Canceller"><span style="color: black"> &nbsp;&nbsp;Place cart on-hold or<br /> <i>Cancel</i> this checkout &nbsp;&nbsp;</span></div>
+                    </div>
+
+                </div>
             }
         </div>
     }

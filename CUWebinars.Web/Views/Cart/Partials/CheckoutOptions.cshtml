@@ -12,6 +12,7 @@
     @Html.HiddenFor(model => model.WebinarDuration)
     @Html.HiddenFor(model => model.WebinarStatus)
     @Html.HiddenFor(model => model.DisplayOptionsViewModel.EventTitle)
+    
 
     if (Model.OrderExists && Model.OrderHasId)
     {
@@ -28,17 +29,13 @@
                <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn btn-success well">@Model.RegistrationType.OptionExplain.Replace(" Only", " ") </blockquote>
             }
         }
-        else
-        {
-            <span>Our logs indicate you have pending order for this event. Please either confirm or cancel it.</span>
-            @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model.DisplayOptionsViewModel)
-        }
     }
     else
     {
         @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model.DisplayOptionsViewModel)
     }
 }
+
 
 <div id="changeTypeConfirmModal" class="modal hide fade">
     <div class="modal-header">

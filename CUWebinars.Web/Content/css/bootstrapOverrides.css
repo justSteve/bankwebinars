@@ -1,4 +1,9 @@
-﻿[class^="icon-"],
+﻿.dt-Button {
+    margin: 5px;
+
+    display: inline-table;
+}
+[class^="icon-"],
 [class*=" icon-"] {
   display: inline-block;
   width: 14px;
@@ -14,9 +19,10 @@
 
 
   .hero-unit {padding: 10px 0;margin: 0;margin-bottom: 15px;}
-  .ordersTable_length {
+  .dataTables_length {
       margin-left: 15px;
-      margin-top: 1px;   
+      margin-top: 2px;
+      margin-right: 20px;   
   }
 
   
@@ -92,6 +98,9 @@ input[type="checkbox"] {
     background-color: #5bb75b;
 }
 #webinarOrders #ordersTable td.loading {
+    background-color: #fcf8e3;
+}
+#webinarsTable td.wAddToCart.loading {
     background-color: #fcf8e3;
 }
 td.save-bg-transition
@@ -226,4 +235,28 @@ table.dataTable thead .sorting_desc_disabled { background: url('/content/images/
 .wijmo-wijsplitter-h-panel2
 {
     width:100% !important;
+}
+
+
+/*deals with Admin Form inputs*/
+select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+    border-radius: 4px;
+    color: #555555;
+    display: inline-block;
+    font-size: 14px;
+    height: auto;
+    line-height: 20px;
+    margin-bottom: 10px;
+    padding: 4px 6px;
+    vertical-align: middle;
+}
+
+.form-promo-generater input
+{
+    margin-bottom: 0px;
+    margin-left: 6px;
+}
+
+.removed-order-in-cart {
+    background-color: #eed3d7;
 }

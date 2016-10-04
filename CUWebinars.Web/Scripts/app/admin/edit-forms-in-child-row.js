@@ -27,6 +27,7 @@ function AttachDataTableEditEvents() {
             $("td", tr).removeClass("child-showing");
         } else {
             row.child(createChildRow(cell, $td, row.data()), "child-row").show();
+
             $td.addClass("child-showing");
             tr.addClass('shown');
         }
@@ -258,12 +259,13 @@ function removeIsLoadingIndicator($cell) {
 
 
 function createChildRow(cell, $td, rowData) {
-    
+    //console.log(cell);
     if ($td.hasClass("edit-user-name-email")) {
         return editUserCell(cell, $td, rowData);
     }  //
 
     if ($td.hasClass("edit-institution")) {
+
         return editInstitutionCell(cell, $td, rowData);
     }
 
@@ -332,6 +334,15 @@ function editBillingCell(cell, $td, rowData) {
         type: "POST",
         success: function (data) {
             html = data.html;
+
+
+            var e = '<div id="browser" class="jsonbrowser"></div>';
+            $('#notesPanel').append(e);
+            
+            console.log(cell);
+            console.log($td);
+            console.log(rowData);
+
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert("/account/GetEditBillingForm idOrder=" + rowData.idOrder + textStatus);
@@ -341,6 +352,10 @@ function editBillingCell(cell, $td, rowData) {
         },
         complete: function () {
             removeIsLoadingIndicator($td);
+
+            $('#notesPanel').html("<br>");
+            console.log($("#notesPanel").html());
+
         }
     });
 
@@ -422,12 +437,12 @@ function updateOrderStatus(item, orderId, newOrderStatus) {
         dataType: "json",
         type: "POST",
         success: function (data) {
-            console.log(data);
+            //console.log(data);
 
             if (data.Result == "Success") {
                 // need to update the currently displaying status (presuming it changed)
                 $(".dropdown-toggle", $form).html(data.orderStatus + "&nbsp;<b class=\"caret\"></b>");
-                alert(data.msgFromLegacy);
+                //alert(data.msgFromLegacy);
                 var $cell = $item.parents("td");
                 fireSuccessIndicator($cell);
             }
@@ -488,7 +503,7 @@ function updateEmail(e, thatThis) {
     $form.validate().settings.ignore = []; // so it doens't "ignore" .hidden fields
 
     var data = $form.serialize();
-    
+
 
     $.ajax({
         async: false,
@@ -542,7 +557,7 @@ function updateRegType(item, orderId, newRegTypeId) {
                 if (data.updateRegTypeOnLegacy == "Order Not Found") {
                     alert("Order at Legacy was not found");
                 } else {
-                    alert(data.updateRegTypeOnLegacy);
+                    alert(data.UpdateSuccessCaption);
                 }
                 // need to update the currently displaying regType and associated costs
                 $(".dropdown-toggle", $form).html(data.regTypeShort + "&nbsp;<b class=\"caret\"></b>");
@@ -572,7 +587,7 @@ function updateRegType(item, orderId, newRegTypeId) {
                 }
 
                 //  Reuse logic already in display-orders.js for when the datatables.net gets created...
-                var parentHtml = DO.getBillingCellHtml(showDiscount, data.regTypeShort, data.Total);
+                var parentHtml = DO.getBillingCellHtml(showDiscount, data.regTypeShort, data.Total, data.ShippedDateString);
                 $parentCell.html(parentHtml);
 
                 var $childRow = $item.closest("td.child-row");
@@ -584,37 +599,6 @@ function updateRegType(item, orderId, newRegTypeId) {
         }
     });
 }
-
-
-//function editOrderStatusCell(cell, $td, rowData) {
-
-//    // could definitely use a "busy" cursor.
-
-//    var html = "";
-//    var orderToEdit = (rowData.idOrderLegacy != 0) ? rowData.idOrderLegacy : rowData.idOrder;
-
-//    $.ajax({
-//        async: false,
-//        url: "/admin/geteditorderstatuscompactform",
-//        data: ({ id: orderToEdit }),
-//        dataType: "json",
-//        type: "POST",
-//        success: function (data) {
-//            html = data.html;
-//        },
-//        error: function (XMLHttpRequest, textStatus, errorThrown) {
-//            alert(textStatus);
-//        },
-//beforeSend: function () {
-//    addIsLoadingIndicator($td, -1); // let ajax "complete" call remove
-//},
-//complete: function () {
-//    removeIsLoadingIndicator($td);
-//}
-//    });
-
-//    return html;
-//}
 
 
 

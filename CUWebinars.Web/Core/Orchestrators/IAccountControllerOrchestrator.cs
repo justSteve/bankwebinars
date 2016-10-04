@@ -16,7 +16,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         bool AddPasswordForCartCreatedUser(CreateUserConfirmedViewModel model);
         //AddQuizEditModel BuildAddQuizEditModel();
         EditBillingAddressModel BuildBillingAddressModel();
-        DiscountModel BuildDiscountModel();
+        DiscountModel BuildDiscountModelForUser();
 
         ManageModel BuildManageModel(ManageMessageId? message);
         EditShippingAddressModel BuildShippingAddressModel();
@@ -59,6 +59,10 @@ namespace CUWebinars.Web.Core.Orchestrators
         void EditInstitution(EditInstitutionInfoModel model);
         void UpdateDiscountDetails(Discount thisSubscription);
         void EditEmail(string oldEmail, string email, string tenant);
-        
+
+        CompliancePerspectivesModel BuildCompPersectivesModel();
+        DiscountModel BuildDiscountModelForUser(Discount discount, int idUser);
+        DiscountModel BuildCPSubscriptionModel(Discount discount, int idUser);
+        DiscountModel BuildDiscountModelForOrder(OrderRow orderRow, int idUser);
     }
 }

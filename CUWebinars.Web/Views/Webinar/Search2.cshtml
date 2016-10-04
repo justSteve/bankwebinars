@@ -2,6 +2,7 @@
 @model  ShowWebinarsViewModel
 
 @{
+    var SearchTerm = ViewBag.SearchTerm.ToString().Replace("title:", "");
     @section scripts{
         @Scripts.Render("~/bundles/display-webinars")
         @Scripts.Render("~/bundles/dataTables")
@@ -22,8 +23,8 @@
             <div class="row-fluid">
                 <h1 class="span5">Search Results</h1>
                 <div id="howSearch" class="well well-small span6 pull-right">
-                    <p>Primary Search: <b>@ViewBag.SearchTerm</b></p>
-                    <p>Limit search to Title? <input id="titleOnly" type="checkbox" checked="" /></p>
+                    <p>Primary Search: <b>@SearchTerm</b></p>
+                    <p>Limit search to Title? <input id="titleOnly" type="checkbox" /></p>
                     <span style="font-size: smaller;">
                         Note: You can click cell contents to reveal additional details about each event. Also, you can narrow these results by entering additional terms in the filter box.
                     </span>

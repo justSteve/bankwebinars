@@ -9,6 +9,9 @@ namespace CUWebinars.Web.App_Start
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+            
+            routes.MapMvcAttributeRoutes(); // enable attribute routing
+
             //replicates legacy's generic connection info endpoint
             routes.MapRoute(
                     "WebinarConnectionDetails",
@@ -21,6 +24,17 @@ namespace CUWebinars.Web.App_Start
                 "PostBackWPS",
                 url: "PostBackWPS",
                 defaults: new { controller = "Cart", action = "PostBackWPS", id = 0 }
+            );
+            routes.MapRoute(
+                "Incoming",
+                url: "Incoming",
+                defaults: new { controller = "Cart", action = "Incoming" }
+            );
+            routes.MapRoute(
+                name: "ResumeCheckout",
+                url: "Resume/{id}",
+               defaults: new { controller = "Cart", action = "Resume", id = 0 }
+
             );
             routes.MapRoute(
                 "expresscheckout",
@@ -80,28 +94,28 @@ namespace CUWebinars.Web.App_Start
 
             );
 
-            
+
             routes.MapRoute(
                 "OnDemandPlaybackLegacy",
                 url: "Webinar/OnDemandPlayback/{args}",
                 defaults: new { controller = "Webinar", action = "RedirectLegacyRecordings" }
             );
 
-            
+
             routes.MapRoute(
                 "DirSeriesCerts",
                 url: "Admin/registrations/CertificateOfCompletionDS",
                 defaults: new { controller = "Admin", action = "CertificateOfCompletionDS" }
             );
 
-                  
+
             routes.MapRoute(
                 "Recorded",
                 url: "Webinar/Recorded",
                 defaults: new { controller = "Webinar", action = "Recorded" }
             );
 
-                  
+
             routes.MapRoute(
                 "Upcoming",
                 url: "Webinar/Upcoming",
@@ -112,7 +126,7 @@ namespace CUWebinars.Web.App_Start
             routes.MapRoute(
                 "RedirectLegacyRecordings",
                 url: "Recordings/{recordingURL}",
-                defaults: new { controller = "Webinar", action = "RedirectLegacyRecordings"}
+                defaults: new { controller = "Webinar", action = "RedirectLegacyRecordings" }
             );
 
             routes.MapRoute(

@@ -13,7 +13,7 @@
     string currentUserAffiliateFullName = string.Empty;
     if (currentAffiliate != null)
     {
-        currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
+        //currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
         ViewBag.currentAffiliateId = currentAffiliate.idUserAff;
     }
     else
@@ -163,14 +163,20 @@
             border: none;
             text-align: center;
         }
-
+        #shoppingCartInHeader {
+            margin-left: 20px;
+        }
+        #preheaderIcon {
+            padding-top: 5px;
+            margin-top: 5px;
+        }
         .hero-unit {
             padding-top: 20px;
             padding-bottom: 0px;
         }
 
         .preheader {
-            background-color: lightgray;
+            background-color: black;
             width: 100%;
             padding-left: 25px;
         }
@@ -226,7 +232,7 @@
 
 
             <ul class="social">
-                <li><a href="" target="_blank" data-placement="bottom" title="A TTS Production"><img src="~/Content/images/TTS-logoPreHeader.jpg" /></a></li>
+                <li><span id="preheaderIcon"><a href="http://www.ttstrain.com?from=tenant" target="_blank" data-placement="bottom" title="A TTS Production"><img src="~/Content/images/TTS-logoPreHeaderReverse.png" /></a></span></li>
                 <li><a class="socicon small facebook" href="https://www.facebook.com/home.php#!/pages/Total-Training-Solutions/300546163412" target="_blank" data-placement="bottom" title="Follow us on Facebook"></a></li>
                 <li><a class="socicon small twitterbird" href="https://twitter.com/#!/ttstrain" target="_blank" data-placement="bottom" title="Follow us on Twitter"></a></li>
                 <li><a class="socicon small linkedin" href="https://www.linkedin.com/company/bankwebinars-com" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
@@ -336,7 +342,14 @@
                         @{
                             if (currentAffiliate.idUserAff > 19)
                             {
-                                <p style="margin-top: 10px;" align="center">This site is managed for @currentAffiliate.DisplayTitle by @globalConfig.TenantDomain and Total Training Solutions - TTSTrain.com.</p>
+                                if (@currentAffiliate.DisplayTitle == "Total Training Solutions")
+                                {
+                                    <p style="margin-top: 10px;" align="center">This site is brought to you by @globalConfig.TenantDomain and Total Training Solutions - TTSTrain.com.</p>
+                                }
+                                else
+                                {
+                                    <p style="margin-top: 10px;" align="center">This site is managed for @currentAffiliate.DisplayTitle by @globalConfig.TenantDomain and Total Training Solutions - TTSTrain.com.</p>
+                                }
                             }
                         }
                     </section>

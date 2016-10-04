@@ -1,4 +1,5 @@
 ﻿@using CUWebinars.Business.Core
+@using CUWebinars.Business.Core.Helpers
 @model CheckoutConfirmViewModel
 
 
@@ -10,32 +11,10 @@
         var orderID = 0;
         if (Model.OrderRowExists && Model.OrderRowHasId)
         {
-            if (Model.OrderStatus == OrderStatus.InProcess)
+            if (Model.OrderStatus == OrderStatus.InProcess || Model.OrderStatus == OrderStatus.AwaitingVerification)
             {
                 <b>Please review this order summary and and choose billing method.</b>
 
-                @*<div class="row">
-                        <div class="offset1 span10">Primary Contact:</div>
-                        <div id="userDetailsSummed" class="span10 offset2">
-                            <p>
-                                @Html.Raw(@Model.UserDetails)
-                                <a id="editUserDetails" role="button" class="btn btn-mini"> Edit?</a>
-                            </p>
-
-                        </div>
-                    </div>
-                    <div id="AdjustUserDetails" class="row initialHide">
-                        @using (Html.BeginForm("adjustuserdetails", "cart", FormMethod.Post, new { id = "UserDetailsAdjustForm", @class = "form form-horizontal" }))
-                        {
-                            @Html.AntiForgeryToken()
-                            @Html.EditorFor(m => m.AdjustUserDetailsPanel)
-                            <div class="control-group">
-                                <div class="controls">
-                                    <button id="SubmitUserDetailEdits" class="btn btn-default btn-mini btn-primary">apply edits</button>
-                                </div>
-                            </div>
-                        }
-                    </div>*@
                 <div id="AdjustDiscount" class="row initialHide">
                     <div class="offset2 span9 ">
                         <div id="EnterDiscountCode" class="clear pull-right">
@@ -48,12 +27,15 @@
                 <div id="AdjustAddLoc" class="row initialHide">
                     <div class="offset2 span9 ">
                         <div id="additionalLocationsCaption" class="clear pull-right">
-                            Additional Locations: <button id="addAnotherAddLoc" class="btn btn-mini">add</button>
+                            Additional Locations: @Model.AdditionalLocationsViewModel.OptionsCost.ToString("c") will be added to the cost of registration for each additional seat.
+
+                            <button id="addAnotherAddLoc" class="btn btn-mini">add</button>
 
                             @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new { id = "AdjustAddLocsForm" }))
                             {
                                 <div id="additionalLocationsList"></div>
                             }
+
                         </div>
                     </div>
                 </div>
@@ -71,46 +53,11 @@
                         <div id="showCartPrice">
                             @{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }
                         </div>
-                        <div style="font-size: x-small; text-align: center;">
-                            <span><button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button></span> &nbsp; &nbsp; &nbsp;
-                            @{
-                                <span>
-                                    <button data-toggle="modal" role="button" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button>
-                                </span><br />
-                                @*<span>Call 800-831-0678 to pay by credit card</span>*@
-                            }
-                        </div>
-                        <div class="pull-right">
-                            <a id="Canceller">[Cancel Checkout]</a><br />
-                            @*Sales tax may be added to orders in Wisconsin or Illinois.*@
-                        </div>
+
+
                     </div>
                 </div>
-
-                @*<div class="row">
-                        <div class="span5 offset1">
-                            <input class="input input-xlarge" type="text" placeholder="How did you hear about this webinar?" name="referred" id="tbReferred" value="" />
-
-                            @Html.Raw(Model.UserComments)
-                            @Html.Raw(Model.AffiliateComments)
-                            @if (Model.UserType == UserType.Admin)
-                            {
-                                <br />
-                                @Html.Raw(Model.AdminComments)
-                                <br />
-                                @Html.Raw(Model.Origin)
-                            }
-                        </div>
-                        <div class="span2 offset1">&nbsp;</div>
-                    </div>
-                    <div class="row">
-                        <div class="span5 offset1">
-                            <a href=""></a> a comment or question for our staff?<br />
-                        </div>
-                    </div>*@
             }
-
-
 
             if (Model.OrderStatus != OrderStatus.InProcess)
             {
@@ -144,39 +91,37 @@
                     </div>
                 </div>
             }
+            else
+            {
+                if (Request.Url.PathAndQuery.ContainsIgnoreCase("/webinar/getaddtocartjson"))
+                {
+                    <div class="row">
+                        <div class="pull-right">
+                            <button class="btn btn-small cancel-edit-order">close panel</button>
+                        </div>
+                    </div>
+                }
+                }
+            }
         }
 
     }
-}
 
-@{
     Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
+
+    Html.RenderPartial("~/Views/Cart/Partials/_ContinueShopping.cshtml");
     if (ViewBag.Order != null)
     {
         Html.RenderPartial("~/Views/Cart/Partials/_PayByMoneris.cshtml", (Order)ViewBag.Order);
+        
+
+        Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml", (Order)ViewBag.Order);
     }
-    Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml");
     Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
-    //Html.RenderPartial("~/Views/Cart/Partials/_DisplayAppliedDiscount.cshtml", Model.DiscountDetailsModel);
 }
 
 
 
 <script type="text/javascript">var anyAddLocs = @(string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption) ? "false" : "true");</script>
 
-@*
-    @{
-        if (orderRowID > 0)
-        {
-            <div id="AddLocation_@(orderRowID)" class="modal hide fade">
-                @Html.Partial("~/Views/Shared/AddLocationsView.cshtml", row)
-            </div>
-            if (Model.Order.OrderStatus != OrderStatus.InProcess)
-            {
-                <div id="ResendConfirmationModal" class="modal hide fade">
-                    @Html.Partial("~/Views/Shared/ResendConfirmationView.cshtml", row)
-                </div>
-            }
         }
-    }*@
-

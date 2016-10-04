@@ -112,7 +112,7 @@ namespace CUWebinars.Business.Services
                         option.Text.Equals("false", StringComparison.OrdinalIgnoreCase))
                     {
                         var storedOption = _quizRepository.Context.Option.Single(o => o.Id == option.Id);
-                        
+
                         foreach (var questionWithOption in question.QuestionWithOptions)
                         {
                             if (questionWithOption.Option.Id == storedOption.Id)
@@ -317,7 +317,7 @@ namespace CUWebinars.Business.Services
                     // deal with option additions
                     foreach (var addedOption in addedOptions)
                     {
-                        var newOption = new Option {Text = addedOption.NewOptionText};
+                        var newOption = new Option { Text = addedOption.NewOptionText };
 
                         var questionWithOption = new QuestionWithOption
                         {
@@ -380,6 +380,27 @@ namespace CUWebinars.Business.Services
             return _webinarRepository.GetSearchDTO(searchTerm);
         }
 
+        public int? GetNextCompliancePerspectives()
+        {
+            return _webinarRepository.GetNextCompliancePerspectives();
+        }
+
+        public IList<Webinar> GetWebinarsForWeeklyInvoices(DateTime startDate)
+        {
+
+            return _webinarRepository.GetWebinarsForWeeklyInvoice(startDate);
+        }
+
+        public IEnumerable<Webinar> GetRelated(int? idWebinar)
+        {
+            return _webinarRepository.GetRelated(idWebinar);
+        }
+
+        public IEnumerable<Webinar> GetTopicsByWebinar(int? idWebinar)
+        {
+            return _webinarRepository.GetTopicsByWebinar(idWebinar);
+        }
+
         public Quiz GetQuizByOrderId(int idOrder)
         {
             return _quizRepository.GetQuizFromOrder(idOrder);
@@ -402,14 +423,10 @@ namespace CUWebinars.Business.Services
             return regType;
         }
 
-        public void SynchToLegacy()
-        {
-            _webinarRepository.MigrateWebinarsFromLegacy();
-        }
 
         public int GetRegTypeByACS(string registrationType, int idWebinar)
         {
-           return _webinarRepository.GetRegTypeByACS(registrationType, idWebinar);
+            return _webinarRepository.GetRegTypeByACS(registrationType, idWebinar);
         }
 
         private IList<WebUser> GetRegistrants_CP()
@@ -531,13 +548,13 @@ namespace CUWebinars.Business.Services
                 _regTypeRepository.Dispose();
                 _webinarRepository.Dispose();
                 _webUserRepository.Dispose();
-                
+
                 _disposed = true;
             }
         }
 
 
-        
+
         public static string CreateCalendarEvent(string title, string body, DateTime startDate, double duration, string location, string organizer, string eventId, bool allDayEvent)
         {
             // mandatory for outlook 2007

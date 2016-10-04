@@ -18,22 +18,42 @@ namespace CUWebinars.Business.Models
         {
             get
             {
-                return this.OptionLabel.Replace(" Package", "").Replace("Live Plus Six", "Live+6").Replace(" and Hardcopy Handouts", "").Replace(" Recording Only", "").Replace(" Plus Five", "+5");
+                //return this.OptionLabel.Replace(" Package", "").Replace("Live Plus Six", "Live+6").Replace(" and Hardcopy Handouts", "").Replace(" Recording Only", "").Replace(" Plus Five", "+5");
                 // from EditOrder_Compact.cshtml...
-                //if (Model.EditFields.DisplayRowPriceViewModel.RegistrationType.OptionLabel.StartsWith("Live Plus Five"))
-                //{
-                //    abbvLable = "Live";
-                //}
-                //if (Model.EditFields.DisplayRowPriceViewModel.RegistrationType.OptionLabel.StartsWith("OnDemand"))
-                //{
-                //    abbvLable = "Recorded Only";
-                //}
-                //if (Model.EditFields.DisplayRowPriceViewModel.RegistrationType.OptionLabel.StartsWith("CD"))
-                //{
-                //    abbvLable = "CD-ROM";
-                //}
+                var abbvLable = "";
+                if (this.OptionLabel.StartsWith("Live Plus Five"))
+                {
+                    abbvLable = "Live";
+                }                
+                if (this.OptionLabel.StartsWith("Live+5"))
+                {
+                    abbvLable = "Live";
+                }
+                if (this.OptionLabel.StartsWith("Live Plus Six"))
+                {
+                    abbvLable = "Live+OD";
+                }
+                if (this.OptionLabel.StartsWith("OnDemand"))
+                {
+                    abbvLable = "OnDemand";
+                }
+                if (this.OptionLabel.StartsWith("6-"))
+                {
+                    abbvLable = "OnDemand";
+                }
+                if (this.OptionLabel.StartsWith("CD"))
+                {
+                    abbvLable = "CD-ROM";
+                }
+                if (this.OptionLabel.StartsWith("Premier"))
+                {
+                    abbvLable = "Premier";
+                }
+
+                return abbvLable;
             }
         }
+        public decimal CreditCost { get; set; }
         public double Price { get; set; }
         public Nullable<bool> TaxExempt { get; set; }
         public int SortOrder { get; set; }

@@ -29,6 +29,10 @@ namespace CUWebinars.Web.Models
         [Required]
         [Display(Name = "Credits Remaining")]
         public decimal CreditsRemain { get; set; }
+        
+        [Required]
+        [Display(Name = "Date Verified")]
+        public DateTime DateVerified { get; set; }
 
         [Required]
         [Display(Name = "Date Started")]
@@ -50,6 +54,10 @@ namespace CUWebinars.Web.Models
 
         [Required]
         public int RenewalTerm { get; set; }
+
+    
+        [Required]
+        public decimal TotalCount { get; set; }
 
         [HiddenInput]
         public int idDiscount { get; set; }

@@ -10,6 +10,7 @@
         @*@Scripts.Render("~/bundles/display-webinars")*@
         @Scripts.Render("~/bundles/dataTables")
         @Scripts.Render("~/bundles/display-orders")
+        @Scripts.Render("~/bundles/jqueryval")
     }
     @Styles.Render("~/Content/data-tables")
     <style>
@@ -26,7 +27,10 @@
             <div class="container">
                 <div class="row-fluid">
                     <h1 class="span5">Search Results</h1>
-                    <div id="howSearch" class="well well-large span6 pull-right">Primary Search: <b>@ViewBag.SearchTerm</b> <br />Limit to title: <input id="titleOnly" type="checkbox" checked="" /></div>
+                    <div id="howSearch" class="well well-large span6 pull-right">
+                        Primary Search: <b>@ViewBag.SearchTerm</b>
+                        @*<br />Limit to title: <input id="titleOnly" type="checkbox" checked="" />*@
+                    </div>
                 </div>
             </div>
         </div>

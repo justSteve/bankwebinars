@@ -16,6 +16,7 @@ using Microsoft.WindowsAzure.Storage.Queue;
 using Newtonsoft.Json;
 using Ninject.Extensions.Logging;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
@@ -26,6 +27,7 @@ using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 using CUWebinars.Web.Models.DataTablesModels;
+using Microsoft.Ajax.Utilities;
 using ClaimsExtensions = CUWebinars.Web.Helpers.ClaimsExtensions;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
@@ -234,12 +236,13 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public bool SignUserIn(SignInModel model, out string userMustVerify)
         {
-
-
             if (_membershipService.LogInUser(_globals.Tenant, model.Email, model.Password, model.RememberMe, out userMustVerify))
             {
                 if (!ReferenceEquals(_request.ApplicationPath, null) && !ReferenceEquals(_request.Url, null))
                 {
+                    if (model.ReturnUrl.Contains("/acc/apwd/"))
+                        model.ReturnUrl = "/";
+
                     var retUrl = model.ReturnUrl.Replace(
                             string.Format(@"{0}://{1}{2}/",
                             _request.Url.Scheme,
@@ -248,7 +251,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                             string.Empty
                             );
 
-                    _logger.Info("Account.SignIn {0}. Redirecting to: {2},  Session={1} ", model.Email, _appHelper.GetUserAuditInfo(), retUrl);
+                    _logger.Info("Account.SignIn {0}. Redirecting to: {2},  Session: {1} ", model.Email, _appHelper.GetUserAuditInfo(), retUrl);
                 }
 
                 return true;
@@ -363,7 +366,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             };
 
             _membershipService.UpdateShippingAddressDetails(shippingAddress);
-            _orderManagementService.UpdateShippingAddressDetails(shippingAddress,  idUser);
+            _orderManagementService.UpdateShippingAddressDetails(shippingAddress, idUser);
         }
         public void UpdateDiscountDetails(Discount discount)
         {
@@ -375,6 +378,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             _membershipService.UpdateUserEmail(oldEmail, email, tenant);
         }
+
 
         public void UpdateDiscountDetails(DiscountModel discountModel, int idUser)
         {
@@ -392,8 +396,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 PercentOff = discountModel.PercentOff,
                 RenewalTerm = discountModel.RenewalTerm,
                 Status = discountModel.Status,
-                CreditsUsed = discountModel.CreditsUsed,
-                CreditsRemain = discountModel.CreditsRemain,
+                //CreditsUsed = discountModel.CreditsUsed,
+                //CreditsRemain = discountModel.CreditsRemain,
                 //WebUserDiscountXref = 
                 //idDiscount = 
             };
@@ -404,7 +408,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void EditInstitution(EditInstitutionInfoModel model)
         {
             var updateFields = model.EditFields;
-            
+
             Institution saveInst = _membershipService.GetInstitutionById(model.EditFields.idInstitution);
             if (saveInst == null) throw new ArgumentNullException("saveInst");
 
@@ -413,7 +417,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             saveInst.City = updateFields.City.Trim();
             saveInst.State = updateFields.State.Trim();
             saveInst.Zip = updateFields.Zip.Trim();
-            saveInst.Country = updateFields.Country?? "US";
+            saveInst.Country = updateFields.Country ?? "US";
             saveInst.InstitutionName = updateFields.InstitutionName.Trim();
 
             if (ReferenceEquals(null, saveInst.Address))
@@ -459,7 +463,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             _membershipService.UpdateUserDetails(_globals.Tenant,
                 updateFields.FirstName.Trim(),
-                updateFields.LastName.Trim(), 
+                updateFields.LastName.Trim(),
                 updateFields.Email.Trim(),
                 updateFields.Institution,
                 billingAddress,
@@ -555,15 +559,32 @@ namespace CUWebinars.Web.Core.Orchestrators
             model.Recorded = new Dictionary<string, Order>(ordersForRecordedWebinars.Count, StringComparer.OrdinalIgnoreCase);
             model.Archived = _orderManagementService.SelectOrdersWithArchivedWebinars(currentUser.idUser);
 
+            IEnumerable myClaims = model.MyClaims as IList<object> ?? model.MyClaims.Cast<object>().ToList();
             foreach (var selectOrdersWithRecordedWebinar in ordersForRecordedWebinars.OrderByDescending(o => o.OrderRows.SingleOrDefault().Webinar.Date))
             {
                 var myRow =
                     selectOrdersWithRecordedWebinar.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
                 var quiz =
                     _webinarManagementService.GetQuizByWebinarId(myRow.idWebinar);
-                //var playbackURL =
-                //    _orderManagementService.GetAccessToRecording(myRow.Order);
+                var rowFoundClaim = false;
+                foreach (var claim in myClaims)
+                {
 
+                    //are you seeing intellisense errors on the next 2 lines?
+                    var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.ToString());
+                    if (thisClaim.OnDemandCode == myRow.OnDemandCode)
+                    {
+                        rowFoundClaim = true;
+                    }
+
+                }
+                if (!rowFoundClaim)
+                {
+                    _logger.Info("missing OD claim detected: " + myRow.idOrder);
+
+                    var userAcct = _membershipService.GetUserAccountByEmail(_globals.Tenant, claimsIdentityOfAuthenticatedUser.Name);
+                    _membershipService.SignIn(userAcct, true);
+                }
                 if (!ReferenceEquals(null, quiz))
                 {
                     model.Recorded.Add(new KeyValuePair<string, Order>(quiz.QuizCode, selectOrdersWithRecordedWebinar));
@@ -572,7 +593,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     model.Recorded.Add(new KeyValuePair<string, Order>("na" + selectOrdersWithRecordedWebinar.idOrder, selectOrdersWithRecordedWebinar));
                 }
-                
+
             }
 
             foreach (var orderRow in model.Scheduled.Select(order => order.OrderRows
@@ -679,7 +700,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 AddressType = Enum.GetName(typeof(AddressType), shippingAddressFields.TypeOfAddress)
             };
             WebUser existingUser = GetWebUserByEmail(model.RegisterFields.Email);
-            
+
 
             _membershipService.UpdateUserDetails(_globals.Tenant,
                 updateFields.FirstName.Trim(),
@@ -837,7 +858,141 @@ namespace CUWebinars.Web.Core.Orchestrators
             return model;
         }
 
-        public DiscountModel BuildDiscountModel()
+        public CompliancePerspectivesModel BuildCompPersectivesModel()
+        {
+            var cpSubscription = new CompliancePerspectivesModel();
+            var currentUser = GetWebUserFromIPrincipal();
+            var userorders = _orderManagementService.GetOrdersByUserId(currentUser.idUser);
+
+            Discount discount = null;
+
+            foreach (var order in userorders)
+            {
+                discount = _orderManagementService.GetDiscountByOrderId(order.idOrder);
+                if (!ReferenceEquals(discount, null))
+                {
+                    if (discount.DiscountType == DiscountType.ComplianceSeries)
+                        break;
+                }
+
+            }
+            if (ReferenceEquals(discount, null))
+            {
+                return null;
+            }
+            if (discount.DiscountType != DiscountType.ComplianceSeries)
+                return null;
+            _universalMapper.Map(discount, cpSubscription);
+
+            cpSubscription.DateValidFrom = discount.DateValidFrom;
+            cpSubscription.DateValidTo = discount.DateValidTo;
+            cpSubscription.RenewalTerm = discount.RenewalTerm;
+            cpSubscription.Status = discount.Status;
+            cpSubscription.Notes = discount.Notes;
+
+            cpSubscription.CreditsRemain = _orderManagementService.CalculateCreditsRemain(discount);
+            cpSubscription.CreditsUsed = _orderManagementService.CalculateCreditsUsed(discount);
+            cpSubscription.Cost = discount.Cost;
+            cpSubscription.DateBilled = discount.DateBilled;
+            cpSubscription.FlatOff = discount.FlatOff;
+            cpSubscription.PercentOff = discount.PercentOff;
+            cpSubscription.Status = discount.Status;
+            cpSubscription.DiscountCode = discount.DiscountCode;
+
+            return cpSubscription;
+        }
+
+        public DiscountModel BuildDiscountModelForOrder(OrderRow row, int idUser)
+        {
+            var discountModel = new DiscountModel();
+            //var currentUser = GetWebUserById(idUser);
+            var orderDiscount = row.Discount;
+            if (ReferenceEquals(orderDiscount, null))
+                return null;
+            _universalMapper.Map(orderDiscount, discountModel);
+
+            discountModel.DateValidFrom = orderDiscount.DateValidFrom;
+            discountModel.DateValidTo = orderDiscount.DateValidTo;
+            discountModel.RenewalTerm = orderDiscount.RenewalTerm;
+            discountModel.Status = orderDiscount.Status;
+            discountModel.Notes = orderDiscount.Notes;
+
+            discountModel.CreditsRemain = _orderManagementService.CalculateCreditsRemain(orderDiscount);
+            discountModel.CreditsUsed = _orderManagementService.CalculateCreditsUsed(orderDiscount);
+            discountModel.Cost = orderDiscount.Cost;
+            discountModel.TotalCount = orderDiscount.TotalCount;
+            discountModel.DateBilled = orderDiscount.DateBilled;
+            discountModel.FlatOff = orderDiscount.FlatOff;
+            discountModel.PercentOff = orderDiscount.PercentOff;
+            discountModel.Status = orderDiscount.Status;
+            discountModel.DiscountCode = orderDiscount.DiscountCode;
+
+
+            return discountModel;
+
+        }
+        public DiscountModel BuildDiscountModelForUser(Discount discount, int idUser)
+        {
+            var discountModel = new DiscountModel();
+            var currentUser = GetWebUserById(idUser);
+            var userDiscount = _orderManagementService.GetDiscountByUser(currentUser);
+            if (ReferenceEquals(userDiscount, null))
+                return null;
+            _universalMapper.Map(userDiscount, discountModel);
+
+            discountModel.DateValidFrom = userDiscount.DateValidFrom;
+            discountModel.DateValidTo = userDiscount.DateValidTo;
+            discountModel.RenewalTerm = userDiscount.RenewalTerm;
+            discountModel.Status = userDiscount.Status;
+            discountModel.Notes = userDiscount.Notes;
+
+            discountModel.CreditsRemain = _orderManagementService.CalculateCreditsRemain(userDiscount);
+            discountModel.CreditsUsed = _orderManagementService.CalculateCreditsUsed(userDiscount);
+            discountModel.Cost = userDiscount.Cost;
+            discountModel.TotalCount = userDiscount.TotalCount;
+            discountModel.DateBilled = userDiscount.DateBilled;
+            discountModel.FlatOff = userDiscount.FlatOff;
+            discountModel.PercentOff = userDiscount.PercentOff;
+            discountModel.Status = userDiscount.Status;
+            discountModel.DiscountCode = userDiscount.DiscountCode;
+
+
+            return discountModel;
+
+        }
+
+        public DiscountModel BuildCPSubscriptionModel(Discount discount, int idUser)
+        {
+            var discountModel = new DiscountModel();
+
+            var userDiscount = discount;
+            if (ReferenceEquals(userDiscount, null))
+                return null;
+            _universalMapper.Map(userDiscount, discountModel);
+
+            discountModel.DateValidFrom = userDiscount.DateValidFrom;
+            discountModel.DateValidTo = userDiscount.DateValidTo;
+            discountModel.RenewalTerm = userDiscount.RenewalTerm;
+            discountModel.Status = userDiscount.Status;
+            discountModel.Notes = userDiscount.Notes;
+
+            discountModel.CreditsRemain = -1 * (((DateTime.Now.Year - discountModel.DateValidTo.Year) * 12) + DateTime.Now.Month - discountModel.DateValidTo.Month);
+
+            discountModel.CreditsUsed = _orderManagementService.CalculateCreditsUsed(userDiscount);
+            discountModel.Cost = userDiscount.Cost;
+            discountModel.TotalCount = userDiscount.TotalCount;
+            discountModel.DateBilled = userDiscount.DateBilled;
+            discountModel.FlatOff = userDiscount.FlatOff;
+            discountModel.PercentOff = userDiscount.PercentOff;
+            discountModel.Status = userDiscount.Status;
+            discountModel.DiscountCode = userDiscount.DiscountCode;
+
+
+            return discountModel;
+        }
+
+
+        public DiscountModel BuildDiscountModelForUser()
         {
             var discountModel = new DiscountModel();
             var currentUser = GetWebUserFromIPrincipal();
@@ -852,17 +1007,61 @@ namespace CUWebinars.Web.Core.Orchestrators
             discountModel.Status = userDiscount.Status;
             discountModel.Notes = userDiscount.Notes;
 
-            discountModel.CreditsRemain = userDiscount.CreditsRemain;
-            discountModel.CreditsUsed = userDiscount.CreditsUsed;
+            discountModel.CreditsRemain = _orderManagementService.CalculateCreditsRemain(userDiscount);
+            discountModel.CreditsUsed = _orderManagementService.CalculateCreditsUsed(userDiscount);
             discountModel.Cost = userDiscount.Cost;
+            discountModel.TotalCount = userDiscount.TotalCount;
             discountModel.DateBilled = userDiscount.DateBilled;
             discountModel.FlatOff = userDiscount.FlatOff;
             discountModel.PercentOff = userDiscount.PercentOff;
             discountModel.Status = userDiscount.Status;
             discountModel.DiscountCode = userDiscount.DiscountCode;
 
+
             return discountModel;
         }
+
+        // refactored so that all references to CalculateCreditsxxx now point to orderManagementService
+        //private decimal CalculateCreditsRemain(Discount userDiscount)
+        //{
+
+        //    if (userDiscount.DiscountType == DiscountType.Subscription &&
+        //        userDiscount.DateValidTo > userDiscount.DateValidFrom) return 100;
+
+        //    var ordersWithDiscount = _orderManagementService.GetOrdersByDiscount(userDiscount.idDiscount)
+        //        .Where(o => o.OrderDate > userDiscount.DateVerified)
+        //        ;
+
+        //    var creditsUsed = 0M;
+
+        //    if (ordersWithDiscount.Any())
+        //        foreach (var order in ordersWithDiscount)
+        //        {
+
+        //            {
+        //                creditsUsed +=
+        //                    order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+        //                        .RegistrationType.CreditCost;
+        //            }
+        //        }
+        //    return userDiscount.TotalCount - creditsUsed;
+        //}
+
+        //private decimal CalculateCreditsUsed(Discount userDiscount)
+        //{
+        //    var ordersWithDiscount = _orderManagementService.GetOrdersByDiscount(userDiscount.idDiscount)
+        //        .Where(o => o.OrderDate > userDiscount.DateVerified);
+        //    var credits = 0M;
+        //    if (ordersWithDiscount.Any())
+        //        foreach (var order in ordersWithDiscount)
+        //        {
+        //            credits +=
+        //                order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+        //                    .RegistrationType.CreditCost;
+        //        }
+
+        //    return credits;
+        //}
 
         public ManageModel BuildManageModel(ManageMessageId? message)
         {
@@ -876,7 +1075,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             var addresses = user.Addresses.ToArray();
             var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
             var shippingAddress = addresses.First(a => a.AddressType == WebUiConstants.ShippingAddress);
-
             manageModel.RegisterFields = new RegisterModel
             {
                 BillingAddress = new AddressModel
@@ -962,16 +1160,16 @@ namespace CUWebinars.Web.Core.Orchestrators
             UserAccount userAccount = _membershipService.GetUserAccountByVerificationKey(key);
 
             if (userAccount == null)
-            { 
+            {
             }
             _membershipService.RemoveClaim(_globals.Tenant, userAccount.Email, ClaimTypes.HasNotVerified);
 
-                if (!_membershipService.UserHasClaim(userAccount, ClaimTypes.FullName))
-                {
-                    var webUser = _membershipService.GetWebUserById(_membershipService.GetWebUserIdByEmail(userAccount.Email).Value);
-                    _membershipService.AddClaim(userAccount, ClaimTypes.FullName, webUser.FirstName + " " + webUser.LastName);
-                }
-            
+            if (!_membershipService.UserHasClaim(userAccount, ClaimTypes.FullName))
+            {
+                var webUser = _membershipService.GetWebUserById(_membershipService.GetWebUserIdByEmail(userAccount.Email).Value);
+                _membershipService.AddClaim(userAccount, ClaimTypes.FullName, webUser.FirstName + " " + webUser.LastName);
+            }
+
 
             return _membershipService.ChangePasswordFromResetKey(_globals.Tenant, key, password);
         }
@@ -1149,10 +1347,10 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             var user = _membershipService.GetUserByEmail(email);
 
-            if (ReferenceEquals(user, null))
-            {
-                user = _membershipService.GetUserFromLegacy(email);
-            }
+            //if (ReferenceEquals(user, null))
+            //{
+            //    user = _membershipService.GetUserFromLegacy(email);
+            //}
             return user;
         }
 
@@ -1218,6 +1416,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 if (returnUrl.Contains("PasswordResetConfirm") || returnUrl.Equals("/Account/Signin") || returnUrl.Equals("/Account/Login"))
                     returnUrl = "/Account/MyWebinars";
+
+                //if (returnUrl.StartsWith("/Resume"))
+                //    returnUrl = "/Resume/" + returnUrl.Split('+')[1];
 
                 loginModel.ReturnUrl = returnUrl;
                 loginModel.SignIn.ReturnUrl = returnUrl;

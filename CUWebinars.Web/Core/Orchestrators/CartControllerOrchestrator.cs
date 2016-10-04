@@ -24,6 +24,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Web;
+using CUWebinars.Business.Repository;
 using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models.DataTablesModels;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
@@ -43,6 +44,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         private readonly IFormatter _generalFormatter;
         private readonly IOrderManagementService _orderManagementService;
         private readonly IWebinarManagementService _webinarManagementService;
+        private readonly IRegTypeRepository _regTypeRepository;
         private readonly IUniversalMapper _universalMapper;
 
         private bool _disposed;
@@ -56,6 +58,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             HttpRequestBase request,
             IAppHelper appHelper,
             IFormatter generalFormatter,
+                IRegTypeRepository regTypeRepository,
+
             IUniversalMapper universalMapper)
         {
             Request = request;
@@ -66,6 +70,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             _orderManagementService = orderManagementService;
             _webinarManagementService = webinarManagementService;
             _stateService = stateService;
+            _regTypeRepository = regTypeRepository;
 
             _universalMapper = universalMapper;
         }
@@ -145,7 +150,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public CheckoutConfirmViewModel BuildCheckoutConfirmViewModel(int? idOrder)
         {
-            _logger.Info("BuildCheckoutConfirmViewModel was passed: " + idOrder);
+
             if (idOrder.HasValue && idOrder.Value > 0)
             {
                 var order = _orderManagementService.GetOrderById(idOrder.Value);
@@ -189,24 +194,19 @@ namespace CUWebinars.Web.Core.Orchestrators
                             existingJObject = JObject.Parse(comments);
                             existingJObject.Add(newJson);
                         }
-                        //_membershipService.AddClaim(
-                        // _membershipService.GetUserAccountByEmail(_globalConfig.Tenant
-                        // , _globalConfig.TenantEmail)
-                        // , "SetUserAssignedToOrder",
-                        //   CUWebinars.Business.Constants.ClaimTypes.CommentAdmin
-                        //    );
 
                         order.AdminComments = existingJObject.ToString(Formatting.None);
 
-                        OrderRow orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+                        OrderRow row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+
                         // This ViewModel is built here because it is re-used.
                         var additionalLocationsViewModel =
-                            BuildAdditionalLocationsViewModel(orderRow, idOrder);
+                            BuildAdditionalLocationsViewModel(row, idOrder);
 
                         var checkoutConfirmViewModel = new CheckoutConfirmViewModel
                         {
                             //Order = order,
-                            AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
+                            AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(row),
                             AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
                             {
                                 Email = webUser.email,
@@ -246,9 +246,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                             //    "None <a href=\"#AddCCModal\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Add?</a> ", // CC user removed at request
                             DiscountModel = BuildDiscountModel(webUser),
                             DisplayOptionsInDropDownViewModel =
-                                BuildDisplayOptionsInDropDownViewModel(orderRow, idOrder),
+                                BuildDisplayOptionsInDropDownViewModel(row, idOrder),
                             DisplayRowPriceViewModel =
-                                BuildDisplayRowPriceViewModel(orderRow, idOrder,
+                                BuildDisplayRowPriceViewModel(row, idOrder,
                                     additionalLocationsViewModel.OptionsCost),
                             idUser = order.WebUser.idUser,
                             ShippingDetailsModel = new ShippingDetailsModel()
@@ -269,7 +269,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                                         TypeOfAddress = AddressType.Shipping
                                     }
                             },
-                            OrderExists = orderRow.Order != null,
+                            OrderExists = row.Order != null,
                             AdditionalLocationsViewModel = additionalLocationsViewModel,
                             OrderRowExists = true,
                             OrderRowHasId = true,
@@ -287,11 +287,11 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                         if (checkoutConfirmViewModel.OrderRowExists)
                         {
-                            if (orderRow.idOrder > 0)
+                            if (row.idOrder > 0)
                                 checkoutConfirmViewModel.OrderRowHasId = true;
 
                             if (checkoutConfirmViewModel.OrderRowHasId)
-                                checkoutConfirmViewModel.OptionLabel = orderRow.RegistrationType.OptionLabel;
+                                checkoutConfirmViewModel.OptionLabel = row.RegistrationType.OptionLabel;
                         }
 
                         if (Request["referred"] != null &&
@@ -320,6 +320,26 @@ namespace CUWebinars.Web.Core.Orchestrators
             return null;
         }
 
+        public ContinueShoppingModel BuildContinueShoppingModel(int? idWebinar)
+        {
+            Webinar webinar = LoadWebinar(idWebinar.Value);
+
+            string[] titleWords = webinar.Title.Split();
+
+            string presenterFullName = webinar.Presenter.WebUser.FullName;
+            ContinueShoppingModel model = new ContinueShoppingModel
+            {
+
+                    SelectedRelated = _webinarManagementService.GetRelated(idWebinar),
+                    SelectedPresenter = _webinarManagementService.GetWebinarByPresenterFullName(presenterFullName),
+                    SelectedTopics = _webinarManagementService.GetTopicsByWebinar(idWebinar)
+            };
+            return null;
+
+        }
+
+
+
         public DiscountModel BuildDiscountModel(WebUser currentUser)
         {
             var discountModel = new DiscountModel();
@@ -334,14 +354,15 @@ namespace CUWebinars.Web.Core.Orchestrators
             discountModel.Status = userDiscount.Status;
             discountModel.Notes = userDiscount.Notes;
 
-            discountModel.CreditsRemain = userDiscount.CreditsRemain;
-            discountModel.CreditsUsed = userDiscount.CreditsUsed;
+            discountModel.CreditsRemain = _orderManagementService.CalculateCreditsRemain(userDiscount);
+            discountModel.CreditsUsed = _orderManagementService.CalculateCreditsUsed(userDiscount);
             discountModel.Cost = userDiscount.Cost;
             discountModel.DateBilled = userDiscount.DateBilled;
             discountModel.FlatOff = userDiscount.FlatOff;
             discountModel.PercentOff = userDiscount.PercentOff;
             discountModel.Status = userDiscount.Status;
             discountModel.DiscountCode = userDiscount.DiscountCode;
+            discountModel.TotalCount = userDiscount.TotalCount;
 
             return discountModel;
         }
@@ -429,28 +450,19 @@ namespace CUWebinars.Web.Core.Orchestrators
             var order = _orderManagementService.GetOrdersByUserId(idUser).FirstOrDefault();
             OrderRow orderRow = null;
             IEnumerable<AdditionalLocation> additionalLocations = Enumerable.Empty<AdditionalLocation>();
-            
+
             if (!ReferenceEquals(null, order))
             {
                 orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
                 additionalLocations = orderRow.AdditionalLocation;
             }
 
-            var dataOp = new DataOperations(_globals.DefaultConnectionString);
-            var addPrice = dataOp.GetAdditionalLocationsPricing(idWebinar).SingleOrDefault();
-
-            decimal priceOfAdditionalLocation = 0M;
-
-            if (!ReferenceEquals(addPrice, null))
-            {
-                priceOfAdditionalLocation = addPrice.Price; // Item2 of the Tuple is the price
-            }
-
+            decimal priceOfAdditionalLocation = _orderManagementService.GetAdditionalLocationsPricing(idWebinar);
 
             var addAdditionalLocationViewModel = new AdditionalLocationOfferViewModel
             {
                 AdditionalLocations = additionalLocations.ToList(),
-                
+
                 OrderExists = !ReferenceEquals(order, null),
                 Emails = order == null ? new List<string>() : additionalLocations.Select(al => al.Email).ToList(),
                 Price = priceOfAdditionalLocation,
@@ -477,18 +489,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     if (!optionsCost.HasValue)
                     {
-                        var dataOperations =
-                            new Business.Core.DataOperations(GlobalConfig.GlobalConfigSingleton.DefaultConnectionString);
-                        var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(orderRow.idWebinar);
-                        if (additionalLocationsPricing == null)
-                        {
-                            _logger.Warn("AdditionalLocation lacks price on: " + orderRow.idWebinar);
-                            optionsCost = 0;
-                        }
-                        else
-                        {
-                            optionsCost = additionalLocationsPricing.Single().Price;
-                        }
+                        optionsCost = _orderManagementService.GetAdditionalLocationsPricing(orderRow.idWebinar);
                     }
 
                     string addressesForAdditionalLocations = "";
@@ -497,7 +498,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         foreach (var addy in orderRow.AdditionalLocation)
                         {
                             if (_appHelper.CheckIsEmailValid(addy.Email.Trim()))
-                            addressesForAdditionalLocations += addy.Email.Trim() + "<br>";
+                                addressesForAdditionalLocations += addy.Email.Trim() + "<br>";
                         }
 
                         addressesForAdditionalLocations.Remove(addressesForAdditionalLocations.IndexOf('<'));
@@ -506,14 +507,14 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     var displayRowPriceViewModel = new DisplayRowPriceViewModel
                     {
-                        Discount = orderRow.Discount,
+                        //Discount = orderRow.Discount,
                         NumberOfAdditionalLocations = orderRow.AdditionalLocation.Count(),
                         AddressesForAdditionalLocations = addressesForAdditionalLocations,
-                        OrderStatus = orderRow.Order.OrderStatus,
-                        Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
+                        //OrderStatus = orderRow.Order.OrderStatus,
+                        //Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
                         PricesAndDiscounts =
                             _orderManagementService.CalculateOrderCost(orderRow.Order, optionsCost.Value),
-                        RowPrice = orderRow.RowPrice,
+                        //RowPrice = orderRow.RowPrice,
                         RegistrationType = orderRow.RegistrationType
                     };
 
@@ -590,15 +591,15 @@ namespace CUWebinars.Web.Core.Orchestrators
                     var addressesAndOptionsCost =
                         _orderManagementService.GetCostOfAdditionalLocations(orderRow.AdditionalLocation,
                             orderRow.idWebinar);
-                    
-                    
+
+
                     var additionalLocationsViewModel = new AdditionalLocationsViewModel
                     {
                         AdditionalLocations = orderRow.AdditionalLocation,
                         Addresses = addressesAndOptionsCost.Item1,
                         OptionsCost = addressesAndOptionsCost.Item2
                     };
-                    
+
                     return additionalLocationsViewModel;
                 }
                 catch (Exception exception)
@@ -616,6 +617,16 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             _logger.Info("CancelOrder hit {0}", idOrder);
             _orderManagementService.DeleteOrder(orderId: idOrder);
+        }
+
+        public void SetOrderStatus(int idOrder, string loggedInEmail, OrderStatus orderStatus)
+        {
+            Order order = GetOrderById(idOrder);
+            if (order.BillingEmail.ToLower() == loggedInEmail.ToLower())
+            {
+                order.OrderStatus = orderStatus;
+                _orderManagementService.SaveChanges(); // less processing than SaveOrderChanges
+            } // else log this attempt? may want some visibility in case admins ever end up here
         }
 
         public Tuple<string, string> CheckIfAddLocShouldHide(int optionId)
@@ -709,7 +720,16 @@ namespace CUWebinars.Web.Core.Orchestrators
                     _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.SelectedWebUser) : // if logged in as admin or affiliate
                     _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.idUser);
 
-                return CreateNewOrder(currentAffiliate, webUser, webinar, newOrderRow, beingImpersonatedClaim);
+                var order = CreateNewOrder(currentAffiliate, webUser, webinar, newOrderRow, beingImpersonatedClaim);
+
+                if (formModel.CCEmail != null)
+                {
+                    var newJson = new JProperty(string.Concat(JsonPropertyKeys.CarbonCopy), formModel.CCEmail);
+                    order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, newJson);
+                    _orderManagementService.SaveChanges();
+                }
+
+                return order;
             }
             catch (Exception ex)
             {
@@ -721,14 +741,19 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public Order CreateOrderByAffiliate(CheckoutOptionsViewModel formModel, Affiliate affiliate)
         {
+
+
+
             _stateService.SetValue(DomainConstants.CheckoutInProcess, true);
             Claim beingImpersonatedClaim = null;
 
-            if (Request.IsAuthenticated)
-            {
-                var user = Request.RequestContext.HttpContext.User as ClaimsPrincipal;
+            //if (Request.IsAuthenticated)
+            //{
+            var user = Request.RequestContext.HttpContext.User as ClaimsPrincipal;
+            if (user != null)
                 beingImpersonatedClaim = user.Claims.SingleOrDefault(c => c.Type == ClaimTypes.BeingImpersonated);
-            }
+
+            //}
 
             var webinar = _webinarManagementService.GetWebinar(formModel.idWebinar);
 
@@ -759,7 +784,17 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 order = _orderManagementService.AssignAffiliateToOrder(currentAffiliate.idUserAff, order);
 
-                //_orderManagementService.SaveChanges();
+                JProperty adminMsg = new JProperty(JsonPropertyKeys.AffiliateCheckout, JsonConvert.SerializeObject("Order created by: " + order.Affiliate.DisplayTitle + " - " + user.Identity.Name, Formatting.None,
+                        new JsonSerializerSettings()
+                        {
+                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                        }));
+
+                order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, adminMsg);
+                order.AffiliateComments = JsonHelpers.MergeJsonWithStoredField(order.AffiliateComments, adminMsg);
+                order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, adminMsg);
+
+                _orderManagementService.SaveChanges();
 
                 return order;
             }
@@ -774,7 +809,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         public ExpressCheckoutPostBackModel BuildExpressPostback(ExpressCheckoutPostBackModel form)
         {
             var user = _membershipService.GetUserByEmail(form.email5);
-            bool userCreatedByCheckout = false;
+
             if (!ReferenceEquals(null, user))
             {
                 form.UserIsConfirmed = "yes";
@@ -794,13 +829,13 @@ namespace CUWebinars.Web.Core.Orchestrators
                     form.DisplayRowPriceViewModel = new DisplayRowPriceViewModel
                     {
                         PricesAndDiscounts = displayRowPriceViewModel,
-                        Discount = orderRow.Discount,
+                        //Discount = orderRow.Discount,
                         //NumberOfAdditionalLocations = additionalLocationsCount,
-                        OrderStatus = expressOrder.OrderStatus,
-                        Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
+                        //OrderStatus = expressOrder.OrderStatus,
+                        //Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
 
                         RegistrationType = orderRow.RegistrationType,
-                        RowPrice = orderRow.RowPrice
+                        //RowPrice = orderRow.RowPrice
                     };
 
                 }
@@ -814,11 +849,28 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
             catch (Exception ex)
             {
-                _logger.Fatal("ExpressPostback tossed:" + ex.Message + " stacktrace: " + ex.StackTrace );
+                _logger.FatalException("ExpressPostback tossed:", ex);
             }
             return null;
         }
 
+        public RegType FindRegType4ExpressPostback2(string idRegType, int q18QWebinarid18)
+        {
+            return _regTypeRepository.FindRegType4ExpressPostback2(idRegType, q18QWebinarid18);
+        }
+
+        public string GetDiscountCaption(Discount discount, OrderRow row, int? undo, int? previewOnly)
+        {
+            return _orderManagementService.CalculateDiscountRedemption(discount, row, null, 1);
+
+        }
+
+
+
+        public decimal CalculateCreditsRemaining(Discount myDiscount)
+        {
+            return _orderManagementService.CalculateCreditsRemain(myDiscount);
+        }
 
 
         public OrderRow GetOrderRowLoaded(int idOrderRow)
@@ -952,22 +1004,37 @@ namespace CUWebinars.Web.Core.Orchestrators
             var existingAdditionalLocationsForOrderRow =
                 _orderManagementService.GetAdditionalLocationsForOrderRow(newOrderRowId);
 
-
-            foreach (var newSubmittedAdditionalLocation in additionalLocations.Where(al => !existingAdditionalLocationsForOrderRow.Select(eal => eal.Email).Contains(al.Email)))
+            if (additionalLocations == null)
             {
-                newSubmittedAdditionalLocation.idOrderRow = newOrderRowId;
-                _orderManagementService.RemoveFromDiscount(newOrderRowId);
-                _orderManagementService.AddAdditionalLocation(newSubmittedAdditionalLocation);
-            }
+                foreach (var additionalLocationToDelete in
+                    existingAdditionalLocationsForOrderRow)
+                {
 
-            foreach (var additionalLocationToDelete in
-                existingAdditionalLocationsForOrderRow.Where(existingEmail => !additionalLocations.Select(al => al.Email).Contains(existingEmail.Email)))
+                    //_orderManagementService.RestoreToDiscount(newOrderRowId);
+                    _orderManagementService.RemoveAndDeleteAdditionalLocation(additionalLocationToDelete);
+                }
+            }
+            else
             {
+                foreach (
+                    var newSubmittedAdditionalLocation in
+                        additionalLocations.Where(
+                            al => !existingAdditionalLocationsForOrderRow.Select(eal => eal.Email).Contains(al.Email)))
+                {
+                    newSubmittedAdditionalLocation.idOrderRow = newOrderRowId;
+                    //_orderManagementService.RemoveFromDiscount(newOrderRowId);
+                    _orderManagementService.AddAdditionalLocation(newSubmittedAdditionalLocation);
+                }
 
-                _orderManagementService.RestoreToDiscount(newOrderRowId);
-                _orderManagementService.RemoveAndDeleteAdditionalLocation(additionalLocationToDelete);
+                foreach (var additionalLocationToDelete in
+                    existingAdditionalLocationsForOrderRow.Where(
+                        existingEmail => !additionalLocations.Select(al => al.Email).Contains(existingEmail.Email)))
+                {
+
+                    //_orderManagementService.RestoreToDiscount(newOrderRowId);
+                    _orderManagementService.RemoveAndDeleteAdditionalLocation(additionalLocationToDelete);
+                }
             }
-
             _orderManagementService.SaveChanges();
         }
 
@@ -1021,6 +1088,17 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
 
             return _orderManagementService.GetWebUser(email);
+        }
+
+        public Affiliate GetAffiliateById(int affiliateId)
+        {
+            return _orderManagementService.GetAffiliateById(affiliateId);
+        }
+
+
+        public List<Order> GetOrdersByUser(string loggedInEmail)
+        {
+            return _orderManagementService.GetOrdersByEmail(loggedInEmail, 19).ToList();
         }
 
         public ExpressCheckoutModel ExpressCheckout(Order order, WebUser user)
@@ -1090,7 +1168,12 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             if (email == null) throw new ArgumentNullException(@"email");
             if (row == null) throw new ArgumentNullException(@"row");
-
+            var editingUser = "";
+            if (Request.IsAuthenticated)
+            {
+                var user = Request.RequestContext.HttpContext.User;
+                if (!ReferenceEquals(user, null)) editingUser = user.Identity.Name;
+            }
             try
             {
                 if (!OnDemandCodeIsUnique(row.OnDemandCode))
@@ -1100,7 +1183,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     {
                         row.OnDemandCode = RandomHelpers.GetUniqueCode(5);
                     }
-                    _logger.Warn("OnDemand Order Changed " + row.idOrder + " from: " + fromVal + " to: " + row.OnDemandCode);
+                    _logger.Warn("OnDemand Order Changed " + row.idOrder + " from: " + fromVal + " to: " + row.OnDemandCode + " by: " + editingUser);
                 }
 
                 _orderManagementService.SaveChanges();
@@ -1109,7 +1192,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
             catch (Exception ex)
             {
-                _logger.Fatal("AddClaimForPostEventMaterials: ", ex);
+                _logger.FatalException("AddClaimForPostEventMaterials: ", ex);
             }
 
         }
@@ -1137,7 +1220,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
             catch (Exception ex)
             {
-                _logger.Fatal("InsertOnDemandClaim" + ex);
+                _logger.FatalException("InsertOnDemandClaim", ex);
             }
 
             var result = _globalConfig.TenantURL + "/o/" + orderId + "-" + order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).OnDemandCode;

@@ -15,45 +15,19 @@
     string wDate = "<b>" + DateTimeHelper.FormatDate(Model.Webinar.Date) + "</b> &nbsp;";
     wDate = wDate + DateTimeHelper.FormatTimeWithDuration(Model.Webinar.Date, Model.TimeZone, false, Model.Webinar.Duration);
 
-    ViewBag.Title = "Send VR - Daily " + promoEvent.Title;
+    ViewBag.Title = "Generate Promo Emails - Daily" + promoEvent.Title;
 
     //var minDay = 1.Days().Since(DomainConstants.BuildUtcNowAsCts);
     //var maxDay = DomainConstants.BuildUtcNowAsCts.NextMonth();
 
+    bool hasAffiliates = Model.Affiliates.Count > 0;
+    bool isAffiliateRestricted = Model.Affiliate != null;
 }
 
-<!-- TODO: some or all of the following should be moved to BundleConfig.cs -->
+@Scripts.Render("~/bundles/wijmo-editor-scripts")
+<link type="text/css" href="~/Scripts/WijmoEditor/Themes/arctic/jquery-wijmo.css" rel="stylesheet" />
+@Styles.Render("~/bundles/wijmo-editor-styles")
 
-<!--Theme-->
-<link href="/scripts/wijmoeditor/themes/arctic/jquery-wijmo.css" rel="stylesheet" type="text/css" />
-
-<!--Wijmo Widgets CSS-->
-<link href="/scripts/wijmoeditor/jquery.wijmo-pro.3.20153.84.css" rel="stylesheet" type="text/css" />
-
-<script type="text/javascript" src="http://cdn.wijmo.com/external/require.js"></script>
-
-<!-- TODO: I would like to understand why the following "require.js" stuff is needed:
-    is there an issue with BundleConfig.js?
-    does it end up loading some things (jquery, jquery-ui) twice?
-    are there pros/cons to using it / depending on it?
--->
-
-<script type="text/javascript">
-    // load from require.js
-    requirejs.config({
-        baseUrl: "http://cdn.wijmo.com/amd-js/3.20153.83",
-        paths: {
-            "jquery": "jquery-1.11.1.min",
-            "jquery-ui": "jquery-ui-1.11.0.custom.min",
-            "jquery.ui": "jquery-ui",
-            "jquery.mousewheel": "jquery.mousewheel.min",
-            "globalize": "globalize.min"
-        }
-    });
-    // end load from require.js
-</script>
-
-<script src="/scripts/app/admin/promo-generator.js" type="text/javascript"></script>
 
 <script id="scriptInit" type="text/javascript">
     @{
@@ -62,6 +36,7 @@
             {
                 ttsDomain = a.ttsDomain,
                 idUserAff = a.idUserAff,
+                EmailBanner = a.EmailBanner,
                 ContactPerson = a.ContactPerson,
                 ContactEmail = a.ContactEmail,
                 ContactPhone = a.ContactPhone,
@@ -71,14 +46,12 @@
 
     var affs = @Html.Raw(Json.Encode(affDTO));
 
-    require(["wijmo.wijeditor"], function () {
-        $(document).ready(function () {
-            $("#editorTA").wijeditor({
-                // editorMode: "split" // can default to split view if they want
-                textChanged: function (e, data) { // Set textChanged event handler function
-                    SetCopyToClipboardTextArea(false);
-                }
-            });
+    $(document).ready(function () {
+        $("#editorTA").wijeditor({
+            // editorMode: "split" // can default to split view if they want
+            textChanged: function (e, data) { // Set textChanged event handler function
+                SetCopyToClipboardTextArea(false);
+            }
         });
     });
 
@@ -134,10 +107,10 @@
 
 </script>
 
-@*figure out how to get the calendar working*@
-<script src="/Scripts/fullcalendar/fullcalendar.js" type="text/javascript"></script>
-<link href="/Scripts/fullcalendar/fullcalendar.css" rel="stylesheet" type="text/css" />
-
+@*figure out how to get the calendar working
+    <script src="/Scripts/fullcalendar/fullcalendar.js" type="text/javascript"></script>
+    <link href="/Scripts/fullcalendar/fullcalendar.css" rel="stylesheet" type="text/css" />
+*@
 
 @* vertical tab layout based on http://tutsme-webdesign.info/tutorials/navs/pills_stacked_panesright.html*@
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "mailer", @class = "form-inline form-promo-generater" }))
@@ -172,10 +145,30 @@
                         <p>
                             @Html.HiddenFor(m => m.TemplateType)
                             @Html.HiddenFor(m => m.Webinar.idWebinar)
+                            @Html.HiddenFor(m => m.Webinar.Title)
 
-                            <input type="button" id="resetAllAffiliates" class="button btn btn-small" value="Reset All Affiliates" />
-                            <label for="SendDate">Send date:</label> @Html.TextBoxFor(m => m.SendDate,  "{0:MM/dd/yyyy}", new { @class = "input", type = "date" })
-                            <input type="button" id="submitGenPromoTexts" class="button btn btn-success btn-small" value="Generate Master Markup" />
+                            @if (hasAffiliates) { 
+                                <input type="button" id="resetAllAffiliates" class="button btn btn-small" value="Reset@(isAffiliateRestricted ? " Affiliate" : " All Affiliates")" />
+                            }
+                            <label for="SendDate">Send date:</label>@Html.TextBoxFor(m => m.SendDate, "{0:MM/dd/yyyy}", new { @class = "input", type = "date" })
+                            <button id="submitGenPromoTexts" class="button btn btn-success btn-small">Generate Master Markup</button>
+                            @if (hasAffiliates)
+                            {
+                                <button id="writeAllAffMarkupToStorage" class="button btn btn-small">Save@(isAffiliateRestricted ? " Affiliate" : " All")</button>
+                            }
+                            @*@if (TempData["ListOfWebinarsForUpcoming"] != null)
+                            {
+                                <a id="pickWebinars" href="#" data-toggle="collapse" data-target="#ListForUpcoming" class="button btn btn-info btn-small">Pick Webinars for Upcoming</a>
+                                <div id="ListForUpcoming" class="collapse out">
+                                    <div>
+
+                                        <input type="hidden" name="id" value=@Model.Webinar.idWebinar />
+                                        @Html.DropDownList("ListOfWebinarsForUpcoming", (MultiSelectList)TempData["ListOfWebinarsForUpcoming"], new { multiple = "multiple" })
+                                        <br />
+                                    </div>
+
+                                </div>
+                            }*@
 
                         </p>
                         <p>
@@ -192,7 +185,9 @@
                                 <input type="button" class="button btn btn-small reset-to-master" value="Reset to Master" />
                                 <input type="button" class="button btn btn-small copy-markup" value="Copy to Clipboard" />
                                 @Html.TextBox("SendToList_" + @aff.idUserAff, "", new { @class = "input" })
+                                @Html.HiddenFor(m => aff.ttsDomain, new { id = "ttsDomain_" + @aff.idUserAff })
                                 <input type="button" class="button btn btn-small send-to-affiliate" value="Send" />
+                                <button class="button btn btn-small write-markup-to-storage">Save</button>
                             </p>
                             <p>
                                 <textarea id="editor_@aff.idUserAff" name="editor_@aff.idUserAff" style="display: none;"></textarea>

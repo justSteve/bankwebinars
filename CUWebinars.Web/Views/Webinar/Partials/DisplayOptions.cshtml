@@ -1,16 +1,24 @@
-﻿@using System.Configuration
-@using System.Text
-@using CUWebinars.Web.Core
-@using Ninject
+﻿@using CUWebinars.Web.Core
 @model DisplayOptionsViewModel
 
 @{
     var defaultCheck = "checked";
 
     var explainsOptionsBuilder = new StringBuilder();
-    explainsOptionsBuilder.Append("The following options are available for this webinar.<br>");
+    //explainsOptionsBuilder.Append("The following options are available for this webinar.<br>");
 }
-
+<style>
+    #ExplainRegistrationOptions {
+        width: 540px;
+    }
+     .regTypeDescOutdent {
+         border-top-style: dotted;
+         border-top-color: gray;
+         margin-top: 10px;
+         text-indent: -1em;
+         padding-left: 1em;
+     }
+</style>
 <div id="AttendRegTypes" class="modal hide fade">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -25,8 +33,21 @@
         <button type="button" class="btn btn-success" data-dismiss="modal" aria-hidden="true">Finished</button>
     </div>
 </div>
+<div id="IsOrderForCoWorker" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 id="confirmCaption">Ordering for a co-worker?</h3>
+    </div>
+    <div id="confirmResult" class="modal-body">
+        <p>If you would like to share your order's notifications with a co-worker - to CC them with Connection Information and all other notifications related to the order - just enter the email in the textbox below. </p>
+        <input type="text" name="CCEmail" id="CCEmail"/>
+    </div>
+    <div class="modal-footer">
+        <a href="#" id="confirmCCEmail" role="button" data-dismiss="modal" class="btn btn-success">Continue</a>
+        <button id="cancelCCEmail" class="btn" data-dismiss="modal">Cancel</button>
+    </div>
+</div>
 <div id="ShowsOptions">
-    <button type="button" class="btn-success btn pull-right" id="AddToCart"> Sign Up </button>
     @{
         if (Model.OrderRowExists)
         {
@@ -34,70 +55,74 @@
                 @Html.Partial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel)
             </div>
         }
-    }
-    <div id="userHasDiscount"></div>
-    <div id="RegistrationType">
-        <dl>
-            @foreach (var myOption in Model.Options)
-            {
-                bool appendJustOnce = true;
+        else
+        {
+            <button type="button" class="btn-success btn pull-right" id="AddToCart"> Sign Up </button>
 
-                if (!myOption.Key.SKU.Contains("Upgrade"))
-                {
-                    explainsOptionsBuilder.Append("<span><b>" + myOption.Key.OptionLabel + "</b> - " + myOption.Key.OptionExplain + " This option costs <i>$" + myOption.Key.Price.ToString().Replace(".00", "") + "</i><br></span>");
-                    //font override to apply (days)
-                    <dt style="font-weight: normal">
-                        @Html.Hidden(string.Concat("IsShippingRequired_", myOption.Key.idRegType), myOption.Value.ToString())
-                        <input type="radio" class="checkbox" id='regTypeID_@(myOption.Key.idRegType)' @defaultCheck name="RegistrationTypeId"
-                               value="@myOption.Key.idRegType" />
-                        &nbsp;&nbsp;<b>
-                            @Html.Raw(myOption.Key.OptionLabel.Replace("Five", "Five </b>(days)<b>").Replace("Six", "Six </b>(months)<b>")) - $@myOption.Key.Price &nbsp;&nbsp;
-                        </b>
-                        <a onclick="return false;" data-html="true" rel="tooltip" href="#" data-toggle="tooltip" title='@Html.Raw(myOption.Key.OptionExplain).ToHtmlString().Replace("<i>","").Replace("</i>","")'><i class="icon-question-sign"></i></a>
-                    </dt>
-                }
-                else
-                {
-                    if (ViewBag.userOwnsThisEvent > 0)
+            <div id="RegistrationType">
+                <dl>
+                    @foreach (var myOption in Model.Options)
                     {
-                        if (appendJustOnce)
+                        bool appendJustOnce = true;
+
+                        if (!myOption.Key.SKU.Contains("Upgrade"))
                         {
-                            appendJustOnce = false;
-                            //since the RegType hasn't been designated as an 'Upgrade'
-                            // we need to display it. Only show 'Upgrades' to users
-                            // who already own a registration.
-                            explainsOptionsBuilder.Append("Upgrade your existing order with these options - ");
-
+                            explainsOptionsBuilder.Append("<div class='regTypeDescOutdent'><b>" + myOption.Key.OptionLabel.Replace(" (days)", "").Replace(" (months)", "") + "</b> (<i>$" + myOption.Key.Price.ToString().Replace(".00", "") + "</i>) - " + myOption.Key.OptionExplain + "</div>");
+                            //font override to apply (days)
+                            <dt style="font-weight: normal">
+                                @Html.Hidden(string.Concat("IsShippingRequired_", myOption.Key.idRegType), myOption.Value.ToString())
+                                <input type="radio" class="checkbox" id='regTypeID_@(myOption.Key.idRegType)' @defaultCheck name="RegistrationTypeId"
+                                       value="@myOption.Key.idRegType" />
+                                &nbsp;&nbsp;<b>
+                                    @Html.Raw(myOption.Key.OptionLabel.Replace("Five", "Five </b>(days)<b>").Replace("Six", "Six </b>(months)<b>")) - $@myOption.Key.Price &nbsp;&nbsp;
+                                </b>
+                                <a onclick="return false;" data-html="true" rel="tooltip" href="#" data-toggle="tooltip" title='@Html.Raw(myOption.Key.OptionExplain).ToHtmlString().Replace("<i>", "").Replace("</i>", "")'><i class="icon-question-sign"></i></a>
+                            </dt>
                         }
-                        <dt style="font-weight: normal">
-                            <input type="radio" class="checkbox" id='regTypeID_@(myOption.Key.idRegType)' @defaultCheck name="regType" value="@myOption.Key.idRegType" />
-                            &nbsp;&nbsp;<b>
-                                @Html.Raw(myOption.Key.OptionLabel.Replace("Five", "Five </b>(days)<b>").Replace("Six", "Six </b>(months)<b>")) - $@myOption.Key.Price &nbsp;&nbsp;- $
-                                @myOption.Key.Price
-                            </b>&nbsp;
-                            &nbsp;<a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.Key.OptionExplain) "><i class="icon-question-sign"></i></a>
-                            <br />
-                        </dt>
+                        else
+                        {
+                            if (ViewBag.userOwnsThisEvent > 0)
+                            {
+                                if (appendJustOnce)
+                                {
+                                    appendJustOnce = false;
+                                    //since the RegType hasn't been designated as an 'Upgrade'
+                                    // we need to display it. Only show 'Upgrades' to users
+                                    // who already own a registration.
+                                    explainsOptionsBuilder.Append("Upgrade your existing order with these options - ");
+
+                                }
+                                <dt style="font-weight: normal">
+                                    <input type="radio" class="checkbox" id='regTypeID_@(myOption.Key.idRegType)' @defaultCheck name="regType" value="@myOption.Key.idRegType" />
+                                    &nbsp;&nbsp;<b>
+                                        @Html.Raw(myOption.Key.OptionLabel.Replace("Five", "Five </b>(days)<b>").Replace("Six", "Six </b>(months)<b>")) - $@myOption.Key.Price &nbsp;&nbsp;- $
+                                        @myOption.Key.Price
+                                    </b>&nbsp;
+                                    &nbsp;<a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.Key.OptionExplain) "><i class="icon-question-sign"></i></a>
+                                    <br />
+                                </dt>
+                            }
+                        }
+                        defaultCheck = string.Empty;
                     }
-                }
-                defaultCheck = string.Empty;
-            }
-        </dl>
-        <a href="#AttendRegTypes" class="btn btn-mini pull-right" data-toggle="modal">attendance options explained</a>
-    </div>
-    <script type="text/javascript" language="javascript">
-        $(document).ready(function () {
-            $("#ExplainRegistrationOptions").html("@Html.Raw(explainsOptionsBuilder.ToString())");
-            $('.dt').tooltip({ selector: "a[rel=tooltip]" });
+                </dl>
+                <div style="text-align: right;" class="pull-right">
+                    <a href="#IsOrderForCoWorker" class="btn btn-mini " data-toggle="modal">ordering for a co-worker?</a><br />
+                    <a href="#AttendRegTypes" class="btn btn-mini " data-toggle="modal">attendance options explained</a>
+                </div></div>
+            <script type="text/javascript" language="javascript">
+                $(document).ready(function () {
+                    $("#ExplainRegistrationOptions").html("@Html.Raw(explainsOptionsBuilder.ToString())");
+                    $('.dt').tooltip({ selector: "a[rel=tooltip]" });
 
-        });
-    </script>
-
-    @if (Model.WebinarStatus == WebinarStatus.Scheduled || Model.WebinarStatus == WebinarStatus.Active || Model.WebinarStatus == WebinarStatus.InProgress)
-    {
-        <div id="displayAddLoc">
-            @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", Model.AdditionalLocationOfferViewModel)
-        </div>
+                });
+            </script>
+        }
+        if (Model.WebinarStatus == WebinarStatus.Scheduled || Model.WebinarStatus == WebinarStatus.Active || Model.WebinarStatus == WebinarStatus.InProgress)
+        {
+            <div id="displayAddLoc">
+                @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", Model.AdditionalLocationOfferViewModel)
+            </div>
+        }
     }
-
 </div>

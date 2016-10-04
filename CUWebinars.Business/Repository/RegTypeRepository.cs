@@ -27,71 +27,43 @@ namespace CUWebinars.Business.Repository
             return items.Where(o => o.idRegType == optionId).ToList();
         }
 
-        public IDictionary<RegType, bool> FindAllPossibleRegTypesByWebinarId2(int id, bool detached)
-        {
-            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
-
-            IList<RegType> regTypes = dataOperations.FindAllPossibleRegTypesByWebinarId(id);
-            IDictionary<RegType, bool> regTypesAndShippingRequirement = new Dictionary<RegType, bool>();
-
-
-            return regTypesAndShippingRequirement;
-        }
-
 
         public IDictionary<RegType, bool> FindAllPossibleRegTypesByWebinarId(int id, bool detached)
         {
-            //return every RegType a given event without regard to current state of the event. 
-            // permits admins to change a recorded order to 'live' even after the event has occurred
-
             var stronglyTypedContext = (TTSWebinarsContext)db;
 
-            var webinars = stronglyTypedContext.Webinars
-                .Where(w => w.idWebinar == id);
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
-            // There can be only one RegTypesGroupsXrefs per webinar at any one time for end-user.
-            // But when an Admin is editing an order he needs to see all RegTypes without filtering
-            // against the 'PreEvent' or 'PostEvent' state. To support this need a column is added
-            // to the RegTypesGroup that provides a CrossRefenence from the current state to it's alternate.
+            IList<RegType> regTypes = new List<RegType>();
+            
+            var regTypeIds = dataOperations.FindAllPossibleRegTypesByWebinarId(id);
 
-            var regTypesGroupsXrefs = webinars.SelectMany(w => w.RegTypesGroupsXref);
+            foreach (var idRegType in regTypeIds)
+            {
+                regTypes.Add(FindRegType(idRegType));
+            }
+            
 
-            //  For each of those RegTypesGroupsXrefs, get the relevant OptionGroup
-            var regtypesGroups = regTypesGroupsXrefs.Include(o => o.RegTypesGroup)
-                .Select(o => o.RegTypesGroup);
-
-            //TODO: Add the RegTypeGroup where idRegTypeGroup = AltState
-
-
-            //  Get all OptionsXrefs for those RegTypesGroups
-            var regtypesXrefs = regtypesGroups.Include(o => o.RegTypesXrefs)
-                .SelectMany(opt => opt.RegTypesXrefs);
-
-            //  Finally, get the RegTypes
-            //  NOTE: ToDictionary is called here with the "shape" <RegType, bool> because I am pairing the RegType with a bool
-            //  that determines whether the RegType in question includes materials to be physically shipped. This "pairing" needs
-            //  to make it all the way to the view so when the user clicks on a radio button, that information is right there in the dom.
-            var regTypes =
-                regtypesXrefs.Include(o => o.RegType)
-                    .Select(o => o.RegType)
+            var regTypes_ =
+                regTypes
                     .Distinct()
                     .ToList()
                     .ToDictionary(r => r, rt => rt.ShowShippedNotifications.Trim().Equals("Yes", StringComparison.OrdinalIgnoreCase), new RegTypeComparer());
 
             if (!detached)
-                return regTypes;
+                return regTypes_;
 
-            foreach (var regType in regTypes)
+            foreach (var regType in regTypes_)
             {
                 stronglyTypedContext.Entry(regType.Key).State = EntityState.Detached;
             }
 
-            return regTypes;
+            return regTypes_;
 
         }
         public IDictionary<RegType, bool> FindRegTypesByWebinarId(int id, bool detached)
         {
-            IDictionary<RegType, bool> regTypesAndShippingRequirement = new Dictionary<RegType, bool>();
+            //IDictionary<RegType, bool> regTypesAndShippingRequirement = new Dictionary<RegType, bool>();
 
             var stronglyTypedContext = (TTSWebinarsContext) db;
 
@@ -113,6 +85,7 @@ namespace CUWebinars.Business.Repository
                 regtypesXrefs.Include(o => o.RegType)
                     .Select(o => o.RegType)
                     .Distinct()
+                    .OrderBy(o => o.SortOrder)
                     .ToList()
                     .ToDictionary(r => r, rt => rt.ShowShippedNotifications.Trim().Equals("Yes", StringComparison.OrdinalIgnoreCase), new RegTypeComparer());
 
@@ -161,6 +134,31 @@ namespace CUWebinars.Business.Repository
 
 
 
+
+        }
+
+        public RegType FindRegType4ExpressPostback2(string regType, int idWebinar)
+        {
+            var stronglyTypedContext = (TTSWebinarsContext)db;
+
+            var webinars = stronglyTypedContext.Webinars
+                .Where(w => w.idWebinar == idWebinar);
+
+            // There can be only one RegTypesGroupsXrefs per webinar at any one time
+            var regTypesGroupsXrefs = webinars.SelectMany(w => w.RegTypesGroupsXref);
+
+            //when pre-event
+            //  For each of those RegTypesGroupsXrefs, get the relevant OptionGroup
+            var regtypesGroups = regTypesGroupsXrefs.Include(o => o.RegTypesGroup).Select(o => o.RegTypesGroup);
+
+            //  Get all OptionsXrefs for those RegTypesGroups
+            var regtypesXrefs = regtypesGroups.Include(o => o.RegTypesXrefs).SelectMany(opt => opt.RegTypesXrefs);
+
+            //  Finally, get the RegTypes
+            var regTypeFound =
+                regtypesXrefs.Include(o => o.RegType)
+                    .Select(o => o.RegType).Where(o => o.OptionLabel.StartsWith(regType)).SingleOrDefault();
+            return regTypeFound;
 
         }
     }

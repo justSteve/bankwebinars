@@ -36,7 +36,7 @@ namespace CUWebinars.Web.Helpers
                     timeZoneSuffix = AppConst.TIME_ZONE_EASTERN;
                     break;
                 default:
-                   timeZoneDifference = 0;
+                    timeZoneDifference = 0;
                     timeZoneSuffix = AppConst.TIME_ZONE_CENTRAL;
                     break;
                     ;
@@ -79,7 +79,9 @@ namespace CUWebinars.Web.Helpers
                     timeZoneSuffix = AppConst.TIME_ZONE_EASTERN;
                     break;
                 default:
-                    throw new TTSException("Invalid time zone");
+                    timeZoneDifference = 0;
+                    timeZoneSuffix = AppConst.TIME_ZONE_CENTRAL;
+                    break;
 
             }
 

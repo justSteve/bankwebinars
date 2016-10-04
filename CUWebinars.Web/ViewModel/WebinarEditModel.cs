@@ -10,6 +10,7 @@ namespace CUWebinars.Web.ViewModel
         public int idPresenter { get; set; }
         public string Description { get; set; }
         public string DescriptionLong { get; set; }
+        public string SeriesInfo { get; set; }
         public string ImageUrl { get; set; }
         public string SmallImageUrl { get; set; }
         public IEnumerable<SelectListItem> Statuses { get; set; }

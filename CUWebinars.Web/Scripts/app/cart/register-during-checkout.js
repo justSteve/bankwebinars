@@ -3,7 +3,7 @@ registerDuringCheckout.institutionNames = {};
 
 
 registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, addressOptions, callback) {
-    
+
     L.clientLogger.info('registerDuringCheckout.initialize', { orderId: orderId, webinarId: webinarId, orderRowId: orderRowId, shippingAddressRequired: shippingAddressRequired });
 
     cartStateManager.setCancelOrderForm($('#cancelOrder'));
@@ -34,6 +34,8 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
     });
 
     $('body').on('click', 'input:button', (function (e, data) {
+
+
 
         if (e.currentTarget.value === 'Create New Account?') // called directly in the razor partial view
             return false;
@@ -682,31 +684,6 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
         return false;
     });
 
-    //$('#RegisterFields_Institution').typeahead({
-    //    source: function(query, process) {
-    //        registerDuringCheckout.searchInstitution(query, process);
-    //    },
-
-    //    matcher: function(item) {
-    //        return true;
-    //    },
-
-    //    highlighter: function(name) {
-    //        return name;
-    //    },
-
-    //    sorter: function(items) {
-    //        return items;
-    //    },
-
-    //    updater: function(name) {
-    //        return name;
-    //    }
-
-    //});
-
-    $('#loadingSpinner').remove();
-
 };
 
 registerDuringCheckout.gatherPricingData = function () {
@@ -946,7 +923,7 @@ function hookUpEditUserLogic(button, shippingAddressRequired) {
 
 function hookUpChangeTypeLogic(dropDown) {
 
-    //var changeTypeConfirmModal = $('#changeTypeConfirmModal');
+    var changeTypeConfirmModal = $('#changeTypeConfirmModal');
     var chosenRegTypeLabel = $('#chosenRegType');
     var position,
         typeChosenCurrent,
@@ -1005,6 +982,7 @@ function hookUpChangeTypeLogic(dropDown) {
                         if (data.Result === 'Success') {
                             // This next variable is initially set in the CheckoutConfirm.cshtml razor view
                             anyAddLocs = false;
+                            
                             $('#additionalLocationsCaption').html('None');
 
                             $('#addlocSpiel').text('To add additional locations for this order, please use our Help & Feedback button (lower right corner)  for immediate assistance').addClass('text-info');
@@ -1033,17 +1011,17 @@ function hookUpChangeTypeLogic(dropDown) {
                 updatePriceOnNewSelection(valOfTypeChosenCurrent, registerDuringCheckout.totalPrice, dropDown);
             }
 
-            if (data.shippingDetailsRqrd === 'Yes') {
-                registerDuringCheckout.addressOptions['shippingAddressRequired'] = true;
-            } else {
-                registerDuringCheckout.addressOptions['shippingAddressRequired'] = false;
-            }
+            //if (data.shippingDetailsRqrd === 'Yes') {
+            //    registerDuringCheckout.addressOptions['shippingAddressRequired'] = true;
+            //} else {
+            //    registerDuringCheckout.addressOptions['shippingAddressRequired'] = false;
+            //}
         }).fail(commonFuncs.failCallBack);
     });
 }
 
 // This function's purpose is to update pricing details where the RegType DropDown has its selected value changed.
-// It also displays the Shipping Details modal form where the RegType chosen has a shipping address requirement.
+// TODO: Display 'Confirm Shipping Address' via the Shipping Details modal form where the RegType chosen has a shipping address requirement.
 function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
 
     registerDuringCheckout.gatherPricingData();
@@ -1065,11 +1043,20 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
     }).done(function (data) {
 
         if (data) {
+            if (data.Tax > 0) {
+                $('#showTax').removeClass("hidden");
+            } else {
+                $('#showTax').addClass("hidden");
+            }
 
-            $('#baseCost').html('$' + data.BasePrice + '.00');
-            $('#totalDiscount').html('$' + data.Discount + '.00').parent().addClass('muted');
-            $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '.00');
-            $('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + data.Total + '.00</span>');
+            $('#flyUpdateSuccessFlag').html(data.UpdateSuccessCaption).show();
+            $('#discountCaption').html(data.DiscountCaption);
+            $('#optionLabel').html(data.regTypeShort);
+            $('#baseCost').html('$' + data.BasePrice + '');
+            $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
+            $('#taxAmt').html(data.Tax + '');
+            $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
+            $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
         }
 
         dropDown.removeAttr('disabled');
@@ -1087,7 +1074,7 @@ function ShowModalForShippingDetails(shippingDetailsRqrd) {
 }
 
 function hookUpApplyDiscountLogic(btn, orderRowId) {
-
+    
     btn.on('click', function (e) {
         var $item = $(e);
         var form = $item.parents("form");
@@ -1127,31 +1114,41 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
                 alert("The discount code " + $('#CheckoutDiscountCode').val() + " was not found. Try again or use our Help & Feedback button (lower right corner)  for assistance.");
             } else {
 
+                //regTypeShort = row.RegistrationType.OptionLabelShort,
+                //BasePrice = pricesAndDiscounts.UnitPrice,
+                //Discount = pricesAndDiscounts.TotalDiscount,
+                //OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
+                //Tax = pricesAndDiscounts.TaxAmount,
+                //Total = pricesAndDiscounts.TotalOrderPrice,
+                //FlatOff = pricesAndDiscounts.Discount.FlatOff,
+                //PercentOff = pricesAndDiscounts.Discount.PercentOff
+
                 var flatOff = data.FlatOff;
                 var percentOff = data.PercentOff;
-
+                //console.log(data);
                 var showDiscount = "";
-                if (flatOff > 0) {
+                if (percentOff> 0) {
+                    //alert("flatOff" + data.Discount);
 
-                    var amount2Discount = data.Discount.replace(".00%", "") / 100;
-                    registerDuringCheckout.totalDiscount = registerDuringCheckout.totalPrice * amount2Discount;
+                    var amount2Discount = data.Discount;
+                    registerDuringCheckout.totalDiscount = amount2Discount;
                 }
 
-                if (percentOff > 0) {
+                if (flatOff > 0) {
                     registerDuringCheckout.totalDiscount = data.Discount;
                 }
 
-                var newTotalPrice = registerDuringCheckout.totalPrice - registerDuringCheckout.totalDiscount;
+                var newTotalPrice = data.Total;
 
                 $("#amount").val(newTotalPrice);
 
                 if (newTotalPrice < 0)
                     newTotalPrice = 0;
-
-                $('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 3.').addClass('text-info');
-
-                $('#discountedText').html('Discounted: <span id="totalDiscount">$' + registerDuringCheckout.totalDiscount + '</span>').removeClass('muted');
-                $('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
+                
+                
+                $('#discountedText').html(' <span id="totalDiscount" style="color: red;">Discounted: $' + registerDuringCheckout.totalDiscount + '</span>').removeClass('muted');
+                //original -- what changed this? $('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
+                $('#showTotalPrice').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '</span>');
 
                 $('#discountSpinner').remove();
             }

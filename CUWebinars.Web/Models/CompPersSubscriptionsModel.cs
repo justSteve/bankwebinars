@@ -16,6 +16,6 @@ namespace CUWebinars.Web.Models
 
         [HiddenInput]
         public string EditDiscountTitle { get; set; }
-        public DiscountModel Discount { get; set; }
+        public CompliancePerspectivesModel Discount { get; set; }
     }
 }

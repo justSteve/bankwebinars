@@ -1,17 +1,31 @@
-﻿<div id="CancelModal" class="modal hide fade">
-    @using (Html.BeginForm("CancelOrder", "Cart", null, FormMethod.Post, new {id = "cancelOrder"}))
+﻿
+
+@model Order
+
+<script language="javascript" type="text/javascript">
+    function openQWindow() {
+        window.location.href = '/cart/CancelPauseOrder?idOrder=@Model.idOrder&email=@Model.BillingEmail' ;
+        //window.open('https://form.jotform.com/60898267714974?idOrder=' + cartStateManager.getOrderRowId(), 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');
+    }
+</script>
+
+<div id="CancelModal" class="modal hide fade">
+    @using (Html.BeginForm("CancelOrder", "Cart", null, FormMethod.Post, new { id = "cancelOrder" }))
     {
-        <input type="hidden" name="id" id="cancelModalOrderId"/>
+        <input type="hidden" name="id" id="cancelModalOrderId" />
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3 id="cancelCaption">Cancel This Order?</h3>
+            <h3 id="cancelCaption">Pause or Cancel This Order?</h3>
         </div>
         <div id="cancelResult" class="modal-body">
-            <p>Please confirm that you wish to delete this registration.</p>
+            <p>
+                We understand it can be difficult to bring together all of the various bits of info that make up a webinar's registration. If there's something we can explain better or information we can provide - just hit <i>Pause</i>. We'll be ready anytime you want to resume this order!
+            </p>
         </div>
         <div class="modal-footer">
-            <a href="#" id="rtn" class="btn btn-inverse" data-dismiss="modal">Return to checkout</a>&nbsp;&nbsp;
-            
+            <button class="btn btn-warning" id="pauseRegistration" onclick="javascript: openQWindow();">Pause This Registration </button>
+            <a href="#" id="rtn" class="btn btn-inverse" data-dismiss="modal">Return To Checkout</a>&nbsp;&nbsp;
+
             <input type="submit" id="cancelRegistration" value="Delete This Registration" class="btn btn-danger" />
         </div>
     }

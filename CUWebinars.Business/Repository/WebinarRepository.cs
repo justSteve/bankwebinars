@@ -133,9 +133,21 @@ namespace CUWebinars.Business.Repository
                 var titleSearch = stronglyTypedContext.Webinars
                     .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
                     .Include(w => w.Presenter.WebUser)
-                    .Where(w => w.Title.Contains(searchTerm))
+                    .Where(w => w.Title.Contains(searchTerm)
+                        && (w.Status != WebinarStatus.Archived || w.Status != WebinarStatus.Pending || w.Status != WebinarStatus.Deleted))
                     ;
                 return titleSearch.ToList();
+            }
+
+            var check4Speaker = stronglyTypedContext.Webinars
+                .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
+                .Include(w => w.Presenter.WebUser)
+                .Where(w => w.Presenter.WebUser.LastName == searchTerm
+                            && (w.Status != WebinarStatus.Archived || w.Status != WebinarStatus.Pending || w.Status != WebinarStatus.Deleted));
+
+            if (check4Speaker.Any())
+            {
+                return check4Speaker.ToList();
             }
 
 
@@ -163,11 +175,10 @@ namespace CUWebinars.Business.Repository
                         || w.Title.ToLower().Contains(searchTerm)
                     || w.WhoAttend.ToLower().Contains(searchTerm)
                     || w.LearnBody.ToLower().Contains(searchTerm)
-                    && w.Status != WebinarStatus.Archived
-                    && w.Status != WebinarStatus.Deleted
-                    && w.Status != WebinarStatus.Pending
-
-                    );
+                    )
+                    .Where(w => w.Status != WebinarStatus.Archived
+                    || w.Status != WebinarStatus.Deleted
+                    || w.Status != WebinarStatus.Pending);
 
             var result = searchTopics.Union(searchDesc).ToList();
             return result;
@@ -248,24 +259,11 @@ namespace CUWebinars.Business.Repository
             return db.SaveChanges();
         }
 
-        public IList<WebUser> MigrateUsersFromLegacy()
-        {
-            var dataOperations = new MigrationOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString, ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
-            return dataOperations.GetLegacyUsers();
-
-        }
-
-        public IList<Webinar> MigrateWebinarsFromLegacy()
-        {
-            var dataOperations = new MigrationOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString, ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
-            return null;
-
-        }
 
         public int GetRegTypeByACS(string registrationType, int idWebinar)
         {
             //first step is to convert ACS lables to TTS version
-            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LoggerConnection"].ConnectionString);
+            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
 
             var retVal = GetRegTypeByLableAndWebinar(dataOperations.FindRegTypeForACS(registrationType), idWebinar);
             return retVal;
@@ -332,6 +330,88 @@ namespace CUWebinars.Business.Repository
                             ).Select(o => o.idOrder).ToList();
         }
 
+        public int? GetNextCompliancePerspectives()
+        {
+            var item = items.Where(w => w.Status == WebinarStatus.Scheduled
+                                           || w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress)
+                                          .Where(w => w.Title.StartsWith("Compliance Perspectives"))
+                                          .Where(w => w.idWebinar != 883)
+                .OrderBy(w => w.Date).First().idWebinar;
+
+            return item;
+
+        }
+
+        public IList<Webinar> GetWebinarsForWeeklyInvoice(DateTime startDate)
+        {
+            var endDate = startDate.AddDays(7);
+            return ((TTSWebinarsContext)db).Webinars
+                .Where(w => w.Date > startDate
+                    && w.Date < endDate
+                    && w.Status == WebinarStatus.Recorded
+                    && !w.SeriesInfo.StartsWith("RequiredParent")
+                    && !w.Title.StartsWith("Compliance Perspectives")
+                )
+                .ToList();
+        }
+
+        public IEnumerable<Webinar> GetRelated(int? idWebinar)
+        {
+            var webinars = items.Include(i => i.WebinarTopicXrefs.Select(w => w.Topic))
+                .Include(i => i.Presenter.WebUser)
+                .Where(w => w.WebinarTopicXrefs
+                    .Any(t => t.idTopic == 1)
+                            &&
+                            (w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Scheduled ||
+                             w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress));
+            //Logger.Debug("TopicId=" + topicId); 
+
+            return webinars;
+        }
+
+        public IEnumerable<Webinar> GetTopicsByWebinar(int? idWebinar)
+        {
+            var webinars = new List<Webinar>();
+
+            var webinar = FindByIdLoaded(idWebinar.Value);
+            foreach (var idTopic in webinar.WebinarTopicXrefs)
+            {
+                IQueryable<Webinar> webinarsByTopic = GetByTopic(1);
+                
+            }
+            //            items.Include(i => i.WebinarTopicXrefs.Select(w => w.Topic))
+    //.Include(i => i.Presenter.WebUser)
+    //.Where(w => w.WebinarTopicXrefs
+    //    .Any(t => t.idTopic == topicId)
+    //            &&
+    //            (w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Scheduled ||
+    //             w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress));
+    //        //Logger.Debug("TopicId=" + topicId); 
+
+            return webinars;
+        }
+
+        public IQueryable<Order> GetOrdersByWebinarForInvoice(int webinarId)
+        {
+            return ((TTSWebinarsContext)db).Orders
+                .Where(
+                    o =>
+                        o.OrderRows.FirstOrDefault(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar ==
+                        webinarId
+                        && (o.OrderStatus == OrderStatus.Billed
+                            || o.OrderStatus == OrderStatus.Paid
+                            || o.OrderStatus == OrderStatus.Submitted
+                        //|| o.OrderStatus == OrderStatus.AwaitingVerification
+                            )
+                            )
+                //.Include(o => o.Affiliate)
+                //.Include(o => o.WebUser)
+                //.Include(o => o.WebUser.Addresses)
+                .Include(o => o.OrderRows)
+                .Include(o => o.OrderRows.Select(or => or.Discount))
+                ;
+
+        }
         public IQueryable<Order> GetOrdersByWebinar(int webinarId)
         {
             return ((TTSWebinarsContext)db).Orders
@@ -342,12 +422,16 @@ namespace CUWebinars.Business.Repository
                         && (o.OrderStatus == OrderStatus.Billed
                             || o.OrderStatus == OrderStatus.Paid
                             || o.OrderStatus == OrderStatus.Submitted
-                            || o.OrderStatus == OrderStatus.AwaitingVerification
+                        //|| o.OrderStatus == OrderStatus.AwaitingVerification
                             )
                             )
                 .Include(o => o.Affiliate)
                 .Include(o => o.WebUser)
-                .Include(o => o.OrderRows);
+                .Include(o => o.WebUser.Addresses)
+                .Include(o => o.OrderRows)
+                .Include(o => o.OrderRows.Select(or => or.Discount))
+
+                ;
 
             //why is registration type not hydrated from here
         }

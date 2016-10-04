@@ -8,6 +8,8 @@ using CUWebinars.NotificationSystem.Event;
 using Ninject.Extensions.Logging;
 using System;
 using Ninject.Extensions.Logging.Log4net.Infrastructure;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CUWebinars.Business.Notification.Handlers
 {
@@ -38,18 +40,15 @@ namespace CUWebinars.Business.Notification.Handlers
 
         public virtual void Process(SendPerDayPromoEvent<T> sendPerDayPromoEvent)
         {
-            string sPattern = @"<img[^>]+/>";
-            Regex rgx = new Regex(sPattern);
-            Match m = rgx.Match(sendPerDayPromoEvent.EventObject.Webinar.Presenter.BiographyLong);
-            //HACK: Parse out the photo from the bio and carry the result via the no longer used EventBody.
-            if (m.Success)
-                sendPerDayPromoEvent.EventObject.EventBody = rgx.Replace(sendPerDayPromoEvent.EventObject.Webinar.Presenter.BiographyLong, "");
             try
             {
-                var persistedNamePrefix = "PerWeekPromo_" + sendPerDayPromoEvent.EventObject.Affiliate.ttsDomain + '_';
-                var notificationMessage = _generalFormatter
-                    .Format(sendPerDayPromoEvent.EventObject, "SendPerDayPromo");
+                TtsConfigHelper ttsConfigHelper = new TtsConfigHelper();
 
+                var persistedNamePrefix = "PerDayPromo_" + sendPerDayPromoEvent.EventObject.Affiliate.ttsDomain + '_';
+
+                var notificationMessage = new NotificationMessage();
+
+                notificationMessage.Body = sendPerDayPromoEvent.EventObject.EventBody;
 
                 notificationMessage.PersistedName = string.Format("{0}_{1}{2}",
                     persistedNamePrefix,
@@ -57,8 +56,27 @@ namespace CUWebinars.Business.Notification.Handlers
                     ".htm"
                     );
 
-                //                notificationMessage.To = sendPerDayPromoEvent.EventObject.Affiliate.WebUser.email;
-                notificationMessage.To = "steve@ttstrain.com";
+                // parse potential multiple emails, concept from http://stackoverflow.com/questions/14689044/regex-split-on-comma-space-or-semi-colon-delimitted-string
+                char[] delimiters = new[] { ',', ';', ' ' };  // List of your delimiters
+                List<string> addressess = sendPerDayPromoEvent.EventObject.Affiliate.ContactEmail.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).ToList();
+
+                // ContactEmail  or WebUser.email?
+                //notificationMessage.To = sendPerDayPromoEvent.EventObject.Affiliate.WebUser.email;// ?????
+
+
+                if (addressess.Count > 0)
+                {
+                    notificationMessage.To = addressess[0];
+
+                    if (addressess.Count > 1)
+                    {
+                        notificationMessage.Addresses = addressess.Skip(1).ToList(); // put the rest in the CC
+                    }
+                }
+
+                notificationMessage.From = ttsConfigHelper.GetPromoEmailFromAddress(); // approach for From Address TBD!
+                notificationMessage.Subject = ttsConfigHelper.GetPromoEmailSubject(); // approach for Subject TBD!
+
                 _notificationDelivery.Notify(notificationMessage);
             }
             catch (NullReferenceException nullReferenceException)

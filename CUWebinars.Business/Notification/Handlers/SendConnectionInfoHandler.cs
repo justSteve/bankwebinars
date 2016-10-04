@@ -87,7 +87,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 sendConnectionInfoEvent.EventObject.NotificationStorage =
                     notificationStorage.ToString(Formatting.None);
 
-                if (isAdditionalLocation.Any())
+                if (isAdditionalLocation != null && isAdditionalLocation.Any())
                 {
                     string tmpNameStorage = sendConnectionInfoEvent.EventObject.FirstName;
 
@@ -135,15 +135,25 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 IList<string> ccEmailAddresses = null;
                 //see Account/ShareNotifications
-                if (!string.IsNullOrWhiteSpace(sendConnectionInfoEvent.EventObject.UserComments))
+                if (!string.IsNullOrWhiteSpace(sendConnectionInfoEvent.EventObject.UserComments)
+                    && sendConnectionInfoEvent.EventObject.UserComments.Contains(JsonPropertyKeys.CarbonCopy))
                 {
-                    JToken addresses;
 
-                    addresses = JObject.Parse(sendConnectionInfoEvent.EventObject.UserComments).GetValue(JsonPropertyKeys.CarbonCopy);
-
-                    if (!ReferenceEquals(null, addresses))
+                    var addresses = JToken.Parse(sendConnectionInfoEvent.EventObject.UserComments);
+                    var isCC = "";
+                    foreach (JProperty prop in addresses.Children<JObject>().SelectMany(content => content.Properties().Where(prop => prop.Name == JsonPropertyKeys.CarbonCopy)))
                     {
-                        ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(addresses.ToString());
+                        isCC = prop.Value.ToString();
+                    }
+
+                    if (isCC != "")
+                    {
+                        ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(isCC);
+                    }
+                    else
+                    {
+                        var _addresses = JObject.Parse(sendConnectionInfoEvent.EventObject.UserComments).GetValue(JsonPropertyKeys.CarbonCopy).Value<string>();
+                        ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(_addresses);
                     }
                 }
 
@@ -165,7 +175,7 @@ namespace CUWebinars.Business.Notification.Handlers
                     _logger.Error(
                         string.Format(
                             "Event processing failed for sendConnectionInfoEvent - OrderId {0}. ExceptionMessage: {1}",
-                            orderId,
+                            sendConnectionInfoEvent.EventObject.idOrder,
                             nullReferenceException.Message)
                         , nullReferenceException);
                 }
@@ -175,7 +185,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 _logger.Error(
                     string.Format(
                         "Event processing (outer) failed for sendConnectionInfoEvent - OrderId {0}. ExceptionMessage: {1}"
-                        , orderId,
+                        , sendConnectionInfoEvent.EventObject.idOrder,
                         exception.Message), exception);
             }
         }

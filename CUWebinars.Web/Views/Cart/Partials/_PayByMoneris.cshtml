@@ -6,20 +6,55 @@
 
 
 }
+<script type="text/javascript" language="javascript">
+    $(function() {
+        var idOrder = @Model.idOrder;
+        var updatedTotal = @Model.Total;
+        $('#PayByCCModal').on('show', function () {
+
+            $.ajax({
+
+                datatype: "text/plain",
+                type: "GET",
+                url: '/cart/IniMonerisModal?idOrder='+idOrder,
+                cache: false,
+                success: function (data) {
+
+                    //moneris requires that cents are included:
+
+                    var amount2Charge = data.total;
+                    if (amount2Charge.indexOf(".") == -1) {
+                        amount2Charge = amount2Charge + ".00";
+                    }
+
+                    $("input[name='amount']").val( amount2Charge);
+                    $("input[name='li_price1']").val( amount2Charge);
+                }
+            });
+        });
+        //
+    });
+
+</script>
 @{
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
-    var TaxAmount = ViewBag.TaxAmount;
+    var TaxAmount = Convert.ToDecimal(ViewBag.TaxAmount);
 
-    var note = globalConfig.Tenant + " thanks you! Watch your email for complete details. " +ViewBag.NoteVersion;
-    
+    var note = globalConfig.Tenant + " thanks you! Watch your email for complete details. " + ViewBag.NoteVersion;
+
     if (ReferenceEquals(TaxAmount, null))
-    {TaxAmount = 0;}
+    {
+        TaxAmount = 0;
+
+    }
     //Layout = "/Views/Shared/_Layout_PayCC.cshtml";
     var hpp_id = globalConfig.TenantMonerisHpp_Id;
     var hpp_key = globalConfig.TenantMonerisHpp_Key;
     var order = Model;
 
     var myRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+    var RowPrice = Convert.ToDecimal(myRow.RowPrice);
+
     var regTypeDesc = myRow.RegistrationType.OptionLabel;
 
     var title = myRow.Webinar.Title;
@@ -66,9 +101,9 @@
                 <input type="hidden" name="li_id1" value="@order.idOrder">
                 <input type="hidden" name="li_description1" value="@title - @regTypeDesc">
                 <input type="hidden" name="li_quantity1" value="1">
-                <input type="hidden" name="li_price1" value="@Math.Round(myRow.RowPrice, 2)">
-                <input type="hidden" name="li_taxes" value="@Math.Round(@TaxAmount,2)">
-                <input type="hidden" name="li_taxamount" value="@Math.Round(@TaxAmount, 2)">
+                <input type="hidden" name="li_price1" value="@RowPrice">
+                <input type="hidden" name="li_taxes" value="@Math.Round(TaxAmount,2)">
+                <input type="hidden" name="li_taxamount" value="@Math.Round(TaxAmount, 2)">
                 <input type="hidden" name="li_invoice" value="@globalConfig.TenantPrefix@order.idOrder">
                 <input type="hidden" name="cust_id" value="@order.BillingEmail">
                 <input type="hidden" name="order_no" value="@globalConfig.TenantPrefix@order.idOrder">

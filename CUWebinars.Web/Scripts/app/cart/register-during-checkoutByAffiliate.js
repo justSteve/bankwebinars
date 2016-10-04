@@ -627,103 +627,103 @@ function hookUpEditUserLogic(button) {
     });
 }
 
-function hookUpChangeTypeLogic(dropDown) {
+//function hookUpChangeTypeLogic(dropDown) {
+//    alert("hook");
+//    //var changeTypeConfirmModal = $('#changeTypeConfirmModal');
+//    var chosenRegTypeLabel = $('#chosenRegType');
+//    var position,
+//        typeChosenCurrent,
+//        typeChosenPrevious,
+//        valOfTypeChosenPrevious,
+//        valOfTypeChosenCurrent;
 
-    //var changeTypeConfirmModal = $('#changeTypeConfirmModal');
-    var chosenRegTypeLabel = $('#chosenRegType');
-    var position,
-        typeChosenCurrent,
-        typeChosenPrevious,
-        valOfTypeChosenPrevious,
-        valOfTypeChosenCurrent;
+//    //  need to save state in the event that a Modal is displayed and Cancel is clicked on it.
+//    typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
+//    valOfTypeChosenPrevious = valOfTypeChosenCurrent = dropDown.val();
 
-    //  need to save state in the event that a Modal is displayed and Cancel is clicked on it.
-    typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
-    valOfTypeChosenPrevious = valOfTypeChosenCurrent = dropDown.val();
+//    dropDown.on('change', function (e) {
 
-    dropDown.on('change', function (e) {
+//        e.preventDefault();
 
-        e.preventDefault();
+//        valOfTypeChosenCurrent = $(this).val();
+//        var totalPrice = 0;
 
-        valOfTypeChosenCurrent = $(this).val();
-        var totalPrice = 0;
+//        var url = '/Cart/CheckIfAddLocShouldHide?optionID=' + valOfTypeChosenCurrent;
 
-        var url = '/Cart/CheckIfAddLocShouldHide?optionID=' + valOfTypeChosenCurrent;
+//        $.ajax({
+//            type: 'GET',
+//            contentType: constants.FormPostContentType,
+//            cache: false,
+//            url: url,
+//            dataType: constants.JsonDataType,
+//            beforeSend: function () {
+//                dropDown.attr('disabled', 'disabled').after('<i id="discountSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+//            }
+//        }).done(function (data) {
 
-        $.ajax({
-            type: 'GET',
-            contentType: constants.FormPostContentType,
-            cache: false,
-            url: url,
-            dataType: constants.JsonDataType,
-            beforeSend: function () {
-                dropDown.attr('disabled', 'disabled').after('<i id="discountSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-            }
-        }).done(function (data) {
+//            // see CartController's CheckIfAddLocShouldHide method for commented explanation regarding the 'shouldShow' property.
+//            if (data.shouldShow === 'No') {
 
-            // see CartController's CheckIfAddLocShouldHide method for commented explanation regarding the 'shouldShow' property.
-            if (data.shouldShow === 'No') {
+//                registerDuringCheckout.gatherPricingData();
 
-                registerDuringCheckout.gatherPricingData();
+//                //  First, check if there are currently any Additional Locations added to the order.
+//                if (anyAddLocs === true) {
 
-                //  First, check if there are currently any Additional Locations added to the order.
-                if (anyAddLocs === true) {
+//                    position = $('#confirmation').offset();
 
-                    position = $('#confirmation').offset();
+//                    var url = '/Cart/RemoveAdditionalLocationsFromOrder';
+//                    var payLoad = {
+//                        idOrderRow: cartStateManager.getOrderRowId()
+//                    };
 
-                    var url = '/Cart/RemoveAdditionalLocationsFromOrder';
-                    var payLoad = {
-                        idOrderRow: cartStateManager.getOrderRowId()
-                    };
+//                    $.ajax({
+//                        type: 'POST',
+//                        contentType: constants.JsonContentType,
+//                        cache: false,
+//                        url: url,
+//                        dataType: constants.JsonDataType,
+//                        data: JSON.stringify(payLoad)
+//                    }).done(function (data) {
 
-                    $.ajax({
-                        type: 'POST',
-                        contentType: constants.JsonContentType,
-                        cache: false,
-                        url: url,
-                        dataType: constants.JsonDataType,
-                        data: JSON.stringify(payLoad)
-                    }).done(function (data) {
+//                        if (data.Result === 'Success') {
+//                            // This next variable is initially set in the CheckoutConfirm.cshtml razor view
+//                            anyAddLocs = false;
+//                            $('#additionalLocationsCaption').html('None');
 
-                        if (data.Result === 'Success') {
-                            // This next variable is initially set in the CheckoutConfirm.cshtml razor view
-                            anyAddLocs = false;
-                            $('#additionalLocationsCaption').html('None');
+//                            $('#addlocSpiel').text('To add additional locations for this order, please use our Help & Feedback button (lower right corner)  for immediate assistance').addClass('text-info');
 
-                            $('#addlocSpiel').text('To add additional locations for this order, please use our Help & Feedback button (lower right corner)  for immediate assistance').addClass('text-info');
+//                            $('#addLocsText').html('Additional Locations: <span id="totalAdLocsPrice">$0.00</span>').addClass('muted');
+//                            totalPrice = registerDuringCheckout.totalPrice - registerDuringCheckout.addLocsPrice;
 
-                            $('#addLocsText').html('Additional Locations: <span id="totalAdLocsPrice">$0.00</span>').addClass('muted');
-                            totalPrice = registerDuringCheckout.totalPrice - registerDuringCheckout.addLocsPrice;
+//                            updatePriceOnNewSelection(valOfTypeChosenCurrent, totalPrice, dropDown);
+//                        }
+//                    }).fail(commonFuncs.failCallBack);
 
-                            updatePriceOnNewSelection(valOfTypeChosenCurrent, totalPrice, dropDown);
-                        }
-                    }).fail(commonFuncs.failCallBack);
+//                    valOfTypeChosenCurrent = valOfTypeChosenPrevious = dropDown.val();
+//                    typeChosenCurrent = typeChosenPrevious = $.trim($('#RegType option:selected').text());
+//                    chosenRegTypeLabel.empty().text(typeChosenCurrent);
+//                } else {
+//                    typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
+//                    chosenRegTypeLabel.empty().text(typeChosenCurrent);
+//                    valOfTypeChosenPrevious = valOfTypeChosenCurrent;
 
-                    valOfTypeChosenCurrent = valOfTypeChosenPrevious = dropDown.val();
-                    typeChosenCurrent = typeChosenPrevious = $.trim($('#RegType option:selected').text());
-                    chosenRegTypeLabel.empty().text(typeChosenCurrent);
-                } else {
-                    typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
-                    chosenRegTypeLabel.empty().text(typeChosenCurrent);
-                    valOfTypeChosenPrevious = valOfTypeChosenCurrent;
+//                    updatePriceOnNewSelection(valOfTypeChosenCurrent, registerDuringCheckout.totalPrice, dropDown);
+//                }
+//            } else {
+//                typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
+//                chosenRegTypeLabel.empty().text(typeChosenCurrent);
+//                valOfTypeChosenPrevious = valOfTypeChosenCurrent;
+//                updatePriceOnNewSelection(valOfTypeChosenCurrent, registerDuringCheckout.totalPrice, dropDown);
+//            }
 
-                    updatePriceOnNewSelection(valOfTypeChosenCurrent, registerDuringCheckout.totalPrice, dropDown);
-                }
-            } else {
-                typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
-                chosenRegTypeLabel.empty().text(typeChosenCurrent);
-                valOfTypeChosenPrevious = valOfTypeChosenCurrent;
-                updatePriceOnNewSelection(valOfTypeChosenCurrent, registerDuringCheckout.totalPrice, dropDown);
-            }
-
-            if (data.shippingDetailsRqrd === 'Yes') {
-                registerDuringCheckout.addressOptions['shippingAddressRequired'] = true;
-            } else {
-                registerDuringCheckout.addressOptions['shippingAddressRequired'] = false;
-            }
-        }).fail(commonFuncs.failCallBack);
-    });
-}
+//            if (data.shippingDetailsRqrd === 'Yes') {
+//                registerDuringCheckout.addressOptions['shippingAddressRequired'] = true;
+//            } else {
+//                registerDuringCheckout.addressOptions['shippingAddressRequired'] = false;
+//            }
+//        }).fail(commonFuncs.failCallBack);
+//    });
+//}
 
 // This function's purpose is to update pricing details where the RegType DropDown has its selected value changed.
 // It also displays the Shipping Details modal form where the RegType chosen has a shipping address requirement.
@@ -748,11 +748,20 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
     }).done(function (data) {
 
         if (data) {
+            if (data.Tax > 0) {
+                $('#showTax').removeClass("hidden");
+            } else {
+                $('#showTax').addClass("hidden");
+            }
 
-            $('#baseCost').html('$' + data.BasePrice + '.00');
-            $('#totalDiscount').html('$' + data.Discount + '.00').parent().addClass('muted');
-            $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '.00');
-            $('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + data.Total + '.00</span>');
+            $('#flyUpdateSuccessFlag').html(data.UpdateSuccessCaption).show();
+            $('#discountCaption').html(data.DiscountCaption);
+            $('#optionLabel').html(data.regTypeShort);
+            $('#baseCost').html('$' + data.BasePrice + '');
+            $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
+            $('#taxAmt').html(data.Tax + '');
+            $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
+            $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
         }
 
         dropDown.removeAttr('disabled');
@@ -769,71 +778,6 @@ function ShowModalForShippingDetails(shippingDetailsRqrd) {
     }
 }
 
-function hookUpApplyDiscountLogic(btn, orderRowId) {
-
-    btn.on('click', function (e) {
-
-        e.preventDefault();
-
-        registerDuringCheckout.gatherPricingData();
-
-        if (registerDuringCheckout.totalPrice < 1) {
-            return;
-        }
-        var token = $(this).find('input[name=__RequestVerificationToken]').val();
-        var headers = {};
-        headers['__RequestVerificationToken'] = token;
-
-        var url = '/cart/ApplyDiscountCode';
-        var payload = { code: $('#CheckoutDiscountCode').val(), orderRowId: orderRowId };
-        var self = this;
-
-        $.ajax({
-            type: 'POST',
-
-            contentType: constants.JsonContentType,
-            cache: false,
-            url: url,
-            dataType: constants.JsonDataType,
-            data: JSON.stringify(payload),
-            headers: headers,
-            beforeSend: function () {
-                $(self).prepend('<i id="discountSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-                $(self).attr('disabled', 'disabled');
-            }
-        }).done(function (data) {
-
-            if (data.Result == 0) {
-                alert("The discount code " + $('#CheckoutDiscountCode').val() + " was not found. Try again or use our Help & Feedback button (lower right corner)  for assistance.");
-            }
-
-            if (data.Result.indexOf('%') !== -1) {
-                var amount2Discount = data.Result.replace(".00%", "") / 100;
-                registerDuringCheckout.totalDiscount = registerDuringCheckout.totalPrice * amount2Discount;
-            } else {
-                registerDuringCheckout.totalDiscount = data.Result;
-            }
-
-            var newTotalPrice = registerDuringCheckout.totalPrice - registerDuringCheckout.totalDiscount;
-
-            $("#amount").val(newTotalPrice);
-
-            if (newTotalPrice < 0)
-                newTotalPrice = 0;
-
-            $('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 3.').addClass('text-info');
-
-            $('#discountedText').html('Discounted: <span id="totalDiscount">$' + registerDuringCheckout.totalDiscount + '</span>').removeClass('muted');
-            $('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
-
-            $('#discountSpinner').remove();
-
-        }).fail(commonFuncs.failCallBack).always(function (e) {
-            $('#discountSpinner').remove();
-            $(self).removeAttr('disabled');
-        });
-    });
-}
 
 function showModalForShippingAddressDetails() {
     var modalShippingDetails = $('#UserDetailsModal'),

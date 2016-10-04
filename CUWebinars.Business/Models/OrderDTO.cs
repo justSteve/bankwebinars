@@ -33,7 +33,11 @@ namespace CUWebinars.Business.Models
         public string RegistrationTypeString { get { return RegistrationType.OptionLabel; } }
 
         public bool Webinar_IsActive { get; set; } // flattened via Automapper to avoid circular reference during JSON serialization
-        public bool Webinar_IsRecorded { get; set; } // flattened via Automapper to avoid circular reference during JSON serialization
+        public bool Webinar_IsRecorded { get; set; }
+        public DateTime ShippedDate { get; set; }
+        public string ShippedDateString { get { return ShippedDate.Month + "/"+ ShippedDate.Day; } } 
+
+// flattened via Automapper to avoid circular reference during JSON serialization
 
     }
 }

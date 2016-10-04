@@ -19,7 +19,7 @@
 }
 
 <script language="javascript" type="text/javascript">
-    
+
     function openECWindow() {
         window.location.href = "@url?idOrder=" + cartStateManager.getOrderId() + "&idWebinar=" + cartStateManager.getWebinarId() + "&idAffiliate=" + currentAffiliate + "&email=" + $('#Email1').val();
     }
@@ -131,28 +131,26 @@
                         </div>
                         <div>
                             <div id="wrapAddressBilling">
-                                <label>Address:</label> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.StreetAddress)@*, new { @class = "input-xxlarge" })*@
+                                <label>Address:</label>@Html.TextBoxFor(model => model.RegisterFields.BillingAddress.StreetAddress)@*, new { @class = "input-xxlarge" })*@
                                 <br />
                                 <label>(2nd address optional):</label>@Html.TextBoxFor(model => model.RegisterFields.BillingAddress.StreetAddress2)@*, new { @class = "input-xxlarge" })*@
                             </div>
                         </div>
                         <div>
                             <div id="wrapCityBilling">
-                                <label>City:</label> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.City, new { @class = "input-large" })
+                                <label>City:</label>@Html.TextBoxFor(model => model.RegisterFields.BillingAddress.City, new { @class = "input-large" })
                             </div>
                             <div id="wrapCityBilling">
-                                <label>State:</label> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.State, new { @class = "input-mini" })
-                                <label>Zip:</label> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Zip, new { @class = "input-mini" })
+                                <label>State:</label>@Html.TextBoxFor(model => model.RegisterFields.BillingAddress.State, new { @class = "input-mini" })
+                                <label>Zip:</label>@Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Zip, new { @class = "input-mini" })
                             </div>
                         </div>
                         <div>
                             <div id="wrapPhone">
-                                <label>Phone:</label>
-                                @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Phone)
+                                <label>Phone:</label>@Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Phone)
                             </div>
                             <div id="wrapTimeZone">
-                                <label for="TimeZone" style="display: inline-block">Time Zone:</label>
-                                <select style="width: 120px" id="TimeZone" name="TimeZone">
+                                <label for="TimeZone" style="display: inline-block">Time Zone:</label><select style="width: 120px" id="TimeZone" name="TimeZone">
                                     <option value="-5">Eastern</option>
                                     <option value="-6">Central</option>
                                     <option value="-7">Mountain</option>
@@ -201,7 +199,7 @@
 
                         <div>
                             <div id="wrapAddressShipping">
-                                <label>Address:</label> @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.StreetAddress, new { @class = "input-xxlarge" })
+                                <label>Address:</label>@Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.StreetAddress, new { @class = "input-xxlarge" })
                                 <label>(2nd address optional):</label>@Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.StreetAddress2, new { @class = "input-xxlarge" })
                             </div>
                         </div>
@@ -261,6 +259,12 @@
     @Html.Partial("Partials/_UpdateOrderWithUserId")
 </div>
 
+<style>
+    .modal {
+        width: 500px;
+    }
+</style>
+
 <div id="modalShowExpressCheckout" class="modal hide">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -268,8 +272,8 @@
     </div>
     <div id="UserHasAccount" class="modal-body">
         <p>
-            Use our <i>Express Me!</i> button for guest checkout.
-            If you need instant access to your account use the <i>'Continue to Login'</i> button.
+            Use our <i>Express Me!</i> button for guest checkout.<br />
+            For instant access to your account use the <i>'Continue to Login'</i> button.
         </p>
 
 

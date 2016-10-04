@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using CUWebinars.Business.Models;
 using System.Collections.Generic;
+using System.Web.Mvc;
 
 namespace CUWebinars.Web.ViewModel
 {
@@ -27,7 +28,7 @@ namespace CUWebinars.Web.ViewModel
         public int UserHasOpenOrder { get; set; }
         public int UserOwnsThisEvent { get; set; }
         public Discount UserHasDiscount { get; set; }
-
+        public int[] ListOfUpcomingEvents { get; set; }
         public Webinar Webinar { get; set; }
         public WebUser WebUser { get; set; }
         public object Testamoan { get; set; }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
@@ -14,6 +15,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
+
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
@@ -27,9 +29,11 @@ using CUWebinars.Web.Models.JsonModels;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using FluentValidation;
+using Glimpse.AspNet.Tab;
 using Microsoft.VisualBasic.ApplicationServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 using Ninject.Extensions.Logging;
 using WebGrease.Css.Extensions;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
@@ -109,20 +113,81 @@ namespace CUWebinars.Web.Core.Orchestrators
                 UserAudit = _appHelper.GetUserAuditInfo()
             };
 
-            var validationResultUser = _jsonValidator.Validate(new ValidationString(order.UserComments));
+            try
+            {
+                string schemaJson = @"{
+                          '$schema': 'http://json-schema.org/draft-04/schema#',
+                          'description': 'PostEventMaterialsWereAccessed',
+                          'type': 'object',
+                          'properties': {
+                            'DateAdded': {
+                              'type': [
+                                'string'
+                              ]
+                            },
+                            'OnDemandCode': {
+                              'type': [
+                                'string'
+                              ]
+                            },
+                            'UserEmail': {
+                              'type': [
+                                'string'
+                              ]
+                            },
+                            'UserName': {
+                              'type': [
+                                'string'
+                              ]
+                            },
+                            'UserAudit': {
+                              'type': [
+                                'object'
+                              ]
+                            }
+                          }
+                        }";
+                //using (StreamReader file = File.OpenText(HttpContext.Current.Server.MapPath("~/App_Data/JsonSchemaStore/PostEventMaterialsWereAccessed.json")))
+                //using (JsonTextReader reader = new JsonTextReader(file))
+                //{
+                //JSchema schema = JSchema.Load(reader);
 
-            if (validationResultUser.IsValid || string.IsNullOrWhiteSpace(order.UserComments))
-            {
+                StringWriter stringWriter = new StringWriter();
+                JsonTextWriter writer = new JsonTextWriter(stringWriter);
+
+                JSchemaValidatingWriter validatingWriter = new JSchemaValidatingWriter(writer);
+                validatingWriter.Schema = JSchema.Parse(schemaJson);
+
+                IList<string> messages = new List<string>();
+                validatingWriter.ValidationEventHandler += (o, a) => messages.Add(a.Message);
+
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(validatingWriter, fieldsToComments);
+
+                if (messages != null)
+                {
+                    foreach (var msg in messages)
+                    {
+                        _logger.Warn("Ondemand|Identify: " + msg);
+                    }
+                }
+
                 string updatedUserComments = JsonHelpers.AddObjectToJsonArray(
-                    order.UserComments,
-                    JsonPropertyKeys.PostEventMaterialsWereAccessedKey,
-                    fieldsToComments
-                    );
+                   order.UserComments,
+                   JsonPropertyKeys.PostEventMaterialsWereAccessedKey,
+                   fieldsToComments
+                   );
                 order.UserComments = updatedUserComments;
+
+                //}
+
+
             }
-            else
+            catch (Exception ex)
             {
-                _logger.Warn("UserComments for OnDemand access failed to save: {0}", order.UserComments);
+
+                _logger.FatalException("UserComments for OnDemand access failed to save and threw: " + order.UserComments, ex);
+                throw;
             }
 
             try
@@ -136,7 +201,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     stringBuilder.AppendFormat("Property: {0} Error: {1} ", error.PropertyName, error.ErrorMessage);
                 }
-                _logger.Warn("Identify | OnDemand claim processing: " + stringBuilder.ToString());
+                _logger.FatalException("Identify | OnDemand claim processing: " + stringBuilder.ToString(), dbEntityValidationException);
                 Trace.TraceInformation(stringBuilder.ToString());
             }
 
@@ -349,12 +414,13 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             //client.DownloadFile(model.ManageURL, filename);
 
+            var webinar = _webinarManagementService.GetWebinar(connectionInfoModel.idWebinar);
             var doc = new HtmlAgilityPack.HtmlDocument();
             //doc.Load(filename);
             doc.LoadHtml(connectionInfoModel.ManageURL);
 
             var root = doc.DocumentNode;
-            var audioNode = root.SelectNodes("//*[text()[contains(., 'Access')]]");
+            var audioNode = root.SelectNodes("//span[contains(@class, 'audio-role-bold')]/parent::p");
 
             var citrixRegisterUrl = "";
             var accessCodeAttendee = "";
@@ -365,7 +431,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             webinarKey = root.SelectSingleNode("//span[contains(@id,'WebinarInfoID')]").InnerHtml;
             webinarKey = webinarKey.Replace("-", "").Trim();
-            accessPhone = root.SelectSingleNode("//*[text()[contains(., 'Toll-')]]").InnerHtml;
+            accessPhone = root.SelectSingleNode("//p[contains(@id, 'audioInstructions')]/following::p[1]//span[1]").InnerHtml;
+            //accessPhone = root.SelectSingleNode("//p[text()[starts-with(., 'Toll-')]]").InnerHtml;
             //accessPhone = Regex.Split(accessPhone, @"\<br\>")[1].Replace("Toll-free: 1 ", "").Trim().Replace(" ", "-");
             // element at [1] not present starting 7/6/2015
             accessPhone = Regex.Split(accessPhone, @":")[1].Replace("Toll-free: 1 ", "").Trim().Replace(" ", "-");
@@ -392,11 +459,10 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 if (aNode.InnerHtml.Contains("Attendee"))
                 {
-                    accessCodeAttendee = aNode.ParentNode.OuterHtml.Split(':')[1].Trim().Split(' ')[0];
+                    accessCodeAttendee = aNode.ParentNode.OuterHtml.Split(':')[1].Trim().Split(' ')[0].Replace("</span>","");
                 }
             }
 
-            var webinar = _webinarManagementService.GetWebinar(connectionInfoModel.idWebinar);
             webinar.AccessCodeAttendee = accessCodeAttendee;
             webinar.AccessCodeOrganizer = accessCodeOrganizer;
             webinar.AccessCodePresenter = accessCodePresenter;
@@ -406,33 +472,20 @@ namespace CUWebinars.Web.Core.Orchestrators
             webinar.OrganizerKey = connectionInfoModel.OrganizerKey;
             webinar.WebinarKey = webinarKey.Trim();
 
-
-            if (webinar.CitrixRegisterUrl == "" ||
-                webinar.AccessCodeAttendee == "" ||
-                webinar.AccessCodePresenter == "" ||
-                webinar.AccessCodeOrganizer == "" ||
-                webinar.WebinarKey == "" ||
-                webinar.AccessPhone == "")
+            if (webinar.WebinarFiles != null || webinar.WebinarFiles.Count < 1)
             {
-                detailsValid = false;
+                webinar.Status = WebinarStatus.Active;
+
+                var changeString = PublishStateChange(webinar.Status.ToString() + " to " + "Active", webinar);
+
+                webinar.ConnectionInfo = changeString;
             }
-            else
-            {
-
-                if (webinar.WebinarFiles != null || webinar.WebinarFiles.Count < 1)
-                {
-                    webinar.Status = WebinarStatus.Active;
-
-                    var changeString = PublishStateChange(webinar.Status.ToString() + " to " + "Active", webinar);
-
-                    webinar.ConnectionInfo = changeString;
-                }
 
 
-                UpdateWebinar(webinar);
+            UpdateWebinar(webinar);
 
-                detailsValid = true;
-            }
+            detailsValid = true;
+
 
             return webinar;
         }
@@ -628,7 +681,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 //how to get this ex to detail the tossed error? Inner ex is null.
                 catch (Exception ex)
                 {
-                    _logger.Fatal("AddClaimForOrderNote| MR record not found " + order.BillingEmail + " " + ex.Message);
+                    _logger.FatalException("AddClaimForOrderNote| MR record not found " + order.BillingEmail + " " , ex);
                 }
             }
 
@@ -642,11 +695,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void SendRecordingIsPostedBatch(int idWebinar)
         {
             var ordersForWebinar = _orderManagementService.GetV3OrdersByWebinarForPostEventClaims(idWebinar).ToList();
-
-            //AddClaimForPostEventMaterials(ordersForWebinar);
             AddNoteClaim(ordersForWebinar);
-
-            //_orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
 
         }
 
@@ -784,7 +833,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             var topicIdsForWebinar = _webinarManagementService.GetTopicsPerWebinar(idWebinar).ToList();
             var upcomingRegTypeGroups = _webinarManagementService.GetUpcomingRegTypesForWebinars().ToList();
             var regTypeGroupsForWebinars = _webinarManagementService.GetRegTypeGroupsForWebinars(idWebinar).ToList();
-            var presenters = _webinarManagementService.GetAllPresenters()
+            var presenters = _webinarManagementService.GetAllPresenters().OrderBy(p => p.WebUser.LastName)
                 .Select(presenter => new SelectListItem
                 {
                     Text = presenter.WebUser.FullName,
@@ -818,6 +867,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 SelectedRegTypeGroups = regTypeGroupsForWebinars,
                 SelectedTopics = topicIdsForWebinar,
                 SelectedStatus = (int)webinar.Status,
+                SeriesInfo = webinar.SeriesInfo,
                 Statuses = statuses,
                 Topics = topics
             };

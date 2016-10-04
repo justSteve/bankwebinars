@@ -34,7 +34,7 @@
                 <h2>Admin</h2>
 
                 @Html.ValidationSummary()
-                <div class="row navbar">
+                <div id="div4Accounts" class="row navbar">
                     <div class="navbar-inner">
                         <a class="brand" href="#">Accounts</a>
                         <ul class="nav">
@@ -46,7 +46,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="row navbar">
+                <div id="div4Orders" class="row navbar">
                     <div class="navbar-inner">
                         <a id="OrdersMenuHeader" class="brand" href="#">Orders</a>
                         <ul class="nav">
@@ -61,6 +61,7 @@
                             @*<div><button id="GetAdhocEventsHtmlButton" >Ad hoc Notification</button></div>*@
 
                             <li><a id="GetAdhocEventsHtmlButton">Adhoc Notification</a></li>
+                            <li><a href="@Url.Content("~/Admin/GetWeeklyInvoicesEvent")" id="GenerateWeeklyInvoicesHtmlButton">Generate Weekly Invoices</a></li>
                             @*<div class="span8"><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>*@
                         </ul>
                     </div>
@@ -91,13 +92,13 @@
     }
 </style>
 
-<div class="container">
-    <h2 class="short_headline">My Webinars</h2>
+<div id="div4Webinars" class="container">
 
     <ul class="nav nav-tabs">
         <li class="active"><a href="#webinars" data-toggle="tab">Webinars</a></li>
         <li><a href="#account" data-toggle="tab">Settings</a></li>
         <li><a href="#reports" data-toggle="tab">Reports</a></li>
+        <li><a href="#subscriptions" data-toggle="tab">Subscriptions</a></li>
     </ul>
 
 
@@ -105,11 +106,14 @@
         <div class="tab-pane active" id="webinars">
             @{ Html.RenderPartial("Admin/_Webinars"); }
         </div>
-        <div class="tab-pane " id="account">
-            @{ Html.RenderPartial("Admin/_AffAccount");}
-        </div>
+        @*<div class="tab-pane " id="account">
+            @{ Html.RenderPartial("Admin/_AffAccount", Model.AffiliateSettingsViewModel);}
+        </div>*@
         <div class="tab-pane" id="reports">
             @{ Html.RenderPartial("Admin/_Reports"); }
+
+        </div>        <div class="tab-pane" id="subscriptions">
+            @{ Html.RenderPartial("Admin/_Subscriptions"); }
 
         </div>
 

@@ -84,9 +84,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\WindowsAzure.Storage.4.3.0\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.7\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json.Schema, Version=2.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.Schema.2.0.3\lib\net45\Newtonsoft.Json.Schema.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Ninject">
       <HintPath>..\packages\Ninject.3.2.0.0\lib\net45-full\Ninject.dll</HintPath>
@@ -151,8 +155,8 @@
     <Compile Include="Core\Helpers\IDomainHelper.cs" />
     <Compile Include="Core\Helpers\JsonHelpers.cs" />
     <Compile Include="Core\Helpers\RandomHelpers.cs" />
+    <Compile Include="Core\Helpers\StringExtensions.cs" />
     <Compile Include="Core\Helpers\ValidationHelper.cs" />
-    <Compile Include="Core\MigrationOperations.cs" />
     <Compile Include="Core\OrderGenesis.cs" />
     <Compile Include="Core\PricesAndDiscounts.cs" />
     <Compile Include="Core\QuizScore.cs" />
@@ -187,6 +191,7 @@
     <Compile Include="Models\AdditionalLocationsLookupPrice.cs" />
     <Compile Include="Models\AffiliateInvoiceDTO.cs" />
     <Compile Include="Models\AffiliateReportDTO.cs" />
+    <Compile Include="Models\DiscountDTO.cs" />
     <Compile Include="Models\DiscountType.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -224,16 +229,18 @@
     <Compile Include="Notification\Email\AdhocNotificationDelivery.cs" />
     <Compile Include="Notification\Email\AzureAdhocNotificationDelivery.cs" />
     <Compile Include="Notification\Email\AdhocNotificationMessage.cs" />
+    <Compile Include="Notification\Email\AzureWeeklyInvoiceWebJobSmtpMessageDelivery.cs" />
     <Compile Include="Notification\Email\AzureCuwWebJobSmtpMessageDelivery.cs" />
     <Compile Include="Notification\Email\AzureOrderConfirmedForAdditionalLocationDelivery.cs" />
     <Compile Include="Notification\Email\AzureOrderNotifierMessageDelivery.cs" />
     <Compile Include="Notification\Email\ConfirmAdditionalLocationsOrderMessage.cs" />
     <Compile Include="Notification\Email\ConfirmOrderMessage.cs" />
-    <Compile Include="Notification\Email\MailGunDelivery.cs" />
     <Compile Include="Notification\Email\OrderConfirmedForAdditionalLocationDelivery.cs" />
     <Compile Include="Notification\Email\OrderNotifierMessageDelivery.cs" />
     <Compile Include="Notification\Events\AdhocNotificationEvent.cs" />
+    <Compile Include="Notification\Events\SendWeeklyInvoiceEvent.cs" />
     <Compile Include="Notification\Handlers\AdhocNotificationHandler.cs" />
+    <Compile Include="Notification\Handlers\SendWeeklyInvoiceHandler.cs" />
     <Compile Include="Notification\IAdhocNotificationDelivery.cs" />
     <Compile Include="Notification\IAdhocNotificationMessage.cs" />
     <Compile Include="Notification\Email\OrderSynchMessage.cs" />
@@ -299,6 +306,8 @@
     <Compile Include="Notification\INotificationDelivery.cs" />
     <Compile Include="Notification\INotificationMessage.cs" />
     <Compile Include="Notification\TemplateResolver.cs" />
+    <Compile Include="Notification\ViewModel\SendWeeklyInvoiceViewModel.cs" />
+    <Compile Include="Notification\ViewModel\SendPromoLinksViewModel.cs" />
     <Compile Include="Notification\ViewModel\AdhocNotificationSubmittedViewModel.cs" />
     <Compile Include="Notification\ViewModel\OrderSubmittedAdditionalLocationViewModel.cs" />
     <Compile Include="Notification\ViewModel\OrderSubmittedViewModel.cs" />

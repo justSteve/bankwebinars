@@ -8,9 +8,9 @@ namespace CUWebinars.Web.ViewModel
         public AdditionalLocationsViewModel AdditionalLocationsViewModel { get; set; }
         public OrderRow OrderRow { get; set; }
         public string RecordingLink { get; set; }
-        public int UserOwnsThisEvent { get; set; }
         public int DisplayPostEventMaterials { get; set; }
         public IEnumerable<string> WebinarFiles { get; set; }
         public WebinarStatus WebinarStatus { get; set; }
+        public string DiscountCaption { get; set; }
     }
 }

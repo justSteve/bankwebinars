@@ -13,5 +13,6 @@ namespace CUWebinars.Business.Repository
         bool IsShippingAddressRequired(int regTypeId);
 
         RegType GetRegTypeByLabel(string regType, int idWebinar);
+        RegType FindRegType4ExpressPostback2(string idRegType, int q18QWebinarid18);
     }
 }

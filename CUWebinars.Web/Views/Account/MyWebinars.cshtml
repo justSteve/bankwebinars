@@ -43,9 +43,10 @@
         background-color: #555555;
         color: white;
     }
+
     .nav-tabs {
         border-bottom: 2px solid darkgray;
-}
+    }
 </style>
 
 <div class="container">
@@ -56,9 +57,17 @@
     <ul class="nav nav-tabs">
         <li class="@activeScheduled"><a href="#upcoming1" data-toggle="tab">Upcoming Events</a></li>
         <li class="@activeRec"><a href="#recorded1" data-toggle="tab">Recorded Events</a></li>
-        <li class="@activeArchived"><a href="#archived" data-toggle="tab">Expired</a></li>
+        @if (activeArchived.Length > 0)
+        {
+            <li class="@activeArchived"><a href="#archived" data-toggle="tab">Expired</a></li>
+        }
         @if (_globalConfig.Tenant == "BankWebinars")
         {
+
+            if (Model.CompliancePerspectives != null)
+            {
+                <li><a href="#compPerspectives" data-toggle="tab">Compliance Perspectives</a></li>
+            }
             <li><a href="#subscriptions" data-toggle="tab">Subscriptions & Discounts</a></li>
         }
         @*<li><a href="#account" data-toggle="tab">Edit Account Profile</a></li>*@
@@ -86,7 +95,7 @@
         <div class="tab-pane @activeArchived" id="archived">
             @if (Model.Archived.Count > 0)
             {
-                
+
                 Html.RenderPartial("Partials/Archived");
             }
         </div>
@@ -193,6 +202,13 @@
                     </div>
                 }
             </div>
+
+            if (Model.CompliancePerspectives != null)
+            {
+                <div class="tab-pane" id="compPerspectives">
+                    @{ Html.RenderPartial("DisplayTemplates/ShowCompPerspectivesSubscription", Model.CompliancePerspectives); }
+                </div>
+            }
         }
         @*<div class="tab-pane" id="account">
 

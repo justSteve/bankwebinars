@@ -14,6 +14,7 @@ namespace CUWebinars.Business.Constants
         public const string CheckoutInProcess = "CheckoutInProcess"; 
         public const string ConfirmChangeEmailLink = "ConfirmChangeEmailLink";
         public const string DateTimeLongFormat = "yyyy-MM-dd-hh-mm-ss-fff-tt";
+        public const string DateTimeShortFormat = "MM-dd-yyyy";
         public const string CareOfString = "c/o ";
         public const string JoinUrl = "joinUrl";
         public const string LoggerConnectionStringName = "LoggerConnection";
@@ -24,6 +25,7 @@ namespace CUWebinars.Business.Constants
         public const string OriginImportedACS = "ImportedByACS";
         public const string OriginExpress = "Express";
         public const string OriginMigrated = "Migrator";
+        public const string OriginResume = "Resume";
 
         public const string RazorExtension = ".cshtml";
         public const string RegistrantKey = "registrantKey";

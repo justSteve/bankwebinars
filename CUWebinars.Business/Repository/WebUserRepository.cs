@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using CUWebinars.Business.Core;
 
@@ -14,7 +15,7 @@ namespace CUWebinars.Business.Repository
     {
         private readonly ILogger _logger;
 
-        public WebUserRepository()
+        public WebUserRepository(TTSWebinarsContext ttsWebinarsContext)
         {
 
         }
@@ -71,14 +72,7 @@ namespace CUWebinars.Business.Repository
                 .Where(w => w.email == email).SingleOrDefault();
         }
 
-        public WebUser GetWebUserLegacyByEmail(string email)
-        {
-            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
-            var getWebUserLegacyByEmail = dataOperations.GetWebUserLegacyByEmail(email);
-            return null;
-
-        }
 
         public WebUser GetWebUserByEmailDomain(string emailDomain)
         {
@@ -86,6 +80,25 @@ namespace CUWebinars.Business.Repository
                 .Include(wu => wu.Addresses)
                 .Include(wu => wu.Institution)
                 .FirstOrDefault(w => w.email.EndsWith(emailDomain));
+        }
+
+        public IList<WebUser> GetWebUsersOfDiscount(int idDiscount)
+        {
+            var users = ((TTSWebinarsContext)db).WebUsers
+                .Where(u => u.idSubscriptionDiscount == idDiscount).ToList();
+
+            return users;
+
+        }
+
+        public Affiliate FindAffiliateOfLastOrder(string identity)
+        {
+            var aff = ((TTSWebinarsContext)db).Orders
+                .Where(o => o.BillingEmail == identity)
+                .OrderByDescending(o => o.OrderDate)
+                .Include(u => u.WebUser)
+                .Select(o => o.Affiliate).FirstOrDefault();
+            return aff;
         }
 
         public int? GetWebUserIdByEmail(string email)
@@ -273,7 +286,7 @@ namespace CUWebinars.Business.Repository
                 newUser.FirstName = "tempFirst";
                 newUser.LastName = "tempLast";
                 newUser.UserType = UserType.Customer;
-                
+
                 Update(newUser);
 
                 return newUser;
@@ -286,7 +299,7 @@ namespace CUWebinars.Business.Repository
                 Address addBilling = new Address { AddressType = "Billing" };
                 Address addShipping = new Address { AddressType = "Shipping" };
                 addBilling.WebUser = newUser;
-                addBilling.City ="";
+                addBilling.City = "";
                 addBilling.Country = "";
                 addBilling.Name = "";
                 addBilling.Phone = "";

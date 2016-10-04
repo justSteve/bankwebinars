@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using CUWebinars.Business.Models;
 
 namespace CUWebinars.Web.Models
 {
@@ -21,5 +22,7 @@ namespace CUWebinars.Web.Models
         public string AccessCodePresenter { get; set; }
         [Display(Name = "Organizer Code")]
         public string AccessCodeOrganizer { get; set; }
+
+        public WebinarStatus WebinarStatus { get; set; }
     }
 }

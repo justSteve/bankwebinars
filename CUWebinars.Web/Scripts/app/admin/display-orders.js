@@ -12,8 +12,15 @@ $(function () {
     DO.primeDomVariables();
     DO.wireUpHandlers();
     DO.wireUpDataTable();
+    //DO.wireUpDataTableForRoyalties();
+    //DO.wireUpDataTableForAffiliatesListing();
 
+    $("#revenueReport").on('shown', function () {
+        DO.wireUpDataTableForAffiliatesListing();
 
+        $('#webinarOrders').collapse('hide');
+    }
+    );
 });
 
 
@@ -90,32 +97,22 @@ function getOrderStatusHtml() {
     return html;
 }
 
-//function getRegTypeDropDownHtml() {
-//    // this seems a little slower than I'd like...
-//    var html = "";
-
-//    $.ajax({
-//        async: false,
-//        url: "/admin/GetRegTypeDropdownHtml",
-//        dataType: "json",
-//        type: "POST",
-//        success: function (data) {
-//            html = data.html;
-//        },
-//        error: function (XMLHttpRequest, textStatus, errorThrown) {
-//            alert(textStatus);
-//        }
-//    });
-
-//    return html;
-//}
 
 // self-invoking function for creating methods using Module pattern.
 (function (ns) {
+    //SendReport = function (WebinarId, idAff) {
+    //    ns.wireUpDataTableForRoyalties(idAff);
 
+    //    $('#revenueReport').collapse('hide');
+    //    $('#webinarOrders').collapse('hide');
+
+    //    $('#revenueReportByAffiliate').collapse('show');
+
+    //};
     ns.primeDomVariables = function () {
         DO.ordersTable = $('#ordersTable');
         DO.royaltiesTable = $('#royaltiesTable');
+        DO.affiliatesTable = $('#affiliatesTable');
         DO.connInfoTable = $('#connInfoTable');
         DO.webinarIdDiv = $('#webinarIdDiv');
         //defined in parent page
@@ -126,22 +123,30 @@ function getOrderStatusHtml() {
         //DO.baseDiscountHtml = getDiscountHtml();  // 
 
         DO.orderStatusFilters = [];
-
-
     };
 
-    ns.getBillingCellHtml = function (discount, regTypeLabel, total) {
+    ns.getBillingCellHtml = function (discount, regTypeLabel, total, shippedDate) {
         //debugger;
+
+        if (shippedDate != '1/1' && shippedDate != '') {
+            shippedDate = "<br />\n<span style=\"font-size: xx-small;\">Shipped: " + shippedDate + "</span>";
+        } else {
+            shippedDate = '';
+        }
+        var billingHtml = "";
         if (discount != undefined) {
 
-            var billingHtml = regTypeLabel
-                + (discount + "")
-                + "<br />Total: $" + (total + "").replace(".00", "");
+            billingHtml = regTypeLabel
+                + (discount + "\n")
+                + "<br />\n$" + (total + "").replace(".00", "");
         } else {
 
-            var billingHtml = regTypeLabel
-                    + "<br />Total: $" + (total + "").replace(".00", "");
+            billingHtml = regTypeLabel
+                    + "<br />\n$" + (total + "").replace(".00", "");
         }
+
+        billingHtml = billingHtml + shippedDate;
+
 
         return billingHtml;
 
@@ -150,6 +155,9 @@ function getOrderStatusHtml() {
         $('#webinarOrders').on('shown', function () {
             $('#ordersTable_filter input').focus();
         });
+
+
+
         //var mouseX;
         //var mouseY;
         //$(document).mousemove(function (e) {
@@ -219,39 +227,39 @@ function getOrderStatusHtml() {
             });
         });
 
-        $('.dataTable').on("click", ".aff-revenue-summary", function () {
+        //$('.dataTable').on("click", ".aff-revenue-summary", function () {
 
-            var self = this;
+        //    var self = this;
 
-            var payload = { idWebinar: this.getAttribute('data-w'), aff: this.getAttribute('data-a') };
+        //    var payload = { idWebinar: this.getAttribute('data-w'), aff: this.getAttribute('data-a') };
 
-            $.ajax({
-                type: 'POST',
-                contentType: constants.JsonContentType,
-                cache: false,
-                url: '/Admin/BuildAffiliateInvoice',
-                dataType: constants.JsonDataType,
-                data: JSON.stringify(payload),
-                beforeSend: function () {
-                    $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
-                }
-            }).done(function (data) {
-                //alert("hit");
-                if (result.Result === 'Success') {
-                    $('#InputFormFields').append(successScreenMessage);
-                } else if (result.Result === 'Fail') {
-                    $('#InputFormFields').append(noOrderScreenMessage);
-                }
-                $('#spinnerLabel').remove();
-            }).fail(function (result) {
-                ns.formatAffRevTable(result);
-            }).always(function () {
-                $('#loadingSpinner').remove();
-            });
-        });
-        ns.formatAffRevTable = function (data) {
-            alert(data.InvoiceId);
-        };
+        //    $.ajax({
+        //        type: 'POST',
+        //        contentType: constants.JsonContentType,
+        //        cache: false,
+        //        url: '/Admin/BuildAffiliateInvoice',
+        //        dataType: constants.JsonDataType,
+        //        data: JSON.stringify(payload),
+        //        beforeSend: function () {
+        //            $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
+        //        }
+        //    }).done(function (data) {
+        //        //alert("hit");
+        //        if (result.Result === 'Success') {
+        //            $('#InputFormFields').append(successScreenMessage);
+        //        } else if (result.Result === 'Fail') {
+        //            $('#InputFormFields').append(noOrderScreenMessage);
+        //        }
+        //        $('#spinnerLabel').remove();
+        //    }).fail(function (result) {
+        //        ns.formatAffRevTable(result);
+        //    }).always(function () {
+        //        $('#loadingSpinner').remove();
+        //    });
+        //});
+        //ns.formatAffRevTable = function (data) {
+        //    alert(data.InvoiceId);
+        //};
 
         $('.dataTable').on("click", ".ResendConnectionInfoButton", function () {
             var self = this;
@@ -426,23 +434,158 @@ function getOrderStatusHtml() {
     };
 
 
+    ns.wireUpDataTableForAffiliatesListing = function () {
+
+        DO.affiliatesTable.dataTable({
+            destroy: true, "serverSide": true,
+            'buttons': [{
+                extend: 'print',
+                className: 'btn btn-mini',
+                text: 'Print current page ',
+                exportOptions: {
+                    stripHtml: false
+                }
+            }, {
+                extend: 'pdf',
+                text: ' Save PDF',
+                className: 'btn btn-mini',
+                exportOptions: {
+                    stripNewlines: false
+                }
+            }, {
+                extend: 'excel',
+                text: ' Export to Excel',
+                className: 'btn btn-mini',
+                exportOptions: {
+                    stripNewlines: false
+                }
+            }
+            ],
+            "ajax": {
+                "type": "POST",
+                "url": '/admin/DTDataHandlerAffiliateReport',
+                "contentType": 'application/json; charset=utf-8',
+                'data': function (data) {
+
+                    data.idWebinar = parseInt(DO.webinarIdDiv.text());
+                    return data = JSON.stringify(data);
+                }
+            },
+
+            "dom": '<ilfB<t>ipB>',
+            "pageLength": 10,
+            "scroller": {
+                loadingIndicator: false
+            },
+            "processing": true,
+            "paging": true,
+            "deferRender": true,
+            'columns': [
+                { "orderable": false, 'data': 'idAff' },
+                { "orderable": false, 'data': 'idAff' },
+                { "orderable": false, 'data': 'Affiliate_ContactName' },
+                { "orderable": false, 'data': 'TotalRevenues' },
+                { "orderable": false, 'data': 'TotalCommissions' },
+                { "orderable": false, 'data': 'NumOfOrders' }
+            ],
+            "order": [5, "asc"],
+            //, // complex columns can be specified / created with mRender
+            "aoColumnDefs": [
+
+                {
+                    "aTargets": [1], // Send Rpt column  -- 
+                    "mData": "idAff",
+                    "mRender": function (data, type, full) {
+                        return '<button name="sendReportTo ' + full.idAff + '" onclick="SendReport(' + full.WebinarId + ', ' + full.idAff + '); return false;">Send</button>';
+                    }
+                },
+                {
+                    "aTargets": [3], // Total Revs column  -- 
+                    "mData": "TotalRevenues",
+                    "mRender": function (data, type, full) {
+                        return ('<div class="float-right">$' + full.TotalRevenues + '</div>').replace(".5", ".50");
+                    }
+                },
+{
+    "aTargets": [4], // Total Revs column  -- 
+    "mData": "TotalCommissions",
+    "mRender": function (data, type, full) {
+        return ('<div class="float-right">$' + full.TotalCommissions + '</div>').replace(".5", ".50");
+    }
+}, {
+    "aTargets": [5], // Total Revs column  -- 
+    "mData": "NumOfOrders",
+    "mRender": function (data, type, full) {
+        return ('<div class="float-right">' + full.NumOfOrders + '</div>').replace(".5", ".50");
+    }
+}
+            ]
+        });
+    };
+
+
     ns.wireUpDataTable = function () {
-        //alert("hit");
-
-        var showUserColumn = false;
-        var showWebinarColumn = true;
-
-        if (parseInt(DO.webinarIdDiv.text()) > 0) {
-            showUserColumn = true;
-            showWebinarColumn = false;
-        }
-
-
         DO.ordersTable.dataTable({
+
+            //destroy: true, 
+"footerCallback": function (row, data, start, end, display) {
+                var api = this.api(), data;
+
+                // Remove the formatting to get integer data for summation
+                var intVal = function (i) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '') * 1 :
+                        typeof i === 'number' ?
+                        i : 0;
+                };
+
+                // Total over all pages
+                total = api
+                    .column(3)
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Total over this page
+                pageTotal = api
+                    .column(3, { page: 'current' })
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Update footer
+                $(api.column(3).footer()).html(
+                    '$' + pageTotal + ' ( $' + total + ' total)'
+                );
+            }, 'buttons': [{
+                extend: 'print',
+                className: 'btn btn-mini',
+                text: 'Print current page ',
+                exportOptions: {
+                    stripHtml: false
+                }
+            }, {
+                extend: 'pdf',
+                text: ' Save PDF',
+                className: 'btn btn-mini',
+                exportOptions: {
+                    stripNewlines: false
+                }
+            }, {
+                extend: 'excel',
+                text: ' Export to Excel',
+                className: 'btn btn-mini',
+                exportOptions: {
+                    stripNewlines: false
+                }
+            }],
+
             "serverSide": true,
             "ajax": {
                 "type": "POST",
-                "url": '/admin/OrdersDataHandler',
+                "url": '/admin/DTHandlerOrders',
                 "contentType": 'application/json; charset=utf-8',
                 'data': function (data) {
 
@@ -458,7 +601,7 @@ function getOrderStatusHtml() {
                 }
             },
 
-            "dom": '<ilf<t>ip>',
+            "dom": '<ilfB<t>ipB>',
             "pageLength": 10,
             "scroller": {
                 loadingIndicator: false
@@ -469,13 +612,18 @@ function getOrderStatusHtml() {
             'columns': [
                 // class names function as trigger - createChildRow
                 { 'data': 'idOrder', 'visible': false },
-                { 'data': 'LastName','visible': showUserColumn, 'class': 'details-control edit-user-name-email' },
-                { 'data': 'WebinarDateTitleString', 'visible': showWebinarColumn,'class': 'details-control ' },
+                { 'data': 'LastName', 'class': 'details-control edit-user-name-email' },
+                { 'data': 'WebinarDateTitleString', 'visible': showWebinarColumn, 'class': 'details-control ' },
                 { 'data': 'Institution', 'class': 'details-control edit-institution' },
                 { 'data': 'RegistrationTypeString', 'class': 'details-control edit-billing' },
                 {
                     'data': 'Affiliate_ttsDomain',
-                    'visible': showAffiliateColumn,
+                    'visible': showAffiliateColumn
+                    //'class': 'details-control '
+                },
+                {
+                    'data': 'Royalty',
+                    'visible': false,
                     'class': 'details-control '
                 },
                 { 'data': 'OrderDate', 'class': 'details-control edit-resends' },
@@ -532,7 +680,7 @@ function getOrderStatusHtml() {
 
                    var newBillingHtml = ns.getBillingCellHtml(showDiscount,
                                                            full.RegistrationType.OptionLabelShort,
-                                                           full.Total);
+                                                           full.Total, full.ShippedDateString);
 
                    return newBillingHtml;
 
@@ -544,15 +692,26 @@ function getOrderStatusHtml() {
                 "mData": "Affiliate_ttsDomain",
                 "mRender": function (data, type, full) {
 
-                    var royaltyHtml = full.Royalty;
-                    return "<div class=\"aff-revenue-summary\" data-w=" + parseInt(DO.webinarIdDiv.text()) + " data-a='" + full.Affiliate_ttsDomain + "' style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</br>" + royaltyHtml + "</div>";
+                    //var royaltyHtml = full.Royalty;
+                    //return "<div class=\"aff-revenue-summary\" data-w=" + parseInt(DO.webinarIdDiv.text()) + " data-a='" + full.Affiliate_ttsDomain + "' style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</br>" + royaltyHtml + "</div>";
+                    
+                    return "<div class=\"aff-revenue-summary\" data-w=" + parseInt(DO.webinarIdDiv.text()) + " data-a='" + full.Affiliate_ttsDomain + "' style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</div>";
                 }
             },
+           // [6] Royalty Column
+            //{
+            //    "aTargets": [6], //
+            //    "mData": "Royalty",
+            //    "mRender": function (data, type, full) {
 
-           // [6] Resends Column
+            //        var royaltyHtml = full.Royalty;
+            //        return "<div class=\"aff-revenue-summary\" data-w=" + parseInt(DO.webinarIdDiv.text()) + " data-a='" + full.Affiliate_ttsDomain + "' style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</br>" + royaltyHtml + "</div>";
+            //    }
+            //},
+
+           // [7] Resends Column
             {
-
-                "aTargets": [6], // OrderDate column
+                "aTargets": [7], // OrderDate column
                 "mData": "",
                 "mRender": function (data, type, full) {
 
@@ -563,19 +722,15 @@ function getOrderStatusHtml() {
                     if (full.Webinar_IsActive) {
                         resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
                     }
-                    //if (full.Webinar_IsRecorded) {
-                    //    resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendPostEventMaterialButton btn btn-mini\">PostEvent Material</button>";
-                    //}
+
                     return "<div style=\"text-align: center\">" + statusHtml + "</br>" + resendMsg + "</div>";
                 }
             },
             {
 
-                "aTargets": [7], // Status column
+                "aTargets": [8], // Status column
                 "mData": "",
                 "mRender": function (data, type, full) {
-
-                    // setup a Bootstrap dropdown (http://getbootstrap.com/2.3.2/javascript.html#dropdowns) with the current order status "selected"
 
                     var orderToEdit = full.idOrder;
                     //var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;

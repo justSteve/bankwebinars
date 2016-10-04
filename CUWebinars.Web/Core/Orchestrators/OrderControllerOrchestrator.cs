@@ -143,7 +143,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
 
              //incomingOrderModel.AdditionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(incomingOrderModel.AdditionalLocations).ToList();
-
+            
             var addOrderRowCommand = new AddOrderRowCommand
             {
                 AdditionalLocations = incomingOrderModel.AdditionalLocations,

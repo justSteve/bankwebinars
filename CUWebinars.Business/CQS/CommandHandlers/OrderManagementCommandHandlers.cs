@@ -48,15 +48,12 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             
             if (command.AdditionalLocations != null && command.AdditionalLocations.Any())
             {
-                var priceOfAdditionalLocationListItem = GetPriceOfAdditionalLocation(command.Webinar.idWebinar).SingleOrDefault();
+                var priceOfAdditionalLocationListItem = command.Webinar.AdditionalLocationPrice;
 
                 decimal priceOfAdditionalLocation = 0M;
 
-                if (!ReferenceEquals(priceOfAdditionalLocationListItem, null))
-                {
-                    priceOfAdditionalLocation = priceOfAdditionalLocationListItem.Price;
-                }
-
+                priceOfAdditionalLocation = priceOfAdditionalLocationListItem;
+                
                 foreach (var additionalLocationEmail in command.AdditionalLocations.Select(additionalLocation => additionalLocation.Email))
                 {
                     additionalLocations.Add(_orderManagementService.CreateAdditionalLocation(
@@ -94,7 +91,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                 try
                 {
                     int idRegType = Convert.ToInt32(command.RegistrationType);
-                    var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
+                    var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
                     command.RegistrationType = dataOperations.getLegacyOptionID(idRegType);
 
                 }
@@ -109,7 +106,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
                 string[] addLocs = command.AdditionalLocationsString.Split(',');
 
-                var addLocPrice = _orderManagementService.GetPriceOfAdditionalLocation(command.Webinar.idWebinar);
+                var addLocPrice = _orderManagementService.GetAdditionalLocationsPricing(command.Webinar.idWebinar);
 
                 foreach (var additionalLocationEmail in addLocs)
                 {
@@ -180,16 +177,6 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             _postCommitRegistrator.ExecuteActions();
             _postCommitRegistrator.Reset();
         }
-
-        private IList<AdditionalLocationsPricing> GetPriceOfAdditionalLocation(int idWebinar)
-        {
-            DataOperations dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-
-            var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(idWebinar);
-
-            return additionalLocationsPricing;
-        }
-
 
         public void Handle(RegisterNewAccountCommand command)
         {

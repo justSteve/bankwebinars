@@ -22,6 +22,7 @@ namespace CUWebinars.Business.Repository
         IQueryable<Webinar> GetAllActive();
         IQueryable<Topic> GetAllTopics();
         IQueryable<Order> GetOrdersByWebinar(int webinarId);
+        IQueryable<Order> GetOrdersByWebinarForInvoice(int webinarId);
         IEnumerable<Order> GetOrdersByWebinarForPostEventClaims(int idWebinar);
         IQueryable<Order> GetAllOrdersByWebinarForUser(int webinarId, int userId);
         IQueryable<Webinar> GetByTopic(int topicId);
@@ -37,12 +38,16 @@ namespace CUWebinars.Business.Repository
         WebinarTopicXref GetWebinarTopicXref(int idTopic, int idWebinar);
         int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar);
         int SaveChanges();
-        IList<Webinar> MigrateWebinarsFromLegacy();
         int GetRegTypeByACS(string registrationType, int idWebinar);
         double[] GetCostOfUpgrades(int idWebinar);
         Webinar GetWebinarByJoinCode(string joinCode);
         IList<Webinar> GetSearchDTO(string searchTerm);
 
         IList<int> GetV3OrdersIdsByWebinar(int idWebinar);
+        int? GetNextCompliancePerspectives();
+        IList<Webinar> GetWebinarsForWeeklyInvoice(DateTime startDate);
+
+        IEnumerable<Webinar> GetRelated(int? idWebinar);
+        IEnumerable<Webinar> GetTopicsByWebinar(int? idWebinar);
     }
 }

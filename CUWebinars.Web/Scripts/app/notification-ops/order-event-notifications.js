@@ -8,6 +8,7 @@
     resendOrderConfirmationUrl,
     selectedUpcomingWebinarId,
     sendAdhocEventUrl,
+    generateWeeklyInvoicesEventUrl,
     sendConnectionInfoUrl,
     sendOrderShippedUrl,
     sendRecordingPostedUrl,
@@ -28,6 +29,7 @@ $(function () {
     noOrderScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-information">&nbsp;&nbsp;There is no order which matches that Order Id</span>';
     successScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-success">&nbsp;The Orders have been sent.</span>';
     sendAdhocEventUrl = '/Admin/SendAdhocEvent';
+    generateWeeklyInvoicesEventUrl = '/Admin/GenerateWeeklyInvoicesEvent';
     sendConnectionInfoUrl = '/Admin/SendConnectionInfo';
     sendReminderUrl = '/Admin/SendReminder';
     sendRecordingPostedUrl = '/Admin/SendRecordingPosted';
@@ -42,7 +44,7 @@ $(function () {
         eventArgs.preventDefault();
 
         $('#OrdersMenuHeader').after('<i id="getHtmlSpinner" class="icon-spinner icon-spin"></i>');
-        
+
         $('#InputFormFields').empty().load(resendConnectionInfoUrl, function () {
 
             $('#ResendConnectionInfoButton').on('click', function () {
@@ -100,9 +102,9 @@ $(function () {
         eventArgs.preventDefault();
 
         $('#OrdersMenuHeader').after('<i id="getHtmlSpinner" class="icon-spinner icon-spin"></i>');
-        
+
         $('#InputFormFields').empty().load(sendRecordingPostedUrl, function () {
-        //$('#InputFormFields').empty().load(resendConnectionInfoUrl, function () {
+            //$('#InputFormFields').empty().load(resendConnectionInfoUrl, function () {
 
             $('#ResendPostEventMaterialButton').on('click', function () {
 
@@ -148,13 +150,13 @@ $(function () {
         });
 
     });
-            
+
     $('#GetResendOrderConfirmationHtmlButton').on('click', function (eventArgs) {
 
         eventArgs.preventDefault();
 
         $('#OrdersMenuHeader').after('<i id="getHtmlSpinner" class="icon-spinner icon-spin"></i>');
-        
+
         $('#InputFormFields').empty().load(resendOrderConfirmationUrl, function () {
 
             $('#ResendOrderConfirmationButton').on('click', function () {
@@ -180,10 +182,10 @@ $(function () {
                     url: resendOrderConfirmationUrl,
                     dataType: constants.JsonDataType,
                     data: JSON.stringify(payload),
-                    beforeSend: function() {
+                    beforeSend: function () {
                         $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
                     }
-                }).done(function(result) {
+                }).done(function (result) {
 
                     if (result.Result === 'Success') {
                         $('#InputFormFields').append(successScreenMessage);
@@ -192,9 +194,9 @@ $(function () {
                     }
                     $('#spinnerLabel').remove();
                     //Rollbar.info({ 'oen-#4': { 'result': result }});
-                }).fail(function() {
+                }).fail(function () {
                     //Rollbar.error({ 'oen-#5': { 'fail-result': 'no data' } });
-                }).always(function() {
+                }).always(function () {
                     //$('#loadingSpinner').remove();
                 });
             });
@@ -202,13 +204,13 @@ $(function () {
             $('#getHtmlSpinner').remove();
         });
 
-       
+
     });
 
     getAdhocEventsHtmlButton.on('click', function (eventArgs) {
 
         eventArgs.preventDefault();
-        
+
         $('#InputFormFields').empty().load(sendAdhocEventUrl, function () {
             $('#RegTypesCheckBoxes').hide();
             adhocNotificationForm = $('#AdhocNotificationForm');
@@ -287,7 +289,7 @@ $(function () {
                             regTypesCheckBoxesDiv.append('<textarea cols="40" data-val="true" data-val-required="The NotificationBody field is required." id="NotificationBody" name="NotificationBody" rows="2" placeholder="Enter the body of the notification" style="width:100%;margin-top:10px;clear:left"></textarea>');
                             regTypesCheckBoxesDiv.append('<button id="SendNotificationButton" class="btn btn-primary" style="margin-top:10px;">Send Notification</button>');
 
-                            $('#SendNotificationButton').on('click', function(e) {
+                            $('#SendNotificationButton').on('click', function (e) {
 
                                 e.preventDefault();
 
@@ -348,16 +350,17 @@ $(function () {
         });
     });
 
-    
+
+
     $('#SendShippedOrderNotificationButton').on('click', function (evtArgs) {
 
         evtArgs.preventDefault();
 
         $('#OrdersMenuHeader').after('<i id="getHtmlSpinner" class="icon-spinner icon-spin"></i>');
-        
+
         $('#InputFormFields').empty().load(sendOrderShippedUrl, function () {
 
-            var selectedOrderId = $('#SelectedOrderId'); 
+            var selectedOrderId = $('#SelectedOrderId');
 
             $('#GetSendShippedOrderNotificationButton').on('click', function (eventArgs) {
 
@@ -380,7 +383,7 @@ $(function () {
                     dataType: constants.JsonDataType,
                     data: JSON.stringify({ orderId: payload }),
                     beforeSend: function () {
-                        
+
                     }
                 }).done(function (result) {
 
@@ -395,7 +398,7 @@ $(function () {
                 }).fail(function (jqXHR, textStatus, errorThrown) {
                     labelCheckRemove();
                     $('#InputFormFields').append(failedScreenMessage);
-                    
+
                     //Rollbar.error({ 'oen-#12': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
                     //Rollbar.error({ 'oen-#13': { 'errorThrown': errorThrown } });
                 }).always(function () {
@@ -423,7 +426,7 @@ $(function () {
 
 
                 $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-                
+
                 var that = this;
 
                 var url = '/Admin/PreviewShippedOrder/' + selectedOrderIdVal;
@@ -434,7 +437,7 @@ $(function () {
                         backdrop: 'static',
                         show: true
                     };
-                
+
                 $.get(url, function (data) {
                     $('#emailContent').html(data);
                     $('#loadingSpinner').remove();
@@ -525,12 +528,12 @@ $(function () {
             var webinarsDropdownList = $('#SelectedWebinarId');
 
             $('#SendConnectionInfoRecipientsButton').on('click', function (eventArgs) {
-                
+                //console.log(sendConnectionInfoUrl);
                 var webinarsDropdownListVal = webinarsDropdownList.val();
                 var payload = { webinarId: webinarsDropdownListVal };
 
                 //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-                
+
                 //var logStartOperation = toastLogger.getLogFn('SendConnectionInfo');
                 //logStartOperation("Sending ConnectionInfo", null, true);
 
@@ -678,16 +681,17 @@ $(function () {
     });
 
     $('#GetSendRecordingPostedEventHtmlButton').on('click', function (eventArgs) {
+
         eventArgs.preventDefault();
 
         $('#OrdersMenuHeader').after('<i id="getHtmlSpinner" class="icon-spinner icon-spin"></i>');
-        
+
         $('#InputFormFields').empty().load(sendRecordingPostedUrl, function () {
 
             var webinarsDropdownList = $('#SelectedWebinarId');
-            
+
             $('#SendRecordingPostedButton').on('click', function (eventArgs) {
-                
+
                 var webinarsDropdownListVal = webinarsDropdownList.val();
                 var payload = { webinarId: webinarsDropdownListVal };
 
@@ -712,7 +716,7 @@ $(function () {
                     } else if (result.Result === 'No Orders to send for that webinar') {
                         $('#InputFormFields').append(noOrdersScreenMessage);
                     }
-                    
+
 
                 }).fail(function (jqXHR, textStatus, errorThrown) {
                     labelCheckRemove();
@@ -831,13 +835,164 @@ $(function () {
 
             $('#getHtmlSpinner').remove();
         });
-        
+
     });
 
-    var labelCheckRemove = function() {
+    var labelCheckRemove = function () {
         if ($('#ScreenMessageSpan').length > 0) {
             $('#ScreenMessageSpan').siblings('br').remove();
             $('#ScreenMessageSpan').remove();
         }
     };
 });
+
+
+function FireGenerator() { // used recursively!!!
+
+    console.log("Starting: " + callsComplete);
+
+    // can't use beforeSend as async: false blocks UI
+    crunchingLabel.html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Processing ' + (callsComplete + 1) + ' of ' + callsNeeded + '</span>');
+
+    var payload = { startDate: $("#startDate").val(), _idAffiliate: arryAff[callsComplete] };
+
+    window.setTimeout(function () { // "window" seems to be required...
+        $.ajax({
+            type: 'GET',
+            contentType: constants.JsonContentType,
+            cache: false,
+            async: false,
+            // timeout: 3000, // I don't think this is a good idea, maybe though...
+            url: "/Admin/GenerateWeeklyInvoicesEvent?startDate=" + payload.startDate + "&_idAffiliate=" + payload._idAffiliate,
+            dataType: constants.JsonDataType,
+            beforeSend: function () {
+                //crunchingLabel.html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Processing ' + (callsComplete + 1) + ' of ' + arryAff.length + '</span>');
+            }
+        }).done(function (data) {
+            if (data.InvoicesFound) {
+
+                var parsedInvoice = 0;
+                if (data.InvoiceId) {
+                    parsedInvoice = data.InvoiceId;
+                }
+                // dynamically create / add checkboxes with the information returned
+                sendRptCheckBoxesDiv.append('<p class="checkbox-inline">' +
+                    '<label style="display:inline"><input type="checkbox" checked="Checked" ' +
+                    'id="inlineCheckbox_' +
+                    parsedInvoice +
+                    '" ' +
+                    'data-affid="' +
+                    data.AffiliateId +
+                    '" ' +
+                    'data-invoiceid="' +
+                    data.InvoiceId +
+                    '" ' +
+                    'data-invoiceurl="' +
+                    data.Link.PrimaryUri +
+                    '" ' +
+                    'data-affiliatecontactemail="' +
+                    data.AffiliateContactEmail +
+                    '" ' +
+                    'data-daterange="' +
+                    data.DateRange +
+                    '" ' +
+                    'value="' +
+                    data.AffiliateLabel +
+                    '">' +
+                    data.AffiliateLabel +
+                    '</label> ' +
+                    '<a href="' +
+                    data.Link.PrimaryUri +
+                    '" _target=_new>View Report</a></p>');
+            } else {
+                if (data
+                    .OrdersFound) {
+
+                    // successful request; do something with the data
+                    // console.log(data);
+
+                    var parsedInvoice = 0;
+                    if (data.InvoiceId) {
+                        parsedInvoice = data.InvoiceId;
+                    }
+
+                    // dynamically create / add checkboxes with the information returned
+                    sendRptCheckBoxesDiv.append('<p class="checkbox-inline">' +
+                        '<label style="display:inline"><input type="checkbox" checked="Checked" ' +
+                        'id="inlineCheckbox_' + parsedInvoice + '" ' +
+                        'data-affid="' + data.AffiliateId + '" ' +
+                        'data-invoiceid="' + data.InvoiceId + '" ' +
+                        'data-invoiceurl="' + data.Link.PrimaryUri + '" ' +
+                        'data-affiliatecontactemail="' + data.AffiliateContactEmail + '" ' +
+                        'data-daterange="' + data.DateRange + '" ' +
+                        'value="' + data.AffiliateLabel + '">' +
+                        data.AffiliateLabel + '</label> ' + '<a href="' + data.Link.PrimaryUri + '" _target=_new>View Report</a></p>');
+
+                } else {
+
+                    console.log("NO INVOICE DATA: " + payload._idAffiliate);
+                    sendRptCheckBoxesDiv.append('<p>No orders found for ' + data.AffiliateLabel + '</p>');
+                }
+            }
+            console.log("Done: " + callsComplete);
+
+
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+
+            // failed request; give feedback to user
+            alert("Problem with " + payload._idAffiliate + " (iteration " + callsComplete + ") -- " + errorThrown);
+
+            console.log("Error on iteration " + callsComplete);
+
+        }).always(function () {
+            callsComplete++;
+            // figure out if this was the "last one" so we can clean up the UI, report errors, etc.
+            if (callsComplete >= callsNeeded) {
+                crunchingLabel.html('Processing complete')
+                setTimeout(function () { crunchingLabel.html('&nbsp;') }, 2000);
+                $('#sendRpt').show();
+            } else {
+                FireGenerator(); // Call ourself
+            }
+        });
+    }, 1);
+}
+
+function SendInvoices() {
+
+    var payload = [];
+
+    // add each of the checked invoices to the payload for posting to controller
+    $("#SendRptCheckBoxes input[id^='inlineCheckbox_']:checked").each(function (idx, item) {
+        var $item = $(item);
+        payload[idx] = { "Affiliate.idUserAff": $item.data("affid"), "Affiliate.ContactEmail": $item.data("affiliatecontactemail"), "InvoiceId": $item.data("invoiceid"), "InvoiceStorageUri": $item.data("invoiceurl"), "DateRange": $item.data("daterange") };
+    });
+
+    console.log(payload);
+
+    if (payload.length == 0)
+        return;
+
+    // post the list to the action / controller
+    $.ajax({
+        type: 'POST',
+        contentType: constants.JsonContentType,
+        cache: false,
+        url: "/Admin/SendWeeklyInvoicesEvent",
+        dataType: constants.JsonDataType,
+        data: JSON.stringify(payload),
+        beforeSend: function () {
+            crunchingLabel.html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Processing ' + payload.length + ' notifications...</span>');
+        }
+    }).done(function (data) {
+
+        console.log(data);
+        crunchingLabel.html('Processing complete.  ' + data.EmailsQueued + ' emails queued.');
+        setTimeout(function () { crunchingLabel.html('&nbsp;') }, 2000);
+
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        // failed request; give feedback to user
+        alert("problem encountered -- " + errorThrown);
+        crunchingLabel.html('');
+    });
+}

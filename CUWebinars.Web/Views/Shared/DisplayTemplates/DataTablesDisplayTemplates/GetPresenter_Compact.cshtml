@@ -1,10 +1,10 @@
 ﻿@using CUWebinars.Web.Core
 @model WebinarDetailsViewModel
 @{
-    //http://stackoverflow.com/questions/14580346/vertical-divider-between-two-columns-in-bootstrap
     GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
-    <section class="row-fluid span3 sidebar">
-        <aside class="widget well-large">
+    <div class="container-fluid">
+        @*todo: why is this container not observing span?*@
+        <div class="row-fluid span9">
             @{
                 if (Model.Webinar.idWebinar != 1952)
                 {
@@ -12,8 +12,6 @@
                     @Html.Raw(Model.Webinar.Presenter.BiographyLong)
                 }
             }
-        </aside>
-        <!--close aside widget-->
-    </section>
-
+        </div>
+    </div>
 }

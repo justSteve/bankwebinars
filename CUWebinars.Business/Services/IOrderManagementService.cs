@@ -36,13 +36,15 @@ namespace CUWebinars.Business.Services
         void FireAdminEmailConnectionInfoHandler(Order order, IEnumerable<string> recipients);
         void FireAdminEmailSendShippedOrderEvent(Order order, IEnumerable<string> recipients, bool resending = false);
         void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, bool resending = false, Uri url = null);
-        void FireOrderSynchEvent(Order order, bool userCreatedInCart = false, bool resending = false, Uri url = null);
+        //void FireOrderSynchEvent(Order order, bool userCreatedInCart = false, bool resending = false, Uri url = null);
         void FireSendConnectionInfoNotificationEvent(IList<Order> orders, bool resending);
         void FireSendOrderShippedNotificationEvent(IList<Order> orders);
         void FireSendRecordingIsPostedEvent(IList<Order> orders);
         void FireSendPerDayPromoEvent(WebinarPromoViewModel webinarPromoViewModel);
         void FireSendPerWeekPromoEvent(IList<Affiliate> affiliates, Webinar webinar);
         void FireSendReminderNotificationEvent(IList<Order> orders);
+        void FireSendWeeklyInvoiceEvent(SendWeeklyInvoiceViewModel weeklyInvoiceViewModel);
+
         IEnumerable<AdditionalLocation> GetAdditionalLocationsForOrderRow(int idOrderRow);
         IDictionary<int, string> GetAffiliatesForDisplayList();
         Tuple<string, decimal> GetCostOfAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations,
@@ -61,6 +63,8 @@ namespace CUWebinars.Business.Services
         IEnumerable<int> GetOrderIdsByPartialId(int id);
         IList<Order> GetOrdersByUserId(int id);
         IEnumerable<Order> GetOrdersAll(int idAffliate, out int totalNumberOrders);
+        IEnumerable<Order> GetOrdersAllForInvoice(int idAffliate, out int totalNumberOrders);
+        IEnumerable<Discount> GetSubscriptionsAll(int idAffliate, out int totalNumberOrders);
         IList<Order> GetOrdersForLiveNotifications(int idWebinar);
         IList<Order> GetOrdersForRecordedNotifications(int idWebinar);
         IEnumerable<Order> GetOrdersForShippedNotification();
@@ -87,15 +91,16 @@ namespace CUWebinars.Business.Services
         void RemoveAdditionalLocationsForOrder(int idOrderRow);
         Discount GetDiscountByCode(string discount);
         Discount GetDiscountByOrderId(int idOrder);
-        decimal GetPriceOfAdditionalLocation(int idWebinar);
+        decimal GetAdditionalLocationsPricing(int idWebinar);
         Discount GetDiscountByUser(WebUser currentUser);
         void GetJoinUrl(OrderRow row);
         Discount ApplyDiscountCode(string code, OrderRow row);
         void GenerateRegistrantKey(Order order, AdditionalLocation additionalLocation = null);
         int GetNumberOfOrdersPerWebinar(int id);
         void RemoveAndDeleteAdditionalLocation(AdditionalLocation deletedAdditionalLocation);
-        
+
         Discount GetDiscountById(int discount);
+        
         IList<Order> GetV3OrdersByWebinar(int idWebinar);
         DateTime CalculatePostEventMaterialsAccessExpiry(OrderRow row);
         //void SendOrderToLegacy(Order newOrder);
@@ -108,15 +113,14 @@ namespace CUWebinars.Business.Services
         void LoadWebinarIntoOrderRow(OrderRow newOrderRow);
         void SetUserStatusToUnChanged(WebUser user);
         void SetAffiliateStatusToUnChanged(Affiliate affiliate);
-        IEnumerable<Order> GetOrdersByEmailDomain(string email, int aff);
+        //IEnumerable<Order> GetOrdersByEmailDomain(string email, int aff);
         void SendAdhocNotification(string emails, string subject, string body);
-        OrderRow GetLegacyOrder(Order order);
-        void SynchOrders(int webinarId);
+
+        //void SynchOrders(int webinarId);
         Order FindExpressCheckoutOrderByOrderId(int q11Orderid);
         IEnumerable<Order> GetV3OrdersByWebinarForPostEventClaims(int idWebinar);
         void UpdateOrderByAdmin(Order newOrder);
-        int SynchExpressCheckoutOrder(Order order);
-        void SynchIds(Order order);
+        
         PostEventClaim FindPostEventClaimByOnDemandCode(Order order);
         IList<Order> GetV3OrdersByOnDemandClaim();
         IList<PostEventClaim> FindAllPostEventClaims();
@@ -128,12 +132,24 @@ namespace CUWebinars.Business.Services
         void UpdateDiscountDetails(Discount discount);
         void UpdateShippingAddressDetails(Address shippingAddress, int idUser);
         //string InsertOnDemandClaim(int orderId);
-        string SynchOrdersWhereLegacyIsZero(int idOrderLegacy, int idOrderV3);
+        
         RegType GetRegTypeByLabel(string regType, int idWebinar);
         bool OnDemandCodeIsUnique(string onDemandCode);
         IList<int> GetV3OrdersIdsByWebinar(int idWebinar);
         List<Order> GetOrdersByWebinar(int idWebinar);
+        List<Order> GetOrdersByWebinarForInvoice(int idWebinar);
+
         void RestoreToDiscount(int newOrderRowId);
         void RemoveFromDiscount(int newOrderRowId);
+        IList<Order> GetOrdersByDomain(string searchTerm);
+        IList<Order> GetOrdersByDiscount(int idDiscount);
+        string CalculateDiscountRedemption(Discount userHasDiscount, OrderRow row, int? undo, int? previewOnly);
+        string ApplyDiscountCode(int? discountId);
+        IList<WebUser> GetWebUsersOfDiscount(int idDiscount);
+        string CheckOrderComments();
+        decimal CalculateCreditsRemain(Discount userDiscount);
+        decimal CalculateCreditsUsed(Discount userDiscount);
+
+        void CreateTestRegistration(Webinar webinar);
     }
 }

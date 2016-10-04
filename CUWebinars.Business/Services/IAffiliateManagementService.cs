@@ -2,8 +2,10 @@
 using System.Linq.Expressions;
 using CUWebinars.Business.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using CUWebinars.Web.Models;
+
 
 namespace CUWebinars.Business.Services
 {
@@ -21,7 +23,10 @@ namespace CUWebinars.Business.Services
         IQueryable<Order> GetOrders(int affiliateId);
 
         IList<AffiliateReportDTO> BuildAffiliateReport(List<Order> orders, int webinarId);
-        IList<AffiliateInvoiceDTO> BuildAffiliateInvoice(List<Order> orders, int webinarId);
+        AffiliateInvoiceDTO BuildAffiliateInvoice(AffiliateInvoiceDTO invoice, List<Order> orders, int webinarId, int affiliateId);
+        AffiliateInvoiceDTO BuildAffiliateInvoiceForPostEventOrders(AffiliateInvoiceDTO invoice, List<Order> theseOrders, int thisAffiliate);
+        AffiliateInvoiceDTO BuildAffiliateInvoiceForAdjustedOrders(AffiliateInvoiceDTO invoice, List<Order> theseOrders, int thisAffiliate);
         AffiliateInvoiceDTO GetAffiliateInvoice(int value, string aff);
-    }
+        IList<DiscountDTO> GetSubscriptionsByAffiliate(int idUserAff);
+            }
 }

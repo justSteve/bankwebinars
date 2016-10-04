@@ -11,6 +11,7 @@ using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
+using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
@@ -97,6 +98,14 @@ namespace CUWebinars.Web.Controllers
                 if (!ReferenceEquals(myDiscount, null))
                 {
                     _cartControllerOrchestrator.UpdateOrderPricing(row.Order);
+                    var newJson = new JProperty(
+                        "DiscountIsApplied",
+                        new JObject(new JProperty("DiscountID", myDiscount.idDiscount)
+                            , new JProperty("By", _appHelper.GetUserAuditInfo())));
+
+
+                    row.Order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(row.Order.AdminComments, newJson, "DiscountIsApplied");
+                    //row.Order.AffiliateComments = JsonHelpers.AddObjectToJsonArray(row.Order.AffiliateComments, newJson);
 
                     var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(row.Order);
 
@@ -111,7 +120,8 @@ namespace CUWebinars.Web.Controllers
                                 Tax = pricesAndDiscounts.TaxAmount,
                                 Total = pricesAndDiscounts.TotalOrderPrice,
                                 FlatOff = pricesAndDiscounts.Discount.FlatOff,
-                                PercentOff = pricesAndDiscounts.Discount.PercentOff
+                                PercentOff = pricesAndDiscounts.Discount.PercentOff,
+                                CreditsRemain = _cartControllerOrchestrator.CalculateCreditsRemaining(myDiscount).ToString()
                             });
                 }
                 else
@@ -122,9 +132,9 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception exception)
             {
-                ModelState.AddModelError(string.Empty, "Code Not Found.");
+                //ModelState.AddModelError(string.Empty, "Code Not Found.");
                 _logger.ErrorException("ApplyDiscountCode|ApplyDiscountCode failed ", exception);
-                return this.ModelStateJson(ModelState);
+                return Json(new { Result = 0, Code = code, Order = orderRowId });
             }
         }
 
@@ -153,7 +163,15 @@ namespace CUWebinars.Web.Controllers
                 var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
                 try
                 {
+                    //if (model.Order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).Discount != null)
+                    //{
+                    //    _cartControllerOrchestrator.ApplyDiscountCode(
+                    //        model.Order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active)
+                    //            .Discount.DiscountCode,
+                    //        model.Order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active));
+                    //}
                     model.Order.OrderStatus = OrderStatus.Submitted;
+
                     _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email, model.Order.OrderRows.FirstOrDefault());
 
 
@@ -177,6 +195,8 @@ namespace CUWebinars.Web.Controllers
                 try
                 {
                     _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
+                    if (model.Order.Total == 0) model.Order.OrderStatus = OrderStatus.Paid;
+
                 }
                 catch (Exception exception)
                 {
@@ -221,6 +241,15 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
+                    if (id == null)
+                    {
+                        id = Convert.ToInt32(Request.UrlReferrer.ToString().Split('=')[1].Split('&')[0]);
+                        id =
+                            _cartControllerOrchestrator.GetOrderById(id)
+                                .OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                                .idOrderRow;
+                    }
+
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
 
                     JProperty adminMsg = new JProperty(JsonPropertyKeys.AffiliateCheckout, JsonConvert.SerializeObject(model.Order.Affiliate, Formatting.None,
@@ -297,14 +326,23 @@ namespace CUWebinars.Web.Controllers
         {
             if (id.HasValue)
             {
-                _cartControllerOrchestrator.CancelOrder(id.Value);
-
-                return Json(new
+                try
                 {
-                    success = "success"
+                    _cartControllerOrchestrator.CancelOrder(id.Value);
 
-                }, JsonRequestBehavior.AllowGet);
-                //return RedirectToAction("Step2");
+                    _logger.Info("CancelOrder idOrder: " + id);
+
+                    return Json(new
+                    {
+                        success = "success"
+
+                    }, JsonRequestBehavior.AllowGet);
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.FatalException("CancelOrder " + id, ex);
+                }
             }
             ModelState.AddModelError(string.Empty, "No Order ID was posted to the Server. In case of persistant error contact us at support@ttstrain.com. For immediate assistance, use our Help & Feedback button in your lower right screen.");
             return this.ModelStateJson(ModelState);
@@ -325,36 +363,67 @@ namespace CUWebinars.Web.Controllers
             {
                 if (ID != null && ID > 0)
                 {
-                    ViewBag.Order = _cartControllerOrchestrator.LoadOrder(ID.Value);
+
+                    var order = _cartControllerOrchestrator.LoadOrder(ID.Value);
+                    ViewBag.Order = order;
+
+                    var row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
                     ViewBag.TaxAmount = model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount;
+                    if (row.Discount != null)
+                    {
+                        ViewBag.DiscountCaption = _cartControllerOrchestrator.GetDiscountCaption(
+                            row.Discount, row, null, 1);
+                    }
+
                 }
                 else
                 {
-                    _logger.Fatal("CheckoutConfirm was passed a null or zero value: ", new Exception("null or zero ID passed to CheckoutConfirm partial"));
+                    _logger.FatalException("CheckoutConfirm was passed a null or zero value: ", new Exception("null or zero ID passed to CheckoutConfirm partial"));
                 }
             }
             catch (Exception ex)
             {
-                _logger.Fatal("CheckoutConfirm heard: " + ex);
+                _logger.FatalException("CheckoutConfirm heard: ", ex);
                 throw;
             }
             return PartialView("Partials/CheckoutConfirm", model);
         }
+
+
         public ActionResult CheckoutConfirmForAffiliate(int? ID = null)
         {
-            var model = _cartControllerOrchestrator.BuildCheckoutConfirmViewModel(ID);
+            {
+                var model = _cartControllerOrchestrator.BuildCheckoutConfirmViewModel(ID);
+                if (model == null) throw new ArgumentNullException("model");
+                try
+                {
+                    var order = _cartControllerOrchestrator.LoadOrder(ID.Value);
 
-            if (ID != null && ID > 0)
-            {
-                ViewBag.Order = _cartControllerOrchestrator.LoadOrder(ID.Value);
-                ViewBag.TaxAmount = model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount;
+                    if (order.OrderStatus == OrderStatus.Error)
+                    {
+                        order.OrderStatus = OrderStatus.InProcess;
+                    }
+
+                    ViewBag.Order = order;
+                    ViewBag.TaxAmount = model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount;
+                    if (order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).Discount != null)
+                    {
+                        ViewBag.DiscountCaption = _cartControllerOrchestrator.GetDiscountCaption(
+                            order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).Discount,
+                            order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active),
+                            null,
+                            1);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.FatalException("CheckoutConfirm heard: ", ex);
+                    throw;
+                }
+                return PartialView("Partials/CheckoutConfirmForAffiliate", model);
             }
-            else
-            {
-                _logger.Fatal("CheckoutConfirm was passed a null or zero value: ", new Exception("null or zero ID passed to CheckoutConfirm partial"));
-            }
-            return PartialView("Partials/CheckoutConfirmForAffiliate", model);
         }
+
         public ActionResult CheckoutDisplayRowPrice(int ID)
         {
             var model = _cartControllerOrchestrator.BuildDisplayRowPriceViewModel(null, ID);
@@ -379,6 +448,42 @@ namespace CUWebinars.Web.Controllers
         public PartialViewResult UpdateOrderWithUserIdForm()
         {
             return PartialView("~/Views/cart/Partials/_UpdateOrderWithUserId.cshtml");
+        }
+
+        [HttpGet]
+        public JsonResult IniMonerisModal(int idOrder)
+        {
+            //ensures that the price passed to moneris reflects order price with discount applied.
+            var updatedTotal = _cartControllerOrchestrator.GetOrderById(idOrder).Total;
+            return Json(new
+            {
+                success = "success",
+                total = updatedTotal
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [AllowAnonymous]
+        [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
+        public ActionResult Incoming(FormCollection form)
+        //public ActionResult Incoming()
+        {
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                var incoming = form[0].TrimStart('[').TrimEnd(']');
+                _logger.Info("Incoming: " + incoming);
+                var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(incoming);
+
+                var parsedOrder = ParseMandrillMsg.ParseAcs("<html><body>" + msgHtml.msg.html + "</body></html>", DateTime.Now.ToString());
+
+                return RedirectToAction("Importorder4Acs", "Order", parsedOrder);
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn("ex: " + ex);
+                return null;
+            }
         }
 
 
@@ -448,7 +553,7 @@ namespace CUWebinars.Web.Controllers
                     _logger.Warn("SignupAffiliate pulls existing order: " + formModel.idUser + " " + formModel.idWebinar);
                     foreach (var order in orderAlreadyExists)
                     {
-                        if (order.OrderStatus == OrderStatus.Submitted ||
+                        if (order.OrderStatus == OrderStatus.Billed ||
                             order.OrderStatus == OrderStatus.Paid)
                         {
                             return Json(new
@@ -475,7 +580,8 @@ namespace CUWebinars.Web.Controllers
                                 webinarId = formModel.idWebinar
                             }, JsonRequestBehavior.AllowGet);
                         }
-                        if (order.OrderStatus == OrderStatus.InProcess ||
+                        if (order.OrderStatus == OrderStatus.Submitted ||
+                            order.OrderStatus == OrderStatus.InProcess ||
                             order.OrderStatus == OrderStatus.AwaitingVerification)
                         {
                             return Json(new
@@ -526,7 +632,7 @@ namespace CUWebinars.Web.Controllers
 
             }
 
-            return this.ModelStateJson(ModelState);
+
         }
 
         public ActionResult SearchWebUsers(string lastName)
@@ -625,20 +731,40 @@ namespace CUWebinars.Web.Controllers
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(idOrderRow);
                     model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType = regType;
 
+
+
                     var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
+
+                    var discountCaption = "";
                     if (pricesAndDiscounts.Discount == null)
+                    {
                         pricesAndDiscounts.Discount = new Discount();
+                    }
+                    else
+                    {
+                        discountCaption = _cartControllerOrchestrator.GetDiscountCaption(
+                               model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Discount,
+                               model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active), null, 1);
+                    }
+
+                    //_cartControllerOrchestrator.UpdateRegTypeOnLegacy(idRegType.Value, model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar, model.Order.BillingEmail);
 
                     _logger.Info("EditRegTypeTo: " + newRegType + " From: " + oldRegType + " on orderId: " + model.Order.idOrder);
-                    var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
-
-                    var updateRegTypeOnLegacy = dataOperations.UpdateRegTypeOnLegacy(idRegType.Value, model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar, model.Order.BillingEmail);
-
+                    var UpdateSuccessCaption = "Order updated to: " + newRegType;
+                    var ShippedDate =
+                        model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).ShipmentDate;
+                    string shippDateString = "";
+                    if (ShippedDate != null)
+                    {
+                        shippDateString = ShippedDate.Value.Month
+                        + "/" + ShippedDate.Value.Day;
+                    }
                     return
                         Json(
                             new
                             {
-                                updateRegTypeOnLegacy = updateRegTypeOnLegacy,
+                                DiscountCaption = discountCaption,
+                                UpdateSuccessCaption = UpdateSuccessCaption,
                                 regTypeShort = regType.OptionLabelShort,
                                 BasePrice = pricesAndDiscounts.UnitPrice,
                                 Discount = pricesAndDiscounts.TotalDiscount,
@@ -646,6 +772,7 @@ namespace CUWebinars.Web.Controllers
                                 Tax = pricesAndDiscounts.TaxAmount,
                                 Total = pricesAndDiscounts.TotalOrderPrice,
                                 FlatOff = pricesAndDiscounts.Discount.FlatOff,
+                                ShippedDateString = shippDateString,
                                 PercentOff = pricesAndDiscounts.Discount.PercentOff
                             });
                 }
@@ -659,7 +786,7 @@ namespace CUWebinars.Web.Controllers
 
                 }
 
-                return Json(new { Result = WebUiConstants.Success });
+
             }
             return Json(new { });
         }
@@ -701,21 +828,58 @@ namespace CUWebinars.Web.Controllers
             return Content("Nothing for Search Engines here!");
         }
 
+
+        public ActionResult Resume(int id)
+        {
+            if (Request.IsAuthenticated)
+            {
+                try
+                {
+                    var order = _cartControllerOrchestrator.GetOrderById(id);
+                    order.Origin = DomainConstants.OriginResume;
+
+                    _logger.Info("Resume idOrder: " + id + " by: " + User.Identity.Name);
+
+                    return RedirectToAction("Details", "Webinar", new
+                    {
+                        id = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                        .Webinar.idWebinar,
+                        idOrder = id,
+                        source = "Resume"
+                    });
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.FatalException("Resume " + id, ex);
+
+                    throw;
+                }
+
+            }
+            return RedirectToAction("Login", "Account", new { ReturnURL = "/Resume/" + id });
+        }
+
+
         [HttpPost]
         public ActionResult ExpressPostback2(ExpressCheckoutModel form)
         {
             try
             {
-                if (form.q11_orderid != null && form.q11_orderid > 0)
+                if (form.q11_orderid > 0)
                 {
                     var order = _cartControllerOrchestrator.GetOrderById(form.q11_orderid);
-                    //order.ShippingAddress=form.q14_address14
+
                     order.Origin = DomainConstants.OriginExpress;
 
+                    order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType =
+                        _cartControllerOrchestrator.GetRegTypeByLabel(form.q10_registrationType, form.q18_q_webinarid18);
 
-                    _logger.Info("ExpressPostback " + _appHelper.GetSessionStartInfo());
+                    _cartControllerOrchestrator.UpdateOrderPricing(order);
 
-                    return RedirectToAction("Details", "Webinar", new { id = form.q18_q_webinarid18, idOrder = form.q11_orderid });
+                    _logger.Info("ExpressPostback from: " + " - " + form.q11_orderid + _appHelper.GetUserAuditInfo());
+
+                    return RedirectToAction("Details", "Webinar", new { id = form.q18_q_webinarid18, idOrder = form.q11_orderid, source = "ExpressPostback2" });
 
                 }
 
@@ -727,6 +891,17 @@ namespace CUWebinars.Web.Controllers
             return null;
 
         }
+
+        public ActionResult CancelPauseOrder(int idOrder, string email)
+        {
+
+
+            var model = new CheckoutPauseViewModel { email = email, idOrder = idOrder };
+            _logger.Info("CancelPauseOrder called email: " + email + " idOrder: " + idOrder);
+
+            return View("Partials/_Cancel_PauseOrder", model);
+        }
+
 
         public ActionResult ExpressCheckout(int? idOrder, int? idWebinar, int? idAffiliate, string email)
         {
@@ -781,7 +956,7 @@ namespace CUWebinars.Web.Controllers
                             {
                                 var userAccount = _membershipService.GetUserAccountByUserId(ClaimsExtensions.GetUserID(identity));
 
-                                selectedUser = _membershipService.GetUserByEmail(userAccount.Email).idUser;       
+                                selectedUser = _membershipService.GetUserByEmail(userAccount.Email).idUser;
                             }
                         }
                     }
@@ -814,23 +989,36 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult ComplianceSchoolCheckout()
         {
+            var _idAffiliate = 19;
 
-            //var webinar = _cartControllerOrchestrator.LoadWebinar(idWebinar);
-            //var _idAffiliate = 19;
-            //if (!ReferenceEquals(idAffiliate, null))
-            //{
-            //    _idAffiliate = idAffiliate.Value;
-            //}
+            try
+            {
+                int id;
+                if (Request.UrlReferrer.ToString().Contains("&"))
+                {
+                    id = Convert.ToInt32(Request.UrlReferrer.ToString().Split('&')[1].Split('=')[1]);
+                }
+                else
+                {
+                    id = Convert.ToInt32(Request.UrlReferrer.ToString().Split('=')[1]);
+                }
+                if (!ReferenceEquals(id, null))
+                {
+                    _idAffiliate = id;
+                }
+            }
+            catch (Exception ex)
+            {
 
-            //var model = new ExpressCheckoutModel
-            //{
-            //    q18_q_webinarid18 = idWebinar,
-            //    q15_affiliateid15 = _idAffiliate,
-            //    q12_webinarTitle = webinar.Title
-            //};
+                _logger.FatalException("ComplianceSchoolCheckoutreferrer " + Request.UrlReferrer.ToString(), ex);
+            }
 
-            return View();
+            var model = new ExpressCheckoutModel
+            {
+                q15_affiliateid15 = _idAffiliate
+            };
 
+            return View(model);
         }
 
         [HttpPost]
@@ -948,17 +1136,267 @@ namespace CUWebinars.Web.Controllers
         }
 
 
+        [HttpGet]
+        public JsonResult ContinueShopping(int idWebinar)
+        {
+            var e = _cartControllerOrchestrator.BuildContinueShoppingModel(idWebinar);
+            return Json(new
+{
+    success = "success"
+
+}, JsonRequestBehavior.AllowGet);
+
+        }
+
+        public ActionResult Checkout()
+        {
+            // do not allow anonymous (it errors due to null/empty list of orders)
+            if (User == null || !User.Identity.IsAuthenticated)
+                return RedirectToAction("Login", "Account", new { ReturnURL = "/cart/checkout" });
+            
+
+            // _logger.Info("CancelPauseOrder called email: " + email + " idOrder: " + idOrder);
+
+            // get list of order Ids for signed in user
+            // use existing BuildCheckoutConfirmViewModel method to populate our list
+            // feed to view
+            //   feeds to partial
+
+            RegistrationSummaryMultiViewModel model = new RegistrationSummaryMultiViewModel();
+
+            List<Order> orders = _cartControllerOrchestrator.GetOrdersByUser(User.Identity.Name)
+                .Where(o => o.OrderStatus == OrderStatus.InProcess).ToList();
+
+            model.RegistrationSummaryViewModels = new List<RegistrationSummaryViewModel>();
+
+            foreach (Order order in orders)
+            {
+                OrderRow orderRowForOrder = order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active);
+                if (orderRowForOrder == null)
+                    continue;
+
+                if (orderRowForOrder.AdditionalLocation == null)
+                    orderRowForOrder.AdditionalLocation = new List<AdditionalLocation>();
+
+                if (orderRowForOrder.Webinar == null)
+                    orderRowForOrder.Webinar = _cartControllerOrchestrator.LoadWebinar(orderRowForOrder.idWebinar);
+
+                if (orderRowForOrder.RegistrationType == null)
+                    orderRowForOrder.RegistrationType = _cartControllerOrchestrator.GetRegTypeById(orderRowForOrder.idRegType);
+
+                if (orderRowForOrder.Order.Affiliate == null)
+                    orderRowForOrder.Order.Affiliate = _cartControllerOrchestrator.GetAffiliateById(orderRowForOrder.Order.idAffiliate);
+
+                RegistrationSummaryViewModel registrationSummaryViewModel = new RegistrationSummaryViewModel
+                {
+                    AdditionalLocationsViewModel = _cartControllerOrchestrator.BuildAdditionalLocationsViewModel(orderRowForOrder, orderRowForOrder.idOrder),
+                    OrderRow = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active),
+                    RecordingLink =
+                        "<a href='" + GlobalConfig.GlobalConfigSingleton.WMVRepository + orderRowForOrder.Webinar.RecordingUrl +
+                        "' target=_blank /> Recording Playback</a>",
+                    WebinarStatus = orderRowForOrder.Webinar.Status
+                };
+
+
+                if (orderRowForOrder.Discount != null &&
+                    orderRowForOrder.Discount.DiscountType == DiscountType.Subscription)
+                {
+                    registrationSummaryViewModel.DiscountCaption = "WSP Credit Cost: " +
+                                                                    orderRowForOrder.RegistrationType.CreditCost
+                                                                        .ToString().Replace(".00", "");
+                }
+
+                model.RegistrationSummaryViewModels.Add(registrationSummaryViewModel);
+            }
+
+            string discountCaptionMultiMsg = "";
+            string grandTotalCaptionMultiMsg = "";
+
+            BuildCaptionsMulti(orders, out discountCaptionMultiMsg, out grandTotalCaptionMultiMsg);
+
+            model.DiscountCaptionMulti = discountCaptionMultiMsg;
+            model.GrandTotalCaptionMulti = grandTotalCaptionMultiMsg;
+
+            
+
+            return View(model);
+        }
+
+
+        private void BuildCaptionsMulti(List<Order> orders, out string discountCaptionMultiMsg, out string grandTotalCaptionMultiMsg)
+        {
+            decimal totalCostInCredits = 0M;
+            decimal discountTotal = 0M;
+            decimal creditsRemain = 0M;
+            decimal grandTotal= 0M;
+            string notEnoughCreditsCaption = "";
+
+            discountCaptionMultiMsg = "";
+            grandTotalCaptionMultiMsg = "";
+
+            if (orders.Count == 0)
+                return;
+
+            foreach (Order order in orders)
+            {
+                OrderRow orderRowForOrder = order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active);
+                if (orderRowForOrder == null)
+                    continue;
+
+                grandTotal += order.Total;
+
+                System.Diagnostics.Debug.WriteLine("idOrder: {0}, idOrderRow: {1}, running grandTotal: {2}", order.idOrder, orderRowForOrder.idOrderRow, grandTotal);
+
+                // special subscription processing
+                if (orderRowForOrder.Discount != null &&
+                    orderRowForOrder.Discount.DiscountType == DiscountType.Subscription)
+                {
+
+                    System.Diagnostics.Debug.Write("Discount processing ");
+
+                    decimal creditCost = orderRowForOrder.RegistrationType.CreditCost; // occasionally null???
+                    totalCostInCredits += creditCost;
+
+                    System.Diagnostics.Debug.WriteLine("running totalCostInCredits: {0}, orderRow.CreditCost: {1}", totalCostInCredits, creditCost);
+
+                    Discount subDiscount = orderRowForOrder.Discount;
+                    creditsRemain = _cartControllerOrchestrator.CalculateCreditsRemaining(subDiscount);
+
+                    System.Diagnostics.Debug.WriteLine("creditsRemain: {0}", creditsRemain);
+                    System.Diagnostics.Debug.WriteLine("discount.PercentOff: {0}", subDiscount.PercentOff);
+
+                    if (creditsRemain >= totalCostInCredits)
+                    {
+                        decimal orderRowCost = orderRowForOrder.RowPrice*subDiscount.PercentOff/100;
+                        System.Diagnostics.Debug.WriteLine("enough credits to cover, adding on orderRow price: {0}", orderRowCost);
+
+                        discountTotal += orderRowCost;
+                        System.Diagnostics.Debug.WriteLine("running discountTotal: {0}", discountTotal);
+
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("not enough credits to cover");
+
+                        if (creditsRemain > 0)
+                        {
+                            System.Diagnostics.Debug.WriteLine("partial credits to apply: {0}", creditsRemain);
+
+                            discountTotal += 265 * creditsRemain;
+                            
+                            System.Diagnostics.Debug.WriteLine("running discountTotal: {0}", discountTotal);
+                        }
+
+                        //else
+                        //{
+                        //    discountTotal = 0;
+                        //}
+                    }
+                } // end special subscription processing
+            }
+
+
+            if (creditsRemain < 0)
+            {
+                notEnoughCreditsCaption = 
+                    "The credits available to your Webinar Subscription Package do not " +
+                    "completely cover the required cost of your orders. We've pro-rated " +
+                    "the total amount required to " +
+                    discountTotal + ".";
+
+                System.Diagnostics.Debug.WriteLine("notEnoughCreditsCaption: {0}", notEnoughCreditsCaption);
+ 
+            }
+
+            //if (orders.Count == 0)
+            //    creditsRemain = _cartControllerOrchestrator.CalculateCreditsRemaining(???);  // promote that they have credits??
+            
+
+            if (totalCostInCredits > 0)
+            {
+                discountCaptionMultiMsg =
+                    "Your subscription package has " + creditsRemain + " credits. This cart uses " +
+                    totalCostInCredits + ". " + notEnoughCreditsCaption;
+            }
+
+            System.Diagnostics.Debug.WriteLine("final discountCaptionMultiMsg: {0}", discountCaptionMultiMsg);
+
+            grandTotalCaptionMultiMsg = "Grand Total: " + grandTotal.ToString("c").Replace(".00", "");
+
+            System.Diagnostics.Debug.WriteLine("final grandTotalCaptionMultiMsg: {0}", grandTotalCaptionMultiMsg);
+            
+        }
+
+        public JsonResult RemoveOrderJson(int idOrder, int idOrderRow)
+        {
+            return UpdateOrderStatus(idOrder, idOrderRow, OrderStatus.Canceled);
+        }
+        public JsonResult UndoRemoveOrderJson(int idOrder, int idOrderRow)
+        {
+            return UpdateOrderStatus(idOrder, idOrderRow, OrderStatus.InProcess);
+        }
+
+        private JsonResult UpdateOrderStatus(int idOrder, int idOrderRow, OrderStatus orderStatus)
+        {
+            _cartControllerOrchestrator.SetOrderStatus(idOrder, User.Identity.Name, orderStatus); // validates that the user owns this orderid
+
+            List<Order> orders = _cartControllerOrchestrator.GetOrdersByUser(User.Identity.Name)
+                .Where(o => o.OrderStatus == OrderStatus.InProcess).ToList(); // used a couple of places, may want to make a function that just returns these...
+
+            string discountCaptionMultiMsg = "";
+            string grandTotalCaptionMultiMsg = "";
+
+            BuildCaptionsMulti(orders, out discountCaptionMultiMsg, out grandTotalCaptionMultiMsg);
+
+            return Json(new { Result = WebUiConstants.Success, discountCaptionMultiMsg = discountCaptionMultiMsg, grandTotalCaptionMultiMsg = grandTotalCaptionMultiMsg });            
+        }
+
         [HttpPost]
         public ActionResult UpdateAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations, int? newOrderRowId)
         {
             try
             {
                 _cartControllerOrchestrator.UpdateAdditionalLocationsForOrderRow(additionalLocations, newOrderRowId.Value);
-                return Json(new { Result = WebUiConstants.Success });
+
+                var model = _cartControllerOrchestrator.BuildCheckOutViewModel(newOrderRowId.Value);
+
+                var UpdateSuccessCaption = "Updated Additional Locations";
+
+                var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
+
+                var discountCaption = "";
+                if (pricesAndDiscounts.Discount == null)
+                {
+                    pricesAndDiscounts.Discount = new Discount();
+                }
+                else
+                {
+                    discountCaption = _cartControllerOrchestrator.GetDiscountCaption(
+                           model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Discount,
+                           model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active), null, 1);
+                }
+
+                return
+                    Json(
+                        new
+                        {
+                            Result = WebUiConstants.Success,
+                            DiscountCaption = discountCaption,
+                            UpdateSuccessCaption = UpdateSuccessCaption,
+                            //regTypeShort = regType.OptionLabelShort,
+                            BasePrice = pricesAndDiscounts.UnitPrice,
+                            Discount = pricesAndDiscounts.TotalDiscount,
+                            OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
+                            Tax = pricesAndDiscounts.TaxAmount,
+                            Total = pricesAndDiscounts.TotalOrderPrice,
+                            FlatOff = pricesAndDiscounts.Discount.FlatOff,
+                            //ShippedDateString = shippDateString,
+                            PercentOff = pricesAndDiscounts.Discount.PercentOff
+                        });
             }
             catch (Exception ex)
             {
-                _logger.Fatal("UpdateAdditionalLocations", ex);
+                _logger.FatalException("UpdateAdditionalLocations", ex);
                 return Json(new { Result = WebUiConstants.Fail });
             }
         }

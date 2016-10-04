@@ -55,7 +55,6 @@ $(document).ready(function () {
     };
 
     ns.deleteItem = function (e) {
-
         e.preventDefault();
 
         ns.numberOfAdditionalLocations -= 1;
@@ -93,6 +92,7 @@ $(document).ready(function () {
         ns.addAdditionalLocationsButton = $('#addLocationsButton');
         ns.adInfinitumButton = $('#AdInfinitumButton');
         ns.changeUserOrderButton = $('#changeUserOrderButton');
+        ns.setPriceOfOrderButton = $('#SetPriceOfOrderButton');
         ns.changeUserOrdersButton = $('#changeUserOrdersButton');
         ns.editDiscountNotesButton = $('#editDiscountNotesButton');
         ns.extendEventAccessButton = $('#extendEventAccessButton');
@@ -113,7 +113,9 @@ $(document).ready(function () {
         ns.showExtendAccessButton = $('#showExtendAccessButton');
         ns.showExtendAccess = $('#showExtendAccess');
         ns.showChangeUser = $('#showChangeUser');
+        ns.showChangePrice = $('#showChangePrice');
         ns.changeAssignedUser = $('#changeAssignedUser');
+        ns.changePrice = $('#changePrice');
         ns.PayByMonerisModal = $('#PayByMonerisModal');
         ns.listOfRegTypes = $('#listOfRegTypes');
 
@@ -187,7 +189,7 @@ $(document).ready(function () {
         });
 
         ns.showChangeUser.on('click', function (e) {
-
+            
             e.preventDefault();
 
             var modalFormOptions = {
@@ -203,7 +205,26 @@ $(document).ready(function () {
             });
         });
 
+        ns.showChangePrice.on('click', function (e) {
+            alert("Hit");
+            e.preventDefault();
+
+            var modalFormOptions = {
+                keyboard: true,
+                backdrop: 'static',
+                show: true
+            };
+
+            ns.changePrice.modal(modalFormOptions);
+
+            ns.changePrice.on('hidden', function () {
+                modalFormOptions = null;
+            });
+        });
+
         ns.changeUserOrderButton.on('click', ns.changeUserOrder);
+
+        ns.setPriceOfOrderButton.on('click', ns.setPriceOfOrder);
 
         ns.changeUserOrdersButton.on('click', ns.changeUserOrders);
 
@@ -236,7 +257,7 @@ $(document).ready(function () {
         var form = $item.parents("form");
         var $form = $(form);
 
-
+        //console.log(e);
         e.preventDefault();
 
         // initialization code currently commented out
@@ -271,7 +292,7 @@ $(document).ready(function () {
                 if (data) {
                     if (data.Result == 0) {
 
-                        alert("The discount code " + data.Code + " was not found." +
+                        alert("There was an error detected while attempting to locate discount code " + data.Code + ". " +
                             " Try again or use our Help & Feedback button (lower right corner)  for assistance.");
                     } else {
                         // need to update the currently displaying regType and associated costs
@@ -279,6 +300,7 @@ $(document).ready(function () {
                         $("#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice").html("$" + data.BasePrice);
                         $("#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions").html("$" + data.OptionsPrice);
                         $("#DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount").html("$" + data.Discount);
+                        $("#DisplayRowPriceViewModel_PricesAndDiscounts_CreditsRemain").html("$" + data.CreditsRemain);
 
                         $("#DisplayRowPriceViewModel_PricesAndDiscounts_Tax").html("$" + data.Tax);
                         if (data.Tax > 0)
@@ -302,7 +324,7 @@ $(document).ready(function () {
                         }
 
                         //  Reuse logic already in display-orders.js for when the datatables.net gets created...
-                        var parentHtml = DO.getBillingCellHtml(showDiscount, data.regTypeShort, data.Total);
+                        var parentHtml = DO.getBillingCellHtml(showDiscount, data.regTypeShort, data.Total, data.ShippedDateString);
                         $parentCell.html(parentHtml);
 
                         var $childRow = $item.closest("td.child-row");
@@ -436,11 +458,11 @@ $(document).ready(function () {
         e.preventDefault();
 
         ns.updateAdditionalLocationsForm.submit();
-        
+
     };
 
     ns.submitUpdateAddLocsForm = function (e) {
-        
+
         var $item = $(e);
         var form = $item.parents("form");
         //var $form = $(form);
@@ -494,7 +516,7 @@ $(document).ready(function () {
                     var $parentCell = $("td.child-showing");
 
                     //  Reuse logic already in display-orders.js for when the datatables.net gets created...
-                    var parentHtml = DO.getBillingCellHtml(data.discount, data.regTypeShort, data.Total);
+                    var parentHtml = DO.getBillingCellHtml(data.discount, data.regTypeShort, data.Total, data.ShippedDateString);
                     $parentCell.html(parentHtml);
 
                     var $childRow = $item.closest("td.child-row");
@@ -624,7 +646,40 @@ $(document).ready(function () {
         });
 
     };
+    ns.setPriceOfOrder = function (e) {
+        e.preventDefault();
+        alert("hit");
+        var self = this;
 
+        var url = $('#frmSetPriceOfOrder').attr('action');
+
+        var tabInputs = formProcessor.getApplicableInputs('frmSetPriceOfOrder');
+        var payload = formProcessor.processInputs(tabInputs);
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: url,
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payload),
+            beforeSend: function () {
+                $(self).append('<span id="changePriceSpinner"><i class="icon-spinner icon-spin"></i>&nbsp;</span>');
+                $(self).attr('disabled', 'disabled');
+            }
+        }).done(function (data) {
+
+            if (data.Result === 'Success') {
+                $('#SetUserAssignedToOrder-modal-body').html("<p>" + data.message + "</p>");
+                
+            } else {
+                $("<p>" + data.Reason + "</p>").insertAfter($('#targetPrice'));
+            }
+            $('#changePriceSpinner').remove();
+            $(self).removeAttr('disabled');
+
+        });
+    };
     ns.changeUserOrder = function (e) {
         e.preventDefault();
 
@@ -649,10 +704,11 @@ $(document).ready(function () {
         }).done(function (data) {
 
             if (data.Result === 'Success') {
-                $('#editUserLink').attr('href', data.NewHref);
-                $('#UserEmail').val(data.Email);
-                $('#FullName').val(data.FullName);
-                $('#Phone ').val(data.Phone);
+                $('#SetUserAssignedToOrder-modal-body').html("<p>" + data.message + "</p>");
+                $('#changeUserOrdersButton').hide();
+                $('#changeUserOrderButton').hide();
+            } else {
+                $("<p>" + data.Reason + "</p>").insertAfter($('#targetUserEmail'));
             }
             $('#changeUserSpinner').remove();
             $(self).removeAttr('disabled');
@@ -685,10 +741,15 @@ $(document).ready(function () {
         }).done(function (data) {
 
             if (data.Result === 'Success') {
-                $('#editUserLink').attr('href', data.NewHref);
-                $('#UserEmail').val(data.Email);
-                $('#FullName').val(data.FullName);
-                $('#Phone ').val(data.Phone);
+                alert(data.message);
+                $('#SetUserAssignedToOrder-modal-body').html("<p>" + data.message + "</p>");
+                $('#changeUserOrdersButton').hide();
+                $('#changeUserOrderButton').hide();
+
+            } else {
+
+
+                $("<p>" + data.Reason + "</p>").insertAfter($('#targetUserEmail'));
             }
             $('#changeUserSpinner').remove();
             $(self).removeAttr('disabled');

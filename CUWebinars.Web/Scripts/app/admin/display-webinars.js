@@ -10,22 +10,38 @@ var DW = DISPLAYWEBINARS; // alias for code brevity
 
 // document.ready function
 $(function () {
+    $('#titleOnly').change(function () {
+
+        DW.titleOnly = "";
+        if ($("#titleOnly").prop('checked') == true) {
+            DW.titleOnly = "title:";
+        }
+        $("#search-box").val(DW.titleOnly + DW.searchTermDiv.text());
+        $('.search').submit();
+    });
+
 
     DW.primeDomVariables();
     DW.wireUpHandlers();
     DW.wireUpWebinarsGrid();
+
+    if (DW.searchTermDiv.text().indexOf('title:') > -1) {
+
+        $("#titleOnly").prop('checked', true);
+        DW.searchTermDiv.text(DW.searchTermDiv.text().replace("title:", ""));
+        $("#search-box").val(DW.searchTermDiv.text());
+    }
+
 });
 
 // self-invoking function for creating methods using Module pattern.
 (function (ns) {
-    $('#titleOnly').change(function () {
-        location.reload();
-    });
 
     ns.primeDomVariables = function () {
         DW.webinarsTable = $('#webinarsTable');
         DW.connInfoTable = $('#connInfoTable');
         DW.searchTermDiv = $('#searchTermDiv');
+        //DW.titleOnlyCheckboxState = titleOnlyCheckboxState;
         DW.titleOnly = "";
         if ($("#titleOnly").prop('checked')) {
             DW.titleOnly = "title:";
@@ -72,29 +88,30 @@ $(function () {
             },
             'columns': [
 
-                { 'data': 'Date', 'class': 'details-control wDate' },
-                { 'data': 'Status', 'class': 'details-control edit' },
+                { 'data': 'Date' },
+                { 'data': 'Status', 'visible': shouldShow, 'class': 'details-control edit' },
+                { 'data': 'yXy', 'class': 'details-control wAddToCart', 'orderable': false },
                 { 'data': 'Title', 'class': 'details-control wTitle' },
                 { 'data': 'PresenterName', 'class': 'details-control presenter' },
                 { 'data': 'RelatedTopicsString', 'class': 'details-control topicsTitles' },
-                { 'data': 'Orders',  'visible': false, 'class': 'details-control orders' }
+                { 'data': 'Orders', 'visible': false, 'class': 'details-control orders' }
             ],
             "order": [0, "desc"]
 
             , // complex columns can be specified / created with mRender
             "aoColumnDefs": [
             {
-
                 "aTargets": [0], // Date column
                 "mData": "",
                 "createdCell": function (td, cellData, rowData, row, col) {
-                    //if (cellData != null) {
-                    //    $(td).css('color', 'red');
-                    //}
+                    if (cellData != null) {
+                        $(td).tooltip();
+                        //console.log(rowData);
+                    }
                 },
                 "mRender": function (data, type, full) {
-                    console.log(full);
-                    var statusHtml = full.WebinarDateString;
+
+                    var statusHtml = full.WebinarDateString + "<br><a target='EventDetails' id='goToEventButton' type='button' class='btn btn-mini' href='/webinar/details/" + full.idWebinar + "' />Go to event</a>";
 
                     return statusHtml;
                 }
@@ -111,17 +128,37 @@ $(function () {
                 }
             },
             {
-                "aTargets": [2], // Titlecolumn
-                "mData": "Title",
+                "aTargets": [2], // Add to Cart
+                "mData": "",
                 "mRender": function (data, type, full) {
 
-                    var statusHtml = full.Title;
+                    var statusHtml = "<input type='checkbox' class='chkShowChild'>";
 
                     return statusHtml;
                 }
             },
             {
-                "aTargets": [5], // Status column
+                "aTargets": [3], // Titlecolumn
+                "mData": "Title",
+                "mRender": function (data, type, full) {
+
+                    var statusHtml = full.Title + " <a class='small' href='#'>[more...]</a>";
+
+                    return statusHtml;
+                }
+            },
+            {
+                "aTargets": [4], // Titlecolumn
+                "mData": "PresenterPresenterName",
+                "mRender": function (data, type, full) {
+
+                    var statusHtml = full.PresenterName + " <a class='small'href='#'>[bio...]</a>";
+
+                    return statusHtml;
+                }
+            },
+            {
+                "aTargets": [6], // Status column
                 "mData": "",
                 "orderable": false,
                 "mRender": function (data, type, full) {

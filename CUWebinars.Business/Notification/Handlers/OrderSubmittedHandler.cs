@@ -69,6 +69,7 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 _logger.Info("PersistedName for Order {0} is {1}", orderId, orderSubmittedEvent.EventObject.PersistedName);
 
+
                 _notificationDelivery.Notify(orderSubmittedEvent.EventObject);
 
             }

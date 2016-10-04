@@ -80,7 +80,7 @@ function wireUpHandlersForModal() {
     var locationsCloned, locationsBakForCancel;
     var collectAdditionalLocations = $('#collectAdditionalLocations');
     var locations = collectAdditionalLocations.children();
-
+    
     if (locations.length > 0) {
         locationsCloned = locations.clone();
         locationsBakForCancel = locations.clone();
@@ -100,7 +100,7 @@ function wireUpHandlersForModal() {
             $('#AdditionalLocationEmailWrapper').after($('<button>',
             {
                 id: 'sumbitAdditionalLocationsButton',
-                text: 'Submit',
+                text: 'done adding?',
                 'class': 'btn btn-primary'
             }));
 
@@ -138,14 +138,14 @@ function wireUpHandlersForModal() {
     numberOfAdditionalLocations = $('#AdditionalLocationEmailWrapper input[type="email"]').length;
 
     if (numberOfAdditionalLocations < 1) {
-        //$('#sumbitAdditionalLocationsButton').off('click');
-
+        $('#sumbitAdditionalLocationsButton').off('click');
+        
     } else {
 
         $('#AdditionalLocationEmailWrapper').after($('<button>',
         {
             id: 'sumbitAdditionalLocationsButton',
-            text: 'Submit',
+            text: 'done adding?',
             'class': 'btn btn-primary'
         }));
 

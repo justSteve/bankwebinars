@@ -10,6 +10,12 @@ namespace CUWebinars.Web.Core
 {
     public class GlobalConfig
     {
+        public string CitrixAuthMark { get; private set; }
+        public string CitrixOrgKeyMark { get; private set; }
+        public string CitrixAuthKyle { get; private set; }
+        public string CitrixOrgKeyKyle { get; private set; }
+        public string CitrixAuthSteve { get; private set; }
+        public string CitrixOrgKeySteve { get; private set; }
 
         public string CcPaymentProcessingUrlKey { get; private set; }
         public string CreateUserQueueName { get; private set; }
@@ -40,6 +46,10 @@ namespace CUWebinars.Web.Core
         public string TraceLevel { get; private set; }
         public bool UseAzureWebjobs { get; private set; }
         public string WMVRepository { get; private set; }
+        public string PromoEmailFromAddress { get; private set; }
+        public string PromoEmailSubject { get; private set; }
+        public string WeeklyInvoiceEmailFromAddress { get; private set; }
+        public string WeeklyInvoiceEmailSubject { get; private set; }
 
         private GlobalConfig()
         {
@@ -51,6 +61,12 @@ namespace CUWebinars.Web.Core
             static GlobalConfigSingletonCreator()
             {
                 NameValueCollection ApplicationSettingsSection = WebConfigurationManager.AppSettings;
+                UniqueInstance.CitrixAuthMark = ApplicationSettingsSection["CitrixAuthMark"];
+                UniqueInstance.CitrixOrgKeyMark = ApplicationSettingsSection["CitrixOrgKeyMark"];
+                UniqueInstance.CitrixAuthKyle = ApplicationSettingsSection["CitrixAuthKyle"];
+                UniqueInstance.CitrixOrgKeyKyle = ApplicationSettingsSection["CitrixOrgKeyKyle"];
+                UniqueInstance.CitrixAuthSteve = ApplicationSettingsSection["CitrixAuthSteve"];
+                UniqueInstance.CitrixOrgKeySteve = ApplicationSettingsSection["CitrixOrgKeySteve"];
 
                 UniqueInstance.CcPaymentProcessingUrlKey = ApplicationSettingsSection["CcPaymentProcessingUrlKey"];
                 UniqueInstance.CreateUserQueueName = ApplicationSettingsSection["CreateUserQueueName"];
@@ -77,6 +93,10 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.TraceLevel = GetTraceLevel();
                 UniqueInstance.UseAzureWebjobs = bool.Parse(ApplicationSettingsSection["UseAzureWebjobs"]);
                 UniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
+                UniqueInstance.PromoEmailFromAddress = ApplicationSettingsSection["PromoEmailFromAddress"];
+                UniqueInstance.PromoEmailSubject = ApplicationSettingsSection["PromoEmailSubject"];
+                UniqueInstance.WeeklyInvoiceEmailFromAddress = ApplicationSettingsSection["WeeklyInvoiceEmailFromAddress"];
+                UniqueInstance.WeeklyInvoiceEmailSubject = ApplicationSettingsSection["WeeklyInvoiceEmailSubject"];
 
                 ConnectionStringSettingsCollection ConnectionStringSettings = WebConfigurationManager.ConnectionStrings;
 
@@ -94,7 +114,7 @@ namespace CUWebinars.Web.Core
                 Debug.Assert(sources != null, "Web.config must contain a Tracing section.");
 
                 return (
-                    from ConfigurationElement source in sources 
+                    from ConfigurationElement source in sources
                     select source.ElementInformation.Properties["switchValue"].Value.ToString())
                     .FirstOrDefault();
             }

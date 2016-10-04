@@ -36,16 +36,6 @@ using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
-namespace CUWebinars.Web.Infrastructure
-{
-    public enum ManageMessageId
-    {
-        ChangePasswordSuccess,
-        SetPasswordSuccess,
-        RemoveLoginSuccess,
-    }
-}
-
 namespace CUWebinars.Web.Controllers
 {
     [ElmahHandleError]
@@ -346,10 +336,12 @@ namespace CUWebinars.Web.Controllers
                     return RedirectToAction("Index", "Admin");
 
                 }
-                var discountModel = _accountControllerOrchestrator.BuildDiscountModel();
+                CompliancePerspectivesModel compPersectivesModel = _accountControllerOrchestrator.BuildCompPersectivesModel();
+                var discountModel = _accountControllerOrchestrator.BuildDiscountModelForUser();
                 var myWebinarsDTO = _accountControllerOrchestrator.BuildMyWebinarsDTO
                     (discountModel, claimsIdentityOfAuthenticatedUser);
-
+                if (compPersectivesModel != null)
+                    myWebinarsDTO.CompliancePerspectives = compPersectivesModel;
 
                 ViewBag.idUser = myWebinarsDTO.WebUser.idUser;
                 return View("MyWebinars", myWebinarsDTO);
@@ -639,7 +631,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Fatal("GetResendInfoForm error on " + orderId, ex);
+                _logger.FatalException("GetResendInfoForm error on " + orderId, ex);
             }
 
             return Json(new { html = html });
@@ -649,6 +641,7 @@ namespace CUWebinars.Web.Controllers
         public JsonResult GetEditBillingForm(int orderId)
         {
             string html = "";
+                var order = _orderManagementService.GetOrderById(orderId);
 
             try
             {
@@ -660,7 +653,6 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 _logger.Info(string.Format("GetEditBillingForm: {0} opened {1}", editingUser.email, orderId));
-                var order = _orderManagementService.GetOrderById(orderId);
 
                 var editModel = BuildOrderInfoModel(order, "");
 
@@ -670,10 +662,10 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Fatal("GetOrderInfoForm error on " + orderId, ex);
+                _logger.FatalException("GetOrderInfoForm error on " + orderId, ex);
             }
 
-            return Json(new { html = html });
+            return Json(new { html = html, adminComments = order.AdminComments});
 
         }
         public JsonResult GetEditDiscountForm(int orderId)
@@ -700,7 +692,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Fatal("GetOrderInfoForm error on " + orderId, ex);
+                _logger.FatalException("GetOrderInfoForm error on " + orderId, ex);
             }
 
             return Json(new { html = html });
@@ -739,7 +731,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Fatal("GetEditUserCompactForm error on " + id.Value, ex);
+                _logger.FatalException("GetEditUserCompactForm error on " + id.Value, ex);
             }
 
             return Json(new { html = html });
@@ -777,7 +769,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Fatal("EditInstitution error on " + id.Value, ex);
+                _logger.FatalException("EditInstitution error on " + id.Value, ex);
             }
 
             return Json(new { html = html });
@@ -906,7 +898,7 @@ namespace CUWebinars.Web.Controllers
             var additionalLocationsCount = 0;
             if (orderRow.AdditionalLocation != null && orderRow.AdditionalLocation.Count > 0)
             {
-                additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(additionalLocations).ToList();
+                additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(additionalLocations.ToList());
                 additionalLocationsCount = additionalLocations.Count;
             }
 
@@ -925,6 +917,17 @@ namespace CUWebinars.Web.Controllers
                                         "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditRegType_DropDown.cshtml",
                                         regTypeDD, true);
 
+            var discount = _accountControllerOrchestrator.BuildDiscountModelForUser(orderRow.Discount, order.idUser);
+
+            if (orderRow.Discount != null)
+            {
+                discount=_accountControllerOrchestrator.BuildDiscountModelForOrder(orderRow, order.idUser);
+            }
+
+            if (orderRow.Webinar.Title.StartsWith("Compliance Perspectives"))
+            {
+                discount =  _accountControllerOrchestrator.BuildCPSubscriptionModel(orderRow.Discount, order.idUser);
+            }
             var editModel = new EditOrderInfoModel
             {
                 EditFields = new EditOrderModel
@@ -939,14 +942,14 @@ namespace CUWebinars.Web.Controllers
                     DisplayRowPriceViewModel = new DisplayRowPriceViewModel
                     {
                         NumberOfAdditionalLocations = additionalLocationsCount,
-                        OrderStatus = order.OrderStatus,
-                        Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
+                        //OrderStatus = order.OrderStatus,
+                        //Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
                         PricesAndDiscounts =
                             _orderManagementService.CalculateOrderCost(order, additionalLocationsPricing.Item2),
                         RegistrationType = orderRow.RegistrationType,
-                        RowPrice = orderRow.RowPrice
+                        //RowPrice = orderRow.RowPrice
                     },
-                    Discount = orderRow.Discount,
+                    Discount = discount,
                     Order = order,
                     WebUser = order.WebUser,
                     WebinarId = orderRow.Webinar.idWebinar,
@@ -1107,9 +1110,9 @@ namespace CUWebinars.Web.Controllers
                     _accountControllerOrchestrator.EditEmail(oldEmail, newEmail, _globalConfig.Tenant);
 
 
-                    var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
+                    //var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
 
-                    var EditEmailAddressOnLegacy = dataOperations.EditEmailAddressOnLegacy(oldEmail, newEmail);
+                    //var EditEmailAddressOnLegacy = dataOperations.EditEmailAddressOnLegacy(oldEmail, newEmail);
 
 
 
@@ -1305,11 +1308,36 @@ namespace CUWebinars.Web.Controllers
 
                     if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
                     {
+                        var webUser = _orderManagementService.GetWebUser(model.Email);
 
-                        _logger.Info("Account.SignIn. Email: {1},  Session={0}",
-                            _appHelper.GetUserAuditInfo(),
-                            model.Email
-                            );
+                        Affiliate affiliate = null;
+                        if (webUser != null)
+                        {
+                            affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser);
+                        }
+                        else
+                        {
+                            //hardwire a valid affiliate ID
+                            affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(19);
+                        }
+
+                        // if null returned, just use whatever is stored in Session for CurrentAffiliate.
+                        //      O/w, set that value.
+                        if (!ReferenceEquals(null, affiliate))
+                        {
+                            _stateService.SetValue(WebUiConstants.CurrentAffiliate, affiliate);
+                            _logger.Info("Account.SignIn. Email: {1}, Affiliate: {2},  Session: {0}",
+                              _appHelper.GetUserAuditInfo(),
+                                model.Email, affiliate.ttsDomain
+                                );
+                        }
+                        else
+                        {
+                            _logger.Warn("Account.SignIn. Email: {1}, Affiliate: null, Session: {0}",
+                                _appHelper.GetUserAuditInfo(),
+                                model.Email
+                                );
+                        }
                         // Handles an edge case where a user has been created anonymously in the cart and has just set their password.
                         // In such a case, we don't want to redirect back to the page where they just set their password. So send to base instead.
                         var returnUrl = string.IsNullOrWhiteSpace(model.ReturnUrl) ? @"/" :
@@ -1318,9 +1346,10 @@ namespace CUWebinars.Web.Controllers
                         return Json(new { result = LoggedInResult, returnUrl = returnUrl });
                     }
 
+
                     if (!string.IsNullOrEmpty(userMustVerify))
                     {
-                        _logger.Info("Account.SignIn UserMustVerify. Session={0}, Email: {1}",
+                        _logger.Info("Account.SignIn UserMustVerify. Session: {0}, Email: {1}",
                             _appHelper.GetUserAuditInfo(),
                             model.Email
                             );
@@ -1329,7 +1358,7 @@ namespace CUWebinars.Web.Controllers
                     }
 
                     // If we got this far, something failed, redisplay form
-                    _logger.Warn("Account.SignIn Failed. {0} | Session= {1}",
+                    _logger.Warn("Account.SignIn Failed. Email: {0},  Session: {1}",
                         model.Email,
                         _appHelper.GetUserAuditInfo()
                         );
@@ -1343,14 +1372,14 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     _logger.ErrorException(
-                        string.Format("Account.SignIn Failed. {0} | {1} Session= {2}", model.Email, model.Password,
-                            _appHelper.GetUserAuditInfo()), exception);
+                        string.Format("Account.SignIn Failed. Email: {0}, Session: {1}"
+                        , model.Email, _appHelper.GetUserAuditInfo()), exception);
                     ErrorSignal.FromCurrentContext().Raise(exception);
 
                     ModelState.AddModelError(
                         string.Empty,
                         // Needs to be an empty string to show up in ValidationSummary as not model-level error.
-                        "There was an error at the server which has been logged. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com."
+                        "Server Error #536: For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com."
                         );
                 }
             }
@@ -1375,7 +1404,24 @@ namespace CUWebinars.Web.Controllers
                     {
                         _logger.Info("Account.SignIn Post Success in cart.{1} Session={0}", _appHelper.GetUserAuditInfo(), model.Email);
                         WebUser webUser = _accountControllerOrchestrator.GetWebUserByEmail(model.Email);
-
+                        var affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser);
+                        // if null returned, just use whatever is stored in Session for CurrentAffiliate.
+                        //      O/w, set that value.
+                        if (!ReferenceEquals(null, affiliate))
+                        {
+                            _stateService.SetValue(WebUiConstants.CurrentAffiliate, affiliate);
+                            _logger.Info("Account.SignIn. Email: {1}, Affiliate: {2},  Session: {0}",
+                              _appHelper.GetUserAuditInfo(),
+                                model.Email, affiliate.ttsDomain
+                                );
+                        }
+                        else
+                        {
+                            _logger.Warn("Account.SignInFromCartDidNotFindExistingAffiliate. Email: {1}, Affiliate: null, Session: {0}",
+                                _appHelper.GetUserAuditInfo(),
+                                model.Email
+                                );
+                        }
                         return Json(new { result = LoggedInResult, UserId = webUser.idUser });
                     }
                 }
@@ -1676,6 +1722,14 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.AllowAnonymous]
         public ActionResult AddPasswordForCartCreatedUser(string email)
         {
+
+
+            int idOrder = 0;
+            string s = email;
+            bool result = int.TryParse(s, out idOrder);
+
+            if (result)
+            email = _orderManagementService.GetOrderById(idOrder).BillingEmail;
 
             if (string.IsNullOrWhiteSpace(email))
                 return View();
@@ -2007,12 +2061,12 @@ namespace CUWebinars.Web.Controllers
                     var usershipping =
                         _accountControllerOrchestrator.GetWebUserById(shippingDetailsModel.UserId)
                             .Addresses.Where(a => a.AddressType == "Shipping");
-                    if (shippingDetailsModel.ShippingAddress != usershipping)
-                    {
-                        _logger.Info("Shipping details were updated by: " + _appHelper.GetUserAuditInfo());
-                        _accountControllerOrchestrator.UpdateShippingAddressDetails(
-                            shippingDetailsModel.ShippingAddress, shippingDetailsModel.UserId);
-                    }
+                    //if (shippingDetailsModel.ShippingAddress != usershipping)
+                    //{
+                    //    _logger.Info("Shipping details were updated by: " + _appHelper.GetUserAuditInfo());
+                    //    _accountControllerOrchestrator.UpdateShippingAddressDetails(
+                    //        shippingDetailsModel.ShippingAddress, shippingDetailsModel.UserId);
+                    //}
                     _accountControllerOrchestrator.AddShippingAddressVerifiedClaim(shippingDetailsModel.UserId);
 
                     return Json(new { Result = WebUiConstants.Success });
@@ -2140,21 +2194,30 @@ namespace CUWebinars.Web.Controllers
         }
 
         #endregion
-        private void ProcessModelStateErrors()
+        private string ProcessModelStateErrors()
         {
-            var errors = ModelState.Values.SelectMany(v => v.Errors); // Get all errors flattened
+            //Please use this general pattern when logging ModelState errors.
+            var myErr = "ProcessModelStateErrors found errors.";
 
-
-
-            foreach (var error in errors)
+            foreach (ModelState modelState in ViewData.ModelState.Values)
             {
-                Debug.WriteLine(error.ErrorMessage);
-
-                _logger.Error("Account.Register ModelError: {0} | Session={1}",
-                    error.ErrorMessage,
-                    _appHelper.GetUserAuditInfo()
-                    );
+                foreach (ModelError error in modelState.Errors)
+                {
+                    myErr += error.ErrorMessage + Environment.NewLine;
+                }
             }
+            myErr += "Session Info: " + Environment.NewLine;
+            myErr += _appHelper.GetUserAuditInfo();
+
+            //a better implementation:
+            //http://stackoverflow.com/questions/2845852/asp-net-mvc-how-to-convert-modelstate-errors-to-json
+            var errorList = ModelState.Where(kvp => kvp.Value.Errors.Count > 0)
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(e => e.ErrorMessage)
+                    .ToArray()
+            );
+
+            _logger.Error(errorList.ToString());
+            return myErr;
         }
 
 
@@ -2321,20 +2384,11 @@ namespace CUWebinars.Web.Controllers
 
         }
 
-        public ActionResult GetUserDiscount()
-        {
-            var discountModel = _accountControllerOrchestrator.BuildDiscountModel();
-            return null;
+        //public ActionResult GetUserDiscount()
+        //{
+        //    var discountModel = _accountControllerOrchestrator.BuildDiscountModelForUser();
+        //    return discountModel;
 
-        }
-    }
-
-    public class CertOfCompletionDSViewModel
-    {
-        public Webinar Webinar { get; set; }
-        public string DisplayName { get; set; }
-        public string CeuShort { get; set; }
-        public string CeuStatement { get; set; }
-        public string DisplayInst { get; set; }
+        //}
     }
 }

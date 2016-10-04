@@ -9,7 +9,7 @@ var addFilesButton,
     numberOfWebinarFiles;
 
 
-$(function() {
+$(function () {
     UCI.primeDomVariables();
     UCI.wireUpHandlersForUpdateConnectionInfoModal();
 
@@ -26,8 +26,8 @@ $(function() {
         UCI.updateConnectionInfoModal.modal(modalFormOptionsOnPageLoad);
     });
 
-    UCI.updateConnectionInfoModal.on('shown', function() {
-        
+    UCI.updateConnectionInfoModal.on('shown', function () {
+
     });
 });
 
@@ -35,13 +35,14 @@ $(function() {
 
     ns.primeDomVariables = function () {
         ns.updateConnectionInfoModalButton = $('#UpdateConnectionInfoModalButton');
+        ns.createCitrixWebinar = $('#CreateCitrixWebinar');
         ns.updateConnectionInfoModal = $('#UpdateConnectionInfoModal');
         ns.updateConnectionInfoForm = $('#_UpdateConnectionInfo');
     };
 
     ns.wireUpHandlersForUpdateConnectionInfoModal = function () {
 
-        $('#saveDetailsButton').on('click', function(e) {
+        $('#saveDetailsButton').on('click', function (e) {
 
             e.preventDefault();
 
@@ -57,7 +58,7 @@ $(function() {
             headers['__RequestVerificationToken'] = token;
 
             var updateConnInfoValSummary = $('#updateConnInfoValSummary');
-            
+
             $.ajax({
                 type: 'POST',
                 contentType: constants.JsonContentType,
@@ -66,10 +67,60 @@ $(function() {
                 dataType: constants.JsonDataType,
                 data: JSON.stringify(payload),
                 headers: headers,
-                beforeSend: function() {
+                beforeSend: function () {
                     $('#result').remove();
 
                     formProcessor.clearValidationSummary(updateConnInfoValSummary);
+
+                    $(self).append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+                }
+            }).done(function (data) {
+                if (data.Result == "Success") {
+                    var label = $('<div id="result" class="label label-success pull-left block buttonAdjacentLabel">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details Updated</div>');
+                    label.hide().insertAfter($(self)).fadeIn(500);
+                    //Rollbar.info({ 'uci-#2': { 'result': data } });
+                } else if (!data.isSuccessful) {
+                    formProcessor.lightUpValidationSummary('updateConnInfoValSummary', data);
+                    //Rollbar.info({ 'uci-#3': { 'fail-result': data } });
+                }
+            }).always(function (data) {
+                $('#waitSpinner').remove();
+            });
+
+        });
+
+
+        $('#CreateCitrixWebinar').on('click', function (e) {
+
+            var idWebinar = $("#idWebinar").val() + "";
+            
+            e.preventDefault();
+
+            var self = this;
+
+            //var inputs = formProcessor.getApplicableInputs('_UpdateConnectionInfo');
+            //var payload = formProcessor.processInputs(inputs);
+
+            //Rollbar.info({ 'uci-#1': { 'payload': payload}});
+
+            var token = UCI.updateConnectionInfoForm.find('input[name=__RequestVerificationToken]').val();
+            var headers = {};
+            headers['__RequestVerificationToken'] = token;
+
+            var createCitrixWebinarSummary = $('#createCitrixWebinarSummary');
+
+            $.ajax({
+                type: 'GET',
+                contentType: constants.JsonContentType,
+                cache: false,
+                url: '/Webinar/CreateCitrixWebinar/?idWebinar=' + idWebinar,
+                dataType: constants.JsonDataType,
+                data: JSON.stringify("idWebinar"),
+                headers: headers,
+                beforeSend: function () {
+                    $('#result').remove();
+
+                    formProcessor.clearValidationSummary(createCitrixWebinarSummary);
 
                     $(self).append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
                 }

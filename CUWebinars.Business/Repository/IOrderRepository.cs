@@ -20,13 +20,14 @@ namespace CUWebinars.Business.Repository
         Order GetOrderById(int id);
         Order FindById(int id);
         IQueryable<Order> FindOrdersByBillingEmail(string email, int aff);
-        IQueryable<Order> FindOrdersByBillingEmailDomain(string email, int aff);
+        //IQueryable<Order> FindOrdersByBillingEmailDomain(string email, int aff);
         IQueryable<Order> FindOrdersByLastName(string lastName, int idAffiliate);
         IList<Order> FindOrdersByUserId(int userId);
         IList<int> FindOrderIdsByPartialId(int userId);
         IList<Order> FindOrdersByUserIdWithOrderRows(int userId);
         IEnumerable<Order> GetOrdersByUserId(int userId);
         IEnumerable<Order> GetOrdersAll(int idAffliate, out int totalNumberOrders);
+        IEnumerable<Order> GetOrdersAllForInvoice(int idAffliate, out int totalNumberOrders);
         IList<Order> GetOrdersForLiveEventNotifications(int idWebinar);
         IList<Order> GetOrdersForRecordedEventNotifications(int idWebinar);
         IList<Order> GetOrdersForShippedEventNotifications();
@@ -36,29 +37,36 @@ namespace CUWebinars.Business.Repository
         IList<Order> SelectOrdersWithArchivedWebinars(int idUser);
         IList<Order> SelectOrdersWithRecordedWebinars(int idUser);
         IList<Order> SelectOrdersWithScheduledWebinars(int idUser);
+
+        IList<Order> GetOrdersByDiscount(int idDiscount);
         int AccessToPostEventMaterials(int i, int i1);
         Discount FindDiscountById(int id);
+        
         Discount FindDiscountByCode(string discountCode);
         Discount FindDiscountByUser(WebUser currentUser);
         Order GetOrderByIdThin(int idOrder);
         int GetNumberOfOrdersPerWebinar(int id);
+        int GetNumberOfOrdersPerWebinarByAffiliate(int id, int idAffiliate);
         void RemoveAndDeleteAdditionalLocation(AdditionalLocation deletedAdditionalLocation);
         
         IList<int> FindUserIdsByPartialId(int value);
         object SearchOrders(int affiliateId, IList<int> excludeUserIDs, int skip, int take, string search);
         void LoadWebinarIntoOrderRow(OrderRow newOrderRow);
         Order FindExpressCheckoutOrder(string trim, int idWebinar);
-        void ConvertLegacyOrder(Order order);
-        int MigrateOrderFromV3(Order order);
-        void SynchIds(int lOrder, int vOrder);
+        
+        
+        
         PostEventClaim FindPostEventClaim(Order order);
         IList<Order> GetV3OrdersByOnDemandClaim();
-        Order MigrateOrderWithDiscount(Order order);
+        
         Order GetOrderByIdByOnDemandCode(string onDemandCode);
         Discount GetDiscountByOrderId(int idOrder);
         void UpdateShippingAddressDetails(Address shippingAddress, int idUser);
 
         bool OnDemandCodeIsUnique(string onDemandCode);
         IList<Order> GetOrdersByWebinar(int idWebinar);
+        IEnumerable<Discount> GetSubscriptionsAll(int idAffliate, out int totalNumberOrders);
+
+
     }
 }

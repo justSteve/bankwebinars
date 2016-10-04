@@ -16,16 +16,20 @@
 
     if (Model.Affiliate != null && !Model.UserIsAdmin)
     {
+
         <script type="text/javascript">
             if (SHOWORDERS === null || typeof SHOWORDERS === 'undefined') {
                 var SHOWORDERS = {};
 
             }
+            var affiliateId = @Model.Affiliate.idUserAff;
+            var showAffiliateColumn = false;
+            var showWebinarColumn = true;
+            var currentAffiliateId = affiliateId;
+            var currentAffiliateDisplayTitle = "@Model.Affiliate.DisplayTitle";
 
-            alert("@Model.SearchTerm");
-            //var DO = SHOWORDERS;
             SHOWORDERS.affiliateId = @Model.Affiliate.idUserAff;
-            SHOWORDERS.searchTerm = @Model.SearchTerm;
+            SHOWORDERS.searchTerm = "@Model.SearchTerm";
 
         </script>
     }
@@ -34,27 +38,18 @@
     {
         <script type="text/javascript">
 
-            alert("@Model.SearchTerm");
             if (SHOWORDERS === null || typeof SHOWORDERS === 'undefined') {
                 var SHOWORDERS = {};
-
             }
-            //var DO = SHOWORDERS;
+
             SHOWORDERS.affiliateId = 19;
-            alert("@Model.SearchTerm");
-            SHOWORDERS.searchTerm = @Model.SearchTerm;
+            SHOWORDERS.searchTerm = "@Model.SearchTerm";
         </script>
     }
 
-    //var showAffColumn = Model.UserIsAdmin ? "true" : "false";
-    //\Scripts\app\admin\display-orders.js
-    // AdminController/
-    <div></div>
+
     <div id="filter-buttons" class="clearfix" style="margin-bottom:8px;">
-        @*<div class="btn-group pull-left" id="showAllOrders" data-toggle="buttons-radio">
-                <button type="button" class="btn btn-info btn-mini active" value="justThisEvent">Just This Event</button>
-                <button type="button" class="btn btn-info btn-mini " value="showAllEvents">All Orders</button>
-            </div>*@
+
         <div id="hdrCaption" style="position: absolute; color: white; font-size: larger; background-color: darkgray; padding: 10px;" class="classForHoverEffect pull-left"></div>
         <div class="btn-group pull-right" id="order-status-filter-container" data-toggle="buttons-checkbox">
 
@@ -79,23 +74,19 @@
                 <th id="hdrInstitution">Institution</th>
                 <th id="hdrBilling">Billing</th>
                 <th id="hdrAffiliate">Affiliate</th>
+                <th id="hdrRoyalty">Royalty</th>
                 <th id="hdrLinks">Order Date</th>
                 <th id="hdrStatus">Status</th>
             </tr>
         </thead>
-        <tr>
-            <th>Order</th>
-            <th>User</th>
-            <th>Webinar</th>
-            <th>Institution</th>
-            <th>Billing</th>
-            <th>Affiliate</th>
-            <th>Order Date</th>
-            <th>Status</th>
-        </tr>
+        <tbody>
+            <tr>
+                <td colspan="2" class="dataTables_empty">Loading registrations list...</td>
+            </tr>
+        </tbody>
 
     </table>
 
-    <div id="webinarIdDiv" class="">@idWebinar</div>
-    <div id="searchTermDiv">@searchTerm</div>
+    <div id="webinarIdDiv" class="hidden">@idWebinar</div>
+    <div id="searchTermDiv" class="hidden">@searchTerm</div>
 }

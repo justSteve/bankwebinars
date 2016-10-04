@@ -26,8 +26,8 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.DiscountCode).HasColumnName("DiscountCode");
             Property(t => t.PercentOff).HasColumnName("PercentOff");
             Property(t => t.FlatOff).HasColumnName("FlatOff");
-            Property(t => t.CreditsUsed).HasColumnName("CreditsUsed");
-            Property(t => t.CreditsRemain).HasColumnName("CreditsRemain");
+            //Property(t => t.CreditsUsed).HasColumnName("CreditsUsed");
+            //Property(t => t.CreditsRemain).HasColumnName("CreditsRemain");
             Property(t => t.DateValidFrom).HasColumnName("dateValidFrom");
             Property(t => t.DateValidTo).HasColumnName("dateValidTo");
             Property(t => t.Status).HasColumnName("status");

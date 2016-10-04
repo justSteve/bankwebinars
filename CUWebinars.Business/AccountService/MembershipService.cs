@@ -87,13 +87,6 @@ namespace CUWebinars.Business.AccountService
             return webUser;
         }
 
-        WebUser IMembershipService.GetUserFromLegacy(string email)
-        {
-            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
-            return dataOperations.GetWebUserFromLegacy(email);
-
-        }
-
         public WebUser GetWebUserById(int userId)
         {
 
@@ -376,8 +369,14 @@ namespace CUWebinars.Business.AccountService
                 if ((userAccount.HasClaim(ClaimTypes.HasNotVerified, ClaimValues.OrderImportRegistration) ||
                     userAccount.HasClaim(ClaimTypes.HasNotVerified, ClaimValues.CartRegistration)))
                 {
-                    userMustVerify = "User Must Verify";
-                    return false;
+                    //userMustVerify = "User Must Verify";
+                    //return false;
+
+                    _logger.Info("Manually removing NotVerify claim for: " + emailAddress);
+                    //Given the problems caused by a system that demands that user Must Verify
+                    // we now just acknowledge that an attempt to log in is suffienct to 
+                    // verify the account.
+                    RemoveClaim(tenant, emailAddress, ClaimTypes.HasNotVerified);
                 }
 
                 if (!userAccount.HasClaim(ClaimTypes.FullName))
@@ -451,52 +450,12 @@ namespace CUWebinars.Business.AccountService
             return newInstitution;
         }
 
-        public Institution ProcessInstitutionForUserFromLegacy(string institutionName,
-            string email,
-            string city,
-            string state,
-            string regIdentifier,
-            string institutionType,
-            string zip)
-        {
-            List<Institution> institutionsList = null;
 
-            try
-            {
-                var institutions = _institutionRepository.GetByNameAndZipCode(institutionName, zip);
-                institutionsList = institutions.ToList();
-            }
-            catch (Exception exception)
-            {
-                _logger.ErrorException(string.Format("ProcessInstitutionForUserFromLegacy exception | email:{0}", email), exception);
-            }
-
-            if (institutionsList != null && institutionsList.Count == 1)
-            {
-                return institutionsList.First();
-            }
-
-            var newInstitution = new Institution
-            {
-                InstitutionName = institutionName,
-                City = city,
-                State = state,
-                Zip = zip,
-                RegIdentifier = regIdentifier,
-                InstitutionType = institutionType,
-                domainName = new string(email.SkipWhile(ltr => ltr != '@').Skip(1).ToArray())
-            };
-
-            _institutionRepository.Add(newInstitution);
-
-            return newInstitution;
-
-        }
 
         public void RemoveClaim(string tenant, string email, string claim, string claimValue = null)
         {
             var userAccount = GetUserAccountByEmail(tenant, email);
-
+            
             if (string.IsNullOrWhiteSpace(claimValue))
                 _userAccountService.RemoveClaim(userAccount.ID, claim);
             else
@@ -507,6 +466,7 @@ namespace CUWebinars.Business.AccountService
         {
             try
             {
+                RemoveClaim(tenant, email, ClaimTypes.HasNotVerified);
                 _userAccountService.ResetPassword(tenant, email);
             }
             catch (Exception exception)
@@ -568,8 +528,8 @@ namespace CUWebinars.Business.AccountService
             }
             else
             {
-                starterUser = _webUserRepository.GetWebUserLegacyByEmail(email);
-                //starterUser = _webUserRepository.GetWebUserByEmail("placeholder@ttstrain.com");
+                //starterUser = _webUserRepository.GetWebUserLegacyByEmail(email);
+                starterUser = _webUserRepository.GetWebUserByEmail("placeholder@ttstrain.com");
 
                 Address addressBilling = new Address { AddressType = "Billing" };
 
@@ -666,14 +626,14 @@ namespace CUWebinars.Business.AccountService
             //_webUserRepository.Update(user);
         }
 
-        public string CreateUserOnLegacy(WebUser user)
-        {
+        //public string CreateUserOnLegacy(WebUser user)
+        //{
 
-            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
+        //    var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
 
-            return dataOperations.CreateUserOnLegacy(user);
+        //    return dataOperations.CreateUserOnLegacy(user);
 
-        }
+        //}
 
         public void AddAccountTypeNotVerifiedClaim(UserAccount userAccount, string accountType)
         {
@@ -748,7 +708,7 @@ namespace CUWebinars.Business.AccountService
             }
             catch (Exception ex)
             {
-                _logger.Fatal("AddClaimForPostEventMaterials| MR record not found " + email + " " + ex.Message);
+                _logger.FatalException("AddClaimForPostEventMaterials| MR record not found " + email , ex);
             }
 
         }

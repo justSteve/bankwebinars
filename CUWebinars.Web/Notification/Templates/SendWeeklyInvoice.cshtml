@@ -1,0 +1,15 @@
+﻿@model CUWebinars.Business.Notification.ViewModel.SendWeeklyInvoiceViewModel
+@using CUWebinars.Business.Notification
+@using CUWebinars.Web.Models
+
+<title>
+    @*not needed for this implementation, but needed by the plumbing*@
+</title>
+
+<html>
+<body>
+<div>
+    Invoice #@Model.InvoiceId covering Webinars and other orders from @Model.DateRange is posted and ready for viewing at <a href="@Model.InvoiceStorageUri">@Model.InvoiceStorageUri</a>
+</div>
+</body>
+</html>

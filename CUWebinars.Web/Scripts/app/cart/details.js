@@ -1,4 +1,5 @@
 ﻿//  This script correlates with the Details View.
+//  This script correlates with the Details View.
 var userHasDiscount, additionalLocationsList, checkoutConfirm, discount, cartStateManager, okToLeave, shippingAddressRequired, signUpForm, signUpFormContainer, storedHeight, numberOfAdditionalLocationsTab3;
 
 discount = '';
@@ -60,11 +61,7 @@ $(function () {
             var self = $(this);
             self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
 
-            L.clientLogger.info('d-#1', { 'submitting getConfirmOrderForm': cartStateManager.getOrderRowId() });
-
             var data = $(this).serialize();
-
-            L.clientLogger.info('d-#2', { 'Serialized Form: ': data });
 
             var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
 
@@ -83,8 +80,7 @@ $(function () {
                 }
             }).done(function (data) {
                 if (data.Result === 'Success') {
-                    L.clientLogger.info('d-#3', { 'OrderId': data.OrderRowID });
-
+                    
                     $('#orderDetails').empty();
                     $('#orderDetails').append(data.Msg);
 
@@ -98,8 +94,7 @@ $(function () {
 
                 } else {
                     //console.error('Failed to post order');
-                    L.clientLogger.error('d-#4 Failed to post order', { 'jsonResponse': data });
-
+                    
                     confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data #554. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
                 }
 
@@ -111,7 +106,7 @@ $(function () {
                 confirmRegistrationBillMe.removeAttr('disabled');
                 $('#signUpSpinner').remove();
                 confirmRegistrationBillMe.after('<span class="field-validation-error">Transport error #555. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
-                L.clientLogger.error('d-#5', { 'Error': jqXHR.responseText });
+                
             });
 
         });
@@ -135,14 +130,11 @@ $(function () {
                 // disable button while operation in progress
                 $('#cancelRegistration').attr('disabled', 'disabled').after('<span id="cancelSpinner"><span>&nbsp;<i class="icon icon-spinner icon-spin"></i></span></span>');
 
-                L.clientLogger.info('d-#6', { 'orderCancellation': 'deleting order at 3rd tab', 'orderId': cartStateManager.getOrderId() });
-
                 $.post(self.attr('action'), data, function (response, status, xhr) {
 
                     if (status !== 'error') {
                         if (xhr.responseJSON['success']) {
-                            L.clientLogger.info('d-#7', { 'orderCancellationConfirmed': 'deletion succeeded' });
-
+                            
                             okToLeave = true;
 
                             var utilities = new Common.Utilities();
@@ -150,13 +142,11 @@ $(function () {
                             $('#cancelSpinner').remove();
                             utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
                         } else {
-                            L.clientLogger.error('d-#8', { 'orderCancellationFailed': 'Deletion failed. System potentially in error state.' });
                             $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Invalid Data #88. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
                             $('#CancelModal').modal('hide');
                         }
 
                     } else {
-                        L.clientLogger.error('d-#9', { 'orderCancellationFailed': 'Deletion failed. System potentially in error state.' });
                         $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Server Error. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
                         $('#CancelModal').modal('hide');
                     }
@@ -189,17 +179,6 @@ $(function () {
     cartStateManager.setAddressVerified(addressVerified); // addressVerified is set in a script tag in razor view Details.cshtml
     cartStateManager.setNotificationsTesting(notificationsTesting); // notificationsTesting is set in a script tag in razor view Details.cshtml
 
-    L.clientLogger.info(
-        'd-#10', {
-            'serverVariables': {
-                'webinarId': webinarId,
-                'orderRowId': orderRowId,
-                'isUserLoggedIn': isUserLoggedIn,
-                'checkoutInProcess': checkoutInProcess,
-                'addressVerified': addressVerified,
-                'notificationsTesting': notificationsTesting
-            }
-        });
 
     cartStateManager.SetCartState();
 
@@ -217,7 +196,6 @@ $(function () {
     // Flow goes inside this block where the order exists and is in process e.g. previously abandoned before finializing
     if (cartStateManager.getOrderRowId() > 0 && cartStateManager.getCheckoutInProcess()) {
 
-        L.clientLogger.info('d-#11', { 'returnUnfinishedOrder': 'User finishing order row: ' + cartStateManager.getOrderRowId() });
 
         if (shippingAddressRequired && !cartStateManager.getNotificationsTesting() && !cartStateManager.getAddressVerified()) {
             // Following function lives in the register-during-checkout.js script
@@ -226,15 +204,12 @@ $(function () {
         }
 
         cartStateManager.setOrderId(orderId);
-        L.clientLogger.info('d-#12', { 'returnUnfinishedOrder': 'User finishing order: ' + orderId });
-
         // see top of this file
         checkoutConfirm.initialize();
 
         //The BIG GREEN 'Bill Me' button on 3rd tab
         $('#ConfirmRegistrationBillMe').on('click', function (e) {
 
-            L.clientLogger.info("BigGreenBillMe from Details", { orderid: cartStateManager.getOrderId() });
             e.preventDefault();
             var confirmOrderForm = $('#confirmOrder');
             confirmOrderForm.submit();
@@ -276,7 +251,6 @@ $(function () {
 
         var data = signUpForm.serialize();
 
-        L.clientLogger.info('d-#19', { 'signupData': data });
 
         var spinner = $('#signUpSpinner');
         $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
@@ -285,7 +259,6 @@ $(function () {
         // If the user IS NOT LOGGED IN - control moves to the register-during-checkout.js script
         if (!cartStateManager.getIsUserLoggedIn()) {
 
-            L.clientLogger.info('d-#20', { 'anonymousUser': 'Order created for anonymous user. Not yet finalized.' });
 
             $.post(signUpForm.attr('action'), data, function (response, status, xhr) {
                 if (status !== 'error') {
@@ -306,7 +279,7 @@ $(function () {
                                 registerDuringCheckout.initialize(cartStateManager.getOrderId(), cartStateManager.getWebinarId(), cartStateManager.getOrderRowId(), addressOptions, checkoutConfirm.initialize);
                             } else {
                                 $('#labelEmail').html('<span class="label label-important">Server error #21. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance!</span>');
-                                L.clientLogger.error('d-#28', { 'responseObject': xhr.responseJSON, 'anonymousUserSubmit': 'Fail condition.' });
+                                
                             }
                             loadingSpinner.remove();
                         });
@@ -316,12 +289,12 @@ $(function () {
                         $('#labelEmail').html('<span class="label label-important">&nbsp;There were some problems with the form. Please refer to the items in red.</span>');
                         formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
                         loadingSpinner.remove();
-                        L.clientLogger.error('d-#22', { 'anonymousUserSubmit': 'Fail condition.' });
+                    
                     }
                 } else {
                     $('#labelEmail').html('<span class="label label-important">&nbsp;Server error. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance!</span>');
                     loadingSpinner.remove();
-                    L.clientLogger.error('d-#23', { 'anonymousUserSubmit': 'Fail condition.' });
+                    
                 }
             }, constants.JsonDataType);
         } else {
@@ -334,8 +307,7 @@ $(function () {
                         cartStateManager.setOrderId(xhr.responseJSON['orderId']);
                         cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
 
-                        L.clientLogger.info('d-#30', { 'loggedInUser': 'submitting ConfirmOrder' + xhr.responseJSON['orderId'] });
-
+                        
                         $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderId(), function (response, status, xhr) {
 
                             if (status === 'error') {
@@ -343,7 +315,7 @@ $(function () {
                                 $('#loadingSpinner').remove();
                                 $('#confirmationTab a').tab('show');
 
-                                L.clientLogger.error('d-#31', { 'loggedInUser': 'Fail condition.', 'responseObject': xhr.responseJSON });
+                                
                             } else {
 
                                 $('#confirmationTab a').tab('show');
@@ -404,12 +376,10 @@ $(function () {
 
                         spinner.remove();
 
-                        L.clientLogger.error('d-#27', { 'loggedInUser': 'Fail condition.', 'responseObject': xhr.responseJSON });
                     }
                 } else {
                     spinner.remove();
                     $('#confirmation').html('<div class="text-error">There has been an error at the server, please use our Help & Feedback button (lower right corner)  for immediate assistance.</div>');
-                    L.clientLogger.error('d-#26', { 'loggedInUser': 'Fail condition.' });
                 }
             }, constants.JsonDataType);
 
@@ -423,8 +393,6 @@ $(function () {
         if (okToLeave) {
             return undefined;
         }
-
-        L.clientLogger.info('d-#32', { 'User error': 'User attempted to abandoned order', OrderId: cartStateManager.getOrderId() || 'No order id available yet' });
 
         var confirmationMessage = 'It looks like you have been creating an order.\r\n';
         cartStateManager.getOrderId() && (confirmationMessage += 'OrderId: ' + cartStateManager.getOrderId() + '.\r\n');
@@ -490,8 +458,7 @@ function setUpEditButtons() {
             Institution: $('#AdjustUserDetailsPanel_Institution').val()
         };
 
-        L.clientLogger.info('d-#17', { 'userDetailEdits': payload });
-
+        
         $.ajax({
             type: 'POST',
             contentType: constants.JsonContentType,
@@ -508,7 +475,7 @@ function setUpEditButtons() {
 
             if (data.Result === 'Success') {
                 self.after('<span id="editUserResult">&nbsp;<span class="label label-success"><span> Details updated successfully! </span></span></span>').hide().fadeIn(500);
-                L.clientLogger.info('d-#18', { 'userDetailEditsResult': 'edits succeeded' });
+                
             }
 
             $('#userDetailsSpinner').remove();
@@ -526,7 +493,7 @@ function setUpEditButtons() {
             additionalLocationsList.after($('<button>',
             {
                 id: 'applyAdditionalLocationsButton',
-                text: 'apply',
+                text: 'done adding?',
                 'class': 'btn btn-mini btn-primary'
             }));
 
@@ -549,7 +516,7 @@ function setUpEditButtons() {
 }
 
 function populateAdditionalLocationsOn3rdTab() {
-
+    
     // There is re-use involved with additional locations as they can be manipulated on either the 1st or 3rd tab. 
     // Hence, the locationsSpanPrefix may already exist in some scenarios.
     if (!locationsSpanPrefix) {
@@ -587,6 +554,7 @@ function populateAdditionalLocationsOn3rdTab() {
         $.each(trashCans, function (idx, i) {
             $(i).on('click', deleteAddLocInputTabb3);
         });
+        console.log(locations);
     }
 }
 
@@ -606,11 +574,11 @@ var deleteAddLocInputTabb3 = function (event) {
         $(this).remove();
     });
 
-    if (numberOfAdditionalLocationsTab3 < 1) {
-        $('#applyAdditionalLocationsButton').hide(300, function () {
-            $(this).remove();
-        });
-    }
+    //if (numberOfAdditionalLocationsTab3 < 1) {
+    //    $('#applyAdditionalLocationsButton').hide(300, function () {
+    //        $(this).remove();
+    //    });
+    //}
 };
 
 var applyAdditionalLocations = function (e) {
@@ -630,7 +598,6 @@ var applyAdditionalLocations = function (e) {
 
     var formData = adjustAddLocsForm.serialize();
 
-    L.clientLogger.info('d-#14', { 'applyEditsToAdditionalLocationsTab3': formData });
 
     $.ajax({
         type: 'POST',
@@ -644,10 +611,20 @@ var applyAdditionalLocations = function (e) {
         }
     }).done(function (data) {
         if (data.Result === 'Success') {
+            
             var infoLabel = $('#addLocsText');
 
             var priceLabel = $('#totalAdLocsPrice');
-            priceLabel.text('$' + (numberOfAdditionalLocationsTab3 * ADDLOC.price));
+
+            var addLocPrice = 0;
+
+            if (typeof ADDLOC != "undefined") {
+                addLocPrice = ADDLOC.price;
+            } else if (typeof webinarAdditionalLocationPrice != "undefined") {
+                addLocPrice = webinarAdditionalLocationPrice;
+            }
+
+            priceLabel.text('$' + (numberOfAdditionalLocationsTab3 * addLocPrice));
 
             var newText = numberOfAdditionalLocationsTab3 + $.trim(infoLabel.html()).slice(1);
 
@@ -655,11 +632,25 @@ var applyAdditionalLocations = function (e) {
                 infoLabel.html(newText);
                 infoLabel.fadeIn(200);
             });
+            if (data.Tax > 0) {
+                $('#showTax').removeClass("hidden");
+            } else {
+                $('#showTax').addClass("hidden");
+            }
 
-            L.clientLogger.info('d-#15', { 'applyEditsToAdditionalLocationsResult': 'edits succeeded' });
-
+            $('#flyUpdateSuccessFlag').html(data.UpdateSuccessCaption).show();
+            $('#discountCaption').html(data.DiscountCaption);
+            //$('#optionLabel').html(data.regTypeShort);
+            $('#baseCost').html('$' + data.BasePrice + '');
+            $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
+            $('#taxAmt').html(data.Tax + '');
+            $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
+            $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
+            $('#additionalLocationsCaption').addClass("hidden");
+            
         } else {
-            L.clientLogger.error('d-#16', { 'applyEditsToAdditionalLocationsResult': 'edits failed', 'returnObject': data });
+            alert("failed to add");
+            var a = 'holder';
         }
         $('#waitSpinner').remove();
     });

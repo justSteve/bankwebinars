@@ -27,6 +27,8 @@ using System.Text;
 using System.Web.UI.WebControls;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Core.Helpers;
+using CUWebinars.Business.Notification;
+using CUWebinars.Web.Models;
 using IEvent = CUWebinars.NotificationSystem.Event.IEvent;
 using IEventSource = CUWebinars.NotificationSystem.Event.IEventSource;
 
@@ -76,6 +78,11 @@ namespace CUWebinars.Business.Services
         public void AddAdditionalLocation(AdditionalLocation addedAdditionalLocation)
         {
             _orderRepository.AddAdditionalLocation(addedAdditionalLocation);
+        }
+        public string ApplyDiscountCode(int? discountId)
+        {
+            _logger.Fatal("not implemented: " + discountId.Value);
+            return null;
         }
 
         public Order AssignAffiliateToOrder(int affiliateId, Order order)
@@ -195,7 +202,7 @@ namespace CUWebinars.Business.Services
             var addresses = new StringBuilder();
             var i = 0;
 
-            var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(idWebinar);
+            var additionalLocationsPricing = GetAdditionalLocationsPricing(idWebinar);
 
             decimal optionsCost = 0M;
 
@@ -228,9 +235,7 @@ namespace CUWebinars.Business.Services
                 }
             }
 
-            Debug.Assert(additionalLocationsPricing.Count == 1, "There should only ever be 1 value returned for the cost of an Additionalocation for a particular Webinar");
-            // Item2 of the tuple is the price value as a decimal. Item 1 is the AdditionalLocationsLookupPrice id 
-            optionsCost = additionalLocationsPricing.Single().Price;
+            optionsCost = additionalLocationsPricing;
 
             return new Tuple<string, decimal>(addresses.ToString(), optionsCost);
         }
@@ -307,10 +312,10 @@ namespace CUWebinars.Business.Services
             return order;
         }
 
-        public IEnumerable<Order> GetOrdersByEmailDomain(string email, int aff)
-        {
-            return _orderRepository.FindOrdersByBillingEmailDomain(email.Trim(), aff);
-        }
+        //public IEnumerable<Order> GetOrdersByEmailDomain(string email, int aff)
+        //{
+        //    return _orderRepository.FindOrdersByBillingEmailDomain(email.Trim(), aff);
+        //}
 
         public void SendAdhocNotification(string emails, string subject, string body)
         {
@@ -324,250 +329,296 @@ namespace CUWebinars.Business.Services
             FireAdhocNotificationHandler(adhocNotificationSubmittedViewModel);
         }
 
-        public OrderRow GetLegacyOrder(Order order)
-        {
-            var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
-            return dataOperations.GetLegacyOrder(order);
+        //public OrderRow GetLegacyOrder(Order order)
+        //{
+        //    var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
+        //    return dataOperations.GetLegacyOrder(order);
 
-        }
+        //}
 
-        public void SynchOrders(int webinarId)
-        {
-            _logger.Info("SynchOrders begins for: " + webinarId);
+        //public void SynchOrders(int webinarId)
+        //{
+        //    _logger.Info("SynchOrders begins for: " + webinarId);
 
-            var webinar = GetWebinarById(webinarId);
+        //    var webinar = GetWebinarById(webinarId);
 
-            var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
-            IList<Order> lOrders = dataOperations.GetLegacyOrdersByWebinar(webinarId);
-            IList<Order> v3Orders = GetV3OrdersByWebinar(webinarId);
-
-
-            List<string> legacyEmails = lOrders.Select(order => order.BillingEmail).ToList();
-            List<string> v3Emails = v3Orders.Select(v3Order => v3Order.BillingEmail).ToList();
+        //    var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
+        //    IList<Order> lOrders = dataOperations.GetLegacyOrdersByWebinar(webinarId);
+        //    IList<Order> v3Orders = GetV3OrdersByWebinar(webinarId);
 
 
+        //    List<string> legacyEmails = lOrders.Select(order => order.BillingEmail).ToList();
+        //    List<string> v3Emails = v3Orders.Select(v3Order => v3Order.BillingEmail).ToList();
 
-            var query = legacyEmails.GroupBy(x => x)
-                  .Where(g => g.Count() > 1)
-                  .Select(y => y.Key)
-                  .ToList();
-            foreach (var d in query)
-            {
-                _logger.Warn("SynchError: Duped order from Legacy " + webinarId + " on " + d);
-            }
+        //    //foreach (var orderEmail in v3Emails)
+        //    //{
 
+        //    //    var dataOperations1 = new DataOperations(TtsConfig.DefaultConnectionString);
+        //    //    var EmailAlreadyRegisteredForWebinar = dataOperations1.CheckIfEmailAlreadyRegisteredForWebinar(orderEmail, webinarId);   
+        //    //    _logger.Info("result = " + EmailAlreadyRegisteredForWebinar);
 
-            var queryv3 = v3Emails.GroupBy(x => x)
-                  .Where(g => g.Count() > 1)
-                  .Select(y => y.Key)
-                  .ToList();
-            foreach (var d in query)
-            {
-                _logger.Warn("SynchError: Duped order from V3 " + webinarId + " on " + d);
-            }
+        //    //}
 
-
-            // find orders in legacy not in v3
-            var missingFromV3 = legacyEmails.Except(v3Emails).ToList();
-
-            // find orders in v3Emails not in Legacy
-            var missingFromLegacy = v3Emails.Except(legacyEmails).ToList();
-
-            // find common numbers in both arrays
-            var commonEmails = legacyEmails.Intersect(v3Emails).ToList();
-
-            _logger.Info("SynchOrders on {3} found {0} missingFromV3, {1} missingFromLegacy, and {2} already synched. ", missingFromV3.Count(), missingFromLegacy.Count(), commonEmails.Count(), webinarId);
-            var i = 1;
-            try
-            {
-                if (missingFromLegacy.Count > 0)
-                    foreach (var orderEmail in missingFromLegacy)
-                    {
-                        var order = _orderRepository.GetOrderById(v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail).idOrder);
-                        if (order != null && order.WebUser.email.EndsWith("notauthenticated.com"))
-                        {
-                            var user = _webUserRepository.GetWebUserByEmail(orderEmail);
-                            if (user == null)
-                            {
-                                user = _webUserRepository.BuildPlaceHolderUser(orderEmail);
-                                order.WebUser = user;
-                            }
-                            else
-                            {
-                                order.WebUser = user;
-                            }
-                            order.FirstName = user.FirstName;
-                            order.LastName = user.LastName;
-                            order.BillingAddress = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").StreetAddress;
-                            order.BillingAddress2 = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").StreetAddress2;
-                            order.BillingCity = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").City;
-                            order.BillingState = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").State;
-                            order.BillingZip = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").Zip;
-                            order.BillingPhone = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").Phone;
-
-                            order.ShippingAddress = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").StreetAddress;
-                            order.ShippingAddress2 = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").StreetAddress2;
-                            order.ShippingCity = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").City;
-                            order.ShippingState = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").State;
-                            order.ShippingZip = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").Zip;
-                            order.ShippingPhone = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").Phone;
-                            try
-                            {
-                                SaveOrderChanges(order, "", "", OrderGenesis.CreatedViaCartByExistingUser);
-                                _logger.Info("SynchOrder added missing address for: ", orderEmail);
-
-                            }
-                            catch (Exception ex)
-                            {
-
-                                _logger.FatalException("SynchOrder failed to add address for " + orderEmail, ex);
-                            }
-
-                        }
-                        try
-                        {
-                            _orderRepository.MigrateOrderFromV3(order);
-                            _logger.Info("SynchOrder MigrateToLegacy {0} of {1} - {2}", i, missingFromLegacy.Count(), orderEmail);
-                            i++;
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.ErrorException("SynchOrder to Legacy Failed: " + orderEmail, ex);
-                        }
-                    }
-            }
-            catch (Exception ex)
-            {
-                _logger.ErrorException("missingFromLegacy loop failed.  i=" + i + " idWebinar=" + webinarId, ex);
-            }
-
-            //Missing From V3
-            i = 1;
-            try
-            {
-                if (missingFromV3.Count > 0)
-                    foreach (var orderEmail in missingFromV3)
-                    {
-                        var order = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
-                        try
-                        {
-                            _orderRepository.ConvertLegacyOrder(order);
-                            _logger.Info("SynchOrder MigrateToV3 {0} of {1} - {2}", i, missingFromV3.Count(), orderEmail);
-
-                        }
-                        catch (Exception ex)
-                        {
-                            i++;
-                            _logger.ErrorException("SynchOrder select idOrder, idOrderLegacy, " + orderEmail + ", from order", ex);
-                        }
-                        //try
-                        //{
-                        //    _orderRepository.MigrateOrderWithDiscount(order);
-                        //    _logger.Info("SynchOrder Discount {0} of {1} - {2}", i, missingFromV3.Count(), orderEmail);
-
-                        //}
-                        //catch (Exception ex)
-                        //{
-                        //    i++;
-                        //    _logger.ErrorException("SynchOrder Migrate to V3 failed: " + orderEmail, ex);
-                        //}
-                        i++;
-
-                    }
-
-            }
-            catch (Exception ex)
-            {
-                _logger.ErrorException("missingFromV3 loop failed. i=" + i + " idWebinar=" + webinarId, ex);
-            }
-
-            // Common to both
-            i = 1;
-            try
-            {
-                if (commonEmails.Count > 0)
-                    foreach (var orderEmail in commonEmails)
-                    {
-                        var lOrder = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
-                        var vOrder = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
-                        try
-                        {
-                            //_logger.Info("SynchOrder CommonToBoth {0} of {1} - {2} ", i, commonEmails.Count(), orderEmail);
-                            if (vOrder.idOrder != vOrder.idOrderLegacy)
-                            {
-                                _orderRepository.SynchIds(vOrder.idOrderLegacy, vOrder.idOrder);
-                            }
-                            if (lOrder.Total != vOrder.Total)
-                            {
-                                _logger.Info("SynchOrder Legacy Total = {0} vs. V3 Total = {1} on {2} ", lOrder.Total, vOrder.Total, orderEmail);
-                            }
-                            if (lOrder.idAffiliate != vOrder.idAffiliate)
-                            {
-                                //_logger.Info("SynchOrder AFFILIATE MISMATCH Legacy={0} - V3={1}", lOrder.idAffiliate, vOrder.idAffiliate);
-                                //vOrder.idAffiliate = lOrder.idAffiliate;
-                                _logger.Warn("UPDATE dbo.[Order] SET idAffiliate = {0} WHERE idOrder = {1}", lOrder.idAffiliate, vOrder.idOrder);
-
-                            }
+        //    var query = legacyEmails.GroupBy(x => x)
+        //          .Where(g => g.Count() > 1)
+        //          .Select(y => y.Key)
+        //          .ToList();
+        //    foreach (var d in query)
+        //    {
+        //        _logger.Warn("SynchError: Duped order from Legacy " + webinarId + " on " + d);
+        //    }
 
 
+        //    var queryv3 = v3Emails.GroupBy(x => x)
+        //          .Where(g => g.Count() > 1)
+        //          .Select(y => y.Key)
+        //          .ToList();
+        //    foreach (var d in query)
+        //    {
+        //        _logger.Warn("SynchError: Duped order from V3 " + webinarId + " on " + d);
+        //    }
 
-                            if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType != vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType)
-                            {
-                                vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType;
-                                SaveChanges();
-                                _logger.Info("SynchOrder adjusted RegType from V3 RegType = {1} to Legacy = {0} on {2} ", lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, orderEmail);
-                            }
 
+        //    // find orders in legacy not in v3
+        //    var missingFromV3 = legacyEmails.Except(v3Emails).ToList();
 
-                            if (lOrder.OrderStatus != vOrder.OrderStatus)
-                            {
-                                vOrder.OrderStatus = lOrder.OrderStatus;
-                                SaveChanges();
-                                _logger.Info("SynchOrder adjusted OrderStatus from V3 = {1} to Legacy = {0} on {2} ", lOrder.OrderStatus  , vOrder.OrderStatus, orderEmail);
-                            }
+        //    // find orders in v3Emails not in Legacy
+        //    var missingFromLegacy = v3Emails.Except(legacyEmails).ToList();
 
-                            //if (vOrder.OrderDate > DateTime.Parse("01/01/2016"))
-                            //{
-                            //    try
-                            //    {
-                            //        if (!ReferenceEquals(null, lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount) 
-                            //            && ReferenceEquals(null, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount))
-                            //        {
-                            //            var code = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount.DiscountCode;
+        //    // find common numbers in both arrays
+        //    var commonEmails = legacyEmails.Intersect(v3Emails).ToList();
 
-                            //            var discount = GetDiscountById(Convert.ToInt32(code));
+        //    _logger.Info("SynchOrders on {3} found {0} missingFromV3, {1} missingFromLegacy, and {2} already synched. ", missingFromV3.Count(), missingFromLegacy.Count(), commonEmails.Count(), webinarId);
+        //    var i = 1;
+        //    try
+        //    {
+        //        //if (missingFromLegacy.Count > 0)
+        //        //    foreach (var orderEmail in missingFromLegacy)
+        //        //    {
+        //        //        _logger.Info("SynchOrderToLegacy starts: " + orderEmail);
+        //        //        var order = _orderRepository.GetOrderById(v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail).idOrder);
+        //        //        if (order != null && order.WebUser.email.EndsWith("notauthenticated.com"))
+        //        //        {
+        //        //            var user = _webUserRepository.GetWebUserByEmail(orderEmail);
+        //        //            if (user == null)
+        //        //            {
+        //        //                user = _webUserRepository.BuildPlaceHolderUser(orderEmail);
+        //        //                order.WebUser = user;
+        //        //            }
+        //        //            else
+        //        //            {
+        //        //                order.WebUser = user;
+        //        //            }
+        //        //            order.FirstName = user.FirstName;
+        //        //            order.LastName = user.LastName;
+        //        //            order.BillingAddress = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").StreetAddress;
+        //        //            order.BillingAddress2 = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").StreetAddress2;
+        //        //            order.BillingCity = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").City;
+        //        //            order.BillingState = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").State;
+        //        //            order.BillingZip = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").Zip;
+        //        //            order.BillingPhone = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing").Phone;
 
-                            //            ApplyDiscountCode(discount.DiscountCode, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active));
+        //        //            order.ShippingAddress = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").StreetAddress;
+        //        //            order.ShippingAddress2 = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").StreetAddress2;
+        //        //            order.ShippingCity = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").City;
+        //        //            order.ShippingState = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").State;
+        //        //            order.ShippingZip = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").Zip;
+        //        //            order.ShippingPhone = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping").Phone;
+        //        //            try
+        //        //            {
+        //        //                SaveOrderChanges(order, "", "", OrderGenesis.CreatedViaCartByExistingUser);
+        //        //                _logger.Info("SynchOrder added missing address for: ", orderEmail);
+        //        //            }
+        //        //            catch (Exception ex)
+        //        //            {
+        //        //                _logger.FatalException("SynchOrder failed to add address for " + orderEmail, ex);
+        //        //            }
 
-                            //            _logger.Warn("SynchOrder adjusted Discount = {0} on order {1} ",
-                            //                code, vOrder.idOrder);
-                            //        }
-                            //    }
-                            //    catch (Exception ex)
-                            //    {
-                            //        _logger.ErrorException(
-                            //            "SynchOrder attempt to apply discount failed: " + orderEmail, ex);
-                            //    }
-                            //                            }
-                            //PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
-                            //UpdateOrderChanges(vOrder, ref pricesAndDiscounts);
+        //        //        }
+        //        //        try
+        //        //        {
+        //        //            _orderRepository.MigrateOrderFromV3(order);
+        //        //            _logger.Info("SynchOrder MigrateToLegacy {0} of {1} - {2}", i, missingFromLegacy.Count(), orderEmail);
+        //        //            i++;
+        //        //        }
+        //        //        catch (Exception ex)
+        //        //        {
+        //        //            _logger.ErrorException("SynchOrder to Legacy Failed: " + orderEmail, ex);
+        //        //        }
+        //        //    }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.ErrorException("missingFromLegacy loop failed.  i=" + i + " idWebinar=" + webinarId, ex);
+        //    }
 
-                            i++;
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.Warn("EXEC dbo.FindDupeEmailPerWebinarAndRemove @idWebinar =  " + webinarId);
-                            _logger.ErrorException("SynchOrder checks common orders to V3 failed: " + orderEmail, ex);
-                        }
-                    }
-            }
-            catch (Exception ex)
-            {
-                _logger.ErrorException("SynchOrder CommonToBoth loop failed.  i=" + i + " idWebinar=" + webinarId, ex);
-            }
+        //    //Missing From V3
+        //    i = 1;
+        //    try
+        //    {
+        //        if (missingFromV3.Count > 0)
+        //            foreach (var orderEmail in missingFromV3)
+        //            {
+        //                _logger.Info("SynchOrderToV3 starts: " + orderEmail);
+        //                var order = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
+        //                try
+        //                {
+        //                    _orderRepository.ConvertLegacyOrder(order);
+        //                    _logger.Info("SynchOrder MigrateToV3 {0} of {1} - {2}", i, missingFromV3.Count(), orderEmail);
 
-            _logger.Info("SynchOrders ends for: " + webinarId);
-        }
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    i++;
+        //                    _logger.ErrorException("SynchOrder select idOrder, idOrderLegacy, " + orderEmail + ", from order", ex);
+        //                }
+        //                //try
+        //                //{
+        //                //    _orderRepository.MigrateOrderWithDiscount(order);
+        //                //    _logger.Info("SynchOrder Discount {0} of {1} - {2}", i, missingFromV3.Count(), orderEmail);
+
+        //                //}
+        //                //catch (Exception ex)
+        //                //{
+        //                //    i++;
+        //                //    _logger.ErrorException("SynchOrder Migrate to V3 failed: " + orderEmail, ex);
+        //                //}
+        //                i++;
+
+        //            }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.ErrorException("missingFromV3 loop failed. i=" + i + " idWebinar=" + webinarId, ex);
+        //    }
+
+        //    // Common to both
+        //    i = 1;
+        //    try
+        //    {
+        //        if (commonEmails.Count > 0)
+        //            foreach (var orderEmail in commonEmails)
+        //            {
+        //                if (v3Orders.Where(o => o.BillingEmail == orderEmail).Count() > 1)
+        //                {
+        //                    _logger.Warn("SynchOrder duped Legacy registration for " + orderEmail + " in " + webinarId);
+        //                }
+        //                if (lOrders.Where(o => o.BillingEmail == orderEmail).Count() > 1)
+        //                {
+        //                    _logger.Warn("SynchOrder duped V3 registration for " + orderEmail + " in " + webinarId);
+        //                }
+
+        //                try
+        //                {
+        //                    var lOrder = lOrders.SingleOrDefault(o => o.BillingEmail == orderEmail);
+        //                    var vOrder = v3Orders.SingleOrDefault(o => o.BillingEmail == orderEmail);
+
+        //                    _logger.Info("SynchOrder CommonToBoth {0} of {1} - {2} ", i, commonEmails.Count(), orderEmail);
+        //                    if (vOrder.idOrder != vOrder.idOrderLegacy)
+        //                    {
+        //                        _orderRepository.SynchIds(vOrder.idOrderLegacy, vOrder.idOrder);
+        //                    }
+
+        //                    if (lOrder.Total != vOrder.Total)
+        //                    {
+        //                        _logger.Info("SynchOrder Legacy Total = {0} vs. V3 Total = {1} on {2} ", lOrder.Total, vOrder.Total, orderEmail);
+        //                    }
+        //                    if (lOrder.idAffiliate != vOrder.idAffiliate)
+        //                    {
+        //                        //_logger.Info("SynchOrder AFFILIATE MISMATCH Legacy={0} - V3={1}", lOrder.idAffiliate, vOrder.idAffiliate);
+        //                        //vOrder.idAffiliate = lOrder.idAffiliate;
+        //                        _logger.Warn("UPDATE dbo.[Orders] SET idAffiliate = {0} WHERE idOrder = {1}", lOrder.idAffiliate, lOrder.idOrder);
+
+        //                    }
+        //                    try
+        //                    {
+        //                        if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).ShipmentDate != null
+        //                        && vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).ShipmentDate == null)
+        //                        {
+        //                            var lShippedDate =
+        //                                lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
+        //                                    .ShipmentDate.Value;
+        //                            if (lShippedDate > DateTime.Parse("01/01/1900"))
+        //                            {
+        //                                vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
+        //                                    .ShipmentDate =
+        //                                    lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
+        //                                        .ShipmentDate;
+        //                                SaveChanges();
+        //                            }
+        //                        }
+
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        _logger.ErrorException("SynchOrder save shipped date failed: " + orderEmail, ex);
+        //                    }
+
+        //                    try
+        //                    {
+        //                        if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).ShipmentDate == null
+        //                        && vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).ShipmentDate != null)
+        //                        {
+        //                            var shippedDate =
+        //                                vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
+        //                                    .ShipmentDate;
+        //                            if (shippedDate > DateTime.Parse("01/01/1900"))
+        //                            {
+        //                                _orderRepository.SetLegacyShippedDate(lOrder.idOrder, shippedDate);
+        //                            }
+        //                        }
+
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        _logger.ErrorException("SynchOrder save shipped date from V3 to Legacy failed: " + orderEmail, ex);
+        //                    }
+
+        //                    try
+        //                    {
+        //                        if (lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType != vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType)
+        //                        {
+        //                            vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType = lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType;
+        //                            SaveChanges();
+        //                            _logger.Info("SynchOrder adjusted RegType from V3 RegType = {1} to Legacy = {0} on {2} ", lOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, vOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).idRegType, orderEmail);
+        //                        }
+
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        _logger.ErrorException("SynchOrder save regtype failed: " + orderEmail, ex);
+        //                    }
+
+        //                    try
+        //                    {
+        //                        if (lOrder.OrderStatus != vOrder.OrderStatus)
+        //                        {
+        //                            vOrder.OrderStatus = lOrder.OrderStatus;
+        //                            SaveChanges();
+        //                            _logger.Info("SynchOrder adjusted OrderStatus from V3 = {1} to Legacy = {0} on {2} ", lOrder.OrderStatus, vOrder.OrderStatus, orderEmail);
+        //                        }
+
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        _logger.ErrorException("SynchOrder save orderstatus failed: " + orderEmail, ex);
+        //                    }
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    _logger.ErrorException("SELECT email, (SELECT ttsDomain FROM dbo.Affiliate WHERE idUser = o.idAffiliate), idOrder, (SELECT status FROM dbo.OrdersRows WHERE idOrder = o.idOrder) from Orders o where email = '" + orderEmail + "' and idOrder in (SELECT idOrder FROM dbo.OrdersRows WHERE idWebinar =	" + webinarId + ")", ex);
+        //                }
+        //                i++;
+        //            }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.ErrorException("SynchOrder CommonToBoth loop failed.  i=" + i + " idWebinar=" + webinarId, ex);
+        //    }
+
+        //    _logger.Info("SynchOrders ends for: " + webinarId);
+        //}
 
         public Order FindExpressCheckoutOrderByOrderId(int q11Orderid)
         {
@@ -706,6 +757,16 @@ namespace CUWebinars.Business.Services
             return _orderRepository.GetOrdersAll(idAffliate, out totalNumberOrders);
         }
 
+        public IEnumerable<Order> GetOrdersAllForInvoice(int idAffliate, out int totalNumberOrders)
+        {
+            return _orderRepository.GetOrdersAllForInvoice(idAffliate, out totalNumberOrders);
+        }
+
+        public IEnumerable<Discount> GetSubscriptionsAll(int idAffliate, out int totalNumberOrders)
+        {
+            return _orderRepository.GetSubscriptionsAll(idAffliate, out totalNumberOrders);
+        }
+
         public WebUser GetWebUser(int id)
         {
             return _webUserRepository.FindByIdLoaded(id);
@@ -725,40 +786,6 @@ namespace CUWebinars.Business.Services
         {
             var order = GetOrderById(orderId);
 
-            if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Discount != null)
-            {
-
-                JObject existingJObject = null;
-
-                string comments = string.Empty;
-
-
-                if (!ReferenceEquals(null, order.AdminComments))
-                {
-                    comments = order.AdminComments.Trim();
-                }
-
-                var newJson =
-                    new JProperty(
-                        string.Concat("DiscountRestored-",
-                            TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
-                        new JObject(new JProperty("CanceledOrder", order.AdminComments))
-                        );
-
-                if (string.IsNullOrWhiteSpace(comments))
-                {
-                    existingJObject = new JObject(newJson);
-                }
-                else
-                {
-                    existingJObject = JObject.Parse(comments);
-                    existingJObject.Add(newJson);
-                }
-
-                order.AdminComments = existingJObject.ToString(Formatting.None);
-
-                CalculateDiscountRedemtion(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Discount, order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active), 1);
-            }
             _orderRepository.DeleteOrder(order);
         }
 
@@ -952,7 +979,7 @@ namespace CUWebinars.Business.Services
             }
             else
             {
-
+                _logger.Warn("CalculateOrderCost did not find row when processing " + order.idOrder);
                 var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
                 var regTypePricing = dataOperations.GetCostOfRegtype(row.idRegType);
@@ -980,10 +1007,36 @@ namespace CUWebinars.Business.Services
 
             //Calculate discount. 
             decimal discountTotal = 0;
+            TtsConfigHelper ttsConfigHelper = new TtsConfigHelper();
+
 
             if (row.Discount != null && row.Discount.PercentOff != 0.0M)
             {
-                discountTotal = row.RowPrice * row.Discount.PercentOff / 100;
+                var creditsRemain = CalculateCreditsRemain(row.Discount);
+
+                if (row.Discount.DiscountType == DiscountType.Subscription)
+                {
+                    if (creditsRemain >= row.RegistrationType.CreditCost)
+                    {
+                        discountTotal = row.RowPrice * row.Discount.PercentOff / 100;
+                    }
+                    else
+                    {
+                        if (creditsRemain > 0)
+                        {
+                            discountTotal = 265 * creditsRemain;
+                            //discountTotal = Convert.ToDecimal( ttsConfigHelper.DiscountCreditUnitCost )* creditsRemain;
+                        }
+                        else
+                        {
+                            discountTotal = 0;
+                        }
+                    }
+                }
+                else
+                {
+                    discountTotal = row.RowPrice * row.Discount.PercentOff / 100;
+                }
             }
             else if (row.Discount != null && row.Discount.FlatOff != 0.0M)
             {
@@ -1006,7 +1059,7 @@ namespace CUWebinars.Business.Services
                 && row.RowPrice > 0
                 )
             {
-                pricesAndDiscounts.TaxAmount = Convert.ToDecimal(Convert.ToInt32(row.RowPrice) * .055);
+                pricesAndDiscounts.TaxAmount = Math.Round(row.RowPrice * Convert.ToDecimal(.055), 2);
             }
 
 
@@ -1018,6 +1071,8 @@ namespace CUWebinars.Business.Services
 
             return pricesAndDiscounts;
         }
+
+        public decimal DiscountCreditUnitCost { get; private set; }
 
         //public virtual decimal CalculateOptionsPrice(OrderRow row)
         //{
@@ -1048,59 +1103,6 @@ namespace CUWebinars.Business.Services
             throw new NotImplementedException();
         }
 
-        public void FireOrderSynchEvent(Order order, bool userCreatedInCart = false, bool resending = false, Uri url = null)
-        {
-            string addPasswordUrl = string.Empty;
-
-            var orderSynchMessage = new OrderSynchMessage
-            {
-                AddPasswordUrl = string.Empty,
-                ConfirmChangeEmailUrl = string.Empty,
-                Details = order.NotificationStorage,
-                idOrder = order.idOrder,
-                Order = order,
-                OrderGenesis =
-                    userCreatedInCart ? OrderGenesis.CreatedViaCartByNewUser : OrderGenesis.CreatedViaCartByExistingUser,
-                UserCreatedInCart = userCreatedInCart,
-                UserCreatedOnImport = false
-            };
-
-            if (!ReferenceEquals(null, url))
-            {
-                var baseUri = new Uri(string.Concat(url.Scheme, @"://", url.Authority), UriKind.Absolute);
-                addPasswordUrl = new Uri(
-                    baseUri,
-                    string.Concat(@"acc/apwd/", order.WebUser.email)
-                    ).ToString();
-            }
-
-            AddEvent(new OrderSynchEvent<OrderSynchMessage>
-            {
-                Details = order.NotificationStorage,
-                EventObject = orderSynchMessage,
-                RelativePath = addPasswordUrl,
-                ResendEvent = resending
-            });
-
-            foreach (var evt in GetEvents().OfType<OrderSynchEvent<OrderSynchMessage>>())
-            {
-                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
-            }
-
-            //int rowsUpdated = _orderRepository.SaveChanges();
-
-            Clear(); // need to clear at this point, otherwise the OrderSubmittedEvent will be fired again when 
-
-            //if (order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count != 0)
-            //{
-            //    foreach (var addLoc in order.OrderRows
-            //        .Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
-            //    {
-            //        FireOrderSubmittedAdditionalLocationEvent(order, addLoc.Email, resending);
-            //    }
-            //}
-
-        }
 
         public void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, bool resending = false,
             Uri url = null)
@@ -1129,7 +1131,7 @@ namespace CUWebinars.Business.Services
                 var baseUri = new Uri(string.Concat(url.Scheme, @"://", url.Authority), UriKind.Absolute);
                 addPasswordUrl = new Uri(
                     baseUri,
-                    string.Concat(@"acc/apwd/", order.WebUser.email)
+                    string.Concat(@"acc/apwd/", order.idOrder)
                     ).ToString();
             }
 
@@ -1254,7 +1256,7 @@ namespace CUWebinars.Business.Services
             {
                 Double[] i = _webinarRepository.GetCostOfUpgrades(order.OrderRows.Single().idRegType);
 
-                
+
 
                 Double basePrice = i[0];
                 Double cost6 = i[1];
@@ -1459,70 +1461,70 @@ namespace CUWebinars.Business.Services
                 sb.Append("        </span>");
                 sb.Append("    </td>");
                 sb.Append("</tr>");
-                if (!ReferenceEquals(myRow.Discount, null))
-                {
-                    decimal amountToReduce;
-                    sb.Append("<tr>");
-                    if (!ReferenceEquals(myRow.Discount.FlatOff, null))
-                    {
-                        amountToReduce = Convert.ToDecimal(myRow.Order.Total) - (myRow.Discount.FlatOff);
-                        sb.Append(
-                            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                        sb.Append("            Amt. of Discount:");
-                        sb.Append("        </span>");
-                        sb.Append("    </td>");
-                        sb.Append(
-                            "    <td width='350px' style='text-align: left; color: red; background-color: #B4D1EC; padding-left: 6px;'>");
-                        sb.Append(
-                            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                        sb.Append("            <b>$");
-                        sb.Append(amountToReduce.ToString().Replace(".00", ""));
-                        sb.Append("            </b>");
-                        sb.Append("        </span>");
-                        sb.Append("    </td>");
-                    }
-                    if (!ReferenceEquals(myRow.Discount.PercentOff, null))
-                    {
-                        amountToReduce = (myRow.Discount.PercentOff * 100) /
-                                         Convert.ToDecimal(string.Format("{0:0.00}", myRow.UnitPrice));
+                //if (!ReferenceEquals(myRow.Discount, null))
+                //{
+                //    decimal amountToReduce;
+                //    sb.Append("<tr>");
+                //    if (!ReferenceEquals(myRow.Discount.FlatOff, null))
+                //    {
+                //        amountToReduce = Convert.ToDecimal(myRow.Order.Total) - (myRow.Discount.FlatOff);
+                //        sb.Append(
+                //            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                //        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                //        sb.Append("            Amt. of Discount:");
+                //        sb.Append("        </span>");
+                //        sb.Append("    </td>");
+                //        sb.Append(
+                //            "    <td width='350px' style='text-align: left; color: red; background-color: #B4D1EC; padding-left: 6px;'>");
+                //        sb.Append(
+                //            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                //        sb.Append("            <b>$");
+                //        sb.Append(amountToReduce.ToString().Replace(".00", ""));
+                //        sb.Append("            </b>");
+                //        sb.Append("        </span>");
+                //        sb.Append("    </td>");
+                //    }
+                //    if (!ReferenceEquals(myRow.Discount.PercentOff, null))
+                //    {
+                //        amountToReduce = (myRow.Discount.PercentOff * 100) /
+                //                         Convert.ToDecimal(string.Format("{0:0.00}", myRow.UnitPrice));
 
-                        sb.Append(
-                            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                        sb.Append("            Amt. of Discount:");
-                        sb.Append("        </span>");
-                        sb.Append("    </td>");
-                        sb.Append(
-                            "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-                        sb.Append(
-                            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                        sb.Append("            <b>$");
-                        sb.Append(amountToReduce.ToString().Replace(".00", ""));
-                        sb.Append("            </b>");
-                        sb.Append("        </span>");
-                        sb.Append("    </td>");
-                    }
-                    sb.Append("</tr>");
-                }
+                //        sb.Append(
+                //            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                //        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                //        sb.Append("            Amt. of Discount:");
+                //        sb.Append("        </span>");
+                //        sb.Append("    </td>");
+                //        sb.Append(
+                //            "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                //        sb.Append(
+                //            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                //        sb.Append("            <b>$");
+                //        sb.Append(amountToReduce.ToString().Replace(".00", ""));
+                //        sb.Append("            </b>");
+                //        sb.Append("        </span>");
+                //        sb.Append("    </td>");
+                //    }
+                //    sb.Append("</tr>");
+                //}
 
-                sb.Append("<tr>");
-                sb.Append(
-                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                sb.Append("            Cost:");
-                sb.Append("        </span>");
-                sb.Append("    </td>");
-                sb.Append(
-                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-                sb.Append(
-                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                sb.Append("            <b>$");
-                sb.Append(myRow.Order.Total.ToString().Replace(".00", ""));
-                sb.Append("            </b>");
-                sb.Append("        </span>");
-                sb.Append("    </td>");
-                sb.Append("</tr>");
+                //sb.Append("<tr>");
+                //sb.Append(
+                //    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+                //sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+                //sb.Append("            Cost:");
+                //sb.Append("        </span>");
+                //sb.Append("    </td>");
+                //sb.Append(
+                //    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+                //sb.Append(
+                //    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+                //sb.Append("            <b>$");
+                //sb.Append(myRow.Order.Total.ToString().Replace(".00", ""));
+                //sb.Append("            </b>");
+                //sb.Append("        </span>");
+                //sb.Append("    </td>");
+                //sb.Append("</tr>");
                 //sb.Append("<tr>");
                 //sb.Append(
                 //    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
@@ -1652,28 +1654,226 @@ namespace CUWebinars.Business.Services
             int numRows = _orderRepository.SaveChanges();
         }
 
-        public string UpdateOrderChanges(Order currentOrder, ref PricesAndDiscounts pricesAndDiscounts)
+        public void FireSendWeeklyInvoiceEvent(SendWeeklyInvoiceViewModel weeklyInvoiceViewModel)
+        {
+            AddEvent(new SendWeeklyInvoiceEvent<SendWeeklyInvoiceViewModel> { EventObject = weeklyInvoiceViewModel });
+
+            foreach (var evt in GetEvents().OfType<SendWeeklyInvoiceEvent<SendWeeklyInvoiceViewModel>>())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            Clear();
+
+            // int rowsUpdated = _orderRepository.SaveChanges(); // TODO: zzz ALS confirm we can remove, then remove
+        }
+
+        public string UpdateOrderChanges(Order newOrder, ref PricesAndDiscounts pricesAndDiscounts)
         {
             try
             {
+
+                var originalOrder = GetOrderById(newOrder.idOrder);
                 var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
-                var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(
-                    currentOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar
+                var additionalLocationsPricing = GetAdditionalLocationsPricing(
+                    newOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar
                     );
 
-                pricesAndDiscounts = CalculateOrderCost(currentOrder, additionalLocationsPricing.Single().Price);
+                string preSaveValues = dataOperations.GetPreSaveValues(newOrder.idOrder);
+                string pRowPrice = preSaveValues.Split(',')[0];
+                string pOrderStatus = preSaveValues.Split(',')[1];
+                string pDiscount_idDiscount = preSaveValues.Split(',')[2];
+                string pAddLocsPrice = preSaveValues.Split(',')[3];
+                string regTypeShortened =
+                    preSaveValues.Split(',')[4].Replace(" Package", "")
+                        .Replace("Live Plus Six", "Live+6")
+                        .Replace(" and Hardcopy Handouts", "")
+                        .Replace(" Recording Only", "")
+                        .Replace(" Plus Five", "+5");
+                int idRegTypeOfOrg = Convert.ToInt32(preSaveValues.Split(',')[5]);
 
-                var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, (int)currentOrder.OrderStatus);
+                pricesAndDiscounts = CalculateOrderCost(newOrder, additionalLocationsPricing);
 
-                _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
+                if (newOrder.OrderRows != null)
+                {
+                    if (
+                        newOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
+                            .RegistrationType.idRegType != idRegTypeOfOrg)
+                    {
+                        // tracked by sproc: EXEC OrderIsUpdated
+                        _logger.Info("UpdateOrderChanges: {0} went from: {1} - {2} to: {3} - {4}", newOrder.idOrder,
+                            regTypeShortened, pRowPrice,
+                            newOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
+                                .RegistrationType.OptionLabel,
+                            newOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RowPrice);
+                        try
+                        {
+                            if (!string.IsNullOrEmpty(newOrder.InvoiceDetail) && newOrder.InvoiceDetail.Contains("OrderIsInvoiced"))
+                            {
+                                _logger.Warn("Invoiced Order is updated: " + newOrder.idOrder);
+
+                                var toJson = JObject.Parse(newOrder.InvoiceDetail);
+                                var orgInvoiceDetails =
+                                    toJson.Properties().FirstOrDefault(p => p.Name.StartsWith("OrderIsInvoiced"));
+
+                                if (orgInvoiceDetails != null)
+                                {
+                                    var row =
+                                        newOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                                    //
+                                    Debug.Assert(row != null, "row != null");
+                                    row.Royalty = row.RowPrice * (decimal)orgInvoiceDetails.First()["PercentPaid"];
+
+                                    StringBuilder sb = new StringBuilder();
+
+                                    sb.Append(newOrder.idOrder + " was " + regTypeShortened);
+                                    sb.Append(" ($" + pRowPrice.ToString().Replace(".0000", "").Replace(".00", "") +
+                                              ") on InvoiceID " + orgInvoiceDetails.First()["InvoiceId"] +
+                                              " but changed to " +
+                                              row.RegistrationType.OptionLabelShort + " (" +
+                                              row.RowPrice.ToString("C").Replace(".00", "") + "). ");
+
+                                    decimal adustmentAmount;
+                                    var adjustmentDirection = "Royalty is increased";
+
+                                    if ((decimal)orgInvoiceDetails.First()["AmountOfRoyalty"] < row.Royalty)
+                                    {
+                                        adustmentAmount = row.Royalty -
+                                                          (decimal)orgInvoiceDetails.First()["AmountOfRoyalty"];
+                                        sb.Append(adjustmentDirection + " by " +
+                                                  adustmentAmount.ToString("C").Replace(".00", ""));
+
+                                    }
+                                    else
+                                    {
+                                        adjustmentDirection = "Royalty is decreased";
+                                        adustmentAmount = row.Royalty -
+                                                          (decimal)orgInvoiceDetails.First()["AmountOfRoyalty"];
+                                        sb.Append(adjustmentDirection + " by " +
+                                                  (-adustmentAmount).ToString("C").Replace(".00", ""));
+                                    }
+
+
+                                    var newJson4Invoice = new JProperty(
+                                        "ChangedOrderNeedsNewInvoice",
+                                        new JObject(
+                                            new JProperty("OriginalInvoice", orgInvoiceDetails.First()["InvoiceId"].ToString()),
+                                            new JProperty("OriginalDateOfInvoice", orgInvoiceDetails.First()["DateOfInvoice"].ToString()),
+                                            new JProperty("OriginalTotal", orgInvoiceDetails.First()["AmountOfOrder"].ToString()),
+                                            new JProperty("OriginalPercentPaid", orgInvoiceDetails.First()["PercentPaid"].ToString()),
+                                            new JProperty("OriginalRoyaltyPaid", orgInvoiceDetails.First()["AmountOfRoyalty"].ToString()),
+                                            new JProperty("OriginalAffiliate", orgInvoiceDetails.First()["Affiliate"].ToString()),
+                                            new JProperty(adjustmentDirection, adustmentAmount),
+                                            new JProperty("DateOfChange", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
+                                            new JProperty("Message", sb.ToString())
+                                            ));
+
+
+                                    newOrder.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(
+                                        newOrder.InvoiceDetail, newJson4Invoice, "OrderIsInvoiced");
+
+                                }
+                                else
+                                {
+                                    orgInvoiceDetails =
+                                        toJson.Properties()
+                                            .FirstOrDefault(p => p.Name.StartsWith("ChangedOrderNeedsNewInvoice"));
+                                    //properties saved when updated:
+                                    //{ChangedOrderNeedsNewInvoice:{
+                                    //OriginalInvoice
+                                    //OriginalDateOfInvoice
+                                    //OriginalTotal
+                                    //OriginalPercentPaid
+                                    //OriginalRoyaltyPaid
+                                    //OriginalAffiliate
+                                    //Royalty is increased
+                                    //DateOfChange
+                                    _logger.Warn("ChangedOrderNeedsNewInvoice: " + orgInvoiceDetails);
+
+                                    Debug.Assert(orgInvoiceDetails != null, "orgInvoiceDetails != null");
+                                    string[] tokens = orgInvoiceDetails.First()["Message"].ToString().Split(' ');
+                                    string retVal = tokens[0] + " " + tokens[4];
+
+                                    pRowPrice = orgInvoiceDetails.First()["OriginalTotal"].ToString();
+                                    //string pOrderStatus = preSaveValues.Split(',')[1];
+                                    //string pDiscount_idDiscount = ""; //TODO account for subscription orders;
+                                    //string pAddLocsPrice = ""; //TODO: account for addLoc prices
+                                    regTypeShortened = tokens[3];
+                                    //string regTypeShortened = orgInvoiceDetails.First()["Message"].ToString().Substring(19,  retVal.Length);
+
+                                    var row =
+                                        newOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                                    //
+                                    row.Royalty = row.RowPrice *
+                                                  (decimal)orgInvoiceDetails.First()["OriginalPercentPaid"];
+
+                                    StringBuilder sb = new StringBuilder();
+
+                                    sb.Append(newOrder.idOrder + " was " + regTypeShortened);
+                                    sb.Append(" ($" + pRowPrice.ToString().Replace(".0000", "").Replace(".00", "") +
+                                              ") on InvoiceID " + orgInvoiceDetails.First()["InvoiceId"] +
+                                              " but changed to " +
+                                              row.RegistrationType.OptionLabelShort + " (" +
+                                              row.RowPrice.ToString("C").Replace(".00", "") + "). ");
+
+
+                                    decimal adustmentAmount;
+                                    var adjustmentDirection = "Royalty is increased";
+
+                                    if ((decimal)orgInvoiceDetails.First()["OriginalRoyaltyPaid"] < row.Royalty)
+                                    {
+                                        adustmentAmount = row.Royalty -
+                                                          (decimal)orgInvoiceDetails.First()["OriginalRoyaltyPaid"];
+                                        sb.Append(adjustmentDirection + " by " +
+                                                  adustmentAmount.ToString("C").Replace(".00", ""));
+
+                                    }
+                                    else
+                                    {
+
+                                        adjustmentDirection = "Royalty is decreased";
+                                        adustmentAmount = row.Royalty -
+                                                          (decimal)orgInvoiceDetails.First()["OriginalRoyaltyPaid"];
+                                        sb.Append(adjustmentDirection + " by " +
+                                                  (adustmentAmount).ToString("C").Replace(".00", ""));
+                                    }
+
+                                    var newJson4Invoice = new JProperty(
+                                        "ChangedOrderNeedsNewInvoice",
+                                        new JObject(
+                                            new JProperty("OriginalInvoice", orgInvoiceDetails.First()["OriginalInvoice"].ToString()),
+                                            new JProperty("OriginalDateOfInvoice", orgInvoiceDetails.First()["OriginalDateOfInvoice"].ToString()),
+                                            new JProperty("OriginalTotal", orgInvoiceDetails.First()["OriginalTotal"].ToString()),
+                                            new JProperty("OriginalPercentPaid", orgInvoiceDetails.First()["OriginalPercentPaid"].ToString()),
+                                            new JProperty("OriginalRoyaltyPaid", orgInvoiceDetails.First()["OriginalRoyaltyPaid"].ToString()),
+                                            new JProperty("OriginalAffiliate", orgInvoiceDetails.First()["OriginalAffiliate"].ToString()),
+                                            new JProperty(adjustmentDirection, adustmentAmount),
+                                            new JProperty("DateOfChange", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
+                                            new JProperty("Message", sb.ToString())
+                                            ));
+
+
+                                    newOrder.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(
+                                        newOrder.InvoiceDetail, newJson4Invoice, "ChangedOrderNeedsNewInvoice");
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.FatalException("UpdateOrderChanged Json Merge: ", ex);
+                        }
+                    }
+                }
+
+                _orderRepository.SaveOrderChanges(newOrder, (int)newOrder.OrderStatus);
 
                 Clear();
                 return "success";
             }
             catch (Exception exception)
             {
-                _logger.ErrorException(string.Format("SaveOrderChanges method: {0}", exception.Message), exception);
+                _logger.ErrorException(string.Format("SaveOrderChanges method: {0} - {1}", newOrder.idOrder, exception.Message), exception);
             }
             return "failed";
         }
@@ -1761,10 +1961,9 @@ namespace CUWebinars.Business.Services
                 _additionalLocationsRepository.DeleteAdditionalLocationsByOrderRowId(idOrderRow);
 
                 var orderRow = _orderRepository.GetOrderRowById(idOrderRow);
-                var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
-                var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(orderRow.idWebinar);
+                var additionalLocationsPricing = GetAdditionalLocationsPricing(orderRow.idWebinar);
 
-                var totalOptionsDeletedCost = additionalLocationsPricing.First().Price * orderRow.AdditionalLocation.Count;
+                var totalOptionsDeletedCost = additionalLocationsPricing * orderRow.AdditionalLocation.Count;
                 SetTotalPrice(totalOptionsDeletedCost, orderRow);
             }
             catch (Exception exception)
@@ -1798,36 +1997,18 @@ namespace CUWebinars.Business.Services
         //    return myDiscount;
         //}
 
-        public decimal GetPriceOfAdditionalLocation(int idWebinar)
+        public decimal GetAdditionalLocationsPricing(int idWebinar)
         {
-            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
-            var addLocPrice = dataOperations.GetAdditionalLocationsPricing(idWebinar);
-            var additionalLocationsPricing = addLocPrice.SingleOrDefault();
-
-            if (additionalLocationsPricing.LookupPriceId > 0) // struct equivalent of checking for null.
-            {
-                return additionalLocationsPricing.Price;
-            }
-
-            _logger.Warn("AdditionalLocation price not set for: {0}", idWebinar);
-            return 0;
+            return _webinarRepository.FindById(idWebinar).AdditionalLocationPrice;
         }
+
+
 
         public void UpdateOrderByAdmin(Order order)
         {
             var updatedOrder = _orderRepository.SaveOrderChanges(order, 0);
         }
 
-        public int SynchExpressCheckoutOrder(Order order)
-        {
-            return _orderRepository.MigrateOrderFromV3(order);
-            ;
-        }
-
-        public void SynchIds(Order order)
-        {
-            _orderRepository.SynchIds(order.idOrderLegacy, order.idOrder);
-        }
 
         public PostEventClaim FindPostEventClaimByOnDemandCode(Order order)
         {
@@ -1863,22 +2044,22 @@ namespace CUWebinars.Business.Services
             foreach (var order in orders)
             {
                 var changedVals = "";
+                if (order.FirstName != firstName) { changedVals += " First Name: " + order.FirstName + "  to " + firstName; }
+                if (order.LastName != lastName) { changedVals += " Last Name: " + order.LastName + "  to " + lastName; }
+                if (order.BillingEmail != email) { changedVals += " Email: " + order.BillingEmail + "  to " + email; }
+                if (order.Institution != institution) { changedVals += " Institution: " + order.Institution + "  to " + institution; }
+                if (order.BillingAddress != billingAddress.StreetAddress) { changedVals += " Street Address: " + order.BillingAddress + "  to " + billingAddress.StreetAddress; }
+                if (order.BillingAddress2 != billingAddress.StreetAddress2) { changedVals += " Street Address2: " + order.BillingAddress2 + "  to " + billingAddress.StreetAddress2; }
+                if (order.BillingCity != billingAddress.City) { changedVals += " City: " + order.BillingCity + "  to " + billingAddress.City; }
+                if (order.BillingState != billingAddress.State) { changedVals += " State: " + order.BillingState + "  to " + billingAddress.State; }
+                if (order.BillingZip != billingAddress.Zip) { changedVals += " Zip: " + order.BillingZip + "  to " + billingAddress.Zip; }
 
-                if (order.FirstName != firstName) { changedVals += order.FirstName + " to " + firstName + Environment.NewLine; }
-                if (order.LastName != lastName) { changedVals += order.LastName + " to " + lastName + Environment.NewLine; }
-                if (order.BillingEmail != email) { changedVals += order.BillingEmail + " to " + email + Environment.NewLine; }
-                if (order.Institution != institution) { changedVals += order.Institution + " to " + institution + Environment.NewLine; }
-                if (order.BillingAddress != billingAddress.StreetAddress) { changedVals += order.BillingAddress + " to " + billingAddress.StreetAddress + Environment.NewLine; }
-                if (order.BillingAddress2 != billingAddress.StreetAddress2) { changedVals += order.BillingAddress2 + " to " + billingAddress.StreetAddress2 + Environment.NewLine; }
-                if (order.BillingCity != billingAddress.City) { changedVals += order.BillingCity + " to " + billingAddress.City + Environment.NewLine; }
-                if (order.BillingState != billingAddress.State) { changedVals += order.BillingState + " to " + billingAddress.State + Environment.NewLine; }
-                if (order.BillingZip != billingAddress.Zip) { changedVals += order.BillingZip + " to " + billingAddress.Zip + Environment.NewLine; }
+                if (order.ShippingAddress != shippingAddress.StreetAddress) { changedVals += " Shipping Address: " + order.ShippingAddress + "  to " + shippingAddress.StreetAddress; }
+                if (order.ShippingAddress2 != shippingAddress.StreetAddress2) { changedVals += " Shipping Address2: " + order.ShippingAddress2 + "  to " + shippingAddress.StreetAddress2; }
+                if (order.ShippingCity != shippingAddress.City) { changedVals += " Shipping City: " + order.ShippingCity + "  to " + shippingAddress.City; }
+                if (order.ShippingState != shippingAddress.State) { changedVals += " Shipping State: " + order.ShippingState + "  to " + shippingAddress.State; }
+                if (order.ShippingZip != shippingAddress.Zip) { changedVals += " Shipping Zip: " + order.ShippingZip + "  to " + shippingAddress.Zip; }
 
-                if (order.ShippingAddress != shippingAddress.StreetAddress) { changedVals += order.ShippingAddress + " to " + shippingAddress.StreetAddress + Environment.NewLine; }
-                if (order.ShippingAddress2 != shippingAddress.StreetAddress2) { changedVals += order.ShippingAddress2 + " to " + shippingAddress.StreetAddress2 + Environment.NewLine; }
-                if (order.ShippingCity != shippingAddress.City) { changedVals += order.ShippingCity + " to " + shippingAddress.City + Environment.NewLine; }
-                if (order.ShippingState != shippingAddress.State) { changedVals += order.ShippingState + " to " + shippingAddress.State + Environment.NewLine; }
-                if (order.ShippingZip != shippingAddress.Zip) { changedVals += order.ShippingZip + " to " + shippingAddress.Zip + Environment.NewLine; }
 
                 order.FirstName = firstName;
                 order.LastName = lastName;
@@ -1895,7 +2076,7 @@ namespace CUWebinars.Business.Services
                 order.ShippingCity = shippingAddress.City;
                 order.ShippingState = shippingAddress.State;
                 order.ShippingZip = shippingAddress.Zip;
-                order.UserComments += "'ContactInfoUpdated': '" + changedVals + "'";
+                order.UserComments += "{'ContactInfoUpdated': '" + changedVals + "'}";
                 _logger.Info("idOrder {0} user info updated:  {1}", order.idOrder, changedVals);
 
                 SaveChanges();
@@ -1973,6 +2154,13 @@ namespace CUWebinars.Business.Services
             return _webinarRepository.GetOrdersByWebinar(idWebinar).ToList();
         }
 
+        public List<Order> GetOrdersByWebinarForInvoice(int idWebinar)
+        {
+
+            return _webinarRepository.GetOrdersByWebinarForInvoice(idWebinar).ToList();
+
+        }
+
         public void RestoreToDiscount(int newOrderRowId)
         {
             _logger.Fatal("logs the restoration of discount credit when addLocation is deleted.");
@@ -1981,6 +2169,16 @@ namespace CUWebinars.Business.Services
         public void RemoveFromDiscount(int newOrderRowId)
         {
             _logger.Fatal("logs the decrement of discount credit when addLocation is added.");
+        }
+
+        public IList<Order> GetOrdersByDomain(string searchTerm)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IList<Order> GetOrdersByDiscount(int idDiscount)
+        {
+            return _orderRepository.GetOrdersByDiscount(idDiscount);
         }
 
 
@@ -2092,7 +2290,7 @@ namespace CUWebinars.Business.Services
             {
                 orderDate = row.Order.OrderDate;
             }
-            
+
             var regType = GetRegTypeOfOrderRow(row.idRegType);
 
 
@@ -2200,17 +2398,9 @@ namespace CUWebinars.Business.Services
 
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink, OrderGenesis orderGenesis = OrderGenesis.ImportedForExistingUser)
         {
+            decimal optionsPrice = GetAdditionalLocationsPricing(currentOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar);
 
-            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
-            var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(currentOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar);
-            var tuple = additionalLocationsPricing.SingleOrDefault();
-            decimal optionsPrice = 0M;
-
-            // If no data is stored for AdditionalLocations pricing in db, price will be $0. Up to us to ensure pricing is available.
-            if (!ReferenceEquals(null, tuple))
-                optionsPrice = tuple.Price;
-
-            ProcessDiscountCodes(currentOrder);
+            //ProcessDiscountCodes(currentOrder);
             CalculateOrderCost(currentOrder, optionsPrice);
 
             try
@@ -2285,6 +2475,7 @@ namespace CUWebinars.Business.Services
 
         public virtual IList<Order> SelectOrdersWithArchivedWebinars(int idUser)
         {
+
             return _orderRepository.SelectOrdersWithArchivedWebinars(idUser);
         }
 
@@ -2303,23 +2494,24 @@ namespace CUWebinars.Business.Services
             return _orderRepository.AccessToPostEventMaterials(w, u);
         }
 
-        private void ProcessDiscountCodes(Order order)
-        {
-            var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-            //
-            if (row.Discount != null)
-            {
-                RedeemDiscount(row.Discount, row);
-                _logger.Info("Redeemed Discount On Order: " + order.idOrder);
-            }
-        }
+        //private void ProcessDiscountCodes(Order order)
+        //{
+        //    var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+        //    //
+        //    if (row.Discount != null)
+        //    {
+        //        RedeemDiscount(row.Discount, row);
+        //        _logger.Info("Redeemed Discount On Order: " + order.idOrder);
+        //    }
+        //}
 
 
         private Discount RedeemDiscount(Discount discount, OrderRow row)
         {
             var forNotes = new StringBuilder();
             forNotes.Append(Environment.NewLine + Environment.NewLine + discount.Notes);
-            _logger.Info("Discount: RedeemDiscountStarts: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}", discount.DiscountCode, discount.DateValidFrom, discount.DateValidTo, discount.CreditsUsed, discount.CreditsRemain);
+            _logger.Info("Discount: RedeemDiscountStarts: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}", discount.DiscountCode, discount.DateValidFrom, discount.DateValidTo, CalculateCreditsUsed(discount), CalculateCreditsRemain(discount));
+            decimal creditsRemain = CalculateCreditsRemain(discount);
 
             switch (discount.DiscountType)
             {
@@ -2332,15 +2524,15 @@ namespace CUWebinars.Business.Services
                 case DiscountType.Package:
                 case DiscountType.Promo:
                 case DiscountType.Subscription:
-                    if (discount.CreditsRemain > 0)
+                    if (creditsRemain > 0)
                     {
 
-                        forNotes.Append(CalculateDiscountRedemtion(discount, row, null));
+                        forNotes.Append(CalculateDiscountRedemption(discount, row, null, null));
 
                     }
                     else
                     {
-                        forNotes.Append("No Credits Remain. Credits used = " + discount.CreditsUsed);
+                        forNotes.Append("No Credits Remain. Credits used = " + creditsRemain);
                     }
                     _logger.Info(forNotes.ToString());
                     _discountRepository.SaveChanges(discount);
@@ -2349,98 +2541,201 @@ namespace CUWebinars.Business.Services
             return discount;
         }
 
-        private string CalculateDiscountRedemtion(Discount discount, OrderRow row, int? undo)
+        public string CalculateDiscountRedemption(Discount discount, OrderRow row, int? undo, int? previewOnly)
         {
-            var forNotes = new StringBuilder();
-            var regTypeLabel = GetRegTypeOfOrderRow(row.idRegType).OptionLabel;
-            if (undo != null)
+            if (!discount.Status.ToLower().StartsWith("a"))
             {
-                forNotes.AppendFormat(Environment.NewLine + "--UnDo Usage: {0}", +row.idOrder);
-                if (discount.DiscountType == DiscountType.Compensation)
-                {
-                    discount.CreditsRemain = discount.CreditsRemain + 1;
-                    discount.CreditsUsed = discount.CreditsUsed - 1;
-                }
+                _logger.Warn("Discount redemtion attempted on: " + discount.idDiscount + " - " + row.idOrder);
+                return ("This Discount Code " + discount.DiscountCode + " is not activated. For more info contact us by using the Online Chat button below or emailing Support@ttsTrain.com.");
+            }
+            var forNotes = new StringBuilder();
+            var existingDiscount = discount;
+            var regTypeLabel = GetRegTypeOfOrderRow(row.idRegType).OptionLabel;
+            decimal creditsRemain = CalculateCreditsRemain(discount);
+            decimal creditsUsed = CalculateCreditsUsed(discount);
+
+
+
+            decimal thisUse = GetRegTypeOfOrderRow(row.idRegType).CreditCost;
+
+            if (previewOnly != null)
+            {
+                //if (previewOnly == 0)
+                //{
                 if (discount.DiscountType == DiscountType.Subscription)
                 {
-                    // allows re-apply of discount due to canceled order
-                    if (regTypeLabel.StartsWith("Live Plus Five"))
+
+                    if (discount.DateValidTo > discount.DateValidFrom)
                     {
-                        discount.CreditsRemain = discount.CreditsRemain + 1;
-                        discount.CreditsUsed = discount.CreditsUsed - 1;
+                        forNotes.AppendFormat(" Your subscription will expire on " +
+                                              discount.DateValidTo.ToShortDateString() + ".");
                     }
-                    if (regTypeLabel == ("OnDemand Recording Only"))
+                    else if (discount.DateValidTo < discount.DateValidFrom)
                     {
-                        discount.CreditsRemain = discount.CreditsRemain + 1M;
-                        discount.CreditsUsed = discount.CreditsUsed - 1M;
+                        forNotes.AppendFormat(" Your subscription expired on " +
+                                              discount.DateValidTo.ToShortDateString());
                     }
-                    if (regTypeLabel == ("CD-ROM and Hardcopy Handouts"))
+                    else if (creditsRemain > 0 && creditsRemain >= thisUse)
                     {
-                        discount.CreditsRemain = discount.CreditsRemain + 1.25M;
-                        discount.CreditsUsed = discount.CreditsUsed - 1.25M;
+                        var remainsAfterThisUse = creditsRemain - thisUse;
+                        if (thisUse > 1)
+                        {
+                            forNotes.AppendFormat(
+                                " If applied to this order, {0} credits will be deducted <br>from your package with {1} remaining.",
+                                thisUse.ToString().Replace(".00", ""), remainsAfterThisUse.ToString().Replace(".00", ""));
+                        }
+                        else
+                        {
+                            forNotes.AppendFormat(
+                                " If applied to this order, {0} credit will be deducted <br>from your package with {1} remaining.",
+                                thisUse.ToString().Replace(".00", ""), remainsAfterThisUse.ToString().Replace(".00", ""));
+                        }
                     }
-                    if (regTypeLabel.StartsWith("Live Plus Six"))
+                    else
                     {
-                        discount.CreditsRemain = discount.CreditsRemain + 1.25M;
-                        discount.CreditsUsed = discount.CreditsUsed - 1.25M;
+
+                        forNotes.AppendFormat(" Insufficient credits remaining. Required: {0} Available: {1}", thisUse.ToString().Replace(".00", ""), creditsRemain.ToString().Replace(".00", ""));
                     }
-                    if (regTypeLabel == ("Premier Package"))
-                    {
-                        discount.CreditsRemain = discount.CreditsRemain + 1.5M;
-                        discount.CreditsUsed = discount.CreditsUsed - 1.5M;
-                    }
+                }
+                if (discount.DiscountType == DiscountType.Compensation)
+                {
+                    forNotes.AppendFormat("Applying discount code: {0}", discount.DiscountCode);
+                }
+                if (discount.DiscountType == DiscountType.Promo)
+                {
+                    forNotes.AppendFormat("Applying discount code: {0}", discount.DiscountCode);
                 }
 
             }
             else
             {
-                forNotes.AppendFormat(Environment.NewLine + "Applied By: {0}", row.idOrder);
 
-                if (discount.DiscountType == DiscountType.Compensation)
-                {
-                    discount.CreditsRemain = discount.CreditsRemain - 1;
-                    discount.CreditsUsed = discount.CreditsUsed + 1;
-                }
-                if (discount.DiscountType == DiscountType.Subscription)
-                {
-                    // allows re-apply of discount due to canceled order
-                    if (regTypeLabel.StartsWith("Live Plus Five"))
-                    {
-                        discount.CreditsRemain = discount.CreditsRemain - 1;
-                        discount.CreditsUsed = discount.CreditsUsed + 1;
-                    }
-                    if (regTypeLabel == ("OnDemand Recording Only"))
-                    {
-                        discount.CreditsRemain = discount.CreditsRemain - 1M;
-                        discount.CreditsUsed = discount.CreditsUsed + 1M;
-                    }
-                    if (regTypeLabel == ("CD-ROM and Hardcopy Handouts"))
-                    {
-                        discount.CreditsRemain = discount.CreditsRemain - 1.25M;
-                        discount.CreditsUsed = discount.CreditsUsed + 1.25M;
-                    }
-                    if (regTypeLabel.StartsWith("Live Plus Six"))
-                    {
-                        discount.CreditsRemain = discount.CreditsRemain - 1.25M;
-                        discount.CreditsUsed = discount.CreditsUsed + 1.25M;
-                    }
-                    if (regTypeLabel == ("Premier Package"))
-                    {
-                        discount.CreditsRemain = discount.CreditsRemain - 1.5M;
-                        discount.CreditsUsed = discount.CreditsUsed + 1.5M;
-                    }
-                }
+                //discount.CreditsRemain = CalculateCreditsRemain(discount);
+                //discount.CreditsUsed = CalculateCreditsUsed(discount);
+                forNotes.AppendFormat(Environment.NewLine + "Applied By: {0}", row.idOrder);
+                forNotes.AppendFormat(" Used: {0} Remain: {1}" + Environment.NewLine, creditsUsed,
+                    creditsRemain);
+
             }
-            forNotes.AppendFormat(" Used: {0} Remain: {1}" + Environment.NewLine, discount.CreditsUsed, discount.CreditsRemain);
             return forNotes.ToString();
         }
 
-        private void RejectDiscount(OrderRow orderRow)
+        public decimal CalculateCreditsRemain(Discount userDiscount)
         {
-            orderRow.Discount.CreditsRemain++;
-            //according to legacy code but can a condition exist 
-            //  a non-valid discount resulted in a decrement.
+            if (userDiscount.DiscountType == DiscountType.Subscription &&
+                userDiscount.DateValidTo > userDiscount.DateValidFrom) return 100; // date-based subscription, # doesn't really matter
+
+            var ordersWithDiscount = GetOrdersByDiscount(userDiscount.idDiscount)
+                .Where((o => o.OrderDate > userDiscount.DateVerified
+                || (o.InvoiceDetail.Contains("DiscountIsApplied") )
+                && !o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title.StartsWith("Compliance Perspe")
+                && o.InvoiceDetail.Contains(userDiscount.idDiscount.ToString())));
+
+            var creditsUsed = 0M;
+
+            if (ordersWithDiscount.Any())
+                foreach (var order in ordersWithDiscount)
+                {
+                    creditsUsed +=
+                        order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                            .RegistrationType.CreditCost;
+                }
+            return userDiscount.TotalCount - creditsUsed;
         }
+
+        public decimal CalculateCreditsUsed(Discount userDiscount)
+        {
+            var ordersWithDiscount = GetOrdersByDiscount(userDiscount.idDiscount)
+                  .Where(o => o.OrderDate > userDiscount.DateVerified);
+            var credits = 0M;
+            if (ordersWithDiscount.Any())
+                foreach (var order in ordersWithDiscount)
+                {
+                    credits +=
+                        order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                            .RegistrationType.CreditCost;
+                }
+
+            return credits;
+        }
+
+        public void CreateTestRegistration(Webinar webinar)
+        {
+            var idRegType = GetAllPossibleOptionsByWebinarId(webinar.idWebinar, false);
+
+            var live_id = 0;
+
+            foreach (var _regType in idRegType)
+            {
+                if (_regType.Key.OptionLabel.Contains("Five"))
+                    live_id = _regType.Key.idRegType;
+                    ;
+            }
+
+            var row = CreateOrderRow(webinar, null, live_id);
+            var orders = new List<Order>();
+            var order = CreateNewOrder(_affiliateRepository.FindById(19), GetWebUser(1), webinar, row, "testing");
+
+            AssignWebUserToOrder(GetWebUser(1), order);
+            AssignAffiliateToOrder(19, order);
+            
+            order.OrderStatus = OrderStatus.Submitted;
+            
+            orders.Add(order);
+
+            FireSendConnectionInfoNotificationEvent(orders, false); // this is where a single email is specified
+
+            DeleteOrder(order.idOrder);
+        }
+
+
+        public IList<WebUser> GetWebUsersOfDiscount(int idDiscount)
+        {
+            return _webUserRepository.GetWebUsersOfDiscount(idDiscount);
+        }
+
+        public string CheckOrderComments()
+        {
+            int totalNumberOrders = 0;
+            List<Order> orders = _orderRepository.GetOrdersAll(19, out totalNumberOrders).ToList();
+
+            foreach (var order in orders)
+            {
+                if (order.AdminComments != null && !order.AdminComments.StartsWith("["))
+                {
+                    var AdminResult = JsonHelpers.IsValidObjectSingle(order.AdminComments);
+                    if (AdminResult != "isSingle")
+                    {
+                        _logger.Warn("invalid Json on Admin: " + order.idOrder + " | " + order.AdminComments);
+                    }
+                }
+                if (order.AffiliateComments != null && !order.AffiliateComments.StartsWith("["))
+                {
+                    var AffResult = JsonHelpers.IsValidObjectSingle(order.AffiliateComments);
+                    if (AffResult != "isSingle")
+                    {
+                        _logger.Warn("invalid Json on Aff: " + order.idOrder + " | " + order.AffiliateComments);
+                    }
+                }
+                if (order.UserComments != null && !order.UserComments.StartsWith("["))
+                {
+                    var UserResult = JsonHelpers.IsValidObjectSingle(order.UserComments);
+                    if (UserResult != "isSingle")
+                    {
+                        _logger.Warn("invalid Json on User: " + order.idOrder + " | " + order.UserComments);
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        //private void RejectDiscount(OrderRow orderRow)
+        //{
+        //    orderRow.Discount.CreditsRemain++;
+        //    //according to legacy code but can a condition exist 
+        //    //  a non-valid discount resulted in a decrement.
+        //}
 
         public Discount GetDiscountById(int id)
         {

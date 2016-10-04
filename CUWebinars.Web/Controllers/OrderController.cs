@@ -18,6 +18,7 @@ using System.Web;
 using System.Web.Mvc;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
+using CUWebinars.Web.Models.Importers;
 
 namespace CUWebinars.Web.Controllers
 {
@@ -263,10 +264,161 @@ namespace CUWebinars.Web.Controllers
 
         }
 
+        public void MigrateCompliancePerspectivesOrders()
+        {
+            IList<Order> orders =
+                _orderManagementService.GetOrdersByWebinar(842).Where(o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Submitted || o.OrderStatus == OrderStatus.Paid).ToList();
+            _logger.Info("CPMigrator found " + orders.Count + " orders to process.");
+            var nextCPId = _webinarManagementService.GetNextCompliancePerspectives();
+
+            foreach (var o in orders)
+            {
+                _logger.Info("CPMigrator begins: " + o.BillingEmail);
+                var row = o.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
+                var addLocString = "";
+                if (row.AdditionalLocation != null)
+                {
+                    foreach (var addLoc in row.AdditionalLocation)
+                    {
+                        addLocString += addLoc.Email + ",";
+                    }
+                }
+                try
+                {
+                    var thisOrder = new MigrateOrderModel
+                    {
+                        idWebinar = nextCPId.Value,
+                        idAffiliate = o.idAffiliate,
+                        Email = o.BillingEmail,
+                        Title = o.WebUser.Title ?? "",
+                        Status = o.OrderStatus,
+                        AdditionalLocationsString = addLocString.TrimEnd(','),
+                        idOrderLegacy = 0,
+                        idRegType = row.idRegType,
+                        OrderDate = DateTime.Now,
+                        Total = o.Total,
+                        BillingAddress = new Address
+                        {
+                            StreetAddress = o.BillingAddress,
+                            StreetAddress2 = o.BillingAddress2,
+                            City = o.BillingCity,
+                            State = o.BillingState,
+                            AddressType = "0",
+                            Phone = o.BillingPhone,
+                            Name = o.WebUser.FullName,
+                            Zip = o.BillingZip
+                        },
+                        ShippingAddress = new Address
+                        {
+                            StreetAddress = o.ShippingAddress,
+                            StreetAddress2 = o.ShippingAddress2,
+                            City = o.ShippingCity,
+                            State = o.ShippingState,
+                            AddressType = "1",
+                            Phone = o.ShippingPhone,
+                            Name = o.WebUser.FullName,
+                            Zip = o.ShippingZip
+                        },
+
+                        Institution = o.Institution,
+                        DiscountCode = null,
+                        AdminComments = "",
+                        FirstName = o.FirstName,
+                        LastName = o.LastName,
+                        Origin = o.Origin,
+                        LegacyRegType = 0,
+                        SendNotification = false
+                    };
+
+                    var makeCPOrder = MigrateOrderCompPerspectivesPost(thisOrder);
+                    _logger.Info(JsonConvert.DeserializeObject(makeCPOrder.ToString()).ToString());
+
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.FatalException("migrating CP failed on: " + o.idOrder + "  with: ",ex);
+                }
+            }
+        }
+        /// <summary>
+        /// Permits migration of legacy system.
+        /// </summary>
+        /// <param name="migrateOrderModel"></param>
+        /// <returns></returns>
+
+        public JsonResult MigrateOrderCompPerspectivesPost(MigrateOrderModel migratedOrder)
+        {
+            int idOfLastOrder = default(int);
+            string verificationKey = string.Empty;
+            string confirmChangeEmailUrl = string.Empty;
+
+            if (!ModelState.IsValid)
+            {
+                var myError = ProcessModelStateErrors();
+                return Json(new { Result = WebUiConstants.Fail, Error = myError });
+            }
+
+            try
+            {
+                var email = migratedOrder.Email.Trim();
+
+                _logger.Info("Begin migrate: " + email);
+
+                var migratorQueryResult = _orderControllerOrchestrator.GetPreparatoryDataForMigrator(migratedOrder
+                    , email);
+
+                if (ReferenceEquals(null, migratorQueryResult.WebUser))
+                {
+                    try
+                    {
+                        migratorQueryResult.WebUser =
+                            _orderControllerOrchestrator.MigrateUser(migratedOrder, email);
+
+                        verificationKey = _orderControllerOrchestrator.GetVerificationKeyForNewUserAccount();
+
+                        confirmChangeEmailUrl =
+                            _orderControllerOrchestrator.GetConfirmChangeEmailLinkForNewUserAccount();
+
+                        _orderControllerOrchestrator.FinalizeMigratedRegistation(migratedOrder, verificationKey);
+
+                        _logger.Info(string.Format("MigrateOrder|CreateUser Succeeded: {0}", email));
+                    }
+                    catch (Exception exception)
+                    {
+                        _logger.ErrorException(
+                            string.Format("MigrateOrder|CreateUser failed: {0}", email), exception);
+                        Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                        throw;
+                    }
+                }
+
+                idOfLastOrder = _orderControllerOrchestrator.MigrateOrder(migratedOrder, email,
+                    migratorQueryResult, verificationKey, confirmChangeEmailUrl);
+
+                _logger.Info(string.Format("MigrateOrder|CreateNewOrder: {0}", idOfLastOrder));
+
+                //Order resultOrder = _orderManagementService.GetOrderById(idOfLastOrder);
+                //var discount =
+                //    resultOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount;
+                //_logger.Info("Discount: RedeemDiscountStarts: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}", discount.DiscountCode, discount.DateValidFrom, discount.DateValidTo, discount.CreditsUsed, discount.CreditsRemain);
+                return Json(new { Result = idOfLastOrder.ToString() }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception exception)
+            {
+                var errString = string.Format("Order creation failed on {0} - {1} with msg: {2}", migratedOrder.Email, migratedOrder.idWebinar, exception.Message);
+                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                _logger.ErrorException(errString, exception);
+
+                return Json(new { Result = errString }, JsonRequestBehavior.AllowGet);
+            }
+
+        }
+
         private string ProcessModelStateErrors()
         {
             //Please use this general pattern when logging ModelState errors.
-            var myErr = "ProcessModelStateErrors found errors.";
+            var myErr = "ProcessModelStateErrors found errors. ";
 
             foreach (ModelState modelState in ViewData.ModelState.Values)
             {
@@ -275,32 +427,36 @@ namespace CUWebinars.Web.Controllers
                     myErr += error.ErrorMessage + Environment.NewLine;
                 }
             }
-            myErr += "Session Info: " + Environment.NewLine;
+            myErr += " Session Info: " + Environment.NewLine;
             myErr += _appHelper.GetUserAuditInfo();
 
             //a better implementation:
             //http://stackoverflow.com/questions/2845852/asp-net-mvc-how-to-convert-modelstate-errors-to-json
-            //var errorList = ModelState.ToDictionary(
-            //    kvp => kvp.Key,
-            //    kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
-            //);
+            var errorList = ModelState.Where(kvp => kvp.Value.Errors.Count > 0)
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(e => e.ErrorMessage)
+                    .ToArray()
+            );
 
-            _logger.Error(myErr);
-            return myErr;
+            _logger.Error(errorList.ToString());
+            return myErr.ToString();
         }
+
 
         /// <summary>
         /// Imports orders based on form submissions from Affiliate Import Sheets.
         /// </summary>
         /// <param name="ImportOrderModel"></param>
         /// <returns></returns>
+        /// 
+        [AllowAnonymous]
         [HttpPost]
-        public JsonResult importorder4ACS(ImportOrderForAcsModel _importedOrder)
+        [ValidateInput(false)]
+        public JsonResult Importorder4Acs(ImportOrderForAcsModel _importedOrder)
         {
             _logger.Info("importorder4ACS Incoming Values: " + JsonConvert.SerializeObject(_importedOrder, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
             if (ModelState.IsValid)
             {
-                var idRegType = _webinarManagementService.GetRegTypeByACS(_importedOrder.DeliveryType,  Convert.ToInt32(_importedOrder.BankWebID));
+                var idRegType = _webinarManagementService.GetRegTypeByACS(_importedOrder.DeliveryType, Convert.ToInt32(_importedOrder.BankWebID));
                 ImportOrderModel importedOrder = new ImportOrderModel
                 {
                     idWebinar = Convert.ToInt32(_importedOrder.BankWebID),
@@ -336,7 +492,7 @@ namespace CUWebinars.Web.Controllers
                     Title = _importedOrder.Title,
                     FirstName = _importedOrder.FirstName,
                     LastName = _importedOrder.LastName,
-                    
+
                     AdditionalLocationsString = _importedOrder.AdditionalLocationsString,
                     Email = _importedOrder.Email
 
@@ -352,7 +508,7 @@ namespace CUWebinars.Web.Controllers
                     return Json(new { Result = WebUiConstants.Fail, Error = myError });
                 }
                 _logger.Info("ACS EmailParser Input: " + JsonConvert.SerializeObject(importedOrder, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
-                
+
                 if (idRegType == 0)
                 {
                     _logger.Fatal(string.Format("idRegType comes up 0. RegType = {0}; email = {1}; orderDate = {2};",
@@ -393,7 +549,8 @@ namespace CUWebinars.Web.Controllers
 
                             _orderControllerOrchestrator.FinalizeImportedRegistation(verificationKey);
 
-                            _logger.Info(string.Format("ImportOrder|CreateUser Succeeded: {0}", importedOrder.Email.Trim()));
+                            _logger.Info(string.Format("ImportOrder|CreateUser Succeeded: {0}",
+                                importedOrder.Email.Trim()));
                         }
                         catch (Exception exception)
                         {
@@ -402,6 +559,31 @@ namespace CUWebinars.Web.Controllers
                             Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                             throw;
                         }
+                    }
+                    else
+                    {
+                        // send address info
+                        var billingAdd = importQueryResult.WebUser.Addresses.Where(a => a.AddressType == "Billing").SingleOrDefault();
+                        var shippingAdd = importQueryResult.WebUser.Addresses.Where(a => a.AddressType == "Shipping").SingleOrDefault();
+                        if (!ReferenceEquals(null, billingAdd))
+                        {
+                            billingAdd.City = _importedOrder.City;
+                            billingAdd.StreetAddress = _importedOrder.StreetorP_O_Box;
+                            billingAdd.Phone = _importedOrder.Phone;
+                            billingAdd.State = _importedOrder.State_Province_Region;
+                            billingAdd.Zip = _importedOrder.Zip_PostalCode;
+                            billingAdd.Name = _importedOrder.FirstName + " " + _importedOrder.LastName;
+                        }
+                        if (!ReferenceEquals(null, shippingAdd))
+                        {
+                            shippingAdd.City = _importedOrder.City;
+                            shippingAdd.StreetAddress = _importedOrder.StreetorP_O_Box;
+                            shippingAdd.Phone = _importedOrder.Phone;
+                            shippingAdd.State = _importedOrder.State_Province_Region;
+                            shippingAdd.Zip = _importedOrder.Zip_PostalCode;
+                            shippingAdd.Name = _importedOrder.FirstName + " " + _importedOrder.LastName;
+                        }
+                        //_orderControllerOrchestrator.U
                     }
 
                     idOfLastOrder = _orderControllerOrchestrator.ImportOrder(importedOrder, importedOrder.Email.Trim(),
@@ -420,18 +602,28 @@ namespace CUWebinars.Web.Controllers
                     }
                     catch (Exception ex)
                     {
-                        _logger.Fatal("Attempt to seriealize order failed: " + newOrder.idOrder, ex);
+                        _logger.FatalException("Attempt to seriealize order failed: " + newOrder.idOrder, ex);
                     }
 
                     newOrder.OrderDate = importedOrder.OrderDate;
                     newOrder.OrderStatus = OrderStatus.AwaitingVerification;
 
-                    //if (_importedOrder.PaymentMethod == "Credit Card")
-                    //{
-                    //    newOrder.OrderStatus = OrderStatus.Paid;
-                    //}
-                    newOrder.AuditInfo = "'ACSImporter: '+{" + JsonConvert.SerializeObject(_importedOrder) + "}";
-                    
+                    var cftTitleString = _importedOrder.AffiliateComments;
+
+                    if (cftTitleString ==
+                        newOrder.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title)
+                    {
+                        cftTitleString = "";
+                    }
+                    else
+                    {
+                        cftTitleString = "The title of this event at cftnow.org is: " + cftTitleString;
+                    }
+
+                    newOrder.UserComments = "{\"ACSImporter\": \"This registration originated at cftnow.org. " + cftTitleString + "\"}";
+
+                    newOrder.AuditInfo = "{'ACSImporter': {'" + JsonConvert.SerializeObject(_importedOrder) + "'}}";
+
                     _orderManagementService.SaveChanges();
 
                     _logger.Info(string.Format("ImportOrder from {0} produced: {1}", importedOrder.Source, idOfLastOrder));

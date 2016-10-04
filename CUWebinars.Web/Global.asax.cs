@@ -19,6 +19,7 @@ using System.Net.Configuration;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Http;
@@ -27,6 +28,10 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using AutoMapper;
 using ClaimTypes = System.IdentityModel.Claims.ClaimTypes;
+using System.IdentityModel.Services;
+using System.IdentityModel.Tokens;
+using Elmah;
+using GemBox.Document;
 
 namespace CUWebinars.Web
 {
@@ -47,6 +52,7 @@ namespace CUWebinars.Web
             // Clears all previously registered view engines.
             ViewEngines.Engines.Clear();
 
+            ComponentInfo.SetLicense("DUZ7-YWDS-BDTM-7Z5I");
             // Registers our Razor C# specific view engine.
             ViewEngines.Engines.Add(new RazorViewEngine() { FileExtensions = new string[] { "cshtml" } });
 
@@ -208,14 +214,20 @@ namespace CUWebinars.Web
             // Note: in Web.config, httpErrors is as follows: <httpErrors existingResponse="PassThrough" />
             // This is required (or set existingResponse to "auto"), otherwise Response.TrySkipIisCustomErrors
             // is ignored.
-            Response.TrySkipIisCustomErrors = true;
+            ; Response.TrySkipIisCustomErrors = true;
 
             if (httpException != null)
             {
+                var userName = "anon";
+                if (User.Identity.IsAuthenticated)
+                {
+                    userName = User.Identity.Name;
+                }
+                ErrorSignal.FromCurrentContext().Raise(exception);
+                logger.Fatal("Global asax: " + userName + " error: " + exception.Message + " session: " + httpContext.Session);
                 switch (httpException.GetHttpCode())
                 {
                     case 404:
-                        logger.Info("404 served to: " + httpContext.Request.UrlReferrer);
                         Response.StatusCode = 404;
                         newRouteData.Values[WebUiConstants.Action] = WebUiConstants.PageNotFound;
                         _errorResponseCommand.Execute(errorResponse);
@@ -257,15 +269,21 @@ namespace CUWebinars.Web
 
         private void Session_Start(object sender, EventArgs e)
         {
-
+            //bool iscrawler = Regex.IsMatch(Request.UserAgent,
+            //    @"bot|crawler|baiduspider|80legs|ia_archiver|voyager|curl|wget|yahoo! slurp|mediapartners-google",
+            //    RegexOptions.IgnoreCase);
+            //if (!iscrawler)
+            //{
             var ttsWebinarsContext = new TTSWebinarsContext();
             try
             {
                 IAffiliateRepository affiliateRepository = new AffiliateRepository(ttsWebinarsContext);
+                IWebUserRepository webUserRepository = new WebUserRepository(ttsWebinarsContext);
                 IInstitutionRepository institutionRepository = new InstitutionRepository(ttsWebinarsContext);
 
 
-                StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(AppConst.DEFAULT_AFFILIATE));
+                StateService.SetValue(WebUiConstants.CurrentAffiliate,
+                    affiliateRepository.FindByIdWithIncluding(AppConst.DEFAULT_AFFILIATE));
                 //StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(AppConst.DEFAULT_AFFILIATE, a => a.WebUser));
                 StateService.SetValue("AValidInstitution", institutionRepository.FindFirst());
 
@@ -277,11 +295,24 @@ namespace CUWebinars.Web
                         (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
                     {
                         var claimTTSDomain =
-                            claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate)
+                            claimsIdentityOfAuthenticatedUser.Claims.Where(
+                                c => c.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate)
                                 .First()
                                 .Value;
-                        StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.LoadByTTSDomain(claimTTSDomain));
+                        StateService.SetValue(WebUiConstants.CurrentAffiliate,
+                            affiliateRepository.LoadByTTSDomain(claimTTSDomain));
+                    }
+                    else
+                    {
+                        StateService.SetValue(WebUiConstants.CurrentAffiliate,
+                            webUserRepository.FindAffiliateOfLastOrder(User.Identity.Name));
+                    }
+                    if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                        (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Admin))
+                    {
 
+                        StateService.SetValue(WebUiConstants.CurrentAffiliate,
+                            affiliateRepository.LoadById(19));
                     }
                 }
 
@@ -299,7 +330,8 @@ namespace CUWebinars.Web
 
                 if (HttpContext.Current != null)
                 {
-                    StateService.SetValue(WebUiConstants.FirstPage, HttpContext.Current.Request.Url.ToString().Trim());
+                    StateService.SetValue(WebUiConstants.FirstPage,
+                        HttpContext.Current.Request.Url.ToString().Trim());
                     StateService.SetValue(WebUiConstants.InitialQueryString, Request.Url.Query);
                     StateService.SetValue(WebUiConstants.SessionId, HttpContext.Current.Session.SessionID);
 
@@ -316,9 +348,11 @@ namespace CUWebinars.Web
 
                             if (!ReferenceEquals(foundAff, null))
                             {
-                                StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(loadAff));
+                                StateService.SetValue(WebUiConstants.CurrentAffiliate,
+                                    affiliateRepository.FindByIdWithIncluding(loadAff));
                                 //StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser));
-                                logger.Info(string.Format("Resolving Affiliate via query string with id {0}", loadAff));
+                                logger.Info(string.Format("Resolving Affiliate via query string with id {0}",
+                                    loadAff));
 
                             }
                             else
@@ -345,7 +379,8 @@ namespace CUWebinars.Web
                         }
                         else
                         {
-                            logger.Error(SessionStartError + "Non-numeric idAff: " + HttpContext.Current.Request.QueryString);
+                            logger.Error(SessionStartError + "Non-numeric idAff: " +
+                                         HttpContext.Current.Request.QueryString);
                         }
                     }
                 }
@@ -378,7 +413,8 @@ namespace CUWebinars.Web
                         }
                         catch (Exception ex)
                         {
-                            logger.Error(string.Format("Failed to resolving Affiliate via subdomainBranding {0}", subdomainBranding));
+                            logger.Error(string.Format("Failed to resolving Affiliate via subdomainBranding {0}",
+                                subdomainBranding));
                             logger.Fatal(ex);
                             throw;
                         }
@@ -429,19 +465,23 @@ namespace CUWebinars.Web
                 if (User.Identity.IsAuthenticated)
                 {
                     logger.Info("{\"Name\": \"" + User.Identity.Name
-                        + "\", \"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
-                        + "\", \"QueryString\": \"" + StateService.GetValue<string>(WebUiConstants.InitialQueryString)
-                        + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
-                        + "\", \"FirstCookies\": {" + StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
+                                + "\", \"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
+                                + "\", \"QueryString\": \"" +
+                                StateService.GetValue<string>(WebUiConstants.InitialQueryString)
+                                + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
+                                + "\", \"FirstCookies\": {" +
+                                StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
                         );
                 }
                 else
                 {
                     logger.Info("Anon Session Starts with: {"
-                        + "\"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
-                        + "\", \"QueryString\": \"" + StateService.GetValue<string>(WebUiConstants.InitialQueryString)
-                        + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
-                        + "\", \"FirstCookies\": {" + StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
+                                + "\"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
+                                + "\", \"QueryString\": \"" +
+                                StateService.GetValue<string>(WebUiConstants.InitialQueryString)
+                                + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
+                                + "\", \"FirstCookies\": {" +
+                                StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
                         );
                 }
             }
@@ -455,7 +495,64 @@ namespace CUWebinars.Web
                 //ttsWebinarsContext.Database.Connection.Close(); --> THIS LINE PROBABLY NOT NECESSARY. DISPOSE SHOULD DO THIS FOR US.
                 ttsWebinarsContext.Dispose();
             }
+            //}//ends attempt to filter bots
         }
-    }
 
+        //private void SessionAuthenticationModule_SessionSecurityTokenReceived(object sender, SessionSecurityTokenReceivedEventArgs e)
+        //{
+        //    // This method gets run about 5 or 6 times per page, seems to be run once for each resource request that the page includes
+        //    // I am using "if (request.Path...)" tests to isolate the functionality to "page loads" for particular pages
+
+        //    System.Diagnostics.Debug.WriteLine(Request.Path);
+
+        //    if (Request.Path == "/Account/MyWebinars") // Proof-of-concept, watch for the /Admin (or pick a different page if you want) page load
+        //    {
+        //        // BREAKPOINT IN HERE and browse to /Admin (My Webinars as admin)
+
+        //        var token = e.SessionToken;
+
+        //        System.Diagnostics.Debug.WriteLine("in /Admin--");
+
+        //        System.Diagnostics.Debug.WriteLine(token.ValidFrom.ToString("MM/dd/yyyy HH:mm:ss"));
+        //        System.Diagnostics.Debug.WriteLine(token.ValidTo.ToString("MM/dd/yyyy HH:mm:ss"));
+
+        //        //*** THE FOLLOWING DEFINITELY SEEMS TO SET THE COOKIE (updates the ValidFrom and ValidTo properties on subsequent access)
+        //        // the question are:
+        //        //  does it pull the latest claims from the DB?
+        //        //  how fast (or slow) is this process?
+
+        //        e.ReissueCookie = true;
+        //        e.SessionToken =
+        //            new SessionSecurityToken(
+        //                token.ClaimsPrincipal,
+        //                token.Context,
+        //                DateTime.UtcNow,
+        //                DateTime.UtcNow.Add(TimeSpan.FromHours(8))) // needs to be the configured value, hard-coded to 8 hours for testing
+        //            {
+        //                IsPersistent = token.IsPersistent,
+        //                IsReferenceMode = token.IsReferenceMode
+        //            };
+
+        //        // these dates are not changed at this point in time, browse to the home page (or wherever you set up below as "subsequent")
+        //        System.Diagnostics.Debug.WriteLine(" ---- ");
+        //        System.Diagnostics.Debug.WriteLine(token.ValidFrom.ToString("MM/dd/yyyy HH:mm:ss"));
+        //        System.Diagnostics.Debug.WriteLine(token.ValidTo.ToString("MM/dd/yyyy HH:mm:ss"));
+
+        //        System.Diagnostics.Debug.WriteLine("end /Admin--");
+
+        //    }
+
+        //    if (Request.Path == "/Home") // could be any page that you want, this is the "subsequent" "page request" load where we can see the dates have been changed
+        //    {
+        //        // BREAKPOINT IN HERE and browse to homepage (/) after browsing to /Admin (or whatever is configured above)
+
+        //        var token = e.SessionToken;
+        //        System.Diagnostics.Debug.WriteLine("in /Homepage--");
+
+        //        // these dates are different (updated) after the code above (/Admin) runs
+        //        System.Diagnostics.Debug.WriteLine(token.ValidFrom.ToString("MM/dd/yyyy HH:mm:ss"));
+        //        System.Diagnostics.Debug.WriteLine(token.ValidTo.ToString("MM/dd/yyyy HH:mm:ss"));
+        //    }
+        //}
+    }
 }
