@@ -1,0 +1,175 @@
+﻿@using CUWebinars.Web.Core
+@model CheckoutPauseViewModel
+
+@{
+
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+
+    ViewBag.Title = "Pause Checkout";
+    Layout = "~/Views/Shared/_LayoutJotForm.cshtml";
+}
+
+
+<style type="text/css">
+    .form-label-left {
+        width: 150px !important;
+    }
+
+    .form-line {
+        padding-top: 3px;
+        padding-bottom: 3px;
+    }
+
+    .form-label-right {
+        width: 150px !important;
+    }
+
+    .form-all {
+        width: 560px;
+        margin-left: 150px;
+        background: #F5F5F5;
+        color: #555 !important;
+        font-family: 'Tahoma';
+        font-size: 14px;
+    }
+
+    .form-radio-item label, .form-checkbox-item label, .form-grading-label, .form-header {
+        color: #555;
+    }
+</style>
+<script type="text/javascript">
+
+    JotForm.init(function () {
+
+        JotForm.clearFieldOnHide = "disable";
+        JotForm.onSubmissionError = "jumpToSubmit";
+    });
+</script>
+
+<div id="CancelModal" class="modal hide fade">
+    <div id="cancelResult">
+        <div>
+            <form class="jotform-form" action="https://submit.jotformpro.com/submit/60898267714974/" method="post" name="form_60898267714974" id="60898267714974" accept-charset="utf-8">
+                <input type="hidden" name="id" id="cancelModalOrderId" value="@Model.idOrder" />
+                <input type="hidden" name="formID" value="60898267714974" />
+                <div class="form-all">
+                    <ul class="form-section page-section">
+                        <li class="form-line always-hidden" data-type="control_textbox" id="id_27">
+                            <label class="form-label form-label-top form-label-auto" id="label_27" for="input_27">  </label>
+                            <div id="cid_27" class="form-input-wide always-hidden jf-required">
+                                <input type="text" class=" form-textbox" data-type="input-textbox" id="input_27" name="q27_idOrder" size="20" value="" />
+                            </div>
+                        </li>
+                        <li class="form-line jf-required" data-type="control_checkbox" id="id_26">
+                            <label class="form-label form-label-top form-label-auto" id="label_26" for="input_26">
+                                The nature of your question
+                                <span class="form-required">
+                                    *
+                                </span>
+                            </label>
+                            <div id="cid_26" class="form-input-wide jf-required">
+                                <div class="form-single-column">
+                                    <span class="form-checkbox-item" style="clear:left;">
+                                        <span class="dragger-item">
+                                        </span>
+                                        <input type="checkbox" class="form-checkbox validate[required]" id="input_26_0" name="q26_theNature[]" value="I don't have a question - just put the order on hold." />
+                                        <label id="label_input_26_0" for="input_26_0"> I don't have a question - just put the order on hold. </label>
+                                    </span>
+                                    <span class="form-checkbox-item" style="clear:left;">
+                                        <span class="dragger-item">
+                                        </span>
+                                        <input type="checkbox" class="form-checkbox validate[required]" id="input_26_1" name="q26_theNature[]" value="Clarification on deliverables of the various attendance types." />
+                                        <label id="label_input_26_1" for="input_26_1"> Clarification on deliverables of the various attendance types. </label>
+                                    </span>
+                                    <span class="form-checkbox-item" style="clear:left;">
+                                        <span class="dragger-item">
+                                        </span>
+                                        <input type="checkbox" class="form-checkbox validate[required]" id="input_26_2" name="q26_theNature[]" value="Can I share notifications with a co-worker?" />
+                                        <label id="label_input_26_2" for="input_26_2"> Can I share notifications with a co-worker? </label>
+                                    </span>
+                                    <span class="form-checkbox-item" style="clear:left;">
+                                        <span class="dragger-item">
+                                        </span>
+                                        <input type="checkbox" class="form-checkbox validate[required]" id="input_26_3" name="q26_theNature[]" value="How do I watch the recording?" />
+                                        <label id="label_input_26_3" for="input_26_3"> How do I watch the recording? </label>
+                                    </span>
+                                    <span class="form-checkbox-item" style="clear:left;">
+                                        <span class="dragger-item">
+                                        </span>
+                                        <input type="checkbox" class="form-checkbox validate[required]" id="input_26_4" name="q26_theNature[]" value="Where do I find my Certificate of Attendance?" />
+                                        <label id="label_input_26_4" for="input_26_4"> Where do I find my Certificate of Attendance? </label>
+                                    </span>
+                                    <span class="form-checkbox-item" style="clear:left;">
+                                        <span class="dragger-item">
+                                        </span>
+                                        <input type="checkbox" class="form-checkbox validate[required]" id="input_26_5" name="q26_theNature[]" value="Can you invoice me or do I need to pay up front?" />
+                                        <label id="label_input_26_5" for="input_26_5"> Can you invoice me or do I need to pay up front? </label>
+                                    </span>
+                                    <span class="form-checkbox-item" style="clear:left">
+                                        <input type="checkbox" class="form-checkbox-other form-checkbox validate[required]" name="q26_theNature[other]" id="other_26" value="other" />
+                                        <input type="text" class="form-checkbox-other-input form-textbox" name="q26_theNature[other]" data-otherhint="Other" size="15" id="input_26" />
+                                        <br />
+                                    </span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="form-line form-field-hidden" style="display:none;" data-type="control_textarea" id="id_23">
+                            <label class="form-label form-label-top form-label-auto" id="label_23" for="input_23"> Detailed Question Text </label>
+                            <div id="cid_23" class="form-input-wide jf-required">
+                                <textarea id="input_23" class="form-textarea" name="q23_detailedQuestion" cols="40" rows="6"></textarea>
+                            </div>
+                        </li>
+                        <li class="form-line jf-required" data-type="control_email" id="id_21">
+                            <label class="form-label form-label-top form-label-auto" id="label_21" for="input_21">
+                                Your E-mail Address
+                                <span class="form-required">
+                                    *
+                                </span>
+                            </label>
+                            <div id="cid_21" class="form-input-wide jf-required">
+                                <input type="email" class=" form-textbox validate[required, Email]" id="input_21" name="q21_yourEmail21" size="32" value="@Model.email" />
+                            </div>
+                        </li>
+                        <li class="form-line" data-type="control_fullname" id="id_15">
+                            <label class="form-label form-label-top form-label-auto" id="label_15" for="input_15"> Your Name </label>
+                            <div id="cid_15" class="form-input-wide jf-required">
+                                <span class="form-sub-label-container" style="vertical-align: top">
+                                    <input class="form-textbox" type="text" size="10" name="q15_yourName[first]" id="first_15" />
+                                    <label class="form-sub-label" for="first_15" id="sublabel_first" style="min-height: 13px;"> First Name </label>
+                                </span>
+                                <span class="form-sub-label-container" style="vertical-align: top">
+                                    <input class="form-textbox" type="text" size="15" name="q15_yourName[last]" id="last_15" />
+                                    <label class="form-sub-label" for="last_15" id="sublabel_last" style="min-height: 13px;"> Last Name </label>
+                                </span>
+                            </div>
+                        </li>
+                        @*<li class="form-line" data-type="control_email" id="id_16">
+                                <label class="form-label form-label-top form-label-auto" id="label_16" for="input_16"> Institution </label>
+                                <div id="cid_16" class="form-input-wide jf-required">
+                                    <input type="email" class=" form-textbox" id="input_16" name="q16_institution" size="32" value="" />
+                                </div>
+                            </li>*@
+                        <li class="form-line" data-type="control_button" id="id_14">
+                            <div id="cid_14" class="form-input-wide">
+                                <div style="text-align:center" class="form-buttons-wrapper">
+                                    <button id="input_14" type="submit" class="form-submit-button">
+                                        Pause My Order
+                                    </button>
+                                </div>
+                            </div>
+                        </li>
+                        <li style="display:none">
+                            Should be Empty:
+                            <input type="text" name="website" value="" />
+                        </li>
+                    </ul>
+                </div>
+                <input type="hidden" id="simple_spc" name="simple_spc" value="60898267714974" />
+                <script type="text/javascript">
+                    document.getElementById("si" + "mple" + "_spc").value = "60898267714974-60898267714974";
+                </script>
+            </form>
+        </div>
+    </div>
+
+</div>
