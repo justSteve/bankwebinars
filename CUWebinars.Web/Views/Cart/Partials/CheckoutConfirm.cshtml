@@ -93,7 +93,7 @@
             }
             else
             {
-                if (Request.Url.PathAndQuery.ContainsIgnoreCase("/webinar/getaddtocartjson"))
+                if (Request.Url.PathAndQuery.ContainsIgnoreCase("/webinar/geteditincartjson"))
                 {
                     <div class="row">
                         <div class="pull-right">
@@ -104,8 +104,6 @@
                 }
             }
         }
-
-    }
 
     Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
 
@@ -124,4 +122,4 @@
 
 <script type="text/javascript">var anyAddLocs = @(string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption) ? "false" : "true");</script>
 
-        }
+
