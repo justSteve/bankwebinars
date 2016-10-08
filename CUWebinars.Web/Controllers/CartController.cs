@@ -19,6 +19,7 @@ using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Models.DataTablesModels;
+using CUWebinars.Web.Models.Importers;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Elmah;
@@ -181,6 +182,11 @@ namespace CUWebinars.Web.Controllers
                     }
                     else
                     {
+                        if (model.Order.Origin == "Express")
+                        {
+                            _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
+                        }
+
                         _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: true);
                     }
 
@@ -466,17 +472,16 @@ namespace CUWebinars.Web.Controllers
         [AllowAnonymous]
         [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
         public ActionResult Incoming(FormCollection form)
-        //public ActionResult Incoming()
         {
             try
             {
                 StringBuilder sb = new StringBuilder();
                 var incoming = form[0].TrimStart('[').TrimEnd(']');
-                _logger.Info("Incoming: " + incoming);
+                _logger.Info("IncomingFromMandrillRaw: " + incoming);
                 var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(incoming);
-
+                _logger.Info("IncomingFromMandrillPreParse: " + msgHtml.msg);
                 var parsedOrder = ParseMandrillMsg.ParseAcs("<html><body>" + msgHtml.msg.html + "</body></html>", DateTime.Now.ToString());
-
+                _logger.Info("IncomingFromMandrillParsed: " + JsonConvert.SerializeObject(parsedOrder));
                 return RedirectToAction("Importorder4Acs", "Order", parsedOrder);
             }
             catch (Exception ex)
@@ -1141,10 +1146,10 @@ namespace CUWebinars.Web.Controllers
         {
             var e = _cartControllerOrchestrator.BuildContinueShoppingModel(idWebinar);
             return Json(new
-{
-    success = "success"
+            {
+                success = "success"
 
-}, JsonRequestBehavior.AllowGet);
+            }, JsonRequestBehavior.AllowGet);
 
         }
 
@@ -1153,7 +1158,7 @@ namespace CUWebinars.Web.Controllers
             // do not allow anonymous (it errors due to null/empty list of orders)
             if (User == null || !User.Identity.IsAuthenticated)
                 return RedirectToAction("Login", "Account", new { ReturnURL = "/cart/checkout" });
-            
+
 
             // _logger.Info("CancelPauseOrder called email: " + email + " idOrder: " + idOrder);
 
@@ -1217,7 +1222,7 @@ namespace CUWebinars.Web.Controllers
             model.DiscountCaptionMulti = discountCaptionMultiMsg;
             model.GrandTotalCaptionMulti = grandTotalCaptionMultiMsg;
 
-            
+
 
             return View(model);
         }
@@ -1228,7 +1233,7 @@ namespace CUWebinars.Web.Controllers
             decimal totalCostInCredits = 0M;
             decimal discountTotal = 0M;
             decimal creditsRemain = 0M;
-            decimal grandTotal= 0M;
+            decimal grandTotal = 0M;
             string notEnoughCreditsCaption = "";
 
             discountCaptionMultiMsg = "";
@@ -1267,7 +1272,7 @@ namespace CUWebinars.Web.Controllers
 
                     if (creditsRemain >= totalCostInCredits)
                     {
-                        decimal orderRowCost = orderRowForOrder.RowPrice*subDiscount.PercentOff/100;
+                        decimal orderRowCost = orderRowForOrder.RowPrice * subDiscount.PercentOff / 100;
                         System.Diagnostics.Debug.WriteLine("enough credits to cover, adding on orderRow price: {0}", orderRowCost);
 
                         discountTotal += orderRowCost;
@@ -1283,7 +1288,7 @@ namespace CUWebinars.Web.Controllers
                             System.Diagnostics.Debug.WriteLine("partial credits to apply: {0}", creditsRemain);
 
                             discountTotal += 265 * creditsRemain;
-                            
+
                             System.Diagnostics.Debug.WriteLine("running discountTotal: {0}", discountTotal);
                         }
 
@@ -1298,19 +1303,19 @@ namespace CUWebinars.Web.Controllers
 
             if (creditsRemain < 0)
             {
-                notEnoughCreditsCaption = 
+                notEnoughCreditsCaption =
                     "The credits available to your Webinar Subscription Package do not " +
                     "completely cover the required cost of your orders. We've pro-rated " +
                     "the total amount required to " +
                     discountTotal + ".";
 
                 System.Diagnostics.Debug.WriteLine("notEnoughCreditsCaption: {0}", notEnoughCreditsCaption);
- 
+
             }
 
             //if (orders.Count == 0)
             //    creditsRemain = _cartControllerOrchestrator.CalculateCreditsRemaining(???);  // promote that they have credits??
-            
+
 
             if (totalCostInCredits > 0)
             {
@@ -1324,7 +1329,7 @@ namespace CUWebinars.Web.Controllers
             grandTotalCaptionMultiMsg = "Grand Total: " + grandTotal.ToString("c").Replace(".00", "");
 
             System.Diagnostics.Debug.WriteLine("final grandTotalCaptionMultiMsg: {0}", grandTotalCaptionMultiMsg);
-            
+
         }
 
         public JsonResult RemoveOrderJson(int idOrder, int idOrderRow)
@@ -1348,7 +1353,7 @@ namespace CUWebinars.Web.Controllers
 
             BuildCaptionsMulti(orders, out discountCaptionMultiMsg, out grandTotalCaptionMultiMsg);
 
-            return Json(new { Result = WebUiConstants.Success, discountCaptionMultiMsg = discountCaptionMultiMsg, grandTotalCaptionMultiMsg = grandTotalCaptionMultiMsg });            
+            return Json(new { Result = WebUiConstants.Success, discountCaptionMultiMsg = discountCaptionMultiMsg, grandTotalCaptionMultiMsg = grandTotalCaptionMultiMsg });
         }
 
         [HttpPost]

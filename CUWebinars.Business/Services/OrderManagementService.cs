@@ -1107,6 +1107,9 @@ namespace CUWebinars.Business.Services
         public void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, bool resending = false,
             Uri url = null)
         {
+
+            //var userExistedPrior = _orderRepository.FindById()
+
             string addPasswordUrl = string.Empty;
             var idOrderToShow = order.idOrderLegacy;
             if (order.idOrderLegacy == 0)
@@ -2284,33 +2287,47 @@ namespace CUWebinars.Business.Services
 
         public DateTime CalculatePostEventMaterialsAccessExpiry(OrderRow row)
         {
-            if (row == null) throw new ArgumentNullException("order");
-            var orderDate = DateTime.Now;
-            if (row.Order != null)
+            if (row == null) throw new ArgumentNullException("orderrow_CalcPostEvent");
+
+            try
             {
-                orderDate = row.Order.OrderDate;
+
+                var orderDate = DateTime.Now;
+                if (row.Order != null)
+                {
+                    _logger.Warn("WTF was row.Order null??");
+                    orderDate = row.Order.OrderDate;
+                }
+
+                var regType = GetRegTypeOfOrderRow(row.idRegType);
+
+
+                //establish order date as starting point
+                DateTime expryDate = orderDate.AddMonths(6);
+
+                var webinar = _webinarRepository.FindById(row.idWebinar);
+
+                //if order's placed before event - override starting point
+                if (webinar.Date > orderDate)
+                    expryDate = webinar.Date.AddMonths(6);
+                if (regType.ShowRecordingNotifications.Equals("yes", StringComparison.OrdinalIgnoreCase))
+                {
+                    return expryDate;
+                }
+                // now we only addressing Live+5
+                //update to pull LivePlusFive value from database
+                var forceToMidnight = Convert.ToDateTime(webinar.LivePlusFiveValue.ToShortDateString()).AddHours(23).AddMinutes(59);
+                return forceToMidnight;
+
+
+
+            }
+            catch (Exception exception)
+            {
+                _logger.FatalException("CalculatePostEventMaterialsAccessExpiry", exception);
+                throw;
             }
 
-            var regType = GetRegTypeOfOrderRow(row.idRegType);
-
-
-            //establish order date as starting point
-            DateTime expryDate = orderDate.AddMonths(6);
-            var webinar = _webinarRepository.FindById(row.idWebinar);
-
-            //if order's placed before event - override starting point
-            if (webinar.Date > orderDate)
-                expryDate = webinar.Date.AddMonths(6);
-
-
-            if (regType.ShowRecordingNotifications.Equals("yes", StringComparison.OrdinalIgnoreCase))
-            {
-                return expryDate;
-            }
-            // now we only addressing Live+5
-            //update to pull LivePlusFive value from database
-            var forceToMidnight = Convert.ToDateTime(webinar.LivePlusFiveValue.ToShortDateString()).AddHours(23).AddMinutes(59);
-            return forceToMidnight;
 
         }
 
@@ -2627,7 +2644,7 @@ namespace CUWebinars.Business.Services
 
             var ordersWithDiscount = GetOrdersByDiscount(userDiscount.idDiscount)
                 .Where((o => o.OrderDate > userDiscount.DateVerified
-                || (o.InvoiceDetail.Contains("DiscountIsApplied") )
+                || (o.InvoiceDetail.Contains("DiscountIsApplied"))
                 && !o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title.StartsWith("Compliance Perspe")
                 && o.InvoiceDetail.Contains(userDiscount.idDiscount.ToString())));
 
@@ -2669,7 +2686,7 @@ namespace CUWebinars.Business.Services
             {
                 if (_regType.Key.OptionLabel.Contains("Five"))
                     live_id = _regType.Key.idRegType;
-                    ;
+                ;
             }
 
             var row = CreateOrderRow(webinar, null, live_id);
@@ -2678,9 +2695,9 @@ namespace CUWebinars.Business.Services
 
             AssignWebUserToOrder(GetWebUser(1), order);
             AssignAffiliateToOrder(19, order);
-            
+
             order.OrderStatus = OrderStatus.Submitted;
-            
+
             orders.Add(order);
 
             FireSendConnectionInfoNotificationEvent(orders, false); // this is where a single email is specified

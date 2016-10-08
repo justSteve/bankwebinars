@@ -14,7 +14,7 @@
 
         <script type="text/javascript">
             function exprsOrder(idRegType) {
-                alert("Please send mail to support at @globalConfig.TenantEmail  and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder. For immediate assistance, use our Help & Feedback button in your lower right screen.");
+                al  ert("Please send mail to support at @globalConfig.TenantEmail  and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder. For immediate assistance, use our Help & Feedback button in your lower right screen.");
 
             };
             function upgrade(idRegType) {
@@ -73,14 +73,14 @@
         <!--begin row-fluid-->
         <section class="row-fluid span3 sidebar">
             <aside class="widget well-large">
-                @{
+                @*@{
                     if (Model.Webinar.idWebinar != 1952)
                     {
                         <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FullName</span></h5>
                         @Html.Raw(Model.Webinar.Presenter.BiographyLong)
                         @Html.Partial("Partials/_OtherEventsBySpeaker")
                     }
-                }
+                }*@
             </aside>
             <!--close aside widget-->
         </section>

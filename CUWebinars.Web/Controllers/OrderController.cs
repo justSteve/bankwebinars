@@ -337,7 +337,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (Exception ex)
                 {
-                    _logger.FatalException("migrating CP failed on: " + o.idOrder + "  with: ",ex);
+                    _logger.FatalException("migrating CP failed on: " + o.idOrder + "  with: ", ex);
                 }
             }
         }
@@ -522,7 +522,7 @@ namespace CUWebinars.Web.Controllers
                             });
                 }
                 importedOrder.RegistrationType = idRegType.ToString();
-                importedOrder.OrderDate = importedOrder.OrderDate;
+                
 
                 try
                 {
