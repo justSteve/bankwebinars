@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -471,8 +472,35 @@ namespace CUWebinars.Web.Controllers
 
         [AllowAnonymous]
         [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
-        public ActionResult Incoming(FormCollection form)
+        public ActionResult Incoming(System.Collections.Specialized.NameValueCollection form)
         {
+            
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                var incoming = form[0].TrimStart('[').TrimEnd(']');
+                _logger.Info("IncomingFromMandrillRaw: " + incoming);
+                var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(incoming);
+                _logger.Info("IncomingFromMandrillPreParse: " + msgHtml.msg);
+                var parsedOrder = ParseMandrillMsg.ParseAcs("<html><body>" + msgHtml.msg.html + "</body></html>", DateTime.Now.ToString());
+                _logger.Info("IncomingFromMandrillParsed: " + JsonConvert.SerializeObject(parsedOrder));
+                return RedirectToAction("Importorder4Acs", "Order", parsedOrder);
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn("ex: " + ex);
+                return null;
+            }
+        }
+
+
+
+        [AllowAnonymous]
+        [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
+        public ActionResult Incoming1()
+        {
+            NameValueCollection form =  Request.Form;
+
             try
             {
                 StringBuilder sb = new StringBuilder();
@@ -824,6 +852,7 @@ namespace CUWebinars.Web.Controllers
         //handle search engine cra
         public ActionResult ExpressCheckout4IE1()
         {
+
             return Content("Nothing for Search Engines here!");
         }
 
