@@ -1,4 +1,4 @@
-﻿/// <reference path="../typings/jquery/jquery.d.ts" />
+/// <reference path="../typings/jquery/jquery.d.ts" />
 /// <reference path="../typings/toastr/toastr.d.ts" />
 var Common;
 (function (Common) {
@@ -7,7 +7,6 @@ var Common;
             var _this = this;
             this.getLogFn = function (moduleId, fnName) {
                 fnName = fnName || 'log';
-
                 switch (fnName.toLowerCase()) {
                     case 'success':
                         fnName = 'logSuccess';
@@ -22,9 +21,7 @@ var Common;
                         fnName = 'logWarning';
                         break;
                 }
-
                 var func = _this[fnName];
-
                 return function (msg, data, showToast) {
                     func(msg, data, moduleId, (showToast === undefined) ? true : showToast);
                 };
@@ -45,22 +42,24 @@ var Common;
         Logger.prototype.logIt = function (message, data, source, showToast, toastType) {
             source = source ? '[' + source + '] ' : '';
             console.info(source, message, data || '');
-
             if (showToast) {
                 if (toastType === 'error') {
                     toastr.error(message);
-                } else if (toastType === 'warning') {
+                }
+                else if (toastType === 'warning') {
                     toastr.warning(message);
-                } else if (toastType === 'success') {
+                }
+                else if (toastType === 'success') {
                     toastr.success(message);
-                } else {
+                }
+                else {
                     toastr.info(message);
                 }
             }
         };
         return Logger;
-    })();
+    }());
     Common.Logger = Logger;
     ;
 })(Common || (Common = {}));
-//# sourceMappingURL=ToastLogger.js.map
+//# sourceMappingURL=toastLogger.js.map

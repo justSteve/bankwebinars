@@ -1,4 +1,4 @@
-﻿/// <reference path="../../typings/jquery/jquery.d.ts" />
+/// <reference path="../../typings/jquery/jquery.d.ts" />
 /// <reference path="../../typings/jquery/jquery.validation.d.ts" />
 /// <reference path="../../typings/bootstrap/bootstrap.d.ts" />
 var OrderRegistration;
@@ -27,107 +27,84 @@ var OrderRegistration;
         Constants.TypeofAddressShipping = 'Shipping';
         Constants.Zip = '_Zip';
         return Constants;
-    })();
+    }());
     OrderRegistration.Constants = Constants;
     ;
-
     var StateManager = (function () {
         function StateManager() {
         }
         StateManager.prototype.getAddressVerified = function () {
             return this.addressVerified;
         };
-
         StateManager.prototype.getCancelOrderForm = function () {
             return this.cancelOrderForm;
         };
-
         StateManager.prototype.getCheckoutInProcess = function () {
             return this.checkoutInProcess;
         };
-
         StateManager.prototype.getConfirmOrderForm = function () {
             return this.confirmOrderForm;
         };
-
         StateManager.prototype.getIsUserLoggedIn = function () {
             return this.isUserLoggedIn;
         };
         StateManager.prototype.getUserHasDiscount = function () {
             return this.userHasDiscount;
         };
-
         StateManager.prototype.getNotificationsTesting = function () {
             return this.notificationsTesting;
         };
-
         StateManager.prototype.getOrderId = function () {
             return this.orderId;
         };
-
         StateManager.prototype.getOrderRowId = function () {
             return this.orderRowID;
         };
-
         StateManager.prototype.getShippingAddressRequired = function () {
             return this.shippingAddressRequired;
         };
-
         StateManager.prototype.getWebinarId = function () {
             return this.idWebinar;
         };
-
         StateManager.prototype.setAddressVerified = function (verified) {
             this.addressVerified = verified;
         };
-
         StateManager.prototype.setCancelOrderForm = function (form) {
             this.cancelOrderForm = form;
         };
-
         StateManager.prototype.setCheckoutInProcess = function (checkoutInProcess) {
             this.checkoutInProcess = checkoutInProcess;
         };
-
         StateManager.prototype.setConfirmOrderForm = function (form) {
             this.confirmOrderForm = form;
         };
-
         StateManager.prototype.setIsUserLoggedIn = function (val) {
             this.isUserLoggedIn = val;
         };
-
         StateManager.prototype.setUserHasDiscount = function (val) {
             this.userHasDiscount = val;
         };
-
         StateManager.prototype.setNotificationsTesting = function (val) {
             this.notificationsTesting = val;
         };
-
         StateManager.prototype.setOrderId = function (num) {
             this.orderId = num;
         };
-
         StateManager.prototype.setOrderRowId = function (num) {
             this.orderRowID = num;
         };
-
         StateManager.prototype.setShippingAddressRequired = function (val) {
             this.shippingAddressRequired = val;
         };
-
         StateManager.prototype.setWebinarId = function (id) {
             this.idWebinar = id;
         };
-
         StateManager.prototype.BuildPreRegPrice = function (oEvent, orderRowId) {
             //permits a 'preReg' pricing scheme to handle
             //computation of discounts and addl locations prior
             //to stepping to confirmation.
             //alert("hit");
             var $form = $("#BuildPrice");
-
             oEvent.preventDefault();
             $.ajax({
                 url: '/cart/CheckoutDisplayRowPrice/' + orderRowId,
@@ -142,12 +119,10 @@ var OrderRegistration;
                 }
             });
         };
-
         StateManager.prototype.CheckIfAddLocShouldHide = function (optionID) {
             //don't show AdditionalEmails when RegType
             // can't support them. (ex: recorded only)
             var self = this;
-
             $.ajax({
                 url: "/cart/CheckIfAddLocShouldHide?optionID=" + optionID,
                 type: "GET",
@@ -162,46 +137,45 @@ var OrderRegistration;
                 if (data.shouldShow === 'Yes') {
                     //console.log('show CheckIfAddLocShouldHide');
                     $('#displayAddLoc').show('slow');
-                } else if (data.shouldShow === 'No') {
+                }
+                else if (data.shouldShow === 'No') {
                     //console.log('hide  CheckIfAddLocShouldHide');
                     $('#displayAddLoc').hide(1000);
                     $('#collectAdditionalLocations').empty();
                 }
-
                 if (data.shippingDetailsRqrd === 'Yes') {
                     self.shippingAddressRequired = true;
-                } else {
+                }
+                else {
                     self.shippingAddressRequired = false;
                 }
             }).fail(function (data) {
                 //console.log('CheckIfAddLocShouldHide failed!!! ');
             });
         };
-
         StateManager.prototype.PlaceOrder = function () {
             $("#Step2_BillMeFormReferred").val($("#tbReferred").val());
             this.confirmOrderForm.submit();
         };
-
         StateManager.prototype.SetCartState = function (cartType) {
             if (cartType === 'affiliate') {
                 $("#findUserTab").hide();
                 $("#confirmationTabForAffiliate").hide();
-            } else if (cartType === 'admin') {
-            } else {
+            }
+            else if (cartType === 'admin') {
+            }
+            else {
                 $("#signUpTab").hide();
                 $("#contactInfoTab").hide();
                 $("#confirmationTab").hide();
             }
-
             //$("#connectionsCount").val(0);
             $('#collectAdditionalLocation').html('');
-
             $('#AddToCart').attr({ disabled: false, value: 'Sign Up' });
             $('#AddToCart1').attr({ disabled: false, value: 'Sign Up' });
         };
         return StateManager;
-    })();
+    }());
     OrderRegistration.StateManager = StateManager;
     ;
 })(OrderRegistration || (OrderRegistration = {}));
@@ -220,5 +194,5 @@ var OrderRegistration;
 //function isValidEmailAddress(emailAddress : string) {
 //    var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
 //    return pattern.test(emailAddress);
-//};
+//}; 
 //# sourceMappingURL=create-order-new.js.map

@@ -51,7 +51,7 @@ using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using Thinktecture.IdentityModel.Authorization;
 using Thinktecture.IdentityModel.Authorization.Mvc;
-using WinSCP;
+
 using ClaimTypes = System.Security.Claims.ClaimTypes;
 using ClaimTypes1 = CUWebinars.Business.Constants.ClaimTypes;
 using DateTimeHelper = CUWebinars.Web.Helpers.DateTimeHelper;
@@ -209,59 +209,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
             response.Close();
 
-
-            return View();
-        }
-
-        public ActionResult GetAppLog()
-        {
-            // Setup session options
-            SessionOptions sessionOptions = new SessionOptions
-            {
-                Protocol = Protocol.Ftp,
-                HostName = "waws-prod-ch1-005.ftp.azurewebsites.windows.net",
-                PortNumber = 21,
-                UserName = @"BankWebinars33\$BankWebinars33",
-                Password = "FDcehM4K2WbSuxEplrG2B7uJxqrMbeqJ6MdDm3GLyraYTmzWnmLDQAkllu0t",
-                FtpMode = FtpMode.Active,
-            };
-
-
-            try
-            {
-                using (Session session = new Session())
-                {
-                    // Connect
-                    session.DebugLogLevel = 1;
-                    session.DebugLogPath = "d:\\log.log";
-
-                    session.Open(sessionOptions);
-                    // Upload files
-                    TransferOptions transferOptions = new TransferOptions();
-                    transferOptions.TransferMode = TransferMode.Ascii;
-
-                    TransferOperationResult transferResult;
-                    transferResult = session.GetFiles("LogFiles/log4netCSV.log", "D:\\log4net.log", false,
-                        transferOptions);
-
-
-                    // Throw on any error
-                    transferResult.Check();
-
-                    // Print results
-                    foreach (TransferEventArgs transfer in transferResult.Transfers)
-                    {
-                        Console.WriteLine("Upload of {0} succeeded", transfer.FileName);
-                    }
-                }
-
-                View();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Error: {0}", e);
-                View();
-            }
 
             return View();
         }
