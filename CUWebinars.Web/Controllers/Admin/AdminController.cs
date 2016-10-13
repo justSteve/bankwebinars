@@ -958,7 +958,8 @@ namespace CUWebinars.Web.Controllers.Admin
                     row.idRegType = regType.idRegType;
                     _orderManagementService.CalculateOrderCost(expressOrder, additionalLocationsPricing);
                     _orderManagementService.SaveChanges();
-                    _orderManagementService.FireOrderSubmittedEvent(expressOrder, userCreatedByCheckout);
+                    _orderManagementService.FireOrderSubmittedEvent(expressOrder
+                        , userCreatedByCheckout);
 
                     
                     _orderManagementService.SaveChanges();

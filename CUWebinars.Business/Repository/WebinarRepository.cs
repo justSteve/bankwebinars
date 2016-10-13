@@ -6,6 +6,7 @@ using CUWebinars.Business.Models;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace CUWebinars.Business.Repository
 {
@@ -357,6 +358,7 @@ namespace CUWebinars.Business.Repository
 
         public IEnumerable<Webinar> GetRelated(int? idWebinar)
         {
+
             var webinars = items.Include(i => i.WebinarTopicXrefs.Select(w => w.Topic))
                 .Include(i => i.Presenter.WebUser)
                 .Where(w => w.WebinarTopicXrefs
@@ -366,7 +368,33 @@ namespace CUWebinars.Business.Repository
                              w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress));
             //Logger.Debug("TopicId=" + topicId); 
 
+
+
+            try
+            {
+                Webinar webinar = FindByIdLoaded(idWebinar.Value);
+
+                string[] titleWords = webinar.Title.Split(' ');
+
+                var pattern = new Regex(@"\W");
+                var q = pattern.Split(webinar.Title).Any(w => titleWords.Contains(w));
+
+                foreach (var titleWord in titleWords)
+                {
+                    foreach (var source in webinars.Where(s => Regex.Split(titleWord, @"\W").Any(w => webinar.Title.Contains(w))))
+                    {
+                        
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
             return webinars;
+
         }
 
         public IEnumerable<Webinar> GetTopicsByWebinar(int? idWebinar)
@@ -377,16 +405,16 @@ namespace CUWebinars.Business.Repository
             foreach (var idTopic in webinar.WebinarTopicXrefs)
             {
                 IQueryable<Webinar> webinarsByTopic = GetByTopic(1);
-                
+
             }
             //            items.Include(i => i.WebinarTopicXrefs.Select(w => w.Topic))
-    //.Include(i => i.Presenter.WebUser)
-    //.Where(w => w.WebinarTopicXrefs
-    //    .Any(t => t.idTopic == topicId)
-    //            &&
-    //            (w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Scheduled ||
-    //             w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress));
-    //        //Logger.Debug("TopicId=" + topicId); 
+            //.Include(i => i.Presenter.WebUser)
+            //.Where(w => w.WebinarTopicXrefs
+            //    .Any(t => t.idTopic == topicId)
+            //            &&
+            //            (w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Scheduled ||
+            //             w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress));
+            //        //Logger.Debug("TopicId=" + topicId); 
 
             return webinars;
         }
@@ -401,7 +429,7 @@ namespace CUWebinars.Business.Repository
                         && (o.OrderStatus == OrderStatus.Billed
                             || o.OrderStatus == OrderStatus.Paid
                             || o.OrderStatus == OrderStatus.Submitted
-                        //|| o.OrderStatus == OrderStatus.AwaitingVerification
+                            //|| o.OrderStatus == OrderStatus.AwaitingVerification
                             )
                             )
                 //.Include(o => o.Affiliate)
@@ -422,7 +450,7 @@ namespace CUWebinars.Business.Repository
                         && (o.OrderStatus == OrderStatus.Billed
                             || o.OrderStatus == OrderStatus.Paid
                             || o.OrderStatus == OrderStatus.Submitted
-                        //|| o.OrderStatus == OrderStatus.AwaitingVerification
+                            //|| o.OrderStatus == OrderStatus.AwaitingVerification
                             )
                             )
                 .Include(o => o.Affiliate)

@@ -484,7 +484,7 @@ module RegistrationInCart {
                     break;
                 case Action.SubmitRegister:
                     //console.log('SubmitRegister hit');
-                    if ($('#_CreateUserFromCartForm').valid() == true) {
+                    if ($('#_CreateUserFromCartForm').valid() === true) {
                         this.action = Action.PostCreateAccount;
                         this.submitCreateUserForm();
                     } else {
