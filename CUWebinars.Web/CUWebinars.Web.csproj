@@ -1864,6 +1864,8 @@
     <Content Include="App_Data\mergeTemplates\WeeklyInvoice.docx" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\BWDev - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\BWDev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars33 - Web Deploy.pubxml" />
     <Content Include="Scripts\calendarview.js" />
@@ -2677,6 +2679,9 @@
     <TypeScriptCompile Include="Scripts\typings\toastr\toastr.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\underscore\underscore.d.ts" />
   </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -2725,11 +2730,6 @@
   </Target>
   <PropertyGroup>
     <PostBuildEvent>copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\TTSWebJobs\CUWebinars.Azure.EmailParser\ThirdPartyAssemblies\$(ProjectName).dll"
-copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\TTSWebJobs\CUWebinars.Azure.OrderSynch\ThirdPartyAssemblies\$(ProjectName).dll"
-copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).dll"
-copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).dll"
-copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AddLocConfirm\ThirdPartyAssemblies\$(ProjectName).dll"
-copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AdhocNotifier\ThirdPartyAssemblies\$(ProjectName).dll"
 copy /Y "$(ProjectDir)Notification\Templates\OrderSubmitted.cshtml" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\CUWebinars.Azure.OrderConfirmNotifier\Notifications\Templates\OrderSubmitted.cshtml"
 copy /Y "$(ProjectDir)Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AddLocConfirm\CUWebinars.Azure.AddLocConfirm\Notifications\Templates\OrderSubmittedAdditionalLocation.cshtml"
 copy /Y "$(ProjectDir)Notification\Templates\AdhocNotification.cshtml" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AdhocNotifier\CUWebinars.Azure.AdhocNotifier\Notifications\Templates\AdhocNotification.cshtml"

@@ -11,13 +11,14 @@
     #ExplainRegistrationOptions {
         width: 540px;
     }
-     .regTypeDescOutdent {
-         border-top-style: dotted;
-         border-top-color: gray;
-         margin-top: 10px;
-         text-indent: -1em;
-         padding-left: 1em;
-     }
+
+    .regTypeDescOutdent {
+        border-top-style: dotted;
+        border-top-color: gray;
+        margin-top: 10px;
+        text-indent: -1em;
+        padding-left: 1em;
+    }
 </style>
 <div id="AttendRegTypes" class="modal hide fade">
     <div class="modal-header">
@@ -40,7 +41,7 @@
     </div>
     <div id="confirmResult" class="modal-body">
         <p>If you would like to share your order's notifications with a co-worker - to CC them with Connection Information and all other notifications related to the order - just enter the email in the textbox below. </p>
-        <input type="text" name="CCEmail" id="CCEmail"/>
+        <input type="text" name="CCEmail" id="CCEmail" />
     </div>
     <div class="modal-footer">
         <a href="#" id="confirmCCEmail" role="button" data-dismiss="modal" class="btn btn-success">Continue</a>
@@ -109,7 +110,8 @@
                 <div style="text-align: right;" class="pull-right">
                     <a href="#IsOrderForCoWorker" class="btn btn-mini " data-toggle="modal">ordering for a co-worker?</a><br />
                     <a href="#AttendRegTypes" class="btn btn-mini " data-toggle="modal">attendance options explained</a>
-                </div></div>
+                </div>
+            </div>
             <script type="text/javascript" language="javascript">
                 $(document).ready(function () {
                     $("#ExplainRegistrationOptions").html("@Html.Raw(explainsOptionsBuilder.ToString())");
@@ -118,7 +120,10 @@
                 });
             </script>
         }
-        if (Model.WebinarStatus == WebinarStatus.Scheduled || Model.WebinarStatus == WebinarStatus.Active || Model.WebinarStatus == WebinarStatus.InProgress)
+        if ((Model.WebinarStatus == WebinarStatus.Scheduled
+            || Model.WebinarStatus == WebinarStatus.Active
+            || Model.WebinarStatus == WebinarStatus.InProgress
+            ) && Model.idWebinar != 2248 && Model.idWebinar != 2109)
         {
             <div id="displayAddLoc">
                 @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", Model.AdditionalLocationOfferViewModel)

@@ -64,8 +64,8 @@
 
     <script type="text/javascript">
 
-        JotForm.init(function() {
-            setTimeout(function() {
+        JotForm.init(function () {
+            setTimeout(function () {
                 $('input_5').hint('ex: myname@example.com');
             }, 20);
 
@@ -114,30 +114,56 @@
                             *
                         </span>
                     </label>
-                    <div id="cid_10" class="form-input jf-required">
-                        <div class="form-single-column">
-                            <span class="form-radio-item" style="clear: left;">
-                                <input type="radio" class="form-radio validate[required]" id="input_10_0" name="q10_registrationType" value="Live Plus Five (days)" />
-                                <label id="label_input_10_0" for="input_10_0">Live Plus Five (days) </label>
-                            </span>
-                            <span class="form-radio-item" style="clear: left;">
-                                <input type="radio" class="form-radio validate[required]" id="input_10_1" name="q10_registrationType" value="OnDemand Recording Only" />
-                                <label id="label_input_10_1" for="input_10_1">OnDemand Recording Only </label>
-                            </span>
-                            <span class="form-radio-item" style="clear: left;">
-                                <input type="radio" class="form-radio validate[required]" id="input_10_2" name="q10_registrationType" value="CD-ROM and Hardcopy Handouts" />
-                                <label id="label_input_10_2" for="input_10_2">CD-ROM and Hardcopy Handouts </label>
-                            </span>
-                            <span class="form-radio-item" style="clear: left;">
-                                <input type="radio" class="form-radio validate[required]" id="input_10_3" name="q10_registrationType" value="Live Plus Six (months)" />
-                                <label id="label_input_10_3" for="input_10_3">Live Plus Six (months) </label>
-                            </span>
-                            <span class="form-radio-item" style="clear: left;">
-                                <input type="radio" class="form-radio validate[required]" id="input_10_4" name="q10_registrationType" value="Premier Package (includes all options above)" />
-                                <label id="label_input_10_4" for="input_10_4">Premier Package (includes all options above) </label>
-                            </span>
+                    @if (Model.q18_q_webinarid18 != 2248)
+                    {
+                        <div id="cid_10" class="form-input jf-required">
+                            <div class="form-single-column">
+                                <span class="form-radio-item" style="clear: left;">
+                                    <input type="radio" class="form-radio validate[required]" id="input_10_0" name="q10_registrationType" value="Live Plus Five (days)" />
+                                    <label id="label_input_10_0" for="input_10_0">Live Plus Five (days) </label>
+                                </span>
+                                <span class="form-radio-item" style="clear: left;">
+                                    <input type="radio" class="form-radio validate[required]" id="input_10_1" name="q10_registrationType" value="OnDemand Recording Only" />
+                                    <label id="label_input_10_1" for="input_10_1">OnDemand Recording Only </label>
+                                </span>
+                                <span class="form-radio-item" style="clear: left;">
+                                    <input type="radio" class="form-radio validate[required]" id="input_10_2" name="q10_registrationType" value="CD-ROM and Hardcopy Handouts" />
+                                    <label id="label_input_10_2" for="input_10_2">CD-ROM and Hardcopy Handouts </label>
+                                </span>
+                                <span class="form-radio-item" style="clear: left;">
+                                    <input type="radio" class="form-radio validate[required]" id="input_10_3" name="q10_registrationType" value="Live Plus Six (months)" />
+                                    <label id="label_input_10_3" for="input_10_3">Live Plus Six (months) </label>
+                                </span>
+                                <span class="form-radio-item" style="clear: left;">
+                                    <input type="radio" class="form-radio validate[required]" id="input_10_4" name="q10_registrationType" value="Premier Package (includes all options above)" />
+                                    <label id="label_input_10_4" for="input_10_4">Premier Package (includes all options above) </label>
+                                </span>
+                            </div>
                         </div>
-                    </div>
+                    }
+                    else
+                    {
+                        <div id="cid_10" class="form-input jf-required">
+                            <div class="form-single-column">
+                                <span class="form-radio-item" style="clear: left;">
+                                    <input type="radio" class="form-radio validate[required]" id="input_10_0" name="q10_registrationType" value="Entire School" />
+                                    <label id="label_input_10_0" for="input_10_0">Entire School </label>
+                                </span>
+                                <span class="form-radio-item" style="clear: left;">
+                                    <input type="radio" class="form-radio validate[required]" id="input_10_1" name="q10_registrationType" value=" Deposit Operations Module" />
+                                    <label id="label_input_10_1" for="input_10_1"> Deposit Operations Module</label>
+                                </span>
+                                <span class="form-radio-item" style="clear: left;">
+                                    <input type="radio" class="form-radio validate[required]" id="input_10_2" name="q10_registrationType" value="Management Module" />
+                                    <label id="label_input_10_2" for="input_10_2">Management Module</label>
+                                </span>
+                                <span class="form-radio-item" style="clear: left;">
+                                    <input type="radio" class="form-radio validate[required]" id="input_10_3" name="q10_registrationType" value="Credit Module" />
+                                    <label id="label_input_10_3" for="input_10_3">Credit Module </label>
+                                </span>
+                            </div>
+                        </div>
+                    }
                 </li>
                 <li class="form-line " data-type="control_fullname" id="id_4">
                     <label class="form-label form-label-right" id="label_4" for="input_4">

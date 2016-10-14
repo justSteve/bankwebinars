@@ -479,9 +479,9 @@ namespace CUWebinars.Web.Controllers
             {
                 StringBuilder sb = new StringBuilder();
                 var incoming = form[0].TrimStart('[').TrimEnd(']');
-                _logger.Info("IncomingFromMandrillRaw: " + incoming);
+
                 var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(incoming);
-                _logger.Info("IncomingFromMandrillPreParse: " + msgHtml.msg);
+                
                 var parsedOrder = ParseMandrillMsg.ParseAcs("<html><body>" + msgHtml.msg.html + "</body></html>", DateTime.Now.ToString());
                 _logger.Info("IncomingFromMandrillParsed: " + JsonConvert.SerializeObject(parsedOrder));
                 return RedirectToAction("Importorder4Acs", "Order", parsedOrder);
