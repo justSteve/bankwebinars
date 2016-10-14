@@ -334,7 +334,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     SelectedPresenter = _webinarManagementService.GetWebinarByPresenterFullName(presenterFullName),
                     SelectedTopics = _webinarManagementService.GetTopicsByWebinar(idWebinar)
             };
-            return null;
+            return model;
 
         }
 
@@ -974,7 +974,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (userCreatedInCart.HasValue)
             {
                 _orderManagementService.FireOrderSubmittedEvent(order, userCreatedInCart.Value, url: Request.Url);
-                //_orderManagementService.FireOrderSynchEvent(order, userCreatedInCart.Value, url: Request.Url);
+                
             }
             else
             {

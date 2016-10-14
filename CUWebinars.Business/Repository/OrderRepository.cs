@@ -95,6 +95,7 @@ namespace CUWebinars.Business.Repository
                 }
 
                 newOrderRow.Webinar = webinar;
+                newOrderRow.idWebinar = webinar.idWebinar;
                 newOrderRow.RegistrationType = registrationType;
                 newOrderRow.idRegType = registrationType.idRegType;
 

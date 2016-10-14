@@ -232,12 +232,6 @@
                     <div id="InputFormFields" style="margin-top: 20px;"></div>
                 </aside>*@
             <!-- Close ics file widget -->
-            <div>
-                @if (globalConfig.Tenant == "BankWebinars" && !Model.Webinar.Title.StartsWith("Compliance Pers"))
-                {
-                    <button id="submitSynchOrders" role="button" class="btn btn-primary">Synch Orders</button>
-                }
-            </div>
 
             <div>
                 <button data-toggle="collapse" data-target="#sendConnInfoOrders" id="submitSendConnInfo" role="button" class="btn btn-danger">Send Connection Info</button>

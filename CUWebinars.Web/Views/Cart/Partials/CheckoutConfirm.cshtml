@@ -43,7 +43,7 @@
                     <div class="offset2 span9 ">
                         <div id="RegTypeChanger" class="clear pull-right">
                             @{
-                Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel);
+                                Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel);
                             }
                         </div>
                     </div>
@@ -57,69 +57,67 @@
 
                     </div>
                 </div>
-            }
+                                }
 
-            if (Model.OrderStatus != OrderStatus.InProcess)
-            {
-                <div id="postCheckout" class="well pull-right">
-                    <div id="showCartPrice">@{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }</div>
-                    @if (Model.OrderStatus != OrderStatus.Paid)
-                    {
+                                if (Model.OrderStatus != OrderStatus.InProcess)
+                                {
+                                    <div id="postCheckout" class="well pull-right">
+                                        <div id="showCartPrice">@{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }</div>
+                                        @if (Model.OrderStatus != OrderStatus.Paid)
+                                        {
 
-                        <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>
-                        <br />
-                    }
-                </div>
-                <div class="row">
-                    <div class="span2 offset1 alignright">
-                        Primary Contact:<br />
-                        <br />
+                                            <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>
+                                            <br />
+                                        }
+                                    </div>
+                                    <div class="row">
+                                        <div class="span2 offset1 alignright">
+                                            Primary Contact:<br />
+                                            <br />
 
-                        Type:<br />
+                                            Type:<br />
 
-                    </div>
-                    <div class="span4">
-                        @Html.Raw(@Model.UserDetails)<br />
+                                        </div>
+                                        <div class="span4">
+                                            @Html.Raw(@Model.UserDetails)<br />
 
-                        @Model.OptionLabel<br />
-                        Additional Locations:<br />@Html.Raw(Model.AdditionalLocationCaption)
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="pull-right">
-                        <a class="btn btn-mini btn-success" href="#ResendConfirmationModal" data-toggle="modal" id="ConfirmationResender">Resend/Forward Order Summary</a>
-                    </div>
-                </div>
-            }
-            else
-            {
-                if (Request.Url.PathAndQuery.ContainsIgnoreCase("/webinar/geteditincartjson"))
-                {
-                    <div class="row">
-                        <div class="pull-right">
-                            <button class="btn btn-small cancel-edit-order">close panel</button>
-                        </div>
-                    </div>
-                }
-                }
-            }
-        }
+                                            @Model.OptionLabel<br />
+                                            Additional Locations:<br />@Html.Raw(Model.AdditionalLocationCaption)
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="pull-right">
+                                            <a class="btn btn-mini btn-success" href="#ResendConfirmationModal" data-toggle="modal" id="ConfirmationResender">Resend/Forward Order Summary</a>
+                                        </div>
+                                    </div>
+                                            }
+                                            else
+                                            {
+                                                if (Request.Url.PathAndQuery.ContainsIgnoreCase("/webinar/getaddtocartjson"))
+                                                {
+                                                    <div class="row">
+                                                        <div class="pull-right">
+                                                            <button class="btn btn-small cancel-edit-order">close panel</button>
+                                                        </div>
+                                                    </div>
+                                                        }
+                                                    }
+                                                }
+                                            }
 
-    Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
+                                            Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
 
-    Html.RenderPartial("~/Views/Cart/Partials/_ContinueShopping.cshtml");
-    if (ViewBag.Order != null)
-    {
-        Html.RenderPartial("~/Views/Cart/Partials/_PayByMoneris.cshtml", (Order)ViewBag.Order);
-        
-
-        Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml", (Order)ViewBag.Order);
-    }
-    Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
-}
+                                            Html.RenderPartial("~/Views/Cart/Partials/_ContinueShopping.cshtml");
+                                            if (ViewBag.Order != null)
+                                            {
+                                                Html.RenderPartial("~/Views/Cart/Partials/_PayByMoneris.cshtml", (Order)ViewBag.Order);
 
 
+                                                Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml", (Order)ViewBag.Order);
+                                            }
+                                            Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
 
-<script type="text/javascript">var anyAddLocs = @(string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption) ? "false" : "true");</script>
+
+                                            <script type="text/javascript">var anyAddLocs = @(string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption) ? "false" : "true");</script>
 
 

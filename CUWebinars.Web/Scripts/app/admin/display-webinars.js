@@ -13,7 +13,7 @@ $(function () {
     $('#titleOnly').change(function () {
 
         DW.titleOnly = "";
-        if ($("#titleOnly").prop('checked') == true) {
+        if ($("#titleOnly").prop('checked') === true) {
             DW.titleOnly = "title:";
         }
         $("#search-box").val(DW.titleOnly + DW.searchTermDiv.text());
@@ -90,7 +90,7 @@ $(function () {
 
                 { 'data': 'Date' },
                 { 'data': 'Status', 'visible': shouldShow, 'class': 'details-control edit' },
-                { 'data': 'yXy', 'class': 'details-control wAddToCart', 'orderable': false },
+                { 'data': 'yXy', 'visible': false, 'class': 'details-control wAddToCart', 'orderable': false },
                 { 'data': 'Title', 'class': 'details-control wTitle' },
                 { 'data': 'PresenterName', 'class': 'details-control presenter' },
                 { 'data': 'RelatedTopicsString', 'class': 'details-control topicsTitles' },
@@ -104,7 +104,7 @@ $(function () {
                 "aTargets": [0], // Date column
                 "mData": "",
                 "createdCell": function (td, cellData, rowData, row, col) {
-                    if (cellData != null) {
+                    if (cellData !== null) {
                         $(td).tooltip();
                         //console.log(rowData);
                     }
