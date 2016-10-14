@@ -12,12 +12,14 @@ namespace CUWebinars.Business.Notification.Email
         private CloudQueueClient _queueClient;
         private readonly string _storageAccountName;
         private readonly string _storageAccessKey;
+        private readonly string _targetQueueName;
         private readonly ILogger _logger;
 
-        public AzureCuwWebJobSmtpMessageDelivery(string storageAccountName, string storageAccessKey, ILogger logger)
+        public AzureCuwWebJobSmtpMessageDelivery(string storageAccountName, string storageAccessKey, string targetQueueName, ILogger logger)
         {
             _storageAccountName = storageAccountName;
             _storageAccessKey = storageAccessKey;
+            _targetQueueName = targetQueueName;
             _logger = logger;
         }
 
@@ -31,7 +33,8 @@ namespace CUWebinars.Business.Notification.Email
 
             _queueClient = cloudStorageAccount.CreateCloudQueueClient();
 
-            CloudQueue cloudQueue = _queueClient.GetQueueReference("tts-cuw-notifications-queue");
+            CloudQueue cloudQueue = _queueClient.GetQueueReference(_targetQueueName);  // passed in during construction, usually from web.config
+            cloudQueue.CreateIfNotExists();
 
             EnsureMessage(notificationMessage);
 

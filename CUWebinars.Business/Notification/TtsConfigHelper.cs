@@ -70,6 +70,24 @@ namespace CUWebinars.Business.Notification
         {
             return ConfigurationManager.AppSettings["DiscountCreditUnitCost"];
         }
+        public string GetOrderSubmittedMultiFromAddress()
+        {
+            return ConfigurationManager.AppSettings["OrderSubmittedMultiFromAddress"];
+        }
 
+        public string GetOrderSubmittedMultiEmailSubject()
+        {
+            return ConfigurationManager.AppSettings["OrderSubmittedMultiEmailSubject"];
+        }
+
+        public string GetCuwNotificationQueueName()
+        {
+            return ConfigurationManager.AppSettings["CuwNotificationQueueName"];
+        }
+
+        public string GetOrderSubmittedMultiQueueName()
+        {
+            return ConfigurationManager.AppSettings["OrderSubmittedMultiQueueName"];
+        }
     }
 }

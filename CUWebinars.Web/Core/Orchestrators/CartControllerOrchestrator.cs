@@ -982,6 +982,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
         }
 
+        public void FireOrderSubmittedMultiNotification(string toEmail, string subject, string notificationCopy)
+        {
+            _orderManagementService.FireOrderSubmittedMultiEvent(toEmail, subject, notificationCopy);
+        }
+
         public void UpdateOrderWithUserId(int orderId, int userId)
         {
             _orderManagementService.UpdateOrderWithUserId(orderId, userId);

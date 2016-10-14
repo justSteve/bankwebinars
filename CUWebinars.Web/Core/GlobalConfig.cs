@@ -50,6 +50,8 @@ namespace CUWebinars.Web.Core
         public string PromoEmailSubject { get; private set; }
         public string WeeklyInvoiceEmailFromAddress { get; private set; }
         public string WeeklyInvoiceEmailSubject { get; private set; }
+        public string OrderSubmittedMultiFromAddress { get; private set; }
+        public string OrderSubmittedMultiEmailSubject { get; private set; }
 
         private GlobalConfig()
         {
@@ -97,6 +99,8 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.PromoEmailSubject = ApplicationSettingsSection["PromoEmailSubject"];
                 UniqueInstance.WeeklyInvoiceEmailFromAddress = ApplicationSettingsSection["WeeklyInvoiceEmailFromAddress"];
                 UniqueInstance.WeeklyInvoiceEmailSubject = ApplicationSettingsSection["WeeklyInvoiceEmailSubject"];
+                UniqueInstance.OrderSubmittedMultiFromAddress = ApplicationSettingsSection["OrderSubmittedMultiFromAddress"];
+                UniqueInstance.OrderSubmittedMultiEmailSubject = ApplicationSettingsSection["OrderSubmittedMultiEmailSubject"];
 
                 ConnectionStringSettingsCollection ConnectionStringSettings = WebConfigurationManager.ConnectionStrings;
 

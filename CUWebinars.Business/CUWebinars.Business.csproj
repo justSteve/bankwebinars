@@ -227,6 +227,7 @@
     <Compile Include="Models\WebUserLegacy.cs" />
     <Compile Include="Notification\Email\AdditionalLocationOrderDetailsMessage.cs" />
     <Compile Include="Notification\Email\AdhocNotificationDelivery.cs" />
+    <Compile Include="Notification\Email\OrderSubmittedMultiMessage.cs" />
     <Compile Include="Notification\Email\AzureAdhocNotificationDelivery.cs" />
     <Compile Include="Notification\Email\AdhocNotificationMessage.cs" />
     <Compile Include="Notification\Email\AzureWeeklyInvoiceWebJobSmtpMessageDelivery.cs" />
@@ -237,11 +238,15 @@
     <Compile Include="Notification\Email\ConfirmOrderMessage.cs" />
     <Compile Include="Notification\Email\OrderConfirmedForAdditionalLocationDelivery.cs" />
     <Compile Include="Notification\Email\OrderNotifierMessageDelivery.cs" />
+    <Compile Include="Notification\Events\OrderSubmittedMultiEvent.cs" />
     <Compile Include="Notification\Events\AdhocNotificationEvent.cs" />
     <Compile Include="Notification\Events\SendWeeklyInvoiceEvent.cs" />
+    <Compile Include="Notification\Handlers\OrderSubmittedMultiHandler.cs" />
     <Compile Include="Notification\Handlers\AdhocNotificationHandler.cs" />
     <Compile Include="Notification\Handlers\SendWeeklyInvoiceHandler.cs" />
     <Compile Include="Notification\IAdhocNotificationDelivery.cs" />
+    <Compile Include="Notification\IOrderSubmittedMultiDelivery.cs" />
+    <Compile Include="Notification\IOrderSubmittedMultiMessage.cs" />
     <Compile Include="Notification\IAdhocNotificationMessage.cs" />
     <Compile Include="Notification\Email\OrderSynchMessage.cs" />
     <Compile Include="Notification\Events\OrderSynchEvent.cs" />
@@ -306,9 +311,10 @@
     <Compile Include="Notification\INotificationDelivery.cs" />
     <Compile Include="Notification\INotificationMessage.cs" />
     <Compile Include="Notification\TemplateResolver.cs" />
+    <Compile Include="Notification\ViewModel\AdhocNotificationSubmittedViewModel.cs" />
     <Compile Include="Notification\ViewModel\SendWeeklyInvoiceViewModel.cs" />
     <Compile Include="Notification\ViewModel\SendPromoLinksViewModel.cs" />
-    <Compile Include="Notification\ViewModel\AdhocNotificationSubmittedViewModel.cs" />
+    <Compile Include="Notification\ViewModel\OrderSubmittedMultiViewModel.cs" />
     <Compile Include="Notification\ViewModel\OrderSubmittedAdditionalLocationViewModel.cs" />
     <Compile Include="Notification\ViewModel\OrderSubmittedViewModel.cs" />
     <Compile Include="Notification\ViewModel\PostEventPublishModel.cs" />
@@ -442,8 +448,10 @@ copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.A
 copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.WeeklyInvoicesWebJob\ThirdPartyAssemblies\$(ProjectName).dll"
 
 copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderNotifierWebJob\ThirdPartyAssemblies\$(ProjectName).dll"
-
-copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).dll"</PostBuildEvent>
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).dll"
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).dll"
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AddLocConfirm\ThirdPartyAssemblies\$(ProjectName).dll"
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmMultiWebJob\ThirdPartyAssemblies\$(ProjectName).dll"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

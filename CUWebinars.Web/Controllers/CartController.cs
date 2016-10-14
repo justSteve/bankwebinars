@@ -12,6 +12,7 @@ using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
+using CUWebinars.Business.Notification.ViewModel;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
@@ -38,6 +39,8 @@ namespace CUWebinars.Web.Controllers
         private readonly IUniversalMapper _universalMapper;
         private readonly IStateService _stateService;
         private readonly IMembershipService _membershipService;
+        private readonly GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+
         private bool _disposed;
 
         public CartController(ILogger logger,
@@ -1173,13 +1176,8 @@ namespace CUWebinars.Web.Controllers
         [HttpGet]
         public JsonResult ContinueShopping(int idWebinar)
         {
-            var e = _cartControllerOrchestrator.BuildContinueShoppingModel(idWebinar);
-            return Json(new
-            {
-                success = "success"
-
-            }, JsonRequestBehavior.AllowGet);
-
+            ContinueShoppingModel e = _cartControllerOrchestrator.BuildContinueShoppingModel(idWebinar);
+            return Json(new { success = "success" }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Checkout()
@@ -1192,14 +1190,21 @@ namespace CUWebinars.Web.Controllers
             // _logger.Info("CancelPauseOrder called email: " + email + " idOrder: " + idOrder);
 
             // get list of order Ids for signed in user
-            // use existing BuildCheckoutConfirmViewModel method to populate our list
+            // use BuildRegistrationSummaryMultiViewModel method to populate our list
             // feed to view
             //   feeds to partial
 
-            RegistrationSummaryMultiViewModel model = new RegistrationSummaryMultiViewModel();
-
             List<Order> orders = _cartControllerOrchestrator.GetOrdersByUser(User.Identity.Name)
                 .Where(o => o.OrderStatus == OrderStatus.InProcess).ToList();
+
+            RegistrationSummaryMultiViewModel model = BuildRegistrationSummaryMultiViewModel(orders);
+
+            return View(model);
+        }
+
+        private RegistrationSummaryMultiViewModel BuildRegistrationSummaryMultiViewModel(List<Order> orders)
+        {
+            RegistrationSummaryMultiViewModel model = new RegistrationSummaryMultiViewModel();
 
             model.RegistrationSummaryViewModels = new List<RegistrationSummaryViewModel>();
 
@@ -1251,9 +1256,8 @@ namespace CUWebinars.Web.Controllers
             model.DiscountCaptionMulti = discountCaptionMultiMsg;
             model.GrandTotalCaptionMulti = grandTotalCaptionMultiMsg;
 
+            return model;
 
-
-            return View(model);
         }
 
 
@@ -1383,6 +1387,46 @@ namespace CUWebinars.Web.Controllers
             BuildCaptionsMulti(orders, out discountCaptionMultiMsg, out grandTotalCaptionMultiMsg);
 
             return Json(new { Result = WebUiConstants.Success, discountCaptionMultiMsg = discountCaptionMultiMsg, grandTotalCaptionMultiMsg = grandTotalCaptionMultiMsg });
+        }
+
+        public JsonResult SubmitOrderBillMeJson()
+        {
+            string currentUserEmail = User.Identity.Name;
+
+            // get list of orders in process for this user
+            List<Order> orders = _cartControllerOrchestrator.GetOrdersByUser(currentUserEmail)
+                .Where(o => o.OrderStatus == OrderStatus.InProcess).ToList(); // used a couple of places, may want to make a function that just returns these...
+
+            RegistrationSummaryMultiViewModel model = BuildRegistrationSummaryMultiViewModel(orders);
+
+            StringBuilder sbOrdersSummary = new StringBuilder();
+            foreach (RegistrationSummaryViewModel registrationSummaryViewModel in model.RegistrationSummaryViewModels)
+            {
+                // update the rows to submitted status
+                _cartControllerOrchestrator.SetOrderStatus(registrationSummaryViewModel.OrderRow.idOrder, currentUserEmail, OrderStatus.Submitted); // validates that the user owns this orderid
+
+                // generate order summary email verbiage via RenderViewToString
+                sbOrdersSummary.Append(ViewHelpers.RenderViewToString(ControllerContext, "~/Views/Shared/Partials/_OrderSumUser2.cshtml", registrationSummaryViewModel, true));
+            }
+
+            // send email via azure / mailchimp
+            string subject = _globalConfig.OrderSubmittedMultiEmailSubject; // could do it in handler, could add dynamic content
+
+            // take the summery and merge it into our HTML email template.  doing this early since we are reusing the generic-ish AzureCuwWebJobSmtpMessageDelivery code
+            OrderSubmittedMultiViewModel orderSubmittedMultiViewModel = new OrderSubmittedMultiViewModel()
+            {
+                Subject = subject,
+                OrderSummaryHtml = sbOrdersSummary.ToString(),
+                DiscountCaption = model.DiscountCaptionMulti,
+                GrandTotalCaption = model.GrandTotalCaptionMulti
+            };
+
+            string htmlEmailBody = ViewHelpers.RenderViewToString(ControllerContext, "~/Notification/Templates/OrderSubmittedMulti.cshtml", orderSubmittedMultiViewModel, true);
+
+            _cartControllerOrchestrator.FireOrderSubmittedMultiNotification(currentUserEmail, subject, htmlEmailBody);
+
+            // send back enough to make the user comfortable, adjust the screen (remove buttons, say thanks, etc.)
+            return Json(new { Result = WebUiConstants.Success, msg = "Order submitted - thank you!" });
         }
 
         [HttpPost]
