@@ -194,6 +194,7 @@ namespace CUWebinars.Business.Repository
             }
             return items.Include(o => o.WebUser)
                 .Include(o => o.OrderRows.Select(or => or.Discount))
+                .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
                 .Where(o => o.BillingEmail.ToLower() == (email.ToLower()));
         }
 

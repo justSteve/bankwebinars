@@ -1,0 +1,80 @@
+﻿@using CUWebinars.Business.Core.Helpers
+@using CUWebinars.Web.Core
+@model RegistrationSummaryViewModel
+@functions {
+    private const string CurrencyFormatToken = "c";
+    private const string DotAndTwoDecimals = ".00";
+}
+@{
+    // _OrderSumUser2.cshtml is very much like the DisplayTemplates/OrderSumUser.cshtml file,
+    //  but this version has been customized to be used primarily for Multi-Event Order Confirmation emails
+
+    // hack: This partial is a confusing redundancy when compared against
+    //  DisplayTemplates/OrderSumUser", Model
+    //  AND _OrderSumUser.cshtml
+
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+    var myRow = Model.OrderRow;
+    NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
+    nfi.CurrencyDecimalDigits = 2;
+
+    decimal amtToReduce;
+
+    <table style="width: 100%; font-family: sans-serif; border-bottom: 1px solid black">
+        <tr>
+            <td>
+                <h4>@myRow.Webinar.Title</h4>
+                <i>Order ID:</i> <b>@globalConfig.TenantPrefix@myRow.idOrder</b><br />
+                <i>Date Ordered:</i> <b>@myRow.Order.OrderDate.ToShortDateString()</b><br />
+                <i>Registration:</i> <b>@myRow.RegistrationType.OptionLabel.Replace(" Only", "")</b><br />
+                @if (!ReferenceEquals(myRow.AdditionalLocation, null) && myRow.AdditionalLocation.Count > 0)
+                {
+                    <i>Additional Locations:</i><br />
+                    foreach (var addy in myRow.AdditionalLocation)
+                    {
+                        <div>&nbsp;@addy.Email</div>
+                    }
+                }
+
+                @if (myRow.ShipmentDate.HasValue)
+                {
+                    <text>Shipped Date:<b>@Html.DisplayDate(myRow.ShipmentDate.Value)</b></text>
+                }
+
+                @if (!ReferenceEquals(myRow.Discount, null) && myRow.Discount.PercentOff > 0 && !myRow.Webinar.Title.StartsWith("Compliance Per"))
+                {
+
+                    amtToReduce = myRow.UnitPrice * ((myRow.Discount.PercentOff) / 100);
+                    <i>Amt. of Discount:</i>
+                    <span style="color: red;">@amtToReduce.ToString(CurrencyFormatToken).Replace(".00", "")</span>
+
+                    if (myRow.Discount.DiscountType == DiscountType.Subscription && Model.DiscountCaption != null)
+                    {
+                        <text>(</text>
+                        @Model.DiscountCaption
+                        <text>)</text>
+                    }
+
+                    <br />
+                }
+
+                @if (!ReferenceEquals(myRow.Discount, null) && myRow.Discount.FlatOff > 0)
+                {
+                    amtToReduce = Convert.ToDecimal(myRow.Order.Total) - myRow.UnitPrice;
+                    <i>Amt. of Discount:</i>
+                    <span style="color: red;">@amtToReduce.ToString().Replace(".00", "")</span><br />
+                }
+
+                <i>Total Cost:</i> <b>@myRow.Order.Total.ToString(CurrencyFormatToken).Replace(".00", "")</b>
+            </td>
+        </tr>
+ 
+        @if (myRow.Order.Affiliate.idUserAff == 62)
+        {
+            <tr><td><b>Note:</b> This order originated from Center For Financial Training<br /><br /></td></tr>
+        }
+
+    </table>
+    <br />
+    <br />
+}

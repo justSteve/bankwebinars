@@ -28,18 +28,26 @@ namespace CUWebinars.Business.Core
             var genericFormatter = new Formatter(new EnvironmentInformation { BaseUrl = baseUrl });
             var config = new TtsConfiguration();
 
+            var ttsConfigHelper = new TtsConfigHelper();
+
             INotificationDelivery notificationDelivery;
             IOrderConfirmedNotificationDelivery orderConfirmationDelivery;
             IOrderConfirmedForAdditionalLocationDelivery orderConfirmedForAdditionalLocationDelivery;
             IAdhocNotificationDelivery adhocNotificationDelivery;
             INotificationDelivery weeklyInvoiceDelivery;
+            INotificationDelivery orderSubmittedMultiNotificationDelivery;
 
             // toggle whether to use Azure Webjobs or local code (for local debugiing/development purposes)
             if (useAzureWebjobs)
             {
-                notificationDelivery = new AzureCuwWebJobSmtpMessageDelivery(storageAccountName, storageAccessKey,
-                    new Log4NetLogger(typeof (AzureCuwWebJobSmtpMessageDelivery)));
+                notificationDelivery = new AzureCuwWebJobSmtpMessageDelivery(
+                    storageAccountName, 
+                    storageAccessKey, 
+                    ttsConfigHelper.GetCuwNotificationQueueName(),
+                    new Log4NetLogger(typeof (AzureCuwWebJobSmtpMessageDelivery))
+                    );
 
+                // new Mandrill approach, always through Azure
                 weeklyInvoiceDelivery = new AzureWeeklyInvoiceWebJobSmtpMessageDelivery(storageAccountName, storageAccessKey,
                     new Log4NetLogger(typeof(AzureWeeklyInvoiceWebJobSmtpMessageDelivery)));
 
@@ -50,17 +58,27 @@ namespace CUWebinars.Business.Core
                         new Log4NetLogger(typeof (AzureOrderNotifierMessageDelivery)),
                         baseUrl
                         );
+
                 orderConfirmedForAdditionalLocationDelivery =
                     new AzureOrderConfirmedForAdditionalLocationDelivery(storageAccountName,
                         storageAccessKey,
                         new Log4NetLogger(typeof(AzureOrderConfirmedForAdditionalLocationDelivery)),
                         baseUrl
                         );
+
                 adhocNotificationDelivery = new AzureAdhocNotificationDelivery(
                     storageAccountName, 
                     storageAccessKey,
                     new Log4NetLogger(typeof(AzureAdhocNotificationDelivery)),
                     baseUrl);
+
+                // new Mandrill approach, always through Azure
+                orderSubmittedMultiNotificationDelivery = new AzureCuwWebJobSmtpMessageDelivery(
+                    storageAccountName, 
+                    storageAccessKey, 
+                    ttsConfigHelper.GetOrderSubmittedMultiQueueName(),
+                    new Log4NetLogger(typeof(AzureCuwWebJobSmtpMessageDelivery))
+                    );
             }
             else
             {
@@ -69,7 +87,7 @@ namespace CUWebinars.Business.Core
                 //notificationDelivery = new AzureCuwWebJobSmtpMessageDelivery(storageAccountName, storageAccessKey,
                 //    new Log4NetLogger(typeof(AzureCuwWebJobSmtpMessageDelivery)));
 
-                //testing out new Mandrill approach
+                // new Mandrill approach, always through Azure
                 weeklyInvoiceDelivery = new AzureWeeklyInvoiceWebJobSmtpMessageDelivery(storageAccountName, storageAccessKey,
                     new Log4NetLogger(typeof(AzureWeeklyInvoiceWebJobSmtpMessageDelivery)));
 
@@ -77,13 +95,23 @@ namespace CUWebinars.Business.Core
                     new OrderNotifierMessageDelivery(new Log4NetLogger(typeof (OrderNotifierMessageDelivery)),
                         genericFormatter
                         );
+
                 orderConfirmedForAdditionalLocationDelivery =
                     new OrderConfirmedForAdditionalLocationDelivery(
                         new Log4NetLogger(typeof (OrderConfirmedForAdditionalLocationDelivery)), genericFormatter
                         );
+
                 adhocNotificationDelivery = new AdhocNotificationDelivery(
                     new Log4NetLogger(typeof(AzureAdhocNotificationDelivery)),
                     genericFormatter);
+
+                // new Mandrill approach, always through Azure
+                orderSubmittedMultiNotificationDelivery = new AzureCuwWebJobSmtpMessageDelivery(
+                    storageAccountName, 
+                    storageAccessKey,
+                    ttsConfigHelper.GetOrderSubmittedMultiQueueName(),
+                    new Log4NetLogger(typeof(AzureCuwWebJobSmtpMessageDelivery))
+                    );
             }
 
             var notificationOrderHandlerLogger = new Log4NetLogger(typeof(OrderSubmittedHandler));
@@ -100,6 +128,7 @@ namespace CUWebinars.Business.Core
             var sendPerWeekPromoHandlerLogger = new Log4NetLogger(typeof(SendPerWeekPromoHandler));
             var adhocNotificationHandlerLogger = new Log4NetLogger(typeof(AdhocNotificationHandler));
             var sendWeeklyInvoiceHandlerLogger = new Log4NetLogger(typeof(SendWeeklyInvoiceHandler));
+            var sendOrderSubmittedMultiHandlerLogger = new Log4NetLogger(typeof(OrderSubmittedMultiHandler));
 
 
             config.AddEventHandler(new SendPerDayPromoHandler(genericFormatter, notificationDelivery,sendPerDayPromoHandlerLogger));
@@ -115,6 +144,7 @@ namespace CUWebinars.Business.Core
             config.AddEventHandler(new AdminEmailRecordingPostedHandler(genericFormatter, emailRecordingPostedHandlerLogger, notificationDelivery));
             config.AddEventHandler(new AdhocNotificationHandler(adhocNotificationDelivery, adhocNotificationHandlerLogger));
             config.AddEventHandler(new SendWeeklyInvoiceHandler(genericFormatter, weeklyInvoiceDelivery, sendWeeklyInvoiceHandlerLogger));
+            config.AddEventHandler(new OrderSubmittedMultiHandler(orderSubmittedMultiNotificationDelivery, sendOrderSubmittedMultiHandlerLogger));
 
             return config;
         }

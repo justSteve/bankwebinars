@@ -15,6 +15,11 @@
         }
     });
 
+    $("#ConfirmRegistrationBillMeMulti").on("click", function () {
+        var $this = $(this);
+        ConfirmRegistrationBillMeMulti($this);
+    });
+
 });
 
 function ShowEditOrderForm($button, orderId, webinarId) {
@@ -151,6 +156,48 @@ function UndoRemoveOrder($button, orderId, orderRowId) {
             // remove spinner
             //$('#loadingSpinnerContainer', $button).fadeOut();
             //setTimeout(function () { $('#loadingSpinnerContainer', $button).remove(); }, 1500);
+        }
+    });
+}
+
+
+function ConfirmRegistrationBillMeMulti($button) {
+    var message = "";
+
+    $.ajax({
+        async: true,
+        url: "/cart/submitorderbillmejson",
+        data: (
+        {
+            //idOrder: orderId,
+            //idOrderRow: orderRowId
+        }),
+        dataType: "json",
+        type: "POST",
+        success: function(data) {
+            console.log(data);
+
+            // hide all of the edit and remove buttons, do this in beforeSend?
+            $(".edit-order, .remove-order").fadeOut();
+
+            // do something w/ the UI for this order...
+            $("#checkout-action-container").html(data.msg);
+
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            console.log("/account/submitorderbillmejson: " + textStatus + ", " + errorThrown);
+        },
+        beforeSend: function () {
+            $button.prop("disabled", true);
+            //console.log("beforesend");
+            // add spinner to button
+            $button.append('<span id="loadingSpinnerContainer">&nbsp;<i id="loadingSpinner" class="icon-spinner icon-spin"></i></span>');
+        },
+        complete: function() {
+            //console.log("complete");
+            // remove spinner
+            $('#loadingSpinnerContainer', $button).fadeOut();
+            setTimeout(function () { $('#loadingSpinnerContainer', $button).remove(); }, 1500);
         }
     });
 }

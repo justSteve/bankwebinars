@@ -25,9 +25,10 @@
     <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
-    <TypeScriptToolsVersion>1.0</TypeScriptToolsVersion>
+    <TypeScriptToolsVersion>1.8</TypeScriptToolsVersion>
     <ApplicationInsightsResourceId>/subscriptions/4aa59c5e-6984-4f30-bb2b-df7e1eb43e6e/resourcegroups/Default-Web-northcentralus/providers/microsoft.insights/components/cuwebinars31</ApplicationInsightsResourceId>
     <NuGetPackageImportStamp>f65174cb</NuGetPackageImportStamp>
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -1870,6 +1871,7 @@
     <Content Include="Notification\Templates\SendPromoLinks.cshtml" />
     <Content Include="Notification\Templates\SendWeeklyInvoice.cshtml" />
     <Content Include="App_Data\mergeTemplates\WeeklyInvoice.docx" />
+    <Content Include="Notification\Templates\OrderSubmittedMulti.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars33 - Web Deploy.pubxml" />
@@ -2149,6 +2151,7 @@
     <Content Include="Views\Cart\Checkout.cshtml" />
     <Content Include="Views\Cart\Partials\_ContinueShopping.cshtml" />
     <Content Include="Views\Cart\Partials\_CartInHeader.cshtml" />
+    <Content Include="Views\Shared\Partials\_OrderSumUser2.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2734,6 +2737,7 @@ copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUUserAccount\ThirdPa
 copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).dll"
 copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AddLocConfirm\ThirdPartyAssemblies\$(ProjectName).dll"
 copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AdhocNotifier\ThirdPartyAssemblies\$(ProjectName).dll"
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmMultiWebJob\ThirdPartyAssemblies\$(ProjectName).dll"
 copy /Y "$(ProjectDir)Notification\Templates\OrderSubmitted.cshtml" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\CUWebinars.Azure.OrderConfirmNotifier\Notifications\Templates\OrderSubmitted.cshtml"
 copy /Y "$(ProjectDir)Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AddLocConfirm\CUWebinars.Azure.AddLocConfirm\Notifications\Templates\OrderSubmittedAdditionalLocation.cshtml"
 copy /Y "$(ProjectDir)Notification\Templates\AdhocNotification.cshtml" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AdhocNotifier\CUWebinars.Azure.AdhocNotifier\Notifications\Templates\AdhocNotification.cshtml"

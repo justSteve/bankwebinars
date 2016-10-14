@@ -9,7 +9,7 @@
         <div id="reset">
 
             <div class="legendImitator">
-                <b>Below are pending orders</b>
+                <b>Shopping Cart (Pending Orders)</b>
             </div>
             
             @{
@@ -38,7 +38,17 @@
                         Your shopping cart is empty. <a href="#">Home | Search | ???</a>
                     </p>
                 }
-
+                else
+                {
+                    <div id="checkout-action-container" style="margin-bottom: 10px;">
+                        @{
+                            string confirmButtonLabel = "TBC (computed)";
+                            // null check like Views\Cart\Partials\_DisplayRowPrice.cshtml ->   Model.PricesAndDiscounts.Discount == null  ?
+                        }
+                        Cool buttons go here: <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMeMulti">@confirmButtonLabel</button>
+                        <div>make this slide along margin as they scroll?  or put them at the top and bottom?</div>
+                    </div>
+                }
             }
 
             @*<div id="FeedbackContainer" class="span6">

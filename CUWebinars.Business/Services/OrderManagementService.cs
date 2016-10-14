@@ -29,6 +29,7 @@ using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Notification;
 using CUWebinars.Web.Models;
+using Ninject.Infrastructure.Language;
 using IEvent = CUWebinars.NotificationSystem.Event.IEvent;
 using IEventSource = CUWebinars.NotificationSystem.Event.IEventSource;
 
@@ -1659,6 +1660,27 @@ namespace CUWebinars.Business.Services
             AddEvent(new SendWeeklyInvoiceEvent<SendWeeklyInvoiceViewModel> { EventObject = weeklyInvoiceViewModel });
 
             foreach (var evt in GetEvents().OfType<SendWeeklyInvoiceEvent<SendWeeklyInvoiceViewModel>>())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            Clear();
+
+            // int rowsUpdated = _orderRepository.SaveChanges(); // TODO: zzz ALS confirm we can remove, then remove
+        }
+
+        public void FireOrderSubmittedMultiEvent(string toEmail, string subject, string body)
+        {
+            var orderSubmittedMultiMessage = new OrderSubmittedMultiMessage()
+            {
+                Recipients = toEmail.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries),
+                Subject = subject,
+                Body = body,
+            };
+
+            AddEvent(new OrderSubmittedMultiEvent<OrderSubmittedMultiMessage> { EventObject = orderSubmittedMultiMessage });
+
+            foreach (var evt in GetEvents().OfType<OrderSubmittedMultiEvent<OrderSubmittedMultiMessage>>())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }
