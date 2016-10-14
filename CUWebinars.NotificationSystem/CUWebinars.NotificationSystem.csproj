@@ -75,7 +75,7 @@
   <PropertyGroup>
     <PostBuildEvent>
 copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.PromoGeneratedWebJob\ThirdPartyAssemblies\$(ProjectName).dll"
-copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.WeeklyInvoicesWebJob\ThirdPartyAssemblies\$(ProjectName).dll"
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.WeeklyInvoiceWebJob\ThirdPartyAssemblies\$(ProjectName).dll"
 copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderNotifierWebJob\ThirdPartyAssemblies\$(ProjectName).dll"
 copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).dll"
 </PostBuildEvent>
