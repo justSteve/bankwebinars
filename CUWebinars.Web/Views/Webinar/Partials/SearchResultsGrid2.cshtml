@@ -2,7 +2,9 @@
 
 @{
     ViewBag.Title = "Orders";
-
+    <script type="text/javascript">
+         var   shouldShowContinueShopping = true;
+    </script>
 
     if (Model.Affiliate != null && !Model.UserIsAdmin)
     {
@@ -12,6 +14,14 @@
             }
             var DW = DISPLAYWEBINARS;
             DW.affiliateId = @Model.Affiliate.idUserAff;
+            
+        </script>
+    }
+
+    if (Model.Affiliate != null || Model.UserIsAdmin)
+    {
+        <script type="text/javascript">
+            shouldShowContinueShopping = false;
         </script>
     }
 
@@ -21,9 +31,9 @@
     <table id="webinarsTable" class="table table-striped table-bordered dataTable no-footer" cellspacing="0" width="100%">
         <thead>
             <tr>
-                <th>WebinarDate</th>
+                <th>Webinar Date</th>
                 <th>Status</th>
-                <th>$</th>
+                <th><i class="icon-large icon-shopping-cart"></i></th>
                 <th>Title & Details</th>
                 <th>Presenter</th>
                 <th>Related Topics</th>

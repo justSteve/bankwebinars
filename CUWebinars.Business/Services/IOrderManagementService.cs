@@ -152,5 +152,6 @@ namespace CUWebinars.Business.Services
         decimal CalculateCreditsUsed(Discount userDiscount);
 
         void CreateTestRegistration(Webinar webinar);
+        int CheckIfEmailAlreadyRegisteredForWebinar(int idWebinar, string email);
     }
 }

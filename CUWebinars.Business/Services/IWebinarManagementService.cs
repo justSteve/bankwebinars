@@ -32,7 +32,7 @@ namespace CUWebinars.Business.Services
         Webinar GetWebinar(int id);
         Webinar GetWebinarThin(int id);
         IEnumerable<Webinar> GetWebinarByPresenterLastName(string lastName);
-        IEnumerable<Webinar> GetWebinarByPresenterFullName(string searchTerm);
+        IEnumerable<Webinar> GetWebinarsByPresenterFullName(string searchTerm);
         IEnumerable<Webinar> GetWebinarByDescription(string topicDescription);
         WebinarFile GetWebinarFile(int idWebinarFile);
         Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id);

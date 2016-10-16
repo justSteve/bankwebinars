@@ -119,12 +119,9 @@ namespace CUWebinars.Web.Controllers.Admin
         public ActionResult Index()
         {
             var aff = _affiliateManagementService.FindById(19);
-            //uncomment to use Updated DataTable code
+
             string searchTerm = Request["searchTerm"];
-            ShowWebinarsViewModel gridModel = new ShowWebinarsViewModel
-            {
-                SearchTerm = searchTerm
-            };
+
             ViewBag.Title = "Search Results";
 
             ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
@@ -132,7 +129,12 @@ namespace CUWebinars.Web.Controllers.Admin
             var user = _membershipService.GetWebUserById(affiliate.idUserAff);
             var model = new AdminDTO
             {
-                ShowWebinarsViewModel = gridModel,
+                ShowWebinarsViewModel = new ShowWebinarsViewModel
+                {
+                    SearchTerm = searchTerm,
+                    UserIsAdmin = true
+
+                },
                 UserDetailsViewModel = new UserDetailsViewModel()
                 {
                     Affiliate = aff,
@@ -144,19 +146,24 @@ namespace CUWebinars.Web.Controllers.Admin
                     WebUser = user
                 },
                 DiscountSubscriptionsModel =
-                    _affiliateManagementService.GetSubscriptionsByAffiliate(62) as IList<DiscountDTO>,
+                    _affiliateManagementService.GetSubscriptionsByAffiliate(user.idUser) as IList<DiscountDTO>,
 
             };
 
             if (claimsIdentityOfAuthenticatedUser.HasClaim(
                 (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
             {
-
                 model = new AdminDTO
                 {
+                    ShowWebinarsViewModel = new ShowWebinarsViewModel
+                    {
+                        SearchTerm = searchTerm,
+                        UserIsAdmin = false
+
+                    },
                     DiscountSubscriptionsModel =
-                        _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff) as
-                            IList<DiscountDTO>,
+        _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff) as
+            IList<DiscountDTO>,
                     UserDetailsViewModel = new UserDetailsViewModel()
                     {
                         Affiliate = affiliate,
@@ -961,7 +968,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     _orderManagementService.FireOrderSubmittedEvent(expressOrder
                         , userCreatedByCheckout);
 
-                    
+
                     _orderManagementService.SaveChanges();
                 }
                 catch (Exception ex)
@@ -2838,13 +2845,13 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 try
                 {
-                    
+
                     // custom filtering by Webinar Id
                     if (!showAllEvents)
                     {
                         if (searchTerm != null)
                         {
-                    
+
                             ViewBag.IsSearchResult = true;
                             int orderId = 0;
 
@@ -3026,7 +3033,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     var hadWOrder = false;
                     var hadPOrder = false;
                     var hadUOrder = false;
-                    
+
 
                     int thisAffiliate = affiliate.idUserAff;
 
@@ -3079,7 +3086,7 @@ namespace CUWebinars.Web.Controllers.Admin
                             List<Order> webinarsOrders =
                                 _orderManagementService.GetOrdersByWebinarForInvoice(webinar.idWebinar)
                                     .Where(o => o.idAffiliate == thisAffiliate)
-                                // filter is already applied .Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted || o.OrderStatus == OrderStatus.Billed)
+                                    // filter is already applied .Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted || o.OrderStatus == OrderStatus.Billed)
                                     .ToList();
                             if (webinarsOrders.Any())
                             {
@@ -3139,7 +3146,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                         //var totalToShow = order.Total.ToString("c");
                                         if (row.Discount != null)
                                         {
-                                            
+
                                             var discount = row.Discount;
                                             _price = "See Note #" + totalNumberDiscounts;
                                             discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode +
@@ -3314,7 +3321,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                         "%";
                                     if (row.Discount != null)
                                     {
-                                        
+
                                         var discount = row.Discount;
                                         _price = "See Note #" + totalNumberDiscounts;
                                         discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode + ": (" +
@@ -3445,7 +3452,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                                     if (row.Discount != null)
                                     {
-                                        
+
                                         var discount = row.Discount;
                                         //_price = "See Note #" + totalNumberDiscounts;
                                         discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode + ": (" +

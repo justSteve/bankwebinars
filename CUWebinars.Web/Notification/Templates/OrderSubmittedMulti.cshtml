@@ -29,9 +29,10 @@
                 TtsConfigHelper TtsTemplateHelperObject = new TtsConfigHelper();
                 NotificationHeaderModel nhm = new NotificationHeaderModel()
                 {
-                    BannerText = "", // OrderSubmittedMulti might not need this near the top of the email body
-                    HeaderText = "", // OrderSubmittedMulti might not need this near the top of the email body
-                    TenantLogo = TtsTemplateHelperObject.TenantLogo()
+                    BannerText = Model.HeaderSummaryCaption.ToString(), // OrderSubmittedMulti might not need this near the top of the email body
+                    HeaderText = "Order Confirmation", // OrderSubmittedMulti might not need this near the top of the email body
+                    TenantLogo = TtsTemplateHelperObject.TenantLogo(),
+                    TenantURL = TtsTemplateHelperObject.TenantURL()
                 };
             }
 
@@ -73,7 +74,7 @@
                                                                 <tr>
                                                                     <td colspan="2" style="text-align: left; margin-left: 6px; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: small">
                                                                         <div style="color: black; font-family: Arial, Helvetica, sans-serif; padding: 5px; font-size: 12px;">
-                                                                            <div>Thank you for your order!  Webinar details are shown below.  Please let us know if there is anything we can do to assist you further as you look forward to these event.</div>
+                                                                            <div><br/>Thank you for your order summarized below! Please visit @nhm.TenantURL/MyWebinars for complete details on each of your registrations.</div>
                                                                             <br />
                                                                             <br />
                                                                             @Html.Raw(Model.OrderSummaryHtml)

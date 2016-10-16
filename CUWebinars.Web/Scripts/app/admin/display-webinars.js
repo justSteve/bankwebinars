@@ -90,7 +90,7 @@ $(function () {
 
                 { 'data': 'Date' },
                 { 'data': 'Status', 'visible': shouldShow, 'class': 'details-control edit' },
-                { 'data': 'yXy', 'visible': false, 'class': 'details-control wAddToCart', 'orderable': false },
+                { 'data': 'ContinueShopping', 'visible': shouldShowContinueShopping, 'class': 'details-control wAddToCart', 'orderable': false },
                 { 'data': 'Title', 'class': 'details-control wTitle' },
                 { 'data': 'PresenterName', 'class': 'details-control presenter' },
                 { 'data': 'RelatedTopicsString', 'class': 'details-control topicsTitles' },

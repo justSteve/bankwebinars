@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -77,6 +78,7 @@ namespace CUWebinars.Web.Controllers
                 return this.ModelStateJson(ModelState);
             }
         }
+
 
         [System.Web.Mvc.AllowAnonymous]
         [System.Web.Mvc.HttpGet]
@@ -477,14 +479,14 @@ namespace CUWebinars.Web.Controllers
         [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
         public ActionResult Incoming(System.Collections.Specialized.NameValueCollection form)
         {
-            
+
             try
             {
                 StringBuilder sb = new StringBuilder();
                 var incoming = form[0].TrimStart('[').TrimEnd(']');
 
                 var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(incoming);
-                
+
                 var parsedOrder = ParseMandrillMsg.ParseAcs("<html><body>" + msgHtml.msg.html + "</body></html>", DateTime.Now.ToString());
                 _logger.Info("IncomingFromMandrillParsed: " + JsonConvert.SerializeObject(parsedOrder));
                 return RedirectToAction("Importorder4Acs", "Order", parsedOrder);
@@ -502,7 +504,7 @@ namespace CUWebinars.Web.Controllers
         [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
         public ActionResult Incoming1()
         {
-            NameValueCollection form =  Request.Form;
+            NameValueCollection form = Request.Form;
 
             try
             {
@@ -1176,9 +1178,54 @@ namespace CUWebinars.Web.Controllers
         [HttpGet]
         public JsonResult ContinueShopping(int idWebinar)
         {
-            ContinueShoppingModel e = _cartControllerOrchestrator.BuildContinueShoppingModel(idWebinar);
-            return Json(new { success = "success" }, JsonRequestBehavior.AllowGet);
+
+            ContinueShoppingModel model = _cartControllerOrchestrator.BuildContinueShoppingModel(idWebinar);
+
+            var topicButtons = "";
+
+            foreach (var _topic in model.SelectedTopics)
+            {
+                topicButtons += "<button class='btn btn-mini topic_'  id='topic_" + _topic.idTopic + "' name='topic_" + _topic.idTopic + "'  value='" + _topic.Topic.topicDesc + "'>" + _topic.Topic.topicDesc + "</button><br>";
+            }
+
+            topicButtons.TrimEnd(new Char[] { '<', 'b', 'r', '>' });
+
+            return Json(new { success = "success", topicButtons, presenterName = model.SelectedPresenter }, JsonRequestBehavior.AllowGet);
         }
+
+        public ActionResult ContinueShoppingJumper(FormCollection form)
+        {
+
+            try
+            {
+                if (form["searchTerm"] != null && form["searchTerm"].Length > 1)
+                {
+                    _logger.Info("continueShoppingSearchTerm: " + form["searchTerm"]);
+                    return RedirectToAction("Search", controllerName: "Webinar", routeValues: new { searchTerm = form["searchTerm"] });
+                }
+
+                if (form["relatedTag"] != null && form["relatedTag"] != string.Empty)
+                {
+                    _logger.Info("continueShoppingTopic: " + form["relatedTag"]);
+                    return RedirectToAction("Search", controllerName: "Webinar", routeValues: new { searchTerm = form["relatedTag"] });
+                }
+
+                if (form["continueShoppingBySpeaker"] != null && form["continueShoppingBySpeaker"] != string.Empty)
+                {
+                    _logger.Info("continueShoppingPresenter: " + form["continueShoppingBySpeaker"]);
+                    return RedirectToAction("Search", controllerName: "Webinar", routeValues: new { searchTerm = form["continueShoppingBySpeaker"] });
+                }
+
+                return Json(new { Result = WebUiConstants.Success });
+            }
+            catch (Exception exception)
+            {
+                ModelState.AddModelError(string.Empty, "The operation failed.");
+                _logger.ErrorException("AdjustUserDetails|AdjustUserDetails failed ", exception);
+                return this.ModelStateJson(ModelState);
+            }
+        }
+
 
         public ActionResult Checkout()
         {
@@ -1213,7 +1260,14 @@ namespace CUWebinars.Web.Controllers
                 OrderRow orderRowForOrder = order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active);
                 if (orderRowForOrder == null)
                     continue;
+                int checkForDupedOrderId = _cartControllerOrchestrator.CheckIfEmailAlreadyRegisteredForWebinar(orderRowForOrder.idWebinar, order.BillingEmail);
 
+                if (checkForDupedOrderId > 0)
+                {
+                    _cartControllerOrchestrator.SetOrderStatus(checkForDupedOrderId, order.BillingEmail,
+                        OrderStatus.Canceled);
+                    _logger.Warn("BuildRegistrationSummaryMultiViewModel found duped order: " + checkForDupedOrderId + "_" + order.BillingEmail);
+                }
                 if (orderRowForOrder.AdditionalLocation == null)
                     orderRowForOrder.AdditionalLocation = new List<AdditionalLocation>();
 
@@ -1261,6 +1315,7 @@ namespace CUWebinars.Web.Controllers
         }
 
 
+
         private void BuildCaptionsMulti(List<Order> orders, out string discountCaptionMultiMsg, out string grandTotalCaptionMultiMsg)
         {
             decimal totalCostInCredits = 0M;
@@ -1281,7 +1336,11 @@ namespace CUWebinars.Web.Controllers
                 if (orderRowForOrder == null)
                     continue;
 
+
+
+
                 grandTotal += order.Total;
+
 
                 System.Diagnostics.Debug.WriteLine("idOrder: {0}, idOrderRow: {1}, running grandTotal: {2}", order.idOrder, orderRowForOrder.idOrderRow, grandTotal);
 
@@ -1400,6 +1459,8 @@ namespace CUWebinars.Web.Controllers
             RegistrationSummaryMultiViewModel model = BuildRegistrationSummaryMultiViewModel(orders);
 
             StringBuilder sbOrdersSummary = new StringBuilder();
+            StringBuilder sbHeaderSummary = new StringBuilder();
+            sbHeaderSummary.Append("This confirmation includes summaries for the following orders:" + Environment.NewLine);
             foreach (RegistrationSummaryViewModel registrationSummaryViewModel in model.RegistrationSummaryViewModels)
             {
                 // update the rows to submitted status
@@ -1407,6 +1468,7 @@ namespace CUWebinars.Web.Controllers
 
                 // generate order summary email verbiage via RenderViewToString
                 sbOrdersSummary.Append(ViewHelpers.RenderViewToString(ControllerContext, "~/Views/Shared/Partials/_OrderSumUser2.cshtml", registrationSummaryViewModel, true));
+                sbHeaderSummary.Append("  " + registrationSummaryViewModel.OrderRow.idOrder + ",");
             }
 
             // send email via azure / mailchimp
@@ -1418,7 +1480,8 @@ namespace CUWebinars.Web.Controllers
                 Subject = subject,
                 OrderSummaryHtml = sbOrdersSummary.ToString(),
                 DiscountCaption = model.DiscountCaptionMulti,
-                GrandTotalCaption = model.GrandTotalCaptionMulti
+                GrandTotalCaption = model.GrandTotalCaptionMulti,
+                HeaderSummaryCaption = sbHeaderSummary.ToString().TrimEnd(',')
             };
 
             string htmlEmailBody = ViewHelpers.RenderViewToString(ControllerContext, "~/Notification/Templates/OrderSubmittedMulti.cshtml", orderSubmittedMultiViewModel, true);
@@ -1496,5 +1559,7 @@ namespace CUWebinars.Web.Controllers
                 base.Dispose();
             }
         }
+
+
     }
 }

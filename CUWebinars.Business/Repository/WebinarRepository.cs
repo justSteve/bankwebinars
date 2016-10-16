@@ -140,12 +140,34 @@ namespace CUWebinars.Business.Repository
                 return titleSearch.ToList();
             }
 
-            var check4Speaker = stronglyTypedContext.Webinars
-                .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
-                .Include(w => w.Presenter.WebUser)
-                .Where(w => w.Presenter.WebUser.LastName == searchTerm
-                            && (w.Status != WebinarStatus.Archived || w.Status != WebinarStatus.Pending || w.Status != WebinarStatus.Deleted));
+            var try4SpeakerName = searchTerm.Split(' ');
+            var check4Speaker = stronglyTypedContext.Webinars.Where(w => w.idWebinar == 0);
 
+            
+            if (try4SpeakerName.Length > 1)
+            {
+                var firstName = try4SpeakerName[0].ToString();
+                var lastName = try4SpeakerName[1].ToString();
+
+                check4Speaker = stronglyTypedContext.Webinars
+                    .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
+                    .Include(w => w.Presenter.WebUser)
+                    .Where(w => w.Presenter.WebUser.FirstName == firstName && w.Presenter.WebUser.LastName == lastName
+                                && (w.Status != WebinarStatus.Archived || w.Status != WebinarStatus.Pending ||
+                                 w.Status != WebinarStatus.Deleted));
+
+            }
+            else
+            {
+
+                check4Speaker = stronglyTypedContext.Webinars
+                    .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
+                    .Include(w => w.Presenter.WebUser)
+                    .Where(w => w.Presenter.WebUser.LastName == searchTerm
+                                &&
+                                (w.Status != WebinarStatus.Archived || w.Status != WebinarStatus.Pending ||
+                                 w.Status != WebinarStatus.Deleted));
+            }
             if (check4Speaker.Any())
             {
                 return check4Speaker.ToList();
@@ -379,13 +401,14 @@ namespace CUWebinars.Business.Repository
                 var pattern = new Regex(@"\W");
                 var q = pattern.Split(webinar.Title).Any(w => titleWords.Contains(w));
 
-                foreach (var titleWord in titleWords)
-                {
-                    foreach (var source in webinars.Where(s => Regex.Split(titleWord, @"\W").Any(w => webinar.Title.Contains(w))))
-                    {
-                        
-                    }
-                }
+                //foreach (var titleWord in titleWords)
+                //{
+                //    foreach (var source in webinars.Where(a => a.Title == titleWord).AsEnumerable().ThenByDescending
+                //        (s => Regex.Split(titleWord, @"\W").Any(w => webinar.Title.Contains(w))))
+                //    {
+
+                //    }
+                //}
 
             }
             catch (Exception)

@@ -1,47 +1,73 @@
 ﻿@using CUWebinars.Web.Core
 
+@model CheckoutConfirmViewModel
+
+
 @functions {
     private const string CurrencyFormatToken = "c";
     private const string DotAndTwoDecimals = ".00";
 
 
+    public string SearchTerm { get; set; }
 }
+
 <script type="text/javascript" language="javascript">
     $(function () {
 
         $('#ContinueShoppingModal').on('show', function () {
-
+            //event.preventDefault();
             $.ajax({
-
                 datatype: "text/plain",
                 type: "GET",
                 url: '/cart/continueshopping?idWebinar=' + webinarId,
                 cache: false,
                 success: function (data) {
-                    //
+                    var form = $("#frmContinueShopping");
+
+                    $("#continueShoppingBySpeaker").val("See other events by " + data.presenterName);
+                    $("#holdsButtons").html(data.topicButtons);
+                    $("#continueShoppingSearchBox").val("");
+
+                    $(".topic_").on('click', function (e) {
+                        $("#relatedTag").val(e.target.name.toString().split('_')[1]);
+                        form.submit();
+                    });
+
+                    $("#continueShoppingBySpeaker").on('click', function (e) {
+                        $("#relatedTag").val("");
+                        $("#continueShoppingBySpeaker").val($("#continueShoppingBySpeaker").val().replace("See other events by ", ""));
+                        form.submit();
+                    });
                 }
             });
+            //
         });
-        //
     });
-
 </script>
-@{
-    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
+<div id="ContinueShoppingModal" class="modal hide fade">
 
-
-    <div id="ContinueShoppingModal" class="modal hide fade">
-        <div class="modal-header">
-            <h3 id="ContinueShoppingHeader"></h3>
-        </div>
-        <div id="ContinueShoppingBody" class="modal-body">
-            <div>Other Events By Speaker:</div>
-            <div>Related Events:</div>
-            <div>Search All Events:</div>
-
-        </div>
-        <div class="modal-footer">foot</div>
+    <div class="modal-header">
+        <h3 id="ContinueShoppingHeader">Please choose your preferred path:</h3>
     </div>
 
-}
+    <div id="ContinueShoppingBody" class="modal-body">
+        @{
+            Html.BeginForm("ContinueShoppingJumper", "Cart", FormMethod.Post, new { id = "frmContinueShopping", name = "frmContinueShopping" });
+            {
+                <input type="hidden" id="relatedTag" name="relatedTag" value="" />
+
+                <div>
+                    <input type="text" role="button" class="btn" name="continueShoppingBySpeaker" id="continueShoppingBySpeaker">
+                </div>
+                <div>Related Events:<span id="holdsButtons"></span> </div>
+                <div>
+                    Search All Events: <input type="text" name="searchTerm" id="continueShoppingSearchBox" />
+                </div>
+            }
+        }
+    </div>
+    <div class="modal-footer"><input type="submit" value="Submit Search" name="btnContinueShoppingSearch" /></div>
+
+
+</div>

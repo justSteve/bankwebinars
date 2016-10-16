@@ -359,6 +359,7 @@ namespace CUWebinars.Web.Controllers
         }
 
         //
+
         public ActionResult Search()
         {
             ViewBag.PageStyleType = "two-columns-right-sidebar";
@@ -390,9 +391,16 @@ namespace CUWebinars.Web.Controllers
                         if (claimsIdentityOfAuthenticatedUser.HasClaim(
                             (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
                         {
+
                             currentAffiliate =
                                 _orderManagementService.GetAffiliateByDomain(claimsIdentityOfAuthenticatedUser.Claims
                                     .Where(c => c.Type == ClaimTypes.Affiliate).Select(c => c.Value).Single());
+                        }
+                        if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                            (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
+                        {
+
+                            model.UserIsAdmin = true;
                         }
                         var oModel = new ShowOrdersViewModel
                         {
@@ -401,6 +409,9 @@ namespace CUWebinars.Web.Controllers
                             UserIsAdmin = false,
                             Webinar = null
                         };
+                        model.UserIsAdmin = false;
+                        model.Affiliate = currentAffiliate;
+
                         //searchByidOrder
                         if (searchTerm != "" && searchTerm.All(Char.IsDigit))
                         {
@@ -432,9 +443,17 @@ namespace CUWebinars.Web.Controllers
                             }
 
                         }
+                        
+                    }
+                }
 
+                if (searchTerm != "" && searchTerm.All(Char.IsDigit)){
+                    if (searchTerm.Length < 5)
+                    {
+                        Session["TopicID"] = searchTerm;
+                        ViewBag.SearchTerm = "TopicID=" + Session["TopicID"].ToString();
 
-                        //model.Webinars = _webinarControllerOrchestrator.SearchWebinars(searchTerm).ToList();
+                        var webinars = _webinarManagementService.GetByTopic(Convert.ToInt32(searchTerm)).OrderByDescending(d => d.Date);
                     }
                 }
                 return View("search2", model);

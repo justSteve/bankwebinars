@@ -23,7 +23,7 @@
     <table style="width: 100%; font-family: sans-serif; border-bottom: 1px solid black">
         <tr>
             <td>
-                <h4>@myRow.Webinar.Title</h4>
+                <h4 style="margin-top: 0px;">@myRow.Webinar.Title</h4>
                 <i>Order ID:</i> <b>@globalConfig.TenantPrefix@myRow.idOrder</b><br />
                 <i>Date Ordered:</i> <b>@myRow.Order.OrderDate.ToShortDateString()</b><br />
                 <i>Registration:</i> <b>@myRow.RegistrationType.OptionLabel.Replace(" Only", "")</b><br />
@@ -68,12 +68,6 @@
                 <i>Total Cost:</i> <b>@myRow.Order.Total.ToString(CurrencyFormatToken).Replace(".00", "")</b>
             </td>
         </tr>
- 
-        @if (myRow.Order.Affiliate.idUserAff == 62)
-        {
-            <tr><td><b>Note:</b> This order originated from Center For Financial Training<br /><br /></td></tr>
-        }
-
     </table>
     <br />
     <br />

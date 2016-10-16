@@ -10,5 +10,6 @@ namespace CUWebinars.Web.Models
         public string BannerText { get; set; }
         public string HeaderText { get; set; }
         public string TenantLogo { get; set; }
+        public string TenantURL { get; set; }
     }
 }

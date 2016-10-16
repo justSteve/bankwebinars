@@ -1369,19 +1369,19 @@ namespace CUWebinars.Business.Core
         //    }
         //}
 
-        public object CheckIfEmailAlreadyRegisteredForWebinar(string orderEmail, int webinarId)
+        public int CheckIfEmailAlreadyRegisteredForWebinar(string orderEmail, int webinarId)
         {
             var result = "";
             using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
             {
                 sqlConnection.Open();
-                using (var synchLegacyUser
+                using (var checkIfOrderExists
                     = new SqlCommand("CheckIfEmailAlreadyRegisteredForWebinar", sqlConnection))
                 {
                     try
                     {
-                        synchLegacyUser.Connection = sqlConnection;
-                        synchLegacyUser.CommandType = CommandType.StoredProcedure;
+                        checkIfOrderExists.Connection = sqlConnection;
+                        checkIfOrderExists.CommandType = CommandType.StoredProcedure;
 
                         var newEmailParm = new SqlParameter
                         {
@@ -1389,7 +1389,7 @@ namespace CUWebinars.Business.Core
                             ParameterName = "@email",
                             Value = orderEmail
                         };
-                        synchLegacyUser.Parameters.Add(newEmailParm);
+                        checkIfOrderExists.Parameters.Add(newEmailParm);
 
                         var idWebinarParm = new SqlParameter
                         {
@@ -1397,10 +1397,10 @@ namespace CUWebinars.Business.Core
                             ParameterName = "@idWebinar",
                             Value = webinarId
                         };
-                        synchLegacyUser.Parameters.Add(idWebinarParm);
+                        checkIfOrderExists.Parameters.Add(idWebinarParm);
 
 
-                        result = synchLegacyUser.ExecuteScalar().ToString();
+                        result =  checkIfOrderExists.ExecuteScalar().ToString();
                     }
                     catch (Exception ex)
                     {
@@ -1420,7 +1420,7 @@ namespace CUWebinars.Business.Core
                         throw;
                     }
                 }
-                return result;
+                return Convert.ToInt32(result);
             }
         }
 

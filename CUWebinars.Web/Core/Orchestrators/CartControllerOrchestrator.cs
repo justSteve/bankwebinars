@@ -323,16 +323,14 @@ namespace CUWebinars.Web.Core.Orchestrators
         public ContinueShoppingModel BuildContinueShoppingModel(int? idWebinar)
         {
             Webinar webinar = LoadWebinar(idWebinar.Value);
-
-            string[] titleWords = webinar.Title.Split();
-
-            string presenterFullName = webinar.Presenter.WebUser.FullName;
+            
             ContinueShoppingModel model = new ContinueShoppingModel
             {
-
-                    SelectedRelated = _webinarManagementService.GetRelated(idWebinar),
-                    SelectedPresenter = _webinarManagementService.GetWebinarByPresenterFullName(presenterFullName),
-                    SelectedTopics = _webinarManagementService.GetTopicsByWebinar(idWebinar)
+                idWebinar =  idWebinar.Value,
+                //SearchTerm = 
+                SelectedRelated = new List<Webinar>(),      // _webinarManagementService.GetRelated(idWebinar),
+                SelectedPresenter = webinar.Presenter.WebUser.FullName,
+                SelectedTopics = webinar.WebinarTopicXrefs
             };
             return model;
 
@@ -347,7 +345,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (ReferenceEquals(userDiscount, null))
                 return null;
             _universalMapper.Map(userDiscount, discountModel);
-
             discountModel.DateValidFrom = userDiscount.DateValidFrom;
             discountModel.DateValidTo = userDiscount.DateValidTo;
             discountModel.RenewalTerm = userDiscount.RenewalTerm;
@@ -974,7 +971,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (userCreatedInCart.HasValue)
             {
                 _orderManagementService.FireOrderSubmittedEvent(order, userCreatedInCart.Value, url: Request.Url);
-                
+
             }
             else
             {
@@ -1098,6 +1095,11 @@ namespace CUWebinars.Web.Core.Orchestrators
         public Affiliate GetAffiliateById(int affiliateId)
         {
             return _orderManagementService.GetAffiliateById(affiliateId);
+        }
+
+        public int CheckIfEmailAlreadyRegisteredForWebinar(int idWebinar, string email)
+        {
+            return _orderManagementService.CheckIfEmailAlreadyRegisteredForWebinar(idWebinar, email);
         }
 
 
