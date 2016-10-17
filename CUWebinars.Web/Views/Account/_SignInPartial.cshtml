@@ -41,11 +41,6 @@
         <div style="margin-top: 25px;">
             <input id="registerLinkButton" type="button" class="btn-small btn btn-link" onclick="javascript: stateManager.registerView(); return false;" value="Create New Account?" />
             <span style="margin-left: 25px;"><input id="forgotPasswordLinkButton" type="button" class="btn-small btn btn-link" onclick="javascript: stateManager.passResetView(); return false;" value="Reset Password" /></span>
-            @if (globalConfig.Tenant == "BankWebinars")
-            {
-
-                <div><b>Note: </b>We've updated our site with enhanced security! Accounts<br /> created prior to 10/18/2015 require a password reset (button above). </div>
-            }
         </div>
     </fieldset>
 }

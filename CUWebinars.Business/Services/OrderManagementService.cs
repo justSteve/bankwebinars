@@ -1466,7 +1466,7 @@ namespace CUWebinars.Business.Services
                                               ") on InvoiceID " + orgInvoiceDetails.First()["InvoiceId"] +
                                               " but changed to " +
                                               row.RegistrationType.OptionLabelShort + " (" +
-                                              row.RowPrice.ToString("C").Replace(".00", "") + "). ");
+                                              row.RowPrice.ToString("C").Replace(".00", "") + ") on " + TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat) + ". ");
 
                                     decimal adustmentAmount;
                                     var adjustmentDirection = "Royalty is increased";
@@ -1549,7 +1549,7 @@ namespace CUWebinars.Business.Services
                                               ") on InvoiceID " + orgInvoiceDetails.First()["InvoiceId"] +
                                               " but changed to " +
                                               row.RegistrationType.OptionLabelShort + " (" +
-                                              row.RowPrice.ToString("C").Replace(".00", "") + "). ");
+                                              row.RowPrice.ToString("C").Replace(".00", "") + ") on " + TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat) + ". ");
 
 
                                     decimal adustmentAmount;

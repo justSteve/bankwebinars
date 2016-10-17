@@ -1463,6 +1463,7 @@ namespace CUWebinars.Web.Controllers
             sbHeaderSummary.Append("This confirmation includes summaries for the following orders:" + Environment.NewLine);
             foreach (RegistrationSummaryViewModel registrationSummaryViewModel in model.RegistrationSummaryViewModels)
             {
+                _logger.Info("Multi-event checkout: " + registrationSummaryViewModel.OrderRow.idOrder);
                 // update the rows to submitted status
                 _cartControllerOrchestrator.SetOrderStatus(registrationSummaryViewModel.OrderRow.idOrder, currentUserEmail, OrderStatus.Submitted); // validates that the user owns this orderid
 
