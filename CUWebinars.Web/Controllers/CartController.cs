@@ -466,11 +466,14 @@ namespace CUWebinars.Web.Controllers
         public JsonResult IniMonerisModal(int idOrder)
         {
             //ensures that the price passed to moneris reflects order price with discount applied.
-            var updatedTotal = _cartControllerOrchestrator.GetOrderById(idOrder).Total;
+            var order = _cartControllerOrchestrator.GetOrderById(idOrder);
+
+          var newPrice = _cartControllerOrchestrator.UpdateOrderPricing(order);
+
             return Json(new
             {
                 success = "success",
-                total = updatedTotal
+                total = newPrice.TotalOrderPrice
             }, JsonRequestBehavior.AllowGet);
         }
 

@@ -13,11 +13,8 @@ using System.Reflection;
 using System.Security.Claims;
 using System.ServiceModel.Syndication;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.Xml;
 using AutoMapper;
 using BrockAllen.MembershipReboot;
@@ -37,14 +34,11 @@ using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Models;
-using CUWebinars.Web.Models.DataTablesModels;
-
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Elmah;
 using GemBox.Document;
 using GemBox.Document.MailMerging;
-using GemBox.Document.Tables;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -56,17 +50,9 @@ using ClaimTypes = System.Security.Claims.ClaimTypes;
 using ClaimTypes1 = CUWebinars.Business.Constants.ClaimTypes;
 using DateTimeHelper = CUWebinars.Web.Helpers.DateTimeHelper;
 using Formatting = Newtonsoft.Json.Formatting;
-
-// would be needed if we add PromoGenerateForAffiliate action
-//using Newtonsoft.Json.Converters;
-//using System.Dynamic;
-
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
-using Calendar = System.Web.UI.WebControls.Calendar;
-using Table = GemBox.Document.Tables.Table;
-
 namespace CUWebinars.Web.Controllers.Admin
 {
 

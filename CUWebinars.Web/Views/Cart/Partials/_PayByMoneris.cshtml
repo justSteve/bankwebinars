@@ -6,36 +6,6 @@
 
 
 }
-<script type="text/javascript" language="javascript">
-    $(function() {
-        var idOrder = @Model.idOrder;
-        var updatedTotal = @Model.Total;
-        $('#PayByCCModal').on('show', function () {
-
-            $.ajax({
-
-                datatype: "text/plain",
-                type: "GET",
-                url: '/cart/IniMonerisModal?idOrder='+idOrder,
-                cache: false,
-                success: function (data) {
-
-                    //moneris requires that cents are included:
-
-                    var amount2Charge = data.total;
-                    if (amount2Charge.indexOf(".") == -1) {
-                        amount2Charge = amount2Charge + ".00";
-                    }
-
-                    $("input[name='amount']").val( amount2Charge);
-                    $("input[name='li_price1']").val( amount2Charge);
-                }
-            });
-        });
-        //
-    });
-
-</script>
 @{
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     var TaxAmount = Convert.ToDecimal(ViewBag.TaxAmount);
@@ -81,71 +51,116 @@
             regTypeDesc += " Includes " + myRow.AdditionalLocation.Count + " Addition Locations.";
         }
     }
+
+    <script type="text/javascript" language="javascript">
+        function SubmitCCForm () {
+            alert("SubmitCCForm");
+
+            $("#PayByCCForm").submit();
+        }
+
+        $(function() {
+            var idOrder = @Model.idOrder;
+            var updatedTotal = @Model.Total;
+
+            $('#PayByCCModal').on('show', function () {
+
+                $.ajax({
+
+                    datatype: "text/plain",
+                    type: "GET",
+                    url: '/cart/IniMonerisModal?idOrder='+idOrder,
+                    cache: false,
+                    success: function (data) {
+
+                        //moneris requires that cents are included:
+
+                        amount2Charge = data.total;
+
+                        if (amount2Charge.toString().indexOf(".") == -1) {
+                            amount2Charge = amount2Charge + ".00";
+                        }
+
+                        $("#PayByCCForm input[name='amount']").val( amount2Charge);
+                        $("input[name='li_price1']").val( amount2Charge);
+
+                        $("#PayByCCForm input[name='hpp_id']").val("@globalConfig.TenantMonerisHpp_Id");
+                        $("#PayByCCForm input[name='hpp_key']").val("@globalConfig.TenantMonerisHpp_Key");
+                        @*$("#PayByCCForm input[name='amount']").val("9.00">*@
+
+                        $("#PayByCCForm input[name='li_id1']").val("@order.idOrder");
+                        $("#PayByCCForm input[name='li_description1']").val("@title - @regTypeDesc");
+                        $("#PayByCCForm input[name='li_quantity1']").val("1");
+                        $("#PayByCCForm input[name='li_price1']").val("@RowPrice");
+                        $("#PayByCCForm input[name='li_taxes']").val("@Math.Round(TaxAmount,2)");
+                        $("#PayByCCForm input[name='li_taxamount']").val("@Math.Round(TaxAmount, 2)");
+                        $("#PayByCCForm input[name='li_invoice']").val("@globalConfig.TenantPrefix@order.idOrder");
+                        $("#PayByCCForm input[name='cust_id']").val("@order.BillingEmail");
+                        $("#PayByCCForm input[name='order_no']").val("@globalConfig.TenantPrefix@order.idOrder");
+                        $("#PayByCCForm input[name='client_email']").val("@order.BillingEmail");
+                        $("#PayByCCForm input[name='note']").val("@note");
+
+                        $("#PayByCCForm input[name='od_bill_firstname']").val("@order.FirstName");
+                        $("#PayByCCForm input[name='od_bill_lastname']").val("@order.LastName");
+                        $("#PayByCCForm input[name='od_bill_company']").val("@order.Institution");
+                        $("#PayByCCForm input[name='od_bill_address']").val("@order.BillingAddress");
+                        $("#PayByCCForm input[name='od_bill_city']").val("@order.BillingCity");
+                        $("#PayByCCForm input[name='od_bill_state']").val("@order.BillingState");
+                        $("#PayByCCForm input[name='od_bill_zipcode']").val("@order.BillingZip");
+
+                        $("#PayByCCForm input[name='od_bill_phone']").val("@order.BillingPhone");
+
+                        $("#PayByCCForm input[name='od_ship_firstname']").val("@order.ShippingFirstName");
+                        $("#PayByCCForm input[name='od_ship_lastname']").val("@order.ShippingLastName");
+                        $("#PayByCCForm input[name='od_ship_company']").val("@order.Institution");
+                        $("#PayByCCForm input[name='od_ship_address']").val("@order.ShippingAddress");
+                        $("#PayByCCForm input[name='od_ship_city']").val("@order.ShippingCity");
+                        $("#PayByCCForm input[name='od_ship_state']").val("@order.ShippingState");
+                        $("#PayByCCForm input[name='od_ship_zipcode']").val("@order.ShippingZip");
+
+                        $("#PayByCCForm input[name='od_ship_phone']").val("@order.ShippingPhone");
+
+
+                        $("#btnSubmitCCForm").click(function() {
+                            SubmitCCForm();
+                        });
+                    }
+                });
+            });
+            //
+        });
+
+    </script>
 }
 
 <div id="PayByCCModal" class="modal hide fade">
-    <form method="POST" action="https://esplus.moneris.com/DPHPP/index.php">
 
-        <input type="hidden" name="id" />
-        <input type="hidden" id="Step2_BillMeFormReferred" name="referred" value="" />
-        <div class="modal-header">
-            <h3 id="confirmCaption"></h3>
-        </div>
-        <div id="orderDetails" class="modal-body">
-            <div>
-                <input type="hidden" name="hpp_id" value="@globalConfig.TenantMonerisHpp_Id">
-                <input type="hidden" name="hpp_key" value="@globalConfig.TenantMonerisHpp_Key">
-                <input type="hidden" name="amount" value="@Math.Round(order.Total, 2)">
-                @*<input type="hidden" name="amount" value="9.00">*@
+    <input type="hidden" name="id" />
+    <input type="hidden" id="Step2_BillMeFormReferred" name="referred" value="" />
+    <div class="modal-header">
+        <h3 id="confirmCaption"></h3>
+    </div>
+    <div id="PayByCCModalOrderDetails" class="modal-body">
+        <div>
 
-                <input type="hidden" name="li_id1" value="@order.idOrder">
-                <input type="hidden" name="li_description1" value="@title - @regTypeDesc">
-                <input type="hidden" name="li_quantity1" value="1">
-                <input type="hidden" name="li_price1" value="@RowPrice">
-                <input type="hidden" name="li_taxes" value="@Math.Round(TaxAmount,2)">
-                <input type="hidden" name="li_taxamount" value="@Math.Round(TaxAmount, 2)">
-                <input type="hidden" name="li_invoice" value="@globalConfig.TenantPrefix@order.idOrder">
-                <input type="hidden" name="cust_id" value="@order.BillingEmail">
-                <input type="hidden" name="order_no" value="@globalConfig.TenantPrefix@order.idOrder">
-                <input type="hidden" name="client_email" value="@order.BillingEmail">
-                <input type="hidden" name="note" value="@note">
-
-                <input type="hidden" name="od_bill_firstname" value="@order.FirstName">
-                <input type="hidden" name="od_bill_lastname" value="@order.LastName">
-                <input type="hidden" name="od_bill_company" value="@order.Institution">
-                <input type="hidden" name="od_bill_address" value="@order.BillingAddress">
-                <input type="hidden" name="od_bill_city" value="@order.BillingCity">
-                <input type="hidden" name="od_bill_state" value="@order.BillingState">
-                <input type="hidden" name="od_bill_zipcode" value="@order.BillingZip">
-
-                <input type="hidden" name="od_bill_phone" value="@order.BillingPhone">
-
-                <input type="hidden" name="od_ship_firstname" value="@order.ShippingFirstName">
-                <input type="hidden" name="od_ship_lastname" value="@order.ShippingLastName">
-                <input type="hidden" name="od_ship_company" value="@order.Institution">
-                <input type="hidden" name="od_ship_address" value="@order.ShippingAddress">
-                <input type="hidden" name="od_ship_city" value="@order.ShippingCity">
-                <input type="hidden" name="od_ship_state" value="@order.ShippingState">
-                <input type="hidden" name="od_ship_zipcode" value="@order.ShippingZip">
-
-                <input type="hidden" name="od_ship_phone" value="@order.ShippingPhone">
-
-
-                <div class="legendImitator">
-                    Credit Card Processing Redirect
-                </div>
-
-                <div style="margin-bottom:10px;">
-                    We will now redirect your browser to our credit card processor - https://esplusqa.moneris.com - for entry of credit card information.
-                </div>
-
-
-                <div class="pull-right">
-                    <input class="btn btn-success" type="submit" value="Continue" />
-                    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-                </div>
+            <div class="legendImitator">
+                Credit Card Processing Redirect
             </div>
 
+            <div style="margin-bottom:10px;">
+                We will now redirect your browser to our credit card processor - https://esplusqa.moneris.com - for entry of credit card information.
+                @*Direct credit card processing is temporarily offline. We apologize for the inconvenience. Please choose the 'Bill Me' option or call us at 800-831-0678 to post immediate payment with our customer service staff.*@
+            </div>
+
+
+            <div class="pull-right">
+
+
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                <button class="btn btn-success" name="btnSubmitCCForm" id="btnSubmitCCForm">Submit</button>
+            </div>
         </div>
-    </form>
+
+
+    </div>
 </div>
