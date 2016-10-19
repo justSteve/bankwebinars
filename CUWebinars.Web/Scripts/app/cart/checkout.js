@@ -166,7 +166,7 @@ function ConfirmRegistrationBillMeMulti($button) {
 
     $.ajax({
         async: true,
-        url: "/cart/submitorderbillmejson",
+        url: "/cart/CheckoutConfirmOrderBillMeJson",
         dataType: "json",
         type: "POST",
         success: function(data) {
@@ -180,7 +180,7 @@ function ConfirmRegistrationBillMeMulti($button) {
 
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
-            console.log("/account/submitorderbillmejson: " + textStatus + ", " + errorThrown);
+            console.log("/cart/CheckoutConfirmOrderBillMeJson: " + textStatus + ", " + errorThrown);
         },
         beforeSend: function () {
             $button.prop("disabled", true);

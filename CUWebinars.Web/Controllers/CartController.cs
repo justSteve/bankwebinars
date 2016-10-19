@@ -1446,7 +1446,7 @@ namespace CUWebinars.Web.Controllers
             return Json(new { Result = WebUiConstants.Success, discountCaptionMultiMsg = discountCaptionMultiMsg, grandTotalCaptionMultiMsg = grandTotalCaptionMultiMsg });
         }
 
-        public JsonResult SubmitOrderBillMeJson()
+        public JsonResult CheckoutConfirmOrderBillMeJson()
         {
             string currentUserEmail = User.Identity.Name;
 
@@ -1462,8 +1462,13 @@ namespace CUWebinars.Web.Controllers
             foreach (RegistrationSummaryViewModel registrationSummaryViewModel in model.RegistrationSummaryViewModels)
             {
                 _logger.Info("Multi-event checkout: " + registrationSummaryViewModel.OrderRow.idOrder);
+                
+                
                 // update the rows to submitted status
                 _cartControllerOrchestrator.SetOrderStatus(registrationSummaryViewModel.OrderRow.idOrder, currentUserEmail, OrderStatus.Submitted); // validates that the user owns this orderid
+
+                _cartControllerOrchestrator.AddClaimForPostEventMaterials(registrationSummaryViewModel.OrderRow.Order.BillingEmail, registrationSummaryViewModel.OrderRow);
+
 
                 // generate order summary email verbiage via RenderViewToString
                 sbOrdersSummary.Append(ViewHelpers.RenderViewToString(ControllerContext, "~/Views/Shared/Partials/_OrderSumUser2.cshtml", registrationSummaryViewModel, true));
