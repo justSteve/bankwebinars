@@ -166,17 +166,18 @@ namespace CUWebinars.Web.Controllers
         {
             if (id.HasValue)
             {
+
+                if (_cartControllerOrchestrator.UserHasMultipleEvents(id))
+                {
+                    return Json(new
+                    {
+                        Result = "UserHasMulti"
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 _logger.Info("Confirming Order for OrderRow with Id {0}", id.Value);
                 var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
                 try
                 {
-                    //if (model.Order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).Discount != null)
-                    //{
-                    //    _cartControllerOrchestrator.ApplyDiscountCode(
-                    //        model.Order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active)
-                    //            .Discount.DiscountCode,
-                    //        model.Order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active));
-                    //}
                     model.Order.OrderStatus = OrderStatus.Submitted;
 
                     _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email, model.Order.OrderRows.FirstOrDefault());
@@ -244,6 +245,7 @@ namespace CUWebinars.Web.Controllers
 
             return this.ModelStateJson(ModelState);
         }
+
 
 
         [HttpPost]
@@ -468,7 +470,7 @@ namespace CUWebinars.Web.Controllers
             //ensures that the price passed to moneris reflects order price with discount applied.
             var order = _cartControllerOrchestrator.GetOrderById(idOrder);
 
-          var newPrice = _cartControllerOrchestrator.UpdateOrderPricing(order);
+            var newPrice = _cartControllerOrchestrator.UpdateOrderPricing(order);
 
             return Json(new
             {
@@ -1188,7 +1190,7 @@ namespace CUWebinars.Web.Controllers
 
             foreach (var _topic in model.SelectedTopics)
             {
-                topicButtons += "<button class='btn btn-mini topic_'  id='topic_" + _topic.idTopic + "' name='topic_" + _topic.idTopic + "'  value='" + _topic.Topic.topicDesc + "'>" + _topic.Topic.topicDesc + "</button><br>";
+                topicButtons += "<button class='btn btn-mini topic_'  id='topic_" + _topic.idTopic + "' name='topic_" + _topic.idTopic + "'  value='" + _topic.Topic.topicDesc + "'>" + _topic.Topic.topicDesc + "</button>&nbsp;&nbsp;";
             }
 
             topicButtons.TrimEnd(new Char[] { '<', 'b', 'r', '>' });
@@ -1236,14 +1238,7 @@ namespace CUWebinars.Web.Controllers
             if (User == null || !User.Identity.IsAuthenticated)
                 return RedirectToAction("Login", "Account", new { ReturnURL = "/cart/checkout" });
 
-
-            // _logger.Info("CancelPauseOrder called email: " + email + " idOrder: " + idOrder);
-
-            // get list of order Ids for signed in user
-            // use BuildRegistrationSummaryMultiViewModel method to populate our list
-            // feed to view
-            //   feeds to partial
-
+            
             List<Order> orders = _cartControllerOrchestrator.GetOrdersByUser(User.Identity.Name)
                 .Where(o => o.OrderStatus == OrderStatus.InProcess).ToList();
 
@@ -1493,7 +1488,7 @@ namespace CUWebinars.Web.Controllers
             _cartControllerOrchestrator.FireOrderSubmittedMultiNotification(currentUserEmail, subject, htmlEmailBody);
 
             // send back enough to make the user comfortable, adjust the screen (remove buttons, say thanks, etc.)
-            return Json(new { Result = WebUiConstants.Success, msg = "Order submitted - thank you!" });
+            return Json(new { Result = WebUiConstants.Success, msg = "Order successfully submitted - thank you! Please visit <b>My Webinars</b> (link above) for detailed information of all your events." });
         }
 
         [HttpPost]

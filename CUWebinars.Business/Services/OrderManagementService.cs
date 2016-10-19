@@ -330,7 +330,7 @@ namespace CUWebinars.Business.Services
             FireAdhocNotificationHandler(adhocNotificationSubmittedViewModel);
         }
 
-         public Order FindExpressCheckoutOrderByOrderId(int q11Orderid)
+        public Order FindExpressCheckoutOrderByOrderId(int q11Orderid)
         {
             return _orderRepository.GetOrderById(q11Orderid);
         }
@@ -2440,7 +2440,13 @@ namespace CUWebinars.Business.Services
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
-            return dataOperations.CheckIfEmailAlreadyRegisteredForWebinar(email,  idWebinar);
+            return dataOperations.CheckIfEmailAlreadyRegisteredForWebinar(email, idWebinar);
+        }
+
+        public bool UserHasMultipleEvents(int idUser)
+        {
+            var orders = GetOrdersByUserId(idUser).Where(o => o.OrderStatus == OrderStatus.InProcess);
+            return orders.Count() > 1;
         }
 
 

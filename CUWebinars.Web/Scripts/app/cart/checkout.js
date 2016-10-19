@@ -167,21 +167,16 @@ function ConfirmRegistrationBillMeMulti($button) {
     $.ajax({
         async: true,
         url: "/cart/submitorderbillmejson",
-        data: (
-        {
-            //idOrder: orderId,
-            //idOrderRow: orderRowId
-        }),
         dataType: "json",
         type: "POST",
         success: function(data) {
-            console.log(data);
-
+            
             // hide all of the edit and remove buttons, do this in beforeSend?
             $(".edit-order, .remove-order").fadeOut();
 
             // do something w/ the UI for this order...
-            $("#checkout-action-container").html(data.msg);
+            $("#confirmHeader").html("<h3>"+ data.msg + "</h3>");
+            $("#FeedbackContainer").show();
 
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {

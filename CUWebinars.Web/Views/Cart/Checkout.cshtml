@@ -8,23 +8,23 @@
     <div id="LogInContainer" class="container">
         <div id="reset">
 
-            <div class="legendImitator">
-                <b>Shopping Cart (Pending Orders)</b>
-            </div>
-            
+
             @{
+                <div  id="confirmHeader">
+                    <div class="legendImitator">
+                        <b>Pending Orders</b>
+                    </div>
 
-                
-                if (!string.IsNullOrWhiteSpace(Model.DiscountCaptionMulti))
-                {
+                    @if (!string.IsNullOrWhiteSpace(Model.DiscountCaptionMulti))
+                    {
                     <div id="discountCaptionMulti">@Model.DiscountCaptionMulti</div>
-                }
+                    }
 
-                if (!string.IsNullOrWhiteSpace(Model.GrandTotalCaptionMulti))
-                {
+                    @if (!string.IsNullOrWhiteSpace(Model.GrandTotalCaptionMulti))
+                    {
                     <p id="grandTotalCaptionMulti">@Model.GrandTotalCaptionMulti</p>
-                }
-                
+                    }
+                </div>
                 foreach (RegistrationSummaryViewModel registrationSummaryViewModel in Model.RegistrationSummaryViewModels)
                 {
                     <div id="OrderSummaryContainer_@registrationSummaryViewModel.OrderRow.idOrder">

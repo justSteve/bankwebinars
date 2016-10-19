@@ -91,7 +91,7 @@
                         $("#PayByCCForm input[name='li_id1']").val("@order.idOrder");
                         $("#PayByCCForm input[name='li_description1']").val("@title - @regTypeDesc");
                         $("#PayByCCForm input[name='li_quantity1']").val("1");
-                        $("#PayByCCForm input[name='li_price1']").val("@RowPrice");
+                        
                         $("#PayByCCForm input[name='li_taxes']").val("@Math.Round(TaxAmount,2)");
                         $("#PayByCCForm input[name='li_taxamount']").val("@Math.Round(TaxAmount, 2)");
                         $("#PayByCCForm input[name='li_invoice']").val("@globalConfig.TenantPrefix@order.idOrder");

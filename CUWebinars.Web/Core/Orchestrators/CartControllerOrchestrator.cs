@@ -1102,6 +1102,17 @@ namespace CUWebinars.Web.Core.Orchestrators
             return _orderManagementService.CheckIfEmailAlreadyRegisteredForWebinar(idWebinar, email);
         }
 
+        public bool UserHasMultipleEvents(int? id)
+        {
+            var orderRow = GetOrderRowLoaded(id.Value);
+            var order = orderRow.Order;
+            if (ReferenceEquals(order, null))
+            {
+                return false;
+            }
+            return _orderManagementService.UserHasMultipleEvents(order.idUser);
+        }
+
 
         public List<Order> GetOrdersByUser(string loggedInEmail)
         {

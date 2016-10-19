@@ -70,5 +70,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         Affiliate GetAffiliateById(int affiliateId);
 
         int CheckIfEmailAlreadyRegisteredForWebinar(int idWebinar, string email);
+        bool UserHasMultipleEvents(int? id);
     }
 }

@@ -57,14 +57,12 @@ $(function () {
 
         cartStateManager.getConfirmOrderForm().on('submit', function (e) {
             e.preventDefault();
-
             var self = $(this);
             self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
 
             var data = $(this).serialize();
-
             var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
-
+            var utilities = new Common.Utilities();
 
             $.ajax({
                 type: 'POST',
@@ -80,21 +78,23 @@ $(function () {
                 }
             }).done(function (data) {
                 if (data.Result === 'Success') {
-                    
+
                     $('#orderDetails').empty();
                     $('#orderDetails').append(data.Msg);
 
                     $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
 
-                    confirmRegistrationBillMe.after('<span>&nbsp;<span class="label label-success">&nbsp;<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;Order Confirmed!</span></span>');
+                    confirmRegistrationBillMe
+                        .after('<span>&nbsp;<span class="label label-success">&nbsp;<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;Order Confirmed!</span></span>');
 
                     okToLeave = true;
-                    var utilities = new Common.Utilities();
                     utilities.goToUrl('/Account/OrderComplete/' + data.OrderRowID);
 
+                } else if (data.Result === 'UserHasMulti') {
+                    utilities.goToUrl('/Cart/Checkout');
                 } else {
                     //console.error('Failed to post order');
-                    
+
                     confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data #554. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
                 }
 
@@ -106,7 +106,7 @@ $(function () {
                 confirmRegistrationBillMe.removeAttr('disabled');
                 $('#signUpSpinner').remove();
                 confirmRegistrationBillMe.after('<span class="field-validation-error">Transport error #555. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
-                
+
             });
 
         });
@@ -134,7 +134,7 @@ $(function () {
 
                     if (status !== 'error') {
                         if (xhr.responseJSON['success']) {
-                            
+
                             okToLeave = true;
 
                             var utilities = new Common.Utilities();
@@ -279,7 +279,7 @@ $(function () {
                                 registerDuringCheckout.initialize(cartStateManager.getOrderId(), cartStateManager.getWebinarId(), cartStateManager.getOrderRowId(), addressOptions, checkoutConfirm.initialize);
                             } else {
                                 $('#labelEmail').html('<span class="label label-important">Server error #21. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance!</span>');
-                                
+
                             }
                             loadingSpinner.remove();
                         });
@@ -289,12 +289,12 @@ $(function () {
                         $('#labelEmail').html('<span class="label label-important">&nbsp;There were some problems with the form. Please refer to the items in red.</span>');
                         formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
                         loadingSpinner.remove();
-                    
+
                     }
                 } else {
                     $('#labelEmail').html('<span class="label label-important">&nbsp;Server error. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance!</span>');
                     loadingSpinner.remove();
-                    
+
                 }
             }, constants.JsonDataType);
         } else {
@@ -307,7 +307,7 @@ $(function () {
                         cartStateManager.setOrderId(xhr.responseJSON['orderId']);
                         cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
 
-                        
+
                         $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderId(), function (response, status, xhr) {
 
                             if (status === 'error') {
@@ -315,7 +315,7 @@ $(function () {
                                 $('#loadingSpinner').remove();
                                 $('#confirmationTab a').tab('show');
 
-                                
+
                             } else {
 
                                 $('#confirmationTab a').tab('show');
@@ -458,7 +458,7 @@ function setUpEditButtons() {
             Institution: $('#AdjustUserDetailsPanel_Institution').val()
         };
 
-        
+
         $.ajax({
             type: 'POST',
             contentType: constants.JsonContentType,
@@ -475,7 +475,7 @@ function setUpEditButtons() {
 
             if (data.Result === 'Success') {
                 self.after('<span id="editUserResult">&nbsp;<span class="label label-success"><span> Details updated successfully! </span></span></span>').hide().fadeIn(500);
-                
+
             }
 
             $('#userDetailsSpinner').remove();
@@ -516,7 +516,7 @@ function setUpEditButtons() {
 }
 
 function populateAdditionalLocationsOn3rdTab() {
-    
+
     // There is re-use involved with additional locations as they can be manipulated on either the 1st or 3rd tab. 
     // Hence, the locationsSpanPrefix may already exist in some scenarios.
     if (!locationsSpanPrefix) {
@@ -611,7 +611,7 @@ var applyAdditionalLocations = function (e) {
         }
     }).done(function (data) {
         if (data.Result === 'Success') {
-            
+
             var infoLabel = $('#addLocsText');
 
             var priceLabel = $('#totalAdLocsPrice');
@@ -647,7 +647,7 @@ var applyAdditionalLocations = function (e) {
             $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
             $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
             $('#additionalLocationsCaption').addClass("hidden");
-            
+
         } else {
             alert("failed to add");
             var a = 'holder';
