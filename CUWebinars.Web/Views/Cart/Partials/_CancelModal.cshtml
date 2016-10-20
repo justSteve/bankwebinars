@@ -5,14 +5,11 @@
 <script language="javascript" type="text/javascript">
     function openQWindow() {
         window.location.href = '/cart/CancelPauseOrder?idOrder=@Model.idOrder&email=@Model.BillingEmail' ;
-        //window.open('https://form.jotform.com/60898267714974?idOrder=' + cartStateManager.getOrderRowId(), 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');
     }
 </script>
 
 <div id="CancelModal" class="modal hide fade">
-    @using (Html.BeginForm("CancelOrder", "Cart", null, FormMethod.Post, new { id = "cancelOrder" }))
-    {
-        <input type="hidden" name="id" id="cancelModalOrderId" />
+
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h3 id="cancelCaption">Pause or Cancel This Order?</h3>
@@ -26,7 +23,6 @@
             <button class="btn btn-warning" id="pauseRegistration" onclick="javascript: openQWindow();">Pause This Registration </button>
             <a href="#" id="rtn" class="btn btn-inverse" data-dismiss="modal">Return To Checkout</a>&nbsp;&nbsp;
 
-            <input type="submit" id="cancelRegistration" value="Delete This Registration" class="btn btn-danger" />
+            <input type="submit" id="cancelRegistrationbtn" value="Delete This Registration" class="btn btn-danger" />
         </div>
-    }
 </div>

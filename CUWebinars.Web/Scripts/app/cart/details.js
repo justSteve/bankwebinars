@@ -53,7 +53,7 @@ $(function () {
         cartStateManager.setCancelOrderForm($('#cancelOrder'));
         cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
-        //console.log('initialize hit');
+        console.log('initialize hit');
 
         cartStateManager.getConfirmOrderForm().on('submit', function (e) {
             e.preventDefault();
@@ -111,61 +111,105 @@ $(function () {
 
         });
         var cancelOrderForm = cartStateManager.getCancelOrderForm();
-        // CANCEL REGISTRATION BUTTON CLICKED
-        cancelOrderForm.on('submit', function (e) {
+        console.log(cancelOrderForm);
 
-            //console.log('cancelOrderForm submit hit');
 
-            e.preventDefault();
-            e.stopImmediatePropagation();
+        $('#CancelModal').on('show', function (e) {
+            
+            $('#cancelModalOrderId').val(orderId);
 
-            $('#cancelModalOrderId').val(cartStateManager.getOrderId());
-            var data = $(this).serialize();
+            $('#cancelModalOrderId').val(orderId);
+            var data = cancelOrderForm.serialize();
 
-            var self = $(this);
-            // RED BUTTON - DELETE REGISTRATION
-            $('#cancelRegistration').on('click', function (e) {
+            $('#cancelRegistrationbtn').on('click', function (e) {
                 e.preventDefault();
 
                 // disable button while operation in progress
-                $('#cancelRegistration').attr('disabled', 'disabled').after('<span id="cancelSpinner"><span>&nbsp;<i class="icon icon-spinner icon-spin"></i></span></span>');
-
-                $.post(self.attr('action'), data, function (response, status, xhr) {
-
-                    if (status !== 'error') {
-                        if (xhr.responseJSON['success']) {
-
-                            okToLeave = true;
-
-                            var utilities = new Common.Utilities();
-                            //console.log('/webinar/details/' + cartStateManager.getWebinarId());
-                            $('#cancelSpinner').remove();
-                            utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
-                        } else {
-                            $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Invalid Data #88. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
-                            $('#CancelModal').modal('hide');
-                        }
+                $('#cancelRegistration').attr('disabled', 'disabled');
+                console.log(cancelOrderForm.attr('action'));
+                $.post(cancelOrderForm.attr('action'), data, function (response, status, xhr) {
+                    if (response.success) {
+                        okToLeave = true;
+                        var utilities = new Common.Utilities();
+                        utilities.goToUrl('/webinar/details/' + webinarId);
 
                     } else {
-                        $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Server Error. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
+
+                        L.clientLogger.error("Cancel Order Failure: ", { data: xhr && xhr.data });
+
+                        $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Error #216. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
                         $('#CancelModal').modal('hide');
                     }
+
+                    // enable button again upon ending operation.
+                    //$('#cancelRegistration').removeAttr('disabled');  // [dar] NO. On staging, redirect is slow and button enabled again. User could have clicked it again.
+
                 }, 'json');
 
                 // unbind event so we don't get them building up each time the user clicks the Cancel Registration button.
-                $(this).off('click');
+                this.off('click');
                 $('#rtn').off('click');
             });
-            // BLACK BUTTON - RETURN TO ORDER
-            $('#rtn').on('click', function (e) {
-                e.preventDefault();
-                $('#CancelModal').modal('hide');
-                $(this).off('click');
-                $('#cancelRegistration').off('click');
-            });
-
-            $('#CancelModal').modal('show');
         });
+
+
+        // CANCEL REGISTRATION BUTTON CLICKED
+        //cancelOrderForm.on('submit', function (e) {
+
+        //        alert("hit");
+        //    //console.log('cancelOrderForm submit hit');
+
+        //    e.preventDefault();
+        //    e.stopImmediatePropagation();
+
+        //    $('#cancelModalOrderId').val(cartStateManager.getOrderId());
+        //    var data = $(this).serialize();
+
+        //    var self = $(this);
+        //    // RED BUTTON - DELETE REGISTRATION
+        //    $('#cancelRegistration').on('click', function (e) {
+        //        e.preventDefault();
+        //        alert("hit");
+        //        // disable button while operation in progress
+        //        $('#cancelRegistration').attr('disabled', 'disabled').after('<span id="cancelSpinner"><span>&nbsp;<i class="icon icon-spinner icon-spin"></i></span></span>');
+
+        //        $.post(self.attr('action'), data, function (response, status, xhr) {
+
+        //            if (status !== 'error') {
+        //                if (xhr.responseJSON['success']) {
+
+        //                    okToLeave = true;
+
+        //                    var utilities = new Common.Utilities();
+        //                    //console.log('/webinar/details/' + cartStateManager.getWebinarId());
+        //                    $('#cancelSpinner').remove();
+        //                    utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
+        //                } else {
+        //                    $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Invalid Data #88. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
+        //                    $('#CancelModal').modal('hide');
+        //                }
+
+        //            } else {
+        //                $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Server Error. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
+        //                $('#CancelModal').modal('hide');
+        //            }
+        //        }, 'json');
+
+        //        // unbind event so we don't get them building up each time the user clicks the Cancel Registration button.
+        //        $(this).off('click');
+        //        $('#rtn').off('click');
+        //    });
+        //    // BLACK BUTTON - RETURN TO ORDER
+        //    $('#rtn').on('click', function (e) {
+        //        e.preventDefault();
+        //        alert("onHit");
+        //        $('#CancelModal').modal('hide');
+        //        $(this).off('click');
+        //        $('#cancelRegistration').off('click');
+        //    });
+
+        //    $('#CancelModal').modal('show');
+        //});
     };
 
     cartStateManager = new OrderRegistration.StateManager();
@@ -221,8 +265,10 @@ $(function () {
         // The grey CANCEL Registration button on 3rd tab       
         $('#Canceller').on('click', function (e) {
             e.preventDefault();
-            var cancelOrderForm = $('#cancelOrder');
-            cancelOrderForm.submit();
+
+            $('#CancelModal').modal('show');
+            //var cancelOrderForm = $('#cancelOrder');
+            //cancelOrderForm.submit();
         });
 
         populateAdditionalLocationsOn3rdTab();

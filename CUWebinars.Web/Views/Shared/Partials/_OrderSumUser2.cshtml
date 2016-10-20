@@ -9,10 +9,8 @@
     // _OrderSumUser2.cshtml is very much like the DisplayTemplates/OrderSumUser.cshtml file,
     //  but this version has been customized to be used primarily for Multi-Event Order Confirmation emails
 
-    // hack: This partial is a confusing redundancy when compared against
-    //  DisplayTemplates/OrderSumUser", Model
-    //  AND _OrderSumUser.cshtml
-
+    // updating this view to provide complete details (including OD link)
+    
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     var myRow = Model.OrderRow;
     NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;

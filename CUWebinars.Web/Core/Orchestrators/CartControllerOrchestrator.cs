@@ -323,10 +323,10 @@ namespace CUWebinars.Web.Core.Orchestrators
         public ContinueShoppingModel BuildContinueShoppingModel(int? idWebinar)
         {
             Webinar webinar = LoadWebinar(idWebinar.Value);
-            
+
             ContinueShoppingModel model = new ContinueShoppingModel
             {
-                idWebinar =  idWebinar.Value,
+                idWebinar = idWebinar.Value,
                 //SearchTerm = 
                 SelectedRelated = new List<Webinar>(),      // _webinarManagementService.GetRelated(idWebinar),
                 SelectedPresenter = webinar.Presenter.WebUser.FullName,
@@ -360,6 +360,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             discountModel.Status = userDiscount.Status;
             discountModel.DiscountCode = userDiscount.DiscountCode;
             discountModel.TotalCount = userDiscount.TotalCount;
+            if (discountModel.TypeOfDiscount == DiscountType.Subscription &&
+                discountModel.CreditsRemain < (decimal).25) return null;
 
             return discountModel;
         }

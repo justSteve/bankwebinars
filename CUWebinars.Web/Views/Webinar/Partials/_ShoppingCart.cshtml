@@ -186,7 +186,10 @@
         }
     }
 }
-
+@using (Html.BeginForm("CancelOrder", "Cart", null, FormMethod.Post, new { id = "cancelOrder" }))
+{
+    <input type="hidden" name="id" id="cancelModalOrderId" />
+}
 <form id="PayByCCForm" method="POST" action="https://esplus.moneris.com/DPHPP/index.php">
     <input type="hidden" name="hpp_id" />
     <input type="hidden" name="hpp_key" />
