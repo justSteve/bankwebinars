@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
+using System.Web;
 using System.Web.Mvc;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
@@ -482,52 +483,101 @@ namespace CUWebinars.Web.Controllers
 
         [AllowAnonymous]
         [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
-        public ActionResult Incoming(System.Collections.Specialized.NameValueCollection form)
+        public void Incoming()
         {
+            var incoming = HttpContext.Request.Form[0].TrimStart('[').TrimEnd(']');
 
             try
             {
                 StringBuilder sb = new StringBuilder();
-                var incoming = form[0].TrimStart('[').TrimEnd(']');
+                _logger.Info("Incoming Starts");
+                if (incoming != null)
+                {
+                    var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(incoming.ToString());
+                    _logger.Info("Incoming " + msgHtml);
+                    var parsedOrder = ParseMandrillMsg.ParseAcs("<html><body>" + msgHtml.msg.html + "</body></html>", DateTime.Now.ToString());
+                    _logger.Info("IncomingFromMandrillParsed: " + JsonConvert.SerializeObject(parsedOrder));
 
-                var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(incoming);
+                    if (
+                        _cartControllerOrchestrator.CheckIfEmailAlreadyRegisteredForWebinar(
+                            Convert.ToInt32(parsedOrder.BankWebID), parsedOrder.Email) > 0)
+                    {
+                        _logger.Info("Incoming found dupe: " + parsedOrder.BankWebID + " : " + parsedOrder.Email);
+                    }
+                    else
+                    {
+                        //var orderController = new OrderController();
+                        //var orderControllerContext = new ControllerContext(this.ControllerContext.RequestContext, OrderController);
 
-                var parsedOrder = ParseMandrillMsg.ParseAcs("<html><body>" + msgHtml.msg.html + "</body></html>", DateTime.Now.ToString());
-                _logger.Info("IncomingFromMandrillParsed: " + JsonConvert.SerializeObject(parsedOrder));
-                return RedirectToAction("Importorder4Acs", "Order", parsedOrder);
+                        //RedirectToAction("Importorder4Acs", "Order", new {ImportOrderForAcsModel = parsedOrder});
+                        var PostForm = "AdditionalLocationsString=" +
+                                       HttpUtility.UrlEncode(parsedOrder.AdditionalLocationsString ?? "");
+
+
+                        PostForm += "&AffiliateComments=" + HttpUtility.UrlEncode("ACSImporter");
+                        PostForm += "&AffiliateID=" + HttpUtility.UrlEncode("62");
+                        PostForm += "&BankWebID=" + HttpUtility.UrlEncode(parsedOrder.BankWebID);
+                        PostForm += "&BillingContact=" +
+                                    HttpUtility.UrlEncode(parsedOrder.BillingContact ?? "steve@ttstrain.com");
+                        PostForm += "&City=" + HttpUtility.UrlEncode(parsedOrder.City ?? "-ct");
+                        PostForm += "&Company=" + HttpUtility.UrlEncode(parsedOrder.Company ?? "_co");
+                        PostForm += "&CompanyBillingInformation=" +
+                                    HttpUtility.UrlEncode(parsedOrder.CompanyBillingInformation ?? "cbi");
+                        PostForm += "&Country=" + HttpUtility.UrlEncode(parsedOrder.Country ?? "");
+                        PostForm += "&CourseDeliveryType=" + HttpUtility.UrlEncode(parsedOrder.CourseDeliveryType ?? "");
+                        PostForm += "&CourseNumber=" + HttpUtility.UrlEncode(parsedOrder.CourseNumber ?? "");
+                        PostForm += "&CoursePrice=" + HttpUtility.UrlEncode(parsedOrder.CoursePrice ?? "");
+                        PostForm += "&CreditCard=" + HttpUtility.UrlEncode(parsedOrder.CreditCard ?? "");
+                        PostForm += "&DateSubmittedToACS=" + HttpUtility.UrlEncode(parsedOrder.DateSubmittedToACS);
+                        PostForm += "&DeliveryType=" + HttpUtility.UrlEncode(parsedOrder.DeliveryType);
+                        PostForm += "&Email=" + HttpUtility.UrlEncode(parsedOrder.Email);
+                        PostForm += "&EmailAddress=" +
+                                    HttpUtility.UrlEncode(parsedOrder.EmailAddress ?? "_emailAddress@assigned.com");
+                        PostForm += "&EmailAddressforCreditCardReceipt=" +
+                                    HttpUtility.UrlEncode(parsedOrder.EmailAddressforCreditCardReceipt ??
+                                                          "_emailAddress@forCreditCardReceipt");
+                        PostForm += "&Ext=" + HttpUtility.UrlEncode(parsedOrder.Ext ?? "");
+                        PostForm += "&FirstName=" + HttpUtility.UrlEncode(parsedOrder.FirstName);
+                        PostForm += "&LastName=" + HttpUtility.UrlEncode(parsedOrder.LastName);
+                        PostForm += "&PaymentMethod=" + HttpUtility.UrlEncode(parsedOrder.PaymentMethod ?? "");
+                        PostForm += "&Phone=" + HttpUtility.UrlEncode(parsedOrder.Phone);
+                        PostForm += "&State=" + HttpUtility.UrlEncode(parsedOrder.State ?? "");
+                        PostForm += "&State_Province_Region=" + HttpUtility.UrlEncode(parsedOrder.State_Province_Region);
+                        PostForm += "&StreetorP_O_Box=" + HttpUtility.UrlEncode(parsedOrder.StreetorP_O_Box);
+                        PostForm += "&Title=" + HttpUtility.UrlEncode(parsedOrder.Title);
+                        PostForm += "&WebinarDate=" + HttpUtility.UrlEncode(parsedOrder.WebinarDate);
+                        PostForm += "&WebinarTitle=" + HttpUtility.UrlEncode(parsedOrder.WebinarTitle);
+                        PostForm += "&ZeroValue=" + HttpUtility.UrlEncode(parsedOrder.ZeroValue);
+                        PostForm += "&Zip_PostalCode=" + HttpUtility.UrlEncode(parsedOrder.Zip_PostalCode);
+
+                        WebRequest req = WebRequest.Create("https://www.bankwebinars.com/order/importorder4ACS");
+
+                        byte[] send = Encoding.Default.GetBytes(PostForm);
+                        req.Method = "POST";
+                        req.ContentType = "application/x-www-form-urlencoded";
+                        req.ContentLength = send.Length;
+
+                        Stream sout = req.GetRequestStream();
+                        sout.Write(send, 0, send.Length);
+                        sout.Flush();
+                        sout.Close();
+
+                        WebResponse res = req.GetResponse();
+                        StreamReader sr = new StreamReader(res.GetResponseStream());
+                        string returnvalue1 = sr.ReadToEnd();
+                        var importResult = returnvalue1;
+                    }
+                }
+
             }
             catch (Exception ex)
             {
-                _logger.Warn("ex: " + ex);
-                return null;
+                _logger.Warn("Incoming: " + incoming + " exception: " + ex);
+
             }
+            //return null;
         }
 
-
-
-        [AllowAnonymous]
-        [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
-        public ActionResult Incoming1()
-        {
-            NameValueCollection form = Request.Form;
-
-            try
-            {
-                StringBuilder sb = new StringBuilder();
-                var incoming = form[0].TrimStart('[').TrimEnd(']');
-                _logger.Info("IncomingFromMandrillRaw: " + incoming);
-                var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(incoming);
-                _logger.Info("IncomingFromMandrillPreParse: " + msgHtml.msg);
-                var parsedOrder = ParseMandrillMsg.ParseAcs("<html><body>" + msgHtml.msg.html + "</body></html>", DateTime.Now.ToString());
-                _logger.Info("IncomingFromMandrillParsed: " + JsonConvert.SerializeObject(parsedOrder));
-                return RedirectToAction("Importorder4Acs", "Order", parsedOrder);
-            }
-            catch (Exception ex)
-            {
-                _logger.Warn("ex: " + ex);
-                return null;
-            }
-        }
 
 
         [HttpPost]
@@ -1120,7 +1170,10 @@ namespace CUWebinars.Web.Controllers
             JProperty monerisResponse = new JProperty(JsonPropertyKeys.MonerisResponse, JsonConvert.SerializeObject(form));
 
             order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, monerisResponse);
-
+            //TODO: Fix Json formatter for Jsonbrowser (jquery plugin)
+            // the comment being written here is valid Json but is not displayed nicely by the Json reader:
+            // original: { "MonerisResponse":"{\"FormId\":null,\"order_no\":\"BW-129285\",\"ref_num\":\"642120820012660120\",\"message\":\"APPROVED*\",\"result\":\"1\",\"auth_code\":\"062449\",\"txn_time\":\"14:06:26\",\"txn_date\":\"2016-09-23\",\"response_code\":\"001\",\"note\":\"BankWebinars thanks you! Watch your email for complete details. \"}"}
+            //  better: {"MonerisResponse":{"FormId":null,"order_no":"BW-129285","ref_num":"642120820012660120","message":"APPROVED*","result":"1","auth_code":"062449","txn_time":"14:06:26","txn_date":"2016-09-23","response_code":"001","note":"BankWebinars thanks you! Watch your email for complete details. "}}
             _cartControllerOrchestrator.UpdateOrderPricing(order);
 
             if (form.message.StartsWith("APPROVED"))
@@ -1238,7 +1291,7 @@ namespace CUWebinars.Web.Controllers
             if (User == null || !User.Identity.IsAuthenticated)
                 return RedirectToAction("Login", "Account", new { ReturnURL = "/cart/checkout" });
 
-            
+
             List<Order> orders = _cartControllerOrchestrator.GetOrdersByUser(User.Identity.Name)
                 .Where(o => o.OrderStatus == OrderStatus.InProcess).ToList();
 
@@ -1462,8 +1515,8 @@ namespace CUWebinars.Web.Controllers
             foreach (RegistrationSummaryViewModel registrationSummaryViewModel in model.RegistrationSummaryViewModels)
             {
                 _logger.Info("Multi-event checkout: " + registrationSummaryViewModel.OrderRow.idOrder);
-                
-                
+
+
                 // update the rows to submitted status
                 _cartControllerOrchestrator.SetOrderStatus(registrationSummaryViewModel.OrderRow.idOrder, currentUserEmail, OrderStatus.Submitted); // validates that the user owns this orderid
 

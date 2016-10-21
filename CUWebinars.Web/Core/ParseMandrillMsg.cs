@@ -13,7 +13,7 @@ namespace CUWebinars.Web.Core
 {
     public class ParseMandrillMsg
     {
-        private readonly ILogger _logger;
+        private static ILogger _logger;
 
 
         public
@@ -29,7 +29,7 @@ namespace CUWebinars.Web.Core
             model.DateSubmittedToACS = orderDate;
                                         
             HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-
+            
             doc.LoadHtml(_doc);
 
             if (doc.ParseErrors != null && doc.ParseErrors.Count() > 0)
@@ -55,7 +55,7 @@ namespace CUWebinars.Web.Core
                             var _values = doc.DocumentNode.SelectNodes("//tr[@bgcolor='#FFFFFF']/td[2]");
                             var _names = doc.DocumentNode.SelectNodes("//tr[@bgcolor='#EAF2FA']/td");
 
-
+                            
                             string[] values = new string[_values.Count];
                             string[] names = new string[_values.Count];
 
@@ -204,6 +204,8 @@ namespace CUWebinars.Web.Core
                         catch (Exception ex)
                         {
                             model.LoggerNotes += "ParseAcs FatalExecption: " + ex.Message;
+                            _logger.FatalException("IncomingParseACS", ex);
+                            
                         }
                         return model;
                     }
@@ -211,6 +213,7 @@ namespace CUWebinars.Web.Core
                 else
                 {
                     model.LoggerNotes += "ParseAcs Returned Null! ";
+                    _logger.Warn("Incoming | AcsModel is null");
                     return null;
                 }
             }
