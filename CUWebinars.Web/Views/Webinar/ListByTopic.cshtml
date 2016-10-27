@@ -31,35 +31,10 @@
 
     List<Webinar> webinars = Model.ToList();
 
-    //var rowsData = new List<object>();
-
-    //foreach (var entry in webinars)
-    //{
-
-    //    rowsData.Add(new List<object>
-    //    {
-    //        null,
-    //        webinar.Title,
-    //        webinar.Date.ToShortDateString(),
-    //        buildWebinarCol,
-    //        "<div class='presenterColumn'>" + webinar.Presenter.WebUser.FirstName + " " + webinar.Presenter.WebUser.LastName +
-    //        "<br><img src='" + webinar.Presenter.photoThumb +
-    //        "' class='presenterImg' /></div>"
-    //    });
-    //}
-
-    //var currentUser = UserFacade.Instance.GetCurrentUser();
-    @*<div class="btn-group pull-right" id="IncludeButtons" data-toggle="buttons-checkbox">
-            <button type="button" id="includeUpcoming" class="btn btn-primary active">Upcoming</button>
-            <button type="button" id="includeRecorded" class="btn btn-primary">Recorded</button>
-        </div>*@
-
-
-    //Html.RenderPartial("Partials/ResultsGrid");
     var topic = ViewContext.Controller.ValueProvider.GetValue("ID").RawValue;
     var topicPrefix = "Bank";
-    if (globalConfig.Tenant == "CUWebinars"){ topicPrefix = "Credit Union";}
-            
+    if (globalConfig.Tenant == "CUWebinars") { topicPrefix = "Credit Union"; }
+
     var topicCaption = "";
     var topicBody = "";
     switch (topic.ToString())
@@ -133,7 +108,7 @@
     @Html.Raw(topicBody)
 </div>
 <div class="container ">
-    
+
     @{
         foreach (var webinar in webinars)
         {
@@ -143,7 +118,7 @@
             if (webinar.Status == WebinarStatus.Recorded)
             {
                 showDateValue = "This event was recorded on <i>" + DateTimeHelper.FormatDate(webinar.Date) + "</i>.";
-                }
+            }
 
             var allTopics = webinar.WebinarTopicXrefs
                 .Select(webinarTopic => webinarTopic.Topic.topicDesc)
@@ -171,119 +146,3 @@
         }
     }
 </div>
-@*<script language="javascript" type="text/javascript">
-
-        var bIncludeUpcoming = true;
-        var bIncludeRecorded = true;
-        var bIncludeArchived = false;
-        var searchExtent = "";
-        //
-
-        $(document).ready(function () {
-
-            bIncludeUpcoming ? $("#includeUpcoming").addClass('active') : $("#includeUpcoming").removeClass('active');
-            bIncludeRecorded ? $("#includeRecorded").addClass('active') : $("#includeRecorded").removeClass('active');
-            //bIncludeArchived == "True" ? $("#includeArchived").addClass('active') : $("#includeArchived").removeClass('active');
-
-            $("#webinarsTable_filter :input").text("@ViewBag.SearchTerm");
-
-            //if (ViewBag.SearchTerm != null) $("#ViewBag.SearchTerm").html("Searched for: " + ViewBag.SearchTerm);
-
-            $('body').on('click', '[id^=include]', function (event) {
-
-                event.stopPropagation(); // prevent default bootstrap behavior
-                if ($(this).attr('data-toggle') != 'button') { // don't toggle if data-toggle="button"
-                    $(this).toggleClass('active');
-                }
-                bIncludeUpcoming = $("#includeUpcoming").hasClass('active');
-                bIncludeRecorded = $("#includeRecorded").hasClass('active');
-                //bIncludeArchived = $("#includeArchived").hasClass('active');
-
-                browserTable.fnDraw();
-            });
-
-
-            var browserTable = initWebinarsBrowser("webinarsTable", {
-                "sAjaxSource": "/webinar/SearchByTopic",
-                "fnServerData": function (sSource, aoData, fnCallback) {
-                    aoData.push({ name: "bIncludeUpcoming", value: bIncludeUpcoming });
-                    aoData.push({ name: "bIncludeRecorded", value: bIncludeRecorded });
-                    aoData.push({ name: "sSearch", value: @ViewBag.SearchTerm });
-                    aoData.push({ name: "bIncludeArchived", value: false });
-                    $.ajax({
-                        "dataType": "json",
-                        "type": "POST",
-                        "url": sSource,
-                        "data": aoData,
-                        "success": fnCallback
-                    });
-                }
-            });
-        });
-        var webinarsBrowserTable;
-
-        function initWebinarsBrowser(tableId, options) {
-
-            // default settings, will be overriden by values from options
-            var settings = {
-                "bProcessing": true,
-                "sDom": '<"top">rt<"bottom"><"clear">',
-                "bServerSide": true,
-                "bStateSave": false,
-                "bFilter": false,
-                "aaSorting": [[2, "asc"]],
-                "aoColumns": [
-                    { "bVisible": false },
-                    { "bVisible": false },
-
-        //{ sets date column to non-visible
-        { "bVisible": false },//    "sWidth": "5%", "sType": "datetime-us-pre",
-        //    "fnRender": function (obj) {
-        //        //console.dir(obj);
-
-        //        return "<div class='DateColumn'>" + obj.aData[2] + "</div>";
-
-        //    }
-        //},
-                    { "sWidth": "70%", "bSortable": true },
-                    { "sWidth": "25%" }
-                ],
-                "fnServerData": function (sSource, aoData, fnCallback) {
-                    $.ajax({
-                        "dataType": "json",
-                        "type": "POST",
-                        "url": sSource,
-                        "data": aoData,
-                        "success": fnCallback
-                    });
-                },
-                "fnDrawCallback": function () {
-                    $("#webinarsTable_filter :input").text("@ViewBag.SearchTerm");
-
-
-                    if (bIncludeUpcoming) {
-                        searchExtent = "@ViewBag.TopicCaption from Upcoming Events";
-                    }
-                    if (bIncludeRecorded) searchExtent = "@ViewBag.TopicCaption from OnDemand Events";
-                    if (bIncludeRecorded && bIncludeUpcoming) searchExtent = "@ViewBag.TopicCaption from All Events";
-
-                    $("#PageTitle").html(searchExtent);
-                }
-            };
-
-            jQuery.extend(settings, options);
-            webinarsBrowserTable = $("#" + tableId).dataTable(settings).fnSetFilteringDelay(2000);
-
-            return webinarsBrowserTable;
-        }
-
-        function initWebinarsBrowserRegistrations() {
-            //
-        }
-
-        jQuery.fn.outerHTML = function () {
-            return $('<div>').append(this.eq(0).clone()).html();
-        };
-
-
-    </script>*@

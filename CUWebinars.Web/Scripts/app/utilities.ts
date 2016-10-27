@@ -9,7 +9,7 @@ module Common {
 
     export class Utilities {
 
-        private sourceAttribute : string = 'source';
+        private sourceAttribute: string = 'source';
         private relativeAttribute: string = 'relative';
 
         getFullPath(): string {
@@ -20,7 +20,7 @@ module Common {
             return $.url().attr(this.relativeAttribute);
         }
 
-        getMainPath(pathToCheck : string) : string  {
+        getMainPath(pathToCheck: string): string {
 
             if (pathToCheck.substr(pathToCheck.length - 1) === '/')
                 return pathToCheck.substr(0, pathToCheck.length - 1);
@@ -35,7 +35,7 @@ module Common {
             window.open(this.setPathToBaseUrl() + actionMethod, title);
         }
 
-        relativePathStartsWith(stringToCheck : string) : boolean {
+        relativePathStartsWith(stringToCheck: string): boolean {
             var path = this.getRelativePath();
             var len = stringToCheck.length;
 
@@ -53,9 +53,15 @@ module Common {
             return fullUrl.substr(0, indexOfRelativePath);
         }
 
-        isValidEmailAddress(emailAddress:string) : boolean {
-            var pattern = new RegExp('/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i');
-            return pattern.test(emailAddress);
-        }
-    };
+        isValidEmailAddress(emailAddress: string): boolean {
+            {
+                if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(emailAddress)) {
+                    return (true);
+                }
+                else {
+                    return (false);
+                }
+            }
+        };
+    }
 }

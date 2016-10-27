@@ -1,5 +1,5 @@
 ﻿//  Rename this file 'additional-locations' if we decide to be rid of additional-locations.js
-
+var utilities = new Common.Utilities();
 var addLocationsButton,
     AdditionalLocationSubmitButton,
     newLocationsContainer;
@@ -9,8 +9,6 @@ var additionalLocationEmailWrapper,
     deleteItem,
     locationsSpanPrefix,
     numberOfAdditionalLocations;
-
-
 deleteItem = function (event) {
     numberOfAdditionalLocations--;
     var trashClicked = event.currentTarget.id;
@@ -52,9 +50,9 @@ function wireUpHandlers() {
 
 
     addLocationsButton.on('click', function (e) {
-        
-        e.preventDefault();
 
+        e.preventDefault();
+        
         $(this).append('<i id="loadModalSpinner" class="icon-spinner icon-spin"></i>');
 
         $('#additionalLocationsModalDialog > div.modal-body').load('/Cart/GetAdditionalLocationByOrderId/' + $('#Webinar_idWebinar').val() + '/' + ($('#WebUser_idUser').val() || 0).toString(), function () {
@@ -80,7 +78,7 @@ function wireUpHandlersForModal() {
     var locationsCloned, locationsBakForCancel;
     var collectAdditionalLocations = $('#collectAdditionalLocations');
     var locations = collectAdditionalLocations.children();
-    
+
     if (locations.length > 0) {
         locationsCloned = locations.clone();
         locationsBakForCancel = locations.clone();
@@ -95,8 +93,10 @@ function wireUpHandlersForModal() {
     $('#AddInputsButton').on('click', function (e) {
 
         e.preventDefault();
+        $(".AddLocCaption")
+            .html("<b>Note:</b> Only use this entry for branches or other remote locations that you wish to attend. We will collect the primary (billing) email on the next screen.");
 
-        if (numberOfAdditionalLocations == 0) {
+        if (numberOfAdditionalLocations === 0) {
             $('#AdditionalLocationEmailWrapper').after($('<button>',
             {
                 id: 'sumbitAdditionalLocationsButton',
@@ -107,17 +107,38 @@ function wireUpHandlersForModal() {
             $('#sumbitAdditionalLocationsButton').on('click', function () {
 
                 collectAdditionalLocations.empty();
-                collectAdditionalLocations.append(additionalLocationEmailWrapper.children());
+                var allValid = true;
 
-                $('#additionalLocationsModalDialog').modal('hide');
+                $.each(additionalLocationEmailWrapper.children(), function (i, val) {
+                    if (typeof this.childNodes[0] !== "undefined") {
+                        console.log("Index #" + i + ": " + this.childNodes[0].value);
+                        if (utilities.isValidEmailAddress(this.childNodes[0].value)) {
 
-                $(this).remove();
+                            $('#AddInputsButton').show();
+
+
+                        } else {
+                            allValid = false;
+                            //additionalLocationEmailWrapper.children().remove();
+                            alert("Non-valid email detected. Try again?");
+                        }
+
+
+                    }
+                });
+                if (allValid) {
+                    collectAdditionalLocations.append(additionalLocationEmailWrapper.children());
+
+                    $('#additionalLocationsModalDialog').modal('hide');
+                    $(this).remove();
+                }
+
             });
         }
 
         var newId;
 
-        if (numberOfAdditionalLocations == 0) {
+        if (numberOfAdditionalLocations === 0) {
             newId = 0;
         } else {
             // first get the last previous email input
@@ -139,7 +160,7 @@ function wireUpHandlersForModal() {
 
     if (numberOfAdditionalLocations < 1) {
         $('#sumbitAdditionalLocationsButton').off('click');
-        
+
     } else {
 
         $('#AdditionalLocationEmailWrapper').after($('<button>',
@@ -150,7 +171,7 @@ function wireUpHandlersForModal() {
         }));
 
         $('#sumbitAdditionalLocationsButton').on('click', function () {
-
+            
             collectAdditionalLocations.empty();
             collectAdditionalLocations.append(additionalLocationEmailWrapper.children());
 

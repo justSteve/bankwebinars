@@ -56,8 +56,8 @@ namespace CUWebinars.Business.Notification.Handlers
                     ".htm"
                     );
 
-                //                notificationMessage.To = sendPerWeekPromoEvent.EventObject.Affiliate.WebUser.email;
-                notificationMessage.To = "steve@ttstrain.com";
+                notificationMessage.To = sendPerWeekPromoEvent.EventObject.Affiliate.WebUser.email;
+                //notificationMessage.To = "steve@ttstrain.com";
                 _notificationDelivery.Notify(notificationMessage);
             }
             catch (NullReferenceException nullReferenceException)

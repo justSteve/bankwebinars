@@ -518,7 +518,7 @@ namespace CUWebinars.Web.Controllers
                         PostForm += "&AffiliateID=" + HttpUtility.UrlEncode("62");
                         PostForm += "&BankWebID=" + HttpUtility.UrlEncode(parsedOrder.BankWebID);
                         PostForm += "&BillingContact=" +
-                                    HttpUtility.UrlEncode(parsedOrder.BillingContact ?? "steve@ttstrain.com");
+                                    HttpUtility.UrlEncode(parsedOrder.BillingContact ?? "MissingBillingContact@ttstrain.com");
                         PostForm += "&City=" + HttpUtility.UrlEncode(parsedOrder.City ?? "-ct");
                         PostForm += "&Company=" + HttpUtility.UrlEncode(parsedOrder.Company ?? "_co");
                         PostForm += "&CompanyBillingInformation=" +

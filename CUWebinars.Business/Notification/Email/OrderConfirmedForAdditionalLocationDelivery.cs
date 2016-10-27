@@ -88,7 +88,7 @@ namespace CUWebinars.Business.Notification.Email
                     mailMessage.To.Add(new MailAddress(ConfigurationManager.AppSettings["TestEmailAddress2"]));
                 }
 
-                mailMessage.To.Add(new MailAddress("steve@ttstrain.com"));
+                //mailMessage.To.Add(new MailAddress("steve@ttstrain.com"));
                 mailMessage.To.Add(new MailAddress(destinationEmailAddress));
 
                 try

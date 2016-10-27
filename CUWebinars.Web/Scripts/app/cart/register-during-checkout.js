@@ -793,6 +793,9 @@ function cancelOrder(orderId, webinarId) {
 
         // disable button while operation in progress
         $('#cancelRegistration').attr('disabled', 'disabled');
+        //        self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
+        console.log("hit CancelReg");
+        console.log(data);
 
         $.post(cancelOrderForm.attr('action'), data, function (response, status, xhr) {
             if (response.success) {
@@ -807,10 +810,7 @@ function cancelOrder(orderId, webinarId) {
                 $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Error #216. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
                 $('#CancelModal').modal('hide');
             }
-
-            // enable button again upon ending operation.
-            //$('#cancelRegistration').removeAttr('disabled');  // [dar] NO. On staging, redirect is slow and button enabled again. User could have clicked it again.
-
+            
         }, 'json');
 
         // unbind event so we don't get them building up each time the user clicks the Cancel Registration button.

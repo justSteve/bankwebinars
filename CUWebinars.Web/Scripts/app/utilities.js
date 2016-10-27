@@ -41,12 +41,18 @@ var Common;
             return fullUrl.substr(0, indexOfRelativePath);
         };
         Utilities.prototype.isValidEmailAddress = function (emailAddress) {
-            var pattern = new RegExp('/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i');
-            return pattern.test(emailAddress);
+            {
+                if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(emailAddress)) {
+                    return (true);
+                }
+                else {
+                    return (false);
+                }
+            }
         };
+        ;
         return Utilities;
     }());
     Common.Utilities = Utilities;
-    ;
 })(Common || (Common = {}));
 //# sourceMappingURL=utilities.js.map

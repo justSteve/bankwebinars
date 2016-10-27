@@ -264,13 +264,6 @@ namespace CUWebinars.Web.Controllers
             VRObject.Add("footer", Request["footer"].ToString());
 
 
-            //string adminEmail = "steve@ttstrain.com";
-
-            //string myHTML = NotificationFacade.Instance.SendVRPerDay(TemplateTypes.VR_PER_WEEK, VRObject, adminEmail, "VR Code for " + Request["from"].ToString());
-
-            //string[] myReturn =  {"myString", myHTML};
-
-            //return Content(myHTML);
             return null;
         }
 
@@ -348,13 +341,11 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult ListByTopic(int ID)
         {
-            // var webinars = WebinarFacade.Instance.SelectAllActiveWebinarsByTopic(ID);
             Session["TopicID"] = ID;
             ViewBag.SearchTerm = "TopicID=" + Session["TopicID"].ToString();
 
             var webinars = _webinarManagementService.GetByTopic(ID).OrderByDescending(d => d.Date);
-            //var dtos = new WebinarDTOAssembler().Entities2DTOs(webinars);
-            //return View(dtos);
+
             return View(webinars);
         }
 

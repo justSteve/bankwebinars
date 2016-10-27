@@ -2,7 +2,7 @@
 <script type="text/javascript">
     var ADDLOC = {};
     ADDLOC.price = @Model.Price;
-    
+
 </script>
 @{
     if (Model.Webinar.Status == WebinarStatus.Scheduled
@@ -33,8 +33,10 @@
             }
             else
             {
-                <div>
+                <div class="AddLocCaption">
                     <blockquote style="margin-bottom: 0;">Want your branches to participate? Facilities within your organization will be able to participate without the travel costs of coming to one location.</blockquote>
+                </div>
+
                     <div style="padding-left: 50px;">
                         <span>
                             <b>Each additional location adds @Model.Price.ToString("c").Replace(".00", "") to your registration.</b>
@@ -43,7 +45,6 @@
                         <div id="collectAdditionalLocations"></div> @*This is where the inputs for each Additional Location will be dynamically created by the Modal dialog.*@
                     </div>
 
-                </div>
             }
             @if (Model.OrderExists)
             {
@@ -55,7 +56,7 @@
             }
             @Html.HiddenFor(m => m.Webinar.idWebinar)
         </div>
-    }
+                }
 }
 
 @Scripts.Render("~/bundles/AdditionalLocation")
