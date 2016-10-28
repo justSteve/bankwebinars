@@ -1,0 +1,264 @@
+﻿@using System.Configuration
+@using System.Text
+@using System.Web
+@using CUWebinars.Business.Constants
+@using CUWebinars.Web.Core
+@{
+    var PageStyleType = ViewBag.PageStyleType;
+    IStateService stateService = new StateService();
+
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+
+    var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+    string currentUserAffiliateFullName = string.Empty;
+    if (currentAffiliate != null)
+    {
+        //currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
+        ViewBag.currentAffiliateId = currentAffiliate.idUserAff;
+    }
+    else
+    {
+        CUWebinars.Business.Core.Tracing.Tracer.Warning("CurrentAffiliate should always have a value. Session | {0}", new AppHelper(Request, stateService).GetUserAuditInfo());
+        Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
+    }
+
+    var footAddress = currentAffiliate.WebFooter.Split('~')[0];
+    var footSocial = "";
+    if (currentAffiliate.WebFooter.Split('~').Length > 1)
+    {
+        footSocial = currentAffiliate.WebFooter.Split('~')[1];
+    }
+
+    var firstPage = stateService.GetValue<string>("FirstPage");
+    var sessionID = stateService.GetValue<string>(WebUiConstants.SessionId);
+    var affiliateSessionSource = stateService.GetValue<string>("AffiliateSessionSource");
+}
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en" dir="ltr"> <![endif]-->
+<!--[if IE 7 ]> <html class="no-js lt-ie9 lt-ie8" lang="en" dir="ltr"> <![endif]-->
+<!--[if IE 8 ]> <html class="no-js lt-ie9" lang="en" dir="ltr"> <![endif]-->
+<!--[if IE 9 ]> <html class="ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html class="no-js" lang="en" dir="ltr">
+<!--<![endif]-->
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="msvalidate.01" content="EC4039EF0FA485B010F4E9AA1E51FF9C" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <script type="text/javascript">
+        var firstPage = "@firstPage";
+        var sessionID = "@sessionID";
+        var affiliateSessionSource = "@affiliateSessionSource";
+        var currentAffiliate = "@currentAffiliate.idUserAff";
+    </script>
+    <script type="text/javascript">  var appInsights = window.appInsights || function (config) { function i(config) { t[config] = function () { var i = arguments; t.queue.push(function () { t[config].apply(t, i) }) } } var t = { config: config }, u = document, e = window, o = "script", s = "AuthenticatedUserContext", h = "start", c = "stop", l = "Track", a = l + "Event", v = l + "Page", y = u.createElement(o), r, f; y.src = config.url || "https://az416426.vo.msecnd.net/scripts/a/ai.0.js"; u.getElementsByTagName(o)[0].parentNode.appendChild(y); try { t.cookie = u.cookie } catch (p) { } for (t.queue = [], t.version = "1.0", r = ["Event", "Exception", "Metric", "PageView", "Trace", "Dependency"]; r.length;) i("track" + r.pop()); return i("set" + s), i("clear" + s), i(h + a), i(c + a), i(h + v), i(c + v), i("flush"), config.disableExceptionTracking || (r = "onerror", i("_" + r), f = e[r], e[r] = function (config, i, u, e, o) { var s = f && f(config, i, u, e, o); return s !== !0 && t["_" + r](config, i, u, e, o), s }), t }({ instrumentationKey: "740ba977-f1a1-4c25-9819-cf6d01e7f1a2" }); window.appInsights = appInsights; appInsights.trackPageView();</script>
+    <!--Start of Zopim Live Chat Script-->
+    <script type="text/javascript">
+
+        window.$zopim || (function (d, s) {
+            var z = window.$zopim = function (c) {
+                z._.push(c);
+            },
+                $ = z.s = d.createElement(s),
+                e = d.getElementsByTagName(s)[0];
+
+            z.set = function (o) {
+                z.set._.push(o);
+            };
+            z._ = [];
+            z.set._ = [];
+            $.async = !0;
+            $.setAttribute("charset", "utf-8");
+            $.src = "//v2.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU";
+            z.t = +new Date;
+            $.type = "text/javascript";
+            e.parentNode.insertBefore($, e);
+        })(document, "script");
+    </script>
+    <!--End of Zopim Live Chat Script-->
+
+    <title>@ViewBag.Title</title>
+    @{
+        <script type="text/javascript">
+
+            var currentAffiliateId = "@currentAffiliate.idUserAff";
+            var currentAffiliateDisplayTitle = "@currentAffiliate.DisplayTitle";
+        </script>
+        if (globalConfig.Tenant == DomainConstants.CUWebinars)
+        {
+
+            <script>
+                function earlyIEExpress(idWebinar) {
+                    window.location = "/cart/ExpressCheckout";
+                }
+                //Rollbar Placeholder
+
+                (function (i, s, o, g, r, a, m) {
+                    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                        (i[r].q = i[r].q || []).push(arguments)
+                    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+                })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+                ga('create', 'UA-44361719-1', 'auto');
+                ga('send', 'pageview');
+
+            </script>
+        }
+        if (globalConfig.Tenant == DomainConstants.BankWebinars)
+        {
+            <script>
+
+                function earlyIEExpress(idWebinar) {
+                    window.location = "/cart/ExpressCheckout";
+                }
+
+                //Rollbar Placeholder
+
+                (function (i, s, o, g, r, a, m) {
+                    i['GoogleAnalyticsObject'] = r;
+                    i[r] = i[r] || function () {
+                        (i[r].q = i[r].q || []).push(arguments)
+                    }, i[r].l = 1 * new Date();
+                    a = s.createElement(o),
+                        m = s.getElementsByTagName(o)[0];
+                    a.async = 1;
+                    a.src = g;
+                    m.parentNode.insertBefore(a, m)
+                })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+                ga('create', 'UA-1443899-1', 'auto');
+                ga('send', 'pageview');
+            </script>
+        }
+
+
+
+    }
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/CommonModules")
+    @Scripts.Render("~/bundles/myApp")
+    @Scripts.Render("~/bundles/app-processing-manage")
+    @Styles.Render("~/Content/CrispCSS")
+    @Styles.Render("~/Content/common-styles")
+    <link href="/Content/css/stylesDirectorSeries.css" rel="stylesheet" type="text/css" />
+    <!-- Icons ================ -->
+    <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
+    <link rel="apple-touch-icon-precomposed" href="~/Content/images/BankWebinars/apple-touch-icon.png" />
+    <!-- For first- and second-generation iPad: -->
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="~/Content/images/BankWebinars/apple-touch-icon-72x72-precomposed.png" />
+    <!-- For iPhone with high-resolution Retina display: -->
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="~/Content/images/BankWebinars/apple-touch-icon-114x114-precomposed.png" />
+    <!-- For third-generation iPad with high-resolution Retina display: -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="~/Content/images/BankWebinars/apple-touch-icon-144x144-precomposed.png" />
+
+    <link rel="shortcut icon" href="~/Content/images/BankWebinars/favicon.ico" />
+    <meta property="og:description" content="@GlobalConfig.GlobalConfigSingleton.Tenant is Webinars for the financial industry." />
+
+
+    <style>
+        table td {
+            border: none;
+            text-align: center;
+        }
+
+        #shoppingCartInHeader {
+            margin-left: 20px;
+        }
+
+        #preheaderIcon {
+            padding-top: 5px;
+            margin-top: 5px;
+        }
+
+        .hero-unit {
+            padding-top: 20px;
+            padding-bottom: 0px;
+        }
+
+        .preheader {
+            background-color: black;
+            width: 100%;
+            padding-left: 25px;
+        }
+
+        .affFooter {
+            color: white;
+        }
+    </style>
+
+    <script>
+        //to accomodate IE  http://stackoverflow.com/questions/5522164/input-placeholders-for-internet-explorer -- Jonathan Tonge
+        var placeholder = 'placeholder' in document.createElement('input');
+        if (!placeholder) {
+            $.getScript("/Scripts/placeholder.js", function () {
+                $(":input").each(function () {   // this will work for all input fields
+                    $(this).placeHolder();
+                });
+            });
+        }
+    </script>
+    @{
+        if (User.Identity.IsAuthenticated)
+        {
+            //if (!Html.IsDebug())
+            //{
+            <script>
+                window.$zopim(function () {
+                    window.$zopim.livechat.setName("@User.Identity.Name.ToString().Replace("@", "_")");
+
+                });
+            </script>
+            //}
+        }
+    }
+</head>
+<body>
+    <!-- wrap START -->
+    <div id="wrap">
+        <!-- container START -->
+        <div id="maincontainer" style="width: 800px; margin-left: auto; margin-right: auto;">
+            <div id="topsection">
+                <div class="innertube">
+                    <!-- header START -->
+                    <div align="center" class="holdLeft">
+                        <br />
+                        <span style="color: #FFF; font-family: Arial, Helvetica, sans-serif; font-size: 14px;">
+                            @Model.DisplayTitle
+                        </span>
+                        <br />
+                        <span style="font-size: 36px; font-family: Arial, Helvetica, sans-serif; color: #493514">
+                            <strong>ANNOUNCING</strong>
+                        </span>
+                        <br />
+                        <span style="color: #FFF; font-family: Arial, Helvetica, sans-serif; font-size: 15px;">
+                            <strong>DIRECTORS EDUCATION SERIES</strong>
+                        </span>
+                        <p style="color: #493514; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                            Presented in partnership with Total Training Solutions, Inc.<br />
+
+                        </p>
+                    </div>
+                    <div class="holdRight">
+                        <img src="/Content/images/compass.jpg" alt="Compass Photo" align="center" />
+                    </div>
+                </div>
+            </div>
+            <div id="contentwrapper">
+                @RenderBody()
+            </div>
+            @*<div id="footer">
+                <span id="affName"><strong>@Model.DisplayTitle</strong></span><br />
+                <span id="affAddress">
+                    @Model.Address @Model.City, @Model.State @Model.Zip
+                </span> <span id="affPhone">(P) @Model.ContactPhone</span>
+                <span id="affFax">(F) @Model.Fax</span> <span id="affWeb"><a href="@Model.AffiliateWebsiteUrl" target="_blank" style="color: #FFFFFF;">@Model.AffiliateWebsiteUrl</a></span>
+            </div>*@
+            <p>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

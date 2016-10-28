@@ -1,0 +1,93 @@
+﻿
+.subhead
+{
+    border-bottom: 1px solid white;
+}
+#topsection
+{
+    background: #baac9e;
+    height: 150px; /*Height of top section*/
+    border: #999 solid thick;
+    border-bottom: thick solid #796761;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+#topsection h1
+{
+    margin: 0;
+    padding-top: 15px;
+}
+
+.holdRight
+{
+    margin-top: 5px;
+    width: 150px;
+    float: right;
+    margin-left: 5px;
+    margin-right: 5px; /*border-left: 2px solid #A7BDD2;*/
+}
+
+.holdLeft
+{
+    width: 600px;
+    float: left;
+}
+
+body
+{
+    margin: 0px;
+    padding: 0;
+    font-size: 12px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+.presentersList
+{
+    margin-left: 10px;
+    margin-top: 8px;
+    color: White;
+    font-size: 12px;
+}
+
+#contentwrapper
+{
+    float: left;
+    width: 100%;
+}
+
+
+#contentcolumn
+{
+    margin-right: 230px; /*Set right margin to RightColumnWidth*/
+    border-left: thick solid #999;
+}
+
+#rightcolumn
+{
+    float: left;
+    width: 230px; /*Width of right column in pixels*/
+    margin-left: -230px; /*Set left margin to -(RightColumnWidth) */
+    background: #84716b;
+}
+
+#footer
+{
+    clear: both;
+    width: 800px;
+    background: #baac9e;
+    color: #FFF;
+    text-align: center;
+    padding: 4px 0;
+}
+
+#footer a
+{
+    color: #FFFF80;
+}
+
+.innertube {
+    /*margin: 10px;Margins for inner DIV inside each column (to provide padding)*/
+    margin-top: 0;
+}

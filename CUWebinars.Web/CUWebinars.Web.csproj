@@ -627,6 +627,7 @@
     <Compile Include="ViewModel\UserDetailsViewModel.cs" />
     <Compile Include="ViewModel\WebinarEditModel.cs" />
     <Compile Include="ViewModel\WebinarFileViewModel.cs" />
+    <Content Include="Content\css\stylesDirectorSeries.css" />
     <Content Include="Scripts\ai.0.22.19-build00125.js" />
     <Content Include="Scripts\ai.0.22.19-build00125.min.js" />
     <Content Include="Web.config">
@@ -2190,6 +2191,9 @@
     <Content Include="Views\Cart\Partials\_CartInHeader.cshtml" />
     <Content Include="Views\Shared\Partials\_OrderSumUser2.cshtml" />
     <Content Include="Service References\Application Insights\ConnectedService.json" />
+    <Content Include="Views\Home\DSSignUp.cshtml" />
+    <Content Include="Views\Shared\_Layout_DirectorSeries.cshtml" />
+    <Content Include="Views\Home\DirectorSeries.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
