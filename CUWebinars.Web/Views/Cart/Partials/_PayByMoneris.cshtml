@@ -54,7 +54,7 @@
 
     <script type="text/javascript" language="javascript">
         function SubmitCCForm () {
-
+            alert("hit");
             $("#PayByCCForm").submit();
         }
 
@@ -71,7 +71,7 @@
                     url: '/cart/IniMonerisModal?idOrder='+idOrder,
                     cache: false,
                     success: function (data) {
-
+                        console.log(data);
                         //moneris requires that cents are included:
 
                         amount2Charge = data.total;
@@ -81,7 +81,7 @@
                         }
 
                         $("#PayByCCForm input[name='amount']").val( amount2Charge);
-                        $("input[name='li_price1']").val( amount2Charge);
+                        $("#PayByCCForm input[name='li_price1']").val( amount2Charge);
 
                         $("#PayByCCForm input[name='hpp_id']").val("@globalConfig.TenantMonerisHpp_Id");
                         $("#PayByCCForm input[name='hpp_key']").val("@globalConfig.TenantMonerisHpp_Key");

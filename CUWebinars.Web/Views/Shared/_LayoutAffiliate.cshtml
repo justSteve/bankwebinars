@@ -258,7 +258,45 @@
     <div id="page">
 
         @RenderBody()
+        <form id="PayByCCForm" method="POST" action="https://esplus.moneris.com/DPHPP/index.php">
+            <input type="hidden" name="hpp_id" />
+            <input type="hidden" name="hpp_key" />
+            <input type="hidden" name="amount" />
 
+            <input type="hidden" name="li_id1" />
+            <input type="hidden" name="li_description1" />
+            <input type="hidden" name="li_quantity1" />
+            <input type="hidden" name="li_price1" />
+            <input type="hidden" name="li_taxes" />
+            <input type="hidden" name="li_taxamount" />
+            <input type="hidden" name="li_invoice" />
+            <input type="hidden" name="cust_id" />
+            <input type="hidden" name="order_no">
+            <input type="hidden" name="client_email" />
+            <input type="hidden" name="note" />
+
+            <input type="hidden" name="od_bill_firstname" />
+            <input type="hidden" name="od_bill_lastname" />
+            <input type="hidden" name="od_bill_company" />
+            <input type="hidden" name="od_bill_address">
+            <input type="hidden" name="od_bill_city" />
+            <input type="hidden" name="od_bill_state" />
+            <input type="hidden" name="od_bill_zipcode" />
+
+            <input type="hidden" name="od_bill_phone" />
+
+            <input type="hidden" name="od_ship_firstname" />
+            <input type="hidden" name="od_ship_lastname" />
+            <input type="hidden" name="od_ship_company" />
+            <input type="hidden" name="od_ship_address" />
+            <input type="hidden" name="od_ship_city" />
+            <input type="hidden" name="od_ship_state" />
+            <input type="hidden" name="od_ship_zipcode" />
+
+            <input type="hidden" name="od_ship_phone" />
+
+
+        </form>
     </div>
 
     <div id="ProgressDialogBS" class="modal hide fade">
