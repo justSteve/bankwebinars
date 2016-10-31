@@ -5,6 +5,7 @@ using Ninject.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Web.Mvc;
+using CUWebinars.Business.Services;
 
 namespace CUWebinars.Web.Controllers
 {
@@ -13,13 +14,17 @@ namespace CUWebinars.Web.Controllers
     {
 
         private readonly IWebinarRepository _webinarRepository;
+
+        private readonly IAffiliateManagementService _affiliateManagementService;
+
         private readonly ILogger _logger;
         private bool _disposed;
 
-        public HomeController(IWebinarRepository webinarRepository, ILogger logger)
+        public HomeController(IWebinarRepository webinarRepository, ILogger logger, IAffiliateManagementService affiliateManagementService)
         {
             _webinarRepository = webinarRepository;
             _logger = logger;
+            _affiliateManagementService = affiliateManagementService;
         }
 
         public ActionResult PrivacyStatement()
@@ -50,6 +55,65 @@ namespace CUWebinars.Web.Controllers
             ViewBag.PageStyleType = "two-columns-right-sidebar";
             return View();
         }
+
+        public ActionResult DSSignUp(int id, FormCollection frm)
+        {
+            Business.Models.Affiliate affiliate;
+            if (id > 1)
+            {
+                affiliate = _affiliateManagementService.FindById(id);
+            }
+            else
+            {
+                affiliate = _affiliateManagementService.FindById(19);
+            }
+            string msgText = "";
+            int i = 0;
+            foreach (var x in frm)
+            {
+                msgText += "" + x.ToString() + ": " + frm[i] + "<br>"; //Request.Form[x] + ;
+
+                i++;
+            }
+            _logger.Info(msgText);
+            //NotificationFacade.Instance.SendMessage("steve@ttstrain.com", "Director Series Registration", "Registrations@BankWebinars.com", msgText);
+
+            ViewData["isConfirmed"] = "true";
+            return View("~/Views/Home/DSSignUp.cshtml", affiliate);
+
+        }
+
+        [AcceptVerbs(HttpVerbs.Get)]
+        public ActionResult DSSignUp(int? id)
+        {
+
+
+            if (id.HasValue)
+            {
+                if (id == 17146)
+                {
+
+                    ViewBag.showPrice = "$1,395 for a 12-month subscription.<br>$1,895 for non-members";
+                }
+
+            }
+
+            Business.Models.Affiliate affiliate;
+
+            if (!id.HasValue)
+            {
+                affiliate = _affiliateManagementService.FindById(id.Value);
+            }
+            else
+            {
+
+                affiliate = affiliate = _affiliateManagementService.FindById(19);
+            }
+
+            return View(affiliate);
+        }
+
+
 
         [HttpPost]
         public ActionResult ConfirmOrder(FormCollection formCollection)

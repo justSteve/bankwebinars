@@ -2377,7 +2377,8 @@ namespace CUWebinars.Business.Services
                 .Where((o => o.OrderDate > userDiscount.DateVerified
                 || (o.InvoiceDetail.Contains("DiscountIsApplied"))
                 && !o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title.StartsWith("Compliance Perspe")
-                && o.InvoiceDetail.Contains(userDiscount.idDiscount.ToString())));
+                //&& o.InvoiceDetail.Contains(userDiscount.idDiscount.ToString())
+                ));
 
             var creditsUsed = 0M;
 

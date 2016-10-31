@@ -1,0 +1,165 @@
+﻿@model CUWebinars.Business.Models.Affiliate
+@{
+    ViewBag.Title = "Director Series";
+    Layout = "~/Views/Shared/_Layout_DirectorSeries.cshtml";
+    var showPrice = @Html.Raw(ViewBag.showPrice);
+
+}
+<script language="javascript" type="text/javascript">
+
+    $(document).ready(function () {
+
+        var leftcol = $("#contentcolumn");
+
+        var rightcol = $("#rightcolumn");
+        //
+
+        var rightcol_height = rightcol.height();
+        var leftcol_height = leftcol.height();
+        //if (leftcol_height > rightcol_height)
+        rightcol.height(leftcol_height);
+        //        else
+        //            leftcol.height(rightcol_height);
+
+        var l = $("#topsection");
+        var myLeft = l.position();
+
+        $("#footer").css("margin-left", myLeft.left);
+
+    });
+</script>
+<div id="contentcolumn">
+    <div class="innertube">
+        <br />
+        <div style="margin-left: 20px; margin-right: 20px;">
+            <span style="font-size: 14px; color: #796761; padding-top: 0; font-family: Arial, Helvetica, sans-serif">
+                The responsibility and liability of the Bank Director is ever increasing. It is
+                critical that you now provide your Directors with training to help them through
+                the complexities of today's banking environment.
+            </span>
+            <p style="font-size: 14px; color: #796761; font-family: Arial, Helvetica, sans-serif">
+                We are proud to announce that the @Model.DisplayTitle is offering a series of 30–minute
+                training modules geared to the Bank Director. These programs have been developed
+                in consultation with a highly respected group of banking industry experts. Your
+                subscription to this series will assist you with the responsibility you have to
+                educate those who serve on your Board.
+            </p>
+            <br />
+            <div class="subhead">
+                A PARTIAL LIST OF TOPICS THAT WILL BE COVERED INCLUDE:
+            </div>
+            <table style="margin-left: 25px;">
+                <tr>
+                    <td>
+                        <ul style="font-size: 13px; color: #666; font-family: Arial, Helvetica, sans-serif">
+                            <li style="margin-top: 5px;">Strategic Planning</li>
+                            <li style="margin-top: 5px;">Minimizing Board Liability </li>
+                            <li style="margin-top: 5px;">Regulatory Environment </li>
+                            <li style="margin-top: 5px;">Board/Committee Composition </li>
+                            <li style="margin-top: 5px;">Compliance Management </li>
+                            <li style="margin-top: 5px;">BSA/AML Training </li>
+                            <li style="margin-top: 5px;">Insiders &amp; Reg O </li>
+                            <li style="margin-top: 5px;">Exam Preparation</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul style="font-size: 13px; color: #666; font-family: Arial, Helvetica, sans-serif">
+                            <li style="margin-top: 5px;">Board Legal Duties </li>
+                            <li style="margin-top: 5px;">Board Meetings and Minutes </li>
+                            <li style="margin-top: 5px;">Understanding Bank Capital </li>
+                            <li style="margin-top: 5px;">Enterprise Risk Management </li>
+                            <li style="margin-top: 5px;">Credit Risk Management </li>
+                            <li style="margin-top: 5px;">Asset Liability Management </li>
+                            <li style="margin-top: 5px;">Conflicts of Interest </li>
+                            <li style="margin-top: 5px;">Confidentiality</li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+            <p style="font-size: 14px; color: #796761; font-family: Arial, Helvetica, sans-serif">
+                An annual subscription will provide you with a recorded 20&ndash;30 minute web&ndash;based
+                training module each month. You will also be supported with discussion topics and
+                handouts. Since the programs are recorded, you have the flexibility to show these
+                programs at your Board meeting or make the link available to your Directors prior
+                to the meeting.
+            </p>
+        </div>
+        <div class="logos" style="text-align: center">
+            <img src="/Content/images/aff/@Model.ttsDomain/logo.png" border="0" />
+            <img src="/Content/images/TTS-logo.jpg" alt="Total Training Solutions" />
+        </div>
+        <div align="center" style="background: #990000; padding: 6px; font-family: Arial, Helvetica, sans-serif;">
+            <a href="/home/DSSignUp/@Model.idUserAff" style="color: #FFF">
+                <span style="font-size: 16px;">
+                    <b>CLICK HERE TO REGISTER</b>
+                </span><br />
+                <span style="font-size: 14px;">for the Directors Education Series!</span>
+            </a>
+        </div>
+    </div>
+</div>
+<div id="rightcolumn" style="color: #FFF">
+    <div class="innertube" style="border-left: #999 solid thick; background: #84716b">
+        <div align="center" style="background: #990000; padding: 6px; padding-bottom: 10px;
+            font-family: Arial, Helvetica, sans-serif;">
+            <a href="/home/DSSignUp/@Model.idUserAff" style="color: #FFF">
+                <span style="font-size: 14px;">
+                    <b>CLICK HERE TO REGISTER</b>
+                </span><br />
+                <span style="font-size: 12px;">for the Directors Education Series!</span>
+            </a>
+        </div>
+        <p>
+            <br />
+            <em>Our distinguished experts include:</em>
+        </p>
+        <ul style="margin-left: 15px;">
+            <li class="presentersList">
+                <strong>JOHN KNIGHT</strong><br />
+                <em>Boardman & Clark, llp</em>
+            </li>
+            <li class="presentersList">
+                <strong>
+                    TERRY SABER<br />
+                </strong><em>Wipfli LLP </em>
+            </li>
+            <li class="presentersList">
+                <strong>
+                    JOHN BEHRINGER<br />
+                </strong><em>McGladrey </em>
+            </li>
+            <li class="presentersList">
+                <strong>
+                    SOPHIE KELLEY<br />
+                </strong><em>Wipfli LLP </em>
+            </li>
+            <li class="presentersList">
+                <strong>JERRY SMITH </strong>
+                <br />
+                <em>First Business Financial Services, Inc. </em>
+            </li>
+            <li class="presentersList">
+                <strong>CARL PRY </strong>
+                <br />
+                <em>Treliant Risk Advisors </em>
+            </li>
+            <li class="presentersList">
+                <strong>KARL NELSON </strong>
+                <br />
+                <em>KPN Consulting</em>
+            </li>
+        </ul>
+        <br />
+        <p>
+            <span style="margin-bottom: 6px; border-bottom: #FFF thin solid">
+                SUBSCRIPTION FEE:<br />
+            </span><span>@showPrice</span><br />
+            <br />
+        </p>
+        <span style="border-top: #FFF thin solid;">For more information, contact</span><br />
+        @Model.ContactPerson
+        at @Model.ContactPhone.Replace('-', '.')<br />
+        or <a href="mailto:@Model.ContactEmail" target="_blank" style="color: #FFFFFF">@Model.ContactEmail</a>.<br />
+        <br />
+    </div>
+</div>
