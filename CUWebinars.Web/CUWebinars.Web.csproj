@@ -549,6 +549,7 @@
     <Compile Include="Models\ExpressCheckoutPostBackModel.cs" />
     <Compile Include="Models\Importers\ImportOrderForAcsModel.cs" />
     <Compile Include="Models\MandrillIncomingMsg.cs" />
+    <Compile Include="Models\PayTraceResponse.cs" />
     <Compile Include="Models\NotificationHeaderModel.cs" />
     <Compile Include="Models\AddClaimInputModel.cs" />
     <Compile Include="Models\AddQuizEditModel.cs" />
@@ -613,6 +614,7 @@
     <Compile Include="ViewModel\DiscountPromotionViewModel.cs" />
     <Compile Include="ViewModel\GenerateClickToJoinViewModel.cs" />
     <Compile Include="ViewModel\GenerateWeeklyInvoicesViewModel.cs" />
+    <Compile Include="ViewModel\PayTraceViewModel.cs" />
     <Compile Include="ViewModel\MonerisViewModel.cs" />
     <Compile Include="ViewModel\OrderSumUserViewModel.cs" />
     <Compile Include="ViewModel\QuizViewModel.cs" />
@@ -2192,6 +2194,10 @@
     <Content Include="Views\Home\DSSignUp.cshtml" />
     <Content Include="Views\Shared\_Layout_DirectorSeries.cshtml" />
     <Content Include="Views\Home\DirectorSeries.cshtml" />
+    <Content Include="Views\Cart\Partials\_PayByPayTrace.cshtml" />
+    <Content Include="Views\Cart\PayTraceDeclined.cshtml" />
+    <Content Include="Views\Cart\PayTraceApproved.cshtml" />
+    <Content Include="Views\Cart\PayTraceCanceled.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

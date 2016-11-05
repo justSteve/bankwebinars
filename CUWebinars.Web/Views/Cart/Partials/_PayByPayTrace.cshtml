@@ -1,0 +1,120 @@
+﻿@using CUWebinars.Web.Core
+@model Order
+@functions {
+    private const string CurrencyFormatToken = "c";
+    private const string DotAndTwoDecimals = ".00";
+
+
+}
+@{
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+    var TaxAmount = Convert.ToDecimal(ViewBag.TaxAmount);
+
+    var note = globalConfig.Tenant + " thanks you! Watch your email for complete details. " + ViewBag.NoteVersion;
+
+    if (ReferenceEquals(TaxAmount, null))
+    {
+        TaxAmount = 0;
+    }
+
+    var hpp_id = globalConfig.TenantMonerisHpp_Id;
+    var hpp_key = globalConfig.TenantMonerisHpp_Key;
+    var order = Model;
+
+    var myRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+    var RowPrice = Convert.ToDecimal(myRow.RowPrice);
+
+    var regTypeDesc = myRow.RegistrationType.OptionLabel;
+
+    var title = myRow.Webinar.Title;
+    title = title.Replace("%", "");
+    title = title.Replace("&", "");
+    title = title.Replace("#", "");
+    title = title.Replace("[", "");
+    title = title.Replace("]", "");
+    title = title.Replace("<", "");
+    title = title.Replace(">", "");
+    title = title.Replace("\"", "");
+    title = title.Replace("\\", "");
+    title = title.Replace("'", "");
+    title = title.Replace("/", "");
+
+    if (myRow.AdditionalLocation.Count > 0)
+    {
+        if (myRow.AdditionalLocation.Count == 1)
+        {
+            regTypeDesc += " Includes 1 Additional Location";
+        }
+        else
+        {
+            regTypeDesc += " Includes " + myRow.AdditionalLocation.Count + " Addition Locations.";
+        }
+    }
+
+    <script type="text/javascript" language="javascript">
+        var dataParamList = 0;
+
+        function SubmitCCForm () {
+            $("#PayByCCFormPT input[name='parmList']").val(dataParamList);
+            
+            $("#PayByCCFormPT").submit();
+        }
+
+        $(function() {
+            var idOrder = @Model.idOrder;
+            var updatedTotal = @Model.Total;
+
+            $('#PayByCCModal').on('show', function () {
+
+                $.ajax({
+
+                    datatype: "text/plain",
+                    type: "GET",
+                    url: '/cart/IniPayTraceModal?idOrder='+idOrder,
+                    cache: false,
+                    success: function (data) {
+
+                        dataParamList = data.paramList;
+
+                        $("#btnSubmitCCForm").click(function() {
+                            SubmitCCForm();
+                        });
+                    }
+                });
+            });
+        });
+
+    </script>
+}
+
+<div id="PayByCCModal" class="modal hide fade">
+
+    <input type="hidden" name="id" />
+    <input type="hidden" id="Step2_BillMeFormReferred" name="referred" value="" />
+    <div class="modal-header">
+        <h3 id="confirmCaption"></h3>
+    </div>
+    <div id="PayByCCModalOrderDetails" class="modal-body">
+        <div>
+
+            <div class="legendImitator">
+                Credit Card Processing Redirect
+            </div>
+
+            <div style="margin-bottom:10px;">
+                We will now redirect your browser to our credit card processor - https://www.paytrace.com - for entry of credit card information.
+                @*Direct credit card processing is temporarily offline. We apologize for the inconvenience. Please choose the 'Bill Me' option or call us at 800-831-0678 to post immediate payment with our customer service staff.*@
+            </div>
+
+
+            <div class="pull-right">
+                
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                <button class="btn btn-success" name="btnSubmitCCForm" id="btnSubmitCCForm">Continue</button>
+                
+            </div>
+        </div>
+
+
+    </div>
+</div>

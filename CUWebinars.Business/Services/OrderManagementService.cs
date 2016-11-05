@@ -2293,16 +2293,15 @@ namespace CUWebinars.Business.Services
         {
             if (!discount.Status.ToLower().StartsWith("a"))
             {
-                _logger.Warn("Discount redemtion attempted on: " + discount.idDiscount + " - " + row.idOrder);
-                return ("This Discount Code " + discount.DiscountCode + " is not activated. For more info contact us by using the Online Chat button below or emailing Support@ttsTrain.com.");
+                _logger.Warn("Discount redemption attempted on: " + discount.idDiscount + " - " + row.idOrder);
+                return ("This Discount Code " + discount.DiscountCode + " is expired.<br> For more info contact us by using the <i>Help & Feedback</i> button below<br> or emailing <b>Support@ttsTrain.com</b>.");
             }
             var forNotes = new StringBuilder();
             var existingDiscount = discount;
             var regTypeLabel = GetRegTypeOfOrderRow(row.idRegType).OptionLabel;
             decimal creditsRemain = CalculateCreditsRemain(discount);
             decimal creditsUsed = CalculateCreditsUsed(discount);
-
-
+            
 
             decimal thisUse = GetRegTypeOfOrderRow(row.idRegType).CreditCost;
 

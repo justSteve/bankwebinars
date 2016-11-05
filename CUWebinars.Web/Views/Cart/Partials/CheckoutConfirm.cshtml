@@ -100,22 +100,23 @@
                             <button class="btn btn-small cancel-edit-order">close panel</button>
                         </div>
                     </div>
-                }
-            }
-        }
-    }
+                                    }
+                                }
+                            }
+                        }
 
-    Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
+                        Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
 
-    Html.RenderPartial("~/Views/Cart/Partials/_ContinueShopping.cshtml");
-    if (ViewBag.Order != null)
-    {
-        Html.RenderPartial("~/Views/Cart/Partials/_PayByMoneris.cshtml", (Order) ViewBag.Order);
+                        Html.RenderPartial("~/Views/Cart/Partials/_ContinueShopping.cshtml");
+                        if (ViewBag.Order != null)
+                        {
+                            Html.RenderPartial("~/Views/Cart/Partials/_PayByPayTrace.cshtml", (Order) ViewBag.Order);
+                            //Html.RenderPartial("~/Views/Cart/Partials/_PayByMoneris.cshtml", (Order) ViewBag.Order);
 
 
-        Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml", (Order) ViewBag.Order);
-    }
-    Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
+                            Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml", (Order) ViewBag.Order);
+                        }
+                        Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
 
 
     <script type="text/javascript">var anyAddLocs = @(string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption) ? "false" : "true");</script>

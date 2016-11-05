@@ -1,0 +1,21 @@
+﻿@using CUWebinars.Web.Core
+@*@model Order*@
+
+@{
+    ViewBag.Title = "Payment Successful";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+    
+    <div id="LogInContainer" class="container">
+        <div id="reset">
+
+            <div class="legendImitator">
+                <b>Thank you for your order</b>
+            </div>
+            <div id="OrderSummaryContainer">
+                You payment was accepted.
+            </div>
+        </div>
+    </div>
+}

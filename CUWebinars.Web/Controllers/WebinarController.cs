@@ -382,7 +382,6 @@ namespace CUWebinars.Web.Controllers
                         if (claimsIdentityOfAuthenticatedUser.HasClaim(
                             (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
                         {
-
                             currentAffiliate =
                                 _orderManagementService.GetAffiliateByDomain(claimsIdentityOfAuthenticatedUser.Claims
                                     .Where(c => c.Type == ClaimTypes.Affiliate).Select(c => c.Value).Single());

@@ -111,7 +111,7 @@
             discountCaption = ViewBag.DiscountCaption.ToString();
         }
         var discResult = "success";
-        if (discountCaption != "" && discountCaption.Contains("Insufficient"))
+        if (discountCaption != "" && (discountCaption.Contains("Insufficient") || discountCaption.Contains("expired")))
         {
             discResult = "danger";
         }

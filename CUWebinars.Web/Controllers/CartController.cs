@@ -481,6 +481,158 @@ namespace CUWebinars.Web.Controllers
         }
 
 
+        [HttpGet]
+        public JsonResult IniPayTraceModal(int idOrder, string multi)
+        {
+            //ensures that the price passed to PayTrace reflects order price with discount applied.
+            var order = _cartControllerOrchestrator.GetOrderById(idOrder);
+
+            var newPrice = _cartControllerOrchestrator.UpdateOrderPricing(order);
+
+            string wTitle = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title;
+
+            string regType =
+                order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType.OptionLabel;
+            decimal totalAmt = newPrice.TotalOrderPrice;
+
+            string[] orderList = null;
+            var ProdDesc = "";
+            if (multi != null)
+            {
+                orderList = multi.TrimEnd(',').Split(',');
+            }
+            if (orderList != null && orderList.Length > 0)
+            {
+                ProdDesc += "<tr><td colspan=3 align=left><font size=2><b>Registration Details - " + _globalConfig.Tenant + ".</b><br></font></td></tr>";
+                ProdDesc += "<tr><td colspan=3 height=1 bgcolor=000000></td></tr>";
+                ProdDesc += "<tr bgcolor=CCCCCC>";
+                ProdDesc += "    <td align='Center'><b>Title</b></td>";
+                ProdDesc += "    <td align='center'><b>Type</b></td>";
+                ProdDesc += "    <td align='center'><b>Price</b></td>";
+                ProdDesc += "</tr>";
+
+                foreach (var _idOrder in orderList)
+                {
+                    var _order = _cartControllerOrchestrator.GetOrderById(Convert.ToInt32(_idOrder));
+                    var _newPrice = _cartControllerOrchestrator.UpdateOrderPricing(_order);
+
+
+
+                    totalAmt = totalAmt + _newPrice.TotalOrderPrice;
+
+
+                    wTitle = _order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title;
+                    wTitle = wTitle.Substring(0, Math.Min(wTitle.Length, 40)) + " <font size=2>(" + _globalConfig.TenantPrefix +
+                             _order.idOrder + ")</font>";
+                    regType =
+                        _order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                            .RegistrationType.OptionLabel;
+                    var _totalAmt = _newPrice.TotalOrderPrice.ToString("C").Replace(".00", "");
+
+
+                    ProdDesc += "<tr bgcolor=CCCCCC>";
+                    ProdDesc += "    <td align='left'>" + wTitle + "</td>";
+                    ProdDesc += "    <td align='left'>" + regType + "</td>";
+                    ProdDesc += "    <td align='left'>" + _totalAmt + "</td>";
+                    ProdDesc += "</tr>";
+                }
+            }
+            else
+            {
+                ProdDesc += "<tr><td colspan=3 align=left><font size=2><b>Registration Details - " + _globalConfig.Tenant + "</b></font></td></tr>";
+                ProdDesc += "<tr><td colspan=3 height=1 bgcolor=000000></td></tr>";
+                ProdDesc += "<tr bgcolor=CCCCCC>";
+                ProdDesc += "    <td align='Center'><b>Title</b></td>";
+                ProdDesc += "    <td align='center'><b>Type</b></td>";
+                ProdDesc += "    <td align='center'><b>Price</b></td>";
+                ProdDesc += "</tr>";
+
+                ProdDesc += "<tr bgcolor=CCCCCC>";
+                ProdDesc += "    <td align='left'>" + wTitle + "</td>";
+                ProdDesc += "    <td align='left'>" + regType + "</td>";
+                ProdDesc += "    <td align='left'>" + totalAmt + "</td>";
+                ProdDesc += "</tr>";
+            }
+
+            //format parameters for request 
+            // to get an approval amount set: AMOUNT~1.00
+            // to get a declined amount set: AMOUNT~1.12
+            totalAmt = 1.00M;
+            string parameters = "UN~shuener|PSWD~PttAWka2|TERMS~Y|TRANXTYPE~Sale|";
+            parameters += "ORDERID~" + idOrder + "|AMOUNT~" + totalAmt + "|";
+
+            string return_url = @"http://" + Request.Url.Authority;
+
+            parameters += "ApproveURL~https://bwdev.azurewebsites.net/cart/PayTraceApproved/|";
+            parameters += "DeclineURL~https://bwdev.azurewebsites.net/cart/PayTraceDeclined/|";
+
+            parameters += "ReturnURL~https://bwdev.azurewebsites.net/cart/PostBackPayTrace/|";
+            //parameters += "ReturnURL~" + _globalConfig.TenantURL + "/cart/PostBackPayTrace/|";
+
+            string parameter_list = "PARMLIST=";
+
+            parameter_list = parameter_list + parameters;
+            ASCIIEncoding encoding = new ASCIIEncoding();
+            byte[] bytes = encoding.GetBytes(parameter_list);
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://paytrace.com/api/validate.pay");
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentLength = bytes.Length;
+
+            // send validation request
+            Stream str = request.GetRequestStream();
+            str.Write(bytes, 0, bytes.Length);
+            str.Flush();
+            str.Close();
+
+            // get response and parse
+            WebResponse response = request.GetResponse();
+            Stream rsp_stream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(rsp_stream);
+
+            // read the response string
+            string strResponse = reader.ReadToEnd();
+            var responseString = strResponse;
+
+            string authKey;
+
+            // if we have errors if so output to ui
+            if (!strResponse.Contains("ERROR"))
+            {
+                string[] _parameters = strResponse.Split('|');
+
+                authKey = _parameters[1].Split('~')[1];
+            }
+            else
+            {
+                responseString = strResponse;
+                authKey = "failed";
+            }
+
+            string paramList = string.Format("DISPLAYTRUSTLOGO~Y|DISABLETERMS~Y|ENABLEREDIRECT~Y|RETURNPARIS~Y|authKey~{0}|disablelogin~y|disableoptional~y|showbname~y|hideinvoice~y|test~y|hidepassword~y|orderid~{1}|bname~{2}", authKey, idOrder, order.FirstName + ' ' + order.LastName);
+            paramList += "|ProductDetails~" + ProdDesc.Replace(System.Environment.NewLine, "");
+            paramList += "|baddress~" + order.BillingAddress;
+            paramList += "|bcity~" + order.BillingCity;
+            paramList += "|bstate~" + order.BillingState;
+            paramList += "|bzip~" + order.BillingZip;
+            paramList += "|bcountry~US";
+            paramList += "|email~" + order.BillingEmail;
+            paramList += "|phone~" + order.BillingPhone;
+            paramList += "|CUSTOMDBA~" + _globalConfig.TenantDomain;
+            paramList += "|IMAGEURL~" + _globalConfig.TenantLogo;
+            paramList += "|CANCELURL~https://bwdev.azurewebsites.net/cart/PayTraceCanceled";
+
+
+            return Json(new
+            {
+                success = "success",
+                responseString,
+                paramList
+
+            }, JsonRequestBehavior.AllowGet);
+        }
+
         [AllowAnonymous]
         [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
         public void Incoming()
@@ -1115,6 +1267,31 @@ namespace CUWebinars.Web.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public ActionResult PayTraceApproved()
+        {
+            string formFields = Request.QueryString.ToString();
+            _logger.Info("PayTraceApproved postback: " + formFields);
+
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult PayTraceDeclined()
+        {
+            string formFields = Request.QueryString.ToString();
+            _logger.Info("PayTraceDeclined postback: " + formFields);
+
+            return View();
+        }
+        [HttpGet]
+        public ActionResult PayTraceCanceled()
+        {
+            string formFields = Request.QueryString.ToString();
+            _logger.Info("PayTraceCanceled postback: " + formFields);
+
+            return View();
+        }
         [HttpPost]
         public ActionResult ThankYou(FormCollection form)
         {
@@ -1158,6 +1335,73 @@ namespace CUWebinars.Web.Controllers
             //return View(form);
         }
 
+        //[HttpPost]
+        public ActionResult PostBackPayTrace()
+        {
+            string formFields = Request.Form.ToString().Replace("parmList=", "");
+            //string formFields = HttpUtility.UrlDecode("BNAME%257EStephen%2bHueners%257CNAME%257EStephen%2bHueners%257CBADDRESS%257E7136%2bHeram%257CBADDRESS2%257E%257CBCITY%257EHolmen%257CBSTATE%257EWI%257CBCOUNTRY%257EUS%257CBZIP%257E54636%257CPHONE%257E%257CDESCRIPTION%257E%252A%252ATEST%252A%252Athis%2bis%2bfor%2bspecial%2binstructions%257CINVOICE%257E%257CAMOUNT%257E1%252E00%257C&cmdSecureCheckout=Click+here+to+return+to+the+TOTAL+TRAINING+SOLUTIONS+web+site.");
+            formFields = HttpUtility.UrlDecode(formFields.Replace("parmList=", ""));
+            _logger.Info("PostBackPayTrace: " + formFields);
+            //PostBackPayTrace: parmList=ORDERID~131598|TRANSACTIONID~136100879|APPCODE~123456|APPMSG~Your TEST transaction was successfully processed. HOWEVER, NO FUNDS WILL BE transferred.|AVSRESPONSE~Full Exact Match|CSCRESPONSE~Match|EMAIL~user@ttstrain.com|BNAME~Stephen Hueners|CARDTYPE~MasterCard|EXPMNTH~08|EXPYR~19|LAST4~6285|AMOUNT~1.00|
+            //var order = _cartControllerOrchestrator.LoadOrder(Convert.ToInt32(form.order_no.Split('-')[1]));
+
+            //if (order == null) throw new ArgumentNullException("order");
+
+            //JProperty monerisResponse = new JProperty(JsonPropertyKeys.MonerisResponse, JsonConvert.SerializeObject(form));
+
+            //order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, monerisResponse);
+            ////TODO: Fix Json formatter forJsonbrowser (jquery plugin)
+            //// the comment being written here is valid Json but is not displayed nicely by the Json reader:
+            //// original: { "MonerisResponse":"{\"FormId\":null,\"order_no\":\"BW-129285\",\"ref_num\":\"642120820012660120\",\"message\":\"APPROVED*\",\"result\":\"1\",\"auth_code\":\"062449\",\"txn_time\":\"14:06:26\",\"txn_date\":\"2016-09-23\",\"response_code\":\"001\",\"note\":\"BankWebinars thanks you! Watch your email for complete details. \"}"}
+            ////  better: {"MonerisResponse":{"FormId":null,"order_no":"BW-129285","ref_num":"642120820012660120","message":"APPROVED*","result":"1","auth_code":"062449","txn_time":"14:06:26","txn_date":"2016-09-23","response_code":"001","note":"BankWebinars thanks you! Watch your email for complete details. "}}
+            //_cartControllerOrchestrator.UpdateOrderPricing(order);
+
+            //if (form.message.StartsWith("APPROVED"))
+            //{
+            //    try
+            //    {
+            //        _logger.Info("Confirming Moneris submission with Id BW-{0}", JsonConvert.SerializeObject(order, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+
+            //        order.OrderStatus = OrderStatus.Paid;
+
+            //        //_cartControllerOrchestrator.CreatePostEventClaim(order);
+            //        _cartControllerOrchestrator.AddClaimForPostEventMaterials(order.BillingEmail, order.OrderRows.FirstOrDefault());
+
+            //        if (User.Identity.IsAuthenticated)
+            //        {
+            //            _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
+            //        }
+            //        else
+            //        {
+            //            _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: true);
+            //        }
+
+            //        return RedirectToAction("OrderComplete", "Account", new { id = order.idOrder, message = form.message });
+            //    }
+            //    catch (Exception exception)
+            //    {
+            //        ModelState.AddModelError(string.Empty,
+            //            "Connection Error #552. Please contact the administrator to complete transaction.");
+            //        _logger.ErrorException("MonerisConfirmOrder returned APPROVED but controller failed ", exception);
+            //        ErrorSignal.FromCurrentContext().Raise(exception);
+            //    }
+            //    _logger.Error("ConfirmOrder Action | Id parameter was null");
+            //    _logger.Error(string.Format("ConfirmOrder Action | {0}", _appHelper.GetSessionStartInfo()));
+            //}
+            //else
+            //{
+            //    _logger.Info("Moneris declined with msg {0}: order {1}", form.message, JsonConvert.SerializeObject(order, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+            //    return Json(new
+            //    {
+            //        Result = WebUiConstants.Fail,
+            //        OrderRowID = order.idOrder,
+            //        Msg = string.Format("Your credit card transaction did not complete successfully. Our processor replied with this message: {0}", form.message)
+            //    }, JsonRequestBehavior.AllowGet);
+
+            //}
+            return this.ModelStateJson(ModelState);
+
+        }
         [HttpPost]
         public ActionResult PostBackMoneris(MonerisResponse form)
         {
@@ -1544,6 +1788,54 @@ namespace CUWebinars.Web.Controllers
             string htmlEmailBody = ViewHelpers.RenderViewToString(ControllerContext, "~/Notification/Templates/OrderSubmittedMulti.cshtml", orderSubmittedMultiViewModel, true);
 
             _cartControllerOrchestrator.FireOrderSubmittedMultiNotification(currentUserEmail, subject, htmlEmailBody);
+
+            // send back enough to make the user comfortable, adjust the screen (remove buttons, say thanks, etc.)
+            return Json(new { Result = WebUiConstants.Success, msg = "Order successfully submitted - thank you! Please visit <b>My Webinars</b> (link above) for detailed information of all your events." });
+        }
+        public JsonResult CheckoutConfirmOrderPayTraceJson()
+        {
+            string currentUserEmail = User.Identity.Name;
+
+            // get list of orders in process for this user
+            List<Order> orders = _cartControllerOrchestrator.GetOrdersByUser(currentUserEmail)
+                .Where(o => o.OrderStatus == OrderStatus.InProcess).ToList(); // used a couple of places, may want to make a function that just returns these...
+
+            RegistrationSummaryMultiViewModel model = BuildRegistrationSummaryMultiViewModel(orders);
+
+            StringBuilder sbOrdersSummary = new StringBuilder();
+            StringBuilder sbHeaderSummary = new StringBuilder();
+            sbHeaderSummary.Append("Payment will be submitted for the following orders:" + Environment.NewLine);
+            foreach (RegistrationSummaryViewModel registrationSummaryViewModel in model.RegistrationSummaryViewModels)
+            {
+                _logger.Info("Multi-event checkout to PayTrace: " + registrationSummaryViewModel.OrderRow.idOrder);
+
+                // update the rows to submitted status
+                //_cartControllerOrchestrator.SetOrderStatus(registrationSummaryViewModel.OrderRow.idOrder, currentUserEmail, OrderStatus.Submitted); // validates that the user owns this orderid
+
+                //_cartControllerOrchestrator.AddClaimForPostEventMaterials(registrationSummaryViewModel.OrderRow.Order.BillingEmail, registrationSummaryViewModel.OrderRow);
+
+
+                // generate order summary email verbiage via RenderViewToString
+                sbOrdersSummary.Append(ViewHelpers.RenderViewToString(ControllerContext, "~/Views/Shared/Partials/_OrderSumUser2.cshtml", registrationSummaryViewModel, true));
+                sbHeaderSummary.Append("  " + registrationSummaryViewModel.OrderRow.idOrder + ",");
+            }
+
+            // send email via azure / mailchimp
+            string subject = _globalConfig.OrderSubmittedMultiEmailSubject; // could do it in handler, could add dynamic content
+
+            // take the summery and merge it into our HTML email template.  doing this early since we are reusing the generic-ish AzureCuwWebJobSmtpMessageDelivery code
+            OrderSubmittedMultiViewModel orderSubmittedMultiViewModel = new OrderSubmittedMultiViewModel()
+            {
+                Subject = subject,
+                OrderSummaryHtml = sbOrdersSummary.ToString(),
+                DiscountCaption = model.DiscountCaptionMulti,
+                GrandTotalCaption = model.GrandTotalCaptionMulti,
+                HeaderSummaryCaption = sbHeaderSummary.ToString().TrimEnd(',')
+            };
+
+            //string htmlEmailBody = ViewHelpers.RenderViewToString(ControllerContext, "~/Notification/Templates/OrderSubmittedMulti.cshtml", orderSubmittedMultiViewModel, true);
+
+            //_cartControllerOrchestrator.FireOrderSubmittedMultiNotification(currentUserEmail, subject, htmlEmailBody);
 
             // send back enough to make the user comfortable, adjust the screen (remove buttons, say thanks, etc.)
             return Json(new { Result = WebUiConstants.Success, msg = "Order successfully submitted - thank you! Please visit <b>My Webinars</b> (link above) for detailed information of all your events." });

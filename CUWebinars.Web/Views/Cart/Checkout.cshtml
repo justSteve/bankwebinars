@@ -5,24 +5,65 @@
     ViewBag.Title = "Checkout";
     Layout = "~/Views/Shared/_LayoutPublic.cshtml";
 
+    var orderList = "";
+
+    foreach (var order in Model.RegistrationSummaryViewModels)
+    {
+        orderList += order.OrderRow.idOrder + ",";
+    }
+
+    <script type="text/javascript" language="javascript">
+        var dataParamList = 0;
+
+        function SubmitCCForm () {
+            $("#PayByCCFormPTMulti input[name='parmList']").val(dataParamList);
+            console.log(dataParamList);
+            $("#PayByCCFormPTMulti").submit();
+        }
+
+        $(function() {
+            var idOrder = @Model.RegistrationSummaryViewModels.First().OrderRow.idOrder;
+
+            $('#PayByPayTraceModal').on('show', function () {
+
+                $.ajax({
+
+                    datatype: "text/plain",
+                    type: "GET",
+                    url: '/cart/IniPayTraceModal?idOrder='+idOrder + "&multi=@orderList",
+                    cache: false,
+                    success: function (data) {
+
+                        dataParamList = data.paramList;
+
+                        $("#btnSubmitPayTraceForm").click(function() {
+                            SubmitCCForm();
+                        });
+                    }
+                });
+            });
+        });
+
+    </script>
+
     <div id="LogInContainer" class="container">
         <div id="reset">
 
 
             @{
-                <div  id="confirmHeader">
+                <div id="confirmHeader">
                     <div class="legendImitator">
                         <b>Pending Orders</b>
                     </div>
 
                     @if (!string.IsNullOrWhiteSpace(Model.DiscountCaptionMulti))
                     {
-                    <div id="discountCaptionMulti">@Model.DiscountCaptionMulti</div>
+                        <div id="discountCaptionMulti">@Model.DiscountCaptionMulti</div>
                     }
 
                     @if (!string.IsNullOrWhiteSpace(Model.GrandTotalCaptionMulti))
                     {
-                    <p id="grandTotalCaptionMulti">@Model.GrandTotalCaptionMulti</p>
+                        <p id="grandTotalCaptionMulti">@Model.GrandTotalCaptionMulti</p>
                     }
                 </div>
                 foreach (RegistrationSummaryViewModel registrationSummaryViewModel in Model.RegistrationSummaryViewModels)
@@ -40,16 +81,61 @@
                 }
                 else
                 {
+
                     <div id="checkout-action-container" style="margin-bottom: 10px;">
                         @{
                             string confirmButtonLabel = "Submit Registrations";
+                            string confirmPayTraceLabel = "Pay By Credit Card";
                             // null check like Views\Cart\Partials\_DisplayRowPrice.cshtml ->   Model.PricesAndDiscounts.Discount == null  ?
                         }
                         <button class="btn btn-success btn-large" role="button" id="ConfirmRegistrationBillMeMulti">@confirmButtonLabel</button>
-                        
+
+                        <button data-toggle="modal" role="button" data-target="#PayByPayTraceModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />`
+
+
                     </div>
-                }
+                            }
             }
+
+            <div id="PayByPayTraceModal" class="modal hide fade">
+
+                <form id="PayByCCFormPTMulti" method="post" action="https://paytrace.com/api/checkout.pay">
+
+                    <input type="hidden" name="parmList" id="paraList" value="">
+                    <input type="hidden" name="ordersList" id="ordersList" value="">
+
+                    <input type="hidden" name="id" />
+                    <input type="hidden" name="orderList" />
+
+                    <div class="modal-header">
+                        <h3 id="confirmCaption"></h3>
+                    </div>
+                    <div id="PayByCCModalOrderDetails" class="modal-body">
+                        <div>
+
+                            <div class="legendImitator">
+                                Credit Card Processing Redirect
+                            </div>
+
+                            <div style="margin-bottom:10px;">
+                                We will now redirect your browser to our credit card processor - https://www.paytrace.com - for entry of credit card information.
+                                @*Direct credit card processing is temporarily offline. We apologize for the inconvenience. Please choose the 'Bill Me' option or call us at 800-831-0678 to post immediate payment with our customer service staff.*@
+                            </div>
+
+
+                            <div class="pull-right">
+
+                                <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                                <button class="btn btn-success" name="btnSubmitPayTraceForm" id="btnSubmitPayTraceForm">Continue</button>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </form>
+            </div>
 
             <div id="FeedbackContainer" class="span6 hidden">
                 <section>
@@ -63,9 +149,9 @@
 
 @section scripts{
     @*@Scripts.Render("~/bundles/jqueryval")
-    @Scripts.Render("~/bundles/create-order")
-    @Scripts.Render("~/bundles/manage-webinar-files")*@
-    
+        @Scripts.Render("~/bundles/create-order")
+        @Scripts.Render("~/bundles/manage-webinar-files")*@
+
     <script src="~/Scripts/app/cart/checkout.js"></script>
 
 }

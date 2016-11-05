@@ -75,65 +75,65 @@
                             <div class="tab-content">
                                 @if (Model.UserOwnsThisEvent < 1)
                                 {
-                                <div class="tab-pane active" id="signUp">@Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)</div>
-                                <div class="tab-pane" id="contactInfo"></div>
-                                <div class="tab-pane" id="confirmation"></div>
-                                @*if (Model.UserHasDiscount != null)
-                                    {
-                                        if (Model.UserHasDiscount.CreditsRemain > 0)
+                                    <div class="tab-pane active" id="signUp">@Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)</div>
+                                    <div class="tab-pane" id="contactInfo"></div>
+                                    <div class="tab-pane" id="confirmation"></div>
+                                    @*if (Model.UserHasDiscount != null)
                                         {
-                                            if (Model.UserHasDiscount.DateValidTo > Model.UserHasDiscount.DateValidFrom)
+                                            if (Model.UserHasDiscount.CreditsRemain > 0)
                                             {
-                                                <span class="label large label-success">
-                                                    Your subscription will expire on @Model.UserHasDiscount.DateValidTo.ToShortDateString()<text>.</text>
-                                                </span>
-                                            }
-                                            else
-                                            {
-                                                if (Model.UserHasDiscount.CreditsRemain == 1)
+                                                if (Model.UserHasDiscount.DateValidTo > Model.UserHasDiscount.DateValidFrom)
                                                 {
-                                                    <span class="label large label-success">Your Webinar Subscription Package has one credit available for your next order!</span>
+                                                    <span class="label large label-success">
+                                                        Your subscription will expire on @Model.UserHasDiscount.DateValidTo.ToShortDateString()<text>.</text>
+                                                    </span>
                                                 }
                                                 else
                                                 {
-                                                    <span class=" pull-right label label-success">&nbsp;<span style="font-weight: normal">Your Webinar Subscription Package has @Model.UserHasDiscount.CreditsRemain.ToString().Replace(".00", "") credits available for your next order!&nbsp;</span></span>
+                                                    if (Model.UserHasDiscount.CreditsRemain == 1)
+                                                    {
+                                                        <span class="label large label-success">Your Webinar Subscription Package has one credit available for your next order!</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class=" pull-right label label-success">&nbsp;<span style="font-weight: normal">Your Webinar Subscription Package has @Model.UserHasDiscount.CreditsRemain.ToString().Replace(".00", "") credits available for your next order!&nbsp;</span></span>
+                                                    }
                                                 }
                                             }
-                                        }
-                                    }*@
+                                        }*@
                                 }
                                 else if (Model.Order.OrderStatus == OrderStatus.AwaitingVerification || Model.Order.OrderStatus == OrderStatus.InProcess || Model.Order.OrderStatus == OrderStatus.Canceled || Model.Order.OrderStatus == OrderStatus.Submitted)
                                 {
                                     if (Request.Url.PathAndQuery.ContainsIgnoreCase("/webinar/getaddtocartjson")) // i don't love this as our logic gate, is there something else we can use / invent?
                                     {
                                         //should only happen if they are viewing the "buy column" child row on the search results page and have an order in process
-                                <div>
-                                    An order (@Model.Order.idOrder) for this event is In Process. If you are ready to complete your order, please <a target='EventDetails' href="/webinar/details/@Model.Webinar.idWebinar">continue to checkout</a>.
-                                </div>
+                                        <div>
+                                            An order (@Model.Order.idOrder) for this event is In Process. If you are ready to complete your order, please <a target='EventDetails' href="/webinar/details/@Model.Webinar.idWebinar">continue to checkout</a>.
+                                        </div>
                                     }
                                     else
                                     {
-                                <div class="tab-pane" id="signUp"></div>
-                                <div class="tab-pane" id="contactInfo"></div>
-                                <div class="tab-pane active" id="confirmation">@Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutConfirm.cshtml", model: Model.CheckoutConfirmViewModel)</div>
+                                        <div class="tab-pane" id="signUp"></div>
+                                        <div class="tab-pane" id="contactInfo"></div>
+                                        <div class="tab-pane active" id="confirmation">@Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutConfirm.cshtml", model: Model.CheckoutConfirmViewModel)</div>
                                     }
                                 }
 
                             </div>
                             <!-- The following forms are positioned here so that they are not nested in the form in the CheckoutOptions View. -->
-                            @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new {id = "frmSignIn", name = "signIn"}))
+                            @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
                             {
-                            @Html.AntiForgeryToken()
+                                @Html.AntiForgeryToken()
 
-                            <input id="loginEmail" name="Email" type="hidden" value="">
-                            <input id="loginPassword" name="Password" type="hidden">
-                            <input id="loginRememberMe" type="hidden" value="true" name="RememberMe">
-                            <input type="hidden" name="returnUrl" value="/Webinar/Details/@Model.Webinar.idWebinar" />
+                                <input id="loginEmail" name="Email" type="hidden" value="">
+                                <input id="loginPassword" name="Password" type="hidden">
+                                <input id="loginRememberMe" type="hidden" value="true" name="RememberMe">
+                                <input type="hidden" name="returnUrl" value="/Webinar/Details/@Model.Webinar.idWebinar" />
                             }
-                            @using (Html.BeginForm("ResetPassword", "Account", FormMethod.Post, new {id = "ResetPasswordForm"}))
+                            @using (Html.BeginForm("ResetPassword", "Account", FormMethod.Post, new { id = "ResetPasswordForm" }))
                             {
-                            @Html.AntiForgeryToken()
-                            <input id="ResetPassEmail" name="emailForReset" type="hidden" value="">
+                                @Html.AntiForgeryToken()
+                                <input id="ResetPassEmail" name="emailForReset" type="hidden" value="">
                             }
                             <form id="checkEmail">
                                 @Html.AntiForgeryToken()
@@ -181,6 +181,7 @@
                         // user owns or is in process...
                         @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
                     }
+
                 }
             }
         }
@@ -190,6 +191,14 @@
 {
     <input type="hidden" name="id" id="cancelModalOrderId" />
 }
+
+<form id="PayByCCFormPT" method="post" action="https://paytrace.com/api/checkout.pay">
+
+    <input type="hidden" name="parmList" id="paraList" value="">
+
+</form>
+
+
 <form id="PayByCCForm" method="POST" action="https://esplus.moneris.com/DPHPP/index.php">
     <input type="hidden" name="hpp_id" />
     <input type="hidden" name="hpp_key" />
