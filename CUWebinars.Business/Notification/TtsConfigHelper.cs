@@ -85,6 +85,14 @@ namespace CUWebinars.Business.Notification
             return ConfigurationManager.AppSettings["CuwNotificationQueueName"];
         }
 
+        public string GetStorageAccessKey()
+        {
+            return ConfigurationManager.AppSettings["StorageAccessKey"];
+        }
+        public string GetStorageAccountName()
+        {
+            return ConfigurationManager.AppSettings["StorageAccountName"];
+        }
         public string GetOrderSubmittedMultiQueueName()
         {
             return ConfigurationManager.AppSettings["OrderSubmittedMultiQueueName"];

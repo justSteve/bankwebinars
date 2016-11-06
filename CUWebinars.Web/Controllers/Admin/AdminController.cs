@@ -140,71 +140,39 @@ namespace CUWebinars.Web.Controllers.Admin
             if (claimsIdentityOfAuthenticatedUser.HasClaim(
                 (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
             {
-                model = new AdminDTO
+                model.ShowWebinarsViewModel = new ShowWebinarsViewModel
                 {
-                    ShowWebinarsViewModel = new ShowWebinarsViewModel
-                    {
-                        SearchTerm = searchTerm,
-                        UserIsAdmin = false
+                    SearchTerm = searchTerm,
+                    UserIsAdmin = false,
+                    Affiliate = affiliate
 
-                    },
-                    DiscountSubscriptionsModel =
-                        _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff) as
-                            IList<DiscountDTO>,
-                    UserDetailsViewModel = new UserDetailsViewModel()
-                    {
-                        Affiliate = affiliate,
-                        UserIsAdmin = false
-                    },
-                    AffiliateSettingsViewModel = new AffiliateSettingsViewModel()
-                    {
-                        Affiliate = affiliate,
-                        WebUser = user
-                    }
                 };
-            }
+                model.DiscountSubscriptionsModel =
+                    _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff) as
+                        IList<DiscountDTO>;
+
+                model.InvoicesModel =
+                    new InvoicesModel
+                    {
+                        Affiliate = affiliate,
+                        Links = _affiliateManagementService.GetInvoicesByAffiliate(_globalConfig.Tenant, affiliate.idUserAff)
+                    };
+
+                model.UserDetailsViewModel = new UserDetailsViewModel()
+                {
+                    Affiliate = affiliate,
+                    UserIsAdmin = false
+                };
+                model.AffiliateSettingsViewModel = new AffiliateSettingsViewModel()
+                {
+                    Affiliate = affiliate,
+                    WebUser = user
+                };
+            };
+
 
             return View("~/Views/Admin/Home/Index.cshtml", model);
-        }
 
-        public ActionResult GetAppLog2()
-        {
-            ServicePointManager.SetTcpKeepAlive(true, 30000, 20000);
-
-            // Get the object used to communicate with the server.
-
-            FtpWebRequest request =
-                (FtpWebRequest)
-                WebRequest.Create(
-                    "ftp://waws-prod-ch1-005.ftp.azurewebsites.windows.net/LogFiles/log4netCSV.log");
-
-            request.Method = WebRequestMethods.Ftp.DownloadFile;
-
-
-            request.Credentials = new NetworkCredential("$BankWebinars33",
-                "FDcehM4K2WbSuxEplrG2B7uJxqrMbeqJ6MdDm3GLyraYTmzWnmLDQAkllu0t", "BankWebinars33");
-
-            FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-
-
-            Stream responseStream = response.GetResponseStream();
-
-            StreamReader reader = new StreamReader(responseStream);
-
-
-            StreamWriter writer = new StreamWriter("C:\\Users\\Steve\\Desktop\\logfiles\\resultStream.log");
-            writer.Write(reader.ReadToEnd());
-
-            Console.WriteLine("Download Complete, status {0}", response.StatusDescription);
-
-
-
-            reader.Close();
-
-            response.Close();
-
-
-            return View();
         }
 
         public PartialViewResult GetAffiliates()
@@ -3524,7 +3492,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                                         order.InvoiceDetail = order.InvoiceDetail.Replace("ChangedOrderNeedsNewInvoice",
                                             "ChangedOrderWasReinvoiced-" + InvoiceID);
-
+                                        _orderManagementService.SaveChanges();
                                     }
                                     catch (Exception ex)
                                     {
@@ -3759,11 +3727,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
             try
             {
-
-                DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
-                System.Globalization.Calendar cal = dfi.Calendar;
-
-
                 var blobTest = BlobHelper.GetBlob("affiliateinvoices/", startDate, weekNumber + "-" + idAffiliate + ".pdf");
                 if (blobTest != null)
                     blob = blobTest.BlobUri;

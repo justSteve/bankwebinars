@@ -479,6 +479,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Models\FileViewModel.cs" />
     <Compile Include="Controllers\CertOfCompletionDSViewModel.cs" />
     <Compile Include="Controllers\ManageMessageId.cs" />
     <Compile Include="Core\CalendarRssDTO.cs" />
@@ -548,6 +549,7 @@
     <Compile Include="Models\DiscountAudit.cs" />
     <Compile Include="Models\ExpressCheckoutPostBackModel.cs" />
     <Compile Include="Models\Importers\ImportOrderForAcsModel.cs" />
+    <Compile Include="Models\InvoicesModel.cs" />
     <Compile Include="Models\MandrillIncomingMsg.cs" />
     <Compile Include="Models\PayTraceResponse.cs" />
     <Compile Include="Models\NotificationHeaderModel.cs" />

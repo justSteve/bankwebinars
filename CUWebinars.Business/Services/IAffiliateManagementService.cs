@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using CUWebinars.Web.Models;
 
 
+
 namespace CUWebinars.Business.Services
 {
     public interface IAffiliateManagementService : IDisposable
@@ -28,5 +29,6 @@ namespace CUWebinars.Business.Services
         AffiliateInvoiceDTO BuildAffiliateInvoiceForAdjustedOrders(AffiliateInvoiceDTO invoice, List<Order> theseOrders, int thisAffiliate);
         AffiliateInvoiceDTO GetAffiliateInvoice(int value, string aff);
         IList<DiscountDTO> GetSubscriptionsByAffiliate(int idUserAff);
-            }
+        List<Uri> GetInvoicesByAffiliate(string globalConfigTenant, int affiliateIdUserAff);
+    }
 }

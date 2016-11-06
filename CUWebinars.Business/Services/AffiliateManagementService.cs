@@ -1,16 +1,23 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using System.Net;
+using System.Web.Razor.Generator;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Repository;
 using CUWebinars.NotificationSystem.Event;
 using CUWebinars.Web.Models;
+using CUWebinars.Web.Core;
+
 using FluentValidation;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
@@ -47,7 +54,7 @@ namespace CUWebinars.Business.Services
 
             invoice.Affiliate = FindById(affiliateId);
 
-            
+
             foreach (Order order in orders.OrderBy(o => o.OrderDate))
             {
                 try
@@ -583,29 +590,6 @@ namespace CUWebinars.Business.Services
         }
 
 
-        //public virtual IList<AffiliateReportDTO> AffiliateReport(int webinarID)
-        //{
-        //    List<Order> orders = _webinarRepository.GetOrdersByWebinar(webinarID).ToList();
-
-        //    IList<AffiliateReportDTO> reportData = BuildAffiliateReport(orders, webinarID);
-        //    return reportData;
-        //}
-
-
-        //public virtual AffiliateInvoiceDTO AffiliateInvoice(int webinarID, int affiliateID)
-        //{
-        //    List<Order> orders = _webinarRepository.GetOrdersByWebinar(webinarID)
-        //        .Where(o => o.idAffiliate == affiliateID).ToList();
-
-
-        //    AffiliateInvoiceDTO reportData = BuildAffiliateInvoice(orders, webinarID, affiliateID);
-        //    if (reportData != null)
-        //    {
-        //        return new AffiliateInvoiceDTO { idWebinar = webinarID, Affiliate = FindById(affiliateID) };
-        //    }
-
-        //    return reportData;
-        //}
 
         public virtual AffiliateReportDTO AffiliateReport(int webinarID, int affiliateID)
         {
@@ -794,6 +778,71 @@ namespace CUWebinars.Business.Services
             return theseSubscriptions;
         }
 
+        public List<Uri> GetInvoicesByAffiliate(string tenant, int idAffiliate)
+        {
+
+            List<Uri> links = new List<Uri>();
+
+
+            var firstMonday = Core.Extensions.DateTimeExtensions.ToDateTime("1/4/2016");
+            DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
+
+            System.Globalization.Calendar cal = dfi.Calendar;
+            if (DateTime.Now.Year == 2017)
+            {
+                firstMonday = Core.Extensions.DateTimeExtensions.ToDateTime("1/2/2017");
+            }
+            for (var _week = 0; _week <= 52; _week++)
+            {
+                //https://storeforbw.blob.core.windows.net/affiliateinvoices/10-17-2016/43-2016-11464.pdf
+                DateTime theMonday;
+                if (_week == 0)
+                {
+                    theMonday = firstMonday.Value;
+                }
+                theMonday = firstMonday.Value.AddDays(_week * 7);
+
+                var weekNumber = cal.GetWeekOfYear(theMonday, dfi.CalendarWeekRule,
+                                     dfi.FirstDayOfWeek) + "-" + cal.GetYear(DateTime.Now);
+                var urlBase = "https://storeforcu.blob.core.windows.net/affiliateinvoices/";
+
+                if (tenant == "BankWebinars") urlBase = "https://storeforbw.blob.core.windows.net/affiliateinvoices/";
+
+                //Console.WriteLine("The current date and time: {0:MM/dd/yy H:mm:ss zzz}",thisDate2);
+                string theFileName = theMonday.ToString("M/d/yyyy").Replace("/", "-") + "/" + weekNumber + "-" +
+                                     idAffiliate + ".pdf";
+                string theURL = urlBase + theMonday.ToString("M/d/yyyy").Replace("/", "-") + "/" + weekNumber + "-" + idAffiliate + ".pdf";
+
+                Uri blob = null;
+
+                try
+                {
+                    var blobTest = BlobHelper.GetBlob("invoicesprivate/", theMonday.ToString("M/d/yyyy").Replace("/", "-"), weekNumber + "-" + idAffiliate + ".pdf");
+
+                    if (blobTest != null)
+                    {
+
+                        blob = Core.Helpers.BlobHelper.GetInvoiceForPage(theFileName);
+
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.FatalException("CheckForExistingInvoice: ", ex);
+                }
+                if (blob != null)
+                    links.Add(blob);
+
+
+
+            }
+
+            return links;
+
+        }
+
+
 
         private string GetRowPercent(int ordinalHolder, byte commissionModel)
         {
@@ -901,3 +950,5 @@ namespace CUWebinars.Business.Services
 
     }
 }
+
+

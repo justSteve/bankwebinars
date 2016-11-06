@@ -156,7 +156,12 @@ namespace CUWebinars.Business.Core
 
             DefaultConnectionString = connectionStringSettingsCollection["DefaultConnection"].ConnectionString;
             //LegacyConnectionString = connectionStringSettingsCollection["LegacyConnection"].ConnectionString;
-
+            //var StorageAccessKey = applicationSettingsSection.GetKey();
+            foreach (var key in applicationSettingsSection.AllKeys)
+            {
+                
+                Console.WriteLine("Key: {0} Value: {1}", key, applicationSettingsSection[key]);
+            }
         }
 
         public static DateTime UtcNowAsCts
@@ -167,5 +172,6 @@ namespace CUWebinars.Business.Core
                 return TimeZoneInfo.ConvertTimeFromUtc(timeUtc, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
             }
         }
+
     }
 }

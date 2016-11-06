@@ -170,7 +170,9 @@
     <Compile Include="Core\Exceptions\Class1.cs" />
     <Compile Include="Core\Exceptions\UserCreatedMembershipException.cs" />
     <Compile Include="Core\Extensions\CollectionExtensions.cs" />
+    <Compile Include="Core\Extensions\DateTimeExtensions.cs" />
     <Compile Include="Core\Extensions\WebinarExtensions.cs" />
+    <Compile Include="Core\Helpers\BlobHelper.cs" />
     <Compile Include="Core\Helpers\DateTimeHelper.cs" />
     <Compile Include="Core\Helpers\DomainHelper.cs" />
     <Compile Include="Core\Helpers\EventHandlerHelpers.cs" />

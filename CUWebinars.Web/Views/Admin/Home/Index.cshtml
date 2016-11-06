@@ -27,6 +27,10 @@
     ViewBag.Title = "Admin Functions";
     Layout = "/Views/Shared/_LayoutAdmin.cshtml";
     GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+    if (Model.ShowWebinarsViewModel.Affiliate != null)
+    {
+        var a = 1;
+    }
     if (Model.UserDetailsViewModel.UserIsAdmin)
     {
         <section>
@@ -110,7 +114,7 @@
             @{ Html.RenderPartial("Admin/_AffAccount", Model.AffiliateSettingsViewModel);}
         </div>*@
         <div class="tab-pane" id="reports">
-            @{ Html.RenderPartial("Admin/_Reports"); }
+            @{ Html.RenderPartial("Admin/_Reports", Model.InvoicesModel); }
 
         </div>        <div class="tab-pane" id="subscriptions">
             @{ Html.RenderPartial("Admin/_Subscriptions"); }
