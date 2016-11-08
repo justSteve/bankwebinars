@@ -2369,6 +2369,8 @@ namespace CUWebinars.Business.Services
 
         public decimal CalculateCreditsRemain(Discount userDiscount)
         {
+            // this and the CalculateCreditUsed method
+            // are copy/paste replicates of the OrderReposistory versions
             if (userDiscount.DiscountType == DiscountType.Subscription &&
                 userDiscount.DateValidTo > userDiscount.DateValidFrom) return 100; // date-based subscription, # doesn't really matter
 
@@ -2393,6 +2395,9 @@ namespace CUWebinars.Business.Services
 
         public decimal CalculateCreditsUsed(Discount userDiscount)
         {
+
+            // this and the CalculateCreditRemain method
+            // are copy/paste replicates of the OrderRepository versions
             var ordersWithDiscount = GetOrdersByDiscount(userDiscount.idDiscount)
                   .Where(o => o.OrderDate > userDiscount.DateVerified);
             var credits = 0M;

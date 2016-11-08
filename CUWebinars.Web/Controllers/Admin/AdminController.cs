@@ -132,8 +132,18 @@ namespace CUWebinars.Web.Controllers.Admin
                     Affiliate = affiliate,
                     WebUser = user
                 },
-                DiscountSubscriptionsModel =
-                    _affiliateManagementService.GetSubscriptionsByAffiliate(user.idUser) as IList<DiscountDTO>,
+
+                //WpsViewModel = new WpsViewModel
+                //{
+                //    Discounts = _affiliateManagementService.GetSubscriptionsByAffiliate(19)
+                //    .Where(d => d.DiscountType == DiscountType.Subscription).ToList()
+                //},
+
+                //CompPersSubscriptionsModel = new CompPersSubscriptionsModel
+                //{
+                //    Discounts = _affiliateManagementService.GetSubscriptionsByAffiliate(19)
+                //}
+
 
             };
 
@@ -147,9 +157,6 @@ namespace CUWebinars.Web.Controllers.Admin
                     Affiliate = affiliate
 
                 };
-                model.DiscountSubscriptionsModel =
-                    _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff) as
-                        IList<DiscountDTO>;
 
                 model.InvoicesModel =
                     new InvoicesModel
@@ -157,6 +164,16 @@ namespace CUWebinars.Web.Controllers.Admin
                         Affiliate = affiliate,
                         Links = _affiliateManagementService.GetInvoicesByAffiliate(_globalConfig.Tenant, affiliate.idUserAff)
                     };
+
+                model.WpsViewModel = new WpsViewModel
+                {
+                    Discounts = _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff).Where(d => d.DiscountType == DiscountType.Subscription).ToList()
+                };
+
+                model.CompPersSubscriptionsModel = new CompPersSubscriptionsModel
+                {
+                    Discounts = _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff)
+                };
 
                 model.UserDetailsViewModel = new UserDetailsViewModel()
                 {
@@ -3907,8 +3924,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             var model = new GenerateWeeklyInvoicesViewModel
             {
-                Affiliates = _affiliateManagementService.GetAffiliates().Where(a => a.idUserAff != 379 || a.idUserAff != 380 || a.idUserAff != 384 || a.idUserAff != 395 || a.idUserAff != 396 || a.idUserAff != 963).ToList()
-
+                Affiliates = _affiliateManagementService.GetAffiliates().Where(a => a.idUserAff != 379 && a.idUserAff != 380 && a.idUserAff != 384 && a.idUserAff != 395 && a.idUserAff != 396 && a.idUserAff != 963).ToList()
             };
 
             return View("~/Views/Admin/Home/GenerateWeeklyInvoices.cshtml", model);

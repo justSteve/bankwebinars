@@ -37,18 +37,16 @@
                         <a href="javascript:document.getElementById('logoutForm').submit()">&nbsp;&nbsp;[Release]</a>
                     }
 
-                    <span id="shoppingCartInHeader"><a id="btnLogin" href="@Url.Action("Checkout", "Cart")"><i class="icon-large icon-shopping-cart"></i></a></span> 
-
+                    @if (claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Affiliate) == null && claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Admin) == null)
+                    {
+                        <span id="shoppingCartInHeader"><a id="btnLogin" href="@Url.Action("Checkout", "Cart")"><i class="icon-large icon-shopping-cart"></i></a></span>
+                    }
                 </div>
             }
             else
             {
                 <a id="btnLogin" href="@Url.Action("Login", "Account")"><i class="icon-user"></i> Login</a>
             }
-
-
-
-
         }
 
     </nav>

@@ -10,7 +10,7 @@
 
     var nfi = new CultureInfo("en-US", false).NumberFormat;
     nfi.CurrencyDecimalDigits = 0;
-    var list = Model.Links.Reverse();
+
 }
 
 <div class="container">
@@ -19,15 +19,20 @@
         <!--begin row-fluid-->
         <div class="span12">
             @{
-                foreach (var link in list)
+                if (Model.Links != null)
                 {
-                    //http://storeforbw.blob.core.windows.net/invoicesprivate/10-31-2016/45-2016-62.pdf?sv=2014-02-14&sr=b&sig=c04lkgGd0cuBYX7MdLJOQzFzrxrBwIwG7S84EU7HEeQ%3D&se=2016-11-06T16%3A18%3A53Z&sp=r 
-                    var weekNumber = link.AbsoluteUri.Split('/')[4];
-                    <a href="@link.AbsoluteUri">@weekNumber</a>
-                    <br />
+                    foreach (var link in Model.Links.Reverse())
+                    {
+                        //http://storeforbw.blob.core.windows.net/invoicesprivate/10-31-2016/45-2016-62.pdf?sv=2014-02-14&sr=b&sig=c04lkgGd0cuBYX7MdLJOQzFzrxrBwIwG7S84EU7HEeQ%3D&se=2016-11-06T16%3A18%3A53Z&sp=r
+                        var weekNumber = link.AbsoluteUri.Split('/')[4];
+                        <a href="@link.AbsoluteUri">@weekNumber</a>
+                        <br/>
+                    }
                 }
-
-                //https://storeforbw.blob.core.windows.net/affiliateinvoices/10-17-2016/43-2016-11464.pdf
+                else
+                {
+                    <div>No Invoices Found</div>
+                }
             }
         </div>
     </div>

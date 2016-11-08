@@ -32,8 +32,7 @@ namespace CUWebinars.Business.Models
         public string TechPhone { get; set; }
         public string TechName { get; set; }
         public string EmailPromo { get; set; }
-        public string Invoices { get; set; }
-        //public Nullable<int> WebUser_Id { get; set; }
+
         public virtual WebUser WebUser { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         

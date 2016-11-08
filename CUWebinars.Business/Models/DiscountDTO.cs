@@ -22,6 +22,7 @@ namespace CUWebinars.Business.Models
         public string Notes { get; set; }
         public int RenewalTerm { get; set; }
         public WebUserDiscountXref WebUserDiscountXref { get; set; }
-
+        public object UserEmail { get; set; }
+        public IList<WebUser> WpsUsers { get; set; }
     }
 }

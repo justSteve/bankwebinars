@@ -3,7 +3,7 @@
 @using CUWebinars.Web.Helpers
 @using CUWebinars.Web.Models.JsonModels
 @using Newtonsoft.Json
-@model  WpsViewModel
+@model  CompPersSubscriptionsModel
 @{
     GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
@@ -28,21 +28,16 @@
                 if (Model.Discounts != null)
                 {
                     <table>
-                        <tr style="background-color: black; color: gray"><td>Code</td><td>Email</td><td>Remaining</td><td>Status</td></tr>
-                        @foreach (var discount in Model.Discounts.OrderBy(d => d.DateValidTo).Where(d => d.DiscountType == DiscountType.Subscription))
+                        <tr style="background-color: black; color: gray"><td>OrderId</td><td>Email</td><td>Renewal Term</td><td>Expires</td></tr>
+                        @foreach (var discount in Model.Discounts.OrderBy(d => d.DateValidTo).Where(d => d.DiscountType == DiscountType.ComplianceSeries))
                         {
-                            var users = "";
-                            foreach (var user in discount.WpsUsers)
-                            {
-                                users += user.email + ", ";
-                            }
                             <tr>
-                                <td>@discount.DiscountCode (@discount.idDiscount)</td>
-                                <td>@users.TrimEnd(' ').TrimEnd(',')</td>
+                                <td>@discount.idDiscount</td>
+                                <td>@discount.UserEmail</td>
                                 <td>
-                                    <div style="text-align: right">@discount.CreditsRemain</div></td>
+                                    <div style="text-align: right">@discount.RenewalTerm</div></td>
                                 <td>
-                                    <div style="text-align: right">@discount.Status</div></td>
+                                    <div style="text-align: right">@discount.DateValidTo.ToString().Replace("12:00:00 AM", "")</div></td>
 
                             </tr>
                         }

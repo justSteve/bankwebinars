@@ -92,14 +92,14 @@ namespace CUWebinars.Business.Core.Helpers
             CloudBlobContainer container = client.GetContainerReference("invoicesprivate/");
 
             // Retrieve reference to a blob.
-            ICloudBlob blockBlob = container.GetBlockBlobReference(theFileName);
-            //var readPolicy = blockBlob.GetSharedAccessSignature(new SharedAccessBlobPolicy()
-            //{
+            ICloudBlob blockBlob = container.GetBlockBlobReference(theFileName.TrimEnd('/'));
+            var readPolicy = blockBlob.GetSharedAccessSignature(new SharedAccessBlobPolicy()
+            {
 
-            //    SharedAccessStartTime = DateTime.UtcNow.AddMinutes(-10),
-            //    Permissions = SharedAccessBlobPermissions.Read,
-            //    SharedAccessExpiryTime = DateTime.UtcNow.AddDays(1),
-            //});
+                SharedAccessStartTime = DateTime.UtcNow.AddDays(-1),
+                Permissions = SharedAccessBlobPermissions.Read,
+                SharedAccessExpiryTime = DateTime.UtcNow.AddDays(1),
+            });
 
             //return new Uri(blockBlob.Uri.AbsoluteUri + readPolicy);
             return new Uri(blockBlob.Uri.AbsoluteUri);

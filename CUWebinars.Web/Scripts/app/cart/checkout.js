@@ -165,43 +165,6 @@ function UndoRemoveOrder($button, orderId, orderRowId) {
     });
 }
 
-
-function ConfirmRegistrationPayTraceMulti($button) {
-    var message = "";
-
-    $.ajax({
-        async: true,
-        url: "/cart/CheckoutConfirmOrderBillMeJson",
-        dataType: "json",
-        type: "POST",
-        success: function(data) {
-            
-            // hide all of the edit and remove buttons, do this in beforeSend?
-            $(".edit-order, .remove-order").fadeOut();
-
-            // do something w/ the UI for this order...
-            $("#confirmHeader").html("<h3>"+ data.msg + "</h3>");
-            $("#FeedbackContainer").show();
-
-        },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-            console.log("/cart/CheckoutConfirmOrderBillMeJson: " + textStatus + ", " + errorThrown);
-        },
-        beforeSend: function () {
-            $button.prop("disabled", true);
-            //console.log("beforesend");
-            // add spinner to button
-            $button.append('<span id="loadingSpinnerContainer">&nbsp;<i id="loadingSpinner" class="icon-spinner icon-spin"></i></span>');
-        },
-        complete: function() {
-            //console.log("complete");
-            // remove spinner
-            $('#loadingSpinnerContainer', $button).fadeOut();
-            setTimeout(function () { $('#loadingSpinnerContainer', $button).remove(); }, 1500);
-        }
-    });
-}
-
 function ConfirmRegistrationBillMeMulti($button) {
     var message = "";
 
@@ -237,6 +200,7 @@ function ConfirmRegistrationBillMeMulti($button) {
         }
     });
 }
+
 function ConfirmRegistrationPayTraceMulti($button) {
     var message = "";
 
@@ -246,7 +210,7 @@ function ConfirmRegistrationPayTraceMulti($button) {
         dataType: "json",
         type: "POST",
         success: function(data) {
-            
+            console.log(data);
             // hide all of the edit and remove buttons, do this in beforeSend?
             $(".edit-order, .remove-order").fadeOut();
 

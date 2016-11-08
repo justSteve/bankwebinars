@@ -610,7 +610,7 @@ namespace CUWebinars.Web.Controllers
                 authKey = "failed";
             }
 
-            string paramList = string.Format("DISPLAYTRUSTLOGO~Y|DISABLETERMS~Y|ENABLEREDIRECT~Y|RETURNPARIS~Y|authKey~{0}|disablelogin~y|disableoptional~y|showbname~y|hideinvoice~y|test~y|hidepassword~y|orderid~{1}|bname~{2}", authKey, idOrder, order.FirstName + ' ' + order.LastName);
+            string paramList = string.Format("DISPLAYTRUSTLOGO~Y|DISABLETERMS~Y|ENABLEREDIRECT~N|RETURNPARIS~Y|authKey~{0}|disablelogin~y|disableoptional~y|showbname~y|hideinvoice~y|test~y|hidepassword~y|orderid~{1}|bname~{2}", authKey, idOrder, order.FirstName + ' ' + order.LastName);
             paramList += "|ProductDetails~" + ProdDesc.Replace(System.Environment.NewLine, "");
             paramList += "|baddress~" + order.BillingAddress;
             paramList += "|bcity~" + order.BillingCity;

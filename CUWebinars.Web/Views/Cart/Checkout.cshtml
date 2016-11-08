@@ -33,7 +33,7 @@
                     url: '/cart/IniPayTraceModal?idOrder='+idOrder + "&multi=@orderList",
                     cache: false,
                     success: function (data) {
-
+                        console.log(data);
                         dataParamList = data.paramList;
 
                         $("#btnSubmitPayTraceForm").click(function() {
@@ -88,7 +88,7 @@
                             string confirmPayTraceLabel = "Pay By Credit Card";
                             // null check like Views\Cart\Partials\_DisplayRowPrice.cshtml ->   Model.PricesAndDiscounts.Discount == null  ?
                         }
-                        <button class="btn btn-success btn-large" role="button" id="ConfirmRegistrationBillMeMulti">@confirmButtonLabel</button>
+                        <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMeMulti">@confirmButtonLabel</button>
 
                         <button data-toggle="modal" role="button" data-target="#PayByPayTraceModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />`
 

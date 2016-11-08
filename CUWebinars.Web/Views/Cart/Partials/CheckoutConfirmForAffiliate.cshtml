@@ -142,8 +142,8 @@
     if (ViewBag.Order != null)
     {
         ViewBag.NoteVersion = "03";
-        Html.RenderPartial("~/Views/Cart/Partials/_PayByPayTrace.cshtml", (Order)ViewBag.Order);
-        //Html.RenderPartial("~/Views/Cart/Partials/_PayByMoneris.cshtml", (Order)ViewBag.Order);
+        //Html.RenderPartial("~/Views/Cart/Partials/_PayByPayTrace.cshtml", (Order)ViewBag.Order);
+        Html.RenderPartial("~/Views/Cart/Partials/_PayByMoneris.cshtml", (Order)ViewBag.Order);
 
         Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml", (Order)ViewBag.Order);
     }

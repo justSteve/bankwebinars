@@ -733,10 +733,19 @@ namespace CUWebinars.Business.Services
             if (idUserAff != 19)
             {
                 var theseDiscounts = _context.Discounts
-                    .Where(d => d.DiscountType == DiscountType.Subscription && d.idAffiliate == idUserAff).ToList();
+                    .Where(d => (d.DiscountType == DiscountType.Subscription || d.DiscountType == DiscountType.ComplianceSeries) && d.idAffiliate == idUserAff).ToList();
 
                 foreach (var discount in theseDiscounts)
                 {
+                    IList<WebUser> wpsUsers = _context.WebUsers.Where(u => u.idSubscriptionDiscount == discount.idDiscount).ToList();
+                    var userEmail = "";
+                    var order = _context.Orders.SingleOrDefault(o => o.idOrder == discount.idDiscount);
+                    if (order != null)
+                    {
+
+                        userEmail = order.BillingEmail;
+                    }
+
                     var thisSub = new DiscountDTO
                     {
                         idAffiliate = idUserAff,
@@ -747,18 +756,35 @@ namespace CUWebinars.Business.Services
                         DiscountCode = discount.DiscountCode,
                         Notes = discount.Notes,
                         RenewalTerm = discount.RenewalTerm,
-                        Status = discount.Status
+                        Status = discount.Status,
+                        DiscountType = discount.DiscountType,
+                        CreditsRemain = _orderRepository.CalculateCreditsRemain(discount),
+                        CreditsUsed = _orderRepository.CalculateCreditsUsed(discount),
+                        UserEmail = userEmail,
+                        WpsUsers = wpsUsers
                     };
                     theseSubscriptions.Add(thisSub);
                 }
+
             }
             else
             {
                 var theseDiscounts = _context.Discounts
-                    .Where(d => d.DiscountType == DiscountType.Subscription).ToList();
+                    .Where(d => (d.DiscountType == DiscountType.Subscription || d.DiscountType == DiscountType.ComplianceSeries) 
+                    ).ToList();
 
                 foreach (var discount in theseDiscounts)
                 {
+                    IList<WebUser> wpsUsers = _context.WebUsers.Where(u => u.idSubscriptionDiscount == discount.idDiscount)
+                        .ToList();
+                    var userEmail = "";
+                    var order = _context.Orders.SingleOrDefault(o => o.idOrder == discount.idDiscount);
+                    if (order != null)
+                    {
+
+                        userEmail = order.BillingEmail;
+                    }
+
                     var thisSub = new DiscountDTO
                     {
                         idAffiliate = idUserAff,
@@ -769,7 +795,12 @@ namespace CUWebinars.Business.Services
                         DiscountCode = discount.DiscountCode,
                         Notes = discount.Notes,
                         RenewalTerm = discount.RenewalTerm,
-                        Status = discount.Status
+                        Status = discount.Status,
+                        DiscountType = discount.DiscountType,
+                        CreditsRemain = _orderRepository.CalculateCreditsRemain(discount),
+                        CreditsUsed = _orderRepository.CalculateCreditsUsed(discount),
+                        UserEmail = userEmail,
+                        WpsUsers = wpsUsers
                     };
                     theseSubscriptions.Add(thisSub);
                 }

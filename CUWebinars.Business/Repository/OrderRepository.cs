@@ -124,7 +124,7 @@ namespace CUWebinars.Business.Repository
                             validationError.ErrorMessage);
                     }
                 }
-                
+
                 throw new Exception(stringBuilder.ToString());
             }
         }
@@ -239,6 +239,8 @@ namespace CUWebinars.Business.Repository
             return userOrder;
 
         }
+
+
         public IList<int> FindUserIdsByPartialId(int userId)
         {
             return items.Where(order => order.idOrder.ToString().Contains(userId.ToString()))
@@ -445,6 +447,50 @@ namespace CUWebinars.Business.Repository
             return discounts;
         }
 
+        public decimal CalculateCreditsRemain(Discount discount)
+        {
+            // this and the CalculateCreditUsed method
+            // are copy/paste replicates of the OrderManagementService versions
+            if (discount.DiscountType == DiscountType.Subscription && discount.DateValidTo > discount.DateValidFrom) return 100; // date-based subscription, # doesn't really matter
+
+            var ordersWithDiscount = GetOrdersByDiscount(discount.idDiscount)
+                .Where((o => o.OrderDate > discount.DateVerified
+                || (o.InvoiceDetail.Contains("DiscountIsApplied"))
+                && !o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title.StartsWith("Compliance Perspe")
+                //&& o.InvoiceDetail.Contains(userDiscount.idDiscount.ToString())
+                ));
+
+            var creditsUsed = 0M;
+
+            if (ordersWithDiscount.Any())
+                foreach (var order in ordersWithDiscount)
+                {
+                    creditsUsed +=
+                        order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                            .RegistrationType.CreditCost;
+                }
+            return discount.TotalCount - creditsUsed;
+        }
+
+        public decimal CalculateCreditsUsed(Discount userDiscount)
+        {
+            // this and the CalculateCreditUsed method
+            // are copy/paste replicates of the OrderManagementService versions
+            var ordersWithDiscount = GetOrdersByDiscount(userDiscount.idDiscount)
+                  .Where(o => o.OrderDate > userDiscount.DateVerified);
+            var credits = 0M;
+            if (ordersWithDiscount.Any())
+                foreach (var order in ordersWithDiscount)
+                {
+                    credits +=
+                        order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                            .RegistrationType.CreditCost;
+                }
+
+            return credits;
+        }
+
+    
 
 
         public IList<Order> GetOrdersForLiveEventNotifications(int idWebinar)

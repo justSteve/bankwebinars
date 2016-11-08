@@ -56,7 +56,7 @@
 
         function SubmitCCForm () {
             $("#PayByCCFormPT input[name='parmList']").val(dataParamList);
-            
+            console.log(dataParamList);
             $("#PayByCCFormPT").submit();
         }
 
@@ -73,7 +73,7 @@
                     url: '/cart/IniPayTraceModal?idOrder='+idOrder,
                     cache: false,
                     success: function (data) {
-
+                        console.log(data);
                         dataParamList = data.paramList;
 
                         $("#btnSubmitCCForm").click(function() {

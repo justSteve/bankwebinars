@@ -100,9 +100,10 @@
 
     <ul class="nav nav-tabs">
         <li class="active"><a href="#webinars" data-toggle="tab">Webinars</a></li>
-        <li><a href="#account" data-toggle="tab">Settings</a></li>
-        <li><a href="#reports" data-toggle="tab">Reports</a></li>
+        @*<li><a href="#account" data-toggle="tab">Settings</a></li>*@
+        <li><a href="#reports" data-toggle="tab">Invoices</a></li>
         <li><a href="#subscriptions" data-toggle="tab">Subscriptions</a></li>
+        <li><a href="#CompliancePerspectives" data-toggle="tab">Compliance Perspectives</a></li>
     </ul>
 
 
@@ -116,8 +117,13 @@
         <div class="tab-pane" id="reports">
             @{ Html.RenderPartial("Admin/_Reports", Model.InvoicesModel); }
 
-        </div>        <div class="tab-pane" id="subscriptions">
-            @{ Html.RenderPartial("Admin/_Subscriptions"); }
+        </div>
+        <div class="tab-pane" id="subscriptions">
+            @{ Html.RenderPartial("Admin/_Subscriptions", Model.WpsViewModel); }
+
+        </div>
+        <div class="tab-pane" id="CompliancePerspectives">
+            @{ Html.RenderPartial("Admin/_SubscriptionsCP", Model.CompPersSubscriptionsModel); }
 
         </div>
 

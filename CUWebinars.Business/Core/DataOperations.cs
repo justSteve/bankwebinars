@@ -1489,14 +1489,14 @@ namespace CUWebinars.Business.Core
                         };
                         checkForAnyOrders.Parameters.Add(startDateParam);
 
-                        var idWebinarParm = new SqlParameter
+                        var idAffiliateParam = new SqlParameter
                         {
                             SqlDbType = SqlDbType.Int,
                             ParameterName = "@idAffiliate",
                             Value = idAffiliate
                         };
 
-                        checkForAnyOrders.Parameters.Add(idWebinarParm);
+                        checkForAnyOrders.Parameters.Add(idAffiliateParam);
                         reader = checkForAnyOrders.ExecuteReader();
                     }
                     catch (Exception ex)

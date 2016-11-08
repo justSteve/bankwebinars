@@ -294,14 +294,14 @@ namespace CUWebinars.Web
 
                     if (User != null && User.Identity.IsAuthenticated)
                     {
-                        ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+                        ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity) User.Identity;
 
                         if (claimsIdentityOfAuthenticatedUser.HasClaim(
                             (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
                         {
                             var claimTTSDomain =
                                 claimsIdentityOfAuthenticatedUser.Claims.Where(
-                                    c => c.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate)
+                                        c => c.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate)
                                     .First()
                                     .Value;
                             StateService.SetValue(WebUiConstants.CurrentAffiliate,
@@ -450,7 +450,7 @@ namespace CUWebinars.Web
                                     string subkeyValue = Server.HtmlEncode(cookieValues[j]);
                                     if (!subkeyName.StartsWith("__") &&
                                         !subkeyName.StartsWith("Fed")
-                                        )
+                                    )
                                     {
                                         allCookies.Append("\"SubkeyName: \"" + subkeyName);
                                         allCookies.Append("\", \"SubkeyValue: \"" + subkeyValue);
@@ -476,7 +476,7 @@ namespace CUWebinars.Web
                                     + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
                                     + "\", \"FirstCookies\": {" +
                                     StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
-                            );
+                        );
                     }
                     else
                     {
@@ -487,7 +487,7 @@ namespace CUWebinars.Web
                                     + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
                                     + "\", \"FirstCookies\": {" +
                                     StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
-                            );
+                        );
                     }
                 }
                 catch (Exception exception)
@@ -500,7 +500,16 @@ namespace CUWebinars.Web
                     //ttsWebinarsContext.Database.Connection.Close(); --> THIS LINE PROBABLY NOT NECESSARY. DISPOSE SHOULD DO THIS FOR US.
                     ttsWebinarsContext.Dispose();
                 }
-            }//ends attempt to filter bots
+            } //ends attempt to filter bots
+            else
+            {
+
+                var ttsWebinarsContext = new TTSWebinarsContext();
+                IAffiliateRepository affiliateRepository = new AffiliateRepository(ttsWebinarsContext);
+
+                StateService.SetValue(WebUiConstants.CurrentAffiliate,
+                    affiliateRepository.FindByIdWithIncluding(19));
+            }
         }
 
         //private void SessionAuthenticationModule_SessionSecurityTokenReceived(object sender, SessionSecurityTokenReceivedEventArgs e)

@@ -4,18 +4,13 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using CUWebinars.Business.Models;
 
 namespace CUWebinars.Web.Models
 {
     public class CompPersSubscriptionsModel
     {
-
-        public int UserId { get; set; }
-        [UIHint("CompPersSubscriptionEditor")]
-        //public DiscountDetailsModel Discount { get; set; }
-
-        [HiddenInput]
-        public string EditDiscountTitle { get; set; }
-        public CompliancePerspectivesModel Discount { get; set; }
+        public IList<DiscountDTO> Discounts { get; set; }
+        public List<WebUser> WebUsers { get; set; }
     }
 }

@@ -68,5 +68,7 @@ namespace CUWebinars.Business.Repository
         IEnumerable<Discount> GetSubscriptionsAll(int idAffliate, out int totalNumberOrders);
 
 
+        decimal CalculateCreditsRemain(Discount discount);
+        decimal CalculateCreditsUsed(Discount discount);
     }
 }
