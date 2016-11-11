@@ -815,7 +815,7 @@ namespace CUWebinars.Business.Services
 
         private OrderRow ProcessPartialDiscount(OrderRow row, decimal discountTotal)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public decimal DiscountCreditUnitCost { get; private set; }

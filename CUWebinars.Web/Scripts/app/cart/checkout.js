@@ -172,7 +172,7 @@ function ConfirmRegistrationBillMeMulti($button) {
         async: true,
         url: "/cart/",
         dataType: "json",
-        type: "POST",CheckoutConfirmOrderBillMeJson
+        type: "POST",CheckoutConfirmOrderBillMeJson,
         success: function(data) {
             
             // hide all of the edit and remove buttons, do this in beforeSend?
@@ -210,7 +210,7 @@ function ConfirmRegistrationPayTraceMulti($button) {
         dataType: "json",
         type: "POST",
         success: function(data) {
-            console.log(data);
+            
             // hide all of the edit and remove buttons, do this in beforeSend?
             $(".edit-order, .remove-order").fadeOut();
 

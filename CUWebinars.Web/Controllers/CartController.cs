@@ -1128,7 +1128,7 @@ namespace CUWebinars.Web.Controllers
 
                     _logger.Info("ExpressPostback from: " + " - " + form.q11_orderid + _appHelper.GetUserAuditInfo());
 
-                    return RedirectToAction("Details", "Webinar", new { id = form.q18_q_webinarid18, idOrder = form.q11_orderid, source = "ExpressPostback2" });
+                    return RedirectToAction("OrderComplete", "Account", new { id = order.idOrder});
 
                 }
 
