@@ -2347,27 +2347,29 @@ namespace CUWebinars.Business.Services
 
                         if (remainsAfterThisUse >= thisUseCost)
                         {
-                            if (thisUseCost > 1)
+
+                            forNotes.AppendFormat(
+                                " If applied to this order, {0} {1} will be deducted <br>from your package with {2} remaining.",
+                                thisUseCost.ToString().Replace(".00", ""),
+                                thisUseCost > 1 ? "credits" : "credit",
+                                    remainsAfterThisUse.ToString().Replace(".00", ""));
+
+                        }
+                        else
+                        {
+                            if (remainsAfterThisUse == 0)
                             {
                                 forNotes.AppendFormat(
-                                    " If applied to this order, {0} credits will be deducted <br>from your package with {1} remaining.",
-                                    thisUseCost.ToString().Replace(".00", ""),
-                                    remainsAfterThisUse.ToString().Replace(".00", ""));
+                                    " If applied to this order, {0} credit will be deducted <br>from your package with none remaining.",
+                                    thisUseCost.ToString().Replace(".00", ""));
                             }
                             else
                             {
                                 forNotes.AppendFormat(
-                                    " If applied to this order, {0} credit will be deducted <br>from your package with {1} remaining.",
-                                    thisUseCost.ToString().Replace(".00", ""),
-                                    remainsAfterThisUse.ToString().Replace(".00", ""));
+                                   " If applied to this order, {0} credit will be deducted <br>from your package with {1} remaining.",
+                                   thisUseCost.ToString().Replace(".00", ""),
+                                   remainsAfterThisUse.ToString().Replace(".00", ""));
                             }
-                        }
-                        else
-                        {
-                            forNotes.AppendFormat(
-                                " If applied to this order, {0} credit will be deducted <br>from your package with none remaining.",
-                                thisUseCost.ToString().Replace(".00", ""),
-                                remainsAfterThisUse.ToString().Replace(".00", ""));
                         }
                     }
                 }
