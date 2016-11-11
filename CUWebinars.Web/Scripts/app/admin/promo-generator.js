@@ -4,6 +4,20 @@ var formerAffId = 0;
 
 $(document).ready(function () {
 
+    $("#sendAll").on("click", function (e) {
+        
+        e.preventDefault();
+        var $btn = $(this);
+        $btn.blur();
+
+        // check to see if we are on the master, we should be, since this button should only be on the master
+        if (currentAffId == 0) {
+            $("#editor_0").val(GetCurrentEditorCopy()); // store what is in the editor as the latest and greatest for use by replaceMasterTokensForAffiliate
+        }
+
+        SendAll($btn);
+    });
+
     // refactoring to be a little more basic as I had trouble with the reliability of the bootstrap tab events (2 of 3)
     // event documentation from http://getbootstrap.com/javascript/#tabs
     //$('a[data-toggle="pill"]').on('shown.bs.tab', function (e) { // was "shown.bs.tab" but that stopped firing?? switch to show.bs.tab, it worked, switch back to shown and *that* worked??
@@ -223,6 +237,78 @@ function GetMasterMarkupAJAX($btn) {
     });
 }
 
+function SendAll($btn) {
+
+    // save time...
+    var tStart = (new Date()).getTime();
+
+    // setup UI for user feedback
+    var origBtnText = $btn.text();
+    $btn.text("Saving...");
+    $btn.append('<span id="submitSpinWrapper">&nbsp;<span class=""><i id="spinner" class="icon-spinner icon-spin"></i></span></span>');
+
+    var errorAffs = [];
+    var callsNeeded = $(".tab-pane").length - 1; // don't count Master tab, we're skipping that one
+    var callsComplete = 0;
+    var messages = [];
+
+    // loop through all tabs...
+    $(".tab-pane").each(function (idx) {
+        var $tab = $(this);
+        var affiliateId = $tab.data("pane-affid");
+
+        if (affiliateId == 0) // skip the Master tab, although, conceivably, we could store that in a special file and use it for something...
+            return;
+
+        // get affiliate specific copy
+        var isActive = $tab.hasClass("active"); // should ALWAYS be false in this method, as the Save All button is only on the master tab
+        var currCopy = GetAffiliateCopy(affiliateId, isActive);
+
+        //localCopy = replaceMasterTokensForAffiliate(affObj);
+
+        if (currCopy == "")     // if they don't have customized copy we'll need to create it
+        {
+            // generate from master...
+            var affObj = arrayLookup(affs, "idUserAff", affiliateId);
+            if (affObj != null) {
+                currCopy = replaceMasterTokensForAffiliate(affObj); // always pulls from editor_0 (master)
+                // could save it to affiliate text area, since we have it?
+
+                // deal with the SendToList_XYZ textbox
+                var $sendTo = $("#SendToList_" + affiliateId);
+                if ($.trim($sendTo.val()) == "") {
+                    $sendTo.val(affObj.ContactEmail);
+                }
+            }
+        }
+
+
+        $.ajax({
+            url: '/Admin/SendSinglePromo',
+            type: 'POST',
+            data: { "affiliateId": affiliateId, "messageBodyHtml": currCopy },
+            dataType: "json",
+            //contentType: "json",
+            success: function (result) {
+                //$('#send' + affID).text("Success");
+                console.log(result);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                // $('#send' + affID).text(textStatus + " " + errorThrown);
+                alert("error");
+            }
+        });
+        // remove spinner
+        $('#submitSpinWrapper').remove();
+        $btn.text("Send!");
+
+        setTimeout(function () { $btn.text(origBtnText); }, 2000);
+
+    });
+}
+
+
+
 function WriteAllAffMarkupToStorageAJAX($btn) {
 
     // save time...
@@ -333,6 +419,7 @@ function WriteAllAffMarkupToStorageAJAX($btn) {
         
     });
 }
+
 
 // should be pretty (very!) similar to the above "WriteAllAffMarkupToStorageAJAX" function
 function WriteMarkupToStorageAJAX($btn, affiliateId) {

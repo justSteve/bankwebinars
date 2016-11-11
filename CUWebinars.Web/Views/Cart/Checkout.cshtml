@@ -38,7 +38,7 @@
 
                 datatype: "text/plain",
                     type: "GET",
-                    url: '/cart/IniPayTraceModal?idOrder='+idOrder + "&multi=@orderList",
+                    url: '/cart/PayTraceModalIni?idOrder='+idOrder + "&multi=@orderList",
                     cache: false,
                     success: function (data) {
                     console.log(data);
@@ -98,7 +98,7 @@
                         }
                         <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMeMulti">@confirmButtonLabel</button>
 
-                        <button data-toggle="modal" role="button" data-target="#PayByPayTraceModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />`
+                        @*<button data-toggle="modal" role="button" data-target="#PayByPayTraceModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />`*@
 
 
                     </div>

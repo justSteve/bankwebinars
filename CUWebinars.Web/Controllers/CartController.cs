@@ -485,7 +485,7 @@ namespace CUWebinars.Web.Controllers
 
 
         [HttpGet]
-        public JsonResult IniPayTraceModal(int idOrder, string multi)
+        public JsonResult PayTraceModalIni(int idOrder, string multi)
         {
             //ensures that the price passed to PayTrace reflects order price with discount applied.
             var order = _cartControllerOrchestrator.GetOrderById(idOrder);
@@ -561,7 +561,8 @@ namespace CUWebinars.Web.Controllers
             // to get an approval amount set: AMOUNT~1.00
             // to get a declined amount set: AMOUNT~1.12
             totalAmt = 1.00M;
-            string parameters = "UN~shuener|PSWD~PttAWka2|TERMS~Y|TRANXTYPE~Sale|";
+            //string parameters = "UN~shuener|PSWD~PttAWka2|TERMS~Y|TRANXTYPE~Sale|";
+            string parameters = "UN~demo123|PSWD~demo123|TERMS~Y|TRANXTYPE~Sale|";
             parameters += "ORDERID~" + idOrder + "|AMOUNT~" + totalAmt + "|";
 
             string return_url = @"http://" + Request.Url.Authority;
@@ -613,8 +614,9 @@ namespace CUWebinars.Web.Controllers
                 authKey = "failed";
             }
 
-            string paramList = string.Format("DISPLAYTRUSTLOGO~Y|DISABLETERMS~Y|ENABLEREDIRECT~N|RETURNPARIS~Y|authKey~{0}|disablelogin~y|disableoptional~y|showbname~y|hideinvoice~y|test~y|hidepassword~y|orderid~{1}|bname~{2}", authKey, idOrder, order.FirstName + ' ' + order.LastName);
+            string paramList = string.Format("DISPLAYTRUSTLOGO~Y|DISABLETERMS~Y|ENABLEREDIRECT~N|RETURNPARIS~Y|authKey~{0}|disablelogin~y|disableoptional~y|showbname~y|hideinvoice~y|hidepassword~y|orderid~{1}|bname~{2}", authKey, idOrder, order.FirstName + ' ' + order.LastName);
             paramList += "|ProductDetails~" + ProdDesc.Replace(System.Environment.NewLine, "");
+            //paramList += "|test~y";
             paramList += "|baddress~" + order.BillingAddress;
             paramList += "|bcity~" + order.BillingCity;
             paramList += "|bstate~" + order.BillingState;
@@ -1270,7 +1272,7 @@ namespace CUWebinars.Web.Controllers
             return View(model);
         }
 
-        [HttpGet]
+
         public ActionResult PayTraceApproved()
         {
             string formFields = Request.QueryString.ToString();
@@ -1279,7 +1281,6 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
-        [HttpGet]
         public ActionResult PayTraceDeclined()
         {
             string formFields = Request.QueryString.ToString();
@@ -1287,7 +1288,7 @@ namespace CUWebinars.Web.Controllers
 
             return View();
         }
-        [HttpGet]
+        
         public ActionResult PayTraceCanceled()
         {
             string formFields = Request.QueryString.ToString();
@@ -1338,7 +1339,7 @@ namespace CUWebinars.Web.Controllers
             //return View(form);
         }
 
-        //[HttpPost]
+        [HttpPost]
         public ActionResult PostBackPayTrace()
         {
             string formFields = Request.Form.ToString().Replace("parmList=", "");

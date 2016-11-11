@@ -158,7 +158,12 @@
                             <input type="button" id="resetAllAffiliates" class="button btn btn-small" value="Reset All Affiliates" />
                             <label for="SendDate">Send date:</label>@Html.TextBoxFor(m => m.SendDate, "{0:MM/dd/yyyy}", new { @class = "input", type = "date" })
                             <button id="submitGenPromoTexts" class="button btn btn-success btn-small">Generate Master Markup</button>
+                            @if (hasAffiliates)
+                            {
+                                <button id="writeAllAffMarkupToStorage" class="button btn btn-small">Save@(isAffiliateRestricted ? " Affiliate" : " All")</button>
 
+                                <button id="sendAll" class="button btn btn-small">Send@(isAffiliateRestricted ? " Affiliate" : " All")</button>
+                            }
                         </p>
                         <p>
                             <textarea id="editor_0" name="editor_0" style="display: none;"></textarea>

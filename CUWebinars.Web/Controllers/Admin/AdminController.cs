@@ -1724,25 +1724,27 @@ namespace CUWebinars.Web.Controllers.Admin
                 hrefsForEmail.Add(string.Format("https://siteroot/mypromos/{0}/{1}", containerRoot, filename));
             // configuration-driven pattern??
 
-            // text file
-            filename = string.Concat(filenameBase, ".txt");
-            string htmlContents = new System.IO.StreamReader(eventBodyText, Encoding.UTF8, true).ReadToEnd();
+            //// text file
+            //filename = string.Concat(filenameBase, ".txt");
+            //string htmlContents = new System.IO.StreamReader(eventBodyText, Encoding.UTF8, true).ReadToEnd();
+            ////string htmlContents = new System.IO.StreamReader(eventBodyText, Encoding.UTF8, true).ReadToEnd();
 
-            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-            doc.LoadHtml(htmlContents);
-            if (doc == null) return null;
 
-            string output = "";
-            foreach (var node in doc.DocumentNode.ChildNodes)
-            {
-                output += node.InnerText;
-            }
-            byte[] byteArrayTXT = Encoding.UTF8.GetBytes(output);
-            // as per http://stackoverflow.com/questions/785715/how-can-i-strip-html-tags-from-a-string-in-asp-net
-            ret += UploadToAzure(container, filename, byteArrayTXT, overwriteFlag);
-            if (string.IsNullOrWhiteSpace(ret)) // no error, add to list for email
-                hrefsForEmail.Add(string.Format("https://siteroot/mypromos/{0}/{1}", containerRoot, filename));
-            // configuration-driven pattern??
+            //HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            //doc.LoadHtml(htmlContents);
+            //if (doc == null) return null;
+
+            //string output = "";
+            //foreach (var node in doc.DocumentNode.ChildNodes)
+            //{
+            //    output += node.InnerText;
+            //}
+            //byte[] byteArrayTXT = Encoding.UTF8.GetBytes(output);
+            //// as per http://stackoverflow.com/questions/785715/how-can-i-strip-html-tags-from-a-string-in-asp-net
+            //ret += UploadToAzure(container, filename, byteArrayTXT, overwriteFlag);
+            //if (string.IsNullOrWhiteSpace(ret)) // no error, add to list for email
+            //    hrefsForEmail.Add(string.Format("https://siteroot/mypromos/{0}/{1}", containerRoot, filename));
+            //// configuration-driven pattern??
 
             ////// TODO: zzz ALS always trigger message to "To" address on form (if filled in)?
             ////// TODO: zzz ALS how about we build a function we can use separately from saving even if that won't be 100% natural?

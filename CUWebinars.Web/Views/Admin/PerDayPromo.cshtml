@@ -155,6 +155,8 @@
                             @if (hasAffiliates)
                             {
                                 <button id="writeAllAffMarkupToStorage" class="button btn btn-small">Save@(isAffiliateRestricted ? " Affiliate" : " All")</button>
+                            
+                                <button id="sendAll" class="button btn btn-small">Send@(isAffiliateRestricted ? " Affiliate" : " All")</button>
                             }
                             @*@if (TempData["ListOfWebinarsForUpcoming"] != null)
                             {
