@@ -1125,19 +1125,9 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
 
                 var flatOff = data.FlatOff;
                 var percentOff = data.PercentOff;
-                //console.log(data);
+                console.log(data);
                 var showDiscount = "";
-                if (percentOff> 0) {
-                    //alert("flatOff" + data.Discount);
-
-                    var amount2Discount = data.Discount;
-                    registerDuringCheckout.totalDiscount = amount2Discount;
-                }
-
-                if (flatOff > 0) {
-                    registerDuringCheckout.totalDiscount = data.Discount;
-                }
-
+                
                 var newTotalPrice = data.Total;
 
                 $("#amount").val(newTotalPrice);
@@ -1146,10 +1136,10 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
                     newTotalPrice = 0;
                 
                 
-                $('#discountedText').html(' <span id="totalDiscount" style="color: red;">Discounted: $' + registerDuringCheckout.totalDiscount + '</span>').removeClass('muted');
+                $('#discountedText').html(' <span id="totalDiscount" style="color: red;">Discounted: $' + data.Discount + '</span>').removeClass('muted');
                 //original -- what changed this? $('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
                 $('#showTotalPrice').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '</span>');
-
+                alert(data.msg);
                 $('#discountSpinner').remove();
             }
         }).fail(commonFuncs.failCallBack).always(function (e) {

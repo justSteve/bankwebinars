@@ -144,8 +144,8 @@ namespace CUWebinars.Business.Services
         void RemoveFromDiscount(int newOrderRowId);
         IList<Order> GetOrdersByDomain(string searchTerm);
         IList<Order> GetOrdersByDiscount(int idDiscount);
-        string CalculateDiscountRedemption(Discount userHasDiscount, OrderRow row, int? undo, int? previewOnly);
-        string ApplyDiscountCode(int? discountId);
+        Discount CalculateDiscountRedemption(Discount userHasDiscount, OrderRow row);
+        
         IList<WebUser> GetWebUsersOfDiscount(int idDiscount);
         string CheckOrderComments();
         decimal CalculateCreditsRemain(Discount userDiscount);

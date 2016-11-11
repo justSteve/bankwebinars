@@ -53,8 +53,7 @@ $(function () {
         cartStateManager.setCancelOrderForm($('#cancelOrder'));
         cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
-        console.log('initialize hit');
-
+        
         cartStateManager.getConfirmOrderForm().on('submit', function (e) {
             e.preventDefault();
             var self = $(this);
@@ -63,11 +62,12 @@ $(function () {
             var data = $(this).serialize();
             var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
             var utilities = new Common.Utilities();
-
+            
             $.ajax({
                 type: 'POST',
                 contentType: RegistrationInCart.Constants.FormPostContentType,
                 cache: false,
+                // form is submitted to Cart/ConfirmOrder
                 url: self.attr('action'),
                 dataType: RegistrationInCart.Constants.JsonDataType,
                 data: data,

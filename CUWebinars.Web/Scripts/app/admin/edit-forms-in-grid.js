@@ -295,6 +295,7 @@ $(document).ready(function () {
                         alert("There was an error detected while attempting to locate discount code " + data.Code + ". " +
                             " Try again or use our Help & Feedback button (lower right corner)  for assistance.");
                     } else {
+                        
                         // need to update the currently displaying regType and associated costs
 
                         $("#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice").html("$" + data.BasePrice);
@@ -322,7 +323,7 @@ $(document).ready(function () {
                         if (percentOff > 0) {
                             showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: " + percentOff + "%</span>";
                         }
-
+                        alert(data.msg);
                         //  Reuse logic already in display-orders.js for when the datatables.net gets created...
                         var parentHtml = DO.getBillingCellHtml(showDiscount, data.regTypeShort, data.Total, data.ShippedDateString);
                         $parentCell.html(parentHtml);

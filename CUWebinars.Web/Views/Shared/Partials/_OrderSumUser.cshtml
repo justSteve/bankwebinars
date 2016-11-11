@@ -36,7 +36,8 @@
         }
         @if (!ReferenceEquals(myRow.Discount, null) && myRow.Discount.PercentOff > 0 && !myRow.Webinar.Title.StartsWith("Compliance Per"))
         {
-            decimal amtToReduce = myRow.UnitPrice * ((myRow.Discount.PercentOff) / 100);
+            decimal amtToReduce = myRow.UnitPrice - Model.Total;
+            //decimal amtToReduce = myRow.UnitPrice * ((myRow.Discount.PercentOff) / 100);
             <i>Amt. of Discount:</i>
             <span style="color: red;">@amtToReduce.ToString(CurrencyFormatToken).Replace(".00", "")</span><br />
         }

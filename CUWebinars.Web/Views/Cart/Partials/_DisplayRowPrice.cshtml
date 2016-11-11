@@ -131,7 +131,10 @@
         else
         {
             rowAmount.Append(GetDiscountedTextSpan() + "<br />");
-            confirmButtonLabel = "Use My Credits!";
+            if (!rowAmount.ToString().Contains("Insufficient"))
+            {
+                confirmButtonLabel = "Use My Credits!";
+            }
 
         }
 

@@ -24,6 +24,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Text;
+using System.Web.Helpers;
 using System.Web.UI.WebControls;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Core.Helpers;
@@ -80,11 +81,11 @@ namespace CUWebinars.Business.Services
         {
             _orderRepository.AddAdditionalLocation(addedAdditionalLocation);
         }
-        public string ApplyDiscountCode(int? discountId)
-        {
-            _logger.Fatal("not implemented: " + discountId.Value);
-            return null;
-        }
+        //public string ApplyDiscountCode(int? discountId)
+        //{
+        //    _logger.Fatal("not implemented: " + discountId.Value);
+        //    return null;
+        //}
 
         public Order AssignAffiliateToOrder(int affiliateId, Order order)
         {
@@ -689,7 +690,7 @@ namespace CUWebinars.Business.Services
             }
             else
             {
-                _logger.Warn("CalculateOrderCost did not find row when processing " + order.idOrder);
+                _logger.Warn("COC did not find row when processing " + order.idOrder);
                 var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
                 var regTypePricing = dataOperations.GetCostOfRegtype(row.idRegType);
@@ -717,8 +718,6 @@ namespace CUWebinars.Business.Services
 
             //Calculate discount. 
             decimal discountTotal = 0;
-            TtsConfigHelper ttsConfigHelper = new TtsConfigHelper();
-
 
             if (row.Discount != null && row.Discount.PercentOff != 0.0M)
             {
@@ -726,36 +725,53 @@ namespace CUWebinars.Business.Services
 
                 if (row.Discount.DiscountType == DiscountType.Subscription)
                 {
+                    _logger.Info("COC begin discount create " + row.Discount.idDiscount + " on " + row.idOrder + " found "
+                            + creditsRemain + " against " + row.RegistrationType.CreditCost);
+
                     if (creditsRemain >= row.RegistrationType.CreditCost)
                     {
                         discountTotal = row.RowPrice * row.Discount.PercentOff / 100;
+                        _logger.Info("COC create discount  " + row.Discount.idDiscount + " on " + row.idOrder + " found "
+                            + creditsRemain + " against " + row.RegistrationType.CreditCost);
                     }
                     else
                     {
-                        if (creditsRemain > 0)
+                        if (creditsRemain >= 0)
                         {
                             discountTotal = 265 * creditsRemain;
-                            //discountTotal = Convert.ToDecimal( ttsConfigHelper.DiscountCreditUnitCost )* creditsRemain;
+                            _logger.Info("COC create partial discount  " + row.Discount.idDiscount + " on " + row.idOrder + " found "
+                                + creditsRemain + " against " + row.RegistrationType.CreditCost);
                         }
                         else
                         {
                             discountTotal = 0;
+                            _logger.Info("COC failed to create discount  " + row.Discount.idDiscount + " on " + row.idOrder + " found "
+                                + creditsRemain + " against " + row.RegistrationType.CreditCost);
+                            row.Discount = null;
                         }
                     }
                 }
                 else
                 {
                     discountTotal = row.RowPrice * row.Discount.PercentOff / 100;
+                    _logger.Info("COC found non WPS discount  " + row.Discount.idDiscount + " on " + row.idOrder + " found "
+                            + creditsRemain + " against " + row.RegistrationType.CreditCost);
                 }
+
             }
             else if (row.Discount != null && row.Discount.FlatOff != 0.0M)
             {
                 discountTotal = row.Discount.FlatOff;
+                _logger.Info("COC found non flatOff discount " + row.Discount.idDiscount + " on " + row.idOrder + " found " + row.Discount.FlatOff);
             }
 
-            if (discountTotal > row.RowPrice)
+            if (discountTotal >= row.RowPrice)
             {
                 discountTotal = row.RowPrice;
+            }
+            else
+            {
+                ProcessPartialDiscount(row, discountTotal);
             }
 
             row.RowPrice -= discountTotal;
@@ -769,7 +785,9 @@ namespace CUWebinars.Business.Services
                 && row.RowPrice > 0
                 )
             {
+
                 pricesAndDiscounts.TaxAmount = Math.Round(row.RowPrice * Convert.ToDecimal(.055), 2);
+                _logger.Info("COC found tax on: " + row.idOrder + " found " + pricesAndDiscounts.TaxAmount);
             }
 
 
@@ -778,47 +796,42 @@ namespace CUWebinars.Business.Services
             pricesAndDiscounts.Discount = row.Discount;
             pricesAndDiscounts.TotalOrderPrice = order.Total;
 
+            var discountJson = JsonConvert.SerializeObject(pricesAndDiscounts.Discount);
+
+            var discountJsonString =
+                new JObject(
+                    new JProperty("Discount", discountJson)
+                    );
+            var rowJson =
+                new JObject(
+                       new JProperty("Row", JsonConvert.SerializeObject(row, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore })));
+
+
+            _logger.Info(discountJsonString.ToString());
+            _logger.Info(rowJson.ToString());
 
             return pricesAndDiscounts;
         }
 
-        public decimal DiscountCreditUnitCost { get; private set; }
-
-        //public virtual decimal CalculateOptionsPrice(OrderRow row)
-        //{
-        //    ////if (row.RegistrationType == RegistrationType.SubscriptionRedeem)
-        //    ////{
-        //    ////    return 0.0M;
-        //    ////}
-
-        //    //var additionalLocationsPricingForWebinar = GetCostOfAdditionalLocations(row.idWebinar);
-
-        //    //decimal optionsTotal = 0.0M;
-
-        //    //if (row.AdditionalLocation != null)
-        //    //{
-        //    //    foreach (var addLoc in row.AdditionalLocation)
-        //    //    {
-        //    //        // Item2 of the tuple is price
-        //    //        addLoc.Price = additionalLocationsPricingForWebinar[0].Item2;
-        //    //        optionsTotal += addLoc.Price;
-        //    //    }
-        //    //}
-
-        //    //return optionsTotal;
-        //}
-
-        public void CreateCPSubscription(OrderRow orderRow)
+        private OrderRow ProcessPartialDiscount(OrderRow row, decimal discountTotal)
         {
             throw new NotImplementedException();
         }
 
+        public decimal DiscountCreditUnitCost { get; private set; }
 
         public void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, bool resending = false,
             Uri url = null)
         {
 
-            //var userExistedPrior = _orderRepository.FindById()
+            //override userCreatedInCart to remedy express checkout problem where existing users
+            // are being prompted to confirm password.
+
+            var doesUserExist = _webUserRepository.GetWebUserFullname(order.BillingEmail);
+            // GetOrdersByUserId(order.idUser).Where(o => o.idOrder  < order.idOrder && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted))
+
+            if (doesUserExist != null)
+                userCreatedInCart = false;
 
             string addPasswordUrl = string.Empty;
             var idOrderToShow = order.idOrderLegacy;
@@ -1410,9 +1423,10 @@ namespace CUWebinars.Business.Services
                 var originalOrder = GetOrderById(newOrder.idOrder);
                 var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
-                var additionalLocationsPricing = GetAdditionalLocationsPricing(
-                    newOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar
-                    );
+                var additionalLocationsPricing = newOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.AdditionalLocationPrice;
+                //var additionalLocationsPricing = GetAdditionalLocationsPricing(
+                //    newOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar
+                //    );
 
                 string preSaveValues = dataOperations.GetPreSaveValues(newOrder.idOrder);
                 string pRowPrice = preSaveValues.Split(',')[0];
@@ -2133,15 +2147,36 @@ namespace CUWebinars.Business.Services
         public Discount ApplyDiscountCode(string code, OrderRow row)
         {
             var thisDiscount = GetDiscountByCode(code);
+            var hasRemaining = CalculateCreditsRemain(thisDiscount);
 
             if (!ReferenceEquals(null, thisDiscount))
             {
-                row.Discount = thisDiscount;
-                thisDiscount = RedeemDiscount(thisDiscount, row);
+                if (hasRemaining >= row.RegistrationType.CreditCost)
+                {
+                    thisDiscount = RedeemDiscount(thisDiscount, row);
+                    thisDiscount.Notes =
+                    "Order is fully discounted. " + (hasRemaining - row.RegistrationType.CreditCost).ToString().Replace(".00", "") + " will remain.";
+
+                    row.Discount = thisDiscount;
+
+
+
+                    _logger.Info("ApplyDiscountCode: " + row.Discount.DiscountCode + " idOrder: " + row.idOrder);
+                }
+                else
+                {
+                    thisDiscount.Notes =
+                    "Insufficient credits: " + hasRemaining.ToString().Replace(".00", "") + " remain but " + row.RegistrationType.CreditCost.ToString().Replace(".00", "") + " are required.";
+                    _logger.Info("ApplyDiscountCode failed due to insufficient credits: " + thisDiscount.DiscountCode + " idOrder: " + row.idOrder + +hasRemaining + " remain but " + row.RegistrationType.CreditCost + " are required.");
+                }
+
+                return thisDiscount;
+            }
+            else
+            {
+                return null;
             }
 
-            _logger.Info("ApplyDiscountCode: " + row.Discount.DiscountCode + " idOrder: " + row.idOrder);
-            return thisDiscount;
         }
 
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink, OrderGenesis orderGenesis = OrderGenesis.ImportedForExistingUser)
@@ -2242,22 +2277,10 @@ namespace CUWebinars.Business.Services
             return _orderRepository.AccessToPostEventMaterials(w, u);
         }
 
-        //private void ProcessDiscountCodes(Order order)
-        //{
-        //    var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-        //    //
-        //    if (row.Discount != null)
-        //    {
-        //        RedeemDiscount(row.Discount, row);
-        //        _logger.Info("Redeemed Discount On Order: " + order.idOrder);
-        //    }
-        //}
-
-
         private Discount RedeemDiscount(Discount discount, OrderRow row)
         {
             var forNotes = new StringBuilder();
-            forNotes.Append(Environment.NewLine + Environment.NewLine + discount.Notes);
+            //
             _logger.Info("Discount: RedeemDiscountStarts: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}", discount.DiscountCode, discount.DateValidFrom, discount.DateValidTo, CalculateCreditsUsed(discount), CalculateCreditsRemain(discount));
             decimal creditsRemain = CalculateCreditsRemain(discount);
 
@@ -2274,9 +2297,7 @@ namespace CUWebinars.Business.Services
                 case DiscountType.Subscription:
                     if (creditsRemain > 0)
                     {
-
-                        forNotes.Append(CalculateDiscountRedemption(discount, row, null, null));
-
+                        forNotes.Append(CalculateDiscountRedemption(discount, row));
                     }
                     else
                     {
@@ -2289,82 +2310,85 @@ namespace CUWebinars.Business.Services
             return discount;
         }
 
-        public string CalculateDiscountRedemption(Discount discount, OrderRow row, int? undo, int? previewOnly)
+        public Discount CalculateDiscountRedemption(Discount discount, OrderRow row)
         {
             if (!discount.Status.ToLower().StartsWith("a"))
             {
                 _logger.Warn("Discount redemption attempted on: " + discount.idDiscount + " - " + row.idOrder);
-                return ("This Discount Code " + discount.DiscountCode + " is expired.<br> For more info contact us by using the <i>Help & Feedback</i> button below<br> or emailing <b>Support@ttsTrain.com</b>.");
+                discount.Notes = ("This Discount Code " + discount.DiscountCode + " is expired.<br> For more info contact us by using the <i>Help & Feedback</i> button below<br> or emailing <b>Support@ttsTrain.com</b>.");
             }
             var forNotes = new StringBuilder();
             var existingDiscount = discount;
             var regTypeLabel = GetRegTypeOfOrderRow(row.idRegType).OptionLabel;
             decimal creditsRemain = CalculateCreditsRemain(discount);
             decimal creditsUsed = CalculateCreditsUsed(discount);
-            
 
-            decimal thisUse = GetRegTypeOfOrderRow(row.idRegType).CreditCost;
 
-            if (previewOnly != null)
+            decimal thisUseCost = GetRegTypeOfOrderRow(row.idRegType).CreditCost;
+
+            if (discount.DiscountType == DiscountType.Subscription)
             {
-                //if (previewOnly == 0)
-                //{
-                if (discount.DiscountType == DiscountType.Subscription)
-                {
+                var remainsAfterThisUse = creditsRemain - thisUseCost;
 
-                    if (discount.DateValidTo > discount.DateValidFrom)
+                if (discount.DateValidTo > discount.DateValidFrom)
+                {
+                    forNotes.AppendFormat(" Your subscription will expire on " +
+                                          discount.DateValidTo.ToShortDateString() + ".");
+                }
+                else if (discount.DateValidTo < discount.DateValidFrom)
+                {
+                    forNotes.AppendFormat(" Your subscription expired on " +
+                                          discount.DateValidTo.ToShortDateString());
+                }
+                else if (creditsRemain > 0)
+                {
+                    if (creditsRemain >= thisUseCost)
                     {
-                        forNotes.AppendFormat(" Your subscription will expire on " +
-                                              discount.DateValidTo.ToShortDateString() + ".");
-                    }
-                    else if (discount.DateValidTo < discount.DateValidFrom)
-                    {
-                        forNotes.AppendFormat(" Your subscription expired on " +
-                                              discount.DateValidTo.ToShortDateString());
-                    }
-                    else if (creditsRemain > 0 && creditsRemain >= thisUse)
-                    {
-                        var remainsAfterThisUse = creditsRemain - thisUse;
-                        if (thisUse > 1)
+
+                        if (remainsAfterThisUse >= thisUseCost)
                         {
-                            forNotes.AppendFormat(
-                                " If applied to this order, {0} credits will be deducted <br>from your package with {1} remaining.",
-                                thisUse.ToString().Replace(".00", ""), remainsAfterThisUse.ToString().Replace(".00", ""));
+                            if (thisUseCost > 1)
+                            {
+                                forNotes.AppendFormat(
+                                    " If applied to this order, {0} credits will be deducted <br>from your package with {1} remaining.",
+                                    thisUseCost.ToString().Replace(".00", ""),
+                                    remainsAfterThisUse.ToString().Replace(".00", ""));
+                            }
+                            else
+                            {
+                                forNotes.AppendFormat(
+                                    " If applied to this order, {0} credit will be deducted <br>from your package with {1} remaining.",
+                                    thisUseCost.ToString().Replace(".00", ""),
+                                    remainsAfterThisUse.ToString().Replace(".00", ""));
+                            }
                         }
                         else
                         {
                             forNotes.AppendFormat(
-                                " If applied to this order, {0} credit will be deducted <br>from your package with {1} remaining.",
-                                thisUse.ToString().Replace(".00", ""), remainsAfterThisUse.ToString().Replace(".00", ""));
+                                " If applied to this order, {0} credit will be deducted <br>from your package with none remaining.",
+                                thisUseCost.ToString().Replace(".00", ""),
+                                remainsAfterThisUse.ToString().Replace(".00", ""));
                         }
                     }
-                    else
-                    {
-
-                        forNotes.AppendFormat(" Insufficient credits remaining. Required: {0} Available: {1}", thisUse.ToString().Replace(".00", ""), creditsRemain.ToString().Replace(".00", ""));
-                    }
                 }
-                if (discount.DiscountType == DiscountType.Compensation)
+                else
                 {
-                    forNotes.AppendFormat("Applying discount code: {0}", discount.DiscountCode);
-                }
-                if (discount.DiscountType == DiscountType.Promo)
-                {
-                    forNotes.AppendFormat("Applying discount code: {0}", discount.DiscountCode);
-                }
 
+                    forNotes.AppendFormat(" Insufficient credits remaining. Required: {0} Available: {1}", thisUseCost.ToString().Replace(".00", ""), creditsRemain.ToString().Replace(".00", ""));
+                }
             }
-            else
+            if (discount.DiscountType == DiscountType.Compensation)
             {
-
-                //discount.CreditsRemain = CalculateCreditsRemain(discount);
-                //discount.CreditsUsed = CalculateCreditsUsed(discount);
-                forNotes.AppendFormat(Environment.NewLine + "Applied By: {0}", row.idOrder);
-                forNotes.AppendFormat(" Used: {0} Remain: {1}" + Environment.NewLine, creditsUsed,
-                    creditsRemain);
-
+                forNotes.AppendFormat("Applying discount code: {0}", discount.DiscountCode);
             }
-            return forNotes.ToString();
+            if (discount.DiscountType == DiscountType.Promo)
+            {
+                forNotes.AppendFormat("Applying discount code: {0}", discount.DiscountCode);
+            }
+
+            discount.Notes = forNotes.ToString();
+
+            return discount;
         }
 
         public decimal CalculateCreditsRemain(Discount userDiscount)
@@ -2375,11 +2399,10 @@ namespace CUWebinars.Business.Services
                 userDiscount.DateValidTo > userDiscount.DateValidFrom) return 100; // date-based subscription, # doesn't really matter
 
             var ordersWithDiscount = GetOrdersByDiscount(userDiscount.idDiscount)
-                .Where((o => o.OrderDate > userDiscount.DateVerified
-                || (o.InvoiceDetail.Contains("DiscountIsApplied"))
-                && !o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title.StartsWith("Compliance Perspe")
-                //&& o.InvoiceDetail.Contains(userDiscount.idDiscount.ToString())
-                ));
+                .Where(o => o.OrderDate > userDiscount.DateVerified
+                            || (o.InvoiceDetail.Contains("DiscountIsApplied"))
+                            && (o.OrderStatus == OrderStatus.Submitted || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid)
+                            && !o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title.StartsWith("Compliance Perspe"));
 
             var creditsUsed = 0M;
 

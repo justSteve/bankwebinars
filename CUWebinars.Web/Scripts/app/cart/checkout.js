@@ -170,9 +170,9 @@ function ConfirmRegistrationBillMeMulti($button) {
 
     $.ajax({
         async: true,
-        url: "/cart/CheckoutConfirmOrderBillMeJson",
+        url: "/cart/",
         dataType: "json",
-        type: "POST",
+        type: "POST",CheckoutConfirmOrderBillMeJson
         success: function(data) {
             
             // hide all of the edit and remove buttons, do this in beforeSend?

@@ -339,9 +339,9 @@ function editBillingCell(cell, $td, rowData) {
             var e = '<div id="browser" class="jsonbrowser"></div>';
             $('#notesPanel').append(e);
             
-            console.log(cell);
-            console.log($td);
-            console.log(rowData);
+            //console.log(cell);
+            //console.log($td);
+            //console.log(rowData);
 
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -354,7 +354,7 @@ function editBillingCell(cell, $td, rowData) {
             removeIsLoadingIndicator($td);
 
             $('#notesPanel').html("<br>");
-            console.log($("#notesPanel").html());
+            //console.log($("#notesPanel").html());
 
         }
     });

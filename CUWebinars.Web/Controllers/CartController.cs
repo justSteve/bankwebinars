@@ -105,7 +105,9 @@ namespace CUWebinars.Web.Controllers
 
                 if (!ReferenceEquals(myDiscount, null))
                 {
-                    _cartControllerOrchestrator.UpdateOrderPricing(row.Order);
+
+                    var msg = myDiscount.Notes;
+                    //_cartControllerOrchestrator.UpdateOrderPricing(row.Order);
                     var newJson = new JProperty(
                         "DiscountIsApplied",
                         new JObject(new JProperty("DiscountID", myDiscount.idDiscount)
@@ -115,20 +117,21 @@ namespace CUWebinars.Web.Controllers
                     row.Order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(row.Order.AdminComments, newJson, "DiscountIsApplied");
                     //row.Order.AffiliateComments = JsonHelpers.AddObjectToJsonArray(row.Order.AffiliateComments, newJson);
 
-                    var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(row.Order);
+                    var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricingReadOnly(row.Order);
 
                     return
                         Json(
                             new
                             {
+                                msg = msg,
                                 regTypeShort = row.RegistrationType.OptionLabelShort,
                                 BasePrice = pricesAndDiscounts.UnitPrice,
                                 Discount = pricesAndDiscounts.TotalDiscount,
                                 OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
                                 Tax = pricesAndDiscounts.TaxAmount,
                                 Total = pricesAndDiscounts.TotalOrderPrice,
-                                FlatOff = pricesAndDiscounts.Discount.FlatOff,
-                                PercentOff = pricesAndDiscounts.Discount.PercentOff,
+                                FlatOff = (pricesAndDiscounts.Discount != null) ? pricesAndDiscounts.Discount.FlatOff : 0,
+                                PercentOff = (pricesAndDiscounts.Discount != null) ? pricesAndDiscounts.Discount.PercentOff : 0,
                                 CreditsRemain = _cartControllerOrchestrator.CalculateCreditsRemaining(myDiscount).ToString()
                             });
                 }
@@ -208,7 +211,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 try
                 {
-                    _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
+                    //_cartControllerOrchestrator.UpdateOrderPricing(model.Order);
                     if (model.Order.Total == 0) model.Order.OrderStatus = OrderStatus.Paid;
 
                 }

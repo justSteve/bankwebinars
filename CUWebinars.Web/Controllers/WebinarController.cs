@@ -967,7 +967,7 @@ namespace CUWebinars.Web.Controllers
                     if (orderRow.Discount != null)
                     {
                         ViewBag.DiscountCaption =
-                            _orderManagementService.CalculateDiscountRedemption(orderRow.Discount, orderRow, null, 1);
+                            _orderManagementService.CalculateDiscountRedemption(orderRow.Discount, orderRow).Notes;
 
 
                     }

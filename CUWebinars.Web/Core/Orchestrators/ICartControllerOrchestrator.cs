@@ -39,6 +39,8 @@ namespace CUWebinars.Web.Core.Orchestrators
         OrderRow LoadOrderRow(int id, OrderStatus status);
         void RemoveAdditionalLocationsFromOrder(int value);
         PricesAndDiscounts UpdateOrderPricing(Order order);
+
+        PricesAndDiscounts UpdateOrderPricingReadOnly(Order rowOrder);
         void UpdateOrderWithUserId(int orderId, int userId);
         string GetDiscountAmountAsPercentageOrDollarAmount(Discount myDiscount);
         void UpdateAdditionalLocationsForOrderRow(IEnumerable<AdditionalLocation> additionalLocations, int newOrderRowId);

@@ -12,37 +12,45 @@
         orderList += order.OrderRow.idOrder + ",";
     }
 
+    var idOrder = 0;
+
+    if (Model.RegistrationSummaryViewModels != null && Model.RegistrationSummaryViewModels.Count > 0)
+    {
+        idOrder = Model.RegistrationSummaryViewModels.FirstOrDefault().OrderRow.idOrder;
+    }
+
     <script type="text/javascript" language="javascript">
         var dataParamList = 0;
 
-        function SubmitCCForm () {
+    function SubmitCCForm () {
             $("#PayByCCFormPTMulti input[name='parmList']").val(dataParamList);
-            console.log(dataParamList);
+        console.log(dataParamList);
             $("#PayByCCFormPTMulti").submit();
-        }
+    }
 
         $(function() {
-            var idOrder = @Model.RegistrationSummaryViewModels.First().OrderRow.idOrder;
+
+        var idOrder = @idOrder;
 
             $('#PayByPayTraceModal').on('show', function () {
 
                 $.ajax({
 
-                    datatype: "text/plain",
+                datatype: "text/plain",
                     type: "GET",
                     url: '/cart/IniPayTraceModal?idOrder='+idOrder + "&multi=@orderList",
                     cache: false,
                     success: function (data) {
-                        console.log(data);
-                        dataParamList = data.paramList;
+                    console.log(data);
+                    dataParamList = data.paramList;
 
                         $("#btnSubmitPayTraceForm").click(function() {
-                            SubmitCCForm();
-                        });
-                    }
-                });
+                        SubmitCCForm();
+                    });
+                }
             });
         });
+    });
 
     </script>
 

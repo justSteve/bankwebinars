@@ -860,7 +860,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public string GetDiscountCaption(Discount discount, OrderRow row, int? undo, int? previewOnly)
         {
-            return _orderManagementService.CalculateDiscountRedemption(discount, row, null, 1);
+            return _orderManagementService.CalculateDiscountRedemption(discount, row).Notes;
 
         }
 
@@ -953,8 +953,20 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public PricesAndDiscounts UpdateOrderPricing(Order order)
         {
-            PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
+
+           PricesAndDiscounts pricesAndDiscounts = _orderManagementService.CalculateOrderCost(order,
+                _orderManagementService.GetAdditionalLocationsPricing(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar));
             _orderManagementService.UpdateOrderChanges(order, ref pricesAndDiscounts);
+
+            return pricesAndDiscounts;
+        }
+
+        public PricesAndDiscounts UpdateOrderPricingReadOnly(Order order)
+        {
+            PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
+          pricesAndDiscounts = _orderManagementService.CalculateOrderCost(order,
+                _orderManagementService.GetAdditionalLocationsPricing(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar));
+            //_orderManagementService.UpdateOrderChanges(order, ref pricesAndDiscounts);
 
             return pricesAndDiscounts;
         }
@@ -1278,8 +1290,10 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             var discount = _orderManagementService.ApplyDiscountCode(code, row);
 
+
             if (!ReferenceEquals(discount, null))
             {
+                _orderManagementService.CalculateOrderCost(row.Order, _orderManagementService.GetAdditionalLocationsPricing(row.idWebinar));
                 _orderManagementService.SaveChanges();
             }
             return discount;
