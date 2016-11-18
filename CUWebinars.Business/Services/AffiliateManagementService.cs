@@ -148,12 +148,10 @@ namespace CUWebinars.Business.Services
             switch (invoice.Affiliate.CommissionModel)
             {
                 case 1: // Sliding4TierNoCCBreak:
-
                     foreach (Order order in orders.OrderBy(o => o.OrderDate))
                     {
                         try
                         {
-
                             var nullCheck = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                             if (nullCheck != null)
                                 numberOfRegistrations =
@@ -195,16 +193,13 @@ namespace CUWebinars.Business.Services
                             }
                             row.PercentPaid = commissionPercent;
                             invoice.TotalRoyalties += row.Royalty;
-
-
+                            
                             StoreInvoiceDetail(order, invoice);
                         }
                         catch (Exception ex)
                         {
                             _logger.FatalException("ComputRoyaltyForPostEventOrders Sliding4TierNoCCBreak " + order.idOrder, ex);
-
                         }
-
                     }
                     break;
 
@@ -214,7 +209,6 @@ namespace CUWebinars.Business.Services
                     {
                         try
                         {
-
                             decimal commissionPercent;
                             var row = IniInvoice(order, invoice);
                             commissionPercent = 0.4M;
@@ -247,7 +241,6 @@ namespace CUWebinars.Business.Services
                     {
                         try
                         {
-
                             var row = IniInvoice(order, invoice);
                             decimal commissionPercent = 0.35M;
 
@@ -272,13 +265,9 @@ namespace CUWebinars.Business.Services
                         {
                             _logger.FatalException("ComputRoyaltyForPostEventOrders Flat35 " + order.idOrder, ex);
                         }
-
-
                     }
                     break;
                 case 5: // CommissionModel.Flat25
-
-
                     foreach (Order order in orders.OrderBy(o => o.OrderDate))
                     {
                         try
@@ -309,7 +298,6 @@ namespace CUWebinars.Business.Services
 
                             _logger.FatalException("ComputRoyaltyForPostEventOrders Flat25 " + order.idOrder, ex);
                         }
-
                     }
                     break;
 
@@ -327,8 +315,6 @@ namespace CUWebinars.Business.Services
                 invoice.TotalNetDue = totalBilledRevenue - totalBilledRoyalty - totalPaidRoyalty;
             }
             return invoice;
-
-
         }
 
         private AffiliateInvoiceDTO ComputeRoyalty(AffiliateInvoiceDTO invoice, IList<Order> orders, int idAffiliate, bool generatingWeeklyReport)
@@ -348,7 +334,6 @@ namespace CUWebinars.Business.Services
                     {
                         try
                         {
-
                             numberOfRegistrations++;
                             decimal commissionPercent;
 
@@ -393,28 +378,21 @@ namespace CUWebinars.Business.Services
                         {
                             _logger.FatalException("ComputRoyalty Sliding4TierNoCCBreak " + order.idOrder, ex);
                         }
-
                     }
                     break;
 
                 case 3: // CommissionModel.Flat40
-
-                    numberOfRegistrations = 0;
-
                     foreach (Order order in orders.OrderBy(o => o.OrderDate))
                     {
                         try
                         {
-
                             decimal commissionPercent;
                             var row = IniInvoice(order, invoice);
                             commissionPercent = 0.4M;
 
-                            //row.Royalty = order.Total * commissionPercent;
                             row.Royalty = row.RowPrice * commissionPercent;
                             row.PercentPaid = commissionPercent;
                             invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
-
 
                             if (order.OrderStatus == OrderStatus.Paid)
                             {
@@ -439,15 +417,12 @@ namespace CUWebinars.Business.Services
                     {
                         try
                         {
-
                             var row = IniInvoice(order, invoice);
                             decimal commissionPercent = 0.35M;
 
-                            //row.Royalty = order.Total * commissionPercent;
                             row.Royalty = row.RowPrice * commissionPercent;
                             row.PercentPaid = commissionPercent;
                             invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
-
 
                             if (order.OrderStatus == OrderStatus.Paid)
                             {
@@ -469,13 +444,10 @@ namespace CUWebinars.Business.Services
                     }
                     break;
                 case 5: // CommissionModel.Flat25
-
-
                     foreach (Order order in orders.OrderBy(o => o.OrderDate))
                     {
                         try
                         {
-
                             decimal commissionPercent = 0.25M;
 
                             var row = IniInvoice(order, invoice);
@@ -483,7 +455,6 @@ namespace CUWebinars.Business.Services
                             row.Royalty = row.RowPrice * commissionPercent;
                             row.PercentPaid = commissionPercent;
                             invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
-
 
                             if (order.OrderStatus == OrderStatus.Paid)
                             {
@@ -500,9 +471,7 @@ namespace CUWebinars.Business.Services
                         catch (Exception ex)
                         {
                             _logger.FatalException("ComputRoyalty Sliding4TierNoCCBreak " + order.idOrder, ex);
-
                         }
-
                     }
                     break;
 
@@ -520,8 +489,6 @@ namespace CUWebinars.Business.Services
             }
 
             return invoice;
-
-
         }
 
         private void StoreInvoiceDetail(Order order, AffiliateInvoiceDTO invoice)
@@ -544,7 +511,7 @@ namespace CUWebinars.Business.Services
                             ));
 
                     order.InvoiceDetail = JsonHelpers.MergeJsonWithStoredField(order.InvoiceDetail, newJson);
-
+                    _logger.Info("GenerateWeeklyInvoicesEvent | StoreInvoiceDetail on idOrder: " + order.idOrder);
                 }
             }
             catch (Exception ex)
@@ -770,7 +737,7 @@ namespace CUWebinars.Business.Services
             else
             {
                 var theseDiscounts = _context.Discounts
-                    .Where(d => (d.DiscountType == DiscountType.Subscription || d.DiscountType == DiscountType.ComplianceSeries) 
+                    .Where(d => (d.DiscountType == DiscountType.Subscription || d.DiscountType == DiscountType.ComplianceSeries)
                     ).ToList();
 
                 foreach (var discount in theseDiscounts)

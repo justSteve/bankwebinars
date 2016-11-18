@@ -54,5 +54,6 @@ namespace CUWebinars.Web.Helpers
         public const string NullValueParameter = "NullValueParameter";
         public const string WebinarFromCode = "WebinarFromCode";
         public const string AnonUserEmail = "AnonUserEmail";
+        public const string PayTraceSubmit = "PayTraceSubmit";
     }
 }

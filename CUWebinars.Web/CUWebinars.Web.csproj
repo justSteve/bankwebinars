@@ -588,7 +588,6 @@
     </Compile>
     <Compile Include="Models\ManageOrderEditModel.cs" />
     <Compile Include="Models\MigrateOrderModel.cs" />
-    <Compile Include="Models\MonerisResponse.cs" />
     <Compile Include="Models\OnDemandPlaybackModel.cs" />
     <Compile Include="Models\PhoneNumber.cs" />
     <Compile Include="Models\PostEventInfoModel.cs" />
@@ -618,7 +617,6 @@
     <Compile Include="ViewModel\GenerateClickToJoinViewModel.cs" />
     <Compile Include="ViewModel\GenerateWeeklyInvoicesViewModel.cs" />
     <Compile Include="ViewModel\PayTraceViewModel.cs" />
-    <Compile Include="ViewModel\MonerisViewModel.cs" />
     <Compile Include="ViewModel\OrderSumUserViewModel.cs" />
     <Compile Include="ViewModel\QuizViewModel.cs" />
     <Compile Include="ViewModel\RegistrationSummaryMultiViewModel.cs" />
@@ -1998,7 +1996,6 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="Views\Cart\Partials\_LogsModal.cshtml" />
-    <Content Include="Views\Cart\Partials\_PayByMoneris.cshtml" />
     <Content Include="Views\Cart\Partials\_UserDetailsModal.cshtml" />
     <Content Include="Views\Home\robots.txt" />
     <Content Include="Views\Shared\DisplayTemplates\ShowDiscountSubscription.cshtml">

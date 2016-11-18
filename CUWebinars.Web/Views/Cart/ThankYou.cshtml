@@ -1,5 +1,5 @@
 ﻿@using CUWebinars.Web.Core
-@*@model Order*@
+@model Order
 
 @{
     ViewBag.Title = "ThankYou";
@@ -7,31 +7,64 @@
 
     GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
-    //var myRow = Model.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-    //var newUserMsg = "<div class='span7'><p>" +
-    //                 "An order confirmation email has been dispatched to " + Model.BillingEmail + " and includes " +
-    //                 "complete details of your registration. </p></div>";
-    //if (!User.Identity.IsAuthenticated)
-    //{
-    //    newUserMsg = "<div class='span7'><p>" +
-    //                 "An order confirmation email has been dispatched to " + Model.BillingEmail + " and includes " +
-    //                 "a link that will confirm your identity and activate this account. You will not be able " +
-    //                 "to log into our website until visiting the link provided in that email. </p>" +
-    //                 "<p>If you do not see our message in a timely fashion (and after checking your spam folder " +
-    //                 "for a message from " + _globalConfig.TenantEmail + ") please contact Customer Service at 800-831-0678 ext. 703.</p></div>";
-    //}
+    var idOrder = 0;
 
+        idOrder = Model.idOrder;
+
+    <script type="text/javascript" language="javascript">
+        var dataParamList = 0;
+
+        function SubmitCCForm () {
+            $("#PayByCCFormPTMulti input[name='parmList']").val(dataParamList);
+
+            $("#PayByCCFormPTMulti").submit();
+        }
+
+        $(function() {
+
+            var idOrder = @idOrder;
+
+            $('#PayByPayTraceModal').on('show', function () {
+
+                $.ajax({
+
+                    datatype: "text/plain",
+                    type: "GET",
+                    url: '/cart/PayTraceModalIni?idOrder='+idOrder,
+                    cache: false,
+                    success: function (data) {
+                        console.log(data);
+                        dataParamList = data.paramList;
+
+                        $("#btnSubmitPayTraceForm").click(function() {
+                            SubmitCCForm();
+                        });
+                    }
+                });
+            });
+        });
+
+    </script>
     <div id="LogInContainer" class="container">
         <div id="reset">
 
             <div class="legendImitator">
                 <b>Thank you for your order!</b>
-                
-            </div>
-            <div id="OrderSummaryContainer">
-                You order has been recorded and an invoice for payment will be sent to your billing address. Please check your email for complete details!
 
             </div>
+            <div id="OrderSummaryContainer">
+                You order has been recorded and an invoice for payment will be sent to your billing address.
+                Alternately you may wish to submit a credit card payment.<br/>
+                <span>
+                    <button data-toggle="modal" role="button" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />`
+                </span><br/>
+                Please check your email for complete details!<br/>@Html.ActionLink("Continue to MyWebinars", "MyWebinars", "Account")
+            </div>
+            <div id="OrderSummaryContainer">
+                @Html.Partial("~/Views/Shared/Partials/_OrderSumUser.cshtml", Model)
+            </div>
+
+
 
             <div id="FeedbackContainer" class="span6">
                 <section>
@@ -40,5 +73,7 @@
                 </section>
             </div>
         </div>
+        @Html.Partial("~/Views/Cart/Partials/_PayByPayTrace.cshtml", Model);
+
     </div>
 }

@@ -577,7 +577,7 @@ OCA.initializeFunctions = function () {
             self.find('input[name="id"]').val(OCA.cartStateManager.getOrderRowId());
             var data = $(this).serialize();
             confirmRegistrationBillMe.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-
+            alert(self.attr('action'));
             $.ajax({
                 type: 'POST',
                 contentType: constants.FormPostContentType,

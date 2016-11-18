@@ -796,19 +796,17 @@ namespace CUWebinars.Business.Services
             pricesAndDiscounts.Discount = row.Discount;
             pricesAndDiscounts.TotalOrderPrice = order.Total;
 
-            var discountJson = JsonConvert.SerializeObject(pricesAndDiscounts.Discount);
-
-            var discountJsonString =
-                new JObject(
-                    new JProperty("Discount", discountJson)
-                    );
-            var rowJson =
-                new JObject(
-                       new JProperty("Row", JsonConvert.SerializeObject(row, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore })));
+            //var discountJsonString =
+            //    new JObject(
+            //        new JProperty("Discount", discountJson)
+            //        );
+            //var rowJson =
+            //    new JObject(
+            //           new JProperty("Row", JsonConvert.SerializeObject(row, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore })));
 
 
-            _logger.Info(discountJsonString.ToString());
-            _logger.Info(rowJson.ToString());
+            //_logger.Info(discountJsonString.ToString());
+            //_logger.Info(rowJson.ToString());
 
             return pricesAndDiscounts;
         }
@@ -2036,17 +2034,14 @@ namespace CUWebinars.Business.Services
 
             try
             {
-
                 var orderDate = DateTime.Now;
                 if (row.Order != null)
                 {
-                    _logger.Warn("WTF was row.Order null??");
                     orderDate = row.Order.OrderDate;
                 }
 
                 var regType = GetRegTypeOfOrderRow(row.idRegType);
-
-
+                
                 //establish order date as starting point
                 DateTime expryDate = orderDate.AddMonths(6);
 
@@ -2063,9 +2058,6 @@ namespace CUWebinars.Business.Services
                 //update to pull LivePlusFive value from database
                 var forceToMidnight = Convert.ToDateTime(webinar.LivePlusFiveValue.ToShortDateString()).AddHours(23).AddMinutes(59);
                 return forceToMidnight;
-
-
-
             }
             catch (Exception exception)
             {
@@ -2399,6 +2391,7 @@ namespace CUWebinars.Business.Services
             // are copy/paste replicates of the OrderReposistory versions
             if (userDiscount.DiscountType == DiscountType.Subscription &&
                 userDiscount.DateValidTo > userDiscount.DateValidFrom) return 100; // date-based subscription, # doesn't really matter
+            if (userDiscount.DiscountType == DiscountType.ComplianceSeries) return 100; // date-based subscription, # doesn't really matter
 
             var ordersWithDiscount = GetOrdersByDiscount(userDiscount.idDiscount)
                 .Where(o => o.OrderDate > userDiscount.DateVerified
@@ -2492,30 +2485,38 @@ namespace CUWebinars.Business.Services
 
             foreach (var order in orders)
             {
-                if (order.AdminComments != null && !order.AdminComments.StartsWith("["))
+                //if (order.AdminComments != null && !order.AdminComments.StartsWith("["))
+                //{
+                //    var AdminResult = JsonHelpers.IsValidObjectSingle(order.AdminComments);
+                //    if (AdminResult != "isSingle")
+                //    {
+                //        _logger.Warn("invalid Json on Admin: " + order.idOrder + " | " + order.AdminComments);
+                //    }
+                //}
+                if (!string.IsNullOrEmpty(order.InvoiceDetail))
                 {
-                    var AdminResult = JsonHelpers.IsValidObjectSingle(order.AdminComments);
-                    if (AdminResult != "isSingle")
+                    var InvoiceDetail = JsonHelpers.IsValidObjectSingle(order.InvoiceDetail);
+                    if (InvoiceDetail != "isSingle")
                     {
-                        _logger.Warn("invalid Json on Admin: " + order.idOrder + " | " + order.AdminComments);
+                        _logger.Warn("invalidJson_InvoiceDetail: {" + order.idOrder + "}," + order.InvoiceDetail);
                     }
                 }
-                if (order.AffiliateComments != null && !order.AffiliateComments.StartsWith("["))
-                {
-                    var AffResult = JsonHelpers.IsValidObjectSingle(order.AffiliateComments);
-                    if (AffResult != "isSingle")
-                    {
-                        _logger.Warn("invalid Json on Aff: " + order.idOrder + " | " + order.AffiliateComments);
-                    }
-                }
-                if (order.UserComments != null && !order.UserComments.StartsWith("["))
-                {
-                    var UserResult = JsonHelpers.IsValidObjectSingle(order.UserComments);
-                    if (UserResult != "isSingle")
-                    {
-                        _logger.Warn("invalid Json on User: " + order.idOrder + " | " + order.UserComments);
-                    }
-                }
+                //if (order.AffiliateComments != null && !order.AffiliateComments.StartsWith("["))
+                //{
+                //    var AffResult = JsonHelpers.IsValidObjectSingle(order.AffiliateComments);
+                //    if (AffResult != "isSingle")
+                //    {
+                //        _logger.Warn("invalid Json on Aff: " + order.idOrder + " | " + order.AffiliateComments);
+                //    }
+                //}
+                //if (order.UserComments != null && !order.UserComments.StartsWith("["))
+                //{
+                //    var UserResult = JsonHelpers.IsValidObjectSingle(order.UserComments);
+                //    if (UserResult != "isSingle")
+                //    {
+                //        _logger.Warn("invalid Json on User: " + order.idOrder + " | " + order.UserComments);
+                //    }
+                //}
             }
 
             return null;

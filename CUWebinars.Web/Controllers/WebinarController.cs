@@ -32,6 +32,7 @@ using System.Security.Claims;
 using System.ServiceModel.Syndication;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
 using Thinktecture.IdentityModel.Authorization;
@@ -433,11 +434,12 @@ namespace CUWebinars.Web.Controllers
                             }
 
                         }
-                        
+
                     }
                 }
 
-                if (searchTerm != "" && searchTerm.All(Char.IsDigit)){
+                if (searchTerm != "" && searchTerm.All(Char.IsDigit))
+                {
                     if (searchTerm.Length < 5)
                     {
                         Session["TopicID"] = searchTerm;
@@ -741,6 +743,15 @@ namespace CUWebinars.Web.Controllers
         public ActionResult Details(int? id, int? idOrder)
         {
 
+
+            foreach (String key in Request.QueryString.AllKeys)
+            {
+                //if (_stateService.HasValue(WebUiConstants.WebinarFromCode))
+                //    _stateService.ClearValue(WebUiConstants.WebinarFromCode);
+                //_stateService.SetValue(WebUiConstants.WebinarFromCode, webinar);
+            }
+
+
             ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
             var currentUser = User.Identity.Name ?? "anon";
 
@@ -750,6 +761,7 @@ namespace CUWebinars.Web.Controllers
             if (idOrder != null)
             {
                 incomingOrder = idOrder.Value;
+                //if ()
             }
 
             if (id.HasValue)
@@ -812,7 +824,7 @@ namespace CUWebinars.Web.Controllers
                     ViewBag.ListOfWebinars = new MultiSelectList(webinars, "idWebinar", "Title");
 
                     var aff = _affiliateManagementService.LoadByTTSDomain("bankwebinars");
-
+                    // find a better check for admin
                     if (model.CheckoutInProcess)
                     {
                         CheckoutResumeByAdmin(id, model);
@@ -863,9 +875,10 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 InitializeInProcessProperties(id.Value, model, webinar);
-                
+                if (_stateService.HasValue(DomainConstants.OriginExpress))
+                    if (model.Order != null)
+                        model.Order.Origin = DomainConstants.OriginExpress;
                 BuildConfirmOrderView(model);
-
                 return View(model);
             }
 
@@ -1083,7 +1096,7 @@ namespace CUWebinars.Web.Controllers
         {
             model = null;
 
-            if (webinar == null) 
+            if (webinar == null)
                 return;
 
             model = new WebinarDetailsViewModel()
@@ -1095,6 +1108,7 @@ namespace CUWebinars.Web.Controllers
             if (incomingOrder != -1)
             {
                 model.UserOwnsThisEvent = incomingOrder;
+                model.UserHasOpenOrder = incomingOrder;
             }
         }
 
@@ -1290,7 +1304,7 @@ namespace CUWebinars.Web.Controllers
             if (order != null)
             {
                 var user = _orderManagementService.GetWebUser(order.BillingEmail);
-
+                _orderManagementService.AssignWebUserToOrder(user, order);
                 OrderRow orderRowForOrder = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
                 IEnumerable<AdditionalLocation> additionalLocations = orderRowForOrder.AdditionalLocation.ToList(); ;
                 additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(additionalLocations.ToList());
@@ -1419,8 +1433,9 @@ namespace CUWebinars.Web.Controllers
         private void InitializeViewCentricProperties(WebinarDetailsViewModel model)
         {
             ViewBag.PageStyleType = "holy-grail-three-columns";
-            model.UserHasOpenOrder = 0;
-            model.UserOwnsThisEvent = 0;
+
+            model.UserHasOpenOrder = model.UserHasOpenOrder > 0 ? model.UserHasOpenOrder : 0;
+            model.UserOwnsThisEvent = model.UserOwnsThisEvent > 0 ? model.UserOwnsThisEvent : 0;
 
             if (!model.CheckoutInProcess) model.CheckoutInProcess = false;
 
@@ -1435,6 +1450,7 @@ namespace CUWebinars.Web.Controllers
 
             model.SignUpCaption = "Sign Up!";
             model.ConfirmationCaption = "Confirmation";
+            //model.Identity = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, model.WebUser.email);// ((ClaimsIdentity)User.Identity);
             model.Identity = ((ClaimsIdentity)User.Identity);
             model.UserAddressVerified = model.Identity.HasClaim(ClaimTypes.AddressVerified);
             model.TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(model.Webinar.Date, model.TimeZone, false) +
@@ -1783,7 +1799,7 @@ namespace CUWebinars.Web.Controllers
                 string output = doc.DocumentNode.ChildNodes.Aggregate("", (current, node) => current + node.InnerText);
 
                 //var createWebinarPost = new StringContent("{\"subject\": \"webinar.Title + "\",\"description\": \"" + output + "\",\"times\": [{\"startTime\": \"" + webinar.Date.ToString("o").Replace(".0000000", "Z") + "\",\"endTime\": \"" + endTime.ToString("o").Replace(".0000000", "Z") + "\"}],\"type\": \"single_session\",\"isPasswordProtected\": false}", Encoding.UTF8, "application/json");
-                var createWebinarPost = new StringContent("{\"subject\": \"[Testing] "  + "\",\"description\": \"" + output + "\",\"times\": [{\"startTime\": \"" + webinar.Date.ToString("o").Replace(".0000000", "Z") + "\",\"endTime\": \"" + endTime.ToString("o").Replace(".0000000", "Z") + "\"}],\"type\": \"single_session\",\"isPasswordProtected\": false}", Encoding.UTF8, "application/json");
+                var createWebinarPost = new StringContent("{\"subject\": \"[Testing] " + "\",\"description\": \"" + output + "\",\"times\": [{\"startTime\": \"" + webinar.Date.ToString("o").Replace(".0000000", "Z") + "\",\"endTime\": \"" + endTime.ToString("o").Replace(".0000000", "Z") + "\"}],\"type\": \"single_session\",\"isPasswordProtected\": false}", Encoding.UTF8, "application/json");
 
                 HttpResponseMessage responseCreate = await client.PostAsync("G2W/rest/organizers/" + currentOrganizer + "/webinars", createWebinarPost);
                 try
@@ -1904,8 +1920,8 @@ namespace CUWebinars.Web.Controllers
             }
 
             var result = new
-                        {
-                        };
+            {
+            };
 
             JsonResult jsonresult = Json(result);
             jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
@@ -2119,11 +2135,11 @@ namespace CUWebinars.Web.Controllers
                 webinar = _orderManagementService.GetWebinarById(idWebinar.Value);
 
                 clickToJoinViewModel = new ClickToJoinViewModel
-               {
-                   JoinCode = joinCode,
-                   RedirectLinkText = _globalConfig.TenantURL + "/" + webinar.CitrixRegisterUrl,
-                   Webinar = webinar
-               };
+                {
+                    JoinCode = joinCode,
+                    RedirectLinkText = _globalConfig.TenantURL + "/" + webinar.CitrixRegisterUrl,
+                    Webinar = webinar
+                };
 
             }
 

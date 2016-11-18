@@ -85,21 +85,21 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             if (command == null) throw new ArgumentNullException("command");
             IList<AdditionalLocation> additionalLocations = new List<AdditionalLocation>();
 
+            //no more migrations from Legacy
+            //if (command.OrderDate > Convert.ToDateTime("01-01-2015") && command.RegistrationType < 200)
+            //{
+            //    try
+            //    {
+            //        int idRegType = Convert.ToInt32(command.RegistrationType);
+            //        var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+            //        command.RegistrationType = dataOperations.getLegacyOptionID(idRegType);
 
-            if (command.OrderDate > Convert.ToDateTime("01-01-2015") && command.RegistrationType < 200)
-            {
-                try
-                {
-                    int idRegType = Convert.ToInt32(command.RegistrationType);
-                    var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-                    command.RegistrationType = dataOperations.getLegacyOptionID(idRegType);
-
-                }
-                catch (Exception)
-                {
-                    throw new Exception();
-                }
-            }
+            //    }
+            //    catch (Exception)
+            //    {
+            //        throw new Exception();
+            //    }
+            //}
 
             if (!string.IsNullOrWhiteSpace(command.AdditionalLocationsString) && command.AdditionalLocationsString != "NULL")
             {
@@ -128,7 +128,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             {
                 if (command.Discount != null)
                 {
-                    orderRow.Discount = _orderManagementService.GetDiscountById(Convert.ToInt32(command.Discount));
+                    orderRow.Discount = _orderManagementService.GetDiscountById(Convert.ToInt32(command.Discount.Replace("CP_","")));
 
                 }
 
@@ -525,7 +525,8 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             _orderManagementService.CalculatePostEventMaterialsAccessExpiry(command.OrderRow), "BankWebinars");
         
 
-            _orderManagementService.SaveOrderChanges(migratedOrder, command.VerificationKey, command.ConfirmChangeEmailUrl);
+            //_orderManagementService.SaveOrderChanges(migratedOrder, command.VerificationKey, command.ConfirmChangeEmailUrl);
+            _orderManagementService.SaveChanges();
 
             _postCommitRegistrator.Committed += () =>
             {

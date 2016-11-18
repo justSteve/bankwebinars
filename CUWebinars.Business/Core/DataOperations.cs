@@ -1400,7 +1400,7 @@ namespace CUWebinars.Business.Core
                         checkIfOrderExists.Parameters.Add(idWebinarParm);
 
 
-                        result =  checkIfOrderExists.ExecuteScalar().ToString();
+                        result = checkIfOrderExists.ExecuteScalar().ToString();
                     }
                     catch (Exception ex)
                     {
@@ -1529,16 +1529,30 @@ namespace CUWebinars.Business.Core
                     while (reader.HasRows)
                     {
                         sb.Append(reader.GetName(0) + Environment.NewLine);
+                        
+                        //an interesting bug in how the reader is behaving here:
+                        //  the sproc being call returns 3 resultsets. If one of
+                        //  those resultsets contains no members, none of the remaining
+                        //  resultsets will have any data in the reader.
+                        //E.G. if 'WebinarsOrders' is blank neither PostEvent nor Adjusted
+                        //  will return the values that the sproc output.
 
                         while (reader.Read())
                         {
                             if (reader.GetName(0) == "WebinarOrders")
+                            {
                                 sbWO.Append(reader.GetInt32(0) + ",");
+                            }
+
                             if (reader.GetName(0) == "PostEventOrders")
+                            {
                                 sbPEO.Append(reader.GetInt32(0) + ",");
+                            }
 
                             if (reader.GetName(0) == "AjustedOrders")
+                            {
                                 sbADJ.Append(reader.GetInt32(0) + ",");
+                            }
                         }
 
                         reader.NextResult();

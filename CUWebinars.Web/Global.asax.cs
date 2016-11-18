@@ -274,8 +274,11 @@ namespace CUWebinars.Web
 
         private void Session_Start(object sender, EventArgs e)
         {
-            bool iscrawler = Regex.IsMatch(Request.UserAgent,
-                @"bot|crawler|baiduspider|80legs|ia_archiver|voyager|curl|wget|yahoo! slurp|mediapartners-google",
+            var ua = Request.UserAgent;
+            if (ua == null)
+                ua = "bot";
+            bool iscrawler = Regex.IsMatch(ua,
+                @"bot|crawler|baiduspider|80legs^|ia_archiver|voyager|curl|wget|yahoo! slurp|mediapartners-google",
                 RegexOptions.IgnoreCase);
             if (!iscrawler)
             {

@@ -641,7 +641,7 @@ namespace CUWebinars.Web.Controllers
         public JsonResult GetEditBillingForm(int orderId)
         {
             string html = "";
-                var order = _orderManagementService.GetOrderById(orderId);
+            var order = _orderManagementService.GetOrderById(orderId);
 
             try
             {
@@ -665,7 +665,7 @@ namespace CUWebinars.Web.Controllers
                 _logger.FatalException("GetOrderInfoForm error on " + orderId, ex);
             }
 
-            return Json(new { html = html, adminComments = order.AdminComments});
+            return Json(new { html = html, adminComments = order.AdminComments });
 
         }
         public JsonResult GetEditDiscountForm(int orderId)
@@ -844,45 +844,45 @@ namespace CUWebinars.Web.Controllers
                 _membershipService.UpdateUserDetails(user);
             }
             var editModel = new EditUserInfoModel
+            {
+                EditFields = new EditUserModel
                 {
-                    EditFields = new EditUserModel
+                    BillingAddress = new AddressModel
                     {
-                        BillingAddress = new AddressModel
-                        {
-                            Name = user.FirstName + ' ' + user.LastName,
-                            City = billingAddress.City,
-                            Country = billingAddress.Country,
-                            StreetAddress = billingAddress.StreetAddress,
-                            StreetAddress2 = billingAddress.StreetAddress2,
-                            State = billingAddress.State,
-                            Zip = billingAddress.Zip,
-                            Phone = billingAddress.Phone,
-                            TypeOfAddress = AddressType.Billing
-                        },
-                        ShippingAddress = new AddressModel
-                        {
-                            City = string.IsNullOrWhiteSpace(shippingAddress.City) ? billingAddress.City : shippingAddress.City,
-                            Country = string.IsNullOrWhiteSpace(shippingAddress.Country) ? billingAddress.Country : shippingAddress.Country,
-                            StreetAddress = string.IsNullOrWhiteSpace(shippingAddress.StreetAddress) ? billingAddress.StreetAddress : shippingAddress.StreetAddress,
-                            StreetAddress2 = string.IsNullOrWhiteSpace(shippingAddress.StreetAddress2) ? billingAddress.StreetAddress2 : shippingAddress.StreetAddress2,
-                            State = string.IsNullOrWhiteSpace(shippingAddress.State) ? billingAddress.State : shippingAddress.State,
-                            Zip = string.IsNullOrWhiteSpace(shippingAddress.Zip) ? billingAddress.Zip : shippingAddress.Zip,
-                            Phone = string.IsNullOrWhiteSpace(shippingAddress.Phone) ? billingAddress.Phone : shippingAddress.Phone,
-                            Name = string.IsNullOrWhiteSpace(shippingAddress.Name) ? billingAddress.Name : shippingAddress.Name,
-                            TypeOfAddress = AddressType.Shipping
-                        },
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Institution = user.Institution.InstitutionName,
-                        Email = user.email,
-                        Title = user.Title,
-                        SageAccountId = user.SageAccountId,
-                        AccountDetailsTitle = WebUiConstants.ManageUser
+                        Name = user.FirstName + ' ' + user.LastName,
+                        City = billingAddress.City,
+                        Country = billingAddress.Country,
+                        StreetAddress = billingAddress.StreetAddress,
+                        StreetAddress2 = billingAddress.StreetAddress2,
+                        State = billingAddress.State,
+                        Zip = billingAddress.Zip,
+                        Phone = billingAddress.Phone,
+                        TypeOfAddress = AddressType.Billing
                     },
-                    LoggedInUser = (ClaimsIdentity)User.Identity,
-                    ReturnUrl = returnUrl,
-                    StatusMessage = string.Empty
-                };
+                    ShippingAddress = new AddressModel
+                    {
+                        City = string.IsNullOrWhiteSpace(shippingAddress.City) ? billingAddress.City : shippingAddress.City,
+                        Country = string.IsNullOrWhiteSpace(shippingAddress.Country) ? billingAddress.Country : shippingAddress.Country,
+                        StreetAddress = string.IsNullOrWhiteSpace(shippingAddress.StreetAddress) ? billingAddress.StreetAddress : shippingAddress.StreetAddress,
+                        StreetAddress2 = string.IsNullOrWhiteSpace(shippingAddress.StreetAddress2) ? billingAddress.StreetAddress2 : shippingAddress.StreetAddress2,
+                        State = string.IsNullOrWhiteSpace(shippingAddress.State) ? billingAddress.State : shippingAddress.State,
+                        Zip = string.IsNullOrWhiteSpace(shippingAddress.Zip) ? billingAddress.Zip : shippingAddress.Zip,
+                        Phone = string.IsNullOrWhiteSpace(shippingAddress.Phone) ? billingAddress.Phone : shippingAddress.Phone,
+                        Name = string.IsNullOrWhiteSpace(shippingAddress.Name) ? billingAddress.Name : shippingAddress.Name,
+                        TypeOfAddress = AddressType.Shipping
+                    },
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Institution = user.Institution.InstitutionName,
+                    Email = user.email,
+                    Title = user.Title,
+                    SageAccountId = user.SageAccountId,
+                    AccountDetailsTitle = WebUiConstants.ManageUser
+                },
+                LoggedInUser = (ClaimsIdentity)User.Identity,
+                ReturnUrl = returnUrl,
+                StatusMessage = string.Empty
+            };
             return editModel;
         }
 
@@ -917,16 +917,19 @@ namespace CUWebinars.Web.Controllers
                                         "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditRegType_DropDown.cshtml",
                                         regTypeDD, true);
 
-            var discount = _accountControllerOrchestrator.BuildDiscountModelForUser(orderRow.Discount, order.idUser);
+            DiscountModel discount = null;
+
+            if (!orderRow.Webinar.Title.StartsWith("Compliance Perspectives"))
+                _accountControllerOrchestrator.BuildDiscountModelForUser(orderRow.Discount, order.idUser);
 
             if (orderRow.Discount != null)
             {
-                discount=_accountControllerOrchestrator.BuildDiscountModelForOrder(orderRow, order.idUser);
+                discount = _accountControllerOrchestrator.BuildDiscountModelForOrder(orderRow, order.idUser);
             }
 
             if (orderRow.Webinar.Title.StartsWith("Compliance Perspectives"))
             {
-                discount =  _accountControllerOrchestrator.BuildCPSubscriptionModel(orderRow.Discount, order.idUser);
+                discount = _accountControllerOrchestrator.BuildCPSubscriptionModel(orderRow.Discount, order.idUser);
             }
             var editModel = new EditOrderInfoModel
             {
@@ -1020,22 +1023,22 @@ namespace CUWebinars.Web.Controllers
             var institution = user.Institution;
 
             var editModel = new EditInstitutionInfoModel
+            {
+                EditFields = new EditInstitutionModel
                 {
-                    EditFields = new EditInstitutionModel
-                    {
-                        InstitutionName = user.Institution.InstitutionName,
-                        Address = user.Institution.Address,
-                        City = user.Institution.City,
-                        Zip = user.Institution.Zip,
-                        State = user.Institution.State,
-                        Country = user.Institution.Country,
-                        idInstitution = user.idUserInstitution,
-                        idOfCurrentUser = user.idUser
-                    },
-                    LoggedInUser = (ClaimsIdentity)User.Identity,
-                    ReturnUrl = returnUrl,
-                    StatusMessage = string.Empty
-                };
+                    InstitutionName = user.Institution.InstitutionName,
+                    Address = user.Institution.Address,
+                    City = user.Institution.City,
+                    Zip = user.Institution.Zip,
+                    State = user.Institution.State,
+                    Country = user.Institution.Country,
+                    idInstitution = user.idUserInstitution,
+                    idOfCurrentUser = user.idUser
+                },
+                LoggedInUser = (ClaimsIdentity)User.Identity,
+                ReturnUrl = returnUrl,
+                StatusMessage = string.Empty
+            };
             return editModel;
         }
 
@@ -1048,22 +1051,22 @@ namespace CUWebinars.Web.Controllers
             var institution = user.Institution;
             //
             var editModel = new EditInstitutionInfoModel
+            {
+                EditFields = new EditInstitutionModel
                 {
-                    EditFields = new EditInstitutionModel
-                    {
-                        idOfCurrentUser = user.idUser,
-                        idInstitution = institution.idInstitution,
-                        InstitutionName = institution.InstitutionName,
-                        Address = institution.Address,
-                        City = institution.City,
-                        State = institution.State,
-                        Zip = institution.Zip
+                    idOfCurrentUser = user.idUser,
+                    idInstitution = institution.idInstitution,
+                    InstitutionName = institution.InstitutionName,
+                    Address = institution.Address,
+                    City = institution.City,
+                    State = institution.State,
+                    Zip = institution.Zip
 
-                    },
-                    LoggedInUser = (ClaimsIdentity)User.Identity,
-                    ReturnUrl = returnUrl,
-                    StatusMessage = string.Empty
-                };
+                },
+                LoggedInUser = (ClaimsIdentity)User.Identity,
+                ReturnUrl = returnUrl,
+                StatusMessage = string.Empty
+            };
             return editModel;
         }
 
@@ -1729,7 +1732,7 @@ namespace CUWebinars.Web.Controllers
             bool result = int.TryParse(s, out idOrder);
 
             if (result)
-            email = _orderManagementService.GetOrderById(idOrder).BillingEmail;
+                email = _orderManagementService.GetOrderById(idOrder).BillingEmail;
 
             if (string.IsNullOrWhiteSpace(email))
                 return View();

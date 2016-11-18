@@ -21,7 +21,7 @@ namespace CUWebinars.Business.Constants
         public static readonly string OrderCreatedByImpersonatedUserKey = "OrderCreatedByImpersonatedUser";
         public static readonly string OrderCreatedByExpressCheckoutKey = "OrderCreatedByExpressCheckout";
         public static readonly string PayByCC = "PayByCC";
-        public static readonly string MonerisResponse = "MonerisResponse";
+        public static readonly string PayTraceResponse = "PayTraceResponse";
         public static readonly string V3OrderUpdatedByLegacyRegType = "V3OrderUpdatedByLegacyRegType";
         public static readonly string Note = "Note";
         public static readonly string AffiliateCheckout = "AffiliateCheckout";
@@ -30,5 +30,6 @@ namespace CUWebinars.Business.Constants
         public static readonly string MonerisDupeTx = "MonerisDupeTx";
         public static readonly string DiscountIsApplied = "DiscountIsApplied";
         public static readonly string PriceAdjusted = "PriceAdjusted";
+
     }
 }

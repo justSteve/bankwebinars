@@ -227,8 +227,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
 
             int _discountCode;
-
-            bool result = Int32.TryParse(migrateOrderModel.DiscountCode, out _discountCode);
+            bool result = Int32.TryParse(migrateOrderModel.DiscountCode.Replace("CP_", ""), out _discountCode);
             if (result)
             {
                 var migratorQuery = new MigratorQuery

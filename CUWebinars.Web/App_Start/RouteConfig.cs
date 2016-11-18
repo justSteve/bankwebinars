@@ -9,7 +9,7 @@ namespace CUWebinars.Web.App_Start
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
-            
+
             routes.MapMvcAttributeRoutes(); // enable attribute routing
 
             //replicates legacy's generic connection info endpoint
@@ -44,28 +44,10 @@ namespace CUWebinars.Web.App_Start
                 //defaults: new { controller = "Admin", action = "ExpressCheckoutPostBack", id = 0 }
                 defaults: new { controller = "Admin", action = "ExpressCheckout", id = 0 }
             );
-            //routes.MapRoute(
-            //    "blog",
-            //    url: "blog/",
-            //    defaults: new { controller = "Admin", action = "RedirectToAzureBlog"}
-            //);
-
             routes.MapRoute(
-                "ccpostback",
-                url: "ccpostback",
-                defaults: new { controller = "Cart", action = "PostBackMonerisDEPRICATED", id = 0 }
-            );
-
-            routes.MapRoute(
-                "ccpostbackbw",
-                url: "ccpostbackbw",
-                defaults: new { controller = "Cart", action = "PostBackMonerisbwDEPRICATED", id = 0 }
-            );
-            routes.MapRoute(
-                "PostBackMoneris",
-                url: "PostBackMoneris",
-                defaults: new { controller = "Cart", action = "PostBackMoneris", id = 0 }
-            );
+                "express",
+                url: "express",
+                defaults: new { controller = "Cart", action = "Express", id = 0 });
 
             routes.MapRoute(
                 "EditWebinar",

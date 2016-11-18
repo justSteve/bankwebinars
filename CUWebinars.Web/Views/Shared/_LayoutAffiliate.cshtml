@@ -177,24 +177,25 @@
             <!-- begin #main_menu -->
             <nav id="main_menu">
                 <ul class="primary_menu">
-                    @*
-                        <li><a href="/home">Home</a></li>*@
 
                     <li><a href="/webinar/calendar">calendar</a></li>
                     <li class="parent">
                         <a href="javascript:void(0)">topics<i></i></a>
                         <ul>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/30">BSA</a></li>
                             <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/15">Compliance</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/26">Risk Management</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/16">IRA</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/17">Customer Service</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/19">Operations</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/18">Security</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/20">Auditing</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/21">Sales</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/22">Lending</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/25">Computer Skills</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/31">Deposit Accounts</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/32">Executive/Director</a></li>
                             <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/23">Human Resources</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/27">Teller</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/16">IRAs</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/22">Lending</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/33">Management/Employee Development</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/34">Reporting</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/35">Risk Management/Legal</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/36">Safe Deposit</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/21">Sales</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/37">TRID</a></li>
                         </ul>
                     </li>
                     <li class="parent">
@@ -207,12 +208,10 @@
                     </li>
 
                     <li class="parent">
-                        @*<a href="javascript:void(0)">Admin<i></i></a>*@
+                        
                         <a role="menuitem" tabindex="1" href="/Admin">Admin</a>
                         <ul>
                             <li role="presentation"><a role="menuitem" tabindex="1" href="/Admin">Admin</a></li>
-                            @*<li role="presentation"><a role="menuitem" tabindex="2" href="/Admin/Users">Users</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="3" href="/Admin/Edit">Edit</a></li>*@
                         </ul>
                     </li>
                 </ul>
@@ -258,44 +257,8 @@
     <div id="page">
 
         @RenderBody()
-        <form id="PayByCCForm" method="POST" action="https://esplus.moneris.com/DPHPP/index.php">
-            <input type="hidden" name="hpp_id" />
-            <input type="hidden" name="hpp_key" />
-            <input type="hidden" name="amount" />
-
-            <input type="hidden" name="li_id1" />
-            <input type="hidden" name="li_description1" />
-            <input type="hidden" name="li_quantity1" />
-            <input type="hidden" name="li_price1" />
-            <input type="hidden" name="li_taxes" />
-            <input type="hidden" name="li_taxamount" />
-            <input type="hidden" name="li_invoice" />
-            <input type="hidden" name="cust_id" />
-            <input type="hidden" name="order_no">
-            <input type="hidden" name="client_email" />
-            <input type="hidden" name="note" />
-
-            <input type="hidden" name="od_bill_firstname" />
-            <input type="hidden" name="od_bill_lastname" />
-            <input type="hidden" name="od_bill_company" />
-            <input type="hidden" name="od_bill_address">
-            <input type="hidden" name="od_bill_city" />
-            <input type="hidden" name="od_bill_state" />
-            <input type="hidden" name="od_bill_zipcode" />
-
-            <input type="hidden" name="od_bill_phone" />
-
-            <input type="hidden" name="od_ship_firstname" />
-            <input type="hidden" name="od_ship_lastname" />
-            <input type="hidden" name="od_ship_company" />
-            <input type="hidden" name="od_ship_address" />
-            <input type="hidden" name="od_ship_city" />
-            <input type="hidden" name="od_ship_state" />
-            <input type="hidden" name="od_ship_zipcode" />
-
-            <input type="hidden" name="od_ship_phone" />
-
-
+        <form id="PayByCCFormPT" method="post" action="https://paytrace.com/api/checkout.pay">
+            <input type="hidden" name="parmList" id="paraList" value="">
         </form>
     </div>
 
@@ -348,18 +311,6 @@
                             <li><a class="socicon small linkedin" href="https://www.linkedin.com/company/bankwebinars.com" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
                         </ul>
                     </section>
-                    <!--close section
-                    <section>
-                        <h4>Latest Blog Posts</h4>
-                        <ul class="footerPosts">
-                            <li><a href="blog-single.html">We will amplify our power to benchmark</a> <span class="meta">December 10, 2012</span> </li>
-                            <li><a href="blog-single.html">Crisp has revolutionized the conceptualization of structuring</a> <span class="meta">September 10, 2012</span> </li>
-                            <li><a href="blog-single.html">A company that can implement correctly</a> <span class="meta">September 10, 2012</span> </li>
-                            <li><a href="blog-single.html">Claritas est etiam processus dynamicus</a> <span class="meta">September 10, 2012</span> </li>
-                            <li><a href="blog-single.html">It is stunning to you!</a> <span class="meta">September 10, 2012</span> </li>
-                            <li><a href="blog-single.html">We will increase our aptitude to evolve </a> <span class="meta">November 15, 2012</span> </li>
-                        </ul>
-                    </section>-->
                 </div>
                 <!-- close .span4 -->
             </div>
@@ -380,7 +331,6 @@
         <!--close section-->
     </footer>
     <!--/.footer-->
-    @*<span class="backToTop"><a href="#top">back to top</a></span>*@
     <!-- close #page-->
 
     <div class="modal hide fade in" id="DisplayErrorModal">
@@ -395,14 +345,7 @@
             <a href="#" id="ErrorSubmitter" class="btn btn-primary">Continue</a>
         </div>
     </div>
-
-
-    @*@Scripts.Render("~/bundles/jquery")*@
-
-    @*@Scripts.Render("~/bundles/jqueryui")*@
     @Scripts.Render("~/bundles/CrispApp")
-
-
     @RenderSection("scripts", required: false)
 
 </body>

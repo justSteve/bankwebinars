@@ -109,14 +109,12 @@ $(document).ready(function () {
         ns.totalOptionsInput = $('DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions');
         ns.updateAdditionalLocationsForm = $('#updateAdditionalLocationsForm');
         ns.showChangeAssignedAffiliate = $('#showChangeAssignedAffiliate');
-        ns.showMonerisModalButton = $('#showMonerisModal');
         ns.showExtendAccessButton = $('#showExtendAccessButton');
         ns.showExtendAccess = $('#showExtendAccess');
         ns.showChangeUser = $('#showChangeUser');
         ns.showChangePrice = $('#showChangePrice');
         ns.changeAssignedUser = $('#changeAssignedUser');
         ns.changePrice = $('#changePrice');
-        ns.PayByMonerisModal = $('#PayByMonerisModal');
         ns.listOfRegTypes = $('#listOfRegTypes');
 
         //the following 2 values are loaded at EditOrder_Compact.cshtml so as to pull the value directly from the server.
@@ -153,7 +151,6 @@ $(document).ready(function () {
         $('#editOrderSubmitButton').on('click', ns.submitForm);
         $('#renewCPSubscriptionButton').on('click', ns.ShowRenewCPSubscriptionModal);
         ns.add5DaysButton.on('click', ns.add5DaysButtonClick);//
-        ns.showMonerisModalButton.on('click', ns.ShowMonerisModal);//
         ns.showExtendAccessButton.on('click', ns.showExtendAccessModal);//
         ns.add6MonthsButton.on('click', ns.add6MonthsButtonClick);//
         ns.addAdditionalLocationsButton.on('click', ns.addAdditionalLocation);//
@@ -371,23 +368,6 @@ $(document).ready(function () {
         ns.editNotes.modal(modalFormOptions);
 
         ns.editNotes.on('hidden', function () {
-            modalFormOptions = null;
-        });
-    };
-
-    ns.ShowMonerisModal = function (e) {
-
-        e.preventDefault();
-
-        var modalFormOptions = {
-            keyboard: true,
-            backdrop: 'static',
-            show: true
-        };
-
-        ns.PayByMonerisModal.modal(modalFormOptions);
-
-        ns.PayByMonerisModal.on('hidden', function () {
             modalFormOptions = null;
         });
     };

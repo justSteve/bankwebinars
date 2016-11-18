@@ -16,9 +16,7 @@
     {
         TaxAmount = 0;
     }
-
-    var hpp_id = globalConfig.TenantMonerisHpp_Id;
-    var hpp_key = globalConfig.TenantMonerisHpp_Key;
+    
     var order = Model;
 
     var myRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);

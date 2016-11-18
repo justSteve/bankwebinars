@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
+using CUWebinars.Business.Models;
 
 namespace CUWebinars.Web.Models
 {
@@ -21,5 +23,8 @@ namespace CUWebinars.Web.Models
         public string Avsresponse { get; set; }
         public string Cscresponse { get; set; }
         public string Email { get; set; }
+        public string Amount { get; set; }
+        public string Bname { get; set; }
+        public Order Order { get; set; }
     }
 }

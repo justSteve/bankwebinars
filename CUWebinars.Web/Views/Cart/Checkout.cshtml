@@ -24,7 +24,7 @@
 
     function SubmitCCForm () {
             $("#PayByCCFormPTMulti input[name='parmList']").val(dataParamList);
-        console.log(dataParamList);
+        
             $("#PayByCCFormPTMulti").submit();
     }
 
@@ -56,8 +56,6 @@
 
     <div id="LogInContainer" class="container">
         <div id="reset">
-
-
             @{
                 <div id="confirmHeader">
                     <div class="legendImitator">
@@ -97,8 +95,7 @@
                             // null check like Views\Cart\Partials\_DisplayRowPrice.cshtml ->   Model.PricesAndDiscounts.Discount == null  ?
                         }
                         <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMeMulti">@confirmButtonLabel</button>
-
-                        @*<button data-toggle="modal" role="button" data-target="#PayByPayTraceModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />`*@
+                        <button data-toggle="modal" role="button" data-target="#PayByPayTraceModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />
 
 
                     </div>

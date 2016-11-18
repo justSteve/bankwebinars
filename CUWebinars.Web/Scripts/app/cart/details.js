@@ -63,6 +63,7 @@ $(function () {
             var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
             var utilities = new Common.Utilities();
             
+            
             $.ajax({
                 type: 'POST',
                 contentType: RegistrationInCart.Constants.FormPostContentType,

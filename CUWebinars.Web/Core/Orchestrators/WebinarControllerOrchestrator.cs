@@ -115,77 +115,17 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             try
             {
-                string schemaJson = @"{
-                          '$schema': 'http://json-schema.org/draft-04/schema#',
-                          'description': 'PostEventMaterialsWereAccessed',
-                          'type': 'object',
-                          'properties': {
-                            'DateAdded': {
-                              'type': [
-                                'string'
-                              ]
-                            },
-                            'OnDemandCode': {
-                              'type': [
-                                'string'
-                              ]
-                            },
-                            'UserEmail': {
-                              'type': [
-                                'string'
-                              ]
-                            },
-                            'UserName': {
-                              'type': [
-                                'string'
-                              ]
-                            },
-                            'UserAudit': {
-                              'type': [
-                                'object'
-                              ]
-                            }
-                          }
-                        }";
-                //using (StreamReader file = File.OpenText(HttpContext.Current.Server.MapPath("~/App_Data/JsonSchemaStore/PostEventMaterialsWereAccessed.json")))
-                //using (JsonTextReader reader = new JsonTextReader(file))
-                //{
-                //JSchema schema = JSchema.Load(reader);
-
-                StringWriter stringWriter = new StringWriter();
-                JsonTextWriter writer = new JsonTextWriter(stringWriter);
-
-                JSchemaValidatingWriter validatingWriter = new JSchemaValidatingWriter(writer);
-                validatingWriter.Schema = JSchema.Parse(schemaJson);
-
-                IList<string> messages = new List<string>();
-                validatingWriter.ValidationEventHandler += (o, a) => messages.Add(a.Message);
-
-                JsonSerializer serializer = new JsonSerializer();
-                serializer.Serialize(validatingWriter, fieldsToComments);
-
-                if (messages != null)
-                {
-                    foreach (var msg in messages)
-                    {
-                        _logger.Warn("Ondemand|Identify: " + msg);
-                    }
-                }
-
+                
                 string updatedUserComments = JsonHelpers.AddObjectToJsonArray(
                    order.UserComments,
                    JsonPropertyKeys.PostEventMaterialsWereAccessedKey,
                    fieldsToComments
                    );
                 order.UserComments = updatedUserComments;
-
-                //}
-
-
+                
             }
             catch (Exception ex)
             {
-
                 _logger.FatalException("UserComments for OnDemand access failed to save and threw: " + order.UserComments, ex);
                 throw;
             }
@@ -656,7 +596,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     // Zopim
                     // email
                     // Grasshopper
-                    // Moneris
+                    
 
                     var addNote = GetLoggedIncidents(order);
 

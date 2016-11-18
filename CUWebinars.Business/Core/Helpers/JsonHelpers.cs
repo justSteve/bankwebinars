@@ -10,17 +10,33 @@ using System.Reflection;
 
 namespace CUWebinars.Business.Core.Helpers
 {
-    public class JsonHelpers
+    public static class JsonHelpers
     {
-        //usage:
-        //    JProperty somthingMsg = new JProperty(
-        //    JsonPropertyKeys.somthingKey,
-        //    sometingVal.Value
-        //    );
 
-        // the msgs & keys have constants in 
+        public static JToken RemoveFields(this JToken token, string[] fields)
+        {
+            http://stackoverflow.com/questions/11676159/json-net-how-to-remove-nodes
+            JContainer container = token as JContainer;
+            if (container == null) return token;
 
-        //newOrder.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrder.AdminComments, createdByImpersonatedUserMsg);
+            List<JToken> removeList = new List<JToken>();
+            foreach (JToken el in container.Children())
+            {
+                JProperty p = el as JProperty;
+                if (p != null && fields.Contains(p.Name))
+                {
+                    removeList.Add(el);
+                }
+                el.RemoveFields(fields);
+            }
+
+            foreach (JToken el in removeList)
+            {
+                el.Remove();
+            }
+
+            return token;
+        }
 
         public static string IsValidObjectSingle(string existingJson)
         {
@@ -96,6 +112,7 @@ namespace CUWebinars.Business.Core.Helpers
                     objectToValidate = JObject.Parse(existingJson);
 
                     IList<string> keys = objectToValidate.Properties().Select(p => p.Name).ToList();
+                    Debug.WriteLine(keys);
                     foreach (var myKey in keys)
                     {
                         Debug.WriteLine(myKey);
@@ -108,13 +125,13 @@ namespace CUWebinars.Business.Core.Helpers
                         existingJson = existingJson.TrimStart('[').TrimEnd(']');
                         objectToValidate = JObject.Parse(existingJson);
                     }
-                    catch
+                    catch (Exception e1)
                     { //Handle the case when e is the base Exception
                         objectToValidate = JObject.FromObject(new
                         {
                             existing = "wrapped Json by ReplaceJsonWIthStoredField =" + existingJson,
-                            exceptionMsg = e.Message,
-                            exceptionStack = e.StackTrace
+                            exceptionMsg = e1.Message,
+                            exceptionStack = e1.StackTrace
                         });
                     }
                 }
@@ -153,7 +170,7 @@ namespace CUWebinars.Business.Core.Helpers
             {
                 existingStoredJsonObject = new JObject();
                 jArray = new JArray(newJsonObject);
-                existingStoredJsonObject.Add(JsonPropertyKeys.PostEventMaterialsWereAccessed, jArray);
+                existingStoredJsonObject.Add(keyOfArray, jArray);
 
                 return existingStoredJsonObject.ToString(Formatting.None);
             }

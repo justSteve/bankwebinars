@@ -936,6 +936,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             var discountModel = new DiscountModel();
             var currentUser = GetWebUserById(idUser);
             var userDiscount = _orderManagementService.GetDiscountByUser(currentUser);
+            if (discount!= null && discount.DiscountType == DiscountType.ComplianceSeries)
+            {
+                userDiscount = discount;
+            }
             if (ReferenceEquals(userDiscount, null))
                 return null;
             _universalMapper.Map(userDiscount, discountModel);
@@ -946,8 +950,16 @@ namespace CUWebinars.Web.Core.Orchestrators
             discountModel.Status = userDiscount.Status;
             discountModel.Notes = userDiscount.Notes;
 
-            discountModel.CreditsRemain = _orderManagementService.CalculateCreditsRemain(userDiscount);
-            discountModel.CreditsUsed = _orderManagementService.CalculateCreditsUsed(userDiscount);
+            if (discount != null && discount.DiscountType == DiscountType.ComplianceSeries)
+            {
+                discountModel.CreditsRemain = 10M;
+                discountModel.CreditsUsed = 10M;
+            }
+            else
+            {
+                discountModel.CreditsRemain = _orderManagementService.CalculateCreditsRemain(userDiscount);
+                discountModel.CreditsUsed = _orderManagementService.CalculateCreditsUsed(userDiscount);
+            }
             discountModel.Cost = userDiscount.Cost;
             discountModel.TotalCount = userDiscount.TotalCount;
             discountModel.DateBilled = userDiscount.DateBilled;

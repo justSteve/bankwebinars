@@ -15,6 +15,7 @@
         var str = "@str";
         
         console.log(str.replace(/&quot;/g, '"'));
+        console.log(str);
 
         //alert("@Model.EditFields.Order.AdminComments");
         $( "#browser" ).jsonbrowser(str.replace(/&quot;/g, '"'));
@@ -81,7 +82,6 @@
                             <li><a tabindex="-1" href="#" id="showChangePrice">Apply Price Adjustment</a></li>
                             <li><a tabindex="-1" href="#" id="showChangeUser">Assign to Different User</a></li>
                             <li><a tabindex="-1" href="#" id="showChangeAssignedAffiliate">Change Credited Affiliate (<span id="affiliateNameText">@Model.EditFields.Order.Affiliate.ttsDomain</span>)</a></li>
-                            @*<li><a tabindex="-1" href="#" id="showMonerisModal">Submit Payment</a></li>*@
                             @if (row.Webinar.Status == WebinarStatus.Recorded)
                             {
                                 <li><a tabindex="-1" href="#" id="showExtendAccessButton">Extend OnDemand Access</a></li>
@@ -445,119 +445,5 @@
             }
         </div>
 
-
-        <div id="PayByMonerisModal" class="modal hide fade">
-
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3>Submit Payment</h3>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" name="orderID" value="@Model.EditFields.Order.idOrder" />
-                @*@{
-                        Html.RenderPartial("~/Views/Cart/Partials/_PayByMoneris.cshtml", Model.EditFields.Order);
-                    }*@
-                @{
-
-                    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
-                    double TaxAmount = Convert.ToDouble(ViewBag.TaxAmount);
-
-                    if (ReferenceEquals(TaxAmount, null))
-                    {
-                        TaxAmount = 0;
-                    }
-                    //Layout = "/Views/Shared/_Layout_PayCC.cshtml";
-                    var hpp_id = globalConfig.TenantMonerisHpp_Id;
-                    var hpp_key = globalConfig.TenantMonerisHpp_Key;
-                    var order = Model.EditFields.Order;
-
-                    var myRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-                    var regTypeDesc = myRow.RegistrationType.OptionLabel;
-
-                    var title = myRow.Webinar.Title;
-                    title = title.Replace("%", "");
-                    title = title.Replace("&", "");
-                    title = title.Replace("#", "");
-                    title = title.Replace("[", "");
-                    title = title.Replace("]", "");
-                    title = title.Replace("<", "");
-                    title = title.Replace(">", "");
-                    title = title.Replace("\"", "");
-                    title = title.Replace("\\", "");
-                    title = title.Replace("'", "");
-                    title = title.Replace("/", "");
-
-                    if (myRow.AdditionalLocation.Count > 0)
-                    {
-                        if (myRow.AdditionalLocation.Count == 1)
-                        {
-                            regTypeDesc += " Includes 1 Additional Location";
-                        }
-                        else
-                        {
-                            regTypeDesc += " Includes " + myRow.AdditionalLocation.Count + " Addition Locations.";
-                        }
-                    }
-                }
-
-                <form method="POST" action="https://esplus.moneris.com/DPHPP/index.php">
-
-                    <input type="hidden" name="id" />
-                    <input type="hidden" id="Step2_BillMeFormReferred" name="referred" value="" />
-
-                    <h3 id="confirmCaption"></h3>
-                    <div>
-                        <input type="hidden" name="hpp_id" value="@globalConfig.TenantMonerisHpp_Id">
-                        <input type="hidden" name="hpp_key" value="@globalConfig.TenantMonerisHpp_Key">
-                        <input type="hidden" name="amount" value="@Math.Round(order.Total, 2)">
-                        @*<input type="hidden" name="amount" value="9.00">*@
-
-                        <input type="hidden" name="li_id1" value="@order.idOrder">
-                        <input type="hidden" name="li_description1" value="@title - @regTypeDesc">
-                        <input type="hidden" name="li_quantity1" value="1">
-                        <input type="hidden" name="li_price1" value="@Math.Round(myRow.RowPrice, 2)">
-                        <input type="hidden" name="li_taxes" value="@Math.Round(TaxAmount, 2)">
-                        <input type="hidden" name="li_taxamount" value="@Math.Round(TaxAmount, 2)">
-                        <input type="hidden" name="li_invoice" value="@globalConfig.TenantPrefix@order.idOrder">
-                        <input type="hidden" name="cust_id" value="@order.BillingEmail">
-                        <input type="hidden" name="order_no" value="@globalConfig.TenantPrefix@order.idOrder">
-                        <input type="hidden" name="client_email" value="@order.BillingEmail">
-                        <input type="hidden" name="note" value="Admin Commments Only">
-
-                        <input type="hidden" name="od_bill_firstname" value="@order.FirstName">
-                        <input type="hidden" name="od_bill_lastname" value="@order.LastName">
-                        <input type="hidden" name="od_bill_company" value="@order.Institution">
-                        <input type="hidden" name="od_bill_address" value="@order.BillingAddress">
-                        <input type="hidden" name="od_bill_city" value="@order.BillingCity">
-                        <input type="hidden" name="od_bill_state" value="@order.BillingState">
-                        <input type="hidden" name="od_bill_zipcode" value="@order.BillingZip">
-                        <input type="hidden" name="od_bill_phone" value="@order.BillingPhone">
-
-                        <input type="hidden" name="od_ship_firstname" value="@order.ShippingFirstName">
-                        <input type="hidden" name="od_ship_lastname" value="@order.ShippingLastName">
-                        <input type="hidden" name="od_ship_company" value="@order.Institution">
-                        <input type="hidden" name="od_ship_address" value="@order.ShippingAddress">
-                        <input type="hidden" name="od_ship_city" value="@order.ShippingCity">
-                        <input type="hidden" name="od_ship_state" value="@order.ShippingState">
-                        <input type="hidden" name="od_ship_zipcode" value="@order.ShippingZip">
-                        <input type="hidden" name="od_ship_phone" value="@order.ShippingPhone">
-
-
-                        <div class="legendImitator">
-                            Credit Card Processing Redirect
-                        </div>
-
-                        <div style="margin-bottom: 10px;">
-                            We will now redirect your browser to our credit card processor - https://esplusqa.moneris.com - for entry of credit card information.
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <input class="btn btn-success" type="submit" value="Continue" />
-                        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-                    </div>
-                </form>
-            </div>
-        </div>
     </div>
 </div>

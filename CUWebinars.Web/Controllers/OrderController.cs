@@ -329,9 +329,9 @@ namespace CUWebinars.Web.Controllers
                         LegacyRegType = 0,
                         SendNotification = false
                     };
-
+                    thisOrder.DiscountCode = "CP_" + o.idOrder;
                     var makeCPOrder = MigrateOrderCompPerspectivesPost(thisOrder);
-                    _logger.Info(JsonConvert.DeserializeObject(makeCPOrder.ToString()).ToString());
+                    _logger.Info(makeCPOrder.ToString());
 
 
                 }

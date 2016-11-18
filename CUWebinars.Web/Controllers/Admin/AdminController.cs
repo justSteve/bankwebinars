@@ -481,9 +481,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     var order = _orderManagementService.GetOrderById(model.Id);
                     _logger.Info("Updating OrderStatus " + order.idOrder + " from: " + order.OrderStatus + " to: " +
                                  model.DisplayRowPriceViewModel.OrderStatus + " by: " + _appHelper.GetUserAuditInfo());
-                    //var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
 
-                    //var UpdateOrderStatusOnLegacy = dataOperations.UpdateOrderStatusOnLegacy(order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).idWebinar, order.BillingEmail, Convert.ToInt32(model.DisplayRowPriceViewModel.OrderStatus));
                     var dataOperationsV3 = new DataOperations(TtsConfig.DefaultConnectionString);
 
                     string preSaveValues = dataOperationsV3.GetPreSaveValues(order.idOrder);
@@ -492,25 +490,19 @@ namespace CUWebinars.Web.Controllers.Admin
                     // the only field that we are updating at this time
                     try
                     {
-                        if (order.InvoiceDetail != null && order.InvoiceDetail != "" &&
+                        if (!string.IsNullOrEmpty(order.InvoiceDetail) &&
                             order.OrderStatus == OrderStatus.Canceled)
                         {
 
                             _logger.Warn("Invoiced Order is canceled: " + order.idOrder);
 
                             var toJson = JObject.Parse(order.InvoiceDetail);
-                            var nullChecked =
+                            var thisInvoice =
                                 toJson.Properties().FirstOrDefault(p => p.Name.StartsWith("OrderIsInvoiced"));
 
-                            if (nullChecked != null)
+                            if (thisInvoice != null)
                             {
-                                //properties saved when invoiced:
-                                //"", invoice.InvoiceID),
-                                //"", TtsConfig.UtcNowAsCts,
-                                //"AmountOfOrder", order.Total),
-                                //"AmountOfRoyalty", row.Royalty),
-                                //"", row.PercentPaid),
-                                //"Affiliate", _affiliateRepository.FindById(order.idAffiliate).ttsDomain)
+
                                 var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                                 //
                                 row.Royalty = 0;
@@ -523,14 +515,14 @@ namespace CUWebinars.Web.Controllers.Admin
                                         .Replace(" Plus Five", "+5");
                                 StringBuilder sb = new StringBuilder();
 
-                                sb.Append(order.idOrder + " was first invoiced on " + nullChecked.First()["InvoiceId"] +
+                                sb.Append(order.idOrder + " was first invoiced on " + thisInvoice.First()["InvoiceId"] +
                                           " as type '" + regTypeShortened + "' for $" +
                                           preSaveValues.Split(',')[0].ToString().Replace(".0000", "").Replace(".00", "") +
                                           ") ");
                                 sb.Append(" but was canceled " +
                                           TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat) + ". ");
 
-                                var adustmentAmount = 0 - (decimal)nullChecked.First()["AmountOfRoyalty"];
+                                var adustmentAmount = 0 - (decimal)thisInvoice.First()["AmountOfRoyalty"];
 
                                 //set default direction
                                 var adjustmentDirection = "Royalty is decreased";
@@ -542,15 +534,15 @@ namespace CUWebinars.Web.Controllers.Admin
                                 var newJson4Invoice = new JProperty(
                                     "ChangedOrderNeedsNewInvoice",
                                     new JObject(
-                                        new JProperty("OriginalInvoice", nullChecked.First()["InvoiceId"].ToString()),
+                                        new JProperty("OriginalInvoice", thisInvoice.First()["InvoiceId"].ToString()),
                                         new JProperty("OriginalDateOfInvoice",
-                                            nullChecked.First()["DateOfInvoice"].ToString()),
-                                        new JProperty("OriginalTotal", nullChecked.First()["AmountOfOrder"].ToString()),
+                                            thisInvoice.First()["DateOfInvoice"].ToString()),
+                                        new JProperty("OriginalTotal", thisInvoice.First()["AmountOfOrder"].ToString()),
                                         new JProperty("OriginalPercentPaid",
-                                            nullChecked.First()["PercentPaid"].ToString()),
+                                            thisInvoice.First()["PercentPaid"].ToString()),
                                         new JProperty("OriginalRoyaltyPaid",
-                                            nullChecked.First()["AmountOfRoyalty"].ToString()),
-                                        new JProperty("OriginalAffiliate", nullChecked.First()["Affiliate"].ToString()),
+                                            thisInvoice.First()["AmountOfRoyalty"].ToString()),
+                                        new JProperty("OriginalAffiliate", thisInvoice.First()["Affiliate"].ToString()),
                                         new JProperty(adjustmentDirection, adustmentAmount),
                                         new JProperty("DateOfChange",
                                             TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
@@ -645,7 +637,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 msg = order.idOrder + " update price " + targetPrice + " via Discount: " + idDiscount;
 
 
-                if (order.InvoiceDetail != null && order.InvoiceDetail != "")
+                if (!string.IsNullOrEmpty(order.InvoiceDetail))
                 {
 
                 }
@@ -918,16 +910,9 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     JProperty createdByExpressCheckout = new JProperty(
                         JsonPropertyKeys.OrderCreatedByExpressCheckoutKey,
-                        "'ExpressCheckoutPostBack': {'" + postback.Pretty + "'}");
+                        postback.Pretty);
 
-                    expressOrder.AdminComments = JsonHelpers.MergeJsonWithStoredField(null,
-                        createdByExpressCheckout);
-
-                    //_membershipService.AddClaim(
-                    // _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, _globalConfig.TenantEmail)
-                    // ,CUWebinars.Business.Constants.ClaimTypes.CommentAdmin, JsonConvert.SerializeObject(createdByExpressCheckout, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore })
-
-                    //    );
+                    expressOrder.AdminComments = JsonHelpers.AddObjectToJsonArray(expressOrder.AdminComments, JsonPropertyKeys.OrderCreatedByExpressCheckoutKey, createdByExpressCheckout);
 
                     expressOrder.OrderStatus = OrderStatus.Submitted;
                     expressOrder.Origin = DomainConstants.OriginExpress;
@@ -2754,38 +2739,6 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
 
-        //[HandleAjaxException]
-        //[HttpPost]
-        //[AllowAnonymous]
-        //public void BuildAffiliateInvoice(int? idWebinar, string aff)
-        //{
-        //    if (idWebinar != null)
-        //    {
-        //        AffiliateInvoiceDTO model = _affiliateManagementService.GetAffiliateInvoice(idWebinar.Value, aff);
-
-        //        //JsonResult jsonresult = Json(model.Rows);
-        //        //jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
-        //        //string html = "";
-
-        //        //try
-        //        //{
-        //        //    WebUser editingUser = null;
-
-        //        //    html = ViewHelpers.RenderViewToString(ControllerContext,
-        //        //            "~/Views/Shared/EditorTemplates/DataTablesEditorTemplates/EditOrder_Compact.cshtml",
-        //        //            model, true);
-        //        //}
-        //        //catch (Exception ex)
-        //        //{
-        //        //    _logger.Fatal("GetOrderInfoForm error", ex);
-        //        //}
-
-        //        //return Json(new { success = "success" });
-
-        //    }
-        //}
-
-
         public JsonResult getorderscompact(int? idWebinar)
         {
             string html = "";
@@ -3067,8 +3020,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     var dsWebinars = IniDataTables(out dsPostEvent, out webinarsPerAff, out PostEventOrders,
                         out ordersPerAff, out pOrders, out upgradedOrders, out uOrders, out dsUpgradedOrders);
-                    Stopwatch webinarGroup = new Stopwatch();
-                    webinarGroup.Start();
+
                     foreach (var webinar in webinars)
                     {
 
@@ -3081,9 +3033,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
                         try
                         {
-                            Stopwatch wLooper = new Stopwatch();
-                            wLooper.Start();
-
                             List<Order> webinarsOrders =
                                 _orderManagementService.GetOrdersByWebinarForInvoice(webinar.idWebinar)
                                     .Where(o => o.idAffiliate == thisAffiliate)
@@ -3091,12 +3040,6 @@ namespace CUWebinars.Web.Controllers.Admin
                                     .ToList();
                             if (webinarsOrders.Any())
                             {
-                                TimeSpan ts = wLooper.Elapsed;
-                                _logger.Info("elapsedTimeToEnterOrderProcessing  on idAffiliate: " + idAffiliate +
-                                             " for idWebinar: " + webinar.idWebinar + " was: " +
-                                             String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes,
-                                                 ts.Seconds, ts.Milliseconds / 10) + ". Number of orders was: " +
-                                             webinarsOrders.Count);
                                 foreach (var o in webinarsOrders)
                                 {
                                     o.InvoiceDetail = null;
@@ -3127,13 +3070,6 @@ namespace CUWebinars.Web.Controllers.Admin
                                 {
                                     try
                                     {
-                                        ts = wLooper.Elapsed;
-                                        _logger.Info("GenerateWeeklyInvoicesEventClocker starting " + order.idOrder +
-                                                     ":  " +
-                                                     String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes,
-                                                         ts.Seconds, ts.Milliseconds / 10));
-
-
                                         var row =
                                             order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
 
@@ -3188,12 +3124,8 @@ namespace CUWebinars.Web.Controllers.Admin
                                     }
                                     catch (Exception ex)
                                     {
-                                        wLooper.Stop();
                                         _logger.ErrorException(
-                                            "GenerateWeeklyInvoicesEvent | WebinarsOrders looper: " + order.idOrder +
-                                            " elapsed: " +
-                                            String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes,
-                                                ts.Seconds, ts.Milliseconds / 10), ex);
+                                            "GenerateWeeklyInvoicesEvent | WebinarsOrders looper: " + order.idOrder, ex);
                                     }
                                 }
 
@@ -3203,27 +3135,15 @@ namespace CUWebinars.Web.Controllers.Admin
                                 GrandTotalRoyalties += invoice.TotalRoyalties;
                                 GrandTotalNetDue += invoice.TotalNetDue;
                             }
-                            wLooper.Stop();
 
-                            TimeSpan ts1 = wLooper.Elapsed;
-                            _logger.Info("GenerateWeeklyInvoicesEvent | ends processing: " + webinar.idWebinar +
-                                         " elapsed: " +
-                                         String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts1.Hours, ts1.Minutes,
-                                             ts1.Seconds, ts1.Milliseconds / 10));
+                            _logger.Info("GenerateWeeklyInvoicesEvent | ends processing: " + webinar.idWebinar);
                         }
 
                         catch (Exception ex)
                         {
                             _logger.ErrorException("GenerateWeeklyInvoicesEvent", ex);
                         }
-
                     }
-                    webinarGroup.Stop();
-
-                    TimeSpan tsWG = webinarGroup.Elapsed;
-                    _logger.Info("GenerateWeeklyInvoicesEvent | ends processing WebinarGroup  elapsed: " +
-                                 String.Format("{0:00}:{1:00}:{2:00}.{3:00}", tsWG.Hours, tsWG.Minutes, tsWG.Seconds,
-                                     tsWG.Milliseconds / 10));
 
                     //Post Event Orders
 
@@ -3233,10 +3153,14 @@ namespace CUWebinars.Web.Controllers.Admin
 
                         foreach (var id in listOrdersPostEvent.Split(','))
                         {
-                            int variable = 0;
-                            int.TryParse(id, out variable);
-                            if (variable > 0)
-                                _postEventOrders.Add(_orderManagementService.GetOrderById(Convert.ToInt32(id)));
+                            //for why the test against static ID see DataOperations | 
+                            if (id != "19983")
+                            {
+                                int variable = 0;
+                                int.TryParse(id, out variable);
+                                if (variable > 0)
+                                    _postEventOrders.Add(_orderManagementService.GetOrderById(Convert.ToInt32(id)));
+                            }
                         }
                         //    _orderManagementService.GetOrdersAllForInvoice(thisAffiliate, out totalNumberOrders)
                         //        .Where(o => o.idAffiliate == thisAffiliate)
@@ -3284,11 +3208,10 @@ namespace CUWebinars.Web.Controllers.Admin
 
                         if (_postEventOrders.Any())
                         {
-                            _logger.Info("GenerateWeeklyInvoices found " + _postEventOrders.Count + " for " + idAffiliate +
-                                         " on ");
+                            _logger.Info("GenerateWeeklyInvoices found " + _postEventOrders.Count + " for " + idAffiliate);
                             foreach (var postEventOrder in _postEventOrders)
                             {
-                                _logger.Info("Webinar order " + postEventOrder.idOrder + " for " + idAffiliate);
+                                _logger.Info("GenerateWeeklyInvoices | PostEvent  order " + postEventOrder.idOrder + " for " + idAffiliate);
                                 postEventOrder.InvoiceDetail = null;
                             }
                             hadPOrder = true;
@@ -3299,8 +3222,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                 RoyaltyTier = affiliate.CommissionModel
                             };
                             invoice = _affiliateManagementService.BuildAffiliateInvoiceForPostEventOrders(invoice,
-                                _postEventOrders,
-                                thisAffiliate);
+                                _postEventOrders, thisAffiliate);
                             int rowNumber = 0;
                             PostEventOrders.Rows.Add(
                                 "Post Event Orders"
@@ -3330,7 +3252,6 @@ namespace CUWebinars.Web.Controllers.Admin
                                         "%";
                                     if (row.Discount != null)
                                     {
-
                                         var discount = row.Discount;
                                         _price = "See Note #" + totalNumberDiscounts;
                                         discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode + ": (" +
@@ -3348,10 +3269,9 @@ namespace CUWebinars.Web.Controllers.Admin
                                         {
                                             discountAmount = (row.UnitPrice - row.Discount.FlatOff).ToString("C");
                                         }
-                                        //discountNotes.Append(discountAmount);
+
                                         discountNotes.Append(Environment.NewLine);
                                     }
-
 
                                     pOrders.Rows.Add(
                                         rowNumber
@@ -3407,10 +3327,13 @@ namespace CUWebinars.Web.Controllers.Admin
 
                         foreach (var id in listOrdersAdjusted.Split(','))
                         {
-                            int variable = 0;
-                            int.TryParse(id, out variable);
-                            if (variable > 0)
-                                adjustedOrders.Add(_orderManagementService.GetOrderById(Convert.ToInt32(id)));
+                            if (id != "19983")
+                            {
+                                int variable = 0;
+                                int.TryParse(id, out variable);
+                                if (variable > 0)
+                                    adjustedOrders.Add(_orderManagementService.GetOrderById(Convert.ToInt32(id)));
+                            }
                         }
 
                         if (adjustedOrders.Any())
@@ -3488,7 +3411,6 @@ namespace CUWebinars.Web.Controllers.Admin
                                             {
                                                 discountAmount = (row.UnitPrice - row.Discount.FlatOff).ToString("C");
                                             }
-                                            //discountNotes.Append(discountAmount);
                                             discountNotes.Append(Environment.NewLine);
                                         }
 
@@ -3582,31 +3504,17 @@ namespace CUWebinars.Web.Controllers.Admin
 
                         if (e.IsValueFound)
                         {
-
-
                             switch (e.FieldName)
                             {
-
                                 case "Date":
-
                                     ((Run)e.Inline).Text = ((DateTime)e.Value).ToString("dddd, MMMM d, yyyy");
-
                                     break;
-
 
                                 case "Percent":
-
                                 case "Royalty":
-
-                                    //((Run)e.Inline).Text = ((double)e.Value).ToString("0.00");
-
                                     break;
-
                             }
-
                         }
-
-
                     };
 
                     var dsGrandTotals = new
@@ -3640,7 +3548,6 @@ namespace CUWebinars.Web.Controllers.Admin
                     //  see also: http://www.gemboxsoftware.com/support-center/kb/articles/9-how-does-mailmergeclearoptions-removeemptyranges-work
                     document.MailMerge.ClearOptions = MailMergeClearOptions.RemoveEmptyRanges;
                     document.MailMerge.Execute(dsGrandTotals);
-
 
                     try
                     {
@@ -3706,7 +3613,6 @@ namespace CUWebinars.Web.Controllers.Admin
                             },
                                 JsonRequestBehavior.AllowGet);
                         }
-
                     }
                     catch (Exception ex)
                     {
@@ -3736,8 +3642,6 @@ namespace CUWebinars.Web.Controllers.Admin
         private string abbrevRegType(int idRegType)
         {
             return _orderManagementService.GetRegTypeOfOrderRow(idRegType).OptionLabelShort;
-
-
         }
 
         private string CheckForExistingInvoice(string startDate, string weekNumber, int idAffiliate)

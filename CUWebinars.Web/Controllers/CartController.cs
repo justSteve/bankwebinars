@@ -171,15 +171,15 @@ namespace CUWebinars.Web.Controllers
             if (id.HasValue)
             {
 
-                if (_cartControllerOrchestrator.UserHasMultipleEvents(id))
+                _logger.Info("Confirming Order for OrderRow with Id {0}", id.Value);
+                var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
+                if (_cartControllerOrchestrator.UserHasMultipleEvents(id) && model.Order.Origin != DomainConstants.OriginExpress)
                 {
                     return Json(new
                     {
                         Result = "UserHasMulti"
                     }, JsonRequestBehavior.AllowGet);
                 }
-                _logger.Info("Confirming Order for OrderRow with Id {0}", id.Value);
-                var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
                 try
                 {
                     model.Order.OrderStatus = OrderStatus.Submitted;
@@ -468,21 +468,6 @@ namespace CUWebinars.Web.Controllers
             return PartialView("~/Views/cart/Partials/_UpdateOrderWithUserId.cshtml");
         }
 
-        [HttpGet]
-        public JsonResult IniMonerisModal(int idOrder)
-        {
-            //ensures that the price passed to moneris reflects order price with discount applied.
-            var order = _cartControllerOrchestrator.GetOrderById(idOrder);
-
-            var newPrice = _cartControllerOrchestrator.UpdateOrderPricing(order);
-
-            return Json(new
-            {
-                success = "success",
-                total = newPrice.TotalOrderPrice
-            }, JsonRequestBehavior.AllowGet);
-        }
-
 
         [HttpGet]
         public JsonResult PayTraceModalIni(int idOrder, string multi)
@@ -519,11 +504,8 @@ namespace CUWebinars.Web.Controllers
                     var _order = _cartControllerOrchestrator.GetOrderById(Convert.ToInt32(_idOrder));
                     var _newPrice = _cartControllerOrchestrator.UpdateOrderPricing(_order);
 
-
-
                     totalAmt = totalAmt + _newPrice.TotalOrderPrice;
-
-
+                    
                     wTitle = _order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title;
                     wTitle = wTitle.Substring(0, Math.Min(wTitle.Length, 40)) + " <font size=2>(" + _globalConfig.TenantPrefix +
                              _order.idOrder + ")</font>";
@@ -560,18 +542,21 @@ namespace CUWebinars.Web.Controllers
             //format parameters for request 
             // to get an approval amount set: AMOUNT~1.00
             // to get a declined amount set: AMOUNT~1.12
-            totalAmt = 1.00M;
-            //string parameters = "UN~shuener|PSWD~PttAWka2|TERMS~Y|TRANXTYPE~Sale|";
-            string parameters = "UN~demo123|PSWD~demo123|TERMS~Y|TRANXTYPE~Sale|";
+
+            //totalAmt = .21M;
+            //if (order.idOrder % 2 != 0)
+            //    totalAmt = 1.12m;
+            string parameters = "UN~shuener|PSWD~PttAWka2|TERMS~Y|TRANXTYPE~Sale|";
+            //string parameters = "UN~demo123|PSWD~demo123|TERMS~Y|TRANXTYPE~Sale|";
             parameters += "ORDERID~" + idOrder + "|AMOUNT~" + totalAmt + "|";
 
-            string return_url = @"http://" + Request.Url.Authority;
+            //parameters += "ApproveURL~https://bwdev.azurewebsites.net/cart/PayTraceApproved/|";
+            //parameters += "DeclineURL~https://bwdev.azurewebsites.net/cart/PayTraceDeclined/|";
+            //parameters += "ReturnURL~https://bwdev.azurewebsites.net/cart/PayTracePostBack/|";
+            parameters += "ApproveURL~" + _globalConfig.TenantURL + "/cart/PayTraceApproved/|";
+            parameters += "DeclineURL~" + _globalConfig.TenantURL + "/cart/PayTraceDeclined/|";
+            parameters += "ReturnURL~" + _globalConfig.TenantURL + "/cart/PayTracePostBack/|";
 
-            parameters += "ApproveURL~https://bwdev.azurewebsites.net/cart/PayTraceApproved/|";
-            parameters += "DeclineURL~https://bwdev.azurewebsites.net/cart/PayTraceDeclined/|";
-
-            parameters += "ReturnURL~https://bwdev.azurewebsites.net/cart/PostBackPayTrace/|";
-            //parameters += "ReturnURL~" + _globalConfig.TenantURL + "/cart/PostBackPayTrace/|";
 
             string parameter_list = "PARMLIST=";
 
@@ -614,7 +599,7 @@ namespace CUWebinars.Web.Controllers
                 authKey = "failed";
             }
 
-            string paramList = string.Format("DISPLAYTRUSTLOGO~Y|DISABLETERMS~Y|ENABLEREDIRECT~N|RETURNPARIS~Y|authKey~{0}|disablelogin~y|disableoptional~y|showbname~y|hideinvoice~y|hidepassword~y|orderid~{1}|bname~{2}", authKey, idOrder, order.FirstName + ' ' + order.LastName);
+            string paramList = string.Format("DISPLAYTRUSTLOGO~Y|DISABLETERMS~Y|ENABLEREDIRECT~N|RETURNPARIS~Y|authKey~{0}|disablelogin~y|disableoptional~y|showbname~y|hideinvoice~n|hidepassword~y|orderid~{1}|bname~{2}", authKey, idOrder, order.FirstName + ' ' + order.LastName);
             paramList += "|ProductDetails~" + ProdDesc.Replace(System.Environment.NewLine, "");
             //paramList += "|test~y";
             paramList += "|baddress~" + order.BillingAddress;
@@ -628,6 +613,11 @@ namespace CUWebinars.Web.Controllers
             paramList += "|IMAGEURL~" + _globalConfig.TenantLogo;
             paramList += "|CANCELURL~https://bwdev.azurewebsites.net/cart/PayTraceCanceled";
 
+            _stateService.SetValue(WebUiConstants.PayTraceSubmit, paramList);
+
+            _logger.Info("PayTraceModalIni submits: {1}, Session: {0}",
+              _appHelper.GetUserAuditInfo(), paramList
+                );
 
             return Json(new
             {
@@ -1110,6 +1100,32 @@ namespace CUWebinars.Web.Controllers
             }
             return RedirectToAction("Login", "Account", new { ReturnURL = "/Resume/" + id });
         }
+        public ActionResult Express(int id)
+        {
+            try
+            {
+                var order = _cartControllerOrchestrator.GetOrderById(id);
+                order.Origin = DomainConstants.OriginExpress;
+
+                _logger.Info("Express idOrder: " + id);
+                _stateService.SetValue(DomainConstants.OriginExpress, Request.QueryString["idOrder"]);
+
+                return RedirectToAction("Details", "Webinar", new
+                {
+                    id = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                                    .Webinar.idWebinar,
+                    idOrder = id,
+                    source = "Express"
+                });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("ExpressEx: " + id, ex);
+                throw;
+            }
+
+        }
 
 
         [HttpPost]
@@ -1119,21 +1135,28 @@ namespace CUWebinars.Web.Controllers
             {
                 if (form.q11_orderid > 0)
                 {
+
                     var order = _cartControllerOrchestrator.GetOrderById(form.q11_orderid);
-
-                    order.Origin = DomainConstants.OriginExpress;
-
-                    order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType =
-                        _cartControllerOrchestrator.GetRegTypeByLabel(form.q10_registrationType, form.q18_q_webinarid18);
-
-                    _cartControllerOrchestrator.UpdateOrderPricing(order);
-
                     _logger.Info("ExpressPostback from: " + " - " + form.q11_orderid + _appHelper.GetUserAuditInfo());
 
-                    return RedirectToAction("OrderComplete", "Account", new { id = order.idOrder});
+                    if (order != null)
+                    {
+                        order.Origin = DomainConstants.OriginExpress;
+                        order.OrderStatus = OrderStatus.Submitted;
 
+                        order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType =
+                            _cartControllerOrchestrator.GetRegTypeByLabel(form.q10_registrationType, form.q18_q_webinarid18);
+                        _logger.Info("ExpressPostback regtype is: " + order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType.OptionLabel);
+                        _cartControllerOrchestrator.UpdateOrderPricing(order);
+
+                        return View("~/Views/Cart/ThankYou.cshtml", order);
+                    }
+
+
+                    return RedirectToAction("Details", "Webinar", new { id = form.q18_q_webinarid18, idOrder = form.q11_orderid, source = "ExpressPostback2" });
+
+                    //                  return RedirectToAction("OrderComplete", "Account", new { id = order.idOrder });
                 }
-
             }
             catch (Exception ex)
             {
@@ -1176,9 +1199,9 @@ namespace CUWebinars.Web.Controllers
                         order.AdminComments = "";
                         var newJson = new JProperty(string.Concat(JsonPropertyKeys.OrderCreatedByExpressCheckoutKey), JsonConvert.SerializeObject(_appHelper.GetSessionStartInfo()));
 
-                        JProperty createdByImpersonatedUserMsg = new JProperty(JsonPropertyKeys.OrderCreatedByExpressCheckoutKey, newJson.Value);
+                        JProperty OrderCreatedByExpressCheckout = new JProperty(JsonPropertyKeys.OrderCreatedByExpressCheckoutKey, newJson.Value);
 
-                        order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, createdByImpersonatedUserMsg);
+                        order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, OrderCreatedByExpressCheckout);
 
 
                         ExpressCheckoutModel model = _cartControllerOrchestrator.ExpressCheckout(order, user);
@@ -1275,20 +1298,97 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult PayTraceApproved()
         {
-            string formFields = Request.QueryString.ToString();
-            _logger.Info("PayTraceApproved postback: " + formFields);
+            string formFields = Request.Form.ToString().Replace("parmList=", "");
+            formFields = HttpUtility.UrlDecode(formFields);
 
-            return View();
+            var ptRedirectSession = _stateService.GetValue<string>(WebUiConstants.PayTraceSubmit);
+
+            var sb = new StringBuilder();
+            sb.AppendLine("PayTraceApproved: " + formFields);
+            var nameValuePair = ptRedirectSession.Split('|');
+            var payTraceModel = new PayTraceResponse();
+            foreach (var name in nameValuePair)
+            {
+                sb.AppendLine("name :" + name.Split('~')[0] + "  value: " + name.Split('~')[1]);
+                if (name.ToUpper().StartsWith("ORDERID"))
+                    payTraceModel.Orderid = name.Split('~')[1];
+
+                if (name.ToUpper().StartsWith("TRANSACTIONID"))
+                    payTraceModel.Transactionid = name.Split('~')[1];
+
+                if (name.ToUpper().StartsWith("APPCODE"))
+                    payTraceModel.Appcode = name.Split('~')[1];
+
+                if (name.ToUpper().StartsWith("APPMSG"))
+                    payTraceModel.Appmsg = name.Split('~')[1];
+
+                if (name.ToUpper().StartsWith("AMOUNT"))
+                    payTraceModel.Amount = name.Split('~')[1];
+
+                if (name.ToUpper().StartsWith("BNAME"))
+                    payTraceModel.Bname = name.Split('~')[1];
+
+            }
+            var order = _cartControllerOrchestrator.LoadOrder(Convert.ToInt32(payTraceModel.Orderid));
+
+            payTraceModel.Order = order;
+
+            if (order.OrderStatus != OrderStatus.Paid)
+            {
+                payTraceModel.Appcode = "PayTrace reports that your transaction succeeded however, we have not yet received a confirmation" +
+                                        "code but will update your order status as soon as that arrives.";
+            }
+
+            return View(payTraceModel);
         }
 
         public ActionResult PayTraceDeclined()
         {
-            string formFields = Request.QueryString.ToString();
-            _logger.Info("PayTraceDeclined postback: " + formFields);
 
-            return View();
+            string formFields = Request.Form.ToString().Replace("parmList=", "");
+            formFields = HttpUtility.UrlDecode(formFields);
+
+            var ptRedirectSession = _stateService.GetValue<string>(WebUiConstants.PayTraceSubmit);
+
+            var sb = new StringBuilder();
+            sb.AppendLine("PayTraceDeclined: " + formFields);
+            var nameValuePair = ptRedirectSession.Split('|');
+            var payTraceModel = new PayTraceResponse();
+            foreach (var name in nameValuePair)
+            {
+                sb.AppendLine("name :" + name.Split('~')[0] + "  value: " + name.Split('~')[1]);
+                if (name.ToUpper().StartsWith("ORDERID"))
+                    payTraceModel.Orderid = name.Split('~')[1];
+
+                if (name.ToUpper().StartsWith("TRANSACTIONID"))
+                    payTraceModel.Transactionid = name.Split('~')[1];
+
+                if (name.ToUpper().StartsWith("APPCODE"))
+                    payTraceModel.Appcode = name.Split('~')[1];
+
+                if (name.ToUpper().StartsWith("APPMSG"))
+                    payTraceModel.Appmsg = name.Split('~')[1];
+
+                if (name.ToUpper().StartsWith("AMOUNT"))
+                    payTraceModel.Amount = name.Split('~')[1];
+
+                if (name.ToUpper().StartsWith("BNAME"))
+                    payTraceModel.Bname = name.Split('~')[1];
+
+            }
+            var order = _cartControllerOrchestrator.LoadOrder(Convert.ToInt32(payTraceModel.Orderid));
+
+            payTraceModel.Order = order;
+
+            if (order.OrderStatus != OrderStatus.Paid)
+            {
+                payTraceModel.Appcode = "PayTrace reports that your transaction succeeded however, we have not yet received a confirmation" +
+                                        "code but will update your order status as soon as that arrives.";
+            }
+
+            return View(payTraceModel);
         }
-        
+
         public ActionResult PayTraceCanceled()
         {
             string formFields = Request.QueryString.ToString();
@@ -1339,139 +1439,92 @@ namespace CUWebinars.Web.Controllers
             //return View(form);
         }
 
-        [HttpPost]
-        public ActionResult PostBackPayTrace()
+        //[HttpPost]
+        public string PayTracePostBack()
         {
             string formFields = Request.Form.ToString().Replace("parmList=", "");
-            //string formFields = HttpUtility.UrlDecode("BNAME%257EStephen%2bHueners%257CNAME%257EStephen%2bHueners%257CBADDRESS%257E7136%2bHeram%257CBADDRESS2%257E%257CBCITY%257EHolmen%257CBSTATE%257EWI%257CBCOUNTRY%257EUS%257CBZIP%257E54636%257CPHONE%257E%257CDESCRIPTION%257E%252A%252ATEST%252A%252Athis%2bis%2bfor%2bspecial%2binstructions%257CINVOICE%257E%257CAMOUNT%257E1%252E00%257C&cmdSecureCheckout=Click+here+to+return+to+the+TOTAL+TRAINING+SOLUTIONS+web+site.");
-            formFields = HttpUtility.UrlDecode(formFields.Replace("parmList=", ""));
-            _logger.Info("PostBackPayTrace: " + formFields);
-            //PostBackPayTrace: parmList=ORDERID~131598|TRANSACTIONID~136100879|APPCODE~123456|APPMSG~Your TEST transaction was successfully processed. HOWEVER, NO FUNDS WILL BE transferred.|AVSRESPONSE~Full Exact Match|CSCRESPONSE~Match|EMAIL~user@ttstrain.com|BNAME~Stephen Hueners|CARDTYPE~MasterCard|EXPMNTH~08|EXPYR~19|LAST4~6285|AMOUNT~1.00|
-            //var order = _cartControllerOrchestrator.LoadOrder(Convert.ToInt32(form.order_no.Split('-')[1]));
+            formFields = HttpUtility.UrlDecode(formFields);
+            _logger.Info("PayTracePostBack: " + formFields);
+            try
+            {
+                var nameValuePair = formFields.Split('|');
+                var payTraceModel = new PayTraceResponse();
+                foreach (var name in nameValuePair)
+                {
 
-            //if (order == null) throw new ArgumentNullException("order");
+                    if (name.ToUpper().StartsWith("ORDERID"))
+                        payTraceModel.Orderid = name.Split('~')[1];
 
-            //JProperty monerisResponse = new JProperty(JsonPropertyKeys.MonerisResponse, JsonConvert.SerializeObject(form));
 
-            //order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, monerisResponse);
-            ////TODO: Fix Json formatter forJsonbrowser (jquery plugin)
-            //// the comment being written here is valid Json but is not displayed nicely by the Json reader:
-            //// original: { "MonerisResponse":"{\"FormId\":null,\"order_no\":\"BW-129285\",\"ref_num\":\"642120820012660120\",\"message\":\"APPROVED*\",\"result\":\"1\",\"auth_code\":\"062449\",\"txn_time\":\"14:06:26\",\"txn_date\":\"2016-09-23\",\"response_code\":\"001\",\"note\":\"BankWebinars thanks you! Watch your email for complete details. \"}"}
-            ////  better: {"MonerisResponse":{"FormId":null,"order_no":"BW-129285","ref_num":"642120820012660120","message":"APPROVED*","result":"1","auth_code":"062449","txn_time":"14:06:26","txn_date":"2016-09-23","response_code":"001","note":"BankWebinars thanks you! Watch your email for complete details. "}}
-            //_cartControllerOrchestrator.UpdateOrderPricing(order);
+                    if (name.ToUpper().StartsWith("TRANSACTIONID"))
+                        payTraceModel.Transactionid = name.Split('~')[1];
 
-            //if (form.message.StartsWith("APPROVED"))
-            //{
-            //    try
-            //    {
-            //        _logger.Info("Confirming Moneris submission with Id BW-{0}", JsonConvert.SerializeObject(order, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
 
-            //        order.OrderStatus = OrderStatus.Paid;
+                    if (name.ToUpper().StartsWith("APPCODE"))
+                        payTraceModel.Appcode = name.Split('~')[1];
 
-            //        //_cartControllerOrchestrator.CreatePostEventClaim(order);
-            //        _cartControllerOrchestrator.AddClaimForPostEventMaterials(order.BillingEmail, order.OrderRows.FirstOrDefault());
 
-            //        if (User.Identity.IsAuthenticated)
-            //        {
-            //            _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
-            //        }
+                    if (name.ToUpper().StartsWith("APPMSG"))
+                        payTraceModel.Appmsg = name.Split('~')[1];
+
+
+                    if (name.ToUpper().StartsWith("AMOUNT"))
+                        payTraceModel.Amount = name.Split('~')[1];
+
+
+                    if (name.ToUpper().StartsWith("BNAME"))
+                        payTraceModel.Bname = name.Split('~')[1];
+
+                }
+                var order = _cartControllerOrchestrator.LoadOrder(Convert.ToInt32(payTraceModel.Orderid));
+
+                if (order == null) throw new ArgumentNullException("order");
+                //JProperty monerisResponse = new JProperty(JsonPropertyKeys.MonerisResponse, JsonConvert.SerializeObject(form));
+
+                //string updatedUserComments = JsonHelpers.AddObjectToJsonArray(
+                //   order.UserComments,
+                //   JsonPropertyKeys.PostEventMaterialsWereAccessedKey,
+                //   fieldsToComments
+                //   );
+                //order.AdminComments = JsonHelpers.AddObjectToJsonArray(order.AdminComments
+                //    , JsonPropertyKeys.PayTraceResponse
+                //    , payTraceModel);
+                ////TODO: Fix Json formatter forJsonbrowser (jquery plugin)
+                //// the comment being written here is valid Json but is not displayed nicely by the Json reader:
+                //// original: { "MonerisResponse":"{\"FormId\":null,\"order_no\":\"BW-129285\",\"ref_num\":\"642120820012660120\",\"message\":\"APPROVED*\",\"result\":\"1\",\"auth_code\":\"062449\",\"txn_time\":\"14:06:26\",\"txn_date\":\"2016-09-23\",\"response_code\":\"001\",\"note\":\"BankWebinars thanks you! Watch your email for complete details. \"}"}
+                ////  better: {"MonerisResponse":{"FormId":null,"order_no":"BW-129285","ref_num":"642120820012660120","message":"APPROVED*","result":"1","auth_code":"062449","txn_time":"14:06:26","txn_date":"2016-09-23","response_code":"001","note":"BankWebinars thanks you! Watch your email for complete details. "}}
+                _logger.Info("Confirming PayTrace postback with Id BW-{0}", JsonConvert.SerializeObject(order, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+
+                order.OrderStatus = OrderStatus.Paid;
+
+                _cartControllerOrchestrator.AddClaimForPostEventMaterials(order.BillingEmail, order.OrderRows.FirstOrDefault());
+
+                _cartControllerOrchestrator.UpdateOrderPricing(order);
+
+                _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
+            }
+            catch (Exception exception)
+            {
+                ModelState.AddModelError(string.Empty,
+                    "Connection Error #552. Please contact the administrator to complete transaction.");
+                _logger.ErrorException("PayTrace postback returned APPROVED but controller failed ", exception);
+                ErrorSignal.FromCurrentContext().Raise(exception);
+
+                return $"Ok";
+            }
+            //        _logger.Error("ConfirmOrder Action | Id parameter was null");
+            //        _logger.Error(string.Format("ConfirmOrder Action | {0}", _appHelper.GetSessionStartInfo()));
+            //    }
             //        else
             //        {
-            //            _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: true);
-            //        }
+            //            _logger.Info("Moneris declined with msg {0}: order {1}", form.message, JsonConvert.SerializeObject(order, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            //}));
+            return $"Ok";
 
-            //        return RedirectToAction("OrderComplete", "Account", new { id = order.idOrder, message = form.message });
-            //    }
-            //    catch (Exception exception)
-            //    {
-            //        ModelState.AddModelError(string.Empty,
-            //            "Connection Error #552. Please contact the administrator to complete transaction.");
-            //        _logger.ErrorException("MonerisConfirmOrder returned APPROVED but controller failed ", exception);
-            //        ErrorSignal.FromCurrentContext().Raise(exception);
-            //    }
-            //    _logger.Error("ConfirmOrder Action | Id parameter was null");
-            //    _logger.Error(string.Format("ConfirmOrder Action | {0}", _appHelper.GetSessionStartInfo()));
-            //}
-            //else
-            //{
-            //    _logger.Info("Moneris declined with msg {0}: order {1}", form.message, JsonConvert.SerializeObject(order, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
-            //    return Json(new
-            //    {
-            //        Result = WebUiConstants.Fail,
-            //        OrderRowID = order.idOrder,
-            //        Msg = string.Format("Your credit card transaction did not complete successfully. Our processor replied with this message: {0}", form.message)
-            //    }, JsonRequestBehavior.AllowGet);
-
-            //}
-            return this.ModelStateJson(ModelState);
 
         }
         [HttpPost]
-        public ActionResult PostBackMoneris(MonerisResponse form)
-        {
-            string formFields = Request.Form.ToString();
-            _logger.Info("PostBackMoneris: " + formFields);
-            var order = _cartControllerOrchestrator.LoadOrder(Convert.ToInt32(form.order_no.Split('-')[1]));
-
-            if (order == null) throw new ArgumentNullException("order");
-
-            JProperty monerisResponse = new JProperty(JsonPropertyKeys.MonerisResponse, JsonConvert.SerializeObject(form));
-
-            order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, monerisResponse);
-            //TODO: Fix Json formatter for Jsonbrowser (jquery plugin)
-            // the comment being written here is valid Json but is not displayed nicely by the Json reader:
-            // original: { "MonerisResponse":"{\"FormId\":null,\"order_no\":\"BW-129285\",\"ref_num\":\"642120820012660120\",\"message\":\"APPROVED*\",\"result\":\"1\",\"auth_code\":\"062449\",\"txn_time\":\"14:06:26\",\"txn_date\":\"2016-09-23\",\"response_code\":\"001\",\"note\":\"BankWebinars thanks you! Watch your email for complete details. \"}"}
-            //  better: {"MonerisResponse":{"FormId":null,"order_no":"BW-129285","ref_num":"642120820012660120","message":"APPROVED*","result":"1","auth_code":"062449","txn_time":"14:06:26","txn_date":"2016-09-23","response_code":"001","note":"BankWebinars thanks you! Watch your email for complete details. "}}
-            _cartControllerOrchestrator.UpdateOrderPricing(order);
-
-            if (form.message.StartsWith("APPROVED"))
-            {
-                try
-                {
-                    _logger.Info("Confirming Moneris submission with Id BW-{0}", JsonConvert.SerializeObject(order, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
-
-                    order.OrderStatus = OrderStatus.Paid;
-
-                    //_cartControllerOrchestrator.CreatePostEventClaim(order);
-                    _cartControllerOrchestrator.AddClaimForPostEventMaterials(order.BillingEmail, order.OrderRows.FirstOrDefault());
-
-                    if (User.Identity.IsAuthenticated)
-                    {
-                        _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
-                    }
-                    else
-                    {
-                        _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: true);
-                    }
-
-                    return RedirectToAction("OrderComplete", "Account", new { id = order.idOrder, message = form.message });
-                }
-                catch (Exception exception)
-                {
-                    ModelState.AddModelError(string.Empty,
-                        "Connection Error #552. Please contact the administrator to complete transaction.");
-                    _logger.ErrorException("MonerisConfirmOrder returned APPROVED but controller failed ", exception);
-                    ErrorSignal.FromCurrentContext().Raise(exception);
-                }
-
-                _logger.Error("ConfirmOrder Action | Id parameter was null");
-                _logger.Error(string.Format("ConfirmOrder Action | {0}", _appHelper.GetSessionStartInfo()));
-            }
-            else
-            {
-                _logger.Info("Moneris declined with msg {0}: order {1}", form.message, JsonConvert.SerializeObject(order, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
-                return Json(new
-                {
-                    Result = WebUiConstants.Fail,
-                    OrderRowID = order.idOrder,
-                    Msg = string.Format("Your credit card transaction did not complete successfully. Our processor replied with this message: {0}", form.message)
-                }, JsonRequestBehavior.AllowGet);
-
-            }
-            return this.ModelStateJson(ModelState);
-
-        }
-
+        
         public void PostBackWPS(FormCollection form)
         {
             //wps = webinar package subscription
