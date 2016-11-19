@@ -203,7 +203,7 @@ $(document).ready(function () {
         });
 
         ns.showChangePrice.on('click', function (e) {
-            alert("Hit");
+            
             e.preventDefault();
 
             var modalFormOptions = {
@@ -629,7 +629,7 @@ $(document).ready(function () {
     };
     ns.setPriceOfOrder = function (e) {
         e.preventDefault();
-        alert("hit");
+        
         var self = this;
 
         var url = $('#frmSetPriceOfOrder').attr('action');

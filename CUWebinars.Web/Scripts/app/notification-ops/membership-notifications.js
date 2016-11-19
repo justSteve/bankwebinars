@@ -120,7 +120,7 @@ $(function () {
             });
 
             $('#NormalResetPasswordButton').on('click', function (e) {
-                alert("hit");
+                
                 e.preventDefault();
 
                 var self = this;

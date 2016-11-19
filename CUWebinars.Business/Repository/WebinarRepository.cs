@@ -223,6 +223,16 @@ namespace CUWebinars.Business.Repository
                    .OrderByDescending(w => w.Date);
         }
 
+        public IQueryable<Webinar> GetDes()
+        {
+                        return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
+                   .Include(w => w.Presenter.WebUser)
+                   .Where(
+                       w =>
+                           (w.SeriesInfo == "DES"))
+                   .OrderByDescending(w => w.Date);
+        }
+
         public IQueryable<RegTypesGroup> GetRegTypeGroupsForWebinars(int idWebinar)
         {
             return items.Where(w => w.idWebinar == idWebinar)
@@ -242,7 +252,8 @@ namespace CUWebinars.Business.Repository
         public IQueryable<RegTypesGroup> GetUpcomingRegTypesForWebinars()
         {
             return ((TTSWebinarsContext)db).RegTypesGroups.Where(
-                    r => r.RegTypeGroupDesc.ToLower().Contains("15")
+                    r => r.SortOrder > 0
+                    //r => r.RegTypeGroupDesc.ToLower().Contains("15")
                     );
         }
 

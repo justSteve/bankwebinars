@@ -477,6 +477,13 @@ namespace CUWebinars.Web.Controllers
                 ViewBag.Title = "All Recorded Events for " + _globalConfig.Tenant;
             }
 
+            if (eventsToShow == "des")
+            {
+                webinars = _webinarManagementService.GetDesWebinars().OrderByDescending(w => w.Date);
+                ViewBag.Title = "All Director Education Series Courses";
+                return View("~/Views/Webinar/AllActiveDes.cshtml", webinars);
+            }
+
             return View(webinars);
         }
 
@@ -741,6 +748,153 @@ namespace CUWebinars.Web.Controllers
         }
 
         public ActionResult Details(int? id, int? idOrder)
+        {
+
+
+            foreach (String key in Request.QueryString.AllKeys)
+            {
+                //if (_stateService.HasValue(WebUiConstants.WebinarFromCode))
+                //    _stateService.ClearValue(WebUiConstants.WebinarFromCode);
+                //_stateService.SetValue(WebUiConstants.WebinarFromCode, webinar);
+            }
+
+
+            ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+            var currentUser = User.Identity.Name ?? "anon";
+
+            //if (currentUser.)
+
+            int incomingOrder = 0;
+            if (idOrder != null)
+            {
+                incomingOrder = idOrder.Value;
+                //if ()
+            }
+
+            if (id.HasValue)
+            {
+
+                Webinar webinar = null;
+                WebinarDetailsViewModel model = null;
+
+                InitializeDetailsWebinar(id.Value, out webinar);
+
+                if (webinar == null) return HttpNotFound();
+
+                InitializeDetailsModel(webinar, out model, incomingOrder);
+
+                if (incomingOrder == 0)
+                {
+                    InitializeDetailsState(webinar, model, id.Value);
+                    // form state, incl. stuff that will be posted back. 
+                }
+                else
+                {
+                    try
+                    {
+                        InitializeDetailsStateFromExpChcSubmit(webinar, model, id.Value, incomingOrder);
+                        var logModelState = JsonConvert.SerializeObject(model.Order, Formatting.None,
+                        new JsonSerializerSettings()
+                        {
+                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                        });
+
+                        _logger.Info("Details | returning checkout session by" + currentUser + " on: " + incomingOrder + " {" + logModelState + "}, Audit: {" + _appHelper.GetUserAuditInfo() + "}");
+
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.FatalException("Details | returning checkout session - ", ex);
+                        throw;
+                    }
+                }
+                InitializeViewCentricProperties(model);
+                // mostly just stuff that helps determine layout of the page on load. Not meant to be sent back here to Server from the View
+                if (model.Webinar == null)
+                {
+                    return HttpNotFound();
+                }
+
+
+                if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                        (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
+                {
+                    var webinars = _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(15);
+                    //int totalNumberOrders;
+                    //var ListOfUpcomingEvents =
+                    //    webinars.Select(x => new 
+                    //    {
+                    //        idWebinar = x.idWebinar.ToString(),
+                    //        Title = x.Title
+                    //    }).ToList();
+
+                    ViewBag.ListOfWebinars = new MultiSelectList(webinars, "idWebinar", "Title");
+
+                    var aff = _affiliateManagementService.LoadByTTSDomain("bankwebinars");
+                    // find a better check for admin
+                    if (model.CheckoutInProcess)
+                    {
+                        CheckoutResumeByAdmin(id, model);
+                    }
+
+                    model.ShowOrdersViewModel = new ShowOrdersViewModel
+                    {
+                        Affiliate = aff,
+                        Orders = _orderManagementService.GetOrdersByWebinar(id.Value),
+                        UserIsAdmin = true,
+                        Webinar = model.Webinar
+                    };
+                    BuildConfirmOrderView(model);
+
+                    return PartialView("DetailsAdmin", model);
+                }
+
+                if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                        (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
+                {
+                    var webinars = _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(15);
+
+                    ViewBag.ListOfWebinars = new MultiSelectList(webinars, "idWebinar", "Title");
+
+
+                    // Get the claims values
+                    var ttsDomain = claimsIdentityOfAuthenticatedUser.Claims
+                        .Where(c => c.Type == ClaimTypes.Affiliate)
+                        .Select(c => c.Value)
+                        .SingleOrDefault();
+
+                    var aff = _affiliateManagementService.LoadByTTSDomain(ttsDomain);
+
+                    if (model.CheckoutInProcess)
+                    {
+                        CheckoutResumeByAdmin(id, model);
+                    }
+                    model.ShowOrdersViewModel = new ShowOrdersViewModel
+                    {
+                        Affiliate = aff,
+                        Orders = _orderManagementService.GetOrdersByWebinar(id.Value).Where(o => o.idAffiliate == aff.idUserAff).ToList(),
+                        UserIsAdmin = false,
+                        Webinar = model.Webinar
+                    };
+
+                    BuildConfirmOrderView(model);
+                    return PartialView("DetailsAffiliate", model);
+                }
+
+                InitializeInProcessProperties(id.Value, model, webinar);
+                if (_stateService.HasValue(DomainConstants.OriginExpress))
+                    if (model.Order != null)
+                        model.Order.Origin = DomainConstants.OriginExpress;
+                BuildConfirmOrderView(model);
+                return View(model);
+            }
+
+            _logger.Error("Details Action invoked with null 'id' parameter");
+
+            return RedirectToAction("allActive", new { eventsToShow = "upcoming" });
+        }
+
+        public ActionResult DetailsDes(int? id, int? idOrder)
         {
 
 

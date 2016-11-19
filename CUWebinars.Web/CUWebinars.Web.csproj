@@ -2198,6 +2198,9 @@
     <Content Include="Views\Cart\PayTraceApproved.cshtml" />
     <Content Include="Views\Cart\PayTraceCanceled.cshtml" />
     <Content Include="Views\Shared\Admin\_SubscriptionsCP.cshtml" />
+    <Content Include="Views\Home\DESModules.cshtml" />
+    <Content Include="Views\Webinar\AllActiveDes.cshtml" />
+    <Content Include="Views\Webinar\DetailsDes.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

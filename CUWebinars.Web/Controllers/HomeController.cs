@@ -82,35 +82,45 @@ namespace CUWebinars.Web.Controllers
             return View("~/Views/Home/DSSignUp.cshtml", affiliate);
 
         }
+        [AcceptVerbs(HttpVerbs.Get)]
+        public ActionResult DESModules(int? id)
+        {
+            var lWebinars = _webinarRepository.GetUpcoming().OrderByDescending(w => w.Date).Take(15).ToList();
+            return View(lWebinars);
+
+        }
 
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult DSSignUp(int? id)
         {
 
+            ViewBag.PageStyleType = "index-flex-dark";
 
-            if (id.HasValue)
-            {
-                if (id == 17146)
-                {
+            var lWebinars = _webinarRepository.GetUpcoming().OrderByDescending(w => w.Date).Take(15).ToList();
+            return View(lWebinars);
+            //if (id.HasValue)
+            //{
+            //    if (id == 17146)
+            //    {
 
-                    ViewBag.showPrice = "$1,395 for a 12-month subscription.<br>$1,895 for non-members";
-                }
+            //        ViewBag.showPrice = "$1,395 for a 12-month subscription.<br>$1,895 for non-members";
+            //    }
 
-            }
+            //}
 
-            Business.Models.Affiliate affiliate;
+            //Business.Models.Affiliate affiliate;
 
-            if (!id.HasValue)
-            {
-                affiliate = _affiliateManagementService.FindById(id.Value);
-            }
-            else
-            {
+            //if (!id.HasValue)
+            //{
+            //    affiliate = _affiliateManagementService.FindById(id.Value);
+            //}
+            //else
+            //{
 
-                affiliate = affiliate = _affiliateManagementService.FindById(19);
-            }
+            //    affiliate = affiliate = _affiliateManagementService.FindById(19);
+            //}
 
-            return View(affiliate);
+            //return View(affiliate);
         }
 
 

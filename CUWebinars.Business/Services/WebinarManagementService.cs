@@ -434,6 +434,12 @@ namespace CUWebinars.Business.Services
             return null;
 
         }
+
+        public IEnumerable<Webinar> GetDesWebinars()
+        {
+            return _webinarRepository.GetDes().ToList();
+        }
+
         public IEnumerable<Topic> GetTopicsPerWebinar(int idWebinar)
         {
             return _webinarRepository.GetTopicsPerWebinar(idWebinar).ToList();

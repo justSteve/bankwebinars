@@ -104,6 +104,52 @@ namespace CUWebinars.Web.Controllers
 
             return recordedWebinarsListItems.ToString();
         }
- 
+
+        public string GetDesModules()
+        {
+            var desWebinars = _webinarRepository.GetDes().OrderByDescending(w => w.Date).Take(8).ToList();
+
+            var recordedWebinarsListItems = new StringBuilder();
+
+            recordedWebinarsListItems.Append(
+                "<li role='presentation'><a  role=\"menuitem\" tabindex=\"-1\"  href='/Webinar/allActive/?eventsToShow=des'>View <b>All</b> Courses</a></li>"
+                );
+
+            if (desWebinars.Count > 0)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    var webinar = desWebinars[i];
+                    var wTitle = webinar.Title.Replace("The Directors Education Series: ", "");
+
+                    string shortTitle =
+                        wTitle.Length > 45
+                            ? wTitle.Substring(0, 45) + YadaYadaYada
+                            : wTitle;
+
+                    string seoTitle =
+                        webinar.Title.RemoveIllegalCharacters()
+                            .ReplaceSpacesWithHyphens()
+                            .ReplaceAmpersandsWithAnd()
+                            .ToLower()
+                            .TrimEnd('.');
+
+                    recordedWebinarsListItems.Append(
+                        string.Concat(string.Format(
+                            "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href='/{0}/{1}'",
+                            webinar.idWebinar,
+                            seoTitle
+                            ),
+                            ">" + Server.HtmlEncode(shortTitle) + "</a></li>"));
+
+                    //recordedWebinarsListItems.Append(
+                    //    "<li role='presentation'><a role=\"menuitem\" tabindex=\"-1\" href='/Webinar/Details/" +
+                    //    recordedWebinar.idWebinar + "'>" + Server.HtmlEncode(ShortTitle) + "</a></li>"
+                    //    );
+                }
+            }
+
+            return recordedWebinarsListItems.ToString();
+        }
     }
 }

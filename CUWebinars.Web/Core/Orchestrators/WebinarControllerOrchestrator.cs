@@ -800,7 +800,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         RegTypeGroupIds = regTypeGroupsForWebinars.Select(r => r.idRegTypeGroup).ToArray()
                     },
                 Presenters = presenters,
-                RegTypeGroups = upcomingRegTypeGroups,
+                RegTypeGroups = upcomingRegTypeGroups.OrderBy(r => r.SortOrder),
                 RecordingUrl = webinar.RecordingUrl,
                 SelectedPresenter = webinar.idPresenter,
                 SelectedRegTypeGroups = regTypeGroupsForWebinars,

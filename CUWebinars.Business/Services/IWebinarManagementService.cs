@@ -24,6 +24,7 @@ namespace CUWebinars.Business.Services
         Quiz GetQuizByWebinarId(int idWebinar);
         Quiz GetQuizByOrderId(int idOrder);
         IEnumerable<Webinar> GetRecordedWebinars();
+        IEnumerable<Webinar> GetDesWebinars();
         IEnumerable<Topic> GetTopicsPerWebinar(int idWebinar);
         IEnumerable<WebinarFile> GetWebinarFilesPerWebinar(int idWebinar);
         IEnumerable<Webinar> GetUpcomingWebinars();
@@ -58,5 +59,6 @@ namespace CUWebinars.Business.Services
         IList<Webinar> GetWebinarsForWeeklyInvoices(DateTime startDate);
         IEnumerable<Webinar> GetRelated(int? idWebinar);
         IEnumerable<Webinar> GetTopicsByWebinar(int? idWebinar);
+        
     }
 }

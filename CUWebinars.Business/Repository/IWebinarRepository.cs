@@ -18,6 +18,7 @@ namespace CUWebinars.Business.Repository
         IEnumerable<Webinar> FindByDescription(string topicDescription);
         IQueryable<AdditionalLocationsLookupPrice> GetAdditionalLocationsLookupPricesForWebinar(int idWebinar);
         IQueryable<Webinar> GetUpcoming();
+        IQueryable<Webinar> GetDes();
         IQueryable<Webinar> GetRecorded();
         IQueryable<Webinar> GetAllActive();
         IQueryable<Topic> GetAllTopics();
@@ -49,5 +50,6 @@ namespace CUWebinars.Business.Repository
 
         IEnumerable<Webinar> GetRelated(int? idWebinar);
         IEnumerable<Webinar> GetTopicsByWebinar(int? idWebinar);
+        
     }
 }
