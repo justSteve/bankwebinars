@@ -7,6 +7,7 @@
 
 @model CUWebinars.Business.Notification.ViewModel.WebinarPromoViewModel
 
+
 @{
 
     var promoEvent = Model.Webinar;
@@ -46,71 +47,21 @@
 
     var affs = @Html.Raw(Json.Encode(affDTO));
 
-    $(document).ready(function () {
-        $("#editorTA").wijeditor({
-            // editorMode: "split" // can default to split view if they want
-            textChanged: function (e, data) { // Set textChanged event handler function
-                SetCopyToClipboardTextArea(false);
-            }
+    var valOfStatus = "@Model.Webinar.Status";
+    var _subject = "ANNOUNCING: @Model.Webinar.Title";
+
+    $(document)
+        .ready(function() {
+            $("#editorTA")
+                .wijeditor({
+                    // editorMode: "split" // can default to split view if they want
+                    textChanged: function(e, data) { // Set textChanged event handler function
+                        SetCopyToClipboardTextArea(false);
+                    }
+                });
         });
-    });
-
-    //$(document).ready(function () {
-    //    //$('#calendar').fullCalendar({
-    //    //    events: "/Webinar/CalendarData",
-    //    //    timeFormat: 'h(:mm)t ',
-    //    //    allDayDefault: false,
-    //    //    weekends: false,
-    //    //    loading: function (bool) {
-    //    //        if (bool) $('#veil').show();
-    //    //        else $('#veil').hide();
-    //    //    }
-    //    //});
-
-    //    //$("#calendar1").wijcalendar({ monthCols: 2, monthRows: 1 });
-
-    //    //$("#calendar1").wijcalendar({
-    //    //    afterSelect: function (e, args) {
-    //    //        $("#SendDate").val(ISODateString(args.date));
-    //    //    }
-    //    //});
-    //});
-
-    //function ISODateString(d) {
-    //    function pad(n) { return n < 10 ? '0' + n : n; }
-
-    //    return pad(d.getUTCMonth() + 1)
-    //        + '-' + pad(d.getUTCDate())
-    //        + '-' + d.getUTCFullYear();
-    //}
-
-    //function SendtoAff(affID) {
-    //    $("#editor").cleditor("setText", $("#edit" + affID).html());
-    //    $('#send' + affID).text("Please Wait");
-    //    var msgBody = $("#edit" + affID).html();
-    //    //var msgBody = en(msgBody);
-
-    //    $.ajax({
-    //        url: '/Admin/SendtoAff',
-    //        type: 'POST',
-    //        data: { "affID": affID, "msgBody": msgBody },
-    //        dataType: "json",
-    //        //contentType: "json",
-    //        success: function (result) {
-    //            $('#send' + affID).text("Success");
-    //        },
-    //        error: function (XMLHttpRequest, textStatus, errorThrown) {
-    //            $('#send' + affID).text(textStatus + " " + errorThrown);
-    //        }
-    //    });
-    //}
-
 </script>
 
-@*figure out how to get the calendar working
-    <script src="/Scripts/fullcalendar/fullcalendar.js" type="text/javascript"></script>
-    <link href="/Scripts/fullcalendar/fullcalendar.css" rel="stylesheet" type="text/css" />
-*@
 
 @* vertical tab layout based on http://tutsme-webdesign.info/tutorials/navs/pills_stacked_panesright.html*@
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "mailer", @class = "form-inline form-promo-generater" }))
@@ -141,13 +92,15 @@
             <div class="span10">
                 <div class="tab-content">
                     <div class="tab-pane active" id="tab_Master" data-pane-affid="0">
-                        <h4 class="float-right">Master Markup</h4>
+
+                        <h4 class="float-right"><button type="button" class="btn  btn-info setStatusBtn" id="setStatusBtn_@Model.Webinar.idWebinar" name="setStatusBtn">Set to Draft</button></h4>
                         <p>
                             @Html.HiddenFor(m => m.TemplateType)
                             @Html.HiddenFor(m => m.Webinar.idWebinar)
                             @Html.HiddenFor(m => m.Webinar.Title)
 
-                            @if (hasAffiliates) { 
+                            @if (hasAffiliates)
+                            {
                                 <input type="button" id="resetAllAffiliates" class="button btn btn-small" value="Reset@(isAffiliateRestricted ? " Affiliate" : " All Affiliates")" />
                             }
                             <label for="SendDate">Send date:</label>@Html.TextBoxFor(m => m.SendDate, "{0:MM/dd/yyyy}", new { @class = "input", type = "date" })
@@ -155,23 +108,22 @@
                             @if (hasAffiliates)
                             {
                                 <button id="writeAllAffMarkupToStorage" class="button btn btn-small">Save@(isAffiliateRestricted ? " Affiliate" : " All")</button>
-                            
                                 <button id="sendAll" class="button btn btn-small">Send@(isAffiliateRestricted ? " Affiliate" : " All")</button>
+
                             }
                             @*@if (TempData["ListOfWebinarsForUpcoming"] != null)
-                            {
-                                <a id="pickWebinars" href="#" data-toggle="collapse" data-target="#ListForUpcoming" class="button btn btn-info btn-small">Pick Webinars for Upcoming</a>
-                                <div id="ListForUpcoming" class="collapse out">
-                                    <div>
+                                {
+                                    <a id="pickWebinars" href="#" data-toggle="collapse" data-target="#ListForUpcoming" class="button btn btn-info btn-small">Pick Webinars for Upcoming</a>
+                                    <div id="ListForUpcoming" class="collapse out">
+                                        <div>
 
-                                        <input type="hidden" name="id" value=@Model.Webinar.idWebinar />
-                                        @Html.DropDownList("ListOfWebinarsForUpcoming", (MultiSelectList)TempData["ListOfWebinarsForUpcoming"], new { multiple = "multiple" })
-                                        <br />
+                                            <input type="hidden" name="id" value=@Model.Webinar.idWebinar />
+                                            @Html.DropDownList("ListOfWebinarsForUpcoming", (MultiSelectList)TempData["ListOfWebinarsForUpcoming"], new { multiple = "multiple" })
+                                            <br />
+                                        </div>
+
                                     </div>
-
-                                </div>
-                            }*@
-
+                                }*@
                         </p>
                         <p>
                             <textarea id="editor_0" name="editor_0" style="display: none;"></textarea>

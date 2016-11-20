@@ -4,18 +4,37 @@ var formerAffId = 0;
 
 $(document).ready(function () {
 
+    $("#sendAll").hide();
+    $(".setStatusBtn").off();
+    $(".setStatusBtn").on("click", SetwStatus);
+
+    if (valOfStatus == "Pending") {
+        $(".setStatusBtn").text("Set event to 'Scheduled'.");
+
+    } else {
+        $(".setStatusBtn").text("Set event to 'Pending'.");
+    }
+
     $("#sendAll").on("click", function (e) {
-        
-        e.preventDefault();
-        var $btn = $(this);
-        $btn.blur();
 
-        // check to see if we are on the master, we should be, since this button should only be on the master
-        if (currentAffId == 0) {
-            $("#editor_0").val(GetCurrentEditorCopy()); // store what is in the editor as the latest and greatest for use by replaceMasterTokensForAffiliate
+        //var r = confirm("Do you want to continue", "yes");
+        if (!confirm("Do you want to continue")) {
+            alert("Submission has been canceled.");
+            return false;
+        } else {
+            alert("runninng...");
+            e.preventDefault();
+            var $btn = $(this);
+            $btn.blur();
+
+            // check to see if we are on the master, we should be, since this button should only be on the master
+            if (currentAffId == 0) {
+                $("#editor_0").val(GetCurrentEditorCopy());
+                // store what is in the editor as the latest and greatest for use by replaceMasterTokensForAffiliate
+            }
+
+            SendAll($btn);
         }
-
-        SendAll($btn);
     });
 
     // refactoring to be a little more basic as I had trouble with the reliability of the bootstrap tab events (2 of 3)
@@ -30,7 +49,7 @@ $(document).ready(function () {
         //var formerAffId = $(e.relatedTarget).data("link-affid");
         formerAffId = currentAffId;
         currentAffId = $(this).data("link-affid");
-        
+
         var $editorTA = $("#editorTA");
 
         // start by retrieving what is in the editor now
@@ -44,7 +63,7 @@ $(document).ready(function () {
 
         // grab the target's textarea and load up the editor and its associated textarea
         affCopy = $("#editor_" + currentAffId).val();
-        
+
         SetEditorTabForAffiliate(currentAffId, affCopy);
     });
 
@@ -54,8 +73,7 @@ $(document).ready(function () {
     });
 
     $("#resetAllAffiliates").on("click", function (e) {
-        if (confirm("Are you sure?"))
-        {
+        if (confirm("Are you sure?")) {
             // check to see if we are on the master, we should be, since this button should only be on the master
             if (currentAffId == 0) {
                 $("#editor_0").val(GetCurrentEditorCopy()); // store what is in the editor as the latest and greatest for use by replaceMasterTokensForAffiliate
@@ -64,10 +82,9 @@ $(document).ready(function () {
             $(".tab-pane").each(function (index) {
                 var $tab = $(this);
                 var affId = $tab.data("pane-affid");
-                
+
                 var localCopy = "";
-                if (affId != 0)
-                {
+                if (affId != 0) {
                     var affObj = arrayLookup(affs, "idUserAff", affId);
                     if (affObj != null) {
                         localCopy = replaceMasterTokensForAffiliate(affObj);
@@ -123,7 +140,7 @@ $(document).ready(function () {
                 alert('Please use Ctrl/Cmd+C to copy');
             }
         }, 0);
-        
+
     });
 
     $("#copyToClipboard").on("focus", function (e) {
@@ -132,8 +149,7 @@ $(document).ready(function () {
 
 });
 
-function GetCurrentEditorCopy()
-{
+function GetCurrentEditorCopy() {
     var $editorTA = $("#editorTA");
     var currCopy = $.trim($editorTA.wijeditor("getText"));
 
@@ -143,6 +159,35 @@ function GetCurrentEditorCopy()
     return currCopy;
 }
 
+function SetwStatus() {
+    var subject = prompt("Subject Line", _subject);
+
+    var idWebinar = $("#Webinar_idWebinar").val();
+    console.log(status);
+    $.ajax({
+        url: '/Webinar/SetStatus',
+        type: 'GET',
+        data: { "idWebinar": idWebinar, "status": valOfStatus, "subject": subject },
+        dataType: "json",
+        //contentType: "json",
+        success: function(result) {
+            $("#sendAll").show();
+            if (result.status == "Scheduled") {
+                $(".setStatusBtn").text("Status set to: Pending");
+
+
+            } else {
+                $(".setStatusBtn").text("Status set to: Scheduled");
+                valOfStatus = result.status;
+
+            }
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus + " " + errorThrown);
+        }
+
+    });
+};
 function GetAffiliateCopy(affiliateId, isActive) {
 
     var currCopy = "";
@@ -152,19 +197,17 @@ function GetAffiliateCopy(affiliateId, isActive) {
         currCopy = $.trim($("#editorTA").wijeditor("getText"));
     else
         currCopy = $.trim($("#editor_" + affiliateId).val());
-    
+
     currCopy = stripWijNull(currCopy);
     return currCopy;
 }
 
-function stripWijNull(copy)
-{
+function stripWijNull(copy) {
     // if it contains our special empty comment (staticComment / <!--WIJ-NULL-->) remove that
     return copy.replace(/<!--WIJ-NULL-->/g, "");
 }
 
-function SetCopyToClipboardTextArea(selectText)
-{
+function SetCopyToClipboardTextArea(selectText) {
     var currCopy = GetCurrentEditorCopy();
     var $fld = $("#copyToClipboard");
     $fld.val(currCopy);
@@ -173,8 +216,7 @@ function SetCopyToClipboardTextArea(selectText)
 }
 
 // not the cleanest function ever... pending a refactor?
-function SetEditorTabForAffiliate(affiliateId, affiliateCopy)
-{
+function SetEditorTabForAffiliate(affiliateId, affiliateCopy) {
     var localCopy = affiliateCopy;
 
     // if it's blank, run master conversion
@@ -182,8 +224,7 @@ function SetEditorTabForAffiliate(affiliateId, affiliateCopy)
         $.trim(localCopy) == "") {
 
         var affObj = arrayLookup(affs, "idUserAff", affiliateId);
-        if (affObj != null)
-        {
+        if (affObj != null) {
             localCopy = replaceMasterTokensForAffiliate(affObj);
 
             // this probably needs to be moved out of this function, but only needs to run on initial tab load, just like the replacement code
@@ -389,8 +430,7 @@ function WriteAllAffMarkupToStorageAJAX($btn) {
             }
 
             // figure out if this was the "last one" so we can clean up the UI, report errors, etc.
-            if (callsComplete >= callsNeeded)
-            {
+            if (callsComplete >= callsNeeded) {
                 // print elapsed time...
                 var tEnd = (new Date()).getTime();
                 console.log("Time taken for all (" + callsComplete + ") AJAX calls: " + (tEnd - tStart) + " ms");
@@ -416,7 +456,7 @@ function WriteAllAffMarkupToStorageAJAX($btn) {
             }
 
         });
-        
+
     });
 }
 
@@ -492,8 +532,7 @@ function SendToAff(affiliateId) {
 }
 
 // unforatunately there is a server-side version of this function in the AdminController file as well...
-function replaceMasterTokensForAffiliate(aff)
-{
+function replaceMasterTokensForAffiliate(aff) {
     var copy = $("#editor_0").val(); // 0 is master
 
     copy = copy.replace(/\{aff_EmailBanner\}/gi, aff.EmailBanner);

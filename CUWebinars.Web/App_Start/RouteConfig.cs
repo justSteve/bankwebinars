@@ -37,6 +37,12 @@ namespace CUWebinars.Web.App_Start
 
             );
             routes.MapRoute(
+                name: "AffiliateUpdate",
+                url: "AffiliateUpdate",
+               defaults: new { controller = "Admin", action = "AffiliateUpdate", id = 0 }
+
+            );
+            routes.MapRoute(
                 "expresscheckout",
                 url: "expresscheckout",
                 // this should work and would be better

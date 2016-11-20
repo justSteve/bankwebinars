@@ -1440,6 +1440,15 @@ namespace CUWebinars.Web.Controllers
         }
 
         //[HttpPost]
+        public string AffiliateUpdate()
+        {
+            string formFields = Request.Form.ToString();
+            formFields = HttpUtility.UrlDecode(formFields);
+            _logger.Info("AffiliateUpdate: " + formFields);
+            return "ok";
+        }
+        
+        //[HttpPost]
         public string PayTracePostBack()
         {
             string formFields = Request.Form.ToString().Replace("parmList=", "");

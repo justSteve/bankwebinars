@@ -638,25 +638,11 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         }
 
-        public void SendRecordingIsPostedPerOrder(int idOrder, string note)
+        public void SendRecordingIsPostedPerOrder(int idWebinar, string note)
         {
             throw new NotImplementedException();
         }
 
-        //public string SetEventToRecorded(int webinarId)
-        //{
-        //    var webinar = _webinarManagementService.GetWebinar(webinarId);
-        //    if (webinar.RecordingUrl != null)
-        //    {
-        //        String setPostEventClaims = _orderManagementService.SetPostEventClaims(webinarId);
-        //        webinar.Status = WebinarStatus.Recorded;
-
-        //        var changeString = PublishStateChange(webinar.Status.ToString() + " to " + "recorded", webinar);
-
-        //        webinar.ConnectionInfo = changeString;
-        //    }
-        //    return null;
-        //}
 
         public void UpdateWebinar(Webinar webinar)
         {

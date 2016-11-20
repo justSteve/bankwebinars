@@ -228,8 +228,7 @@ namespace CUWebinars.Business.Repository
                         return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
                    .Include(w => w.Presenter.WebUser)
                    .Where(
-                       w =>
-                           (w.SeriesInfo == "DES"))
+                       w =>(w.SeriesInfo == "DES"))
                    .OrderByDescending(w => w.Date);
         }
 

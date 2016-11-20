@@ -58,12 +58,9 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 // parse potential multiple emails, concept from http://stackoverflow.com/questions/14689044/regex-split-on-comma-space-or-semi-colon-delimitted-string
                 char[] delimiters = new[] { ',', ';', ' ' };  // List of your delimiters
-                List<string> addressess = sendPerDayPromoEvent.EventObject.Affiliate.ContactEmail.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).ToList();
-
-                // ContactEmail  or WebUser.email?
-                //notificationMessage.To = sendPerDayPromoEvent.EventObject.Affiliate.WebUser.email;// ?????
-
-
+                List<string> addressess = sendPerDayPromoEvent.EventObject.Affiliate.NotiPromos.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).ToList();
+                //List<string> addressess = sendPerDayPromoEvent.EventObject.Affiliate.ContactEmail.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).ToList();
+                
                 if (addressess.Count > 0)
                 {
                     notificationMessage.To = addressess[0];
@@ -75,7 +72,10 @@ namespace CUWebinars.Business.Notification.Handlers
                 }
 
                 notificationMessage.From = ttsConfigHelper.GetPromoEmailFromAddress(); // approach for From Address TBD!
-                notificationMessage.Subject = ttsConfigHelper.GetPromoEmailSubject(); // approach for Subject TBD!
+
+                if (sendPerDayPromoEvent.EventObject.Webinar != null)
+                    if (sendPerDayPromoEvent.EventObject.Webinar.TitleAnnouncement != null)
+                        notificationMessage.Subject = sendPerDayPromoEvent.EventObject.Webinar.TitleAnnouncement;
 
                 _notificationDelivery.Notify(notificationMessage);
             }

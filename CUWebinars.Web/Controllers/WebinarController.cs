@@ -1923,6 +1923,25 @@ namespace CUWebinars.Web.Controllers
 
         }
 
+        [System.Web.Mvc.HttpGet]
+        public JsonResult SetStatus(int idWebinar, string status, string subject)
+        {
+            var webinar = _webinarManagementService.GetWebinar(idWebinar);
+            webinar.TitleAnnouncement = subject;
+            if (status == "Pending")
+            {
+                webinar.Status = WebinarStatus.Scheduled;
+                status = "Scheduled";
+            }
+            else
+            {
+                webinar.Status = WebinarStatus.Pending;
+                status = "Pending";
+            }
+
+            _webinarManagementService.SaveChanges();
+            return Json(new {success = true, status}, JsonRequestBehavior.AllowGet);
+        }
 
         [System.Web.Mvc.HttpGet]
         [ValidateJsonAntiForgeryToken]

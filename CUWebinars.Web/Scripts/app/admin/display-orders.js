@@ -81,19 +81,7 @@ function getOrderStatusHtml() {
     html = html + '        </ul>';
     html = html + '    </div>';
     html = html + '</form>';
-    //$.ajax({
-    //    async: false,
-    //    url: "/admin/geteditorderstatusdropdownhtml",
-    //    dataType: "json",
-    //    type: "POST",
-    //    success: function (data) {
 
-    //        html = data.html;
-    //    },
-    //    error: function (XMLHttpRequest, textStatus, errorThrown) {
-    //        alert(textStatus);
-    //    }
-    //});
     return html;
 }
 

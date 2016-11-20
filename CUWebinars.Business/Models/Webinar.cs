@@ -44,6 +44,7 @@ namespace CUWebinars.Business.Models
         public string SmallImageUrl { get; set; }
         public WebinarStatus Status { get; set; }
         public string Title { get; set; }
+        public string TitleAnnouncement { get; set; }
         public string WebinarKey { get; set; }
         public string WhoAttend { get; set; }
 

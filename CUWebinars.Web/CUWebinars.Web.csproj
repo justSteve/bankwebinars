@@ -2152,9 +2152,6 @@
     <Content Include="Views\Shared\EditorTemplates\DataTablesEditorTemplates\EditOrderStatus_Compact.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DataTablesEditorTemplates\ResendInfo_Compact.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\ResendNotifications.cshtml" />
-    <Content Include="Views\AdhocNotification\ResendInfo_Compact.cshtml" />
-    <Content Include="Views\AdhocNotification\EditInstitution.cshtml" />
-    <Content Include="Views\AdhocNotification\EditOrder_Compact.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DataTablesEditorTemplates\EditRegType_DropDown.cshtml" />
     <Content Include="Views\Webinar\Partials\_AdditionalLocationsModalAdmin.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutContactForAffiliate.cshtml" />
@@ -2706,6 +2703,7 @@
     <Folder Include="Notification\Delivery\" />
     <Folder Include="Scripts\app\types\" />
     <Folder Include="Scripts\vendor\" />
+    <Folder Include="Views\AdhocNotification\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
