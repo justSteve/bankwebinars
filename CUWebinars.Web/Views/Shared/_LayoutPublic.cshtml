@@ -10,6 +10,7 @@
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
     var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+    var currentUser = stateService.GetValue<WebUser>(WebUiConstants.CurrentUser);
     string currentUserAffiliateFullName = string.Empty;
     if (currentAffiliate != null)
     {

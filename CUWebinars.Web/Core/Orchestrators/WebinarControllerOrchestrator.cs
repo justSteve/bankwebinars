@@ -915,14 +915,14 @@ namespace CUWebinars.Web.Core.Orchestrators
                 });
             }
 
-            //foreach (
-            //    var existingRegTypeGroupId in
-            //        existingRegTypeGroupIds.Where(
-            //            existingRegTypeGroupId =>
-            //                !webinarEditModel.PostedRegTypeGroups.RegTypeGroupIds.Contains(existingRegTypeGroupId)))
-            //{
-            //    _webinarManagementService.DeleteRegTypeGroupXRef(webinar, existingRegTypeGroupId);
-            //}
+            foreach (
+                var existingRegTypeGroupId in
+                    existingRegTypeGroupIds.Where(
+                        existingRegTypeGroupId =>
+                            !webinarEditModel.PostedRegTypeGroups.RegTypeGroupIds.Contains(existingRegTypeGroupId)))
+            {
+                _webinarManagementService.DeleteRegTypeGroupXRef(webinar, existingRegTypeGroupId);
+            }
 
             var existingTopicIds =
                 webinar.WebinarTopicXrefs.Where(r => r.idWebinar == webinar.idWebinar).Select(r => r.idTopic).ToArray();

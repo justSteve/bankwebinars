@@ -94,6 +94,12 @@
     }
 
 
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+    
+    IStateService stateService = new StateService();
+
+    var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+    var claimsIdentity = (ClaimsIdentity)User.Identity;
 
 }
 
@@ -132,6 +138,8 @@
 
             var relatedTopics = "Related Topics: <b><i>" + string.Join(", ", allTopics) + "</i></b>";
 
+            var affURL = "Promo URL: " + _globalConfig.TenantURL + "/Webinar/Details/" + webinar.idWebinar + "/?idAff=" + currentAffiliate.idUserAff;
+
             <div class="wTitle clearfix">
                 @Html.Raw(title)
                 <div id="eventBody" style="width: 90%; margin-left: auto; margin-right: auto;">
@@ -141,6 +149,7 @@
                     </p>
                     @Html.Raw(desc)
                     <p>@Html.Raw(relatedTopics)</p>
+                    <p>@affURL</p>
                 </div>
             </div>
         }

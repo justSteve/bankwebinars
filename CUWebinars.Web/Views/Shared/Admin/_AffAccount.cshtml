@@ -9,10 +9,11 @@
 @using Newtonsoft.Json
 
 @{
-//GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
-//var nfi = new CultureInfo("en-US", false).NumberFormat;
-//nfi.CurrencyDecimalDigits = 0;
+    var nfi = new CultureInfo("en-US", false).NumberFormat;
+    nfi.CurrencyDecimalDigits = 0;
+
 }
 <link href="~/Content/css/bootstrapOverrides.css" rel="stylesheet" />
 <div class="container-fluid">
@@ -20,17 +21,12 @@
     <div class="row-fluid">
         <!--begin row-fluid-->
         <div class="span12">
-            <link href="https://cdn.jotfor.ms/static/formCss.css?3.3.12155" rel="stylesheet" type="text/css" />
-            <link type="text/css" rel="stylesheet" href="https://cdn.jotfor.ms/css/styles/nova.css?3.3.12155" />
-            <link type="text/css" media="print" rel="stylesheet" href="https://cdn.jotfor.ms/css/printForm.css?3.3.12155" />
+            <link href="~/Content/css/formCss.css" rel="stylesheet" type="text/css" />
+            <link href="~/Content/css/nova.css" rel="stylesheet" type="text/css" />
+            <link type="text/css" media="print" rel="stylesheet" href="~/Content/css/printForm.css?3.3.12155" />
             <style type="text/css">
                 .form-label-left {
                     width: 150px !important;
-                }
-
-                .form-line {
-                    padding-top: 6px;
-                    padding-bottom: 6px;
                 }
 
                 .form-label-right {
@@ -42,14 +38,20 @@
                     padding: 0;
                     background: #F5F5F5;
                 }
-
+                td {
+                    padding: 0;
+                }
+                form input {
+                    padding-top: 0;
+                    padding-bottom: 0;
+                }
                 .form-all {
                     margin: 0px auto;
-                    padding-top: 20px;
+                    /*padding-top: 20px;*/
                     width: 960px;
                     background: #F5F5F5;
                     color: #555 !important;
-                    font-family: 'Tahoma';
+                    /*font-family: 'Tahoma';*/
                     font-size: 14px;
                 }
 
@@ -58,31 +60,16 @@
                 }
             </style>
 
-            @*<script src="https://cdn.jotfor.ms/static/prototype.forms.js" type="text/javascript"></script>
-                <script src="https://cdn.jotfor.ms/static/jotform.forms.js?3.3.12155" type="text/javascript"></script>*@
-            @*<script type="text/javascript">
-                    JotForm.init(function () {
-                        setTimeout(function () {
-                            $('input_5').hint('ex: myname@example.com');
-                        }, 20);
-                        JotForm.description('input_19', 'Place each address on a new line. Additional Locations will impact your price.');
-                        JotForm.description('input_21', 'Place each address on a new line. Additional Locations will impact your price.');
-                        JotForm.clearFieldOnHide = "disable";
-                        JotForm.onSubmissionError = "jumpToSubmit";
-                    });
-                </script>*@
+
             <form class="jotform-form" action="https://submit.jotformpro.com/submit/60706390321953/" method="post" name="form_60706390321953" id="60706390321953" accept-charset="utf-8">
                 <input type="hidden" name="formID" value="60706390321953" />
                 <div class="form-all">
                     <ul class="form-section page-section">
                         <li id="cid_23" class="form-input-wide" data-type="control_head">
-                            <div class="form-header-group">
-                                <div class="header-text httal htvam">
-                                    <h2 id="header_23" class="form-header">
-                                        Admin Contact Info
-                                    </h2>
-                                </div>
-                            </div>
+                            <h2 id="header_23" class="form-header">
+                                Admin Contact Info
+                            </h2>
+
                         </li>
                         <li class="form-line jf-required" data-type="control_email" id="id_5">
                             <label class="form-label form-label-right" id="label_5" for="input_5">
@@ -121,7 +108,7 @@
                                         <td colspan="2">
                                             <span class="form-sub-label-container" style="vertical-align: top">
                                                 <input class="form-textbox form-address-line" type="text" name="q14_address[addr_line1]" id="input_14_addr_line1" />
-                                                <label class="form-sub-label" for="input_14_addr_line1" id="sublabel_14_addr_line1" style="min-height: 13px;"> Street Address </label>
+                                                <label class="form-sub-label" for="input_14_addr_line1" id="sublabel_14_addr_line1" > Street Address </label>
                                             </span>
                                         </td>
                                     </tr>
@@ -129,7 +116,7 @@
                                         <td colspan="2">
                                             <span class="form-sub-label-container" style="vertical-align: top">
                                                 <input class="form-textbox form-address-line" type="text" name="q14_address[addr_line2]" id="input_14_addr_line2" size="46" />
-                                                <label class="form-sub-label" for="input_14_addr_line2" id="sublabel_14_addr_line2" style="min-height: 13px;"> Street Address Line 2 </label>
+                                                <label class="form-sub-label" for="input_14_addr_line2" id="sublabel_14_addr_line2" > Street Address Line 2 </label>
                                             </span>
                                         </td>
                                     </tr>
@@ -137,13 +124,13 @@
                                         <td width="50%">
                                             <span class="form-sub-label-container" style="vertical-align: top">
                                                 <input class="form-textbox form-address-city" type="text" name="q14_address[city]" id="input_14_city" size="21" />
-                                                <label class="form-sub-label" for="input_14_city" id="sublabel_14_city" style="min-height: 13px;"> City </label>
+                                                <label class="form-sub-label" for="input_14_city" id="sublabel_14_city" > City </label>
                                             </span>
                                         </td>
                                         <td>
                                             <span class="form-sub-label-container" style="vertical-align: top">
                                                 <input class="form-textbox form-address-state" type="text" name="q14_address[state]" id="input_14_state" size="22" />
-                                                <label class="form-sub-label" for="input_14_state" id="sublabel_14_state" style="min-height: 13px;"> State  </label>
+                                                <label class="form-sub-label" for="input_14_state" id="sublabel_14_state" > State  </label>
                                             </span>
                                         </td>
                                     </tr>
@@ -151,7 +138,15 @@
                                         <td width="50%">
                                             <span class="form-sub-label-container" style="vertical-align: top">
                                                 <input class="form-textbox form-address-postal" type="text" name="q14_address[postal]" id="input_14_postal" size="10" />
-                                                <label class="form-sub-label" for="input_14_postal" id="sublabel_14_postal" style="min-height: 13px;"> Zip </label>
+                                                <label class="form-sub-label" for="input_14_postal" id="sublabel_14_postal" > Zip </label>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="50%">
+                                            <span class="form-sub-label-container" style="vertical-align: top">
+                                                <input type="text" class=" form-textbox" data-type="input-textbox" id="input_36" name="q36_TimeZone" size="20" value="@Model.Affiliate.WebUser.timeZone" />
+                                                <label class="form-sub-label" for="input_14_postal" id="Default Timezone for promos" > TimeZone </label>
                                             </span>
                                         </td>
                                     </tr>
@@ -214,16 +209,16 @@
                             </div>
                         </li>
                         <li class="form-line" data-type="control_textarea" id="id_19">
-                            <label class="form-label form-label-right" id="label_19" for="input_19"> Notified of Promos </label>
-                            <div id="cid_19" class="form-input jf-required"> <span class="form-sub-label-container" style="vertical-align: top;"> <textarea id="input_19" class="form-textarea validate[Email]" name="q19_notifiedOfPromos" cols="40" rows="3"></textarea> <label class="form-sub-label" for="input_19" style="min-height: 13px;"> Add addresses to your registration (one per line). </label> </span> </div>
+                            <label class="form-label form-label-right" id="label_19" for="input_19"> Notified of New Events </label>
+                            <div id="cid_19" class="form-input jf-required"> <span class="form-sub-label-container" style="vertical-align: top;"> <textarea id="input_19" class="form-textarea" name="q19_notifiedOfPromos" cols="40" rows="3">@Model.Affiliate.NotiPromos</textarea> <label class="form-sub-label" for="input_19" > Add addresses to your registration (one per line). </label> </span> </div>
                         </li>
                         <li class="form-line" data-type="control_textarea" id="id_21">
                             <label class="form-label form-label-right" id="label_21" for="input_21"> Notified of Orders </label>
-                            <div id="cid_21" class="form-input jf-required"> <span class="form-sub-label-container" style="vertical-align: top;"> <textarea id="input_21" class="form-textarea validate[Email]" name="q21_notifiedOfOrders" cols="40" rows="3"></textarea> <label class="form-sub-label" for="input_21" style="min-height: 13px;"> Add addresses to your registration (one per line). </label> </span> </div>
+                            <div id="cid_21" class="form-input jf-required"> <span class="form-sub-label-container" style="vertical-align: top;"> <textarea id="input_21" class="form-textarea" name="q21_notifiedOfOrders" cols="40" rows="3">@Model.Affiliate.NotiOrders</textarea> <label class="form-sub-label" for="input_21" > Add addresses to your registration (one per line) [Coming soon!]. </label> </span> </div>
                         </li>
                         <li class="form-line" data-type="control_textarea" id="id_35">
                             <label class="form-label form-label-right" id="label_35" for="input_35"> Notified of Invoices </label>
-                            <div id="cid_35" class="form-input jf-required"> <span class="form-sub-label-container" style="vertical-align: top;"> <textarea id="input_35" class="form-textarea validate[Email]" name="q35_notifiedOfInvoices" cols="40" rows="3"></textarea> <label class="form-sub-label" for="input_35" style="min-height: 13px;"> Add addresses to your registration (one per line). </label> </span> </div>
+                            <div id="cid_35" class="form-input jf-required"> <span class="form-sub-label-container" style="vertical-align: top;"> <textarea id="input_35" value="" class="form-textarea" name="q35_notifiedOfInvoices" cols="40" rows="3">@Model.Affiliate.NotiInvoices</textarea> <label class="form-sub-label" for="input_35" > Add addresses to your registration (one per line) [Coming soon!]. </label> </span> </div>
                         </li>
                         <li class="form-line" data-type="control_textarea" id="id_17">
                             <label class="form-label form-label-left form-label-auto" id="label_17" for="input_17"> Comments </label>

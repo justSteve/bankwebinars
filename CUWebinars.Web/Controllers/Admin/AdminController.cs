@@ -2545,7 +2545,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     AdditionalLocations = additionalLocations
                 };
 
-                var addLocEmails = "UpdateAdditionalLocations: " + orderRow.idOrder;
+                var addLocEmails = "UpdateAdditionalLocations: " + orderRow.idOrder + "_";
                 foreach (var addLoc in additionalLocations)
                 {
                     if (_appHelper.CheckIsEmailValid(addLoc.Email.Trim()))
@@ -2569,8 +2569,64 @@ namespace CUWebinars.Web.Controllers.Admin
                 _logger.Info(addLocEmails.TrimEnd(','));
                 SyncAdditionalLocations(manageOrderEditModel, orderRow);
             }
+            Order order = orderRow.Order;
+            if (!string.IsNullOrEmpty(order.InvoiceDetail) &&
+                            order.OrderStatus == OrderStatus.Canceled)
+            {
+
+                _logger.Warn("Invoiced Order changes additional locations: " + order.idOrder);
+
+                var toJson = JObject.Parse(order.InvoiceDetail);
+                var thisInvoice =
+                    toJson.Properties().FirstOrDefault(p => p.Name.StartsWith("OrderIsInvoiced"));
+
+                if (thisInvoice != null)
+                {
+                    var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                    //
+
+                    StringBuilder sb = new StringBuilder();
+
+                    //sb.Append(order.idOrder + " was first invoiced on " + thisInvoice.First()["InvoiceId"] +
+                    //          " as type '" + regTypeShortened + "' for $" +
+                    //          preSaveValues.Split(',')[0].ToString().Replace(".0000", "").Replace(".00", "") +
+                    //          ") ");
+                    sb.Append(" but was canceled " +
+                              TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat) + ". ");
+
+                    var adustmentAmount = 0 - (decimal)thisInvoice.First()["AmountOfRoyalty"];
+
+                    //set default direction
+                    var adjustmentDirection = "Royalty is decreased";
+
+                    sb.Append(adjustmentDirection + " by " +
+                              adustmentAmount.ToString("C").Replace(".00", ""));
+
+                    row.RowPrice = 0;
+                    var newJson4Invoice = new JProperty(
+                        "ChangedOrderNeedsNewInvoice",
+                        new JObject(
+                            new JProperty("OriginalInvoice", thisInvoice.First()["InvoiceId"].ToString()),
+                            new JProperty("OriginalDateOfInvoice",
+                                thisInvoice.First()["DateOfInvoice"].ToString()),
+                            new JProperty("OriginalTotal", thisInvoice.First()["AmountOfOrder"].ToString()),
+                            new JProperty("OriginalPercentPaid",
+                                thisInvoice.First()["PercentPaid"].ToString()),
+                            new JProperty("OriginalRoyaltyPaid",
+                                thisInvoice.First()["AmountOfRoyalty"].ToString()),
+                            new JProperty("OriginalAffiliate", thisInvoice.First()["Affiliate"].ToString()),
+                            new JProperty(adjustmentDirection, adustmentAmount),
+                            new JProperty("DateOfChange",
+                                TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
+                            new JProperty("Message", sb.ToString())
+                        ));
 
 
+                    order.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(
+                        order.InvoiceDetail, newJson4Invoice, "OrderIsInvoiced");
+
+                }
+            }
             PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
             _orderManagementService.UpdateOrderChanges(orderRow.Order, ref pricesAndDiscounts);
 

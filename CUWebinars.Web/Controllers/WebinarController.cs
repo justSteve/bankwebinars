@@ -35,6 +35,8 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
+using MailChimp.Net;
+using MailChimp.Net.Interfaces;
 using Thinktecture.IdentityModel.Authorization;
 using WebGrease.Css.Extensions;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
@@ -1940,7 +1942,37 @@ namespace CUWebinars.Web.Controllers
             }
 
             _webinarManagementService.SaveChanges();
+
+            try
+            {
+
+            }
+            catch (Exception)
+            {
+                
+                throw;
+                
+            }
+
             return Json(new {success = true, status}, JsonRequestBehavior.AllowGet);
+        }
+
+        [System.Web.Mvc.HttpGet]
+        [ValidateJsonAntiForgeryToken]
+        public async Task<JsonResult> CreateCampaign(int idWebinar)
+        {
+            IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10"); //if you have it in code
+
+            var camps = await manager.Campaigns.GetAll();
+
+            foreach (var camp in camps)
+            {
+                if (camp.Settings.InlineCss != null)
+                {
+                    var a = 1;
+                }
+            }
+            return null;
         }
 
         [System.Web.Mvc.HttpGet]

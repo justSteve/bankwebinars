@@ -226,8 +226,12 @@ namespace CUWebinars.Web.Core.Orchestrators
         public MigratorQueryResult GetPreparatoryDataForMigrator(MigrateOrderModel migrateOrderModel, string email)
         {
 
-            int _discountCode;
-            bool result = Int32.TryParse(migrateOrderModel.DiscountCode.Replace("CP_", ""), out _discountCode);
+            int _discountCode = 0;
+            var result = false;
+            if (migrateOrderModel.DiscountCode != null)
+            {
+                 result = Int32.TryParse(migrateOrderModel.DiscountCode.Replace("CP_", ""), out _discountCode);
+            }
             if (result)
             {
                 var migratorQuery = new MigratorQuery

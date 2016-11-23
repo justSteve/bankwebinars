@@ -157,6 +157,10 @@
     <Reference Include="log4net.Appender.Azure">
       <HintPath>..\packages\log4net.Appender.Azure.1.1.1.0\lib\net45\log4net.Appender.Azure.dll</HintPath>
     </Reference>
+    <Reference Include="MailChimp.Net.V3, Version=1.8.0.0, Culture=neutral, PublicKeyToken=37d26d538413c581, processorArchitecture=MSIL">
+      <HintPath>..\packages\MailChimp.Net.V3.1.8.0.0\lib\net45\MailChimp.Net.V3.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Mandrill.net, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Mandrill.net.3.0.0\lib\net45\Mandrill.net.dll</HintPath>
       <Private>True</Private>
@@ -332,9 +336,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Net.Http.2.2.27-beta\lib\net45\System.Net.Http.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http.Formatting, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.0\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Net.Http.Primitives, Version=4.2.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -628,7 +632,13 @@
     <Compile Include="ViewModel\UserDetailsViewModel.cs" />
     <Compile Include="ViewModel\WebinarEditModel.cs" />
     <Compile Include="ViewModel\WebinarFileViewModel.cs" />
+    <Content Include="Content\css\formCss.css" />
     <Content Include="Content\css\stylesDirectorSeries.css" />
+    <Content Include="Content\images\presenters\katecole.png" />
+    <Content Include="Content\images\presenters\osburn.png" />
+    <Content Include="Content\images\presenters\russell.png" />
+    <Content Include="Content\images\presenters\schwantes.png" />
+    <Content Include="Content\images\presenters\thompson.png" />
     <Content Include="Scripts\ai.0.22.19-build00125.js" />
     <Content Include="Scripts\ai.0.22.19-build00125.min.js" />
     <Content Include="Web.config">

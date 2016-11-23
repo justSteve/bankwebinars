@@ -1,4 +1,20 @@
-﻿@using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes
+﻿@using CUWebinars.Web.Core
+@using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes
+@{
+    IStateService stateService = new StateService();
+
+    var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+    var url = Request.Url.AbsoluteUri;
+
+    if (url.Contains("?"))
+    {
+        url = url + "&idAff=" + currentAffiliate.idUserAff;
+    }
+    else
+    {
+        url = url + "?idAff=" + currentAffiliate.idUserAff;
+    }
+}
 @if (Request.IsAuthenticated)
 {
     <nav class="user clearfix">
@@ -40,6 +56,15 @@
                     @if (claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Affiliate) == null && claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Admin) == null)
                     {
                         <span id="shoppingCartInHeader"><a id="btnLogin" href="@Url.Action("Checkout", "Cart")"><i class="icon-large icon-shopping-cart"></i></a></span>
+                    }
+                    else
+                    {
+                        <span>
+                            <button type="button" class="btn btn-mini" style="margin-left: 20px; " data-toggle="collapse" data-target="#affUrl">
+                                promo url
+                            </button>
+                        </span>
+                        <div id="affUrl" class="collapse out">@url</div>
                     }
                 </div>
             }
