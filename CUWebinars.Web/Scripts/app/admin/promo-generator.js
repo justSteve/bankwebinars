@@ -327,7 +327,7 @@ function SendAll($btn) {
         $.ajax({
             url: '/Admin/SendSinglePromo',
             type: 'POST',
-            data: { "affiliateId": affiliateId, "messageBodyHtml": currCopy },
+            data: { "affiliateId": affiliateId, "messageBodyHtml": currCopy, "webinarId": $("#Webinar_idWebinar").val() },
             dataType: "json",
             //contentType: "json",
             success: function (result) {

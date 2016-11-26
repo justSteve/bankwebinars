@@ -53,6 +53,6 @@ namespace CUWebinars.Business.Models
         public virtual ICollection<WebinarFile> WebinarFiles { get; set; }
         public virtual ICollection<WebinarTopicXref> WebinarTopicXrefs { get; set; }
         public virtual Presenter Presenter { get; set; }
-
+        public string Campaigns { get; set; }
     }
 }

@@ -36,11 +36,14 @@ using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
 using MailChimp.Net;
+using MailChimp.Net.Core;
 using MailChimp.Net.Interfaces;
+using MailChimp.Net.Models;
 using Thinktecture.IdentityModel.Authorization;
 using WebGrease.Css.Extensions;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 using DateTimeHelper = CUWebinars.Web.Helpers.DateTimeHelper;
+using Order = CUWebinars.Business.Models.Order;
 using PostEventClaim = CUWebinars.Business.Services.PostEventClaim;
 
 
@@ -1949,29 +1952,51 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception)
             {
-                
+
                 throw;
-                
+
             }
 
-            return Json(new {success = true, status}, JsonRequestBehavior.AllowGet);
+            return Json(new { success = true, status }, JsonRequestBehavior.AllowGet);
         }
 
         [System.Web.Mvc.HttpGet]
         [ValidateJsonAntiForgeryToken]
-        public async Task<JsonResult> CreateCampaign(int idWebinar)
+        public async Task<JsonResult> CreateCampaign(int idWebinar, string ttsDomain)
         {
+
+            var webinar = _webinarManagementService.GetWebinar(idWebinar);
+            var affiliate = _affiliateManagementService.LoadByTTSDomain(ttsDomain);
+
             IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10"); //if you have it in code
 
-            var camps = await manager.Campaigns.GetAll();
-
-            foreach (var camp in camps)
+            var newCamp = new Campaign
             {
-                if (camp.Settings.InlineCss != null)
+                ContentType = "html",
+                Type = CampaignType.Regular,
+                Recipients = new Recipient { ListId = "6001c311bf" },
+                Settings = new Setting
                 {
-                    var a = 1;
+                    SubjectLine = "[testing] " + webinar.Title,
+                    Title = "[testing] " + ttsDomain + "_" + webinar.Title,
+                    FolderId = "79f02e25e8",
+                    InlineCss = false,
+                    Authenticate = true,
+                    AutoFooter = true,
+                    AutoTweet = false,
+                    FromName = "ApiTest",
+                    ReplyTo = "steve@ttstrain.com"
                 }
-            }
+
+            };
+            var mkCamp = await manager.Campaigns.AddAsync(campaign: newCamp);
+
+            var content = new Content
+            {
+                Html = "<div>test</div>"
+
+            };
+
             return null;
         }
 

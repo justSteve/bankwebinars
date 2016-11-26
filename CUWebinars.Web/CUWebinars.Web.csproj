@@ -483,6 +483,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Models\JsonModels\McCampaign.cs" />
     <Compile Include="Models\FileViewModel.cs" />
     <Compile Include="Controllers\CertOfCompletionDSViewModel.cs" />
     <Compile Include="Controllers\ManageMessageId.cs" />
