@@ -3,10 +3,15 @@ var currentAffId = 0; // initial tab is the master (0)
 var formerAffId = 0;
 
 $(document).ready(function () {
+    $("#showCampaignsBtn").button();
 
     $("#sendAll").hide();
     $(".setStatusBtn").off();
     $(".setStatusBtn").on("click", SetwStatus);
+
+    $("#showCampaignsBtn").on("click", showHideCampaign);
+
+
 
     if (valOfStatus == "Pending") {
         $(".setStatusBtn").text("Set event to 'Scheduled'.");
@@ -22,7 +27,7 @@ $(document).ready(function () {
             alert("Submission has been canceled.");
             return false;
         } else {
-            alert("runninng...");
+
             e.preventDefault();
             var $btn = $(this);
             $btn.blur();
@@ -97,6 +102,14 @@ $(document).ready(function () {
         }
     });
 
+    $(".create-campaign").on("click", function (e) {
+        e.preventDefault();
+        var $btn = $(this);
+        var affiliateId = $btn.closest(".tab-pane").data("pane-affid");
+        CreateCampaign($btn, affiliateId);
+
+    });
+
     $(".send-to-affiliate").on("click", function (e) {
         var affiliateId = $(this).closest(".tab-pane").data("pane-affid");
         SendToAff(affiliateId);
@@ -148,7 +161,17 @@ $(document).ready(function () {
     });
 
 });
+function showHideCampaign() {
 
+    if ($(this).hasClass('active')) {
+        $("#showAll").show();
+        $("#showCampaign").hide();
+    } else {
+        $("#showAll").hide();
+        $("#showCampaign").show();
+    };
+    $(this).hasClass('checked');
+}
 function GetCurrentEditorCopy() {
     var $editorTA = $("#editorTA");
     var currCopy = $.trim($editorTA.wijeditor("getText"));
@@ -170,7 +193,7 @@ function SetwStatus() {
         data: { "idWebinar": idWebinar, "status": valOfStatus, "subject": subject },
         dataType: "json",
         //contentType: "json",
-        success: function(result) {
+        success: function (result) {
             $("#sendAll").show();
             if (result.status == "Scheduled") {
                 $(".setStatusBtn").text("Status set to: Pending");
@@ -182,7 +205,7 @@ function SetwStatus() {
 
             }
         },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert(textStatus + " " + errorThrown);
         }
 
@@ -327,9 +350,9 @@ function SendAll($btn) {
         $.ajax({
             url: '/Admin/SendSinglePromo',
             type: 'POST',
-            data: { "affiliateId": affiliateId, "messageBodyHtml": currCopy, "webinarId": $("#Webinar_idWebinar").val() },
+            data: { "affiliateId": affiliateId, "messageBodyHtml": currCopy, "webinarId": $("#Webinar_idWebinar").val(), "sendDate": $("#SendDate").val() },
             dataType: "json",
-            //contentType: "json",
+            async: false,
             success: function (result) {
                 //$('#send' + affID).text("Success");
                 console.log(result);
@@ -346,6 +369,53 @@ function SendAll($btn) {
         setTimeout(function () { $btn.text(origBtnText); }, 2000);
 
     });
+}
+
+function CreateCampaign($btn, affiliateId) {
+
+    // save time...
+    var tStart = (new Date()).getTime();
+
+    // setup UI for user feedback
+    var origBtnText = $btn.text();
+    $btn.text("Processing...");
+    $btn.append('<span id="submitSpinWrapper">&nbsp;<span class=""><i id="spinner" class="icon-spinner icon-spin"></i></span></span>');
+
+    var errorAffs = [];
+    //var callsNeeded = $(".tab-pane").length - 1; // don't count Master tab, we're skipping that one
+    var callsComplete = 0;
+    var messages = [];
+
+    var $tab = $(this);
+
+    if (affiliateId == 0) // skip the Master tab, although, conceivably, we could store that in a special file and use it for something...
+        return;
+
+    // get affiliate specific copy
+    var isActive = $tab.hasClass("active"); // should ALWAYS be false in this method, as the Save All button is only on the master tab
+    var currCopy = GetAffiliateCopy(affiliateId, isActive);
+
+    $.ajax({
+        url: '/Admin/CreateCampaignSingle',
+        type: 'POST',
+        data: { "affiliateId": affiliateId, "messageBodyHtml": currCopy, "webinarId": $("#Webinar_idWebinar").val(), "sendDate": $("#SendDate").val() },
+        dataType: "json",
+        //contentType: "json",
+        success: function (result) {
+            //$('#send' + affID).text("Success");
+            console.log(result);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            // $('#send' + affID).text(textStatus + " " + errorThrown);
+            alert("error");
+        }
+    });
+    // remove spinner
+    $('#submitSpinWrapper').remove();
+    $btn.text("Send!");
+
+    setTimeout(function () { $btn.text(origBtnText); }, 2000);
+
 }
 
 

@@ -67,22 +67,30 @@
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "mailer", @class = "form-inline form-promo-generater" }))
 {
     <div class="container-admin">
-        @*<div align="right">
-                <input type="button" id="GenButton" onclick="javascript: GetWeekly();" value="Gen Multiple Events" />
-            </div>*@
+
         <h2>
             @Model.Webinar.Title
         </h2>
-        <p>
+        <div>
+            <button data-toggle="button" type="button" id="showCampaignsBtn" class="btn btn-mini">Show Just Campaigns</button>
             @Model.Webinar.Presenter.WebUser.FullName &nbsp;
             @Html.Raw(wDate)
-        </p>
+        </div>
 
         <div class="row-fluid">
             <div class="span2" style="height:98%; overflow: auto;">
-                <ul class="nav nav-pills nav-stacked" style="margin: 0; padding: 0;">
+                <ul id="showAll" class="nav nav-pills nav-stacked" style="margin: 0; padding: 0;  ">
                     <li class="active"><a href="#tab_Master" data-toggle="pill" data-link-affid="0">MASTER</a></li>
+
                     @foreach (var aff in Model.Affiliates)
+                    {
+                        <li><a href="#tab_@aff.idUserAff" data-toggle="pill" data-link-affid="@aff.idUserAff">@aff.ttsDomain - @aff.idUserAff</a></li>
+                    }
+                </ul>
+                <ul id="showCampaign" class="nav nav-pills nav-stacked" style="display: none; margin: 0; padding: 0;">
+                    <li class="active"><a href="#tab_Master" data-toggle="pill" data-link-affid="0">MASTER</a></li>
+
+                    @foreach (var aff in Model.Affiliates.Where(a => a.idMailChimpList != null))
                     {
                         <li><a href="#tab_@aff.idUserAff" data-toggle="pill" data-link-affid="@aff.idUserAff">@aff.ttsDomain - @aff.idUserAff</a></li>
                     }
@@ -109,21 +117,7 @@
                             {
                                 <button id="writeAllAffMarkupToStorage" class="button btn btn-small">Save@(isAffiliateRestricted ? " Affiliate" : " All")</button>
                                 <button id="sendAll" class="button btn btn-small">Send@(isAffiliateRestricted ? " Affiliate" : " All")</button>
-
                             }
-                            @*@if (TempData["ListOfWebinarsForUpcoming"] != null)
-                                {
-                                    <a id="pickWebinars" href="#" data-toggle="collapse" data-target="#ListForUpcoming" class="button btn btn-info btn-small">Pick Webinars for Upcoming</a>
-                                    <div id="ListForUpcoming" class="collapse out">
-                                        <div>
-
-                                            <input type="hidden" name="id" value=@Model.Webinar.idWebinar />
-                                            @Html.DropDownList("ListOfWebinarsForUpcoming", (MultiSelectList)TempData["ListOfWebinarsForUpcoming"], new { multiple = "multiple" })
-                                            <br />
-                                        </div>
-
-                                    </div>
-                                }*@
                         </p>
                         <p>
                             <textarea id="editor_0" name="editor_0" style="display: none;"></textarea>
@@ -138,10 +132,14 @@
                             <p>
                                 <input type="button" class="button btn btn-small reset-to-master" value="Reset to Master" />
                                 <input type="button" class="button btn btn-small copy-markup" value="Copy to Clipboard" />
-                                @Html.TextBox("SendToList_" + @aff.idUserAff, "", new { @class = "input" })
+                                @*@Html.TextBox("SendToList_" + @aff.idUserAff, "", new { @class = "input" })*@
                                 @Html.HiddenFor(m => aff.ttsDomain, new { id = "ttsDomain_" + @aff.idUserAff })
                                 <input type="button" class="button btn btn-small send-to-affiliate" value="Send" />
                                 <button class="button btn btn-small write-markup-to-storage">Save</button>
+                                @if (hasAffiliates && aff.idMailChimpList != null)
+                                {
+                                    <button id="createCampBtn" data-btn-affid="@aff.idUserAff" class="button btn btn-small create-campaign">Create Campaign</button>
+                                }
                             </p>
                             <p>
                                 <textarea id="editor_@aff.idUserAff" name="editor_@aff.idUserAff" style="display: none;"></textarea>

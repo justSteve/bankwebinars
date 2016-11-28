@@ -83,20 +83,31 @@
             @Model.Webinar.Title
         </h2>
         <p>
+            <button data-toggle="button" type="button" id="showCampaignsBtn" class="btn">Show Just Campaigns</button>
             @Model.Webinar.Presenter.WebUser.FullName &nbsp;
             @Html.Raw(wDate)
         </p>
 
         <div class="row-fluid">
             <div class="span2" style="height:98%; overflow: auto;">
-                <ul class="nav nav-pills nav-stacked" style="margin: 0; padding: 0;">
+                <ul id="showAll" class="nav nav-pills nav-stacked" style="margin: 0; padding: 0;">
                     <li class="active"><a href="#tab_Master" data-toggle="pill" data-link-affid="0">MASTER</a></li>
+
                     @foreach (var aff in Model.Affiliates)
                     {
                         <li><a href="#tab_@aff.idUserAff" data-toggle="pill" data-link-affid="@aff.idUserAff">@aff.ttsDomain - @aff.idUserAff</a></li>
                     }
                 </ul>
+                <ul id="showCampaign" class="nav nav-pills nav-stacked" style=" display: none; margin: 0; padding: 0;">
+                    <li class="active"><a href="#tab_Master" data-toggle="pill" data-link-affid="0">MASTER</a></li>
+
+                    @foreach (var aff in Model.Affiliates.Where(a => a.idMailChimpList != null))
+                    {
+                        <li><a href="#tab_@aff.idUserAff" data-toggle="pill" data-link-affid="@aff.idUserAff">@aff.ttsDomain - @aff.idUserAff</a></li>
+                    }
+                </ul>
             </div>
+
 
             <div class="span10">
                 <div class="tab-content">
@@ -133,6 +144,10 @@
                                 @Html.TextBox("SendToList_" + @aff.idUserAff, "", new { @class = "input" })
                                 <input type="button" class="button btn btn-small send-to-affiliate" value="Send" />
                                 <button class="button btn btn-small write-markup-to-storage">Save</button>
+                                @if (hasAffiliates && aff.idMailChimpList != null)
+                                {
+                                    <button id="createCampBtn" data-btn-affid="@aff.idUserAff" class="button btn btn-small create-campaign">Create Campaign</button>
+                                }
                             </p>
                             <p>
                                 <textarea id="editor_@aff.idUserAff" name="editor_@aff.idUserAff" style="display: none;"></textarea>

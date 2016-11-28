@@ -121,7 +121,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             ViewBag.Title = "Search Results";
 
-            ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity) User.Identity;
+            ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
             var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
             var user = _membershipService.GetWebUserById(affiliate.idUserAff);
             var model = new AdminDTO
@@ -261,7 +261,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
                         string preSaveValues = dataOperations.GetPreSaveValues(order.idOrder);
 
-                        row.Royalty = row.RowPrice*(decimal) nullChecked.First()["PercentPaid"];
+                        row.Royalty = row.RowPrice * (decimal)nullChecked.First()["PercentPaid"];
                         if (order.idAffiliate != originalAffiliate.idUserAff)
                         {
                             //order will be re-invoiced when processed as via the postevent-orders branch
@@ -281,103 +281,9 @@ namespace CUWebinars.Web.Controllers.Admin
 
             _logger.Info(buildMessage);
 
-            return Json(new {Result = WebUiConstants.Success, NewAffiliate = newAffiliate.ttsDomain});
+            return Json(new { Result = WebUiConstants.Success, NewAffiliate = newAffiliate.ttsDomain });
         }
-
-        //public ActionResult ManageOrder()
-        //{
-        //    return View();
-        //}
-
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken(Order = 0)]
-        //[HandleAjaxException(Order = 1)]
-        //public ActionResult ManageOrder(ManageOrderEditModel model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var newOrder = ApplyModelChangesToOrder(model);
-        //        var oldOrder = model.Order;
-
-        //        //var orderchanges = new OrderChanges
-        //        //{
-
-        //        //}
-
-        //        //model.PostEventAccessExpires = _membershipService.SetPostEventAccessExpireyDate(userAccount, id.Value);
-
-        //        _orderManagementService.UpdateOrderByAdmin(newOrder);
-        //    }
-
-        //    return Json(new { Result = WebUiConstants.Success });
-        //}
-
-        //public ActionResult ManageOrderFromDetails(int? id)
-        //{
-        //    if (id.HasValue)
-        //    {
-        //        if (id == 0)
-        //            return RedirectToAction("ManageOrder");
-
-        //        var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant,
-        //            _orderManagementService.GetOrderById(id.Value).BillingEmail);
-        //        var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
-
-        //        var model = BuildManageOrderEditModel(id.Value);
-
-        //        if (model.Order.WebUser.email != model.Order.BillingEmail)
-        //        {
-        //            model.Order.WebUser = _membershipService.GetUserByEmail(model.Order.BillingEmail);
-        //            if (model.Order.WebUser != null)
-        //                _orderManagementService.SaveChanges();
-        //        }
-
-        //        var onDemandClaim = new PostEventClaim();
-        //        foreach (
-        //            var claim in
-        //                claimsViewModel.UserClaims.Where(
-        //                    c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials"))
-        //        {
-        //            var singleOrDefault = model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-        //            if (singleOrDefault != null && claim.Value.Contains(singleOrDefault.OnDemandCode))
-        //            {
-        //                var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
-
-        //                onDemandClaim.OrderId = model.Order.idOrder;
-        //                onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
-        //                onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
-
-        //                model.ClaimByOrderViewModel = onDemandClaim;
-        //            }
-        //        }
-
-        //        model.PostEventAccessExpires = onDemandClaim.ExpiryDate;
-
-        //        return View(model);
-        //    }
-
-        //    //  should never reach here as RouteConfig will not route here with anything but an integer > 0.
-        //    throw new NullReferenceException(
-        //        "Query string parameter has to be an positive integer for the ManageOrderFromDetails action.");
-        //}
-
-        //private Order ApplyModelChangesToOrder(ManageOrderEditModel model)
-        //{
-        //    var order = _orderManagementService.GetOrderById(model.Id);
-        //    var orderRow = order.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
-
-        //    order.Total = model.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice;
-        //    order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus;
-
-        //    orderRow.RowPrice = order.Total;
-        //    orderRow.UnitPrice = model.DisplayRowPriceViewModel.PricesAndDiscounts.UnitPrice;
-
-        //    SyncAdditionalLocations(model, orderRow);
-
-        //    return order;
-        //}
-
+        
         private void SyncAdditionalLocations(ManageOrderEditModel model, OrderRow orderRow)
         {
             IList<AdditionalLocation> deletedAdditionalLocations = new List<AdditionalLocation>();
@@ -430,22 +336,6 @@ namespace CUWebinars.Web.Controllers.Admin
             }
         }
 
-        public JsonResult getResendInfoHtml()
-        {
-
-            string html = "";
-
-            //var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
-
-            //var resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendOrderConfirmationButton btn btn-mini\">Send Confirmation</button>";
-            //if (full.Webinar_IsActive)
-            //{
-            //    resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
-            //}
-
-            return Json(new {html = html});
-
-        }
 
         [AllowAnonymous]
         public JsonResult GetEditOrderStatusDropdownHtml()
@@ -460,7 +350,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 null, true);
             //}
 
-            return Json(new {html = html});
+            return Json(new { html = html });
 
         }
 
@@ -475,7 +365,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     null, true);
             }
 
-            return Json(new {html = html});
+            return Json(new { html = html });
 
         }
 
@@ -537,7 +427,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                 sb.Append(" but was canceled " +
                                           TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat) + ". ");
 
-                                var adustmentAmount = 0 - (decimal) thisInvoice.First()["AmountOfRoyalty"];
+                                var adustmentAmount = 0 - (decimal)thisInvoice.First()["AmountOfRoyalty"];
 
                                 //set default direction
                                 var adjustmentDirection = "Royalty is decreased";
@@ -696,7 +586,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 if (ReferenceEquals(null, webUser))
                 {
                     return
-                        Json(new {Result = WebUiConstants.Fail, Reason = targetUserEmail + " was not found."});
+                        Json(new { Result = WebUiConstants.Fail, Reason = targetUserEmail + " was not found." });
                 }
 
                 Debug.Assert(webUser.Addresses.Single(a => a.AddressType == WebUiConstants.BillingAddress) != null,
@@ -825,9 +715,9 @@ namespace CUWebinars.Web.Controllers.Admin
                                 model.NewClaimType,
                                 claimValue.ToString(Formatting.None)
                             );
-                            return Json(new {Result = WebUiConstants.Success});
+                            return Json(new { Result = WebUiConstants.Success });
                         }
-                        return Json(new {Result = WebUiConstants.Fail, Msg = result.Errors.ElementAt(0).ErrorMessage});
+                        return Json(new { Result = WebUiConstants.Fail, Msg = result.Errors.ElementAt(0).ErrorMessage });
                     }
 
                     _membershipService.AddClaim(
@@ -836,7 +726,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         model.NewClaimValue
                     );
 
-                    return Json(new {Result = WebUiConstants.Success});
+                    return Json(new { Result = WebUiConstants.Success });
                 }
                 catch (Exception ex)
                 {
@@ -1019,7 +909,7 @@ namespace CUWebinars.Web.Controllers.Admin
                             _orderManagementService.GetOrderById(generateClickToJoinViewModel.OrderId.Value).OrderRows
                                 .Single(or => or.RowStatus == OrderRowStatus.Active);
 
-                        return Json(new {Result = WebUiConstants.Success, Code = orderRow.TtsJoinUrl});
+                        return Json(new { Result = WebUiConstants.Success, Code = orderRow.TtsJoinUrl });
                     }
 
                     var user = _membershipService.GetUserByEmail(generateClickToJoinViewModel.Email);
@@ -1050,7 +940,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     _orderManagementService.SaveChanges();
 
-                    return Json(new {Result = WebUiConstants.Success, Code = newOrderRow.TtsJoinUrl});
+                    return Json(new { Result = WebUiConstants.Success, Code = newOrderRow.TtsJoinUrl });
                 }
                 catch (DbEntityValidationException dbEntityValidationException)
                 {
@@ -1070,7 +960,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
             }
 
-            return Json(new {Result = WebUiConstants.Fail});
+            return Json(new { Result = WebUiConstants.Fail });
         }
 
         [HttpPost]
@@ -1087,7 +977,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         string.Format("There's no User in the system with the email {0}", email)
                     );
 
-                var claimsViewModel = new ClaimsViewModel {UserClaims = userAccount.Claims};
+                var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
 
                 return PartialView("~/Views/Admin/Partials/_ViewClaims.cshtml", claimsViewModel);
             }
@@ -1198,10 +1088,10 @@ namespace CUWebinars.Web.Controllers.Admin
                 //var userIds = _orderManagementService.GetUserIdsByPartialId(id.Value);
 
 
-                return Json(new {results}, JsonRequestBehavior.AllowGet);
+                return Json(new { results }, JsonRequestBehavior.AllowGet);
             }
 
-            return Json(new {Error = WebUiConstants.NullValueParameter});
+            return Json(new { Error = WebUiConstants.NullValueParameter });
         }
 
 
@@ -1230,10 +1120,10 @@ namespace CUWebinars.Web.Controllers.Admin
                         institution = o.Institution
                     }).Distinct();
 
-                return Json(new {results}, JsonRequestBehavior.AllowGet);
+                return Json(new { results }, JsonRequestBehavior.AllowGet);
             }
 
-            return Json(new {Error = WebUiConstants.NullValueParameter});
+            return Json(new { Error = WebUiConstants.NullValueParameter });
         }
 
 
@@ -1267,12 +1157,12 @@ namespace CUWebinars.Web.Controllers.Admin
                         }).Distinct();
 
 
-                    return Json(new {results}, JsonRequestBehavior.AllowGet);
+                    return Json(new { results }, JsonRequestBehavior.AllowGet);
                 }
-                return Json(new {NotAuthorized = "true"});
+                return Json(new { NotAuthorized = "true" });
             }
 
-            return Json(new {Error = WebUiConstants.NullValueParameter});
+            return Json(new { Error = WebUiConstants.NullValueParameter });
         }
 
 
@@ -1294,7 +1184,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             if (ReferenceEquals(null, order))
             {
-                return Json(new {Result = WebUiConstants.Fail});
+                return Json(new { Result = WebUiConstants.Fail });
             }
 
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
@@ -1316,7 +1206,7 @@ namespace CUWebinars.Web.Controllers.Admin
             //TODO: orders that have been migrated are going to have the OrderGenisis over-written by FireOrderSubmittedEvent
             _orderManagementService.FireOrderSubmittedEvent(order, resending: true);
 
-            return Json(new {Result = WebUiConstants.Success});
+            return Json(new { Result = WebUiConstants.Success });
         }
 
         //public PartialViewResult ResendConnectionInfo()
@@ -1336,15 +1226,15 @@ namespace CUWebinars.Web.Controllers.Admin
 
             if (ReferenceEquals(null, order))
             {
-                return Json(new {Result = WebUiConstants.Fail});
+                return Json(new { Result = WebUiConstants.Fail });
             }
 
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             // perf bump by assigning to local variable
 
-            _orderManagementService.FireSendConnectionInfoNotificationEvent(new[] {order}, resending: true);
+            _orderManagementService.FireSendConnectionInfoNotificationEvent(new[] { order }, resending: true);
 
-            return Json(new {Result = WebUiConstants.Success});
+            return Json(new { Result = WebUiConstants.Success });
         }
 
         [HttpPost]
@@ -1354,15 +1244,15 @@ namespace CUWebinars.Web.Controllers.Admin
 
             if (ReferenceEquals(null, order))
             {
-                return Json(new {Result = WebUiConstants.Fail});
+                return Json(new { Result = WebUiConstants.Fail });
             }
 
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             // perf bump by assigning to local variable
 
-            _orderManagementService.FireSendConnectionInfoNotificationEvent(new[] {order}, resending: true);
+            _orderManagementService.FireSendConnectionInfoNotificationEvent(new[] { order }, resending: true);
 
-            return Json(new {Result = WebUiConstants.Success});
+            return Json(new { Result = WebUiConstants.Success });
         }
 
         public PartialViewResult SendAdhocEvent()
@@ -1394,7 +1284,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 try
                 {
                     _orderManagementService.SendAdhocNotification(emails, subject, body);
-                    return Json(new {Result = WebUiConstants.Success});
+                    return Json(new { Result = WebUiConstants.Success });
                 }
                 catch (Exception exception)
                 {
@@ -1425,10 +1315,10 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 _orderManagementService.FireSendReminderNotificationEvent(orders);
 
-                return Json(new {Result = WebUiConstants.Success});
+                return Json(new { Result = WebUiConstants.Success });
             }
 
-            return Json(new {Result = WebUiConstants.NoOrdersForWebinar});
+            return Json(new { Result = WebUiConstants.NoOrdersForWebinar });
         }
 
         public PartialViewResult SendConnectionInfo()
@@ -1485,7 +1375,7 @@ namespace CUWebinars.Web.Controllers.Admin
             var numRows = _orderManagementService.SaveChanges();
 
             _logger.Info("Concludes SendConnectionInfo. {0} rows updated.", numRows);
-            return Json(new {Result = WebUiConstants.Success});
+            return Json(new { Result = WebUiConstants.Success });
         }
 
         //public PartialViewResult SendRecordingPosted()
@@ -1551,9 +1441,9 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             var order = _orderManagementService.GetOrderById(orderId);
 
-            _orderManagementService.FireSendOrderShippedNotificationEvent(new Order[] {order});
+            _orderManagementService.FireSendOrderShippedNotificationEvent(new Order[] { order });
 
-            return Json(new {Result = WebUiConstants.Success});
+            return Json(new { Result = WebUiConstants.Success });
         }
 
 
@@ -1565,7 +1455,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 return File("<html>fail</html>".GenerateStreamFromString(), HtmlMimeType);
 
 
-            var formatter = new PreviewFormatter(new EnvironmentInformation {BaseUrl = HttpRuntime.AppDomainAppPath});
+            var formatter = new PreviewFormatter(new EnvironmentInformation { BaseUrl = HttpRuntime.AppDomainAppPath });
 
             return File(formatter.FormatToString(order, "PreviewShippedOrder").GenerateStreamFromString(), HtmlMimeType);
         }
@@ -1584,7 +1474,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 return File("<html>fail</html>".GenerateStreamFromString(), HtmlMimeType);
 
 
-            var formatter = new PreviewFormatter(new EnvironmentInformation {BaseUrl = HttpRuntime.AppDomainAppPath});
+            var formatter = new PreviewFormatter(new EnvironmentInformation { BaseUrl = HttpRuntime.AppDomainAppPath });
 
             return
                 File(
@@ -1605,7 +1495,7 @@ namespace CUWebinars.Web.Controllers.Admin
             if (ReferenceEquals(null, firstRetrievedOrderForWebinar))
                 return File("<html>fail</html>".GenerateStreamFromString(), HtmlMimeType);
 
-            var formatter = new PreviewFormatter(new EnvironmentInformation {BaseUrl = HttpRuntime.AppDomainAppPath});
+            var formatter = new PreviewFormatter(new EnvironmentInformation { BaseUrl = HttpRuntime.AppDomainAppPath });
 
             return
                 File(
@@ -1846,11 +1736,11 @@ namespace CUWebinars.Web.Controllers.Admin
                 model.PresenterW_OutPic = root.InnerHtml;
 
                 var upcomingWebinars = (from w in _upcoming
-                    select
-                    "<p style=\"color: whitesmoke; text-decoration: none; \" ><a style=\" color: whitesmoke; border-bottom: 1px dotted bisque;\" href=\"" +
-                    _globalConfig.TenantURL + "/Webinar/Details/" +
-                    w.idWebinar + "?idaff={aff_idUserAff}\">" + w.Title + "</a><br>" +
-                    w.Date.ToLongDateString() + "</p>"
+                                        select
+                                        "<p style=\"color: whitesmoke; text-decoration: none; \" ><a style=\" color: whitesmoke; border-bottom: 1px dotted bisque;\" href=\"" +
+                                        _globalConfig.TenantURL + "/Webinar/Details/" +
+                                        w.idWebinar + "?idaff={aff_idUserAff}\">" + w.Title + "</a><br>" +
+                                        w.Date.ToLongDateString() + "</p>"
                 ).ToArray();
 
                 if (upcomingWebinars.Count() > 0)
@@ -1863,7 +1753,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 model.TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(model.Webinar.Date, model.TimeZone, false) +
                                           " - " +
                                           DateTimeHelper.FormatTime(
-                                              model.Webinar.Date.AddHours((double) model.Webinar.Duration),
+                                              model.Webinar.Date.AddHours((double)model.Webinar.Duration),
                                               model.TimeZone,
                                               true) + "<br /></i>";
                 model.EventBody =
@@ -1871,7 +1761,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         _generalFormatter.FormatV2(model, "~/Notification/Templates/SendPerDayPromoMaster.cshtml").Body);
                 // get Template with new method
 
-                return Json(new {masterText = model.EventBody});
+                return Json(new { masterText = model.EventBody });
             }
             else
             {
@@ -1879,7 +1769,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 var upcomingDetail = new StringBuilder();
                 if (TempData["ListOfWebinarsForWeekly"] != null)
                 {
-                    foreach (var webinar in (IList<Webinar>) TempData["ListOfWebinarsForWeekly"])
+                    foreach (var webinar in (IList<Webinar>)TempData["ListOfWebinarsForWeekly"])
                     {
                         featureWebinarIDs.Add(webinar.idWebinar);
 
@@ -1935,7 +1825,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     HttpUtility.HtmlDecode(
                         _generalFormatter.FormatV2(model, "~/Notification/Templates/SendPerWeekPromoMaster.cshtml").Body);
 
-                return Json(new {masterText = model.EventBody});
+                return Json(new { masterText = model.EventBody });
             }
             //return null;
         }
@@ -1983,7 +1873,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
             // check for Admins vs Affiliates and limit if Affiliate
-            ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity) User.Identity;
+            ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
             if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
             {
                 model.Affiliates = new AffiliateRepository().GetAffiliatesByPromoType("Daily").ToList();
@@ -2010,10 +1900,10 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpPost]
         //[ValidateAntiForgeryToken]
         [ValidateInput(false)]
-        public async Task<ActionResult> SendSinglePromo(int affiliateId, string messageBodyHtml, int webinarId)
-            // WebinarPromoViewModel model
+        public async Task<ActionResult> SendSinglePromo(int affiliateId, string messageBodyHtml, int webinarId, string sendDate)
+        // WebinarPromoViewModel model
         {
-            //var model = null;
+
             WebinarPromoViewModel model = new WebinarPromoViewModel
             {
                 Affiliate = _affiliateManagementService.FindById(affiliateId),
@@ -2025,31 +1915,34 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 try
                 {
-                    bool campaignExists = false;
-                    McCampaign campaign;
-                    if (model.Webinar.Campaigns != null)
-                    {
+                    //bool campaignExists = false;
+                    //McCampaign campaign;
+                    //if (model.Webinar.Campaigns != null)
+                    //{
+                    //    List<McCampaign> campagin =
+                    //        JsonConvert.DeserializeObject<List<McCampaign>>(model.Webinar.Campaigns);
+                    //    foreach (var mcCampaign in campagin)
+                    //    {
+                    //        if (mcCampaign.AffiliateId == affiliateId)
+                    //            campaignExists = true;
+                    //    }
+                    //}
 
-                        List<McCampaign> campagin =
-                            JsonConvert.DeserializeObject<List<McCampaign>>(model.Webinar.Campaigns);
-                        foreach (var mcCampaign in campagin)
-                        {
-                            if (mcCampaign.AffiliateId == affiliateId)
-                                campaignExists = true;
-                        }
-                    }
+                    //if (!campaignExists)
+                    //{
+                    //    if (model.Affiliate.idMailChimpList != null)
+                    //    {
+                    //        _logger.Info("CreateCampaign | starting " + model.Affiliate.ttsDomain);
+                    //        var createdCamp = CreateCampaignSingle(model.Affiliate.idUserAff, messageBodyHtml, model.Webinar.idWebinar, sendDate);
+                    //        var campMsg = new JProperty(JsonPropertyKeys.MailChimpCampaign, JsonConvert.SerializeObject(createdCamp.Result, Formatting.None, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
 
-                    if (!campaignExists)
-                    {
-                        var createdCamp = CreateCampaign(model.Affiliate, model.Webinar, messageBodyHtml);
+                    //        model.Webinar.Campaigns = JsonHelpers.MergeJsonWithStoredField(model.Webinar.Campaigns, campMsg);
+                    //        _webinarManagementService.SaveChanges();
+                    //    }
+                    //}
 
-                        //JsonHelpers.MergeJsonWithStoredField(model.Webinar.Campaigns,
-                        //JProperty.Parse(createdCamp.ToString()));
-
-                    }
-
-                    //_orderManagementService.FireSendPerDayPromoEvent(model);
-                    return Json(new {Result = WebUiConstants.Success});
+                    _orderManagementService.FireSendPerDayPromoEvent(model);
+                    return Json(new { Result = WebUiConstants.Success });
                 }
                 catch (Exception exception)
                 {
@@ -2060,22 +1953,30 @@ namespace CUWebinars.Web.Controllers.Admin
             return this.ModelStateJson(ModelState);
         }
 
-        private async Task<string> CreateCampaign(Affiliate affiliate, Webinar webinar, string messageBodyHtml)
+
+        [ValidateInput(false)]
+
+        [HttpPost]
+        public async Task<JsonResult> CreateCampaignSingle(int affiliateId, string messageBodyHtml, int webinarId, string sendDate)
         {
-            McCampaign result = new McCampaign {AffiliateId = affiliate.CommissionModel, WebinarId = webinar.idWebinar};
+            Webinar webinar = _webinarManagementService.GetWebinar(webinarId);
+            Affiliate affiliate = _affiliateManagementService.FindById(affiliateId);
+            sendDate = sendDate.Split('/')[2]+"-"+sendDate.Split('/')[0]+"-"+ sendDate.Split('/')[1]+"-"+ "T10:00:00-05:00";
+            
+            McCampaign result = new McCampaign { AffiliateId = affiliate.idUserAff, WebinarId = webinar.idWebinar };
 
             IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
-               
+
             var newCamp = new Campaign
             {
                 ContentType = "html",
                 Type = CampaignType.Regular,
-                Recipients = new Recipient {ListId = "6001c311bf"},
+                Recipients = new Recipient { ListId = affiliate.idMailChimpList },
                 Settings = new Setting
                 {
                     SubjectLine = "[testing] " + webinar.Title,
                     Title = "[testing] " + affiliate.ttsDomain + "_" + webinar.Title,
-                    FolderId = "2abdaba56d",
+                    FolderId = "40f228d426",
                     InlineCss = false,
                     Authenticate = true,
                     AutoFooter = true,
@@ -2083,33 +1984,54 @@ namespace CUWebinars.Web.Controllers.Admin
                     FromName = "ApiTest",
                     ReplyTo = "steve@ttstrain.com"
                 }
-
             };
             try
             {
                 var mkCamp = await manager.Campaigns.AddAsync(campaign: newCamp);
-
+                result.CampaignId = mkCamp.Id;
                 var content = new Content
                 {
                     Html = messageBodyHtml
-
                 };
-                _logger.Info("mkCamp.Id: " + mkCamp.Id);
-                var putContent = await manager.Content.AddOrUpdateAsync(mkCamp.Id);
 
-                result.CampaignId = mkCamp.Id;
-                return result.CampaignId;
+                _logger.Info("CreateCampaign | sendDate: " + mkCamp.Id);
+                //await manager.Campaigns.ScheduleAsync(mkCamp.Id, new CampaignScheduleRequest
+                //{
+                //    Timewarp = false,
+                //    BatchDelivery = new BatchDelivery
+                //    {
+                //        Count = 3,
+                //        Delay = 5
+                //    },
+                //    ScheduleTime = sendDate
+                //});
+
+                _logger.Info("CreateCampaign | mkCamp.Id: " + mkCamp.Id);
+                var putContent = await manager.Content.AddOrUpdateAsync(mkCamp.Id, new ContentRequest
+                {
+                    Html = messageBodyHtml
+                });
+
+                _logger.Info("CreateCampaign | putContent links: " + putContent.Links);
+                
+
+                CampaignTestRequest emails = new CampaignTestRequest { EmailType = "html", Emails = new string[] { "steve@ttstrain.com" } };
+                await manager.Campaigns.TestAsync(mkCamp.Id, emails);
+
+                _logger.Info("CreateCampaign | follows TestSend: " + putContent.Links);
+                
+                var campMsg = new JProperty(JsonPropertyKeys.MailChimpCampaign, JsonConvert.SerializeObject(result, Formatting.None, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+
+                webinar.Campaigns = JsonHelpers.MergeJsonWithStoredField(webinar.Campaigns, campMsg);
+                _webinarManagementService.SaveChanges();
+                return Json(new { success = "success" });
 
             }
             catch (Exception exception)
             {
-                return exception.Message;
+                _logger.FatalException("CreateCampaignSingle: ", exception);
+                return Json(new { error = exception.Message });
             }
-        }
-
-        private Task<string> AddContent(Task<string> createdCamp, string messageBodyHtml)
-        {
-            throw new NotImplementedException();
         }
 
         public ActionResult RssFeedOfAddedEvents()

@@ -5,6 +5,7 @@ namespace CUWebinars.Business.Models
 {
     public partial class Affiliate
     {
+
         public Affiliate()
         {
             Orders = new List<Order>();
@@ -35,6 +36,7 @@ namespace CUWebinars.Business.Models
         public string NotiPromos { get; set; }
         public string NotiOrders { get; set; }
         public string NotiInvoices { get; set; }
+        public string idMailChimpList { get; set; }
         
         public virtual WebUser WebUser { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
