@@ -1771,10 +1771,20 @@ namespace CUWebinars.Web.Controllers
             }
         }
 
-
+        [Authorize]
         [HandleAjaxException]
         public ActionResult Edit(int? id)
         {
+            if (User != null)
+            {
+                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity) User.Identity;
+                if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                    (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
+                {
+
+                    return Json(new { Result = WebUiConstants.Fail, Msg = "Not Authorized" }, JsonRequestBehavior.AllowGet);
+                }
+            }
             if (id.HasValue)
             {
                 try
@@ -1796,11 +1806,22 @@ namespace CUWebinars.Web.Controllers
 
 
         [System.Web.Mvc.HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken(Order = 0)]
         [ValidateInput(false)]
         [HandleAjaxException(Order = 1)]
         public ActionResult Edit(WebinarEditModel webinarEditModel)
         {
+            if (User != null)
+            {
+                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+                if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                    (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
+                {
+
+                    return Json(new { Result = WebUiConstants.Fail, Msg = "Not Authorized" }, JsonRequestBehavior.AllowGet);
+                }
+            }
             try
             {
                 _webinarControllerOrchestrator.UpdateWebinarFromViewInput(webinarEditModel);
@@ -1838,8 +1859,19 @@ namespace CUWebinars.Web.Controllers
             }
         }
 
+        [Authorize]
         public ActionResult EditWebinarFromDetails(int? id)
         {
+            if (User != null)
+            {
+                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+                if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                    (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
+                {
+
+                    return Json(new { Result = WebUiConstants.Fail, Msg = "Not Authorized" }, JsonRequestBehavior.AllowGet);
+                }
+            }
             if (id.HasValue)
             {
                 var webinarEditModel = _webinarControllerOrchestrator.BuildEditModelForWebinar(id.Value);

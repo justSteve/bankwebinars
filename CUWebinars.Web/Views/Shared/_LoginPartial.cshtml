@@ -57,14 +57,14 @@
                     {
                         <span id="shoppingCartInHeader"><a id="btnLogin" href="@Url.Action("Checkout", "Cart")"><i class="icon-large icon-shopping-cart"></i></a></span>
                     }
-                    else
+                    @if (claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Affiliate) != null && claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Admin) == null)
                     {
                         <span>
                             <button type="button" class="btn btn-mini" style="margin-left: 20px; " data-toggle="collapse" data-target="#affUrl">
                                 promo url
                             </button>
                         </span>
-                        <div id="affUrl" class="collapse out">@url</div>
+                        <div id="affUrl"  style="color: whitesmoke; " class="collapse out">@url</div>
                     }
                 </div>
             }

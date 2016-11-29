@@ -1961,7 +1961,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             Webinar webinar = _webinarManagementService.GetWebinar(webinarId);
             Affiliate affiliate = _affiliateManagementService.FindById(affiliateId);
-            sendDate = sendDate.Split('/')[2]+"-"+sendDate.Split('/')[0]+"-"+ sendDate.Split('/')[1]+"-"+ "T10:00:00-05:00";
+            sendDate = sendDate.Split('/')[2]+"-"+sendDate.Split('/')[0]+"-"+ sendDate.Split('/')[1]+ "T10:00:00-05:00";
             
             McCampaign result = new McCampaign { AffiliateId = affiliate.idUserAff, WebinarId = webinar.idWebinar };
 
@@ -1976,7 +1976,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     SubjectLine = "[testing] " + webinar.Title,
                     Title = "[testing] " + affiliate.ttsDomain + "_" + webinar.Title,
-                    FolderId = "40f228d426",
+                    FolderId = "30aca5892b",
                     InlineCss = false,
                     Authenticate = true,
                     AutoFooter = true,
@@ -1984,6 +1984,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     FromName = "ApiTest",
                     ReplyTo = "steve@ttstrain.com"
                 }
+                
             };
             try
             {
@@ -1994,28 +1995,27 @@ namespace CUWebinars.Web.Controllers.Admin
                     Html = messageBodyHtml
                 };
 
-                _logger.Info("CreateCampaign | sendDate: " + mkCamp.Id);
-                //await manager.Campaigns.ScheduleAsync(mkCamp.Id, new CampaignScheduleRequest
-                //{
-                //    Timewarp = false,
-                //    BatchDelivery = new BatchDelivery
-                //    {
-                //        Count = 3,
-                //        Delay = 5
-                //    },
-                //    ScheduleTime = sendDate
-                //});
-
                 _logger.Info("CreateCampaign | mkCamp.Id: " + mkCamp.Id);
                 var putContent = await manager.Content.AddOrUpdateAsync(mkCamp.Id, new ContentRequest
                 {
                     Html = messageBodyHtml
                 });
 
-                _logger.Info("CreateCampaign | putContent links: " + putContent.Links);
                 
+                _logger.Info("CreateCampaign | sendDate: " + mkCamp.Id);
+                await manager.Campaigns.ScheduleAsync(mkCamp.Id, new CampaignScheduleRequest
+                {
+                    Timewarp = false,
+                    BatchDelivery = new BatchDelivery
+                    {
+                        Count = 2,
+                        Delay = 15
+                    },
+                    ScheduleTime = sendDate
+                });
 
-                CampaignTestRequest emails = new CampaignTestRequest { EmailType = "html", Emails = new string[] { "steve@ttstrain.com" } };
+                _logger.Info("CreateCampaign | putContent links: " + putContent.Links);
+                CampaignTestRequest emails = new CampaignTestRequest { EmailType = "html", Emails = new string[] { "all.of.us@ttstrain.com" } };
                 await manager.Campaigns.TestAsync(mkCamp.Id, emails);
 
                 _logger.Info("CreateCampaign | follows TestSend: " + putContent.Links);

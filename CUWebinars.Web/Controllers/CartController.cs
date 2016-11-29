@@ -505,7 +505,7 @@ namespace CUWebinars.Web.Controllers
                     var _newPrice = _cartControllerOrchestrator.UpdateOrderPricing(_order);
 
                     totalAmt = totalAmt + _newPrice.TotalOrderPrice;
-                    
+
                     wTitle = _order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title;
                     wTitle = wTitle.Substring(0, Math.Min(wTitle.Length, 40)) + " <font size=2>(" + _globalConfig.TenantPrefix +
                              _order.idOrder + ")</font>";
@@ -1382,10 +1382,10 @@ namespace CUWebinars.Web.Controllers
 
             if (order.OrderStatus != OrderStatus.Paid)
             {
-                payTraceModel.Appcode = "PayTrace reports that your transaction succeeded however, we have not yet received a confirmation" +
-                                        "code but will update your order status as soon as that arrives.";
+                _logger.Fatal("PayTrace returned user to 'Declined' but order is marked paid on order: " + order.idOrder);
+                payTraceModel.Appcode = "PayTrace reports that your transaction was declined.";
             }
-
+            _logger.Warn("PayTrace returns user to 'Declined' on order: " + order.idOrder);
             return View(payTraceModel);
         }
 
@@ -1447,7 +1447,7 @@ namespace CUWebinars.Web.Controllers
             _logger.Info("AffiliateUpdate: " + formFields);
             return "ok";
         }
-        
+
         //[HttpPost]
         public string PayTracePostBack()
         {
@@ -1502,15 +1502,35 @@ namespace CUWebinars.Web.Controllers
                 //// the comment being written here is valid Json but is not displayed nicely by the Json reader:
                 //// original: { "MonerisResponse":"{\"FormId\":null,\"order_no\":\"BW-129285\",\"ref_num\":\"642120820012660120\",\"message\":\"APPROVED*\",\"result\":\"1\",\"auth_code\":\"062449\",\"txn_time\":\"14:06:26\",\"txn_date\":\"2016-09-23\",\"response_code\":\"001\",\"note\":\"BankWebinars thanks you! Watch your email for complete details. \"}"}
                 ////  better: {"MonerisResponse":{"FormId":null,"order_no":"BW-129285","ref_num":"642120820012660120","message":"APPROVED*","result":"1","auth_code":"062449","txn_time":"14:06:26","txn_date":"2016-09-23","response_code":"001","note":"BankWebinars thanks you! Watch your email for complete details. "}}
-                _logger.Info("Confirming PayTrace postback with Id BW-{0}", JsonConvert.SerializeObject(order, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                if (payTraceModel.Appmsg.Contains("Approv"))
+                {
+                    _logger.Info("PayTrace postback confirms Id BW-{0}",
+                        JsonConvert.SerializeObject(order, Formatting.None,
+                            new JsonSerializerSettings
+                            {
+                                MaxDepth = 1,
+                                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                            }));
 
-                order.OrderStatus = OrderStatus.Paid;
+                    order.OrderStatus = OrderStatus.Paid;
 
-                _cartControllerOrchestrator.AddClaimForPostEventMaterials(order.BillingEmail, order.OrderRows.FirstOrDefault());
+                    _cartControllerOrchestrator.AddClaimForPostEventMaterials(order.BillingEmail,
+                        order.OrderRows.FirstOrDefault());
 
-                _cartControllerOrchestrator.UpdateOrderPricing(order);
+                    _cartControllerOrchestrator.UpdateOrderPricing(order);
 
-                _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
+                    _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
+                }
+                else
+                {
+                    _logger.Fatal("Paytrace declines payment: BW-{0}",
+                        JsonConvert.SerializeObject(order, Formatting.None,
+                            new JsonSerializerSettings
+                            {
+                                MaxDepth = 1,
+                                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                            }));
+                }
             }
             catch (Exception exception)
             {
@@ -1533,7 +1553,7 @@ namespace CUWebinars.Web.Controllers
 
         }
         [HttpPost]
-        
+
         public void PostBackWPS(FormCollection form)
         {
             //wps = webinar package subscription

@@ -400,6 +400,7 @@ function CreateCampaign($btn, affiliateId) {
         type: 'POST',
         data: { "affiliateId": affiliateId, "messageBodyHtml": currCopy, "webinarId": $("#Webinar_idWebinar").val(), "sendDate": $("#SendDate").val() },
         dataType: "json",
+        async: false,
         //contentType: "json",
         success: function (result) {
             //$('#send' + affID).text("Success");
