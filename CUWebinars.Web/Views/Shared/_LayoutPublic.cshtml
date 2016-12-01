@@ -370,7 +370,7 @@
             <div class="container">
                 <ul class="clearfix">
                     <li style="text-align: right;">@globalConfig.TenantDomain is © 2016 & All Rights Reserved By Total Training Solutions. <br /></li>
-    <li style="text-align: left;"><a href="/home/privacystatement">Privacy Statement</a><br />For financial institution training visit<a href="http://www.ttstrain.com/?s=cuwebinars" target="_new"> TTSTrain.com </a></li>
+                    <li style="text-align: left;"><a href="/home/privacystatement">Privacy Statement</a><br />For financial institution training visit<a href="http://www.ttstrain.com/?s=cuwebinars" target="_new"> TTSTrain.com </a></li>
                 </ul>
             </div>
             <!--footerCredits container-->
@@ -380,7 +380,17 @@
     <!--/.footer-->
     @*<span class="backToTop"><a href="#top">back to top</a></span>*@
     <!-- close #page-->
+    @using (Html.BeginForm("AddToICalendariCal", "Webinar", FormMethod.Post, new { name = "frmAddIcs", id = "frmAddIcs" }))
+    {
+        <input type="hidden" id="icsWebinar" name="icsWebinar" />
+        <input type="hidden" id="icsOrder" name="icsOrder" />
 
+    }
+    @using (Html.BeginForm("AddToICalendarGmail", "Webinar", FormMethod.Post, new { name = "frmAddGmail", id = "frmAddGmail" }))
+    {
+        <input type="hidden" id="glWebinar" name="glWebinar" />
+        <input type="hidden" id="glOrder" name="glOrder" />
+    }
     <div class="modal hide fade in" id="DisplayErrorModal">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

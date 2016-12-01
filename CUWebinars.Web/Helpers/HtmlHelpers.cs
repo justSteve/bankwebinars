@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Web.Mvc;
@@ -15,6 +16,13 @@ namespace CUWebinars.Web.Helpers
 {
     public static class HtmlHelpers
     {
+        public static string StripHtmlTags(string html)
+        {
+            if (String.IsNullOrEmpty(html)) return "";
+            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(WebUtility.HtmlDecode(html));
+            return WebUtility.HtmlDecode(doc.DocumentNode.InnerText);
+        }
         public static string SafeGetString(this SqlDataReader reader, int colIndex)
         {
             if (!reader.IsDBNull(colIndex))
@@ -225,11 +233,11 @@ namespace CUWebinars.Web.Helpers
                 var attribute = fi.GetCustomAttributes(typeof(DescriptionAttribute), true).FirstOrDefault();
                 var title = attribute == null ? item.ToString() : ((DescriptionAttribute)attribute).Description;
                 var listItem = new SelectListItem
-                    {
-                        Value = ((int)item).ToString(),
-                        Text = title,
-                        Selected = selectedItem == ((int)item).ToString()
-                    };
+                {
+                    Value = ((int)item).ToString(),
+                    Text = title,
+                    Selected = selectedItem == ((int)item).ToString()
+                };
                 items.Add(listItem);
             }
             return new SelectList(items, "Value", "Text");
@@ -261,11 +269,11 @@ namespace CUWebinars.Web.Helpers
         {
             //http://stackoverflow.com/questions/4696175/razor-view-engine-how-to-enter-preprocessorif-debug
             // adds support for IfDebug compiler directive to razor views
-            #if DEBUG
-                        return true;
-            #else
+#if DEBUG
+            return true;
+#else
                               return false;
-            #endif
+#endif
         }
 
     }

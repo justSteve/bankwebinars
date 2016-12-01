@@ -283,7 +283,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return Json(new { Result = WebUiConstants.Success, NewAffiliate = newAffiliate.ttsDomain });
         }
-        
+
         private void SyncAdditionalLocations(ManageOrderEditModel model, OrderRow orderRow)
         {
             IList<AdditionalLocation> deletedAdditionalLocations = new List<AdditionalLocation>();
@@ -1961,8 +1961,8 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             Webinar webinar = _webinarManagementService.GetWebinar(webinarId);
             Affiliate affiliate = _affiliateManagementService.FindById(affiliateId);
-            sendDate = sendDate.Split('/')[2]+"-"+sendDate.Split('/')[0]+"-"+ sendDate.Split('/')[1]+ "T10:00:00-05:00";
-            
+            sendDate = sendDate.Split('/')[2] + "-" + sendDate.Split('/')[0] + "-" + sendDate.Split('/')[1] + "T10:00:00-05:00";
+
             McCampaign result = new McCampaign { AffiliateId = affiliate.idUserAff, WebinarId = webinar.idWebinar };
 
             IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
@@ -1983,8 +1983,14 @@ namespace CUWebinars.Web.Controllers.Admin
                     AutoTweet = false,
                     FromName = "ApiTest",
                     ReplyTo = "steve@ttstrain.com"
+                },
+                Tracking = new Tracking
+                {
+                    GoogleAnalytics = affiliate.idUserAff + "_" + webinar.idWebinar + "_" + sendDate,
+                    HtmlClicks = true,
+                    TextClicks = true
                 }
-                
+
             };
             try
             {
@@ -2001,7 +2007,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     Html = messageBodyHtml
                 });
 
-                
+
                 _logger.Info("CreateCampaign | sendDate: " + mkCamp.Id);
                 await manager.Campaigns.ScheduleAsync(mkCamp.Id, new CampaignScheduleRequest
                 {
@@ -2019,7 +2025,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 await manager.Campaigns.TestAsync(mkCamp.Id, emails);
 
                 _logger.Info("CreateCampaign | follows TestSend: " + putContent.Links);
-                
+
                 var campMsg = new JProperty(JsonPropertyKeys.MailChimpCampaign, JsonConvert.SerializeObject(result, Formatting.None, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
 
                 webinar.Campaigns = JsonHelpers.MergeJsonWithStoredField(webinar.Campaigns, campMsg);

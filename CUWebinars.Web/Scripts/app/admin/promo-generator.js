@@ -249,7 +249,7 @@ function SetEditorTabForAffiliate(affiliateId, affiliateCopy) {
         var affObj = arrayLookup(affs, "idUserAff", affiliateId);
         if (affObj != null) {
             localCopy = replaceMasterTokensForAffiliate(affObj);
-
+            console.log(affObj);
             // this probably needs to be moved out of this function, but only needs to run on initial tab load, just like the replacement code
             // deal with the SendToList_XYZ box
             var sendTo = $("#SendToList_" + affiliateId);
@@ -583,7 +583,7 @@ function SendToAff(affiliateId) {
 
     //alert($("#SendToList_" + affiliateId).val());
     var currCopy = GetCurrentEditorCopy();
-
+    console.log(currCopy);
 
     $.ajax({
         url: '/Admin/SendSinglePromo',

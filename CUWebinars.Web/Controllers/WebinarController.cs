@@ -891,6 +891,8 @@ namespace CUWebinars.Web.Controllers
                     if (model.Order != null)
                         model.Order.Origin = DomainConstants.OriginExpress;
                 BuildConfirmOrderView(model);
+
+                model.AddICS = _webinarControllerOrchestrator.CreateICS(model);
                 return View(model);
             }
 
@@ -898,7 +900,58 @@ namespace CUWebinars.Web.Controllers
 
             return RedirectToAction("allActive", new { eventsToShow = "upcoming" });
         }
+        [System.Web.Mvc.HttpPost]
+        public ActionResult AddToICalendariCal(int icsWebinar, int icsOrder)
+        {
 
+            var webinar = _webinarControllerOrchestrator.GetWebinar(icsWebinar);
+
+            var desc = webinar.Description;
+           desc = HtmlHelpers.StripHtmlTags(desc);
+
+
+            var icalStringbuilder = new StringBuilder();
+
+            icalStringbuilder.AppendLine("BEGIN:VCALENDAR");
+            icalStringbuilder.AppendLine("PRODID:-//Scheduled Event//EN");
+            icalStringbuilder.AppendLine("VERSION:2.0");
+
+            icalStringbuilder.AppendLine("BEGIN:VEVENT");
+            icalStringbuilder.AppendLine("SUMMARY;LANGUAGE=en-us:" + webinar.Title);
+            icalStringbuilder.AppendLine("CLASS:PUBLIC");
+            icalStringbuilder.AppendLine(string.Format("CREATED:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow));
+            icalStringbuilder.AppendLine("DESCRIPTION:" + desc);
+            icalStringbuilder.AppendLine("X-ALT-DESC;FMTTYPE=text/html:" + webinar.Description);
+            icalStringbuilder.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmss}", webinar.Date));
+            icalStringbuilder.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmss}", webinar.Date.AddHours((double)webinar.Duration) ));
+            icalStringbuilder.AppendLine("SEQUENCE:0");
+            icalStringbuilder.AppendLine("UID:" + Guid.NewGuid());
+            icalStringbuilder.AppendLine("END:VEVENT");
+            icalStringbuilder.AppendLine("END:VCALENDAR");
+
+            var bytes = Encoding.UTF8.GetBytes(icalStringbuilder.ToString());
+
+            return this.File(bytes, "text/calendar", "thisEvent.ics");
+
+        }
+        public ActionResult AddToICalendarGmail(int glWebinar, int glOrder)
+        {
+            var webinar = _webinarControllerOrchestrator.GetWebinar(glWebinar);
+
+            var icalStringbuilder = new StringBuilder();
+
+            icalStringbuilder.Append("http://www.google.com/calendar/event?action=TEMPLATE");
+            icalStringbuilder.Append("&text=" + webinar.Title);
+            icalStringbuilder.Append("&dates=" + HttpUtility.HtmlDecode(webinar.Date.ToString("O")) + "/" + HttpUtility.HtmlDecode(webinar.Date.AddHours(1).ToString("O")));
+            icalStringbuilder.Append("&location=Online");
+            icalStringbuilder.Append("&details=" + HttpUtility.HtmlDecode(webinar.Description));
+            //icalStringbuilder.Append("&trp=
+            //icalStringbuilder.Append("&sprop=
+            icalStringbuilder.Append("&sprop=name:" + _globalConfig.Tenant);
+
+            return Redirect(icalStringbuilder.ToString());
+
+        }
         public ActionResult DetailsDes(int? id, int? idOrder)
         {
 
@@ -1777,7 +1830,7 @@ namespace CUWebinars.Web.Controllers
         {
             if (User != null)
             {
-                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity) User.Identity;
+                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
                 if (claimsIdentityOfAuthenticatedUser.HasClaim(
                     (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
                 {
@@ -2223,96 +2276,6 @@ namespace CUWebinars.Web.Controllers
             return this.ModelStateJson(ModelState);
         }
 
-        public ActionResult CreateICSForWebinar(int id)
-        {
-            try
-            {
-                var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id);
-
-                string filePath = HostingEnvironment.MapPath("~/App_Data/ics/");
-
-                string defaultDescription =
-                    "1. Click this link to start or to join the Webinar:<br><br>https://www2.gotomeeting.com/ojoin/325710074/922930 <br><br><br>2. Choose one of the following audio options:<br><br> TO USE YOUR COMPUTER’S AUDIO:<br> When the Webinar begins, you will be connected to audio using your computer’s microphone and speakers (VoIP). A headset is recommended.<br><br><br> TO USE YOUR TELEPHONE:<br> If you prefer to use your phone, you must select “Use Telephone” after joining the Webinar and call in using the numbers below.<br><br><br> Toll-free: 1 877 568 4108<br> Access Code: 529-918-465<br> Audio PIN: Shown after joining the meeting<br><br><br>GoToWebinar®<br>Webinars Made Easy™<br>";
-                defaultDescription += webinar.DescriptionLong;
-
-                string presentedBy = string.Empty;
-
-                if (webinar.Presenter != null)
-                    presentedBy = "<br>Presented By:<br>" + webinar.Presenter.Biography;
-
-                // Now Contruct the ICS file using string builder
-                StringBuilder str = new StringBuilder();
-
-                str.AppendLine("BEGIN:VCALENDAR");
-                str.AppendLine("PRODID:-//Schedule a Meeting");
-                str.AppendLine("VERSION:2.0");
-                //str.AppendLine("METHOD:REQUEST");
-                str.AppendLine("METHOD:PUBLISH");
-
-                //str.AppendLine("BEGIN:VTIMEZONE");
-                //str.AppendLine("TZID:Pacific Time (US & Canada)");
-                //str.AppendLine("BEGIN:STANDARD");
-                //str.AppendLine("DTSTART:20061105T020000");
-                //str.AppendLine("RRULE:FREQ=YEARLY;BYDAY=1SU;BYMONTH=11");
-                //str.AppendLine("TZOFFSETFROM:-0700");
-                //str.AppendLine("TZOFFSETTO:-0800");
-                //str.AppendLine("END:STANDARD");
-                //str.AppendLine("BEGIN:DAYLIGHT");
-                //str.AppendLine("DTSTART:20070311T020000");
-                //str.AppendLine("RRULE:FREQ=YEARLY;BYDAY=2SU;BYMONTH=3");
-                //str.AppendLine("TZOFFSETFROM:-0800");
-                //str.AppendLine("TZOFFSETTO:-0700");
-                //str.AppendLine("TZNAME:Daylight Savings Time");
-                //str.AppendLine("END:DAYLIGHT");
-                //str.AppendLine("END:VTIMEZONE");
-
-                str.AppendLine("BEGIN:VEVENT");
-
-                str.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmssZ}", webinar.Date));
-
-                //str.AppendLine(string.Format("DTSTAMP:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow));
-                str.AppendLine(string.Format("DTSTAMP:{0:yyyyMMddTHHmmssZ}", webinar.Date));
-
-                str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}",
-                    webinar.Date.AddHours(Convert.ToDouble(webinar.Duration))));
-
-                str.AppendLine("LOCATION;ENCODING=QUOTED-PRINTABLE:Webinar – See conference call information below");
-
-                str.AppendLine(string.Format("UID:{0}", Guid.NewGuid()));
-
-                str.AppendLine(string.Format("DESCRIPTION:{0}", defaultDescription + presentedBy));
-
-                str.AppendLine(string.Format("X-ALT-DESC;FMTTYPE=text/html:{0}", defaultDescription + presentedBy));
-
-                str.AppendLine(string.Format("SUMMARY:{0}", webinar.Title));
-
-                str.AppendLine("BEGIN:VALARM");
-                str.AppendLine("TRIGGER:-PT15M");
-                str.AppendLine("ACTION:DISPLAY");
-                str.AppendLine("DESCRIPTION:Reminder");
-                str.AppendLine("END:VALARM");
-                str.AppendLine("END:VEVENT");
-                str.AppendLine("END:VCALENDAR");
-
-                //Code for save ics file in application
-                filePath += "w_" + id.ToString() + ".ics";
-                TextWriter tw = new StreamWriter(filePath);
-
-                // write a line of text to the file
-                tw.WriteLine(str.ToString());
-
-                // close the stream
-                tw.Close();
-                //Code for save ics file in application
-                return Json(new { success = true, result = "Successfully Created." }, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception e)
-            {
-                _logger.Error("/Webinar/CreateICSForWebinar: " + e.Message);
-                return Json(new { success = false, result = "File creation failed." }, JsonRequestBehavior.AllowGet);
-            }
-
-        }
 
         protected override void Dispose(bool disposing)
         {

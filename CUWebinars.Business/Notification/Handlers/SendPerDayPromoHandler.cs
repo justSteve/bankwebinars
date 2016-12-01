@@ -55,7 +55,7 @@ namespace CUWebinars.Business.Notification.Handlers
                     DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat),
                     ".htm"
                     );
-
+                _logger.Info("");
                 // parse potential multiple emails, concept from http://stackoverflow.com/questions/14689044/regex-split-on-comma-space-or-semi-colon-delimitted-string
                 char[] delimiters = new[] { ',', ';', ' ' };  // List of your delimiters
                 List<string> addressess = sendPerDayPromoEvent.EventObject.Affiliate.NotiPromos.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).ToList();

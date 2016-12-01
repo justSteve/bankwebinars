@@ -1,5 +1,5 @@
 ﻿//  This script correlates with the Details View.
-//  This script correlates with the Details View.
+
 var userHasDiscount, additionalLocationsList, checkoutConfirm, discount, cartStateManager, okToLeave, shippingAddressRequired, signUpForm, signUpFormContainer, storedHeight, numberOfAdditionalLocationsTab3;
 
 discount = '';
@@ -38,10 +38,9 @@ function checkVersion() {
 $(function () {
     checkVersion();
 
-    if (ieVer === "preIE10") {
-
+    if (ieVer === "preIE10")
         $("#iePre10").show();
-    }
+
 
 
     signUpForm = $('#SignUpForm');
@@ -53,7 +52,7 @@ $(function () {
         cartStateManager.setCancelOrderForm($('#cancelOrder'));
         cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
-        
+
         cartStateManager.getConfirmOrderForm().on('submit', function (e) {
             e.preventDefault();
             var self = $(this);
@@ -62,8 +61,8 @@ $(function () {
             var data = $(this).serialize();
             var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
             var utilities = new Common.Utilities();
-            
-            
+
+
             $.ajax({
                 type: 'POST',
                 contentType: RegistrationInCart.Constants.FormPostContentType,
@@ -114,7 +113,6 @@ $(function () {
         var cancelOrderForm = cartStateManager.getCancelOrderForm();
         console.log(cancelOrderForm);
 
-
         $('#CancelModal').on('show', function (e) {
 
             $('#cancelModalOrderId').val(cartStateManager.getOrderId());
@@ -151,64 +149,6 @@ $(function () {
             });
         });
 
-
-        // CANCEL REGISTRATION BUTTON CLICKED
-        //    cancelOrderForm.on('submit', function (e) {
-
-        //            alert("hit");
-        //        //console.log('cancelOrderForm submit hit');
-
-        //        e.preventDefault();
-        //        e.stopImmediatePropagation();
-
-        //        $('#cancelModalOrderId').val(cartStateManager.getOrderId());
-        //        var data = $(this).serialize();
-
-        //        var self = $(this);
-        //        // RED BUTTON - DELETE REGISTRATION
-        //        $('#cancelRegistration').on('click', function (e) {
-        //            e.preventDefault();
-        //            alert("hit");
-        //            // disable button while operation in progress
-        //            $('#cancelRegistration').attr('disabled', 'disabled').after('<span id="cancelSpinner"><span>&nbsp;<i class="icon icon-spinner icon-spin"></i></span></span>');
-
-        //            $.post(self.attr('action'), data, function (response, status, xhr) {
-
-        //                if (status !== 'error') {
-        //                    if (xhr.responseJSON['success']) {
-
-        //                        okToLeave = true;
-
-        //                        var utilities = new Common.Utilities();
-        //                        //console.log('/webinar/details/' + cartStateManager.getWebinarId());
-        //                        $('#cancelSpinner').remove();
-        //                        utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
-        //                    } else {
-        //                        $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Invalid Data #88. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
-        //                        $('#CancelModal').modal('hide');
-        //                    }
-
-        //                } else {
-        //                    $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Server Error. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
-        //                    $('#CancelModal').modal('hide');
-        //                }
-        //            }, 'json');
-
-        //            // unbind event so we don't get them building up each time the user clicks the Cancel Registration button.
-        //            $(this).off('click');
-        //            $('#rtn').off('click');
-        //        });
-        //        // BLACK BUTTON - RETURN TO ORDER
-        //        $('#rtn').on('click', function (e) {
-        //            e.preventDefault();
-        //            alert("onHit");
-        //            $('#CancelModal').modal('hide');
-        //            $(this).off('click');
-        //            $('#cancelRegistration').off('click');
-        //        });
-
-        //        $('#CancelModal').modal('show');
-        //    });
     };
 
     cartStateManager = new OrderRegistration.StateManager();
@@ -228,6 +168,25 @@ $(function () {
     $("[id^='regTypeID_']").on("click", function (oEvent) {
         cartStateManager.CheckIfAddLocShouldHide(oEvent.currentTarget.value);
     });
+
+    $('#addGmail').on('click', function (e) {
+        
+        e.preventDefault();
+        var frmAddGmail = $('#frmAddGmail');
+        $("#glWebinar").val(webinarId);
+        $("#glOrder").val(orderRowId);
+        frmAddGmail.submit();
+    });
+
+    $('#addICS').on('click', function (e) {
+
+        e.preventDefault();
+        var frmAddIcs = $('#frmAddIcs');
+        $("#icsWebinar").val(webinarId);
+        $("#icsOrder").val(orderRowId);
+        frmAddIcs.submit();
+    });
+
 
     // Click event for the BIG GREEN SignUp button
     $('#AddToCart').on('click', function () {
@@ -257,8 +216,6 @@ $(function () {
             var confirmOrderForm = $('#confirmOrder');
             confirmOrderForm.submit();
         });
-
-
 
 
         // The grey CANCEL Registration button on 3rd tab       
