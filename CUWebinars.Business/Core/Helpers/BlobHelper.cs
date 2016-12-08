@@ -103,15 +103,34 @@ namespace CUWebinars.Business.Core.Helpers
 
             //return new Uri(blockBlob.Uri.AbsoluteUri + readPolicy);
             return new Uri(blockBlob.Uri.AbsoluteUri);
-            // returns the correct URI with a SIG value
-            // but when attempting to follow the link:
-            //<Error><Code>AuthenticationFailed</Code><Message>Server failed to authenticate the request. Make sure the value of Authorization header is formed correctly including the signature.
-            // RequestId:bd8a2812-0001-0042-7670-384c80000000
-            // Time:2016-11-06T21:00:44.8375295Z</Message><AuthenticationErrorDetail>Signature did not match. String to sign used was r
-            // 
-            // 2016-11-07T21:00:30Z
-            // /storeforbw/invoicesprivate/10-31-2016/45-2016-62.pdf
-            // </AuthenticationErrorDetail></Error>
+        }
+        public static Uri GetPromosForPage(string theFileName)
+        {
+            //Objective is to retrieve a pdf from azure storage 
+            // and to present a link to that file using a 
+            // key presented by this 'readPolicy'
+
+            TtsConfigHelper _ttsConfig = new TtsConfigHelper();
+            var storageCredentials = new StorageCredentials(_ttsConfig.GetStorageAccountName(), _ttsConfig.GetStorageAccessKey());
+
+            var storageAccount = new CloudStorageAccount(storageCredentials, false);
+            CloudBlobClient client = storageAccount.CreateCloudBlobClient();
+
+            // Retrieve reference to a previously created container.
+            CloudBlobContainer container = client.GetContainerReference("v3generator/");
+
+            // Retrieve reference to a blob.
+            ICloudBlob blockBlob = container.GetBlockBlobReference(theFileName.TrimEnd('/'));
+            var readPolicy = blockBlob.GetSharedAccessSignature(new SharedAccessBlobPolicy()
+            {
+
+                SharedAccessStartTime = DateTime.UtcNow.AddDays(-1),
+                Permissions = SharedAccessBlobPermissions.Read,
+                SharedAccessExpiryTime = DateTime.UtcNow.AddDays(1),
+            });
+
+            //return new Uri(blockBlob.Uri.AbsoluteUri + readPolicy);
+            return new Uri(blockBlob.Uri.AbsoluteUri);
         }
 
 

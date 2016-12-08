@@ -697,6 +697,7 @@ namespace CUWebinars.Web.Controllers
                         PostForm += "&ZeroValue=" + HttpUtility.UrlEncode(parsedOrder.ZeroValue);
                         PostForm += "&Zip_PostalCode=" + HttpUtility.UrlEncode(parsedOrder.Zip_PostalCode);
 
+                        //WebRequest req = WebRequest.Create("http://localhost:3538/order/importorder4ACS");
                         WebRequest req = WebRequest.Create("https://www.bankwebinars.com/order/importorder4ACS");
 
                         byte[] send = Encoding.Default.GetBytes(PostForm);

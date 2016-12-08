@@ -7,5 +7,6 @@ namespace CUWebinars.Web.ViewModel
         public string JoinCode { get; set; }
         public string RedirectLinkText { get; set; }
         public Webinar Webinar { get; set; }
+        public USTimeZone TimeZone { get; set; }
     }
 }

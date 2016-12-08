@@ -2472,6 +2472,11 @@ namespace CUWebinars.Business.Services
             return orders.Count() > 1;
         }
 
+        public Order GetOrderByJoinCode(string joinCode)
+        {
+            return _orderRepository.GetOrderByJoinCode(joinCode);
+        }
+
 
         public IList<WebUser> GetWebUsersOfDiscount(int idDiscount)
         {

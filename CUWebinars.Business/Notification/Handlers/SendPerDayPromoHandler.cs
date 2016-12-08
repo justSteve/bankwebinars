@@ -74,8 +74,8 @@ namespace CUWebinars.Business.Notification.Handlers
                 notificationMessage.From = ttsConfigHelper.GetPromoEmailFromAddress(); // approach for From Address TBD!
 
                 if (sendPerDayPromoEvent.EventObject.Webinar != null)
-                    if (sendPerDayPromoEvent.EventObject.Webinar.TitleAnnouncement != null)
-                        notificationMessage.Subject = sendPerDayPromoEvent.EventObject.Webinar.TitleAnnouncement;
+                    if (sendPerDayPromoEvent.EventObject.Subject != null)
+                        notificationMessage.Subject = sendPerDayPromoEvent.EventObject.Subject;
 
                 _notificationDelivery.Notify(notificationMessage);
             }

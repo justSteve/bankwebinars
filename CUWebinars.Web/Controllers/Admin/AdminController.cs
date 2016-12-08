@@ -41,6 +41,7 @@ using CUWebinars.Web.ViewModel;
 using Elmah;
 using GemBox.Document;
 using GemBox.Document.MailMerging;
+using GemBox.Document.Tables;
 using HtmlAgilityPack;
 using MailChimp.Net;
 using MailChimp.Net.Core;
@@ -108,6 +109,30 @@ namespace CUWebinars.Web.Controllers.Admin
             _appHelper = appHelper;
             _affiliateManagementService = affiliateManagementService;
             _generalFormatter = generalFormatter;
+        }
+
+        public ActionResult GetPromoLinks(int? idWebinar, int? idAffiliate)
+        {
+            PromoLinks model = new PromoLinks();
+            if (idWebinar.HasValue && idAffiliate.HasValue)
+            {
+                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+                var currentAffiliate = _orderManagementService.GetAffiliateById(19);
+
+                if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                    (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
+                {
+                    currentAffiliate =
+                        _orderManagementService.GetAffiliateByDomain(claimsIdentityOfAuthenticatedUser.Claims
+                            .Where(c => c.Type == Business.Constants.ClaimTypes.Affiliate).Select(c => c.Value).Single());
+                }
+
+                model.Affiliate = currentAffiliate;
+                model.Links =
+                    _affiliateManagementService.GetPromosByAffiliate(_globalConfig.Tenant, currentAffiliate.idUserAff, idWebinar.Value);
+
+            }
+            return View("~/Views/Admin/Partials/_ShowPromoLinks.cshtml", model);
         }
 
         //
@@ -391,6 +416,26 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     string preSaveValues = dataOperationsV3.GetPreSaveValues(order.idOrder);
 
+
+                    if ((model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Billed ||
+                         model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Paid ||
+                         model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Submitted)
+                        && order.idAffiliate == 62
+                        && order.OrderStatus == OrderStatus.AwaitingVerification)
+                    {
+                        var newDate = TtsConfig.UtcNowAsCts.ToShortDateString();
+                        JProperty NewOrderDateApplied = new JProperty(JsonPropertyKeys.NewOrderDateAppliedKey,
+                       "'OrderIsUpdated': {' OrderDate changed from " + order.OrderDate + " to " + newDate + " '}");
+
+                        //                    order.AdminComments = JsonHelpers.MergeJsonWithStoredField(null,
+                        //                        createdByExpressCheckout);
+
+                        order.AffiliateComments = JsonHelpers.MergeJsonWithStoredField(order.AffiliateComments, NewOrderDateApplied);
+
+
+                        order.OrderDate = DateTime.Now;
+
+                    }
                     order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus;
                     // the only field that we are updating at this time
                     try
@@ -398,7 +443,6 @@ namespace CUWebinars.Web.Controllers.Admin
                         if (!string.IsNullOrEmpty(order.InvoiceDetail) &&
                             order.OrderStatus == OrderStatus.Canceled)
                         {
-
                             _logger.Warn("Invoiced Order is canceled: " + order.idOrder);
 
                             var toJson = JObject.Parse(order.InvoiceDetail);
@@ -407,7 +451,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
                             if (thisInvoice != null)
                             {
-
                                 var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                                 //
                                 row.Royalty = 0;
@@ -466,7 +509,6 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         _logger.FatalException("UpdateOrderChanged Json Merge: ", ex);
                     }
-
 
                     _orderManagementService.UpdateOrderByAdmin(order);
 
@@ -533,7 +575,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 JProperty createdByExpressCheckout = new JProperty(JsonPropertyKeys.PriceAdjusted,
                     "'PriceAdjusted': {'" + _appHelper.GetUserAuditInfo() + "'}");
 
-                order.AdminComments = JsonHelpers.MergeJsonWithStoredField(null,
+                order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments,
                     createdByExpressCheckout);
 
                 _orderManagementService.SaveOrderChanges(order, string.Empty, string.Empty);
@@ -1578,11 +1620,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
             string eventBodyText = System.Uri.UnescapeDataString(model.EventBody);
 
-            // refactor??? don't want to create a new connection to azure for each file though...
+            GeneratePromoDocuments(model);
 
-            // based on CUMailer\CUWebinars.Azure.OrderConfirmNotifier\CUWebinars.Azure.OrderConfirmNotifier\OrderConfirmationHandler.cs
-
-            // almost certainly should be extracted to a function in the Business project
             var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName,
                 _globalConfig.StorageAccessKey);
             var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
@@ -1594,68 +1633,25 @@ namespace CUWebinars.Web.Controllers.Admin
             CloudBlobContainer container = blobClient.GetContainerReference(containerRoot);
             container.CreateIfNotExists();
 
-            string webinarTitleEnc = Server.UrlEncode(model.Webinar.Title);
             string strAffId = model.Affiliate.idUserAff.ToString();
-            string filenameBase = string.Concat(strAffId, "/", model.Webinar.idWebinar, "/", webinarTitleEnc);
+            string filenameBase = string.Concat(strAffId, "/", model.Webinar.idWebinar + "_promo");
 
             List<string> hrefsForEmail = new List<string>();
 
             // Create the blobs
             string filename = "";
             string ret = "";
-            bool overwriteFlag = false;
+            bool overwriteFlag = true;
             // do we want to think of a way to let the user tell us we should (or should not) overwrite?
 
             // html file
             filename = string.Concat(filenameBase, ".html");
             byte[] byteArrayHTML = Encoding.UTF8.GetBytes(eventBodyText);
             // "full" markup from WIJMO editor, may want to add doctype and body tags...
+
             ret += UploadToAzure(container, filename, byteArrayHTML, overwriteFlag);
             if (string.IsNullOrWhiteSpace(ret)) // no error, add to list for email
                 hrefsForEmail.Add(string.Format("https://siteroot/mypromos/{0}/{1}", containerRoot, filename));
-            // configuration-driven pattern??
-
-            //// text file
-            //filename = string.Concat(filenameBase, ".txt");
-            //string htmlContents = new System.IO.StreamReader(eventBodyText, Encoding.UTF8, true).ReadToEnd();
-            ////string htmlContents = new System.IO.StreamReader(eventBodyText, Encoding.UTF8, true).ReadToEnd();
-
-
-            //HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-            //doc.LoadHtml(htmlContents);
-            //if (doc == null) return null;
-
-            //string output = "";
-            //foreach (var node in doc.DocumentNode.ChildNodes)
-            //{
-            //    output += node.InnerText;
-            //}
-            //byte[] byteArrayTXT = Encoding.UTF8.GetBytes(output);
-            //// as per http://stackoverflow.com/questions/785715/how-can-i-strip-html-tags-from-a-string-in-asp-net
-            //ret += UploadToAzure(container, filename, byteArrayTXT, overwriteFlag);
-            //if (string.IsNullOrWhiteSpace(ret)) // no error, add to list for email
-            //    hrefsForEmail.Add(string.Format("https://siteroot/mypromos/{0}/{1}", containerRoot, filename));
-            //// configuration-driven pattern??
-
-            ////// TODO: zzz ALS always trigger message to "To" address on form (if filled in)?
-            ////// TODO: zzz ALS how about we build a function we can use separately from saving even if that won't be 100% natural?
-            ////if (!string.IsNullOrWhiteSpace(model.Affiliate.ContactEmail))
-            ////{
-
-            ////    // we can hijack the model.eventbody property, right? we are done with the promo markup...
-            ////    // where to store this markup?  View/model/FormatV2?  Mailchip or mandrill? <- doesn't seem to support list/looping, so links might be a non-starter, although could format in here...
-
-            ////    model.EventBody = HttpUtility.HtmlDecode(
-            ////            _generalFormatter.FormatV2(new SendPromoLinksViewModel()
-            ////            {
-            ////                Subject = "Do we have the subject here?", // not really creating the actual email message yet...
-            ////                FileLinks = hrefsForEmail
-            ////            }, "~/Notification/Templates/SendPromoLinks.cshtml").Body
-            ////        );
-
-            ////    // is there any risk of this not working and us needing to deal with problems?
-            ////    _orderManagementService.FireSendPerDayPromoEvent(model);
-            ////}
 
             return Json(new
             {
@@ -1664,20 +1660,21 @@ namespace CUWebinars.Web.Controllers.Admin
             });
         }
 
+
         private string UploadToAzure(CloudBlobContainer container, string filename, byte[] content,
-            bool overwriteIfExists)
+            bool overwriteIfExists = true)
         {
             string ret = "";
 
             using (var memoryStream = new MemoryStream(content))
             {
-                _logger.Info(string.Format("Persisting blob now. Named: {0}", filename));
+
                 CloudBlockBlob blob = container.GetBlockBlobReference(filename);
                 if (overwriteIfExists ||
                     !blob.Exists())
                 {
                     blob.UploadFromStream(memoryStream);
-                    _logger.Info("Blob successfully persisted");
+                    _logger.Info("Promo named: {0}", filename);
                 }
                 else
                 {
@@ -1745,17 +1742,14 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 if (upcomingWebinars.Count() > 0)
                     model.ListOfWebinarsUpcomingRendered = String.Join("\r\n", upcomingWebinars);
-                //TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(model.Webinar.Date, model.TimeZone, false) +
-                //                      " - " +
-                //                      DateTimeHelper.FormatTime(
-                //                          model.Webinar.Date.AddHours((double)model.Webinar.Duration), model.TimeZone,
-                //                          true) + "<br /></i>";
+
                 model.TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(model.Webinar.Date, model.TimeZone, false) +
                                           " - " +
                                           DateTimeHelper.FormatTime(
                                               model.Webinar.Date.AddHours((double)model.Webinar.Duration),
                                               model.TimeZone,
                                               true) + "<br /></i>";
+
                 model.EventBody =
                     HttpUtility.HtmlDecode(
                         _generalFormatter.FormatV2(model, "~/Notification/Templates/SendPerDayPromoMaster.cshtml").Body);
@@ -1830,6 +1824,416 @@ namespace CUWebinars.Web.Controllers.Admin
             //return null;
         }
 
+        private void GeneratePromoDocuments(WebinarPromoViewModel model)
+        {
+            var webinar = _webinarManagementService.GetWebinar(model.Webinar.idWebinar);
+            model.Webinar = webinar;
+            model.Affiliate = _affiliateManagementService.FindById(model.Affiliate.idUserAff);
+            model.Affiliate.WebUser = _membershipService.GetWebUserById(model.Affiliate.idUserAff);
+            model.Webinar.Presenter.WebUser = _membershipService.GetWebUserById(model.Webinar.idPresenter);
+
+            var doc = new HtmlDocument();
+            doc.LoadHtml(model.Webinar.Presenter.BiographyLong);
+            var root = doc.DocumentNode;
+            root.SelectSingleNode("(//img)[1]").Remove();
+            double bodyWidth = 0;
+            double sideBarWidth = 0;
+            model.PresenterW_OutPic = root.InnerHtml;
+
+            doc.LoadHtml(HttpUtility.UrlDecode(model.EventBody));
+
+
+            var _upcoming =
+                _webinarManagementService.GetUpcomingWebinars()
+                    .Where(w => w.Date > model.SendDate && w.idWebinar != model.Webinar.idWebinar)
+                    .OrderBy(w => w.Date)
+                    .Take(5);
+
+            var upcomingWebinars = (from w in _upcoming
+                                    select
+                                    "<p style=\"color: whitesmoke; text-decoration: none; \" ><a style=\" color: whitesmoke; border-bottom: 1px dotted bisque;\" href=\"" +
+                                    _globalConfig.TenantURL + "/Webinar/Details/" +
+                                    w.idWebinar + "?idaff=" + model.Affiliate.idUserAff + "\">" + w.Title + "</a><br>" +
+                                    w.Date.ToLongDateString() + "</p>").ToArray();
+
+            if (upcomingWebinars.Count() > 0)
+                model.ListOfWebinarsUpcomingRendered = String.Join("\r\n", upcomingWebinars);
+
+            model.TimeFormatDisplay = "<b>" + DateTimeHelper.FormatDate(webinar.Date) + " - " +
+               DateTimeHelper.FormatTimeWithDuration(webinar.Date, model.TimeZone, false,
+                   webinar.Duration) + "</b><br />";
+
+            model.BasePrice = "$265";
+            if (model.Webinar.Duration == 1)
+                model.BasePrice = "$165";
+
+            var bodyLeft = "<H1>" + webinar.Title + "</H1>" +
+                doc.DocumentNode.SelectSingleNode("//*[@id='bodyLeft']").InnerHtml;
+
+            var bodyRight = "<h3 style=\"color: whitesmoke\">Upcoming Webinars</h3>" + model.ListOfWebinarsUpcomingRendered;
+            bodyRight += "<p style=\"color: whitesmoke\" align=\"center\"><b>OnDemand Webinars Available</b></p>";
+            bodyRight += "<p style=\"color: whitesmoke\">Unable to attend the live session, or interested in a topic of a past webinar? Not a problem. Get the recording that includes online access to the webinar for six months, you can even add a CD-ROM and materials for offline viewing. <a href=\"@TenantURL/Webinar/Recorded?idaff={aff_idUserAff}\" style=\"color: red; text-decoration: none; border-bottom: 1px dotted red; font-style: italic;\">Click here to see all our OnDemand Recordings.</a></p>";
+            bodyRight += "<p style=\"color: whitesmoke\" align=\"center\"><b>Webinar Subscription Packages</b></p>";
+            bodyRight += "<p style=\"color: whitesmoke\">Would you and your colleagues like to attend webinars at a lower price?&nbsp; With a Webinar Subscription Package, we can help you greatly reduce that expense.&nbsp; <a href=\"@Model.SubscriptionPackURL\" style=\"color: red; text-decoration: none; border-bottom: 1px dotted red; font-style: italic;\">Click here to learn more about this cost-saving option.</a></p>";
+
+            model.BodyLeft = bodyLeft;
+            model.BodyRight = bodyRight;
+
+            TableRow insetRow;
+            var document = BuildPromoReplica(model, bodyLeft, bodyRight);
+
+            CloudBlockBlob blob;
+            var container = BuildCloudBlobContainer(model, out blob);
+
+            using (MemoryStream output = new MemoryStream())
+            {
+                document.Save(output, SaveOptions.DocxDefault);
+                output.Position = 0; // reset to beginning so Upload operation can work correctly
+                blob.UploadFromStream(output);
+
+                blob = container.GetBlockBlobReference(string.Concat(model.Affiliate.idUserAff, "/", model.Webinar.idWebinar) + ".pdf");
+                document.Save(output, SaveOptions.PdfDefault);
+                output.Position = 0; // reset to beginning so Upload operation can work correctly
+                blob.UploadFromStream(output);
+
+                blob = container.GetBlockBlobReference(string.Concat(model.Affiliate.idUserAff, "/", model.Webinar.idWebinar) + ".txt");
+                document.Save(output, SaveOptions.TxtDefault);
+                output.Position = 0; // reset to beginning so Upload operation can work correctly
+                blob.UploadFromStream(output);
+            }
+
+            bodyLeft = "<h1 style =\"font-size: 18px;\" align=\"center\">" + model.Webinar.Title + "</h1>";
+            bodyLeft += "<h3 align=\"center\"><b>A web-based Seminar<br /></b></h3>";
+            bodyLeft += model.TimeFormatDisplay;
+            bodyLeft += "<p><b>Recommended for" + model.CEUValue + " CE Credits</b></p>";
+            bodyLeft += "<b>Program Content: </b>" + model.Webinar.Description;
+            bodyLeft += "<h3>" + model.Webinar.LearnCaption + "</h3>";
+            bodyLeft += model.Webinar.LearnBody;
+            bodyLeft += "<h3>Who Should Attend</h3>";
+            bodyLeft += model.Webinar.WhoAttend;
+            bodyLeft += "<h3>" + model.Webinar.Presenter.WebUser.FullName + "</h3>";
+            bodyLeft += model.PresenterW_OutPic;
+            bodyLeft += "<h3>Cancellation Policy:</h3><p>Refunds will be given only for cancellations received in written form 3 business days prior to the program.  If your bank is unable to participate after registering, you can also select to receive an OnDemand website link to see the information online of the seminar at no additional charge.</p><p><b>If you are unable to attend the webinar but would like to have this information for training purposes, you may also purchase an OnDemand website link and/or CD-ROM. </b></p>";
+
+            bodyRight = "<div style=\"font-size: small; border-bottom-color: black; border-width: 0 0 2px 0; border-style: solid;\">Bank:   </div>";
+            bodyRight += "<div style=\"font-size: small; border-bottom-color: black; border-width: 0 0 2px 0; border-style: solid;\">Address:    </div>";
+            bodyRight += "<div style=\"font-size: small; border-bottom-color: black; border-width: 0 0 2px 0; border-style: solid;\">City, State, ZIP:   </div>";
+            bodyRight += "<div style=\"font-size: small; border-bottom-color: black; border-width: 0 0 2px 0; border-style: solid;\">Phone:  </div>";
+            bodyRight += "<div style=\"font-size: small; border-bottom-color: black; border-width: 0 0 2px 0; border-style: solid;\">*Email Address:     </div>";
+            bodyRight += "<p style=\"font-size: smaller;\">*Please include an email address as this is how your webinar materials will be delivered to you.</p>";
+            bodyRight += " &#10063; \"<i>Live</i>\" Web connection - <b>$265</b>";
+            bodyRight += "<br>&#10063; Additional connection for a branch - <b>$75 </b></p> ";
+            bodyRight += "<br>&#10063; 6-month \"OnDemand\" website link only - <b> $295</b></p>";
+            bodyRight += "<br>&#10063; CD-ROM and materials only     - <b>$345</b></p>";
+            bodyRight += "<br>&#10063; Live plus OnDemand website link   - <b>$365</b></p>";
+            bodyRight += "<br>&#10063; Entire Package:  Live, OnDemand link, and CD-ROM plus materials    - <b>$395</b></p>";
+            document = BuildPromoForms(model, bodyLeft, bodyRight);
+
+            container = BuildCloudBlobContainer(model, out blob);
+
+            blob =
+                container.GetBlockBlobReference(string.Concat(model.Affiliate.idUserAff, "/", model.Webinar.idWebinar) + "_form.docx");
+
+            using (MemoryStream output = new MemoryStream())
+            {
+                document.Save(output, SaveOptions.DocxDefault);
+                output.Position = 0; // reset to beginning so Upload operation can work correctly
+                blob.UploadFromStream(output);
+
+                blob = container.GetBlockBlobReference(string.Concat(model.Affiliate.idUserAff, "/", model.Webinar.idWebinar) + "_form.pdf");
+                document.Save(output, SaveOptions.PdfDefault);
+                output.Position = 0; // reset to beginning so Upload operation can work correctly
+                blob.UploadFromStream(output);
+
+                blob = container.GetBlockBlobReference(string.Concat(model.Affiliate.idUserAff, "/", model.Webinar.idWebinar) + "_form.txt");
+                document.Save(output, SaveOptions.TxtDefault);
+                output.Position = 0; // reset to beginning so Upload operation can work correctly
+                blob.UploadFromStream(output);
+            }
+
+        }
+
+
+        private static DocumentModel BuildPromoForms(WebinarPromoViewModel model, string bodyLeft,
+            string bodyRight)
+        {
+            double bodyWidth;
+            double sideBarWidth;
+            DocumentModel document = new DocumentModel();
+
+            Table table = new Table(document);
+            document.Sections.Add(new GemBox.Document.Section(document, table));
+
+            PageSetup pageSetup = document.Sections[0].PageSetup;
+            pageSetup.PageMargins.Top = 10;
+            pageSetup.PageMargins.Bottom = 10;
+            pageSetup.PageMargins.Left = 35;
+            pageSetup.PageMargins.Right = 35;
+            pageSetup.Orientation = Orientation.Portrait;
+
+
+            bodyWidth = 50; // width / (66 * 100);
+            sideBarWidth = 50; // width / (33 * 100);
+
+            table.TableFormat.AutomaticallyResizeToFitContents = true;
+            table.TableFormat.Alignment = HorizontalAlignment.Center;
+
+            table.Columns.Add(new TableColumn() { PreferredWidth = bodyWidth });
+            table.Columns.Add(new TableColumn() { PreferredWidth = sideBarWidth });
+
+            TableRow logoRow = new TableRow(document);
+            TableRow bodyRow = new TableRow(document);
+            TableRow footerRow = new TableRow(document);
+            TableRow insetRow = new TableRow(document);
+
+
+            //preheadRow.Cells.Add(new TableCell(document, new Paragraph(document, "preheadLeft"))
+            //{
+            //    CellFormat = new TableCellFormat()
+            //    {
+            //        BackgroundColor = Color.LightGray
+            //    }
+            //});
+
+            //preheadRow.Cells.Add(new TableCell(document, new Paragraph(document, "preheadRight")
+            //{
+            //    ParagraphFormat = new ParagraphFormat()
+            //    {
+            //        Alignment = HorizontalAlignment.Center
+            //    }
+            //})
+            //{
+            //    CellFormat = new TableCellFormat()
+            //    {
+            //        VerticalAlignment = VerticalAlignment.Center,
+            //        BackgroundColor = new Color(35, 43, 46)
+            //    }
+            //});
+
+            //logoRow.Cells.Add(new TableCell(document, new Paragraph(document, "logoBanner")
+            //{
+            //    ParagraphFormat = new ParagraphFormat()
+            //    {
+            //        Alignment = HorizontalAlignment.Center
+            //    }
+            //})
+            //{
+            //    CellFormat = new TableCellFormat()
+            //    {
+            //        VerticalAlignment = VerticalAlignment.Center,
+            //        BackgroundColor = new Color(76, 89, 102)
+            //    },
+            //    ColumnSpan = 2
+            //});
+
+            footerRow.Cells.Add(new TableCell(document, new Paragraph(document, "footer")
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = HorizontalAlignment.Center
+                }
+            })
+            {
+                CellFormat = new TableCellFormat()
+                {
+                    VerticalAlignment = VerticalAlignment.Center,
+                    BackgroundColor = new Color(76, 89, 102)
+                },
+                ColumnSpan = 2
+            });
+
+
+            bodyRow.Cells.Add(new TableCell(document, new Paragraph(document, "bodyLeft"))
+            {
+                CellFormat = new TableCellFormat()
+                {
+                    BackgroundColor = Color.LightGray
+                }
+            });
+
+            bodyRow.Cells.Add(new TableCell(document, new Paragraph(document, "bodyRight")));
+
+
+            //table.Rows.Add(preheadRow);
+            //table.Rows.Add(logoRow);
+            table.Rows.Add(bodyRow);
+            table.Rows.Add(footerRow);
+
+
+            //foreach (ContentRange item in document.Content.Find("preheadRight").Reverse())
+            //    item.LoadText("<a href=\"*|ARCHIVE|*\" style=\"mso-line-height-rule: exactly; color: whitesmoke; font-weight: normal; text-decoration: none; text-align: right;\" target=\"_blank\">View this email in your browser</a>", new HtmlLoadOptions());
+            //foreach (ContentRange item in document.Content.Find("preheadLeft").Reverse())
+            //    item.LoadText(webinar.Description, new HtmlLoadOptions());
+            foreach (ContentRange item in document.Content.Find("logoBanner").Reverse())
+                item.LoadText(model.Affiliate.EmailBanner, new HtmlLoadOptions());
+            foreach (ContentRange item in document.Content.Find("bodyLeft").Reverse())
+                item.LoadText(bodyLeft, new HtmlLoadOptions());
+            foreach (ContentRange item in document.Content.Find("bodyRight").Reverse())
+                item.LoadText(bodyRight, new HtmlLoadOptions());
+            foreach (ContentRange item in document.Content.Find("footer").Reverse())
+                item.LoadText(model.Affiliate.EmailFooter, new HtmlLoadOptions());
+            return document;
+        }
+        private static DocumentModel BuildPromoReplica(WebinarPromoViewModel model, string bodyLeft,
+            string bodyRight)
+        {
+            double bodyWidth;
+            double sideBarWidth;
+            DocumentModel document = new DocumentModel();
+
+            Table table = new Table(document);
+            Table tableInset = new Table(document);
+            document.Sections.Add(new GemBox.Document.Section(document, table));
+
+            double width = document.Sections[0].PageSetup.PageWidth;
+            double height = document.Sections[0].PageSetup.PageHeight;
+            PageSetup pageSetup = document.Sections[0].PageSetup;
+            pageSetup.PageMargins.Top = 10;
+            pageSetup.PageMargins.Bottom = 10;
+            pageSetup.PageMargins.Left = 35;
+            pageSetup.PageMargins.Right = 35;
+            pageSetup.Orientation = Orientation.Portrait;
+
+
+            bodyWidth = 380; // width / (66 * 100);
+            sideBarWidth = 140; // width / (33 * 100);
+
+            table.TableFormat.AutomaticallyResizeToFitContents = true;
+            table.TableFormat.Alignment = HorizontalAlignment.Center;
+
+            table.Columns.Add(new TableColumn() { PreferredWidth = bodyWidth });
+            table.Columns.Add(new TableColumn() { PreferredWidth = sideBarWidth });
+            tableInset.Columns.Add(new TableColumn());
+            tableInset.Columns.Add(new TableColumn());
+
+            //TableRow preheadRow = new TableRow(document);
+            TableRow logoRow = new TableRow(document);
+            TableRow bodyRow = new TableRow(document);
+            TableRow footerRow = new TableRow(document);
+            TableRow insetRow = new TableRow(document);
+
+            insetRow.Cells.Add(new TableCell(document, new Paragraph(document,
+                    new Picture(document, model.Webinar.Presenter.PhotoFull))
+            ));
+
+            insetRow.Cells.Add(new TableCell(document, new Paragraph(document,
+                    model.TimeFormatDisplay + "Presented by " +
+                    model.Webinar.Presenter.WebUser.FullName +
+                    "<br><span style=\"font-size: xx-small; line-height: 100% \"><i>* Can't attend? OnDemand playback included with your registration.</i></span></p>")
+            ));
+
+            tableInset.Rows.Add(insetRow);
+            //preheadRow.Cells.Add(new TableCell(document, new Paragraph(document, "preheadLeft"))
+            //{
+            //    CellFormat = new TableCellFormat()
+            //    {
+            //        BackgroundColor = Color.LightGray
+            //    }
+            //});
+
+            //preheadRow.Cells.Add(new TableCell(document, new Paragraph(document, "preheadRight")
+            //{
+            //    ParagraphFormat = new ParagraphFormat()
+            //    {
+            //        Alignment = HorizontalAlignment.Center
+            //    }
+            //})
+            //{
+            //    CellFormat = new TableCellFormat()
+            //    {
+            //        VerticalAlignment = VerticalAlignment.Center,
+            //        BackgroundColor = new Color(35, 43, 46)
+            //    }
+            //});
+
+            logoRow.Cells.Add(new TableCell(document, new Paragraph(document, "logoBanner")
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = HorizontalAlignment.Center
+                }
+            })
+            {
+                CellFormat = new TableCellFormat()
+                {
+                    VerticalAlignment = VerticalAlignment.Center,
+                    BackgroundColor = new Color(76, 89, 102)
+                },
+                ColumnSpan = 2
+            });
+
+            footerRow.Cells.Add(new TableCell(document, new Paragraph(document, "footer")
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = HorizontalAlignment.Center
+                }
+            })
+            {
+                CellFormat = new TableCellFormat()
+                {
+                    VerticalAlignment = VerticalAlignment.Center,
+                    BackgroundColor = new Color(76, 89, 102)
+                },
+                ColumnSpan = 2
+            });
+
+
+            bodyRow.Cells.Add(new TableCell(document, new Paragraph(document, "bodyLeft"))
+            {
+                CellFormat = new TableCellFormat()
+                {
+                    BackgroundColor = Color.LightGray
+                }
+            });
+
+            bodyRow.Cells.Add(new TableCell(document, new Paragraph(document, "bodyRight"))
+            {
+                CellFormat = new TableCellFormat()
+                {
+                    BackgroundColor = new Color(35, 43, 46)
+                },
+            });
+
+
+            //table.Rows.Add(preheadRow);
+            table.Rows.Add(logoRow);
+            table.Rows.Add(bodyRow);
+            table.Rows.Add(footerRow);
+
+
+            //foreach (ContentRange item in document.Content.Find("preheadRight").Reverse())
+            //    item.LoadText("<a href=\"*|ARCHIVE|*\" style=\"mso-line-height-rule: exactly; color: whitesmoke; font-weight: normal; text-decoration: none; text-align: right;\" target=\"_blank\">View this email in your browser</a>", new HtmlLoadOptions());
+            //foreach (ContentRange item in document.Content.Find("preheadLeft").Reverse())
+            //    item.LoadText(webinar.Description, new HtmlLoadOptions());
+            foreach (ContentRange item in document.Content.Find("logoBanner").Reverse())
+                item.LoadText(model.Affiliate.EmailBanner, new HtmlLoadOptions());
+            foreach (ContentRange item in document.Content.Find("bodyLeft").Reverse())
+                item.LoadText(bodyLeft, new HtmlLoadOptions());
+            foreach (ContentRange item in document.Content.Find("bodyRight").Reverse())
+                item.LoadText(bodyRight, new HtmlLoadOptions());
+            foreach (ContentRange item in document.Content.Find("footer").Reverse())
+                item.LoadText(model.Affiliate.EmailFooter, new HtmlLoadOptions());
+            return document;
+        }
+
+        private CloudBlobContainer BuildCloudBlobContainer(WebinarPromoViewModel model, out CloudBlockBlob blob)
+        {
+            var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName,
+                _globalConfig.StorageAccessKey);
+
+            var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
+            CloudBlobClient blobClient = cloudStorageAccount.CreateCloudBlobClient();
+
+            // Retrieve reference to a previously created container.
+            CloudBlobContainer container = blobClient.GetContainerReference("v3generator");
+            container.CreateIfNotExists();
+
+            blob =
+                container.GetBlockBlobReference(string.Concat(model.Affiliate.idUserAff, "/", model.Webinar.idWebinar) + ".docx");
+            return container;
+        }
+
         [HttpPost]
         public ActionResult PerWeekPromo(WebinarPromoViewModel model)
         {
@@ -1900,7 +2304,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpPost]
         //[ValidateAntiForgeryToken]
         [ValidateInput(false)]
-        public async Task<ActionResult> SendSinglePromo(int affiliateId, string messageBodyHtml, int webinarId, string sendDate)
+        public ActionResult SendSinglePromo(int affiliateId, string messageBodyHtml, int webinarId, string subject)
         // WebinarPromoViewModel model
         {
 
@@ -1908,9 +2312,10 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 Affiliate = _affiliateManagementService.FindById(affiliateId),
                 EventBody = messageBodyHtml,
-                Webinar = _webinarManagementService.GetWebinar(webinarId)
-
+                Webinar = _webinarManagementService.GetWebinar(webinarId),
+                Subject = subject
             };
+
             if (ModelState.IsValid)
             {
                 try
@@ -1963,26 +2368,31 @@ namespace CUWebinars.Web.Controllers.Admin
             Affiliate affiliate = _affiliateManagementService.FindById(affiliateId);
             sendDate = sendDate.Split('/')[2] + "-" + sendDate.Split('/')[0] + "-" + sendDate.Split('/')[1] + "T10:00:00-05:00";
 
-            McCampaign result = new McCampaign { AffiliateId = affiliate.idUserAff, WebinarId = webinar.idWebinar };
+            McCampaign campaign = new McCampaign { AffiliateId = affiliate.idUserAff, WebinarId = webinar.idWebinar };
 
             IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
+
+            List list = await manager.Lists.GetAsync(affiliate.idMailChimpList).ConfigureAwait(false);
 
             var newCamp = new Campaign
             {
                 ContentType = "html",
                 Type = CampaignType.Regular,
                 Recipients = new Recipient { ListId = affiliate.idMailChimpList },
+
                 Settings = new Setting
                 {
-                    SubjectLine = "[testing] " + webinar.Title,
+                    SubjectLine = "[testing] Webinar: " + webinar.Title,
                     Title = "[testing] " + affiliate.ttsDomain + "_" + webinar.Title,
                     FolderId = "30aca5892b",
-                    InlineCss = false,
+                    InlineCss = true,
                     Authenticate = true,
                     AutoFooter = true,
                     AutoTweet = false,
-                    FromName = "ApiTest",
-                    ReplyTo = "steve@ttstrain.com"
+                    ToName = "*|FNAME|* *|LNAME|* ",
+                    FromName = affiliate.ContactPerson,
+                    ReplyTo = affiliate.ContactEmail,
+                    UseConversation = true,
                 },
                 Tracking = new Tracking
                 {
@@ -1995,7 +2405,7 @@ namespace CUWebinars.Web.Controllers.Admin
             try
             {
                 var mkCamp = await manager.Campaigns.AddAsync(campaign: newCamp);
-                result.CampaignId = mkCamp.Id;
+                campaign.CampaignId = mkCamp.Id;
                 var content = new Content
                 {
                     Html = messageBodyHtml
@@ -2021,15 +2431,16 @@ namespace CUWebinars.Web.Controllers.Admin
                 });
 
                 _logger.Info("CreateCampaign | putContent links: " + putContent.Links);
-                CampaignTestRequest emails = new CampaignTestRequest { EmailType = "html", Emails = new string[] { "all.of.us@ttstrain.com" } };
+                CampaignTestRequest emails = new CampaignTestRequest { EmailType = "html", Emails = new string[] { "all.of.us@ttstrain.com", affiliate.NotiPromos } };
+
                 await manager.Campaigns.TestAsync(mkCamp.Id, emails);
 
                 _logger.Info("CreateCampaign | follows TestSend: " + putContent.Links);
 
-                var campMsg = new JProperty(JsonPropertyKeys.MailChimpCampaign, JsonConvert.SerializeObject(result, Formatting.None, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
-
-                webinar.Campaigns = JsonHelpers.MergeJsonWithStoredField(webinar.Campaigns, campMsg);
-                _webinarManagementService.SaveChanges();
+                var campMsg = new JProperty(JsonPropertyKeys.MailChimpCampaign, JsonConvert.SerializeObject(campaign, Formatting.None, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                _logger.Info("Webinar.Campaigns += " + campMsg);
+                //webinar.Campaigns = JsonHelpers.MergeJsonWithStoredField(webinar.Campaigns, campMsg);
+                //_webinarManagementService.SaveChanges();
                 return Json(new { success = "success" });
 
             }
@@ -3223,7 +3634,6 @@ namespace CUWebinars.Web.Controllers.Admin
                     }
 
                     //Post Event Orders
-
                     try
                     {
                         List<Order> _postEventOrders = new List<Order>();
@@ -3704,7 +4114,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         affiliate.DisplayTitle + " (" + affiliate.ttsDomain + " - " + affiliate.idUserAff + ")",
                     ErrorMsg = "Error processing " + affiliate.DisplayTitle + " (" + affiliate.ttsDomain + " - " + affiliate.idUserAff + ")"
                 },
-    JsonRequestBehavior.AllowGet);
+        JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -3850,6 +4260,7 @@ namespace CUWebinars.Web.Controllers.Admin
             dsUpgradedOrders.Relations.Add("uOrders", upgradedOrders.Columns["Id"], uOrders.Columns["Id"]); // relation name needs to match nested range name in doc
             return dsWebinars;
         }
+
 
 
         public PartialViewResult SendWeeklyInvoicesEvent()

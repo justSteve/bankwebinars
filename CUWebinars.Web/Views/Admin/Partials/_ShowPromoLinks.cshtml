@@ -1,0 +1,48 @@
+﻿
+@using System.Linq
+@using CUWebinars.Web.Core
+@using CUWebinars.Web.Helpers
+@using CUWebinars.Web.Models.JsonModels
+@using Newtonsoft.Json
+@model PromoLinks
+@{
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+
+    var nfi = new CultureInfo("en-US", false).NumberFormat;
+    nfi.CurrencyDecimalDigits = 0;
+
+}
+
+<div class="container">
+    <!--begin main content-->
+    <div class="row-fluid">
+        <!--begin row-fluid-->
+        <div class="span6">
+            @{
+                if (Model.Links != null && Model.Links.Count > 0)
+                {
+                    foreach (var link in Model.Links.Reverse())
+                    {
+                        //http://storeforbw.blob.core.windows.net/invoicesprivate/10-31-2016/45-2016-62.pdf?sv=2014-02-14&sr=b&sig=c04lkgGd0cuBYX7MdLJOQzFzrxrBwIwG7S84EU7HEeQ%3D&se=2016-11-06T16%3A18%3A53Z&sp=r
+                        <a href="@link.AbsoluteUri">@link.AbsoluteUri</a>
+                        <br />
+                    }
+                }
+                else
+                {
+                    <div>No promotional links for this have been generated. Please contact support so we can provide them for you.</div>
+                }
+            }
+        </div>
+        <div class="span6">
+            @{
+                <p>Subscribe to our catalog's RSS feed and import your choice of events directly to your website or catalog. Out of the box we provide a <a href="@_globalConfig.TenantURL/webinar/calendarrss" target="_blank">summary</a> and a <a href="@_globalConfig.TenantURL/webinar/calendarrssfull" target="_blank">full</a>  feed but are happy to provide develop a custom feed the works for you!
+                
+            </p>
+            }
+        </div>
+
+    </div>
+</div>
+
+

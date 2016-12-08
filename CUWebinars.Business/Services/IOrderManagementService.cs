@@ -154,5 +154,6 @@ namespace CUWebinars.Business.Services
         void CreateTestRegistration(Webinar webinar);
         int CheckIfEmailAlreadyRegisteredForWebinar(int idWebinar, string email);
         bool UserHasMultipleEvents(int idUser);
+        Order GetOrderByJoinCode(string joinCode);
     }
 }

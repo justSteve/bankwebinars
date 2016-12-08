@@ -47,13 +47,13 @@ namespace CUWebinars.Business.Notification.Formatters
         public INotificationMessage FormatV2<T>(T underPinningObject, string templatePath)
         {
             // using MVC for text template rendering "outside" of the web project (based on http://www.codemag.com/article/1312081)
-            var controller = ViewRenderer.CreateController<EmptyController>(); // Create an arbitrary controller instance
+            //var controller = ViewRenderer.CreateController<EmptyController>(); // Create an arbitrary controller instance
 
-            string markup = ViewRenderer.RenderPartialView(
-                             templatePath,
-                             underPinningObject,
-                             controller.ControllerContext);
-
+            //string markup = ViewRenderer.RenderPartialView(
+            //                 templatePath,
+            //                 underPinningObject,
+            //                 controller.ControllerContext);
+            var markup = ViewRenderer.RenderPartialView(templatePath, underPinningObject);
             var returnThis = CreateMessage(markup);
             return returnThis;
         }

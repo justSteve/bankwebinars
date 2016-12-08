@@ -491,7 +491,13 @@ namespace CUWebinars.Business.Repository
             return credits;
         }
 
-    
+        public Order GetOrderByJoinCode(string joinCode)
+        {
+            if (joinCode == null)
+                return null;
+            var order = ((TTSWebinarsContext)db).OrderRows.Include(or => or.Order).SingleOrDefault(or => or.TtsJoinUrl == joinCode).Order;
+            return order;
+        }
 
 
         public IList<Order> GetOrdersForLiveEventNotifications(int idWebinar)

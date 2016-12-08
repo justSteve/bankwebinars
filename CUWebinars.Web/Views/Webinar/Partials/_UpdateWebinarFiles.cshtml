@@ -72,6 +72,10 @@
                                         <span class="control-label">Label</span>
                                         <input type="text" class="form-control" name="WebinarFiles[@idx].fileDesc" value="@file.fileDesc.TrimEnd()" /><br />
                                     </div>
+                                                                        <div id="fileDescDiv_@file.idWebinarFile">
+                                        <span class="control-label">Link</span>
+                                        <input type="text" class="form-control" name="WebinarFiles[@idx].link" value="https://ttsimages.blob.core.windows.net/$root/@file.fileLocation" /><br />
+                                    </div>
                                 </div>
                                 idx++;
                             }

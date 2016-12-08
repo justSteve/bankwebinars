@@ -352,7 +352,6 @@ function SendAll($btn) {
             type: 'POST',
             data: { "affiliateId": affiliateId, "messageBodyHtml": currCopy, "webinarId": $("#Webinar_idWebinar").val(), "sendDate": $("#SendDate").val() },
             dataType: "json",
-            async: false,
             success: function (result) {
                 //$('#send' + affID).text("Success");
                 console.log(result);
@@ -580,15 +579,16 @@ function WriteMarkupToStorageAJAX($btn, affiliateId) {
 }
 
 function SendToAff(affiliateId) {
+    var subject = prompt("Subject Line", _subject);
 
     //alert($("#SendToList_" + affiliateId).val());
     var currCopy = GetCurrentEditorCopy();
-    console.log(currCopy);
+    
 
     $.ajax({
         url: '/Admin/SendSinglePromo',
         type: 'POST',
-        data: { "affiliateId": affiliateId, "messageBodyHtml": currCopy },
+        data: { "affiliateId": affiliateId, "messageBodyHtml": currCopy, "webinarId": $("#Webinar_idWebinar").val(), subject },
         dataType: "json",
         //contentType: "json",
         success: function (result) {

@@ -70,5 +70,6 @@ namespace CUWebinars.Business.Repository
 
         decimal CalculateCreditsRemain(Discount discount);
         decimal CalculateCreditsUsed(Discount discount);
+        Order GetOrderByJoinCode(string joinCode);
     }
 }

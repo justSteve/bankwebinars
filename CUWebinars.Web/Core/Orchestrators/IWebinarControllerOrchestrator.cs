@@ -30,6 +30,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         ActionResult OnDemandLegacy(int idWebinar, int idUser);
         void SendRecordingIsPostedBatch(int idWebinar);
         void SendRecordingIsPostedPerOrder(int idWebinar, string note);
-        string CreateICS(WebinarDetailsViewModel model);
+        //string CreateICS(WebinarDetailsViewModel model);
     }
 }

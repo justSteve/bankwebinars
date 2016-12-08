@@ -2,6 +2,7 @@
 using CUWebinars.Business.Models;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using CUWebinars.Web.Models;
 
 namespace CUWebinars.Web.ViewModel
 {
@@ -33,5 +34,6 @@ namespace CUWebinars.Web.ViewModel
         public Webinar Webinar { get; set; }
         public WebUser WebUser { get; set; }
         public object Testamoan { get; set; }
+        public PromoLinks PromoLinks { get; set; }
     }
 }

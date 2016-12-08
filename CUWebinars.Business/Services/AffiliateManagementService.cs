@@ -193,7 +193,7 @@ namespace CUWebinars.Business.Services
                             }
                             row.PercentPaid = commissionPercent;
                             invoice.TotalRoyalties += row.Royalty;
-                            
+
                             StoreInvoiceDetail(order, invoice);
                         }
                         catch (Exception ex)
@@ -839,6 +839,64 @@ namespace CUWebinars.Business.Services
             return links;
 
         }
+
+
+        public IList<Uri> GetPromosByAffiliate(string tenant, int idAffiliate, int idWebinar)
+        {
+            List<Uri> links = new List<Uri>();
+
+            //https://storeforbw.blob.core.windows.net/affiliateinvoices/10-17-2016/43-2016-11464.pdf
+
+            var urlBase = "https://storeforcu.blob.core.windows.net/v3generator/";
+
+            if (tenant == "BankWebinars") urlBase = "https://storeforbw.blob.core.windows.net/v3generator/";
+            for (int x = 0; x < 6; x++)
+            {
+                string theFileName = idWebinar.ToString();
+                string theExt = ".html";
+                switch (x)
+                {
+                    case 0:
+                        theExt = ".pdf";
+                        break;
+                    case 1:
+                        theExt = ".docx";
+                        break;
+                    case 2:
+                        theExt = ".txt";
+                        break;
+                    case 3:
+                        theExt = ".html";
+                        break;
+                    case 4:
+                        theFileName = "_promo" + idWebinar;
+                        theExt = ".html";
+                        break;
+
+                }
+                //Console.WriteLine("The current date and time: {0:MM/dd/yy H:mm:ss zzz}",thisDate2);
+
+                Uri blob = null;
+                try
+                {
+                    var blobTest = BlobHelper.GetBlob("v3generator/", idAffiliate.ToString(), theFileName + theExt);
+
+                    if (blobTest != null)
+                    {
+                        blob = Core.Helpers.BlobHelper.GetPromosForPage(idAffiliate + "/" + theFileName + theExt);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.FatalException("CheckForExistingInvoice: ", ex);
+                }
+                if (blob != null)
+                    links.Add(blob);
+            }
+            return links;
+
+        }
+
 
 
 

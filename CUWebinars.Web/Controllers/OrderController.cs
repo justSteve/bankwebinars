@@ -454,10 +454,17 @@ namespace CUWebinars.Web.Controllers
         public JsonResult Importorder4Acs(ImportOrderForAcsModel _importedOrder)
         {
             _logger.Info("importorder4ACS Incoming Values: " + JsonConvert.SerializeObject(_importedOrder, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
-            _logger.Info("importorder4ACS AdditionalLocation: " + JsonConvert.SerializeObject(_importedOrder.AdditionalLocationsString, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+            //_logger.Info("importorder4ACS AdditionalLocation: " + JsonConvert.SerializeObject(_importedOrder.AdditionalLocationsString, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
             if (ModelState.IsValid)
             {
                 var idRegType = _webinarManagementService.GetRegTypeByACS(_importedOrder.DeliveryType, Convert.ToInt32(_importedOrder.BankWebID));
+                string addLocString = null;
+
+                if (_importedOrder.AdditionalLocationsString != null)
+                {
+                    addLocString = _importedOrder.AdditionalLocationsString.TrimEnd(',');
+                }
+
                 ImportOrderModel importedOrder = new ImportOrderModel
                 {
                     idWebinar = Convert.ToInt32(_importedOrder.BankWebID),
@@ -494,7 +501,7 @@ namespace CUWebinars.Web.Controllers
                     FirstName = _importedOrder.FirstName,
                     LastName = _importedOrder.LastName,
 
-                    AdditionalLocationsString = _importedOrder.AdditionalLocationsString.TrimEnd(','),
+                    AdditionalLocationsString = addLocString,
                     Email = _importedOrder.Email
 
 

@@ -22,35 +22,34 @@
     <script type="text/javascript" language="javascript">
         var dataParamList = 0;
 
-    function SubmitCCForm () {
+        function SubmitCCForm () {
             $("#PayByCCFormPTMulti input[name='parmList']").val(dataParamList);
-        
+
             $("#PayByCCFormPTMulti").submit();
-    }
+        }
 
         $(function() {
 
-        var idOrder = @idOrder;
+            var idOrder = @idOrder;
 
             $('#PayByPayTraceModal').on('show', function () {
 
                 $.ajax({
-
-                datatype: "text/plain",
+                    datatype: "text/plain",
                     type: "GET",
                     url: '/cart/PayTraceModalIni?idOrder='+idOrder + "&multi=@orderList",
                     cache: false,
                     success: function (data) {
-                    console.log(data);
-                    dataParamList = data.paramList;
+                        //console.log(data);
+                        dataParamList = data.paramList;
 
                         $("#btnSubmitPayTraceForm").click(function() {
-                        SubmitCCForm();
-                    });
-                }
+                            SubmitCCForm();
+                        });
+                    }
+                });
             });
         });
-    });
 
     </script>
 

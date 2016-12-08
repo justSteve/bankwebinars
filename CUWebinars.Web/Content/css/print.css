@@ -1,16 +1,1 @@
-﻿body
-{
-    color: #000000;
-    background: #ffffff;
-    font-family: "Times New Roman" , Times, serif;
-    font-size: 11pt;
-}
-#EventChooser
-{
-    display: none;
-}
-
-#affRptPrinter
-{
-    page-break-after: always;
-}
+﻿

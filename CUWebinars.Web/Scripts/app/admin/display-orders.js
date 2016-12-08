@@ -15,8 +15,8 @@ $(function () {
     //DO.wireUpDataTableForRoyalties();
     //DO.wireUpDataTableForAffiliatesListing();
 
-    $("#revenueReport").on('shown', function () {
-        DO.wireUpDataTableForAffiliatesListing();
+    $("#showPromoLinks").on('shown', function () {
+        //DO.wireUpDataTableForAffiliatesListing();
 
         $('#webinarOrders').collapse('hide');
     }
@@ -422,94 +422,94 @@ function getOrderStatusHtml() {
     };
 
 
-    ns.wireUpDataTableForAffiliatesListing = function () {
+//    ns.wireUpDataTableForAffiliatesListing = function () {
 
-        DO.affiliatesTable.dataTable({
-            destroy: true, "serverSide": true,
-            'buttons': [{
-                extend: 'print',
-                className: 'btn btn-mini',
-                text: 'Print current page ',
-                exportOptions: {
-                    stripHtml: false
-                }
-            }, {
-                extend: 'pdf',
-                text: ' Save PDF',
-                className: 'btn btn-mini',
-                exportOptions: {
-                    stripNewlines: false
-                }
-            }, {
-                extend: 'excel',
-                text: ' Export to Excel',
-                className: 'btn btn-mini',
-                exportOptions: {
-                    stripNewlines: false
-                }
-            }
-            ],
-            "ajax": {
-                "type": "POST",
-                "url": '/admin/DTDataHandlerAffiliateReport',
-                "contentType": 'application/json; charset=utf-8',
-                'data': function (data) {
+//        DO.affiliatesTable.dataTable({
+//            destroy: true, "serverSide": true,
+//            'buttons': [{
+//                extend: 'print',
+//                className: 'btn btn-mini',
+//                text: 'Print current page ',
+//                exportOptions: {
+//                    stripHtml: false
+//                }
+//            }, {
+//                extend: 'pdf',
+//                text: ' Save PDF',
+//                className: 'btn btn-mini',
+//                exportOptions: {
+//                    stripNewlines: false
+//                }
+//            }, {
+//                extend: 'excel',
+//                text: ' Export to Excel',
+//                className: 'btn btn-mini',
+//                exportOptions: {
+//                    stripNewlines: false
+//                }
+//            }
+//            ],
+//            "ajax": {
+//                "type": "POST",
+//                "url": '/admin/DTDataHandlerAffiliateReport',
+//                "contentType": 'application/json; charset=utf-8',
+//                'data': function (data) {
 
-                    data.idWebinar = parseInt(DO.webinarIdDiv.text());
-                    return data = JSON.stringify(data);
-                }
-            },
+//                    data.idWebinar = parseInt(DO.webinarIdDiv.text());
+//                    return data = JSON.stringify(data);
+//                }
+//            },
 
-            "dom": '<ilfB<t>ipB>',
-            "pageLength": 10,
-            "scroller": {
-                loadingIndicator: false
-            },
-            "processing": true,
-            "paging": true,
-            "deferRender": true,
-            'columns': [
-                { "orderable": false, 'data': 'idAff' },
-                { "orderable": false, 'data': 'idAff' },
-                { "orderable": false, 'data': 'Affiliate_ContactName' },
-                { "orderable": false, 'data': 'TotalRevenues' },
-                { "orderable": false, 'data': 'TotalCommissions' },
-                { "orderable": false, 'data': 'NumOfOrders' }
-            ],
-            "order": [5, "asc"],
-            //, // complex columns can be specified / created with mRender
-            "aoColumnDefs": [
+//            "dom": '<ilfB<t>ipB>',
+//            "pageLength": 10,
+//            "scroller": {
+//                loadingIndicator: false
+//            },
+//            "processing": true,
+//            "paging": true,
+//            "deferRender": true,
+//            'columns': [
+//                { "orderable": false, 'data': 'idAff' },
+//                { "orderable": false, 'data': 'idAff' },
+//                { "orderable": false, 'data': 'Affiliate_ContactName' },
+//                { "orderable": false, 'data': 'TotalRevenues' },
+//                { "orderable": false, 'data': 'TotalCommissions' },
+//                { "orderable": false, 'data': 'NumOfOrders' }
+//            ],
+//            "order": [5, "asc"],
+//            //, // complex columns can be specified / created with mRender
+//            "aoColumnDefs": [
 
-                {
-                    "aTargets": [1], // Send Rpt column  -- 
-                    "mData": "idAff",
-                    "mRender": function (data, type, full) {
-                        return '<button name="sendReportTo ' + full.idAff + '" onclick="SendReport(' + full.WebinarId + ', ' + full.idAff + '); return false;">Send</button>';
-                    }
-                },
-                {
-                    "aTargets": [3], // Total Revs column  -- 
-                    "mData": "TotalRevenues",
-                    "mRender": function (data, type, full) {
-                        return ('<div class="float-right">$' + full.TotalRevenues + '</div>').replace(".5", ".50");
-                    }
-                },
-{
-    "aTargets": [4], // Total Revs column  -- 
-    "mData": "TotalCommissions",
-    "mRender": function (data, type, full) {
-        return ('<div class="float-right">$' + full.TotalCommissions + '</div>').replace(".5", ".50");
-    }
-}, {
-    "aTargets": [5], // Total Revs column  -- 
-    "mData": "NumOfOrders",
-    "mRender": function (data, type, full) {
-        return ('<div class="float-right">' + full.NumOfOrders + '</div>').replace(".5", ".50");
-    }
-}
-            ]
-        });
-    };
+//                {
+//                    "aTargets": [1], // Send Rpt column  -- 
+//                    "mData": "idAff",
+//                    "mRender": function (data, type, full) {
+//                        return '<button name="sendReportTo ' + full.idAff + '" onclick="SendReport(' + full.WebinarId + ', ' + full.idAff + '); return false;">Send</button>';
+//                    }
+//                },
+//                {
+//                    "aTargets": [3], // Total Revs column  -- 
+//                    "mData": "TotalRevenues",
+//                    "mRender": function (data, type, full) {
+//                        return ('<div class="float-right">$' + full.TotalRevenues + '</div>').replace(".5", ".50");
+//                    }
+//                },
+//{
+//    "aTargets": [4], // Total Revs column  -- 
+//    "mData": "TotalCommissions",
+//    "mRender": function (data, type, full) {
+//        return ('<div class="float-right">$' + full.TotalCommissions + '</div>').replace(".5", ".50");
+//    }
+//}, {
+//    "aTargets": [5], // Total Revs column  -- 
+//    "mData": "NumOfOrders",
+//    "mRender": function (data, type, full) {
+//        return ('<div class="float-right">' + full.NumOfOrders + '</div>').replace(".5", ".50");
+//    }
+//}
+//            ]
+//        });
+//    };
 
 
     ns.wireUpDataTable = function () {

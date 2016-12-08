@@ -15,7 +15,7 @@ namespace CUWebinars.Business.Core.Helpers
 
         public static JToken RemoveFields(this JToken token, string[] fields)
         {
-            http://stackoverflow.com/questions/11676159/json-net-how-to-remove-nodes
+            http: //stackoverflow.com/questions/11676159/json-net-how-to-remove-nodes
             JContainer container = token as JContainer;
             if (container == null) return token;
 
@@ -126,7 +126,8 @@ namespace CUWebinars.Business.Core.Helpers
                         objectToValidate = JObject.Parse(existingJson);
                     }
                     catch (Exception e1)
-                    { //Handle the case when e is the base Exception
+                    {
+                        //Handle the case when e is the base Exception
                         objectToValidate = JObject.FromObject(new
                         {
                             existing = "wrapped Json by ReplaceJsonWIthStoredField =" + existingJson,
@@ -149,7 +150,9 @@ namespace CUWebinars.Business.Core.Helpers
         {
             ICollection<JProperty> properties = new List<JProperty>();
 
-            foreach (var propertyInfo in objectToJsonify.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public))
+            foreach (
+                var propertyInfo in objectToJsonify.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            )
             {
                 properties.Add(new JProperty(propertyInfo.Name, propertyInfo.GetValue(objectToJsonify)));
             }
@@ -161,20 +164,29 @@ namespace CUWebinars.Business.Core.Helpers
         {
             JObject existingStoredJsonObject;
             JArray jArray;
-
-            // convert object to a json object
-            var newJsonObject = new JObject(CreateJsonPropertiesFromObject(objectToJsonify));
-
-            // if the existing stored string is null or emptiness, just create it and return.
-            if (string.IsNullOrWhiteSpace(jsonAsString))
+            var newJsonObject = new JObject();
+            try
             {
-                existingStoredJsonObject = new JObject();
-                jArray = new JArray(newJsonObject);
-                existingStoredJsonObject.Add(keyOfArray, jArray);
+                // convert object to a json object
 
-                return existingStoredJsonObject.ToString(Formatting.None);
+                newJsonObject = new JObject(CreateJsonPropertiesFromObject(objectToJsonify));
+
+                // if the existing stored string is null or emptiness, just create it and return.
+                if (string.IsNullOrWhiteSpace(jsonAsString))
+                {
+                    existingStoredJsonObject = new JObject();
+                    jArray = new JArray(newJsonObject);
+                    existingStoredJsonObject.Add(keyOfArray, jArray);
+
+                    return existingStoredJsonObject.ToString(Formatting.None);
+                }
             }
+            catch (Exception ex)
+            {
+                //is the incoming a flat string
+                newJsonObject["msg"] = objectToJsonify.ToString();
 
+            }
             // ************* if we got here, we need to now process the existing stored json as an input *************
             try
             {
@@ -184,11 +196,11 @@ namespace CUWebinars.Business.Core.Helpers
             catch (Exception e)
             {
                 existingStoredJsonObject = JObject.FromObject(new
-                     {
-                         existing = "wrapped Json by AddObjectToJsonArray =" + jsonAsString,
-                         exceptionMsg = e.Message,
-                         exceptionStack = e.StackTrace
-                     });
+                {
+                    existing = "wrapped Json by AddObjectToJsonArray =" + jsonAsString,
+                    exceptionMsg = e.Message,
+                    exceptionStack = e.StackTrace
+                });
             }
 
             // 1st, see if valid json is stored at all

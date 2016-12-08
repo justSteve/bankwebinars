@@ -1,0 +1,536 @@
+﻿@using CUWebinars.Business.Models
+@using CUWebinars.Business.Notification
+@model CUWebinars.Business.Notification.ViewModel.WebinarPromoViewModel
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+
+<title>
+    @{
+        TtsTemplateHelper TtsTemplateHelperObject = new TtsTemplateHelper();
+
+        var thisWebinar = Model.Webinar;
+        string TenantHead = TtsTemplateHelperObject.Tenant();
+    }
+    [preview-@TenantHead] promo: @thisWebinar.Title
+</title>
+
+
+
+@{
+
+    var webinar = Model.Webinar;
+    var affiliate = Model.Affiliate;
+    //var aff = Model.Affiliate;
+    //int currentUserID = UserFacade.Instance.GetCurrentUserID();
+    var CEUValue = "2.5";
+
+    if (webinar.Duration > 2)
+    {
+        CEUValue = "1.5";
+    }
+
+    USTimeZone tz = Model.Affiliate.WebUser.timeZone;
+    string TimeFormatDisplay = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, tz, true, webinar.Duration);
+
+    string Tenant = TtsTemplateHelperObject.Tenant();
+    string TenantEmail = TtsTemplateHelperObject.TenantEmail();
+    string TenantDomain = TtsTemplateHelperObject.TenantDomain();
+    string TenantURL = TtsTemplateHelperObject.TenantURL();
+    string TenantLogo = TtsTemplateHelperObject.TenantLogo();
+    string TenantPrefix = TtsTemplateHelperObject.TenantPrefix();
+    string TenantCom = TenantDomain + ".com";
+}
+<head>
+
+    <meta property="og:title" content="testing" />
+    <meta charset="UTF-8">
+
+    <style type="text/css">
+        p {
+            margin: 40px 0;
+            padding: 0;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            display: block;
+            margin: 0;
+            padding: 0;
+        }
+
+        img, a img {
+            border: 0;
+            height: auto;
+            outline: none;
+            text-decoration: none;
+        }
+
+        body, #bodyTable, #bodyCell {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+
+        #outlook a {
+            padding: 0;
+        }
+
+        img {
+            -ms-interpolation-mode: bicubic;
+        }
+
+        table {
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
+
+        .ReadMsgBody {
+            width: 100%;
+        }
+
+        .ExternalClass {
+            width: 100%;
+        }
+
+        p, a, li, td, blockquote {
+            mso-line-height-rule: exactly;
+        }
+
+            a[href^=tel], a[href^=sms] {
+                color: inherit;
+                cursor: default;
+                text-decoration: none;
+            }
+
+        p, a, li, td, body, table, blockquote {
+            -ms-text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        .ExternalClass, .ExternalClass p, .ExternalClass td, .ExternalClass div, .ExternalClass span, .ExternalClass font {
+            line-height: 100%;
+        }
+
+        a[x-apple-data-detectors] {
+            color: inherit !important;
+            text-decoration: none !important;
+            font-size: inherit !important;
+            font-family: inherit !important;
+            font-weight: inherit !important;
+            line-height: inherit !important;
+        }
+
+        #bodyCell {
+            padding: 10px;
+        }
+
+        /*.templateContainer {
+            max-width: 1200px !important;
+        }*/
+
+        a.mcnButton {
+            display: block;
+        }
+
+        .mcnImage {
+            vertical-align: bottom;
+        }
+
+        .mcnTextContent {
+            word-break: break-word;
+        }
+
+            .mcnTextContent img {
+                height: auto !important;
+            }
+
+        .mcnDividerBlock {
+            table-layout: fixed !important;
+        }
+
+        body, #bodyTable {
+            background-color: #FAFAFA;
+        }
+
+        #bodyCell {
+            border-top: 0;
+        }
+
+        .templateContainer {
+            border: 0;
+        }
+
+        h1 {
+            color: #202020;
+            font-family: Helvetica;
+            font-size: 26px;
+            font-style: normal;
+            font-weight: bold;
+            line-height: 125%;
+            letter-spacing: normal;
+            text-align: left;
+        }
+
+        h2 {
+            color: #202020;
+            font-family: Helvetica;
+            font-size: 22px;
+            font-style: normal;
+            font-weight: bold;
+            line-height: 125%;
+            letter-spacing: normal;
+            text-align: left;
+        }
+
+        h3 {
+            color: #202020;
+            font-family: Helvetica;
+            font-size: 20px;
+            font-style: normal;
+            font-weight: bold;
+            line-height: 125%;
+            letter-spacing: normal;
+            text-align: left;
+        }
+
+        h4 {
+            color: #202020;
+            font-family: Helvetica;
+            font-size: 18px;
+            font-style: normal;
+            font-weight: bold;
+            line-height: 125%;
+            letter-spacing: normal;
+            text-align: left;
+        }
+
+        #templatePreheader {
+            background-color: #FAFAFA;
+            background-image: none;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            border-top: 0;
+            border-bottom: 0;
+            padding-top: 9px;
+            padding-bottom: 9px;
+        }
+
+            #templatePreheader .mcnTextContent, #templatePreheader .mcnTextContent p {
+                color: #656565;
+                font-family: Helvetica;
+                font-size: 10px;
+                line-height: 150%;
+                text-align: left;
+            }
+
+                #templatePreheader .mcnTextContent a, #templatePreheader .mcnTextContent p a {
+                    color: #656565;
+                    font-weight: normal;
+                    text-decoration: underline;
+                }
+
+        #templateHeader {
+            background-color: #FFFFFF;
+            background-image: none;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            border-top: 0;
+            border-bottom: 0;
+            padding-top: 9px;
+            padding-bottom: 0;
+        }
+
+            #templateHeader .mcnTextContent, #templateHeader .mcnTextContent p {
+                color: #202020;
+                font-family: Helvetica;
+                font-size: 16px;
+                line-height: 150%;
+                text-align: left;
+            }
+
+                #templateHeader .mcnTextContent a, #templateHeader .mcnTextContent p a {
+                    color: #2BAADF;
+                    font-weight: normal;
+                    text-decoration: underline;
+                }
+
+        #templateColumns {
+            background-color: #FFFFFF;
+            background-image: none;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            border-top: 0;
+            border-bottom: 2px solid #EAEAEA;
+            padding-top: 0;
+            padding-bottom: 9px;
+        }
+
+            #templateColumns .columnContainer .mcnTextContent, #templateColumns .columnContainer .mcnTextContent p {
+                color: #202020;
+                font-family: Helvetica;
+                font-size: 16px;
+                line-height: 150%;
+                text-align: left;
+            }
+
+                #templateColumns .columnContainer .mcnTextContent a, #templateColumns .columnContainer .mcnTextContent p a {
+                    color: #2BAADF;
+                    font-weight: normal;
+                    text-decoration: underline;
+                }
+
+        #templateFooter {
+            background-color: #FAFAFA;
+            background-image: none;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            border-top: 0;
+            border-bottom: 0;
+            padding-top: 9px;
+            padding-bottom: 9px;
+        }
+
+            #templateFooter .mcnTextContent, #templateFooter .mcnTextContent p {
+                color: #656565;
+                font-family: Helvetica;
+                font-size: 13px;
+                line-height: 150%;
+                text-align: center;
+            }
+
+                #templateFooter .mcnTextContent a, #templateFooter .mcnTextContent p a {
+                    color: #656565;
+                    font-weight: normal;
+                    text-decoration: underline;
+                }
+    </style>
+
+    <script type="text/javascript">
+        try {
+            var _gaq = _gaq || [];
+            _gaq.push(["_setAccount", "UA-329148-88"]);
+            _gaq.push(["_setDomainName", ".campaign-archive.com"]);
+            _gaq.push(["_trackPageview"]);
+            _gaq.push(["_setAllowLinker", true]);
+        } catch (err) { console.log(err); }</script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script src="http://us10.campaign-archive1.com/js/mailchimp/fancyzoom.mc.js"></script>
+    <script type="text/javascript">
+        function incrementFacebookLikeCount() {
+            var current = parseInt($('#campaign-fb-like-btn span').html());
+            $('#campaign-fb-like-btn span').fadeOut().html(++current).fadeIn();
+        }
+
+        function getUrlParams(str) {
+            var vars = {}, hash;
+            if (!str) return vars;
+            var hashes = str.slice(str.indexOf('?') + 1).split('&');
+            for (var i = 0; i < hashes.length; i++) {
+                hash = hashes[i].split('=');
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        }
+
+        if (window.top != window.self) {
+            $(function () {
+                var iframeOffset = $("#archive", window.parent.document).offset();
+                $("a").each(function () {
+                    var link = $(this);
+                    var href = link.attr("href");
+                    if (href && href[0] == "#") {
+                        var name = href.substring(1);
+                        $(this).click(function () {
+                            var nameElement = $("[name='" + name + "']");
+                            var idElement = $("#" + name);
+                            var element = null;
+                            if (nameElement.length > 0) {
+                                element = nameElement;
+                            } else if (idElement.length > 0) {
+                                element = idElement;
+                            }
+
+                            if (element) {
+                                var offset = element.offset();
+                                var height = element.height();
+                                //3 is totally arbitrary, but seems to work best.
+                                window.parent.scrollTo(offset.left, (offset.top + iframeOffset.top - (height * 3)));
+                            }
+
+                            return false;
+                        });
+                    }
+                });
+            });
+        }
+    </script>
+    <style type="text/css">
+        /* Facebook/Google+ Modals */
+        #social-proxy {
+            background: #fff;
+            -webkit-box-shadow: 4px 4px 8px 2px rgba(0,0,0,.2);
+            box-shadow: 4px 4px 8px 2px rgba(0,0,0,.2);
+            padding-bottom: 35px;
+            z-index: 1000;
+        }
+
+        #social-proxy_close {
+            display: block;
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 30px;
+            width: 32px;
+            background: transparent url() 0 -200px;
+            text-indent: -9999px;
+            outline: none;
+            font-size: 1px;
+        }
+
+            #social-proxy_close:hover {
+                background-position: 0 -240px;
+            }
+
+        body {
+            padding-bottom: 50px !important;
+        }
+    </style>
+</head>
+
+<body style="height: 100%;margin: 0;padding: 0;width: 100%;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;background-color: #FAFAFA;">
+    <center>
+        <table align="center" border="1" cellpadding="10" cellspacing="0" height="100%" width="100%" id="bodyTable" style="-webkit-text-size-adjust: 100%;height: 100%;margin: 0;padding: 6px;width: 100%; border: 1px;">
+            <tr>
+                <td align="center" valign="top" id="bodyCell" style="mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;height: 100%;margin: 0;padding: 10px;width: 100%;">
+
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%" class="templateContainer">
+
+                        <tr>
+                            <td valign="top" id="templateColumn1">
+                                @*<td valign="top" id="templateColumns" style="background:#FFFFFF none no-repeat center/cover;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;background-color: #FFFFFF;background-image: none;background-repeat: no-repeat;background-position: center;background-size: cover;border-top: 0;border-bottom: 2px solid #EAEAEA;padding-top: 0;padding-bottom: 9px;">*@
+                                <!--[if gte mso 9]>
+                                <table align="center" border="0" cellspacing="0" cellpadding="0" width="350" style="width:350px;">
+                                <tr>
+                                <td align="center" valign="top" width="350" style="width:350px;">
+                                <![endif]-->
+                                <table align="left" border="0" cellpadding="0" cellspacing="0" width="350" class="columnWrapper" style="border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
+                                    <tr>
+                                        <td valign="top" class="columnContainer" style="mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
+                                            <table class="mcnTextBlock" style="min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                <tbody class="mcnTextBlockOuter">
+                                                    <tr>
+                                                        <td class="mcnTextBlockInner" style="padding-top: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;" valign="top">
+                                                            <!--[if mso]>
+                                                                            <table align="left" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                                                                            <tr>
+                                                                            <![endif]-->
+                                                            <!--[if mso]>
+                                                            <td valign="top" width="350" style="width:350px;">
+                                                            <![endif]-->
+                                                            <table style="max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;" class="mcnTextContentContainer" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+                                                                <tbody>
+                                                                    <tr>
+
+                                                                        <td class="mcnTextContent" style="padding-top: 0;padding-right: 18px;padding-bottom: 9px;padding-left: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #202020;font-family: Helvetica;font-size: 13px;text-align: left;" valign="top">
+                                                                            
+                                                                            <h1 style="font-size: 18px;" align="center">@Model.Webinar.Title</h1>
+                                                                            <h3 align="center">
+                                                                                <b>
+                                                                                    A web-based Seminar<br />
+                                                                                    @webinar.Date.ToLongDateString()<br />
+                                                                                    @Html.Raw(TimeFormatDisplay)<br />
+                                                                                </b>
+                                                                            </h3>
+                                                                            <p><b>Recommended for @CEUValue CE Credits</b></p>
+                                                                            <b>Program Content: </b>@Html.Raw(webinar.Description)
+                                                                            <h3>@Html.Raw(Model.Webinar.LearnCaption)</h3>
+                                                                            @Html.Raw(webinar.LearnBody)
+
+                                                                            <h3>Who Should Attend</h3>
+                                                                            @Html.Raw(webinar.WhoAttend)
+
+                                                                            <h3>@Html.Raw(Model.Webinar.Presenter.WebUser.FullName)</h3>
+                                                                            <div>@Html.Raw(Model.PresenterW_OutPic)</div><br>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                            <!--[if mso]>
+                                                            </td>
+                                                            <![endif]-->
+                                                            <!--[if mso]>
+                                                            </tr>
+                                                            </table>
+                                                            <![endif]-->
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <!--[if gte mso 9]>
+                                </td>
+                                    <td align="center" valign="top" width="350" style="width:350px;">
+                                <![endif]-->
+                            </td>
+                            <td valign="top" id="templateColumn2">
+                                <table align="left" border="0" cellpadding="0" cellspacing="0" width="350" class="columnWrapper">
+                                    <tr>
+                                        <td valign="top" class="columnContainer">
+                                            <table class="mcnTextBlock">
+                                                <tbody class="mcnTextBlockOuter">
+                                                    <tr>
+                                                        <td class="mcnTextBlockInner">
+                                                            <!--[if mso]>
+                                                                            <table align="left" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                                                                            <tr>
+                                                                            <![endif]-->
+                                                            <!--[if mso]>
+                                                            <td valign="top" width="350" style="width:350px;">
+                                                            <![endif]-->
+                                                            <table>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td class="mcnTextContent">
+                                                                            <div id="logo" style="background: url('https://www.bankwebinars.com/Content/images/logo_bankwebinars.png') no-repeat scroll 0 0 rgba(0, 0, 0, 0)"></div>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                            <!--[if mso]>
+                                                            </td>
+                                                            <![endif]-->
+                                                            <!--[if mso]>
+                                                            </tr>
+                                                            </table>
+                                                            <![endif]-->
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <!--[if gte mso 9]>
+                                </td>
+                                </tr>
+                                </table>
+                                <![endif]-->
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </center>
+</body>
+</html>

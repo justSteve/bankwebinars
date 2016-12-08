@@ -8,6 +8,7 @@ namespace CUWebinars.Business.Notification.ViewModel
     public class WebinarPromoViewModel
     {
         public string SubscriptionPackURL;
+        public string CEUValue;
         public ClaimsIdentity Identity { get; set; }
         public string TemplateType { get; set; } // will the template be the 'per day' or  per week
         public Affiliate Affiliate { get; set; }
@@ -24,5 +25,8 @@ namespace CUWebinars.Business.Notification.ViewModel
         public USTimeZone TimeZone { get; set; }
         public string ListOfWebinarsUpcomingRendered { get; set; }
         public string BasePrice { get; set; }
+        public string Subject { get; set; }
+        public string BodyLeft { get; set; }
+        public string BodyRight { get; set; }
     }
 }

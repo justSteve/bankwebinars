@@ -24,11 +24,11 @@ namespace CUWebinars.Web.Core.Orchestrators
         private readonly IStateService _stateService;
         private readonly ILogger _logger;
         private readonly IAppHelper _appHelper;
-        
+
         private bool _disposed;
 
         public OrderControllerOrchestrator(IQueryProcessor queryProcessor, ICommandProcessor commandProcessor,
-            IStateService stateService, ILogger logger,            IAppHelper appHelper)
+            IStateService stateService, ILogger logger, IAppHelper appHelper)
         {
             _queryProcessor = queryProcessor;
             _commandProcessor = commandProcessor;
@@ -90,7 +90,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             string confirmChangeEmailUrl,
             bool existingUser)
         {
-            
+
             var ImportOrderRowCommand = new ImportOrderRowCommand
             {
                 AdditionalLocationsString = ImportOrderModel.AdditionalLocationsString,
@@ -99,9 +99,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 Discount = ImportOrderModel.DiscountCode,
                 Webinar = importQueryResult.Webinar
             };
-
+            //processed by: OrderManagementCommandHandlers
+            _logger.Info("AdditionalLocationsString are: " + ImportOrderModel.AdditionalLocationsString + " AdditionalLocations" + ImportOrderModel.AdditionalLocations);
             _commandProcessor.Execute(ImportOrderRowCommand);
-
 
             var ImportOrderCommand = new ImportOrderCommand()
             {
@@ -142,8 +142,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             bool userAlreadyExists)
         {
 
-             //incomingOrderModel.AdditionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(incomingOrderModel.AdditionalLocations).ToList();
-            
+            //incomingOrderModel.AdditionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(incomingOrderModel.AdditionalLocations).ToList();
+
             var addOrderRowCommand = new AddOrderRowCommand
             {
                 AdditionalLocations = incomingOrderModel.AdditionalLocations,
@@ -230,7 +230,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             var result = false;
             if (migrateOrderModel.DiscountCode != null)
             {
-                 result = Int32.TryParse(migrateOrderModel.DiscountCode.Replace("CP_", ""), out _discountCode);
+                result = Int32.TryParse(migrateOrderModel.DiscountCode.Replace("CP_", ""), out _discountCode);
             }
             if (result)
             {

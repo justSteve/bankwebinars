@@ -881,7 +881,11 @@ namespace CUWebinars.Web.Controllers
                         UserIsAdmin = false,
                         Webinar = model.Webinar
                     };
-
+                    model.PromoLinks = new PromoLinks
+                    {
+                        Affiliate = aff,
+                        Links = _affiliateManagementService.GetPromosByAffiliate(_globalConfig.Tenant, aff.idUserAff, webinar.idWebinar)
+                };
                     BuildConfirmOrderView(model);
                     return PartialView("DetailsAffiliate", model);
                 }
@@ -892,7 +896,6 @@ namespace CUWebinars.Web.Controllers
                         model.Order.Origin = DomainConstants.OriginExpress;
                 BuildConfirmOrderView(model);
 
-                model.AddICS = _webinarControllerOrchestrator.CreateICS(model);
                 return View(model);
             }
 
@@ -907,7 +910,7 @@ namespace CUWebinars.Web.Controllers
             var webinar = _webinarControllerOrchestrator.GetWebinar(icsWebinar);
 
             var desc = webinar.Description;
-           desc = HtmlHelpers.StripHtmlTags(desc);
+            desc = HtmlHelpers.StripHtmlTags(desc);
 
 
             var icalStringbuilder = new StringBuilder();
@@ -923,7 +926,7 @@ namespace CUWebinars.Web.Controllers
             icalStringbuilder.AppendLine("DESCRIPTION:" + desc);
             icalStringbuilder.AppendLine("X-ALT-DESC;FMTTYPE=text/html:" + webinar.Description);
             icalStringbuilder.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmss}", webinar.Date));
-            icalStringbuilder.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmss}", webinar.Date.AddHours((double)webinar.Duration) ));
+            icalStringbuilder.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmss}", webinar.Date.AddHours((double)webinar.Duration)));
             icalStringbuilder.AppendLine("SEQUENCE:0");
             icalStringbuilder.AppendLine("UID:" + Guid.NewGuid());
             icalStringbuilder.AppendLine("END:VEVENT");
@@ -1723,13 +1726,28 @@ namespace CUWebinars.Web.Controllers
                 .OrderBy(p => p.EventDate).Take(25)
                 .Select(p => new SyndicationItem(p.Title, p.Content, new Uri(p.Url)));
 
-            var feed = new SyndicationFeed("Events from " + _globalConfig.Tenant, _globalConfig.TenantURL + " is Webinars for the financial industry.", new Uri("http://www.bankwebinars/com/blog"), postItems)
+            var feed = new SyndicationFeed("Events from " + _globalConfig.Tenant, _globalConfig.TenantURL + " is Webinars for the financial industry.", new Uri("http://www.bankwebinars.com/blog"), postItems)
             {
-                //Copyright = blog.Copyright,
-                //Language = "en-US"
-
+                
             };
+            return new FeedResult(new Rss20FeedFormatter(feed));
 
+        }        [System.Web.Mvc.AcceptVerbs(HttpVerbs.Get)]
+        public ActionResult CalendarRssFull()
+        {
+            IList<Webinar> webinarsList = _webinarManagementService.GetUpcomingWebinars().ToList();
+
+            var data = new CalendarRssFullDTOAssembler().Entities2DTOs(webinarsList);
+
+            //var blog = data.SingleOrDefault();
+            var postItems = data//.Where(p => p.Title = blog)
+                .OrderBy(p => p.EventDate).Take(25)
+                .Select(p => new SyndicationItem(p.Title, p.Content, new Uri(p.Url)));
+
+            var feed = new SyndicationFeed("Events from " + _globalConfig.Tenant, _globalConfig.TenantURL + " is Webinars for the financial industry.", new Uri("http://www.bankwebinars.com/blog"), postItems)
+            {
+                
+            };
             return new FeedResult(new Rss20FeedFormatter(feed));
 
         }
@@ -2047,46 +2065,6 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpGet]
         [ValidateJsonAntiForgeryToken]
-        public async Task<JsonResult> CreateCampaign(int idWebinar, string ttsDomain)
-        {
-
-            var webinar = _webinarManagementService.GetWebinar(idWebinar);
-            var affiliate = _affiliateManagementService.LoadByTTSDomain(ttsDomain);
-
-            IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10"); //if you have it in code
-
-            var newCamp = new Campaign
-            {
-                ContentType = "html",
-                Type = CampaignType.Regular,
-                Recipients = new Recipient { ListId = "6001c311bf" },
-                Settings = new Setting
-                {
-                    SubjectLine = "[testing] " + webinar.Title,
-                    Title = "[testing] " + ttsDomain + "_" + webinar.Title,
-                    FolderId = "79f02e25e8",
-                    InlineCss = false,
-                    Authenticate = true,
-                    AutoFooter = true,
-                    AutoTweet = false,
-                    FromName = "ApiTest",
-                    ReplyTo = "steve@ttstrain.com"
-                }
-
-            };
-            var mkCamp = await manager.Campaigns.AddAsync(campaign: newCamp);
-
-            var content = new Content
-            {
-                Html = "<div>test</div>"
-
-            };
-
-            return null;
-        }
-
-        [System.Web.Mvc.HttpGet]
-        [ValidateJsonAntiForgeryToken]
         public async Task<JsonResult> CreateCitrixWebinar(int idWebinar)
         {
             _logger.Info("CreateCitrixWebinar begins");
@@ -2347,6 +2325,9 @@ namespace CUWebinars.Web.Controllers
         public ActionResult ClickToJoin(string joinCode, int? idWebinar)
         {
             var webinar = _orderManagementService.GetWebinarByJoinCode(joinCode);
+            var order = _orderManagementService.GetOrderByJoinCode(joinCode);
+
+
 
             var clickToJoinViewModel = new ClickToJoinViewModel
             {
@@ -2367,7 +2348,7 @@ namespace CUWebinars.Web.Controllers
                 };
 
             }
-
+            clickToJoinViewModel.TimeZone = _orderManagementService.GetWebUser(order.idUser).timeZone;
             if (_stateService.HasValue(WebUiConstants.WebinarFromCode))
                 _stateService.ClearValue(WebUiConstants.WebinarFromCode);
             _stateService.SetValue(WebUiConstants.WebinarFromCode, webinar);
