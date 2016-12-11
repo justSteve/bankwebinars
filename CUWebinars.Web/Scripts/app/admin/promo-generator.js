@@ -12,13 +12,19 @@ $(document).ready(function () {
     $("#showCampaignsBtn").on("click", showHideCampaign);
 
 
+    if (currentUserIsAffiliate) {
+        $(".setStatusBtn").hide();
+        $("#leftSideBar").hide();
+        $("#showCampaignsBtn").hide();
+    }
 
-    if (valOfStatus == "Pending") {
+    if (valOfStatus === "Pending") {
         $(".setStatusBtn").text("Set event to 'Scheduled'.");
 
     } else {
         $(".setStatusBtn").text("Set event to 'Pending'.");
     }
+
 
     $("#sendAll").on("click", function (e) {
 
@@ -42,16 +48,10 @@ $(document).ready(function () {
         }
     });
 
-    // refactoring to be a little more basic as I had trouble with the reliability of the bootstrap tab events (2 of 3)
-    // event documentation from http://getbootstrap.com/javascript/#tabs
-    //$('a[data-toggle="pill"]').on('shown.bs.tab', function (e) { // was "shown.bs.tab" but that stopped firing?? switch to show.bs.tab, it worked, switch back to shown and *that* worked??
-    $('a[data-toggle="pill"]').on('click', function (e) { // handle click event instead of built-in "tab shown" event
-        //e.target // newly activated tab/pill
-        //e.relatedTarget // previous active tab/pill
 
-        // refactoring to be a little more basic as I had trouble with the reliability of the bootstrap tab events (3 of 3)
-        //var currentAffId = $(e.target).data("link-affid");
-        //var formerAffId = $(e.relatedTarget).data("link-affid");
+    $('a[data-toggle="pill"]').on('click', function (e) {
+        // handle click event instead of built-in "tab shown" event
+
         formerAffId = currentAffId;
         currentAffId = $(this).data("link-affid");
 
@@ -71,6 +71,8 @@ $(document).ready(function () {
 
         SetEditorTabForAffiliate(currentAffId, affCopy);
     });
+
+
 
     $("#submitGenPromoTexts").on('click', function (e) {
         e.preventDefault();
@@ -161,6 +163,29 @@ $(document).ready(function () {
     });
 
 });
+function setDataForAffiliate(currentAffId) {
+    
+    // handle click event instead of built-in "tab shown" event
+
+    formerAffId = currentAffId;
+    //currentAffId = $(this).data("link-affid");
+
+    var $editorTA = $("#editorTA");
+
+    // start by retrieving what is in the editor now
+    var currCopy = $.trim($editorTA.wijeditor("getText"));
+
+    // if it starts with our special comment (<!--WIJ-NULL-->) remove that
+    currCopy = stripWijNull(currCopy);
+
+    // store it in the proper textarea
+    $("#editor_" + formerAffId).val(currCopy);
+
+    // grab the target's textarea and load up the editor and its associated textarea
+    affCopy = $("#editor_" + currentAffId).val();
+
+    SetEditorTabForAffiliate(currentAffId, affCopy);
+}
 function showHideCampaign() {
 
     if ($(this).hasClass('active')) {
@@ -184,32 +209,33 @@ function GetCurrentEditorCopy() {
 
 function SetwStatus() {
     var subject = prompt("Subject Line", _subject);
+    if (subject != null) {
 
-    var idWebinar = $("#Webinar_idWebinar").val();
-    console.log(status);
-    $.ajax({
-        url: '/Webinar/SetStatus',
-        type: 'GET',
-        data: { "idWebinar": idWebinar, "status": valOfStatus, "subject": subject },
-        dataType: "json",
-        //contentType: "json",
-        success: function (result) {
-            $("#sendAll").show();
-            if (result.status == "Scheduled") {
-                $(".setStatusBtn").text("Status set to: Pending");
+        var idWebinar = $("#Webinar_idWebinar").val();
+        console.log(_subject + " " + subject);
+        $.ajax({
+            url: '/Webinar/SetStatus',
+            type: 'GET',
+            data: { "idWebinar": idWebinar, "status": valOfStatus, "subject": subject },
+            dataType: "json",
+            //contentType: "json",
+            success: function(result) {
+                $("#sendAll").show();
+                if (result.status === "Scheduled") {
+                    $(".setStatusBtn").text("Status set to: Pending");
 
+                } else {
+                    $(".setStatusBtn").text("Status set to: Scheduled");
+                    valOfStatus = result.status;
 
-            } else {
-                $(".setStatusBtn").text("Status set to: Scheduled");
-                valOfStatus = result.status;
-
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus + " " + errorThrown);
             }
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus + " " + errorThrown);
-        }
 
-    });
+        });
+    }
 };
 function GetAffiliateCopy(affiliateId, isActive) {
 
@@ -241,16 +267,42 @@ function SetCopyToClipboardTextArea(selectText) {
 // not the cleanest function ever... pending a refactor?
 function SetEditorTabForAffiliate(affiliateId, affiliateCopy) {
     var localCopy = affiliateCopy;
+    
+    $.ajax({
+        url: '/Admin/GetAffiliateTimeZone',
+        type: 'POST',
+        data: {
+            "idAffiliate": affiliateId,
+            "idWebinar": $("#Webinar_idWebinar").val()
+        },
+        dataType: "json",
+
+        success: function(result) {
+            $('#TimeFormatDisplayForAffiliate').val(result.timeFormatDisplay);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus + " " + errorThrown);
+        }
+    });
 
     // if it's blank, run master conversion
-    if (affiliateId != 0 &&
-        $.trim(localCopy) == "") {
 
+    //update by sjh while trying to adapt for affiliate's use of this method
+    // -- can not find conditions where this test ever evaluates to true - strange
+    // -- because logging affiliateId and localCopy will always show expected values
+    // -- am hacking around by addeing ( || currentUserIsAffiliate). Detects that affiliate (not admin)
+    // -- is source of call.
+    if ((affiliateId !== 0 &&
+        localCopy === "") || currentUserIsAffiliate) {
+        //$.trim(localCopy) == "") {
+        
         var affObj = arrayLookup(affs, "idUserAff", affiliateId);
+        
         if (affObj != null) {
-            localCopy = replaceMasterTokensForAffiliate(affObj);
-            console.log(affObj);
-            // this probably needs to be moved out of this function, but only needs to run on initial tab load, just like the replacement code
+            localCopy = replaceMasterTokensForAffiliate(affObj);    
+            // this probably needs to be moved out of this function, 
+            // but only needs to run on initial tab load, just like the replacement code
+
             // deal with the SendToList_XYZ box
             var sendTo = $("#SendToList_" + affiliateId);
             if ($.trim(sendTo.val()) == "") {
@@ -266,9 +318,9 @@ function SetEditorTabForAffiliate(affiliateId, affiliateCopy) {
 
     var $editorTA = $("#editorTA");
     $editorTA.wijeditor("setText", localCopy);
+    console.log(localCopy);
     SetCopyToClipboardTextArea(false);
     $editorTA.focus();
-
 }
 
 function GetMasterMarkupAJAX($btn) {
@@ -299,6 +351,10 @@ function GetMasterMarkupAJAX($btn) {
         $('#submitSpinWrapper').remove();
         $btn.blur();
     });
+
+    if (currentUserIsAffiliate) {
+        setDataForAffiliate(currentUserId);
+    }
 }
 
 function SendAll($btn) {
@@ -371,7 +427,8 @@ function SendAll($btn) {
 }
 
 function CreateCampaign($btn, affiliateId) {
-
+    var _sendTime = 10;
+    var sendTime = prompt("Time To Send: ", _sendTime);
     // save time...
     var tStart = (new Date()).getTime();
 
@@ -397,7 +454,7 @@ function CreateCampaign($btn, affiliateId) {
     $.ajax({
         url: '/Admin/CreateCampaignSingle',
         type: 'POST',
-        data: { "affiliateId": affiliateId, "messageBodyHtml": currCopy, "webinarId": $("#Webinar_idWebinar").val(), "sendDate": $("#SendDate").val() },
+        data: { "affiliateId": affiliateId, "messageBodyHtml": currCopy, "webinarId": $("#Webinar_idWebinar").val(), "sendDate": $("#SendDate").val(), "sendTime": sendTime },
         dataType: "json",
         async: false,
         //contentType: "json",
@@ -417,7 +474,6 @@ function CreateCampaign($btn, affiliateId) {
     setTimeout(function () { $btn.text(origBtnText); }, 2000);
 
 }
-
 
 
 function WriteAllAffMarkupToStorageAJAX($btn) {
@@ -583,7 +639,7 @@ function SendToAff(affiliateId) {
 
     //alert($("#SendToList_" + affiliateId).val());
     var currCopy = GetCurrentEditorCopy();
-    
+
 
     $.ajax({
         url: '/Admin/SendSinglePromo',
@@ -609,6 +665,7 @@ function replaceMasterTokensForAffiliate(aff) {
     copy = copy.replace(/\{aff_EmailBanner\}/gi, aff.EmailBanner);
     copy = copy.replace(/\{aff_ttsdomain\}/gi, aff.ttsDomain);
     copy = copy.replace(/\{aff_idUserAff\}/gi, aff.idUserAff);
+    copy = copy.replace(/\{aff_timeZone\}/gi, aff.timeZone);
     copy = copy.replace(/\{aff_ContactPerson\}/gi, aff.ContactPerson);
     copy = copy.replace(/\{aff_ContactEmail\}/gi, aff.ContactEmail);
     copy = copy.replace(/\{aff_ContactPhone\}/gi, aff.ContactPhone);

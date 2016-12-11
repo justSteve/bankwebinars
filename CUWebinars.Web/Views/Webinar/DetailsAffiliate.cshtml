@@ -197,27 +197,26 @@
                     }
                 </ul>
             </aside>
-            @*<div>
+            <div>
                 <a href="/admin/perdaypromo/@Model.Webinar.idWebinar" class="btn btn-dangerx">Daily Promotional Email</a>
-                <a href="#" data-toggle="collapse" data-target="#ListOfEvents" class="btn btn-dangerx">Weekly Promotional Email</a>
-                        </div>
-                        <div id="ListOfEvents" class="collapse out">
-                            @using (Html.BeginForm("perweekpromo", "Admin", FormMethod.Post, new { id = "PickWebinars", @class = "form-horizontal" }))
-                            {
-                                <div>
-                                    <input type="hidden" name="idWebinar" value=@Model.Webinar.idWebinar />
-                                    @Html.DropDownList("ListOfWebinarsForWeekly", (MultiSelectList)ViewBag.ListOfWebinars, new { multiple = "multiple" })
-                                    <br />
-                                    <input type="submit" value="submit" />
-                                </div>
-                            }
-                <a href="/admin/PerWeekPromo?id=2060&includedEventsIds=2060,2078,2071,2072" class="btn btn-dangerx">Weekly Promotional Email</a>
-                        </div>
-                        <!--close aside .widget -->
-                        @*<aside class="widget">
-                                <h5 class="short_headline"><span>Stay Updated</span></h5>
-                                @{Html.RenderPartial("Partials/_AddToMailingBox");}
-                            </aside>*@
+                @*<a href="#" data-toggle="collapse" data-target="#ListOfEvents" class="btn btn-dangerx">Weekly Promotional Email</a>*@
+            </div>
+
+            @*<div id="ListOfEvents" class="collapse out">
+                @using (Html.BeginForm("perweekpromo", "Admin", FormMethod.Post, new { id = "PickWebinars", @class = "form-horizontal" }))
+                {
+                    <div>
+                        <input type="hidden" name="idWebinar" value=@Model.Webinar.idWebinar />
+                        <input type="text" name="sListOfWebinarsForWeekly" />
+                        @Html.DropDownList("ListOfWebinarsForWeekly", (MultiSelectList)ViewBag.ListOfWebinars, new { multiple = "multiple" })
+                
+
+                        <br />
+                        <input type="submit" value="submit" />
+                    </div>
+                }
+            </div>*@
+
 
         </div>
         <!--close section tertiary-column sidebar span3-->

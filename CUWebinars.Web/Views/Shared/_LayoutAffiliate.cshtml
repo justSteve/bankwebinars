@@ -1,6 +1,4 @@
-﻿@using System.Text
-@using CUWebinars.Web.Core
-@using CUWebinars.Business.Constants
+﻿@using CUWebinars.Web.Core
 
 @{
     var PageStyleType = ViewBag.PageStyleType;
@@ -9,14 +7,17 @@
     var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
     var ShowWebinarColumn = "false";
 
-
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
-    var subdomainBranding = stateService.GetValue<string>("SubdomainBranding");
-    var firstPage = stateService.GetValue<string>("FirstPage");
-    var sessionID = stateService.GetValue<string>(WebUiConstants.SessionId);
-    var affiliateSessionSource = stateService.GetValue<string>("AffiliateSessionSource");
-
+    <script type="text/javascript">
+        var affiliateId = @currentAffiliate.idUserAff;
+        var showAffiliateColumn = false;
+        var showWebinarColumn = @ShowWebinarColumn;
+        var showRoyaltyColumn = "true";
+        var currentAffiliateId = "@currentAffiliate.idUserAff";
+        var currentAffiliateDisplayTitle = "@currentAffiliate.DisplayTitle";
+        var currentUserIsAffiliate = true;
+    </script>
 
 }
 <!doctype html>
@@ -29,14 +30,6 @@
 
 <head>
 
-    <script type="text/javascript">
-        var affiliateId = @currentAffiliate.idUserAff;
-        var showAffiliateColumn = false;
-        var showWebinarColumn = @ShowWebinarColumn;
-        var showRoyaltyColumn = "true";
-        var currentAffiliateId = "@currentAffiliate.idUserAff";
-        var currentAffiliateDisplayTitle = "@currentAffiliate.DisplayTitle";
-    </script>
 
     <script type="text/javascript">
         window.$zopim || (function(d, s) {

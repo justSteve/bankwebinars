@@ -11,8 +11,12 @@
 @{
 
     var promoEvent = Model.Webinar;
-    Layout = "/Views/Shared/_LayoutAdmin.cshtml";
 
+    Layout = "/Views/Shared/_LayoutAdmin.cshtml";
+    if (Model.Affiliates.Count < 2)
+    {
+        Layout = "/Views/Shared/_LayoutAffiliate.cshtml";
+    }
     string wDate = "<b>" + DateTimeHelper.FormatDate(Model.Webinar.Date) + "</b> &nbsp;";
     wDate = wDate + DateTimeHelper.FormatTimeWithDuration(Model.Webinar.Date, Model.TimeZone, false, Model.Webinar.Duration);
 
@@ -21,8 +25,16 @@
     //var minDay = 1.Days().Since(DomainConstants.BuildUtcNowAsCts);
     //var maxDay = DomainConstants.BuildUtcNowAsCts.NextMonth();
 
-    bool hasAffiliates = Model.Affiliates.Count > 0;
+    bool hasAffiliates = Model.Affiliates.Count > 1;
     bool isAffiliateRestricted = Model.Affiliate != null;
+
+    if (hasAffiliates != true)
+    {
+        <script language="javascript" type="text/javascript">
+
+            var currentUserId = @Model.Affiliate.idUserAff;
+        </script>
+    }
 }
 
 @Scripts.Render("~/bundles/wijmo-editor-scripts")
@@ -35,6 +47,7 @@
         var affDTO = (from Affiliate a in Model.Affiliates
                       select new
             {
+
                 ttsDomain = a.ttsDomain,
                 idUserAff = a.idUserAff,
                 EmailBanner = a.EmailBanner,
@@ -78,7 +91,7 @@
         </div>
 
         <div class="row-fluid">
-            <div class="span2" style="height:98%; overflow: auto;">
+            <div id="leftSideBar" class="span2" style="height:98%; overflow: auto;">
                 <ul id="showAll" class="nav nav-pills nav-stacked" style="margin: 0; padding: 0;  ">
                     <li class="active"><a href="#tab_Master" data-toggle="pill" data-link-affid="0">MASTER</a></li>
 
@@ -106,6 +119,7 @@
                             @Html.HiddenFor(m => m.TemplateType)
                             @Html.HiddenFor(m => m.Webinar.idWebinar)
                             @Html.HiddenFor(m => m.Webinar.Title)
+                            @Html.HiddenFor(m => m.Affiliate.idUserAff)
 
                             @if (hasAffiliates)
                             {

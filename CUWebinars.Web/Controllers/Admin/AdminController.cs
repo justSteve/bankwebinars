@@ -47,6 +47,7 @@ using MailChimp.Net;
 using MailChimp.Net.Core;
 using MailChimp.Net.Interfaces;
 using MailChimp.Net.Models;
+using Microsoft.Ajax.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
@@ -1687,21 +1688,44 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
         [HttpPost]
+        public JsonResult GetAffiliateTimeZone(int idAffiliate, int idWebinar)
+        {
+
+            Webinar webinar = _webinarManagementService.GetWebinar(idWebinar);
+            var timeZone = _affiliateManagementService.FindById(idAffiliate).WebUser.timeZone;
+            var TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(webinar.Date, timeZone, false) +
+                          " - " +
+                          DateTimeHelper.FormatTime(
+                              webinar.Date.AddHours((double)webinar.Duration), timeZone, true) + "<br /></i>";
+
+
+            return Json(new { timeFormatDisplay = TimeFormatDisplay });
+        }
+
+
+        [HttpPost]
         public JsonResult GeneratePromo(WebinarPromoViewModel model)
         {
 
             if (model.TemplateType == "Daily")
             {
                 model.Webinar = _webinarManagementService.GetWebinar(model.Webinar.idWebinar);
-
                 model.SubscriptionPackURL = "http://ttstrain.com/webinar-subscription-packages-for-credit-unions/";
+                if (model.Affiliate.idUserAff != null && model.Affiliate.idUserAff > 0)
+                {
+                    model.Affiliate = _affiliateManagementService.FindById(model.Affiliate.idUserAff);
+                    model.TimeZone = model.Affiliate.WebUser.timeZone;
 
+                }
                 if (_globalConfig.Tenant == "BankWebinars")
                     model.SubscriptionPackURL = "http://ttstrain.com/webinar-subscription-packages-for-banks/";
 
                 model.BasePrice = "$265";
                 if (model.Webinar.Duration == 1)
                     model.BasePrice = "$165";
+                if ((double)model.Webinar.Duration == 1.5)
+                    model.BasePrice = "$195";
+
                 // populate the dropdown selector (not currently implemented)
                 TempData["ListOfWebinarsForUpcoming"] =
                     _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(10).ToList();
@@ -1830,6 +1854,7 @@ namespace CUWebinars.Web.Controllers.Admin
             model.Webinar = webinar;
             model.Affiliate = _affiliateManagementService.FindById(model.Affiliate.idUserAff);
             model.Affiliate.WebUser = _membershipService.GetWebUserById(model.Affiliate.idUserAff);
+            model.TimeZone = model.Affiliate.WebUser.timeZone;
             model.Webinar.Presenter.WebUser = _membershipService.GetWebUserById(model.Webinar.idPresenter);
 
             var doc = new HtmlDocument();
@@ -1859,28 +1884,28 @@ namespace CUWebinars.Web.Controllers.Admin
             if (upcomingWebinars.Count() > 0)
                 model.ListOfWebinarsUpcomingRendered = String.Join("\r\n", upcomingWebinars);
 
-            model.TimeFormatDisplay = "<b>" + DateTimeHelper.FormatDate(webinar.Date) + " - " +
+            model.TimeFormatDisplay = "" + DateTimeHelper.FormatDate(webinar.Date) + "<br>" +
                DateTimeHelper.FormatTimeWithDuration(webinar.Date, model.TimeZone, false,
-                   webinar.Duration) + "</b><br />";
+                   webinar.Duration);
 
             model.BasePrice = "$265";
             if (model.Webinar.Duration == 1)
                 model.BasePrice = "$165";
+            if ((double)model.Webinar.Duration == 1.5)
+                model.BasePrice = "$195";
 
-            var bodyLeft = "<H1>" + webinar.Title + "</H1>" +
-                doc.DocumentNode.SelectSingleNode("//*[@id='bodyLeft']").InnerHtml;
+            model.Webinar.Description = doc.DocumentNode.SelectSingleNode("//*[@id='bodyLeft']").InnerHtml;
 
             var bodyRight = "<h3 style=\"color: whitesmoke\">Upcoming Webinars</h3>" + model.ListOfWebinarsUpcomingRendered;
             bodyRight += "<p style=\"color: whitesmoke\" align=\"center\"><b>OnDemand Webinars Available</b></p>";
-            bodyRight += "<p style=\"color: whitesmoke\">Unable to attend the live session, or interested in a topic of a past webinar? Not a problem. Get the recording that includes online access to the webinar for six months, you can even add a CD-ROM and materials for offline viewing. <a href=\"@TenantURL/Webinar/Recorded?idaff={aff_idUserAff}\" style=\"color: red; text-decoration: none; border-bottom: 1px dotted red; font-style: italic;\">Click here to see all our OnDemand Recordings.</a></p>";
+            bodyRight += "<p style=\"color: whitesmoke\">Unable to attend the live session, or interested in a topic of a past webinar? Not a problem. Get the recording that includes online access to the webinar for six months, you can even add a CD-ROM and materials for offline viewing. </p>";
             bodyRight += "<p style=\"color: whitesmoke\" align=\"center\"><b>Webinar Subscription Packages</b></p>";
-            bodyRight += "<p style=\"color: whitesmoke\">Would you and your colleagues like to attend webinars at a lower price?&nbsp; With a Webinar Subscription Package, we can help you greatly reduce that expense.&nbsp; <a href=\"@Model.SubscriptionPackURL\" style=\"color: red; text-decoration: none; border-bottom: 1px dotted red; font-style: italic;\">Click here to learn more about this cost-saving option.</a></p>";
+            bodyRight += "<p style=\"color: whitesmoke\">Would you and your colleagues like to attend webinars at a lower price?&nbsp; With a Webinar Subscription Package, we can help you greatly reduce that expense.&nbsp; </p>";
 
-            model.BodyLeft = bodyLeft;
             model.BodyRight = bodyRight;
 
             TableRow insetRow;
-            var document = BuildPromoReplica(model, bodyLeft, bodyRight);
+            var document = GemBoxHelpers.BuildPromoReplica(model);
 
             CloudBlockBlob blob;
             var container = BuildCloudBlobContainer(model, out blob);
@@ -1902,7 +1927,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 blob.UploadFromStream(output);
             }
 
-            bodyLeft = "<h1 style =\"font-size: 18px;\" align=\"center\">" + model.Webinar.Title + "</h1>";
+            var bodyLeft = "<h1 style =\"font-size: 18px;\" align=\"center\">" + model.Webinar.Title + "</h1>";
             bodyLeft += "<h3 align=\"center\"><b>A web-based Seminar<br /></b></h3>";
             bodyLeft += model.TimeFormatDisplay;
             bodyLeft += "<p><b>Recommended for" + model.CEUValue + " CE Credits</b></p>";
@@ -1915,19 +1940,9 @@ namespace CUWebinars.Web.Controllers.Admin
             bodyLeft += model.PresenterW_OutPic;
             bodyLeft += "<h3>Cancellation Policy:</h3><p>Refunds will be given only for cancellations received in written form 3 business days prior to the program.  If your bank is unable to participate after registering, you can also select to receive an OnDemand website link to see the information online of the seminar at no additional charge.</p><p><b>If you are unable to attend the webinar but would like to have this information for training purposes, you may also purchase an OnDemand website link and/or CD-ROM. </b></p>";
 
-            bodyRight = "<div style=\"font-size: small; border-bottom-color: black; border-width: 0 0 2px 0; border-style: solid;\">Bank:   </div>";
-            bodyRight += "<div style=\"font-size: small; border-bottom-color: black; border-width: 0 0 2px 0; border-style: solid;\">Address:    </div>";
-            bodyRight += "<div style=\"font-size: small; border-bottom-color: black; border-width: 0 0 2px 0; border-style: solid;\">City, State, ZIP:   </div>";
-            bodyRight += "<div style=\"font-size: small; border-bottom-color: black; border-width: 0 0 2px 0; border-style: solid;\">Phone:  </div>";
-            bodyRight += "<div style=\"font-size: small; border-bottom-color: black; border-width: 0 0 2px 0; border-style: solid;\">*Email Address:     </div>";
-            bodyRight += "<p style=\"font-size: smaller;\">*Please include an email address as this is how your webinar materials will be delivered to you.</p>";
-            bodyRight += " &#10063; \"<i>Live</i>\" Web connection - <b>$265</b>";
-            bodyRight += "<br>&#10063; Additional connection for a branch - <b>$75 </b></p> ";
-            bodyRight += "<br>&#10063; 6-month \"OnDemand\" website link only - <b> $295</b></p>";
-            bodyRight += "<br>&#10063; CD-ROM and materials only     - <b>$345</b></p>";
-            bodyRight += "<br>&#10063; Live plus OnDemand website link   - <b>$365</b></p>";
-            bodyRight += "<br>&#10063; Entire Package:  Live, OnDemand link, and CD-ROM plus materials    - <b>$395</b></p>";
-            document = BuildPromoForms(model, bodyLeft, bodyRight);
+            //create graphic for right side https://jsfiddle.net/justSteve/8mp40fbu/6/
+
+            document = GemBoxHelpers.BuildPromoForms(model, bodyLeft, bodyRight);
 
             container = BuildCloudBlobContainer(model, out blob);
 
@@ -1954,269 +1969,6 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
 
-        private static DocumentModel BuildPromoForms(WebinarPromoViewModel model, string bodyLeft,
-            string bodyRight)
-        {
-            double bodyWidth;
-            double sideBarWidth;
-            DocumentModel document = new DocumentModel();
-
-            Table table = new Table(document);
-            document.Sections.Add(new GemBox.Document.Section(document, table));
-
-            PageSetup pageSetup = document.Sections[0].PageSetup;
-            pageSetup.PageMargins.Top = 10;
-            pageSetup.PageMargins.Bottom = 10;
-            pageSetup.PageMargins.Left = 35;
-            pageSetup.PageMargins.Right = 35;
-            pageSetup.Orientation = Orientation.Portrait;
-
-
-            bodyWidth = 50; // width / (66 * 100);
-            sideBarWidth = 50; // width / (33 * 100);
-
-            table.TableFormat.AutomaticallyResizeToFitContents = true;
-            table.TableFormat.Alignment = HorizontalAlignment.Center;
-
-            table.Columns.Add(new TableColumn() { PreferredWidth = bodyWidth });
-            table.Columns.Add(new TableColumn() { PreferredWidth = sideBarWidth });
-
-            TableRow logoRow = new TableRow(document);
-            TableRow bodyRow = new TableRow(document);
-            TableRow footerRow = new TableRow(document);
-            TableRow insetRow = new TableRow(document);
-
-
-            //preheadRow.Cells.Add(new TableCell(document, new Paragraph(document, "preheadLeft"))
-            //{
-            //    CellFormat = new TableCellFormat()
-            //    {
-            //        BackgroundColor = Color.LightGray
-            //    }
-            //});
-
-            //preheadRow.Cells.Add(new TableCell(document, new Paragraph(document, "preheadRight")
-            //{
-            //    ParagraphFormat = new ParagraphFormat()
-            //    {
-            //        Alignment = HorizontalAlignment.Center
-            //    }
-            //})
-            //{
-            //    CellFormat = new TableCellFormat()
-            //    {
-            //        VerticalAlignment = VerticalAlignment.Center,
-            //        BackgroundColor = new Color(35, 43, 46)
-            //    }
-            //});
-
-            //logoRow.Cells.Add(new TableCell(document, new Paragraph(document, "logoBanner")
-            //{
-            //    ParagraphFormat = new ParagraphFormat()
-            //    {
-            //        Alignment = HorizontalAlignment.Center
-            //    }
-            //})
-            //{
-            //    CellFormat = new TableCellFormat()
-            //    {
-            //        VerticalAlignment = VerticalAlignment.Center,
-            //        BackgroundColor = new Color(76, 89, 102)
-            //    },
-            //    ColumnSpan = 2
-            //});
-
-            footerRow.Cells.Add(new TableCell(document, new Paragraph(document, "footer")
-            {
-                ParagraphFormat = new ParagraphFormat()
-                {
-                    Alignment = HorizontalAlignment.Center
-                }
-            })
-            {
-                CellFormat = new TableCellFormat()
-                {
-                    VerticalAlignment = VerticalAlignment.Center,
-                    BackgroundColor = new Color(76, 89, 102)
-                },
-                ColumnSpan = 2
-            });
-
-
-            bodyRow.Cells.Add(new TableCell(document, new Paragraph(document, "bodyLeft"))
-            {
-                CellFormat = new TableCellFormat()
-                {
-                    BackgroundColor = Color.LightGray
-                }
-            });
-
-            bodyRow.Cells.Add(new TableCell(document, new Paragraph(document, "bodyRight")));
-
-
-            //table.Rows.Add(preheadRow);
-            //table.Rows.Add(logoRow);
-            table.Rows.Add(bodyRow);
-            table.Rows.Add(footerRow);
-
-
-            //foreach (ContentRange item in document.Content.Find("preheadRight").Reverse())
-            //    item.LoadText("<a href=\"*|ARCHIVE|*\" style=\"mso-line-height-rule: exactly; color: whitesmoke; font-weight: normal; text-decoration: none; text-align: right;\" target=\"_blank\">View this email in your browser</a>", new HtmlLoadOptions());
-            //foreach (ContentRange item in document.Content.Find("preheadLeft").Reverse())
-            //    item.LoadText(webinar.Description, new HtmlLoadOptions());
-            foreach (ContentRange item in document.Content.Find("logoBanner").Reverse())
-                item.LoadText(model.Affiliate.EmailBanner, new HtmlLoadOptions());
-            foreach (ContentRange item in document.Content.Find("bodyLeft").Reverse())
-                item.LoadText(bodyLeft, new HtmlLoadOptions());
-            foreach (ContentRange item in document.Content.Find("bodyRight").Reverse())
-                item.LoadText(bodyRight, new HtmlLoadOptions());
-            foreach (ContentRange item in document.Content.Find("footer").Reverse())
-                item.LoadText(model.Affiliate.EmailFooter, new HtmlLoadOptions());
-            return document;
-        }
-        private static DocumentModel BuildPromoReplica(WebinarPromoViewModel model, string bodyLeft,
-            string bodyRight)
-        {
-            double bodyWidth;
-            double sideBarWidth;
-            DocumentModel document = new DocumentModel();
-
-            Table table = new Table(document);
-            Table tableInset = new Table(document);
-            document.Sections.Add(new GemBox.Document.Section(document, table));
-
-            double width = document.Sections[0].PageSetup.PageWidth;
-            double height = document.Sections[0].PageSetup.PageHeight;
-            PageSetup pageSetup = document.Sections[0].PageSetup;
-            pageSetup.PageMargins.Top = 10;
-            pageSetup.PageMargins.Bottom = 10;
-            pageSetup.PageMargins.Left = 35;
-            pageSetup.PageMargins.Right = 35;
-            pageSetup.Orientation = Orientation.Portrait;
-
-
-            bodyWidth = 380; // width / (66 * 100);
-            sideBarWidth = 140; // width / (33 * 100);
-
-            table.TableFormat.AutomaticallyResizeToFitContents = true;
-            table.TableFormat.Alignment = HorizontalAlignment.Center;
-
-            table.Columns.Add(new TableColumn() { PreferredWidth = bodyWidth });
-            table.Columns.Add(new TableColumn() { PreferredWidth = sideBarWidth });
-            tableInset.Columns.Add(new TableColumn());
-            tableInset.Columns.Add(new TableColumn());
-
-            //TableRow preheadRow = new TableRow(document);
-            TableRow logoRow = new TableRow(document);
-            TableRow bodyRow = new TableRow(document);
-            TableRow footerRow = new TableRow(document);
-            TableRow insetRow = new TableRow(document);
-
-            insetRow.Cells.Add(new TableCell(document, new Paragraph(document,
-                    new Picture(document, model.Webinar.Presenter.PhotoFull))
-            ));
-
-            insetRow.Cells.Add(new TableCell(document, new Paragraph(document,
-                    model.TimeFormatDisplay + "Presented by " +
-                    model.Webinar.Presenter.WebUser.FullName +
-                    "<br><span style=\"font-size: xx-small; line-height: 100% \"><i>* Can't attend? OnDemand playback included with your registration.</i></span></p>")
-            ));
-
-            tableInset.Rows.Add(insetRow);
-            //preheadRow.Cells.Add(new TableCell(document, new Paragraph(document, "preheadLeft"))
-            //{
-            //    CellFormat = new TableCellFormat()
-            //    {
-            //        BackgroundColor = Color.LightGray
-            //    }
-            //});
-
-            //preheadRow.Cells.Add(new TableCell(document, new Paragraph(document, "preheadRight")
-            //{
-            //    ParagraphFormat = new ParagraphFormat()
-            //    {
-            //        Alignment = HorizontalAlignment.Center
-            //    }
-            //})
-            //{
-            //    CellFormat = new TableCellFormat()
-            //    {
-            //        VerticalAlignment = VerticalAlignment.Center,
-            //        BackgroundColor = new Color(35, 43, 46)
-            //    }
-            //});
-
-            logoRow.Cells.Add(new TableCell(document, new Paragraph(document, "logoBanner")
-            {
-                ParagraphFormat = new ParagraphFormat()
-                {
-                    Alignment = HorizontalAlignment.Center
-                }
-            })
-            {
-                CellFormat = new TableCellFormat()
-                {
-                    VerticalAlignment = VerticalAlignment.Center,
-                    BackgroundColor = new Color(76, 89, 102)
-                },
-                ColumnSpan = 2
-            });
-
-            footerRow.Cells.Add(new TableCell(document, new Paragraph(document, "footer")
-            {
-                ParagraphFormat = new ParagraphFormat()
-                {
-                    Alignment = HorizontalAlignment.Center
-                }
-            })
-            {
-                CellFormat = new TableCellFormat()
-                {
-                    VerticalAlignment = VerticalAlignment.Center,
-                    BackgroundColor = new Color(76, 89, 102)
-                },
-                ColumnSpan = 2
-            });
-
-
-            bodyRow.Cells.Add(new TableCell(document, new Paragraph(document, "bodyLeft"))
-            {
-                CellFormat = new TableCellFormat()
-                {
-                    BackgroundColor = Color.LightGray
-                }
-            });
-
-            bodyRow.Cells.Add(new TableCell(document, new Paragraph(document, "bodyRight"))
-            {
-                CellFormat = new TableCellFormat()
-                {
-                    BackgroundColor = new Color(35, 43, 46)
-                },
-            });
-
-
-            //table.Rows.Add(preheadRow);
-            table.Rows.Add(logoRow);
-            table.Rows.Add(bodyRow);
-            table.Rows.Add(footerRow);
-
-
-            //foreach (ContentRange item in document.Content.Find("preheadRight").Reverse())
-            //    item.LoadText("<a href=\"*|ARCHIVE|*\" style=\"mso-line-height-rule: exactly; color: whitesmoke; font-weight: normal; text-decoration: none; text-align: right;\" target=\"_blank\">View this email in your browser</a>", new HtmlLoadOptions());
-            //foreach (ContentRange item in document.Content.Find("preheadLeft").Reverse())
-            //    item.LoadText(webinar.Description, new HtmlLoadOptions());
-            foreach (ContentRange item in document.Content.Find("logoBanner").Reverse())
-                item.LoadText(model.Affiliate.EmailBanner, new HtmlLoadOptions());
-            foreach (ContentRange item in document.Content.Find("bodyLeft").Reverse())
-                item.LoadText(bodyLeft, new HtmlLoadOptions());
-            foreach (ContentRange item in document.Content.Find("bodyRight").Reverse())
-                item.LoadText(bodyRight, new HtmlLoadOptions());
-            foreach (ContentRange item in document.Content.Find("footer").Reverse())
-                item.LoadText(model.Affiliate.EmailFooter, new HtmlLoadOptions());
-            return document;
-        }
-
         private CloudBlobContainer BuildCloudBlobContainer(WebinarPromoViewModel model, out CloudBlockBlob blob)
         {
             var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName,
@@ -2239,6 +1991,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             IList<Webinar> webinars = new List<Webinar>();
             //
+
             var listOfIds = model.sListOfWebinarsForWeekly.Split(',');
             foreach (var _id in listOfIds)
             {
@@ -2362,11 +2115,11 @@ namespace CUWebinars.Web.Controllers.Admin
         [ValidateInput(false)]
 
         [HttpPost]
-        public async Task<JsonResult> CreateCampaignSingle(int affiliateId, string messageBodyHtml, int webinarId, string sendDate)
+        public async Task<JsonResult> CreateCampaignSingle(int affiliateId, string messageBodyHtml, int webinarId, string sendDate, string sendTime)
         {
             Webinar webinar = _webinarManagementService.GetWebinar(webinarId);
             Affiliate affiliate = _affiliateManagementService.FindById(affiliateId);
-            sendDate = sendDate.Split('/')[2] + "-" + sendDate.Split('/')[0] + "-" + sendDate.Split('/')[1] + "T10:00:00-05:00";
+            sendDate = sendDate.Split('/')[2] + "-" + sendDate.Split('/')[0] + "-" + sendDate.Split('/')[1] +"T"+ sendTime + ":00:00" + (int)affiliate.WebUser.timeZone;//"T10:00:00-05:00";
 
             McCampaign campaign = new McCampaign { AffiliateId = affiliate.idUserAff, WebinarId = webinar.idWebinar };
 
@@ -2398,7 +2151,8 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     GoogleAnalytics = affiliate.idUserAff + "_" + webinar.idWebinar + "_" + sendDate,
                     HtmlClicks = true,
-                    TextClicks = true
+                    TextClicks = true,
+                    Opens = true
                 }
 
             };
@@ -2429,18 +2183,15 @@ namespace CUWebinars.Web.Controllers.Admin
                     },
                     ScheduleTime = sendDate
                 });
-
-                _logger.Info("CreateCampaign | putContent links: " + putContent.Links);
+                
                 CampaignTestRequest emails = new CampaignTestRequest { EmailType = "html", Emails = new string[] { "all.of.us@ttstrain.com", affiliate.NotiPromos } };
 
                 await manager.Campaigns.TestAsync(mkCamp.Id, emails);
-
-                _logger.Info("CreateCampaign | follows TestSend: " + putContent.Links);
-
+                
                 var campMsg = new JProperty(JsonPropertyKeys.MailChimpCampaign, JsonConvert.SerializeObject(campaign, Formatting.None, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
                 _logger.Info("Webinar.Campaigns += " + campMsg);
-                //webinar.Campaigns = JsonHelpers.MergeJsonWithStoredField(webinar.Campaigns, campMsg);
-                //_webinarManagementService.SaveChanges();
+                webinar.Campaigns = JsonHelpers.MergeJsonWithStoredField(webinar.Campaigns, campMsg);
+                _webinarManagementService.SaveChanges();
                 return Json(new { success = "success" });
 
             }

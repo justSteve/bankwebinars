@@ -484,6 +484,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Core\CalendarRssFullDTOAssembler.cs" />
+    <Compile Include="Helpers\GemBoxHelpers.cs" />
     <Compile Include="Helpers\ViewRenderer.cs" />
     <Compile Include="Models\PromoLinks.cs" />
     <Compile Include="Models\JsonModels\McCampaign.cs" />
@@ -639,6 +640,7 @@
     <Content Include="App_Data\mergeTemplates\WebinarPromo.docx" />
     <Content Include="Content\css\formCss.css" />
     <Content Include="Content\css\stylesDirectorSeries.css" />
+    <Content Include="Content\images\email\calendar.jpg" />
     <Content Include="Content\images\logo_coba.png" />
     <Content Include="Content\images\logo_ctba.png" />
     <Content Include="Content\images\logo_deba.png" />
@@ -2731,6 +2733,7 @@
     <Folder Include="App_Data\Notifications\" />
     <Folder Include="App_Data\Trace\" />
     <Folder Include="Infrastructure\apis\citrix\GTW\" />
+    <Folder Include="Infrastructure\GemBox\" />
     <Folder Include="Notification\Delivery\" />
     <Folder Include="Scripts\app\types\" />
     <Folder Include="Scripts\vendor\" />

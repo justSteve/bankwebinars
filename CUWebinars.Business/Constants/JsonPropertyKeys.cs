@@ -31,6 +31,7 @@ namespace CUWebinars.Business.Constants
         public static readonly string DiscountIsApplied = "DiscountIsApplied";
         public static readonly string PriceAdjusted = "PriceAdjusted";
         public static readonly string MailChimpCampaign = "MailChimpCampaign";
+        public static readonly string NewOrderDateAppliedKey = "NewOrderDateApplied";
         
     }
 }

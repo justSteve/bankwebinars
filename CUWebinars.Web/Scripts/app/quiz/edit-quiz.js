@@ -674,7 +674,7 @@ $(function () {
     };
 
     ns.postAddQuiz = function (btnClickedId, webinarId, questions) {
-                alert("hit");
+              //  alert("hit");
         var payload = {
             Questions: questions,
             SelectedWebinar: webinarId
