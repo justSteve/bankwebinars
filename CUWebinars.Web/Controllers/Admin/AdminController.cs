@@ -296,7 +296,6 @@ namespace CUWebinars.Web.Controllers.Admin
                         }
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -888,55 +887,8 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 _logger.Warn("ExpressCheckout webhook {0} order NOT FOUND: " + form.q11_orderid);
 
-                //var idRegType = _webinarManagementService.GetRegTypeByLableAndWebinar(regTypeLable,
-                //    form.q18_q_webinarid18);
-                //var newOrderRow = _orderManagementService.CreateOrderRow(null, null, idRegType);
-
-                //newOrderRow.idWebinar = form.q18_q_webinarid18;
-
-                //newOrderRow.idRegType = idRegType;
-                //_orderManagementService.LoadWebinarIntoOrderRow(newOrderRow);
-
-
-                //var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
-                //_orderManagementService.SetUserStatusToUnChanged(user);
-
-                //Order newOrder = _orderManagementService.CreateNewOrder(
-                //    affiliate.idUserAff,
-                //    user,
-                //    newOrderRow.Webinar,
-                //    newOrderRow
-                //    );
-
-                //newOrderRow.Order.OrderStatus = OrderStatus.Submitted;
-
-                //newOrderRow.Order.Origin = "ExpressCheckout";
-
-                //JProperty createdByExpressCheckout = new JProperty(
-                //    JsonPropertyKeys.OrderCreatedByExpressCheckoutKey,
-                //    ""
-                //    );
-
-                //newOrderRow.Order.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrderRow.Order.AdminComments,
-                //    createdByExpressCheckout);
-                ////_orderManagementService.AttachAffiliate(affiliate);
-
-                //_orderManagementService.SaveChanges();
-
-
-                //newOrder.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(newOrder);
-
-                //_orderManagementService.SynchIds(newOrder);
-
-                //_orderManagementService.SaveChanges();
-
-                //_logger.Info("ExpressCheckout created order: " + newOrder.idOrder);
-
-                //_orderManagementService.FireOrderSubmittedEvent(newOrderRow.Order, true);
-
-
             }
-            //return RedirectToAction("OrderComplete", "Account", new { id = expressOrder.idOrder });
+
         }
 
         [HttpPost]
@@ -1055,73 +1007,6 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             return null;
         }
-
-        //private ManageOrderEditModel BuildManageOrderEditModel(int id)
-        //{
-        //    var order = _orderManagementService.GetOrderById(id);
-        //    var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-        //    var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
-        //    var additionalLocationsPricing =
-        //        _orderManagementService.GetCostOfAdditionalLocations(
-        //            orderRow.AdditionalLocation,
-        //            orderRow.idWebinar
-        //            );
-        //    var additionalLocations = orderRow.AdditionalLocation;
-        //    additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(additionalLocations).ToList();
-
-        //    var additionalLocationsCount = additionalLocations.Count;
-
-        //    var manageOrderEditModel = new ManageOrderEditModel
-        //    {
-        //        //EditOrder_Compact should look to 
-        //        AdditionalLocations = additionalLocations,
-        //        AdditionalLocationsAvailableOnLoad = false, // see below for where this is properly decided.
-        //        AdditionalLocationsRenderer = ViewHelpers.GetRendererOfAdditionalLocations(additionalLocations.Select(al => al.Email).ToList()),
-        //        CostPerAdditionalLocation = additionalLocationsPricing.Item2,
-        //        ClaimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims },
-
-        //        DisplayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
-        //        {
-        //            Options = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.idWebinar, false),
-        //            OrderRowId = orderRow.idOrderRow,
-        //            OrderRowRegistrationType = orderRow.RegistrationType
-        //        },
-        //        DisplayRowPriceViewModel = new DisplayRowPriceViewModel
-        //        {
-        //            Discount = orderRow.Discount,
-        //            NumberOfAdditionalLocations = additionalLocationsCount,
-        //            OrderStatus = order.OrderStatus,
-        //            Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
-        //            PricesAndDiscounts =
-        //                _orderManagementService.CalculateOrderCost(order, additionalLocationsPricing.Item2),
-        //            RegistrationType = orderRow.RegistrationType,
-        //            RowPrice = orderRow.RowPrice
-        //        },
-        //        Id = order.idOrder,
-        //        AffiliateName = _appHelper.GetAffiliateName(order.idAffiliate),
-        //        JoinCode = orderRow.TtsJoinUrl,
-        //        OnDemandCode = orderRow.OnDemandCode,
-        //        Order = order,
-        //        NumberOfAdditionalLocations = additionalLocationsCount,
-        //        PhoneNumber = order.BillingPhone,
-        //        UserId = order.idUser,
-        //        WebinarId = orderRow.idWebinar,
-        //        WebUser = order.WebUser
-        //    };
-
-        //    // Need to decide whether the selected option in the DropDownList can add additional locations
-        //    var regType = manageOrderEditModel.DisplayOptionsInDropDownViewModel.OrderRowRegistrationType;
-
-        //    {
-        //        var option = CheckIfAddLocAvailable(regType.idRegType);
-        //        if (option.HasValue)
-        //        {
-        //            manageOrderEditModel.AdditionalLocationsAvailableOnLoad = option.Value;
-        //        }
-        //    }
-        //    return manageOrderEditModel;
-        //}
-
         public ActionResult GetOrdersByTypeahead(int? id)
         {
             if (id.HasValue)
@@ -1208,8 +1093,6 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(new { Error = WebUiConstants.NullValueParameter });
         }
 
-
-
         public PartialViewResult ResendOrderConfirmation()
         {
             var model = new ResendOrderInformationViewModel
@@ -1251,16 +1134,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return Json(new { Result = WebUiConstants.Success });
         }
-
-        //public PartialViewResult ResendConnectionInfo()
-        //{
-        //    var model = new ResendOrderInformationViewModel
-        //    {
-        //        OrderId = string.Empty
-        //    };
-
-        //    return PartialView("~/Views/Admin/Home/_resendConnectionInfo.cshtml", model);
-        //}
 
         [HttpPost]
         public ActionResult ResendConnectionInfo(int orderId)
@@ -1421,51 +1294,6 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(new { Result = WebUiConstants.Success });
         }
 
-        //public PartialViewResult SendRecordingPosted()
-        //{
-        //    var model = new AdhocNotificationViewModel
-        //    {
-        //        Webinars = EventInvokerHelpers.GetRecordedWebinarsAsSelectListItems(_webinarManagementService)
-        //    };
-
-        //    return PartialView("~/Views/Admin/Home/_SendRecordingPosted.cshtml", model);
-        //}
-
-        //[System.Web.Mvc.HttpPost]
-        //public JsonResult SendRecordingPosted(int webinarId)
-        //{
-        //    var orders = _orderManagementService.GetOrdersForRecordedNotifications(webinarId);
-        //    _logger.Info(string.Join(",", orders.Select(o => o.idOrder.ToString())));
-
-        //    var ordersWhichSatisfyClaim = GetOrdersWhichAreEligibleForMaterials(orders);
-
-        //    if (ordersWhichSatisfyClaim.Any())
-        //    {
-        //        _orderManagementService.FireSendRecordingIsPostedEvent(ordersWhichSatisfyClaim.ToList());
-
-        //        return Json(new { Result = WebUiConstants.Success });
-        //    }
-
-        //    return Json(new { Result = WebUiConstants.NoOrdersForWebinar });
-        //}
-
-        //private IEnumerable<Order> GetOrdersWhichAreEligibleForMaterials(IEnumerable<Order> orders)
-        //{
-        //    IList<Order> eligableOrders = new Order[0];
-        //    foreach (var order in orders)
-        //    {
-        //        var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.WebUser.email);
-
-        //        DateTime? expiryDate = _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order);
-
-        //        if (expiryDate.HasValue && expiryDate > TtsConfig.UtcNowAsCts)
-        //        {
-        //            eligableOrders.Add(order);
-        //        }
-        //    }
-        //    return eligableOrders;
-        //}
-
 
         public PartialViewResult SendShippedOrder()
         {
@@ -1558,52 +1386,6 @@ namespace CUWebinars.Web.Controllers.Admin
             return PartialView("~/Views/Admin/Home/_LogInAsUser.cshtml", logInAsOtherUserViewModel);
         }
 
-
-        //[HttpPost]
-        //[AllowAnonymous]
-        //public JsonResult PromoGenerateForAffiliate(WebinarPromoViewModel model)
-        //{
-
-        //    // this method could be just an "if affiliate id" block in the main method...
-        //    //  would save on the JSON / object expander complexity
-
-        //    JsonResult ret = GeneratePromo(model);
-        //    string json = ret.Data.ToJsonNet();
-        //    //var x = JsonConvert.DeserializeObject<xobj>(json);
-        //    //System.Diagnostics.Debug.WriteLine(x.masterText);
-
-        //    var converter = new ExpandoObjectConverter();
-        //    dynamic x = JsonConvert.DeserializeObject<ExpandoObject>(json, converter);
-        //    string masterMarkup = x.masterText;
-        //    System.Diagnostics.Debug.WriteLine(masterMarkup);
-
-        //    // do affiliate substitution
-        //    Affiliate aff = new AffiliateRepository().FindByIdWithIncluding(model.Affiliate.idUserAff);
-        //    string affiliateMarkup = replaceMasterTokensForAffiliate(masterMarkup, aff);
-
-        //    // return complete affiliate-specific version
-        //    return Json(new { result = WebUiConstants.Success, affiliateCopy = affiliateMarkup });
-        //}
-
-        ////private class xobj
-        ////{
-        ////    public string masterText { get; set; }
-        ////}
-
-        //// unforatunately there is a client-side version of this function in the promo-generator.js file as well...
-        //private string replaceMasterTokensForAffiliate(string masterCopy, Affiliate aff)
-        //{//    StringBuilder copy = new StringBuilder(masterCopy);
-
-        //    copy.Replace("{aff_ttsdomain}", aff.ttsDomain);
-        //    copy.Replace("{aff_idUserAff}", aff.idUserAff.ToString());
-        //    copy.Replace("{aff_ContactPerson}", aff.ContactPerson);
-        //    copy.Replace("{aff_ContactEmail}", aff.ContactEmail);
-        //    copy.Replace("{aff_ContactPhone}", aff.ContactPhone);
-        //    copy.Replace("{aff_EmailFooter}", aff.EmailFooter);
-
-        //    return copy.ToString();
-
-        //}
         [ValidateInput(false)]
         [HttpPost]
         public JsonResult WritePromoToStorage(WebinarPromoViewModel model)
@@ -2598,44 +2380,7 @@ namespace CUWebinars.Web.Controllers.Admin
             _logger.Info("FirePasswordResetEvent ");
             return Json(model);
         }
-
-
-        ////        public PartialViewResult GetJsonTextArea()
-        ////        {
-        ////            const string importOrderViaDashboardViewModel = @"{""AffiliateComments"": ""Affiliate comments"",
-        ////                                  ""BillingAddress.AddressType"": ""Billing"",
-        ////                                  ""BillingAddress.Name"": ""Alan Turing"",
-        ////                                  ""BillingAddress.Phone"": ""555-555-5555"",
-        ////                                  ""BillingAddress.StreetAddress"": ""968 Wildcat Dr"",
-        ////                                  ""BillingAddress.StreetAddress2"": """",
-        ////                                  ""BillingAddress.City"": ""Del Rio"",
-        ////                                  ""BillingAddress.Zip"": ""5000"",
-        ////                                  ""BillingAddress.State"": ""Tx"",
-        ////                                  ""BillingAddress.Country"": ""USA"",
-        ////                                  ""Email"": ""alanbturingy@turing.com"",
-        ////                                  ""FirstName"": ""Alan"",
-        ////                                  ""LastName"": ""Turing"",
-        ////                                  ""idAffiliate"": 19,
-        ////                                  ""idRegType"": 88,
-        ////                                  ""idWebinar"": 437,
-        ////                                  ""Institution"": ""Some Institution"",
-        ////                                  ""ShippingAddress.AddressType"": ""Shipping"",
-        ////                                  ""ShippingAddress.Name"": ""Alan Turing"",
-        ////                                  ""ShippingAddress.Phone"": ""555-555-5555"",
-        ////                                  ""ShippingAddress.StreetAddress"": ""968 Wildcat Dr"",
-        ////                                  ""ShippingAddress.StreetAddress2"": """",
-        ////                                  ""ShippingAddress.City"": ""Del Rio"",
-        ////                                  ""ShippingAddress.Zip"": ""5000"",
-        ////                                  ""ShippingAddress.State"": ""Tx"",
-        ////                                  ""ShippingAddress.Country"": ""USA"",
-        ////                                  ""SendNotification"": ""true"",
-        ////                                  ""Title"": ""Mr""}";
-
-        ////            ViewBag.Payload = importOrderViaDashboardViewModel;
-
-        ////            return PartialView("~/Views/Admin/Home/_ImportOrder.cshtml", importOrderViaDashboardViewModel);
-        ////        }
-
+        
         public string CreatePostEventClaim(Order order, DateTime expiryDate)
         {
 
@@ -2836,33 +2581,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 data = BuildDisplayOrdersByUserViewModel(email, out totalNumberOrders)
             });
         }
-
-
-        //[HandleAjaxException]
-        //[AllowAnonymous]
-        //public ActionResult SynchOrders(int? webinarId, int? idAffiliate)
-        //{
-
-        //    _orderManagementService.SynchOrders(webinarId.Value);
-        //    return Json(new
-        //    {
-        //        data = webinarId,
-        //        affiliate = idAffiliate,
-        //        Success = "Success"
-        //    });
-        //}
-
-        //[HandleAjaxException]
-        //[AllowAnonymous]
-        //public ActionResult SynchOrdersBatch(int? webinarId, int? idAffiliate)
-        //{
-        //    var totalNumberOrders = 0;
-
-        //    _orderManagementService.SynchOrders(webinarId.Value);
-
-        //    return Content("Ok");
-        //}
-
+        
 
         [HandleAjaxException]
         [AllowAnonymous]
@@ -3384,49 +3103,6 @@ namespace CUWebinars.Web.Controllers.Admin
                                     _postEventOrders.Add(_orderManagementService.GetOrderById(Convert.ToInt32(id)));
                             }
                         }
-                        //    _orderManagementService.GetOrdersAllForInvoice(thisAffiliate, out totalNumberOrders)
-                        //        .Where(o => o.idAffiliate == thisAffiliate)
-                        //        .Where(
-                        //            o =>
-                        //            {
-                        //                //Debug.Assert(o.OrderRows != null, "o.OrderRows != null");
-                        //                var row = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                        //                return row != null &&
-                        //                       (row.Webinar.Date < startDate && o.OrderDate > startDate &&
-                        //                        o.OrderDate < endDate
-                        //                        && !row.Webinar.SeriesInfo.Contains("Parent")
-                        //                        &&
-                        //                        (o.OrderStatus == OrderStatus.Billed ||
-                        //                         o.OrderStatus == OrderStatus.Paid ||
-                        //                         o.OrderStatus == OrderStatus.Submitted));
-                        //            })
-
-                        //        .ToList();
-
-
-                        //List<Order> postEventOrders1 =
-                        //    _orderManagementService.GetOrdersAllForInvoice(thisAffiliate, out totalNumberOrders)
-                        //        .Where(o => o.idAffiliate == thisAffiliate)
-                        //        .Where(
-                        //            o =>
-                        //            {
-                        //                var row = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                        //                return o.InvoiceDetail != null && (row != null && o.InvoiceDetail.StartsWith(
-                        //                                                       "{\"AffiliateReassignedNeedsNewInvoice"));
-                        //            })
-                        //        .Where(
-                        //            o =>
-                        //                o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Billed ||
-                        //                o.OrderStatus == OrderStatus.Billed)
-                        //        .ToList();
-
-                        //if (postEventOrders1 != null)
-                        //{
-                        //    foreach (var order in postEventOrders1)
-                        //    {
-                        //        postEventOrders.Add(order);
-                        //    }
-                        //}
 
                         if (_postEventOrders.Any())
                         {
@@ -3533,18 +3209,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     try
                     {
-                        //List<Order> adjustedOrders =
-                        //    _orderManagementService.GetOrdersAllForInvoice(thisAffiliate, out totalNumberOrders)
-                        //        .Where(o => o.idAffiliate == thisAffiliate)
-                        //        .Where(
-                        //            o =>
-                        //                o.InvoiceDetail != null &&
-                        //                o.InvoiceDetail.StartsWith("{\"ChangedOrderNeedsNewInvoice")
-                        //                &&
-                        //                (o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Billed ||
-                        //                 o.OrderStatus == OrderStatus.Submitted)
-                        //        )
-                        //        .ToList();
+
                         List<Order> adjustedOrders = new List<Order>();
 
                         foreach (var id in listOrdersAdjusted.Split(','))
@@ -4126,130 +3791,6 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
 
-        //[HandleAjaxException]
-        //[HttpPost]
-        //[AllowAnonymous]
-        //public JsonResult DTDataHandlerRoyaltySummary(DTParametersOrders param)
-        //{
-        //    if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
-        //    {
-        //        // based heavily on https://www.echosteg.com/jquery-datatables-asp.net-mvc5-server-side
-        //        int totalNumberOrders = 0;
-        //        int webinarId = param.webinarId;
-        //        string searchTerm = param.searchTerm;
-        //        int affiliateId = param.affiliateId ?? 19; // 19 is magic internal / house affiliate id
-        //        bool showAllEvents = param.showAllEvents ?? false;
-
-        //        List<Order> dtsource = null;
-
-        //        try
-        //        {
-        //            dtsource = _dataTablesService.GetOrdersByWebinar(webinarId, affiliateId, out totalNumberOrders).OrderBy(o => o.OrderDate).ToList();
-
-        //            // use automapper to flatten out the order records, in this specific case the data 
-        //            //  model has circular references which cause problems with JSON serialization
-        //            List<OrderDTO> dtoSource = new List<OrderDTO>();
-        //            Mapper.Map(dtsource, dtoSource);
-
-        //            // custom filtering by Order Status
-        //            if (param.selectedOrderStatuses != null)
-        //            {
-        //                dtoSource = dtoSource.Where(x => param.selectedOrderStatuses.Contains(x.OrderStatus)).ToList();
-
-        //            }
-        //            _affiliateManagementService.BuildAffiliateReport(dtsource, webinarId);
-
-        //            List<String> columnSearch = new List<string>();
-        //            foreach (var col in param.Columns)
-        //            {
-        //                columnSearch.Add(col.Search.Value);
-        //            }
-
-        //            List<OrderDTO> data = new DTResultSetOrders().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtoSource, columnSearch);
-        //            int count = new DTResultSetOrders().Count(param.Search.Value, dtoSource, columnSearch);
-
-
-        //            DataTableService<OrderDTO> result = new DataTableService<OrderDTO>
-        //            {
-        //                draw = param.Draw,
-        //                data = data,
-        //                recordsFiltered = count,
-        //                recordsTotal = count
-        //            };
-
-        //            JsonResult jsonresult = Json(result);
-        //            jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
-
-        //            return jsonresult;
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            return Json(new { error = ex.Message });
-        //        }
-        //    }
-
-        //    return Json(new { NotAuthorized = true });
-
-        //}
-
-        //[HandleAjaxException]
-        //[HttpPost]
-        //[AllowAnonymous]
-        //public JsonResult SubscriptionsDataHandler(DTParametersSubscriptions param)
-        //{
-        //    if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
-        //    {
-        //        // based heavily on https://www.echosteg.com/jquery-datatables-asp.net-mvc5-server-side
-        //        int totalNumberOrders = 0;
-        //        int orderId = param.orderId;
-        //        string searchTerm = param.searchTerm;
-        //        int affiliateId = param.affiliateId ?? 19; // 19 is magic internal / house affiliate id
-        //        bool showAllEvents = param.showAllEvents ?? false;
-
-        //        List<Discount> dtsource = null;
-
-        //        try
-        //        {
-        //            dtsource = _orderManagementService.GetSubscriptionsAll(affiliateId, out totalNumberOrders).ToList();
-
-        //            // use automapper to flatten out the order records, in this specific case the data 
-        //            //  model has circular references which cause problems with JSON serialization
-        //            List<DiscountDTO> dtoSource = new List<DiscountDTO>();
-        //            Mapper.Map(dtsource, dtoSource);
-
-        //            List<String> columnSearch = new List<string>();
-        //            foreach (var col in param.Columns)
-        //            {
-        //                columnSearch.Add(col.Search.Value);
-        //            }
-
-        //            List<DiscountDTO> data = new DTResultSetDiscounts.GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtoSource, columnSearch);
-        //            int count = new DTResultSetDiscounts.Count(param.Search.Value, dtoSource, columnSearch);
-
-
-        //            DataTableService<Discount> result = new DataTableService<Discount>
-        //            {
-        //                draw = param.Draw,
-        //                data = data,
-        //                recordsFiltered = count,
-        //                recordsTotal = count
-        //            };
-
-        //            JsonResult jsonresult = Json(result);
-        //            jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
-
-        //            return jsonresult;
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            return Json(new { error = ex.Message });
-        //        }
-        //    }
-
-        //    return Json(new { NotAuthorized = true });
-
-        //}
-
 
         [HandleAjaxException]
         [HttpPost]
@@ -4344,52 +3885,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return Json(new { NotAuthorized = true });
         }
-
-        //[HandleAjaxException]
-        //[HttpPost]
-        //[AllowAnonymous]
-
-        //public JsonResult GetGridUserData(DTParameters param)
-        //{
-        //    var aff = _affiliateManagementService.LoadByTTSDomain("bankwebinars");
-
-        //    if (ClaimsAuthorization.CheckAccess(IdentityConstants.Access, IdentityConstants.GetGridDataFeature))
-        //    {
-        //        //
-        //        try
-        //        {
-        //            var dtsource = new List<WebUser>();
-
-        //            List<String> columnSearch = new List<string>();
-
-        //            foreach (var col in param.Columns)
-        //            {
-        //                columnSearch.Add(col.Search.Value);
-        //            }
-
-        //            List<WebUser> data = new DTResultSetUsers().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtsource, columnSearch);
-        //            int count = new DTResultSetUsers().Count(param.Search.Value, dtsource, columnSearch);
-
-        //            DataTableService<WebUser> result = new DataTableService<WebUser>
-        //            {
-        //                draw = param.Draw,
-        //                data = data,
-        //                recordsFiltered = count,
-        //                recordsTotal = count
-        //            };
-
-        //            return Json(result);
-
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            return Json(new { error = ex.Message });
-        //        }
-        //    }
-
-        //    return Json(new { NotAuthorized = true });
-
-        //}
 
 
         private IList<IDictionary<string, string>> BuildWebinarsSearchViewModel(string searchTerm, int? affiliateId, out int totalNumberWebinars)
