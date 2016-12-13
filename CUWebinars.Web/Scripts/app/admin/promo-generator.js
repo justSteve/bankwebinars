@@ -695,7 +695,7 @@ function SendToAff(affiliateId) {
 function replaceMasterTokensForAffiliate(aff) {
     var string = "";
     $.ajax({
-        url: '/Admin/GetAffiliateTimeZone',
+        url: '/Admin/GetAffiliateTimeZoneAndList',
         type: 'POST',
         data: {
             "idAffiliate": aff.idUserAff,
@@ -705,7 +705,12 @@ function replaceMasterTokensForAffiliate(aff) {
         dataType: "json",
 
         success: function (result) {
-            console.log(result.timeFormatDisplay);
+            if (result.listName !== "") {
+                console.log(result.listName);
+                $("#opCaption").text("MC list name: " + result.listName);
+            } else {
+                $("#opCaption").text("");
+            }
             string = result.timeFormatDisplay;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {

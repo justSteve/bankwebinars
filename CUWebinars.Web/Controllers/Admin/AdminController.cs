@@ -1618,7 +1618,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 });
             }
 
-            var timeString = GetAffiliateTimeZone(model.Affiliate.idUserAff, model.Webinar.idWebinar).ToString();
+            var timeString = GetAffiliateTimeZoneAndList(model.Affiliate.idUserAff, model.Webinar.idWebinar).ToString();
 
             model.EventBody = model.EventBody.Replace("{timeString}", timeString);
             string eventBodyText = System.Uri.UnescapeDataString(model.EventBody);
@@ -1691,16 +1691,23 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
         [HttpPost]
-        public JsonResult GetAffiliateTimeZone(int idAffiliate, int idWebinar)
+        public async Task<JsonResult> GetAffiliateTimeZoneAndList(int idAffiliate, int idWebinar)
         {
-
+            var idMailChimpList = _affiliateManagementService.FindById(idAffiliate).idMailChimpList;
+            var listName = "";
+            if (idMailChimpList != null)
+            {
+                IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
+                List list = await manager.Lists.GetAsync(idMailChimpList).ConfigureAwait(false);
+                listName = list.Name;
+            }
             Webinar webinar = _webinarManagementService.GetWebinar(idWebinar);
             var timeZone = _affiliateManagementService.FindById(idAffiliate).WebUser.timeZone;
             var TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(webinar.Date, timeZone, false) +
                           " - " +
                           DateTimeHelper.FormatTime(
                               webinar.Date.AddHours((double)webinar.Duration), timeZone, true) + "<br /></i>";
-            return Json(new { timeFormatDisplay = TimeFormatDisplay });
+            return Json(new { timeFormatDisplay = TimeFormatDisplay, listName = listName });
         }
 
 
@@ -2014,8 +2021,12 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
         [HttpGet]
-        public ActionResult PerDayPromo(int id)
+        public async Task<ActionResult> PerDayPromo(int id)
         {
+            
+            //IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
+
+            //var list = await manager.Lists.GetAllAsync().ConfigureAwait(false);
 
             var webinarsForUpcoming = _webinarManagementService.GetUpcomingWebinars().Take(15).OrderBy(w => w.Date);
 
@@ -2060,7 +2071,7 @@ namespace CUWebinars.Web.Controllers.Admin
         // WebinarPromoViewModel model
         {
 
-            var timeString = GetAffiliateTimeZone(affiliateId, webinarId).ToString();
+            var timeString = GetAffiliateTimeZoneAndList(affiliateId, webinarId).ToString();
 
             WebinarPromoViewModel model = new WebinarPromoViewModel
             {
