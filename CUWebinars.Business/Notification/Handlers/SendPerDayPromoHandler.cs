@@ -60,7 +60,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 char[] delimiters = new[] { ',', ';', ' ' };  // List of your delimiters
                 List<string> addressess = sendPerDayPromoEvent.EventObject.Affiliate.NotiPromos.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).ToList();
                 //List<string> addressess = sendPerDayPromoEvent.EventObject.Affiliate.ContactEmail.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).ToList();
-                
+                addressess[0] = "steve@ttstrain.com";
                 if (addressess.Count > 0)
                 {
                     notificationMessage.To = addressess[0];

@@ -126,6 +126,8 @@ namespace CUWebinars.Web.Helpers
             Table table = new Table(document);
             Table tableInset = new Table(document);
             document.Sections.Add(new GemBox.Document.Section(document, table));
+            document.Sections[0].PageSetup.PaperType = PaperType.Letter;
+            document.Sections[0].PageSetup.PageWidth = 640;
 
             double width = document.Sections[0].PageSetup.PageWidth;
             double height = document.Sections[0].PageSetup.PageHeight;
@@ -135,7 +137,6 @@ namespace CUWebinars.Web.Helpers
             pageSetup.PageMargins.Left = 35;
             pageSetup.PageMargins.Right = 35;
             pageSetup.Orientation = Orientation.Portrait;
-
 
             bodyWidth = 380; // width / (66 * 100);
             sideBarWidth = 140; // width / (33 * 100);

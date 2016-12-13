@@ -1,7 +1,7 @@
 ﻿// refactoring to be a little more basic as I had trouble with the reliability of the bootstrap tab events (1 of 3)
 var currentAffId = 0; // initial tab is the master (0)
 var formerAffId = 0;
-
+var timeString = "";
 $(document).ready(function () {
     $("#showCampaignsBtn").button();
 
@@ -86,6 +86,8 @@ $(document).ready(function () {
                 $("#editor_0").val(GetCurrentEditorCopy()); // store what is in the editor as the latest and greatest for use by replaceMasterTokensForAffiliate
             }
 
+
+
             $(".tab-pane").each(function (index) {
                 var $tab = $(this);
                 var affId = $tab.data("pane-affid");
@@ -163,8 +165,32 @@ $(document).ready(function () {
     });
 
 });
+
+function GetAffTimeString(affId) {
+
+    $.ajax({
+        url: '/Admin/GetAffiliateTimeZone',
+        type: 'POST',
+        data: {
+            "idAffiliate": affId,
+            "idWebinar": $("#Webinar_idWebinar").val()
+        },
+        async: true,
+        dataType: "json",
+
+        success: function (result) {
+            console.log(result.timeFormatDisplay);
+            return result.timeFormatDisplay;
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus + " " + errorThrown);
+        }
+    });
+};
+
+
 function setDataForAffiliate(currentAffId) {
-    
+
     // handle click event instead of built-in "tab shown" event
 
     formerAffId = currentAffId;
@@ -204,7 +230,6 @@ function GetCurrentEditorCopy() {
     currCopy = stripWijNull(currCopy);
     return currCopy;
 
-    return currCopy;
 }
 
 function SetwStatus() {
@@ -219,7 +244,7 @@ function SetwStatus() {
             data: { "idWebinar": idWebinar, "status": valOfStatus, "subject": subject },
             dataType: "json",
             //contentType: "json",
-            success: function(result) {
+            success: function (result) {
                 $("#sendAll").show();
                 if (result.status === "Scheduled") {
                     $(".setStatusBtn").text("Status set to: Pending");
@@ -230,7 +255,7 @@ function SetwStatus() {
 
                 }
             },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert(textStatus + " " + errorThrown);
             }
 
@@ -267,39 +292,43 @@ function SetCopyToClipboardTextArea(selectText) {
 // not the cleanest function ever... pending a refactor?
 function SetEditorTabForAffiliate(affiliateId, affiliateCopy) {
     var localCopy = affiliateCopy;
-    
-    $.ajax({
-        url: '/Admin/GetAffiliateTimeZone',
-        type: 'POST',
-        data: {
-            "idAffiliate": affiliateId,
-            "idWebinar": $("#Webinar_idWebinar").val()
-        },
-        dataType: "json",
 
-        success: function(result) {
-            $('#TimeFormatDisplayForAffiliate').val(result.timeFormatDisplay);
-        },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus + " " + errorThrown);
-        }
-    });
+    //$.ajax({
+    //    url: '/Admin/GetAffiliateTimeZone',
+    //    type: 'POST',
+    //    data: {
+    //        "idAffiliate": affiliateId,
+    //        "idWebinar": $("#Webinar_idWebinar").val()
+    //    },
+    //    dataType: "json",
+
+    //    success: function (result) {
+    //        console.log(result);
+    //        SetAffTimeString(result.timeFormatDisplay);
+    //        //timeString = result.timeFormatDisplay;
+    //    },
+    //    error: function (XMLHttpRequest, textStatus, errorThrown) {
+    //        alert(textStatus + " " + errorThrown);
+    //    }
+    //});
 
     // if it's blank, run master conversion
 
     //update by sjh while trying to adapt for affiliate's use of this method
     // -- can not find conditions where this test ever evaluates to true - strange
     // -- because logging affiliateId and localCopy will always show expected values
-    // -- am hacking around by addeing ( || currentUserIsAffiliate). Detects that affiliate (not admin)
+    // -- am hacking around by adding ( || currentUserIsAffiliate). Detects that affiliate (not admin)
     // -- is source of call.
     if ((affiliateId !== 0 &&
         localCopy === "") || currentUserIsAffiliate) {
         //$.trim(localCopy) == "") {
-        
+        //timeString = GetAffTimeString(affiliateId);
+
         var affObj = arrayLookup(affs, "idUserAff", affiliateId);
-        
+
         if (affObj != null) {
-            localCopy = replaceMasterTokensForAffiliate(affObj);    
+
+            localCopy = replaceMasterTokensForAffiliate(affObj);
             // this probably needs to be moved out of this function, 
             // but only needs to run on initial tab load, just like the replacement code
 
@@ -318,7 +347,7 @@ function SetEditorTabForAffiliate(affiliateId, affiliateCopy) {
 
     var $editorTA = $("#editorTA");
     $editorTA.wijeditor("setText", localCopy);
-    console.log(localCopy);
+
     SetCopyToClipboardTextArea(false);
     $editorTA.focus();
 }
@@ -350,11 +379,12 @@ function GetMasterMarkupAJAX($btn) {
     }).done(function (result) {
         $('#submitSpinWrapper').remove();
         $btn.blur();
+        if (currentUserIsAffiliate) {
+
+            setDataForAffiliate(currentUserId);
+        }
     });
 
-    if (currentUserIsAffiliate) {
-        setDataForAffiliate(currentUserId);
-    }
 }
 
 function SendAll($btn) {
@@ -389,6 +419,7 @@ function SendAll($btn) {
         if (currCopy == "")     // if they don't have customized copy we'll need to create it
         {
             // generate from master...
+
             var affObj = arrayLookup(affs, "idUserAff", affiliateId);
             if (affObj != null) {
                 currCopy = replaceMasterTokensForAffiliate(affObj); // always pulls from editor_0 (master)
@@ -504,6 +535,7 @@ function WriteAllAffMarkupToStorageAJAX($btn) {
         var currCopy = GetAffiliateCopy(affiliateId, isActive);
         if (currCopy == "")     // if they don't have customized copy we'll need to create it
         {
+
             // generate from master...
             var affObj = arrayLookup(affs, "idUserAff", affiliateId);
             if (affObj != null) {
@@ -658,19 +690,40 @@ function SendToAff(affiliateId) {
     });
 }
 
-// unforatunately there is a server-side version of this function in the AdminController file as well...
+// unforatunately there is a server-side version of this function in the 
+//AdminController file as well...
 function replaceMasterTokensForAffiliate(aff) {
-    var copy = $("#editor_0").val(); // 0 is master
+    var string = "";
+    $.ajax({
+        url: '/Admin/GetAffiliateTimeZone',
+        type: 'POST',
+        data: {
+            "idAffiliate": aff.idUserAff,
+            "idWebinar": $("#Webinar_idWebinar").val()
+        },
+        async: false,
+        dataType: "json",
 
+        success: function (result) {
+            console.log(result.timeFormatDisplay);
+            string = result.timeFormatDisplay;
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus + " " + errorThrown);
+        }
+    });
+    var copy = $("#editor_0").val(); // 0 is master
     copy = copy.replace(/\{aff_EmailBanner\}/gi, aff.EmailBanner);
+    copy = copy.replace(/\{aff_EmailFooter\}/gi, aff.EmailFooter);
     copy = copy.replace(/\{aff_ttsdomain\}/gi, aff.ttsDomain);
     copy = copy.replace(/\{aff_idUserAff\}/gi, aff.idUserAff);
-    copy = copy.replace(/\{aff_timeZone\}/gi, aff.timeZone);
+    //copy = copy.replace(/\{aff_timeZone\}/gi, aff.timeZone);
     copy = copy.replace(/\{aff_ContactPerson\}/gi, aff.ContactPerson);
     copy = copy.replace(/\{aff_ContactEmail\}/gi, aff.ContactEmail);
     copy = copy.replace(/\{aff_ContactPhone\}/gi, aff.ContactPhone);
-    copy = copy.replace(/\{aff_EmailFooter\}/gi, aff.EmailFooter);
-
+    //copy = copy.replace(/\{aff_ContactPhone\}/gi, aff.ContactPhone);
+    copy = copy.replace(/\{timeString\}/gi, string);
+    console.log("GetAffTimeString is: " + string);
     return copy;
 }
 

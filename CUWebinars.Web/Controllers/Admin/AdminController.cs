@@ -1592,8 +1592,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
         //// unforatunately there is a client-side version of this function in the promo-generator.js file as well...
         //private string replaceMasterTokensForAffiliate(string masterCopy, Affiliate aff)
-        //{
-        //    StringBuilder copy = new StringBuilder(masterCopy);
+        //{//    StringBuilder copy = new StringBuilder(masterCopy);
 
         //    copy.Replace("{aff_ttsdomain}", aff.ttsDomain);
         //    copy.Replace("{aff_idUserAff}", aff.idUserAff.ToString());
@@ -1619,6 +1618,9 @@ namespace CUWebinars.Web.Controllers.Admin
                 });
             }
 
+            var timeString = GetAffiliateTimeZone(model.Affiliate.idUserAff, model.Webinar.idWebinar).ToString();
+
+            model.EventBody = model.EventBody.Replace("{timeString}", timeString);
             string eventBodyText = System.Uri.UnescapeDataString(model.EventBody);
 
             GeneratePromoDocuments(model);
@@ -1687,6 +1689,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return ret;
         }
 
+
         [HttpPost]
         public JsonResult GetAffiliateTimeZone(int idAffiliate, int idWebinar)
         {
@@ -1697,8 +1700,6 @@ namespace CUWebinars.Web.Controllers.Admin
                           " - " +
                           DateTimeHelper.FormatTime(
                               webinar.Date.AddHours((double)webinar.Duration), timeZone, true) + "<br /></i>";
-
-
             return Json(new { timeFormatDisplay = TimeFormatDisplay });
         }
 
@@ -2049,9 +2050,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 model.Affiliates = new AffiliateRepository().GetAffiliatesByPromoType("Daily")
                     .Where(a => a.idUserAff == affId).ToList();
             }
-
             return View(model);
-
         }
 
         [HttpPost]
@@ -2061,10 +2060,12 @@ namespace CUWebinars.Web.Controllers.Admin
         // WebinarPromoViewModel model
         {
 
+            var timeString = GetAffiliateTimeZone(affiliateId, webinarId).ToString();
+
             WebinarPromoViewModel model = new WebinarPromoViewModel
             {
                 Affiliate = _affiliateManagementService.FindById(affiliateId),
-                EventBody = messageBodyHtml,
+                EventBody = messageBodyHtml.Replace("{timeString}", timeString),
                 Webinar = _webinarManagementService.GetWebinar(webinarId),
                 Subject = subject
             };
@@ -2073,32 +2074,6 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 try
                 {
-                    //bool campaignExists = false;
-                    //McCampaign campaign;
-                    //if (model.Webinar.Campaigns != null)
-                    //{
-                    //    List<McCampaign> campagin =
-                    //        JsonConvert.DeserializeObject<List<McCampaign>>(model.Webinar.Campaigns);
-                    //    foreach (var mcCampaign in campagin)
-                    //    {
-                    //        if (mcCampaign.AffiliateId == affiliateId)
-                    //            campaignExists = true;
-                    //    }
-                    //}
-
-                    //if (!campaignExists)
-                    //{
-                    //    if (model.Affiliate.idMailChimpList != null)
-                    //    {
-                    //        _logger.Info("CreateCampaign | starting " + model.Affiliate.ttsDomain);
-                    //        var createdCamp = CreateCampaignSingle(model.Affiliate.idUserAff, messageBodyHtml, model.Webinar.idWebinar, sendDate);
-                    //        var campMsg = new JProperty(JsonPropertyKeys.MailChimpCampaign, JsonConvert.SerializeObject(createdCamp.Result, Formatting.None, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
-
-                    //        model.Webinar.Campaigns = JsonHelpers.MergeJsonWithStoredField(model.Webinar.Campaigns, campMsg);
-                    //        _webinarManagementService.SaveChanges();
-                    //    }
-                    //}
-
                     _orderManagementService.FireSendPerDayPromoEvent(model);
                     return Json(new { Result = WebUiConstants.Success });
                 }
@@ -2107,19 +2082,17 @@ namespace CUWebinars.Web.Controllers.Admin
                     _logger.ErrorException("SendSinglePromo action", exception);
                 }
             }
-
             return this.ModelStateJson(ModelState);
         }
 
 
         [ValidateInput(false)]
-
         [HttpPost]
         public async Task<JsonResult> CreateCampaignSingle(int affiliateId, string messageBodyHtml, int webinarId, string sendDate, string sendTime)
         {
             Webinar webinar = _webinarManagementService.GetWebinar(webinarId);
             Affiliate affiliate = _affiliateManagementService.FindById(affiliateId);
-            sendDate = sendDate.Split('/')[2] + "-" + sendDate.Split('/')[0] + "-" + sendDate.Split('/')[1] +"T"+ sendTime + ":00:00" + (int)affiliate.WebUser.timeZone;//"T10:00:00-05:00";
+            sendDate = sendDate.Split('/')[2] + "-" + sendDate.Split('/')[0] + "-" + sendDate.Split('/')[1] + "T" + sendTime + ":00:00" + (int)affiliate.WebUser.timeZone;//"T10:00:00-05:00";
 
             McCampaign campaign = new McCampaign { AffiliateId = affiliate.idUserAff, WebinarId = webinar.idWebinar };
 
@@ -2183,11 +2156,11 @@ namespace CUWebinars.Web.Controllers.Admin
                     },
                     ScheduleTime = sendDate
                 });
-                
+
                 CampaignTestRequest emails = new CampaignTestRequest { EmailType = "html", Emails = new string[] { "all.of.us@ttstrain.com", affiliate.NotiPromos } };
 
                 await manager.Campaigns.TestAsync(mkCamp.Id, emails);
-                
+
                 var campMsg = new JProperty(JsonPropertyKeys.MailChimpCampaign, JsonConvert.SerializeObject(campaign, Formatting.None, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
                 _logger.Info("Webinar.Campaigns += " + campMsg);
                 webinar.Campaigns = JsonHelpers.MergeJsonWithStoredField(webinar.Campaigns, campMsg);
