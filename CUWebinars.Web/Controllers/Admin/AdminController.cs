@@ -257,11 +257,10 @@ namespace CUWebinars.Web.Controllers.Admin
 
             var newAffiliate = new AffiliateRepository().FindByIdWithIncluding(idAffiliate.Value);
 
-            string buildMessage = "<div class=\"affiliateChanged\">Affiliate changed for order " + order.idOrder +
+            string buildMessage = "Affiliate changed for order " + order.idOrder +
                                   " from " + originalAffiliate.ttsDomain + " to " +
                                   newAffiliate.ttsDomain + " by " + User.Identity.Name +
-                                  " on " + TtsConfig.UtcNowAsCts.ToShortDateString() +
-                                  "</div>";
+                                  " on " + TtsConfig.UtcNowAsCts.ToShortDateString() ;
             try
             {
                 if (order.InvoiceDetail != null && order.InvoiceDetail.StartsWith("{\"OrderIsInvoiced"))
@@ -1950,7 +1949,8 @@ namespace CUWebinars.Web.Controllers.Admin
                     ScheduleTime = sendDate
                 });
 
-                CampaignTestRequest emails = new CampaignTestRequest { EmailType = "html", Emails = new string[] { "all.of.us@ttstrain.com", affiliate.NotiPromos } };
+                CampaignTestRequest emails = new CampaignTestRequest { EmailType = "html",
+                    Emails = new string[] { "all.of.us@ttstrain.com", affiliate.NotiPromos } };
 
                 await manager.Campaigns.TestAsync(mkCamp.Id, emails);
 

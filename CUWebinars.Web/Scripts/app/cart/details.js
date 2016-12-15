@@ -7,6 +7,17 @@ checkoutConfirm = {};
 okToLeave = true;
 pagetitle = $("h1:first").text();
 userHasDiscount = false;
+function getWorkStationTimeZone(now) {
+
+    var offset = new Date().getTimezoneOffset();
+    console.log(offset);
+    offset = offset / 60 * -1;
+    console.log(offset);
+    Cookies.set('timezoneoffset', offset);
+
+};
+
+
 function getInternetExplorerVersion()
     // Returns the version of Internet Explorer or a -1
     // (indicating the use of another browser).
@@ -21,7 +32,6 @@ function getInternetExplorerVersion()
     return rv;
 }
 var ieVer = "";
-
 function checkVersion() {
 
     var ver = getInternetExplorerVersion();
@@ -37,6 +47,8 @@ function checkVersion() {
 
 $(function () {
     checkVersion();
+
+    userWSTimeZone = getWorkStationTimeZone();
 
     if (ieVer === "preIE10")
         $("#iePre10").show();
@@ -170,7 +182,7 @@ $(function () {
     });
 
     $('#addGmail').on('click', function (e) {
-        
+
         e.preventDefault();
         var frmAddGmail = $('#frmAddGmail');
         $("#glWebinar").val(webinarId);

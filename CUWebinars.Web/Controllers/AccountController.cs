@@ -1354,12 +1354,15 @@ namespace CUWebinars.Web.Controllers
                         Affiliate affiliate = null;
                         if (webUser != null)
                         {
+                            _logger.Info("Signin calls DetermineAffiliateByAlternativeMeans: " + webUser.idUser);
                             affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser);
                         }
                         else
                         {
                             //hardwire a valid affiliate ID
-                            affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(19);
+                            _logger.Info("Signin found anon user.");
+                            affiliate = _affiliateRepository.FindById(19);
+                            //affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(19);
                         }
 
                         // if null returned, just use whatever is stored in Session for CurrentAffiliate.
@@ -1453,6 +1456,7 @@ namespace CUWebinars.Web.Controllers
 
                             if (cAffilliate.idUserAff == 19)
                             {
+                                _logger.Info("SigninFromCart calls DetermineAffiliateByAlternativeMeans where aff=19: " + webUser.idUser);
 
                                 var affiliate =
                                     _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser);
@@ -1461,7 +1465,7 @@ namespace CUWebinars.Web.Controllers
                                 if (!ReferenceEquals(null, affiliate))
                                 {
                                     _stateService.SetValue(WebUiConstants.CurrentAffiliate, affiliate);
-                                    _logger.Info("Account.SignIn. Email: {1}, Affiliate: {2},  Session: {0}",
+                                    _logger.Info("Account.SignInFromCart. Email: {1}, Affiliate: {2},  Session: {0}",
                                         _appHelper.GetUserAuditInfo(),
                                         model.Email, affiliate.ttsDomain
                                     );

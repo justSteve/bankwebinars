@@ -133,7 +133,17 @@ namespace CUWebinars.Web.Controllers
                 case "Pacific":
                     tz = USTimeZone.Pacific;
                     break;
+                case "Caribbean":
+                    tz = USTimeZone.Caribbean;
+                    break;
+                case "Alaska":
+                    tz = USTimeZone.Alaska;
+                    break;
+                case "Hawaii":
+                    tz = USTimeZone.Hawaii;
+                    break;
             }
+
             string wDate = "<b>" + DateTimeHelper.FormatDate(webinar.Date) + "</b><br>";
             wDate = wDate + DateTimeHelper.FormatTimeWithDuration(webinar.Date, tz, false, webinar.Duration) + "<br>";
 
@@ -391,13 +401,10 @@ namespace CUWebinars.Web.Controllers
                             currentAffiliate =
                                 _orderManagementService.GetAffiliateByDomain(claimsIdentityOfAuthenticatedUser.Claims
                                     .Where(c => c.Type == ClaimTypes.Affiliate).Select(c => c.Value).Single());
+                            model.UserIsAdmin = false;
+                            model.Affiliate = currentAffiliate;
                         }
-                        if (claimsIdentityOfAuthenticatedUser.HasClaim(
-                            (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
-                        {
 
-                            model.UserIsAdmin = true;
-                        }
                         var oModel = new ShowOrdersViewModel
                         {
                             Affiliate = currentAffiliate,
@@ -405,8 +412,12 @@ namespace CUWebinars.Web.Controllers
                             UserIsAdmin = false,
                             Webinar = null
                         };
-                        model.UserIsAdmin = false;
-                        model.Affiliate = currentAffiliate;
+                        if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                            (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
+                        {
+                            model.UserIsAdmin = true;
+                            oModel.UserIsAdmin = true;
+                        }
 
                         //searchByidOrder
                         if (searchTerm != "" && searchTerm.All(Char.IsDigit))
@@ -885,7 +896,7 @@ namespace CUWebinars.Web.Controllers
                     {
                         Affiliate = aff,
                         Links = _affiliateManagementService.GetPromosByAffiliate(_globalConfig.Tenant, aff.idUserAff, webinar.idWebinar)
-                };
+                    };
                     BuildConfirmOrderView(model);
                     return PartialView("DetailsAffiliate", model);
                 }
@@ -1659,7 +1670,7 @@ namespace CUWebinars.Web.Controllers
 
             var userExists = model.WebUser.idUser > 0;
 
-            model.TimeZone = userExists ? model.WebUser.timeZone : USTimeZone.Central;
+            model.TimeZone = userExists ? model.WebUser.timeZone : AppHelper.ComputeTimeZone(Request.Cookies["timezoneoffset"].Value);
 
             model.UserIsLoggedIn = userExists;
 
@@ -1728,11 +1739,12 @@ namespace CUWebinars.Web.Controllers
 
             var feed = new SyndicationFeed("Events from " + _globalConfig.Tenant, _globalConfig.TenantURL + " is Webinars for the financial industry.", new Uri("http://www.bankwebinars.com/blog"), postItems)
             {
-                
+
             };
             return new FeedResult(new Rss20FeedFormatter(feed));
 
-        }        [System.Web.Mvc.AcceptVerbs(HttpVerbs.Get)]
+        }
+        [System.Web.Mvc.AcceptVerbs(HttpVerbs.Get)]
         public ActionResult CalendarRssFull()
         {
             IList<Webinar> webinarsList = _webinarManagementService.GetUpcomingWebinars().ToList();
@@ -1746,7 +1758,7 @@ namespace CUWebinars.Web.Controllers
 
             var feed = new SyndicationFeed("Events from " + _globalConfig.Tenant, _globalConfig.TenantURL + " is Webinars for the financial industry.", new Uri("http://www.bankwebinars.com/blog"), postItems)
             {
-                
+
             };
             return new FeedResult(new Rss20FeedFormatter(feed));
 

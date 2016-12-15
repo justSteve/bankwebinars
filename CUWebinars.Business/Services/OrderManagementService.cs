@@ -527,6 +527,8 @@ namespace CUWebinars.Business.Services
 
             if (affiliateIds.Any())
             {
+                _logger.Info("DetermineAffiliateByAlternativeMeans found at one aff: " + idUser);
+
                 //  get the most recent
                 int affiliateIdForOrder, mostRecentAffiliateId;
                 affiliateIdForOrder = mostRecentAffiliateId = affiliateIds.First();
@@ -535,6 +537,8 @@ namespace CUWebinars.Business.Services
                 // The history is of more than 1 affiliate
                 if (affiliateIds.Distinct().Count() > 1)
                 {
+                    _logger.Info("DetermineAffiliateByAlternativeMeans find multi affs: " + idUser);
+
                     // The business rule is that where there is more than one Affiliate which the 
                     // user has made orders for, if one affiliate has been used twice as many times 
                     // as the most recent Affiliate, then make the order for that Affiliate.
@@ -562,9 +566,11 @@ namespace CUWebinars.Business.Services
                     }
 
                     if (mostUses >= 2 * numberOfUsesOfMostRecentAffiliate)
+                    {
+                        _logger.Info("DetermineAffiliateByAlternativeMeans by mostUses: " + idUser);
                         affiliateIdForOrder = mostUsedAffiliateId;
-
-                    _logger.Error("{3} affiliates considered: {0} for idUser {1}. Credited to {2}.", sb.ToString(), idUser, affiliateIdForOrder, current);
+                    }
+                    _logger.Error("multiple affiliates considered: {0} for idUser {1}. Credited to {2}.", sb.ToString(), idUser, affiliateIdForOrder, current);
 
                 }
 
@@ -582,6 +588,7 @@ namespace CUWebinars.Business.Services
                     // keeps Affiliate object in cache for 1 hour.
                     //_cachingService.Add(cachKey, affiliate, DomainConstants.BuildUtcNowAsCts.AddHours(1));
                 }
+                _logger.Info("DetermineAffiliateByAlternativeMeans returned: " + affiliate.idUserAff + " for: " + idUser);
 
                 return affiliate;
             }
@@ -2041,7 +2048,7 @@ namespace CUWebinars.Business.Services
                 }
 
                 var regType = GetRegTypeOfOrderRow(row.idRegType);
-                
+
                 //establish order date as starting point
                 DateTime expryDate = orderDate.AddMonths(6);
 

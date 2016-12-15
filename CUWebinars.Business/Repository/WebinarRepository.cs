@@ -236,7 +236,6 @@ namespace CUWebinars.Business.Repository
         {
             return items.Where(w => w.idWebinar == idWebinar)
                 .SelectMany(webinar => webinar.RegTypesGroupsXref)
-                //.Select(r => r.RegTypesGroup).Where(r => r.RegTypeGroupDesc.ToLower().Contains("15"));
                 .Select(r => r.RegTypesGroup).Where(r => !r.RegTypeGroupDesc.StartsWith("BW"));
         }
 
