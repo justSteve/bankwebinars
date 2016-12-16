@@ -1890,7 +1890,6 @@ namespace CUWebinars.Web.Controllers
                 if (claimsIdentityOfAuthenticatedUser.HasClaim(
                     (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
                 {
-
                     return Json(new { Result = WebUiConstants.Fail, Msg = "Not Authorized" }, JsonRequestBehavior.AllowGet);
                 }
             }

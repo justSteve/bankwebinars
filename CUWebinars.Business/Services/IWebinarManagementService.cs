@@ -8,7 +8,7 @@ namespace CUWebinars.Business.Services
 {
     public interface IWebinarManagementService : IDisposable
     {
-        void AddAdditionalLocationsLookupPrice(AdditionalLocationsLookupPrice additionalLocationsLookupPrice);
+        //void AddAdditionalLocationsLookupPrice(AdditionalLocationsLookupPrice additionalLocationsLookupPrice);
         bool AddQuestionsToQuiz(int selectedWebinar, IEnumerable<Question> newQuestions);
         void AddWebinar(Webinar webinar);
         void AddWebinarFiles(IEnumerable<WebinarFile> webinarFiles);
@@ -16,7 +16,7 @@ namespace CUWebinars.Business.Services
         void DeleteWebinarFiles(IEnumerable<WebinarFile> webinarFiles);
         void DeleteRegTypeGroupXRef(Webinar webinar, int idRegTypeGroupXRef);
         IDictionary<RegType, bool> FindRegTypesByWebinarId(int webinarId);
-        IEnumerable<AdditionalLocationsLookupPrice> GetAdditionalLocationsLookupPricesForWebinar(int idWebinar);
+        //IEnumerable<AdditionalLocationsLookupPrice> GetAdditionalLocationsLookupPricesForWebinar(int idWebinar);
         IEnumerable<Webinar> GetAllActive();
         IEnumerable<Presenter> GetAllPresenters();
         IEnumerable<Topic> GetAllTopics();

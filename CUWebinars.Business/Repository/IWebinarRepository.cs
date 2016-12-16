@@ -8,7 +8,7 @@ namespace CUWebinars.Business.Repository
     public interface IWebinarRepository : IDisposable
     {
         void Add(Webinar webinar);
-        void AddAdditionalLocationsLookupPrice(AdditionalLocationsLookupPrice additionalLocationsLookupPrice);
+        //void AddAdditionalLocationsLookupPrice(AdditionalLocationsLookupPrice additionalLocationsLookupPrice);
         void Delete(Webinar webinar);
         void MarkForDeletion(object domainObject);
         Webinar FindById(int id);
@@ -16,7 +16,7 @@ namespace CUWebinars.Business.Repository
         IEnumerable<Webinar> FindByPresenterLastName(string lastName);
         IEnumerable<Webinar> FindByPresenterFullName(string searchTerm);
         IEnumerable<Webinar> FindByDescription(string topicDescription);
-        IQueryable<AdditionalLocationsLookupPrice> GetAdditionalLocationsLookupPricesForWebinar(int idWebinar);
+        //IQueryable<AdditionalLocationsLookupPrice> GetAdditionalLocationsLookupPricesForWebinar(int idWebinar);
         IQueryable<Webinar> GetUpcoming();
         IQueryable<Webinar> GetDes();
         IQueryable<Webinar> GetRecorded();

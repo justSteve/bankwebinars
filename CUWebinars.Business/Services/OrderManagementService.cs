@@ -210,6 +210,7 @@ namespace CUWebinars.Business.Services
 
             // perf tweak - ensures enumerable will only be enumerated once
             var additionalLocationsEnumerated = additionalLocations as AdditionalLocation[] ?? additionalLocations.ToArray();
+            //var additionalLocationsEnumerated = additionalLocations as AdditionalLocation[] ?? additionalLocations.ToArray();
 
             string emailSpanElement = string.Empty; // emails in bold text, or whatever suits
             //tagBuilder.AddCssClass("muted");

@@ -782,14 +782,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             var statuses = (from object value in Enum.GetValues(typeof(WebinarStatus))
                             select new SelectListItem { Text = value.ToString(), Value = ((int)value).ToString() }).ToList();
 
-            // The database does not support the business rule that there will only be a single price for Additional Locations.
-            // We ae therefore enforcing this rule here.
-            var additionalLocationsPricing =
-                _webinarManagementService.GetAdditionalLocationsLookupPricesForWebinar(idWebinar).SingleOrDefault();
-
+            
             var webinarEditModel = new WebinarEditModel
             {
-                AdditionalLocationsPrice = additionalLocationsPricing == null ? 0.00M : additionalLocationsPricing.Cost,
+                AdditionalLocationsPrice = _orderManagementService.GetAdditionalLocationsPricing(idWebinar),
                 ceu = webinar.ceu,
                 LivePlusFive = webinar.Date.AddDays(7),
                 PostedTopics = new PostedTopics { TopicIds = topicIdsForWebinar.Select(topic => topic.idTopic).ToArray() },
@@ -863,24 +859,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             _webinarManagementService.AddWebinar(webinar);
 
-            var additionalLocationsLookupPrice = _webinarManagementService.GetAdditionalLocationsLookupPricesForWebinar(webinar.idWebinar).SingleOrDefault();
+            webinar.AdditionalLocationPrice = _orderManagementService.GetAdditionalLocationsPricing(webinar.idWebinar);
 
-            if (ReferenceEquals(null, additionalLocationsLookupPrice))
-            {
-                additionalLocationsLookupPrice = new AdditionalLocationsLookupPrice
-                {
-                    Cost = webinarEditModel.AdditionalLocationsPrice,
-                    idWebinar = webinar.idWebinar
-                };
-
-                _webinarManagementService.AddAdditionalLocationsLookupPrice(additionalLocationsLookupPrice);
-            }
-            else
-            {
-                additionalLocationsLookupPrice.Cost = webinarEditModel.AdditionalLocationsPrice;
-            }
-
-            _webinarManagementService.AddAdditionalLocationsLookupPrice(additionalLocationsLookupPrice);
             _webinarManagementService.SaveChanges();
         }
 
@@ -955,20 +935,21 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _webinarManagementService.DeleteWebinarTopicXref(webinar, exisingTopicId);
             }
 
-            var additionalLocationsLookupPrice = _webinarManagementService.GetAdditionalLocationsLookupPricesForWebinar(webinar.idWebinar).SingleOrDefault();
+            webinar.AdditionalLocationPrice = _orderManagementService.GetAdditionalLocationsPricing(webinar.idWebinar);
+            //var additionalLocationsLookupPrice = _webinarManagementService.GetAdditionalLocationsLookupPricesForWebinar(webinar.idWebinar).SingleOrDefault();
 
-            if (ReferenceEquals(null, additionalLocationsLookupPrice))
-            {
-                _webinarManagementService.AddAdditionalLocationsLookupPrice(new AdditionalLocationsLookupPrice
-                {
-                    Cost = webinarEditModel.AdditionalLocationsPrice,
-                    idWebinar = webinar.idWebinar
-                });
-            }
-            else
-            {
-                additionalLocationsLookupPrice.Cost = webinarEditModel.AdditionalLocationsPrice;
-            }
+            //if (ReferenceEquals(null, additionalLocationsLookupPrice))
+            //{
+            //    _webinarManagementService.AddAdditionalLocationsLookupPrice(new AdditionalLocationsLookupPrice
+            //    {
+            //        Cost = webinarEditModel.AdditionalLocationsPrice,
+            //        idWebinar = webinar.idWebinar
+            //    });
+            //}
+            //else
+            //{
+            //    additionalLocationsLookupPrice.Cost = webinarEditModel.AdditionalLocationsPrice;
+            //}
 
             _webinarManagementService.UpdateWebinar(webinar);
         }

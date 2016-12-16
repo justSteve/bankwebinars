@@ -79,11 +79,11 @@ namespace CUWebinars.Business.Services
             return _webinarRepository.GetAllTopics();
         }
 
-        public void AddAdditionalLocationsLookupPrice(AdditionalLocationsLookupPrice additionalLocationsLookupPrice)
-        {
-            // NOTE: db.SaveChanges is not called in the following method. 
-            _webinarRepository.AddAdditionalLocationsLookupPrice(additionalLocationsLookupPrice);
-        }
+        //public void AddAdditionalLocationsLookupPrice(AdditionalLocationsLookupPrice additionalLocationsLookupPrice)
+        //{
+        //    // NOTE: db.SaveChanges is not called in the following method. 
+        //    _webinarRepository.AddAdditionalLocationsLookupPrice(additionalLocationsLookupPrice);
+        //}
 
         public bool AddQuestionsToQuiz(int selectedWebinar, IEnumerable<Question> newQuestions)
         {
@@ -523,10 +523,10 @@ namespace CUWebinars.Business.Services
             return _regTypeRepository.FindRegTypesByWebinarId(webinarId, false);
         }
 
-        public IEnumerable<AdditionalLocationsLookupPrice> GetAdditionalLocationsLookupPricesForWebinar(int idWebinar)
-        {
-            return _webinarRepository.GetAdditionalLocationsLookupPricesForWebinar(idWebinar);
-        }
+        //public IEnumerable<AdditionalLocationsLookupPrice> GetAdditionalLocationsLookupPricesForWebinar(int idWebinar)
+        //{
+        //    return _webinarRepository.GetAdditionalLocationsLookupPricesForWebinar(idWebinar);
+        //}
 
         public IEnumerable<IEvent> GetEvents()
         {
