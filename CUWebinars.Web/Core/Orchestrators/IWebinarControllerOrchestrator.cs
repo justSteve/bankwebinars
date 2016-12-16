@@ -31,5 +31,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         void SendRecordingIsPostedBatch(int idWebinar);
         void SendRecordingIsPostedPerOrder(int idWebinar, string note);
         //string CreateICS(WebinarDetailsViewModel model);
+        List<string> GetCitrixRegsPerWebinar(Webinar webinar);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Citrix.GoToWebinar.Api;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
@@ -115,14 +116,14 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             try
             {
-                
+
                 string updatedUserComments = JsonHelpers.AddObjectToJsonArray(
                    order.UserComments,
                    JsonPropertyKeys.PostEventMaterialsWereAccessedKey,
                    fieldsToComments
                    );
                 order.UserComments = updatedUserComments;
-                
+
             }
             catch (Exception ex)
             {
@@ -596,7 +597,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     // Zopim
                     // email
                     // Grasshopper
-                    
+
 
                     var addNote = GetLoggedIncidents(order);
 
@@ -641,6 +642,18 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void SendRecordingIsPostedPerOrder(int idWebinar, string note)
         {
             throw new NotImplementedException();
+        }
+
+        public List<string> GetCitrixRegsPerWebinar(Webinar webinar)
+        {
+            var accessToken = "PKfqIlYbQj3IsmqcBGoIClWzRFYG";
+            var orgKey = 643333405148919814;
+            var webinarKey = Convert.ToInt64(webinar.CitrixRegisterUrl.Replace("https://attendee.gotowebinar.com/register/", ""));
+            var webinarsApi = new WebinarsApi();
+            var cWebinar = webinarsApi.getWebinar(accessToken, orgKey, webinarKey);
+
+            return webinarsApi.getAttendeesForAllWebinarSessions(accessToken, orgKey, webinarKey).Select(c => c.email).ToList();
+            
         }
 
 

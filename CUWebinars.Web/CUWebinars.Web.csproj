@@ -71,6 +71,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\BrockAllen.MembershipReboot.WebHost.7.1.0\lib\net45\BrockAllen.MembershipReboot.WebHost.dll</HintPath>
     </Reference>
+    <Reference Include="Citrix.GoToCoreLib.NET, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Citrix.GoToCoreLib.NET.0.10.0.0\lib\net40\Citrix.GoToCoreLib.NET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Citrix.GoToWebinar.NET, Version=0.12.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Citrix.GoToWebinar.NET.0.12.0.0\lib\net40\Citrix.GoToWebinar.NET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Common.Logging">
       <HintPath>..\packages\Common.Logging.2.2.0\lib\net40\Common.Logging.dll</HintPath>
     </Reference>
@@ -640,22 +648,6 @@
     <Content Include="App_Data\mergeTemplates\WebinarPromo.docx" />
     <Content Include="Content\css\formCss.css" />
     <Content Include="Content\css\stylesDirectorSeries.css" />
-    <Content Include="Content\images\email\calendar.jpg" />
-    <Content Include="Content\images\logo_coba.png" />
-    <Content Include="Content\images\logo_ctba.png" />
-    <Content Include="Content\images\logo_deba.png" />
-    <Content Include="Content\images\logo_iowabankers.jpg" />
-    <Content Include="Content\images\logo_maba.png" />
-    <Content Include="Content\images\logo_mdba.png" />
-    <Content Include="Content\images\logo_mnba.png" />
-    <Content Include="Content\images\logo_moba.png" />
-    <Content Include="Content\images\logo_nhba.png" />
-    <Content Include="Content\images\logo_njba.png" />
-    <Content Include="Content\images\logo_okba.png" />
-    <Content Include="Content\images\logo_scba.png" />
-    <Content Include="Content\images\logo_txba.png" />
-    <Content Include="Content\images\logo_vaba.png" />
-    <Content Include="Content\images\logo_vtba.png" />
     <Content Include="Content\images\presenters\katecole.png" />
     <Content Include="Content\images\presenters\osburn.png" />
     <Content Include="Content\images\presenters\russell.png" />
@@ -1033,38 +1025,6 @@
     <Content Include="Content\images\DSCert.png" />
     <Content Include="Content\images\emailHeaderLeft.png" />
     <Content Include="Content\images\emailHeaderR.png" />
-    <Content Include="Content\images\email\arkbankers.png" />
-    <Content Include="Content\images\email\azbankers.png" />
-    <Content Include="Content\images\email\banner_cftea.png" />
-    <Content Include="Content\images\email\banner_cftncs.png" />
-    <Content Include="Content\images\email\banner_cftse.png" />
-    <Content Include="Content\images\email\banner_cuad.png" />
-    <Content Include="Content\images\email\banner_idba.png" />
-    <Content Include="Content\images\email\banner_kyba.png" />
-    <Content Include="Content\images\email\banner_logocu.png" />
-    <Content Include="Content\images\email\banner_mibankers.png" />
-    <Content Include="Content\images\email\banner_neba.png" />
-    <Content Include="Content\images\email\banner_nebrcul.png" />
-    <Content Include="Content\images\email\banner_njcul.png" />
-    <Content Include="Content\images\email\banner_ohiobankersleague.png" />
-    <Content Include="Content\images\email\banner_sdba.png" />
-    <Content Include="Content\images\email\banner_uba.png" />
-    <Content Include="Content\images\email\banner_wabankers.png" />
-    <Content Include="Content\images\email\banner_wyomingbankers.png" />
-    <Content Include="Content\images\email\emailBannerBase.xcf" />
-    <Content Include="Content\images\email\logoCU.png" />
-    <Content Include="Content\images\email\logoCUTrans.png" />
-    <Content Include="Content\images\email\logoCUtransparent.png" />
-    <Content Include="Content\images\email\montanabankers.png" />
-    <Content Include="Content\images\email\msbankers.png" />
-    <Content Include="Content\images\email\ncbankers.png" />
-    <Content Include="Content\images\email\ndba.png" />
-    <Content Include="Content\images\email\njcul.jpg" />
-    <Content Include="Content\images\email\nmbankers.png" />
-    <Content Include="Content\images\email\oregonbankers.png" />
-    <Content Include="Content\images\email\upcomingwebinars.jpg" />
-    <Content Include="Content\images\email\upcomingwebinars.png" />
-    <Content Include="Content\images\email\upcomingwebinars1.jpg" />
     <Content Include="Content\images\favicon.ico" />
     <Content Include="Content\images\filler.png" />
     <Content Include="Content\images\footer.png" />
@@ -1090,89 +1050,15 @@
     <Content Include="Content\images\heroAccent.png" />
     <Content Include="Content\images\How2Connect1.png" />
     <Content Include="Content\images\hr.png" />
-    <Content Include="Content\images\idba_logo.png" />
     <Content Include="Content\images\img_corner.png" />
     <Content Include="Content\images\insert.png" />
-    <Content Include="Content\images\kyba_logo.jpg" />
-    <Content Include="Content\images\kyba_logo2.jpg" />
     <Content Include="Content\images\light.gif" />
     <Content Include="Content\images\loader.gif" />
     <Content Include="Content\images\loading-background.png" />
     <Content Include="Content\images\loginButton.png" />
     <Content Include="Content\images\loginFormBackground.png" />
-    <Content Include="Content\images\LogoBase.png" />
-    <Content Include="Content\images\logoCU.png" />
-    <Content Include="Content\images\logoCUTrans.png" />
     <Content Include="Content\images\LogOntoWebinar.jpg" />
     <Content Include="Content\images\LogOntoWebinar.png" />
-    <Content Include="Content\images\logo_abtc.png" />
-    <Content Include="Content\images\logo_alabamabankers.png" />
-    <Content Include="Content\images\logo_arkbankers.png" />
-    <Content Include="Content\images\logo_auroratraining.png" />
-    <Content Include="Content\images\logo_azbankers_cjfbe.png" />
-    <Content Include="Content\images\logo_bankwebinars.png" />
-    <Content Include="Content\images\logo_calbankers.png" />
-    <Content Include="Content\images\logo_cbao.png" />
-    <Content Include="Content\images\logo_cft-flsc.png" />
-    <Content Include="Content\images\logo_cft.png" />
-    <Content Include="Content\images\logo_cftea.png" />
-    <Content Include="Content\images\logo_cftgpr.png" />
-    <Content Include="Content\images\logo_cftncs.png" />
-    <Content Include="Content\images\logo_cftnow.png" />
-    <Content Include="Content\images\logo_cftoz.png" />
-    <Content Include="Content\images\logo_cftts.png" />
-    <Content Include="Content\images\logo_cftum.png" />
-    <Content Include="Content\images\logo_cftuny.png" />
-    <Content Include="Content\images\logo_cftva.png" />
-    <Content Include="Content\images\logo_cftws.png" />
-    <Content Include="Content\images\logo_cpd.png" />
-    <Content Include="Content\images\logo_ctbank.png" />
-    <Content Include="Content\images\logo_cuad.png" />
-    <Content Include="Content\images\logo_cunews.png" />
-    <Content Include="Content\images\logo_gabankers.png" />
-    <Content Include="Content\images\logo_gregsouther.png" />
-    <Content Include="Content\images\logo_idahobankers.png" />
-    <Content Include="Content\images\logo_ilbanker.png" />
-    <Content Include="Content\images\logo_ilfi.png" />
-    <Content Include="Content\images\logo_indianabankers.png" />
-    <Content Include="Content\images\logo_interaction.png" />
-    <Content Include="Content\images\logo_iowabankers.png" />
-    <Content Include="Content\images\logo_ksbankers.png" />
-    <Content Include="Content\images\logo_kybanks.png" />
-    <Content Include="Content\images\logo_lba.png" />
-    <Content Include="Content\images\logo_massbankers.png" />
-    <Content Include="Content\images\logo_mibankers.png" />
-    <Content Include="Content\images\logo_minnbankers.png" />
-    <Content Include="Content\images\logo_msbankers.png" />
-    <Content Include="Content\images\logo_mscua.png" />
-    <Content Include="Content\images\logo_ncbankers.png" />
-    <Content Include="Content\images\logo_ndba.png" />
-    <Content Include="Content\images\logo_nebankers.png" />
-    <Content Include="Content\images\logo_nebrcul.png" />
-    <Content Include="Content\images\logo_newswatchmedia.png" />
-    <Content Include="Content\images\logo_nhbankers.png" />
-    <Content Include="Content\images\logo_njbankers.png" />
-    <Content Include="Content\images\logo_njcul.png" />
-    <Content Include="Content\images\logo_nmbankers.png" />
-    <Content Include="Content\images\logo_nvbankers.png" />
-    <Content Include="Content\images\logo_nyba.png" />
-    <Content Include="Content\images\logo_obl.jpg" />
-    <Content Include="Content\images\logo_obl.png" />
-    <Content Include="Content\images\logo_oregonbankers.png" />
-    <Content Include="Content\images\logo_rate-watch.png" />
-    <Content Include="Content\images\logo_sdba.png" />
-    <Content Include="Content\images\logo_sfcft.png" />
-    <Content Include="Content\images\logo_spspec.png" />
-    <Content Include="Content\images\logo_tnbankers.png" />
-    <Content Include="Content\images\logo_trainingpitstop.png" />
-    <Content Include="Content\images\logo_ttsholder.png" />
-    <Content Include="Content\images\logo_ttskb.png" />
-    <Content Include="Content\images\logo_uba.png" />
-    <Content Include="Content\images\logo_vabankers.png" />
-    <Content Include="Content\images\logo_wabankers.png" />
-    <Content Include="Content\images\logo_wisbank.png" />
-    <Content Include="Content\images\logo_wvbankers.png" />
-    <Content Include="Content\images\logo_wyomingbankers.png" />
     <Content Include="Content\images\menu.gif" />
     <Content Include="Content\images\menu\Auditing.jpg" />
     <Content Include="Content\images\menu\Compliance.fw.png" />
@@ -1198,15 +1084,10 @@
     <Content Include="Content\images\menu\Security.jpg" />
     <Content Include="Content\images\menu\Teller.jpg" />
     <Content Include="Content\images\menu_arrow.png" />
-    <Content Include="Content\images\MIBA Logo.jpg" />
     <Content Include="Content\images\MNBA Logo.jpg" />
     <Content Include="Content\images\navtriggerbg.png" />
     <Content Include="Content\images\nav_bg.jpg" />
-    <Content Include="Content\images\neba_logo.jpg" />
-    <Content Include="Content\images\njcul.jpg" />
-    <Content Include="Content\images\NMBA Logo.jpg" />
     <Content Include="Content\images\NotiFooter.gif" />
-    <Content Include="Content\images\NVBA Logo.jpg" />
     <Content Include="Content\images\open-quote-white.png" />
     <Content Include="Content\images\open-quote.png" />
     <Content Include="Content\images\orderedList0.png" />
@@ -1341,7 +1222,6 @@
     <Content Include="Content\images\retina\videoicon_%402x.png" />
     <Content Include="Content\images\retina\zoom-corner_%402x.png" />
     <Content Include="Content\images\rule.png" />
-    <Content Include="Content\images\sdba_logo.png" />
     <Content Include="Content\images\search-icon.png" />
     <Content Include="Content\images\search.png" />
     <Content Include="Content\images\shadedBar.png" />
@@ -1928,14 +1808,12 @@
     <Content Include="Content\images\CUWebinars\Webinars\w1547\cert.doc" />
     <Content Include="Content\images\CUWebinars\Webinars\w1553\cert.doc" />
     <Content Include="Content\images\CUWebinars\Webinars\w1553\cert.docx" />
-    <Content Include="Content\images\Thumbs.db" />
     <Content Include="Notification\Templates\Web.config">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Notification\Templates\Partials\_GeneralHeader.cshtml" />
     <Content Include="Notification\Templates\Partials\_GeneralFooter.cshtml" />
     <Content Include="Notification\Templates\SendPerDayPromoMaster.cshtml" />
-    <Content Include="Content\images\logo_azbankers.png" />
     <Content Include="Notification\Templates\SendPromoLinks.cshtml" />
     <Content Include="Notification\Templates\SendWeeklyInvoice.cshtml" />
     <Content Include="App_Data\mergeTemplates\WeeklyInvoice.docx" />
@@ -2733,6 +2611,7 @@
     <Folder Include="App_Data\Logs\" />
     <Folder Include="App_Data\Notifications\" />
     <Folder Include="App_Data\Trace\" />
+    <Folder Include="Content\images\email\" />
     <Folder Include="Infrastructure\apis\citrix\GTW\" />
     <Folder Include="Infrastructure\GemBox\" />
     <Folder Include="Notification\Delivery\" />

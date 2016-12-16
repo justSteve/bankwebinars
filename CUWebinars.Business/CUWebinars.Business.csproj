@@ -46,6 +46,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\BrockAllen.MembershipReboot.WebHost.7.1.0\lib\net45\BrockAllen.MembershipReboot.WebHost.dll</HintPath>
     </Reference>
+    <Reference Include="Citrix.GoToCoreLib.NET, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Citrix.GoToCoreLib.NET.0.10.0.0\lib\net40\Citrix.GoToCoreLib.NET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Citrix.GoToWebinar.NET, Version=0.12.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Citrix.GoToWebinar.NET.0.12.0.0\lib\net40\Citrix.GoToWebinar.NET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="DDay.iCal">
       <HintPath>..\packages\DDay.iCal.1.0.2.575\lib\DDay.iCal.dll</HintPath>
     </Reference>

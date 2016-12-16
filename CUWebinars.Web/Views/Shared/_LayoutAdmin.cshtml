@@ -30,6 +30,13 @@
 <html class="no-js" lang="en" dir="ltr">
 <!--<![endif]-->
 <head>
+    <script src="~/Scripts/js.cookie/js.cookie.js"></script>
+
+    <script type="text/javascript">
+        var offset = new Date().getTimezoneOffset();
+        offset = offset / 60 * -1;
+        Cookies.set('timezoneoffset', offset);
+    </script>
 
     <title>@ViewBag.Title</title>
     <!-- Meta Data ================ -->
@@ -50,14 +57,15 @@
     <!--Start of Zopim Live Chat Script-->
     <script type="text/javascript">
 
-        window.$zopim || (function (d, s) {
-            var z = window.$zopim = function (c) {
+        window.$zopim ||
+        (function(d, s) {
+            var z = window.$zopim = function(c) {
                 z._.push(c);
             },
                 $ = z.s = d.createElement(s),
                 e = d.getElementsByTagName(s)[0];
 
-            z.set = function (o) {
+            z.set = function(o) {
                 z.set._.push(o);
             };
             z._ = [];
@@ -82,9 +90,9 @@
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="~/Content/images/BankWebinars/apple-touch-icon-144x144-precomposed.png" />
     <link rel="shortcut icon" href="~/Content/images/BankWebinars/favicon.ico" />
     <!-- Open Graph for facebook
-        http://graph.facebook.com/[UserName] replace [UserName]
-        with yours and get your fb:admis content information where the XXXX goes.
-        ================================================== -->
+    http://graph.facebook.com/[UserName] replace [UserName]
+    with yours and get your fb:admis content information where the XXXX goes.
+    ================================================== -->
     <meta property="og:title" content="" />
     <meta property="og:type" content="" />
     <meta property="og:url" content="" />

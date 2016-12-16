@@ -766,25 +766,13 @@ namespace CUWebinars.Web.Controllers
         public ActionResult Details(int? id, int? idOrder)
         {
 
-
-            foreach (String key in Request.QueryString.AllKeys)
-            {
-                //if (_stateService.HasValue(WebUiConstants.WebinarFromCode))
-                //    _stateService.ClearValue(WebUiConstants.WebinarFromCode);
-                //_stateService.SetValue(WebUiConstants.WebinarFromCode, webinar);
-            }
-
-
             ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
             var currentUser = User.Identity.Name ?? "anon";
-
-            //if (currentUser.)
 
             int incomingOrder = 0;
             if (idOrder != null)
             {
                 incomingOrder = idOrder.Value;
-                //if ()
             }
 
             if (id.HasValue)
@@ -853,6 +841,11 @@ namespace CUWebinars.Web.Controllers
                         CheckoutResumeByAdmin(id, model);
                     }
 
+                    if (webinar.Status == WebinarStatus.Active || webinar.Status == WebinarStatus.InProgress)
+                    {
+                        _webinarControllerOrchestrator.GetCitrixRegsPerWebinar(webinar);
+                    }
+
                     model.ShowOrdersViewModel = new ShowOrdersViewModel
                     {
                         Affiliate = aff,
@@ -860,6 +853,7 @@ namespace CUWebinars.Web.Controllers
                         UserIsAdmin = true,
                         Webinar = model.Webinar
                     };
+
                     BuildConfirmOrderView(model);
 
                     return PartialView("DetailsAdmin", model);
@@ -968,15 +962,6 @@ namespace CUWebinars.Web.Controllers
         }
         public ActionResult DetailsDes(int? id, int? idOrder)
         {
-
-
-            foreach (String key in Request.QueryString.AllKeys)
-            {
-                //if (_stateService.HasValue(WebUiConstants.WebinarFromCode))
-                //    _stateService.ClearValue(WebUiConstants.WebinarFromCode);
-                //_stateService.SetValue(WebUiConstants.WebinarFromCode, webinar);
-            }
-
 
             ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
             var currentUser = User.Identity.Name ?? "anon";
@@ -1669,8 +1654,12 @@ namespace CUWebinars.Web.Controllers
             ViewBag.metaKeywords = string.Empty;
 
             var userExists = model.WebUser.idUser > 0;
-
-            model.TimeZone = userExists ? model.WebUser.timeZone : AppHelper.ComputeTimeZone(Request.Cookies["timezoneoffset"].Value);
+            var detectedTimeZone = USTimeZone.Central; //
+            if (!ReferenceEquals(null, Request.Cookies["timezoneoffset"]))
+            {
+                AppHelper.ComputeTimeZone(Request.Cookies["timezoneoffset"].Value);
+            }
+            model.TimeZone = userExists ? model.WebUser.timeZone : detectedTimeZone;
 
             model.UserIsLoggedIn = userExists;
 

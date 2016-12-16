@@ -491,6 +491,7 @@ namespace CUWebinars.Web.Controllers
             }
             if (orderList != null && orderList.Length > 0)
             {
+                totalAmt = 0;
                 ProdDesc += "<tr><td colspan=3 align=left><font size=2><b>Registration Details - " + _globalConfig.Tenant + ".</b><br></font></td></tr>";
                 ProdDesc += "<tr><td colspan=3 height=1 bgcolor=000000></td></tr>";
                 ProdDesc += "<tr bgcolor=CCCCCC>";
@@ -1444,6 +1445,7 @@ namespace CUWebinars.Web.Controllers
         public string AffiliateUpdate()
         {
             string formFields = Request.Form.ToString();
+            
             formFields = HttpUtility.UrlDecode(formFields);
             _logger.Info("AffiliateUpdate: " + formFields);
             return "ok";

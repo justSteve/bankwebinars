@@ -29,9 +29,13 @@
 <!--<![endif]-->
 
 <head>
-
+    <script src="~/Scripts/js.cookie/js.cookie.js"></script>
 
     <script type="text/javascript">
+        var offset = new Date().getTimezoneOffset();
+        offset = offset / 60 * -1;
+        Cookies.set('timezoneoffset', offset);
+
         window.$zopim || (function(d, s) {
             var z = window.$zopim = function(c) {
                 z._.push(c);
@@ -201,7 +205,7 @@
                     </li>
 
                     <li class="parent">
-                        
+
                         <a role="menuitem" tabindex="1" href="/Admin">Admin</a>
                         <ul>
                             <li role="presentation"><a role="menuitem" tabindex="1" href="/Admin">Admin</a></li>

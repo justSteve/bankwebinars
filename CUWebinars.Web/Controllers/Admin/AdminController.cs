@@ -1404,7 +1404,7 @@ namespace CUWebinars.Web.Controllers.Admin
             model.EventBody = model.EventBody.Replace("{timeString}", timeString);
             string eventBodyText = System.Uri.UnescapeDataString(model.EventBody);
 
-            GeneratePromoDocuments(model);
+            //GeneratePromoDocuments(model);
 
             var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName,
                 _globalConfig.StorageAccessKey);
@@ -1682,9 +1682,10 @@ namespace CUWebinars.Web.Controllers.Admin
                 model.BasePrice = "$165";
             if ((double)model.Webinar.Duration == 1.5)
                 model.BasePrice = "$195";
-
-            model.Webinar.Description = doc.DocumentNode.SelectSingleNode("//*[@id='bodyLeft']").InnerHtml;
-
+            if (model.TemplateType == "")
+            {
+                model.Webinar.Description = doc.DocumentNode.SelectSingleNode("//*[@id='bodyLeft']").InnerHtml;
+            }
             var bodyRight = "<h3 style=\"color: whitesmoke\">Upcoming Webinars</h3>" + model.ListOfWebinarsUpcomingRendered;
             bodyRight += "<p style=\"color: whitesmoke\" align=\"center\"><b>OnDemand Webinars Available</b></p>";
             bodyRight += "<p style=\"color: whitesmoke\">Unable to attend the live session, or interested in a topic of a past webinar? Not a problem. Get the recording that includes online access to the webinar for six months, you can even add a CD-ROM and materials for offline viewing. </p>";
@@ -1804,10 +1805,6 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpGet]
         public async Task<ActionResult> PerDayPromo(int id)
         {
-            
-            //IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
-
-            //var list = await manager.Lists.GetAllAsync().ConfigureAwait(false);
 
             var webinarsForUpcoming = _webinarManagementService.GetUpcomingWebinars().Take(15).OrderBy(w => w.Date);
 
@@ -1891,25 +1888,27 @@ namespace CUWebinars.Web.Controllers.Admin
             IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
 
             List list = await manager.Lists.GetAsync(affiliate.idMailChimpList).ConfigureAwait(false);
+            var recp = new Recipient {ListId = affiliate.idMailChimpList};
+            
 
             var newCamp = new Campaign
             {
                 ContentType = "html",
                 Type = CampaignType.Regular,
-                Recipients = new Recipient { ListId = affiliate.idMailChimpList },
+                Recipients = recp,
 
                 Settings = new Setting
                 {
-                    SubjectLine = "[testing] Webinar: " + webinar.Title,
-                    Title = "[testing] " + affiliate.ttsDomain + "_" + webinar.Title,
+                    SubjectLine = "Webinar: " + webinar.Title,
+                    Title = affiliate.ttsDomain + "_" + webinar.Title,
                     FolderId = "30aca5892b",
                     InlineCss = true,
                     Authenticate = true,
                     AutoFooter = true,
                     AutoTweet = false,
                     ToName = "*|FNAME|* *|LNAME|* ",
-                    FromName = affiliate.ContactPerson,
-                    ReplyTo = affiliate.ContactEmail,
+                    FromName = list.CampaignDefaults.FromName,
+                    ReplyTo = list.CampaignDefaults.FromEmail,
                     UseConversation = true,
                 },
                 Tracking = new Tracking
@@ -3142,8 +3141,8 @@ namespace CUWebinars.Web.Controllers.Admin
                             {
                                 try
                                 {
-                                    string _price = order.Total.ToString("C").Replace(".00", "");
                                     var row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                                    string _price = row.RowPrice.ToString("C").Replace(".00", "");
                                     rowNumber++;
                                     string _percent =
                                         (row.PercentPaid * 100).ToString().Replace(".00", "").Replace(".0", "") +
