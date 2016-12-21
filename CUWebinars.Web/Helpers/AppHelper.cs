@@ -110,6 +110,9 @@ namespace CUWebinars.Web.Helpers
             var timeZone = USTimeZone.Central;
             switch (offset)
             {
+                case "-4":
+                    timeZone = USTimeZone.Caribbean;
+                    break;
                 case "-5":
                     timeZone = USTimeZone.Eastern;
                     break;

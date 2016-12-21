@@ -31,5 +31,7 @@ namespace CUWebinars.Business.Services
         IList<DiscountDTO> GetSubscriptionsByAffiliate(int idUserAff);
         List<Uri> GetInvoicesByAffiliate(string globalConfigTenant, int affiliateIdUserAff);
         IList<Uri> GetPromosByAffiliate(string globalConfigTenant, int idUserAff, int idWebinar);
+        int SaveChanges(Affiliate affiliate);
+        Affiliate UpdateAffiliate(Affiliate affiliate);
     }
 }

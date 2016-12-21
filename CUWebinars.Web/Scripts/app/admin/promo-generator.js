@@ -234,6 +234,7 @@ function GetCurrentEditorCopy() {
 
 function SetwStatus() {
     var subject = prompt("Subject Line", _subject);
+
     if (subject != null) {
 
         var idWebinar = $("#Webinar_idWebinar").val();
@@ -669,25 +670,33 @@ function WriteMarkupToStorageAJAX($btn, affiliateId) {
 function SendToAff(affiliateId) {
     var subject = prompt("Subject Line", _subject);
 
-    //alert($("#SendToList_" + affiliateId).val());
-    var currCopy = GetCurrentEditorCopy();
+    if (subject != null) {
+
+        //alert($("#SendToList_" + affiliateId).val());
+        var currCopy = GetCurrentEditorCopy();
 
 
-    $.ajax({
-        url: '/Admin/SendSinglePromo',
-        type: 'POST',
-        data: { "affiliateId": affiliateId, "messageBodyHtml": currCopy, "webinarId": $("#Webinar_idWebinar").val(), subject },
-        dataType: "json",
-        //contentType: "json",
-        success: function (result) {
-            //$('#send' + affID).text("Success");
-            alert('success');
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-            // $('#send' + affID).text(textStatus + " " + errorThrown);
-            alert("error");
-        }
-    });
+        $.ajax({
+            url: '/Admin/SendSinglePromo',
+            type: 'POST',
+            data: {
+                "affiliateId": affiliateId,
+                "messageBodyHtml": currCopy,
+                "webinarId": $("#Webinar_idWebinar").val(),
+                subject
+            },
+            dataType: "json",
+            //contentType: "json",
+            success: function (result) {
+                //$('#send' + affID).text("Success");
+                alert('success');
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                // $('#send' + affID).text(textStatus + " " + errorThrown);
+                alert("error");
+            }
+        });
+    }
 }
 
 // unforatunately there is a server-side version of this function in the 

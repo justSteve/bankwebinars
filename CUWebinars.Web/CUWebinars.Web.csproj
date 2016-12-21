@@ -2076,7 +2076,7 @@
     <Content Include="Views\Admin\Partials\_ShowPromoLinks.cshtml" />
     <Content Include="Views\Shared\Admin\_Webinars.cshtml" />
     <Content Include="Views\Shared\Admin\_Reports.cshtml" />
-    <Content Include="Views\Shared\Admin\_AffAccount.cshtml" />
+    <Content Include="Views\Shared\Partials\_AffAccount.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\DataTablesDisplayTemplates\GetOrders_Compact.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\DataTablesDisplayTemplates\GetWebinarDetails_Compact.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\DataTablesDisplayTemplates\GetPresenter_Compact.cshtml" />
@@ -2110,6 +2110,7 @@
     <Content Include="Views\Home\DESModules.cshtml" />
     <Content Include="Views\Webinar\AllActiveDes.cshtml" />
     <Content Include="Views\Webinar\DetailsDes.cshtml" />
+    <Content Include="Views\Admin\EditAffiliate.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

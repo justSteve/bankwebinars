@@ -268,10 +268,6 @@ namespace CUWebinars.Web.Controllers
                 var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, user.email);
                 //var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
             }
-
-
-
-
             return PartialView("_LoginPartial");
         }
 

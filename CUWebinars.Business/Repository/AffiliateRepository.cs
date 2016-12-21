@@ -19,7 +19,11 @@ namespace CUWebinars.Business.Repository
             
         }
 
-        
+        public int SaveChanges()
+        {//not currently working 12/16
+            return db.SaveChanges();
+        }
+
         public Affiliate FindByIdWithIncluding(int id)
         {
             return items

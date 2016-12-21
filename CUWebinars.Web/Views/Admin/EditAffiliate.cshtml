@@ -1,0 +1,265 @@
+﻿@using CUWebinars.Web.Core
+@model CUWebinars.Web.Models.AffiliateSettingsViewModel
+
+@{
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+
+    var nfi = new CultureInfo("en-US", false).NumberFormat;
+    nfi.CurrencyDecimalDigits = 0;
+
+    ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+
+    if (claimsIdentityOfAuthenticatedUser.HasClaim(
+        (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Admin))
+    {
+        <script type="text/javascript" language="javascript">
+            $(function () {
+
+                $('#AffiliateUpdate').submit(function (e) {
+
+                    e.preventDefault();
+
+                    var jsonUrl = '/Admin/AffiliateUpdate';
+
+                    var payload = $('form#AffiliateUpdate').serialize();
+
+                    $.ajax({
+                        type: 'POST',
+                        contentType: 'application/x-www-form-urlencoded',
+                        cache: false,
+                        url: jsonUrl,
+                        dataType: 'json',
+                        data: payload,
+                        beforeSend: function () {
+                            // this is where we append a loading image
+                            $('#resultWrapper').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Saving Updates...</span>');
+                        }
+                    }).done(function (data) {
+
+                        // successful request; do something with the data
+                        if (data.result === 'Success') {
+                            $('#resultWrapper').html('<span class="label label-success">&nbsp;Saved</span>');
+                        } else if (data.result === 'Failed') {
+                            $('#resultWrapper').html('<span class="label label-danger">&nbsp;Update Failed</span>');
+                        }
+
+                    }).fail(commonFuncs.failCallBack)
+                      .always(function (data, status, message) {
+
+                          if (data && data.responseText) {
+                              if (status === 'error' && JSON.parse(data.responseText)['Message'] === 'Uncaught Ajax Error') {
+                                  L.clientLogger.error("HandleAjaxExceptionAttribute #457 ", { result: data });
+                              }
+
+                          }
+                      });
+
+                });
+
+            });
+        </script>
+    }
+}
+<link href="~/Content/css/bootstrapOverrides.css" rel="stylesheet" />
+<div class="container-fluid">
+    <!--begin main content-->
+    <div class="row-fluid">
+        <!--begin row-fluid-->
+        <div class="span12">
+
+            <link href="~/Content/css/formCss.css" rel="stylesheet" type="text/css" />
+            <link href="~/Content/css/nova.css" rel="stylesheet" type="text/css" />
+            <link href="~/Content/css/print.css" rel="stylesheet" type="text/css" />
+            <style type="text/css">
+                .form-label-left {
+                    width: 150px !important;
+                }
+
+                .form-line {
+                    padding-top: 6px;
+                    padding-bottom: 6px;
+                }
+
+                .form-label-right {
+                    width: 150px !important;
+                }
+
+                body, html {
+                    margin: 0;
+                    padding: 0;
+                    background: #F5F5F5;
+                }
+
+                .form-all {
+                    margin: 0px auto;
+                    padding-top: 20px;
+                    width: 960px;
+                    background: #F5F5F5;
+                    color: #555 !important;
+                    font-family: 'Tahoma';
+                    font-size: 14px;
+                }
+
+                .form-radio-item label, .form-checkbox-item label, .form-grading-label, .form-header {
+                    color: #555;
+                }
+            </style>
+            <form class="jotform-form" action="/admin/AffiliateUpdate" method="post" name="AffiliateUpdate" id="AffiliateUpdate" accept-charset="utf-8">
+                <input type="hidden" name="Affiliate.idUserAff" value="@Model.Affiliate.idUserAff" />
+                <ul class="form-section page-section">
+                    <li class="form-line" data-type="control_text" id="id_37">
+                        <table width="100%">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <h1>
+                                            @Model.Affiliate.DisplayTitle
+                                        </h1>
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <span id="adminID">  @Model.Affiliate.ttsDomain @Model.Affiliate.idUserAff</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p> </p>
+                    </li>
+                    <li class="form-line" style="border-top: 2px black solid " data-type="control_textbox" id="id_19">
+                        <div class="pull-right">
+                            <h4 id="header_34" class="form-header">
+                                Address(es) for notifications
+                            </h4>
+                            <label class="form-sub-label" for="input_19" style="min-height: 13px;">Multiple addresses are permitted. <br />Place a comma between each address. </label>
+                        </div>
+
+                        <label class="form-label form-label-right" id="label_19" for="input_19"> Notified of Promos </label>
+                        <div id="cid_19" class="form-input">
+                            <span class="form-sub-label-container" style="vertical-align: top;">
+                                <input type="text" id="input_19" name="Affiliate.NotiPromos" value="@Model.Affiliate.NotiPromos" />
+
+                            </span>
+                        </div>
+                    </li>
+                    <li class="form-line" data-type="control_textbox" id="id_21">
+                        <label class="form-label form-label-right" id="label_21" for="input_21"> Notified of Orders </label>
+                        <div id="cid_21" class="form-input">
+                            <span class="form-sub-label-container" style="vertical-align: top;">
+                                <input type="text" id="input_21" name="Affiliate.NotiOrders" value="@Model.Affiliate.NotiOrders" />
+                            </span>
+                        </div>
+                    </li>
+                    <li class="form-line" data-type="control_textbox" id="id_35">
+                        <label class="form-label form-label-right" id="label_35" for="input_35"> Notified of Invoices </label>
+                        <div id="cid_35" class="form-input">
+                            <span class="form-sub-label-container" style="vertical-align: top;">
+                                <input type="text" id="input_35" name="Affiliate.NotiInvoices" value="@Model.Affiliate.NotiInvoices" />
+                            </span>
+                        </div>
+                    </li>
+                    <li class="form-line" style="border-top: 2px black solid; " data-type="control_textbox" id="id_32">
+                        <div class="pull-right">
+                            <h4 id="header_34a" class="form-header">
+                                Website & Promo Settings
+                            </h4>
+                        </div>
+
+                    <li class="form-line" data-type="control_dropdown" id="id_38">
+                        <label class="form-label form-label-right form-label-auto" id="label_38" for="input_38"> TimeZone </label>
+                        <div id="cid_38" class="form-input">
+                            <select class="form-dropdown" style="width: 150px;" id="input_38" name="Affiliate.WebUser.timeZone">
+                                <option value=""> </option>
+                                <option value="Caribbean"> Caribbean </option>
+                                <option value="Eastern"> Eastern </option>
+                                <option selected value="Central"> Central </option>
+                                <option value="Mountain"> Mountain </option>
+                                <option value="Pacific"> Pacific </option>
+                                <option value="Alaska"> Alaska </option>
+                                <option value="Hawaii"> Hawaii </option>
+                            </select>
+                        </div>
+                    </li>
+                    <li class="form-line" data-type="control_textbox">
+                        <div class="pull-right">
+                            <p id="header_34a">
+                                (admin use only)
+                            </p>
+                        </div>
+
+                        <label class="form-label form-label-right" id="label_32" for="input_32"> Logo (address) </label>
+                        <div id="cid_32" class="form-input">
+                            <input type="text" class=" form-textbox" data-type="input-textbox" id="input_32" name="Affiliate.Logo" size="50" value="@Model.Affiliate.Logo" />
+                        </div>
+                    </li>
+                    <li class="form-line" data-type="control_textbox">
+                        <div style="background-color: #4c5966">
+                            <img src="@Model.Affiliate.Logo" />
+                        </div>
+                    </li>
+                    <li class="form-line" data-type="control_textbox" id="id_26">
+                        <label class="form-label form-label-right" id="label_26" for="input_26"> Website Footer </label>
+                        <div id="cid_26" class="form-input">
+                            <textarea class=" form-textbox" data-type="input-textarea" id="input_26" name="Affiliate.WebFooter" cols="90" rows="5">@Html.Raw(Model.Affiliate.WebFooter)</textarea>
+                        </div>
+                    </li>
+
+                    <li class="form-line" data-type="control_textbox" id="id_27">
+                        <label class="form-label form-label-right" id="label_27" for="input_27"> Email Banner </label>
+                        <div id="cid_27" class="form-input">
+                            <textarea class=" form-textarea" data-type="input-textbox" id="input_27" name="Affiliate.EmailBanner">@Html.Raw(Model.Affiliate.EmailBanner)" </textarea>
+                        </div>
+                    </li>
+                    <li class="form-line" data-type="control_textbox" id="id_28">
+                        <label class="form-label form-label-right" id="label_28" for="input_28"> Email Footer </label>
+                        <div id="cid_28" class="form-input">
+                            <textarea class=" form-textarea" data-type="input-textbox" id="input_28" name="Affiliate.EmailFooter" cols="90" rows="5">@Html.Raw(Model.Affiliate.EmailFooter)</textarea>
+                        </div>
+                    </li>
+                    @*<li id="cid_34" class="form-input-wide pull-right" >
+                            <div class="form-header-group">
+                                <div class="header-text httar htvam">
+                                </div>
+                            </div>
+                        </li>*@
+
+                    <li class="form-line" data-type="control_textbox" id="adminMCList">
+                        <label class="form-label form-label-left form-label-auto" id="label_40" for="input_40"> MC List ID </label>
+                        <div id="cid_40" class="form-input">
+                            <input type="text" class=" form-textbox" data-type="input-textbox" id="input_40" name="Affiliate.idMailChimpList" size="20" value="@Model.Affiliate.idMailChimpList" />
+                        </div>
+                    </li>
+                    <li class="form-line" data-type="control_dropdown" id="adminBilling">
+                        <label class="form-label form-label-left form-label-auto" id="label_41" for="input_41"> Who Bills </label>
+                        <div id="cid_41" class="form-input">
+                            <select class="form-dropdown" style="width: 100px;" id="input_41" name="Affiliate.BillingModel">
+                                <option value=""> </option>
+                                <option selected value="billed"> TTS Bills </option>
+                                <option value="aff"> Affiliate Bills </option>
+                            </select>
+                        </div>
+                    </li>
+                    <li class="form-line" data-type="control_dropdown" id="adminRoyalty">
+                        <label class="form-label form-label-left form-label-auto" id="label_42" for="input_42"> Royalty </label>
+                        <div id="cid_42" class="form-input">
+                            <select class="form-dropdown" style="width: 100px;" id="input_42" name="Affiliate.CommissionModel">
+                                <option value=""> </option>
+                                <option selected value="1"> Sliding </option>
+                                <option value="2"> Flat 50% </option>
+                                <option value="3"> Flat 40% </option>
+                                <option value="4"> Flat 35% </option>
+                                <option value="5"> Flat 25% </option>
+                            </select>
+                        </div>
+                    </li>
+                    <li class="form-line" data-type="control_button" id="id_2">
+                        <div id="cid_2" class="form-input-wide">
+                            <div style="text-align: center;" class="form-buttons-wrapper">
+                                <input id="input_2" type="submit" class="form-submit-button" data-component="button" value="Update" />
+                            </div>
+                            <div style="text-align: center" id="resultWrapper"></div>
+                        </div>
+                    </li>
+                </ul>
+            </form>
+        </div>
+    </div>
+</div>

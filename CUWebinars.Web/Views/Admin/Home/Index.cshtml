@@ -112,7 +112,7 @@
             @{ Html.RenderPartial("Admin/_Webinars"); }
         </div>
         <div class="tab-pane " id="account">
-            @{ Html.RenderPartial("Admin/_AffAccount", Model.AffiliateSettingsViewModel);}
+            @{ Html.RenderPartial("Partials/_AffAccount", Model.AffiliateSettingsViewModel);}
         </div>
         <div class="tab-pane" id="reports">
             @{ Html.RenderPartial("Admin/_Reports", Model.InvoicesModel); }

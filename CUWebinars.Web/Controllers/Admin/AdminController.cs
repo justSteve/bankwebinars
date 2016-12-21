@@ -117,7 +117,7 @@ namespace CUWebinars.Web.Controllers.Admin
             PromoLinks model = new PromoLinks();
             if (idWebinar.HasValue && idAffiliate.HasValue)
             {
-                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity) User.Identity;
                 var currentAffiliate = _orderManagementService.GetAffiliateById(19);
 
                 if (claimsIdentityOfAuthenticatedUser.HasClaim(
@@ -130,11 +130,50 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 model.Affiliate = currentAffiliate;
                 model.Links =
-                    _affiliateManagementService.GetPromosByAffiliate(_globalConfig.Tenant, currentAffiliate.idUserAff, idWebinar.Value);
+                    _affiliateManagementService.GetPromosByAffiliate(_globalConfig.Tenant, currentAffiliate.idUserAff,
+                        idWebinar.Value);
 
             }
             return View("~/Views/Admin/Partials/_ShowPromoLinks.cshtml", model);
         }
+
+        [HttpGet]
+        public ActionResult EditAffiliate(int idAffiliate)
+        {
+
+            ViewBag.PageStyleType = "index-flex-dark";
+            ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+
+            if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Admin))
+            {
+                Affiliate affiliate = _affiliateManagementService.FindById(idAffiliate);
+
+                WebUser user = _membershipService.GetWebUserById(idAffiliate);
+
+                var model = new AffiliateSettingsViewModel {Affiliate = affiliate, WebUser = user};
+                return View(model);
+            }
+            return View(new AffiliateSettingsViewModel { Affiliate = null, WebUser = null});
+        }
+
+        [ValidateInput(false)]
+        [HttpPost]
+        public JsonResult AffiliateUpdate(AffiliateSettingsViewModel model)
+        {
+            try
+            {
+                _affiliateManagementService.UpdateAffiliate(model.Affiliate);
+
+                return Json(new { result = "Success" });
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("AffiliateUpdate", ex);
+                return Json(new { result = "Failed" });
+            }
+        }
+
 
         //
         // GET: /Admin/
@@ -260,7 +299,7 @@ namespace CUWebinars.Web.Controllers.Admin
             string buildMessage = "Affiliate changed for order " + order.idOrder +
                                   " from " + originalAffiliate.ttsDomain + " to " +
                                   newAffiliate.ttsDomain + " by " + User.Identity.Name +
-                                  " on " + TtsConfig.UtcNowAsCts.ToShortDateString() ;
+                                  " on " + TtsConfig.UtcNowAsCts.ToShortDateString();
             try
             {
                 if (order.InvoiceDetail != null && order.InvoiceDetail.StartsWith("{\"OrderIsInvoiced"))
@@ -1888,14 +1927,15 @@ namespace CUWebinars.Web.Controllers.Admin
             IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
 
             List list = await manager.Lists.GetAsync(affiliate.idMailChimpList).ConfigureAwait(false);
-            var recp = new Recipient {ListId = affiliate.idMailChimpList};
             
+            var recp = new Recipient { ListId = affiliate.idMailChimpList };
+
+            var seg = recp.SegmentText;
 
             var newCamp = new Campaign
             {
                 ContentType = "html",
                 Type = CampaignType.Regular,
-                Recipients = recp,
 
                 Settings = new Setting
                 {
@@ -1948,8 +1988,11 @@ namespace CUWebinars.Web.Controllers.Admin
                     ScheduleTime = sendDate
                 });
 
-                CampaignTestRequest emails = new CampaignTestRequest { EmailType = "html",
-                    Emails = new string[] { "all.of.us@ttstrain.com", affiliate.NotiPromos } };
+                CampaignTestRequest emails = new CampaignTestRequest
+                {
+                    EmailType = "html",
+                    Emails = new string[] { "all.of.us@ttstrain.com", affiliate.NotiPromos }
+                };
 
                 await manager.Campaigns.TestAsync(mkCamp.Id, emails);
 
@@ -2379,7 +2422,7 @@ namespace CUWebinars.Web.Controllers.Admin
             _logger.Info("FirePasswordResetEvent ");
             return Json(model);
         }
-        
+
         public string CreatePostEventClaim(Order order, DateTime expiryDate)
         {
 
@@ -2580,7 +2623,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 data = BuildDisplayOrdersByUserViewModel(email, out totalNumberOrders)
             });
         }
-        
+
 
         [HandleAjaxException]
         [AllowAnonymous]
@@ -3027,11 +3070,22 @@ namespace CUWebinars.Web.Controllers.Admin
 
                                             var discount = row.Discount;
                                             _price = "See Note #" + totalNumberDiscounts;
-                                            discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode +
-                                                                 ": (" +
-                                                                 discount.DiscountType.ToString()
-                                                                     .Replace("DiscountType.", "") +
-                                                                 ") ");
+
+                                            if (discount.DiscountType == DiscountType.Subscription &&
+                                                discount.DateValidFrom != discount.DateValidTo)
+                                            {
+                                                discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode +
+                                                    ": (Unlimited Subscription) ");
+                                            }
+                                            else
+                                            {
+                                                discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode +
+                                                                     ": (" +
+                                                                     discount.DiscountType.ToString()
+                                                                         .Replace("DiscountType.", "") +
+                                                                     ") ");
+                                            }
+
 
                                             totalNumberDiscounts++;
                                             var discountAmount = "";
@@ -3119,22 +3173,22 @@ namespace CUWebinars.Web.Controllers.Admin
                                 RoyaltyTier = affiliate.CommissionModel
                             };
                             invoice = _affiliateManagementService.BuildAffiliateInvoiceForPostEventOrders(invoice,
-                                _postEventOrders, thisAffiliate);
+                                                            _postEventOrders, thisAffiliate);
                             int rowNumber = 0;
                             PostEventOrders.Rows.Add(
-                                "Post Event Orders"
-                                , startDate
-                                , invoice.TotalOnBilled.ToString("C").Replace(".00", "") + Environment.NewLine
-                                , invoice.TotalOnPaid.ToString("C").Replace(".00", "") + Environment.NewLine
-                                , invoice.TotalDiscounts.ToString("C").Replace(".00", "") + Environment.NewLine
-                                , invoice.TotalRoyalties.ToString("C").Replace(".00", "") + Environment.NewLine
-                                , invoice.TotalNetDue.ToString("C").Replace(".00", "") + Environment.NewLine
-                                , "Total Net Due: "
-                                , "Total Royalties: "
-                                , "Total Revenue Billed: "
-                                , "Total Revenue Paid: "
-                                , 99
-                            );
+                                                            "Post Event Orders"
+                                                            , startDate
+                                                            , invoice.TotalOnBilled.ToString("C").Replace(".00", "") + Environment.NewLine
+                                                            , invoice.TotalOnPaid.ToString("C").Replace(".00", "") + Environment.NewLine
+                                                            , invoice.TotalDiscounts.ToString("C").Replace(".00", "") + Environment.NewLine
+                                                            , invoice.TotalRoyalties.ToString("C").Replace(".00", "") + Environment.NewLine
+                                                            , invoice.TotalNetDue.ToString("C").Replace(".00", "") + Environment.NewLine
+                                                            , "Total Net Due: "
+                                                            , "Total Royalties: "
+                                                            , "Total Revenue Billed: "
+                                                            , "Total Revenue Paid: "
+                                                            , 99
+                                                        );
 
 
                             foreach (var order in _postEventOrders)
@@ -3232,23 +3286,23 @@ namespace CUWebinars.Web.Controllers.Admin
                                 RoyaltyTier = affiliate.CommissionModel
                             };
                             invoice = _affiliateManagementService.BuildAffiliateInvoiceForAdjustedOrders(invoice,
-                                adjustedOrders,
-                                thisAffiliate);
+                                                            adjustedOrders,
+                                                            thisAffiliate);
                             int rowNumber = 0;
                             upgradedOrders.Rows.Add(
-                                "Adjusted Orders"
-                                , startDate
-                                , invoice.TotalOnBilled.ToString("C").Replace(".00", "") + Environment.NewLine
-                                , invoice.TotalOnPaid.ToString("C").Replace(".00", "") + Environment.NewLine
-                                , invoice.TotalDiscounts.ToString("C").Replace(".00", "") + Environment.NewLine
-                                , invoice.TotalRoyalties.ToString("C").Replace(".00", "") + Environment.NewLine
-                                , invoice.TotalNetDue.ToString("C").Replace(".00", "") + Environment.NewLine
-                                , "Adjusted Net Due: "
-                                , "Adjusted Royalties: "
-                                , "Adjusted Billed: "
-                                , "Adjusted Paid: "
-                                , 99
-                            );
+                                                            "Adjusted Orders"
+                                                            , startDate
+                                                            , invoice.TotalOnBilled.ToString("C").Replace(".00", "") + Environment.NewLine
+                                                            , invoice.TotalOnPaid.ToString("C").Replace(".00", "") + Environment.NewLine
+                                                            , invoice.TotalDiscounts.ToString("C").Replace(".00", "") + Environment.NewLine
+                                                            , invoice.TotalRoyalties.ToString("C").Replace(".00", "") + Environment.NewLine
+                                                            , invoice.TotalNetDue.ToString("C").Replace(".00", "") + Environment.NewLine
+                                                            , "Adjusted Net Due: "
+                                                            , "Adjusted Royalties: "
+                                                            , "Adjusted Billed: "
+                                                            , "Adjusted Paid: "
+                                                            , 99
+                                                        );
 
 
                             foreach (var order in adjustedOrders)
@@ -3283,9 +3337,9 @@ namespace CUWebinars.Web.Controllers.Admin
                                             var discount = row.Discount;
                                             //_price = "See Note #" + totalNumberDiscounts;
                                             discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode + ": (" +
-                                                                 discount.DiscountType.ToString()
-                                                                     .Replace("DiscountType.", "") +
-                                                                 ") ");
+                                                                                                             discount.DiscountType.ToString()
+                                                                                                                 .Replace("DiscountType.", "") +
+                                                                                                             ") ");
 
                                             totalNumberDiscounts++;
                                             var discountAmount = "";
@@ -3353,55 +3407,55 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
                     document.MailMerge.FieldMerging += (sender, e) =>
-                    {
-                        if (affiliate.BillingModel == "aff")
-                        {
-                            if (e.Inline != null && e.FieldName == "TotalRevenueBilledLabel")
-                                ((Run)e.Inline).Text = "";
-                            if (e.Inline != null && e.FieldName == "TotalRevenuePaidLabel")
-                                ((Run)e.Inline).Text = "";
-                            if (e.Inline != null && e.FieldName == "TotalNetDueLabel")
-                                ((Run)e.Inline).Text = "";
-                            if (e.Inline != null && e.FieldName == "TotalAdjustedRevenueBilledLabel")
-                                ((Run)e.Inline).Text = "";
-                            if (e.Inline != null && e.FieldName == "TotalAdjustedRevenuePaidLabel")
-                                ((Run)e.Inline).Text = "";
-                            if (e.Inline != null && e.FieldName == "TotalAdjustedNetDueLabel")
-                                ((Run)e.Inline).Text = "";
-                            if (e.Inline != null && e.FieldName == "TotalOnBilled")
-                                ((Run)e.Inline).Text = "";
-                            if (e.Inline != null && e.FieldName == "TotalOnPaid")
-                                ((Run)e.Inline).Text = "";
-                            if (e.Inline != null && e.FieldName == "TotalNetDue")
-                                ((Run)e.Inline).Text = "";
-                            if (e.Inline != null && e.FieldName == "GrandTotalOnBilled")
-                                ((Run)e.Inline).Text = "";
-                            if (e.Inline != null && e.FieldName == "GrandTotalOnPaid")
-                                ((Run)e.Inline).Text = "";
-                            if (e.Inline != null && e.FieldName == "GrandTotalNetDue")
-                                ((Run)e.Inline).Text = "";
-                            if (e.Inline != null && e.FieldName == "GrandTotalRevenueBilledLabel")
-                                ((Run)e.Inline).Text = "";
-                            if (e.Inline != null && e.FieldName == "GrandTotalRevenuePaidLabel")
-                                ((Run)e.Inline).Text = "";
-                            if (e.Inline != null && e.FieldName == "GrandTotalNetDueLabel")
-                                ((Run)e.Inline).Text = "";
-                        }
+                                        {
+                                            if (affiliate.BillingModel == "aff")
+                                            {
+                                                if (e.Inline != null && e.FieldName == "TotalRevenueBilledLabel")
+                                                    ((Run)e.Inline).Text = "";
+                                                if (e.Inline != null && e.FieldName == "TotalRevenuePaidLabel")
+                                                    ((Run)e.Inline).Text = "";
+                                                if (e.Inline != null && e.FieldName == "TotalNetDueLabel")
+                                                    ((Run)e.Inline).Text = "";
+                                                if (e.Inline != null && e.FieldName == "TotalAdjustedRevenueBilledLabel")
+                                                    ((Run)e.Inline).Text = "";
+                                                if (e.Inline != null && e.FieldName == "TotalAdjustedRevenuePaidLabel")
+                                                    ((Run)e.Inline).Text = "";
+                                                if (e.Inline != null && e.FieldName == "TotalAdjustedNetDueLabel")
+                                                    ((Run)e.Inline).Text = "";
+                                                if (e.Inline != null && e.FieldName == "TotalOnBilled")
+                                                    ((Run)e.Inline).Text = "";
+                                                if (e.Inline != null && e.FieldName == "TotalOnPaid")
+                                                    ((Run)e.Inline).Text = "";
+                                                if (e.Inline != null && e.FieldName == "TotalNetDue")
+                                                    ((Run)e.Inline).Text = "";
+                                                if (e.Inline != null && e.FieldName == "GrandTotalOnBilled")
+                                                    ((Run)e.Inline).Text = "";
+                                                if (e.Inline != null && e.FieldName == "GrandTotalOnPaid")
+                                                    ((Run)e.Inline).Text = "";
+                                                if (e.Inline != null && e.FieldName == "GrandTotalNetDue")
+                                                    ((Run)e.Inline).Text = "";
+                                                if (e.Inline != null && e.FieldName == "GrandTotalRevenueBilledLabel")
+                                                    ((Run)e.Inline).Text = "";
+                                                if (e.Inline != null && e.FieldName == "GrandTotalRevenuePaidLabel")
+                                                    ((Run)e.Inline).Text = "";
+                                                if (e.Inline != null && e.FieldName == "GrandTotalNetDueLabel")
+                                                    ((Run)e.Inline).Text = "";
+                                            }
 
-                        if (e.IsValueFound)
-                        {
-                            switch (e.FieldName)
-                            {
-                                case "Date":
-                                    ((Run)e.Inline).Text = ((DateTime)e.Value).ToString("dddd, MMMM d, yyyy");
-                                    break;
+                                            if (e.IsValueFound)
+                                            {
+                                                switch (e.FieldName)
+                                                {
+                                                    case "Date":
+                                                        ((Run)e.Inline).Text = ((DateTime)e.Value).ToString("dddd, MMMM d, yyyy");
+                                                        break;
 
-                                case "Percent":
-                                case "Royalty":
-                                    break;
-                            }
-                        }
-                    };
+                                                    case "Percent":
+                                                    case "Royalty":
+                                                        break;
+                                                }
+                                            }
+                                        };
 
                     var dsGrandTotals = new
                     {

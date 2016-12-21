@@ -28,7 +28,7 @@ namespace CUWebinars.Business.Core
         private readonly string _connectionString;
 
         //private readonly ILogger _logger;
-        //private readonly TtsConfiguration _ttsConfig;
+       //private readonly TtsConfiguration _ttsConfig;
 
         public DataOperations(string connectionString)
         {
@@ -225,164 +225,7 @@ namespace CUWebinars.Business.Core
 
             return numRows == 1;
         }
-
-        public int getLegacyOptionID(int idRegType)
-        {
-            switch (idRegType)
-            {
-                case 4:
-                    return 119;
-                //trial CP
-                case 5:
-                    return 120;
-                //6month
-                case 38:
-                    return 118;
-                //12month
-                case 200:
-                    return 27;
-                //Live Plus Five (days) ;
-                //PreEvent_1Hr_2013;
-                case 201:
-                    return 32;
-                //OnDemand Recording Only ;
-                //PreEvent_1Hr_2013;
-                case 203:
-                    return 33;
-                //Live Plus Six (months) ;
-                //PreEvent_1Hr_2013;
-                case 202:
-                    return 35;
-                //CD-ROM and Hardcopy Handouts ;
-                //PreEvent_1Hr_2013;
-                case 204:
-                    return 36;
-                //Premier Package ;
-                //PreEvent_1Hr_2013;
-
-                //2hr;
-                ////;
-                case 205:
-                    return 1;
-                //Live Plus Five (days) ;
-                //PreEvent_2Hr_2013
-                case 206:
-                    return 16;
-                //OnDemand Recording Only ;
-                //PreEvent_2Hr_2013
-                case 208:
-                    return 17;
-                //CD-ROM and Hardcopy Handouts ;
-                //PreEvent_2Hr_2013
-                case 209:
-                    return 18;
-                //Premier Package ;
-                //PreEvent_2Hr_2013
-                case 207:
-                    return 3;
-                //Live Plus Six (months) ;
-                //PreEvent_2Hr_2013
-                //2part;
-                ////;
-                case 249:
-                    return 85;
-                //Live Plus Five (days) ;
-                //PreEvent_2PartSeries_2014;
-                case 250:
-                    return 86;
-                //OnDemand Recording Only ;
-                //PreEvent_2PartSeries_2014;
-                case 253:
-                    return 87;
-                //CD-ROM and Hardcopy Handouts ;
-                //PreEvent_2PartSeries_2014;
-                case 251:
-                    return 88;
-                //Live Plus Six ;
-                //PreEvent_2PartSeries_2014;
-                case 252:
-                    return 89;
-                //Premier Package ;
-                //PreEvent_2PartSeries_2014;
-
-                ////;
-                //3part;
-                ////;
-                case 210:
-                    return 48;
-                //Live Plus Five (days) - 3 Part Series ;
-                //PreEvent_Series3
-                case 211:
-                    return 49;
-                //OnDemand Recording Only ;
-                //PreEvent_Series3
-                case 213:
-                    return 50;
-                //CD-ROM and Hardcopy Handouts ;
-                //PreEvent_Series3
-                case 214:
-                    return 51;
-                //Premium Package - Series ;
-                //PreEvent_Series3
-                case 212:
-                    return 91;
-                //Live Plus Six (months) ;
-                //PreEvent_Series3 id=26    ;
-
-                ////;
-                //4part;
-                ////;
-                case 216:
-                    return 39;
-                //Live Only - 4 Part Series ;
-                //PreEvent_4PartSeries_899
-                case 217:
-                    return 40;
-                //6-Month OnDemand Weblink - Series ;
-                //PreEvent_4PartSeries_899
-                case 219:
-                    return 41;
-                //CD-ROM and Hardcopy Handouts - Series ;
-                //PreEvent_4PartSeries_899
-                case 220:
-                    return 42;
-                //Premium Package - Series ;
-                //PreEvent_4PartSeries_899
-                case 218:
-                    return 71;
-                //Live plus OnDemand Weblinks ;
-                //PreEvent_4PartSeries_899
-
-                ////;
-                //5part;
-                ////;
-                case 221:
-                    return 79;
-                //Live Plus Five (days) ;
-                //PreEvent_5PartSeries_2014
-                case 222:
-                    return 80;
-                //OnDemand Recording Only ;
-                //PreEvent_5PartSeries_2014
-                case 224:
-                    return 81;
-                //CD-ROM and Hardcopy Handouts ;
-                //PreEvent_5PartSeries_2014
-                case 223:
-                    return 82;
-                //Live Plus Six ;
-                //PreEvent_5PartSeries_2014
-                case 225:
-                    return 83;
-                //Premier Package ;
-                //PreEvent_5PartSeries_2014
-                default:
-
-                    LogError("GetLgacyOptionID", "Regtype falls thru to default " + idRegType);
-                    return idRegType;
-            }
-        }
-
+        
         public void LogError(string MethodSendingError, string ErrorToLog)
         {
             using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
@@ -526,203 +369,6 @@ namespace CUWebinars.Business.Core
                 }
             }
 
-        }
-
-        public OrderRow GetLegacyOrder(Order order)
-        {
-            var idWebinarParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.Int,
-                ParameterName = "@idWebinar",
-                Value = order.OrderRows.FirstOrDefault().idWebinar
-            };
-            var emailParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.VarChar,
-                Size = 200,
-                ParameterName = "@email",
-                Value = order.BillingEmail
-            };
-
-            OrderRow lOrder = new OrderRow();
-            lOrder.idOrder = 0;
-
-            using (var sqlConnection = new SqlConnection(_connectionString))
-            {
-
-                sqlConnection.Open();
-
-                using (var getOrder = new SqlCommand("GetLegacyOrderForV3", sqlConnection))
-                {
-                    getOrder.Parameters.Add(idWebinarParameter);
-                    getOrder.Parameters.Add(emailParameter);
-
-                    try
-                    {
-                        getOrder.Connection = sqlConnection;
-                        getOrder.CommandType = CommandType.StoredProcedure;
-
-                        using (var reader = getOrder.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                lOrder.idOrder = Convert.ToInt32(reader.GetInt32(0));
-                                lOrder.idRegType = Convert.ToInt32(reader.GetInt32(1));
-                                //lOrder.RowStatus = (OrderRowStatus)Convert.ToInt32(reader.GetInt32(2));
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                        {
-                            errorLogger.CommandText =
-                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToString() +
-                                                       "',";
-                            errorLogger.CommandText += "'GETLEGACYORDER' ,";
-                            errorLogger.CommandText += "9 ,9 ,9 ,'[GETLEGACYORDER]', 9 ,";
-                            errorLogger.CommandText += "'error at GETLEGACYORDER " + ex.Message + "')";
-
-                            errorLogger.ExecuteNonQuery();
-
-                        }
-                    }
-                }
-                return lOrder;
-            }
-        }
-
-        public List<Order> GetLegacyOrdersByWebinar(int? webinarId)
-        {
-            var idWebinarParameter = new SqlParameter
-            {
-                SqlDbType = SqlDbType.Int,
-                ParameterName = "@idWebinar",
-                Value = webinarId
-            };
-
-            using (var sqlConnection = new SqlConnection(_connectionString))
-            {
-                sqlConnection.Open();
-
-                using (var getOrder = new SqlCommand("GetLegacyOrders", sqlConnection))
-                {
-                    getOrder.Parameters.Add(idWebinarParameter);
-
-                    List<Order> orders = new List<Order>();
-
-                    try
-                    {
-                        getOrder.Connection = sqlConnection;
-                        getOrder.CommandType = CommandType.StoredProcedure;
-
-                        using (var reader = getOrder.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                try
-                                {
-                                    Order newOrder = new Order { OrderRows = new List<OrderRow>() };
-                                    newOrder.OrderRows.Add(new OrderRow());
-                                    var newOrderRow = newOrder.OrderRows.FirstOrDefault();
-                                    newOrder.idAffiliate = reader.GetInt32(0);
-                                    newOrderRow.idWebinar = reader.GetInt32(1);
-                                    newOrderRow.idRegType = reader.GetInt32(2);
-                                    newOrder.FirstName = reader.GetString(3);
-                                    newOrder.LastName = reader.GetString(4);
-                                    //skips title reader(5)
-                                    newOrder.Institution = reader.GetString(6);
-                                    newOrder.BillingEmail = reader.GetString(7);
-                                    newOrder.BillingPhone = reader.GetString(8);
-                                    newOrder.BillingAddress = reader.GetString(9);
-                                    newOrder.BillingAddress2 = reader.GetString(10);
-                                    newOrder.BillingCity = reader.GetString(11);
-                                    newOrder.BillingState = reader.GetString(12);
-                                    newOrder.BillingZip = reader.GetString(13);
-                                    if (!String.IsNullOrEmpty(reader[14].ToString()))
-                                    {
-                                        newOrderRow.Discount = new Discount { DiscountCode = reader.GetString(14) };
-                                    }
-                                    if (!String.IsNullOrEmpty(reader[15].ToString()))
-                                    {
-                                        var addLoc = reader.GetString(15).Split(',');
-                                        newOrderRow.AdditionalLocation = new List<AdditionalLocation>();
-                                        if (addLoc.Count() == 1)
-                                        {
-                                            AdditionalLocation additional = new AdditionalLocation
-                                            {
-                                                Email = reader.GetString(15)
-                                            };
-
-                                            newOrderRow.AdditionalLocation.Add(additional);
-                                            //addLocations.Add(additional);
-                                        }
-                                        else
-                                        {
-                                            foreach (var loc in addLoc)
-                                            {
-                                                AdditionalLocation additional = new AdditionalLocation { Email = loc };
-                                                newOrderRow.AdditionalLocation.Add(additional);
-
-                                            }
-                                        }
-                                    }
-
-
-                                    newOrder.ShippingFirstName = reader.GetString(16);
-                                    newOrder.ShippingLastName = reader.GetString(17);
-                                    newOrder.ShippingPhone = reader.GetString(18);
-                                    newOrder.ShippingAddress = reader.GetString(19);
-                                    newOrder.ShippingCity = reader.GetString(20);
-                                    newOrder.ShippingState = reader.GetString(21);
-                                    newOrder.ShippingZip = reader.GetString(22);
-                                    newOrder.Total = reader.GetDecimal(23);
-                                    //skips shipdate 24
-                                    newOrder.AdminComments = reader.GetString(25);
-                                    newOrder.idOrderLegacy = reader.GetInt32(26);
-                                    newOrder.OrderDate = reader.GetDateTime(27);
-
-                                    newOrder.Origin = "OrderSynch";
-                                    int mkStatus = Convert.ToInt32(reader[28]);
-
-                                    var setStatus = SetOrderStatus(mkStatus);
-                                    newOrder.UserComments = reader.GetInt32(29).ToString();
-                                    newOrder.OrderStatus = setStatus;
-
-                                    newOrderRow.RowStatus = OrderRowStatus.Active;
-                                    newOrderRow.ShipmentDate = reader.GetDateTime(30);
-                                    orders.Add(newOrder);
-                                }
-                                catch (Exception ex)
-                                {
-                                    LogError("GetLegacyOrdersByWebinar",
-                                        "GetLegacyOrders hit error on: " + reader.GetString(7) + " msg: " + ex.Message);
-                                }
-                            }
-                        }
-
-                        return orders;
-                    }
-                    catch (Exception ex)
-                    {
-                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                        {
-                            errorLogger.CommandText =
-                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts +
-                                                       "',";
-                            errorLogger.CommandText += "'GetLegacyOrders' ,";
-                            errorLogger.CommandText += "9 ,9 ,9 ,'[GetLegacyOrders]', 9 ,";
-                            errorLogger.CommandText += "'error at GetLegacyOrders " + ex.Message + "')";
-
-                            errorLogger.ExecuteNonQuery();
-
-                        }
-                        return null;
-                    }
-                }
-            }
         }
 
         private static OrderStatus SetOrderStatus(int mkStatus)
@@ -1195,180 +841,6 @@ namespace CUWebinars.Business.Core
             return result;
         }
 
-        public object SynchOrderIdsWithOnDemandCode(int idOrderLegacy, int idOrderV3, string oldClaim)
-        {
-            var result = "failed on" + idOrderLegacy;
-            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
-            {
-                sqlConnection.Open();
-
-                using (var synchWhereLegacyIsZero = new SqlCommand("InsertOnDemandClaim", sqlConnection))
-                {
-                    try
-                    {
-                        synchWhereLegacyIsZero.Connection = sqlConnection;
-                        synchWhereLegacyIsZero.CommandType = CommandType.StoredProcedure;
-                        var idOrderNew = new SqlParameter
-                        {
-                            SqlDbType = SqlDbType.Int,
-                            ParameterName = "@idOrderNew",
-                            Value = idOrderLegacy
-                        };
-                        synchWhereLegacyIsZero.Parameters.Add(idOrderNew);
-
-                        var idOrderV3Old = new SqlParameter
-                        {
-                            SqlDbType = SqlDbType.Int,
-                            ParameterName = "@idOrderV3Old",
-                            Value = idOrderV3
-                        };
-                        synchWhereLegacyIsZero.Parameters.Add(idOrderV3Old);
-
-
-                        var onDemandCode = new SqlParameter
-                        {
-                            SqlDbType = SqlDbType.VarChar,
-                            ParameterName = "@OnDemandCode",
-                            Value = oldClaim
-                        };
-                        synchWhereLegacyIsZero.Parameters.Add(onDemandCode);
-
-                        result = synchWhereLegacyIsZero.ExecuteScalar().ToString();
-                    }
-                    catch (Exception ex)
-                    {
-                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                        {
-                            errorLogger.CommandText =
-                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
-                            errorLogger.CommandText += "'synchWhereLegacyIsZero' ,";
-                            errorLogger.CommandText += "9 ,9 ,9 ,'synchWhereLegacyIsZero', 9 ,";
-                            errorLogger.CommandText += "'error at synchWhereLegacyIsZero " +
-                                                       ex.Message.Replace("'", "|") + "')";
-
-                            errorLogger.ExecuteNonQuery();
-
-                        }
-
-                        throw;
-                    }
-                }
-
-
-            }
-
-            int resultOut;
-            bool res = int.TryParse(result, out resultOut);
-
-            //if (res)
-            //{
-            //    using (var sqlConnection = new SqlConnection(TtsConfig.LegacyConnectionString))
-            //    {
-            //        sqlConnection.Open();
-            //        using (var synchLegacyOrder = new SqlCommand("InsertOrder2", sqlConnection))
-            //        {
-            //            try
-            //            {
-            //                synchLegacyOrder.Connection = sqlConnection;
-            //                synchLegacyOrder.CommandType = CommandType.StoredProcedure;
-            //                var idOrderNew = new SqlParameter
-            //                {
-            //                    SqlDbType = SqlDbType.Int,
-            //                    ParameterName = "@idOrderNew",
-            //                    Value = resultOut
-            //                };
-            //                synchLegacyOrder.Parameters.Add(idOrderNew);
-
-            //                var idOrderV3Old = new SqlParameter
-            //                {
-            //                    SqlDbType = SqlDbType.Int,
-            //                    ParameterName = "@idOrderOld",
-            //                    Value = idOrderLegacy
-            //                };
-            //                synchLegacyOrder.Parameters.Add(idOrderV3Old);
-
-            //                result = synchLegacyOrder.ExecuteScalar().ToString();
-            //            }
-            //            catch (Exception ex)
-            //            {
-            //                using (var errorLogger = new SqlCommand("logError", sqlConnection))
-            //                {
-            //                    errorLogger.CommandText =
-            //                        "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-            //                    errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
-            //                    errorLogger.CommandText += "'synchLegacyOrder' ,";
-            //                    errorLogger.CommandText += "9 ,9 ,9 ,'synchLegacyOrder', 9 ,";
-            //                    errorLogger.CommandText += "'error at synchLegacyOrder " + ex.Message.Replace("'", "|") +
-            //                                               "')";
-
-            //                    errorLogger.ExecuteNonQuery();
-
-            //                }
-
-            //                throw;
-            //            }
-            //        }
-            //    }
-            //}
-
-            return result;
-        }
-
-        //public string CreateUserOnLegacy(WebUser user)
-        //{
-        //    var result = "";
-        //    using (var sqlConnection = new SqlConnection(TtsConfig.LegacyConnectionString))
-        //    {
-        //        sqlConnection.Open();
-        //        using (var synchLegacyUser
-        //            = new SqlCommand("CreateUserOnLegacy", sqlConnection))
-        //        {
-        //            try
-        //            {
-        //                synchLegacyUser.Connection = sqlConnection;
-        //                synchLegacyUser.CommandType = CommandType.StoredProcedure;
-        //                var emailParam = new SqlParameter
-        //                {
-        //                    SqlDbType = SqlDbType.VarChar,
-        //                    ParameterName = "@email",
-        //                    Value = user.email
-        //                };
-        //                synchLegacyUser.Parameters.Add(emailParam);
-
-        //                var idUserV3 = new SqlParameter
-        //                {
-        //                    SqlDbType = SqlDbType.Int,
-        //                    ParameterName = "@idUser",
-        //                    Value = user.idUser
-        //                };
-        //                synchLegacyUser.Parameters.Add(idUserV3);
-
-        //                result = synchLegacyUser.ExecuteScalar().ToString();
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                using (var errorLogger = new SqlCommand("logError", sqlConnection))
-        //                {
-        //                    errorLogger.CommandText =
-        //                        "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-        //                    errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
-        //                    errorLogger.CommandText += "'synchLegacyUser' ,";
-        //                    errorLogger.CommandText += "9 ,9 ,9 ,'synchLegacyUser', 9 ,";
-        //                    errorLogger.CommandText += "'error at synchLegacyUser " + ex.Message.Replace("'", "|") +
-        //                                               "')";
-
-        //                    errorLogger.ExecuteNonQuery();
-
-        //                }
-
-        //                throw;
-        //            }
-        //        }
-        //        return result;
-        //    }
-        //}
-
         public int CheckIfEmailAlreadyRegisteredForWebinar(string orderEmail, int webinarId)
         {
             var result = "";
@@ -1474,7 +946,7 @@ namespace CUWebinars.Business.Core
             {
                 sqlConnection.Open();
                 using (
-                    var checkForAnyOrders = new SqlCommand("CheckForAllOrders", sqlConnection))
+                    var checkForAnyOrders = new SqlCommand("GetOrdersForWeeklyInvoiceByAffiliate", sqlConnection))
                 {
                     try
                     {
@@ -1628,6 +1100,73 @@ namespace CUWebinars.Business.Core
                         createDiscount.Parameters.Add(NotesParam);
 
                         result = (int)createDiscount.ExecuteScalar();
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
+                            errorLogger.CommandText += "'CreateAdjustmentDiscount' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'CreateAdjustmentDiscount', 9 ,";
+                            errorLogger.CommandText += "'error at CreateAdjustmentDiscount " +
+                                                       ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+                        }
+
+                        throw;
+                    }
+                }
+                return result;
+
+            }
+        }
+
+        public object UpdateAffiliate(Affiliate affiliate)
+        {
+            var result = 0;
+
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+                using (
+                    var updateAff = new SqlCommand("UpdateAffiliate", sqlConnection))
+                {
+                    try
+                    {
+                        updateAff.Connection = sqlConnection;
+                        updateAff.CommandType = CommandType.StoredProcedure;
+
+
+                        var IDAffParam = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idAff", Value = affiliate.idUserAff };
+                        var WebFooterParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@WebFooter", Value = affiliate.WebFooter };
+                        var EmailBannerParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@EmailBanner", Value = affiliate.EmailBanner };
+                        var EmailFooterParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@EmailFooter", Value = affiliate.EmailFooter };
+                        var BillingModelParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@BillingModel", Value = affiliate.BillingModel };
+                        var CommissionModelParam = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@CommissionModel", Value = affiliate.CommissionModel };
+                        var NotiOrdersParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@NotiOrders", Value = affiliate.NotiOrders };
+                        var NotiPromosParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@NotiPromos", Value = affiliate.NotiPromos };
+                        var MailChimpListParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@idMailChimpList", Value = affiliate.idMailChimpList };
+                        var NotiInvoicesParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@NotiInvoices", Value = affiliate.NotiInvoices };
+                        var TimeZoneParam = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@TimeZone", Value = (int)affiliate.WebUser.timeZone };
+
+                        //createDiscount.Parameters.Add(TotalCountParam);
+                        updateAff.Parameters.Add(IDAffParam);
+                        updateAff.Parameters.Add(WebFooterParam);
+                        updateAff.Parameters.Add(EmailBannerParam);
+                        updateAff.Parameters.Add(EmailFooterParam);
+                        updateAff.Parameters.Add(BillingModelParam);
+                        updateAff.Parameters.Add(CommissionModelParam);
+                        updateAff.Parameters.Add(MailChimpListParam);
+                        updateAff.Parameters.Add(NotiInvoicesParam);
+                        updateAff.Parameters.Add(NotiOrdersParam);
+                        updateAff.Parameters.Add(NotiPromosParam);
+                        updateAff.Parameters.Add(TimeZoneParam);
+                        
+                        result = (int)updateAff.ExecuteScalar();
                     }
                     catch (Exception ex)
                     {

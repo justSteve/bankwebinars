@@ -7,6 +7,7 @@ using System.Linq;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using System.Net;
+using System.Text;
 using System.Web.Razor.Generator;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core.Helpers;
@@ -53,14 +54,11 @@ namespace CUWebinars.Business.Services
             decimal totalPaidRoyalty = 0M;
 
             invoice.Affiliate = FindById(affiliateId);
-
-
+            
             foreach (Order order in orders.OrderBy(o => o.OrderDate))
             {
                 try
                 {
-
-
                     var obj = JObject.Parse(order.InvoiceDetail);
                     var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                     var dict = obj.First.First.Children().Cast<JProperty>().ToDictionary(p => p.Name, p => p.Value);
@@ -100,13 +98,10 @@ namespace CUWebinars.Business.Services
                         {
                             invoice.TotalOnBilled += adjustedTotal;
                         }
-
-
+                        
                         invoice.TotalRoyalties += adjustedRoyalty;
-
-
+                        
                         StoreInvoiceDetail(order, invoice);
-
                         _orderRepository.SaveChanges();
                     }
                     catch (Exception ex)
@@ -120,8 +115,7 @@ namespace CUWebinars.Business.Services
                     _logger.FatalException("ReInvoice attempt on " + order.idOrder + " tosses: ", ex);
                 }
             }
-
-
+            
             if (invoice.Affiliate.BillingModel.Trim(' ') == "aff")
             {
                 invoice.TotalNetDue = (invoice.TotalOnBilled + invoice.TotalOnPaid - invoice.TotalDiscounts) - invoice.TotalRoyalties;
@@ -130,9 +124,8 @@ namespace CUWebinars.Business.Services
             {
                 invoice.TotalNetDue = totalBilledRevenue - totalBilledRoyalty - totalPaidRoyalty;
             }
+            
             return invoice;
-
-
         }
 
         private AffiliateInvoiceDTO ComputeRoyaltyForPostEventOrders(AffiliateInvoiceDTO invoice, List<Order> orders, int affiliateId, bool b)
@@ -203,6 +196,39 @@ namespace CUWebinars.Business.Services
                     }
                     break;
 
+                case 2: // CommissionModel.Flat50
+                    numberOfRegistrations = 0;
+                    foreach (Order order in orders.OrderBy(o => o.OrderDate))
+                    {
+                        try
+                        {
+                            decimal commissionPercent;
+                            var row = IniInvoice(order, invoice);
+                            commissionPercent = 0.5M;
+                            row.Royalty = row.RowPrice * commissionPercent;
+
+                            if (order.OrderStatus == OrderStatus.Paid)
+                            {
+                                totalPaidRoyalty += row.Royalty;
+                            }
+                            else
+                            {
+                                totalBilledRevenue += row.RowPrice;
+                                totalBilledRoyalty += row.Royalty;
+                            }
+                            row.PercentPaid = commissionPercent;
+                            invoice.TotalRoyalties += row.Royalty;
+
+
+                            StoreInvoiceDetail(order, invoice);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.FatalException("ComputRoyaltyForPostEventOrders Flat40 " + order.idOrder, ex);
+                        }
+
+                    }
+                    break;
                 case 3: // CommissionModel.Flat40
                     numberOfRegistrations = 0;
                     foreach (Order order in orders.OrderBy(o => o.OrderDate))
@@ -330,7 +356,7 @@ namespace CUWebinars.Business.Services
                 case 1: // Sliding4TierNoCCBreak:
                     int numberOfRegistrations = 0;
 
-                    foreach (Order order in orders.OrderBy(o => o.OrderDate))
+                   foreach (Order order in orders.OrderBy(o => o.OrderDate))
                     {
                         try
                         {
@@ -381,6 +407,38 @@ namespace CUWebinars.Business.Services
                     }
                     break;
 
+                case 2: // CommissionModel.Flat50
+                    foreach (Order order in orders.OrderBy(o => o.OrderDate))
+                    {
+                        try
+                        {
+                            decimal commissionPercent;
+                            var row = IniInvoice(order, invoice);
+                            commissionPercent = 0.5M;
+
+                            row.Royalty = row.RowPrice * commissionPercent;
+                            row.PercentPaid = commissionPercent;
+                            invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
+
+                            if (order.OrderStatus == OrderStatus.Paid)
+                            {
+                                totalPaidRoyalty += row.Royalty;
+                            }
+                            else
+                            {
+                                totalBilledRevenue += row.RowPrice;
+                                totalBilledRoyalty += row.Royalty;
+                            }
+
+                            StoreInvoiceDetail(order, invoice);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.FatalException("ComputRoyalty Flat40 " + order.idOrder, ex);
+                        }
+                    }
+                    break;
+
                 case 3: // CommissionModel.Flat40
                     foreach (Order order in orders.OrderBy(o => o.OrderDate))
                     {
@@ -412,6 +470,7 @@ namespace CUWebinars.Business.Services
                         }
                     }
                     break;
+
                 case 4: // CommissionModel.Flat35:
                     foreach (Order order in orders.OrderBy(o => o.OrderDate))
                     {
@@ -443,6 +502,7 @@ namespace CUWebinars.Business.Services
 
                     }
                     break;
+
                 case 5: // CommissionModel.Flat25
                     foreach (Order order in orders.OrderBy(o => o.OrderDate))
                     {
@@ -897,7 +957,38 @@ namespace CUWebinars.Business.Services
 
         }
 
+        public int SaveChanges(Affiliate affiliate)
+        {// 12/15 not currently working
+            return _affiliateRepository.SaveChanges();
+        }
 
+        public Affiliate UpdateAffiliate(Affiliate _affiliate)
+        {
+
+            //get db version of aff
+            var affiliate = FindById(_affiliate.idUserAff);
+
+            var sb = new StringBuilder();
+            sb.Append("AffiliateUpDate");
+
+            if (affiliate.WebUser.timeZone != _affiliate.WebUser.timeZone)
+                sb.Append(" TimeZone changed from: " + affiliate.WebUser.timeZone + " to: " +
+                          _affiliate.WebUser.timeZone);
+
+            if (affiliate.idMailChimpList != _affiliate.idMailChimpList)
+                sb.Append(" idMailChimpList changed from: " + affiliate.idMailChimpList + " to: " +
+                          _affiliate.idMailChimpList);
+
+            if (affiliate.BillingModel != _affiliate.BillingModel)
+                sb.Append(" BillingModel changed from: " + affiliate.BillingModel + " to: " +
+                          _affiliate.BillingModel);
+
+            DataOperations ops = new DataOperations(TtsConfig.DefaultConnectionString);
+            var saveAff = ops.UpdateAffiliate(_affiliate);
+
+            return affiliate;
+
+        }
 
 
         private string GetRowPercent(int ordinalHolder, byte commissionModel)

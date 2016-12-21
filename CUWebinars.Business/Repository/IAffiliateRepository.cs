@@ -23,5 +23,6 @@ namespace CUWebinars.Business.Repository
 
         void SetAffiliateStatusToUnChanged(Affiliate affiliate);
         Affiliate LoadById(int id);
+        int SaveChanges();
     }
 }
