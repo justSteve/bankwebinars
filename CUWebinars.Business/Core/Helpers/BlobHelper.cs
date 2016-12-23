@@ -95,7 +95,6 @@ namespace CUWebinars.Business.Core.Helpers
             ICloudBlob blockBlob = container.GetBlockBlobReference(theFileName.TrimEnd('/'));
             var readPolicy = blockBlob.GetSharedAccessSignature(new SharedAccessBlobPolicy()
             {
-
                 SharedAccessStartTime = DateTime.UtcNow.AddDays(-1),
                 Permissions = SharedAccessBlobPermissions.Read,
                 SharedAccessExpiryTime = DateTime.UtcNow.AddDays(1),

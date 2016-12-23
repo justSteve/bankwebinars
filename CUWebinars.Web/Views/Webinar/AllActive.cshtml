@@ -60,7 +60,15 @@
                     </p>
                     <span style="margin-right: 20%;">@Html.Raw(desc)</span>
                     <p>@Html.Raw(relatedTopics)</p>
-                    <p>@affURL</p>
+                    @{
+                        ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity) User.Identity;
+
+                        if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                            (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
+                        {
+                            <p>@affURL</p>
+                        }
+                    }
                 </div>
             </div>
         }

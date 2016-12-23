@@ -33,7 +33,7 @@
                     var jsonUrl = '/Admin/AffiliateUpdate';
 
                     var payload = $('form#AffiliateUpdate').serialize();
-            
+
                     $.ajax({
                         type: 'POST',
                         contentType: 'application/x-www-form-urlencoded',
@@ -154,23 +154,26 @@
 
                             </span>
                         </div>
+
+                        <div><input type="hidden" name="Affiliate.NotiInvoices" value="@Model.Affiliate.NotiInvoices" /></div>
+                        <div><input type="hidden" name="Affilaite.NotiOrders" value="@Model.Affiliate.NotiOrders" /></div>
                     </li>
-                    <li class="form-line" data-type="control_textbox" id="id_21">
-                        <label class="form-label form-label-right" id="label_21" for="input_21"> Notified of Orders </label>
-                        <div id="cid_21" class="form-input">
-                            <span class="form-sub-label-container" style="vertical-align: top;">
-                                <input type="text" id="input_21" name="Affiliate.NotiOrders" value="@Model.Affiliate.NotiOrders" />
-                            </span>
-                        </div>
-                    </li>
-                    <li class="form-line" data-type="control_textbox" id="id_35">
-                        <label class="form-label form-label-right" id="label_35" for="input_35"> Notified of Invoices </label>
-                        <div id="cid_35" class="form-input">
-                            <span class="form-sub-label-container" style="vertical-align: top;">
-                                <input type="text" id="input_35" name="Affiliate.NotiInvoices" value="@Model.Affiliate.NotiInvoices" />
-                            </span>
-                        </div>
-                    </li>
+                    @*<li class="form-line" data-type="control_textbox" id="id_21">
+                            <label class="form-label form-label-right" id="label_21" for="input_21"> Notified of Orders </label>
+                            <div id="cid_21" class="form-input">
+                                <span class="form-sub-label-container" style="vertical-align: top;">
+                                    <input type="text" id="input_21" name="Affiliate.NotiOrders" value="@Model.Affiliate.NotiOrders" />
+                                </span>
+                            </div>
+                        </li>
+                        <li class="form-line" data-type="control_textbox" id="id_35">
+                            <label class="form-label form-label-right" id="label_35" for="input_35"> Notified of Invoices </label>
+                            <div id="cid_35" class="form-input">
+                                <span class="form-sub-label-container" style="vertical-align: top;">
+                                    <input type="text" id="input_35" name="Affiliate.NotiInvoices" value="@Model.Affiliate.NotiInvoices" />
+                                </span>
+                            </div>
+                        </li>*@
                     <li class="form-line" style="border-top: 2px black solid; " data-type="control_textbox" id="id_32">
                         <div class="pull-right">
                             <h4 id="header_34a" class="form-header">
@@ -220,7 +223,7 @@
                     <li class="form-line" data-type="control_textbox" id="id_27">
                         <label class="form-label form-label-right" id="label_27" for="input_27"> Email Banner </label>
                         <div id="cid_27" class="form-input">
-                                                        <textarea class=" form-textarea" data-type="input-textbox" id="input_27" name="Affiliate.EmailBanner">@Html.Raw(Model.Affiliate.EmailBanner)" </textarea>
+                            <textarea class=" form-textarea" data-type="input-textbox" id="input_27" name="Affiliate.EmailBanner">@Html.Raw(Model.Affiliate.EmailBanner)" </textarea>
                         </div>
                     </li>
                     <li class="form-line" data-type="control_textbox" id="id_28">
@@ -239,7 +242,7 @@
                     <li class="form-line" data-type="control_textbox" id="adminMCList">
                         <label class="form-label form-label-left form-label-auto" id="label_40" for="input_40"> MC List ID </label>
                         <div id="cid_40" class="form-input">
-                            <input type="text" class=" form-textbox" data-type="input-textbox" id="input_40" name="Affiliate.idMailChimpList" size="20" value="@Model.Affiliate.idMailChimpList"/>
+                            <input type="text" class=" form-textbox" data-type="input-textbox" id="input_40" name="Affiliate.idMailChimpList" size="20" value="@Model.Affiliate.idMailChimpList" />
                         </div>
                     </li>
                     <li class="form-line" data-type="control_dropdown" id="adminBilling">

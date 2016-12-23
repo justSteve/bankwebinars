@@ -71,7 +71,7 @@
                 <div id="edit-order-form-@myRow.idOrder" style="margin-top: 5px; display: none;">fill this div via ajax? needs js, etc, and modals that all work</div>
             }
         </div>
-        @if (myRow.Order.Affiliate.idUserAff == 62)
+        @if (myRow.Order.Affiliate != null && myRow.Order.Affiliate.idUserAff == 62)
         {
             <div><b>Note:</b> This order originated from Center For Financial Training<br /><br /></div>
         }

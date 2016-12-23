@@ -203,6 +203,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                         var additionalLocationsViewModel =
                             BuildAdditionalLocationsViewModel(row, idOrder);
 
+                        Affiliate aff = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+                        order.Affiliate = aff;
+
                         var checkoutConfirmViewModel = new CheckoutConfirmViewModel
                         {
                             //Order = order,
@@ -240,7 +243,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                                 }
                             },
                             AdminComments = order.AdminComments,
-                            Affiliate = order.Affiliate,
+                            Affiliate = aff,
                             //AffiliateComments = order.AffiliateComments,
                             //CCUserDetails =
                             //    "None <a href=\"#AddCCModal\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Add?</a> ", // CC user removed at request
@@ -300,6 +303,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                             order.Origin = Request["referred"] + Environment.NewLine + order.Origin;
                             //ViewData["referred"] = Request["referred"];
                         }
+
 
                         return checkoutConfirmViewModel;
                     }
@@ -551,6 +555,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         Order = order,
                         Webinar = webinar,
                         WebUser = webUser
+
                     };
 
                     //if (Request["referred"] != null &&
@@ -954,8 +959,8 @@ namespace CUWebinars.Web.Core.Orchestrators
         public PricesAndDiscounts UpdateOrderPricing(Order order)
         {
 
-           PricesAndDiscounts pricesAndDiscounts = _orderManagementService.CalculateOrderCost(order,
-                _orderManagementService.GetAdditionalLocationsPricing(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar));
+            PricesAndDiscounts pricesAndDiscounts = _orderManagementService.CalculateOrderCost(order,
+                 _orderManagementService.GetAdditionalLocationsPricing(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar));
             _orderManagementService.UpdateOrderChanges(order, ref pricesAndDiscounts);
 
             return pricesAndDiscounts;
@@ -964,8 +969,8 @@ namespace CUWebinars.Web.Core.Orchestrators
         public PricesAndDiscounts UpdateOrderPricingReadOnly(Order order)
         {
             PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
-          pricesAndDiscounts = _orderManagementService.CalculateOrderCost(order,
-                _orderManagementService.GetAdditionalLocationsPricing(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar));
+            pricesAndDiscounts = _orderManagementService.CalculateOrderCost(order,
+                  _orderManagementService.GetAdditionalLocationsPricing(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar));
             //_orderManagementService.UpdateOrderChanges(order, ref pricesAndDiscounts);
 
             return pricesAndDiscounts;

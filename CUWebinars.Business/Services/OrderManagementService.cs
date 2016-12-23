@@ -519,7 +519,7 @@ namespace CUWebinars.Business.Services
                 affiliateIds = _orderRepository.FindOrdersByUserId(idUser)
                                     .OrderByDescending(o => o.OrderDate)
                                     .Select(o => o.idAffiliate)
-                                    .Take(1)
+                                    
                                     .ToList();
 
                 // keeps affiliateIds object in cache for 1 hour.
@@ -538,7 +538,7 @@ namespace CUWebinars.Business.Services
                 // The history is of more than 1 affiliate
                 if (affiliateIds.Distinct().Count() > 1)
                 {
-                    _logger.Info("DetermineAffiliateByAlternativeMeans find multi affs: " + idUser);
+                    _logger.Info("DetermineAffiliateByAlternativeMeans finds multi affs: " + idUser);
 
                     // The business rule is that where there is more than one Affiliate which the 
                     // user has made orders for, if one affiliate has been used twice as many times 
@@ -1869,24 +1869,6 @@ namespace CUWebinars.Business.Services
             _orderRepository.UpdateShippingAddressDetails(shippingAddress, idUser);
         }
 
-
-        public string SynchOrdersWhereLegacyIsZero(int idOrderLegacy, int idOrderV3)
-        {
-            var oldClaim = GetOnDemandClaimById(idOrderV3);
-
-            //if (oldClaim == "duped")
-            //    return null;
-            //if (oldClaim == "none found")
-            //    return null;
-
-            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
-            var result = dataOperations.SynchOrderIdsWithOnDemandCode(idOrderLegacy, idOrderV3, oldClaim);
-
-
-
-            return null;
-
-        }
 
         public RegType GetRegTypeByLabel(string regType, int idWebinar)
         {

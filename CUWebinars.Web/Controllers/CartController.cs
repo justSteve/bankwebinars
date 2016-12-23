@@ -184,6 +184,8 @@ namespace CUWebinars.Web.Controllers
                 {
                     model.Order.OrderStatus = OrderStatus.Submitted;
 
+
+
                     _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email, model.Order.OrderRows.FirstOrDefault());
 
 
@@ -381,10 +383,15 @@ namespace CUWebinars.Web.Controllers
             {
                 if (ID != null && ID > 0)
                 {
-
                     var order = _cartControllerOrchestrator.LoadOrder(ID.Value);
-                    ViewBag.Order = order;
-
+                    var sessionAff = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+                    if (sessionAff != null && (sessionAff.idUserAff != order.Affiliate.idUserAff) ||
+                        sessionAff.idUserAff != order.idAffiliate)
+                    {
+                        _logger.Fatal("CheckoutConfirm has MISMATCHED AFFILIATE IDS" + order.idOrder + " SessionAff" + sessionAff.idUserAff);
+                        order.Affiliate = sessionAff;
+                        order.idAffiliate = sessionAff.idUserAff;
+                    }
                     var row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
                     ViewBag.TaxAmount = model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount;
                     if (row.Discount != null)
@@ -392,7 +399,7 @@ namespace CUWebinars.Web.Controllers
                         ViewBag.DiscountCaption = _cartControllerOrchestrator.GetDiscountCaption(
                             row.Discount, row, null, 1);
                     }
-
+                    ViewBag.Order = order;
                 }
                 else
                 {
@@ -1108,7 +1115,7 @@ namespace CUWebinars.Web.Controllers
             {
                 var order = _cartControllerOrchestrator.GetOrderById(id);
                 order.Origin = DomainConstants.OriginExpress;
-
+                
                 _logger.Info("Express idOrder: " + id);
                 _stateService.SetValue(DomainConstants.OriginExpress, Request.QueryString["idOrder"]);
 
