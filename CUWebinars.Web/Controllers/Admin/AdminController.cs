@@ -1290,7 +1290,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             //_logger.Info("Begins SendConnectionInfo");
             var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
-
+            var citrixRegistrants = _orderManagementService.GetCitrixRegistrantsByWebinar(webinarId);
             foreach (var order in orders)
             {
                 var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);

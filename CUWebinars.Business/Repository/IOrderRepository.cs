@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Citrix.GoToWebinar.Api.Model;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
+using Webinar = CUWebinars.Business.Models.Webinar;
 
 namespace CUWebinars.Business.Repository
 {
@@ -71,5 +73,6 @@ namespace CUWebinars.Business.Repository
         decimal CalculateCreditsRemain(Discount discount);
         decimal CalculateCreditsUsed(Discount discount);
         Order GetOrderByJoinCode(string joinCode);
+        List<Attendee> GetCitrixRegistrantsByWebinar(Webinar webinarId);
     }
 }

@@ -4,8 +4,10 @@ using CUWebinars.Business.Models;
 using System;
 using System.Collections.Generic;
 using BrockAllen.MembershipReboot;
+using Citrix.GoToWebinar.Api.Model;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.ViewModel;
+using Webinar = CUWebinars.Business.Models.Webinar;
 
 namespace CUWebinars.Business.Services
 {
@@ -155,5 +157,6 @@ namespace CUWebinars.Business.Services
         int CheckIfEmailAlreadyRegisteredForWebinar(int idWebinar, string email);
         bool UserHasMultipleEvents(int idUser);
         Order GetOrderByJoinCode(string joinCode);
+        List<Attendee> GetCitrixRegistrantsByWebinar(int webinarId);
     }
 }

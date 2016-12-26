@@ -27,12 +27,14 @@ using System.Text;
 using System.Web.Helpers;
 using System.Web.UI.WebControls;
 using BrockAllen.MembershipReboot;
+using Citrix.GoToWebinar.Api.Model;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Notification;
 using CUWebinars.Web.Models;
 using Ninject.Infrastructure.Language;
 using IEvent = CUWebinars.NotificationSystem.Event.IEvent;
 using IEventSource = CUWebinars.NotificationSystem.Event.IEventSource;
+using Webinar = CUWebinars.Business.Models.Webinar;
 
 namespace CUWebinars.Business.Services
 {
@@ -2465,6 +2467,11 @@ namespace CUWebinars.Business.Services
         public Order GetOrderByJoinCode(string joinCode)
         {
             return _orderRepository.GetOrderByJoinCode(joinCode);
+        }
+
+        public List<Attendee> GetCitrixRegistrantsByWebinar(int webinarId)
+        {
+            return _orderRepository.GetCitrixRegistrantsByWebinar(_webinarRepository.FindById((webinarId)));
         }
 
 

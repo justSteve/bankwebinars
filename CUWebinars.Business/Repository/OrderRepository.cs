@@ -18,8 +18,11 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Citrix.GoToWebinar.Api;
+using Citrix.GoToWebinar.Api.Model;
 using CUWebinars.Business.Services;
 using FluentValidation.Results;
+using Webinar = CUWebinars.Business.Models.Webinar;
 
 namespace CUWebinars.Business.Repository
 {
@@ -497,6 +500,30 @@ namespace CUWebinars.Business.Repository
                 return null;
             var order = ((TTSWebinarsContext)db).OrderRows.Include(or => or.Order).SingleOrDefault(or => or.TtsJoinUrl == joinCode).Order;
             return order;
+        }
+
+        public List<Attendee> GetCitrixRegistrantsByWebinar(Webinar webinar)
+        {
+            var api = new WebinarsApi();
+
+            string orgKey = webinar.OrganizerKey;
+            string accessToken = webinar.OrganizerOAuthKey;
+
+            Int64 oKey;
+            bool res = Int64.TryParse(webinar.OrganizerKey, out oKey);
+            if (res)
+            {
+
+                Int64 wKey;
+                bool wRes = Int64.TryParse(webinar.OrganizerKey, out wKey);
+                if (wRes)
+                {
+                    var registrants = api.getAttendeesForAllWebinarSessions(accessToken, oKey, wKey);
+
+                    return registrants;
+                }
+            }
+            return null;
         }
 
 
