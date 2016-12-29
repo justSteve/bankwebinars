@@ -1162,7 +1162,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     foreach (var additionalLocation in orderRow.AdditionalLocation)
                     {
-                        _orderManagementService.GenerateRegistrantKey(order, additionalLocation);
+                        _orderManagementService.GenerateRegistrantKey(order);
                     }
                 }
             }
@@ -1304,7 +1304,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         foreach (var additionalLocation in orderRow.AdditionalLocation)
                         {
-                            _orderManagementService.GenerateRegistrantKey(order, additionalLocation);
+                            _orderManagementService.GenerateRegistrantKey(order);
                         }
                     }
                 }

@@ -25,8 +25,10 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Text;
 using System.Web.Helpers;
+using System.Web.Mvc;
 using System.Web.UI.WebControls;
 using BrockAllen.MembershipReboot;
+using Citrix.GoToWebinar.Api;
 using Citrix.GoToWebinar.Api.Model;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Notification;
@@ -521,7 +523,7 @@ namespace CUWebinars.Business.Services
                 affiliateIds = _orderRepository.FindOrdersByUserId(idUser)
                                     .OrderByDescending(o => o.OrderDate)
                                     .Select(o => o.idAffiliate)
-                                    
+
                                     .ToList();
 
                 // keeps affiliateIds object in cache for 1 hour.
@@ -1324,10 +1326,16 @@ namespace CUWebinars.Business.Services
         public void FireSendConnectionInfoNotificationEvent(IList<Order> orders, bool resending)
         {
 
-            //see SendConnectionInfoHandler for handling implementation
+            var idWebinar = orders[0].OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar;
+
+            var citrixRegs = GetCitrixRegistrantsByWebinar(idWebinar);
+
+
             foreach (var order in orders)
             {
+                GenerateRegistrantKey(order);
                 AddEvent(new SendConnectionInfoEvent<Order> { EventObject = order, ResendEvent = resending, Details = order.NotificationStorage });
+            //see SendConnectionInfoHandler for handling implementation
             }
 
             foreach (var evt in GetEvents().OfType<SendConnectionInfoEvent<Order>>())
@@ -1931,82 +1939,66 @@ namespace CUWebinars.Business.Services
             return myDiscount;
         }
 
-        public void GenerateRegistrantKey(Order order, AdditionalLocation additionalLocation = null)
+        public Order GenerateRegistrantKey(Order order)
         {
             if (order == null) throw new ArgumentNullException("order");
 
             var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             var regKeyResponse = string.Empty;
 
-            Debug.Assert(!string.IsNullOrWhiteSpace(row.CitrixJoinUrl), "CitrixJoinUrl should always be null or empty before this method is called as a pre-condition.");
+            var registrant = new Registrant();
 
-            if (additionalLocation == null)
+            try
             {
-                // This branch gets key for main registrant - BillingEmail on the Order
-                if (row.RegistrationType.ShowLiveNotifications.TrimEnd().Equals("Yes", StringComparison.OrdinalIgnoreCase))
+                //Debug.Assert(!string.IsNullOrWhiteSpace(row.CitrixJoinUrl), "CitrixJoinUrl should always be null or empty before this method is called as a pre-condition.");
+                if (row.TtsJoinUrl != null && row.RegistrationType.ShowLiveNotifications.TrimEnd()
+                        .Equals("Yes", StringComparison.OrdinalIgnoreCase))
                 {
-                    regKeyResponse = CreateRegistrantKey(
+
+                    registrant = CreateRegistrantKey(
                         order.FirstName ?? " ",
                         order.LastName ?? " ",
                         order.BillingEmail,
                         row.Webinar.idWebinar,
                         row.Webinar.WebinarKey
-                        );
+                    );
+
+                    row.CitrixJoinUrl = registrant.joinUrl;
+                    row.RegistrantKey = registrant.registrantKey.ToString();
+
+                    if (row.AdditionalLocation != null)
+                    {
+                        // This branch gets key for main Additional Locations
+                        foreach (var addLoc in row.AdditionalLocation)
+                        {
+                            var _regKeyResponse = CreateRegistrantKey(
+                                "c/o " + order.FirstName,
+                                order.LastName ?? " ",
+                                addLoc.Email,
+                                row.Webinar.idWebinar,
+                                row.Webinar.WebinarKey
+                            );
+                            addLoc.RegistrantKey = _regKeyResponse.registrantKey.ToString();
+                            addLoc.JoinURL = _regKeyResponse.joinUrl;
+                        }
+                    }
                 }
             }
-            else
+            catch (Exception ex)
             {
-                // This branch gets key for main Additional Locations
-                regKeyResponse = CreateRegistrantKey(
-                    "c/o " + order.FirstName,
-                    order.LastName ?? " ",
-                    additionalLocation.Email,
-                    row.Webinar.idWebinar,
-                    row.Webinar.WebinarKey
-                    );
+                _logger.FatalException("GenerateRegistrantKey: ", ex);
             }
 
             if (string.IsNullOrWhiteSpace(regKeyResponse))
             {
-                //throw new NullReferenceException(
-                //    "The Registration Key Response from the Citrix API resulted in a null response.");
                 _logger.FatalException("The Registration Key creation failed.", new NullReferenceException("The Registration Key Response from the Citrix API resulted in a null response."));
-
             }
             else
             {
-                // If in error, there'll be no braces. In such a case, make the error a Json object.
-                if (!regKeyResponse.Contains("{"))
-                    regKeyResponse = string.Concat("{ \"error\": \"", regKeyResponse, "\"}");
+                _logger.Info("GenerateRegistrantKey for " + order.idOrder + " = " + regKeyResponse);
 
-                JObject parsedJsonObject = JObject.Parse(regKeyResponse);
-
-                if (parsedJsonObject[DomainConstants.RegistrantKey] != null)
-                {
-                    _logger.Info("RegKey for ." + order.idOrder + " = " + regKeyResponse);
-
-                    var registrantKey = parsedJsonObject[DomainConstants.RegistrantKey].ToString();
-                    var joinUrl = parsedJsonObject[DomainConstants.JoinUrl].ToString();
-
-                    if (additionalLocation == null)
-                    {
-                        row.RegistrantKey = registrantKey;
-                        row.CitrixJoinUrl = joinUrl;
-                    }
-                    else
-                    {
-                        additionalLocation.JoinURL = joinUrl;
-                        additionalLocation.RegistrantKey = registrantKey;
-                    }
-
-
-                    // Next variable not needed here. Just used b/c ref parameter in next method-call.
-                    var pricesAndDiscounts = default(PricesAndDiscounts);
-
-                    // Return result is actually not required. Do nothing with it, unless want to log something. Context SaveChanges is called.
-                    var resultOfUpdate = UpdateOrderChanges(order, ref pricesAndDiscounts);
-                }
             }
+            return order;
         }
 
         public int GetNumberOfOrdersPerWebinar(int id)
@@ -2075,19 +2067,6 @@ namespace CUWebinars.Business.Services
                 var regKeyResponse = CreateRegistrantKey(order.FirstName, order.LastName
                     , order.BillingEmail, row.Webinar.idWebinar, row.Webinar.WebinarKey);
 
-                if (order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count > 0)
-                {
-                    foreach (var additionalLocation in order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
-                    {
-                        if (
-                            string.IsNullOrEmpty(
-                                order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).CitrixJoinUrl))
-                        {
-                            GenerateRegistrantKey(order, additionalLocation);
-                        }
-                    }
-                }
-
                 if (ReferenceEquals(null, regKeyResponse))
                 {
                     _logger.ErrorException(
@@ -2095,35 +2074,6 @@ namespace CUWebinars.Business.Services
                         order.BillingEmail,
                         new NullReferenceException("Attempt to CreateRegistrantKey failed on Webinar: {0} email: {1}" +
                                                    row.Webinar.idWebinar + " email: " + order.BillingEmail));
-                }
-                else
-                {
-                    // If in error, there'll be no braces. In such a case, make the error a Json object.
-                    if (!regKeyResponse.Contains("{"))
-                        regKeyResponse = string.Concat("{ \"error\": \"", regKeyResponse, "\"}");
-
-
-                    JObject parsedJsonObject = JObject.Parse(regKeyResponse);
-
-                    if (parsedJsonObject[DomainConstants.RegistrantKey] != null)
-                    {
-                        var registrantKey = parsedJsonObject[DomainConstants.RegistrantKey].ToString();
-                        var joinUrl = parsedJsonObject[DomainConstants.JoinUrl].ToString();
-
-                        row.RegistrantKey = registrantKey;
-                        row.CitrixJoinUrl = joinUrl;
-
-                        _logger.Info("Successful CreateRegistrantKey: {0}", row.RegistrantKey);
-                    }
-                    else
-                    {
-                        if (!regKeyResponse.Contains("(409) Conflict."))
-                        {
-                            //409 conflict means email already registered
-                            // no need to log multiple citrix hits
-                            _logger.Error("ERROR at CreateRegistrantKey on " + row.Order.idOrder);
-                        }
-                    }
                 }
             }
         }
@@ -2469,7 +2419,7 @@ namespace CUWebinars.Business.Services
             return _orderRepository.GetOrderByJoinCode(joinCode);
         }
 
-        public List<Attendee> GetCitrixRegistrantsByWebinar(int webinarId)
+        public List<Registrant> GetCitrixRegistrantsByWebinar(int webinarId)
         {
             return _orderRepository.GetCitrixRegistrantsByWebinar(_webinarRepository.FindById((webinarId)));
         }
@@ -2549,57 +2499,29 @@ namespace CUWebinars.Business.Services
         }
 
 
-        public string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int webinarId,
+        public Registrant CreateRegistrantKey(string firstName, string lastName, string billingEmail, int webinarId,
             string webinarKey)
         {
             var webinar = _webinarRepository.FindById(webinarId);
-            string orgKey = webinar.OrganizerKey;
-            string accessToken = webinar.OrganizerOAuthKey;
-
-            string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/" + webinarKey + "/registrants";
-
-            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
-
-            httpWebRequest.ContentType = "application/json";
-
-            httpWebRequest.Accept = "application/vnd.citrix.g2wapi-v1.1+json";
-            httpWebRequest.Headers.Add("Authorization", "OAuth oauth_token=" + accessToken);
-
-            httpWebRequest.Method = "POST";
-
-            object sendVars = new { firstName = firstName, lastName = lastName, email = billingEmail };
-
-            string postData = JsonConvert.SerializeObject(sendVars);
-            ;
-
-            byte[] requestBytes = Encoding.UTF8.GetBytes(postData);
-            httpWebRequest.ContentLength = requestBytes.Length;
-
-            using (Stream requestStream = httpWebRequest.GetRequestStream())
-            {
-                requestStream.Write(requestBytes, 0, requestBytes.Length);
-                requestStream.Close();
-            }
-
-            _logger.Info("CreateRegistrantKey starts: " + billingEmail + ", webinarKey = " + webinarKey + ", OrgKey = " + orgKey + ", oauth_token=" + accessToken);
+            var orgKey = _ttsConfig.ConvertToCitrixOrgKey(webinar.OrganizerKey);
+            var cWebinarKey = _ttsConfig.ConvertToCitrixWebinarKey(webinar.WebinarKey);
 
             try
             {
-                HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse();
-                // Get the stream associated with the response.
-                Stream receiveStream = response.GetResponseStream();
+                var api = new RegistrantsApi();
+                var apiResponse = api.createRegistrant(webinar.OrganizerOAuthKey, orgKey, cWebinarKey, "application/vnd.citrix.g2wapi-v1.1+json", false, new RegistrantFields { firstName = firstName, lastName = lastName, email = billingEmail }); // {};
 
-                // Pipes the stream to a higher level 
-                //stream reader with the required encoding format. 
-                StreamReader readStream = new StreamReader(receiveStream, Encoding.UTF8);
+                Registrant reg = new Registrant
+                {
+                    firstName = firstName,
+                    lastName = lastName,
+                    email = billingEmail,
+                    joinUrl = apiResponse.joinUrl,
+                    registrantKey = apiResponse.registrantKey
+                };
+                _logger.Info("CreateRegistrantKey returns: " + billingEmail + ", " + webinarKey + " - Response = " + apiResponse);
 
-                Console.WriteLine("Response stream received.");
-                var myResponse = readStream.ReadToEnd();
-                response.Close();
-                readStream.Close();
-
-                _logger.Info("CreateRegistrantKey returns: " + billingEmail + ", " + webinarKey + " - Response = " + myResponse);
-                return myResponse;
+                return reg;
             }
             catch (WebException webException)
             {
@@ -2612,15 +2534,15 @@ namespace CUWebinars.Business.Services
 
                     _logger.Error("Citrix Message: {0}", responsePayload);
 
-                    return responsePayload;
                 }
+                return new Registrant { firstName = webException.Message };
             }
             catch (Exception exception)
             {
                 _logger.ErrorException(string.Format("Exception CreateRegistrantKey: {0}, {1}. ExceptionMsg = {2}", billingEmail, webinarKey, exception.Message), exception);
-                return "error";
+                return new Registrant { firstName = exception.Message };
             }
-            return null;
+
         }
 
         /// <summary>

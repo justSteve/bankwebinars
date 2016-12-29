@@ -16,7 +16,7 @@
     {
         TaxAmount = 0;
     }
-    
+
     var order = Model;
 
     var myRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
@@ -54,24 +54,23 @@
 
         function SubmitCCForm () {
             $("#PayByCCFormPT input[name='parmList']").val(dataParamList);
-            console.log(dataParamList);
             $("#PayByCCFormPT").submit();
         }
 
         $(function() {
             var idOrder = @Model.idOrder;
-            var updatedTotal = @Model.Total;
 
+            $('#btnSubmitCCForm').text("please wait");
             $('#PayByCCModal').on('show', function () {
 
                 $.ajax({
-
                     datatype: "text/plain",
                     type: "GET",
                     url: '/cart/PayTraceModalIni?idOrder='+idOrder,
                     cache: false,
                     success: function (data) {
-                        console.log(data);
+
+                        $('#btnSubmitCCForm').text("Continue");
                         dataParamList = data.paramList;
 
                         $("#btnSubmitCCForm").click(function() {
@@ -94,7 +93,6 @@
     </div>
     <div id="PayByCCModalOrderDetails" class="modal-body">
         <div>
-
             <div class="legendImitator">
                 Credit Card Processing Redirect
             </div>
@@ -104,15 +102,12 @@
                 @*Direct credit card processing is temporarily offline. We apologize for the inconvenience. Please choose the 'Bill Me' option or call us at 800-831-0678 to post immediate payment with our customer service staff.*@
             </div>
 
-
             <div class="pull-right">
-                
+
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
                 <button class="btn btn-success" name="btnSubmitCCForm" id="btnSubmitCCForm">Continue</button>
-                
+
             </div>
         </div>
-
-
     </div>
 </div>

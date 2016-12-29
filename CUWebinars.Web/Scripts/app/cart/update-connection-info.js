@@ -93,50 +93,58 @@ $(function () {
         $('#CreateCitrixWebinar').on('click', function (e) {
 
             var idWebinar = $("#idWebinar").val() + "";
-            
+
             e.preventDefault();
 
             var self = this;
 
-            //var inputs = formProcessor.getApplicableInputs('_UpdateConnectionInfo');
-            //var payload = formProcessor.processInputs(inputs);
+            var promptForKey = prompt("Enter WebinarKey from Citrix");
 
-            //Rollbar.info({ 'uci-#1': { 'payload': payload}});
+            if (promptForKey != null) {
 
-            var token = UCI.updateConnectionInfoForm.find('input[name=__RequestVerificationToken]').val();
-            var headers = {};
-            headers['__RequestVerificationToken'] = token;
+                var token = UCI.updateConnectionInfoForm.find('input[name=__RequestVerificationToken]').val();
+                var headers = {};
+                headers['__RequestVerificationToken'] = token;
 
-            var createCitrixWebinarSummary = $('#createCitrixWebinarSummary');
+                var createCitrixWebinarSummary = $('#createCitrixWebinarSummary');
 
-            $.ajax({
-                type: 'GET',
-                contentType: constants.JsonContentType,
-                cache: false,
-                url: '/Webinar/CreateCitrixWebinar/?idWebinar=' + idWebinar,
-                dataType: constants.JsonDataType,
-                data: JSON.stringify("idWebinar"),
-                headers: headers,
-                beforeSend: function () {
-                    $('#result').remove();
+                $.ajax({
+                    type: 'GET',
+                    contentType: constants.JsonContentType,
+                    cache: false,
+                    url: '/Webinar/CreateCitrixWebinar/?idWebinar=' + idWebinar + "&webinarKey=" + promptForKey,
+                    dataType: constants.JsonDataType,
+                    data: JSON.stringify("idWebinar"),
+                    headers: headers,
+                    beforeSend: function () {
+                        $('#result').remove();
 
-                    formProcessor.clearValidationSummary(createCitrixWebinarSummary);
+                        formProcessor.clearValidationSummary(createCitrixWebinarSummary);
 
-                    $(self).append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
-                }
-            }).done(function (data) {
-                if (data.Result == "Success") {
-                    var label = $('<div id="result" class="label label-success pull-left block buttonAdjacentLabel">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details Updated</div>');
-                    label.hide().insertAfter($(self)).fadeIn(500);
-                    //Rollbar.info({ 'uci-#2': { 'result': data } });
-                } else if (!data.isSuccessful) {
-                    formProcessor.lightUpValidationSummary('updateConnInfoValSummary', data);
-                    //Rollbar.info({ 'uci-#3': { 'fail-result': data } });
-                }
-            }).always(function (data) {
-                $('#waitSpinner').remove();
-            });
+                        $(self)
+                            .append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+                    }
+                })
+                    .done(function (data) {
+                        
+                        console.log(data);
+                        alert(data.Result);
+                        if (data.Result === "Success") {
 
+                            console.log(data);
+                            $(self).html(
+                                $('<div id="result" class="label label-success pull-left block buttonAdjacentLabel">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details Updated</div>'));
+                            label.hide().insertAfter($(self)).fadeIn(500);
+
+                        } else if (!data.isSuccessful) {
+                            formProcessor.lightUpValidationSummary('updateConnInfoValSummary', data);
+
+                        }
+                    })
+                    .always(function (data) {
+                        $('#waitSpinner').remove();
+                    });
+            }
         });
 
     };

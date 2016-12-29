@@ -502,25 +502,22 @@ namespace CUWebinars.Business.Repository
             return order;
         }
 
-        public List<Attendee> GetCitrixRegistrantsByWebinar(Webinar webinar)
+        public List<Registrant> GetCitrixRegistrantsByWebinar(Webinar webinar)
         {
-            var api = new WebinarsApi();
-
-            string orgKey = webinar.OrganizerKey;
-            string accessToken = webinar.OrganizerOAuthKey;
-
+            var api = new RegistrantsApi();
+            
             Int64 oKey;
             bool res = Int64.TryParse(webinar.OrganizerKey, out oKey);
             if (res)
             {
 
                 Int64 wKey;
-                bool wRes = Int64.TryParse(webinar.OrganizerKey, out wKey);
+                bool wRes = Int64.TryParse(webinar.WebinarKey, out wKey);
                 if (wRes)
                 {
-                    var registrants = api.getAttendeesForAllWebinarSessions(accessToken, oKey, wKey);
-
-                    return registrants;
+                    var registrants = api.getAllRegistrantsForWebinar(webinar.OrganizerOAuthKey, oKey, wKey);
+                    
+                    return registrants.ToList();
                 }
             }
             return null;

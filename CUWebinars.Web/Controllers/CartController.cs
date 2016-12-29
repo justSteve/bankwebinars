@@ -619,7 +619,7 @@ namespace CUWebinars.Web.Controllers
             paramList += "|phone~" + order.BillingPhone;
             paramList += "|CUSTOMDBA~" + _globalConfig.TenantDomain;
             paramList += "|IMAGEURL~" + _globalConfig.TenantLogo;
-            paramList += "|CANCELURL~https://bwdev.azurewebsites.net/cart/PayTraceCanceled";
+            paramList += "|CANCELURL~" + _globalConfig.TenantURL + "/cart/PayTraceCanceled";
 
             _stateService.SetValue(WebUiConstants.PayTraceSubmit, paramList);
 
@@ -1115,7 +1115,7 @@ namespace CUWebinars.Web.Controllers
             {
                 var order = _cartControllerOrchestrator.GetOrderById(id);
                 order.Origin = DomainConstants.OriginExpress;
-                
+
                 _logger.Info("Express idOrder: " + id);
                 _stateService.SetValue(DomainConstants.OriginExpress, Request.QueryString["idOrder"]);
 

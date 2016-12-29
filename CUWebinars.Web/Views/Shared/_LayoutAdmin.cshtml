@@ -231,7 +231,9 @@
     <div id="page">
 
         @RenderBody()
-
+        <form id="PayByCCFormPT" method="post" action="https://paytrace.com/api/checkout.pay">
+            <input type="hidden" name="parmList" id="paraList" value="">
+        </form>
     </div>
 
     <!--begin footer -->

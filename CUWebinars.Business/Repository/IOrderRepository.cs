@@ -73,6 +73,6 @@ namespace CUWebinars.Business.Repository
         decimal CalculateCreditsRemain(Discount discount);
         decimal CalculateCreditsUsed(Discount discount);
         Order GetOrderByJoinCode(string joinCode);
-        List<Attendee> GetCitrixRegistrantsByWebinar(Webinar webinarId);
+        List<Registrant> GetCitrixRegistrantsByWebinar(Webinar webinarId);
     }
 }

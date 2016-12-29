@@ -80,6 +80,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             var orders = _orderManagementService.GetOrdersForLiveNotifications(idWebinar);
 
+
             orders.ToList().ForEach((order) =>
             {
                 var notificationStorage = new NotificationStorage
@@ -644,16 +645,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             throw new NotImplementedException();
         }
 
-        public List<string> GetCitrixRegsPerWebinar(Webinar webinar)
-        {
-            var accessToken = "PKfqIlYbQj3IsmqcBGoIClWzRFYG";
-            var orgKey = 643333405148919814;
-            var webinarKey = Convert.ToInt64(webinar.CitrixRegisterUrl.Replace("https://attendee.gotowebinar.com/register/", ""));
-            var webinarsApi = new WebinarsApi();
-            var cWebinar = webinarsApi.getWebinar(accessToken, orgKey, webinarKey);
 
-            return webinarsApi.getAttendeesForAllWebinarSessions(accessToken, orgKey, webinarKey).Select(c => c.email).ToList();
-            
+        public ConnectionInfoEditModel GetConnectionInfo(string webinarKey)
+        {
+            throw new NotImplementedException();
         }
 
 
@@ -782,7 +777,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             var statuses = (from object value in Enum.GetValues(typeof(WebinarStatus))
                             select new SelectListItem { Text = value.ToString(), Value = ((int)value).ToString() }).ToList();
 
-            
+
             var webinarEditModel = new WebinarEditModel
             {
                 AdditionalLocationsPrice = _orderManagementService.GetAdditionalLocationsPricing(idWebinar),

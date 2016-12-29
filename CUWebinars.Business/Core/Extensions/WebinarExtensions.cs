@@ -7,7 +7,9 @@ namespace CUWebinars.Business.Core.Extensions
     {
         public static bool CitrixJoinInfoAvailable(this Webinar source)
         {
-            return source.Date.Subtract(TimeSpan.FromHours(1)) < DateTime.Now;
+            if (source.Status == WebinarStatus.Active)
+                return true;
+            return false;
         }
     }
 }

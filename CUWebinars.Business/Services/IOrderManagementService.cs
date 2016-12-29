@@ -27,7 +27,7 @@ namespace CUWebinars.Business.Services
 
         OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, int registrationType);
 
-        string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int idWebinar,
+        Registrant CreateRegistrantKey(string firstName, string lastName, string billingEmail, int idWebinar,
             string webinarKey);
 
         void DeleteOrder(int orderId);
@@ -98,7 +98,7 @@ namespace CUWebinars.Business.Services
         Discount GetDiscountByUser(WebUser currentUser);
         void GetJoinUrl(OrderRow row);
         Discount ApplyDiscountCode(string code, OrderRow row);
-        void GenerateRegistrantKey(Order order, AdditionalLocation additionalLocation = null);
+        Order GenerateRegistrantKey(Order order);
         int GetNumberOfOrdersPerWebinar(int id);
         void RemoveAndDeleteAdditionalLocation(AdditionalLocation deletedAdditionalLocation);
 
@@ -157,6 +157,6 @@ namespace CUWebinars.Business.Services
         int CheckIfEmailAlreadyRegisteredForWebinar(int idWebinar, string email);
         bool UserHasMultipleEvents(int idUser);
         Order GetOrderByJoinCode(string joinCode);
-        List<Attendee> GetCitrixRegistrantsByWebinar(int webinarId);
+        List<Registrant> GetCitrixRegistrantsByWebinar(int webinarId);
     }
 }
