@@ -24,6 +24,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Text;
+using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
@@ -844,17 +845,14 @@ namespace CUWebinars.Business.Services
                 userCreatedInCart = false;
 
             string addPasswordUrl = string.Empty;
-            var idOrderToShow = order.idOrderLegacy;
-            if (order.idOrderLegacy == 0)
-            {
-                idOrderToShow = order.idOrder;
-            }
+            //var idOrderToShow = order.idOrderLegacy;
+
             var orderSubmittedViewModel = new ConfirmOrderMessage
             {
                 AddPasswordUrl = string.Empty,
                 ConfirmChangeEmailUrl = string.Empty,
                 Details = order.NotificationStorage,
-                idOrder = idOrderToShow,
+                idOrder = order.idOrder,
                 Order = order,
                 OrderGenesis =
                     userCreatedInCart ? OrderGenesis.CreatedViaCartByNewUser : OrderGenesis.CreatedViaCartByExistingUser,
@@ -898,7 +896,7 @@ namespace CUWebinars.Business.Services
                 }
             }
         }
-
+        
         public void FireAdminEmailSendShippedOrderEvent(Order order, IEnumerable<string> recipients, bool resending = false)
         {
             AddEvent(new AdminEmailSendShippedOrderEvent<Order> { EventObject = order, Recipients = recipients, ResendEvent = resending });
@@ -1322,7 +1320,7 @@ namespace CUWebinars.Business.Services
 
             int numRows = _orderRepository.SaveChanges();
         }
-
+        
         public void FireSendConnectionInfoNotificationEvent(IList<Order> orders, bool resending)
         {
 
@@ -1335,7 +1333,7 @@ namespace CUWebinars.Business.Services
             {
                 GenerateRegistrantKey(order);
                 AddEvent(new SendConnectionInfoEvent<Order> { EventObject = order, ResendEvent = resending, Details = order.NotificationStorage });
-            //see SendConnectionInfoHandler for handling implementation
+                //see SendConnectionInfoHandler for handling implementation
             }
 
             foreach (var evt in GetEvents().OfType<SendConnectionInfoEvent<Order>>())
@@ -2505,10 +2503,10 @@ namespace CUWebinars.Business.Services
             var webinar = _webinarRepository.FindById(webinarId);
             var orgKey = _ttsConfig.ConvertToCitrixOrgKey(webinar.OrganizerKey);
             var cWebinarKey = _ttsConfig.ConvertToCitrixWebinarKey(webinar.WebinarKey);
+            var api = new RegistrantsApi();
 
             try
             {
-                var api = new RegistrantsApi();
                 var apiResponse = api.createRegistrant(webinar.OrganizerOAuthKey, orgKey, cWebinarKey, "application/vnd.citrix.g2wapi-v1.1+json", false, new RegistrantFields { firstName = firstName, lastName = lastName, email = billingEmail }); // {};
 
                 Registrant reg = new Registrant
@@ -2539,6 +2537,26 @@ namespace CUWebinars.Business.Services
             }
             catch (Exception exception)
             {
+                var apiResponse = api.getAllRegistrantsForWebinar(webinar.OrganizerOAuthKey, orgKey, cWebinarKey); // {};
+                foreach (var _reg in apiResponse)
+                {
+                    if (_reg.email == billingEmail)
+                    {
+                        var _reg1 = api.getRegistrant(webinar.OrganizerOAuthKey, orgKey, cWebinarKey, _reg.registrantKey);
+
+                        Registrant reg = new Registrant
+                        {
+                            firstName = firstName,
+                            lastName = lastName,
+                            email = billingEmail,
+                            joinUrl = _reg1.joinUrl,
+                            registrantKey = _reg1.registrantKey
+                        };
+                        return reg;
+                    }
+                }
+                _logger.Info("CreateRegistrantKey returns: " + billingEmail + ", " + webinarKey + " - Response = " + apiResponse);
+
                 _logger.ErrorException(string.Format("Exception CreateRegistrantKey: {0}, {1}. ExceptionMsg = {2}", billingEmail, webinarKey, exception.Message), exception);
                 return new Registrant { firstName = exception.Message };
             }
@@ -2671,5 +2689,13 @@ namespace CUWebinars.Business.Services
             }
             _disposed = true;
         }
+    }
+
+    public class OrderSubmittedV2Message
+    {
+    }
+
+    public class OrderSubmittedV2Event<T>
+    {
     }
 }

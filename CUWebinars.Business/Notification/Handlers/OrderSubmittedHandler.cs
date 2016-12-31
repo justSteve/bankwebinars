@@ -25,7 +25,7 @@ namespace CUWebinars.Business.Notification.Handlers
 
         public virtual void Process(OrderSubmittedEvent<T> orderSubmittedEvent)
         {
-            _logger.Info("Begins OrderSubmitted Notification for {0}", orderSubmittedEvent.EventObject.idOrder);
+            _logger.Info("Begins OrderSubmitted Notification for {0}", orderSubmittedEvent.EventObject);
 
             try
             {

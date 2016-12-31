@@ -35,6 +35,8 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
+using Citrix.GoToWebinar.Api;
+using Citrix.GoToWebinar.Api.Model;
 using MailChimp.Net;
 using MailChimp.Net.Core;
 using MailChimp.Net.Interfaces;
@@ -45,6 +47,7 @@ using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 using DateTimeHelper = CUWebinars.Web.Helpers.DateTimeHelper;
 using Order = CUWebinars.Business.Models.Order;
 using PostEventClaim = CUWebinars.Business.Services.PostEventClaim;
+using Webinar = CUWebinars.Business.Models.Webinar;
 
 
 namespace CUWebinars.Web.Controllers
@@ -523,20 +526,36 @@ namespace CUWebinars.Web.Controllers
         public JsonResult SendConnectionInfo(int webinarId)
         {
             _logger.Info("ConnectionInfo Send is started: " + webinarId);
+            var webinar = _webinarManagementService.GetWebinar(webinarId);
+
+
             try
             {
+                PanelistsApi pApi = new PanelistsApi();
 
-
-                _webinarControllerOrchestrator.FireSendConnectionInfoNotificationEvent(webinarId);
-
-                _logger.Info("ConnectionInfo Send is ended: " + webinarId);
-                return Json(new { Result = WebUiConstants.Success });
+                pApi.createPanelists(_globalConfig.CitrixAuthMark,
+                    _globalConfig.ConvertToCitrixOrgKey(_globalConfig.CitrixOrgKeyMark),
+                    _globalConfig.ConvertToCitrixWebinarKey(webinar.WebinarKey), new List<PanelistReqCreate>
+                    { new PanelistReqCreate {
+                    email = webinar.Presenter.WebUser.email,
+                    name = webinar.Presenter.WebUser.FullName}
+                    });
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _logger.Error(string.Format("SendConnectionInfo Action: {0}", exception.Message), exception);
+                _logger.FatalException("CreateCitrixWebinar | AddPresenter", ex);
+
+                return Json(new
+                {
+                    Result = WebUiConstants.Fail
+                });
             }
-            return Json(new { Result = WebUiConstants.Fail });
+
+            //_webinarControllerOrchestrator.FireSendConnectionInfoNotificationEvent(webinarId);
+
+            _logger.Info("ConnectionInfo Send is ended: " + webinarId);
+            return Json(new { Result = WebUiConstants.Success });
+
         }
 
 
@@ -961,6 +980,54 @@ namespace CUWebinars.Web.Controllers
 
         }
 
+        [System.Web.Mvc.HttpGet]
+        public ActionResult ICalOrder(int icsOrder)
+        {
+
+            var order = _orderManagementService.GetOrderById(icsOrder);
+
+            var webinar = _webinarControllerOrchestrator.GetWebinar(
+                order.OrderRows.First(r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar);
+            var descBuilder = new StringBuilder();
+
+            descBuilder.Append("A reminder of your webinar on order " + _globalConfig.TenantPrefix + icsOrder + ". ");
+            descBuilder.Append("Pre-event and detailed connection information can be reviewed at:  " +
+                               _globalConfig.TenantURL + "/j/" +
+                               order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                                   .TtsJoinUrl);
+
+
+            var icalStringbuilder = new StringBuilder();
+
+            icalStringbuilder.AppendLine("BEGIN:VCALENDAR");
+            icalStringbuilder.AppendLine("PRODID:-//Scheduled Event//EN");
+            icalStringbuilder.AppendLine("VERSION:2.0");
+
+            icalStringbuilder.AppendLine("BEGIN:VEVENT");
+            icalStringbuilder.AppendLine("SUMMARY;LANGUAGE=en-us:" + webinar.Title);
+            icalStringbuilder.AppendLine("CLASS:PUBLIC");
+            icalStringbuilder.AppendLine(string.Format("CREATED:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow));
+            icalStringbuilder.AppendLine("DESCRIPTION:" + descBuilder.ToString());
+            icalStringbuilder.AppendLine("X-ALT-DESC;FMTTYPE=text/html:" + descBuilder.ToString());
+            icalStringbuilder.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmss}", webinar.Date));
+            icalStringbuilder.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmss}",
+                webinar.Date.AddHours((double)webinar.Duration)));
+            icalStringbuilder.AppendLine("SEQUENCE:0");
+            icalStringbuilder.AppendLine("UID:" + Guid.NewGuid());
+            icalStringbuilder.AppendLine("END:VEVENT");
+            icalStringbuilder.AppendLine("END:VCALENDAR");
+
+            var bytes = Encoding.UTF8.GetBytes(icalStringbuilder.ToString());
+
+            return this.File(bytes, "text/calendar", "thisEvent.ics");
+
+        }
+
+        private string MakeTitleSafe(string webinarTitle)
+        {
+            return webinarTitle;
+        }
+
         public ActionResult AddToICalendarGmail(int glWebinar, int glOrder)
         {
             var webinar = _webinarControllerOrchestrator.GetWebinar(glWebinar);
@@ -1378,7 +1445,7 @@ namespace CUWebinars.Web.Controllers
             // perf tweak: ensures no multiple enumerations of usersOrders
             var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray();
 
-            if (checkOrders.Any())  // we know user has order in some state
+            if (checkOrders.Any()) // we know user has order in some state
             {
                 foreach (var checkOrder in checkOrders)
                 {
@@ -1395,7 +1462,8 @@ namespace CUWebinars.Web.Controllers
                             || checkOrder.OrderStatus == OrderStatus.Paid
                             || checkOrder.OrderStatus == OrderStatus.Submitted)
                         {
-                            if (_orderManagementService.FindPostEventClaimByOnDemandCode(checkOrder).ExpiryDate >= DateTime.Today)
+                            if (_orderManagementService.FindPostEventClaimByOnDemandCode(checkOrder).ExpiryDate >=
+                                DateTime.Today)
                                 model.RegistrationSummaryViewModel.DisplayPostEventMaterials = checkOrder.idOrder;
                         }
 
@@ -1427,7 +1495,8 @@ namespace CUWebinars.Web.Controllers
             OrderRow orderRowForOrder = null;
 
             model.WebUser = Request.IsAuthenticated
-                ? _membershipService.GetUserByEmailLoadedWithOrdersData(User.Identity.Name) ?? new WebUser() // new for admin/affiliates
+                ? _membershipService.GetUserByEmailLoadedWithOrdersData(User.Identity.Name) ?? new WebUser()
+                // new for admin/affiliates
                 : new WebUser();
 
             if (Request.IsAuthenticated && model.WebUser.Orders.FirstOrDefault() != null)
@@ -1495,7 +1564,7 @@ namespace CUWebinars.Web.Controllers
                 var additionalLocationsPricing =
                     _orderManagementService.GetCostOfAdditionalLocations(orderRowForOrder.AdditionalLocation,
                         webinar.idWebinar
-                        );
+                    );
 
                 // populate DisplayRowPriceViewModel of DisplayOptionsViewModel
                 model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
@@ -1514,7 +1583,7 @@ namespace CUWebinars.Web.Controllers
                 // populate AdditionalLocationOfferViewModel and AdditionalLocationAddViewModel
 
                 if (model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
-                    .AdditionalLocations != null)
+                        .AdditionalLocations != null)
                     model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Emails =
                         model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
                             .AdditionalLocations.Select(al => al.Email).ToArray();
@@ -1554,7 +1623,8 @@ namespace CUWebinars.Web.Controllers
         /// <param name="model"></param>
         /// <param name="id"></param>
         /// <param name="idOrder"></param>
-        private void InitializeDetailsStateFromExpChcSubmit(Webinar webinar, WebinarDetailsViewModel model, int id, int idOrder)
+        private void InitializeDetailsStateFromExpChcSubmit(Webinar webinar, WebinarDetailsViewModel model, int id,
+            int idOrder)
         {
             var order = _orderManagementService.GetOrderById(idOrder);
             if (order != null)
@@ -1562,7 +1632,8 @@ namespace CUWebinars.Web.Controllers
                 var user = _orderManagementService.GetWebUser(order.BillingEmail);
                 _orderManagementService.AssignWebUserToOrder(user, order);
                 OrderRow orderRowForOrder = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
-                IEnumerable<AdditionalLocation> additionalLocations = orderRowForOrder.AdditionalLocation.ToList(); ;
+                IEnumerable<AdditionalLocation> additionalLocations = orderRowForOrder.AdditionalLocation.ToList();
+                ;
                 additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(additionalLocations.ToList());
                 model.WebUser = user;
                 model.Order = order;
@@ -1570,7 +1641,8 @@ namespace CUWebinars.Web.Controllers
 
                 if (model.WebUser.idSubscriptionDiscount != null)
                 {
-                    model.UserHasDiscount = _orderManagementService.GetDiscountById(model.WebUser.idSubscriptionDiscount.Value);
+                    model.UserHasDiscount =
+                        _orderManagementService.GetDiscountById(model.WebUser.idSubscriptionDiscount.Value);
                     orderRowForOrder.Discount = model.UserHasDiscount;
                 }
 
@@ -1622,7 +1694,7 @@ namespace CUWebinars.Web.Controllers
                     var additionalLocationsPricing =
                         _orderManagementService.GetCostOfAdditionalLocations(orderRowForOrder.AdditionalLocation,
                             webinar.idWebinar
-                            );
+                        );
 
                     //if (orderRowForOrder.AdditionalLocation != null)
                     //{
@@ -1759,6 +1831,7 @@ namespace CUWebinars.Web.Controllers
 
             return Json(dtos, JsonRequestBehavior.AllowGet);
         }
+
         [System.Web.Mvc.AcceptVerbs(HttpVerbs.Get)]
         public ActionResult CalendarRss()
         {
@@ -1767,17 +1840,20 @@ namespace CUWebinars.Web.Controllers
             var data = new CalendarRssDTOAssembler().Entities2DTOs(webinarsList);
 
             //var blog = data.SingleOrDefault();
-            var postItems = data//.Where(p => p.Title = blog)
+            var postItems = data //.Where(p => p.Title = blog)
                 .OrderBy(p => p.EventDate).Take(25)
                 .Select(p => new SyndicationItem(p.Title, p.Content, new Uri(p.Url)));
 
-            var feed = new SyndicationFeed("Events from " + _globalConfig.Tenant, _globalConfig.TenantURL + " is Webinars for the financial industry.", new Uri("http://www.bankwebinars.com/blog"), postItems)
+            var feed = new SyndicationFeed("Events from " + _globalConfig.Tenant,
+                _globalConfig.TenantURL + " is Webinars for the financial industry.",
+                new Uri("http://www.bankwebinars.com/blog"), postItems)
             {
 
             };
             return new FeedResult(new Rss20FeedFormatter(feed));
 
         }
+
         [System.Web.Mvc.AcceptVerbs(HttpVerbs.Get)]
         public ActionResult CalendarRssFull()
         {
@@ -1786,11 +1862,13 @@ namespace CUWebinars.Web.Controllers
             var data = new CalendarRssFullDTOAssembler().Entities2DTOs(webinarsList);
 
             //var blog = data.SingleOrDefault();
-            var postItems = data//.Where(p => p.Title = blog)
+            var postItems = data //.Where(p => p.Title = blog)
                 .OrderBy(p => p.EventDate).Take(25)
                 .Select(p => new SyndicationItem(p.Title, p.Content, new Uri(p.Url)));
 
-            var feed = new SyndicationFeed("Events from " + _globalConfig.Tenant, _globalConfig.TenantURL + " is Webinars for the financial industry.", new Uri("http://www.bankwebinars.com/blog"), postItems)
+            var feed = new SyndicationFeed("Events from " + _globalConfig.Tenant,
+                _globalConfig.TenantURL + " is Webinars for the financial industry.",
+                new Uri("http://www.bankwebinars.com/blog"), postItems)
             {
 
             };
@@ -1813,7 +1891,8 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (Exception exception)
                 {
-                    _logger.ErrorException(string.Format("Clone Webinar | Session{0}", _appHelper.GetUserAuditInfo()), exception);
+                    _logger.ErrorException(string.Format("Clone Webinar | Session{0}", _appHelper.GetUserAuditInfo()),
+                        exception);
                 }
                 return Json(new { Result = WebUiConstants.Fail, Msg = ServerErrorLoggedMsg }, JsonRequestBehavior.AllowGet);
             }
@@ -1834,13 +1913,15 @@ namespace CUWebinars.Web.Controllers
             }
             catch (ValidationException validationException)
             {
-                validationException.Errors.ForEach(error => ModelState.AddModelError(FromFluentPrefix + error.PropertyName, error.ErrorMessage));
+                validationException.Errors.ForEach(
+                    error => ModelState.AddModelError(FromFluentPrefix + error.PropertyName, error.ErrorMessage));
 
                 return this.ModelStateJsonFromFluentValidator(ModelState);
             }
             catch (Exception exception)
             {
-                _logger.ErrorException(string.Format("Create Webinar | Session{0}", _appHelper.GetUserAuditInfo()), exception);
+                _logger.ErrorException(string.Format("Create Webinar | Session{0}", _appHelper.GetUserAuditInfo()),
+                    exception);
             }
 
             return Json(new { Result = WebUiConstants.Fail });
@@ -1857,7 +1938,8 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception exception)
             {
-                _logger.ErrorException(string.Format("Create Webinar | Session{0}", _appHelper.GetUserAuditInfo()), exception);
+                _logger.ErrorException(string.Format("Create Webinar | Session{0}", _appHelper.GetUserAuditInfo()),
+                    exception);
                 return Json(new { Result = WebUiConstants.Fail, Msg = ServerErrorLoggedMsg }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -1877,13 +1959,15 @@ namespace CUWebinars.Web.Controllers
             }
             catch (ValidationException validationException)
             {
-                validationException.Errors.ForEach(error => ModelState.AddModelError(FromFluentPrefix + error.PropertyName, error.ErrorMessage));
+                validationException.Errors.ForEach(
+                    error => ModelState.AddModelError(FromFluentPrefix + error.PropertyName, error.ErrorMessage));
 
                 return this.ModelStateJsonFromFluentValidator(ModelState);
             }
             catch (Exception exception)
             {
-                _logger.ErrorException(string.Format("Create Webinar | Session{0}", _appHelper.GetUserAuditInfo()), exception);
+                _logger.ErrorException(string.Format("Create Webinar | Session{0}", _appHelper.GetUserAuditInfo()),
+                    exception);
                 return Json(new { Result = WebUiConstants.Fail });
             }
         }
@@ -1912,7 +1996,8 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (Exception exception)
                 {
-                    _logger.ErrorException(string.Format("Edit Webinar | Session{0}", _appHelper.GetUserAuditInfo()), exception);
+                    _logger.ErrorException(string.Format("Edit Webinar | Session{0}", _appHelper.GetUserAuditInfo()),
+                        exception);
                 }
 
                 return Json(new { Result = WebUiConstants.Fail, Msg = ServerErrorLoggedMsg }, JsonRequestBehavior.AllowGet);
@@ -1946,7 +2031,8 @@ namespace CUWebinars.Web.Controllers
             }
             catch (ValidationException validationException)
             {
-                validationException.Errors.ForEach(error => ModelState.AddModelError(FromFluentPrefix + error.PropertyName, error.ErrorMessage));
+                validationException.Errors.ForEach(
+                    error => ModelState.AddModelError(FromFluentPrefix + error.PropertyName, error.ErrorMessage));
 
                 return this.ModelStateJsonFromFluentValidator(ModelState);
             }
@@ -1970,7 +2056,8 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception exception)
             {
-                _logger.ErrorException(string.Format("Edit Webinar | Session{0}", _appHelper.GetUserAuditInfo()), exception);
+                _logger.ErrorException(string.Format("Edit Webinar | Session{0}", _appHelper.GetUserAuditInfo()),
+                    exception);
                 return Json(new { Result = WebUiConstants.Fail });
             }
         }
@@ -2037,7 +2124,8 @@ namespace CUWebinars.Web.Controllers
 
             try
             {
-                IEnumerable<Webinar> dtsource = _dataTablesService.SearchWebinars(searchTerm, affiliateId ?? 19, out totalNumberWebinars);
+                IEnumerable<Webinar> dtsource = _dataTablesService.SearchWebinars(searchTerm, affiliateId ?? 19,
+                    out totalNumberWebinars);
 
                 // use automapper to flatten out the webinar records, in this specific case the data 
                 //  model has circular references which cause problems with JSON serialization
@@ -2051,7 +2139,8 @@ namespace CUWebinars.Web.Controllers
                     columnSearch.Add(col.Search.Value);
                 }
 
-                List<SearchDTO> data = new DTResultSetWebinars().GetResult(param.Search.Value, param.SortOrder, param.Start, param.Length, dtoSource, columnSearch);
+                List<SearchDTO> data = new DTResultSetWebinars().GetResult(param.Search.Value, param.SortOrder,
+                    param.Start, param.Length, dtoSource, columnSearch);
                 int count = new DTResultSetWebinars().Count(param.Search.Value, dtoSource, columnSearch);
 
                 DataTableService<SearchDTO> result = new DataTableService<SearchDTO>
@@ -2063,7 +2152,7 @@ namespace CUWebinars.Web.Controllers
                 };
 
                 JsonResult jsonresult = Json(result);
-                jsonresult.MaxJsonLength = int.MaxValue;  // needed if/when the data is > 4mb
+                jsonresult.MaxJsonLength = int.MaxValue; // needed if/when the data is > 4mb
 
                 return jsonresult;
             }
@@ -2108,151 +2197,168 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpGet]
         [ValidateJsonAntiForgeryToken]
-        public async Task<JsonResult> CreateCitrixWebinar(int idWebinar, string webinarKey)
+        public JsonResult CreateCitrixWebinar(int idWebinar, string webinarKey)
         {
             _logger.Info("CreateCitrixWebinar begins");
             var webinar = _webinarManagementService.GetWebinar(idWebinar);
 
             webinar.WebinarKey = webinarKey;
 
-            using (var client = new HttpClient())
+            WebinarsApi api = new WebinarsApi();
+
+            var cWebinar = api.getWebinar(_globalConfig.CitrixAuthMark,
+                _globalConfig.ConvertToCitrixOrgKey(_globalConfig.CitrixOrgKeyMark),
+                _globalConfig.ConvertToCitrixWebinarKey(webinar.WebinarKey));
+
+            webinar.CitrixRegisterUrl = cWebinar.registrationUrl;
+
+
+            var desc = webinar.Description.Replace("\n", String.Empty);
+            desc = desc.Replace("\r", String.Empty);
+
+            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(desc);
+            string output = doc.DocumentNode.ChildNodes.Aggregate("", (current, node) => current + node.InnerText);
+
+            try
             {
-                //var currentOrganizer = _globalConfig.CitrixOrgKeySteve;
-                var currentOrganizer = _globalConfig.CitrixOrgKeyMark;
-                var currentAuthKey = _globalConfig.CitrixAuthMark;
-                //var currentAuthKey = _globalConfig.CitrixAuthSteve;
 
-                client.BaseAddress = new Uri("https://api.citrixonline.com/");
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(currentAuthKey);
-
-
-                var endTime = webinar.Date.AddHours((double)webinar.Duration);
-                var desc = webinar.Description.Replace("\n", String.Empty);
-                desc = desc.Replace("\r", String.Empty);
-
-                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-                doc.LoadHtml(desc);
-                string output = doc.DocumentNode.ChildNodes.Aggregate("", (current, node) => current + node.InnerText);
-
-                var createWebinarPost = new StringContent("{\"subject\": \"" + webinar.Title + "\",\"description\": \"" + output + "\",\"times\": [{\"startTime\": \"" + webinar.Date.ToString("o").Replace(".0000000", "Z") + "\",\"endTime\": \"" + endTime.ToString("o").Replace(".0000000", "Z") + "\"}],\"type\": \"single_session\",\"isPasswordProtected\": false}", Encoding.UTF8, "application/json");
-
-                HttpResponseMessage responseCreate = await client.PutAsync("G2W/rest/organizers/" + currentOrganizer + "/webinars/" + webinar.WebinarKey, createWebinarPost);
-                try
+                var wReqUpdate = new WebinarReqUpdate
                 {
-                    if (responseCreate.IsSuccessStatusCode)
+                    description = output,
+                    subject = webinar.Title,
+                    times = new List<DateTimeRange> {
+                    new DateTimeRange
                     {
-
-                        var updateAudio = new StringContent("{\"type\": \"Hybrid\",\"pstnInfo\": {\"tollFreeCountries\": [\"US\"]}}", Encoding.UTF8, "application/json");
-                        HttpResponseMessage responseUpdateAudio =
-                            await
-                                client.PostAsync("G2W/rest/organizers/" + currentOrganizer + "/webinars/" + webinar.WebinarKey + "/audio?notifyParticipants=false", updateAudio);
-
-                        if (responseUpdateAudio.IsSuccessStatusCode)
-                        {
-                            for (var i = 1; i < 5; i++)
-                            {
-                                var orgEmail = "";
-                                var orgKey = "";
-                                var orgName = "";
-                                var external = "";
-                                switch (i)
-                                {
-                                    case 2:
-                                        orgEmail = "Kyle@ttstrain.com";
-                                        orgKey = _globalConfig.CitrixOrgKeyKyle;
-                                        orgName = "Kyle Bennett";
-                                        external = "false";
-                                        break;
-                                    case 1:
-                                        orgEmail = "steve@ttstrain.com";
-                                        orgKey = _globalConfig.CitrixOrgKeySteve;
-                                        orgName = "Steve Hueners";
-                                        external = "false";
-                                        break;
-                                    case 3:
-                                        orgEmail = "Wesley@ttstrain.com";
-                                        orgKey = "";
-                                        orgName = "Wesley Kavelaris";
-                                        external = "true";
-                                        break;
-                                    case 4:
-                                        orgEmail = "Dan@ttstrain.com";
-                                        orgKey = "";
-                                        orgName = "Dan Heldmann";
-                                        external = "true";
-                                        break;
-
-                                }
-                                var addOrg =
-                                    new StringContent(
-                                        "[{\"external\": " + external + ",\"organizerKey\": \"" + orgKey + "\",\"givenName\": \"" + orgName + "\",\"email\": \"" + orgEmail + "\"}]",
-                                        Encoding.UTF8, "application/json");
-
-                                HttpResponseMessage responseAddOrg =
-                                    await
-                                        client.PostAsync(
-                                            "G2W/rest/organizers/" + currentOrganizer + "/webinars/" +
-                                            webinar.WebinarKey + "/coorganizers", addOrg);
-
-                                if (responseAddOrg.IsSuccessStatusCode)
-                                {
-                                    var cOrg = await responseCreate.Content.ReadAsAsync<CitrixOrganizersModel>();
-                                }
-                            }
-                            var addPresenter = new StringContent("[{\"email\": \"" + webinar.Presenter.WebUser.email + "\",\"name\": \"" + webinar.Presenter.WebUser.FullName + "\"}]", Encoding.UTF8, "application/json");
-                            //var addPresenter = new StringContent("[{\"email\": \"tester@testing.com\",\"name\": \"test name\"}]", Encoding.UTF8, "application/json");
-
-
-                            HttpResponseMessage responseAddPresenter = await client.PostAsync("G2W/rest/organizers/" + currentOrganizer + "/webinars/" + webinar.WebinarKey + "/panelists", addPresenter);
-
-                            if (responseAddPresenter.IsSuccessStatusCode)
-                            {
-                                HttpResponseMessage getAudio =
-                                    await
-                                        client.GetAsync("G2W/rest/organizers/" + currentOrganizer + "/webinars/" + webinar.WebinarKey + "/audio");
-
-                                if (getAudio.IsSuccessStatusCode)
-                                {
-                                    string audioJson = await getAudio.Content.ReadAsStringAsync();
-
-                                    var audio = JsonConvert.DeserializeObject<CitrixAudioModel>(audioJson);
-                                    if (audio.ConfCallNumbers != null &&
-                                        audio.ConfCallNumbers.US != null)
-                                    {
-                                        webinar.AccessCodeAttendee = audio.ConfCallNumbers.US.AccessCodes.Attendee;
-                                        webinar.AccessCodePresenter = audio.ConfCallNumbers.US.AccessCodes.Panelist;
-                                        webinar.AccessCodeOrganizer = audio.ConfCallNumbers.US.AccessCodes.Organizer;
-                                        webinar.AccessPhone = audio.ConfCallNumbers.US.TollFree;
-                                    }
-                                }
-                                else
-                                {
-                                    // How to return error msg
-                                }
-
-                                // have we made sure this is called "outside" enough so updates above are retained
-                                // with current positioning? 
-
-                                webinar.Status = WebinarStatus.Active;
-
-                                _webinarControllerOrchestrator.UpdateWebinar(webinar);
-
-                                //_orderManagementService.CreateTestRegistration(webinar);
-
-                            }
-                        }
+                        startTime = webinar.Date.ToUniversalTime(),
+                        endTime = webinar.Date.AddHours((double)webinar.Duration).ToUniversalTime()
                     }
-                }
-                catch (Exception ex)
-                {
-                    _logger.FatalException("CreateCitrixWebinar", ex);
-                    throw;
-                }
+                },
+                    timeZone = "America/Chicago",
+                    locale = WebinarReqUpdate.LocaleEnum.en_US
+                };
+
+                api.updateWebinar(_globalConfig.CitrixAuthMark,
+                    _globalConfig.ConvertToCitrixOrgKey(_globalConfig.CitrixOrgKeyMark),
+                    _globalConfig.ConvertToCitrixWebinarKey(webinar.WebinarKey), false, wReqUpdate);
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("CreateCitrixWebinar | UpdateWebinar", ex);
+                return Json(new { Result = "Failed", Msg = ex.Message }, JsonRequestBehavior.AllowGet);
             }
 
-            return Json(new { Result = "Success" }, JsonRequestBehavior.AllowGet);
+            try
+            {
+                var audioUpdateBody = new AudioUpdate
+                {
+                    pstnInfo = new PstnInfoUpdate
+                    {
+                        tollFreeCountries = new List<TollFreeCountries> { TollFreeCountries.US }
+                    },
+                    type = AudioType.Hybrid
+                };
+                api.updateAudioInformation(_globalConfig.CitrixAuthMark,
+                    _globalConfig.ConvertToCitrixOrgKey(_globalConfig.CitrixOrgKeyMark),
+                    _globalConfig.ConvertToCitrixWebinarKey(webinar.WebinarKey), false, audioUpdateBody);
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("CreateCitrixWebinar | UpdateAudio", ex);
+                return Json(new { Result = "Failed", Msg = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+
+            var orgList = new List<CoorganizerReqCreate>();
+            for (var i = 1; i < 5; i++)
+            {
+                var orgEmail = "";
+                var orgKey = "";
+                var orgName = "";
+                var external = "";
+                switch (i)
+                {
+                    case 2:
+
+                        orgList.Add(new CoorganizerReqCreate
+                        {
+                            email = "Kyle@ttstrain.com",
+                            external = true,
+                            givenName = "Kyle Bennett"
+                        });
+                        break;
+                    case 1:
+                        orgList.Add(new CoorganizerReqCreate
+                        {
+                            email = "steve@ttstrain.com",
+                            organizerKey = _globalConfig.CitrixOrgKeySteve,
+                            givenName = "Steve Hueners",
+                            external = false
+                        });
+                        break;
+                    case 3:
+                        orgList.Add(new CoorganizerReqCreate
+                        {
+                            email = "Wesley@ttstrain.com",
+                            organizerKey = "",
+                            givenName = "Wesley Kavelaris",
+                            external = true,
+                        });
+                        break;
+                    case 4:
+                        orgList.Add(new CoorganizerReqCreate
+                        {
+                            email = "Dan@ttstrain.com",
+                            organizerKey = "",
+                            givenName = "Dan Heldmann",
+                            external = true,
+                        });
+                        break;
+                }
+
+                //try
+                //{
+                //    CoorganizersApi orgApi = new CoorganizersApi();
+
+                //    var createOrg = orgApi.createCoorganizers(_globalConfig.CitrixAuthMark,
+                //        _globalConfig.ConvertToCitrixOrgKey(_globalConfig.CitrixOrgKeyMark),
+                //        _globalConfig.ConvertToCitrixWebinarKey(webinar.WebinarKey), orgList);
+                //}
+                //catch (Exception ex)
+                //{
+                //    _logger.FatalException("CreateCitrixWebinar | AddOrg", ex);
+                //    return Json(new { Result = "Failed", Msg = ex.Message }, JsonRequestBehavior.AllowGet);
+                //}
+            }
+
+            try
+            {
+                var audio = api.getAudioInformation(_globalConfig.CitrixAuthMark,
+                    _globalConfig.ConvertToCitrixOrgKey(_globalConfig.CitrixOrgKeyMark),
+                    _globalConfig.ConvertToCitrixWebinarKey(webinar.WebinarKey));
+
+
+                webinar.AccessCodeAttendee = audio.confCallNumbers["US"].accessCodes.attendee;
+                webinar.AccessCodePresenter = audio.confCallNumbers["US"].accessCodes.panelist;
+                webinar.AccessCodeOrganizer = audio.confCallNumbers["US"].accessCodes.organizer;
+                webinar.AccessPhone = audio.confCallNumbers["US"].tollFree;
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("CreateCitrixWebinar | GetAudio", ex);
+
+                return Json(new { Result = "Failed", Msg = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+
+            // have we made sure this is called "outside" enough so updates above are retained
+            // with current positioning? 
+
+            webinar.Status = WebinarStatus.Active;
+
+            _webinarControllerOrchestrator.UpdateWebinar(webinar);
+
+            //_orderManagementService.CreateTestRegistration(webinar);
+
+            return Json(new { Result = "Success", Msg = "" }, JsonRequestBehavior.AllowGet);
         }
 
         [System.Web.Mvc.HttpPost]

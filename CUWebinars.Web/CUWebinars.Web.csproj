@@ -1820,6 +1820,7 @@
     <Content Include="Notification\Templates\OrderSubmittedMulti.cshtml" />
     <Content Include="Notification\Templates\PromoSignupFlyer.cshtml" />
     <Content Include="Notification\Templates\PromoSignupFlyer1.cshtml" />
+    <Content Include="Notification\Templates\OrderSubmittedV2.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev - FTP.pubxml" />

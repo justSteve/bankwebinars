@@ -170,9 +170,27 @@ namespace CUWebinars.Web.Controllers
         {
             if (id.HasValue)
             {
-
                 _logger.Info("Confirming Order for OrderRow with Id {0}", id.Value);
                 var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
+
+                try
+                {
+                    if (
+                        model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                            .RegistrationType.ShowLiveNotifications.TrimEnd()
+                            .Equals("Yes", StringComparison.OrdinalIgnoreCase))
+                    {
+                        _cartControllerOrchestrator.GenerateRegistrantKey(model.Order);
+                    }
+
+                }
+                catch (Exception exception)
+                {
+                    ModelState.AddModelError(string.Empty, "ConfirmOrder|GenerateRegistrantKey failed.");
+                    _logger.ErrorException("ConfirmOrder|GenerateRegistrantKey failed ", exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
+                }
+
                 if (_cartControllerOrchestrator.UserHasMultipleEvents(id) && model.Order.Origin != DomainConstants.OriginExpress)
                 {
                     return Json(new
@@ -183,11 +201,7 @@ namespace CUWebinars.Web.Controllers
                 try
                 {
                     model.Order.OrderStatus = OrderStatus.Submitted;
-
-
-
                     _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email, model.Order.OrderRows.FirstOrDefault());
-
 
                     if (User.Identity.IsAuthenticated)
                     {
@@ -202,7 +216,6 @@ namespace CUWebinars.Web.Controllers
 
                         _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: true);
                     }
-
                 }
                 catch (Exception exception)
                 {
@@ -226,7 +239,6 @@ namespace CUWebinars.Web.Controllers
 
                 try
                 {
-                    //_cartControllerOrchestrator.CreatePostEventClaim(model.Order);
                     _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.Order.BillingEmail, model.Order.OrderRows.FirstOrDefault());
 
                 }

@@ -127,13 +127,11 @@ $(function () {
                 })
                     .done(function (data) {
                         
-                        console.log(data);
-                        alert(data.Result);
+                        alert(data.Result + "\n" + data.Msg);
                         if (data.Result === "Success") {
 
-                            console.log(data);
                             $(self).html(
-                                $('<div id="result" class="label label-success pull-left block buttonAdjacentLabel">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details Updated</div>'));
+                                $('<div id="result" class="label label-success pull-left block buttonAdjacentLabel">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Refresh Page</div>'));
                             label.hide().insertAfter($(self)).fadeIn(500);
 
                         } else if (!data.isSuccessful) {

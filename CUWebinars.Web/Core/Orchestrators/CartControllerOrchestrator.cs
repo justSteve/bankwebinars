@@ -984,13 +984,13 @@ namespace CUWebinars.Web.Core.Orchestrators
                 SessionStartInfo = _appHelper.GetSessionStartInfo()
             };
 
-
             order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
+
+
 
             if (userCreatedInCart.HasValue)
             {
                 _orderManagementService.FireOrderSubmittedEvent(order, userCreatedInCart.Value, url: Request.Url);
-
             }
             else
             {
@@ -1130,6 +1130,11 @@ namespace CUWebinars.Web.Core.Orchestrators
                 return false;
             }
             return _orderManagementService.UserHasMultipleEvents(order.idUser);
+        }
+
+        public void GenerateRegistrantKey(Order modelOrder)
+        {
+            _orderManagementService.GenerateRegistrantKey(modelOrder);
         }
 
 
