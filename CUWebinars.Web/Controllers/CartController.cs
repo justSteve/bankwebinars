@@ -628,7 +628,9 @@ namespace CUWebinars.Web.Controllers
             paramList += "|bzip~" + order.BillingZip;
             paramList += "|bcountry~US";
             paramList += "|email~" + order.BillingEmail;
-            paramList += "|phone~" + order.BillingPhone;
+            //Paytrace does not permit 'extentions' and will not permit the tx to continue
+            // and also will not let user correct the 'problem'. let's try just not sending that field.
+            //paramList += "|phone~" + order.BillingPhone;
             paramList += "|CUSTOMDBA~" + _globalConfig.TenantDomain;
             paramList += "|IMAGEURL~" + _globalConfig.TenantLogo;
             paramList += "|CANCELURL~" + _globalConfig.TenantURL + "/cart/PayTraceCanceled";

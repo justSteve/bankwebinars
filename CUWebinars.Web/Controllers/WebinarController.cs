@@ -544,14 +544,9 @@ namespace CUWebinars.Web.Controllers
             catch (Exception ex)
             {
                 _logger.FatalException("CreateCitrixWebinar | AddPresenter", ex);
-
-                return Json(new
-                {
-                    Result = WebUiConstants.Fail
-                });
             }
 
-            //_webinarControllerOrchestrator.FireSendConnectionInfoNotificationEvent(webinarId);
+            _webinarControllerOrchestrator.FireSendConnectionInfoNotificationEvent(webinarId);
 
             _logger.Info("ConnectionInfo Send is ended: " + webinarId);
             return Json(new { Result = WebUiConstants.Success });
@@ -980,22 +975,42 @@ namespace CUWebinars.Web.Controllers
 
         }
 
+        //[System.Web.Mvc.HttpGet]
+        //public ActionResult CalPicker(int icsOrder)
+        //{
+
+        //    var model = new CalPickerViewModel();
+
+        //    return View(model);
+        //}
+
         [System.Web.Mvc.HttpGet]
         public ActionResult ICalOrder(int icsOrder)
         {
-
+            _logger.Info("ICalBuilder for: " + icsOrder);
             var order = _orderManagementService.GetOrderById(icsOrder);
 
             var webinar = _webinarControllerOrchestrator.GetWebinar(
                 order.OrderRows.First(r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar);
             var descBuilder = new StringBuilder();
 
-            descBuilder.Append("A reminder of your webinar on order " + _globalConfig.TenantPrefix + icsOrder + ". ");
-            descBuilder.Append("Pre-event and detailed connection information can be reviewed at:  " +
-                               _globalConfig.TenantURL + "/j/" +
-                               order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
-                                   .TtsJoinUrl);
+            descBuilder.Append("A reminder of your webinar (" + _globalConfig.TenantPrefix + icsOrder + "). ");
 
+            if (
+                order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                    .RegistrationType.ShowLiveNotifications.ToLower() != "yes")
+            {
+                descBuilder.Append("At the time this reminder was generated, your registration did not include " +
+                                   "'Live' attendance. If you would like to change that please visit us at "
+                                   + _globalConfig.TenantURL + "/resume/" + order.idOrder + ". Otherwise, you'll see a notification that the recording is posted within 24 hours following the event. ");
+            }
+            else
+            {
+                descBuilder.Append("Pre-event and other information about this webinar can be reviewed at:  " +
+                                   _globalConfig.TenantURL + "/j/" +
+                                   order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                                       .TtsJoinUrl);
+            }
 
             var icalStringbuilder = new StringBuilder();
 
@@ -1014,6 +1029,13 @@ namespace CUWebinars.Web.Controllers
                 webinar.Date.AddHours((double)webinar.Duration)));
             icalStringbuilder.AppendLine("SEQUENCE:0");
             icalStringbuilder.AppendLine("UID:" + Guid.NewGuid());
+
+            icalStringbuilder.AppendLine("BEGIN:VALARM");
+            icalStringbuilder.AppendLine("TRIGGER:-PT60M");
+            icalStringbuilder.AppendLine("ACTION:DISPLAY");
+            icalStringbuilder.AppendLine("DESCRIPTION:Reminder");
+            icalStringbuilder.AppendLine("END:VALARM");
+
             icalStringbuilder.AppendLine("END:VEVENT");
             icalStringbuilder.AppendLine("END:VCALENDAR");
 
@@ -2230,8 +2252,8 @@ namespace CUWebinars.Web.Controllers
                     times = new List<DateTimeRange> {
                     new DateTimeRange
                     {
-                        startTime = webinar.Date.ToUniversalTime(),
-                        endTime = webinar.Date.AddHours((double)webinar.Duration).ToUniversalTime()
+                        startTime = webinar.Date.AddHours(6),
+                        endTime = webinar.Date.AddHours((double)webinar.Duration).AddHours(6)
                     }
                 },
                     timeZone = "America/Chicago",
@@ -2281,8 +2303,8 @@ namespace CUWebinars.Web.Controllers
 
                         orgList.Add(new CoorganizerReqCreate
                         {
-                            email = "Kyle@ttstrain.com",
-                            external = true,
+                            email = "kbennett@ttstrain.com",
+                            external = false,
                             givenName = "Kyle Bennett"
                         });
                         break;
@@ -2315,19 +2337,19 @@ namespace CUWebinars.Web.Controllers
                         break;
                 }
 
-                //try
-                //{
-                //    CoorganizersApi orgApi = new CoorganizersApi();
+                try
+                {
+                    CoorganizersApi orgApi = new CoorganizersApi();
 
-                //    var createOrg = orgApi.createCoorganizers(_globalConfig.CitrixAuthMark,
-                //        _globalConfig.ConvertToCitrixOrgKey(_globalConfig.CitrixOrgKeyMark),
-                //        _globalConfig.ConvertToCitrixWebinarKey(webinar.WebinarKey), orgList);
-                //}
-                //catch (Exception ex)
-                //{
-                //    _logger.FatalException("CreateCitrixWebinar | AddOrg", ex);
-                //    return Json(new { Result = "Failed", Msg = ex.Message }, JsonRequestBehavior.AllowGet);
-                //}
+                    var createOrg = orgApi.createCoorganizers(_globalConfig.CitrixAuthMark,
+                        _globalConfig.ConvertToCitrixOrgKey(_globalConfig.CitrixOrgKeyMark),
+                        _globalConfig.ConvertToCitrixWebinarKey(webinar.WebinarKey), orgList);
+                }
+                catch (Exception ex)
+                {
+                    _logger.FatalException("CreateCitrixWebinar | AddOrg", ex);
+                    return Json(new { Result = "Failed", Msg = ex.Message }, JsonRequestBehavior.AllowGet);
+                }
             }
 
             try
@@ -2464,15 +2486,19 @@ namespace CUWebinars.Web.Controllers
         public ActionResult ClickToJoin(string joinCode, int? idWebinar)
         {
             var webinar = _orderManagementService.GetWebinarByJoinCode(joinCode);
+
             var order = _orderManagementService.GetOrderByJoinCode(joinCode);
 
-
+            order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType =
+                _orderManagementService.GetRegTypeOfOrderRow(
+                    order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idRegType);
 
             var clickToJoinViewModel = new ClickToJoinViewModel
             {
                 JoinCode = joinCode,
                 RedirectLinkText = _globalConfig.TenantURL + "/" + joinCode,
-                Webinar = webinar
+                Webinar = webinar,
+                Order = order
             };
 
             if (idWebinar.HasValue)
@@ -2483,14 +2509,22 @@ namespace CUWebinars.Web.Controllers
                 {
                     JoinCode = joinCode,
                     RedirectLinkText = _globalConfig.TenantURL + "/" + webinar.CitrixRegisterUrl,
-                    Webinar = webinar
+                    Webinar = webinar,
+                    Order = order
                 };
-
             }
+
             clickToJoinViewModel.TimeZone = _orderManagementService.GetWebUser(order.idUser).timeZone;
             if (_stateService.HasValue(WebUiConstants.WebinarFromCode))
                 _stateService.ClearValue(WebUiConstants.WebinarFromCode);
             _stateService.SetValue(WebUiConstants.WebinarFromCode, webinar);
+
+            if (webinar.Status == WebinarStatus.Active)
+            {
+                string webinarUrl = _webinarControllerOrchestrator.OpenMeeting(joinCode, User.Identity);
+
+                return new RedirectResult(webinarUrl);
+            }
 
             return View(clickToJoinViewModel);
         }

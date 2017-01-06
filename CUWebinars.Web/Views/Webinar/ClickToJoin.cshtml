@@ -1,17 +1,22 @@
-﻿@model ClickToJoinViewModel
+﻿@using CUWebinars.Web.Core
+@model ClickToJoinViewModel
 
 @{
     ViewBag.Title = "Gateway to Your Webinar";
 
     //USTimeZone timeZ = currentUser.timeZone;
     USTimeZone timeZ = Model.TimeZone;
-}
+    WebUser currentUser = Model.Order.WebUser;
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+
+    NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
+
+    nfi.CurrencyDecimalDigits = 2;}
 
 <div id="LogInContainer" class="container">
     <div style="font-size: larger; margin-left: 100px; height: 310px" id="reset">
 
         <div class="legendImitator">Webinar Connection Details</div>
-
         @{
             if (Model.Webinar.Status == WebinarStatus.Recorded)
             {
@@ -29,53 +34,142 @@
                     }
                     else
                     {
-                        <div class="row">
-                            <div class="well well-small pull-right">
-                                <div>
-                                    <b>Event Materials</b>
-                                    @{
-                                        Html.RenderPartial("DisplayTemplates/HandoutsListing", Model.Webinar);
-                                    }
-                                </div>
-                                <div></div>
-                            </div>
-                            <table>
-                                <tr><td style="text-align: right; padding-right: 5px;">Title:</td><td style="text-align: left;">@Model.Webinar.Title</td></tr>
-                                <tr><td style="text-align: right; padding-right: 5px;">Presenter:</td><td style="text-align: left;">@Model.Webinar.Presenter.WebUser.FullName</td></tr>
-                                <tr><td style="text-align: right; padding-right: 5px;">Date:</td><td style="text-align: left;">@Html.DisplayTime(Model.Webinar.Date, timeZ, true)</td></tr>
-                                <tr><td style="text-align: right; padding-right: 5px;">Link To Webinar:</td><td style="text-align: left;"><a href="@Url.Action("OpenMeeting", "Webinar", new {joinCode = Model.JoinCode})">Click To Join!</a></td></tr>
-                            </table>
-                        </div>
-                                            }
-                                        }
-                                        else
+                        var row = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+                        //var showDuration = Convert.ToInt32(row.Webinar.Duration);
+                        //var upgradeCaption = "<a href=\"javascript:upgrade(" + row.Order.idOrder + "); \" id=\"upgrade\" class=\"btn btn-mini btn-success\">Upgrade?</a>";
+                        //var builtURL = globalConfig.TenantURL + "-j-" + row.TtsJoinUrl;
+
+                        TimeSpan calcDays = row.Webinar.Date - DateTime.UtcNow;
+                        var numDays = Convert.ToInt32(calcDays.TotalDays);
+                        string remainingDays;
+                        if (numDays == 0)
+                        {
+                            remainingDays = " today - <i> " + @Html.DisplayDate(row.Webinar.Date) + "</i>";
+                        }
+                        else
+                        {
+                            remainingDays = " in " + Convert.ToInt32(calcDays.TotalDays).ToString() + " days on <i>" + @Html.DisplayDate(row.Webinar.Date) + "</i>";
+                        }
+                        <div class=" container-fluid">
+                            <div class="row-fluid well well-large">
+                                <div style="border-top-color: black;border-top: 10px;">
+                                    <div class="pull-right span4" id="orderSum-@row.idWebinar">
+                                        @Html.Partial("~/Views/Shared/Partials/_OrderSumUser.cshtml", Model.Order)
+                                        <aside class="widget">
+                                            <h5 class="short_headline"><span>Share Connection Info</span></h5>
+                                            @{Html.RenderPartial("Partials/_ShareNotifications", row.Order);}
+                                        </aside>
+                                    </div>
+                                    <div class="span7">
+                                        <h4 id="upcoming-@row.idWebinar">@row.Webinar.Title</h4>
+
+                                        <b>@row.RegistrationType.OptionLabel</b> - will be presented by @row.Webinar.Presenter.WebUser.FullName @Html.Raw(remainingDays) starting at @Html.DisplayTime(row.Webinar.Date, timeZ, true).
+ 
+                                        @*@{ Html.RenderPartial("Partials/OrderHasAdditionalLocations", null); }*@
+                                        @if (row.Webinar.Status == WebinarStatus.Active || row.Webinar.Status == WebinarStatus.InProgress)
                                         {
-                                            <div class="row">
-                                                <div class="well well-small pull-right">
-                                                    <div>
-                                                        <b>Event Materials</b>
-                                                        @{
-                                                            Html.RenderPartial("DisplayTemplates/HandoutsListing", Model.Webinar);
+                                            if (row.RegistrationType.ShowLiveNotifications == "Yes")
+                                            {
+
+                                                <div><b>Connection Summary</b></div>
+
+                                                <table width="400px">
+                                                    <tr>
+                                                        <td valign="top">Click-To-Join:</td>
+                                                        @if (row.Webinar.Status == WebinarStatus.InProgress)
+                                                        {
+                                                            <td>
+                                                                <a href="@Url.Action("ClickToJoin", "Webinar", new { @joinCode = row.TtsJoinUrl })"> Link</a>
+                                                            </td>
                                                         }
-                                                    </div>
-                                                </div>
-                                                <table>
-                                                    <tr><td style="text-align: right; padding-right: 5px;">Title:</td><td style="text-align: left;">@Model.Webinar.Title</td></tr>
-                                                    <tr><td style="text-align: right; padding-right: 5px;">Presenter:</td><td style="text-align: left;">@Model.Webinar.Presenter.WebUser.FullName</td></tr>
-                                                    <tr><td style="text-align: right; padding-right: 5px;">Date:</td><td style="text-align: left;">@Html.DisplayTime(Model.Webinar.Date, timeZ, true)</td></tr>
-                                                    <tr><td style="text-align: right; padding-right: 5px;">Link To Webinar:</td><td style="text-align: left;"><a href="@Model.Webinar.CitrixRegisterUrl">Click To Join!</a></td></tr>
+                                                        else
+                                                        {
+                                                            <td>
+                                                                <a href="@Url.Action("ClickToJoin", "Webinar", new { @joinCode = row.TtsJoinUrl })"> Link</a>
+                                                                @*@Html.ActionLink("Link to page", "ClickToJoin", "Webinar", new { @joinCode = "2" })*@
+                                                            </td>
+                                                        }
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="audio" colspan="2">Audio is delivered directly to your workstation (sound-card and speakers required). Or use the information below to connect via your telephone.</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Teleconference:</td>
+                                                        <td>@row.Webinar.AccessPhone</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="align_right">Access Code:</td>
+                                                        <td>@row.Webinar.AccessCodeAttendee</td>
+                                                    </tr>
                                                 </table>
-                                            </div>
-                                            <div class="row-fluid">
-                                                <div class="span7 offset1">
-                                                    <h4>Need Detailed Connection Instructions?</h4>
-                                                    <div>
-                                                        First time attendees are encouraged to review <a href="https://www.bankwebinars.com/Home/DetailedConnectionInstructions">the instructions here </a>to ensure a trouble-free connection. Total Training Solutions has a set of simple procedures for logging into our Webinars. However, you should always feel free to call tech support at 800-831-0678 x6 if you have difficulties.
-                                                    </div>
+
+                                                <br />
+                                                <div class="well well-small">
+
+                                                    <b>Event Materials</b>
+                                                    @{
+                                                        Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);
+                                                    }
                                                 </div>
-                                            </div>
+
+
+                                                        }
+                                                        if (row.RegistrationType.ShowLiveNotifications != "Yes")
+                                                        {
+                                                            <div>
+                                                                The CD and handouts are typically shipped within 3-5 days following the event. Shipping
+                                                                status will be displayed here. Check back here for links to the OnDemand recording
+                                                                - typically posted within 1-2 days following the event.
+                                                            </div>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            //inactive state
+                                                            if (row.RegistrationType.ShowLiveNotifications != "Yes")
+                                                            {
+                                                                if (row.RegistrationType.ShowShippedNotifications == "Yes")
+                                                                {
+                                                                    <div>
+                                                                        Check back here for links to the OnDemand recording
+                                                                        - typically posted within 1-2 days following the event. Your CD and handouts are typically shipped within 3-5 days following the event. Shipping
+                                                                        status will be displayed here.
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="span10">
+                                                                        Check back here for links to the OnDemand recording - typically posted within 1-2 days following the event.
+                                                                    </div>
                                                                 }
                                                             }
+                                                            else
+                                                            {
+                                                                <div class="container-fluid">
+                                                                    <div class="span10">
+                                                                        The event's connection information will be generated 3-5 days before @row.Webinar.Date.ToShortDateString(). Watch your
+                                                                        email or check back here ('<b>My Webinars</b>') to review the current status of
+                                                                        this event. You may wish to review this general guide to connecting to our events
+                                                                        <a href="/Home/DetailedConnectionInstructions" target="_blank">@globalConfig.TenantDomain/Home/DetailedConnectionInstructions</a>.
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                                                        }
+                                                        <div class="row-fluid">
+                                                            <div class="span7 offset1">
+                                                                <h4>Need Detailed Connection Instructions?</h4>
+                                                                <div>
+                                                                    First time attendees are encouraged to review <a href="https://www.bankwebinars.com/Home/DetailedConnectionInstructions">the instructions here </a>to ensure a trouble-free connection. Total Training Solutions has a set of simple procedures for logging into our Webinars. However, you should always feel free to call tech support at 800-831-0678 x6 if you have difficulties.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                            }
+                                                        }
         }
     </div>
 </div>

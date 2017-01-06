@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Models;
+﻿using System.Web.Mvc;
+using CUWebinars.Business.Models;
 
 namespace CUWebinars.Web.ViewModel
 {
@@ -8,5 +9,7 @@ namespace CUWebinars.Web.ViewModel
         public string RedirectLinkText { get; set; }
         public Webinar Webinar { get; set; }
         public USTimeZone TimeZone { get; set; }
+        public Order Order { get; set; }
+        public ViewDataDictionary OrderHasAdditionalLocationsViewModel { get; set; }
     }
 }

@@ -79,7 +79,8 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void FireSendConnectionInfoNotificationEvent(int idWebinar)
         {
             var orders = _orderManagementService.GetOrdersForLiveNotifications(idWebinar);
-
+            object test = null;
+            _logger.Info("ListSentConnectionInfo" + orders.Select(o => o.BillingEmail).ToList());
 
             orders.ToList().ForEach((order) =>
             {
