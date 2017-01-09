@@ -178,7 +178,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
     });
 
     $('#ResetPasswordForm').on('submit', function (e) {
-
+        //handles submit and postback of /Account/ResetPasword
         var hiddenInput = $('#ResetPassEmail');
 
         e.preventDefault();
@@ -202,8 +202,11 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Working...</span>');
             }
         }).done(function (data) {
+            //console.log(data);
             if (data.Result === 'Success') {
                 $('#labelEmail').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Reset instructions are on the way.</span>');
+                $('#modalEnterPasswordResetLink').modal('show');
+
             } else {
                 if (data['Invalid'] === 'UserNotVerified') {
                     L.clientLogger.error("#388 UserNotVerified ", { result: data && data.Result });
@@ -558,6 +561,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
             }
         }).done(function (data) {
             if (data.result) {
+                //console.log(data);
                 if (data.result === 'LoggedIn') {
 
                     var userId = data.UserId;
@@ -643,8 +647,9 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                     });
                 }
             } else if (!data.isSuccessful) {
+                //invalid Logins return here
                 L.clientLogger.error("Error #641: ", { data: data && data });
-
+                //console.log("here");
                 valSummary.removeClass('validation-summary-valid').addClass('validation-summary-errors');
                 var errorsList = valSummary.find('ul');
                 errorsList.empty();

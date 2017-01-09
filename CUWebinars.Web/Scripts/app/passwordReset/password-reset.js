@@ -21,7 +21,7 @@ $(function () {
         
         var normalResetPasswordButtonClicked = normalResetPasswordButton.data('clicked');
 
-        //  Check if the label is already in existance (user may hit the button twice - for some odd reason). If not, create it.
+        //  Check if the label is already in existence (user may hit the button twice - for some odd reason). If not, create it.
         var crunchingLabel = $('#crunchingLabel');
         if (crunchingLabel.length < 1)
             crunchingLabel = normalResetPasswordButtonClicked ? resetPassEmail.after('<div id="crunchingLabel" style="display:inline-block; margin-left:5px"></div>').next() : $('#labelEmail');
@@ -55,7 +55,7 @@ $(function () {
                     // this is where we append a loading image
                     crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Please Wait...</span>');
                 }
-            }).done(function(data) {
+            }).done(function (data) {
 
                 if (data.Result === 'Success') {
                     crunchingLabel.html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp; Reset Instructions sent!</span>');

@@ -2305,7 +2305,8 @@ namespace CUWebinars.Web.Controllers
                         {
                             email = "kbennett@ttstrain.com",
                             external = false,
-                            givenName = "Kyle Bennett"
+                            givenName = "Kyle Bennett",
+                            organizerKey = _globalConfig.CitrixOrgKeyKyle,
                         });
                         break;
                     case 1:

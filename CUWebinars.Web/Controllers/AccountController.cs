@@ -1529,6 +1529,7 @@ namespace CUWebinars.Web.Controllers
                     return Json(new { Result = WebUiConstants.Fail });
 
                 _accountControllerOrchestrator.ResetPassword(_globalConfig.Tenant, email);
+                //invalid Logins return here
 
                 return Json(new { Result = WebUiConstants.Success });
             }
@@ -1695,6 +1696,70 @@ namespace CUWebinars.Web.Controllers
             }
 
             _logger.Error("Invalid ModelState in PasswordResetConfirm" + model.Key);
+
+            return this.ModelStateJson(ModelState);
+        }
+
+        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        public ActionResult PasswordResetConfirmInCheckout(ChangePasswordFromResetKeyInputModel model, string returnUrl)
+        {
+            if (ModelState.IsValid)
+            {
+                if (string.IsNullOrWhiteSpace(model.Key))
+                {
+                    _logger.Error(
+                        "Account.PasswordResetConfirm.POST was passed empty or null ID. Session=PasswordResetConfirm. " +
+                        _appHelper.GetUserAuditInfo());
+                    ModelState.AddModelError(string.Empty,
+                        "There was a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.");
+                }
+                else
+                {
+                    UserAccount userAccount = _membershipService.GetUserAccountByVerificationKey(model.Key);
+                    if (ReferenceEquals(null, userAccount))
+                    {
+                        _logger.Error("PasswordResetConfirm | User not found " + model.Email + " for key:" + model.Key);
+                        return Json(new { Result = "Not Found: " + model.Email });
+                    }
+
+                    try
+                    {
+                        if (_accountControllerOrchestrator.ChangePasswordFromResetKey(model.Key, model.Password))
+                        {
+                            model.ChangePasswordSucceeded = true;
+                            _logger.Info("Account.PasswordResetConfirmICO.Session=" + _appHelper.GetUserAuditInfo());
+                            return Json(new { Result = "Success" });
+                        }
+                        else
+                        {
+                            model.ChangePasswordSucceeded = false;
+                            _logger.Info("Account.PasswordResetConfirmICO.Failed on " + model.Email + ". Session=" +
+                                         _appHelper.GetUserAuditInfo());
+
+                            return Json(new { Result = "Fail" });
+                        }
+                    }
+                    catch (ValidationException validationException)
+                    {
+
+                        _logger.Fatal("Account.ResetPassword. " + validationException.Message + " Session=" +
+                                      _appHelper.GetUserAuditInfo());
+                        ModelState.AddModelError(string.Empty, "The new password must be different than the old password.");
+                    }
+                    catch (Exception exception)
+                    {
+                        _logger.Error("_accountControllerOrchestrator.ChangePasswordFromResetKey {0} tossed error to: {1}", model.Key, model.Email);
+                        ModelState.AddModelError(string.Empty,
+                            "We've logged an error. Please attempt the password reset procedure again. In case of persisant failures contact us at support@ttstrain.com - or, for immediate assistance contact us with our Help & Feedback button in your lower right screen.");
+                        ErrorSignal.FromCurrentContext().Raise(exception);
+
+                    }
+                }
+            }
+
+            _logger.Error("Invalid ModelState in PasswordResetConfirmICO" + model.Key);
 
             return this.ModelStateJson(ModelState);
         }

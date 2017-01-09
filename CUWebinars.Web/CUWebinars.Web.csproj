@@ -2123,6 +2123,7 @@
     <Content Include="Views\Webinar\AllActiveDes.cshtml" />
     <Content Include="Views\Webinar\DetailsDes.cshtml" />
     <Content Include="Views\Admin\EditAffiliate.cshtml" />
+    <Content Include="Views\Admin\Home\_PasswordResetFromVerKey.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

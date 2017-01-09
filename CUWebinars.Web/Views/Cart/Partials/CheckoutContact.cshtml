@@ -260,6 +260,7 @@
     @Html.Partial("Partials/_UpdateOrderWithUserId")
 </div>
 
+
 <style>
     .modal {
         width: 500px;
@@ -278,9 +279,19 @@
         </p>
 
 
-        <div id="instInfo">
+        <div id="ECBtns">
             <p><input type="button" onclick="javascript: openECWindow();" class=" btn btn-primary" name="ExpressMe" id="ExpressMe" value="Yes, Express Me!" /></p>
             <p><input type="button" data-dismiss="modal" class="btn btn-success" name="ResetMe" id="ResetMe" value="Continue to Login" /></p>
         </div>
+    </div>
+</div>
+
+<div id="modalEnterPasswordResetLink" class="modal hide">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Resetting Password</h3>
+    </div>
+    <div id="EnterPasswordResetLink" class="modal-body">
+        @Html.Partial("~/Views/Admin/Home/_PasswordResetFromVerKey.cshtml", new ChangePasswordFromResetKeyInputModel { ChangePasswordSucceeded = false })
     </div>
 </div>

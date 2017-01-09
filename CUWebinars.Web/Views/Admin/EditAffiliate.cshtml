@@ -14,13 +14,33 @@
     {
         <script type="text/javascript" language="javascript">
             $(function () {
+                //set values of dropdowns.
+                var tz = '@Model.Affiliate.WebUser.timeZone';
+                console.log("tz is:  @Model.Affiliate.WebUser.timeZone");
+
+                $('#Affiliate_WebUser_timeZone option')
+                    .removeAttr('selected')
+                    .filter('[value=' + tz + ']')
+                    .prop('selected', 'selected');
+
+
+                var _billing = '@Model.Affiliate.BillingModel';
+                console.log(_billing);
+                $('#Affiliate_BillingModel option')
+                    .removeAttr('selected')
+                    .filter('[value= ' + _billing + ']')
+                    .prop('selected', true);
+
+                var _royalty = '@Model.Affiliate.CommissionModel';
+                console.log(_royalty);
+                $('#Affiliate_CommissionModel option')
+                    .removeAttr('selected')
+                    .filter('[value=_royalty]')
+                    .prop('selected', true);
 
                 $('#AffiliateUpdate').submit(function (e) {
-
                     e.preventDefault();
-
                     var jsonUrl = '/Admin/AffiliateUpdate';
-
                     var payload = $('form#AffiliateUpdate').serialize();
 
                     $.ajax({
@@ -35,27 +55,21 @@
                             $('#resultWrapper').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Saving Updates...</span>');
                         }
                     }).done(function (data) {
-
                         // successful request; do something with the data
                         if (data.result === 'Success') {
                             $('#resultWrapper').html('<span class="label label-success">&nbsp;Saved</span>');
                         } else if (data.result === 'Failed') {
                             $('#resultWrapper').html('<span class="label label-danger">&nbsp;Update Failed</span>');
                         }
-
                     }).fail(commonFuncs.failCallBack)
                       .always(function (data, status, message) {
-
                           if (data && data.responseText) {
                               if (status === 'error' && JSON.parse(data.responseText)['Message'] === 'Uncaught Ajax Error') {
                                   L.clientLogger.error("HandleAjaxExceptionAttribute #457 ", { result: data });
                               }
-
                           }
                       });
-
                 });
-
             });
         </script>
     }
@@ -136,7 +150,6 @@
                         <div id="cid_19" class="form-input">
                             <span class="form-sub-label-container" style="vertical-align: top;">
                                 <input type="text" id="input_19" name="Affiliate.NotiPromos" value="@Model.Affiliate.NotiPromos" />
-
                             </span>
                         </div>
                     </li>
@@ -166,11 +179,11 @@
                     <li class="form-line" data-type="control_dropdown" id="id_38">
                         <label class="form-label form-label-right form-label-auto" id="label_38" for="input_38"> TimeZone </label>
                         <div id="cid_38" class="form-input">
-                            <select class="form-dropdown" style="width: 150px;" id="input_38" name="Affiliate.WebUser.timeZone">
-                                <option value=""> </option>
+                            <select class="form-dropdown" style="width: 150px;" id="Affiliate_WebUser_timeZone" name="Affiliate.WebUser.timeZone">
+                                
                                 <option value="Caribbean"> Caribbean </option>
                                 <option value="Eastern"> Eastern </option>
-                                <option selected value="Central"> Central </option>
+                                <option value="Central"> Central </option>
                                 <option value="Mountain"> Mountain </option>
                                 <option value="Pacific"> Pacific </option>
                                 <option value="Alaska"> Alaska </option>
@@ -230,19 +243,19 @@
                     <li class="form-line" data-type="control_dropdown" id="adminBilling">
                         <label class="form-label form-label-left form-label-auto" id="label_41" for="input_41"> Who Bills </label>
                         <div id="cid_41" class="form-input">
-                            <select class="form-dropdown" style="width: 100px;" id="input_41" name="Affiliate.BillingModel">
-                                <option value=""> </option>
-                                <option selected value="billed"> TTS Bills </option>
-                                <option value="aff"> Affiliate Bills </option>
+                            <select class="form-dropdown" style="width: 100px;" id="Affiliate_BillingModel" name="Affiliate.BillingModel">
+                                
+                                <option value="aff"> TTS Bills </option>
+                                <option value="billed"> Affiliate Bills </option>
                             </select>
                         </div>
                     </li>
                     <li class="form-line" data-type="control_dropdown" id="adminRoyalty">
                         <label class="form-label form-label-left form-label-auto" id="label_42" for="input_42"> Royalty </label>
                         <div id="cid_42" class="form-input">
-                            <select class="form-dropdown" style="width: 100px;" id="input_42" name="Affiliate.CommissionModel">
-                                <option value=""> </option>
-                                <option selected value="1"> Sliding </option>
+                            <select class="form-dropdown" style="width: 100px;" id="Affiliate_CommissionModel" name="Affiliate.CommissionModel">
+                                
+                                <option value="1"> Sliding </option>
                                 <option value="2"> Flat 50% </option>
                                 <option value="3"> Flat 40% </option>
                                 <option value="4"> Flat 35% </option>

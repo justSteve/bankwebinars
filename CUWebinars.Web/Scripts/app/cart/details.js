@@ -260,8 +260,8 @@ $(function () {
 
         // If the user IS NOT LOGGED IN - control moves to the register-during-checkout.js script
         if (!cartStateManager.getIsUserLoggedIn()) {
-
-
+            console.log(signUpForm.attr('action'));
+            //Account/Signup2
             $.post(signUpForm.attr('action'), data, function (response, status, xhr) {
                 if (status !== 'error') {
                     if (xhr.responseJSON['success']) {
@@ -374,6 +374,7 @@ $(function () {
 
                         }, constants.HtmlDataType);
                     } else if (xhr.responseJSON['isSuccessful'] === false) {
+                        
                         formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
 
                         spinner.remove();

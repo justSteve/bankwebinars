@@ -629,7 +629,7 @@ $(document).ready(function () {
     };
     ns.setPriceOfOrder = function (e) {
         e.preventDefault();
-        
+        //processed by Admin/SetPriceOfOrder
         var self = this;
 
         var url = $('#frmSetPriceOfOrder').attr('action');
@@ -649,10 +649,10 @@ $(document).ready(function () {
                 $(self).attr('disabled', 'disabled');
             }
         }).done(function (data) {
-
+            console.log(data);
             if (data.Result === 'Success') {
-                $('#SetUserAssignedToOrder-modal-body').html("<p>" + data.message + "</p>");
-                
+                $('#SetPriceOfOrder-modal-body').html("<p>" + data.message + "</p>");
+                $('#SetPriceOfOrderButton').hide();
             } else {
                 $("<p>" + data.Reason + "</p>").insertAfter($('#targetPrice'));
             }

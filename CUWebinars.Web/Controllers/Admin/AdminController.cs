@@ -589,22 +589,35 @@ namespace CUWebinars.Web.Controllers.Admin
         public ActionResult SetPriceOfOrder(int orderID, string note, string targetPrice)
         {
             _logger.Info("SetPriceOfOrder: " + orderID + " note: " + note + " to: " + targetPrice);
-            var order = _orderManagementService.GetOrderById(orderID);
-            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
-            var amtToDiscount = "";
-            if (targetPrice == "0")
-            {
-                amtToDiscount = "100%";
-            }
-            else
-            {
-                amtToDiscount = (order.Total - Convert.ToInt32(targetPrice)).ToString(CultureInfo.CurrentCulture);
-            }
-
-            int idDiscount = dataOperations.CreateAdjustmentDiscount(note, amtToDiscount, orderID);
 
             try
             {
+                var order = _orderManagementService.GetOrderById(orderID);
+                var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+                decimal _targetPrice;
+                Decimal.TryParse(targetPrice.Replace(".00", ""), out _targetPrice);
+
+                var amtToDiscount = "";
+
+                if (targetPrice == "0")
+                {
+                    amtToDiscount = "100%";
+                }
+                else
+                {
+                    amtToDiscount = (order.Total - _targetPrice).ToString();
+                }
+                if (targetPrice != "0" && _targetPrice == 0)
+                {
+                    return Json(
+                         new
+                         {
+                             Result = WebUiConstants.Fail,
+                             Reason =
+                             "Price must be number."
+                         });
+                }
+                int idDiscount = dataOperations.CreateAdjustmentDiscount(note, amtToDiscount, orderID);
 
                 var msg = "";
                 order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Discount =
@@ -640,16 +653,14 @@ namespace CUWebinars.Web.Controllers.Admin
             catch (Exception ex)
             {
                 _logger.FatalException("SetPriceOfOrder", ex);
-                Json(
-                    new
-                    {
-                        Result = WebUiConstants.Fail,
-                        Reason =
-                        "Server Error on SetPriceOfOrder"
-                    });
-                throw;
+                return Json(
+                     new
+                     {
+                         Result = WebUiConstants.Fail,
+                         Reason =
+                         "Server Error on SetPriceOfOrder: " + ex.Message
+                     });
             }
-
         }
 
         [HttpPost]

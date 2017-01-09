@@ -536,6 +536,12 @@ var Registration;
             $('form#frmSignIn').submit();
         };
 
+        StateManager.prototype.submitResetPassword = function () {
+            $('#Password').val($('#RegisterFields_Password').val());
+            $('#Email').val($('#emailAddress').val());
+            $('form#frmSignIn').submit();
+        };
+
         StateManager.prototype.useRegisteredAddress = function () {
             //console.log('YesUseAddress hit');
             this.zipCheckRequired = false;
