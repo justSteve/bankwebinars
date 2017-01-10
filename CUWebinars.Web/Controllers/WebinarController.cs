@@ -543,7 +543,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.FatalException("CreateCitrixWebinar | AddPresenter", ex);
+                _logger.FatalException("CreateCitrixWebinar | AddPresenter: " + webinar.Presenter.WebUser.email , ex);
             }
 
             _webinarControllerOrchestrator.FireSendConnectionInfoNotificationEvent(webinarId);

@@ -46,7 +46,8 @@ namespace CUWebinars.Business.Repository
 
         public IQueryable<Affiliate> GetAffiliates()
         {
-            return items.Where(a => a.WebUser.UserType == UserType.Affiliate);
+            //return items.Where(a => a.WebUser.UserType == UserType.Affiliate);
+            return items;
         }
 
         public IQueryable<Affiliate> GetAffiliatesByPromoType(string promoType)

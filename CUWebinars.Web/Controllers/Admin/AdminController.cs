@@ -2978,11 +2978,11 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
                 else
                 {
-                    var listOrdersAdjusted = affiliateHasAnyOrders.Split(':')[3].TrimEnd(',').TrimStart(' ');
+                    var listOrdersAdjusted = affiliateHasAnyOrders.Split(':')[3].TrimEnd(',').TrimStart(' ').Replace("19983,", "");
 
-                    var listOrdersPostEvent = affiliateHasAnyOrders.Split(':')[2].Replace(" AjustedOrders", "").TrimEnd(',').TrimStart(' ');
+                    var listOrdersPostEvent = affiliateHasAnyOrders.Split(':')[2].Replace(" AjustedOrders", "").TrimEnd(',').TrimStart(' ').Replace("19983,", "");
 
-                    _logger.Info("GenerateWeeklyInvoicesEvent | affiliateHasAnyOrders " + affiliateHasAnyOrders);
+                    _logger.Info("GenerateWeeklyInvoicesEvent | affiliateHasAnyOrders " + affiliateHasAnyOrders.Replace("19983,",""));
 
                     // clears the has any orders hurdle - 
                     int totalNumberOrders = 0;

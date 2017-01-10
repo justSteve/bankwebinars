@@ -54,7 +54,7 @@ namespace CUWebinars.Business.Services
             decimal totalPaidRoyalty = 0M;
 
             invoice.Affiliate = FindById(affiliateId);
-            
+
             foreach (Order order in orders.OrderBy(o => o.OrderDate))
             {
                 try
@@ -98,9 +98,9 @@ namespace CUWebinars.Business.Services
                         {
                             invoice.TotalOnBilled += adjustedTotal;
                         }
-                        
+
                         invoice.TotalRoyalties += adjustedRoyalty;
-                        
+
                         StoreInvoiceDetail(order, invoice);
                         _orderRepository.SaveChanges();
                     }
@@ -115,7 +115,7 @@ namespace CUWebinars.Business.Services
                     _logger.FatalException("ReInvoice attempt on " + order.idOrder + " tosses: ", ex);
                 }
             }
-            
+
             if (invoice.Affiliate.BillingModel.Trim(' ') == "aff")
             {
                 invoice.TotalNetDue = (invoice.TotalOnBilled + invoice.TotalOnPaid - invoice.TotalDiscounts) - invoice.TotalRoyalties;
@@ -124,7 +124,7 @@ namespace CUWebinars.Business.Services
             {
                 invoice.TotalNetDue = totalBilledRevenue - totalBilledRoyalty - totalPaidRoyalty;
             }
-            
+
             return invoice;
         }
 
@@ -356,7 +356,7 @@ namespace CUWebinars.Business.Services
                 case 1: // Sliding4TierNoCCBreak:
                     int numberOfRegistrations = 0;
 
-                   foreach (Order order in orders.OrderBy(o => o.OrderDate))
+                    foreach (Order order in orders.OrderBy(o => o.OrderDate))
                     {
                         try
                         {
@@ -840,17 +840,57 @@ namespace CUWebinars.Business.Services
         {
 
             List<Uri> links = new List<Uri>();
-
-
-            var firstMonday = Core.Extensions.DateTimeExtensions.ToDateTime("1/4/2016");
             DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
-
             System.Globalization.Calendar cal = dfi.Calendar;
+            var urlBase = "https://storeforcu.blob.core.windows.net/affiliateinvoices/";
+
+            if (tenant == "BankWebinars") urlBase = "https://storeforbw.blob.core.windows.net/affiliateinvoices/";
+
+            var firstMonday = Core.Extensions.DateTimeExtensions.ToDateTime("1/2/2017");
+
             if (DateTime.Now.Year == 2017)
             {
-                firstMonday = Core.Extensions.DateTimeExtensions.ToDateTime("1/2/2017");
+                for (var _week = 0; _week <= 55; _week++)
+                {
+                    //https://storeforbw.blob.core.windows.net/affiliateinvoices/10-17-2016/43-2016-11464.pdf
+                    DateTime theMonday;
+                    if (_week == 0)
+                    {
+                        theMonday = firstMonday.Value;
+                    }
+                    else
+                    {
+                        theMonday = firstMonday.Value.AddDays(_week * 7);
+                    }
+                    var weekNumber = cal.GetWeekOfYear(theMonday, dfi.CalendarWeekRule,
+                                         dfi.FirstDayOfWeek) + "-" + cal.GetYear(DateTime.Now);
+
+                    //Console.WriteLine("The current date and time: {0:MM/dd/yy H:mm:ss zzz}",thisDate2);
+                    string theFileName = theMonday.ToString("M/d/yyyy").Replace("/", "-") + "/" + weekNumber + "-" +
+                                         idAffiliate + ".pdf";
+                    string theURL = urlBase + theMonday.ToString("M/d/yyyy").Replace("/", "-") + "/" + weekNumber + "-" + idAffiliate + ".pdf";
+
+                    Uri blob = null;
+
+                    try
+                    {
+                        var blobTest = BlobHelper.GetBlob("invoicesprivate/", theMonday.ToString("M/d/yyyy").Replace("/", "-"), weekNumber + "-" + idAffiliate + ".pdf");
+                        if (blobTest != null)
+                        {
+                            blob = Core.Helpers.BlobHelper.GetInvoiceForPage(theFileName);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.FatalException("CheckForExistingInvoice: ", ex);
+                    }
+                    if (blob != null)
+                        links.Add(blob);
+                }
             }
-            for (var _week = 0; _week <= 52; _week++)
+
+            firstMonday = Core.Extensions.DateTimeExtensions.ToDateTime("1/4/2016");
+            for (var _week = 0; _week <= 55; _week++)
             {
                 //https://storeforbw.blob.core.windows.net/affiliateinvoices/10-17-2016/43-2016-11464.pdf
                 DateTime theMonday;
@@ -858,31 +898,25 @@ namespace CUWebinars.Business.Services
                 {
                     theMonday = firstMonday.Value;
                 }
-                theMonday = firstMonday.Value.AddDays(_week * 7);
-
+                else
+                {
+                    theMonday = firstMonday.Value.AddDays(_week * 7);
+                }
                 var weekNumber = cal.GetWeekOfYear(theMonday, dfi.CalendarWeekRule,
-                                     dfi.FirstDayOfWeek) + "-" + cal.GetYear(DateTime.Now);
-                var urlBase = "https://storeforcu.blob.core.windows.net/affiliateinvoices/";
-
-                if (tenant == "BankWebinars") urlBase = "https://storeforbw.blob.core.windows.net/affiliateinvoices/";
-
+                                     dfi.FirstDayOfWeek) + "-2016";
+                
                 //Console.WriteLine("The current date and time: {0:MM/dd/yy H:mm:ss zzz}",thisDate2);
                 string theFileName = theMonday.ToString("M/d/yyyy").Replace("/", "-") + "/" + weekNumber + "-" +
                                      idAffiliate + ".pdf";
                 string theURL = urlBase + theMonday.ToString("M/d/yyyy").Replace("/", "-") + "/" + weekNumber + "-" + idAffiliate + ".pdf";
 
                 Uri blob = null;
-
                 try
                 {
                     var blobTest = BlobHelper.GetBlob("invoicesprivate/", theMonday.ToString("M/d/yyyy").Replace("/", "-"), weekNumber + "-" + idAffiliate + ".pdf");
-
                     if (blobTest != null)
                     {
-
                         blob = Core.Helpers.BlobHelper.GetInvoiceForPage(theFileName);
-
-
                     }
                 }
                 catch (Exception ex)
@@ -891,10 +925,8 @@ namespace CUWebinars.Business.Services
                 }
                 if (blob != null)
                     links.Add(blob);
-
-
-
             }
+
 
             return links;
 

@@ -1347,6 +1347,18 @@ namespace CUWebinars.Web.Controllers
                     {
                         var webUser = _orderManagementService.GetWebUser(model.Email);
 
+                        var userPendingOrder = _orderManagementService.GetOrdersByEmail(model.Email, 19).Where(o => o.OrderStatus == OrderStatus.InProcess);
+
+                        if (userPendingOrder.Count() > 1)
+                        {
+                            return Json(new { result = LoggedInResult, returnUrl = "/cart/checkout" });
+                        }
+
+                        if (userPendingOrder.Count() == 1)
+                        {
+                            return Json(new { result = LoggedInResult, returnUrl = "/resume/" + userPendingOrder.SingleOrDefault().idOrder });
+                        }
+
                         Affiliate affiliate = null;
                         if (webUser != null)
                         {
@@ -1515,7 +1527,6 @@ namespace CUWebinars.Web.Controllers
             try
             {
                 user = _accountControllerOrchestrator.GetWebUserByEmail(email);
-
             }
             catch (Exception ex)
             {
@@ -1570,48 +1581,7 @@ namespace CUWebinars.Web.Controllers
             return Json(errorsDictionary);
         }
 
-
-        //[System.Web.Mvc.AllowAnonymous]
-        //public ViewResult ResetPasswordWhereNotVerified(string tempPassword, string email)
-        //{
-        //    _logger.Info("Account.ResetPasswordWhereNotVerified GET. Session=" + _appHelper.GetUserAuditInfo());
-
-        //    var localPasswordModel = new LocalPasswordModel
-        //    {
-        //        Email = email,
-        //        ConfirmPassword = string.Empty,
-        //        OldPassword = tempPassword,
-        //        NewPassword = string.Empty
-        //    };
-
-        //    return View(localPasswordModel);
-        //}
-        //[System.Web.Mvc.HttpPost]
-        ////[ValidateAntiForgeryToken]
-        //[System.Web.Mvc.AllowAnonymous]
-        //public ViewResult ResetPasswordWhereNotVerified(LocalPasswordModel localPasswordModel)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _logger.Info("Account.ResetPasswordWhereNotVerified POST. Session=" + _appHelper.GetUserAuditInfo());
-
-        //        _stateService.SetValue(DomainConstants.UserCreatedViaNewOrder, true);
-        //        _membershipService.ResetPassword(_globalConfig.Tenant, localPasswordModel.Email);
-
-        //        var key = _stateService.GetValue<string>(DomainConstants.VerificationKey);
-
-        //        _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
-
-        //        _membershipService.ChangePasswordFromResetKey(key, localPasswordModel.NewPassword);
-
-        //        _stateService.ClearValue(DomainConstants.VerificationKey);
-
-        //        return View(localPasswordModel);
-        //    }
-
-        //    return View();
-        //}
-
+        
 
         [System.Web.Mvc.AllowAnonymous]
 
@@ -1679,7 +1649,6 @@ namespace CUWebinars.Web.Controllers
                     }
                     catch (ValidationException validationException)
                     {
-
                         _logger.Fatal("Account.ResetPassword. " + validationException.Message + " Session=" +
                                       _appHelper.GetUserAuditInfo());
                         ModelState.AddModelError(string.Empty, "The new password must be different than the old password.");
@@ -1690,7 +1659,6 @@ namespace CUWebinars.Web.Controllers
                         ModelState.AddModelError(string.Empty,
                             "We've logged an error. Please attempt the password reset procedure again. In case of persisant failures contact us at support@ttstrain.com - or, for immediate assistance contact us with our Help & Feedback button in your lower right screen.");
                         ErrorSignal.FromCurrentContext().Raise(exception);
-
                     }
                 }
             }
@@ -1717,7 +1685,9 @@ namespace CUWebinars.Web.Controllers
                 }
                 else
                 {
-                    UserAccount userAccount = _membershipService.GetUserAccountByVerificationKey(model.Key);
+                    //http://localhost:3538/Account/PasswordResetConfirm/jQjm2ZmVayiZvl6F7rBZvA
+                    var _key = model.Key.Split('/').Last();
+                    UserAccount userAccount = _membershipService.GetUserAccountByVerificationKey(_key);
                     if (ReferenceEquals(null, userAccount))
                     {
                         _logger.Error("PasswordResetConfirm | User not found " + model.Email + " for key:" + model.Key);
@@ -1726,7 +1696,7 @@ namespace CUWebinars.Web.Controllers
 
                     try
                     {
-                        if (_accountControllerOrchestrator.ChangePasswordFromResetKey(model.Key, model.Password))
+                        if (_accountControllerOrchestrator.ChangePasswordFromResetKey(_key, model.Password))
                         {
                             model.ChangePasswordSucceeded = true;
                             _logger.Info("Account.PasswordResetConfirmICO.Session=" + _appHelper.GetUserAuditInfo());

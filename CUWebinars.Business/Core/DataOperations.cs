@@ -1000,10 +1000,9 @@ namespace CUWebinars.Business.Core
                 {
                     while (reader.HasRows)
                     {
-                        sb.Append(reader.GetName(0) + Environment.NewLine);
                         
                         //an interesting bug in how the reader is behaving here:
-                        //  the sproc being call returns 3 resultsets. If one of
+                        //  the sproc being called returns 3 resultsets. If any one of
                         //  those resultsets contains no members, none of the remaining
                         //  resultsets will have any data in the reader.
                         //E.G. if 'WebinarsOrders' is blank neither PostEvent nor Adjusted

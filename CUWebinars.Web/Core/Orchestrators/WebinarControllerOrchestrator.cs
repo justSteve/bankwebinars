@@ -80,10 +80,12 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             var orders = _orderManagementService.GetOrdersForLiveNotifications(idWebinar);
             object test = null;
-            _logger.Info("ListSentConnectionInfo" + orders.Select(o => o.BillingEmail).ToList());
-
+            var sb = new StringBuilder();
+            sb.Append("ListSentConnectionInfo: " );
+            
             orders.ToList().ForEach((order) =>
             {
+                sb.Append(order.BillingEmail + ", ");
                 var notificationStorage = new NotificationStorage
                 {
                     idOrder = order.idOrder,
@@ -93,6 +95,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
             });
 
+            _logger.Info(sb.ToString());
             _orderManagementService.FireSendConnectionInfoNotificationEvent(orders, false);
         }
 
