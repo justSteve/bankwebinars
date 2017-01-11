@@ -578,6 +578,59 @@ namespace CUWebinars.Business.Core
             return retList;
         }
 
+        public IList<int> GetOrdersByDomain(string searchTerm)
+        {
+            IList<int> orderIds = new List<int>();
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+
+                using (var GetOrdersByDomain = new SqlCommand("GetOrdersByDomain", sqlConnection))
+                {
+                    try
+                    {
+                        GetOrdersByDomain.Connection = sqlConnection;
+                        GetOrdersByDomain.CommandType = CommandType.StoredProcedure;
+                        var searchParam = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.VarChar,
+                            ParameterName = "@searchTerm",
+                            Value = searchTerm
+                        };
+                        GetOrdersByDomain.Parameters.Add(searchParam);
+
+                        using (var reader = GetOrdersByDomain.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+
+                                var orderId = reader.GetInt32(0);
+                                orderIds.Add(orderId);
+                            }
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
+                            errorLogger.CommandText += "'FindAllPostEventClaims' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'FindAllPostEventClaims', 9 ,";
+                            errorLogger.CommandText += "'error at FindAllPostEventClaims " +
+                                                       ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+
+                        }
+                    }
+                }
+            }
+            return orderIds;
+        }
+
         public string CreateOnDemandClaimForMigratedOrder(OrderRow row, DateTime getExpiry)
         {
             return "";

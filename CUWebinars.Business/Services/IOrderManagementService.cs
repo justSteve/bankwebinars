@@ -144,7 +144,6 @@ namespace CUWebinars.Business.Services
 
         void RestoreToDiscount(int newOrderRowId);
         void RemoveFromDiscount(int newOrderRowId);
-        IList<Order> GetOrdersByDomain(string searchTerm);
         IList<Order> GetOrdersByDiscount(int idDiscount);
         Discount CalculateDiscountRedemption(Discount userHasDiscount, OrderRow row);
         
@@ -158,5 +157,6 @@ namespace CUWebinars.Business.Services
         bool UserHasMultipleEvents(int idUser);
         Order GetOrderByJoinCode(string joinCode);
         List<Registrant> GetCitrixRegistrantsByWebinar(int webinarId);
+       IList<Order> GetOrdersByDomain(string searchTerm, int affiliateId, out int totalNumberOrders);
     }
 }

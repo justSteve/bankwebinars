@@ -1915,11 +1915,6 @@ namespace CUWebinars.Business.Services
             _logger.Fatal("logs the decrement of discount credit when addLocation is added.");
         }
 
-        public IList<Order> GetOrdersByDomain(string searchTerm)
-        {
-            throw new NotImplementedException();
-        }
-
         public IList<Order> GetOrdersByDiscount(int idDiscount)
         {
             return _orderRepository.GetOrdersByDiscount(idDiscount);
@@ -2420,6 +2415,18 @@ namespace CUWebinars.Business.Services
         public List<Registrant> GetCitrixRegistrantsByWebinar(int webinarId)
         {
             return _orderRepository.GetCitrixRegistrantsByWebinar(_webinarRepository.FindById((webinarId)));
+        }
+
+        public IList<Order> GetOrdersByDomain(string searchTerm, int affiliateId, out int totalNumberOrders)
+        {
+
+            var orders = _orderRepository.GetOrdersByDomain(searchTerm, affiliateId);
+            totalNumberOrders = orders.Count();
+            //foreach (var order in orders)
+            //{
+            //    order.Institution = _
+            //}
+            return orders;
         }
 
 

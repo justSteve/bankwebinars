@@ -172,7 +172,8 @@ namespace CUWebinars.Business.Services
                     .Include(o => o.OrderRows.Select(or => or.RegistrationType))
                     .Include(o => o.OrderRows.Select(or => or.Discount))
                     .Include(o => o.OrderRows.Select(or => or.Webinar))
-                    .Where(o => o.OrderRows.Any(or => or.RowStatus == OrderRowStatus.Active && o.BillingEmail.EndsWith(email)) && o.idAffiliate == idAffliate)
+                    .Where(o => o.OrderRows.Any(or => or.RowStatus == OrderRowStatus.Active
+                    && o.BillingEmail.EndsWith(email)) && o.idAffiliate == idAffliate)
                     .ToList();
             }
             else
@@ -185,7 +186,7 @@ namespace CUWebinars.Business.Services
                     .Include(o => o.OrderRows.Select(or => or.RegistrationType))
                     .Include(o => o.OrderRows.Select(or => or.Discount))
                     .Include(o => o.OrderRows.Select(or => or.Webinar))
-                    .Where(o => o.OrderRows.Any(or => or.RowStatus == OrderRowStatus.Active && o.BillingEmail.EndsWith(email)))
+                    .Where(o => o.BillingEmail.EndsWith(email))
                     .ToList();
             }
 

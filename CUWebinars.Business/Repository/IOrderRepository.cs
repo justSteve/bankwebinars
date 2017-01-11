@@ -74,5 +74,6 @@ namespace CUWebinars.Business.Repository
         decimal CalculateCreditsUsed(Discount discount);
         Order GetOrderByJoinCode(string joinCode);
         List<Registrant> GetCitrixRegistrantsByWebinar(Webinar webinarId);
+        IList<Order> GetOrdersByDomain(string searchTerm, int affiliateId);
     }
 }

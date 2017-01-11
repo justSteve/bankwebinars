@@ -2813,9 +2813,13 @@ namespace CUWebinars.Web.Controllers.Admin
                                 if (searchTerm.StartsWith("@"))
                                 {
                                     dtsource =
-                                        _dataTablesService.GetOrdersByDomain(searchTerm, affiliateId,
+                                        _orderManagementService.GetOrdersByDomain(searchTerm, affiliateId,
                                                 out totalNumberOrders)
                                             .ToList();
+                                    //_dataTablesService.GetOrdersByDomain(searchTerm, affiliateId,
+                                    //        out totalNumberOrders)
+                                    //    .ToList();
+
                                 }
                                 else
                                 {

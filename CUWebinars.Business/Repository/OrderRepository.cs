@@ -505,7 +505,7 @@ namespace CUWebinars.Business.Repository
         public List<Registrant> GetCitrixRegistrantsByWebinar(Webinar webinar)
         {
             var api = new RegistrantsApi();
-            
+
             Int64 oKey;
             bool res = Int64.TryParse(webinar.OrganizerKey, out oKey);
             if (res)
@@ -516,11 +516,33 @@ namespace CUWebinars.Business.Repository
                 if (wRes)
                 {
                     var registrants = api.getAllRegistrantsForWebinar(webinar.OrganizerOAuthKey, oKey, wKey);
-                    
+
                     return registrants.ToList();
                 }
             }
             return null;
+        }
+
+        public IList<Order> GetOrdersByDomain(string searchTerm, int affiliateId)
+        {
+            //var orders = ((TTSWebinarsContext)db).OrderRows
+            //    .Include(or => or.Order)
+            //    .Include(row => row.Webinar)
+            //    .Select(o => o.Order).Where(o => o.BillingEmail.EndsWith(searchTerm));
+
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+
+            var _orders = dataOperations.GetOrdersByDomain(searchTerm);
+
+            IList<Order> orders = new List<Order>();
+
+            foreach (var order in _orders)
+            {
+                orders.Add(GetOrderById(order));
+            }
+
+            return orders;
+
         }
 
 
