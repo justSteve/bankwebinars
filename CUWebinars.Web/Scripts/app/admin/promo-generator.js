@@ -23,6 +23,8 @@ $(document).ready(function () {
 
     } else {
         $(".setStatusBtn").text("Set event to 'Pending'.");
+
+        $("#sendAll").show();
     }
 
 

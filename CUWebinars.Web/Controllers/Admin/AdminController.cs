@@ -2931,6 +2931,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             var weekNumber = cal.GetWeekOfYear(date1, dfi.CalendarWeekRule,
                                  dfi.FirstDayOfWeek) + "-" + cal.GetYear(DateTime.Now);
+                                 //dfi.FirstDayOfWeek) + "-2016";
             var endDate = startDate.AddDays(7);
 
             var existingInvoice = CheckForExistingInvoice(startDate.ToShortDateString().Replace("/", "-"), weekNumber,

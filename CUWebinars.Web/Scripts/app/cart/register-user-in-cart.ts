@@ -463,7 +463,7 @@ module RegistrationInCart {
             $('#register').hide();
             $('#reset').hide();
             $('#nonUSAddressInput').hide();
-            $('#nonUSAddressBtn').hide();
+            $('#nonUSAddressBtn').show();
         }
 
         submit(): void {

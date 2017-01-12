@@ -25,7 +25,8 @@
 
 
                 var _billing = '@Model.Affiliate.BillingModel';
-                console.log(_billing);
+                //console.log(_billing);
+                //console.log(_billing);
                 $('#Affiliate_BillingModel option')
                     .removeAttr('selected')
                     .filter('[value= ' + _billing + ']')
@@ -35,7 +36,7 @@
                 console.log(_royalty);
                 $('#Affiliate_CommissionModel option')
                     .removeAttr('selected')
-                    .filter('[value=_royalty]')
+                    .filter('[value=' + _royalty + ']')
                     .prop('selected', true);
 
                 $('#AffiliateUpdate').submit(function (e) {
@@ -180,7 +181,7 @@
                         <label class="form-label form-label-right form-label-auto" id="label_38" for="input_38"> TimeZone </label>
                         <div id="cid_38" class="form-input">
                             <select class="form-dropdown" style="width: 150px;" id="Affiliate_WebUser_timeZone" name="Affiliate.WebUser.timeZone">
-                                
+
                                 <option value="Caribbean"> Caribbean </option>
                                 <option value="Eastern"> Eastern </option>
                                 <option value="Central"> Central </option>
@@ -218,7 +219,7 @@
                     <li class="form-line" data-type="control_textbox" id="id_27">
                         <label class="form-label form-label-right" id="label_27" for="input_27"> Email Banner </label>
                         <div id="cid_27" class="form-input">
-                            <textarea class=" form-textarea" data-type="input-textbox" id="input_27" name="Affiliate.EmailBanner">@Html.Raw(Model.Affiliate.EmailBanner)" </textarea>
+                            <textarea class=" form-textarea" data-type="input-textbox" id="input_27" name="Affiliate.EmailBanner">@Html.Raw(Model.Affiliate.EmailBanner) </textarea>
                         </div>
                     </li>
                     <li class="form-line" data-type="control_textbox" id="id_28">
@@ -227,13 +228,7 @@
                             <textarea class=" form-textarea" data-type="input-textbox" id="input_28" name="Affiliate.EmailFooter" cols="90" rows="5">@Html.Raw(Model.Affiliate.EmailFooter)</textarea>
                         </div>
                     </li>
-                    @*<li id="cid_34" class="form-input-wide pull-right" >
-                            <div class="form-header-group">
-                                <div class="header-text httar htvam">
-                                </div>
-                            </div>
-                        </li>*@
-
+                    
                     <li class="form-line" data-type="control_textbox" id="adminMCList">
                         <label class="form-label form-label-left form-label-auto" id="label_40" for="input_40"> MC List ID </label>
                         <div id="cid_40" class="form-input">
@@ -244,17 +239,17 @@
                         <label class="form-label form-label-left form-label-auto" id="label_41" for="input_41"> Who Bills </label>
                         <div id="cid_41" class="form-input">
                             <select class="form-dropdown" style="width: 100px;" id="Affiliate_BillingModel" name="Affiliate.BillingModel">
-                                
+
                                 <option value="aff"> TTS Bills </option>
                                 <option value="billed"> Affiliate Bills </option>
                             </select>
                         </div>
                     </li>
                     <li class="form-line" data-type="control_dropdown" id="adminRoyalty">
-                        <label class="form-label form-label-left form-label-auto" id="label_42" for="input_42"> Royalty </label>
+                        <label class="form-label form-label-left form-label-auto" id="label_42" for="input_42"> Royalty: </label>
                         <div id="cid_42" class="form-input">
                             <select class="form-dropdown" style="width: 100px;" id="Affiliate_CommissionModel" name="Affiliate.CommissionModel">
-                                
+
                                 <option value="1"> Sliding </option>
                                 <option value="2"> Flat 50% </option>
                                 <option value="3"> Flat 40% </option>

@@ -371,7 +371,7 @@ var RegistrationInCart;
             $('#register').hide();
             $('#reset').hide();
             $('#nonUSAddressInput').hide();
-            $('#nonUSAddressBtn').hide();
+            $('#nonUSAddressBtn').show();
         };
         StateManager.prototype.submit = function () {
             switch (this.action) {

@@ -200,6 +200,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
             headers: headers,
             beforeSend: function () {
                 $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Working...</span>');
+                $('#EdgeCaseResetPasswordButton').hide();
             }
         }).done(function (data) {
             //console.log(data);

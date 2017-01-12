@@ -1012,6 +1012,9 @@ namespace CUWebinars.Web.Controllers
                                        .TtsJoinUrl);
             }
 
+            var utcTime = TimeZoneInfo.ConvertTimeToUtc(webinar.Date, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
+
+
             var icalStringbuilder = new StringBuilder();
 
             icalStringbuilder.AppendLine("BEGIN:VCALENDAR");
@@ -1024,16 +1027,15 @@ namespace CUWebinars.Web.Controllers
             icalStringbuilder.AppendLine(string.Format("CREATED:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow));
             icalStringbuilder.AppendLine("DESCRIPTION:" + descBuilder.ToString());
             icalStringbuilder.AppendLine("X-ALT-DESC;FMTTYPE=text/html:" + descBuilder.ToString());
-            icalStringbuilder.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmss}", webinar.Date));
-            icalStringbuilder.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmss}",
-                webinar.Date.AddHours((double)webinar.Duration)));
+            icalStringbuilder.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmssZ}", utcTime));
+            icalStringbuilder.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}",utcTime.AddHours((double)webinar.Duration)));
             icalStringbuilder.AppendLine("SEQUENCE:0");
             icalStringbuilder.AppendLine("UID:" + Guid.NewGuid());
 
             icalStringbuilder.AppendLine("BEGIN:VALARM");
             icalStringbuilder.AppendLine("TRIGGER:-PT60M");
             icalStringbuilder.AppendLine("ACTION:DISPLAY");
-            icalStringbuilder.AppendLine("DESCRIPTION:Reminder");
+            icalStringbuilder.AppendLine("DESCRIPTION:Reminder of Webinar");
             icalStringbuilder.AppendLine("END:VALARM");
 
             icalStringbuilder.AppendLine("END:VEVENT");

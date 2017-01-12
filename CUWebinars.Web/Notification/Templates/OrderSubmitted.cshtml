@@ -81,6 +81,7 @@
     }
 
 
+
     if (locations.Count != 0)
     {
         //redo this code to address lack of comparison operator
@@ -287,11 +288,9 @@
                                                                     <tr>
                                                                         <td colspan="2" style="text-align: left; margin-left: 6px; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: small">
                                                                             <div style="color: black; font-family: Arial, Helvetica, sans-serif; padding: 5px; font-size: 12px;">
-                                                                                @thankYouPhrase
+                                                                                @thankYouPhrase <a href="@TenantURL/webinar/ICalOrder?icsOrder=@Model.Order.idOrder ">Add to Calendar</a>
                                                                                 @connInfoPhrase
-                                                                                <p>
-                                                                                    <a href="@TenantURL/webinar/ICalOrder?icsOrder=@Model.Order.idOrder ">Add calendar reminder for this event here.</a>
-                                                                                </p>
+
                                                                                 <p>
                                                                                     Again, thank you very much for your order and don't hesitate to let us know how we can serve you better!<br /><br />Sincerely,<br />The @Tenant Staff<br /><br />
                                                                                 </p>

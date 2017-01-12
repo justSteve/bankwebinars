@@ -89,7 +89,7 @@ var Registration;
             $('#wrapPass').hide();
             $('#wrapReset').hide();
 
-            $('#nonUSAddress').hide();
+            //$('#nonUSAddress').hide();
 
             $('#getFirstLast').hide();
 
@@ -467,7 +467,7 @@ var Registration;
             //$('#register').hide();
             //$('#reset').hide();
             $('#nonUSAddressInput').hide();
-            $('#nonUSAddressBtn').hide();
+            $('#nonUSAddressBtn').show();
         };
 
         StateManager.prototype.submit = function () {
