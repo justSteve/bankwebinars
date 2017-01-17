@@ -1310,18 +1310,28 @@ namespace CUWebinars.Web.Controllers
         }
 
 
+
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
-        public ActionResult SignInForExcelFile(SignInModel model)
+        public ActionResult SignInFromReset(SignInModel model)
         {
+
             if (ModelState.IsValid && _accountControllerOrchestrator.LogUserIn(model))
             {
-                return Content("true");
+                var userPendingOrder =
+                    _orderManagementService.GetOrdersByEmail(model.Email, 19)
+                        .Where(o => o.OrderStatus == OrderStatus.InProcess)
+                        .ToList();
+
+                if (userPendingOrder.Count() > 1)
+                {
+                    return RedirectToAction("Checkout", "Cart");
+                    //return Json(new { result = LoggedInResult, returnUrl = "/cart/checkout" });
+                }
             }
             ProcessModelStateErrors();
             return Content("false");
         }
-
 
 
         [System.Web.Mvc.HttpPost]
@@ -1347,7 +1357,10 @@ namespace CUWebinars.Web.Controllers
                     {
                         var webUser = _orderManagementService.GetWebUser(model.Email);
 
-                        var userPendingOrder = _orderManagementService.GetOrdersByEmail(model.Email, 19).Where(o => o.OrderStatus == OrderStatus.InProcess);
+                        var userPendingOrder =
+                            _orderManagementService.GetOrdersByEmail(model.Email, 19)
+                                .Where(o => o.OrderStatus == OrderStatus.InProcess)
+                                .ToList();
 
                         if (userPendingOrder.Count() > 1)
                         {
@@ -1356,40 +1369,46 @@ namespace CUWebinars.Web.Controllers
 
                         if (userPendingOrder.Count() == 1)
                         {
-                            return Json(new { result = LoggedInResult, returnUrl = "/resume/" + userPendingOrder.SingleOrDefault().idOrder });
+                            return
+                                Json(
+                                    new
+                                    {
+                                        result = LoggedInResult,
+                                        returnUrl = "/resume/" + userPendingOrder.SingleOrDefault().idOrder
+                                    });
                         }
 
-                        Affiliate affiliate = null;
-                        if (webUser != null)
-                        {
-                            _logger.Info("Signin calls DetermineAffiliateByAlternativeMeans: " + webUser.idUser);
-                            affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser);
-                        }
-                        else
-                        {
-                            //hardwire a valid affiliate ID
-                            _logger.Info("Signin found anon user.");
-                            affiliate = _affiliateRepository.FindById(19);
-                            //affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(19);
-                        }
+                        //Affiliate affiliate = null;
+                        //if (webUser != null)
+                        //{
+                        //    _logger.Info("Signin calls DetermineAffiliateByAlternativeMeans: " + webUser.idUser);
+                        //    affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser);
+                        //}
+                        //else
+                        //{
+                        //    //hardwire a valid affiliate ID
+                        //    _logger.Info("Signin found anon user.");
+                        //    affiliate = _affiliateRepository.FindById(19);
+                        //    //affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(19);
+                        //}
 
                         // if null returned, just use whatever is stored in Session for CurrentAffiliate.
                         //      O/w, set that value.
-                        if (!ReferenceEquals(null, affiliate))
-                        {
-                            _stateService.SetValue(WebUiConstants.CurrentAffiliate, affiliate);
-                            _logger.Info("Account.SignIn. Email: {1}, Affiliate: {2},  Session: {0}",
-                                _appHelper.GetUserAuditInfo(),
-                                model.Email, affiliate.ttsDomain
-                            );
-                        }
-                        else
-                        {
-                            _logger.Warn("Account.SignIn. Email: {1}, Affiliate: null, Session: {0}",
-                                _appHelper.GetUserAuditInfo(),
-                                model.Email
-                            );
-                        }
+                        //if (!ReferenceEquals(null, affiliate))
+                        //{
+                        //    _stateService.SetValue(WebUiConstants.CurrentAffiliate, affiliate);
+                        //    _logger.Info("Account.SignIn. Email: {1}, Affiliate: {2},  Session: {0}",
+                        //        _appHelper.GetUserAuditInfo(),
+                        //        model.Email, affiliate.ttsDomain
+                        //    );
+                        //}
+                        //else
+                        //{
+                        //    _logger.Warn("Account.SignIn. Email: {1}, Affiliate: null, Session: {0}",
+                        //        _appHelper.GetUserAuditInfo(),
+                        //        model.Email
+                        //    );
+                        //}
                         // Handles an edge case where a user has been created anonymously in the cart and has just set their password.
                         // In such a case, we don't want to redirect back to the page where they just set their password. So send to base instead.
                         var returnUrl = string.IsNullOrWhiteSpace(model.ReturnUrl)
@@ -1432,7 +1451,8 @@ namespace CUWebinars.Web.Controllers
                     ModelState.AddModelError(
                         string.Empty,
                         // Needs to be an empty string to show up in ValidationSummary as not model-level error.
-                        "Server Error #536: For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com."
+                        "Server Error #536: For customer service contact us by using the Online Chat button below or emailing " +
+                        _globalConfig.TenantEmail + "."
                     );
                 }
             }
@@ -1464,7 +1484,9 @@ namespace CUWebinars.Web.Controllers
 
                             if (cAffilliate.idUserAff == 19)
                             {
-                                _logger.Info("SigninFromCart calls DetermineAffiliateByAlternativeMeans where aff=19: " + webUser.idUser);
+                                _logger.Info(
+                                    "SigninFromCart calls DetermineAffiliateByAlternativeMeans where aff=19: " +
+                                    webUser.idUser);
 
                                 var affiliate =
                                     _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser);
@@ -1515,7 +1537,7 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
-        [ValidateJsonAntiForgeryToken]
+        //[ValidateJsonAntiForgeryToken]
         public JsonResult ResetPassword(string email)
         {
             _logger.Info("Account.ResetPassword GET. Email = {1} Session={0}", _appHelper.GetUserAuditInfo(), email);
@@ -1556,7 +1578,7 @@ namespace CUWebinars.Web.Controllers
                         validationException.Message,
                         _appHelper.GetUserAuditInfo(),
                         email), validationException
-                    );
+                );
             }
             catch (UserCreatedMembershipException userCreatedMembershipException)
             {
@@ -1566,8 +1588,25 @@ namespace CUWebinars.Web.Controllers
                         userCreatedMembershipException.Message,
                         _appHelper.GetUserAuditInfo(), email),
                     userCreatedMembershipException
+                );
+
+                try
+                {
+                    var removeNotVerified = _accountControllerOrchestrator.RemoveClaim(email);
+                }
+                catch (Exception ex)
+                {
+                    _logger.FatalException(
+                        string.Format(
+                            "Account.ResetPassword Failed AGAIN. {0}, Session = {1} on email: {2}",
+                            userCreatedMembershipException.Message,
+                            _appHelper.GetUserAuditInfo(), email),
+                        ex
                     );
-                errorsDictionary.Add("Invalid", "UserNotVerified");
+
+                    errorsDictionary.Add("Invalid", "UserNotVerified");
+                }
+
             }
             catch (Exception exception)
             {
@@ -1581,7 +1620,7 @@ namespace CUWebinars.Web.Controllers
             return Json(errorsDictionary);
         }
 
-        
+
 
         [System.Web.Mvc.AllowAnonymous]
 
@@ -1601,7 +1640,16 @@ namespace CUWebinars.Web.Controllers
                 Key = id
             };
 
-
+            UserAccount userAccount = _membershipService.GetUserAccountByVerificationKey(id);
+            if (ReferenceEquals(null, userAccount))
+            {
+                _logger.Error("PasswordResetConfirm | Expired Key ");
+                vm.Email = "Expired Key";
+            }
+            else
+            {
+                vm.Email = userAccount.Email;
+            }
             return View(vm);
         }
 
@@ -1610,6 +1658,7 @@ namespace CUWebinars.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult PasswordResetConfirm(ChangePasswordFromResetKeyInputModel model, string returnUrl)
         {
+
             if (ModelState.IsValid)
             {
                 if (string.IsNullOrWhiteSpace(model.Key))
@@ -1618,7 +1667,7 @@ namespace CUWebinars.Web.Controllers
                         "Account.PasswordResetConfirm.POST was passed empty or null ID. Session=PasswordResetConfirm. " +
                         _appHelper.GetUserAuditInfo());
                     ModelState.AddModelError(string.Empty,
-                        "There was a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.");
+                        "There was a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again. For customer service contact us by using the Online Chat button below or emailing " + _globalConfig.TenantEmail + ".");
                 }
                 else
                 {
@@ -1633,10 +1682,16 @@ namespace CUWebinars.Web.Controllers
                     {
                         if (_accountControllerOrchestrator.ChangePasswordFromResetKey(model.Key, model.Password))
                         {
+                            var ordersInProc = _orderManagementService
+                                 .GetOrdersByEmail(model.Email, 19).FirstOrDefault(o => o.OrderStatus == OrderStatus.InProcess);
+
+                            bool checkoutRedirect = ordersInProc != null;
+
                             model.ChangePasswordSucceeded = true;
+
                             _logger.Info("Account.PasswordResetConfirm Success. Session=" +
                                          _appHelper.GetUserAuditInfo());
-                            return Json(new { Result = "Success" });
+                            return Json(new { Result = "Success", email = model.Email, password = model.Password });
                         }
                         else
                         {
@@ -1644,7 +1699,7 @@ namespace CUWebinars.Web.Controllers
                             _logger.Info("Account.PasswordResetConfirm Failed on " + model.Email + ". Session=" +
                                          _appHelper.GetUserAuditInfo());
 
-                            return Json(new { Result = "Fail" });
+                            return Json(new { Result = "Invalid Key" });
                         }
                     }
                     catch (ValidationException validationException)
@@ -1657,7 +1712,7 @@ namespace CUWebinars.Web.Controllers
                     {
                         _logger.Error("_accountControllerOrchestrator.ChangePasswordFromResetKey {0} tossed error to: {1}", model.Key, model.Email);
                         ModelState.AddModelError(string.Empty,
-                            "We've logged an error. Please attempt the password reset procedure again. In case of persisant failures contact us at support@ttstrain.com - or, for immediate assistance contact us with our Help & Feedback button in your lower right screen.");
+                            "We've logged an error. Please attempt the password reset procedure again. In case of persistent failures contact us at " + _globalConfig.TenantEmail + " - or, for immediate assistance contact us with our Help & Feedback button in your lower right screen.");
                         ErrorSignal.FromCurrentContext().Raise(exception);
                     }
                 }
@@ -1680,18 +1735,18 @@ namespace CUWebinars.Web.Controllers
                     _logger.Error(
                         "Account.PasswordResetConfirm.POST was passed empty or null ID. Session=PasswordResetConfirm. " +
                         _appHelper.GetUserAuditInfo());
-                    ModelState.AddModelError(string.Empty,
-                        "There was a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.");
+
+                    return Json(new { Result = "Fail", Msg = "Invalid Key: Please ensure you are using the most recent Reset Request email." });
+
                 }
                 else
                 {
-                    //http://localhost:3538/Account/PasswordResetConfirm/jQjm2ZmVayiZvl6F7rBZvA
                     var _key = model.Key.Split('/').Last();
                     UserAccount userAccount = _membershipService.GetUserAccountByVerificationKey(_key);
                     if (ReferenceEquals(null, userAccount))
                     {
-                        _logger.Error("PasswordResetConfirm | User not found " + model.Email + " for key:" + model.Key);
-                        return Json(new { Result = "Not Found: " + model.Email });
+                        _logger.Error("PasswordResetConfirmICO | User not found " + model.Email + " for key:" + model.Key);
+                        return Json(new { Result = "Failed", Msg = "Not Found: " + model.Email });
                     }
 
                     try
@@ -1708,7 +1763,7 @@ namespace CUWebinars.Web.Controllers
                             _logger.Info("Account.PasswordResetConfirmICO.Failed on " + model.Email + ". Session=" +
                                          _appHelper.GetUserAuditInfo());
 
-                            return Json(new { Result = "Fail" });
+                            return Json(new { Result = "Fail", Msg = "The new password must be different than the old password." });
                         }
                     }
                     catch (ValidationException validationException)
@@ -1716,13 +1771,14 @@ namespace CUWebinars.Web.Controllers
 
                         _logger.Fatal("Account.ResetPassword. " + validationException.Message + " Session=" +
                                       _appHelper.GetUserAuditInfo());
-                        ModelState.AddModelError(string.Empty, "The new password must be different than the old password.");
+
+                        return Json(new { Result = "Fail", Msg = "The new password must be different than the old password." });
+
                     }
                     catch (Exception exception)
                     {
-                        _logger.Error("_accountControllerOrchestrator.ChangePasswordFromResetKey {0} tossed error to: {1}", model.Key, model.Email);
-                        ModelState.AddModelError(string.Empty,
-                            "We've logged an error. Please attempt the password reset procedure again. In case of persisant failures contact us at support@ttstrain.com - or, for immediate assistance contact us with our Help & Feedback button in your lower right screen.");
+                        _logger.Error("_accountControllerICO {0} tossed error to: {1}", model.Key, model.Email);
+                        return Json(new { Result = "Fail", Msg = "We've logged an error. Please attempt the password reset procedure again. In case of persistent failures contact us at " + _globalConfig.TenantEmail + " - or, for immediate assistance contact us with our Help & Feedback button in your lower right screen." });
                         ErrorSignal.FromCurrentContext().Raise(exception);
 
                     }
@@ -1859,7 +1915,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     _logger.ErrorException(string.Format("AddPasswordForCartCreatedUser | Session: {0}", _appHelper.GetSessionStartInfo()), exception);
-                    ModelState.AddModelError(string.Empty, "We have logged an error. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.");
+                    ModelState.AddModelError(string.Empty, "We have logged an error. For customer service contact us by using the Online Chat button below or emailing " + _globalConfig.TenantEmail + ".");
                 }
             }
 
@@ -2003,7 +2059,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (Exception exception)
                 {
-                    ModelState.AddModelError(string.Empty, "Server Error at Account.Register. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.");
+                    ModelState.AddModelError(string.Empty, "Server Error at Account.Register. For customer service contact us by using the Online Chat button below or emailing " + _globalConfig.TenantEmail + ".");
                     ErrorSignal.FromCurrentContext().Raise(exception);
                     _logger.FatalException(string.Format("Account.Register Catch block | Session= {0}", _appHelper.GetUserAuditInfo()), exception);
                 }

@@ -376,7 +376,7 @@ namespace CUWebinars.Web.Controllers
                     _logger.FatalException("CancelOrder " + id, ex);
                 }
             }
-            ModelState.AddModelError(string.Empty, "No Order ID was posted to the Server. In case of persistant error contact us at support@ttstrain.com. For immediate assistance, use our Help & Feedback button in your lower right screen.");
+            ModelState.AddModelError(string.Empty, "No Order ID was posted to the Server. In case of persistent error contact us at " + _globalConfig.TenantEmail + ". For immediate assistance, use our Help & Feedback button in your lower right screen.");
             return this.ModelStateJson(ModelState);
         }
 
@@ -938,7 +938,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     _logger.ErrorException(string.Format("CheckIfAddLocShouldHide in cart. | Session{0}", _appHelper.GetUserAuditInfo()), exception);
-                    ModelState.AddModelError(string.Empty, "There has been an error. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.");
+                    ModelState.AddModelError(string.Empty, "There has been an error. For customer service contact us by using the Online Chat button below or emailing " + _globalConfig.TenantEmail + ".");
                 }
             }
             return this.ModelStateJson(ModelState);
@@ -1640,6 +1640,27 @@ namespace CUWebinars.Web.Controllers
 
             List<Order> orders = _cartControllerOrchestrator.GetOrdersByUser(User.Identity.Name)
                 .Where(o => o.OrderStatus == OrderStatus.InProcess).ToList();
+            IList<int> iDsToRemove = new List<int>();
+            var x = 0;
+            foreach (var order in orders)
+            {
+                x++;
+
+                var hasAnyOthers = _cartControllerOrchestrator.GetOrdersByUser(order.BillingEmail).Where(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar == order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar).OrderBy(o => o.idOrder);
+
+                if (hasAnyOthers.Count() > x)
+                {
+                    iDsToRemove.Add(order.idOrder);
+                }
+            }
+            foreach (var id in iDsToRemove)
+            {
+                var itemToRemove = orders.SingleOrDefault(o => o.idOrder == id);
+                if (itemToRemove != null)
+                    orders.Remove(itemToRemove);
+                _logger.Warn("Checkout found and canceled duped order: " + id);
+                //_cartControllerOrchestrator.CancelOrder(id);
+            }
 
             RegistrationSummaryMultiViewModel model = BuildRegistrationSummaryMultiViewModel(orders);
 
@@ -1815,7 +1836,7 @@ namespace CUWebinars.Web.Controllers
 
             System.Diagnostics.Debug.WriteLine("final discountCaptionMultiMsg: {0}", discountCaptionMultiMsg);
 
-            grandTotalCaptionMultiMsg = "Grand Total: " + grandTotal.ToString("c").Replace(".00", "");
+            grandTotalCaptionMultiMsg = "Included below are all currently pending orders. Any orders removed from here are permanently deleted. Edit any remaining orders for your exact need and use our 'Bill Me' or credit card processing when you are ready for final checkout.<br><br><b> Grand Total: " + grandTotal.ToString("c").Replace(".00", "") + "</b>";
 
             System.Diagnostics.Debug.WriteLine("final grandTotalCaptionMultiMsg: {0}", grandTotalCaptionMultiMsg);
 

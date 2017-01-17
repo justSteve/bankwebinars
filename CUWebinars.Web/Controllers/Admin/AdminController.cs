@@ -730,7 +730,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         Result = WebUiConstants.Fail,
                         Reason =
-                        "Server Error - Set user assigned to Order: For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com."
+                        "Server Error - Set user assigned to Order: For customer service contact us by using the Online Chat button below or emailing " + _globalConfig.TenantEmail + "."
                     });
         }
 
@@ -2782,7 +2782,10 @@ namespace CUWebinars.Web.Controllers.Admin
                 // based heavily on https://www.echosteg.com/jquery-datatables-asp.net-mvc5-server-side
                 int totalNumberOrders = 0;
                 int webinarId = param.webinarId;
+
                 string searchTerm = param.searchTerm;
+                if (param.searchTerm.Contains("@"))
+                    searchTerm = param.searchTerm.Replace("_", "@");
                 int affiliateId = param.affiliateId ?? 19; // 19 is magic internal / house affiliate id
                 bool showAllEvents = param.showAllEvents ?? false;
 
@@ -2931,7 +2934,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             var weekNumber = cal.GetWeekOfYear(date1, dfi.CalendarWeekRule,
                                  dfi.FirstDayOfWeek) + "-" + cal.GetYear(DateTime.Now);
-                                 //dfi.FirstDayOfWeek) + "-2016";
+            //dfi.FirstDayOfWeek) + "-2016";
             var endDate = startDate.AddDays(7);
 
             var existingInvoice = CheckForExistingInvoice(startDate.ToShortDateString().Replace("/", "-"), weekNumber,
@@ -2987,7 +2990,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     var listOrdersPostEvent = affiliateHasAnyOrders.Split(':')[2].Replace(" AjustedOrders", "").TrimEnd(',').TrimStart(' ').Replace("19983,", "");
 
-                    _logger.Info("GenerateWeeklyInvoicesEvent | affiliateHasAnyOrders " + affiliateHasAnyOrders.Replace("19983,",""));
+                    _logger.Info("GenerateWeeklyInvoicesEvent | affiliateHasAnyOrders " + affiliateHasAnyOrders.Replace("19983,", ""));
 
                     // clears the has any orders hurdle - 
                     int totalNumberOrders = 0;

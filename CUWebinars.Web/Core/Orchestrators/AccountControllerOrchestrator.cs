@@ -808,7 +808,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     //Should we clear UserNotVerified claims here?
                     _membershipService.ChangePasswordFromResetKey(_globals.Tenant, verificationKey, model.NewPassword);
-                    _membershipService.RemoveClaim(_globals.Tenant, model.Email, ClaimTypes.HasNotVerified);
+                    RemoveClaim(model.Email);
                     break; // reached if no exception is thrown
                 }
                 catch (Exception exception)
@@ -825,6 +825,12 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             _logger.Info("Account.Confirmed for {1}. Session={0}", _appHelper.GetUserAuditInfo(), model.Email);
 
+            return true;
+        }
+
+        public bool RemoveClaim(string modelEmail)
+        {
+            _membershipService.RemoveClaim(_globals.Tenant, modelEmail, ClaimTypes.HasNotVerified);
             return true;
         }
 
@@ -936,7 +942,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             var discountModel = new DiscountModel();
             var currentUser = GetWebUserById(idUser);
             var userDiscount = _orderManagementService.GetDiscountByUser(currentUser);
-            if (discount!= null && discount.DiscountType == DiscountType.ComplianceSeries)
+            if (discount != null && discount.DiscountType == DiscountType.ComplianceSeries)
             {
                 userDiscount = discount;
             }

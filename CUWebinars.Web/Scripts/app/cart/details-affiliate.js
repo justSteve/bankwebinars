@@ -183,7 +183,7 @@ OCA.initializeFunctions = function () {
                 if (newTotalPrice < 0)
                     newTotalPrice = 0;
 
-                $('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 3.').addClass('text-info');
+                $('#addlocSpiel').text('To add additional locations for this order please email us at  @globalConfig.TenantEmail.').addClass('text-info');
 
                 $('#discountedText').html('Discounted: <span id="totalDiscount">$' + registerDuringCheckout.totalDiscount + '</span>').removeClass('muted');
                 $('#showTotalPrice').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
@@ -604,7 +604,7 @@ OCA.initializeFunctions = function () {
                     OCA.utilities.goToUrl('/Account/OrderCompleteAffiliate/' + OCA.cartStateManager.getOrderId());
 
                 } else {
-                    confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data. Please try again. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.</span>');
+                    confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data. Please try again. For customer service contact us by using the Online Chat button below or emailing @globalConfig.TenantEmail .</span>');
                 }
 
                 $('#finalLoadingSpinner').remove();
@@ -1185,13 +1185,13 @@ function modalShown(e) {
             } else {
                 //Rollbar.error('#348 userDetailsFormUrl Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
 
-                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>[Connection Error #348] For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.</span>');
+                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>[Connection Error #348] For customer service contact us by using the Online Chat button below or emailing @globalConfig.TenantEmail .</span>');
             }
         }).fail(function (data) {
 
             //Rollbar.error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData, { data: data });
 
-            $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Connection Error #048] For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.</span>');
+            $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Connection Error #048] For customer service contact us by using the Online Chat button below or emailing @globalConfig.TenantEmail .</span>');
         });
     });
 

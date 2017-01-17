@@ -476,11 +476,11 @@ namespace CUWebinars.Business.AccountService
             }
         }
 
-        public void SignIn(UserAccount userAccount, bool persistant)
+        public void SignIn(UserAccount userAccount, bool persistent)
         {
             try
             {
-                _samAuthenticationService.SignIn(userAccount, persistant);
+                _samAuthenticationService.SignIn(userAccount, persistent);
             }
             catch (Exception exception)
             {
@@ -659,12 +659,8 @@ namespace CUWebinars.Business.AccountService
             _logger.Info("ChangePasswordFromResetKey: {0}", key);
             try
             {
-                //Should we clear UserNotVerified claims here?
-                //var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
-
                 var userAccount = _userAccountService.GetByVerificationKey(key);
 
-                //dataOperations.SetFieldsConsistantWithVerifiedUser(userAccount);
                 RemoveClaim(tenant, userAccount.Email, ClaimTypes.HasNotVerified);
                 var isValid = _userAccountService.ChangePasswordFromResetKey(key, newPassword);
 

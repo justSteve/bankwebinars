@@ -71,7 +71,7 @@ namespace CUWebinars.Business.Repository
                 if (origin == "Imported" || origin == "Migrator" || origin == "AcsImporter")
                 {
                     //instead of throwing error - passback the pre-existing order id
-                    return FindOrderForUserByWebinarID(newOrder.idUser, webinar.idWebinar);
+                    return FindOrderForUserByWebinarId(newOrder.idUser, webinar.idWebinar);
                 }
 
                 throw new Exception(ErrorMessageConstants.ExistingNonCancelledOrderMessage);
@@ -233,7 +233,7 @@ namespace CUWebinars.Business.Repository
             return ReferenceEquals(null, userOrders) ? null : GetLoadedEntitiesForOrder(userOrders);
 
         }
-        public Order FindOrderForUserByWebinarID(int userId, int idWebinar)
+        public Order FindOrderForUserByWebinarId(int userId, int idWebinar)
         {
 
             var userOrder = FindOrdersByUserIdWithOrderRows(userId)

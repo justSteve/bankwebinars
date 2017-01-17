@@ -86,6 +86,7 @@ namespace CUWebinars.Business.Services
         {
             _orderRepository.AddAdditionalLocation(addedAdditionalLocation);
         }
+
         //public string ApplyDiscountCode(int? discountId)
         //{
         //    _logger.Fatal("not implemented: " + discountId.Value);
@@ -122,12 +123,39 @@ namespace CUWebinars.Business.Services
         //}
 
 
-        public Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null)
+        public Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow,
+            string origin = null)
         {
-            var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow, origin);
-            var email = webUser == null ? "notauthenticated@cuwebinars.com" : webUser.email;
+            try
+            {
+                var existingOrder = _orderRepository.FindOrderForUserByWebinarId(webUser.idUser, webinar.idWebinar);
+                if (existingOrder != null)
+                {
+                    _logger.Warn("CreateNewOrder found and returned existing: " + existingOrder);
+                    return existingOrder;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("CreateNewOrder: ", ex);
+            }
+            try
+            {
+                var existingEmail = _orderRepository
+                    .FindOrdersByBillingEmail(webUser.email, 19).Where(o => o.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar == webinar.idWebinar).SingleOrDefault();
+                if (existingEmail != null)
+                {
+                    _logger.Warn("CreateNewOrder found and returned existing: " + existingEmail);
+                    return existingEmail;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("CreateNewOrder found email: ", ex);
+            }
 
-            _logger.Info("CreateNewOrder: " + email + " | " + orderRow.Webinar.Title + " | " + orderRow.RegistrationType.OptionLabel);
+            var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow, origin);
+
             return order;
         }
 
@@ -2242,7 +2270,7 @@ namespace CUWebinars.Business.Services
             if (!discount.Status.ToLower().StartsWith("a"))
             {
                 _logger.Warn("Discount redemption attempted on: " + discount.idDiscount + " - " + row.idOrder);
-                discount.Notes = ("This Discount Code " + discount.DiscountCode + " is expired.<br> For more info contact us by using the <i>Help & Feedback</i> button below<br> or emailing <b>Support@ttsTrain.com</b>.");
+                discount.Notes = ("This Discount Code " + discount.DiscountCode + " is expired.<br> For more info contact us by using the <i>Help & Feedback</i> button below<br>.");
             }
             var forNotes = new StringBuilder();
             var existingDiscount = discount;

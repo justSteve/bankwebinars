@@ -64,5 +64,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         DiscountModel BuildDiscountModelForUser(Discount discount, int idUser);
         DiscountModel BuildCPSubscriptionModel(Discount discount, int idUser);
         DiscountModel BuildDiscountModelForOrder(OrderRow orderRow, int idUser);
+        bool RemoveClaim(string email);
     }
 }

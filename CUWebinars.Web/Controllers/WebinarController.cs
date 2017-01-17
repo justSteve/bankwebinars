@@ -380,7 +380,7 @@ namespace CUWebinars.Web.Controllers
             ViewBag.TopicCaption = " ";
 
 
-            string searchTerm = Request["searchTerm"].Trim(' ');
+            string searchTerm = Request["searchTerm"].Trim(' ').Replace("_", "@");
             ViewBag.SearchTerm = searchTerm;
             _logger.Info("Searching on: " + searchTerm + " by: " + _appHelper.GetUserAuditInfo());
 

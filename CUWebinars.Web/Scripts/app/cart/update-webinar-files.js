@@ -152,7 +152,7 @@ $(function() {
 
                 if (data.status && data.status === 500) {
                     data.data = {};
-                    data.data.error = 'For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.';
+                    data.data.error = 'For customer service contact us by using the Online Chat button below.';
                 }
 
                 if (!data['Result']){

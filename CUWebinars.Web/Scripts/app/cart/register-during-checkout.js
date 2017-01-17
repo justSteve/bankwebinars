@@ -519,7 +519,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
                 } else if (data.Result === 'Fail') {
                     L.clientLogger.error("Connection Error #332", { data: data });
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #332. Please try again or call tech support at 800-831-0678 ext 706.</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #332. Please try again. In case of persistent problem please contact us with our online chat (lower right corner of this page).</span>');
                     regUserStateManager.setAction(RegistrationInCart.Action.SubmitRegister);
                 }
             } else if (!data.isSuccessful) {
@@ -608,7 +608,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                         if (status == 'error') {
                                             L.clientLogger.error("Connection Error #106.", { 'data': data || 'data was falsey' });
 
-                                            $(this).html('<div class="text-error">Connection Error #106. Email support@ttstrain.com or use our Help & Feedback button (lower right corner)  for immediate assistance.</div>');
+                                            $(this).html('<div class="text-error">Connection Error #106. Email @globalConfig.TenantEmail  or use our Help & Feedback button (lower right corner)  for immediate assistance.</div>');
                                             $('#confirmationTab a').tab('show');
                                         } else {
                                             $('#ConfirmRegistrationBillMe').on('click', function (e) {
@@ -900,7 +900,7 @@ function hookUpEditUserLogic(button, shippingAddressRequired) {
                     L.clientLogger.error("Error #416: ", { data: data && data.Result });
                 };
 
-                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #416. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.</span>');
+                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #416. For customer service contact us by using the Online Chat button below or emailing @globalConfig.TenantEmail .</span>');
 
             }).fail(function (data) {
 
@@ -914,7 +914,7 @@ function hookUpEditUserLogic(button, shippingAddressRequired) {
                 };
 
                 L.clientLogger.error("Error #417", { jqXHR: jqXHR && jqXHR.statusCode().statusText });
-                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #417. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.</span>');
+                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #417. For customer service contact us by using the Online Chat button below or emailing @globalConfig.TenantEmail .</span>');
             });
         });
 

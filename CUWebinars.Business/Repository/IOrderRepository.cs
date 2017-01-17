@@ -75,5 +75,6 @@ namespace CUWebinars.Business.Repository
         Order GetOrderByJoinCode(string joinCode);
         List<Registrant> GetCitrixRegistrantsByWebinar(Webinar webinarId);
         IList<Order> GetOrdersByDomain(string searchTerm, int affiliateId);
+        Order FindOrderForUserByWebinarId(int webUserIdUser, int webinarIdWebinar);
     }
 }

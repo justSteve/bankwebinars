@@ -703,6 +703,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             var webinar = _webinarManagementService.GetWebinar(formModel.idWebinar);
 
+
+
             if (webinar == null)
             {
                 _logger.Error(string.Format("Null value for Webinar {0}", formModel.idWebinar));
@@ -915,6 +917,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 _logger.Info("WebUser id is {0}", webUser.idUser);
 
+                
                 var newOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
                 newOrder.AuditInfo = _appHelper.GetUserAuditInfo();
                 newOrder.Origin = DomainConstants.Cart;

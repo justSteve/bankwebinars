@@ -68,7 +68,7 @@
 
                     @if (!string.IsNullOrWhiteSpace(Model.GrandTotalCaptionMulti))
                     {
-                        <p id="grandTotalCaptionMulti">@Model.GrandTotalCaptionMulti</p>
+                        <p id="grandTotalCaptionMulti">@Html.Raw(Model.GrandTotalCaptionMulti)</p>
                     }
                 </div>
                 foreach (RegistrationSummaryViewModel registrationSummaryViewModel in Model.RegistrationSummaryViewModels)
@@ -86,7 +86,12 @@
                 }
                 else
                 {
+                    <script type="text/javascript" language="javascript">
+                        $(function () {
 
+
+                        });
+                    </script>
                     <div id="checkout-action-container" style="margin-bottom: 10px;">
                         @{
                             string confirmButtonLabel = "Submit Registrations";
@@ -123,7 +128,7 @@
 
                             <div style="margin-bottom:10px;">
                                 We will now redirect your browser to our credit card processor - https://www.paytrace.com - for entry of credit card information.
-                                @*Direct credit card processing is temporarily offline. We apologize for the inconvenience. Please choose the 'Bill Me' option or call us at 800-831-0678 to post immediate payment with our customer service staff.*@
+                                @*Direct credit card processing is temporarily offline. We apologize for the inconvenience. Please choose the 'Bill Me' option.*@
                             </div>
 
 

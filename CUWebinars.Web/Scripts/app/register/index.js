@@ -40,7 +40,7 @@ $(function () {
         stateManager.setInputAction(Registration.InputAction.ButtonClick);
 
         if (stateManager.getAction() === '') {
-            $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;There registration has encountered a problem. Please refresh the page and re-start the registration process or call Tech Support at 800-831-0678 ext. 706.</span>');
+            $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;There registration has encountered a problem. Please refresh the page and try again. In case of persistent problems please contact us with our online chat (lower right corner of this page).</span>');
 
             return false;
         }
@@ -364,7 +364,7 @@ $(function () {
                     $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
                     utilities.goToUrl('/');
                 } else if (data.Result === 'Fail') {
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;There has been an error in the request. Please try again. In case of persistent problem please contact us with our online chat (lower right corner of this page).</span>');
                     stateManager.setAction(Registration.Action.SubmitRegister);
                 }
             } else if (!data.isSuccessful) {

@@ -374,7 +374,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
                 } else if (data.Result === 'Fail') {
                     L.clientLogger.error("Connection Error #332", { data: data });
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #332. Please try again or call tech support at 800-831-0678 ext 706.</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #332. Please try again. In case of persistent problem please contact us with our online chat (lower right corner of this page).</span>');
                     regUserStateManager.setAction(RegistrationInCartByAffiliate.Action.SubmitRegister);
                 }
             } else if (!data.isSuccessful) {

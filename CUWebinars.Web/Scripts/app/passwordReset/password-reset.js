@@ -66,16 +66,16 @@ $(function () {
                     //Rollbar.error({ 'Else branch of form#ResetPasswordForm: ': { 'data': data} });
 
                     if (data['Invalid'] === 'UserNotVerified') {
-                        crunchingLabel.html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;The data is in an invalid state. This error is known and can be <br>easily rectified by calling us at 800-831-0678 ext. 3. Or email us at support@ttstrain.com</span>');
+                        crunchingLabel.html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;There was a problem resetting your password. Contact us at @globalConfig.TenantEmail</span>');
                     } else if (data['Invalid'] === 'UnkownEmail') {
-                        crunchingLabel.html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Contact us at support@ttstrain.com to resolve.</span>');
+                        crunchingLabel.html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Contact us at with our online chat (lower right corner of this page).</span>');
                     } else {
                         crunchingLabel.html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Error. Please retry...</span>');
                     }
                 }
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 // failed request; give feedback to user
-                crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;<strong>Oops!</strong> Try that again in a few moments.In case of continued problems, please contact us at 800-831-0678 ext 707.</span>');
+                crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;<strong>Oops!</strong> Try that again in a few moments.In case of continued problems, please contact us with our online chat (lower right corner of this page).</span>');
                 
 
                 //Rollbar.error({ 'ResetPassword AJAX error: ': { 'errorThrown': errorThrown } });

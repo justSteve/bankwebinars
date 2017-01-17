@@ -69,7 +69,7 @@ namespace CUWebinars.Business.AccountService
 
         void RemoveClaim(string tenant, string email, string claim, string claimValue = null);
         void ResetPassword(string tenant, string email);
-        void SignIn(UserAccount userAccount, bool persistant);
+        void SignIn(UserAccount userAccount, bool persistent);
         void UpdateNameTitle(
             string firstName,
             string lastName,
