@@ -1326,11 +1326,10 @@ namespace CUWebinars.Web.Controllers
                 if (userPendingOrder.Count() > 1)
                 {
                     return RedirectToAction("Checkout", "Cart");
-                    //return Json(new { result = LoggedInResult, returnUrl = "/cart/checkout" });
                 }
             }
             ProcessModelStateErrors();
-            return Content("false");
+            return RedirectToAction("MyWebinars", "Account");
         }
 
 

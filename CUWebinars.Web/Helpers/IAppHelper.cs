@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using CUWebinars.Business.Models;
@@ -20,5 +21,6 @@ namespace CUWebinars.Web.Helpers
         IList<string> ServerSideEmailCheck(IList<string> emails);
         IList<AdditionalLocation> CheckAdditionalLocationsForValidEmail(IList<AdditionalLocation> additionalLocations);
         bool CheckIsEmailValid(string email);
+        long ToUnixTimespan(DateTime myEventStart, TimeZoneInfo findSystemTimeZoneById);
     }
 }

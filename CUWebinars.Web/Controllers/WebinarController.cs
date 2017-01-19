@@ -543,7 +543,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.FatalException("CreateCitrixWebinar | AddPresenter: " + webinar.Presenter.WebUser.email , ex);
+                _logger.FatalException("CreateCitrixWebinar | AddPresenter: " + webinar.Presenter.WebUser.email, ex);
             }
 
             _webinarControllerOrchestrator.FireSendConnectionInfoNotificationEvent(webinarId);
@@ -787,8 +787,14 @@ namespace CUWebinars.Web.Controllers
 
         }
 
+
         public ActionResult Details(int? id, int? idOrder)
         {
+            //_stateService.HasValue(DomainConstants.OriginExpress))
+            if (_stateService.HasValue(WebUiConstants.DesSession))
+            {
+                return RedirectToAction("DetailsDes", new { id });
+            }
 
             ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
             var currentUser = User.Identity.Name ?? "anon";
@@ -985,31 +991,43 @@ namespace CUWebinars.Web.Controllers
         //}
 
         [System.Web.Mvc.HttpGet]
-        public ActionResult ICalOrder(int icsOrder)
+        public ActionResult ICalOrder(int? icsOrder, int? icsWebinar)
         {
+            var order = new Order();
             _logger.Info("ICalBuilder for: " + icsOrder);
-            var order = _orderManagementService.GetOrderById(icsOrder);
+            if (icsOrder.HasValue)
+
+                order = _orderManagementService.GetOrderById(icsOrder.Value);
 
             var webinar = _webinarControllerOrchestrator.GetWebinar(
                 order.OrderRows.First(r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar);
             var descBuilder = new StringBuilder();
 
-            descBuilder.Append("A reminder of your webinar (" + _globalConfig.TenantPrefix + icsOrder + "). ");
 
-            if (
-                order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
-                    .RegistrationType.ShowLiveNotifications.ToLower() != "yes")
+            if (order != null)
             {
-                descBuilder.Append("At the time this reminder was generated, your registration did not include " +
-                                   "'Live' attendance. If you would like to change that please visit us at "
-                                   + _globalConfig.TenantURL + "/resume/" + order.idOrder + ". Otherwise, you'll see a notification that the recording is posted within 24 hours following the event. ");
+
+
+                if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                        .RegistrationType.ShowLiveNotifications.ToLower() != "yes")
+                {
+                    descBuilder.Append("A reminder of your webinar (" + _globalConfig.TenantPrefix + icsOrder + "). ");
+                    descBuilder.Append("At the time this reminder was generated, your registration did not include " +
+                                       "'Live' attendance. If you would like to change that please visit us at "
+                                       + _globalConfig.TenantURL + "/resume/" + order.idOrder +
+                                       ". Otherwise, you'll see a notification that the recording is posted within 24 hours following the event. ");
+                }
+                else
+                {
+                    descBuilder.Append("Pre-event and other information about this webinar can be reviewed at:  " +
+                                       _globalConfig.TenantURL + "/j/" +
+                                       order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                                           .TtsJoinUrl);
+                }
             }
             else
             {
-                descBuilder.Append("Pre-event and other information about this webinar can be reviewed at:  " +
-                                   _globalConfig.TenantURL + "/j/" +
-                                   order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
-                                       .TtsJoinUrl);
+                descBuilder.Append("A reminder of " + webinar.Title + ".");
             }
 
             var utcTime = TimeZoneInfo.ConvertTimeToUtc(webinar.Date, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
@@ -1028,7 +1046,7 @@ namespace CUWebinars.Web.Controllers
             icalStringbuilder.AppendLine("DESCRIPTION:" + descBuilder.ToString());
             icalStringbuilder.AppendLine("X-ALT-DESC;FMTTYPE=text/html:" + descBuilder.ToString());
             icalStringbuilder.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmssZ}", utcTime));
-            icalStringbuilder.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}",utcTime.AddHours((double)webinar.Duration)));
+            icalStringbuilder.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", utcTime.AddHours((double)webinar.Duration)));
             icalStringbuilder.AppendLine("SEQUENCE:0");
             icalStringbuilder.AppendLine("UID:" + Guid.NewGuid());
 
@@ -1839,7 +1857,7 @@ namespace CUWebinars.Web.Controllers
         {
 
             //refactor according to: http://rickyrosario.com/blog/creating-an-rss-feed-in-asp-net-mvc/
-            IList<Webinar> webinarsList = _webinarManagementService.GetAllActive().ToList();
+            IList<Webinar> webinarsList = _webinarManagementService.GetAllActive().Where(w => w.SeriesInfo != "DES").ToList();
 
             var dtos = new CalendarDTOAssembler().Entities2DTOs(webinarsList);
 
@@ -1879,20 +1897,40 @@ namespace CUWebinars.Web.Controllers
         }
 
         [System.Web.Mvc.AcceptVerbs(HttpVerbs.Get)]
-        public ActionResult CalendarRssFull()
+        public ActionResult CalendarRssFull(int? idAff)
         {
+            var _idAff = 19;
+            var tz = _membershipService.GetWebUserById(19).timeZone;
+            var aff = _affiliateManagementService.FindById(19);
+
+            if (idAff.HasValue)
+            {
+                _idAff = idAff.Value;
+
+                aff = _affiliateManagementService.FindById(_idAff);
+                tz = _membershipService.GetWebUserById(_idAff).timeZone;
+
+            }
             IList<Webinar> webinarsList = _webinarManagementService.GetUpcomingWebinars().ToList();
 
             var data = new CalendarRssFullDTOAssembler().Entities2DTOs(webinarsList);
+            foreach (var myEvent in data)
+            {
 
-            //var blog = data.SingleOrDefault();
-            var postItems = data //.Where(p => p.Title = blog)
+                //var utcTime = TimeZoneInfo.ConvertTimeToUtc(_appHelper.ToUnixTimespan(myEvent.start, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
+
+
+                myEvent.Url = myEvent.Url + "?idAff=" + _idAff;
+                //myEvent.start = 
+
+            }
+            var postItems = data
                 .OrderBy(p => p.EventDate).Take(25)
                 .Select(p => new SyndicationItem(p.Title, p.Content, new Uri(p.Url)));
 
             var feed = new SyndicationFeed("Events from " + _globalConfig.Tenant,
                 _globalConfig.TenantURL + " is Webinars for the financial industry.",
-                new Uri("http://www.bankwebinars.com/blog"), postItems)
+                new Uri("http://www.bankwebinars.com/"), postItems)
             {
 
             };

@@ -269,12 +269,20 @@ function GetAffiliateCopy(affiliateId, isActive) {
 
     var currCopy = "";
 
-    // is this affiliate currently showing?  if so, grab Editor value rather than hidden text area
-    if (isActive)
-        currCopy = $.trim($("#editorTA").wijeditor("getText"));
-    else
-        currCopy = $.trim($("#editor_" + affiliateId).val());
+    console.log(isActive);
+    console.log($.trim($("#editorTA").wijeditor("getText")));
 
+    // is this affiliate currently showing?  if so, grab Editor value rather than hidden text area
+    // Addendum: this test is returning false at the point where true is expected. 
+    if (isActive) {
+        currCopy = $.trim($("#editorTA").wijeditor("getText"));
+
+    } else {
+        currCopy = $.trim($("#editor_" + affiliateId).val());
+    }
+    // HACK: the above test is returning false at the point where true is expected. 
+    currCopy = $.trim($("#editorTA").wijeditor("getText"));
+    console.log(currCopy);
     currCopy = stripWijNull(currCopy);
     return currCopy;
 }

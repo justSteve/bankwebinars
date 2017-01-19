@@ -31,16 +31,18 @@ $(function () {
                 crunchingLabel.html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Submitting password...</span>');
             }
         }).done(function (data) {
-            
+
             if (data.Result === 'Success') {
-                form.fadeOut(500, function () {
+                //form.fadeOut(500, function () {
 
-                    alert("The reset was successful. You will now be logged in.");
-                    $('#emailFR').val(data.email);
-                    $('#passwordFR').val(data.password);
-                    $('#frmSignInFR').submit();
 
-                });
+
+                //});
+                alert("The reset was successful. You will now be logged in.");
+
+                $('#emailFR').val(data.email);
+                $('#passwordFR').val(data.password);
+                $('#frmSignInFR').submit();
             } else if (data.Result === 'Not Found') {
                 form.fadeOut(500, function () {
                     formParent.append('<div class="legendImitator">That Email was not found.</div><div style="margin-bottom: 25px"><span class="label label-danger">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp; We were unable to find that email. Please try again. In case of continued problems, please contact us with our online chat (lower right corner of this page).</span></div>');
@@ -52,7 +54,7 @@ $(function () {
                 });
                 //Rollbar.info("#699. reset succeeded");
             } else if (data.isSuccessful === false) {
-                
+
                 //formProcessor.lightUpValidationSummary('valSummaryResetPwdForm', data);
                 console.log(data);
                 crunchingLabel.html('<div class="label large label-danger">&nbsp;&nbsp;&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Reset Error #547.</div><div > Please ensure you are using a new password.</div>');

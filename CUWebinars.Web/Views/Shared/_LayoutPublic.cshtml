@@ -49,7 +49,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <script src="~/Scripts/js.cookie/js.cookie.js"></script>
     <script type="text/javascript">
-        
+
         var offset = new Date().getTimezoneOffset();
         offset = offset / 60 * -1;
         Cookies.set('timezoneoffset', offset);
@@ -65,8 +65,8 @@
 
         window.$zopim || (function (d, s) {
             var z = window.$zopim = function (c) {
-                    z._.push(c);
-                },
+                z._.push(c);
+            },
                 $ = z.s = d.createElement(s),
                 e = d.getElementsByTagName(s)[0];
 
@@ -386,13 +386,13 @@
     <!--/.footer-->
     @*<span class="backToTop"><a href="#top">back to top</a></span>*@
     <!-- close #page-->
-    @using (Html.BeginForm("AddToICalendariCal", "Webinar", FormMethod.Post, new { name = "frmAddIcs", id = "frmAddIcs" }))
+    @using (Html.BeginForm("ICalOrder", "Webinar", FormMethod.Get, new { name = "frmAddIcs", id = "frmAddIcs" }))
     {
         <input type="hidden" id="icsWebinar" name="icsWebinar" />
         <input type="hidden" id="icsOrder" name="icsOrder" />
 
     }
-    @using (Html.BeginForm("AddToICalendarGmail", "Webinar", FormMethod.Post, new { name = "frmAddGmail", id = "frmAddGmail" }))
+    @using (Html.BeginForm("ICalOrder", "Webinar", FormMethod.Post, new { name = "frmAddGmail", id = "frmAddGmail" }))
     {
         <input type="hidden" id="glWebinar" name="glWebinar" />
         <input type="hidden" id="glOrder" name="glOrder" />

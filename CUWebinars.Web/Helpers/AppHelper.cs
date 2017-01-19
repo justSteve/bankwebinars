@@ -351,6 +351,24 @@ namespace CUWebinars.Web.Helpers
             }
 
         }
+        //private long ToUnixTimespan(DateTime date)
+        //{
+        //    TimeZoneInfo tzInfo = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
+        //    var convertedTimeToUtc = TimeZoneInfo.ConvertTimeToUtc(date, tzInfo);
+
+        //    TimeSpan tspan = convertedTimeToUtc.Subtract(new DateTime(1970, 1, 1, 0, 0, 0));
+        //    return (long)Math.Truncate(tspan.TotalSeconds);
+        //}
+
+        public long ToUnixTimespan(DateTime myEventStart, TimeZoneInfo findSystemTimeZoneById)
+        {
+            TimeZoneInfo tzInfo = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
+            var convertedTimeToUtc = TimeZoneInfo.ConvertTimeToUtc(myEventStart, tzInfo);
+
+            TimeSpan tspan = convertedTimeToUtc.Subtract(new DateTime(1970, 1, 1, 0, 0, 0));
+            return (long)Math.Truncate(tspan.TotalSeconds);
+
+        }
 
         public static string[] AddNonvalidToArray(string[] zipCentricFields)
         {

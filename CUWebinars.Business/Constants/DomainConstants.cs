@@ -15,6 +15,7 @@ namespace CUWebinars.Business.Constants
         public const string ConfirmChangeEmailLink = "ConfirmChangeEmailLink";
         public const string DateTimeLongFormat = "yyyy-MM-dd-hh-mm-ss-fff-tt";
         public const string DateTimeShortFormat = "MM-dd-yyyy";
+        
         public const string CareOfString = "c/o ";
         public const string JoinUrl = "joinUrl";
         public const string LoggerConnectionStringName = "LoggerConnection";
@@ -56,6 +57,8 @@ namespace CUWebinars.Business.Constants
                 return TimeZoneInfo.ConvertTimeFromUtc(timeUtc, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
             }
         }
+
+
 
         public const string CreationModeImported = "imported";
         public const string CreationModeMigrated = "migrated";

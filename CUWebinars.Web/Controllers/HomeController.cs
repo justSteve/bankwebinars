@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Web.Mvc;
 using CUWebinars.Business.Services;
+using CUWebinars.Web.Services;
 
 namespace CUWebinars.Web.Controllers
 {
@@ -14,17 +15,19 @@ namespace CUWebinars.Web.Controllers
     {
 
         private readonly IWebinarRepository _webinarRepository;
+        private IStateService _stateService;
 
         private readonly IAffiliateManagementService _affiliateManagementService;
 
         private readonly ILogger _logger;
         private bool _disposed;
 
-        public HomeController(IWebinarRepository webinarRepository, ILogger logger, IAffiliateManagementService affiliateManagementService)
+        public HomeController(IWebinarRepository webinarRepository, ILogger logger, IAffiliateManagementService affiliateManagementService, IStateService stateService)
         {
             _webinarRepository = webinarRepository;
             _logger = logger;
             _affiliateManagementService = affiliateManagementService;
+            _stateService = stateService;
         }
 
         public ActionResult PrivacyStatement()
@@ -96,33 +99,32 @@ namespace CUWebinars.Web.Controllers
 
             ViewBag.PageStyleType = "index-flex-dark";
 
-            var lWebinars = _webinarRepository.GetUpcoming().OrderByDescending(w => w.Date).Take(15).ToList();
-            return View(lWebinars);
-            //if (id.HasValue)
-            //{
-            //    if (id == 17146)
-            //    {
+            _stateService.SetValue(WebUiConstants.DesSession, "true");
 
-            //        ViewBag.showPrice = "$1,395 for a 12-month subscription.<br>$1,895 for non-members";
-            //    }
+            if (id.HasValue)
+            {
+                if (id == 17146)
+                {
 
-            //}
+                    ViewBag.showPrice = "$1,395 for a 12-month subscription.<br>$1,895 for non-members";
+                }
 
-            //Business.Models.Affiliate affiliate;
+            }
 
-            //if (!id.HasValue)
-            //{
-            //    affiliate = _affiliateManagementService.FindById(id.Value);
-            //}
-            //else
-            //{
+            Business.Models.Affiliate affiliate;
 
-            //    affiliate = affiliate = _affiliateManagementService.FindById(19);
-            //}
+            if (!id.HasValue)
+            {
+                affiliate = _affiliateManagementService.FindById(id.Value);
+            }
+            else
+            {
 
-            //return View(affiliate);
+                affiliate = affiliate = _affiliateManagementService.FindById(19);
+            }
+
+            return View(affiliate);
         }
-
 
 
         [HttpPost]

@@ -1942,7 +1942,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             var recp = new Recipient { ListId = affiliate.idMailChimpList };
 
-            var seg = recp.SegmentText;
+            //var seg = new Segment { }
             //https://github.com/brandonseydel/MailChimp.Net/issues/157
             // or find a way to nav to URL
 
@@ -1951,7 +1951,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 ContentType = "html",
                 Type = CampaignType.Regular,
                 Recipients = recp,
-
+                
                 Settings = new Setting
                 {
                     SubjectLine = "Webinar: " + webinar.Title,
@@ -2784,7 +2784,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 int webinarId = param.webinarId;
 
                 string searchTerm = param.searchTerm;
-                if (param.searchTerm.Contains("@"))
+                if (param.searchTerm != null && param.searchTerm.Contains("@"))
                     searchTerm = param.searchTerm.Replace("_", "@");
                 int affiliateId = param.affiliateId ?? 19; // 19 is magic internal / house affiliate id
                 bool showAllEvents = param.showAllEvents ?? false;

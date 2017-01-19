@@ -20,7 +20,7 @@ namespace CUWebinars.Web.Controllers
         [OutputCache(Duration = 3600)]
         public string UpComingWebinarMenu()
         {
-            var upcomingWebinars = _webinarRepository.GetUpcoming().OrderBy(w => w.Date).Take(8).ToList();
+            var upcomingWebinars = _webinarRepository.GetUpcoming().Where(w => w.SeriesInfo != "DES").OrderBy(w => w.Date).Take(8).ToList();
             var upComingPresentationListItems = new StringBuilder();
             upComingPresentationListItems.Append(
                 "<li role='presentation'><a  role=\"menuitem\" tabindex=\"-1\"  href='/Webinar/allActive/?eventsToShow=upcoming'>View <b>All</b> Upcoming Events</a></li>"
@@ -61,7 +61,7 @@ namespace CUWebinars.Web.Controllers
         [OutputCache(Duration = 3600)]
         public string GetRecordedWebinarMenu()
         {
-            var recordedWebinars = _webinarRepository.GetRecorded().OrderByDescending(w => w.Date).Take(8).ToList();
+            var recordedWebinars = _webinarRepository.GetRecorded().Where(w => w.SeriesInfo != "DES").OrderByDescending(w => w.Date).Take(8).ToList();
 
             var recordedWebinarsListItems = new StringBuilder();
 
