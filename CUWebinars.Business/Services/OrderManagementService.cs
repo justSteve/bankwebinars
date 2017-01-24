@@ -142,7 +142,12 @@ namespace CUWebinars.Business.Services
             try
             {
                 var existingEmail = _orderRepository
-                    .FindOrdersByBillingEmail(webUser.email, 19).Where(o => o.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar == webinar.idWebinar).SingleOrDefault();
+                    .FindOrdersByBillingEmail(webUser.email, 19)
+                    .Where(
+                        o =>
+                            o.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar ==
+                            webinar.idWebinar)
+                    .SingleOrDefault();
                 if (existingEmail != null)
                 {
                     _logger.Warn("CreateNewOrder found and returned existing: " + existingEmail);
@@ -159,7 +164,8 @@ namespace CUWebinars.Business.Services
             return order;
         }
 
-        public OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, int registrationType)
+        public OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation,
+            int registrationType)
         {
             try
             {
@@ -179,13 +185,16 @@ namespace CUWebinars.Business.Services
             }
             catch (Exception exception)
             {
-                _logger.ErrorException("overload of CreateOrderRow method webinar:  " + webinar.idWebinar + " regType: " + registrationType, exception);
+                _logger.ErrorException(
+                    "overload of CreateOrderRow method webinar:  " + webinar.idWebinar + " regType: " + registrationType,
+                    exception);
 
                 throw;
             }
         }
 
-        public OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, RegType registrationType)
+        public OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation,
+            RegType registrationType)
         {
             try
             {
@@ -193,7 +202,9 @@ namespace CUWebinars.Business.Services
             }
             catch (Exception exception)
             {
-                _logger.ErrorException("CreateOrderRow method webinar:  " + webinar.idWebinar + " regType: " + registrationType.idRegType, exception);
+                _logger.ErrorException(
+                    "CreateOrderRow method webinar:  " + webinar.idWebinar + " regType: " + registrationType.idRegType,
+                    exception);
 
             }
 
@@ -212,7 +223,9 @@ namespace CUWebinars.Business.Services
             }
             catch (Exception exception)
             {
-                _logger.ErrorException(string.Format("CreateAdditionalLocation method - values passed in {0},{1},{2}.", email, price, fullname), exception);
+                _logger.ErrorException(
+                    string.Format("CreateAdditionalLocation method - values passed in {0},{1},{2}.", email, price,
+                        fullname), exception);
                 throw;
             }
         }
@@ -229,7 +242,8 @@ namespace CUWebinars.Business.Services
                 .ToDictionary(a => a.idUserAff, a => a.ttsDomain);
         }
 
-        public Tuple<string, decimal> GetCostOfAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations, int idWebinar)
+        public Tuple<string, decimal> GetCostOfAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations,
+            int idWebinar)
         {
             //so renamed to reflect that we are building the cost of a user's list of added seats. Not
             // how much does it cost per seat.
@@ -242,7 +256,8 @@ namespace CUWebinars.Business.Services
             decimal optionsCost = 0M;
 
             // perf tweak - ensures enumerable will only be enumerated once
-            var additionalLocationsEnumerated = additionalLocations as AdditionalLocation[] ?? additionalLocations.ToArray();
+            var additionalLocationsEnumerated = additionalLocations as AdditionalLocation[] ??
+                                                additionalLocations.ToArray();
             //var additionalLocationsEnumerated = additionalLocations as AdditionalLocation[] ?? additionalLocations.ToArray();
 
             string emailSpanElement = string.Empty; // emails in bold text, or whatever suits
@@ -313,7 +328,7 @@ namespace CUWebinars.Business.Services
             //    _cachingService.Add(cachKey, options, DomainConstants.BuildUtcNowAsCts.AddHours(1));
             //}
 
-            return (IDictionary<RegType, bool>)options;
+            return (IDictionary<RegType, bool>) options;
         }
 
         public IDictionary<RegType, bool> GetAllPossibleOptionsByWebinarId(int idWebinar, bool detached)
@@ -329,7 +344,7 @@ namespace CUWebinars.Business.Services
             //    _cachingService.Add(cachKey, options, DomainConstants.BuildUtcNowAsCts.AddHours(1));
             //}
 
-            return (IDictionary<RegType, bool>)options;
+            return (IDictionary<RegType, bool>) options;
         }
 
 
@@ -445,6 +460,7 @@ namespace CUWebinars.Business.Services
         {
             return _orderRepository.FindOrderIdsByPartialId(id);
         }
+
         public IEnumerable<int> GetUserIdsByPartialId(int value)
         {
             return _orderRepository.FindUserIdsByPartialId(value);
@@ -550,10 +566,10 @@ namespace CUWebinars.Business.Services
                 //HACK: eliminate the problematic calculations and hard-wire the
                 // resultset to include only 1 affiliate chosen by most recent order.
                 affiliateIds = _orderRepository.FindOrdersByUserId(idUser)
-                                    .OrderByDescending(o => o.OrderDate)
-                                    .Select(o => o.idAffiliate)
+                    .OrderByDescending(o => o.OrderDate)
+                    .Select(o => o.idAffiliate)
 
-                                    .ToList();
+                    .ToList();
 
                 // keeps affiliateIds object in cache for 1 hour.
                 //_cachingService.Add(cachKey, affiliateIds, DomainConstants.BuildUtcNowAsCts.AddHours(1));
@@ -599,12 +615,13 @@ namespace CUWebinars.Business.Services
                         }
                     }
 
-                    if (mostUses >= 2 * numberOfUsesOfMostRecentAffiliate)
+                    if (mostUses >= 2*numberOfUsesOfMostRecentAffiliate)
                     {
                         _logger.Info("DetermineAffiliateByAlternativeMeans by mostUses: " + idUser);
                         affiliateIdForOrder = mostUsedAffiliateId;
                     }
-                    _logger.Error("multiple affiliates considered: {0} for idUser {1}. Credited to {2}.", sb.ToString(), idUser, affiliateIdForOrder, current);
+                    _logger.Error("multiple affiliates considered: {0} for idUser {1}. Credited to {2}.", sb.ToString(),
+                        idUser, affiliateIdForOrder, current);
 
                 }
 
@@ -695,6 +712,7 @@ namespace CUWebinars.Business.Services
                 throw new EntityNotFoundException(ex.Message, ex);
             }
         }
+
         //public static WebUser GetMasterUser(this UserFacade userFacadeInstance)
         //{
         //    if (userFacadeInstance.IsCurrentUserControlled() == false)
@@ -717,6 +735,7 @@ namespace CUWebinars.Business.Services
                 _events.Add(orderEvent);
             }
         }
+
         public PricesAndDiscounts CalculateOrderCost(Order order, decimal optionsCost)
         {
             PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
@@ -727,7 +746,7 @@ namespace CUWebinars.Business.Services
             Debug.Assert(row != null, "OrderRow object should always have a value here.");
             if (row.RegistrationType != null)
             {
-                row.UnitPrice = (decimal)row.RegistrationType.Price;
+                row.UnitPrice = (decimal) row.RegistrationType.Price;
             }
             else
             {
@@ -741,16 +760,20 @@ namespace CUWebinars.Business.Services
             //Calculate row price before discount
             if (row.AdditionalLocation != null)
             {
-                if (order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active).Webinar.Title.Contains("Compliance Perspectives"))
+                if (
+                    order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active)
+                        .Webinar.Title.Contains("Compliance Perspectives"))
                 {
                     if (row.AdditionalLocation.Count > 3)
                     {
-                        totalOptionsPrice = row.AdditionalLocation.Count - 3 * optionsCost; // cost * number of additional locations
+                        totalOptionsPrice = row.AdditionalLocation.Count - 3*optionsCost;
+                            // cost * number of additional locations
                     }
                 }
                 else
                 {
-                    totalOptionsPrice = row.AdditionalLocation.Count * optionsCost; // cost * number of additional locations
+                    totalOptionsPrice = row.AdditionalLocation.Count*optionsCost;
+                        // cost * number of additional locations
                 }
             }
 
@@ -766,44 +789,50 @@ namespace CUWebinars.Business.Services
 
                 if (row.Discount.DiscountType == DiscountType.Subscription)
                 {
-                    _logger.Info("COC begin discount create " + row.Discount.idDiscount + " on " + row.idOrder + " found "
-                            + creditsRemain + " against " + row.RegistrationType.CreditCost);
+                    _logger.Info("COC begin discount create " + row.Discount.idDiscount + " on " + row.idOrder +
+                                 " found "
+                                 + creditsRemain + " against " + row.RegistrationType.CreditCost);
 
                     if (creditsRemain >= row.RegistrationType.CreditCost)
                     {
-                        discountTotal = row.RowPrice * row.Discount.PercentOff / 100;
-                        _logger.Info("COC create discount  " + row.Discount.idDiscount + " on " + row.idOrder + " found "
-                            + creditsRemain + " against " + row.RegistrationType.CreditCost);
+                        discountTotal = row.RowPrice*row.Discount.PercentOff/100;
+                        _logger.Info("COC create discount  " + row.Discount.idDiscount + " on " + row.idOrder +
+                                     " found "
+                                     + creditsRemain + " against " + row.RegistrationType.CreditCost);
                     }
                     else
                     {
                         if (creditsRemain >= 0)
                         {
-                            discountTotal = 265 * creditsRemain;
-                            _logger.Info("COC create partial discount  " + row.Discount.idDiscount + " on " + row.idOrder + " found "
-                                + creditsRemain + " against " + row.RegistrationType.CreditCost);
+                            discountTotal = 265*creditsRemain;
+                            _logger.Info("COC create partial discount  " + row.Discount.idDiscount + " on " +
+                                         row.idOrder + " found "
+                                         + creditsRemain + " against " + row.RegistrationType.CreditCost);
                         }
                         else
                         {
                             discountTotal = 0;
-                            _logger.Info("COC failed to create discount  " + row.Discount.idDiscount + " on " + row.idOrder + " found "
-                                + creditsRemain + " against " + row.RegistrationType.CreditCost);
+                            _logger.Info("COC failed to create discount  " + row.Discount.idDiscount + " on " +
+                                         row.idOrder + " found "
+                                         + creditsRemain + " against " + row.RegistrationType.CreditCost);
                             row.Discount = null;
                         }
                     }
                 }
                 else
                 {
-                    discountTotal = row.RowPrice * row.Discount.PercentOff / 100;
-                    _logger.Info("COC found non WPS discount  " + row.Discount.idDiscount + " on " + row.idOrder + " found "
-                            + creditsRemain + " against " + row.RegistrationType.CreditCost);
+                    discountTotal = row.RowPrice*row.Discount.PercentOff/100;
+                    _logger.Info("COC found non WPS discount  " + row.Discount.idDiscount + " on " + row.idOrder +
+                                 " found "
+                                 + creditsRemain + " against " + row.RegistrationType.CreditCost);
                 }
 
             }
             else if (row.Discount != null && row.Discount.FlatOff != 0.0M)
             {
                 discountTotal = row.Discount.FlatOff;
-                _logger.Info("COC found non flatOff discount " + row.Discount.idDiscount + " on " + row.idOrder + " found " + row.Discount.FlatOff);
+                _logger.Info("COC found non flatOff discount " + row.Discount.idDiscount + " on " + row.idOrder +
+                             " found " + row.Discount.FlatOff);
             }
 
             if (discountTotal >= row.RowPrice)
@@ -824,10 +853,10 @@ namespace CUWebinars.Business.Services
             if (order.BillingState == "WI"
                 && !row.RegistrationType.OptionLabel.StartsWith("Live Plus Five")
                 && row.RowPrice > 0
-                )
+            )
             {
 
-                pricesAndDiscounts.TaxAmount = Math.Round(row.RowPrice * Convert.ToDecimal(.055), 2);
+                pricesAndDiscounts.TaxAmount = Math.Round(row.RowPrice*Convert.ToDecimal(.055), 2);
                 _logger.Info("COC found tax on: " + row.idOrder + " found " + pricesAndDiscounts.TaxAmount);
             }
 
@@ -894,7 +923,7 @@ namespace CUWebinars.Business.Services
                 addPasswordUrl = new Uri(
                     baseUri,
                     string.Concat(@"acc/apwd/", order.idOrder)
-                    ).ToString();
+                ).ToString();
             }
 
             AddEvent(new OrderSubmittedEvent<ConfirmOrderMessage>
@@ -914,7 +943,8 @@ namespace CUWebinars.Business.Services
 
             Clear(); // need to clear at this point, otherwise the OrderSubmittedEvent will be fired again when 
 
-            if (!ReferenceEquals(order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation, null)
+            if (!ReferenceEquals(
+                    order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation, null)
                 && order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count != 0)
             {
                 foreach (var addLoc in order.OrderRows
@@ -924,10 +954,16 @@ namespace CUWebinars.Business.Services
                 }
             }
         }
-        
-        public void FireAdminEmailSendShippedOrderEvent(Order order, IEnumerable<string> recipients, bool resending = false)
+
+        public void FireAdminEmailSendShippedOrderEvent(Order order, IEnumerable<string> recipients,
+            bool resending = false)
         {
-            AddEvent(new AdminEmailSendShippedOrderEvent<Order> { EventObject = order, Recipients = recipients, ResendEvent = resending });
+            AddEvent(new AdminEmailSendShippedOrderEvent<Order>
+            {
+                EventObject = order,
+                Recipients = recipients,
+                ResendEvent = resending
+            });
 
 
             foreach (var evt in GetEvents().OfType<AdminEmailSendShippedOrderEvent<Order>>())
@@ -940,7 +976,7 @@ namespace CUWebinars.Business.Services
 
         public void FireAdminEmailConnectionInfoHandler(Order order, IEnumerable<string> recipients)
         {
-            AddEvent(new AdminEmailConnectionInfoEvent<Order> { EventObject = order, Recipients = recipients });
+            AddEvent(new AdminEmailConnectionInfoEvent<Order> {EventObject = order, Recipients = recipients});
 
 
             foreach (var evt in GetEvents().OfType<AdminEmailConnectionInfoEvent<Order>>())
@@ -955,7 +991,7 @@ namespace CUWebinars.Business.Services
 
         public void FireAdminEmailRecordingPostedHandler(Order order, IEnumerable<string> recipients)
         {
-            AddEvent(new AdminEmailRecordingPostedEvent<Order> { EventObject = order, Recipients = recipients });
+            AddEvent(new AdminEmailRecordingPostedEvent<Order> {EventObject = order, Recipients = recipients});
 
 
             foreach (var evt in GetEvents().OfType<AdminEmailRecordingPostedEvent<Order>>())
@@ -1001,7 +1037,9 @@ namespace CUWebinars.Business.Services
 
             //_logger.Info("Persisted Email for Order w/AddLoc {0}-{1} :{2}", order.idOrder, address, relativePath);
 
-            foreach (var evt in GetEvents().OfType<OrderSubmittedAdditionalLocationEvent<AdditionalLocationOrderDetailsMessage>>())
+            foreach (
+                var evt in
+                GetEvents().OfType<OrderSubmittedAdditionalLocationEvent<AdditionalLocationOrderDetailsMessage>>())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }
@@ -1041,7 +1079,8 @@ namespace CUWebinars.Business.Services
                 var postEventPublishModel = new PostEventPublishModel()
                 {
                     Order = order,
-                    CostFor6month = (Convert.ToDecimal(cost6) - Convert.ToDecimal(basePrice)).ToString().Replace(".00", ""),
+                    CostFor6month =
+                        (Convert.ToDecimal(cost6) - Convert.ToDecimal(basePrice)).ToString().Replace(".00", ""),
                     CostForCD = (Convert.ToDecimal(costCD) - Convert.ToDecimal(basePrice)).ToString().Replace(".00", ""),
                     //ExpiryDate = CalculatePostEventMaterialsAccessExpiry(order).ToShortDateString(),
                     OrderSummaryString = orderSum
@@ -1066,8 +1105,8 @@ namespace CUWebinars.Business.Services
         private string OrderSummaryBuilder(Order order, Discount discount)
         {
             var row = from orderRow in order.OrderRows
-                      where orderRow.RowStatus == OrderRowStatus.Active
-                      select orderRow;
+                where orderRow.RowStatus == OrderRowStatus.Active
+                select orderRow;
             var myRow = row.Single();
 
             //var mySub = myRow.Order.d
@@ -1141,7 +1180,8 @@ namespace CUWebinars.Business.Services
                     sb.Append("<tr>");
                     if (!ReferenceEquals(discount.DateValidFrom, null))
                     {
-                        subscriptionSpan = discount.DateValidFrom.ToString("MMM-yy") + " until " + discount.DateValidTo.ToString("MMM-yy");
+                        subscriptionSpan = discount.DateValidFrom.ToString("MMM-yy") + " until " +
+                                           discount.DateValidTo.ToString("MMM-yy");
 
                         sb.Append(
                             "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
@@ -1223,89 +1263,6 @@ namespace CUWebinars.Business.Services
                 sb.Append("        </span>");
                 sb.Append("    </td>");
                 sb.Append("</tr>");
-                //if (!ReferenceEquals(myRow.Discount, null))
-                //{
-                //    decimal amountToReduce;
-                //    sb.Append("<tr>");
-                //    if (!ReferenceEquals(myRow.Discount.FlatOff, null))
-                //    {
-                //        amountToReduce = Convert.ToDecimal(myRow.Order.Total) - (myRow.Discount.FlatOff);
-                //        sb.Append(
-                //            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                //        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                //        sb.Append("            Amt. of Discount:");
-                //        sb.Append("        </span>");
-                //        sb.Append("    </td>");
-                //        sb.Append(
-                //            "    <td width='350px' style='text-align: left; color: red; background-color: #B4D1EC; padding-left: 6px;'>");
-                //        sb.Append(
-                //            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                //        sb.Append("            <b>$");
-                //        sb.Append(amountToReduce.ToString().Replace(".00", ""));
-                //        sb.Append("            </b>");
-                //        sb.Append("        </span>");
-                //        sb.Append("    </td>");
-                //    }
-                //    if (!ReferenceEquals(myRow.Discount.PercentOff, null))
-                //    {
-                //        amountToReduce = (myRow.Discount.PercentOff * 100) /
-                //                         Convert.ToDecimal(string.Format("{0:0.00}", myRow.UnitPrice));
-
-                //        sb.Append(
-                //            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                //        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                //        sb.Append("            Amt. of Discount:");
-                //        sb.Append("        </span>");
-                //        sb.Append("    </td>");
-                //        sb.Append(
-                //            "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-                //        sb.Append(
-                //            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                //        sb.Append("            <b>$");
-                //        sb.Append(amountToReduce.ToString().Replace(".00", ""));
-                //        sb.Append("            </b>");
-                //        sb.Append("        </span>");
-                //        sb.Append("    </td>");
-                //    }
-                //    sb.Append("</tr>");
-                //}
-
-                //sb.Append("<tr>");
-                //sb.Append(
-                //    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                //sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                //sb.Append("            Cost:");
-                //sb.Append("        </span>");
-                //sb.Append("    </td>");
-                //sb.Append(
-                //    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-                //sb.Append(
-                //    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                //sb.Append("            <b>$");
-                //sb.Append(myRow.Order.Total.ToString().Replace(".00", ""));
-                //sb.Append("            </b>");
-                //sb.Append("        </span>");
-                //sb.Append("    </td>");
-                //sb.Append("</tr>");
-                //sb.Append("<tr>");
-                //sb.Append(
-                //    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                //sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                //sb.Append("            OnDemand Access Expires:");
-                //sb.Append("        </span>");
-                //sb.Append("    </td>");
-                //sb.Append(
-                //    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-                //sb.Append("");
-                //sb.Append(
-                //    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                //sb.Append("            <b>");
-
-                //sb.Append(CalculatePostEventMaterialsAccessExpiry(order).ToShortDateString());
-                //sb.Append("            </b>");
-                //sb.Append("        </span>");
-                //sb.Append("    </td>");
-                //sb.Append("</tr>");
 
             }
             return sb.ToString();
@@ -1315,7 +1272,7 @@ namespace CUWebinars.Business.Services
 
         public void FireSendPerDayPromoEvent(WebinarPromoViewModel webinarPromoViewModel)
         {
-            AddEvent(new SendPerDayPromoEvent<WebinarPromoViewModel> { EventObject = webinarPromoViewModel });
+            AddEvent(new SendPerDayPromoEvent<WebinarPromoViewModel> {EventObject = webinarPromoViewModel});
 
             foreach (var evt in GetEvents().OfType<SendPerDayPromoEvent<WebinarPromoViewModel>>())
             {
@@ -1336,7 +1293,7 @@ namespace CUWebinars.Business.Services
         {
             foreach (var order in orders)
             {
-                AddEvent(new SendReminderEvent<Order> { EventObject = order, Details = order.NotificationStorage });
+                AddEvent(new SendReminderEvent<Order> {EventObject = order, Details = order.NotificationStorage});
             }
 
             foreach (var evt in GetEvents().OfType<SendReminderEvent<Order>>())
@@ -1348,11 +1305,12 @@ namespace CUWebinars.Business.Services
 
             int numRows = _orderRepository.SaveChanges();
         }
-        
+
         public void FireSendConnectionInfoNotificationEvent(IList<Order> orders, bool resending)
         {
 
-            var idWebinar = orders[0].OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar;
+            var idWebinar =
+                orders[0].OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar;
 
             var citrixRegs = GetCitrixRegistrantsByWebinar(idWebinar);
 
@@ -1360,7 +1318,12 @@ namespace CUWebinars.Business.Services
             foreach (var order in orders)
             {
                 GenerateRegistrantKey(order);
-                AddEvent(new SendConnectionInfoEvent<Order> { EventObject = order, ResendEvent = resending, Details = order.NotificationStorage });
+                AddEvent(new SendConnectionInfoEvent<Order>
+                {
+                    EventObject = order,
+                    ResendEvent = resending,
+                    Details = order.NotificationStorage
+                });
                 //see SendConnectionInfoHandler for handling implementation
             }
 
@@ -1378,7 +1341,7 @@ namespace CUWebinars.Business.Services
         {
             foreach (var order in orders)
             {
-                AddEvent(new SendShippedOrderEvent<Order> { EventObject = order });
+                AddEvent(new SendShippedOrderEvent<Order> {EventObject = order});
             }
 
 
@@ -1400,7 +1363,8 @@ namespace CUWebinars.Business.Services
             var x = 0;
             foreach (var order in orders)
             {
-                _logger.Info("RecordingPostedNotification {0} of {1} sent to {2} for {3}.", x, orders.Count, order.BillingEmail, title);
+                _logger.Info("RecordingPostedNotification {0} of {1} sent to {2} for {3}.", x, orders.Count,
+                    order.BillingEmail, title);
 
                 var postEventPublishModel = new PostEventPublishModel()
                 {
@@ -1424,7 +1388,7 @@ namespace CUWebinars.Business.Services
 
         public void FireSendWeeklyInvoiceEvent(SendWeeklyInvoiceViewModel weeklyInvoiceViewModel)
         {
-            AddEvent(new SendWeeklyInvoiceEvent<SendWeeklyInvoiceViewModel> { EventObject = weeklyInvoiceViewModel });
+            AddEvent(new SendWeeklyInvoiceEvent<SendWeeklyInvoiceViewModel> {EventObject = weeklyInvoiceViewModel});
 
             foreach (var evt in GetEvents().OfType<SendWeeklyInvoiceEvent<SendWeeklyInvoiceViewModel>>())
             {
@@ -1445,7 +1409,7 @@ namespace CUWebinars.Business.Services
                 Body = body,
             };
 
-            AddEvent(new OrderSubmittedMultiEvent<OrderSubmittedMultiMessage> { EventObject = orderSubmittedMultiMessage });
+            AddEvent(new OrderSubmittedMultiEvent<OrderSubmittedMultiMessage> {EventObject = orderSubmittedMultiMessage});
 
             foreach (var evt in GetEvents().OfType<OrderSubmittedMultiEvent<OrderSubmittedMultiMessage>>())
             {
@@ -1465,7 +1429,9 @@ namespace CUWebinars.Business.Services
                 var originalOrder = GetOrderById(newOrder.idOrder);
                 var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
-                var additionalLocationsPricing = newOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.AdditionalLocationPrice;
+                var additionalLocationsPricing =
+                    newOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                        .Webinar.AdditionalLocationPrice;
                 //var additionalLocationsPricing = GetAdditionalLocationsPricing(
                 //    newOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar
                 //    );
@@ -1499,7 +1465,8 @@ namespace CUWebinars.Business.Services
                             newOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RowPrice);
                         try
                         {
-                            if (!string.IsNullOrEmpty(newOrder.InvoiceDetail) && newOrder.InvoiceDetail.Contains("OrderIsInvoiced"))
+                            if (!string.IsNullOrEmpty(newOrder.InvoiceDetail) &&
+                                newOrder.InvoiceDetail.Contains("OrderIsInvoiced"))
                             {
                                 _logger.Warn("Invoiced Order is updated: " + newOrder.idOrder);
 
@@ -1513,7 +1480,7 @@ namespace CUWebinars.Business.Services
                                         newOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                                     //
                                     Debug.Assert(row != null, "row != null");
-                                    row.Royalty = row.RowPrice * (decimal)orgInvoiceDetails.First()["PercentPaid"];
+                                    row.Royalty = row.RowPrice*(decimal) orgInvoiceDetails.First()["PercentPaid"];
 
                                     StringBuilder sb = new StringBuilder();
 
@@ -1522,15 +1489,16 @@ namespace CUWebinars.Business.Services
                                               ") on InvoiceID " + orgInvoiceDetails.First()["InvoiceId"] +
                                               " but changed to " +
                                               row.RegistrationType.OptionLabelShort + " (" +
-                                              row.RowPrice.ToString("C").Replace(".00", "") + ") on " + TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat) + ". ");
+                                              row.RowPrice.ToString("C").Replace(".00", "") + ") on " +
+                                              TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat) + ". ");
 
                                     decimal adustmentAmount;
                                     var adjustmentDirection = "Royalty is increased";
 
-                                    if ((decimal)orgInvoiceDetails.First()["AmountOfRoyalty"] < row.Royalty)
+                                    if ((decimal) orgInvoiceDetails.First()["AmountOfRoyalty"] < row.Royalty)
                                     {
                                         adustmentAmount = row.Royalty -
-                                                          (decimal)orgInvoiceDetails.First()["AmountOfRoyalty"];
+                                                          (decimal) orgInvoiceDetails.First()["AmountOfRoyalty"];
                                         sb.Append(adjustmentDirection + " by " +
                                                   adustmentAmount.ToString("C").Replace(".00", ""));
 
@@ -1539,7 +1507,7 @@ namespace CUWebinars.Business.Services
                                     {
                                         adjustmentDirection = "Royalty is decreased";
                                         adustmentAmount = row.Royalty -
-                                                          (decimal)orgInvoiceDetails.First()["AmountOfRoyalty"];
+                                                          (decimal) orgInvoiceDetails.First()["AmountOfRoyalty"];
                                         sb.Append(adjustmentDirection + " by " +
                                                   (-adustmentAmount).ToString("C").Replace(".00", ""));
                                     }
@@ -1548,16 +1516,23 @@ namespace CUWebinars.Business.Services
                                     var newJson4Invoice = new JProperty(
                                         "ChangedOrderNeedsNewInvoice",
                                         new JObject(
-                                            new JProperty("OriginalInvoice", orgInvoiceDetails.First()["InvoiceId"].ToString()),
-                                            new JProperty("OriginalDateOfInvoice", orgInvoiceDetails.First()["DateOfInvoice"].ToString()),
-                                            new JProperty("OriginalTotal", orgInvoiceDetails.First()["AmountOfOrder"].ToString()),
-                                            new JProperty("OriginalPercentPaid", orgInvoiceDetails.First()["PercentPaid"].ToString()),
-                                            new JProperty("OriginalRoyaltyPaid", orgInvoiceDetails.First()["AmountOfRoyalty"].ToString()),
-                                            new JProperty("OriginalAffiliate", orgInvoiceDetails.First()["Affiliate"].ToString()),
+                                            new JProperty("OriginalInvoice",
+                                                orgInvoiceDetails.First()["InvoiceId"].ToString()),
+                                            new JProperty("OriginalDateOfInvoice",
+                                                orgInvoiceDetails.First()["DateOfInvoice"].ToString()),
+                                            new JProperty("OriginalTotal",
+                                                orgInvoiceDetails.First()["AmountOfOrder"].ToString()),
+                                            new JProperty("OriginalPercentPaid",
+                                                orgInvoiceDetails.First()["PercentPaid"].ToString()),
+                                            new JProperty("OriginalRoyaltyPaid",
+                                                orgInvoiceDetails.First()["AmountOfRoyalty"].ToString()),
+                                            new JProperty("OriginalAffiliate",
+                                                orgInvoiceDetails.First()["Affiliate"].ToString()),
                                             new JProperty(adjustmentDirection, adustmentAmount),
-                                            new JProperty("DateOfChange", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
+                                            new JProperty("DateOfChange",
+                                                TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
                                             new JProperty("Message", sb.ToString())
-                                            ));
+                                        ));
 
 
                                     newOrder.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(
@@ -1595,8 +1570,8 @@ namespace CUWebinars.Business.Services
                                     var row =
                                         newOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                                     //
-                                    row.Royalty = row.RowPrice *
-                                                  (decimal)orgInvoiceDetails.First()["OriginalPercentPaid"];
+                                    row.Royalty = row.RowPrice*
+                                                  (decimal) orgInvoiceDetails.First()["OriginalPercentPaid"];
 
                                     StringBuilder sb = new StringBuilder();
 
@@ -1605,16 +1580,17 @@ namespace CUWebinars.Business.Services
                                               ") on InvoiceID " + orgInvoiceDetails.First()["InvoiceId"] +
                                               " but changed to " +
                                               row.RegistrationType.OptionLabelShort + " (" +
-                                              row.RowPrice.ToString("C").Replace(".00", "") + ") on " + TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat) + ". ");
+                                              row.RowPrice.ToString("C").Replace(".00", "") + ") on " +
+                                              TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat) + ". ");
 
 
                                     decimal adustmentAmount;
                                     var adjustmentDirection = "Royalty is increased";
 
-                                    if ((decimal)orgInvoiceDetails.First()["OriginalRoyaltyPaid"] < row.Royalty)
+                                    if ((decimal) orgInvoiceDetails.First()["OriginalRoyaltyPaid"] < row.Royalty)
                                     {
                                         adustmentAmount = row.Royalty -
-                                                          (decimal)orgInvoiceDetails.First()["OriginalRoyaltyPaid"];
+                                                          (decimal) orgInvoiceDetails.First()["OriginalRoyaltyPaid"];
                                         sb.Append(adjustmentDirection + " by " +
                                                   adustmentAmount.ToString("C").Replace(".00", ""));
 
@@ -1624,7 +1600,7 @@ namespace CUWebinars.Business.Services
 
                                         adjustmentDirection = "Royalty is decreased";
                                         adustmentAmount = row.Royalty -
-                                                          (decimal)orgInvoiceDetails.First()["OriginalRoyaltyPaid"];
+                                                          (decimal) orgInvoiceDetails.First()["OriginalRoyaltyPaid"];
                                         sb.Append(adjustmentDirection + " by " +
                                                   (adustmentAmount).ToString("C").Replace(".00", ""));
                                     }
@@ -1632,16 +1608,23 @@ namespace CUWebinars.Business.Services
                                     var newJson4Invoice = new JProperty(
                                         "ChangedOrderNeedsNewInvoice",
                                         new JObject(
-                                            new JProperty("OriginalInvoice", orgInvoiceDetails.First()["OriginalInvoice"].ToString()),
-                                            new JProperty("OriginalDateOfInvoice", orgInvoiceDetails.First()["OriginalDateOfInvoice"].ToString()),
-                                            new JProperty("OriginalTotal", orgInvoiceDetails.First()["OriginalTotal"].ToString()),
-                                            new JProperty("OriginalPercentPaid", orgInvoiceDetails.First()["OriginalPercentPaid"].ToString()),
-                                            new JProperty("OriginalRoyaltyPaid", orgInvoiceDetails.First()["OriginalRoyaltyPaid"].ToString()),
-                                            new JProperty("OriginalAffiliate", orgInvoiceDetails.First()["OriginalAffiliate"].ToString()),
+                                            new JProperty("OriginalInvoice",
+                                                orgInvoiceDetails.First()["OriginalInvoice"].ToString()),
+                                            new JProperty("OriginalDateOfInvoice",
+                                                orgInvoiceDetails.First()["OriginalDateOfInvoice"].ToString()),
+                                            new JProperty("OriginalTotal",
+                                                orgInvoiceDetails.First()["OriginalTotal"].ToString()),
+                                            new JProperty("OriginalPercentPaid",
+                                                orgInvoiceDetails.First()["OriginalPercentPaid"].ToString()),
+                                            new JProperty("OriginalRoyaltyPaid",
+                                                orgInvoiceDetails.First()["OriginalRoyaltyPaid"].ToString()),
+                                            new JProperty("OriginalAffiliate",
+                                                orgInvoiceDetails.First()["OriginalAffiliate"].ToString()),
                                             new JProperty(adjustmentDirection, adustmentAmount),
-                                            new JProperty("DateOfChange", TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
+                                            new JProperty("DateOfChange",
+                                                TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
                                             new JProperty("Message", sb.ToString())
-                                            ));
+                                        ));
 
 
                                     newOrder.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(
@@ -1656,24 +1639,37 @@ namespace CUWebinars.Business.Services
                     }
                 }
 
-                _orderRepository.SaveOrderChanges(newOrder, (int)newOrder.OrderStatus);
+                _orderRepository.SaveOrderChanges(newOrder, (int) newOrder.OrderStatus);
 
                 Clear();
                 return "success";
             }
             catch (Exception exception)
             {
-                _logger.ErrorException(string.Format("SaveOrderChanges method: {0} - {1}", newOrder.idOrder, exception.Message), exception);
+                _logger.ErrorException(
+                    string.Format("SaveOrderChanges method: {0} - {1}", newOrder.idOrder, exception.Message), exception);
             }
             return "failed";
         }
 
         public void UpdateOrderWithUserEmail(int orderId, string email)
         {
-            var order = _orderRepository.FindById(orderId);
-            order.BillingEmail = email;
+            try
+            {
+                var order = _orderRepository.FindById(orderId);
+                order.BillingEmail = email;
+                // ADDED 1/17 to provide complete user details to order
 
-            var updatedOrder = _orderRepository.SaveOrderChanges(order, null);
+                var user = _webUserRepository.GetWebUserByEmail(email);
+                _orderRepository.AssignWebUserToOrder(user, order);
+                var updatedOrder = _orderRepository.SaveOrderChanges(order, null);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("UpdateOrderWithUserEmail: ", ex );
+                throw;
+            }
         }
 
         public void UpdateOrderWithUserId(int orderId, int userId)

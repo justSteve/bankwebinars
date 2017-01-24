@@ -135,7 +135,8 @@ namespace CUWebinars.Business.Repository
                     .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
                     .Include(w => w.Presenter.WebUser)
                     .Where(w => w.Title.Contains(searchTerm)
-                        && (w.Status != WebinarStatus.Archived || w.Status != WebinarStatus.Pending || w.Status != WebinarStatus.Deleted))
+                        && (w.Status != WebinarStatus.Archived && w.Status != WebinarStatus.Pending &&
+                                 w.Status != WebinarStatus.Deleted))
                     ;
                 return titleSearch.ToList();
             }
@@ -153,7 +154,7 @@ namespace CUWebinars.Business.Repository
                     .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
                     .Include(w => w.Presenter.WebUser)
                     .Where(w => w.Presenter.WebUser.FirstName == firstName && w.Presenter.WebUser.LastName == lastName
-                                && (w.Status != WebinarStatus.Archived || w.Status != WebinarStatus.Pending ||
+                                && (w.Status != WebinarStatus.Archived && w.Status != WebinarStatus.Pending &&
                                  w.Status != WebinarStatus.Deleted));
 
             }
@@ -165,7 +166,7 @@ namespace CUWebinars.Business.Repository
                     .Include(w => w.Presenter.WebUser)
                     .Where(w => w.Presenter.WebUser.LastName == searchTerm
                                 &&
-                                (w.Status != WebinarStatus.Archived || w.Status != WebinarStatus.Pending ||
+                                (w.Status != WebinarStatus.Archived && w.Status != WebinarStatus.Pending &&
                                  w.Status != WebinarStatus.Deleted));
             }
             if (check4Speaker.Any())
@@ -200,8 +201,8 @@ namespace CUWebinars.Business.Repository
                     || w.LearnBody.ToLower().Contains(searchTerm)
                     )
                     .Where(w => w.Status != WebinarStatus.Archived
-                    || w.Status != WebinarStatus.Deleted
-                    || w.Status != WebinarStatus.Pending);
+                    && w.Status != WebinarStatus.Deleted
+                    && w.Status != WebinarStatus.Pending);
 
             var result = searchTopics.Union(searchDesc).ToList();
             return result;

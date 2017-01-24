@@ -952,10 +952,11 @@ namespace CUWebinars.Web.Controllers
             Order order = new Order { idOrder = 0 };
             _logger.Info("ICalBuilder for: " + icsOrder);
             if (icsOrder.HasValue && icsOrder > 0)
-
                 order = _orderManagementService.GetOrderById(icsOrder.Value);
 
-            var webinar = _webinarControllerOrchestrator.GetWebinar(icsWebinar.Value);
+            Webinar webinar = new Webinar { idWebinar = 0 };
+            if (icsWebinar.HasValue && icsWebinar > 0)
+                _webinarControllerOrchestrator.GetWebinar(icsWebinar.Value);
             var descBuilder = new StringBuilder();
 
 
@@ -1294,7 +1295,7 @@ namespace CUWebinars.Web.Controllers
                                 Email = webUser.email,
                                 FirstName = webUser.FirstName,
                                 idUser = webUser.idUser,
-                                
+
                                 LastName = webUser.LastName,
                                 Title = webUser.Title,
                                 Institution = orderRow.Order.Institution,
