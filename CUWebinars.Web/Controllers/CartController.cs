@@ -504,6 +504,7 @@ namespace CUWebinars.Web.Controllers
 
             string[] orderList = null;
             var ProdDesc = "";
+            var ProdDescText = "";
             if (multi != null)
             {
                 orderList = multi.TrimEnd(',').Split(',');
@@ -540,6 +541,14 @@ namespace CUWebinars.Web.Controllers
                     ProdDesc += "    <td align='left'>" + regType + "</td>";
                     ProdDesc += "    <td align='left'>" + _totalAmt + "</td>";
                     ProdDesc += "</tr>";
+                    if (ProdDescText.Length > 150)
+                    {
+                        ProdDescText += wTitle.Substring(0, Math.Min(wTitle.Length, 20)) + " (" + _globalConfig.TenantPrefix + _order.idOrder + Environment.NewLine;
+                    }
+                    else
+                    {
+                        ProdDescText += wTitle.Substring(0, Math.Min(wTitle.Length, 40)) + " (" + _globalConfig.TenantPrefix + _order.idOrder + Environment.NewLine;
+                    }
                 }
             }
             else
@@ -557,6 +566,7 @@ namespace CUWebinars.Web.Controllers
                 ProdDesc += "    <td align='left'>" + regType + "</td>";
                 ProdDesc += "    <td align='left'>" + totalAmt + "</td>";
                 ProdDesc += "</tr>";
+                ProdDescText += wTitle.Substring(0, Math.Min(wTitle.Length, 40)) + " (" + _globalConfig.TenantPrefix + order.idOrder + Environment.NewLine;
             }
 
             //format parameters for request 
@@ -583,6 +593,7 @@ namespace CUWebinars.Web.Controllers
             parameter_list = parameter_list + parameters;
             ASCIIEncoding encoding = new ASCIIEncoding();
             byte[] bytes = encoding.GetBytes(parameter_list);
+            _logger.Info("PayTrace validation request: " + parameter_list);
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://paytrace.com/api/validate.pay");
             request.Method = "POST";
@@ -610,13 +621,13 @@ namespace CUWebinars.Web.Controllers
             if (!strResponse.Contains("ERROR"))
             {
                 string[] _parameters = strResponse.Split('|');
-
                 authKey = _parameters[1].Split('~')[1];
             }
             else
             {
                 responseString = strResponse;
                 authKey = "failed";
+                _logger.Fatal("PayTrace tx failed validation! " + order.idOrder);
             }
 
             string paramList = string.Format("DISPLAYTRUSTLOGO~Y|DISABLETERMS~Y|ENABLEREDIRECT~N|RETURNPARIS~Y|authKey~{0}|disablelogin~y|disableoptional~y|showbname~y|hideinvoice~n|hidepassword~y|orderid~{1}|bname~{2}", authKey, idOrder, order.FirstName + ' ' + order.LastName);
@@ -628,10 +639,11 @@ namespace CUWebinars.Web.Controllers
             paramList += "|bzip~" + order.BillingZip;
             paramList += "|bcountry~US";
             paramList += "|email~" + order.BillingEmail;
-            //Paytrace does not permit 'extentions' and will not permit the tx to continue
+            //Paytrace does not permit phone 'extensions' and will not permit the tx to continue
             // and also will not let user correct the 'problem'. let's try just not sending that field.
             //paramList += "|phone~" + order.BillingPhone;
             paramList += "|CUSTOMDBA~" + _globalConfig.TenantDomain;
+            paramList += "|DESCRIPTION~" + ProdDescText;
             paramList += "|IMAGEURL~" + _globalConfig.TenantLogo;
             paramList += "|CANCELURL~" + _globalConfig.TenantURL + "/cart/PayTraceCanceled";
 

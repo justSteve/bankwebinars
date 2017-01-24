@@ -1,6 +1,7 @@
 ﻿//  This script correlates with the Details View.
 
-var userHasDiscount, additionalLocationsList, checkoutConfirm, discount, cartStateManager, okToLeave, shippingAddressRequired, signUpForm, signUpFormContainer, storedHeight, numberOfAdditionalLocationsTab3;
+
+var desCheckout, userHasDiscount, additionalLocationsList, checkoutConfirm, discount, cartStateManager, okToLeave, shippingAddressRequired, signUpForm, signUpFormContainer, storedHeight, numberOfAdditionalLocationsTab3;
 
 discount = '';
 checkoutConfirm = {};
@@ -54,6 +55,10 @@ $(function () {
 
 
         cartStateManager.getConfirmOrderForm().on('submit', function (e) {
+
+            if (desCheckout)
+                $('#ConfirmRegistrationBillMe').hide();
+            
             e.preventDefault();
             var self = $(this);
             self.find('input[name="id"]').val(cartStateManager.getOrderRowId());

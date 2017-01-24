@@ -945,67 +945,24 @@ namespace CUWebinars.Web.Controllers
             return RedirectToAction("allActive", new { eventsToShow = "upcoming" });
         }
 
-        [System.Web.Mvc.HttpPost]
-        public ActionResult AddToICalendariCal(int icsWebinar, int icsOrder)
-        {
-
-            var webinar = _webinarControllerOrchestrator.GetWebinar(icsWebinar);
-
-            var desc = webinar.Description;
-            desc = HtmlHelpers.StripHtmlTags(desc);
-
-
-            var icalStringbuilder = new StringBuilder();
-
-            icalStringbuilder.AppendLine("BEGIN:VCALENDAR");
-            icalStringbuilder.AppendLine("PRODID:-//Scheduled Event//EN");
-            icalStringbuilder.AppendLine("VERSION:2.0");
-
-            icalStringbuilder.AppendLine("BEGIN:VEVENT");
-            icalStringbuilder.AppendLine("SUMMARY;LANGUAGE=en-us:" + webinar.Title);
-            icalStringbuilder.AppendLine("CLASS:PUBLIC");
-            icalStringbuilder.AppendLine(string.Format("CREATED:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow));
-            icalStringbuilder.AppendLine("DESCRIPTION:" + desc);
-            icalStringbuilder.AppendLine("X-ALT-DESC;FMTTYPE=text/html:" + webinar.Description);
-            icalStringbuilder.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmss}", webinar.Date));
-            icalStringbuilder.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmss}",
-                webinar.Date.AddHours((double)webinar.Duration)));
-            icalStringbuilder.AppendLine("SEQUENCE:0");
-            icalStringbuilder.AppendLine("UID:" + Guid.NewGuid());
-            icalStringbuilder.AppendLine("END:VEVENT");
-            icalStringbuilder.AppendLine("END:VCALENDAR");
-
-            var bytes = Encoding.UTF8.GetBytes(icalStringbuilder.ToString());
-
-            return this.File(bytes, "text/calendar", "thisEvent.ics");
-
-        }
-
-        //[System.Web.Mvc.HttpGet]
-        //public ActionResult CalPicker(int icsOrder)
-        //{
-
-        //    var model = new CalPickerViewModel();
-
-        //    return View(model);
-        //}
 
         [System.Web.Mvc.HttpGet]
         public ActionResult ICalOrder(int? icsOrder, int? icsWebinar)
         {
-            var order = new Order();
+            Order order = new Order { idOrder = 0 };
             _logger.Info("ICalBuilder for: " + icsOrder);
-            if (icsOrder.HasValue)
+            if (icsOrder.HasValue && icsOrder > 0)
 
                 order = _orderManagementService.GetOrderById(icsOrder.Value);
 
-            var webinar = _webinarControllerOrchestrator.GetWebinar(
-                order.OrderRows.First(r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar);
+            var webinar = _webinarControllerOrchestrator.GetWebinar(icsWebinar.Value);
             var descBuilder = new StringBuilder();
 
 
-            if (order != null)
+            if (order.idOrder > 0)
             {
+                webinar = _webinarControllerOrchestrator.GetWebinar(
+                    order.OrderRows.First(r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar);
 
 
                 if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
@@ -1068,26 +1025,6 @@ namespace CUWebinars.Web.Controllers
         private string MakeTitleSafe(string webinarTitle)
         {
             return webinarTitle;
-        }
-
-        public ActionResult AddToICalendarGmail(int glWebinar, int glOrder)
-        {
-            var webinar = _webinarControllerOrchestrator.GetWebinar(glWebinar);
-
-            var icalStringbuilder = new StringBuilder();
-
-            icalStringbuilder.Append("http://www.google.com/calendar/event?action=TEMPLATE");
-            icalStringbuilder.Append("&text=" + webinar.Title);
-            icalStringbuilder.Append("&dates=" + HttpUtility.HtmlDecode(webinar.Date.ToString("O")) + "/" +
-                                     HttpUtility.HtmlDecode(webinar.Date.AddHours(1).ToString("O")));
-            icalStringbuilder.Append("&location=Online");
-            icalStringbuilder.Append("&details=" + HttpUtility.HtmlDecode(webinar.Description));
-            //icalStringbuilder.Append("&trp=
-            //icalStringbuilder.Append("&sprop=
-            icalStringbuilder.Append("&sprop=name:" + _globalConfig.Tenant);
-
-            return Redirect(icalStringbuilder.ToString());
-
         }
 
         public ActionResult DetailsDes(int? id, int? idOrder)
@@ -1343,17 +1280,21 @@ namespace CUWebinars.Web.Controllers
                     }
                     try
                     {
-
+                        bool desCheckout = false;
+                        if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.SeriesInfo == "DES")
+                            desCheckout = true;
                         order.Affiliate = aff;
                         order.idAffiliate = aff.idUserAff;
                         model.CheckoutConfirmViewModel = new CheckoutConfirmViewModel
                         {
+                            DESCheckout = desCheckout,
                             AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
                             AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
                             {
                                 Email = webUser.email,
                                 FirstName = webUser.FirstName,
                                 idUser = webUser.idUser,
+                                
                                 LastName = webUser.LastName,
                                 Title = webUser.Title,
                                 Institution = orderRow.Order.Institution,

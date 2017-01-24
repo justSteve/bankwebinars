@@ -269,9 +269,7 @@ function GetAffiliateCopy(affiliateId, isActive) {
 
     var currCopy = "";
 
-    console.log(isActive);
-    console.log($.trim($("#editorTA").wijeditor("getText")));
-
+    
     // is this affiliate currently showing?  if so, grab Editor value rather than hidden text area
     // Addendum: this test is returning false at the point where true is expected. 
     if (isActive) {
@@ -351,7 +349,8 @@ function SetEditorTabForAffiliate(affiliateId, affiliateCopy) {
         }
     }
 
-    $("#editor_" + affiliateId).val(localCopy); // do this right away even though it's not really needed, makes it easier to think about when debugging
+    $("#editor_" + affiliateId).val(localCopy);
+    // do this right away even though it's not really needed, makes it easier to think about when debugging
 
     if (localCopy == "")
         localCopy = "<!--WIJ-NULL-->"; // WIJEDITOR seems to choke on erasing / going to blank ("") and leaves the prior text, use a special comment that we have to program around to overcome that
@@ -391,7 +390,6 @@ function GetMasterMarkupAJAX($btn) {
         $('#submitSpinWrapper').remove();
         $btn.blur();
         if (currentUserIsAffiliate) {
-
             setDataForAffiliate(currentUserId);
         }
     });
@@ -451,12 +449,15 @@ function SendAll($btn) {
             data: { "affiliateId": affiliateId, "messageBodyHtml": currCopy, "webinarId": $("#Webinar_idWebinar").val(), "sendDate": $("#SendDate").val() },
             dataType: "json",
             success: function (result) {
+
+                //add feedback to promo sender
+                //$('#PromoSentToAffiliate').text($('#PromoSentToAffiliate').text() + "\n" + result.)
                 //$('#send' + affID).text("Success");
                 console.log(result);
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 // $('#send' + affID).text(textStatus + " " + errorThrown);
-                alert("error");
+                alert("error " + textStatus + " " + errorThrown);
             }
         });
         // remove spinner
@@ -472,49 +473,60 @@ function CreateCampaign($btn, affiliateId) {
     var _sendTime = 10;
     var sendTime = prompt("Time To Send: ", _sendTime);
     // save time...
-    var tStart = (new Date()).getTime();
+    if (sendTime) {
+        var tStart = (new Date()).getTime();
 
-    // setup UI for user feedback
-    var origBtnText = $btn.text();
-    $btn.text("Processing...");
-    $btn.append('<span id="submitSpinWrapper">&nbsp;<span class=""><i id="spinner" class="icon-spinner icon-spin"></i></span></span>');
+        // setup UI for user feedback
+        var origBtnText = $btn.text();
+        $btn.text("Processing...");
+        $btn
+            .append('<span id="submitSpinWrapper">&nbsp;<span class=""><i id="spinner" class="icon-spinner icon-spin"></i></span></span>');
 
-    var errorAffs = [];
-    //var callsNeeded = $(".tab-pane").length - 1; // don't count Master tab, we're skipping that one
-    var callsComplete = 0;
-    var messages = [];
+        var errorAffs = [];
+        //var callsNeeded = $(".tab-pane").length - 1; // don't count Master tab, we're skipping that one
+        var callsComplete = 0;
+        var messages = [];
 
-    var $tab = $(this);
+        var $tab = $(this);
 
-    if (affiliateId == 0) // skip the Master tab, although, conceivably, we could store that in a special file and use it for something...
-        return;
+        if (affiliateId == 0)
+// skip the Master tab, although, conceivably, we could store that in a special file and use it for something...
+            return;
 
-    // get affiliate specific copy
-    var isActive = $tab.hasClass("active"); // should ALWAYS be false in this method, as the Save All button is only on the master tab
-    var currCopy = GetAffiliateCopy(affiliateId, isActive);
+        // get affiliate specific copy
+        var isActive = $tab
+            .hasClass("active");
+// should ALWAYS be false in this method, as the Save All button is only on the master tab
+        var currCopy = GetAffiliateCopy(affiliateId, isActive);
 
-    $.ajax({
-        url: '/Admin/CreateCampaignSingle',
-        type: 'POST',
-        data: { "affiliateId": affiliateId, "messageBodyHtml": currCopy, "webinarId": $("#Webinar_idWebinar").val(), "sendDate": $("#SendDate").val(), "sendTime": sendTime },
-        dataType: "json",
-        async: false,
-        //contentType: "json",
-        success: function (result) {
-            //$('#send' + affID).text("Success");
-            console.log(result);
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-            // $('#send' + affID).text(textStatus + " " + errorThrown);
-            alert("error");
-        }
-    });
-    // remove spinner
-    $('#submitSpinWrapper').remove();
-    $btn.text("Send!");
+        $.ajax({
+            url: '/Admin/CreateCampaignSingle',
+            type: 'POST',
+            data: {
+                "affiliateId": affiliateId,
+                "messageBodyHtml": currCopy,
+                "webinarId": $("#Webinar_idWebinar").val(),
+                "sendDate": $("#SendDate").val(),
+                "sendTime": sendTime
+            },
+            dataType: "json",
+            async: false,
+            //contentType: "json",
+            success: function(result) {
+                //$('#send' + affID).text("Success");
+                console.log(result);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                // $('#send' + affID).text(textStatus + " " + errorThrown);
+                alert("error");
+            }
+        });
+        // remove spinner
+        $('#submitSpinWrapper').remove();
+        $btn.text("Send!");
 
-    setTimeout(function () { $btn.text(origBtnText); }, 2000);
-
+        setTimeout(function() { $btn.text(origBtnText); }, 2000);
+    }
 }
 
 

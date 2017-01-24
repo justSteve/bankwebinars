@@ -4,6 +4,10 @@
 @model WebinarDetailsViewModel
 
 @{
+    <script type="text/javascript">
+        var desCheckout = true;
+    </script>
+
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     ViewBag.Title = Model.Webinar.Title + " - Presented by: " + Model.Webinar.Presenter.WebUser.FullName;
     IStateService stateService = new StateService();
@@ -18,6 +22,7 @@
                 alert("Please send mail to support at @globalConfig.TenantEmail  and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder. For immediate assistance, use our Help & Feedback button in your lower right screen.");
 
             };
+
             function upgrade(idRegType) {
                 alert("Please send mail to support at @globalConfig.TenantEmail  and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder. For immediate assistance, use our Help & Feedback button in your lower right screen.");
             };
@@ -113,7 +118,7 @@
                 <p>You may contact us by using the Online Chat button below. </p>
             </div>
 
-            @*@Html.Partial(partialViewName: "~/Views/Webinar/Partials/_ShoppingCart.cshtml", model: Model)*@
+            @Html.Partial(partialViewName: "~/Views/Webinar/Partials/_ShoppingCart.cshtml", model: Model)
 
         </div>
         <!-- opens Container div-->
@@ -167,13 +172,6 @@
                 @{Html.RenderPartial("Partials/_AddToMailingBox");}
             </aside>
             <!--close aside .widget -->
-            @*<aside class="widget">
-                    <h5 class="short_headline"><span>Search</span></h5>
-                    <form class="searchform" method="get">
-                        <input type="search" class="span12" value="type and hit enter" onfocus="this.value=''" onblur="this.value='type and hit enter'" />
-                    </form>
-                </aside>*@
-            <!--close aside widget-->
         </div>
         <!--close section tertiary-column sidebar span3-->
     </div>

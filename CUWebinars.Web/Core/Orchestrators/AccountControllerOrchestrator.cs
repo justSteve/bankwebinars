@@ -307,6 +307,10 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public void UpdateUserDetails(ManageModel model)
         {
+            if (model.RegisterFields.Email == null)
+            {
+                _logger.Fatal("UpdateUserDetails HAS NO EMAIL: " + model.RegisterFields.idWebUser);
+            }
             var updateFields = model.RegisterFields;
             WebUser existingUser = GetWebUserByEmail(model.RegisterFields.Email);
             var billingAddressFields = updateFields.BillingAddress;

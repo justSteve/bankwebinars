@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity.Validation;
 using System.Diagnostics;
@@ -7,6 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -792,6 +794,30 @@ namespace CUWebinars.Web.Controllers
 
 
         [System.Web.Mvc.HttpGet]
+        public ActionResult EditPresenter(int? id, string returnUrl = null)
+        {
+            if (id.HasValue && id > 0) // if not, assume it is logged in user
+            {
+                var user = _accountControllerOrchestrator.GetWebUserById(id.Value);
+
+                WebUser editingUser = null;
+
+                if (User.Identity.IsAuthenticated)
+                {
+                    editingUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
+                }
+
+                _logger.Info(string.Format("{0} is editing {1}", editingUser.email, user.email));
+
+                var editModel = BuildEditPresenterInfoModel(user, returnUrl);
+
+                return View(editModel);
+            }
+            return null;
+        }
+
+
+        [System.Web.Mvc.HttpGet]
         public ActionResult EditUser(int? id, string returnUrl = null)
         {
             if (id.HasValue && id > 0) // if not, assume it is logged in user
@@ -905,6 +931,31 @@ namespace CUWebinars.Web.Controllers
                     Email = user.email,
                     Title = user.Title,
                     SageAccountId = user.SageAccountId,
+                    AccountDetailsTitle = WebUiConstants.ManageUser
+                },
+                LoggedInUser = (ClaimsIdentity)User.Identity,
+                ReturnUrl = returnUrl,
+                StatusMessage = string.Empty
+            };
+            return editModel;
+        }
+
+        private EditPresenterInfoModel BuildEditPresenterInfoModel(WebUser user, string returnUrl)
+        {
+            if (user == null)
+            {
+                throw new NullReferenceException();
+            }
+            Presenter presenter = _membershipService.GetPresenter(user.idUser);
+            var editModel = new EditPresenterInfoModel
+            {
+                EditFields = new EditPresenterModel
+                {
+                    PhotoThumb = presenter.PhotoThumb,
+                    PhotoFull = presenter.PhotoFull,
+                    BioLong = presenter.BiographyLong,
+                    BioShort = presenter.Biography,
+                    WebUser = _orderManagementService.GetWebUser(user.idUser),
                     AccountDetailsTitle = WebUiConstants.ManageUser
                 },
                 LoggedInUser = (ClaimsIdentity)User.Identity,
@@ -1130,6 +1181,78 @@ namespace CUWebinars.Web.Controllers
         [ValidateAntiForgeryToken(Order = 0)]
         [ValidateInput(false)]
         [HandleAjaxException(Order = 1)]
+        public ActionResult UpdatePresenter(EditPresenterInfoModel model)
+        {
+            if (ModelState.IsValid)
+            {
+
+                try
+                {
+                    var presenter = new Presenter
+                    {
+                        idUser = model.EditFields.WebUser.idUser,
+                        BiographyLong = model.EditFields.BioLong,
+                        Biography = model.EditFields.BioShort,
+                        PhotoFull = model.EditFields.PhotoFull,
+                        PhotoThumb = model.EditFields.PhotoThumb
+                    };
+
+                    var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+                    var UpdatePresenterBySproc = dataOperations.UpdatePresenter(presenter);
+
+                    var results = Json(new { Result = WebUiConstants.Success });
+                    if (UpdatePresenterBySproc == 0)
+                        results = Json(new { Result = WebUiConstants.Fail });
+                    var user = _membershipService.GetWebUserById(model.EditFields.WebUser.idUser);
+
+                    try
+                    {
+                        if (user.email != model.WebUser.email || user.FirstName != model.WebUser.FirstName ||
+                            user.Initial != model.WebUser.Initial || user.LastName != model.WebUser.LastName ||
+                            user.Institution.InstitutionName != model.WebUser.Institution.InstitutionName)
+                            _membershipService.UpdateUserDetails(_globalConfig.Tenant,
+                                model.EditFields.WebUser.FirstName, model.EditFields.WebUser.LastName, user.email,
+                                model.EditFields.WebUser.Institution.InstitutionName,
+                                user.Addresses.SingleOrDefault(a => a.AddressType == "Billing"),
+                                user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping"), model.WebUser.Title,
+                                user.SageAccountId);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.ErrorException("In EditPresenter DETAILS: ", ex);
+
+                        results = Json(new { Result = WebUiConstants.Fail });
+                    }
+
+                    try
+                    {
+                        if (user.email != model.EditFields.WebUser.email)
+                            _membershipService.UpdateUserEmail(user.email, model.WebUser.email, _globalConfig.Tenant);
+
+                        results = Json(new { Result = WebUiConstants.Fail });
+                    }
+                    catch (Exception ex)
+                    {
+
+                        _logger.ErrorException("In EditPresenter EMAIL: ", ex);
+                    }
+
+                    return results;
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException("In EditPresenter Action: ", exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
+                    throw;
+                }
+            }
+            return this.ModelStateJson(ModelState);
+        }
+
+        [System.Web.Mvc.HttpPost, System.Web.Mvc.AllowAnonymous]
+        [ValidateAntiForgeryToken(Order = 0)]
+        [ValidateInput(false)]
+        [HandleAjaxException(Order = 1)]
         public ActionResult EditEmail(string oldEmail, string newEmail)
         {
             var user = _accountControllerOrchestrator.GetWebUserByEmail(newEmail);
@@ -1145,17 +1268,9 @@ namespace CUWebinars.Web.Controllers
                 {
                     _accountControllerOrchestrator.EditEmail(oldEmail, newEmail, _globalConfig.Tenant);
 
-
-                    //var dataOperations = new DataOperations(TtsConfig.LegacyConnectionString);
-
-                    //var EditEmailAddressOnLegacy = dataOperations.EditEmailAddressOnLegacy(oldEmail, newEmail);
-
-
-
                     return Json(new
                     {
-                        Result = WebUiConstants.Success
-                        ,
+                        Result = WebUiConstants.Success,
                         Msg = "UpdatedEmailTo: " + newEmail + " from: " + oldEmail
                     });
 
@@ -1184,7 +1299,6 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
-
                     var model = new EditUserViewModel
                     {
                         //EditFields = _model.EditFields
@@ -1267,6 +1381,41 @@ namespace CUWebinars.Web.Controllers
             return this.ModelStateJson(ModelState);
         }
 
+
+        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
+        public ActionResult Uploader(HttpPostedFileBase file, string target)
+        {
+            string formFields = Request.Form.ToString().Replace("parmList=", "");
+            formFields = HttpUtility.UrlDecode(formFields);
+            _logger.Info("UploadPhotoPostBack: " + formFields);
+            try
+            {
+                HttpFileCollectionBase uploadFiles = Request.Files;
+
+            // Build HTML listing the files received.
+            string summary = "<p>Files Uploaded:</p><ol>";
+
+            // Loop over the uploaded files and save to disk.
+            // Access the uploaded file's content in-memory:
+            System.IO.Stream inStream = file.InputStream;
+            byte[] fileData = new byte[file.ContentLength];
+            inStream.Read(fileData, 0, file.ContentLength);
+
+            // Save the posted file in our "data" virtual directory.
+            file.SaveAs(Server.MapPath("") + "\\App_Data\\" + file.FileName);
+
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+            return null;
+
+        }
 
         [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]

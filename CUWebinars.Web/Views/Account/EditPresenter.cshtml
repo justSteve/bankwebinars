@@ -1,0 +1,44 @@
+﻿
+@model  CUWebinars.Web.Models.EditPresenterInfoModel
+@{
+    ViewBag.Title = "Edit Presenter Info";
+    var fullNameClaim = Model.LoggedInUser.Claims.FirstOrDefault(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName);
+    Layout = "/Views/Shared/_LayoutAdmin.cshtml";
+
+    if (!ReferenceEquals(null, fullNameClaim))
+    {
+        ViewBag.LoggedInUserIdentity = fullNameClaim;
+    }
+}
+
+
+<div id="EditUserContainer" class="container">
+
+
+    <p class="message-success">@Model.StatusMessage</p>
+
+    @using (Html.BeginForm("updatepresenter", "Account", FormMethod.Post, new { id = "editPresenterForm", @class = "form-horizontal" }))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.EditorFor(m => m.EditFields)
+
+        <div class="form-inline">
+            <div class="btn-group" style="width:160px">&nbsp;</div>
+            <div class="btn-group">
+                <input id="submitPresenterUpdates" type="submit" value="Update" class="btn btn-default" />
+            </div>
+        </div>
+    }
+    @*<script type="text/javascript" src="https://form.jotform.com/jsform/70203976754966"></script>*@
+</div>
+
+
+@section Scripts {
+    @Styles.Render("~/Content/themes/base/css")
+    @Styles.Render("~/bundles/wijmo-editor-styles")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/web-user-details-manage")
+    @Scripts.Render("~/bundles/wijmo-editor-scripts")
+}

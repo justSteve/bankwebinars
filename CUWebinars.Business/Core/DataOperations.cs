@@ -1243,5 +1243,60 @@ namespace CUWebinars.Business.Core
 
             }
         }
+
+        public int UpdatePresenter(Presenter newPresenter)
+        {
+
+            var result = 0;
+
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+                using (
+                    var updatePresenter = new SqlCommand("UpdatePresenter", sqlConnection))
+                {
+                    try
+                    {
+                        updatePresenter.Connection = sqlConnection;
+                        updatePresenter.CommandType = CommandType.StoredProcedure;
+
+                        var IDUserParam = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idUser", Value = newPresenter.idUser};
+                        var BioParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@Biography", Value = newPresenter.Biography };
+                        var BioLongParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@BiographyLong", Value = newPresenter.BiographyLong};
+                        var PhotoFullParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@PhotoFull", Value = newPresenter.PhotoFull };
+                        var PhotoThumbParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@PhotoThumb", Value = newPresenter.PhotoThumb};
+                        
+                        updatePresenter.Parameters.Add(IDUserParam);
+                        updatePresenter.Parameters.Add(BioParam);
+                        updatePresenter.Parameters.Add(BioLongParam);
+                        updatePresenter.Parameters.Add(PhotoFullParam);
+                        updatePresenter.Parameters.Add(PhotoThumbParam);
+                        
+                        result = (int)updatePresenter.ExecuteScalar();
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
+                            errorLogger.CommandText += "'UpdatePresenter' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'UpdatePresenter', 9 ,";
+                            errorLogger.CommandText += "'error at UpdatePresenter " +
+                                                       ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+                        }
+
+                        throw;
+                    }
+                }
+                return result;
+
+            }
+
+        }
     }
 }

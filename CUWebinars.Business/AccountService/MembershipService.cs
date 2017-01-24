@@ -626,14 +626,11 @@ namespace CUWebinars.Business.AccountService
             //_webUserRepository.Update(user);
         }
 
-        //public string CreateUserOnLegacy(WebUser user)
-        //{
-
-        //    var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
-
-        //    return dataOperations.CreateUserOnLegacy(user);
-
-        //}
+        public Presenter GetPresenter(int userIdUser)
+        {
+            return _webUserRepository.GetPresenterById(userIdUser);
+        }
+        
 
         public void AddAccountTypeNotVerifiedClaim(UserAccount userAccount, string accountType)
         {
@@ -761,9 +758,7 @@ namespace CUWebinars.Business.AccountService
 
                 if (billingAddressFromDb == null)
                 {
-
                     billingAddressFromDb = billingAddress;
-
                     webUser.Addresses.Add(billingAddressFromDb);
                 }
 

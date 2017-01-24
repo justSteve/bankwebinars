@@ -2,8 +2,15 @@
 @using CUWebinars.Business.Core.Helpers
 @model CheckoutConfirmViewModel
 
+<script language="javascript" type="text/javascript">
+    if (desCheckout)
+        $('#ConfirmRegistrationBillMe').hide();
+    $('#ContinueShoppingButton').hide();
+
+</script>
 
 @{
+
     if (Model.OrderExists)
     {
 
@@ -13,6 +20,11 @@
         {
             if (Model.OrderStatus == OrderStatus.InProcess || Model.OrderStatus == OrderStatus.AwaitingVerification)
             {
+                var HideConfirm = "no";
+                if (Model.DESCheckout)
+                {
+                    HideConfirm = "yes";
+                }
                 <b>Please review this order summary and and choose billing method.</b>
 
                 <div id="AdjustDiscount" class="row initialHide">

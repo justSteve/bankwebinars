@@ -7,6 +7,7 @@ namespace CUWebinars.Web.ViewModel
 {
     public class CheckoutConfirmViewModel
     {
+        public bool DESCheckout;
         public string AffiliateComments { get; set; }
         public string AdditionalLocationCaption { get; set; }
         [UIHint("AdjustUserDetails")]

@@ -1,0 +1,171 @@
+﻿@model  CUWebinars.Web.Models.EditPresenterModel
+
+
+
+
+<script type="text/javascript" language="javascript">
+    var currentUserIsAffiliate = false;
+    var valOfStatus = 0;
+    $(document)
+        .ready(function () {
+            $("#editorBioLong")
+                .wijeditor({
+                    // editorMode: "split" // can default to split view if they want
+                    textChanged: function (e, data) { // Set textChanged event handler function
+                        console.log(data);
+                    }
+                });
+
+            var sizeBox = document.getElementById('sizeBox'), // container for file size info
+                progress = document.getElementById('progress'); // the element we're using for a progress bar
+
+            var uploader = new ss.SimpleUpload({
+                button: 'uploadButton', // file upload button
+
+                dropzone: 'dragZone', // ID of element to be the drop zone
+                url: '/account/uploader?target=thumb', // server side handler
+                name: 'file', // upload parameter name
+                //progressUrl: 'uploadProgress.php', // enables cross-browser progress support (more info below)
+                responseType: 'json',
+                allowedExtensions: ['jpg', 'jpeg', 'png', 'gif'],
+                maxSize: 1024, // kilobytes
+                hoverClass: 'ui-state-hover',
+                focusClass: 'ui-state-focus',
+                disabledClass: 'ui-state-disabled',
+                onSubmit: function (filename, extension) {
+                    console.log(filename);
+                    this.setFileSizeBox(sizeBox); // designate this element as file size container
+                    this.setProgressBar(progress); // designate as progress bar
+                },
+                onComplete: function (filename, response) {
+                    if (!response) {
+                        alert(filename + 'upload failed');
+                        return false;
+                    }
+                    // do something with response...
+                }
+            });
+
+        });
+
+
+
+
+</script>
+<script src="~/Scripts/SimpleAjaxUploader.min.js"></script>
+<style>
+    .form-horizontal .control-group {
+        margin-bottom: 5px;
+    }
+
+        .form-horizontal .control-group input {
+            border-radius: 0px;
+            padding: 1px 6px;
+        }
+</style>
+
+@Html.HiddenFor(model => model.WebUser.idUser)
+<div class="row-fluid">
+    <div id="DisplayPresenterBody" class="span8 offset1 control-group">
+        <div id="PresenterBody">
+            <ul class="nav nav-tabs">
+
+                <li><a href="#Name" data-toggle="tab">Name</a></li>
+                <li><a href="#Summary" data-toggle="tab">Summary</a></li>
+                <li><a href="#Bio" data-toggle="tab">Bio</a></li>
+                <li><a href="#Web" data-toggle="tab">Photo</a></li>
+                <li><a href="#Thumb" data-toggle="tab">Thumbnail</a></li>
+            </ul>
+        </div>
+        <div class="tab-content">
+            <div class="tab-pane " id="Web">
+                <div id="showWebVersion">
+                    <img src="@Model.PhotoFull" /><br />
+                    @Html.TextBoxFor(model => model.PhotoFull)
+                </div>
+            </div>
+
+            <div class="tab-pane" id="Summary">
+                <div class="control-label">Bio - Email</div>
+                <div class="controls">
+                    @Html.EditorFor(model => model.BioShort)
+                    @Html.ValidationMessageFor(model => model.BioShort)
+                </div>
+            </div>
+            <div class="tab-pane active" id="Name">
+
+                @Html.LabelFor(model => model.WebUser.email, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.EditorFor(model => model.WebUser.email, new { @class = "control-label", disabled = "disabled" })
+                </div>
+                @Html.LabelFor(model => model.WebUser.FirstName, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.EditorFor(model => model.WebUser.FirstName)<br />
+                </div>
+                @Html.LabelFor(model => model.WebUser.Initial, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.EditorFor(model => model.WebUser.Initial)<br />
+                </div>
+                @Html.LabelFor(model => model.WebUser.LastName, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.EditorFor(model => model.WebUser.LastName)<br />
+                </div>
+                @Html.LabelFor(model => model.WebUser.Institution, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.EditorFor(model => model.WebUser.Institution.InstitutionName, new { @class = "control-label", disabled = "disabled" })
+                </div>
+
+            </div>
+            <div class="tab-pane" id="Bio">
+                <div class="control-label">Bio - Full</div>
+                <div class="controls">
+                    @Html.EditorFor(model => model.BioLong)
+                    @Html.ValidationMessageFor(model => model.BioLong)
+                </div>
+            </div>
+            <div class="tab-pane" id="Thumb">
+                <div id="showThumbVersion">
+                    <img src="@Model.PhotoThumb" /><br />@Html.TextBoxFor(model => model.PhotoThumb)
+                </div>
+                <input type="file" id="dragZone" style="border-color: gray; border-style: dashed; height: 200px; width: 200px" />drop
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="span4 control-group">
+
+    </div>
+    <div class="span4 control-group">
+
+    </div>
+</div>
+
+
+@*<div class="row-fluid">
+        <div class="span12">
+            <div class="controls">
+                <textarea id="editorBioLong" name="editorBioLong" style="width:98%; height:90%; margin:0; padding: 0;"></textarea>
+            </div>
+        </div>
+    </div>*@
+<div class="row-fluid">
+
+</div>
+
+
+<div id="userInfoWrapper">
+
+
+</div>
+
+
+
+<div id="passwordWrapper">
+    @*// not implemented*@
+</div>
+
+@*<div class="modal hide fade in" id="DisplayPresenterModal">*@
+

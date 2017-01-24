@@ -105,5 +105,6 @@ namespace CUWebinars.Business.AccountService
         void UpdateInstitutionDetails(Institution saveInst);
         void UpdateUserEmail(string oldEmail, string email, string tenant);
         //string CreateUserOnLegacy(WebUser user);
+        Presenter GetPresenter(int userIdUser);
     }
 }

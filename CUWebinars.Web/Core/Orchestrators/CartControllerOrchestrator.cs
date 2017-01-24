@@ -206,9 +206,13 @@ namespace CUWebinars.Web.Core.Orchestrators
                         Affiliate aff = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
                         order.Affiliate = aff;
 
+                        bool desCheckout = false;
+
+                        if (row.Webinar.SeriesInfo == "DES")
+                            desCheckout = true;
                         var checkoutConfirmViewModel = new CheckoutConfirmViewModel
                         {
-                            //Order = order,
+                            DESCheckout = desCheckout,
                             AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(row),
                             AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
                             {

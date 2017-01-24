@@ -5,9 +5,10 @@
 
 </script>
 @{
-    if (Model.Webinar.Status == WebinarStatus.Scheduled
+    if ((Model.Webinar.Status == WebinarStatus.Scheduled
         || Model.Webinar.Status == WebinarStatus.Active
-        || Model.Webinar.Status == WebinarStatus.InProgress)
+        || Model.Webinar.Status == WebinarStatus.InProgress
+        ) && Model.Webinar.SeriesInfo != "DES")
     {
         <div id="AdditionalLocationContainer">
             <h5>Additional Locations</h5>
@@ -57,6 +58,10 @@
             @Html.HiddenFor(m => m.Webinar.idWebinar)
         </div>
                 }
+    if (Model.Webinar.SeriesInfo == "DES")
+    {
+        <div><h4 style="font-style: normal;">Billing Details:</h4><p style="font-style: normal;">The term will commence on the START DATE of this agreement and continue for 6 or 12-months. This subscription will be renewable at the end of the current term for a successive 6 or 12-month term unless either party gives written notice of its intention not to renew 15 days before the expiration of the current term.We will notify you of any changes in the terms of the subscription at least 30 days prior to the notice period for renewal or termination.</p></div>
+    }
 }
 
 @Scripts.Render("~/bundles/AdditionalLocation")

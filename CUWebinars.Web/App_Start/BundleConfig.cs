@@ -204,12 +204,12 @@ namespace CUWebinars.Web.App_Start
             bundles.Add(new ScriptBundle("~/bundles/CrispApp").Include(
                         "~/Content/js/ddsmoothmenu-min.js",         //desktop edge detect menu --> 
                         "~/Content/js/jquery.dcjqaccordion.2.7.min.js",         //mobile multi-level accordion menu --> 
-                        "~/Content/js/jquery.easytabs.min.js",         //tabs/testimonials --> 
-                        "~/Content/js/slide-to-top-accordion-min.js",         //slide to top accordion toggle --> 
+                        //"~/Content/js/jquery.easytabs.min.js",         //tabs/testimonials --> 
+                        //"~/Content/js/slide-to-top-accordion-min.js",         //slide to top accordion toggle --> 
                         "~/Content/js/jquery.easing-1.3.min.js", //easing--> 
                         "~/Content/js/jquery.flexslider-min.js",  //https://github.com/woothemes/FlexSlider/issues?state=open//flexslider content slider twitter slider and initializations--> 
                         "~/Content/js/responsive-tables.js",  //responsive table--> 
-                        "~/Content/js/jquery.fitvid.js",         //responsive videos --> 
+                        //"~/Content/js/jquery.fitvid.js",         //responsive videos --> 
                         "~/Content/js/scripts.js",
                         "~/Scripts/zopimCore.js"
                         ));

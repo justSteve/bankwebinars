@@ -101,6 +101,13 @@ namespace CUWebinars.Business.Repository
             return aff;
         }
 
+        public Presenter GetPresenterById(int userIdUser)
+        {
+            var presenter = ((TTSWebinarsContext) db).Presenters
+                .Where(p => p.idUser == userIdUser).Include(u => u.WebUser).FirstOrDefault();
+            return presenter;
+        }
+
         public int? GetWebUserIdByEmail(string email)
         {
             return items.Where(w => w.email == email).Select(w => w.idUser).SingleOrDefault();
