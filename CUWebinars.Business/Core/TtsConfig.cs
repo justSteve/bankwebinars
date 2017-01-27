@@ -129,6 +129,7 @@ namespace CUWebinars.Business.Core
             var adhocNotificationHandlerLogger = new Log4NetLogger(typeof(AdhocNotificationHandler));
             var sendWeeklyInvoiceHandlerLogger = new Log4NetLogger(typeof(SendWeeklyInvoiceHandler));
             var sendOrderSubmittedMultiHandlerLogger = new Log4NetLogger(typeof(OrderSubmittedMultiHandler));
+            var sendOrderSubmitted2HandlerLogger = new Log4NetLogger(typeof(OrderSubmitted2Handler));
 
 
             config.AddEventHandler(new SendPerDayPromoHandler(genericFormatter, notificationDelivery,sendPerDayPromoHandlerLogger));
@@ -145,6 +146,7 @@ namespace CUWebinars.Business.Core
             config.AddEventHandler(new AdhocNotificationHandler(adhocNotificationDelivery, adhocNotificationHandlerLogger));
             config.AddEventHandler(new SendWeeklyInvoiceHandler(genericFormatter, weeklyInvoiceDelivery, sendWeeklyInvoiceHandlerLogger));
             config.AddEventHandler(new OrderSubmittedMultiHandler(orderSubmittedMultiNotificationDelivery, sendOrderSubmittedMultiHandlerLogger));
+            config.AddEventHandler(new OrderSubmitted2Handler(orderSubmittedMultiNotificationDelivery, sendOrderSubmitted2HandlerLogger));
 
             return config;
         }

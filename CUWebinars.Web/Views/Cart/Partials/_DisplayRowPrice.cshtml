@@ -25,7 +25,7 @@
             totalDiscountElement.AddCssClass("text-error");
         }
 
-        outerSpan.InnerHtml = string.Concat("Discounted: <span style=\"color: red;\">", totalDiscountElement.ToString(TagRenderMode.Normal), "</span>");
+        outerSpan.InnerHtml = string.Concat("Discounted: <span style=\"color: red;\">", totalDiscountElement.ToString(TagRenderMode.Normal), "<br></span>");
 
         return outerSpan.ToString(TagRenderMode.Normal);
     }
@@ -48,13 +48,14 @@
         }
         else
         {
-            outerSpan.InnerHtml = string.Concat(Model.NumberOfAdditionalLocations, " Additional Locations: ", additionalLocsPriceElement.ToString(TagRenderMode.Normal));
+            outerSpan.InnerHtml = string.Concat(Model.NumberOfAdditionalLocations, " Additional Locations: ", additionalLocsPriceElement.ToString(TagRenderMode.Normal), "</br>");
         }
 
 
 
         return outerSpan.ToString(TagRenderMode.Normal);
     }
+
 
 
     private string GetStatusLabel(OrderStatus orderStatus)
@@ -103,6 +104,7 @@
 }
 
 @{
+
     if (Model != null)
     {
         string discountCaption = "";
@@ -130,7 +132,7 @@
         }
         else
         {
-            rowAmount.Append(GetDiscountedTextSpan() + "<br />");
+            rowAmount.Append(GetDiscountedTextSpan());
             if (!rowAmount.ToString().Contains("Insufficient"))
             {
                 confirmButtonLabel = "Use My Credits!";
@@ -140,12 +142,12 @@
 
         if (Model.NumberOfAdditionalLocations == 0)
         {
-            rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> Need an Additional Location?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
+            rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> Need an Additional Location?</button> " + GetAdditionalLocationsTextSpan());
         }
         if (Model.NumberOfAdditionalLocations > 0)
         {
             //rowAmount.Append(GetAdditionalLocationsTextSpan() + "<br>");
-            rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> change?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
+            rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> change?</button> " + GetAdditionalLocationsTextSpan());
         }
 
         //rowAmount.Append("<span id='showSubTotal'>Subtotal: " + Model.PricesAndDiscounts.UnitPrice.ToString(CurrencyFormatToken) + "</span><br />");

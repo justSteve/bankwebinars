@@ -39,7 +39,8 @@ namespace CUWebinars.Business.Services
         void FireAdminEmailSendShippedOrderEvent(Order order, IEnumerable<string> recipients, bool resending = false);
         void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, bool resending = false, Uri url = null);
         void FireOrderSubmittedMultiEvent(string toEmail, string subject, string body);
-        //void FireOrderSynchEvent(Order order, bool userCreatedInCart = false, bool resending = false, Uri url = null);
+        void FireOrderSubmitted2Event(string toEmail, string subject, string body);
+
         void FireSendConnectionInfoNotificationEvent(IList<Order> orders, bool resending);
         void FireSendOrderShippedNotificationEvent(IList<Order> orders);
         void FireSendRecordingIsPostedEvent(IList<Order> orders);
@@ -158,5 +159,7 @@ namespace CUWebinars.Business.Services
         Order GetOrderByJoinCode(string joinCode);
         List<Registrant> GetCitrixRegistrantsByWebinar(int webinarId);
        IList<Order> GetOrdersByDomain(string searchTerm, int affiliateId, out int totalNumberOrders);
+
+        string SetOnDemandClaimById(int myRowIdOrder);
     }
 }

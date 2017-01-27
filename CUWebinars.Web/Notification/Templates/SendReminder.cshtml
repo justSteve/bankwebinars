@@ -266,7 +266,7 @@
                                                                                         </td>
                                                                                     </tr>
 
-                                                                                    if (row.Single().RegistrationType.ShowShippedNotifications == "Yes")
+                                                                                    if (row.Single().RegistrationType.ShowShippedNotifications.ToLower() == "yes")
                                                                                     {
                                                                                         if (webinar.RecordingUrl == "")
                                                                                         {

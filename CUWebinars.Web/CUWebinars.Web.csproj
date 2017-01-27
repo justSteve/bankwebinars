@@ -492,6 +492,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Notification\Templates\OrderSubmitted2ViewModel.cs" />
     <Compile Include="ViewModel\EditPresenterViewModel.cs" />
     <Compile Include="Core\CalendarRssFullDTOAssembler.cs" />
     <Compile Include="Helpers\GemBoxHelpers.cs" />
@@ -1840,6 +1841,7 @@
     <Content Include="Notification\Templates\OrderSubmittedMulti.cshtml" />
     <Content Include="Notification\Templates\PromoSignupFlyer.cshtml" />
     <Content Include="Notification\Templates\PromoSignupFlyer1.cshtml" />
+    <Content Include="Notification\Templates\OrderSubmitted2.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev - FTP.pubxml" />
@@ -2134,6 +2136,7 @@
     <Content Include="Views\Admin\Home\_PasswordResetFromVerKey.cshtml" />
     <Content Include="Views\Account\EditPresenter.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\EditPresenter.cshtml" />
+    <Content Include="Views\Home\testStaticPage.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

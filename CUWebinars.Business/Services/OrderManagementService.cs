@@ -796,6 +796,23 @@ namespace CUWebinars.Business.Services
                     if (creditsRemain >= row.RegistrationType.CreditCost)
                     {
                         discountTotal = row.RowPrice*row.Discount.PercentOff/100;
+                        if (row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
+                        {
+                            discountTotal = discountTotal - 50;
+                            
+
+                            var newJson = new JProperty(
+                                "ShippingSurcharge",
+                                new JObject(
+                                    new JProperty("OriginalDiscountTotal",
+                                        discountTotal + 50),
+                                    new JProperty("UpdatedDiscountTotal",
+                                        discountTotal)
+                                ));
+
+                            order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(order.AdminComments, newJson,
+                                "ShippingSurcharge");
+                        }
                         _logger.Info("COC create discount  " + row.Discount.idDiscount + " on " + row.idOrder +
                                      " found "
                                      + creditsRemain + " against " + row.RegistrationType.CreditCost);
@@ -1417,9 +1434,27 @@ namespace CUWebinars.Business.Services
             }
 
             Clear();
-
-            // int rowsUpdated = _orderRepository.SaveChanges(); // TODO: zzz ALS confirm we can remove, then remove
+            
         }
+        public void FireOrderSubmitted2Event(string toEmail, string subject, string body)
+        {
+            var orderSubmitted2Message = new OrderSubmitted2Message()
+            {
+                Recipients = toEmail.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries),
+                Subject = subject,
+                Body = body,
+            };
+
+            AddEvent(new OrderSubmitted2Event<OrderSubmitted2Message> { EventObject = orderSubmitted2Message });
+
+            foreach (var evt in GetEvents().OfType<OrderSubmitted2Event<OrderSubmitted2Message>>())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            Clear();
+        }
+
 
         public string UpdateOrderChanges(Order newOrder, ref PricesAndDiscounts pricesAndDiscounts)
         {
@@ -1661,8 +1696,9 @@ namespace CUWebinars.Business.Services
                 // ADDED 1/17 to provide complete user details to order
 
                 var user = _webUserRepository.GetWebUserByEmail(email);
-                _orderRepository.AssignWebUserToOrder(user, order);
-                var updatedOrder = _orderRepository.SaveOrderChanges(order, null);
+                if (!ReferenceEquals(user, null))
+                    _orderRepository.AssignWebUserToOrder(user, order);
+                _orderRepository.SaveOrderChanges(order, null);
 
             }
             catch (Exception ex)
@@ -2268,6 +2304,20 @@ namespace CUWebinars.Business.Services
                 _logger.Warn("Discount redemption attempted on: " + discount.idDiscount + " - " + row.idOrder);
                 discount.Notes = ("This Discount Code " + discount.DiscountCode + " is expired.<br> For more info contact us by using the <i>Help & Feedback</i> button below<br>.");
             }
+
+            //if (discount.DiscountType == DiscountType.Subscription && discount.DateValidFrom > row.Order.OrderDate)
+            //{
+            //    _logger.Warn("Discount error: webinar took place prior to activation " + discount.idDiscount + " - " + row.idOrder);
+            //    discount.Notes = ("This webinar took place prior to activation of " + discount.DiscountCode + ".<br> For more info contact us by using the <i>Help & Feedback</i> button below<br>.");
+            //}
+
+            if (discount.DiscountType == DiscountType.Subscription && discount.DateValidTo < row.Order.OrderDate)
+            {
+                _logger.Warn("Discount error: webinar takes place prior to activation " + discount.idDiscount + " - " + row.idOrder);
+                discount.Notes = ("This webinar is scheduled to take place after the expiration of this Subscription Package: " + discount.DiscountCode + ".<br> For more info contact us by using the <i>Help & Feedback</i> button below<br>.");
+            }
+
+
             var forNotes = new StringBuilder();
             var existingDiscount = discount;
             var regTypeLabel = GetRegTypeOfOrderRow(row.idRegType).OptionLabel;
@@ -2451,6 +2501,12 @@ namespace CUWebinars.Business.Services
             //    order.Institution = _
             //}
             return orders;
+        }
+
+        public string SetOnDemandClaimById(int myRowIdOrder)
+        {
+            //RedirectResult("Account", "Signin");
+            return null;
         }
 
 

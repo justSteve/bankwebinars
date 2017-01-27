@@ -2,6 +2,7 @@
 @model DisplayOptionsViewModel
 
 @{
+
     var defaultCheck = "checked";
 
     var explainsOptionsBuilder = new StringBuilder();
@@ -108,8 +109,8 @@
                     }
                 </dl>
                 <div style="text-align: right;" class="pull-right">
-                    <a href="#IsOrderForCoWorker" class="btn btn-mini " data-toggle="modal">ordering for a co-worker?</a><br />
-                    <a href="#AttendRegTypes" class="btn btn-mini " data-toggle="modal">attendance options explained</a>
+                    <a id="linkIsOrderForCoworker" href="#IsOrderForCoWorker" class="btn btn-mini " data-toggle="modal">ordering for a co-worker?</a><br />
+                    <a href="#AttendRegTypes" class="btn btn-mini " data-toggle="modal"><span id="AttendRegTypesCaption">attendance options explained</span></a>
                 </div>
             </div>
             <script type="text/javascript" language="javascript">

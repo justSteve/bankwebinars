@@ -205,6 +205,17 @@ namespace CUWebinars.Web.Controllers
 
                     if (User.Identity.IsAuthenticated)
                     {
+                        OrderSubmitted2ViewModel orderSubmitted2ViewModel = new OrderSubmitted2ViewModel()
+                        {
+                            Subject = "subject",
+                            OrderSummaryHtml = "sbOrdersSummary.ToString()",
+                            
+                            HeaderSummaryCaption = "sbHeaderSummary.ToString().TrimEnd(',')"
+                        };
+
+                        string htmlEmailBody = ViewHelpers.RenderViewToString(ControllerContext, "~/Notification/Templates/OrderSubmitted2.cshtml", orderSubmitted2ViewModel, true);
+
+                        //_cartControllerOrchestrator.FireOrderSubmitted2Notification(model.Order.BillingEmail, "subject", htmlEmailBody);
                         _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
                     }
                     else
@@ -410,7 +421,13 @@ namespace CUWebinars.Web.Controllers
                     {
                         ViewBag.DiscountCaption = _cartControllerOrchestrator.GetDiscountCaption(
                             row.Discount, row, null, 1);
+                        if (row.Discount.DiscountType == DiscountType.Subscription && row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
+                        {
+                            ViewBag.DiscountSurcharge = "A $50 surcharge is added for shipping & handling";
+                            order.Total = order.Total + (int)50.00;
+                        }
                     }
+                    
                     ViewBag.Order = order;
                 }
                 else
@@ -576,7 +593,7 @@ namespace CUWebinars.Web.Controllers
             //totalAmt = .21M;
             //if (order.idOrder % 2 != 0)
             //    totalAmt = 1.12m;
-            string parameters = "UN~shuener|PSWD~PttAWka2|TERMS~Y|TRANXTYPE~Sale|";
+            string parameters = "UN~shuener|PSWD~uHfTSbP4|TERMS~Y|TRANXTYPE~Sale|";
             //string parameters = "UN~demo123|PSWD~demo123|TERMS~Y|TRANXTYPE~Sale|";
             parameters += "ORDERID~" + idOrder + "|AMOUNT~" + totalAmt + "|";
 
@@ -817,7 +834,7 @@ namespace CUWebinars.Web.Controllers
         public ActionResult SignupAffiliate(CheckoutOptionsViewModel formModel)
         {
 
-            _logger.Info("AffiliateSignup: " + JsonConvert.SerializeObject(formModel, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+            _logger.Info("SignupAffiliate: " + JsonConvert.SerializeObject(formModel, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
             if (ModelState.IsValid)
             {
                 var orderAlreadyExists = _cartControllerOrchestrator.GetOrderByUserIdAndWebinar(
@@ -894,7 +911,7 @@ namespace CUWebinars.Web.Controllers
             {
                 ModelState.AddModelError(string.Empty,
                     "There has been an error at the server which has been logged.");
-                _logger.FatalException("Signup2 order excepted: ", exception);
+                _logger.FatalException("SignupAffiliate: ", exception);
 
                 ErrorSignal.FromCurrentContext().Raise(exception);
                 return Json(new
@@ -904,10 +921,7 @@ namespace CUWebinars.Web.Controllers
                     orderRowId = 0,
                     webinarId = formModel.idWebinar
                 }, JsonRequestBehavior.AllowGet);
-
             }
-
-
         }
 
         public ActionResult SearchWebUsers(string lastName)

@@ -771,7 +771,7 @@ OCA.wireUpHandlers = function () {
 
 
         var data = OCA.signUpForm.serialize();
-
+        console.log(data);
         $('#SignUpFormContainer').before('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
         $('#errorAtServer').remove(); // remove error text, if present from a previous fail
 
@@ -782,6 +782,7 @@ OCA.wireUpHandlers = function () {
         if (!OCA.cartStateManager.getIsUserLoggedIn()) {
             alert('log in');
         } else {
+            console.log(OCA.signUpForm.attr('action'));
             // So the user IS LOGGED IN
             $.post(OCA.signUpForm.attr('action'), data, function (response, status, xhr) {
 

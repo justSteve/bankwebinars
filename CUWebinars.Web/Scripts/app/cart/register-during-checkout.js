@@ -461,6 +461,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                             //create the MR UserAccount (but don't log the user in). 
 
                             $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderId(), function (response, status, xhr) {
+                                
 
                                 if (status == 'error') {
                                     L.clientLogger.error("Error at /cart/checkoutConfirm/", { rowid: cartStateManager.getOrderId() });
@@ -468,9 +469,6 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                     $('#loadingSpinner').remove();
                                     $('#confirmationTab a').tab('show');
                                 } else {
-
-                                    if (desCheckout)
-                                        $('#ConfirmRegistrationBillMe').hide();
 
                                     $('#ConfirmRegistrationBillMe').on('click', function (e) {
                                         completeOrder(userId, orderRowId, webinarId, orderId);

@@ -30,6 +30,12 @@ namespace CUWebinars.Web.Controllers
             _stateService = stateService;
         }
 
+        public ActionResult TestStaticPage()
+        {
+//            ViewBag.PageStyleType = "two-columns-right-sidebar";
+            return View();
+        }
+
         public ActionResult PrivacyStatement()
         {
             ViewBag.PageStyleType = "two-columns-right-sidebar";

@@ -1,13 +1,21 @@
 ﻿@using CUWebinars.Business.Core.Helpers
 @using CUWebinars.Web.Core
 @model WebinarDetailsViewModel
+@{
+    if (ViewBag.DiscountSurcharge == "A $50 surcharge is added for shipping & handling")
+    {
+        <script language="javascript" type="text/javascript">
+            var DiscountSurcharge = "A $50 surcharge is added for shipping & handling";
+        </script>
+    }
+    else
+    {
+        <script language="javascript" type="text/javascript">
+            var DiscountSurcharge = "";
+        </script>
 
-
-@*
-    button clicks
-    discounts
-    user / in-process
-*@
+    }
+}
 
 <script language="javascript" type="text/javascript">
     $(function () {
@@ -62,7 +70,7 @@
         {
             if (
                 Model.Webinar.Status != WebinarStatus.Deleted
-                && Model.Webinar.Status != WebinarStatus.Pending 
+                && Model.Webinar.Status != WebinarStatus.Pending
                 || Model.Webinar.SeriesInfo == "DES"
                 )
             {
@@ -73,11 +81,16 @@
                         @if (HideConfirm == "yes")
                         {
                             <script type="text/javascript" language="javascript">
-                               
+
                                 $(function() {
-                                    
+
                                     $('#ConfirmRegistrationBillMe').hide();
                                     $('#ContinueShoppingButton').hide();
+                                    $('#linkIsOrderForCoworker').hide();
+                                    $('#revealAddLocsPanel').hide();
+                                    $('#revealDiscountInput').hide();
+                                    $('#revealOptions').hide();
+                                    $('#AttendRegTypesCaption').text("Subscription Overview");
                                 });
                             </script>
                         }

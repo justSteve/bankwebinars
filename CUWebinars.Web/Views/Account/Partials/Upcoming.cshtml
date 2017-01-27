@@ -189,7 +189,7 @@
                                         //inactive state
                                         if (row.RegistrationType.ShowLiveNotifications != "Yes")
                                         {
-                                            if (row.RegistrationType.ShowShippedNotifications == "Yes")
+                                            if (row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
                                             {
                                                 <div>
                                                     Check back here for links to the OnDemand recording

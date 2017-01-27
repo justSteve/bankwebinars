@@ -45,6 +45,7 @@ $(function () {
 
 
     signUpForm = $('#SignUpForm');
+
     signUpFormContainer = $('#SignUpFormContainer'); // The big beige box
 
     // This function gets invoked when the 3rd tab is loaded and an existing user is using the cart
@@ -56,9 +57,15 @@ $(function () {
 
         cartStateManager.getConfirmOrderForm().on('submit', function (e) {
 
-            if (desCheckout)
+            if (desCheckout) {
                 $('#ConfirmRegistrationBillMe').hide();
-            
+                $('#ContinueShoppingButton').hide();
+                $('#linkIsOrderForCoworker').hide();
+                $('#revealAddLocsPanel').hide();
+                $('#revealDiscountInput').hide();
+                $('#revealOptions').hide();
+                $('#AttendRegTypesCaption').text("Subscription Overview");
+            }
             e.preventDefault();
             var self = $(this);
             self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
@@ -324,7 +331,9 @@ $(function () {
 
 
                             } else {
-
+                                if (DiscountSurcharge === "A $50 surcharge is added for shipping & handling") {
+                                    alert("Note that a $50 surcharge is added for shipping & handling");
+                                }
                                 $('#confirmationTab a').tab('show');
                                 var utilities = new Common.Utilities();
 
@@ -419,6 +428,18 @@ function isShippingAddressRequired(jQueryObject) {
 }
 
 function setUpEditButtons() {
+
+    if (desCheckout) {
+
+        $('#ConfirmRegistrationBillMe').hide();
+        $('#ContinueShoppingButton').hide();
+        $('#linkIsOrderForCoworker').hide();
+        $('#revealAddLocsPanel').hide();
+        $('#revealDiscountInput').hide();
+        $('#discountedText').hide();
+        $('#revealOptions').hide();
+        $('#AttendRegTypesCaption').text("Subscription Overview");
+    }
     $('#revealOptions').on('click', function (e) {
         e.preventDefault();
         $('#AdjustOrder').slideToggle();

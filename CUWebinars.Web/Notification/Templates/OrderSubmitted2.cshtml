@@ -1,0 +1,121 @@
+﻿@using CUWebinars.Business.Notification
+@using CUWebinars.Web.Models
+@model CUWebinars.Business.Notification.ViewModel.OrderSubmitted2ViewModel
+@{
+    // used by FormatV2, doesn't hurt direct use of RenderViewToString
+    <title>
+        @Model.Subject
+    </title>
+}
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@Model.Subject</title>
+    <style type="text/css">
+        .auto-style1 {
+            height: 10px;
+        }
+
+        .auto-style2 {
+            height: 50px;
+        }
+    </style>
+</head>
+<body style="font-family: Verdana, Arial, Helvetica, sans-serif">
+    <table width="660px" border="0" cellspacing="0" cellpadding="0">
+        <tbody>
+            @{
+                TtsConfigHelper TtsTemplateHelperObject = new TtsConfigHelper();
+                NotificationHeaderModel nhm = new NotificationHeaderModel()
+                {
+                    BannerText = Model.HeaderSummaryCaption.ToString(), // OrderSubmittedMulti might not need this near the top of the email body
+                    HeaderText = "Order Confirmation", // OrderSubmittedMulti might not need this near the top of the email body
+                    TenantLogo = TtsTemplateHelperObject.TenantLogo(),
+                    TenantURL = TtsTemplateHelperObject.TenantURL()
+                };
+            }
+
+            @Html.Partial("~/Notification/Templates/Partials/_GeneralHeader.cshtml", nhm)
+
+            <tr style="background-color: #B4D1EC">
+                <td style="padding: 15px 0px; border-right-color: rgb(52, 74, 88); border-left-color: rgb(52, 74, 88); border-right-width: 1px; border-left-width: 1px; border-right-style: solid; border-left-style: solid;">
+                    <table align="center" cellpadding="0" cellspacing="0">
+                        <tbody>
+                            @*<tr style="background-color: #344a58">
+                                    <td colspan="2" height="6">
+                                        <img alt="large_box_top.gif" border="0" height="6" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/large_box_top.gif" style="width: 630px; height: 6px; display: block;" />
+                                    </td>
+                                </tr>*@
+
+                            <tr style="background-color: #000000;">
+                                <td colspan="2">
+                                    <img alt="spacer.gif" height="10" src="http://ttsmedia.ttstrain.com/images/vrLocal/spacer.gif" style="width: 1px; height: 10px; display: block;" width="1" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="background-color: #344a58">
+                                    <table width="500px" border="0" align="center" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td width="50px" style="text-align: right;  background-color: #000000; padding-right: 6px; font-size: small"> </td>
+                                            <td width="500px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;"> </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: right; width: 50px; background-color: #000000; padding-right: 6px; font-size: small"></td>
+                                            <td width="500px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
+                                                <table border="0" cellpadding="0" cellspacing="0" style="width: 500px;">
+                                                    <tr>
+                                                        <td colspan="2" style="background-color: #344a58">
+                                                            <table border="0" align="center" cellpadding="0" cellspacing="0">
+                                                                <tr>
+                                                                    <td width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: small"> </td>
+                                                                    <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;"> </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="2" style="text-align: left; margin-left: 6px; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: small">
+                                                                        <div style="color: black; font-family: Arial, Helvetica, sans-serif; padding: 5px; font-size: 12px;">
+                                                                            <div><br/>Thank you for your order summarized below! Please visit @nhm.TenantURL/MyWebinars for complete details on each of your registrations.</div>
+                                                                            <br />
+                                                                            <br />
+                                                                            @Html.Raw(Model.OrderSummaryHtml)
+                                                                            <br />
+                                                                            
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: right; width: 50px; background-color: #000000; padding-right: 6px; font-size: small"></td>
+                                            <td width="500px" style="text-align: left; background-color: #CCCCCC; padding-left: 6px;">
+                                                <br />
+                                                <br />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="background-color: #344a58; color: #FFFFCC; padding: 10px;" colspan="2"> </td>
+                            </tr>
+                            <tr style="background-color: #344a58">
+                                <td colspan="2" height="6">
+                                    <img alt="large_box_bottom.gif" border="0" height="6" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/large_box_bottom.gif" style="width: 630px; height: 6px; display: block;" />
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+
+            @Html.Partial("~/Notification/Templates/Partials/_GeneralFooter.cshtml")
+
+        </tbody>
+    </table>
+</body>
+</html>

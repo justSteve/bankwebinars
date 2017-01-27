@@ -34,7 +34,7 @@
         //    wf.Append("<a href='" + itemPath + "' target=_blank >" + itemDesc + "</a><br>");
         //}
 
-        if (Model.OrderRow.RegistrationType.ShowShippedNotifications == "Yes" && Model.OrderRow.ShipmentDate != null)
+        if (Model.OrderRow.RegistrationType.ShowShippedNotifications.ToLower() == "yes" && Model.OrderRow.ShipmentDate != null)
         {
             showShipped = "<li>Shipped on: " + Model.OrderRow.ShipmentDate.Value.ToShortDateString() + "</li>";
         }

@@ -617,7 +617,7 @@ namespace CUWebinars.Business.Repository
         {
             var orders = ((TTSWebinarsContext)db).OrderRows
                 .Include(or => or.Order)
-                .Where(or => or.RegistrationType.ShowShippedNotifications == "Yes")
+                .Where(or => or.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
                 .Select(o => o.Order);
             return GetLoadedEntitiesForOrder(orders);
         }

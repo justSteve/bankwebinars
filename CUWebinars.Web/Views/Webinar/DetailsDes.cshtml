@@ -6,6 +6,17 @@
 @{
     <script type="text/javascript">
         var desCheckout = true;
+        $(function() {
+
+            $('#ConfirmRegistrationBillMe').hide();
+            $('#ContinueShoppingButton').hide();
+            $('#linkIsOrderForCoworker').hide();
+            $('#revealAddLocsPanel').hide();
+            $('#revealDiscountInput').hide();
+            $('#revealOptions').hide();
+            $('#AttendRegTypesCaption').text("Subscription Overview");
+        });
+
     </script>
 
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
@@ -101,13 +112,13 @@
                         </span>
                     </h2>
                     @Html.Raw(Model.Webinar.LearnBody)
-                    <h2 class="short_headline">
-                        <span>
-                            Who Should Attend?
-                        </span>
-                    </h2>
-                    @Html.Raw(Model.Webinar.WhoAttend)
-                    <hr />
+                    @*<h2 class="short_headline">
+                            <span>
+                                Who Should Attend?
+                            </span>
+                        </h2>
+                        @Html.Raw(Model.Webinar.WhoAttend)
+                        <hr />*@
                 </div>
             }
             <div class="warnIE" style="display: none;" id="iePre10">

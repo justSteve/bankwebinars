@@ -269,45 +269,31 @@
                         <li class="parent">
                             <a href="javascript:void(0)">topics<i></i></a>
                             <ul>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/30">BSA</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/15">Compliance</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/25">Computer Skills</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/31">Deposit Accounts</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/32">Executive/Director</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/41">Accounting/Financials</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/42">Auditing/Reporting</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/43">BSA/AML</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/44">Compliance/Regulations</a></li>
                                 <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/23">Human Resources</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/16">IRAs</a></li>
                                 <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/22">Lending</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/33">Management/Employee Development</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/34">Reporting</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/35">Risk Management/Legal</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/36">Safe Deposit</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/21">Sales</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/37">TRID</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/19">Operations</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/45">Other</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/46">Risk Management</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/47">Technology/Security</a></li>
+
                             </ul>
                         </li>
-                        @*<li class="parent">
-                            <a href="javascript:void(0)">Upcoming Training<i></i></a>
 
-                            <ul>@Html.Action("UpComingWebinarMenu", "Navigation")</ul>
-                        </li>*@
                         <li class="parent">
-                            <a href="javascript:void(0)">Current Catalog<i></i></a>
+                            <a href="javascript:void(0)">Course Catalog<i></i></a>
                             <ul>@Html.Action("GetDESModules", "Navigation")</ul>
                         </li>
-                        <li>
-                            <a href="javascript:void(0)">About Us<i></i></a>
-                            <ul>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/WhatIsAWebinar">What Is A Webinar?</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/CommonQuestions">Commonly Asked Questions</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/DetailedConnectionInstructions">Connecting to Your Webinar</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/contactus">Contact Us</a></li>
-                            </ul>
-                        </li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/FutureReleases">Future Releases</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/contactus">About Us</a></li>
                         @if (Request.IsAuthenticated)
                         {
                             <li><a href="/Account/MyWebinars">My Webinars</a></li>
                         }
-                        <li><div id="rightLogo" style="width: 113px; height: 90px; padding-bottom: 10px; background-image: url(/Content/images/compass.jpg); background-repeat: no-repeat;"></div></li>
+
                     </ul>
                 </nav>
                 <!-- close / #main_menu -->

@@ -48,13 +48,13 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public
             AccountControllerOrchestrator(ILogger logger,
-            IMembershipService membershipService,
-            IOrderManagementService orderManagementService,
-            IWebinarManagementService webinarManagementService,
-            IStateService stateService,
-            HttpRequestBase request,
-            IAppHelper appHelper,
-            IUniversalMapper universalMapper)
+                IMembershipService membershipService,
+                IOrderManagementService orderManagementService,
+                IWebinarManagementService webinarManagementService,
+                IStateService stateService,
+                HttpRequestBase request,
+                IAppHelper appHelper,
+                IUniversalMapper universalMapper)
         {
             _request = request;
             _logger = logger;
@@ -70,7 +70,8 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             _logger.Info("LogUserIn {0}. Session={1} ", signInModel.Email, _appHelper.GetUserAuditInfo());
 
-            return _membershipService.LogInUser(_globals.Tenant, signInModel.Email, signInModel.Password, signInModel.RememberMe);
+            return _membershipService.LogInUser(_globals.Tenant, signInModel.Email, signInModel.Password,
+                signInModel.RememberMe);
         }
 
         public void LogUserOut(ClaimsPrincipal user = null)
@@ -88,10 +89,11 @@ namespace CUWebinars.Web.Core.Orchestrators
                     adminUserEmail = beingImpersonatedClaim.Value.Split('|')[1].ToString().Trim();
 
                     _membershipService.RemoveClaim(_globals.Tenant,
-                        user.Claims.Single(c => c.Type == System.IdentityModel.Claims.ClaimTypes.Email).Value, // email address
+                        user.Claims.Single(c => c.Type == System.IdentityModel.Claims.ClaimTypes.Email).Value,
+                        // email address
                         ClaimTypes.BeingImpersonated,
                         beingImpersonatedClaim.Value
-                        );
+                    );
                 }
             }
 
@@ -145,7 +147,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 new Address
                 {
                     AddressType =
-                        Enum.GetName(typeof (AddressType), model.RegisterFields.BillingAddress.TypeOfAddress),
+                        Enum.GetName(typeof(AddressType), model.RegisterFields.BillingAddress.TypeOfAddress),
                     City = model.RegisterFields.BillingAddress.City.Trim(),
                     Country = model.RegisterFields.BillingAddress.Country.Trim(),
                     Name = firstName + ' ' + lastName,
@@ -161,7 +163,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 new Address
                 {
                     AddressType =
-                        Enum.GetName(typeof (AddressType), model.RegisterFields.ShippingAddress.TypeOfAddress),
+                        Enum.GetName(typeof(AddressType), model.RegisterFields.ShippingAddress.TypeOfAddress),
                     City = model.RegisterFields.ShippingAddress.City.Trim(),
                     Country = model.RegisterFields.ShippingAddress.Country.Trim(),
                     Name = firstName + ' ' + lastName,
@@ -191,7 +193,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     : model.RegisterFields.Title.Trim()
                 , null
                 , DomainConstants.Active
-                );
+            );
 
             if (!_stateService.HasValue(WebUiConstants.CurrentUser))
                 _stateService.SetValue(WebUiConstants.CurrentUser, webUser);
@@ -209,7 +211,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             // Note: this is a CUW/BW construct of Verified, as distinct from the MR idea of Verified (which is dealt with below)
             _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.ManualRegistration);
 
-            Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey), "There's no reason session should not have a value for the VerificationKey at this point ");
+            Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey),
+                "There's no reason session should not have a value for the VerificationKey at this point ");
 
             var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
             _stateService.ClearValue(DomainConstants.VerificationKey);
@@ -217,14 +220,14 @@ namespace CUWebinars.Web.Core.Orchestrators
             _membershipService.VerifyEmailFromKey(
                 verificationKey,
                 model.RegisterFields.Password
-                ); // verify the user to unlock functionality like PasswordReset
+            ); // verify the user to unlock functionality like PasswordReset
 
             _membershipService.LogInUser(
                 _globals.Tenant,
                 model.RegisterFields.Email,
                 model.RegisterFields.Password,
                 true
-                ); // log the user in.            
+            ); // log the user in.            
 
         }
 
@@ -236,7 +239,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public bool SignUserIn(SignInModel model, out string userMustVerify)
         {
-            if (_membershipService.LogInUser(_globals.Tenant, model.Email, model.Password, model.RememberMe, out userMustVerify))
+            if (_membershipService.LogInUser(_globals.Tenant, model.Email, model.Password, model.RememberMe,
+                out userMustVerify))
             {
                 if (!ReferenceEquals(_request.ApplicationPath, null) && !ReferenceEquals(_request.Url, null))
                 {
@@ -244,14 +248,15 @@ namespace CUWebinars.Web.Core.Orchestrators
                         model.ReturnUrl = "/";
 
                     var retUrl = model.ReturnUrl.Replace(
-                            string.Format(@"{0}://{1}{2}/",
+                        string.Format(@"{0}://{1}{2}/",
                             _request.Url.Scheme,
                             _request.Url.Authority,
                             _request.ApplicationPath.TrimEnd('/')),
-                            string.Empty
-                            );
+                        string.Empty
+                    );
 
-                    _logger.Info("Account.SignIn {0}. Redirecting to: {2},  Session: {1} ", model.Email, _appHelper.GetUserAuditInfo(), retUrl);
+                    _logger.Info("Account.SignIn {0}. Redirecting to: {2},  Session: {1} ", model.Email,
+                        _appHelper.GetUserAuditInfo(), retUrl);
                 }
 
                 return true;
@@ -320,7 +325,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 Name = model.RegisterFields.FirstName + ' ' + model.RegisterFields.LastName,
                 StreetAddress = billingAddressFields.StreetAddress.Trim(),
-                StreetAddress2 = billingAddressFields.StreetAddress2 == null ? billingAddressFields.StreetAddress2 : billingAddressFields.StreetAddress2.Trim(),
+                StreetAddress2 =
+                    billingAddressFields.StreetAddress2 == null
+                        ? billingAddressFields.StreetAddress2
+                        : billingAddressFields.StreetAddress2.Trim(),
                 State = billingAddressFields.State.Trim(),
                 City = billingAddressFields.City.Trim(),
                 Country = billingAddressFields.Country.Trim(),
@@ -333,7 +341,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 Name = shippingAddressFields.Name.Trim(),
                 StreetAddress = shippingAddressFields.StreetAddress.Trim(),
-                StreetAddress2 = shippingAddressFields.StreetAddress2 == null ? shippingAddressFields.StreetAddress2 : shippingAddressFields.StreetAddress2.Trim(),
+                StreetAddress2 =
+                    shippingAddressFields.StreetAddress2 == null
+                        ? shippingAddressFields.StreetAddress2
+                        : shippingAddressFields.StreetAddress2.Trim(),
                 State = shippingAddressFields.State.Trim(),
                 City = shippingAddressFields.City.Trim(),
                 Country = shippingAddressFields.Country.Trim(),
@@ -350,7 +361,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 shippingAddress,
                 updateFields.Title == null ? "na" : updateFields.Title.Trim(),
                 existingUser.SageAccountId
-                );
+            );
         }
 
         public void UpdateShippingAddressDetails(AddressModel shippingAddressModel, int idUser)
@@ -372,6 +383,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             _membershipService.UpdateShippingAddressDetails(shippingAddress);
             _orderManagementService.UpdateShippingAddressDetails(shippingAddress, idUser);
         }
+
         public void UpdateDiscountDetails(Discount discount)
         {
 
@@ -442,7 +454,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 Name = model.EditFields.FirstName + ' ' + model.EditFields.LastName,
                 StreetAddress = billingAddressFields.StreetAddress.Trim(),
-                StreetAddress2 = billingAddressFields.StreetAddress2 == null ? billingAddressFields.StreetAddress2 : billingAddressFields.StreetAddress2.Trim(),
+                StreetAddress2 =
+                    billingAddressFields.StreetAddress2 == null
+                        ? billingAddressFields.StreetAddress2
+                        : billingAddressFields.StreetAddress2.Trim(),
                 State = billingAddressFields.State.Trim(),
                 City = billingAddressFields.City.Trim(),
                 Country = billingAddressFields.Country.Trim(),
@@ -455,13 +470,34 @@ namespace CUWebinars.Web.Core.Orchestrators
             var shippingAddress = new Address
             {
                 Name = shippingAddressFields.Name.Trim(),
-                StreetAddress = String.IsNullOrWhiteSpace(shippingAddressFields.StreetAddress) ? billingAddress.StreetAddress.Trim() : shippingAddressFields.StreetAddress,
-                StreetAddress2 = String.IsNullOrWhiteSpace(shippingAddressFields.StreetAddress2) ? billingAddress.StreetAddress2 : shippingAddressFields.StreetAddress2,
-                State = String.IsNullOrWhiteSpace(shippingAddressFields.State) ? billingAddressFields.State : shippingAddressFields.State.Trim(),
-                City = String.IsNullOrWhiteSpace(shippingAddressFields.City) ? billingAddressFields.City : shippingAddressFields.City.Trim(),
-                Country = String.IsNullOrWhiteSpace(shippingAddressFields.Country) ? billingAddressFields.Country : shippingAddressFields.Country.Trim(),
-                Zip = String.IsNullOrWhiteSpace(shippingAddressFields.Zip) ? billingAddressFields.Zip : shippingAddressFields.Zip.Trim(),
-                Phone = String.IsNullOrWhiteSpace(shippingAddressFields.Phone) ? shippingAddressFields.Phone : billingAddressFields.Phone.Trim(),
+                StreetAddress =
+                    String.IsNullOrWhiteSpace(shippingAddressFields.StreetAddress)
+                        ? billingAddress.StreetAddress.Trim()
+                        : shippingAddressFields.StreetAddress,
+                StreetAddress2 =
+                    String.IsNullOrWhiteSpace(shippingAddressFields.StreetAddress2)
+                        ? billingAddress.StreetAddress2
+                        : shippingAddressFields.StreetAddress2,
+                State =
+                    String.IsNullOrWhiteSpace(shippingAddressFields.State)
+                        ? billingAddressFields.State
+                        : shippingAddressFields.State.Trim(),
+                City =
+                    String.IsNullOrWhiteSpace(shippingAddressFields.City)
+                        ? billingAddressFields.City
+                        : shippingAddressFields.City.Trim(),
+                Country =
+                    String.IsNullOrWhiteSpace(shippingAddressFields.Country)
+                        ? billingAddressFields.Country
+                        : shippingAddressFields.Country.Trim(),
+                Zip =
+                    String.IsNullOrWhiteSpace(shippingAddressFields.Zip)
+                        ? billingAddressFields.Zip
+                        : shippingAddressFields.Zip.Trim(),
+                Phone =
+                    String.IsNullOrWhiteSpace(shippingAddressFields.Phone)
+                        ? shippingAddressFields.Phone
+                        : billingAddressFields.Phone.Trim(),
                 AddressType = Enum.GetName(typeof(AddressType), shippingAddressFields.TypeOfAddress)
             };
 
@@ -474,7 +510,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 shippingAddress,
                 updateFields.Title == null ? "" : updateFields.Title.Trim(),
                 updateFields.SageAccountId
-                );
+            );
 
             ;
             //ensure contact info for orders is also updated
@@ -513,7 +549,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             // if it did not exist after 2 attempts, just log it. and move on.
             if (ReferenceEquals(null, userAccount))
             {
-                _logger.Info(string.Format("The UserAccount for WebUser with id {0} has not been created yet. As such, the AddressVerified claim has not been added.", userId));
+                _logger.Info(
+                    string.Format(
+                        "The UserAccount for WebUser with id {0} has not been created yet. As such, the AddressVerified claim has not been added.",
+                        userId));
             }
             else
             {
@@ -521,7 +560,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
         }
 
-        public MyWebinarsDTO BuildMyWebinarsDTO(DiscountModel discountModel, ClaimsIdentity claimsIdentityOfAuthenticatedUser)
+        public MyWebinarsDTO BuildMyWebinarsDTO(DiscountModel discountModel,
+            ClaimsIdentity claimsIdentityOfAuthenticatedUser)
         {
             var currentUser = GetWebUserFromIPrincipal();
 
@@ -539,15 +579,15 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 model.MyClaims =
                     claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type == ClaimTypes.PostEventMaterials
-                    || c.Type == ClaimTypes.PostEventMaterialsExtended)
-                        .Select(c => c.Value);
+                                                                        || c.Type == ClaimTypes.PostEventMaterialsExtended)
+                                                                        .Select(c => c.Value);
             }
 
             if (!ReferenceEquals(discountModel, null) &&
                 (
-                discountModel.TypeOfDiscount == DiscountType.ComplianceSeries
-                || discountModel.TypeOfDiscount == DiscountType.Package
-                || discountModel.TypeOfDiscount == DiscountType.Subscription))
+                    discountModel.TypeOfDiscount == DiscountType.ComplianceSeries
+                    || discountModel.TypeOfDiscount == DiscountType.Package
+                    || discountModel.TypeOfDiscount == DiscountType.Subscription))
             {
                 model.Subscription = discountModel;
             }
@@ -560,43 +600,58 @@ namespace CUWebinars.Web.Core.Orchestrators
             model.Scheduled = _orderManagementService.SelectOrdersWithScheduledWebinars(currentUser.idUser);
 
             var ordersForRecordedWebinars = _orderManagementService.SelectOrdersWithRecordedWebinars(currentUser.idUser);
-            model.Recorded = new Dictionary<string, Order>(ordersForRecordedWebinars.Count, StringComparer.OrdinalIgnoreCase);
+            model.Recorded = new Dictionary<string, Order>(ordersForRecordedWebinars.Count,
+                StringComparer.OrdinalIgnoreCase);
             model.Archived = _orderManagementService.SelectOrdersWithArchivedWebinars(currentUser.idUser);
-
-            IEnumerable myClaims = model.MyClaims as IList<object> ?? model.MyClaims.Cast<object>().ToList();
-            foreach (var selectOrdersWithRecordedWebinar in ordersForRecordedWebinars.OrderByDescending(o => o.OrderRows.SingleOrDefault().Webinar.Date))
+            try
             {
-                var myRow =
-                    selectOrdersWithRecordedWebinar.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
-                var quiz =
-                    _webinarManagementService.GetQuizByWebinarId(myRow.idWebinar);
-                var rowFoundClaim = false;
-                foreach (var claim in myClaims)
+                IEnumerable<object> myClaims = new List<object>();
+                if (!ReferenceEquals(model.MyClaims, null))
                 {
-
-                    //are you seeing intellisense errors on the next 2 lines?
-                    var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.ToString());
-                    if (thisClaim.OnDemandCode == myRow.OnDemandCode)
+                    myClaims = model.MyClaims as IList<object> ?? model.MyClaims.Cast<object>().ToList();
+                }
+                foreach (var selectOrdersWithRecordedWebinar in ordersForRecordedWebinars.OrderByDescending(o => o.OrderRows.SingleOrDefault().Webinar.Date))
+                {
+                    var myRow =
+                        selectOrdersWithRecordedWebinar.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
+                    var quiz =
+                        _webinarManagementService.GetQuizByWebinarId(myRow.idWebinar);
+                    var rowFoundClaim = false;
+                    foreach (var claim in myClaims)
                     {
-                        rowFoundClaim = true;
+
+                        //are you seeing intellisense errors on the next 2 lines?
+                        var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.ToString());
+                        if (thisClaim.OnDemandCode == myRow.OnDemandCode)
+                        {
+                            rowFoundClaim = true;
+                        }
+
+                    }
+                    // if not found make sure user is re-signed in
+                    if (!rowFoundClaim)
+                    {
+                        var userAcct = _membershipService.GetUserAccountByEmail(_globals.Tenant, claimsIdentityOfAuthenticatedUser.Name);
+                        _membershipService.SignIn(userAcct, true);
+                        _membershipService.AddClaimForPostEventMaterials(myRow.Order.BillingEmail, myRow, _orderManagementService.CalculatePostEventMaterialsAccessExpiry(myRow), _globals.Tenant);
+                        model.PromptRefresh = "true";
+                    }
+
+
+                    if (!ReferenceEquals(null, quiz))
+                    {
+                        model.Recorded.Add(new KeyValuePair<string, Order>(quiz.QuizCode, selectOrdersWithRecordedWebinar));
+                    }
+                    else
+                    {
+                        model.Recorded.Add(new KeyValuePair<string, Order>("na" + selectOrdersWithRecordedWebinar.idOrder, selectOrdersWithRecordedWebinar));
                     }
 
                 }
-                if (!rowFoundClaim)
-                {
-                    _logger.Info("missing OD claim detected: " + myRow.idOrder);
-
-                    var userAcct = _membershipService.GetUserAccountByEmail(_globals.Tenant, claimsIdentityOfAuthenticatedUser.Name);
-                    _membershipService.SignIn(userAcct, true);
-                }
-                if (!ReferenceEquals(null, quiz))
-                {
-                    model.Recorded.Add(new KeyValuePair<string, Order>(quiz.QuizCode, selectOrdersWithRecordedWebinar));
-                }
-                else
-                {
-                    model.Recorded.Add(new KeyValuePair<string, Order>("na" + selectOrdersWithRecordedWebinar.idOrder, selectOrdersWithRecordedWebinar));
-                }
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("BuildMyWebinarsDTO: ", ex);
 
             }
 

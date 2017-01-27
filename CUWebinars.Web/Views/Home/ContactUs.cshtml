@@ -1,6 +1,10 @@
 ﻿@using System.Configuration
+@using System.Runtime.InteropServices
+@using CUWebinars.Web.Core
 @{
     ViewBag.Title = "Contact Us";
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+
 }
 
 <div id="page">
@@ -18,20 +22,18 @@
 
         <div class="container clearfix" id="main-content">
             <div class="row-fluid reverse-order contact-page">
-
-                @if (@ConfigurationManager.AppSettings["Tenant"] == "BankWebinars")
+                @globalConfig.Tenant
+                @if (globalConfig.Tenant == "BankWebinars")
                 {
-                    <div class="span7">
+                    <script type="text/javascript" src="https://form.jotform.com/jsform/43462160046952"></script>
 
-                        <script type="text/javascript" src="http://form.jotformpro.com/form/43462160046952"></script>
-                    </div>
                 }
 
-                @if (@ConfigurationManager.AppSettings["Tenant"] == "CUWebinars")
+                @if (globalConfig.Tenant  == "CUWebinars")
                 {
                     <div class="span7">
 
-                        <script type="text/javascript" src="http://form.jotform.us/jsform/32686256940159"></script>
+                        <script type="text/javascript" src="https://form.jotform.us/jsform/32686256940159"></script>
                     </div>
                 }
                 

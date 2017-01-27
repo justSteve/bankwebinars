@@ -34,6 +34,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         IEnumerable<WebUser> GetWebUsersByLastNameForAffiliate(string lastName, int idAffiliate);
         void FireOrderSubmittedNotification(Order order, bool? userCreatedInCart = null);
         void FireOrderSubmittedMultiNotification(string toEmail, string subject, string notificationCopy);
+        void FireOrderSubmitted2Notification(string toEmail, string subject, string notificationCopy);
         INotificationMessage GenerateMessagePreview(Order order);
         RegType GetRegTypeById(int idRegType);
         OrderRow LoadOrderRow(int id, OrderStatus status);

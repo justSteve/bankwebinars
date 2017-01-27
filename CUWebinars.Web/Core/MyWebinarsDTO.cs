@@ -19,5 +19,6 @@ namespace CUWebinars.Web.Core
         public CompliancePerspectivesModel CompliancePerspectives { get; set; }
          
         public WebUser WebUser { get; set; }
+        public string PromptRefresh { get; set; }
     }
 }

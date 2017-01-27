@@ -128,7 +128,7 @@ namespace CUWebinars.Business.AccountService
             foreach (var claim in claimsForOrder)
             {
                 // extract the date
-
+                _logger.Warn("RemovePostEventClaimByEvent: " + idOrder);
                 RemoveClaim(userAccount.Tenant, userAccount.Email, ClaimTypes.PostEventMaterials, claim.Value);
 
             }

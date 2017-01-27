@@ -25,6 +25,11 @@ namespace CUWebinars.Web.App_Start
                 url: "PostBackWPS",
                 defaults: new { controller = "Cart", action = "PostBackWPS", id = 0 }
             );
+            //routes.MapRoute(
+            //    "wp-login.php",
+            //    url: "wp-login.php",
+            //    defaults: new { controller = "Home", action = "index", id = 0 }
+            //);
             routes.MapRoute(
                 "Incoming",
                 url: "Incoming",
