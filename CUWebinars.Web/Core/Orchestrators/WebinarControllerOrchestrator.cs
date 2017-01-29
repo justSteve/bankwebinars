@@ -30,8 +30,13 @@ using CUWebinars.Web.Models.JsonModels;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using FluentValidation;
+using GemBox.Document;
+using GemBox.Document.MailMerging;
 using Glimpse.AspNet.Tab;
 using Microsoft.VisualBasic.ApplicationServices;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
@@ -81,8 +86,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             var orders = _orderManagementService.GetOrdersForLiveNotifications(idWebinar);
             object test = null;
             var sb = new StringBuilder();
-            sb.Append("ListSentConnectionInfo: " );
-            
+            sb.Append("ListSentConnectionInfo: ");
+
             orders.ToList().ForEach((order) =>
             {
                 sb.Append(order.BillingEmail + ", ");
@@ -572,6 +577,16 @@ namespace CUWebinars.Web.Core.Orchestrators
                         , order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active)
                         , _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active))
                         , _globalConfig.Tenant);
+
+                    //Mandrill-specific handling
+                    var toEmail = order.BillingEmail;
+                    var subject = "[" + _globalConfig.Tenant + "] OnDemand recording posted for  " +
+                                  order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                                      .Webinar.Title;
+                    var body = BuildRecordingIsPostedMessage(order);
+
+
+                    _orderManagementService.FireRecordingIsPostedV2Event(toEmail, subject, body);
                 }
 
             }
@@ -582,9 +597,120 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             }
 
-            _orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
+            //_orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
 
         }
+
+        public string BuildRecordingIsPostedMessage(Order order)
+        {
+            OrderRow row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+            Webinar webinar = row.Webinar;
+            DocumentModel document =
+                DocumentModel.Load(
+                    System.Web.HttpContext.Current.Server.MapPath(
+                        @"~/App_Data/mergeTemplates/RecordingIsPostedToExistingUserBW.docx"));
+
+            if (_globalConfig.Tenant == "CUWebinars")
+            {
+                document =
+                   DocumentModel.Load(
+                       System.Web.HttpContext.Current.Server.MapPath(
+                           @"~/App_Data/mergeTemplates/RecordingIsPostedToExistingUserCU.docx"));
+            }
+            string theOrderSummary = "";
+            string regDesc = "";
+
+            if (row.RegistrationType.ShowRecordingNotifications.ToLower() == "no")
+            {
+                regDesc =
+                    "Included in your registration is a link (see below) to all course material for five (5) business days. You can upgrade your order to gain 6 months OnDemand access - or get the Premier Package which includes a CD-ROM and printouts of the event's materials. We'll be happy to adjust your registration - just reply to this email! ";
+            }
+            else if (row.RegistrationType.ShowShippedNotifications.ToLower() == "no")
+            {
+                regDesc =
+                    "Your registration includes OnDemand access to all event materials but does not include a CD-ROM or printouts. You can still upgrade to the Premier Package - just reply to this email! ";
+            }
+            
+
+            var dsMergeFields = new
+            {
+                AttendType = row.RegistrationType.OptionLabelShort,
+                RegDesc = regDesc,
+                TenantSignature = "The " + _globalConfig.Tenant + " Staff",
+                OrderID = row.idOrder,
+                BillingEmail = order.BillingEmail,
+                TechSupportLink = "<a href='" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "/>" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "</a>",
+                OndemandLink = "<a href='" + _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode  +"/>"+ _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "</a>",
+                LinkToMyWebinars = "<a href='" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder +"/>" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "</a>",
+                TenantName = _globalConfig.Tenant,
+                WebinarTitle = webinar.Title,
+                FirstName = order.FirstName
+            };
+
+            document.MailMerge.Execute(dsMergeFields);
+            
+
+            bool noError = true;
+            try
+            {
+                if (noError)
+                {
+                    _logger.Info("begins write to file: " + order.idOrder);
+
+                    //// SAVE LOCALLY if needed for easier testing
+                    //document.Save(System.Web.HttpContext.Current.Server.MapPath(@"~/App_Data/mergeTemplates/" + order.idOrder + ".pdf"), SaveOptions.PdfDefault);
+
+                    var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName,
+                        _globalConfig.StorageAccessKey);
+
+                    var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
+                    CloudBlobClient blobClient = cloudStorageAccount.CreateCloudBlobClient();
+
+                    // Retrieve reference to a previously created container.
+                    CloudBlobContainer container = blobClient.GetContainerReference("recordingisposted");
+                    container.CreateIfNotExists();
+
+                    CloudBlockBlob blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".pdf");
+
+                    using (MemoryStream output = new MemoryStream())
+                    {
+                        document.Save(output, SaveOptions.PdfDefault);
+                        output.Position = 0; // reset to beginning so Upload operation can work correctly
+                        blob.UploadFromStream(output);
+                    }
+
+                    blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".htm");
+                    using (MemoryStream output = new MemoryStream())
+                    {
+                        document.Save(output, SaveOptions.HtmlDefault);
+                        output.Position = 0; // reset to beginning so Upload operation can work correctly
+                        blob.UploadFromStream(output);
+                    }
+
+                    byte[] fileContents;
+                    using (MemoryStream output = new MemoryStream())
+                    {
+                        document.Save(output, SaveOptions.HtmlDefault);
+                        output.Position = 0; // reset to beginning so Upload operation can work correctly
+
+                        fileContents = output.ToArray();
+                    }
+
+                    return System.Text.Encoding.UTF8.GetString(fileContents);
+                }
+                else
+                {
+                    https://ci4.googleusercontent.com/proxy/AOF0zatzFSovHlWus8P1dHxNNFo0tLbt-mot0d9e-Of2y7-y9OixCjE7b48XZyxMDreHdAqWirQiZ5bnZNro7z99YsBEbeXmAtMPk4wXt_4cag5u=s0-d-e1-ft#http://devholmen15:3538/Content/images/vrLocal/left_shadow.jpg
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorException("buildingRecordingIsPosted for: " + order.idOrder, ex);
+                return "Error: " + ex.Message;
+            }
+        }
+
 
         private void AddNoteClaim(IList<Order> ordersForWebinar)
         {

@@ -117,6 +117,13 @@ namespace CUWebinars.Web.Controllers
                     row.Order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(row.Order.AdminComments, newJson, "DiscountIsApplied");
                     //row.Order.AffiliateComments = JsonHelpers.AddObjectToJsonArray(row.Order.AffiliateComments, newJson);
 
+                    if (myDiscount.DiscountType == DiscountType.Subscription &&
+                        row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
+                    {
+                        ViewBag.DiscountSurcharge = "A $50 surcharge is added for shipping & handling";
+                        msg += " A $50 surcharge is added for shipping & handling.";
+                    }
+
                     var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricingReadOnly(row.Order);
 
                     return
@@ -195,7 +202,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     return Json(new
                     {
-                        Result = "UserHasMulti"
+                        Result = ""
                     }, JsonRequestBehavior.AllowGet);
                 }
                 try

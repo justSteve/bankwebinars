@@ -44,6 +44,8 @@ namespace CUWebinars.Business.Services
         void FireSendConnectionInfoNotificationEvent(IList<Order> orders, bool resending);
         void FireSendOrderShippedNotificationEvent(IList<Order> orders);
         void FireSendRecordingIsPostedEvent(IList<Order> orders);
+
+        void FireRecordingIsPostedV2Event(string toEmail, string subject, string body);
         void FireSendPerDayPromoEvent(WebinarPromoViewModel webinarPromoViewModel);
         void FireSendPerWeekPromoEvent(IList<Affiliate> affiliates, Webinar webinar);
         void FireSendReminderNotificationEvent(IList<Order> orders);

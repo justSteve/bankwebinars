@@ -70,7 +70,7 @@ namespace CUWebinars.Business.Notification
         {
             return ConfigurationManager.AppSettings["DiscountCreditUnitCost"];
         }
-        public string GetOrderSubmittedMultiFromAddress()
+        public string GetMandrillFromAddress()
         {
             return ConfigurationManager.AppSettings["OrderSubmittedMultiFromAddress"];
         }
@@ -93,9 +93,9 @@ namespace CUWebinars.Business.Notification
         {
             return ConfigurationManager.AppSettings["StorageAccountName"];
         }
-        public string GetOrderSubmittedMultiQueueName()
+        public string GetMandrillQueueName()
         {
-            return ConfigurationManager.AppSettings["OrderSubmittedMultiQueueName"];
+            return ConfigurationManager.AppSettings["GetMandrillQueueName"];
         }
     }
 }

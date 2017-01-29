@@ -9,31 +9,31 @@ using System.Linq;
 
 namespace CUWebinars.Business.Notification.Handlers
 {
-    public class OrderSubmitted2<T> : IEventHandler<OrderSubmitted2Event<T>>
-        where T : OrderSubmitted2Message
+    public class RecordingIsPosted2<T> : IEventHandler<RecordingIsPosted2Event<T>>
+        where T : RecordingIsPosted2Message
     {
-        private readonly INotificationDelivery _orderSubmitted2NotificationDelivery;
+        private readonly INotificationDelivery _RecordingIsPosted2NotificationDelivery;
         private readonly ILogger _logger;
 
-        public OrderSubmitted2(INotificationDelivery notificationDelivery
+        public RecordingIsPosted2(INotificationDelivery notificationDelivery
             , ILogger logger)
         {
-            _orderSubmitted2NotificationDelivery = notificationDelivery;
+            _RecordingIsPosted2NotificationDelivery = notificationDelivery;
             _logger = logger;
 
         }
 
-        public void Handle(OrderSubmitted2Event<T> orderSubmitted2Event)
+        public void Handle(RecordingIsPosted2Event<T> RecordingIsPosted2Event)
         {
             try
             {
                 TtsConfigHelper ttsConfigHelper = new TtsConfigHelper();
 
-                var persistedNamePrefix = "OrderConfirmation";
+                var persistedNamePrefix = "RecordingIsPosted";
 
                 var notificationMessage = new NotificationMessage();
 
-                notificationMessage.Body = orderSubmitted2Event.EventObject.Body;
+                notificationMessage.Body = RecordingIsPosted2Event.EventObject.Body;
 
                 notificationMessage.PersistedName = string.Format("{0}_{1}{2}",
                     persistedNamePrefix,
@@ -45,7 +45,7 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 // parse potential 2ple emails, concept from http://stackoverflow.com/questions/14689044/regex-split-on-comma-space-or-semi-colon-delimitted-string
                 char[] delimiters = new[] { ',', ';', ' ' };  // List of your delimiters
-                List<string> addressess = orderSubmitted2Event.EventObject.Recipients.ToList();
+                List<string> addressess = RecordingIsPosted2Event.EventObject.Recipients.ToList();
 
                 if (addressess.Count > 0)
                 {
@@ -57,36 +57,32 @@ namespace CUWebinars.Business.Notification.Handlers
                 }
 
                 notificationMessage.From = ttsConfigHelper.GetMandrillFromAddress(); // approach for From Address TBD!
-                notificationMessage.Subject = orderSubmitted2Event.EventObject.Subject; // or ttsConfigHelper.GetWeeklyInvoiceEmailSubject(); // needs to be done early (prior to OrderSubmitted2.cshtml view being Rendered to String)
+                notificationMessage.Subject = RecordingIsPosted2Event.EventObject.Subject; // or ttsConfigHelper.GetWeeklyInvoiceEmailSubject(); // needs to be done early (prior to RecordingIsPosted2.cshtml view being Rendered to String)
 
-                _orderSubmitted2NotificationDelivery.Notify(notificationMessage);
+                _RecordingIsPosted2NotificationDelivery.Notify(notificationMessage);
             }
             catch (NullReferenceException nullReferenceException)
             {
-                if (ReferenceEquals(null, orderSubmitted2Event.EventObject))
+                if (ReferenceEquals(null, RecordingIsPosted2Event.EventObject))
                 {
-                    _logger.Error(string.Format("ExceptionMessage OrderSubmitted2Event: {0}", nullReferenceException.Message), nullReferenceException);
+                    _logger.Error(string.Format("ExceptionMessage RecordingIsPosted2Event: {0}", nullReferenceException.Message), nullReferenceException);
                 }
                 else
                 {
-                    //_logger.Error(
-                    //    string.Format("Event processing failed for OrderSubmitted2Event - OrderId {0}. ExceptionMessage: {1}",
-                    //        OrderSubmitted2Event.EventObject.Webinar.idWebinar,
-                    //        nullReferenceException.Message)
-                    //    , nullReferenceException);
+                    _logger.Error(string.Format("ExceptionMessage RecordingIsPosted2Event but not null eventObject: {0}", nullReferenceException.Message), nullReferenceException);
                 }
             }
             catch (Exception exception)
             {
-                _logger.Error(string.Format("orderSubmitted2Event (outer) ExceptionMessage: {0}", exception.Message), exception);
+                _logger.Error(string.Format("RecordingIsPosted2Event (outer) ExceptionMessage: {0}", exception.Message), exception);
             }
         }
     }
 
-    public class OrderSubmitted2Handler : OrderSubmitted2Handler<OrderSubmitted2Message>
+    public class RecordingIsPosted2Handler : RecordingIsPosted2Handler<RecordingIsPosted2Message>
     {
-        public OrderSubmitted2Handler(INotificationDelivery orderSubmitted2Delivery, ILogger logger)
-            : base(orderSubmitted2Delivery, logger)
+        public RecordingIsPosted2Handler(INotificationDelivery RecordingIsPosted2Delivery, ILogger logger)
+            : base(RecordingIsPosted2Delivery, logger)
         {
         }
 

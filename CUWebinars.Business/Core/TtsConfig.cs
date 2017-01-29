@@ -35,7 +35,7 @@ namespace CUWebinars.Business.Core
             IOrderConfirmedForAdditionalLocationDelivery orderConfirmedForAdditionalLocationDelivery;
             IAdhocNotificationDelivery adhocNotificationDelivery;
             INotificationDelivery weeklyInvoiceDelivery;
-            INotificationDelivery orderSubmittedMultiNotificationDelivery;
+            INotificationDelivery mandrillNotificationDelivery;
 
             // toggle whether to use Azure Webjobs or local code (for local debugiing/development purposes)
             if (useAzureWebjobs)
@@ -73,10 +73,10 @@ namespace CUWebinars.Business.Core
                     baseUrl);
 
                 // new Mandrill approach, always through Azure
-                orderSubmittedMultiNotificationDelivery = new AzureCuwWebJobSmtpMessageDelivery(
+                mandrillNotificationDelivery = new AzureCuwWebJobSmtpMessageDelivery(
                     storageAccountName, 
                     storageAccessKey, 
-                    ttsConfigHelper.GetOrderSubmittedMultiQueueName(),
+                    ttsConfigHelper.GetMandrillQueueName(),
                     new Log4NetLogger(typeof(AzureCuwWebJobSmtpMessageDelivery))
                     );
             }
@@ -106,10 +106,10 @@ namespace CUWebinars.Business.Core
                     genericFormatter);
 
                 // new Mandrill approach, always through Azure
-                orderSubmittedMultiNotificationDelivery = new AzureCuwWebJobSmtpMessageDelivery(
+                mandrillNotificationDelivery = new AzureCuwWebJobSmtpMessageDelivery(
                     storageAccountName, 
                     storageAccessKey,
-                    ttsConfigHelper.GetOrderSubmittedMultiQueueName(),
+                    ttsConfigHelper.GetMandrillQueueName(),
                     new Log4NetLogger(typeof(AzureCuwWebJobSmtpMessageDelivery))
                     );
             }
@@ -130,6 +130,7 @@ namespace CUWebinars.Business.Core
             var sendWeeklyInvoiceHandlerLogger = new Log4NetLogger(typeof(SendWeeklyInvoiceHandler));
             var sendOrderSubmittedMultiHandlerLogger = new Log4NetLogger(typeof(OrderSubmittedMultiHandler));
             var sendOrderSubmitted2HandlerLogger = new Log4NetLogger(typeof(OrderSubmitted2Handler));
+            var sendRecordingIsPosted2HandlerLogger = new Log4NetLogger(typeof(RecordingIsPosted2Handler));
 
 
             config.AddEventHandler(new SendPerDayPromoHandler(genericFormatter, notificationDelivery,sendPerDayPromoHandlerLogger));
@@ -145,8 +146,9 @@ namespace CUWebinars.Business.Core
             config.AddEventHandler(new AdminEmailRecordingPostedHandler(genericFormatter, emailRecordingPostedHandlerLogger, notificationDelivery));
             config.AddEventHandler(new AdhocNotificationHandler(adhocNotificationDelivery, adhocNotificationHandlerLogger));
             config.AddEventHandler(new SendWeeklyInvoiceHandler(genericFormatter, weeklyInvoiceDelivery, sendWeeklyInvoiceHandlerLogger));
-            config.AddEventHandler(new OrderSubmittedMultiHandler(orderSubmittedMultiNotificationDelivery, sendOrderSubmittedMultiHandlerLogger));
-            config.AddEventHandler(new OrderSubmitted2Handler(orderSubmittedMultiNotificationDelivery, sendOrderSubmitted2HandlerLogger));
+            config.AddEventHandler(new OrderSubmittedMultiHandler(mandrillNotificationDelivery, sendOrderSubmittedMultiHandlerLogger));
+            config.AddEventHandler(new OrderSubmitted2Handler(mandrillNotificationDelivery, sendOrderSubmitted2HandlerLogger));
+            config.AddEventHandler(new RecordingIsPosted2Handler(mandrillNotificationDelivery, sendRecordingIsPosted2HandlerLogger));
 
             return config;
         }

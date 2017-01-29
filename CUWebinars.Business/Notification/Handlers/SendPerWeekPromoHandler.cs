@@ -37,48 +37,48 @@ namespace CUWebinars.Business.Notification.Handlers
 
         public virtual void Process(SendPerWeekPromoEvent<T> sendPerWeekPromoEvent)
         {
-            string sPattern = @"<img[^>]+/>";
-            Regex rgx = new Regex(sPattern);
-            Match m = rgx.Match(sendPerWeekPromoEvent.EventObject.Webinar.Presenter.BiographyLong);
-            //HACK: Parse out the photo from the bio and carry the result via the no longer used EventBody.
-            if (m.Success)
-                sendPerWeekPromoEvent.EventObject.EventBody = rgx.Replace(sendPerWeekPromoEvent.EventObject.Webinar.Presenter.BiographyLong, "");
-            try
-            {
-                var persistedNamePrefix = "PerWeekPromo_" + sendPerWeekPromoEvent.EventObject.Affiliate.ttsDomain + '_';
-                var notificationMessage = _generalFormatter
-                    .Format(sendPerWeekPromoEvent.EventObject, "SendPerWeekPromo");
+            //string sPattern = @"<img[^>]+/>";
+            //Regex rgx = new Regex(sPattern);
+            //Match m = rgx.Match(sendPerWeekPromoEvent.EventObject.Webinar.Presenter.BiographyLong);
+            ////HACK: Parse out the photo from the bio and carry the result via the no longer used EventBody.
+            //if (m.Success)
+            //    sendPerWeekPromoEvent.EventObject.EventBody = rgx.Replace(sendPerWeekPromoEvent.EventObject.Webinar.Presenter.BiographyLong, "");
+            //try
+            //{
+            //    var persistedNamePrefix = "PerWeekPromo_" + sendPerWeekPromoEvent.EventObject.Affiliate.ttsDomain + '_';
+            //    var notificationMessage = _generalFormatter
+            //        .Format(sendPerWeekPromoEvent.EventObject, "SendPerWeekPromo");
 
 
-                notificationMessage.PersistedName = string.Format("{0}_{1}{2}",
-                    persistedNamePrefix,
-                    DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat),
-                    ".htm"
-                    );
+            //    notificationMessage.PersistedName = string.Format("{0}_{1}{2}",
+            //        persistedNamePrefix,
+            //        DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat),
+            //        ".htm"
+            //        );
 
-                notificationMessage.To = sendPerWeekPromoEvent.EventObject.Affiliate.WebUser.email;
-                //notificationMessage.To = "steve@ttstrain.com";
-                _notificationDelivery.Notify(notificationMessage);
-            }
-            catch (NullReferenceException nullReferenceException)
-            {
-                if (ReferenceEquals(null, sendPerWeekPromoEvent.EventObject))
-                {
-                    _logger.Error(string.Format("ExceptionMessage SendPerWeekPromoEvent: {0}", nullReferenceException.Message), nullReferenceException);
-                }
-                else
-                {
-                    _logger.Error(
-                        string.Format("Event processing failed for SendPerWeekPromoEvent - OrderId {0}. ExceptionMessage: {1}",
-                            sendPerWeekPromoEvent.EventObject.Webinar.idWebinar,
-                            nullReferenceException.Message)
-                        , nullReferenceException);
-                }
-            }
-            catch (Exception exception)
-            {
-                _logger.Error(string.Format("SendPerWeekPromoEvent (outer) ExceptionMessage: {0}", exception.Message), exception);
-            }
+            //    notificationMessage.To = sendPerWeekPromoEvent.EventObject.Affiliate.WebUser.email;
+            //    //notificationMessage.To = "steve@ttstrain.com";
+            //    _notificationDelivery.Notify(notificationMessage);
+            //}
+            //catch (NullReferenceException nullReferenceException)
+            //{
+            //    if (ReferenceEquals(null, sendPerWeekPromoEvent.EventObject))
+            //    {
+            //        _logger.Error(string.Format("ExceptionMessage SendPerWeekPromoEvent: {0}", nullReferenceException.Message), nullReferenceException);
+            //    }
+            //    else
+            //    {
+            //        _logger.Error(
+            //            string.Format("Event processing failed for SendPerWeekPromoEvent - OrderId {0}. ExceptionMessage: {1}",
+            //                sendPerWeekPromoEvent.EventObject.Webinar.idWebinar,
+            //                nullReferenceException.Message)
+            //            , nullReferenceException);
+            //    }
+            //}
+            //catch (Exception exception)
+            //{
+            //    _logger.Error(string.Format("SendPerWeekPromoEvent (outer) ExceptionMessage: {0}", exception.Message), exception);
+            //}
         }
 
         public void Handle(SendPerWeekPromoEvent<T> @event)

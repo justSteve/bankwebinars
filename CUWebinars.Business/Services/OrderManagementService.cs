@@ -1066,6 +1066,28 @@ namespace CUWebinars.Business.Services
             //int rowsUpdated = _orderRepository.SaveChanges();
         }
 
+        public void FireRecordingIsPostedV2Event(string toEmail, string subject, string body)
+        {
+
+            var recordingIsPostedV2Message = new RecordingIsPosted2Message()
+            {
+                Recipients = toEmail.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries),
+                Subject = subject,
+                Body = body,
+            };
+
+            AddEvent(new RecordingIsPosted2Event<RecordingIsPosted2Message> { EventObject = recordingIsPostedV2Message });
+
+            foreach (var evt in GetEvents().OfType<RecordingIsPosted2Event<RecordingIsPosted2Message>>())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            Clear();
+
+            //
+        }
+
         public void FireSendRecordingIsPostedEvent(IList<Order> orders)
         {
 
@@ -2507,6 +2529,11 @@ namespace CUWebinars.Business.Services
         {
             //RedirectResult("Account", "Signin");
             return null;
+        }
+
+        public string BuildRecordingIsPostedMessage(Order order)
+        {
+            throw new NotImplementedException();
         }
 
 

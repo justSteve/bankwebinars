@@ -56,7 +56,7 @@ namespace CUWebinars.Business.Notification.Handlers
                     }
                 }
 
-                notificationMessage.From = ttsConfigHelper.GetOrderSubmittedMultiFromAddress(); // approach for From Address TBD!
+                notificationMessage.From = ttsConfigHelper.GetMandrillFromAddress(); // approach for From Address TBD!
                 notificationMessage.Subject = orderSubmittedMultiEvent.EventObject.Subject; // or ttsConfigHelper.GetWeeklyInvoiceEmailSubject(); // needs to be done early (prior to OrderSubmittedMulti.cshtml view being Rendered to String)
 
                 _orderSubmittedMultiNotificationDelivery.Notify(notificationMessage);

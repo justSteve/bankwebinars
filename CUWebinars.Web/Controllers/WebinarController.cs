@@ -37,6 +37,7 @@ using System.Web.Hosting;
 using System.Web.Mvc;
 using Citrix.GoToWebinar.Api;
 using Citrix.GoToWebinar.Api.Model;
+using CUWebinars.Business.Notification.ViewModel;
 using MailChimp.Net;
 using MailChimp.Net.Core;
 using MailChimp.Net.Interfaces;
@@ -2555,13 +2556,55 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
+                    var webinar = webinarDetailsViewModel.Webinar;
                     string message;
                     if (_webinarControllerOrchestrator.UpdateWebinarRecording(webinarDetailsViewModel, out message))
                     {
+
+                        IList<int> orderIDsForWebinar = _orderManagementService.GetV3OrdersIdsByWebinar(webinar.idWebinar);
+                        
+                        try
+                        {
+                            foreach (var orderId in orderIDsForWebinar)
+                            {
+                                var order = _orderManagementService.GetOrderById(orderId);
+                                _membershipService.AddClaimForPostEventMaterials(order.BillingEmail
+                                    , order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active)
+                                    , _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active))
+                                    , _globalConfig.Tenant);
+
+                                //Mandrill-specific handling
+                                var toEmail = order.BillingEmail;
+                                var subject = "[" + _globalConfig.Tenant + "] OnDemand recording posted for  " +
+                                              order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                                                  .Webinar.Title;
+                                var body = _webinarControllerOrchestrator.BuildRecordingIsPostedMessage(order).ToString();
+
+                                RecordingIsPosted2
+                                //string htmlEmailBody = ViewHelpers.RenderViewToString(ControllerContext, "~/Notification/Templates/.cshtml", recordingIsPosted2ViewModel, true);
+
+                                //_cartControllerOrchestrator.FireOrderSubmitted2Notification(model.Order.BillingEmail, "subject", htmlEmailBody);
+
+
+                                _orderManagementService.FireRecordingIsPostedV2Event(toEmail, subject, body);
+                            }
+
+
+                        }
+                        catch (Exception ex)
+                        {
+
+                            _logger.ErrorException(string.Format("SendRecordingIsPostedNotifications| AddClaimForPostEventMaterials failed {0} on idWebinar: {1}", ex.Message, webinar.idWebinar), ex);
+
+                        }
                         return Json(new { Result = WebUiConstants.Success });
                     }
 
+                    //_orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
+
                     return Json(new { Result = WebUiConstants.Fail, Message = message });
+
+
                 }
                 catch (Exception ex)
                 {

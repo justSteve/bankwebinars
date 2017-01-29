@@ -269,6 +269,8 @@
     <Compile Include="Models\WebUserLegacy.cs" />
     <Compile Include="Notification\Email\AdditionalLocationOrderDetailsMessage.cs" />
     <Compile Include="Notification\Email\AdhocNotificationDelivery.cs" />
+    <Compile Include="Notification\Email\IRecordingIsPosted2Message.cs" />
+    <Compile Include="Notification\Email\RecordingIsPosted2Message.cs" />
     <Compile Include="Notification\Email\OrderSubmitted2Message.cs" />
     <Compile Include="Notification\Email\OrderSubmittedMultiMessage.cs" />
     <Compile Include="Notification\Email\AzureAdhocNotificationDelivery.cs" />
@@ -281,10 +283,13 @@
     <Compile Include="Notification\Email\ConfirmOrderMessage.cs" />
     <Compile Include="Notification\Email\OrderConfirmedForAdditionalLocationDelivery.cs" />
     <Compile Include="Notification\Email\OrderNotifierMessageDelivery.cs" />
+    <Compile Include="Notification\Events\RecordingIsPosted2Event.cs" />
     <Compile Include="Notification\Events\OrderSubmitted2Event.cs" />
     <Compile Include="Notification\Events\OrderSubmittedMultiEvent.cs" />
     <Compile Include="Notification\Events\AdhocNotificationEvent.cs" />
     <Compile Include="Notification\Events\SendWeeklyInvoiceEvent.cs" />
+    <Compile Include="Notification\Handlers\RecordingIsPosted2Handler.cs" />
+    <Compile Include="Notification\Handlers\RecordingIsPosted2.cs" />
     <Compile Include="Notification\Handlers\OrderSubmitted2.cs" />
     <Compile Include="Notification\Handlers\OrderSubmitted2Handler.cs" />
     <Compile Include="Notification\Handlers\OrderSubmittedMultiHandler.cs" />

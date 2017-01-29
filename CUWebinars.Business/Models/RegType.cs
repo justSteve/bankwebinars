@@ -31,7 +31,7 @@ namespace CUWebinars.Business.Models
                 }
                 if (this.OptionLabel.StartsWith("Live Plus Six"))
                 {
-                    abbvLable = "Live+OD";
+                    abbvLable = "Live Plus OnDemand";
                 }
                 if (this.OptionLabel.StartsWith("OnDemand"))
                 {

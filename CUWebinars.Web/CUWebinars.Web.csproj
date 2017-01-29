@@ -1842,6 +1842,7 @@
     <Content Include="Notification\Templates\PromoSignupFlyer.cshtml" />
     <Content Include="Notification\Templates\PromoSignupFlyer1.cshtml" />
     <Content Include="Notification\Templates\OrderSubmitted2.cshtml" />
+    <Content Include="App_Data\mergeTemplates\RecordingIsPostedToExistingUserBW.docx" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev - FTP.pubxml" />

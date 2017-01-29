@@ -33,5 +33,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         //string CreateICS(WebinarDetailsViewModel model);
         //List<string> GetCitrixRegsPerWebinar(Webinar webinar);
         ConnectionInfoEditModel GetConnectionInfo(string webinarKey);
+        string BuildRecordingIsPostedMessage(Order order);
     }
 }
