@@ -1857,13 +1857,16 @@ namespace CUWebinars.Web.Controllers
             IList<Webinar> webinarsList = _webinarManagementService.GetUpcomingWebinars().ToList();
 
             var data = new CalendarRssFullDTOAssembler().Entities2DTOs(webinarsList);
+            
             foreach (var myEvent in data)
             {
 
-                //var utcTime = TimeZoneInfo.ConvertTimeToUtc(_appHelper.ToUnixTimespan(myEvent.start, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
-
-
-                myEvent.Url = myEvent.Url + "?idAff=" + _idAff;
+                var showDate = "<b>" + DateTimeHelper.FormatDate(_webinarControllerOrchestrator.GetWebinar(myEvent.id).Date) + "</b> <i>" +
+                    DateTimeHelper.FormatTimeWithDuration(_webinarControllerOrchestrator.GetWebinar(myEvent.id).Date,
+                        tz, true, _webinarControllerOrchestrator.GetWebinar(myEvent.id).Duration) + "</i>";
+                
+                myEvent.Content = "<div id=\"date\">" + showDate + "</div>" + myEvent.Content.Replace("[idAff]", _idAff.ToString()); 
+                    myEvent.Url = myEvent.Url + "?idAff=" + _idAff;
                 //myEvent.start = 
 
             }
@@ -1872,7 +1875,7 @@ namespace CUWebinars.Web.Controllers
                 .Select(p => new SyndicationItem(p.Title, p.Content, new Uri(p.Url)));
 
             var feed = new SyndicationFeed("Events from " + _globalConfig.Tenant,
-                _globalConfig.TenantURL + " is Webinars for the financial industry.",
+                _globalConfig.TenantURL + " <i>is</i> Webinars for the financial industry.",
                 new Uri("http://www.bankwebinars.com/"), postItems)
             {
 
@@ -2530,17 +2533,6 @@ namespace CUWebinars.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult UpdateWebinarRecordingBatch(int idWebinar, string recordingURL, DateTime livePlusFive)
-        {
-            var webinar = _webinarManagementService.GetWebinar(idWebinar);
-            webinar.RecordingUrl = recordingURL;
-            webinar.LivePlusFiveValue = livePlusFive;
-
-            _webinarControllerOrchestrator.SendRecordingIsPostedBatch(idWebinar);
-            return Content("ok");
-        }
-
-        [HttpGet]
         public ActionResult UpdateWebinarRecordingPerOrder(int idOrder, string recordingURL, string livePlusFive, string note)
         {
             var order = _orderManagementService.GetOrderById(idOrder);
@@ -2556,51 +2548,12 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
-                    var webinar = webinarDetailsViewModel.Webinar;
                     string message;
                     if (_webinarControllerOrchestrator.UpdateWebinarRecording(webinarDetailsViewModel, out message))
                     {
-
-                        IList<int> orderIDsForWebinar = _orderManagementService.GetV3OrdersIdsByWebinar(webinar.idWebinar);
-                        
-                        try
-                        {
-                            foreach (var orderId in orderIDsForWebinar)
-                            {
-                                var order = _orderManagementService.GetOrderById(orderId);
-                                _membershipService.AddClaimForPostEventMaterials(order.BillingEmail
-                                    , order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active)
-                                    , _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active))
-                                    , _globalConfig.Tenant);
-
-                                //Mandrill-specific handling
-                                var toEmail = order.BillingEmail;
-                                var subject = "[" + _globalConfig.Tenant + "] OnDemand recording posted for  " +
-                                              order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
-                                                  .Webinar.Title;
-                                var body = _webinarControllerOrchestrator.BuildRecordingIsPostedMessage(order).ToString();
-
-                                RecordingIsPosted2
-                                //string htmlEmailBody = ViewHelpers.RenderViewToString(ControllerContext, "~/Notification/Templates/.cshtml", recordingIsPosted2ViewModel, true);
-
-                                //_cartControllerOrchestrator.FireOrderSubmitted2Notification(model.Order.BillingEmail, "subject", htmlEmailBody);
-
-
-                                _orderManagementService.FireRecordingIsPostedV2Event(toEmail, subject, body);
-                            }
-
-
-                        }
-                        catch (Exception ex)
-                        {
-
-                            _logger.ErrorException(string.Format("SendRecordingIsPostedNotifications| AddClaimForPostEventMaterials failed {0} on idWebinar: {1}", ex.Message, webinar.idWebinar), ex);
-
-                        }
                         return Json(new { Result = WebUiConstants.Success });
                     }
 
-                    //_orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
 
                     return Json(new { Result = WebUiConstants.Fail, Message = message });
 

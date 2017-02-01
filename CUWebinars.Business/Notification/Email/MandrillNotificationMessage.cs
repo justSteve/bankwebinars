@@ -2,7 +2,7 @@
 
 namespace CUWebinars.Business.Notification.Email
 {
-    public class RecordingIsPosted2Message : IRecordingIsPosted2Message
+    public class MandrillNotificationMessage : IRecordingIsPosted2Message
     {
         public string BaseUrl { get; set; }
         public string Body { get; set; }

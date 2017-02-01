@@ -45,7 +45,7 @@ namespace CUWebinars.Business.Services
         void FireSendOrderShippedNotificationEvent(IList<Order> orders);
         void FireSendRecordingIsPostedEvent(IList<Order> orders);
 
-        void FireRecordingIsPostedV2Event(string toEmail, string subject, string body);
+        void FireMandrillNotificationEvent(string toEmail, string subject, string body);
         void FireSendPerDayPromoEvent(WebinarPromoViewModel webinarPromoViewModel);
         void FireSendPerWeekPromoEvent(IList<Affiliate> affiliates, Webinar webinar);
         void FireSendReminderNotificationEvent(IList<Order> orders);
@@ -163,5 +163,6 @@ namespace CUWebinars.Business.Services
        IList<Order> GetOrdersByDomain(string searchTerm, int affiliateId, out int totalNumberOrders);
 
         string SetOnDemandClaimById(int myRowIdOrder);
+        
     }
 }

@@ -1550,6 +1550,7 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 model.Webinar = _webinarManagementService.GetWebinar(model.Webinar.idWebinar);
                 model.SubscriptionPackURL = "http://ttstrain.com/webinar-subscription-packages-for-credit-unions/";
+
                 if (model.Affiliate.idUserAff != null && model.Affiliate.idUserAff > 0)
                 {
                     model.Affiliate = _affiliateManagementService.FindById(model.Affiliate.idUserAff);
@@ -1951,7 +1952,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 ContentType = "html",
                 Type = CampaignType.Regular,
                 Recipients = recp,
-                
+
                 Settings = new Setting
                 {
                     SubjectLine = "Webinar: " + webinar.Title,
@@ -3085,6 +3086,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                 {
                                     try
                                     {
+
                                         var row =
                                             order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
 
@@ -3105,8 +3107,9 @@ namespace CUWebinars.Web.Controllers.Admin
                                             if (discount.DiscountType == DiscountType.Subscription &&
                                                 discount.DateValidFrom != discount.DateValidTo)
                                             {
-                                                discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode +
-                                                    ": (Unlimited Subscription) ");
+
+                                                // change request that we skip any Unlimited subs.
+                                                continue;
                                             }
                                             else
                                             {
@@ -3234,7 +3237,25 @@ namespace CUWebinars.Web.Controllers.Admin
                                         "%";
                                     if (row.Discount != null)
                                     {
+
                                         var discount = row.Discount;
+
+                                        if (discount.DiscountType == DiscountType.Subscription &&
+                                            discount.DateValidFrom != discount.DateValidTo)
+                                        {
+                                            //skip unlimited subs
+                                            continue;
+
+                                        }
+                                        else
+                                        {
+                                            discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode +
+                                                                 ": (" +
+                                                                 discount.DiscountType.ToString()
+                                                                     .Replace("DiscountType.", "") +
+                                                                 ") ");
+                                        }
+
                                         _price = "See Note #" + totalNumberDiscounts;
                                         discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode + ": (" +
                                                              discount.DiscountType.ToString()
@@ -3366,6 +3387,23 @@ namespace CUWebinars.Web.Controllers.Admin
                                         {
 
                                             var discount = row.Discount;
+
+                                            if (discount.DiscountType == DiscountType.Subscription &&
+                                                discount.DateValidFrom != discount.DateValidTo)
+                                            {
+                                                //skip unlimited subs
+                                                continue;
+
+                                            }
+                                            else
+                                            {
+                                                discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode +
+                                                                     ": (" +
+                                                                     discount.DiscountType.ToString()
+                                                                         .Replace("DiscountType.", "") +
+                                                                     ") ");
+                                            }
+
                                             //_price = "See Note #" + totalNumberDiscounts;
                                             discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode + ": (" +
                                                                                                              discount.DiscountType.ToString()

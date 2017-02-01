@@ -4,8 +4,8 @@ using CUWebinars.NotificationSystem.Event;
 
 namespace CUWebinars.Business.Notification.Events
 {
-    public class RecordingIsPosted2Event<T> : TtsBusEvent<T>, IAllowMultiple, INotificationResendableEvent
-        where T : RecordingIsPosted2Message
+    public class MandrillNotificationEvent<T> : TtsBusEvent<T>, IAllowMultiple, INotificationResendableEvent
+        where T : MandrillNotificationMessage
     {
         public string RelativePath { get; set; }
         public bool ResendEvent { get; set; }

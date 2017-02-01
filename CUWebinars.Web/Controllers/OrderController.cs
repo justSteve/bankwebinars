@@ -777,6 +777,35 @@ namespace CUWebinars.Web.Controllers
 
 
 
+        [AllowAnonymous]
+        [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
+        public void UpdateTimeZone()
+        {
+            var incoming = HttpContext.Request.Form[0].TrimStart('[').TrimEnd(']');
+
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                _logger.Info("UpdateTimeZone Starts");
+                if (incoming != null)
+                {
+                    var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(incoming.ToString());
+                    _logger.Info("UpdateTimeZone msgHtml" + msgHtml);
+                    var parsedMessage = ParseMandrillMsg.ParseIncomingMessages("<html><body>" + msgHtml.msg.html + "</body></html>", DateTime.Now.ToString());
+                    _logger.Info("UpdateTimeZone Parsed: " + JsonConvert.SerializeObject(parsedMessage));
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn("UpdateTimeZone: " + incoming + " exception: " + ex);
+
+            }
+            //return null;
+        }
+
+
         protected override void Dispose(bool disposing)
         {
             if (!_disposed && disposing)

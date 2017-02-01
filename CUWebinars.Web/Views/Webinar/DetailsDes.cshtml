@@ -136,33 +136,12 @@
 
         <div class="row-fluid span3">
             <aside class="widget">
-                <div id="resumeOrderStatus" class="hidden"></div>
-
-                @*@if (Model.Webinar.Status == WebinarStatus.Recorded)
-                        {
-                            var expiresDate = Model.Webinar.Date.AddMonths(6);
-                            var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
-                        <h5 class="short_headline"><span>Date/Time</span></h5>
-
-                            <div style="font-size: smaller; line-height: 1.2; text-align: center; margin-bottom: 10px;">
-                                This event was recorded on <i>@Html.DisplayDate(Model.Webinar.Date)</i>.
-                            </div>
-                        }
-                        else
-                        {
-                            <b>@Html.DisplayDate(Model.Webinar.Date)</b>
-                            <br />
-                            <span>@Html.Raw(Model.TimeFormatDisplay)</span>
-                    <div class="pull-right" id="ceu">
-                        <a href="#" title="@Model.CeuStatement ">
-                            @Html.Raw(Model.CeuShort)
-                        </a>
-                    </div>
-                                }*@
+                <h5 class="short_headline">
+                    <span>Publish Date</span>
+                </h5>
+                <b>@Model.Webinar.Date.ToString("MMMM") @Model.Webinar.Date.Year </b>
 
             </aside>
-            @*@Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())*@
-            <!-- close .widget -->
 
             <aside class="widget">
                 <h5 class="short_headline">

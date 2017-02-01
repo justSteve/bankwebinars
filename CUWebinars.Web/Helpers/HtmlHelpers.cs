@@ -63,6 +63,10 @@ namespace CUWebinars.Web.Helpers
         {
             return value.Length <= maxChars ? value : value.Substring(0, maxChars) + " ...";
         }
+        public static string TruncateWithLink(this string value, int maxChars, string link)
+        {
+            return value.Length <= maxChars ? value : value.Substring(0, maxChars) + "...<a href='" + link + "' target=_blank> (more)</a>";
+        }
 
         public static string DisplayTime(this HtmlHelper html, DateTime time, decimal hoursToAdd,
             USTimeZone timeZone)

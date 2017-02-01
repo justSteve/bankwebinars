@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using CUWebinars.Web.Models;
 using CUWebinars.Web.Models.Importers;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
@@ -22,14 +23,14 @@ namespace CUWebinars.Web.Core
             _logger = logger;
         }
 
-        public static ImportOrderForAcsModel ParseAcs(string _doc, string orderDate)
+        public static IncomingEmailModel ParseIncomingMessages(string _doc, string orderDate)
         {
 
-            ImportOrderForAcsModel model = new ImportOrderForAcsModel();                           
+            IncomingEmailModel model = new IncomingEmailModel();
             model.DateSubmittedToACS = orderDate;
-                                        
+
             HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-            
+
             doc.LoadHtml(_doc);
 
             if (doc.ParseErrors != null && doc.ParseErrors.Count() > 0)
@@ -55,7 +56,87 @@ namespace CUWebinars.Web.Core
                             var _values = doc.DocumentNode.SelectNodes("//tr[@bgcolor='#FFFFFF']/td[2]");
                             var _names = doc.DocumentNode.SelectNodes("//tr[@bgcolor='#EAF2FA']/td");
 
-                            
+
+                            string[] values = new string[_values.Count];
+                            string[] names = new string[_values.Count];
+
+                            var flag = "";
+
+                            for (var i = 0; i < _values.Count - 1; i++)
+                            {
+                                string value = _values[i].InnerText.TrimStart().TrimEnd();
+                                string name =
+                                    Regex.Replace(_names[i].InnerText, @"\s", string.Empty, RegexOptions.Multiline)
+                                        .TrimStart().TrimEnd();
+                                //docs the error
+                                if (value.Length == 0)
+                                {
+                                    value = name;
+                                    flag = "Value is 0 length:" + name + " email: ";
+                                }
+                                switch (name)
+                                {
+
+                                }
+                                
+                                values[i] = value;
+                                names[i] = name;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            model.LoggerNotes += "ParseAcs FatalExecption: " + ex.Message;
+                            _logger.FatalException("IncomingParseACS", ex);
+
+                        }
+                        return model;
+                    }
+                }
+                else
+                {
+                    model.LoggerNotes += "ParseAcs Returned Null! ";
+                    _logger.Warn("Incoming | AcsModel is null");
+                    return null;
+                }
+            }
+            return null;
+
+        }
+
+        public static ImportOrderForAcsModel ParseAcs(string _doc, string orderDate)
+        {
+
+            ImportOrderForAcsModel model = new ImportOrderForAcsModel();
+            model.DateSubmittedToACS = orderDate;
+
+            HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+
+            doc.LoadHtml(_doc);
+
+            if (doc.ParseErrors != null && doc.ParseErrors.Count() > 0)
+            {
+                // Handle any parse errors as required
+                model.LoggerNotes = "AcsImporter ParseErrors: ";
+                foreach (var error in doc.ParseErrors)
+                {
+                    model.LoggerNotes += error.Reason;
+                }
+                return model;
+            }
+            else
+            {
+                if (doc.DocumentNode != null)
+                {
+                    HtmlNode bodyNode = doc.DocumentNode.SelectSingleNode("//body");
+
+                    if (bodyNode != null)
+                    {
+                        try
+                        {
+                            var _values = doc.DocumentNode.SelectNodes("//tr[@bgcolor='#FFFFFF']/td[2]");
+                            var _names = doc.DocumentNode.SelectNodes("//tr[@bgcolor='#EAF2FA']/td");
+
+
                             string[] values = new string[_values.Count];
                             string[] names = new string[_values.Count];
 
@@ -205,7 +286,7 @@ namespace CUWebinars.Web.Core
                         {
                             model.LoggerNotes += "ParseAcs FatalExecption: " + ex.Message;
                             _logger.FatalException("IncomingParseACS", ex);
-                            
+
                         }
                         return model;
                     }
@@ -220,5 +301,7 @@ namespace CUWebinars.Web.Core
             return null;
 
         }
+
     }
 }
+

@@ -583,21 +583,27 @@ namespace CUWebinars.Web.Core.Orchestrators
                     var subject = "[" + _globalConfig.Tenant + "] OnDemand recording posted for  " +
                                   order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
                                       .Webinar.Title;
+
+
                     var body = BuildRecordingIsPostedMessage(order);
+                    body = body.Replace("&gt;", ">");
+                    body = body.Replace("&lt;", "<");
+                    body = body.Replace("<p style=\"margin-left:0pt;margin-right:0pt;margin-top:0pt;margin-bottom:0pt;\"><span>&#xa0;</span></p><p style=\"margin-left:0pt;margin-right:0pt;margin-top:0pt;margin-bottom:0pt;\"><span>&#xa0;</span></p><p style=\"margin-left:0pt;margin-right:0pt;margin-top:0pt;margin-bottom:0pt;\"><span>&#xa0;</span></p>", "");
+                    body = body.Replace("<span style=\"font-family:Calibri;font-size:11pt;color:#4B5966;background-color:#4B5966;\">|</span>", "");
+                    body = body.Replace("margin-left:0pt;margin-right:0pt;margin-top:0pt;margin-bottom:0pt;", "");
+                    body = body.Replace("<td style=\"border-top-color:#000000;border-top-style:solid;border-top-width:0.75pt;border-right-color:#000000;border-right-style:solid;border-right-width:0.75pt;padding-left:5.4pt;padding-right:5.4pt;width:157.3pt;background-color:#b9c8d5;vertical-align:top\">","<td>");
+                    body = body.Replace("<td style=\"padding-left:5.4pt;padding-right:5.4pt;width:68.65pt;vertical-align:top\">","<td>");
 
-
-                    _orderManagementService.FireRecordingIsPostedV2Event(toEmail, subject, body);
+                    //_orderManagementService.FireMandrillNotificationEvent(toEmail, subject, body);
+                    _orderManagementService.FireMandrillNotificationEvent("steve@ttstrain.com", subject, body);
                 }
-
             }
             catch (Exception ex)
             {
-
                 _logger.ErrorException(string.Format("SendRecordingIsPostedNotifications| AddClaimForPostEventMaterials failed {0} on idWebinar: {1}", ex.Message, webinar.idWebinar), ex);
-
             }
 
-            //_orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
+            _orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
 
         }
 
@@ -630,7 +636,16 @@ namespace CUWebinars.Web.Core.Orchestrators
                 regDesc =
                     "Your registration includes OnDemand access to all event materials but does not include a CD-ROM or printouts. You can still upgrade to the Premier Package - just reply to this email! ";
             }
-            
+
+            var paymentCaption = "";
+            var paymentStatus = "Paid";
+            if (order.OrderStatus != OrderStatus.Paid)
+            {
+                paymentStatus = "Billed";
+                _logger.Info("RIP_NotYetPaid");
+                paymentCaption =
+                    "This registration is not yet paid. Though immediate payment is not required (we will be happy to send you an invoice), if you wish to pay by credit card <a href='" + _globalConfig.TenantURL + "/resume/" + order.idOrder +"'>" + _globalConfig.TenantURL + "/resume/ " + order.idOrder + " click here.</a>";
+            }
 
             var dsMergeFields = new
             {
@@ -639,12 +654,15 @@ namespace CUWebinars.Web.Core.Orchestrators
                 TenantSignature = "The " + _globalConfig.Tenant + " Staff",
                 OrderID = row.idOrder,
                 BillingEmail = order.BillingEmail,
-                TechSupportLink = "<a href='" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "/>" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "</a>",
-                OndemandLink = "<a href='" + _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode  +"/>"+ _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "</a>",
-                LinkToMyWebinars = "<a href='" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder +"/>" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "</a>",
+                TechSupportLink = "<a href='" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "'>" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "</a>",
+                OndemandLink = "<a href='" + _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode  +"'>"+ _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "</a>",
+                LinkToMyWebinars = "<a href='" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder +"'>" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "</a>",
                 TenantName = _globalConfig.Tenant,
                 WebinarTitle = webinar.Title,
-                FirstName = order.FirstName
+                FirstName = order.FirstName,
+                PaymentCaption = paymentCaption, 
+                PaymentStatus = paymentStatus,
+                
             };
 
             document.MailMerge.Execute(dsMergeFields);
@@ -679,10 +697,18 @@ namespace CUWebinars.Web.Core.Orchestrators
                         blob.UploadFromStream(output);
                     }
 
+                    //blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".gif");
+                    //using (MemoryStream output = new MemoryStream())
+                    //{
+                    //    document.Save(output, new ImageSaveOptions() { Format = ImageSaveFormat.Gif});
+                    //    output.Position = 0; // reset to beginning so Upload operation can work correctly
+                    //    blob.UploadFromStream(output);
+                    //}
+
                     blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".htm");
                     using (MemoryStream output = new MemoryStream())
                     {
-                        document.Save(output, SaveOptions.HtmlDefault);
+                        document.Save(output, new HtmlSaveOptions() { EmbedImages = true });
                         output.Position = 0; // reset to beginning so Upload operation can work correctly
                         blob.UploadFromStream(output);
                     }

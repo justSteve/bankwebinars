@@ -1066,19 +1066,19 @@ namespace CUWebinars.Business.Services
             //int rowsUpdated = _orderRepository.SaveChanges();
         }
 
-        public void FireRecordingIsPostedV2Event(string toEmail, string subject, string body)
+        public void FireMandrillNotificationEvent(string toEmail, string subject, string body)
         {
 
-            var recordingIsPostedV2Message = new RecordingIsPosted2Message()
+            var recordingIsPostedV2Message = new MandrillNotificationMessage()
             {
                 Recipients = toEmail.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries),
                 Subject = subject,
                 Body = body,
             };
 
-            AddEvent(new RecordingIsPosted2Event<RecordingIsPosted2Message> { EventObject = recordingIsPostedV2Message });
+            AddEvent(new MandrillNotificationEvent<MandrillNotificationMessage> { EventObject = recordingIsPostedV2Message });
 
-            foreach (var evt in GetEvents().OfType<RecordingIsPosted2Event<RecordingIsPosted2Message>>())
+            foreach (var evt in GetEvents().OfType<MandrillNotificationEvent<MandrillNotificationMessage>>())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }
@@ -2530,6 +2530,8 @@ namespace CUWebinars.Business.Services
             //RedirectResult("Account", "Signin");
             return null;
         }
+
+
 
         public string BuildRecordingIsPostedMessage(Order order)
         {

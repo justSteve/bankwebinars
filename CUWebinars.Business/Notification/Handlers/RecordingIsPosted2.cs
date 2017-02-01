@@ -9,8 +9,8 @@ using System.Linq;
 
 namespace CUWebinars.Business.Notification.Handlers
 {
-    public class RecordingIsPosted2<T> : IEventHandler<RecordingIsPosted2Event<T>>
-        where T : RecordingIsPosted2Message
+    public class RecordingIsPosted2<T> : IEventHandler<MandrillNotificationEvent<T>>
+        where T : MandrillNotificationMessage
     {
         private readonly INotificationDelivery _RecordingIsPosted2NotificationDelivery;
         private readonly ILogger _logger;
@@ -23,7 +23,7 @@ namespace CUWebinars.Business.Notification.Handlers
 
         }
 
-        public void Handle(RecordingIsPosted2Event<T> RecordingIsPosted2Event)
+        public void Handle(MandrillNotificationEvent<T> mandrillNotificationEvent)
         {
             try
             {
@@ -33,7 +33,7 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 var notificationMessage = new NotificationMessage();
 
-                notificationMessage.Body = RecordingIsPosted2Event.EventObject.Body;
+                notificationMessage.Body = mandrillNotificationEvent.EventObject.Body;
 
                 notificationMessage.PersistedName = string.Format("{0}_{1}{2}",
                     persistedNamePrefix,
@@ -45,7 +45,7 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 // parse potential 2ple emails, concept from http://stackoverflow.com/questions/14689044/regex-split-on-comma-space-or-semi-colon-delimitted-string
                 char[] delimiters = new[] { ',', ';', ' ' };  // List of your delimiters
-                List<string> addressess = RecordingIsPosted2Event.EventObject.Recipients.ToList();
+                List<string> addressess = mandrillNotificationEvent.EventObject.Recipients.ToList();
 
                 if (addressess.Count > 0)
                 {
@@ -57,29 +57,29 @@ namespace CUWebinars.Business.Notification.Handlers
                 }
 
                 notificationMessage.From = ttsConfigHelper.GetMandrillFromAddress(); // approach for From Address TBD!
-                notificationMessage.Subject = RecordingIsPosted2Event.EventObject.Subject; // or ttsConfigHelper.GetWeeklyInvoiceEmailSubject(); // needs to be done early (prior to RecordingIsPosted2.cshtml view being Rendered to String)
+                notificationMessage.Subject = mandrillNotificationEvent.EventObject.Subject; // or ttsConfigHelper.GetWeeklyInvoiceEmailSubject(); // needs to be done early (prior to RecordingIsPosted2.cshtml view being Rendered to String)
 
                 _RecordingIsPosted2NotificationDelivery.Notify(notificationMessage);
             }
             catch (NullReferenceException nullReferenceException)
             {
-                if (ReferenceEquals(null, RecordingIsPosted2Event.EventObject))
+                if (ReferenceEquals(null, mandrillNotificationEvent.EventObject))
                 {
-                    _logger.Error(string.Format("ExceptionMessage RecordingIsPosted2Event: {0}", nullReferenceException.Message), nullReferenceException);
+                    _logger.Error(string.Format("ExceptionMessage MandrillNotificationEvent: {0}", nullReferenceException.Message), nullReferenceException);
                 }
                 else
                 {
-                    _logger.Error(string.Format("ExceptionMessage RecordingIsPosted2Event but not null eventObject: {0}", nullReferenceException.Message), nullReferenceException);
+                    _logger.Error(string.Format("ExceptionMessage MandrillNotificationEvent but not null eventObject: {0}", nullReferenceException.Message), nullReferenceException);
                 }
             }
             catch (Exception exception)
             {
-                _logger.Error(string.Format("RecordingIsPosted2Event (outer) ExceptionMessage: {0}", exception.Message), exception);
+                _logger.Error(string.Format("MandrillNotificationEvent (outer) ExceptionMessage: {0}", exception.Message), exception);
             }
         }
     }
 
-    public class RecordingIsPosted2Handler : RecordingIsPosted2Handler<RecordingIsPosted2Message>
+    public class RecordingIsPosted2Handler : RecordingIsPosted2Handler<MandrillNotificationMessage>
     {
         public RecordingIsPosted2Handler(INotificationDelivery RecordingIsPosted2Delivery, ILogger logger)
             : base(RecordingIsPosted2Delivery, logger)

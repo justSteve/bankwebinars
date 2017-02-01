@@ -492,6 +492,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Models\IncomingEmailModel.cs" />
     <Compile Include="Notification\Templates\OrderSubmitted2ViewModel.cs" />
     <Compile Include="ViewModel\EditPresenterViewModel.cs" />
     <Compile Include="Core\CalendarRssFullDTOAssembler.cs" />

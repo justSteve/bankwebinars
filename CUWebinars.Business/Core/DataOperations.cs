@@ -28,7 +28,7 @@ namespace CUWebinars.Business.Core
         private readonly string _connectionString;
 
         //private readonly ILogger _logger;
-       //private readonly TtsConfiguration _ttsConfig;
+        //private readonly TtsConfiguration _ttsConfig;
 
         public DataOperations(string connectionString)
         {
@@ -225,7 +225,7 @@ namespace CUWebinars.Business.Core
 
             return numRows == 1;
         }
-        
+
         public void LogError(string MethodSendingError, string ErrorToLog)
         {
             using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
@@ -1053,7 +1053,7 @@ namespace CUWebinars.Business.Core
                 {
                     while (reader.HasRows)
                     {
-                        
+
                         //an interesting bug in how the reader is behaving here:
                         //  the sproc being called returns 3 resultsets. If any one of
                         //  those resultsets contains no members, none of the remaining
@@ -1195,6 +1195,7 @@ namespace CUWebinars.Business.Core
 
                         var IDAffParam = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idAff", Value = affiliate.idUserAff };
                         var WebFooterParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@WebFooter", Value = affiliate.WebFooter };
+                        var Logo = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@WebFooter", Value = affiliate.Logo };
                         var EmailBannerParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@EmailBanner", Value = affiliate.EmailBanner };
                         var EmailFooterParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@EmailFooter", Value = affiliate.EmailFooter };
                         var BillingModelParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@BillingModel", Value = affiliate.BillingModel };
@@ -1208,6 +1209,7 @@ namespace CUWebinars.Business.Core
                         //createDiscount.Parameters.Add(TotalCountParam);
                         updateAff.Parameters.Add(IDAffParam);
                         updateAff.Parameters.Add(WebFooterParam);
+                        updateAff.Parameters.Add(Logo);
                         updateAff.Parameters.Add(EmailBannerParam);
                         updateAff.Parameters.Add(EmailFooterParam);
                         updateAff.Parameters.Add(BillingModelParam);
@@ -1217,7 +1219,7 @@ namespace CUWebinars.Business.Core
                         updateAff.Parameters.Add(NotiOrdersParam);
                         updateAff.Parameters.Add(NotiPromosParam);
                         updateAff.Parameters.Add(TimeZoneParam);
-                        
+
                         result = (int)updateAff.ExecuteScalar();
                     }
                     catch (Exception ex)
@@ -1260,18 +1262,18 @@ namespace CUWebinars.Business.Core
                         updatePresenter.Connection = sqlConnection;
                         updatePresenter.CommandType = CommandType.StoredProcedure;
 
-                        var IDUserParam = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idUser", Value = newPresenter.idUser};
+                        var IDUserParam = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idUser", Value = newPresenter.idUser };
                         var BioParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@Biography", Value = newPresenter.Biography };
-                        var BioLongParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@BiographyLong", Value = newPresenter.BiographyLong};
+                        var BioLongParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@BiographyLong", Value = newPresenter.BiographyLong };
                         var PhotoFullParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@PhotoFull", Value = newPresenter.PhotoFull };
-                        var PhotoThumbParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@PhotoThumb", Value = newPresenter.PhotoThumb};
-                        
+                        var PhotoThumbParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@PhotoThumb", Value = newPresenter.PhotoThumb };
+
                         updatePresenter.Parameters.Add(IDUserParam);
                         updatePresenter.Parameters.Add(BioParam);
                         updatePresenter.Parameters.Add(BioLongParam);
                         updatePresenter.Parameters.Add(PhotoFullParam);
                         updatePresenter.Parameters.Add(PhotoThumbParam);
-                        
+
                         result = (int)updatePresenter.ExecuteScalar();
                     }
                     catch (Exception ex)

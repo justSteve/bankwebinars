@@ -21,12 +21,17 @@ using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
 using CUWebinars.Business.Repository;
 using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models.DataTablesModels;
+using GemBox.Document;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.Blob;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
 namespace CUWebinars.Web.Core.Orchestrators
@@ -921,7 +926,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 _logger.Info("WebUser id is {0}", webUser.idUser);
 
-                
+
                 var newOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
                 newOrder.AuditInfo = _appHelper.GetUserAuditInfo();
                 newOrder.Origin = DomainConstants.Cart;
@@ -1011,6 +1016,11 @@ namespace CUWebinars.Web.Core.Orchestrators
         }
 
         public void FireOrderSubmitted2Notification(string toEmail, string subject, string notificationCopy)
+        {
+            _orderManagementService.FireOrderSubmitted2Event(toEmail, subject, notificationCopy);
+        }
+
+        public void FireOrderSubmittedNotificationDES(string toEmail, string subject, string notificationCopy)
         {
             _orderManagementService.FireOrderSubmitted2Event(toEmail, subject, notificationCopy);
         }
@@ -1147,6 +1157,135 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void GenerateRegistrantKey(Order modelOrder)
         {
             _orderManagementService.GenerateRegistrantKey(modelOrder);
+        }
+        
+
+        public string BuildOrderSubmitted2DESNotification(Order order)
+        {
+
+            OrderRow row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+
+            Discount desSub = new Discount
+            {
+                DiscountType = DiscountType.DirectorSeries,
+                DateValidTo = order.OrderDate.AddYears(1),
+                DateValidFrom = order.OrderDate,
+                Cost = row.RowPrice,
+                DateBilled = DateTime.UtcNow,
+                DateVerified = DateTime.Now,
+                DiscountCode = "DES" + order.idOrder,
+                FlatOff = 0,
+                Notes = "V3 entry",
+                PercentOff = 0,
+                RenewalTerm = 1,
+                Status = "Active",
+                TotalCount = 1,
+                idAffiliate = order.idAffiliate,
+                idDiscount = order.idOrder
+
+            };
+            row.Discount = desSub;
+
+            _orderManagementService.SaveOrderChanges(order, null, null);
+
+            Webinar webinar = row.Webinar;
+            DocumentModel document =
+                DocumentModel.Load(
+                    System.Web.HttpContext.Current.Server.MapPath(
+                        @"~/App_Data/mergeTemplates/OrderSubmittedDES.docx"));
+
+
+            string theOrderSummary = "";
+            string regDesc = "";
+
+
+            var dsMergeFields = new
+            {
+                AttendType = row.RegistrationType.OptionLabelShort,
+                RegDesc = regDesc,
+                TenantSignature = "The " + _globalConfig.Tenant + " Staff",
+                OrderID = row.idOrder,
+                BillingEmail = order.BillingEmail,
+                TechSupportLink = "<a href='" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "'>" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "</a>",
+                OndemandLink = "<a href='" + _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "'>" + _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "</a>",
+                LinkToMyWebinars = "<a href='" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "'>" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "</a>",
+                TenantName = _globalConfig.Tenant,
+                WebinarTitle = webinar.Title,
+                FirstName = order.FirstName
+
+            };
+
+            document.MailMerge.Execute(dsMergeFields);
+
+
+            bool noError = true;
+            try
+            {
+                if (noError)
+                {
+                    _logger.Info("BuildOrderSubmitted2DES begins: " + order.idOrder);
+
+                    //// SAVE LOCALLY if needed for easier testing
+                    //document.Save(System.Web.HttpContext.Current.Server.MapPath(@"~/App_Data/mergeTemplates/" + order.idOrder + ".pdf"), SaveOptions.PdfDefault);
+
+                    var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName,
+                        _globalConfig.StorageAccessKey);
+
+                    var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
+                    CloudBlobClient blobClient = cloudStorageAccount.CreateCloudBlobClient();
+
+                    // Retrieve reference to a previously created container.
+                    CloudBlobContainer container = blobClient.GetContainerReference("desregistrations");
+                    container.CreateIfNotExists();
+
+                    CloudBlockBlob blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".pdf");
+
+                    using (MemoryStream output = new MemoryStream())
+                    {
+                        document.Save(output, SaveOptions.PdfDefault);
+                        output.Position = 0; // reset to beginning so Upload operation can work correctly
+                        blob.UploadFromStream(output);
+                    }
+
+                    //blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".gif");
+                    //using (MemoryStream output = new MemoryStream())
+                    //{
+                    //    document.Save(output, new ImageSaveOptions() { Format = ImageSaveFormat.Gif});
+                    //    output.Position = 0; // reset to beginning so Upload operation can work correctly
+                    //    blob.UploadFromStream(output);
+                    //}
+
+                    blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".htm");
+                    using (MemoryStream output = new MemoryStream())
+                    {
+                        document.Save(output, new HtmlSaveOptions() { EmbedImages = true });
+                        output.Position = 0; // reset to beginning so Upload operation can work correctly
+                        blob.UploadFromStream(output);
+                    }
+
+                    byte[] fileContents;
+                    using (MemoryStream output = new MemoryStream())
+                    {
+                        document.Save(output, SaveOptions.HtmlDefault);
+                        output.Position = 0; // reset to beginning so Upload operation can work correctly
+
+                        fileContents = output.ToArray();
+                    }
+                    _orderManagementService.FireMandrillNotificationEvent("steve@ttstrain.com", "Welcome To The Director Series", System.Text.Encoding.UTF8.GetString(fileContents));
+                    return System.Text.Encoding.UTF8.GetString(fileContents);
+                }
+                else
+                {
+                    https://ci4.googleusercontent.com/proxy/AOF0zatzFSovHlWus8P1dHxNNFo0tLbt-mot0d9e-Of2y7-y9OixCjE7b48XZyxMDreHdAqWirQiZ5bnZNro7z99YsBEbeXmAtMPk4wXt_4cag5u=s0-d-e1-ft#http://devholmen15:3538/Content/images/vrLocal/left_shadow.jpg
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorException("BuildOrderSubmitted2DES for: " + order.idOrder, ex);
+                return "Error: " + ex.Message;
+            }
+
         }
 
 

@@ -270,7 +270,7 @@
     <Compile Include="Notification\Email\AdditionalLocationOrderDetailsMessage.cs" />
     <Compile Include="Notification\Email\AdhocNotificationDelivery.cs" />
     <Compile Include="Notification\Email\IRecordingIsPosted2Message.cs" />
-    <Compile Include="Notification\Email\RecordingIsPosted2Message.cs" />
+    <Compile Include="Notification\Email\MandrillNotificationMessage.cs" />
     <Compile Include="Notification\Email\OrderSubmitted2Message.cs" />
     <Compile Include="Notification\Email\OrderSubmittedMultiMessage.cs" />
     <Compile Include="Notification\Email\AzureAdhocNotificationDelivery.cs" />
@@ -283,7 +283,7 @@
     <Compile Include="Notification\Email\ConfirmOrderMessage.cs" />
     <Compile Include="Notification\Email\OrderConfirmedForAdditionalLocationDelivery.cs" />
     <Compile Include="Notification\Email\OrderNotifierMessageDelivery.cs" />
-    <Compile Include="Notification\Events\RecordingIsPosted2Event.cs" />
+    <Compile Include="Notification\Events\MandrillNotificationEvent.cs" />
     <Compile Include="Notification\Events\OrderSubmitted2Event.cs" />
     <Compile Include="Notification\Events\OrderSubmittedMultiEvent.cs" />
     <Compile Include="Notification\Events\AdhocNotificationEvent.cs" />

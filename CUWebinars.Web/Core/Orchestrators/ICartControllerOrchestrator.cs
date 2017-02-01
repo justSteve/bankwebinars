@@ -75,5 +75,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         int CheckIfEmailAlreadyRegisteredForWebinar(int idWebinar, string email);
         bool UserHasMultipleEvents(int? id);
         void GenerateRegistrantKey(Order modelOrder);
+        string BuildOrderSubmitted2DESNotification(Order order);
     }
 }

@@ -216,7 +216,7 @@ namespace CUWebinars.Web.Controllers
                         {
                             Subject = "subject",
                             OrderSummaryHtml = "sbOrdersSummary.ToString()",
-                            
+
                             HeaderSummaryCaption = "sbHeaderSummary.ToString().TrimEnd(',')"
                         };
 
@@ -434,7 +434,7 @@ namespace CUWebinars.Web.Controllers
                             order.Total = order.Total + (int)50.00;
                         }
                     }
-                    
+
                     ViewBag.Order = order;
                 }
                 else
@@ -1567,8 +1567,16 @@ namespace CUWebinars.Web.Controllers
                         order.OrderRows.FirstOrDefault());
 
                     _cartControllerOrchestrator.UpdateOrderPricing(order);
-
-                    _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
+                    if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.SeriesInfo ==
+                        "DES")
+                    {
+                        _logger.Info("DES Subscription is building: " + order.idOrder);
+                        _cartControllerOrchestrator.BuildOrderSubmitted2DESNotification(order);
+                    }
+                    else
+                    {
+                        _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
+                    }
                 }
                 else
                 {
