@@ -422,109 +422,17 @@ function getOrderStatusHtml() {
     };
 
 
-//    ns.wireUpDataTableForAffiliatesListing = function () {
-
-//        DO.affiliatesTable.dataTable({
-//            destroy: true, "serverSide": true,
-//            'buttons': [{
-//                extend: 'print',
-//                className: 'btn btn-mini',
-//                text: 'Print current page ',
-//                exportOptions: {
-//                    stripHtml: false
-//                }
-//            }, {
-//                extend: 'pdf',
-//                text: ' Save PDF',
-//                className: 'btn btn-mini',
-//                exportOptions: {
-//                    stripNewlines: false
-//                }
-//            }, {
-//                extend: 'excel',
-//                text: ' Export to Excel',
-//                className: 'btn btn-mini',
-//                exportOptions: {
-//                    stripNewlines: false
-//                }
-//            }
-//            ],
-//            "ajax": {
-//                "type": "POST",
-//                "url": '/admin/DTDataHandlerAffiliateReport',
-//                "contentType": 'application/json; charset=utf-8',
-//                'data': function (data) {
-
-//                    data.idWebinar = parseInt(DO.webinarIdDiv.text());
-//                    return data = JSON.stringify(data);
-//                }
-//            },
-
-//            "dom": '<ilfB<t>ipB>',
-//            "pageLength": 10,
-//            "scroller": {
-//                loadingIndicator: false
-//            },
-//            "processing": true,
-//            "paging": true,
-//            "deferRender": true,
-//            'columns': [
-//                { "orderable": false, 'data': 'idAff' },
-//                { "orderable": false, 'data': 'idAff' },
-//                { "orderable": false, 'data': 'Affiliate_ContactName' },
-//                { "orderable": false, 'data': 'TotalRevenues' },
-//                { "orderable": false, 'data': 'TotalCommissions' },
-//                { "orderable": false, 'data': 'NumOfOrders' }
-//            ],
-//            "order": [5, "asc"],
-//            //, // complex columns can be specified / created with mRender
-//            "aoColumnDefs": [
-
-//                {
-//                    "aTargets": [1], // Send Rpt column  -- 
-//                    "mData": "idAff",
-//                    "mRender": function (data, type, full) {
-//                        return '<button name="sendReportTo ' + full.idAff + '" onclick="SendReport(' + full.WebinarId + ', ' + full.idAff + '); return false;">Send</button>';
-//                    }
-//                },
-//                {
-//                    "aTargets": [3], // Total Revs column  -- 
-//                    "mData": "TotalRevenues",
-//                    "mRender": function (data, type, full) {
-//                        return ('<div class="float-right">$' + full.TotalRevenues + '</div>').replace(".5", ".50");
-//                    }
-//                },
-//{
-//    "aTargets": [4], // Total Revs column  -- 
-//    "mData": "TotalCommissions",
-//    "mRender": function (data, type, full) {
-//        return ('<div class="float-right">$' + full.TotalCommissions + '</div>').replace(".5", ".50");
-//    }
-//}, {
-//    "aTargets": [5], // Total Revs column  -- 
-//    "mData": "NumOfOrders",
-//    "mRender": function (data, type, full) {
-//        return ('<div class="float-right">' + full.NumOfOrders + '</div>').replace(".5", ".50");
-//    }
-//}
-//            ]
-//        });
-//    };
-
 
     ns.wireUpDataTable = function () {
         DO.ordersTable.dataTable({
 
             //destroy: true, 
-"footerCallback": function (row, data, start, end, display) {
+            "footerCallback": function (row, data, start, end, display) {
                 var api = this.api(), data;
 
                 // Remove the formatting to get integer data for summation
                 var intVal = function (i) {
-                    return typeof i === 'string' ?
-                        i.replace(/[\$,]/g, '') * 1 :
-                        typeof i === 'number' ?
-                        i : 0;
+                    return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
                 };
 
                 // Total over all pages
@@ -533,7 +441,8 @@ function getOrderStatusHtml() {
                     .data()
                     .reduce(function (a, b) {
                         return intVal(a) + intVal(b);
-                    }, 0);
+                    },
+                        0);
 
                 // Total over this page
                 pageTotal = api
@@ -541,34 +450,39 @@ function getOrderStatusHtml() {
                     .data()
                     .reduce(function (a, b) {
                         return intVal(a) + intVal(b);
-                    }, 0);
+                    },
+                        0);
 
                 // Update footer
-                $(api.column(3).footer()).html(
-                    '$' + pageTotal + ' ( $' + total + ' total)'
-                );
-            }, 'buttons': [{
-                extend: 'print',
-                className: 'btn btn-mini',
-                text: 'Print current page ',
-                exportOptions: {
-                    stripHtml: false
+                $(api.column(3).footer())
+                    .html(
+                        '$' + pageTotal + ' ( $' + total + ' total)'
+                    );
+            },
+            'buttons': [
+                {
+                    extend: 'print',
+                    className: 'btn btn-mini',
+                    text: 'Print current page ',
+                    exportOptions: {
+                        stripHtml: false
+                    }
+                }, {
+                    extend: 'pdf',
+                    text: ' Save PDF',
+                    className: 'btn btn-mini',
+                    exportOptions: {
+                        stripNewlines: false
+                    }
+                }, {
+                    extend: 'excel',
+                    text: ' Export to Excel',
+                    className: 'btn btn-mini',
+                    exportOptions: {
+                        stripNewlines: false
+                    }
                 }
-            }, {
-                extend: 'pdf',
-                text: ' Save PDF',
-                className: 'btn btn-mini',
-                exportOptions: {
-                    stripNewlines: false
-                }
-            }, {
-                extend: 'excel',
-                text: ' Export to Excel',
-                className: 'btn btn-mini',
-                exportOptions: {
-                    stripNewlines: false
-                }
-            }],
+            ],
 
             "serverSide": true,
             "ajax": {
@@ -578,7 +492,8 @@ function getOrderStatusHtml() {
                 'data': function (data) {
 
                     // additional custom filters
-                    var showAllEvents = ($("#filter-buttons #showAllOrders button.active").val() == "showAllEvents");
+                    var showAllEvents = ($("#filter-buttons #showAllOrders button.active").val() == "showAllEvents"
+                    );
                     var includeOrderStatuses = DO.orderStatusFilters;
                     data.searchTerm = DO.searchTerm;
                     data.webinarId = parseInt(DO.webinarIdDiv.text());
@@ -617,119 +532,106 @@ function getOrderStatusHtml() {
                 { 'data': 'OrderDate', 'class': 'details-control edit-resends' },
                 { 'data': 'OrderStatusString', 'class': 'edit-status' }
             ],
-            "order": [0, "asc"]
-
-            , // complex columns can be specified / created with mRender
+            "order": [0, "asc"], // complex columns can be specified / created with mRender
             "aoColumnDefs": [
             {
                 // [0] idOrder column is hidden
 
+
                 "aTargets": [1], // User column  -- triggers EditUser_Compact.cshtml
                 "mData": "",
                 "mRender": function (data, type, full) {
-                    return full.LastName + ", " + full.FirstName + "<br>" + full.BillingEmail;
-                    //return "<a href='/account/ordersbyuser/" + full.idUser + "' />" + full.LastName + ", " + full.FirstName + "</a><br>" + full.BillingEmail;
-                }
-                // link on user name should implement 'orders by user' current contorl: byUserWrapper
-            },
-            {
-                "aTargets": [3], // institution column  -- triggers EditInstitution.chtml
-                "mData": "",
-                "mRender": function (data, type, full) {
-                    return full.Institution + "</br>";
-                    //return "<a href='/account/editinstitution/" + full.idUser + "' target='_new' />" + full.Institution + "</a>";
+                    console.log(full);
+                    return full.LastName + ", " + full.FirstName + " <span style=\"font-size: xx-small;\">(" + full.idUser + ")</span><br>" + full.BillingEmail + "<br>";
                 }
             },
-           {
-               "aTargets": [4], // Billing column  -- triggers EditOrder_Compact.cshtml and EditRegType_DropDown.cshtml
-               "mData": "RegistrationType",
-               "mRender": function (data, type, full) {
+        {
+            "aTargets": [3], // institution column  -- triggers EditInstitution.chtml
+            "mData": "",
+            "mRender": function (data, type, full) {
+                return full.Institution + "</br>";
+                //return "<a href='/account/editinstitution/" + full.idUser + "' target='_new' />" + full.Institution + "</a>";
+            }
+        },
+       {
+           "aTargets": [4], // Billing column  -- triggers EditOrder_Compact.cshtml and EditRegType_DropDown.cshtml
+           "mData": "RegistrationType",
+           "mRender": function (data, type, full) {
 
-                   //var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
-                   var orderToEdit = full.idOrder;
+               //var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
+               var orderToEdit = full.idOrder;
 
-                   var flatOff = 0;
-                   var percentOff = 0;
+               var flatOff = 0;
+               var percentOff = 0;
 
-                   if (full.Discount != null) {
-                       flatOff = full.Discount.FlatOff;
-                       percentOff = full.Discount.PercentOff;
+               if (full.Discount != null) {
+                   flatOff = full.Discount.FlatOff;
+                   percentOff = full.Discount.PercentOff;
 
-                   };
-                   var showDiscount = "";
-                   if (flatOff > 0) {
-                       showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: $" + flatOff + "</span>";
-                   }
-
-                   if (percentOff > 0) {
-                       showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: " + percentOff + "%</span>";
-                   }
-
-
-                   var newBillingHtml = ns.getBillingCellHtml(showDiscount,
-                                                           full.RegistrationType.OptionLabelShort,
-                                                           full.Total, full.ShippedDateString);
-
-                   return newBillingHtml;
-
+               };
+               var showDiscount = "";
+               if (flatOff > 0) {
+                   showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: $" + flatOff + "</span>";
                }
-           },
-           // [5] Affiliate Column
-            {
-                "aTargets": [5], //
-                "mData": "Affiliate_ttsDomain",
-                "mRender": function (data, type, full) {
 
-                    //var royaltyHtml = full.Royalty;
-                    //return "<div class=\"aff-revenue-summary\" data-w=" + parseInt(DO.webinarIdDiv.text()) + " data-a='" + full.Affiliate_ttsDomain + "' style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</br>" + royaltyHtml + "</div>";
-                    
-                    return "<div class=\"aff-revenue-summary\" data-w=" + parseInt(DO.webinarIdDiv.text()) + " data-a='" + full.Affiliate_ttsDomain + "' style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</div>";
+               if (percentOff > 0) {
+                   showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: " + percentOff + "%</span>";
+               }
+
+
+               var newBillingHtml = ns.getBillingCellHtml(showDiscount,
+                                                       full.RegistrationType.OptionLabelShort,
+                                                       full.Total, full.ShippedDateString);
+
+               return newBillingHtml;
+
+           }
+       },
+       // [5] Affiliate Column
+        {
+            "aTargets": [5], //
+            "mData": "Affiliate_ttsDomain",
+            "mRender": function (data, type, full) {
+
+                //var royaltyHtml = full.Royalty;
+                //return "<div class=\"aff-revenue-summary\" data-w=" + parseInt(DO.webinarIdDiv.text()) + " data-a='" + full.Affiliate_ttsDomain + "' style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</br>" + royaltyHtml + "</div>";
+
+                return "<div class=\"aff-revenue-summary\" data-w=" + parseInt(DO.webinarIdDiv.text()) + " data-a='" + full.Affiliate_ttsDomain + "' style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</div>";
+            }
+        },
+
+        {
+            "aTargets": [7], // OrderDate column
+            "mData": "",
+            "mRender": function (data, type, full) {
+
+                var orderToEdit = full.idOrder;
+                //var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
+                var statusHtml = full.OrderDateString;
+                var resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendOrderConfirmationButton btn btn-mini\">Confirmation</button>";
+                if (full.Webinar_IsActive) {
+                    resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
                 }
-            },
-           // [6] Royalty Column
-            //{
-            //    "aTargets": [6], //
-            //    "mData": "Royalty",
-            //    "mRender": function (data, type, full) {
 
-            //        var royaltyHtml = full.Royalty;
-            //        return "<div class=\"aff-revenue-summary\" data-w=" + parseInt(DO.webinarIdDiv.text()) + " data-a='" + full.Affiliate_ttsDomain + "' style=\"text-align: center\">" + full.Affiliate_ttsDomain + "</br>" + royaltyHtml + "</div>";
-            //    }
-            //},
+                return "<div style=\"text-align: center\">" + statusHtml + "</br>" + resendMsg + "</div>";
+            }
+        },
+        {
 
-           // [7] Resends Column
-            {
-                "aTargets": [7], // OrderDate column
-                "mData": "",
-                "mRender": function (data, type, full) {
+            "aTargets": [8], // Status column
+            "mData": "",
+            "mRender": function (data, type, full) {
 
-                    var orderToEdit = full.idOrder;
-                    //var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
-                    var statusHtml = full.OrderDateString;
-                    var resendMsg = "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendOrderConfirmationButton btn btn-mini\">Confirmation</button>";
-                    if (full.Webinar_IsActive) {
-                        resendMsg += "<button data-orderId=\"" + orderToEdit + "\" class=\"ResendConnectionInfoButton btn btn-mini\">Connection Info</button>";
-                    }
+                var orderToEdit = full.idOrder;
+                //var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
 
-                    return "<div style=\"text-align: center\">" + statusHtml + "</br>" + resendMsg + "</div>";
-                }
-            },
-            {
+                // the dropdown's HTML gets built one time on the server via ajax via a partial view and RenderViewToString
+                //  magic strings [ORDERSTATUS] and [ORDERID] are hand-/hard-coded in the partial View
+                var dd_html = DO.baseOrderStatusHtml.replace(/\[ORDERSTATUS\]/gi, full.OrderStatusString).replace(/\[ORDERID\]/gi, orderToEdit);
 
-                "aTargets": [8], // Status column
-                "mData": "",
-                "mRender": function (data, type, full) {
-
-                    var orderToEdit = full.idOrder;
-                    //var orderToEdit = (full.idOrderLegacy != 0) ? full.idOrderLegacy : full.idOrder;
-
-                    // the dropdown's HTML gets built one time on the server via ajax via a partial view and RenderViewToString
-                    //  magic strings [ORDERSTATUS] and [ORDERID] are hand-/hard-coded in the partial View
-                    var dd_html = DO.baseOrderStatusHtml.replace(/\[ORDERSTATUS\]/gi, full.OrderStatusString).replace(/\[ORDERID\]/gi, orderToEdit);
-
-                    return orderToEdit + dd_html;
-                }
-            }]
+                return orderToEdit + dd_html;
+            }
+        }]
         });
     };
 

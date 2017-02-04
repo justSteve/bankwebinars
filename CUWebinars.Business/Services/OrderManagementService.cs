@@ -171,13 +171,13 @@ namespace CUWebinars.Business.Services
             {
                 var regType = _regTypeRepository.FindRegType(registrationType);
 
-                if (additionalLocation != null)
-                {
-                    foreach (var addLoc in additionalLocation)
-                    {
-                        addLoc.Price = GetCostOfAdditionalLocations(additionalLocation, webinar.idWebinar).Item2;
-                    }
-                }
+                //if (additionalLocation != null)
+                //{
+                //    foreach (var addLoc in additionalLocation)
+                //    {
+                //        addLoc.Price = GetCostOfAdditionalLocations(additionalLocation, webinar.idWebinar).Item2;
+                //    }
+                //}
 
                 OrderRow row = _orderRepository.CreateOrderRow(webinar, additionalLocation, regType);
 
@@ -242,54 +242,6 @@ namespace CUWebinars.Business.Services
                 .ToDictionary(a => a.idUserAff, a => a.ttsDomain);
         }
 
-        public Tuple<string, decimal> GetCostOfAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations,
-            int idWebinar)
-        {
-            //so renamed to reflect that we are building the cost of a user's list of added seats. Not
-            // how much does it cost per seat.
-            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
-            var addresses = new StringBuilder();
-            var i = 0;
-
-            var additionalLocationsPricing = GetAdditionalLocationsPricing(idWebinar);
-
-            decimal optionsCost = 0M;
-
-            // perf tweak - ensures enumerable will only be enumerated once
-            var additionalLocationsEnumerated = additionalLocations as AdditionalLocation[] ??
-                                                additionalLocations.ToArray();
-            //var additionalLocationsEnumerated = additionalLocations as AdditionalLocation[] ?? additionalLocations.ToArray();
-
-            string emailSpanElement = string.Empty; // emails in bold text, or whatever suits
-            //tagBuilder.AddCssClass("muted");
-
-            foreach (var additionalLocation in additionalLocationsEnumerated)
-            {
-                emailSpanElement = string.Format("<strong>{0}</strong>", additionalLocation.Email);
-
-                i++;
-
-                if (i == additionalLocationsEnumerated.Count())
-                {
-                    addresses.Append(emailSpanElement);
-                }
-                if (i < additionalLocationsEnumerated.Count())
-                {
-                    if (i == additionalLocationsEnumerated.Count() - 1)
-                    {
-                        addresses.Append(emailSpanElement + " and ");
-                    }
-                    else
-                    {
-                        addresses.Append(emailSpanElement + ", ");
-                    }
-                }
-            }
-
-            optionsCost = additionalLocationsPricing;
-
-            return new Tuple<string, decimal>(addresses.ToString(), optionsCost);
-        }
 
         public Affiliate GetAffiliateByDomain(string domain)
         {

@@ -1546,10 +1546,9 @@ namespace CUWebinars.Web.Controllers
                 else
                     row = model.Order.OrderRows.SingleOrDefault();
 
-                var additionalLocationsPricing =
-                    _orderManagementService.GetCostOfAdditionalLocations(orderRowForOrder.AdditionalLocation,
-                        webinar.idWebinar
-                    );
+                var additionalLocationsPricing = orderRowForOrder.Webinar.AdditionalLocationPrice;
+                //_orderManagementService.GetCostOfAdditionalLocations(orderRowForOrder.AdditionalLocation,
+                //    webinar.idWebinar);
 
                 // populate DisplayRowPriceViewModel of DisplayOptionsViewModel
                 model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
@@ -1560,7 +1559,7 @@ namespace CUWebinars.Web.Controllers
                         OrderStatus = row.Order.OrderStatus,
                         //Price = Convert.ToDecimal(row.RegistrationType.Price),
                         PricesAndDiscounts =
-                            _orderManagementService.CalculateOrderCost(row.Order, additionalLocationsPricing.Item2),
+                            _orderManagementService.CalculateOrderCost(row.Order, orderRowForOrder.Webinar.AdditionalLocationPrice),
                         //RowPrice = row.RowPrice,
                         RegistrationType = row.RegistrationType
                     };
@@ -1572,25 +1571,34 @@ namespace CUWebinars.Web.Controllers
                     model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Emails =
                         model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
                             .AdditionalLocations.Select(al => al.Email).ToArray();
+                string lstAddLoc = null;
+                if (orderRowForOrder.AdditionalLocation != null && orderRowForOrder.AdditionalLocation.Count > 0)
+                {
+                    foreach (var additionalLocation in orderRowForOrder.AdditionalLocation)
+                    {
+                        lstAddLoc += additionalLocation.Email + ",";
+                    }
+                }
 
 
                 model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
                     .AdditionalLocationAddViewModel = new AdditionalLocationAddViewModel
                     {
                         AdditionalLocations = additionalLocations,
-                        Price = additionalLocationsPricing.Item2
+                        Price = orderRowForOrder.Webinar.AdditionalLocationPrice// additionalLocationsPricing.Item2
                     };
                 model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Price =
-                    additionalLocationsPricing.Item2;
+                    orderRowForOrder.Webinar.AdditionalLocationPrice;//additionalLocationsPricing.Item2;
 
                 // populate RegistrationSummaryViewModel and AdditionalLocationsViewModel
+
                 model.RegistrationSummaryViewModel = new RegistrationSummaryViewModel
                 {
                     AdditionalLocationsViewModel = new AdditionalLocationsViewModel
                     {
                         AdditionalLocations = row.AdditionalLocation,
-                        Addresses = additionalLocationsPricing.Item1,
-                        OptionsCost = additionalLocationsPricing.Item2
+                        Addresses = lstAddLoc, //additionalLocationsPricing.Item1,
+                        OptionsCost = orderRowForOrder.Webinar.AdditionalLocationPrice//additionalLocationsPricing.Item2
                     },
                     OrderRow = orderRowForOrder,
                     RecordingLink =
@@ -1676,10 +1684,7 @@ namespace CUWebinars.Web.Controllers
 
                     model.CheckoutOptionsViewModel.RegistrationType = orderRowForOrder.RegistrationType;
 
-                    var additionalLocationsPricing =
-                        _orderManagementService.GetCostOfAdditionalLocations(orderRowForOrder.AdditionalLocation,
-                            webinar.idWebinar
-                        );
+                    var additionalLocationsPricing = orderRowForOrder.Webinar.AdditionalLocationPrice;
 
                     //if (orderRowForOrder.AdditionalLocation != null)
                     //{
@@ -1696,7 +1701,7 @@ namespace CUWebinars.Web.Controllers
                             OrderStatus = row.Order.OrderStatus,
                             //Price = Convert.ToDecimal(row.RegistrationType.Price),
                             PricesAndDiscounts =
-                                _orderManagementService.CalculateOrderCost(row.Order, additionalLocationsPricing.Item2),
+                                _orderManagementService.CalculateOrderCost(row.Order, additionalLocationsPricing),
                             //RowPrice = row.RowPrice,
                             RegistrationType = row.RegistrationType
                         };
@@ -1714,19 +1719,29 @@ namespace CUWebinars.Web.Controllers
                         .AdditionalLocationAddViewModel = new AdditionalLocationAddViewModel
                         {
                             AdditionalLocations = additionalLocations,
-                            Price = additionalLocationsPricing.Item2
+                            Price = orderRowForOrder.Webinar.AdditionalLocationPrice
+                            
                         };
                     model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Price =
-                        additionalLocationsPricing.Item2;
+                        orderRowForOrder.Webinar.AdditionalLocationPrice;
 
                     // populate RegistrationSummaryViewModel and AdditionalLocationsViewModel
+                    string lstAddLoc = null;
+                    if (orderRowForOrder.AdditionalLocation != null && orderRowForOrder.AdditionalLocation.Count > 0)
+                    {
+                        foreach (var additionalLocation in orderRowForOrder.AdditionalLocation)
+                        {
+                            lstAddLoc += additionalLocation.Email + ",";
+                        }
+                    }
+
                     model.RegistrationSummaryViewModel = new RegistrationSummaryViewModel
                     {
                         AdditionalLocationsViewModel = new AdditionalLocationsViewModel
                         {
                             AdditionalLocations = row.AdditionalLocation,
-                            Addresses = additionalLocationsPricing.Item1,
-                            OptionsCost = additionalLocationsPricing.Item2
+                            Addresses = lstAddLoc,
+                            OptionsCost = orderRowForOrder.Webinar.AdditionalLocationPrice
                         },
                         OrderRow = orderRowForOrder,
                         RecordingLink =
@@ -1857,16 +1872,16 @@ namespace CUWebinars.Web.Controllers
             IList<Webinar> webinarsList = _webinarManagementService.GetUpcomingWebinars().ToList();
 
             var data = new CalendarRssFullDTOAssembler().Entities2DTOs(webinarsList);
-            
+
             foreach (var myEvent in data)
             {
 
                 var showDate = "<b>" + DateTimeHelper.FormatDate(_webinarControllerOrchestrator.GetWebinar(myEvent.id).Date) + "</b> <i>" +
                     DateTimeHelper.FormatTimeWithDuration(_webinarControllerOrchestrator.GetWebinar(myEvent.id).Date,
                         tz, true, _webinarControllerOrchestrator.GetWebinar(myEvent.id).Duration) + "</i>";
-                
-                myEvent.Content = "<div id=\"date\">" + showDate + "</div>" + myEvent.Content.Replace("[idAff]", _idAff.ToString()); 
-                    myEvent.Url = myEvent.Url + "?idAff=" + _idAff;
+
+                myEvent.Content = "<div id=\"date\">" + showDate + "</div>" + myEvent.Content.Replace("[idAff]", _idAff.ToString());
+                myEvent.Url = myEvent.Url + "?idAff=" + _idAff;
                 //myEvent.start = 
 
             }

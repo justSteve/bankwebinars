@@ -53,8 +53,8 @@ namespace CUWebinars.Business.Services
 
         IEnumerable<AdditionalLocation> GetAdditionalLocationsForOrderRow(int idOrderRow);
         IDictionary<int, string> GetAffiliatesForDisplayList();
-        Tuple<string, decimal> GetCostOfAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations,
-            int idWebinar);
+        //Tuple<string, decimal> GetCostOfAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations,
+        //    int idWebinar);
 
         Affiliate GetAffiliateByDomain(string domain);
         Affiliate GetAffiliateById(int id);
@@ -165,6 +165,5 @@ namespace CUWebinars.Business.Services
         string SetOnDemandClaimById(int myRowIdOrder);
 
         IList<string> orderHasCC(Order order);
-        string GetAddLocOrderCost(Order order);
     }
 }

@@ -2866,10 +2866,6 @@ namespace CUWebinars.Web.Controllers.Admin
                         dtsource = _orderManagementService.GetOrdersAll(affiliateId, out totalNumberOrders).ToList();
                     }
 
-                    //disabled pending stableization of affiliate reports
-                    //if (shouldBuildAffRpt)
-                    //    _affiliateManagementService.BuildAffiliateReport(dtsource, webinarId);
-
                     // use automapper to flatten out the order records, in this specific case the data 
                     //  model has circular references which cause problems with JSON serialization
                     List<OrderDTO> dtoSource = new List<OrderDTO>();

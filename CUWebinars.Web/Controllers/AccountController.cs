@@ -971,8 +971,9 @@ namespace CUWebinars.Web.Controllers
             if (order == null) throw new ArgumentNullException("order");
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
-            var additionalLocationsPricing =
-                _orderManagementService.GetCostOfAdditionalLocations(orderRow.AdditionalLocation, orderRow.idWebinar);
+
+            var additionalLocationsPricing = orderRow.Webinar.AdditionalLocationPrice;
+                //_orderManagementService.GetCostOfAdditionalLocations(orderRow.AdditionalLocation, orderRow.idWebinar);
             var additionalLocations = orderRow.AdditionalLocation;
             var additionalLocationsCount = 0;
             if (orderRow.AdditionalLocation != null && orderRow.AdditionalLocation.Count > 0)
@@ -982,9 +983,11 @@ namespace CUWebinars.Web.Controllers
             }
 
             PostEventClaim postEvent = new PostEventClaim();
-            var claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
-
-
+            var claimsViewModel = new ClaimsViewModel();
+            if (userAccount != null)
+            {
+                claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
+            }
             DisplayOptionsInDropDownViewModel regTypeDD = new DisplayOptionsInDropDownViewModel
             {
                 Options = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.idWebinar, false),
@@ -1019,8 +1022,8 @@ namespace CUWebinars.Web.Controllers
                         ViewHelpers.GetRendererOfAdditionalLocations(additionalLocations.Select(al => al.Email).ToList()),
 
                     AdditionalLocations = additionalLocations,
-                    CostPerAdditionalLocation = additionalLocationsPricing.Item2,
-                    ClaimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims },
+                    CostPerAdditionalLocation = orderRow.Webinar.AdditionalLocationPrice, // additionalLocationsPricing.Item2,
+                    ClaimsViewModel = claimsViewModel,// new ClaimsViewModel { UserClaims = userAccount.Claims },
 
                     DisplayRowPriceViewModel = new DisplayRowPriceViewModel
                     {
@@ -1028,7 +1031,7 @@ namespace CUWebinars.Web.Controllers
                         //OrderStatus = order.OrderStatus,
                         //Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
                         PricesAndDiscounts =
-                            _orderManagementService.CalculateOrderCost(order, additionalLocationsPricing.Item2),
+                            _orderManagementService.CalculateOrderCost(order, orderRow.Webinar.AdditionalLocationPrice),
                         RegistrationType = orderRow.RegistrationType,
                         //RowPrice = orderRow.RowPrice
                     },
@@ -1079,8 +1082,6 @@ namespace CUWebinars.Web.Controllers
 
             return editModel;
         }
-
-
 
         private bool? CheckIfAddLocAvailable(int optionId)
         {
@@ -1393,17 +1394,17 @@ namespace CUWebinars.Web.Controllers
             {
                 HttpFileCollectionBase uploadFiles = Request.Files;
 
-            // Build HTML listing the files received.
-            string summary = "<p>Files Uploaded:</p><ol>";
+                // Build HTML listing the files received.
+                string summary = "<p>Files Uploaded:</p><ol>";
 
-            // Loop over the uploaded files and save to disk.
-            // Access the uploaded file's content in-memory:
-            System.IO.Stream inStream = file.InputStream;
-            byte[] fileData = new byte[file.ContentLength];
-            inStream.Read(fileData, 0, file.ContentLength);
+                // Loop over the uploaded files and save to disk.
+                // Access the uploaded file's content in-memory:
+                System.IO.Stream inStream = file.InputStream;
+                byte[] fileData = new byte[file.ContentLength];
+                inStream.Read(fileData, 0, file.ContentLength);
 
-            // Save the posted file in our "data" virtual directory.
-            file.SaveAs(Server.MapPath("") + "\\App_Data\\" + file.FileName);
+                // Save the posted file in our "data" virtual directory.
+                file.SaveAs(Server.MapPath("") + "\\App_Data\\" + file.FileName);
 
 
             }

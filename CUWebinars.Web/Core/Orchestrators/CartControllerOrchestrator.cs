@@ -600,18 +600,21 @@ namespace CUWebinars.Web.Core.Orchestrators
                 try
                 {
                     _logger.Info("AdditionalLocationsViewModel building for: " + orderRow.Order.idOrder);
+                    string lstAddLoc = null;
+                    if (orderRow.AdditionalLocation != null && orderRow.AdditionalLocation.Count > 0)
+                    {
+                        foreach (var additionalLocation in orderRow.AdditionalLocation)
+                        {
+                            lstAddLoc += additionalLocation.Email + ",";
+                        }
+                    }
 
-                    var addressesAndOptionsCost =
-                        _orderManagementService.GetCostOfAdditionalLocations(orderRow.AdditionalLocation,
-                            orderRow.idWebinar);
-
-
-                    var additionalLocationsViewModel = new AdditionalLocationsViewModel
+                var additionalLocationsViewModel = new AdditionalLocationsViewModel
                     {
                         AdditionalLocations = orderRow.AdditionalLocation,
-                        Addresses = addressesAndOptionsCost.Item1,
-                        OptionsCost = addressesAndOptionsCost.Item2
-                    };
+                        Addresses = lstAddLoc.TrimEnd(','),
+                        OptionsCost = orderRow.Webinar.AdditionalLocationPrice
+                };
 
                     return additionalLocationsViewModel;
                 }
@@ -1390,9 +1393,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 order.FirstName,
                 ClickToJoinLink,
                 AddLocsCost,
-                ExistingAddLocs,
+                ExistingAddLocs = existingAddLocs,
                 ShowTimeZone = order.WebUser.timeZone.ToString(),
-                PaymentCaption,
+                PaymentCaption = PaymentCaption,
                 CCCaption,
                 PaymentStatus,
 

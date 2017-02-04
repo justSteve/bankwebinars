@@ -82,7 +82,7 @@ namespace CUWebinars.Web.Mapping.Configuration
             Profile.CreateMap<Order, OrderDTO>()
                             .ForMember(d => d.Webinar, s => s.Ignore())
                 .ForMember(d => d.Affiliate_ttsDomain,
-                           map => map.MapFrom(s => s.Affiliate.ttsDomain))
+                           map => map.MapFrom(s => s.Affiliate.ttsDomain + "<br><span style=\"font-size: xx-small;\"> " + s.Affiliate.idUserAff + "</span>"))
                 .ForMember(d => d.Institution,
                            map => map.MapFrom
                                (s => s.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active).Order.WebUser.Institution.InstitutionName + "<br>\n"
