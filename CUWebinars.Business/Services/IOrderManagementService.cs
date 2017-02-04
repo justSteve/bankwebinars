@@ -163,6 +163,8 @@ namespace CUWebinars.Business.Services
        IList<Order> GetOrdersByDomain(string searchTerm, int affiliateId, out int totalNumberOrders);
 
         string SetOnDemandClaimById(int myRowIdOrder);
-        
+
+        IList<string> orderHasCC(Order order);
+        string GetAddLocOrderCost(Order order);
     }
 }

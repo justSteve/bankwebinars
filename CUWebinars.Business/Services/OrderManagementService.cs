@@ -1843,6 +1843,7 @@ namespace CUWebinars.Business.Services
 
         public decimal GetAdditionalLocationsPricing(int idWebinar)
         {
+            //if ()
             return _webinarRepository.FindById(idWebinar).AdditionalLocationPrice;
         }
 
@@ -2531,6 +2532,35 @@ namespace CUWebinars.Business.Services
             return null;
         }
 
+        public IList<string> orderHasCC(Order order)
+        {
+            IList<string> ccEmailAddresses = null;
+            if (!string.IsNullOrWhiteSpace(order.UserComments)
+                    && order.UserComments.Contains(JsonPropertyKeys.CarbonCopy))
+            {
+
+                var addresses = JToken.Parse(order.UserComments);
+                var isCC = "";
+                foreach (JProperty prop in addresses.Children<JObject>().SelectMany(content => content.Properties().Where(prop => prop.Name == JsonPropertyKeys.CarbonCopy)))
+                {
+                    isCC = prop.Value.ToString();
+                }
+
+                if (isCC != "")
+                {
+                    ccEmailAddresses = CUWebinars.Business.Core.Helpers.EventHandlerHelpers.GetCcEmailAddresses(isCC);
+                }
+                else
+                {
+                    var _addresses = JObject.Parse(order.UserComments).GetValue(JsonPropertyKeys.CarbonCopy).Value<string>();
+                    ccEmailAddresses = CUWebinars.Business.Core.Helpers.EventHandlerHelpers.GetCcEmailAddresses(_addresses);
+                }
+            }
+            return ccEmailAddresses;
+
+
+
+        }
 
 
         public string BuildRecordingIsPostedMessage(Order order)

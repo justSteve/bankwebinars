@@ -212,18 +212,8 @@ namespace CUWebinars.Web.Controllers
 
                     if (User.Identity.IsAuthenticated)
                     {
-                        OrderSubmitted2ViewModel orderSubmitted2ViewModel = new OrderSubmitted2ViewModel()
-                        {
-                            Subject = "subject",
-                            OrderSummaryHtml = "sbOrdersSummary.ToString()",
-
-                            HeaderSummaryCaption = "sbHeaderSummary.ToString().TrimEnd(',')"
-                        };
-
-                        string htmlEmailBody = ViewHelpers.RenderViewToString(ControllerContext, "~/Notification/Templates/OrderSubmitted2.cshtml", orderSubmitted2ViewModel, true);
-
-                        //_cartControllerOrchestrator.FireOrderSubmitted2Notification(model.Order.BillingEmail, "subject", htmlEmailBody);
-                        _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
+                        _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
+                        //_cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
                     }
                     else
                     {
