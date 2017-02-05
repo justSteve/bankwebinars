@@ -742,7 +742,7 @@ namespace CUWebinars.Web.Controllers
 
                 if (webinar == null) return HttpNotFound();
 
-                InitializeDetailsModel(webinar, out model);
+                InitializeDetailsModel(webinar, out model, null);
 
                 // Incoming Order?  (Express checkout?)
                 // for the time-being we are going to punt on in-process orders.  there is code in the _ShoppingCart view to show the use alterative content in the Search results grid
@@ -801,7 +801,7 @@ namespace CUWebinars.Web.Controllers
             var currentUser = User.Identity.Name ?? "anon";
 
             int incomingOrder = 0;
-            if (idOrder != null)
+            if (idOrder.HasValue)
             {
                 incomingOrder = idOrder.Value;
             }
@@ -1230,6 +1230,20 @@ namespace CUWebinars.Web.Controllers
 
                 if (!ReferenceEquals(null, order))
                 {
+
+                    if (aff != null && aff.idUserAff == 19)
+                    {
+                        var _aff = _orderManagementService.DetermineAffiliateByAlternativeMeans(model.Order.idUser);
+                        if (_aff.idUserAff != 19)
+                        {
+                            _stateService.SetValue(WebUiConstants.CurrentAffiliate, _aff);
+                            aff = _aff;
+                            _orderManagementService.AssignAffiliateToOrder(_aff.idUserAff, order);
+                            _logger.Warn("AffiliateOnOrderIsReassignedFrom19: " + order.idOrder + " to: " + _aff.idUserAff);
+                        }
+                    }
+
+
                     //populate viewbag for expresscheckout viewmodel
                     ViewBag.Order = order;
 
@@ -1271,22 +1285,11 @@ namespace CUWebinars.Web.Controllers
                     }
 
 
-                    if (aff != null && aff.idUserAff == 19)
-                    {
-                        var _aff = _orderManagementService.DetermineAffiliateByAlternativeMeans(model.Order.idUser);
-                        if (_aff.idUserAff != 19)
-                        {
-                            _stateService.SetValue(WebUiConstants.CurrentAffiliate, _aff);
-                            aff = _aff;
-                        }
-                    }
                     try
                     {
                         bool desCheckout = false;
                         if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.SeriesInfo == "DES")
                             desCheckout = true;
-                        order.Affiliate = aff;
-                        order.idAffiliate = aff.idUserAff;
                         model.CheckoutConfirmViewModel = new CheckoutConfirmViewModel
                         {
                             DESCheckout = desCheckout,
@@ -1323,7 +1326,7 @@ namespace CUWebinars.Web.Controllers
                                     Zip = order.ShippingZip
                                 }
                             },
-                            Affiliate = aff,
+                            //Affiliate = aff,
                             AdminComments = order.AdminComments,
                             //AffiliateComments = model.Order.AffiliateComments,
                             //CCUserDetails = "",
@@ -1377,7 +1380,6 @@ namespace CUWebinars.Web.Controllers
                             UserFullname = userFullName,
                             UserType = UserType.Customer
                         };
-                        _orderManagementService.SaveChanges();
                     }
                     catch (Exception ex)
                     {
@@ -1400,7 +1402,7 @@ namespace CUWebinars.Web.Controllers
             webinar = _webinarManagementService.GetWebinar(webinarId);
         }
 
-        private void InitializeDetailsModel(Webinar webinar, out WebinarDetailsViewModel model, int incomingOrder = -1)
+        private void InitializeDetailsModel(Webinar webinar, out WebinarDetailsViewModel model, int? incomingOrder)
         {
             model = null;
 
@@ -1413,10 +1415,10 @@ namespace CUWebinars.Web.Controllers
                 WebinarFiles = webinar.WebinarFiles.ToList()
             };
 
-            if (incomingOrder != -1)
+            if (incomingOrder.HasValue)
             {
-                model.UserOwnsThisEvent = incomingOrder;
-                model.UserHasOpenOrder = incomingOrder;
+                model.UserOwnsThisEvent = incomingOrder.Value;
+                model.UserHasOpenOrder = incomingOrder.Value;
             }
         }
 
@@ -1535,78 +1537,72 @@ namespace CUWebinars.Web.Controllers
                 WebinarStatus = model.Webinar.Status
             };
 
-            if (orderExists)
-            {
-                model.CheckoutOptionsViewModel.OrderStatus = model.Order.OrderStatus;
-                model.CheckoutOptionsViewModel.OrderHasId = model.Order.idOrder > 0;
-                var row = orderRowForOrder;
+            if (!orderExists) return;
+            model.CheckoutOptionsViewModel.OrderStatus = model.Order.OrderStatus;
+            model.CheckoutOptionsViewModel.OrderHasId = model.Order.idOrder > 0;
+            var row = orderRowForOrder;
 
-                if (row != null)
-                    model.CheckoutOptionsViewModel.RegistrationType = orderRowForOrder.RegistrationType;
-                else
-                    row = model.Order.OrderRows.SingleOrDefault();
+            model.CheckoutOptionsViewModel.RegistrationType = orderRowForOrder.RegistrationType;
 
-                var additionalLocationsPricing = orderRowForOrder.Webinar.AdditionalLocationPrice;
-                //_orderManagementService.GetCostOfAdditionalLocations(orderRowForOrder.AdditionalLocation,
-                //    webinar.idWebinar);
+            //_orderManagementService.GetCostOfAdditionalLocations(orderRowForOrder.AdditionalLocation,
+            //    webinar.idWebinar);
 
-                // populate DisplayRowPriceViewModel of DisplayOptionsViewModel
-                model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
-                    new DisplayRowPriceViewModel
-                    {
-                        //Discount = row.Discount,
-                        NumberOfAdditionalLocations = row.AdditionalLocation.Count(),
-                        OrderStatus = row.Order.OrderStatus,
-                        //Price = Convert.ToDecimal(row.RegistrationType.Price),
-                        PricesAndDiscounts =
-                            _orderManagementService.CalculateOrderCost(row.Order, orderRowForOrder.Webinar.AdditionalLocationPrice),
-                        //RowPrice = row.RowPrice,
-                        RegistrationType = row.RegistrationType
-                    };
-
-                // populate AdditionalLocationOfferViewModel and AdditionalLocationAddViewModel
-
-                if (model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
-                        .AdditionalLocations != null)
-                    model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Emails =
-                        model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
-                            .AdditionalLocations.Select(al => al.Email).ToArray();
-                string lstAddLoc = null;
-                if (orderRowForOrder.AdditionalLocation != null && orderRowForOrder.AdditionalLocation.Count > 0)
+            // populate DisplayRowPriceViewModel of DisplayOptionsViewModel
+            model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
+                new DisplayRowPriceViewModel
                 {
-                    foreach (var additionalLocation in orderRowForOrder.AdditionalLocation)
-                    {
-                        lstAddLoc += additionalLocation.Email + ",";
-                    }
-                }
-
-
-                model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
-                    .AdditionalLocationAddViewModel = new AdditionalLocationAddViewModel
-                    {
-                        AdditionalLocations = additionalLocations,
-                        Price = orderRowForOrder.Webinar.AdditionalLocationPrice// additionalLocationsPricing.Item2
-                    };
-                model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Price =
-                    orderRowForOrder.Webinar.AdditionalLocationPrice;//additionalLocationsPricing.Item2;
-
-                // populate RegistrationSummaryViewModel and AdditionalLocationsViewModel
-
-                model.RegistrationSummaryViewModel = new RegistrationSummaryViewModel
-                {
-                    AdditionalLocationsViewModel = new AdditionalLocationsViewModel
-                    {
-                        AdditionalLocations = row.AdditionalLocation,
-                        Addresses = lstAddLoc, //additionalLocationsPricing.Item1,
-                        OptionsCost = orderRowForOrder.Webinar.AdditionalLocationPrice//additionalLocationsPricing.Item2
-                    },
-                    OrderRow = orderRowForOrder,
-                    RecordingLink =
-                        "<a href='" + GlobalConfig.GlobalConfigSingleton.WMVRepository + webinar.RecordingUrl +
-                        "' target=_blank /> Recording Playback</a>",
-                    WebinarStatus = webinar.Status
+                    //Discount = row.Discount,
+                    NumberOfAdditionalLocations = row.AdditionalLocation.Count(),
+                    OrderStatus = row.Order.OrderStatus,
+                    //Price = Convert.ToDecimal(row.RegistrationType.Price),
+                    PricesAndDiscounts =
+                        _orderManagementService.CalculateOrderCost(row.Order, orderRowForOrder.Webinar.AdditionalLocationPrice),
+                    //RowPrice = row.RowPrice,
+                    RegistrationType = row.RegistrationType
                 };
+
+            // populate AdditionalLocationOfferViewModel and AdditionalLocationAddViewModel
+
+            if (model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
+                    .AdditionalLocations != null)
+                model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Emails =
+                    model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
+                        .AdditionalLocations.Select(al => al.Email).ToArray();
+            string lstAddLoc = "";
+            if (orderRowForOrder.AdditionalLocation != null && orderRowForOrder.AdditionalLocation.Count > 0)
+            {
+                foreach (var additionalLocation in orderRowForOrder.AdditionalLocation)
+                {
+                    lstAddLoc += additionalLocation.Email + ",";
+                }
             }
+
+
+            model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
+                .AdditionalLocationAddViewModel = new AdditionalLocationAddViewModel
+                {
+                    AdditionalLocations = additionalLocations,
+                    Price = orderRowForOrder.Webinar.AdditionalLocationPrice// additionalLocationsPricing.Item2
+                };
+            model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Price =
+                orderRowForOrder.Webinar.AdditionalLocationPrice;//additionalLocationsPricing.Item2;
+
+            // populate RegistrationSummaryViewModel and AdditionalLocationsViewModel
+
+            model.RegistrationSummaryViewModel = new RegistrationSummaryViewModel
+            {
+                AdditionalLocationsViewModel = new AdditionalLocationsViewModel
+                {
+                    AdditionalLocations = row.AdditionalLocation,
+                    Addresses = lstAddLoc, //additionalLocationsPricing.Item1,
+                    OptionsCost = orderRowForOrder.Webinar.AdditionalLocationPrice//additionalLocationsPricing.Item2
+                },
+                OrderRow = orderRowForOrder,
+                RecordingLink =
+                    "<a href='" + GlobalConfig.GlobalConfigSingleton.WMVRepository + webinar.RecordingUrl +
+                    "' target=_blank /> Recording Playback</a>",
+                WebinarStatus = webinar.Status
+            };
         }
 
         /// <summary>
@@ -1720,13 +1716,13 @@ namespace CUWebinars.Web.Controllers
                         {
                             AdditionalLocations = additionalLocations,
                             Price = orderRowForOrder.Webinar.AdditionalLocationPrice
-                            
+
                         };
                     model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Price =
                         orderRowForOrder.Webinar.AdditionalLocationPrice;
 
                     // populate RegistrationSummaryViewModel and AdditionalLocationsViewModel
-                    string lstAddLoc = null;
+                    string lstAddLoc = "";
                     if (orderRowForOrder.AdditionalLocation != null && orderRowForOrder.AdditionalLocation.Count > 0)
                     {
                         foreach (var additionalLocation in orderRowForOrder.AdditionalLocation)

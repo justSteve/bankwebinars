@@ -22,6 +22,9 @@ namespace CUWebinars.Business.Constants
         public const string New = "N";
 
         public const string CartByAffiliate = "CartByAffiliate";
+        public const string FoundExistingOrder = "FoundExistingOrder ";
+
+
         public const string OriginImported = "Imported";
         public const string OriginImportedACS = "ImportedByACS";
         public const string OriginExpress = "Express";
@@ -58,6 +61,7 @@ namespace CUWebinars.Business.Constants
             }
         }
 
+        
 
 
         public const string CreationModeImported = "imported";

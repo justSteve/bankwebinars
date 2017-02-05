@@ -25,6 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
+using System.Web.DynamicData;
 using CUWebinars.Business.Repository;
 using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models.DataTablesModels;
@@ -600,7 +601,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 try
                 {
                     _logger.Info("AdditionalLocationsViewModel building for: " + orderRow.Order.idOrder);
-                    string lstAddLoc = null;
+                    string lstAddLoc = "";
                     if (orderRow.AdditionalLocation != null && orderRow.AdditionalLocation.Count > 0)
                     {
                         foreach (var additionalLocation in orderRow.AdditionalLocation)
@@ -706,22 +707,34 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             _stateService.SetValue(DomainConstants.CheckoutInProcess, true);
             Claim beingImpersonatedClaim = null;
+            Order existingOrder = new Order();
 
             if (Request.IsAuthenticated)
             {
                 var user = Request.RequestContext.HttpContext.User as ClaimsPrincipal;
+                if (user != null && user.Identity.Name != null)
+                {
+                   existingOrder = _orderManagementService
+                        .GetOrdersByEmail(user.Identity.Name, 19)
+                        .FirstOrDefault(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar == formModel.idWebinar);
+                    
+                    if (existingOrder != null)
+                    {
+                        _logger.Warn("CreateOrder found existing order: " + existingOrder.idOrder);
+                        _stateService.SetValue(DomainConstants.FoundExistingOrder, existingOrder);
+                    }
+                }
                 beingImpersonatedClaim = user.Claims.SingleOrDefault(c => c.Type == ClaimTypes.BeingImpersonated);
             }
 
             var webinar = _webinarManagementService.GetWebinar(formModel.idWebinar);
-
-
-
+            
             if (webinar == null)
             {
                 _logger.Error(string.Format("Null value for Webinar {0}", formModel.idWebinar));
                 throw new NullReferenceException(string.Format("Null value for Webinar with id {0}", formModel.idWebinar));
             }
+            
             try
             {
                 var newOrderRow = CreateOrderRow(webinar,
