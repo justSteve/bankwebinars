@@ -131,7 +131,7 @@ namespace CUWebinars.Business.Services
                 var existingOrder = _orderRepository.FindOrderForUserByWebinarId(webUser.idUser, webinar.idWebinar);
                 if (existingOrder != null)
                 {
-                    _logger.Warn("CreateNewOrder found and returned existing: " + existingOrder);
+                    _logger.Warn("CreateNewOrder found and returned existing: " + existingOrder.idOrder);
                     return existingOrder;
                 }
             }
@@ -748,7 +748,7 @@ namespace CUWebinars.Business.Services
                     if (creditsRemain >= row.RegistrationType.CreditCost)
                     {
                         discountTotal = row.RowPrice*row.Discount.PercentOff/100;
-                        if (row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
+                        if (row.Discount.DateValidFrom == row.Discount.DateValidTo && row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
                         {
                             discountTotal = discountTotal - 50;
                             
