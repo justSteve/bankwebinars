@@ -1954,6 +1954,12 @@ namespace CUWebinars.Web.Controllers
                 {
 
                     _accountControllerOrchestrator.LogUserOut((ClaimsPrincipal)User);
+
+                    string[] myCookies = Request.Cookies.AllKeys;
+                    foreach (string cookie in myCookies)
+                    {
+                        Response.Cookies[cookie].Expires = DateTime.Now.AddDays(-1);
+                    }
                 }
                 catch (Exception exception)
                 {

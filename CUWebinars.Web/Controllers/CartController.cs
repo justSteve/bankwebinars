@@ -118,7 +118,7 @@ namespace CUWebinars.Web.Controllers
                     //row.Order.AffiliateComments = JsonHelpers.AddObjectToJsonArray(row.Order.AffiliateComments, newJson);
 
                     if (myDiscount.DiscountType == DiscountType.Subscription && myDiscount.DateValidFrom == myDiscount.DateValidTo
-                        row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
+                       && row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
                     {
                         ViewBag.DiscountSurcharge = "A $50 surcharge is added for shipping & handling";
                         msg += " A $50 surcharge is added for shipping & handling.";
@@ -213,7 +213,8 @@ namespace CUWebinars.Web.Controllers
                     if (User.Identity.IsAuthenticated)
                     {
                         _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
-                        //_cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
+                        //continue to send legacy confirmations
+                        _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
                     }
                     else
                     {
