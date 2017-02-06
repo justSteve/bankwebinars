@@ -325,7 +325,7 @@ $(function () {
                         $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderId(), function (response, status, xhr) {
 
                             if (status === 'error') {
-                                $(this).html('<div class="text-error">There has been an error at the server, please use our Help & Feedback button (lower right corner)  for immediate assistance.</div>');
+                                $(this).html('<div class="text-error">There has been an error at the server. Please refresh your page and try again. In the event of repeated problems, please use our Help & Feedback button (lower right corner) for immediate assistance.</div>');
                                 $('#loadingSpinner').remove();
                                 $('#confirmationTab a').tab('show');
 
@@ -396,7 +396,7 @@ $(function () {
                     }
                 } else {
                     spinner.remove();
-                    $('#confirmation').html('<div class="text-error">There has been an error at the server, please use our Help & Feedback button (lower right corner)  for immediate assistance.</div>');
+                    $('#confirmation').html('<div class="text-error">There has been an error at the server. Please refresh your page and try again. In the event of repeated problems, please use our Help & Feedback button (lower right corner) for immediate assistance.</div>');
                 }
             }, constants.JsonDataType);
 

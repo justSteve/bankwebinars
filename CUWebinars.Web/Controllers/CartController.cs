@@ -907,7 +907,7 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 ModelState.AddModelError(string.Empty,
-                    "There has been an error at the server which has been logged.");
+                    "There has been an error at the server. Please refresh your page and try again. In the event of repeated problems, please use our Help & Feedback button (lower right corner) for immediate assistance.");
                 _logger.FatalException("SignupAffiliate: ", exception);
 
                 ErrorSignal.FromCurrentContext().Raise(exception);

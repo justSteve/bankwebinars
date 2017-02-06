@@ -1564,7 +1564,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 return changeEmailFromKeyInputModel;
             }
 
-            changeEmailFromKeyInputModel.ScreenMessage = "There has been an error at the server.";
+            changeEmailFromKeyInputModel.ScreenMessage = "There has been an error at the server. Please refresh your page and try again. In the event of repeated problems, please use our Help & Feedback button (lower right corner) for immediate assistance.";
 
             return changeEmailFromKeyInputModel;
         }

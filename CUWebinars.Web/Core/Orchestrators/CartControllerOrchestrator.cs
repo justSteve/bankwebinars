@@ -602,20 +602,31 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     _logger.Info("AdditionalLocationsViewModel building for: " + orderRow.Order.idOrder);
                     string lstAddLoc = "";
+                    AdditionalLocation badAddLoc = new AdditionalLocation();
                     if (orderRow.AdditionalLocation != null && orderRow.AdditionalLocation.Count > 0)
                     {
                         foreach (var additionalLocation in orderRow.AdditionalLocation)
                         {
-                            lstAddLoc += additionalLocation.Email + ",";
+                            if (_appHelper.CheckIsEmailValid(additionalLocation.Email))
+                            {
+                                lstAddLoc += additionalLocation.Email + ",";
+                            }
+                            else
+                            {
+                                badAddLoc =
+                                    orderRow.AdditionalLocation.SingleOrDefault(a => a.Email == additionalLocation.Email);
+
+                            }
                         }
+                        orderRow.AdditionalLocation.Remove(badAddLoc);
                     }
 
-                var additionalLocationsViewModel = new AdditionalLocationsViewModel
+                    var additionalLocationsViewModel = new AdditionalLocationsViewModel
                     {
                         AdditionalLocations = orderRow.AdditionalLocation,
                         Addresses = lstAddLoc.TrimEnd(','),
                         OptionsCost = orderRow.Webinar.AdditionalLocationPrice
-                };
+                    };
 
                     return additionalLocationsViewModel;
                 }
@@ -714,10 +725,10 @@ namespace CUWebinars.Web.Core.Orchestrators
                 var user = Request.RequestContext.HttpContext.User as ClaimsPrincipal;
                 if (user != null && user.Identity.Name != null)
                 {
-                   existingOrder = _orderManagementService
-                        .GetOrdersByEmail(user.Identity.Name, 19)
-                        .FirstOrDefault(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar == formModel.idWebinar);
-                    
+                    existingOrder = _orderManagementService
+                         .GetOrdersByEmail(user.Identity.Name, 19)
+                         .FirstOrDefault(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar == formModel.idWebinar);
+
                     if (existingOrder != null)
                     {
                         _logger.Warn("CreateOrder found existing order: " + existingOrder.idOrder);
@@ -728,13 +739,13 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
 
             var webinar = _webinarManagementService.GetWebinar(formModel.idWebinar);
-            
+
             if (webinar == null)
             {
                 _logger.Error(string.Format("Null value for Webinar {0}", formModel.idWebinar));
                 throw new NullReferenceException(string.Format("Null value for Webinar with id {0}", formModel.idWebinar));
             }
-            
+
             try
             {
                 var newOrderRow = CreateOrderRow(webinar,
