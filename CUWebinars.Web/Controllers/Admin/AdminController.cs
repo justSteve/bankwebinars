@@ -1929,9 +1929,9 @@ namespace CUWebinars.Web.Controllers.Admin
         [ValidateInput(false)]
         [HttpPost]
         [HandleAjaxException]
-        public async Task<JsonResult> GenerateMailChipCampaign(int affiliateId, string messageBodyHtml, int webinarId, string sendDate, string sendTime)
+        public async Task<JsonResult> GenerateMailChimpCampaign(int affiliateId, string messageBodyHtml, int webinarId, string sendDate, string sendTime)
         {
-
+            _logger.Info("GenerateMailChimpCampaign starting");
             Webinar webinar = _webinarManagementService.GetWebinar(webinarId);
             Affiliate affiliate = _affiliateManagementService.FindById(affiliateId);
             if (sendDate.Contains("-"))
@@ -1955,10 +1955,11 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 var recp = new Recipient { ListId = affiliate.idMailChimpList };
                 var segment = await manager.ListSegments.GetAllAsync(affiliate.idMailChimpList).ConfigureAwait(false);
-                var segmentMembers = await manager.ListSegments.GetAllMembersAsync(affiliate.idMailChimpList, segment.SingleOrDefault(s => s.Name == "General").Id.ToString()).ConfigureAwait(false);
+                //var segmentMembers = await manager.ListSegments.GetAllMembersAsync(affiliate.idMailChimpList, segment.SingleOrDefault(s => s.Name == "General").Id.ToString()).ConfigureAwait(false);
 
                 //if (segmentMembers.Any())
-                //    recp = new Recipient { ListId = affiliate.idMailChimpList, , };
+                //    _logger.Info("Create SegmentMembers: " + JsonConvert.DeserializeObject<IList<MailChimp.Net.Models.Member>>(segmentMembers.ToString()));
+                // recp = new Recipient { ListId = affiliate.idMailChimpList, , };
 
 
                 //https://github.com/brandonseydel/MailChimp.Net/issues/157
@@ -2022,17 +2023,17 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
 
-                //_logger.Info("CreateCampaign | sendDate: " + mkCamp.Id);
-                //await manager.Campaigns.ScheduleAsync(mkCamp.Id, new CampaignScheduleRequest
-                //{
-                //    Timewarp = false,
-                //    BatchDelivery = new BatchDelivery
-                //    {
-                //        Count = 2,
-                //        Delay = 15
-                //    },
-                //    ScheduleTime = sendDate
-                //});
+                _logger.Info("CreateCampaign | sendDate: " + mkCamp.Id);
+                await manager.Campaigns.ScheduleAsync(mkCamp.Id, new CampaignScheduleRequest
+                {
+                    Timewarp = false,
+                    BatchDelivery = new BatchDelivery
+                    {
+                        Count = 2,
+                        Delay = 15
+                    },
+                    ScheduleTime = sendDate
+                });
 
                 var campMsg = new JProperty(JsonPropertyKeys.MailChimpCampaign, JsonConvert.SerializeObject(campaign, Formatting.None));
                 _logger.Info("Webinar.Campaigns += " + campMsg);
@@ -2040,13 +2041,13 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 _webinarManagementService.SaveChanges();
 
-                return Json(new { success = "success" });
+                return Json(new { Result = "success", campMsg });
 
             }
             catch (Exception exception)
             {
-                _logger.FatalException("GenerateMailChipCampaign: ", exception);
-                return Json(new { error = exception.Message });
+                _logger.FatalException("GenerateMailChimpCampaign: ", exception);
+                return Json(new { Result = exception.Message });
             }
         }
 

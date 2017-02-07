@@ -513,7 +513,7 @@ function CreateCampaign($btn, affiliateId) {
         var currCopy = GetAffiliateCopy(affiliateId, isActive);
 
         $.ajax({
-            url: '/Admin/GenerateMailChipCampaign',
+            url: '/Admin/GenerateMailChimpCampaign',
             type: 'POST',
             data: {
                 "affiliateId": affiliateId,
@@ -526,10 +526,11 @@ function CreateCampaign($btn, affiliateId) {
             async: false,
             //contentType: "application/json",
             //contentType: "json",
-            success: function (result) {
+            success: function (Result) {
                 //$('#send' + affID).text("Success");
-                console.log(result);
-                alert("success");
+                console.log(Result);
+                console.log("Result");
+                alert("Campaign Created");
             },
             error: function (result) {
                 console.log(result);
@@ -538,15 +539,13 @@ function CreateCampaign($btn, affiliateId) {
             },
             complete: function (result) {
                 console.log(result);
-                // $('#send' + affID).text(textStatus + " " + errorThrown);
-                alert("complete");
             }
         });
         // remove spinner
         $('#submitSpinWrapper').remove();
-        $btn.text("Send!");
+        $btn.text("Complete!");
 
-        setTimeout(function () { $btn.text(origBtnText); }, 2000);
+        //setTimeout(function () { $btn.text(origBtnText); }, 2000);
     }
 }
 

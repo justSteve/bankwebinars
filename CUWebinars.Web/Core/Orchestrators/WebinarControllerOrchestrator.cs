@@ -580,7 +580,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     //Mandrill-specific handling
                     var toEmail = order.BillingEmail;
-                    var subject = "[" + _globalConfig.Tenant + "] OnDemand recording posted for  " +
+                    var subject = "[" + _globalConfig.Tenant + "] tester for  " +
+                    //var subject = "[" + _globalConfig.Tenant + "] OnDemand recording posted for  " +
                                   order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
                                       .Webinar.Title;
 
@@ -596,7 +597,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     body = body.Replace("[logo]", "<img src=" + _globalConfig.TenantLogo + " />");
 
                     //_orderManagementService.FireMandrillNotificationEvent(toEmail, subject, body);
-                    _orderManagementService.FireMandrillNotificationEvent("all.of.us@ttstrain.com", subject, body);
+                    _orderManagementService.FireMandrillNotificationEvent("steve@ttstrain.com", subject, body);
                 }
             }
             catch (Exception ex)
