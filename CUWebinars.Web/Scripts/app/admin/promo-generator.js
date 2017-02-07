@@ -269,7 +269,7 @@ function GetAffiliateCopy(affiliateId, isActive) {
 
     var currCopy = "";
 
-    
+
     // is this affiliate currently showing?  if so, grab Editor value rather than hidden text area
     // Addendum: this test is returning false at the point where true is expected. 
     if (isActive) {
@@ -398,75 +398,88 @@ function GetMasterMarkupAJAX($btn) {
 
 function SendAll($btn) {
 
-    // save time...
-    var tStart = (new Date()).getTime();
+    var subject = prompt("Subject Line", _subject);
 
-    // setup UI for user feedback
-    var origBtnText = $btn.text();
-    $btn.text("Saving...");
-    $btn.append('<span id="submitSpinWrapper">&nbsp;<span class=""><i id="spinner" class="icon-spinner icon-spin"></i></span></span>');
+    if (subject != null) {
 
-    var errorAffs = [];
-    var callsNeeded = $(".tab-pane").length - 1; // don't count Master tab, we're skipping that one
-    var callsComplete = 0;
-    var messages = [];
+        // setup UI for user feedback
+        var origBtnText = $btn.text();
+        $btn.text("Saving...");
+        $btn
+            .append('<span id="submitSpinWrapper">&nbsp;<span class=""><i id="spinner" class="icon-spinner icon-spin"></i></span></span>');
 
-    // loop through all tabs...
-    $(".tab-pane").each(function (idx) {
-        var $tab = $(this);
-        var affiliateId = $tab.data("pane-affid");
+        var errorAffs = [];
+        var callsNeeded = $(".tab-pane").length - 1; // don't count Master tab, we're skipping that one
+        var callsComplete = 0;
+        var messages = [];
 
-        if (affiliateId == 0) // skip the Master tab, although, conceivably, we could store that in a special file and use it for something...
-            return;
+        // loop through all tabs...
+        $(".tab-pane")
+            .each(function (idx) {
+                var $tab = $(this);
+                var affiliateId = $tab.data("pane-affid");
 
-        // get affiliate specific copy
-        var isActive = $tab.hasClass("active"); // should ALWAYS be false in this method, as the Save All button is only on the master tab
-        var currCopy = GetAffiliateCopy(affiliateId, isActive);
+                if (affiliateId == 0)
+                    // skip the Master tab, although, conceivably, we could store that in a special file and use it for something...
+                    return;
 
-        //localCopy = replaceMasterTokensForAffiliate(affObj);
+                // get affiliate specific copy
+                var isActive = $tab
+                    .hasClass("active");
+                // should ALWAYS be false in this method, as the Save All button is only on the master tab
+                var currCopy = GetAffiliateCopy(affiliateId, isActive);
 
-        if (currCopy == "")     // if they don't have customized copy we'll need to create it
-        {
-            // generate from master...
+                //localCopy = replaceMasterTokensForAffiliate(affObj);
 
-            var affObj = arrayLookup(affs, "idUserAff", affiliateId);
-            if (affObj != null) {
-                currCopy = replaceMasterTokensForAffiliate(affObj); // always pulls from editor_0 (master)
-                // could save it to affiliate text area, since we have it?
+                if (currCopy == "") // if they don't have customized copy we'll need to create it
+                {
+                    // generate from master...
 
-                // deal with the SendToList_XYZ textbox
-                var $sendTo = $("#SendToList_" + affiliateId);
-                if ($.trim($sendTo.val()) == "") {
-                    $sendTo.val(affObj.ContactEmail);
+                    var affObj = arrayLookup(affs, "idUserAff", affiliateId);
+                    if (affObj != null) {
+                        currCopy = replaceMasterTokensForAffiliate(affObj); // always pulls from editor_0 (master)
+                        // could save it to affiliate text area, since we have it?
+
+                        // deal with the SendToList_XYZ textbox
+                        var $sendTo = $("#SendToList_" + affiliateId);
+                        if ($.trim($sendTo.val()) == "") {
+                            $sendTo.val(affObj.ContactEmail);
+                        }
+                    }
                 }
-            }
-        }
 
 
-        $.ajax({
-            url: '/Admin/SendSinglePromo',
-            type: 'POST',
-            data: { "affiliateId": affiliateId, "messageBodyHtml": currCopy, "webinarId": $("#Webinar_idWebinar").val(), "sendDate": $("#SendDate").val() },
-            dataType: "json",
-            success: function (result) {
+                $.ajax({
+                    url: '/Admin/SendSinglePromo',
+                    type: 'POST',
+                    data: {
+                        "affiliateId": affiliateId,
+                        "subject": subject,
+                        "messageBodyHtml": currCopy,
+                        "webinarId": $("#Webinar_idWebinar").val(),
+                        "sendDate": $("#SendDate").val()
+                    },
+                    dataType: "json",
+                    success: function (result) {
 
-                //add feedback to promo sender
-                //$('#PromoSentToAffiliate').text($('#PromoSentToAffiliate').text() + "\n" + result.)
-                //$('#send' + affID).text("Success");
-                console.log(result);
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                // $('#send' + affID).text(textStatus + " " + errorThrown);
-                alert("error " + textStatus + " " + errorThrown);
-            }
-        });
-        // remove spinner
-        $('#submitSpinWrapper').remove();
-        $btn.text("Send!");
+                        //add feedback to promo sender
+                        //$('#PromoSentToAffiliate').text($('#PromoSentToAffiliate').text() + "\n" + result.)
+                        //$('#send' + affID).text("Success");
+                        console.log(result);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        // $('#send' + affID).text(textStatus + " " + errorThrown);
+                        alert("error " + textStatus + " " + errorThrown);
+                    }
+                });
+                // remove spinner
+                $('#submitSpinWrapper').remove();
+                $btn.text("Send!");
 
-        setTimeout(function () { $btn.text(origBtnText); }, 2000);
+                setTimeout(function () { $btn.text(origBtnText); }, 2000);
 
-    });
+            });
+    }
 }
 
 function CreateCampaign($btn, affiliateId) {
@@ -490,17 +503,17 @@ function CreateCampaign($btn, affiliateId) {
         var $tab = $(this);
 
         if (affiliateId == 0)
-// skip the Master tab, although, conceivably, we could store that in a special file and use it for something...
+            // skip the Master tab, although, conceivably, we could store that in a special file and use it for something...
             return;
 
         // get affiliate specific copy
         var isActive = $tab
             .hasClass("active");
-// should ALWAYS be false in this method, as the Save All button is only on the master tab
+        // should ALWAYS be false in this method, as the Save All button is only on the master tab
         var currCopy = GetAffiliateCopy(affiliateId, isActive);
 
         $.ajax({
-            url: '/Admin/CreateCampaignSingle',
+            url: '/Admin/GenerateMailChipCampaign',
             type: 'POST',
             data: {
                 "affiliateId": affiliateId,
@@ -511,21 +524,29 @@ function CreateCampaign($btn, affiliateId) {
             },
             dataType: "json",
             async: false,
+            //contentType: "application/json",
             //contentType: "json",
-            success: function(result) {
+            success: function (result) {
                 //$('#send' + affID).text("Success");
                 console.log(result);
+                alert("success");
             },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
+            error: function (result) {
+                console.log(result);
                 // $('#send' + affID).text(textStatus + " " + errorThrown);
                 alert("error");
+            },
+            complete: function (result) {
+                console.log(result);
+                // $('#send' + affID).text(textStatus + " " + errorThrown);
+                alert("complete");
             }
         });
         // remove spinner
         $('#submitSpinWrapper').remove();
         $btn.text("Send!");
 
-        setTimeout(function() { $btn.text(origBtnText); }, 2000);
+        setTimeout(function () { $btn.text(origBtnText); }, 2000);
     }
 }
 

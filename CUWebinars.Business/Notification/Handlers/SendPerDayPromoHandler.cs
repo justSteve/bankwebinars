@@ -10,6 +10,7 @@ using System;
 using Ninject.Extensions.Logging.Log4net.Infrastructure;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace CUWebinars.Business.Notification.Handlers
 {
@@ -44,33 +45,39 @@ namespace CUWebinars.Business.Notification.Handlers
             {
                 TtsConfigHelper ttsConfigHelper = new TtsConfigHelper();
 
-                var persistedNamePrefix = "PerDayPromo_" + sendPerDayPromoEvent.EventObject.Affiliate.ttsDomain + '_';
-
                 var notificationMessage = new NotificationMessage();
 
                 notificationMessage.Body = sendPerDayPromoEvent.EventObject.EventBody;
 
-                notificationMessage.PersistedName = string.Format("{0}_{1}{2}",
-                    persistedNamePrefix,
-                    DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat),
-                    ".htm"
-                    );
 
                 // parse potential multiple emails, concept from http://stackoverflow.com/questions/14689044/regex-split-on-comma-space-or-semi-colon-delimitted-string
                 char[] delimiters = new[] { ',', ';', ' ' };  // List of your delimiters
                 List<string> addressess = sendPerDayPromoEvent.EventObject.Affiliate.NotiPromos.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).ToList();
-                //List<string> addressess = sendPerDayPromoEvent.EventObject.Affiliate.ContactEmail.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).ToList();
-                //addressess[0] = "steve@ttstrain.com";
-                if (addressess.Count > 0)
-                {
-                    notificationMessage.To = addressess[0];
+                var sbListOfRecpt = new StringBuilder();
 
-                    if (addressess.Count > 1)
-                    {
-                        notificationMessage.Addresses = addressess.Skip(1).ToList(); // put the rest in the CC
-                    }
+                var sendToEmails = "\"all.of.us@ttstrain.com\", \"" + sendPerDayPromoEvent.EventObject.Affiliate.NotiPromos.Replace(",", "\",\"") + "\"";
+
+                foreach (var address in addressess)
+                {
+                    sbListOfRecpt.Append("'" + address + "',");
                 }
 
+                //List<string> addressess = sendPerDayPromoEvent.EventObject.Affiliate.ContactEmail.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).ToList();
+                //addressess[0] = "steve@ttstrain.com";
+                //if (addressess.Count > 0)
+                //{
+                //    notificationMessage.To = addressess[0];
+
+                //    if (addressess.Count > 1)
+                //    {
+                //        notificationMessage.Addresses = addressess.Skip(1).ToList(); // put the rest in the CC
+                //    }
+                //}
+
+                notificationMessage.To = sbListOfRecpt.ToString();
+
+                
+                //notificationMessage.To = "steve@ttstrain.com";
                 notificationMessage.From = ttsConfigHelper.GetPromoEmailFromAddress(); // approach for From Address TBD!
 
                 if (sendPerDayPromoEvent.EventObject.Webinar != null)

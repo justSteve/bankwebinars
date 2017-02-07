@@ -202,7 +202,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     return Json(new
                     {
-                        Result = ""
+                        Result = "UserHasMulti"
                     }, JsonRequestBehavior.AllowGet);
                 }
                 try

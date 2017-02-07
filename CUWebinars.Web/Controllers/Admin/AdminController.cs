@@ -1928,56 +1928,71 @@ namespace CUWebinars.Web.Controllers.Admin
 
         [ValidateInput(false)]
         [HttpPost]
-        public async Task<JsonResult> CreateCampaignSingle(int affiliateId, string messageBodyHtml, int webinarId, string sendDate, string sendTime)
+        [HandleAjaxException]
+        public async Task<JsonResult> GenerateMailChipCampaign(int affiliateId, string messageBodyHtml, int webinarId, string sendDate, string sendTime)
         {
 
             Webinar webinar = _webinarManagementService.GetWebinar(webinarId);
             Affiliate affiliate = _affiliateManagementService.FindById(affiliateId);
-            sendDate = sendDate.Split('/')[2] + "-" + sendDate.Split('/')[0] + "-" + sendDate.Split('/')[1] + "T" + sendTime + ":00:00" + (int)affiliate.WebUser.timeZone;//"T10:00:00-05:00";
-
-            McCampaign campaign = new McCampaign { AffiliateId = affiliate.idUserAff, WebinarId = webinar.idWebinar };
-
-            IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
-
-            List list = await manager.Lists.GetAsync(affiliate.idMailChimpList).ConfigureAwait(false);
-
-            var recp = new Recipient { ListId = affiliate.idMailChimpList };
-
-            //var seg = new Segment { }
-            //https://github.com/brandonseydel/MailChimp.Net/issues/157
-            // or find a way to nav to URL
-
-            var newCamp = new Campaign
+            if (sendDate.Contains("-"))
             {
-                ContentType = "html",
-                Type = CampaignType.Regular,
-                Recipients = recp,
-
-                Settings = new Setting
-                {
-                    SubjectLine = "Webinar: " + webinar.Title,
-                    Title = affiliate.ttsDomain + "_" + webinar.Title,
-                    FolderId = "30aca5892b",
-                    InlineCss = true,
-                    Authenticate = true,
-                    AutoFooter = true,
-                    AutoTweet = false,
-                    ToName = "*|FNAME|* *|LNAME|* ",
-                    FromName = list.CampaignDefaults.FromName,
-                    ReplyTo = list.CampaignDefaults.FromEmail,
-                    UseConversation = true,
-                },
-                Tracking = new Tracking
-                {
-                    GoogleAnalytics = affiliate.idUserAff + "_" + webinar.idWebinar + "_" + sendDate,
-                    HtmlClicks = true,
-                    TextClicks = true,
-                    Opens = true
-                }
-
-            };
+                //2017-01-23
+                sendDate = sendDate.Split('-')[0] + "-" + sendDate.Split('-')[1] + "-" + sendDate.Split('-')[2] + "T" +
+                           sendTime + ":00:00" + (int)affiliate.WebUser.timeZone; //"T10:00:00-05:00";
+            }
+            else
+            {
+                sendDate = sendDate.Split('/')[2] + "-" + sendDate.Split('/')[0] + "-" + sendDate.Split('/')[1] + "T" +
+                           sendTime + ":00:00" + (int)affiliate.WebUser.timeZone; //"T10:00:00-05:00";
+            }
             try
             {
+                McCampaign campaign = new McCampaign { AffiliateId = affiliate.idUserAff, WebinarId = webinar.idWebinar };
+
+                IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
+
+                List list = await manager.Lists.GetAsync(affiliate.idMailChimpList).ConfigureAwait(false);
+
+                var recp = new Recipient { ListId = affiliate.idMailChimpList };
+                var segment = await manager.ListSegments.GetAllAsync(affiliate.idMailChimpList).ConfigureAwait(false);
+                var segmentMembers = await manager.ListSegments.GetAllMembersAsync(affiliate.idMailChimpList, segment.SingleOrDefault(s => s.Name == "General").Id.ToString()).ConfigureAwait(false);
+
+                //if (segmentMembers.Any())
+                //    recp = new Recipient { ListId = affiliate.idMailChimpList, , };
+
+
+                //https://github.com/brandonseydel/MailChimp.Net/issues/157
+                // or find a way to nav to URL
+
+                var newCamp = new Campaign
+                {
+                    ContentType = "html",
+                    Type = CampaignType.Regular,
+                    Recipients = recp,
+
+                    Settings = new Setting
+                    {
+                        SubjectLine = "Webinar: " + webinar.Title,
+                        Title = affiliate.ttsDomain + "_" + webinar.Title,
+                        FolderId = "30aca5892b",
+                        InlineCss = true,
+                        Authenticate = true,
+                        AutoFooter = true,
+                        AutoTweet = false,
+                        ToName = "*|FNAME|* *|LNAME|* ",
+                        FromName = list.CampaignDefaults.FromName,
+                        ReplyTo = list.CampaignDefaults.FromEmail,
+                        UseConversation = true,
+                    },
+                    Tracking = new Tracking
+                    {
+                        GoogleAnalytics = affiliate.idUserAff + "_" + webinar.idWebinar + "_" + sendDate,
+                        HtmlClicks = true,
+                        TextClicks = true,
+                        Opens = true
+                    }
+
+                };
                 var mkCamp = await manager.Campaigns.AddAsync(campaign: newCamp);
                 campaign.CampaignId = mkCamp.Id;
                 var content = new Content
@@ -1995,41 +2010,42 @@ namespace CUWebinars.Web.Controllers.Admin
                 _logger.Info("CreateCampaign | SendChecklistAsync: " + mkCamp.Id);
                 var checkList = await manager.Campaigns.SendChecklistAsync(mkCamp.Id);
 
-                _logger.Info("CreateCampaign | sendDate: " + mkCamp.Id);
-                await manager.Campaigns.ScheduleAsync(mkCamp.Id, new CampaignScheduleRequest
-                {
-                    Timewarp = false,
-                    BatchDelivery = new BatchDelivery
-                    {
-                        Count = 2,
-                        Delay = 15
-                    },
-                    ScheduleTime = sendDate
-                });
 
-                CampaignTestRequest emails = new CampaignTestRequest
-                {
-                    EmailType = "html",
-                    Emails = new string[] { "all.of.us@ttstrain.com", affiliate.NotiPromos }
-                };
+                //var sendToEmails = "\"all.of.us@ttstrain.com\", \"" + affiliate.NotiPromos.Replace(",", "\",\"") + "\"";
+                //CampaignTestRequest emails = new CampaignTestRequest
+                //{
+                //    EmailType = "html",
+                //    Emails = new string[] { sendToEmails }
+                //};
 
-                await manager.Campaigns.TestAsync(mkCamp.Id, emails);
+                //await manager.Campaigns.TestAsync(mkCamp.Id, emails);
+
+
+
+                //_logger.Info("CreateCampaign | sendDate: " + mkCamp.Id);
+                //await manager.Campaigns.ScheduleAsync(mkCamp.Id, new CampaignScheduleRequest
+                //{
+                //    Timewarp = false,
+                //    BatchDelivery = new BatchDelivery
+                //    {
+                //        Count = 2,
+                //        Delay = 15
+                //    },
+                //    ScheduleTime = sendDate
+                //});
 
                 var campMsg = new JProperty(JsonPropertyKeys.MailChimpCampaign, JsonConvert.SerializeObject(campaign, Formatting.None));
                 _logger.Info("Webinar.Campaigns += " + campMsg);
-                webinar.Campaigns = JsonHelpers.MergeJsonWithStoredField(webinar.Campaigns, campMsg);
+                webinar.Campaigns = JsonHelpers.ReplaceJsonWithStoredField(webinar.Campaigns, campMsg, "MailChimpCampaign");
 
                 _webinarManagementService.SaveChanges();
-
-
-
 
                 return Json(new { success = "success" });
 
             }
             catch (Exception exception)
             {
-                _logger.FatalException("CreateCampaignSingle: ", exception);
+                _logger.FatalException("GenerateMailChipCampaign: ", exception);
                 return Json(new { error = exception.Message });
             }
         }

@@ -1346,7 +1346,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             else
             {
                 PaymentCaption =
-                    "Though pre-payment is not required (we'll be happy to invoice you at " + order.BillingEmail + ") if you wish to pay by credit card <a href='" + _globalConfig.TenantURL + "/Resume/" + order.idOrder + "'>" + " click here." + "</a>" + " Is someone else in your organization responsible for payments? <a href='" + _globalConfig.TenantURL + "/Order/AddBillingEmail?idOrder=" + order.idOrder + "'>" + " Enter their email here " + "</a>and we will send the required information directly.";
+                    "Though pre-payment is not required (we'll be happy to invoice you at " + order.BillingEmail + ") if you wish to pay by credit card <a href='" + _globalConfig.TenantURL + "/Resume/" + order.idOrder + "'>" + "click here." + "</a>" + " Is someone else in your organization responsible for payments? <a href='" + _globalConfig.TenantURL + "/Order/AddBillingEmail?idOrder=" + order.idOrder + "'>" + "Enter their email here " + "</a>and we will send the required information directly.";
             }
 
             if (row.Webinar.Title.Contains("Compliance Perspectives"))
@@ -1408,9 +1408,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 OrderID = row.idOrder,
                 BillingEmail = order.BillingEmail,
                 TechSupportLink = "<a href='" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "'>" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "</a>",
-                OndemandLink = "<a href='" + _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "'>" + _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "</a>",
-                LinkToMyWebinars = "<a href='" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "'>" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "</a>",
-                ChangeTimeZoneLink = "<a href='" + _globalConfig.TenantURL + "/Order/ChangeTimeZone?idOrder=" + order.idOrder + "'>" + " click to change timezone." + "</a>",
+                OndemandLink = " <a href='" + _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "'>" + _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "</a>",
+                LinkToMyWebinars = " <a href='" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "'>" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "</a>",
+                ChangeTimeZoneLink = " <a href='" + _globalConfig.TenantURL + "/Order/ChangeTimeZone?idOrder=" + order.idOrder + "'>" + " click to change timezone." + "</a>",
                 AddReminder,
                 TenantName = _globalConfig.Tenant,
                 WebinarTitle = webinar.Title,
@@ -1433,7 +1433,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 if (noError)
                 {
-                    _logger.Info("BuildOrderSubmitted2DES begins: " + order.idOrder);
+                    _logger.Info("BuildOrderSubmitted2NotificationMessage begins: " + order.idOrder);
 
                     //// SAVE LOCALLY if needed for easier testing
                     //document.Save(System.Web.HttpContext.Current.Server.MapPath(@"~/App_Data/mergeTemplates/" + order.idOrder + ".pdf"), SaveOptions.PdfDefault);
@@ -1490,18 +1490,15 @@ namespace CUWebinars.Web.Core.Orchestrators
                     _orderManagementService.FireMandrillNotificationEvent("steve@ttstrain.com", subjectLine, body);
                     return System.Text.Encoding.UTF8.GetString(fileContents);
                 }
-                else
-                {
-                    https://ci4.googleusercontent.com/proxy/AOF0zatzFSovHlWus8P1dHxNNFo0tLbt-mot0d9e-Of2y7-y9OixCjE7b48XZyxMDreHdAqWirQiZ5bnZNro7z99YsBEbeXmAtMPk4wXt_4cag5u=s0-d-e1-ft#http://devholmen15:3538/Content/images/vrLocal/left_shadow.jpg
-                    return null;
-                }
             }
             catch (Exception ex)
             {
-                _logger.ErrorException("BuildOrderSubmitted2DES for: " + order.idOrder, ex);
+                _logger.ErrorException("BuildOrderSubmitted2Noti for: " + order.idOrder, ex);
                 return "Error: " + ex.Message;
             }
 
+            _logger.Error("BuildOrderSubmitted2FloatedTooFar: " + order.idOrder);
+            return "BuildOrderSubmitted2FloatedTooFar: " + order.idOrder;
         }
 
 
