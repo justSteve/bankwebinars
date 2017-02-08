@@ -145,14 +145,6 @@ function getOrderStatusHtml() {
         });
 
 
-
-        //var mouseX;
-        //var mouseY;
-        //$(document).mousemove(function (e) {
-        //    mouseX = e.pageX;
-        //    mouseY = e.pageY;
-        //}); http://stackoverflow.com/questions/4666367/how-do-i-position-a-div-relative-to-the-mouse-pointer-using-jquery
-
         $('.dataTable').on("mouseover", ".edit-user-name-email", function () {
             $('#hdrCaption').text("Edit Contact");
             //            $('#hdrCaption').css({ 'top': mouseY, 'left': mouseX }).fadeIn('slow');
@@ -203,7 +195,7 @@ function getOrderStatusHtml() {
             }).done(function (result) {
 
                 if (result.Result === 'Success') {
-                    $('#InputFormFields').append(successScreenMessage);
+                    $('#InputFormFields').append('<br /><span id="ScreenMessageSpan" class="label label-success">&nbsp;Message Sent</span>');
                 } else if (result.Result === 'Fail') {
                     $('#InputFormFields').append(noOrderScreenMessage);
                 }
@@ -215,49 +207,10 @@ function getOrderStatusHtml() {
             });
         });
 
-        //$('.dataTable').on("click", ".aff-revenue-summary", function () {
-
-        //    var self = this;
-
-        //    var payload = { idWebinar: this.getAttribute('data-w'), aff: this.getAttribute('data-a') };
-
-        //    $.ajax({
-        //        type: 'POST',
-        //        contentType: constants.JsonContentType,
-        //        cache: false,
-        //        url: '/Admin/BuildAffiliateInvoice',
-        //        dataType: constants.JsonDataType,
-        //        data: JSON.stringify(payload),
-        //        beforeSend: function () {
-        //            $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
-        //        }
-        //    }).done(function (data) {
-        //        //alert("hit");
-        //        if (result.Result === 'Success') {
-        //            $('#InputFormFields').append(successScreenMessage);
-        //        } else if (result.Result === 'Fail') {
-        //            $('#InputFormFields').append(noOrderScreenMessage);
-        //        }
-        //        $('#spinnerLabel').remove();
-        //    }).fail(function (result) {
-        //        ns.formatAffRevTable(result);
-        //    }).always(function () {
-        //        $('#loadingSpinner').remove();
-        //    });
-        //});
-        //ns.formatAffRevTable = function (data) {
-        //    alert(data.InvoiceId);
-        //};
-
         $('.dataTable').on("click", ".ResendConnectionInfoButton", function () {
             var self = this;
 
             var orderId = this.getAttribute('data-orderId');
-
-            //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-
-            //var logStartOperation = toastLogger.getLogFn('ResendConnectionInfo');
-            //logStartOperation("Re-sending ConnectionInfo", null, true);
 
             var payload = { orderId: orderId };
 

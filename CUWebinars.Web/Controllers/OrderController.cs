@@ -778,6 +778,23 @@ namespace CUWebinars.Web.Controllers
 
 
         [AllowAnonymous]
+        [AcceptVerbs(HttpVerbs.Get), ValidateInput(false)]
+        public ActionResult AddBillingEmail(int idOrder)
+        {
+
+            var model = _orderManagementService.GetOrderById(idOrder);
+
+            if (model != null)
+            {
+                
+            }
+
+            return View(model);
+
+        }
+
+
+        [AllowAnonymous]
         [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
         public void UpdateTimeZone()
         {
@@ -821,6 +838,11 @@ namespace CUWebinars.Web.Controllers
                 base.Dispose(true);
             }
             _disposed = true;
+        }
+
+        public ActionResult AddBillingToEmail(string addThisEmailAsBilling, int idOrder)
+        {
+            return null;
         }
     }
 }

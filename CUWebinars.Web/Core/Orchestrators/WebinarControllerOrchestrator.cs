@@ -635,12 +635,12 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (row.RegistrationType.ShowRecordingNotifications.ToLower() == "no")
             {
                 regDesc =
-                    "Included in your registration is a link (see below) to all course material for five (5) business days (until" + thisClaim.ExpiryDate.ToShortDateString() + " ). You can upgrade your order to gain 6 months OnDemand access - or get the Premier Package which includes a CD-ROM and printouts of the event's materials. We'll be happy to adjust your registration - just reply to this email! ";
+                    "Included in your registration is a link (see below) to all course material for five (5) business days (until <b>" + Web.Helpers.DateTimeHelper.FormatDate(thisClaim.ExpiryDate) + "</b> ). You can still upgrade to gain 6 months OnDemand access - or the Premier Package which includes a CD-ROM and printouts of the event's materials. We'll be happy to adjust your registration - just reply to this email! ";
             }
             else if (row.RegistrationType.ShowShippedNotifications.ToLower() == "no")
             {
                 regDesc =
-                    "Your registration includes OnDemand access to all event materials but does not include a CD-ROM or printouts. You can still upgrade to the Premier Package - just reply to this email! ";
+                    "Your registration includes OnDemand access to all event materials  (until <b>" + Web.Helpers.DateTimeHelper.FormatDate(thisClaim.ExpiryDate) + "</b> ). but does not include a CD-ROM or printouts. You can still upgrade to the Premier Package - just reply to this email! ";
             }
 
             var PaymentCaption = "";
@@ -652,7 +652,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             else
             {
                 PaymentCaption =
-                    "We'll be sending an invoice to " + order.BillingEmail + " soon. If you wish to pay by credit card <a href='" + _globalConfig.TenantURL + "/Resume/" + order.idOrder + "'>" + " click here." + "</a>" + " Is someone else in your organization responsible for payments? <a href='" + _globalConfig.TenantURL + "/Order/AddBillingEmail?idOrder=" + order.idOrder + "'>" + " Enter their email here" + "</a> and we will send the invoice directly.";
+                    "We'll be sending an invoice to " + order.BillingEmail + " soon. If you wish to pay by credit card " +
+                    "<a href='" + _globalConfig.TenantURL + "/Resume/" + order.idOrder + "'>" + " click here" + "</a>." + " Is someone else in your organization responsible for payments? " +
+                    "<a href='" + _globalConfig.TenantURL + "/Order/AddBillingEmail?idOrder=" + order.idOrder + "'>" + " Enter their email here" + "</a> and we will send the invoice directly.";
             }
             
             var dsMergeFields = new
@@ -660,6 +662,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 AttendType = row.RegistrationType.OptionLabelShort,
                 RegDesc = regDesc,
                 TenantSignature = "The " + _globalConfig.Tenant + " Staff",
+                TenantEmail =  _globalConfig.TenantEmail ,
                 OrderID = row.idOrder,
                 BillingEmail = order.BillingEmail,
                 TechSupportLink = "<a href='" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "'>" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "</a>",

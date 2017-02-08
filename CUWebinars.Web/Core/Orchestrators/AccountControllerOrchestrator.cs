@@ -1499,6 +1499,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 loginModel.ReturnUrl = returnUrl;
                 loginModel.SignIn.ReturnUrl = returnUrl;
+
             }
 
             loginModel.ActiveTab = "login";

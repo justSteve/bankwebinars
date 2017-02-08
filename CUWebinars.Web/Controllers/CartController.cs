@@ -591,7 +591,7 @@ namespace CUWebinars.Web.Controllers
             //totalAmt = .21M;
             //if (order.idOrder % 2 != 0)
             //    totalAmt = 1.12m;
-            string parameters = "UN~shuener|PSWD~uHfTSbP4|TERMS~Y|TRANXTYPE~Sale|";
+            string parameters = "UN~shuener|PSWD~Nb9rj3Sw|TERMS~Y|TRANXTYPE~Sale|";
             //string parameters = "UN~demo123|PSWD~demo123|TERMS~Y|TRANXTYPE~Sale|";
             parameters += "ORDERID~" + idOrder + "|AMOUNT~" + totalAmt + "|";
 
@@ -1037,6 +1037,12 @@ namespace CUWebinars.Web.Controllers
                     //_cartControllerOrchestrator.UpdateRegTypeOnLegacy(idRegType.Value, model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar, model.Order.BillingEmail);
 
                     _logger.Info("EditRegTypeTo: " + newRegType + " From: " + oldRegType + " on orderId: " + model.Order.idOrder);
+
+                    if (!string.IsNullOrEmpty(model.Order.InvoiceDetail))
+                    {
+                        _cartControllerOrchestrator.InvoicedOrderIsUpdated(model.Order);
+                    }
+
                     var UpdateSuccessCaption = "Order updated to: " + newRegType;
                     var ShippedDate =
                         model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).ShipmentDate;

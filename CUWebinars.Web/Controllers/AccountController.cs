@@ -311,7 +311,7 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
-        public ActionResult MyWebinars()
+        public ActionResult MyWebinars(int? idOrder)
         {
             if (User != null && User.Identity.IsAuthenticated)
             {
@@ -346,8 +346,15 @@ namespace CUWebinars.Web.Controllers
                 ViewBag.idUser = myWebinarsDTO.WebUser.idUser;
                 return View("MyWebinars", myWebinarsDTO);
             }
+            else
+            {
+                if (idOrder.HasValue && idOrder.Value > 0)
+                {
+                    return RedirectToAction("Login", "Account", new { ReturnURL = "MyWebinars?idOrder=" + idOrder.Value });
+                }
+            }
 
-            return RedirectToAction("Login", "Account", new { ReturnURL = "MyWebinars" });
+            return RedirectToAction("Login", "Account", new { ReturnURL = "MyWebinars?idOrder=" + idOrder.Value });
         }
 
 
@@ -973,7 +980,7 @@ namespace CUWebinars.Web.Controllers
             var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
 
             var additionalLocationsPricing = orderRow.Webinar.AdditionalLocationPrice;
-                //_orderManagementService.GetCostOfAdditionalLocations(orderRow.AdditionalLocation, orderRow.idWebinar);
+            //_orderManagementService.GetCostOfAdditionalLocations(orderRow.AdditionalLocation, orderRow.idWebinar);
             var additionalLocations = orderRow.AdditionalLocation;
             var additionalLocationsCount = 0;
             if (orderRow.AdditionalLocation != null && orderRow.AdditionalLocation.Count > 0)
@@ -1022,8 +1029,9 @@ namespace CUWebinars.Web.Controllers
                         ViewHelpers.GetRendererOfAdditionalLocations(additionalLocations.Select(al => al.Email).ToList()),
 
                     AdditionalLocations = additionalLocations,
-                    CostPerAdditionalLocation = orderRow.Webinar.AdditionalLocationPrice, // additionalLocationsPricing.Item2,
-                    ClaimsViewModel = claimsViewModel,// new ClaimsViewModel { UserClaims = userAccount.Claims },
+                    CostPerAdditionalLocation = orderRow.Webinar.AdditionalLocationPrice,
+                    // additionalLocationsPricing.Item2,
+                    ClaimsViewModel = claimsViewModel, // new ClaimsViewModel { UserClaims = userAccount.Claims },
 
                     DisplayRowPriceViewModel = new DisplayRowPriceViewModel
                     {
@@ -1049,28 +1057,37 @@ namespace CUWebinars.Web.Controllers
                 OrderId = 0,
                 ExpiryDate = DateTime.Now.AddYears(-10)
             };
-            editModel.EditFields.PostEventClaim = onDemandClaim;
-            foreach (
-                var claim in
-                claimsViewModel.UserClaims.Where(
-                    c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials"
-                         || c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterialsExtended")
-            )
+            try
             {
-                var singleOrDefault =
-                    editModel.EditFields.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                if (singleOrDefault != null && singleOrDefault.OnDemandCode != null &&
-                    claim.Value.Contains(singleOrDefault.OnDemandCode))
+                editModel.EditFields.PostEventClaim = onDemandClaim;
+                foreach (
+                    var claim in
+                    claimsViewModel.UserClaims.Where(
+                        c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials"
+                             || c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterialsExtended")
+                )
                 {
-                    var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
+                    var singleOrDefault =
+                        editModel.EditFields.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                    if (singleOrDefault != null && singleOrDefault.OnDemandCode != null &&
+                        claim.Value.Contains(singleOrDefault.OnDemandCode))
+                    {
+                        var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
 
-                    onDemandClaim.OrderId = editModel.EditFields.Order.idOrder;
-                    onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
-                    onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
+                        onDemandClaim.OrderId = editModel.EditFields.Order.idOrder;
+                        onDemandClaim.OnDemandCode = thisClaim.OnDemandCode;
+                        onDemandClaim.ExpiryDate = thisClaim.ExpiryDate;
 
-                    editModel.EditFields.PostEventClaim = onDemandClaim;
+                        editModel.EditFields.PostEventClaim = onDemandClaim;
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                _logger.FatalException("BuildOrderInforModel was CheckingOnDemandClaims: " + editModel.EditFields.Order.idOrder, ex);
+                //   throw;
+            }
+
             var regType = orderRow.RegistrationType;
 
             var option = CheckIfAddLocAvailable(regType.idRegType);

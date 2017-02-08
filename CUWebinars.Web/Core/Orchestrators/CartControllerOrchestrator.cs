@@ -1357,7 +1357,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (row.RegistrationType.ShowRecordingNotifications.ToLower() == "no")
             {
                 regDesc =
-                    "Included in your registration is a link (see below) to all course material for five (5) business days. You can upgrade your order to gain 6 months OnDemand access - or get the Premier Package which includes a CD-ROM and printouts of the event's materials. We'll be happy to adjust your registration - just reply to this email! ";
+                    "Included in your registration are links to all event material for five (5) business days. You can upgrade your order to gain 6 months OnDemand access - or get the Premier Package which includes a CD-ROM and printouts of the event's materials. We'll be happy to adjust your registration - just reply to this email! ";
             }
             else if (row.RegistrationType.ShowShippedNotifications.ToLower() == "no")
             {
@@ -1501,8 +1501,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             return "BuildOrderSubmitted2FloatedTooFar: " + order.idOrder;
         }
 
-
-
+        public string InvoicedOrderIsUpdated(Order order)
+        {
+           return _orderManagementService.InvoicedOrderIsUpdated(order);
+        }
 
 
         public List<Order> GetOrdersByUser(string loggedInEmail)

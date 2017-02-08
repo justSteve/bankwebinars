@@ -177,5 +177,10 @@ namespace CUWebinars.Web.Helpers
         {
             return new DateTime(dayFromTheMonth.Year, dayFromTheMonth.AddMonths(1).Month, 1).AddDays(-1);
         }
+
+        public static object ToDayWeekExpression(DateTime thisClaimExpiryDate)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

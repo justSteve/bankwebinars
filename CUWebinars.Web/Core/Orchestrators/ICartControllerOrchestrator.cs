@@ -77,5 +77,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         void GenerateRegistrantKey(Order modelOrder);
         string BuildOrderSubmitted2DESNotification(Order order);
         string BuildOrderSubmitted2Notification(Order modelOrder);
+        string InvoicedOrderIsUpdated(Order modelOrder);
     }
 }

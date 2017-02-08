@@ -541,7 +541,7 @@ $(document).ready(function () {
             }).done(function (result) {
 
                 if (result.Result === 'Success') {
-                    $('#fireResendConfirmationDiv').append(successScreenMessage);
+                    $('#fireResendConfirmationDiv').append('<br /><span id="ScreenMessageSpan" class="label label-success">&nbsp;Message Sent</span>');
                 } else if (result.Result === 'Fail') {
                     $('#fireResendConfirmationDiv').append("fail");
                 }

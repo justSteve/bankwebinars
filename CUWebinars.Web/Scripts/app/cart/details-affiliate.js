@@ -67,7 +67,7 @@ OCA.initializeFunctions = function () {
             labelCheckRemove();
 
             if (result.Result === 'Success') {
-                $('#InputFormFields').append(successScreenMessage);
+                $('#InputFormFields').append('<br /><span id="ScreenMessageSpan" class="label label-success">&nbsp;Messsage Sent</span>');
             } else if (result.Result === 'No Orders to send for that webinar') {
                 $('#InputFormFields').append(noOrdersScreenMessage);
             }

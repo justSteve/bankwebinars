@@ -2190,6 +2190,7 @@
     <Content Include="Views\Account\EditPresenter.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\EditPresenter.cshtml" />
     <Content Include="Views\Home\testStaticPage.cshtml" />
+    <Content Include="Views\Order\AddBillingEmail.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

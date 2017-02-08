@@ -1195,7 +1195,7 @@ namespace CUWebinars.Business.Core
 
                         var IDAffParam = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idAff", Value = affiliate.idUserAff };
                         var WebFooterParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@WebFooter", Value = affiliate.WebFooter };
-                        var Logo = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@WebFooter", Value = affiliate.Logo };
+                        var Logo = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@Logo", Value = affiliate.Logo };
                         var EmailBannerParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@EmailBanner", Value = affiliate.EmailBanner };
                         var EmailFooterParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@EmailFooter", Value = affiliate.EmailFooter };
                         var BillingModelParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@BillingModel", Value = affiliate.BillingModel };

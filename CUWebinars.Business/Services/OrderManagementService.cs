@@ -2514,8 +2514,7 @@ namespace CUWebinars.Business.Services
 
         }
 
-
-        public string BuildRecordingIsPostedMessage(Order order)
+        public string InvoicedOrderIsUpdated(Order order)
         {
             throw new NotImplementedException();
         }
