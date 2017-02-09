@@ -1,4 +1,20 @@
 ﻿@model  CUWebinars.Web.Models.DataTablesModels.EditUserInfoModel
+    @{
+        
+    }
+
+<script>
+
+    var tz = '@Model.EditFields.TimeZone';
+    console.log("tz is:  ");
+
+    $('#EditFields_timeZone option')
+        .removeAttr('selected')
+        .filter('[value=' + tz + ']')
+        .prop('selected', 'selected');
+
+
+</script>
 <div>
     <form id="compact-user-edit-form" class="form-compact" novalidate="novalidate">
         <div class="row-fluid">
@@ -124,11 +140,25 @@
         <div class="row-fluid">
             <div class="control-group">
                 <div class="span4">
-                    @Html.LabelFor(model => model.EditFields.SageAccountId, new { @class = "control-label span3" })
+                    @*@Html.LabelFor(model => model.EditFields.SageAccountId, new { @class = "control-label span3" })
+                        <div class="controls span8">
+                            @Html.TextBoxFor(model => model.EditFields.SageAccountId)
+                            @Html.HiddenFor(m => m.EditFields.Institution)
+                        </div>*@
+                    @Html.LabelFor(model => model.EditFields.TimeZone, new { @class = "control-label span3" })
                     <div class="controls span8">
-                        @Html.TextBoxFor(model => model.EditFields.SageAccountId)
+                        <select class="form-dropdown" style="width: 150px;" id="EditFields_timeZone" name="EditFields.timeZone">
+                            <option value="Caribbean"> Caribbean </option>
+                            <option value="Eastern"> Eastern </option>
+                            <option value="Central"> Central </option>
+                            <option value="Mountain"> Mountain </option>
+                            <option value="Pacific"> Pacific </option>
+                            <option value="Alaska"> Alaska </option>
+                            <option value="Hawaii"> Hawaii </option>
+                        </select>
                         @Html.HiddenFor(m => m.EditFields.Institution)
                     </div>
+
                 </div>
                 <div class="span4 billing-field">
                     @Html.LabelFor(model => model.EditFields.BillingAddress.City, new { @class = "control-label span3" })
@@ -203,11 +233,11 @@
             </div>
         }
     </div>
-<script type="text/javascript">
+    <script type="text/javascript">
 
-    $('#editEmailButton').on("click", function (e) {
-        updateEmail(e, this);
-    });
+        $('#editEmailButton').on("click", function (e) {
+            updateEmail(e, this);
+        });
 
-</script>
+    </script>
 </div>

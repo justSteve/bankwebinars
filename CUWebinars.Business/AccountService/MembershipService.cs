@@ -738,7 +738,7 @@ namespace CUWebinars.Business.AccountService
             }
         }
 
-        public void UpdateUserDetails(string tenant, string firstName, string lastName, string email, string institutionName, Address billingAddress, Address shippingAddress, string title, int? sageAccountId)
+        public void UpdateUserDetails(string tenant, string firstName, string lastName, string email, string institutionName, Address billingAddress, Address shippingAddress, string title, int? sageAccountId, int? timeZone)
         {
             _logger.Info("UpdateUserDetails: {0}", email);
             //if (_userAccountService.AuthenticateWithEmail(tenant, email, password))
@@ -786,11 +786,16 @@ namespace CUWebinars.Business.AccountService
                     _userAccountService.AddClaim(_userAccountService.GetByEmail(tenant, webUser.email).ID, ClaimTypes.FullName, string.Format("{0} {1}", firstName, lastName));
 
                 }
-
+                USTimeZone tz = USTimeZone.Central;
+                if (timeZone.HasValue)
+                {
+                     tz = (USTimeZone) timeZone.Value;
+                }
                 webUser.email = email;
                 webUser.FirstName = firstName;
                 webUser.LastName = lastName;
                 webUser.Title = title;
+                webUser.timeZone = tz;
                 //if (!(webUser.Institution.InstitutionName.Equals(institutionName, StringComparison.OrdinalIgnoreCase)))
                 //    //&&
                 //    //billingAddress.State.Equals(billingAddressFromDb.State, StringComparison.OrdinalIgnoreCase) &&

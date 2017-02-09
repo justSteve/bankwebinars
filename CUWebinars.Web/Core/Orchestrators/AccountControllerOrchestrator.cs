@@ -360,8 +360,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 billingAddress,
                 shippingAddress,
                 updateFields.Title == null ? "na" : updateFields.Title.Trim(),
-                existingUser.SageAccountId
-            );
+                existingUser.SageAccountId, (int)updateFields.TimeZone
+                );
         }
 
         public void UpdateShippingAddressDetails(AddressModel shippingAddressModel, int idUser)
@@ -509,7 +509,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 billingAddress,
                 shippingAddress,
                 updateFields.Title == null ? "" : updateFields.Title.Trim(),
-                updateFields.SageAccountId
+                updateFields.SageAccountId, (int)updateFields.TimeZone
             );
 
             ;
@@ -770,7 +770,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 billingAddress,
                 shippingAddress,
                 updateFields.Title == null ? "na" : updateFields.Title.Trim(),
-                existingUser.SageAccountId
+                existingUser.SageAccountId, (int)updateFields.TimeZone
                 );
 
         }
@@ -1469,6 +1469,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             var loginModel = new LoginModel
             {
+                FindLinkModel = new FindLinkModel(),
                 SignIn = new SignInModel(),
                 ResetPassword = new ResetPasswordModel(),
                 Register = new RegisterViewModel

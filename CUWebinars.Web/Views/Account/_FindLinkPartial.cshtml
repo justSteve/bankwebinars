@@ -1,0 +1,31 @@
+﻿@model FindLinkModel
+
+@{
+    Layout = null;
+}
+
+<div class="span8">
+    @using (Html.BeginForm("FindLinkForm", "Admin", FormMethod.Post, new { id = "frmFindLink" }))
+    {
+        <fieldset>
+            <legend id="ResetPassLegend">Finding a Co-Worker's Link</legend>
+            <p>In the event that you are visiting us because a co-worker forwarded you an email with a link to <b><i>My Webinars</i></b> there may not be a need to log in or create a new account. Just give us the eamil address and order ID and we'll let you know what we find.</p>
+            <div>
+                @Html.LabelFor(l => l.Email)
+                @Html.TextBoxFor(t => t.Email)
+                @Html.ValidationMessageFor(m => m.Email)
+            </div>
+            <div>
+                @Html.LabelFor(l => l.OrderId)
+                @Html.TextBoxFor(t => t.OrderId)
+                @Html.ValidationMessageFor(m => m.OrderId)
+            </div>
+            <div>
+                <input id="FindLinkButton" class="btn btn-default" type="submit" value="Find Link" /><span id="FindLinkStatus" style="color: green"></span>
+            </div>
+            <div id="OperationMessageFindLink"></div>
+        </fieldset>
+    }
+</div>
+
+

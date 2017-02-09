@@ -381,6 +381,24 @@ var Registration;
             });
         };
 
+        StateManager.prototype.findLink = function () {
+            //console.log("call passResetView");
+            
+            this.inputAction = InputAction.None;
+
+            $('#login').hide('slow');
+
+            var showFindLinkInput = $.Deferred(function () {
+                $('#findLinkPartial').show('slow');
+            });
+
+            $.when(showFindLinkInput.resolve()).then(function () {
+                $('#FindLinkByEmail').val($('#Email').val());
+                $('#FindLinkByOrderId').val($('#Email').val());
+                $('#FindLinkByEmail').focus();
+            });
+        };
+
         StateManager.prototype.registerView = function () {
             $('#login').hide('slow');
 

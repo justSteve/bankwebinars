@@ -32,7 +32,7 @@ ceuShort = ceu[0];
 ceuStmt = ceu[1];
 }
 
-USTimeZone tz = USTimeZone.Central;
+USTimeZone tz = Model.TimeZone;
 string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, tz, true, webinar.Duration);
 
 string Tenant = TtsTemplateHelperObject.Tenant();
@@ -799,7 +799,7 @@ h4 {
 
                                         <a href="@TenantURL/webinar/details/@Model.Webinar.idWebinar?idaff={aff_idUserAff}" style="mso-line-height-rule: exactly; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #2BAADF; font-weight: normal; text-decoration: underline;" target="_blank">Click here to sign up!</a><br /><br />
 
-                                        <span style="font-size: xx-small; line-height: 100%"><i>*Can't attend? OnDemand playback included with your registration.</i></span>
+                                        <span style="font-size: xx-small; line-height: 100%"><i>*Can't attend? OnDemand playback is included.</i><br/>@ceuShort</span>
 
                                     </td>
                                 </tr>

@@ -126,7 +126,7 @@ OCA.initializeFunctions = function () {
     OCA.hookUpApplyDiscountLogic = function (btn, orderRowId) {
 
         btn.on('click', function (e) {
-            alert("Hit hook");
+            
             e.preventDefault();
 
             registerDuringCheckout.gatherPricingData();

@@ -492,6 +492,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Models\FindLinkModel.cs" />
     <Compile Include="Models\IncomingEmailModel.cs" />
     <Compile Include="Notification\Templates\OrderSubmitted2ViewModel.cs" />
     <Compile Include="ViewModel\EditPresenterViewModel.cs" />
@@ -2191,6 +2192,7 @@
     <Content Include="Views\Shared\EditorTemplates\EditPresenter.cshtml" />
     <Content Include="Views\Home\testStaticPage.cshtml" />
     <Content Include="Views\Order\AddBillingEmail.cshtml" />
+    <Content Include="Views\Account\_FindLinkPartial.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

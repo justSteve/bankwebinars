@@ -35,6 +35,9 @@ namespace CUWebinars.Web.Models.DataTablesModels
         [Display(Name = "Sage Account")]
         public int? SageAccountId { get; set; }
 
+        [Display(Name = "TimeZone")]
+        public USTimeZone TimeZone { get; set; }
+
         [HiddenInput]
         public string AccountDetailsTitle { get; set; }
     }

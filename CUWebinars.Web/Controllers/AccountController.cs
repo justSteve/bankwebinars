@@ -354,7 +354,7 @@ namespace CUWebinars.Web.Controllers
                 }
             }
 
-            return RedirectToAction("Login", "Account", new { ReturnURL = "MyWebinars?idOrder=" + idOrder.Value });
+            return RedirectToAction("Login", "Account", new { ReturnURL = "MyWebinars" });
         }
 
 
@@ -938,6 +938,7 @@ namespace CUWebinars.Web.Controllers
                     Email = user.email,
                     Title = user.Title,
                     SageAccountId = user.SageAccountId,
+                    TimeZone = user.timeZone,
                     AccountDetailsTitle = WebUiConstants.ManageUser
                 },
                 LoggedInUser = (ClaimsIdentity)User.Identity,
@@ -1233,7 +1234,7 @@ namespace CUWebinars.Web.Controllers
                                 model.EditFields.WebUser.Institution.InstitutionName,
                                 user.Addresses.SingleOrDefault(a => a.AddressType == "Billing"),
                                 user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping"), model.WebUser.Title,
-                                user.SageAccountId);
+                                user.SageAccountId, (int)model.WebUser.timeZone);
                     }
                     catch (Exception ex)
                     {

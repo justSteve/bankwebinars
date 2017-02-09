@@ -63,6 +63,7 @@ namespace CUWebinars.Web.Models
         public ResetPasswordModel ResetPassword { get; set; }
         public SignInModel SignIn { get; set; }
         public string ReturnUrl { get; set; }
+        public FindLinkModel FindLinkModel { get; set; }
     }
 
     public class SignInModel

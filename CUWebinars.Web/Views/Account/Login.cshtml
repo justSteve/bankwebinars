@@ -2,15 +2,20 @@
 
 <div id="LogInContainer" class="container">
 
-        <div style="margin-left: 200px;" id="login">
-            @Html.Partial("_SignInPartial", Model.SignIn)
-        </div>
-        <div id="register" class="initialHide">
-            @Html.Partial("_CreateUserForm", Model.Register)
-        </div>
+
+    <div style="margin-left: 200px;" id="login">
+        @Html.Partial("_SignInPartial", Model.SignIn)
+    </div>
+    <div style="margin-left: 200px;" id="findLinkPartial" class="initialHide">
+        @Html.Partial("_FindLinkPartial", Model.FindLinkModel)
+    </div>
+    <div id="register" class="initialHide">
+        @Html.Partial("_CreateUserForm", Model.Register)
+    </div>
     <div style="margin-left: 200px;" id="reset" class="initialHide">
         @Html.Partial("_ResetPasswordPartial", Model.ResetPassword)
     </div>
+
 </div>
 
 @section Scripts {

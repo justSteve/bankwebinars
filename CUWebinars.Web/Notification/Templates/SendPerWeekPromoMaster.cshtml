@@ -32,7 +32,7 @@
         ceuStmt = ceu[1];
     }
 
-    USTimeZone tz = USTimeZone.Central;
+    USTimeZone tz = Model.TimeZone;
     string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, tz, true, webinar.Duration);
 
     string Tenant = TtsTemplateHelperObject.Tenant();

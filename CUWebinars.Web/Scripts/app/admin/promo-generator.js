@@ -527,15 +527,22 @@ function CreateCampaign($btn, affiliateId) {
             //contentType: "application/json",
             //contentType: "json",
             success: function (Result) {
+                if (Result.succuess) {
+                    console.log(Result);
+                    console.log("Result");
+                    alert("Campaign Created: " + Result.campMsg);
+
+                } else {
+                    
+                    alert("error: " + Result);
+
+                }
                 //$('#send' + affID).text("Success");
-                console.log(Result);
-                console.log("Result");
-                alert("Campaign Created");
             },
             error: function (result) {
-                console.log(result);
+
                 // $('#send' + affID).text(textStatus + " " + errorThrown);
-                alert("error");
+
             },
             complete: function (result) {
                 console.log(result);

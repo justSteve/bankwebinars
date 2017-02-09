@@ -59,6 +59,8 @@ namespace CUWebinars.Business.Core.Helpers
             //This function should build a string that diplays 
             //an event's time in beginning/ending format:
             //  
+
+
             int timeZoneDifference;
             string timeZoneSuffix;
             switch (timeZone)
@@ -80,7 +82,9 @@ namespace CUWebinars.Business.Core.Helpers
                     timeZoneSuffix = AppConst.TIME_ZONE_EASTERN;
                     break;
                 default:
-                    throw new TTSException("Invalid time zone");
+                    timeZoneDifference = 0;
+                    timeZoneSuffix = AppConst.TIME_ZONE_CENTRAL;
+                    break;
 
             }
 

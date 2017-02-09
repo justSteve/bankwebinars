@@ -64,17 +64,17 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 //List<string> addressess = sendPerDayPromoEvent.EventObject.Affiliate.ContactEmail.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).ToList();
                 //addressess[0] = "steve@ttstrain.com";
-                //if (addressess.Count > 0)
-                //{
-                //    notificationMessage.To = addressess[0];
+                if (addressess.Count > 0)
+                {
+                    notificationMessage.To = addressess[0];
 
-                //    if (addressess.Count > 1)
-                //    {
-                //        notificationMessage.Addresses = addressess.Skip(1).ToList(); // put the rest in the CC
-                //    }
-                //}
+                    if (addressess.Count > 1)
+                    {
+                        notificationMessage.Addresses = addressess.Skip(1).ToList(); // put the rest in the CC
+                    }
+                }
 
-                notificationMessage.To = sbListOfRecpt.ToString();
+                //notificationMessage.To = sbListOfRecpt.ToString().TrimEnd(',');
 
                 
                 //notificationMessage.To = "steve@ttstrain.com";

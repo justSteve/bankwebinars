@@ -494,7 +494,7 @@ function getOrderStatusHtml() {
                 "aTargets": [1], // User column  -- triggers EditUser_Compact.cshtml
                 "mData": "",
                 "mRender": function (data, type, full) {
-                    console.log(full);
+                    //console.log(full);
                     return full.LastName + ", " + full.FirstName + " <span style=\"font-size: xx-small;\">(" + full.idUser + ")</span><br>" + full.BillingEmail + "<br>";
                 }
             },

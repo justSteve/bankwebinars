@@ -2012,14 +2012,14 @@ namespace CUWebinars.Web.Controllers.Admin
                 var checkList = await manager.Campaigns.SendChecklistAsync(mkCamp.Id);
 
 
-                //var sendToEmails = "\"all.of.us@ttstrain.com\", \"" + affiliate.NotiPromos.Replace(",", "\",\"") + "\"";
-                //CampaignTestRequest emails = new CampaignTestRequest
-                //{
-                //    EmailType = "html",
-                //    Emails = new string[] { sendToEmails }
-                //};
+                var sendToEmails = "\"all.of.us@ttstrain.com\", \"" + affiliate.NotiPromos.Replace(",", "\",\"") + "\"";
+                CampaignTestRequest emails = new CampaignTestRequest
+                {
+                    EmailType = "html",
+                    Emails = new string[] { sendToEmails }
+                };
 
-                //await manager.Campaigns.TestAsync(mkCamp.Id, emails);
+                await manager.Campaigns.TestAsync(mkCamp.Id, emails);
 
 
 
