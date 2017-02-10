@@ -37,7 +37,7 @@
 
 
 <script id="scriptInit" type="text/javascript">
-        @{
+    @{
             var affDTO = (from Affiliate a in Model.Affiliates
                           select new
         {
@@ -49,10 +49,14 @@
             ContactPhone = a.ContactPhone,
             EmailFooter = a.EmailFooter.Trim()
         }).ToList();
-           
-    }
+
+        }
+    console.log("@ViewBag.SubjectForCampaign");
     var valOfStatus = "@Model.Webinar.Status";
     var _subject = "ANNOUNCING: @Model.Webinar.Title";
+    var _subjectForCampaign = "@ViewBag.SubjectForCampaign";
+    var _testEmails = "all.of.us@ttstrain.com";
+
     var affs = @Html.Raw(Json.Encode(affDTO));
 
     $(document)

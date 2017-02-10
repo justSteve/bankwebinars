@@ -54,17 +54,20 @@
                 ContactPerson = a.ContactPerson,
                 ContactEmail = a.ContactEmail,
                 ContactPhone = a.ContactPhone,
+                notiEmails = a.NotiPromos,
                 EmailFooter = a.EmailFooter.Trim()
             }).ToList();
     }
 
     var affs = @Html.Raw(Json.Encode(affDTO));
-
-    var valOfStatus = "@Model.Webinar.Status";
     var _subject = "ANNOUNCING: @Model.Webinar.Title";
+    var _subjectForCampaign = "@ViewBag.SubjectForCampaign";
+    var _testEmails = "all.of.us@ttstrain.com";
+    var valOfStatus = "@Model.Webinar.Status";
 
     $(document)
         .ready(function() {
+
             $("#editorTA")
                 .wijeditor({
                     // editorMode: "split" // can default to split view if they want
@@ -81,7 +84,7 @@
 {
     <div class="container-admin">
 
-        <h2>
+        <h2 id="WebinarTitle">
             @Model.Webinar.Title
         </h2>
         <div>

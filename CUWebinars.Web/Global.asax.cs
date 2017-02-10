@@ -223,7 +223,7 @@ namespace CUWebinars.Web
                 {
                     userName = User.Identity.Name;
                 }
-                ErrorSignal.FromCurrentContext().Raise(exception);
+                //ErrorSignal.FromCurrentContext().Raise(exception);
                 switch (httpException.GetHttpCode())
                 {
                     case 404:

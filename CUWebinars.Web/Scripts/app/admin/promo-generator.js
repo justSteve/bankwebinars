@@ -483,10 +483,14 @@ function SendAll($btn) {
 }
 
 function CreateCampaign($btn, affiliateId) {
+
     var _sendTime = 10;
     var sendTime = prompt("Time To Send: ", _sendTime);
     // save time...
     if (sendTime) {
+
+        var subjectForCampaign = prompt("Subject line: ", _subjectForCampaign);
+        var testEmails = prompt("Test Email", _testEmails);
         var tStart = (new Date()).getTime();
 
         // setup UI for user feedback
@@ -520,20 +524,23 @@ function CreateCampaign($btn, affiliateId) {
                 "messageBodyHtml": currCopy,
                 "webinarId": $("#Webinar_idWebinar").val(),
                 "sendDate": $("#SendDate").val(),
-                "sendTime": sendTime
+                "sendTime": sendTime,
+                "testEmails": testEmails,
+                "subject": subjectForCampaign
             },
             dataType: "json",
             async: false,
             //contentType: "application/json",
             //contentType: "json",
             success: function (Result) {
-                if (Result.succuess) {
-                    console.log(Result);
+
+                console.log(Result);
+                if (Result.Success) {
                     console.log("Result");
-                    alert("Campaign Created: " + Result.campMsg);
+                    alert("Campaign Created: ");
 
                 } else {
-                    
+
                     alert("error: " + Result);
 
                 }
@@ -717,6 +724,7 @@ function WriteMarkupToStorageAJAX($btn, affiliateId) {
 }
 
 function SendToAff(affiliateId) {
+
     var subject = prompt("Subject Line", _subject);
 
     if (subject != null) {

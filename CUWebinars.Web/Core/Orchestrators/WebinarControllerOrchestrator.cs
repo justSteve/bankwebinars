@@ -635,12 +635,12 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (row.RegistrationType.ShowRecordingNotifications.ToLower() == "no")
             {
                 regDesc =
-                    "Included in your registration is a link (see below) to all course material for five (5) business days (until <b>" + Web.Helpers.DateTimeHelper.FormatDate(thisClaim.ExpiryDate) + "</b> ). You can still upgrade to gain 6 months OnDemand access - or the Premier Package which includes a CD-ROM and printouts of the event's materials. We'll be happy to adjust your registration - just reply to this email! ";
+                    "Included in your registration is a link (see below) to all course material for five (5) business days (until <b>" + Web.Helpers.DateTimeHelper.FormatDate(thisClaim.ExpiryDate) + "</b>). You can still upgrade to gain 6 months OnDemand access - or the Premier Package which includes a CD-ROM and printouts of the event's materials. We'll be happy to adjust your registration - just reply to this email! ";
             }
             else if (row.RegistrationType.ShowShippedNotifications.ToLower() == "no")
             {
                 regDesc =
-                    "Your registration includes OnDemand access to all event materials  (until <b>" + Web.Helpers.DateTimeHelper.FormatDate(thisClaim.ExpiryDate) + "</b> ). but does not include a CD-ROM or printouts. You can still upgrade to the Premier Package - just reply to this email! ";
+                    "Your registration includes OnDemand access to all event materials  (until <b>" + Web.Helpers.DateTimeHelper.FormatDate(thisClaim.ExpiryDate) + "</b>). but does not include a CD-ROM or printouts. You can still upgrade to the Premier Package - just reply to this email! ";
             }
 
             var PaymentCaption = "";
@@ -662,7 +662,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 AttendType = row.RegistrationType.OptionLabelShort,
                 RegDesc = regDesc,
                 TenantSignature = "The " + _globalConfig.Tenant + " Staff",
-                TenantEmail =  _globalConfig.TenantEmail ,
+                SupportEmail =  _globalConfig.TenantEmail ,
                 OrderID = row.idOrder,
                 BillingEmail = order.BillingEmail,
                 TechSupportLink = "<a href='" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "'>" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "</a>",

@@ -530,7 +530,7 @@ namespace CUWebinars.Web.Controllers
                             });
                 }
                 importedOrder.RegistrationType = idRegType.ToString();
-                
+
 
                 try
                 {
@@ -786,7 +786,7 @@ namespace CUWebinars.Web.Controllers
 
             if (model != null)
             {
-                
+
             }
 
             return View(model);
@@ -840,8 +840,9 @@ namespace CUWebinars.Web.Controllers
             _disposed = true;
         }
 
-        public ActionResult AddBillingToEmail(string addThisEmailAsBilling, int idOrder)
+        public ActionResult AddBillingEmail(string addThisEmailAsBilling, int idOrder)
         {
+            _logger.Info("AddBillingEmail: " + addThisEmailAsBilling + " to: " + idOrder);
             return null;
         }
     }

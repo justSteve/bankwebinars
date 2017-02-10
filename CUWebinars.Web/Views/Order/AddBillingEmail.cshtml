@@ -13,8 +13,7 @@
 <div class="hero-unit">
     <div id="webinarTitle" class="container">
         <div class="span10">
-
-            <h2>Email for Billing</h2>
+            <h2>Billing Email</h2>
         </div>
     </div>
 </div>
@@ -23,11 +22,12 @@
 <div class="container clearfix" id="main-content">
     <!--begin main content-->
 
-    @using (Html.BeginForm("AddBillingToEmail", "Order", FormMethod.Post))
+    @using (Html.BeginForm("AddBillingEmail", "Order", FormMethod.Post))
     {
         <div>Please enter the email to invoice for @globalConfig.TenantPrefix@Model.idOrder</div>
         <input type="text" name="addThisEmailAsBilling" id="addThisEmailAsBilling" placeholder="Please enter the desired email." />
         <input type="hidden" name="idOrder" id="idOrder" value="@Model.idOrder" /><br />
         <input class="btn" type="submit" value="Submit" />
     }
+    <div id="response"></div>
 </div>

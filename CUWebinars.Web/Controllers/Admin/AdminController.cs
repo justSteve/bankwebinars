@@ -1548,9 +1548,10 @@ namespace CUWebinars.Web.Controllers.Admin
 
             if (model.TemplateType == "Daily")
             {
+
                 model.Webinar = _webinarManagementService.GetWebinar(model.Webinar.idWebinar);
                 model.SubscriptionPackURL = "http://ttstrain.com/webinar-subscription-packages-for-credit-unions/";
-
+                ViewBag.SubjectForCampaign = "Webinar: " + model.Webinar.Title;
                 if (model.Affiliate.idUserAff != null && model.Affiliate.idUserAff > 0)
                 {
                     model.Affiliate = _affiliateManagementService.FindById(model.Affiliate.idUserAff);
@@ -1623,6 +1624,8 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             else
             {
+
+                ViewBag.SubjectForCampaign = "Webinars: Week of " + DateTimeHelper.GetDateOfNextDay(model.SendDate, DayOfWeek.Monday) + " - " + DateTimeHelper.GetDateOfNextDay(model.SendDate, DayOfWeek.Friday);
                 List<int> featureWebinarIDs = new List<int>();
                 var upcomingDetail = new StringBuilder();
                 if (TempData["ListOfWebinarsForWeekly"] != null)
@@ -1929,7 +1932,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [ValidateInput(false)]
         [HttpPost]
         [HandleAjaxException]
-        public async Task<JsonResult> GenerateMailChimpCampaign(int affiliateId, string messageBodyHtml, int webinarId, string sendDate, string sendTime)
+        public async Task<JsonResult> GenerateMailChimpCampaign(int affiliateId, string messageBodyHtml, int webinarId, string sendDate, string sendTime, string subject, string testEmails)
         {
             _logger.Info("GenerateMailChimpCampaign starting");
             Webinar webinar = _webinarManagementService.GetWebinar(webinarId);
@@ -1955,12 +1958,29 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 var recp = new Recipient { ListId = affiliate.idMailChimpList };
                 var segment = await manager.ListSegments.GetAllAsync(affiliate.idMailChimpList).ConfigureAwait(false);
-                //var segmentMembers = await manager.ListSegments.GetAllMembersAsync(affiliate.idMailChimpList, segment.SingleOrDefault(s => s.Name == "General").Id.ToString()).ConfigureAwait(false);
+                var _segment = segment.Where(s => s.Name == "General").FirstOrDefault();
+                if (_segment != null)
+                {
+                    var segmentMembers =
+                        await manager.ListSegments.GetAllMembersAsync(affiliate.idMailChimpList,
+                                _segment.Id.ToString()).ConfigureAwait(false);
 
-                //if (segmentMembers.Any())
-                //    _logger.Info("Create SegmentMembers: " + JsonConvert.DeserializeObject<IList<MailChimp.Net.Models.Member>>(segmentMembers.ToString()));
-                // recp = new Recipient { ListId = affiliate.idMailChimpList, , };
-
+                    if (segmentMembers.Any())
+                        //_logger.Info("Create SegmentMembers: " + JsonConvert.DeserializeObject<IList<MailChimp.Net.Models.Member>>(segmentMembers.ToString()));
+                        recp = new Recipient
+                        {
+                            ListId = affiliate.idMailChimpList,
+                            SegmentOptions =
+                                new SegmentOptions
+                                {
+                                    SavedSegmentId = segment.FirstOrDefault(s => s.Name == "General").Id
+                                }
+                        };
+                }
+                else
+                {
+                    _logger.Warn("No Segment Found for: " + affiliate.ttsDomain);
+                }
 
                 //https://github.com/brandonseydel/MailChimp.Net/issues/157
                 // or find a way to nav to URL
@@ -1973,8 +1993,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     Settings = new Setting
                     {
-                        SubjectLine = "Webinar: " + webinar.Title,
-                        Title = affiliate.ttsDomain + "_" + webinar.Title,
+                        SubjectLine = subject,
+                        Title = affiliate.ttsDomain + "_" + subject,
                         FolderId = "30aca5892b",
                         InlineCss = true,
                         Authenticate = true,
@@ -2011,17 +2031,19 @@ namespace CUWebinars.Web.Controllers.Admin
                 _logger.Info("CreateCampaign | SendChecklistAsync: " + mkCamp.Id);
                 var checkList = await manager.Campaigns.SendChecklistAsync(mkCamp.Id);
 
+                //var sendToEmails = "'all.of.us@ttstrain.com', '" + affiliate.NotiPromos.Replace(",", "\",\"") + "\"";
+                List<string> sendToEmails = new List<string>();
 
-                var sendToEmails = "\"all.of.us@ttstrain.com\", \"" + affiliate.NotiPromos.Replace(",", "\",\"") + "\"";
+                sendToEmails.AddRange(testEmails.Split(','));
+                //sendToEmails.AddRange(affiliate.NotiPromos.Split(','));
+
                 CampaignTestRequest emails = new CampaignTestRequest
                 {
                     EmailType = "html",
-                    Emails = new string[] { sendToEmails }
+                    Emails = sendToEmails.ToArray()
                 };
 
                 await manager.Campaigns.TestAsync(mkCamp.Id, emails);
-
-
 
                 _logger.Info("CreateCampaign | sendDate: " + mkCamp.Id);
                 await manager.Campaigns.ScheduleAsync(mkCamp.Id, new CampaignScheduleRequest
@@ -2041,7 +2063,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 _webinarManagementService.SaveChanges();
 
-                return Json(new { Result = "success", campMsg });
+                return Json(new { WebUiConstants.Success, campMsg });
 
             }
             catch (Exception exception)
@@ -2049,6 +2071,74 @@ namespace CUWebinars.Web.Controllers.Admin
                 _logger.FatalException("GenerateMailChimpCampaign: ", exception);
                 return Json(new { Result = exception.Message });
             }
+        }
+
+        [ValidateInput(false)]
+        [HttpGet]
+        [HandleAjaxException]
+        public async Task<ActionResult> FindMailChimpListSegments()
+        {
+            _logger.Info("GenerateMailChimpCampaign starting");
+            var affiliates = _affiliateManagementService.GetAffiliates();
+            var model = new ListSegmentsViewModel
+            {
+                NoList = new List<Affiliate>(),
+                HaveNoSegment = new List<Affiliate>(),
+                HaveSegment = new List<Affiliate>(),
+                AffAndListSegments = new List<Dictionary<Affiliate, ListSegment>>()
+            };
+
+            foreach (var affiliate in affiliates)
+            {
+                if (affiliate.idMailChimpList == null)
+                {
+                    model.NoList.Add(affiliate);
+                    continue;
+                }
+                try
+                {
+                    IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
+
+                    List list = await manager.Lists.GetAsync(affiliate.idMailChimpList).ConfigureAwait(false);
+
+                    //var recp = new Recipient { ListId = affiliate.idMailChimpList };
+                    var segments =
+                        await manager.ListSegments.GetAllAsync(affiliate.idMailChimpList).ConfigureAwait(false);
+                    var _segment = segments.Where(s => s.Name == "General").FirstOrDefault();
+                    if (_segment != null)
+                    {
+                        //var segmentMembers =
+                        //    await manager.ListSegments.GetAllMembersAsync(affiliate.idMailChimpList,
+                        //        _segment.Id.ToString()).ConfigureAwait(false);
+                        _logger.Info("Segement found for: " + affiliate.ttsDomain);
+                        _logger.Info(affiliate.ttsDomain + " - " + JsonConvert.SerializeObject(_segment));
+                        //if (segmentMembers.Any())
+                        //    //_logger.Info("Create SegmentMembers: " + JsonConvert.DeserializeObject<IList<MailChimp.Net.Models.Member>>(segmentMembers.ToString()));
+                        model.HaveSegment.Add(affiliate);
+                        var dic = new Dictionary<Affiliate, ListSegment>();
+                        dic.Add(affiliate, _segment);
+                        model.AffAndListSegments.Add(dic);
+
+                    }
+                    else
+                    {
+                        model.HaveNoSegment.Add(affiliate);
+                        _logger.Warn("No Segment Found for: " + affiliate.ttsDomain);
+                    }
+
+
+
+                }
+                catch (Exception exception)
+                {
+                    _logger.FatalException("GenerateMailChimpCampaign: ", exception);
+                    //return Json(new { Result = exception.Message });
+
+                }
+            }
+
+            return View(model);
+
         }
 
         public ActionResult RssFeedOfAddedEvents()
