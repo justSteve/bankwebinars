@@ -13,6 +13,7 @@ using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Services;
+using GemBox.Document;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Trace = System.Diagnostics.Trace;
@@ -370,7 +371,7 @@ namespace CUWebinars.Web.Helpers
 
         }
         
-        public bool BuildWebinarOrderOrderInvoiceRow(Order order, StringBuilder discountNotes, out OrderRow row, out string _price,
+        public bool BuildWebinarOrdersInvoiceRow(Order order, StringBuilder discountNotes, out OrderRow row, out string _price,
             ref int rowNumber, out string _percent, ref int totalNumberDiscounts)
         {
             row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
@@ -470,6 +471,111 @@ namespace CUWebinars.Web.Helpers
             }
             return false;
         }
+
+        public void Document_FieldMerging(DocumentModel document, Affiliate affiliate)
+        {
+            document.MailMerge.FieldMerging += (sender, e) =>
+            {
+                if (affiliate.BillingModel == "aff")
+                {
+                    if (e.Inline != null && e.FieldName == "TotalRevenueBilledLabel")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "TotalRevenuePaidLabel")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "TotalNetDueLabel")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "TotalAdjustedRevenueBilledLabel")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "TotalAdjustedRevenuePaidLabel")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "TotalAdjustedNetDueLabel")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "TotalOnBilled")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "TotalOnPaid")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "TotalNetDue")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "GrandTotalOnBilled")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "GrandTotalOnPaid")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "GrandTotalNetDue")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "GrandTotalRevenueBilledLabel")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "GrandTotalRevenuePaidLabel")
+                        ((Run)e.Inline).Text = "";
+                    if (e.Inline != null && e.FieldName == "GrandTotalNetDueLabel")
+                        ((Run)e.Inline).Text = "";
+                }
+
+                if (e.IsValueFound)
+                {
+                    switch (e.FieldName)
+                    {
+                        case "Date":
+                            ((Run)e.Inline).Text = ((DateTime)e.Value).ToString("dddd, MMMM d, yyyy");
+                            break;
+
+                        case "Percent":
+                        case "Royalty":
+                            break;
+                    }
+                }
+            };
+
+        }
+
+        public bool BuildPostEventOrdersInvoiceRows(Order order, StringBuilder discountNotes, out OrderRow row,
+            out string _price, ref int rowNumber, out string _percent, ref int totalNumberDiscounts)
+        {
+            row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+            _price = row.RowPrice.ToString("C").Replace(".00", "");
+            rowNumber++;
+            _percent = (row.PercentPaid*100).ToString().Replace(".00", "").Replace(".0", "") +
+                       "%";
+            if (row.Discount != null)
+            {
+                var discount = row.Discount;
+
+                if (discount.DiscountType == DiscountType.Subscription &&
+                    discount.DateValidFrom != discount.DateValidTo)
+                {
+                    //skip unlimited subs
+                    return true;
+                }
+                else
+                {
+                    discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode +
+                                         ": (" +
+                                         discount.DiscountType.ToString()
+                                             .Replace("DiscountType.", "") +
+                                         ") ");
+                }
+
+                _price = "See Note #" + totalNumberDiscounts;
+                discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode + ": (" +
+                                     discount.DiscountType.ToString()
+                                         .Replace("DiscountType.", "") +
+                                     ") ");
+
+                totalNumberDiscounts++;
+                var discountAmount = "";
+                if (row.Discount.PercentOff > 0)
+                {
+                    discountAmount = (row.UnitPrice*(row.Discount.PercentOff/100)).ToString("c");
+                }
+                if (row.Discount.FlatOff > 0)
+                {
+                    discountAmount = (row.UnitPrice - row.Discount.FlatOff).ToString("C");
+                }
+
+                discountNotes.Append(Environment.NewLine);
+            }
+            return false;
+        }
+
         public static string[] AddNonvalidToArray(string[] zipCentricFields)
         {
             if (zipCentricFields == null) throw new ArgumentNullException("zipCentricFields");

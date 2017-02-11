@@ -4,6 +4,7 @@ using System.Data;
 using System.Text;
 using System.Web.Mvc;
 using CUWebinars.Business.Models;
+using GemBox.Document;
 using Newtonsoft.Json.Linq;
 
 namespace CUWebinars.Web.Helpers
@@ -26,7 +27,9 @@ namespace CUWebinars.Web.Helpers
         bool CheckIsEmailValid(string email);
         long ToUnixTimespan(DateTime myEventStart, TimeZoneInfo findSystemTimeZoneById);
         
-        bool BuildWebinarOrderOrderInvoiceRow(Order order, StringBuilder discountNotes, out OrderRow row, out string price, ref int rowNumber, out string percent, ref int totalNumberDiscounts);
+        bool BuildWebinarOrdersInvoiceRow(Order order, StringBuilder discountNotes, out OrderRow row, out string price, ref int rowNumber, out string percent, ref int totalNumberDiscounts);
         bool BuildAdjustedOrderInvoiceRow(Order order, string adjustmentDirection, OrderRow row, Dictionary<string, JToken> dict, StringBuilder discountNotes, out decimal adjustedTotal, out decimal adjustedRoyalty, ref int totalNumberDiscounts);
+        void Document_FieldMerging(DocumentModel document, Affiliate affiliate);
+        bool BuildPostEventOrdersInvoiceRows(Order order, StringBuilder discountNotes, out OrderRow row, out string price, ref int rowNumber, out string percent, ref int totalNumberDiscounts);
     }
 }
