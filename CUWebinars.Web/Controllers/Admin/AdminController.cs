@@ -3026,10 +3026,8 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpGet]
         //[AuthorizeHeaders]  
         [AllowAnonymous]
-        public JsonResult GenerateWeeklyInvoicesEvent(DateTime startDate, int? _idAffiliate)
+        public JsonResult GenerateWeeklyInvoicesEvent(DateTime startDate, int? _idAffiliate, string overwrite)
         {
-            Stopwatch openingCall = new Stopwatch();
-            openingCall.Start();
 
             if (!_idAffiliate.HasValue)
             {
@@ -3048,7 +3046,7 @@ namespace CUWebinars.Web.Controllers.Admin
             var existingInvoice = CheckForExistingInvoice(startDate.ToShortDateString().Replace("/", "-"), weekNumber,
                 idAffiliate);
 
-            if (existingInvoice != null)
+            if (existingInvoice != null && overwrite == "no")
             {
                 var __idAffiliate =
                     Convert.ToInt32(existingInvoice.Split('/')[5].Split('-')[2].ToString().Replace(".pdf", ""));
@@ -3166,6 +3164,10 @@ namespace CUWebinars.Web.Controllers.Admin
 
                                 foreach (var o in webinarsOrders)
                                 {
+                                    if (o.InvoiceDetail != null)
+                                    {
+                                        _logger.Info("--exec RestoreInvoiceDetail @idOrder=" + o.idOrder + ", @invoiceDetails=" + o.InvoiceDetail + ", @royalty=" + o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Royalty);
+                                    }
                                     o.InvoiceDetail = null;
                                 }
                                 hadWOrder = true;
@@ -3589,7 +3591,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             System.IO.StringWriter sw = new System.IO.StringWriter();
             HtmlTextWriter htw = new HtmlTextWriter(sw);
-            
+
             // Create a dynamic control, populate and render it
             GridView excel = new GridView();
             excel.DataSource = table;
@@ -3640,7 +3642,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             CloudBlockBlob blob =
                 container.GetBlockBlobReference(startDate.ToShortDateString().Replace("/", "-") + "/" +
-                                                ttsDomain + "/PostEventOrders/" + thisAffiliate  + ".xls");
+                                                ttsDomain + "/PostEventOrders/" + thisAffiliate + ".xls");
             blob.UploadText(renderedGridView);
         }
 
@@ -3649,7 +3651,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             StringWriter sw = new StringWriter();
             HtmlTextWriter htw = new HtmlTextWriter(sw);
-            
+
             GridView excel = new GridView();
             excel.DataSource = table;
             excel.DataBind();

@@ -1,9 +1,24 @@
 ﻿@using CUWebinars.Web.Core
+@using Microsoft.Ajax.Utilities
 
 @model  CUWebinars.Web.Models.DataTablesModels.EditOrderInfoModel
 @{
-    var str = Model.EditFields.Order.AdminComments;
-    
+    var strAdminComments = Model.EditFields.Order.AdminComments;
+    var strAudit = Model.EditFields.Order.AuditInfo;
+    var strInvoice = Model.EditFields.Order.InvoiceDetail;
+
+    if (string.IsNullOrEmpty(strInvoice))
+    {
+        strInvoice = "false";
+    }
+    if (string.IsNullOrEmpty(strAdminComments))
+    {
+        strAdminComments = "false";
+    }
+    if (string.IsNullOrEmpty(strAudit))
+    {
+        strAudit = "false";
+    }
 }
 <script type="text/javascript">
     var idOrderFromDTEOC = @Model.EditFields.Order.idOrder;
@@ -12,13 +27,17 @@
 
     $(function () {
         // Need to init a bunch of JS stuff
-        var str = "@str";
-        
-        console.log(str.replace(/&quot;/g, '"'));
-        console.log(str);
+        var strAdminComments = "@strAdminComments";
+        var strAudit = "@strAudit";
+        var strInvoice = "@strInvoice";
+        $('#auditTab a').click(function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+        })
 
-        //alert("@Model.EditFields.Order.AdminComments");
-        $( "#browser" ).jsonbrowser(str.replace(/&quot;/g, '"'));
+        $( "#browserAdmin" ).jsonbrowser(strAdminComments.replace(/&quot;/g, '"'));
+        $( "#browserAudit" ).jsonbrowser(strAudit.replace(/&quot;/g, '"'));
+        $( "#browserInvoice" ).jsonbrowser(strInvoice.replace(/&quot;/g, '"'));
     });
 </script>
 @{
@@ -129,7 +148,7 @@
             {
                 <div id="addLocsPanel" style="text-align: center; border-style: solid; border-color: darkgrey">
                     @using (Html.BeginForm("UpdateAdditionalLocations", "Admin", FormMethod.Post, new { id = "editOrderCompactAddLoc" }))
-                    {
+                {
                         @Html.AntiForgeryToken()
                         <div>
                             @Html.HiddenFor(m => m.EditFields.CostPerAdditionalLocation)
@@ -229,7 +248,30 @@
         </div>
         <div class="span5">
             <div id="notesPanel">
-                <div id="browser" class="jsonbrowser">here</div>
+                @{
+                    if (!isAffiliate)
+                    {
+                        <ul class="nav nav-tabs" id="auditTab">
+                            <li><a href="#auditInfo">Origin</a></li>
+                            <li><a href="#adminComments">AdminComments</a></li>
+                            <li><a href="#invoice">Invoice Details</a></li>
+                            @*<li><a href="#settings">Settings</a></li>*@
+                        </ul>
+
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="auditInfo"><div id="browserAudit" class="jsonbrowser">here</div></div>
+                            <div class="tab-pane" id="adminComments">
+                                <div id="browserAdmin" class="jsonbrowser">here</div>
+                            </div>
+                            <div class="tab-pane" id="invoice"><div id="browserInvoice" class="jsonbrowser">here</div></div>
+                            @*<div class="tab-pane" id="settings">...</div>*@
+                        </div>
+                    }
+                    else
+                    {
+                        <div id="browser" class="jsonbrowser">here</div>
+                    }
+                }
                 @*<textarea class="form-control" style="min-width: 100%">"@Model.EditFields.Order.AdminComments</textarea>*@
             </div>
             @if (Model.EditFields.Discount != null && Model.EditFields.Discount.Notes != null)
