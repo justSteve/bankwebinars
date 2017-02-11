@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Text;
 using System.Web.Mvc;
 using CUWebinars.Business.Models;
+using Newtonsoft.Json.Linq;
 
 namespace CUWebinars.Web.Helpers
 {
@@ -22,5 +25,8 @@ namespace CUWebinars.Web.Helpers
         IList<AdditionalLocation> CheckAdditionalLocationsForValidEmail(IList<AdditionalLocation> additionalLocations);
         bool CheckIsEmailValid(string email);
         long ToUnixTimespan(DateTime myEventStart, TimeZoneInfo findSystemTimeZoneById);
+        
+        bool BuildWebinarOrderOrderInvoiceRow(Order order, StringBuilder discountNotes, out OrderRow row, out string price, ref int rowNumber, out string percent, ref int totalNumberDiscounts);
+        bool BuildAdjustedOrderInvoiceRow(Order order, string adjustmentDirection, OrderRow row, Dictionary<string, JToken> dict, StringBuilder discountNotes, out decimal adjustedTotal, out decimal adjustedRoyalty, ref int totalNumberDiscounts);
     }
 }

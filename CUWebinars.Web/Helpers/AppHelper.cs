@@ -369,7 +369,107 @@ namespace CUWebinars.Web.Helpers
             return (long)Math.Truncate(tspan.TotalSeconds);
 
         }
+        
+        public bool BuildWebinarOrderOrderInvoiceRow(Order order, StringBuilder discountNotes, out OrderRow row, out string _price,
+            ref int rowNumber, out string _percent, ref int totalNumberDiscounts)
+        {
+            row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
 
+            _price = row.RowPrice.ToString("C").Replace(".00", "");
+            rowNumber++;
+
+            _percent = (row.PercentPaid * 100).ToString().Replace(".00", "").Replace(".0", "") +
+                       "%";
+
+            //var totalToShow = order.Total.ToString("c");
+            if (row.Discount != null)
+            {
+                var discount = row.Discount;
+                _price = "See Note #" + totalNumberDiscounts;
+
+                if (discount.DiscountType == DiscountType.Subscription &&
+                    discount.DateValidFrom != discount.DateValidTo)
+                {
+                    // change request that we skip any Unlimited subs.
+                    return true;
+                }
+                else
+                {
+                    discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode +
+                                         ": (" +
+                                         discount.DiscountType.ToString()
+                                             .Replace("DiscountType.", "") +
+                                         ") ");
+                }
+
+
+                totalNumberDiscounts++;
+                var discountAmount = "";
+                if (row.Discount.PercentOff > 0)
+                {
+                    discountAmount =
+                        (row.RowPrice * (row.Discount.PercentOff / 100)).ToString("c");
+                }
+                if (row.Discount.FlatOff > 0)
+                {
+                    discountAmount = (row.RowPrice - row.Discount.FlatOff).ToString("C");
+                }
+                //discountNotes.Append(discountAmount);
+                discountNotes.Append(Environment.NewLine);
+            }
+            return false;
+        }
+
+        public bool BuildAdjustedOrderInvoiceRow(Order order, string adjustmentDirection, OrderRow row, Dictionary<string, JToken> dict,
+            StringBuilder discountNotes, out decimal adjustedTotal, out decimal adjustedRoyalty, ref int totalNumberDiscounts)
+        {
+            if (order.InvoiceDetail.Contains("Royalty is decreased"))
+            {
+                adjustmentDirection = "Royalty is decreased";
+            }
+
+            adjustedTotal = row.RowPrice - (decimal) dict["OriginalTotal"];
+            adjustedRoyalty = (decimal) dict[adjustmentDirection];
+
+            if (row.Discount != null)
+            {
+                var discount = row.Discount;
+
+                if (discount.DiscountType == DiscountType.Subscription &&
+                    discount.DateValidFrom != discount.DateValidTo)
+                {
+                    //skip unlimited subs
+                    return true;
+                }
+                else
+                {
+                    discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode +
+                                         ": (" +
+                                         discount.DiscountType.ToString()
+                                             .Replace("DiscountType.", "") +
+                                         ") ");
+                }
+
+                //_price = "See Note #" + totalNumberDiscounts;
+                discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode + ": (" +
+                                     discount.DiscountType.ToString()
+                                         .Replace("DiscountType.", "") +
+                                     ") ");
+
+                totalNumberDiscounts++;
+                var discountAmount = "";
+                if (row.Discount.PercentOff > 0)
+                {
+                    discountAmount = (row.UnitPrice*(row.Discount.PercentOff/100)).ToString("c");
+                }
+                if (row.Discount.FlatOff > 0)
+                {
+                    discountAmount = (row.UnitPrice - row.Discount.FlatOff).ToString("C");
+                }
+                discountNotes.Append(Environment.NewLine);
+            }
+            return false;
+        }
         public static string[] AddNonvalidToArray(string[] zipCentricFields)
         {
             if (zipCentricFields == null) throw new ArgumentNullException("zipCentricFields");
