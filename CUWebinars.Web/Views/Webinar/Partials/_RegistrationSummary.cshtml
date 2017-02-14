@@ -2,6 +2,11 @@
 @model RegistrationSummaryViewModel
 
 @{
+    var byJoinCode = false;
+    if (ViewBag.byJoinCode != null)
+    {
+        byJoinCode = true;
+    }
     NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     nfi.CurrencyDecimalDigits = 0;
@@ -9,11 +14,6 @@
     if (Model.OrderRow != null)
     {
         RegType orderMsgs = Model.OrderRow.RegistrationType;
-        //var row = from orderRow in Model.OrderRow.Order.OrderRows
-        //          where orderRow.RowStatus == OrderRowStatus.Active
-        //          select orderRow;
-
-        //var myRow = row.Single();
 
         Order order = Model.OrderRow.Order;
         var showShipped = string.Empty;
@@ -27,134 +27,32 @@
             var idRegType = @orderMsgs.idRegType;
         </script>
 
-        //foreach (var webinarFile in Model.WebinarFiles)
-        //{
-        //    string itemDesc = webinarFile.Split('|')[0];
-        //    string itemPath = globalConfig.WMVRepository + webinarFile.Split('|')[1];
-        //    wf.Append("<a href='" + itemPath + "' target=_blank >" + itemDesc + "</a><br>");
-        //}
-
         if (Model.OrderRow.RegistrationType.ShowShippedNotifications.ToLower() == "yes" && Model.OrderRow.ShipmentDate != null)
         {
             showShipped = "<li>Shipped on: " + Model.OrderRow.ShipmentDate.Value.ToShortDateString() + "</li>";
         }
         <div id="OrderSummary">
             @{
-
-        Debug.Assert(order != null, "order != null");
-        if (Model.OrderRow.Order.OrderStatus == OrderStatus.Billed ||
-            Model.OrderRow.Order.OrderStatus == OrderStatus.Paid ||
-            Model.OrderRow.Order.OrderStatus == OrderStatus.Submitted)
-        {
-            <aside style="width: 100%" class="widget clearfix">
-
-                <h5 class="short_headline"><span>Order Summary</span></h5>
-                <div id="idWebinar-@Model.OrderRow.idWebinar">
-                @*<div id="orderSum-@Model.OrderRow.idWebinar">*@
-                    @{Html.RenderPartial("DisplayTemplates/OrderSumUser", Model);}
-
-                </div>
-            </aside>
-            if (Model.WebinarStatus == WebinarStatus.Scheduled
-                || Model.WebinarStatus == WebinarStatus.Active
-                || Model.WebinarStatus == WebinarStatus.InProgress)
-            {
-                <h5 class="short_headline"><span>Connection Information</span></h5>
-                if (orderMsgs.ShowLiveNotifications == "Yes")
+                Debug.Assert(order != null, "order != null");
+                if (Model.OrderRow.Order.OrderStatus == OrderStatus.Billed ||
+                    Model.OrderRow.Order.OrderStatus == OrderStatus.Paid ||
+                    Model.OrderRow.Order.OrderStatus == OrderStatus.Submitted)
                 {
-                    if (Model.WebinarStatus == WebinarStatus.Active
-                        || Model.WebinarStatus == WebinarStatus.InProgress)
-                    {
-                        <aside style="width: 100%" class="widget clearfix">
-                            @Html.Partial("Partials/_ConnectionSummary", Model.OrderRow)
-                        </aside>
-                    }
-                    else
-                    {
-                        <aside style="width: 100%" class="widget clearfix">
-                            Please check back for connection information or watch your email for complete details.
-                        </aside>
-                    }
-                }
-                else
-                {
-                    <aside style="width: 100%; text-align: center;" class="widget clearfix">
-                        Your order currently configured as:
-                        <b><i>@orderMsgs.OptionLabel</i></b>. You'll be notified as soon as the recording is posted.
-                        @{
-                    if (orderMsgs.ShowShippedNotifications == "Yes")
-                    {
-                        <span>CD-ROMs and handouts are shipped 2-3 days following the event.</span>
-                    }
-                        }
-                        <span><br /><i>There's still time to upgrade your order!</i></span>
-                        <br /><a class="btn btn-mini btn-success" href='#' onclick=' upgrade(idRegType); '>Attend the Live Webinar?</a>
+                    <h5 style="text-align: right; background-color: darkviolet; color: whitesmoke; font-weight: bold; padding-top: 2px; padding-right: 3px;" class="short_headline"><span>Connection Status</span></h5>
+                    <aside style="width: 100%" class="widget clearfix">
+                        @Html.Partial("ClickToJoin", Model.ClickToJoinModel)
                     </aside>
                 }
-            }
 
-            if (Model.WebinarStatus == WebinarStatus.Recorded || Model.WebinarStatus == WebinarStatus.Archived)
-            {
-                <h5 class="short_headline"><span>Post Event Materials</span></h5>
-                <p>
-                    This link provides access to the event's materials and may be
-                    shared with associates and co-workers within you organization:
-                </p>
-                <p><b>@Html.Raw(Model.RecordingLink)</b></p>
+                <aside style="width: 100%" class="widget clearfix">
 
-                <div>
-                    <form method="GET" action="/Account/MyCertificate">
-                        <input type="hidden" name="orderID" value="@order.idOrder" />
-                        <aside class="widget">
-                            <input type="submit" value="My Certificate" id="ShowCertificate" class="btn btn-success btn-mini pull-right " />
-                        </aside>
-                    </form>
-                </div>
-            }
-        }
+                    <h5 class="short_headline"><span>Order Summary</span></h5>
+                    <div id="idWebinar-@Model.OrderRow.idWebinar">
+                        @{ Html.RenderPartial("DisplayTemplates/OrderSumUser", Model); }
+
+                    </div>
+                </aside>
             }
         </div>
-    }
-    @*else
-        {// not owned state
-
-            <aside style="width: 100%" class="widget clearfix">
-                <div class="dropdown">
-                    <a class="dropdown-toggle btn btn-success" data-toggle="dropdown" href="#">Express SignUp!</a>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-
-                        @foreach (var myOption in Model.Options)
-                        {
-
-                            if (Model.CheckoutOptionsViewModel.Order == null
-                                //Model.Order.idOrder < 1
-                                //Model.Order.OrderRows.Single().Status == OrderStatus.InProcess
-
-                                && !myOption.SKU.Contains("Upgrade")
-                                )
-                            {
-                                <li>
-                                    <a onclick='javascript:exprsOrder("@myOption.idRegType");'>&nbsp;&nbsp;@myOption.OptionLabel - $@myOption.Price&nbsp;&nbsp;</a>
-                                </li>
                             }
-                        }
-                    </ul>
-                </div>
-            </aside>
-        }
-    //? to Andy as to intent of this block
-    // an 'in-process' order should not show order summary on right-side panel of details.
-    // is this block used elsewhere
-        *@
-    if (Model.OrderRow != null && Model.OrderRow.Order.OrderStatus == OrderStatus.InProcess)
-    {
-        // same markup as above
-        <aside style="width: 100%" class="widget clearfix">
-
-            @*<h5 class="short_headline"><span>Order Summary</span></h5>*@
-            <div id="orderSum-@Model.OrderRow.idWebinar">
-                @{Html.RenderPartial("DisplayTemplates/OrderSumUser", Model);}
-            </div>
-        </aside>
-    }
 }

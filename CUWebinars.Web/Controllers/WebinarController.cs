@@ -35,6 +35,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
+using System.Web.Routing;
 using Citrix.GoToWebinar.Api;
 using Citrix.GoToWebinar.Api.Model;
 using CUWebinars.Business.Notification.ViewModel;
@@ -42,6 +43,7 @@ using MailChimp.Net;
 using MailChimp.Net.Core;
 using MailChimp.Net.Interfaces;
 using MailChimp.Net.Models;
+using Microsoft.Ajax.Utilities;
 using Thinktecture.IdentityModel.Authorization;
 using WebGrease.Css.Extensions;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
@@ -558,7 +560,7 @@ namespace CUWebinars.Web.Controllers
                 // Incoming Order?  (Express checkout?)
                 // for the time-being we are going to punt on in-process orders.  there is code in the _ShoppingCart view to show the use alterative content in the Search results grid
 
-                InitializeDetailsState(webinar, model, id.Value);
+                InitializeDetailsState(webinar, model, id.Value, null);
 
                 InitializeViewCentricProperties(model);
 
@@ -600,7 +602,7 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        public ActionResult Details(int? id, int? idOrder)
+        public ActionResult Details(int? id, int? idOrder, string joinCode)
         {
             //_stateService.HasValue(DomainConstants.OriginExpress))
             if (_stateService.HasValue(WebUiConstants.DesSession))
@@ -629,9 +631,9 @@ namespace CUWebinars.Web.Controllers
 
                 InitializeDetailsModel(webinar, out model, incomingOrder);
 
-                if (incomingOrder == 0)
+                if (incomingOrder == 0 || joinCode != null)
                 {
-                    InitializeDetailsState(webinar, model, id.Value);
+                    InitializeDetailsState(webinar, model, id.Value, joinCode);
                     // form state, incl. stuff that will be posted back. 
                 }
                 else
@@ -667,13 +669,6 @@ namespace CUWebinars.Web.Controllers
                     (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
                 {
                     var webinars = _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(15);
-                    //int totalNumberOrders;
-                    //var ListOfUpcomingEvents =
-                    //    webinars.Select(x => new 
-                    //    {
-                    //        idWebinar = x.idWebinar.ToString(),
-                    //        Title = x.Title
-                    //    }).ToList();
 
                     ViewBag.ListOfWebinars = new MultiSelectList(webinars, "idWebinar", "Title");
 
@@ -748,6 +743,19 @@ namespace CUWebinars.Web.Controllers
                     if (model.Order != null)
                         model.Order.Origin = DomainConstants.OriginExpress;
                 BuildConfirmOrderView(model);
+
+                if (!string.IsNullOrWhiteSpace(joinCode) && joinCode == model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).TtsJoinUrl)
+                {
+                    ViewBag.byJoinCode = joinCode;
+                    var clickToJoinViewModel = new ClickToJoinViewModel
+                    {
+                        JoinCode = joinCode,
+                        RedirectLinkText = _globalConfig.TenantURL + "/" + joinCode,
+                        Webinar = webinar,
+                        Order = model.Order
+                    };
+                    model.RegistrationSummaryViewModel.ClickToJoinModel = clickToJoinViewModel;
+                }
 
                 return View(model);
             }
@@ -869,7 +877,7 @@ namespace CUWebinars.Web.Controllers
 
                 if (incomingOrder == 0)
                 {
-                    InitializeDetailsState(webinar, model, id.Value);
+                    InitializeDetailsState(webinar, model, id.Value, null);
                     // form state, incl. stuff that will be posted back. 
                 }
                 else
@@ -1287,7 +1295,7 @@ namespace CUWebinars.Web.Controllers
             }
         }
 
-        private void InitializeDetailsState(Webinar webinar, WebinarDetailsViewModel model, int id)
+        private void InitializeDetailsState(Webinar webinar, WebinarDetailsViewModel model, int id, string joinCode)
         {
             IEnumerable<AdditionalLocation> additionalLocations = null;
             OrderRow orderRowForOrder = null;
@@ -1303,7 +1311,20 @@ namespace CUWebinars.Web.Controllers
                     model.WebUser.Orders.FirstOrDefault(
                         o => o.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar == id);
             }
+            if (!string.IsNullOrWhiteSpace(joinCode))
+            {
+                model.Order = _orderManagementService.GetOrderById(_orderManagementService.GetOrderByJoinCode(joinCode).idOrder);
 
+                var clickToJoinViewModel = new ClickToJoinViewModel
+                {
+                    JoinCode = joinCode,
+                    RedirectLinkText = _globalConfig.TenantURL + "/" + joinCode,
+                    Webinar = webinar,
+                    Order = model.Order
+                };
+                model.RegistrationSummaryViewModel = new RegistrationSummaryViewModel { ClickToJoinModel = clickToJoinViewModel }
+                ;
+            }
             var orderExists = model.Order != null;
 
             if (orderExists)
@@ -2328,14 +2349,15 @@ namespace CUWebinars.Web.Controllers
                 _stateService.ClearValue(WebUiConstants.WebinarFromCode);
             _stateService.SetValue(WebUiConstants.WebinarFromCode, webinar);
 
-            if (webinar.Status == WebinarStatus.Active)
+            if (webinar.Status == WebinarStatus.InProgress)
             {
                 string webinarUrl = _webinarControllerOrchestrator.OpenMeeting(joinCode, User.Identity);
 
                 return new RedirectResult(webinarUrl);
             }
 
-            return View(clickToJoinViewModel);
+            return RedirectToAction("Details", "Webinar", new { id = webinar.idWebinar, joinCode });
+            //return View(clickToJoinViewModel);
         }
 
         public ActionResult OpenMeeting(string joinCode)
@@ -2384,6 +2406,24 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception ex)
                 {
                     ModelState.AddModelError(string.Empty, "Invalid recording location requested: " + ex.Message);
+                }
+            }
+            return this.ModelStateJson(ModelState);
+        }
+        public ActionResult OpenTheWebinar(WebinarDetailsViewModel webinarDetailsViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var webinar = webinarDetailsViewModel.Webinar;
+                    webinar.Status = WebinarStatus.InProgress;
+
+                    _webinarManagementService.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid operation: " + ex.Message);
                 }
             }
             return this.ModelStateJson(ModelState);

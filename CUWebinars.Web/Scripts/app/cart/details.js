@@ -195,7 +195,7 @@ $(function () {
         e.preventDefault();
         var frmAddIcs = $('#frmAddIcs');
         $("#icsWebinar").val(webinarId);
-        $("#icsOrder").val(orderRowId);
+        $("#icsOrder").val(orderId);
         frmAddIcs.submit();
     });
 

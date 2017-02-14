@@ -2037,9 +2037,11 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 //var sendToEmails = "'all.of.us@ttstrain.com', '" + affiliate.NotiPromos.Replace(",", "\",\"") + "\"";
                 List<string> sendToEmails = new List<string>();
+                sendToEmails.Add("all.of.us@ttstrain.com");
 
-                sendToEmails.AddRange(testEmails.Split(','));
-                //sendToEmails.AddRange(affiliate.NotiPromos.Split(','));
+                //sendToEmails.AddRange(testEmails.Split(','));
+                sendToEmails.AddRange(affiliate.NotiPromos.Split(','));
+
 
                 CampaignTestRequest emails = new CampaignTestRequest
                 {
@@ -3021,13 +3023,14 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(new { NotAuthorized = true });
 
         }
-
         [HandleAjaxException]
         [HttpGet]
         //[AuthorizeHeaders]  
         [AllowAnonymous]
-        public JsonResult GenerateWeeklyInvoicesEvent(DateTime startDate, int? _idAffiliate, string overwrite)
+        public JsonResult GenerateWeeklyInvoicesEvent(DateTime startDate, int? _idAffiliate)
         {
+            Stopwatch openingCall = new Stopwatch();
+            openingCall.Start();
 
             if (!_idAffiliate.HasValue)
             {
@@ -3041,12 +3044,12 @@ namespace CUWebinars.Web.Controllers.Admin
             var weekNumber = cal.GetWeekOfYear(date1, dfi.CalendarWeekRule,
                                  dfi.FirstDayOfWeek) + "-" + cal.GetYear(DateTime.Now);
             //dfi.FirstDayOfWeek) + "-2016";
-            var endDate = startDate.AddDays(7);
+            var endDate = startDate.AddDays(8);
 
             var existingInvoice = CheckForExistingInvoice(startDate.ToShortDateString().Replace("/", "-"), weekNumber,
                 idAffiliate);
 
-            if (existingInvoice != null && overwrite == "no")
+            if (existingInvoice != null)
             {
                 var __idAffiliate =
                     Convert.ToInt32(existingInvoice.Split('/')[5].Split('-')[2].ToString().Replace(".pdf", ""));
@@ -3139,6 +3142,8 @@ namespace CUWebinars.Web.Controllers.Admin
                     DataTable pOrders;
                     DataTable uOrders;
 
+                    string sheetAff = "";
+
                     var dsWebinars = IniDataTables(out dsPostEvent, out webinarsPerAff, out PostEventOrders,
                         out ordersPerAff, out pOrders, out upgradedOrders, out uOrders, out dsUpgradedOrders);
 
@@ -3161,13 +3166,8 @@ namespace CUWebinars.Web.Controllers.Admin
                                     .ToList();
                             if (webinarsOrders.Any())
                             {
-
                                 foreach (var o in webinarsOrders)
                                 {
-                                    if (o.InvoiceDetail != null)
-                                    {
-                                        _logger.Info("--exec RestoreInvoiceDetail @idOrder=" + o.idOrder + ", @invoiceDetails=" + o.InvoiceDetail + ", @royalty=" + o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Royalty);
-                                    }
                                     o.InvoiceDetail = null;
                                 }
                                 hadWOrder = true;
@@ -3196,11 +3196,55 @@ namespace CUWebinars.Web.Controllers.Admin
                                 {
                                     try
                                     {
-                                        OrderRow row;
-                                        string _price;
-                                        string _percent;
 
-                                        if (_appHelper.BuildWebinarOrdersInvoiceRow(order, discountNotes, out row, out _price, ref rowNumber, out _percent, ref totalNumberDiscounts)) continue;
+                                        var row =
+                                            order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+
+                                        string _price = row.RowPrice.ToString("C").Replace(".00", "");
+                                        rowNumber++;
+
+                                        string _percent =
+                                            (row.PercentPaid * 100).ToString().Replace(".00", "").Replace(".0", "") +
+                                            "%";
+
+                                        //var totalToShow = order.Total.ToString("c");
+                                        if (row.Discount != null)
+                                        {
+
+                                            var discount = row.Discount;
+                                            _price = "See Note #" + totalNumberDiscounts;
+
+                                            if (discount.DiscountType == DiscountType.Subscription &&
+                                                discount.DateValidFrom != discount.DateValidTo)
+                                            {
+
+                                                // change request that we skip any Unlimited subs.
+                                                continue;
+                                            }
+                                            else
+                                            {
+                                                discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode +
+                                                                     ": (" +
+                                                                     discount.DiscountType.ToString()
+                                                                         .Replace("DiscountType.", "") +
+                                                                     ") ");
+                                            }
+
+
+                                            totalNumberDiscounts++;
+                                            var discountAmount = "";
+                                            if (row.Discount.PercentOff > 0)
+                                            {
+                                                discountAmount =
+                                                    (row.RowPrice * (row.Discount.PercentOff / 100)).ToString("c");
+                                            }
+                                            if (row.Discount.FlatOff > 0)
+                                            {
+                                                discountAmount = (row.RowPrice - row.Discount.FlatOff).ToString("C");
+                                            }
+                                            //discountNotes.Append(discountAmount);
+                                            discountNotes.Append(Environment.NewLine);
+                                        }
                                         ordersPerAff.Rows.Add(
                                             rowNumber
                                             , order.FirstName + ' ' + order.LastName
@@ -3222,9 +3266,11 @@ namespace CUWebinars.Web.Controllers.Admin
                                         _logger.ErrorException(
                                             "GenerateWeeklyInvoicesEvent | WebinarsOrders looper: " + order.idOrder, ex);
                                     }
-
-                                    ExportWebinarOrdersToExcel(ordersPerAff, startDate, affiliate.ttsDomain, webinar.idWebinar);
                                 }
+
+
+                                sheetAff += ExportWebinarOrdersToExcel(ordersPerAff, startDate, affiliate.ttsDomain, webinar.idWebinar);
+                                //sheetAff.Tables.Add(ordersPerAff);
 
                                 GrandTotalOnBilled += invoice.TotalOnBilled;
                                 GrandTotalOnPaid += invoice.TotalOnPaid;
@@ -3297,10 +3343,52 @@ namespace CUWebinars.Web.Controllers.Admin
                             {
                                 try
                                 {
-                                    OrderRow row;
-                                    string _price;
-                                    string _percent;
-                                    if (_appHelper.BuildPostEventOrdersInvoiceRows(order, discountNotes, out row, out _price, ref rowNumber, out _percent, ref totalNumberDiscounts)) continue;
+                                    var row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                                    string _price = row.RowPrice.ToString("C").Replace(".00", "");
+                                    rowNumber++;
+                                    string _percent =
+                                        (row.PercentPaid * 100).ToString().Replace(".00", "").Replace(".0", "") +
+                                        "%";
+                                    if (row.Discount != null)
+                                    {
+
+                                        var discount = row.Discount;
+
+                                        if (discount.DiscountType == DiscountType.Subscription &&
+                                            discount.DateValidFrom != discount.DateValidTo)
+                                        {
+                                            //skip unlimited subs
+                                            continue;
+
+                                        }
+                                        else
+                                        {
+                                            discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode +
+                                                                 ": (" +
+                                                                 discount.DiscountType.ToString()
+                                                                     .Replace("DiscountType.", "") +
+                                                                 ") ");
+                                        }
+
+                                        _price = "See Note #" + totalNumberDiscounts;
+                                        discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode + ": (" +
+                                                             discount.DiscountType.ToString()
+                                                                 .Replace("DiscountType.", "") +
+                                                             ") ");
+
+                                        totalNumberDiscounts++;
+                                        var discountAmount = "";
+                                        if (row.Discount.PercentOff > 0)
+                                        {
+                                            discountAmount = (row.UnitPrice * (row.Discount.PercentOff / 100)).ToString("c");
+                                        }
+                                        if (row.Discount.FlatOff > 0)
+                                        {
+                                            discountAmount = (row.UnitPrice - row.Discount.FlatOff).ToString("C");
+                                        }
+
+                                        discountNotes.Append(Environment.NewLine);
+                                    }
 
                                     pOrders.Rows.Add(
                                         rowNumber
@@ -3325,7 +3413,11 @@ namespace CUWebinars.Web.Controllers.Admin
                                         "GenerateWeeklyInvoicesEvent | PostEventOrders looper: " + order.idOrder, ex);
                                 }
                             }
-                            ExportPostEventOrdersToExcel(ordersPerAff, startDate, affiliate.ttsDomain, _postEventOrders, thisAffiliate);
+
+
+                            sheetAff += ExportPostEventOrdersToExcel(pOrders, startDate, affiliate.ttsDomain, _postEventOrders, thisAffiliate);
+                            //sheetAff.Tables.Add(pOrders);
+
 
                             GrandTotalOnBilled += invoice.TotalOnBilled;
                             GrandTotalOnPaid += invoice.TotalOnPaid;
@@ -3341,6 +3433,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     try
                     {
+
                         List<Order> adjustedOrders = new List<Order>();
 
                         foreach (var id in listOrdersAdjusted.Split(','))
@@ -3401,9 +3494,53 @@ namespace CUWebinars.Web.Controllers.Admin
                                     var adjustmentDirection = "Royalty is increased";
                                     try
                                     {
-                                        decimal adjustedTotal;
-                                        decimal adjustedRoyalty;
-                                        if (_appHelper.BuildAdjustedOrderInvoiceRow(order, adjustmentDirection, row, dict, discountNotes, out adjustedTotal, out adjustedRoyalty, ref totalNumberDiscounts)) continue;
+                                        if (order.InvoiceDetail.Contains("Royalty is decreased"))
+                                        {
+                                            adjustmentDirection = "Royalty is decreased";
+                                        }
+
+                                        var adjustedTotal = row.RowPrice - (decimal)dict["OriginalTotal"];
+                                        var adjustedRoyalty = (decimal)dict[adjustmentDirection];
+
+                                        if (row.Discount != null)
+                                        {
+
+                                            var discount = row.Discount;
+
+                                            if (discount.DiscountType == DiscountType.Subscription &&
+                                                discount.DateValidFrom != discount.DateValidTo)
+                                            {
+                                                //skip unlimited subs
+                                                continue;
+
+                                            }
+                                            else
+                                            {
+                                                discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode +
+                                                                     ": (" +
+                                                                     discount.DiscountType.ToString()
+                                                                         .Replace("DiscountType.", "") +
+                                                                     ") ");
+                                            }
+
+                                            //_price = "See Note #" + totalNumberDiscounts;
+                                            discountNotes.Append(totalNumberDiscounts + " " + discount.DiscountCode + ": (" +
+                                                                                                             discount.DiscountType.ToString()
+                                                                                                                 .Replace("DiscountType.", "") +
+                                                                                                             ") ");
+
+                                            totalNumberDiscounts++;
+                                            var discountAmount = "";
+                                            if (row.Discount.PercentOff > 0)
+                                            {
+                                                discountAmount = (row.UnitPrice * (row.Discount.PercentOff / 100)).ToString("c");
+                                            }
+                                            if (row.Discount.FlatOff > 0)
+                                            {
+                                                discountAmount = (row.UnitPrice - row.Discount.FlatOff).ToString("C");
+                                            }
+                                            discountNotes.Append(Environment.NewLine);
+                                        }
 
                                         uOrders.Rows.Add(
                                             rowNumber
@@ -3438,7 +3575,8 @@ namespace CUWebinars.Web.Controllers.Admin
                                 }
                             }
 
-                            ExportAdjustedOrdersToExcel(ordersPerAff, startDate, affiliate.ttsDomain, thisAffiliate);
+
+                            sheetAff += ExportAdjustedOrdersToExcel(uOrders, startDate, affiliate.ttsDomain, thisAffiliate);
 
 
                             GrandTotalOnBilled += invoice.TotalOnBilled;
@@ -3460,7 +3598,56 @@ namespace CUWebinars.Web.Controllers.Admin
                     //    document = DocumentModel.Load(Server.MapPath(@"~/App_Data/mergeTemplates/WeeklyInvoiceForFlatPercent.docx"));
 
 
-                    _appHelper.Document_FieldMerging(document, affiliate);
+                    document.MailMerge.FieldMerging += (sender, e) =>
+                    {
+                        if (affiliate.BillingModel == "aff")
+                        {
+                            if (e.Inline != null && e.FieldName == "TotalRevenueBilledLabel")
+                                ((Run)e.Inline).Text = "";
+                            if (e.Inline != null && e.FieldName == "TotalRevenuePaidLabel")
+                                ((Run)e.Inline).Text = "";
+                            if (e.Inline != null && e.FieldName == "TotalNetDueLabel")
+                                ((Run)e.Inline).Text = "";
+                            if (e.Inline != null && e.FieldName == "TotalAdjustedRevenueBilledLabel")
+                                ((Run)e.Inline).Text = "";
+                            if (e.Inline != null && e.FieldName == "TotalAdjustedRevenuePaidLabel")
+                                ((Run)e.Inline).Text = "";
+                            if (e.Inline != null && e.FieldName == "TotalAdjustedNetDueLabel")
+                                ((Run)e.Inline).Text = "";
+                            if (e.Inline != null && e.FieldName == "TotalOnBilled")
+                                ((Run)e.Inline).Text = "";
+                            if (e.Inline != null && e.FieldName == "TotalOnPaid")
+                                ((Run)e.Inline).Text = "";
+                            if (e.Inline != null && e.FieldName == "TotalNetDue")
+                                ((Run)e.Inline).Text = "";
+                            if (e.Inline != null && e.FieldName == "GrandTotalOnBilled")
+                                ((Run)e.Inline).Text = "";
+                            if (e.Inline != null && e.FieldName == "GrandTotalOnPaid")
+                                ((Run)e.Inline).Text = "";
+                            if (e.Inline != null && e.FieldName == "GrandTotalNetDue")
+                                ((Run)e.Inline).Text = "";
+                            if (e.Inline != null && e.FieldName == "GrandTotalRevenueBilledLabel")
+                                ((Run)e.Inline).Text = "";
+                            if (e.Inline != null && e.FieldName == "GrandTotalRevenuePaidLabel")
+                                ((Run)e.Inline).Text = "";
+                            if (e.Inline != null && e.FieldName == "GrandTotalNetDueLabel")
+                                ((Run)e.Inline).Text = "";
+                        }
+
+                        if (e.IsValueFound)
+                        {
+                            switch (e.FieldName)
+                            {
+                                case "Date":
+                                    ((Run)e.Inline).Text = ((DateTime)e.Value).ToString("dddd, MMMM d, yyyy");
+                                    break;
+
+                                case "Percent":
+                                case "Royalty":
+                                    break;
+                            }
+                        }
+                    };
 
                     var dsGrandTotals = new
                     {
@@ -3513,10 +3700,21 @@ namespace CUWebinars.Web.Controllers.Admin
                             // Retrieve reference to a previously created container.
                             CloudBlobContainer container = blobClient.GetContainerReference("affiliateinvoices");
                             container.CreateIfNotExists();
+                            CloudBlobContainer containerSheets = blobClient.GetContainerReference("invoices-affiliate");
+                            containerSheets.CreateIfNotExists();
 
                             CloudBlockBlob blob =
                                 container.GetBlockBlobReference(startDate.ToShortDateString().Replace("/", "-") + "/" +
                                                                 InvoiceID + ".pdf");
+
+                            CloudBlockBlob blobDoc =
+                                container.GetBlockBlobReference(startDate.ToShortDateString().Replace("/", "-") + "/" +
+                                                                InvoiceID + ".docx");
+
+                            CloudBlockBlob blobSheets =
+                                containerSheets.GetBlockBlobReference(startDate.ToShortDateString().Replace("/", "-") + "/" +
+                                                                InvoiceID + ".xls");
+                            blobSheets.UploadText(sheetAff);
 
                             using (MemoryStream output = new MemoryStream())
                             {
@@ -3525,16 +3723,13 @@ namespace CUWebinars.Web.Controllers.Admin
                                 blob.UploadFromStream(output);
                             }
 
-                            CloudBlockBlob blobDoc =
-                                container.GetBlockBlobReference(startDate.ToShortDateString().Replace("/", "-") + "/" +
-                                                                InvoiceID + ".docx");
-
                             using (MemoryStream output = new MemoryStream())
                             {
                                 document.Save(output, SaveOptions.DocxDefault);
                                 output.Position = 0; // reset to beginning so Upload operation can work correctly
                                 blobDoc.UploadFromStream(output);
                             }
+                            
 
                             return Json(new
                             {
@@ -3586,8 +3781,9 @@ namespace CUWebinars.Web.Controllers.Admin
         JsonRequestBehavior.AllowGet);
             }
         }
+        
 
-        private void ExportAdjustedOrdersToExcel(DataTable table, DateTime startDate, string ttsDomain, int thisAffiliate)
+        private string ExportAdjustedOrdersToExcel(DataTable table, DateTime startDate, string ttsDomain, int thisAffiliate)
         {
             System.IO.StringWriter sw = new System.IO.StringWriter();
             HtmlTextWriter htw = new HtmlTextWriter(sw);
@@ -3615,9 +3811,12 @@ namespace CUWebinars.Web.Controllers.Admin
                 container.GetBlockBlobReference(startDate.ToShortDateString().Replace("/", "-") + "/" +
                                                 ttsDomain + "/AdjustedOrders/" + thisAffiliate + ".xls");
             blob.UploadText(renderedGridView);
+
+            return renderedGridView;
+
         }
 
-        private void ExportPostEventOrdersToExcel(DataTable table, DateTime startDate, string ttsDomain, List<Order> postEventOrders, int thisAffiliate)
+        private string ExportPostEventOrdersToExcel(DataTable table, DateTime startDate, string ttsDomain, List<Order> postEventOrders, int thisAffiliate)
         {
             System.IO.StringWriter sw = new System.IO.StringWriter();
             HtmlTextWriter htw = new HtmlTextWriter(sw);
@@ -3644,10 +3843,12 @@ namespace CUWebinars.Web.Controllers.Admin
                 container.GetBlockBlobReference(startDate.ToShortDateString().Replace("/", "-") + "/" +
                                                 ttsDomain + "/PostEventOrders/" + thisAffiliate + ".xls");
             blob.UploadText(renderedGridView);
+
+            return renderedGridView;
         }
 
 
-        private void ExportWebinarOrdersToExcel(DataTable table, DateTime startDate, string ttsDomain, int webinarID)
+        private string ExportWebinarOrdersToExcel(DataTable table, DateTime startDate, string ttsDomain, int webinarID)
         {
             StringWriter sw = new StringWriter();
             HtmlTextWriter htw = new HtmlTextWriter(sw);
@@ -3674,6 +3875,8 @@ namespace CUWebinars.Web.Controllers.Admin
                 container.GetBlockBlobReference(startDate.ToShortDateString().Replace("/", "-") + "/" +
                                                 ttsDomain + "/" + webinarID + ".xls");
             blob.UploadText(renderedGridView);
+
+            return renderedGridView;
         }
 
 

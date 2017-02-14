@@ -1,5 +1,6 @@
 ﻿using CUWebinars.Business.Models;
 using System.Collections.Generic;
+using System.Web.Mvc;
 
 namespace CUWebinars.Web.ViewModel
 {
@@ -12,5 +13,6 @@ namespace CUWebinars.Web.ViewModel
         public IEnumerable<string> WebinarFiles { get; set; }
         public WebinarStatus WebinarStatus { get; set; }
         public string DiscountCaption { get; set; }
+        public ClickToJoinViewModel ClickToJoinModel { get; set; }
     }
 }

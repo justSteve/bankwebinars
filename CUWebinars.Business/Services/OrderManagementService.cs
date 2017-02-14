@@ -748,7 +748,7 @@ namespace CUWebinars.Business.Services
                     if (creditsRemain >= row.RegistrationType.CreditCost)
                     {
                         discountTotal = row.RowPrice*row.Discount.PercentOff/100;
-                        if (row.Discount.DateValidFrom == row.Discount.DateValidTo && row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
+                        if (row.Discount.DateValidFrom != row.Discount.DateValidTo && row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
                         {
                             discountTotal = discountTotal - 50;
                             

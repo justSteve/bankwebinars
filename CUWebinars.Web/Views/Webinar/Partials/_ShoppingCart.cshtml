@@ -2,6 +2,11 @@
 @using CUWebinars.Web.Core
 @model WebinarDetailsViewModel
 @{
+    var byJoinCode = false;
+    if (ViewBag.byJoinCode != null)
+    {
+        byJoinCode = true;
+    }
     if (ViewBag.DiscountSurcharge == "A $50 surcharge is added for shipping & handling")
     {
         <script language="javascript" type="text/javascript">
@@ -60,7 +65,7 @@
     }
     else
     {
-        if (
+        if (!byJoinCode &&
             Model.Webinar.idWebinar != 2215 &&
             Model.Webinar.idWebinar != 2216 &&
             Model.Webinar.idWebinar != 2217 &&

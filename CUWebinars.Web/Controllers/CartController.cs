@@ -117,7 +117,7 @@ namespace CUWebinars.Web.Controllers
                     row.Order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(row.Order.AdminComments, newJson, "DiscountIsApplied");
                     //row.Order.AffiliateComments = JsonHelpers.AddObjectToJsonArray(row.Order.AffiliateComments, newJson);
 
-                    if (myDiscount.DiscountType == DiscountType.Subscription && myDiscount.DateValidFrom == myDiscount.DateValidTo
+                    if (myDiscount.DiscountType == DiscountType.Subscription && myDiscount.DateValidFrom != myDiscount.DateValidTo
                        && row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
                     {
                         ViewBag.DiscountSurcharge = "A $50 surcharge is added for shipping & handling";
@@ -419,7 +419,7 @@ namespace CUWebinars.Web.Controllers
                     {
                         ViewBag.DiscountCaption = _cartControllerOrchestrator.GetDiscountCaption(
                             row.Discount, row, null, 1);
-                        if (row.Discount.DiscountType == DiscountType.Subscription && row.Discount.DateValidFrom == row.Discount.DateValidTo && row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
+                        if (row.Discount.DiscountType == DiscountType.Subscription && row.Discount.DateValidFrom != row.Discount.DateValidTo && row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
                         {
                             ViewBag.DiscountSurcharge = "A $50 surcharge is added for shipping & handling";
                             order.Total = order.Total + (int)50.00;

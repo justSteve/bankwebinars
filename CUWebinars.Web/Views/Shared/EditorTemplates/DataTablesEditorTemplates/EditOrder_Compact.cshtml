@@ -30,10 +30,11 @@
         var strAdminComments = "@strAdminComments";
         var strAudit = "@strAudit";
         var strInvoice = "@strInvoice";
-        $('#auditTab a').click(function (e) {
-            e.preventDefault();
-            $(this).tab('show');
-        })
+        $('#auditTab a')
+            .click(function(e) {
+                e.preventDefault();
+                $(this).tab('show');
+            });
 
         $( "#browserAdmin" ).jsonbrowser(strAdminComments.replace(/&quot;/g, '"'));
         $( "#browserAudit" ).jsonbrowser(strAudit.replace(/&quot;/g, '"'));

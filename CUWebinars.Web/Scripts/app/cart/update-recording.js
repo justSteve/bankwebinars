@@ -3,7 +3,7 @@
 $(function () {
     WR.primeDomVariables();
     WR.wireUpHandlersForAddFilesModal();
-    
+
     var updateWebinarRecordingModalButton = $('#UpdateWebinarRecordingModalButton');
     var updateWebinarRecordingModal = $('#UpdateWebinarRecordingModal');
     var modalFormOptionsOnPageLoad = {
@@ -26,6 +26,46 @@ $(function () {
 });
 
 (function (ns) {
+    var openTheWebinarButton = $('#OpenTheWebinarButton');
+
+    openTheWebinarButton.on('click', function (e) {
+        alert("hit");
+        e.preventDefault();
+
+        var openTheWebinarValSummary = $('#openTheWebinarValSummary');
+
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/x-www-form-urlencoded',
+            cache: false,
+            url: "/Webinar/OpenTheWebinar",
+            dataType: 'json',
+            data: payload,
+            beforeSend: function () {
+
+                $('#result').remove();
+                formProcessor.clearValidationSummary(openTheWebinarValSummary);
+
+                openTheWebinarButton.append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+            }
+        }).done(function (data) {
+            if (data.result === 'Success') {
+                var label = $('<div id="result" class="label label-success pull-left block buttonAdjacentLabel">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Webinar Is Opened!</div>');
+                label.hide().insertAfter(openTheWebinarButton).fadeIn(500);
+                //Rollbar.info({ 'ur-#2': { 'result': data } });
+            } else if (data['Result'] === 'Fail') {
+                var label = $('<div id="result" class="label label-important pull-left block buttonAdjacentLabel">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;' + data['Message'] + '</div>');
+                label.hide().insertAfter(openTheWebinarButton).fadeIn(500);
+                //Rollbar.info({ 'ur-#3': { 'fail-result': data } });
+            } else {
+                formProcessor.lightUpValidationSummary('openTheWebinarValSummary', data);
+                //Rollbar.info({ 'ur-#4': { 'fail-result': data } });
+            }
+        }).always(function (data) {
+            $('#waitSpinner').remove();
+        });
+
+    });
 
     ns.deleteItem = function (event) {
         WR.numberOfWebinarFiles--;
@@ -70,18 +110,6 @@ $(function () {
             });
         }
 
-        //WR.addFilesButton.on('click', function (e) {
-
-        //    e.preventDefault();
-        //    // Add 'N' suffix so at server we can tell that it is a new file. The identifier is just for client-side purposes and for the form submission.
-        //    $(getNewFileDetailsFragment(newFileId + 'N')).hide().appendTo(manageRecordingsWrapper).fadeIn(500, function (e) {
-        //        $(this).find('i').on('click', ns.deleteItem);
-        //    });
-
-        //    WR.numberOfWebinarFiles++;
-        //    newFileId++;
-
-        //});
 
         var updateWebinarRecordingButton = $('#updateWebinarRecordingButton');
 
@@ -91,6 +119,7 @@ $(function () {
 
             $('#_UpdateWebinarRecording').submit();
         });
+
 
         $('#_UpdateWebinarRecording').on('submit', function (e) {
 
@@ -140,6 +169,6 @@ $(function () {
 }(WR));
 
 function getNewFileDetailsFragment(id) {
-//placeholder 
+    //placeholder 
     return '<div id="fileDetails_' + id + '" class="recordingFile"></div>';
 }

@@ -2195,6 +2195,7 @@
     <Content Include="Views\Order\AddBillingEmail.cshtml" />
     <Content Include="Views\Account\_FindLinkPartial.cshtml" />
     <Content Include="Views\Admin\FindMailChimpListSegments.cshtml" />
+    <Content Include="Views\Webinar\Partials\_OpenTheWebinar.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2673,7 +2674,6 @@
     <Content Include="Views\Shared\DisplayTemplates\AdditionalLocationAdd.cshtml" />
     <Content Include="Views\Webinar\Partials\_AdditionalLocationsModal.cshtml" />
     <Content Include="Views\Webinar\OnDemand.cshtml" />
-    <Content Include="Views\Webinar\Partials\_ConnectionSummary.cshtml" />
     <Content Include="Views\Webinar\Partials\_AdminEventButtons.cshtml" />
     <Content Include="Views\Webinar\Partials\_SendConnectionInfo.cshtml" />
     <Content Include="Views\Webinar\Partials\_SendRecordingPosted.cshtml" />

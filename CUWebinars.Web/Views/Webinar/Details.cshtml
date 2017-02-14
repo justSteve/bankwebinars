@@ -4,33 +4,39 @@
 @model WebinarDetailsViewModel
 
 @{
+    var byJoinCode = false;
+    if (ViewBag.byJoinCode != null)
+    {
+        byJoinCode = true;
+        if (Model.Webinar.Status == WebinarStatus.InProgress)
+        {
+            <script language="javascript" type="text/javascript">
+                $(function() {
+                    alert("Opening Webinar Manager in new tab");
+                    window
+                        .open("@Model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).CitrixJoinUrl");
+                });
+            </script>
+        }
+    }
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     ViewBag.Title = Model.Webinar.Title + " - Presented by: " + Model.Webinar.Presenter.WebUser.FullName;
     IStateService stateService = new StateService();
     var ExpressCheckoutURL = "ExpressCheckout";
 
-    if (Model.UserOwnsThisEvent > 0)
-    {
+    //code in upgrade options
 
-        <script type="text/javascript">
-            function exprsOrder(idRegType) {
-                alert("Please send mail to support at @globalConfig.TenantEmail  and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder. For immediate assistance, use our Help & Feedback button in your lower right screen.");
-
-            };
-            function upgrade(idRegType) {
-                alert("Please send mail to support at @globalConfig.TenantEmail  and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder. For immediate assistance, use our Help & Feedback button in your lower right screen.");
-            };
-        </script>
-    }
     if (Model.UserHasDiscount != null)
     {
         <script language="javascript" type="text/javascript">
             $(function() {
+
                 $('#showDiscount').css('display', 'block');
                 $('#discountCaption').html('@Html.Raw(ViewBag.DiscountCaption)');
             });
         </script>
     }
+
 }
 <style>
     .warnIE {
@@ -41,11 +47,8 @@
 </style>
 <script type="text/javascript">
     var checkoutInProcess = @(Model.CheckoutInProcess ? "true" : "false");
-    // var isUserLoggedIn = @(@Model.UserIsLoggedIn ? "true" : "false");
+    
     // var webinarId = @(@Model.Webinar.idWebinar);
-    // var notificationsTesting = @(GlobalConfig.GlobalConfigSingleton.NotificationsTesting ? "true" : "false");
-    // var orderRowId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow : 0);
-    // var orderId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.idOrder : 0);
     // var addressVerified = @(@Model.UserAddressVerified ? "true" : "false");
 </script>
 
@@ -112,14 +115,17 @@
                 <p>You may contact us by using the Online Chat button below. </p>
             </div>
 
-            @Html.Partial(partialViewName: "~/Views/Webinar/Partials/_ShoppingCart.cshtml", model: Model)
-
+                @Html.Partial(partialViewName: "~/Views/Webinar/Partials/_ShoppingCart.cshtml", model: Model)
+            
         </div>
         <!-- opens Container div-->
 
         <div class="row-fluid span3">
             <aside class="widget">
                 <div id="resumeOrderStatus" class="hidden"></div>
+                @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
+
+
                 <h5 class="short_headline"><span>Date/Time</span></h5>
 
                 @if (Model.Webinar.Status == WebinarStatus.Recorded)
@@ -140,13 +146,12 @@
                         <input type="submit" value="Add to Calendar" class="btn btn-mini" id="addICS" />&nbsp;
                     </div>
                 }
-                <div  id="ceu">
+                <div id="ceu">
                     <a href="#" title="@Model.CeuStatement ">
                         @Html.Raw(Model.CeuShort)
                     </a>
                 </div>
             </aside>
-            @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
             <!-- close .widget -->
 
             <aside class="widget">
