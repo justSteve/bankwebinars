@@ -8,10 +8,13 @@ using System.Security;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
+using CUWebinars.Business.Notification;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
+using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using GemBox.Document;
 using Newtonsoft.Json;
@@ -25,12 +28,16 @@ namespace CUWebinars.Web.Helpers
         private readonly IStateService _stateService;
 
         private readonly HttpRequestBase _request;
+        public readonly TtsConfigHelper _globalConfig;
+
+        
 
 
         public AppHelper(HttpRequestBase request, IStateService stateService)
         {
             _request = request;
             _stateService = stateService;
+            _globalConfig = new TtsConfigHelper();
         }
 
         public static IEnumerable<int> StringToIntList(string str)
@@ -236,10 +243,10 @@ namespace CUWebinars.Web.Helpers
 
 
 
-            var auditObjectInner = JsonHelpers.CreateJsonObjectFromDictionary(auditInfoDictionary);
+            var jobject = JsonHelpers.CreateJsonObjectFromDictionary(auditInfoDictionary);
 
-            var jobject = new JObject();
-            jobject.Add("AuditInfo", auditObjectInner);
+            //var jobject = new JObject();
+            //jobject.Add("AuditInfo", auditObjectInner);
 
             //Trace.TraceInformation(jobject.ToString(Newtonsoft.Json.Formatting.None));
 
@@ -574,6 +581,108 @@ namespace CUWebinars.Web.Helpers
                 discountNotes.Append(Environment.NewLine);
             }
             return false;
+        }
+
+        public string CleanHtmlCodesAndLogo(string body, string tenantLogo)
+        {
+            body = body.Replace("&gt;", ">");
+            body = body.Replace("&lt;", "<");
+            body = body.Replace("[logo]", "<img src=" + tenantLogo + " />");
+            return body;
+        }
+
+        public NotificationMessageFields BuildNotiFields(Order order)
+        {
+            var fields = new NotificationMessageFields();
+            OrderRow row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+            string TenantURL = _globalConfig.TenantURL();
+            string Tenant = _globalConfig.Tenant();
+
+            fields.TechSupportLink = "<a href='" + TenantURL + "/oh/" + order.idOrder + "'>" + TenantURL + "/oh/" + order.idOrder + "</a>";
+            fields.OndemandLink = " <a href='" + TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "'>" + TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "</a>";
+            fields.LinkToMyWebinars = " <a href='" + TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "'>" + TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "</a>";
+            fields.ChangeTimeZoneLink = " <a href='" + TenantURL + "/Order/ChangeTimeZone?idOrder=" + order.idOrder + "'>" + " click to change timezone." + "</a>";
+            fields.TenantSignature = "The " + Tenant + " Staff";
+
+            fields.AttendType = row.RegistrationType.OptionLabelShort;
+            fields.OrderID = row.idOrder;
+            fields.BillingEmail = order.BillingEmail;
+            fields.TenantName = _globalConfig.Tenant();
+            fields.WebinarTitle = row.Webinar.Title;
+            fields.FirstName = order.FirstName;
+            fields.ShowTimeZone = order.WebUser.timeZone.ToString();
+            fields.ShowStartTime = row.Webinar.Date.ToShortTimeString();
+
+            fields.SubjectLine = "[" + Tenant + "] Confirmation of Registration: " + row.Webinar.Title;
+            fields.MessageHeading = "Your Order is Submitted!";
+            fields.ClickToJoinLink = "<a href='" + TenantURL + "/j/" + order.idOrder + "-" + row.TtsJoinUrl + "'>" +
+                                     TenantURL + "/j/" + order.idOrder + "-" + row.TtsJoinUrl + "</a>";
+            fields.AddReminder = "<a href='" + TenantURL + "/Webinar/ICalOrder?icsOrder=" + order.idOrder + "'>" +
+                                 " add reminder." + "</a>";
+            fields.CCCaption =
+                " We didn't find any address(es) to CC: on this notification but would be happy to update <a href='" +
+                TenantURL + "/Order/ChangeCC?idOrder=" + order.idOrder + "'>" + " with any address you send back." +
+                "</a>";
+            fields.PaymentStatus = order.OrderStatus.ToString();
+
+            if (order.OrderStatus == OrderStatus.Paid)
+            {
+                fields.PaymentCaption = "Thank you for your payment!";
+            }
+            else
+            {
+                fields.PaymentCaption =
+                    "Though pre-payment is not required (we'll be happy to invoice you at " + order.BillingEmail +
+                    ") if you wish to pay by credit card <a href='" + TenantURL + "/Resume/" + order.idOrder +
+                    "'>" + "click here." + "</a>" + " Is someone else in your organization responsible for payments? <a href='" +
+                    TenantURL + "/Order/AddBillingEmail?idOrder=" + order.idOrder + "'>" +
+                    "Enter their email here " + "</a>and we will send the required information directly.";
+            }
+
+            if (row.Webinar.Title.Contains("Compliance Perspectives"))
+            {
+                fields.AddLocsCost =
+                    " Compliance Perspective events include 3 Additional Locations at no extra cost - $75 per seat afterwards.";
+            }
+            if (row.RegistrationType.ShowRecordingNotifications.ToLower() == "no")
+            {
+                fields.RegDesc =
+                    "Included in your registration are links to all event material for five (5) business days. You can upgrade your order to gain 6 months OnDemand access - or get the Premier Package which includes a CD-ROM and printouts of the event's materials. We'll be happy to adjust your registration - just reply to this email! ";
+            }
+            else if (row.RegistrationType.ShowShippedNotifications.ToLower() == "no")
+            {
+                fields.RegDesc =
+                    "Your registration includes OnDemand access to all event materials but does not include a CD-ROM or printouts. You can still upgrade to the Premier Package - just reply to this email! ";
+            }
+
+            if (row.AdditionalLocation != null)
+            {
+                var locs = "";
+                foreach (var loc in row.AdditionalLocation)
+                {
+                    locs = loc.Email + ",";
+                    if (row.AdditionalLocation.Count > 1)
+                    {
+                        fields.ExistingAddLocs = locs.TrimEnd(',') +
+                                                 " is currently included as an Additional Location. Just let us know if you need more!";
+                    }
+                    else
+                    {
+                        fields.ExistingAddLocs = locs.TrimEnd(',').Replace(",", ", ") +
+                                                 " are currently included Additional Locations. Just let us know if you need more!";
+                    }
+                }
+                if (fields.ExistingAddLocs == "")
+                {
+                    fields.ExistingAddLocs =
+                        " We didn't see any Additional Locations stored but would be happy to add all that you need. (add)";
+                }
+
+            }
+
+
+            return fields;
+
         }
 
         public static string[] AddNonvalidToArray(string[] zipCentricFields)

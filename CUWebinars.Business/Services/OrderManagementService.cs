@@ -102,7 +102,7 @@ namespace CUWebinars.Business.Services
         {
             if (webUser == null) throw new ArgumentNullException("webUser");
             if (order == null) throw new ArgumentNullException("order");
-
+            
             return _orderRepository.AssignWebUserToOrder(webUser, order);
         }
 
@@ -1308,7 +1308,7 @@ namespace CUWebinars.Business.Services
 
             foreach (var order in orders)
             {
-                GenerateRegistrantKey(order);
+                //GenerateRegistrantKey(order);
                 AddEvent(new SendConnectionInfoEvent<Order>
                 {
                     EventObject = order,
@@ -1686,7 +1686,7 @@ namespace CUWebinars.Business.Services
         {
             var user = _webUserRepository.FindByIdLoaded(userId);
             var order = _orderRepository.FindById(orderId);
-            order.AuditInfo = "anon user is updated with " + user.email + Environment.NewLine + order.AuditInfo;
+            order.AuditInfo = "{\"anon user becomes " + user.email +"\":" +  order.AuditInfo + "}";
             order.idUser = userId;
 
             var billingAddress = user.Addresses.Where(a => a.AddressType == DomainConstants.BillingAddress).SingleOrDefault();

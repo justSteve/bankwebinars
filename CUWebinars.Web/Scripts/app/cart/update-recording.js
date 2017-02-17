@@ -29,18 +29,19 @@ $(function () {
     var openTheWebinarButton = $('#OpenTheWebinarButton');
 
     openTheWebinarButton.on('click', function (e) {
-        alert("hit");
+        
         e.preventDefault();
+        var payload = idWebinar = 2292;
 
         var openTheWebinarValSummary = $('#openTheWebinarValSummary');
 
         $.ajax({
             type: 'POST',
-            contentType: 'application/x-www-form-urlencoded',
+
             cache: false,
             url: "/Webinar/OpenTheWebinar",
             dataType: 'json',
-            data: payload,
+            data:payload,
             beforeSend: function () {
 
                 $('#result').remove();

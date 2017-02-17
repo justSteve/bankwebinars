@@ -796,6 +796,21 @@ namespace CUWebinars.Web.Controllers
 
         [AllowAnonymous]
         [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
+        public ActionResult FindCoWorkerLink(FindLinkModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                
+                var order = _orderManagementService.GetOrderById(model.OrderId);
+
+                return View(model);
+            }
+            return null;
+        }
+
+
+        [AllowAnonymous]
+        [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
         public void UpdateTimeZone()
         {
             var incoming = HttpContext.Request.Form[0].TrimStart('[').TrimEnd(']');

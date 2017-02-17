@@ -1300,52 +1300,52 @@ namespace CUWebinars.Web.Controllers.Admin
             return PartialView("~/Views/Admin/Home/_SendConnectionInfo.cshtml", model);
         }
 
-        [HttpPost]
-        public JsonResult SendConnectionInfo(int webinarId)
-        {
-            //_logger.Info("Begins SendConnectionInfo");
-            var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
-            var citrixRegistrants = _orderManagementService.GetCitrixRegistrantsByWebinar(webinarId);
-            foreach (var order in orders)
-            {
-                var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-                // perf bump by assigning to local variable
-                //need to refine logic in the CitrixJoinInfoAvailable a little bit.
-                if (string.IsNullOrEmpty(orderRow.CitrixJoinUrl)) // && orderRow.Webinar.CitrixJoinInfoAvailable())
-                {
-                    _orderManagementService.GenerateRegistrantKey(order);
+        //[HttpPost]
+        //public JsonResult SendConnectionInfo(int webinarId)
+        //{
+        //    //_logger.Info("Begins SendConnectionInfo");
+        //    var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
+        //    var citrixRegistrants = _orderManagementService.GetCitrixRegistrantsByWebinar(webinarId);
+        //    foreach (var order in orders)
+        //    {
+        //        var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+        //        // perf bump by assigning to local variable
+        //        //need to refine logic in the CitrixJoinInfoAvailable a little bit.
+        //        if (string.IsNullOrEmpty(orderRow.CitrixJoinUrl)) // && orderRow.Webinar.CitrixJoinInfoAvailable())
+        //        {
+        //            _orderManagementService.GenerateRegistrantKey(order);
 
-                    if (orderRow.AdditionalLocation.Any())
-                    {
-                        foreach (var additionalLocation in orderRow.AdditionalLocation)
-                        {
-                            _orderManagementService.GenerateRegistrantKey(order);
-                        }
-                    }
-                }
-            }
+        //            if (orderRow.AdditionalLocation.Any())
+        //            {
+        //                foreach (var additionalLocation in orderRow.AdditionalLocation)
+        //                {
+        //                    _orderManagementService.GenerateRegistrantKey(order);
+        //                }
+        //            }
+        //        }
+        //    }
 
-            orders.ToList().ForEach((order) =>
-            {
-                var notificationStorage = new NotificationStorage
-                {
-                    idOrder = order.idOrder,
-                    SessionStartInfo = _appHelper.GetSessionStartInfo()
-                };
+        //    orders.ToList().ForEach((order) =>
+        //    {
+        //        var notificationStorage = new NotificationStorage
+        //        {
+        //            idOrder = order.idOrder,
+        //            SessionStartInfo = _appHelper.GetSessionStartInfo()
+        //        };
 
-                if (string.IsNullOrWhiteSpace(order.NotificationStorage))
-                {
-                    order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
-                }
-            });
+        //        if (string.IsNullOrWhiteSpace(order.NotificationStorage))
+        //        {
+        //            order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
+        //        }
+        //    });
 
-            _orderManagementService.FireSendConnectionInfoNotificationEvent(orders, resending: false);
+        //    _orderManagementService.FireSendConnectionInfoNotificationEvent(orders, resending: false);
 
-            var numRows = _orderManagementService.SaveChanges();
+        //    var numRows = _orderManagementService.SaveChanges();
 
-            _logger.Info("Concludes SendConnectionInfo. {0} rows updated.", numRows);
-            return Json(new { Result = WebUiConstants.Success });
-        }
+        //    _logger.Info("Concludes SendConnectionInfo. {0} rows updated.", numRows);
+        //    return Json(new { Result = WebUiConstants.Success });
+        //}
 
 
         public PartialViewResult SendShippedOrder()
@@ -1936,7 +1936,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [ValidateInput(false)]
         [HttpPost]
         [HandleAjaxException]
-        public async Task<JsonResult> GenerateMailChimpCampaign(int affiliateId, string messageBodyHtml, int webinarId, string sendDate, string sendTime, string subject, string testEmails)
+        public async Task<JsonResult> GenerateMailChimpCampaign(int affiliateId, string messageBodyHtml, int webinarId, string sendDate, string sendTime, string subject)
         {
             _logger.Info("GenerateMailChimpCampaign starting");
             Webinar webinar = _webinarManagementService.GetWebinar(webinarId);
@@ -1956,7 +1956,8 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 McCampaign campaign = new McCampaign { AffiliateId = affiliate.idUserAff, WebinarId = webinar.idWebinar };
 
-                IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
+                IMailChimpManager manager = new MailChimpManager("b864fb8a5039b1152c7b774b6602a9e9-us10");
+                //IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
 
                 List list = await manager.Lists.GetAsync(affiliate.idMailChimpList).ConfigureAwait(false);
 
@@ -1970,7 +1971,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                 _segment.Id.ToString()).ConfigureAwait(false);
 
                     if (segmentMembers.Any())
-                        //_logger.Info("Create SegmentMembers: " + JsonConvert.DeserializeObject<IList<MailChimp.Net.Models.Member>>(segmentMembers.ToString()));
+                        _logger.Info("Segment found: " + _segment.Id.ToString());
                         recp = new Recipient
                         {
                             ListId = affiliate.idMailChimpList,
@@ -2035,14 +2036,11 @@ namespace CUWebinars.Web.Controllers.Admin
                 _logger.Info("CreateCampaign | SendChecklistAsync: " + mkCamp.Id);
                 var checkList = await manager.Campaigns.SendChecklistAsync(mkCamp.Id);
 
-                //var sendToEmails = "'all.of.us@ttstrain.com', '" + affiliate.NotiPromos.Replace(",", "\",\"") + "\"";
                 List<string> sendToEmails = new List<string>();
                 sendToEmails.Add("all.of.us@ttstrain.com");
 
-                //sendToEmails.AddRange(testEmails.Split(','));
                 sendToEmails.AddRange(affiliate.NotiPromos.Split(','));
-
-
+                
                 CampaignTestRequest emails = new CampaignTestRequest
                 {
                     EmailType = "html",
@@ -3044,7 +3042,7 @@ namespace CUWebinars.Web.Controllers.Admin
             var weekNumber = cal.GetWeekOfYear(date1, dfi.CalendarWeekRule,
                                  dfi.FirstDayOfWeek) + "-" + cal.GetYear(DateTime.Now);
             //dfi.FirstDayOfWeek) + "-2016";
-            var endDate = startDate.AddDays(8);
+            var endDate = startDate.AddDays(6);
 
             var existingInvoice = CheckForExistingInvoice(startDate.ToShortDateString().Replace("/", "-"), weekNumber,
                 idAffiliate);
@@ -3142,7 +3140,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     DataTable pOrders;
                     DataTable uOrders;
 
-                    string sheetAff = "";
+                    StringBuilder sheetAff = new StringBuilder();
 
                     var dsWebinars = IniDataTables(out dsPostEvent, out webinarsPerAff, out PostEventOrders,
                         out ordersPerAff, out pOrders, out upgradedOrders, out uOrders, out dsUpgradedOrders);
@@ -3268,8 +3266,8 @@ namespace CUWebinars.Web.Controllers.Admin
                                     }
                                 }
 
-
-                                sheetAff += ExportWebinarOrdersToExcel(ordersPerAff, startDate, affiliate.ttsDomain, webinar.idWebinar);
+                                sheetAff.AppendLine("idWebinar" + webinar.idWebinar + " - " + webinar.Title);
+                                sheetAff.Append(ExportWebinarOrdersToExcel(ordersPerAff, startDate, affiliate.ttsDomain, webinar.idWebinar));
                                 //sheetAff.Tables.Add(ordersPerAff);
 
                                 GrandTotalOnBilled += invoice.TotalOnBilled;
@@ -3414,8 +3412,9 @@ namespace CUWebinars.Web.Controllers.Admin
                                 }
                             }
 
+                            sheetAff.AppendLine("PostEvent");
 
-                            sheetAff += ExportPostEventOrdersToExcel(pOrders, startDate, affiliate.ttsDomain, _postEventOrders, thisAffiliate);
+                            sheetAff.Append(ExportPostEventOrdersToExcel(pOrders, startDate, affiliate.ttsDomain, _postEventOrders, thisAffiliate));
                             //sheetAff.Tables.Add(pOrders);
 
 
@@ -3575,8 +3574,8 @@ namespace CUWebinars.Web.Controllers.Admin
                                 }
                             }
 
-
-                            sheetAff += ExportAdjustedOrdersToExcel(uOrders, startDate, affiliate.ttsDomain, thisAffiliate);
+                            sheetAff.AppendLine("Adjusted");
+                            sheetAff.Append(ExportAdjustedOrdersToExcel(uOrders, startDate, affiliate.ttsDomain, thisAffiliate));
 
 
                             GrandTotalOnBilled += invoice.TotalOnBilled;
@@ -3714,7 +3713,7 @@ namespace CUWebinars.Web.Controllers.Admin
                             CloudBlockBlob blobSheets =
                                 containerSheets.GetBlockBlobReference(startDate.ToShortDateString().Replace("/", "-") + "/" +
                                                                 InvoiceID + ".xls");
-                            blobSheets.UploadText(sheetAff);
+                            blobSheets.UploadText(sheetAff.ToString());
 
                             using (MemoryStream output = new MemoryStream())
                             {
@@ -3729,7 +3728,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                 output.Position = 0; // reset to beginning so Upload operation can work correctly
                                 blobDoc.UploadFromStream(output);
                             }
-                            
+
 
                             return Json(new
                             {
@@ -3781,7 +3780,7 @@ namespace CUWebinars.Web.Controllers.Admin
         JsonRequestBehavior.AllowGet);
             }
         }
-        
+
 
         private string ExportAdjustedOrdersToExcel(DataTable table, DateTime startDate, string ttsDomain, int thisAffiliate)
         {

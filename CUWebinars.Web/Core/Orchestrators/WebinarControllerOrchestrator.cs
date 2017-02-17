@@ -98,6 +98,14 @@ namespace CUWebinars.Web.Core.Orchestrators
                 };
 
                 order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
+
+
+                var body = BuildConnectionInfoMessage(order);
+                body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo);
+
+                _orderManagementService.FireMandrillNotificationEvent("steve@ttstrain.com", "Connection Checklist for " + GetWebinar(idWebinar).Title, body);
+
+
             });
 
             _logger.Info(sb.ToString());
@@ -592,9 +600,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     }
                     
                     var body = BuildRecordingIsPostedMessage(order);
-                    body = body.Replace("&gt;", ">");
-                    body = body.Replace("&lt;", "<");
-                    body = body.Replace("[logo]", "<img src=" + _globalConfig.TenantLogo + " />");
+                    body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo);
 
                     //_orderManagementService.FireMandrillNotificationEvent(toEmail, subject, body);
                     _orderManagementService.FireMandrillNotificationEvent("steve@ttstrain.com", subject, body);
@@ -608,6 +614,90 @@ namespace CUWebinars.Web.Core.Orchestrators
             _orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
 
         }
+
+        public string BuildConnectionInfoMessage(Order order)
+        {
+            OrderRow row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+            Webinar webinar = row.Webinar;
+            DocumentModel document =
+                DocumentModel.Load(
+                    System.Web.HttpContext.Current.Server.MapPath(
+                        @"~/App_Data/mergeTemplates/ConnectionInfo2.docx"));
+
+            var fields = _appHelper.BuildNotiFields(order);
+
+            document.MailMerge.Execute(fields);
+
+
+            bool noError = true;
+            try
+            {
+                if (noError)
+                {
+                    _logger.Info("begins write to file: " + order.idOrder);
+
+                    //// SAVE LOCALLY if needed for easier testing
+                    //document.Save(System.Web.HttpContext.Current.Server.MapPath(@"~/App_Data/mergeTemplates/" + order.idOrder + ".pdf"), SaveOptions.PdfDefault);
+
+                    var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName,
+                        _globalConfig.StorageAccessKey);
+
+                    var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
+                    CloudBlobClient blobClient = cloudStorageAccount.CreateCloudBlobClient();
+
+                    // Retrieve reference to a previously created container.
+                    CloudBlobContainer container = blobClient.GetContainerReference("connectionchecklist");
+                    container.CreateIfNotExists();
+
+                    CloudBlockBlob blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".pdf");
+
+                    using (MemoryStream output = new MemoryStream())
+                    {
+                        document.Save(output, SaveOptions.PdfDefault);
+                        output.Position = 0; // reset to beginning so Upload operation can work correctly
+                        blob.UploadFromStream(output);
+                    }
+                    
+                    blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".htm");
+                    using (MemoryStream output = new MemoryStream())
+                    {
+                        document.Save(output, SaveOptions.HtmlDefault);
+                        output.Position = 0; // reset to beginning so Upload operation can work correctly
+                        blob.UploadFromStream(output);
+                    }
+
+                    var blobDoc = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".docx");
+                    using (MemoryStream output = new MemoryStream())
+                    {
+                        document.Save(output, SaveOptions.DocxDefault);
+                        output.Position = 0; // reset to beginning so Upload operation can work correctly
+                        blobDoc.UploadFromStream(output);
+                    }
+
+                    byte[] fileContents;
+                    using (MemoryStream output = new MemoryStream())
+                    {
+                        document.Save(output, SaveOptions.HtmlDefault);
+                        output.Position = 0; // reset to beginning so Upload operation can work correctly
+
+                        fileContents = output.ToArray();
+                    }
+
+                    return System.Text.Encoding.UTF8.GetString(fileContents);
+                }
+                else
+                {
+                    https://ci4.googleusercontent.com/proxy/AOF0zatzFSovHlWus8P1dHxNNFo0tLbt-mot0d9e-Of2y7-y9OixCjE7b48XZyxMDreHdAqWirQiZ5bnZNro7z99YsBEbeXmAtMPk4wXt_4cag5u=s0-d-e1-ft#http://devholmen15:3538/Content/images/vrLocal/left_shadow.jpg
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorException("buildingRecordingIsPosted for: " + order.idOrder, ex);
+                return "Error: " + ex.Message;
+            }
+        }
+
 
         public string BuildRecordingIsPostedMessage(Order order)
         {
@@ -656,28 +746,10 @@ namespace CUWebinars.Web.Core.Orchestrators
                     "<a href='" + _globalConfig.TenantURL + "/Resume/" + order.idOrder + "'>" + " click here" + "</a>." + " Is someone else in your organization responsible for payments? " +
                     "<a href='" + _globalConfig.TenantURL + "/Order/AddBillingEmail?idOrder=" + order.idOrder + "'>" + " Enter their email here" + "</a> and we will send the invoice directly.";
             }
-            
-            var dsMergeFields = new
-            {
-                AttendType = row.RegistrationType.OptionLabelShort,
-                RegDesc = regDesc,
-                TenantSignature = "The " + _globalConfig.Tenant + " Staff",
-                SupportEmail =  _globalConfig.TenantEmail ,
-                OrderID = row.idOrder,
-                BillingEmail = order.BillingEmail,
-                TechSupportLink = "<a href='" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "'>" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "</a>",
-                OndemandLink = "<a href='" + _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "'>" + _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "</a>",
-                LinkToMyWebinars = "<a href='" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "'>" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "</a>",
-                TenantName = _globalConfig.Tenant,
-                WebinarTitle = webinar.Title,
-                FirstName = order.FirstName,
-                PaymentCaption = PaymentCaption,
-                PaymentStatus = order.OrderStatus.ToString(),
-                Expires =  thisClaim.ExpiryDate.ToShortDateString()
 
-            };
+            var fields = _appHelper.BuildNotiFields(order);
 
-            document.MailMerge.Execute(dsMergeFields);
+            document.MailMerge.Execute(fields);
 
 
             bool noError = true;

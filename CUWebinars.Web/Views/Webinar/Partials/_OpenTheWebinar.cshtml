@@ -1,107 +1,16 @@
-﻿@model WebinarDetailsViewModel
+﻿@model Webinar
 
 @{
     ViewBag.Title = "Open The Webinar";
 
-}
-<style>
-    .form-horizontal .control-label {
-        float: left;
-        padding-top: 0;
-        text-align: right;
-        width: 140px;
-        margin-top: 10px;
-    }
-
-    .form-horizontal .form-control {
-        margin-left: 10px;
-        vert-align: top;
-        margin-top: 10px;
-        border-radius: 4px;
-        height: 20px;
-    }
-
-    .modal {
-        width: 400px;
-    }
-
-    #UpdateWebinarRecordingModal {
-        margin: 0;
-    }
-</style>
-@{
-
-    var buttonCaption = "Open The Webinar";
-    if (Model.Webinar.RecordingUrl != "" && Model.Webinar.RecordingUrl != null)
+    if (Model.Status == WebinarStatus.Active)
     {
-        buttonCaption = Model.Webinar.RecordingUrl;
-    }
-    <a id="OpenTheWebinarButton">@buttonCaption</a>
-    using (Html.BeginForm("openTheWebinar", "Webinar", FormMethod.Post, new { id = "_openTheWebinar" }))
-            {
-    @Html.AntiForgeryToken()
+        var buttonCaption = "Open The Webinar";
+        <a id="OpenTheWebinarButton">@buttonCaption</a>
 
-    @Html.HiddenFor(model => model.Webinar.idWebinar)
-
-    <div class="form-horizontal">
-        @Html.ValidationSummary("Error:", new { id = "openTheWebinarValSummary" })
-
-    </div>
-                <!-- closes modal-body -->
-
-    <div class="modal-footer">
-        <button id="openTheWebinarButton" class="btn btn-primary">Save</button>&nbsp;
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-    </div>
-            }
-    if (Model.Webinar.Status == WebinarStatus.InProgress)
-    {
-
-        buttonCaption = "Set Recording URL";
-        if (Model.Webinar.RecordingUrl != "" && Model.Webinar.RecordingUrl != null)
-        {
-            buttonCaption = Model.Webinar.RecordingUrl;
+        using (Html.BeginForm("OpenTheWebinar", "Webinar", FormMethod.Post, new { id = "_openTheWebinar" }))
+        {            
+            <input type="hidden" name="idWebinar" id="idWebinar" value="@Model.idWebinar"/>
         }
-    <a href="#UpdateWebinarRecordingModal" data-toggle="modal">@buttonCaption</a>
-
     }
-    <div id="UpdateWebinarRecordingModal" class="modal modalCenterV hide fade">
-
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3 id="myModalLabel">Update Recording</h3>
-        </div>
-        <div class="modal-body">
-            @using (Html.BeginForm("UpdateWebinarRecording", "Webinar", FormMethod.Post, new { enctype = "multipart/form-data", id = "_UpdateWebinarRecording" }))
-            {
-                @Html.AntiForgeryToken()
-
-                @Html.HiddenFor(model => model.Webinar.idWebinar)
-
-                <div class="form-horizontal">
-                    @Html.ValidationSummary("Error:", new { id = "updateWebinarRecordingValSummary" })
-
-                    <div id="manageRecordingsWrapper">
-                        <div id="LivePlusFive">
-                            <span class="control-label">Live Plus Five:&nbsp;</span>
-                            @Html.TextBoxFor(m => m.Webinar.LivePlusFiveValue)
-
-                        </div>
-
-                        <div id="fileLocationDiv_">
-                            <span class="control-label">File Name:&nbsp;</span>
-                            @Html.TextBoxFor(m => m.Webinar.RecordingUrl)
-                        </div>
-                    </div>
-
-                </div>
-                <!-- closes modal-body -->
-
-                <div class="modal-footer">
-                    <button id="updateWebinarRecordingButton" class="btn btn-primary">Save</button>&nbsp;
-                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                </div>
-            }
-        </div>
-    </div>
 } 

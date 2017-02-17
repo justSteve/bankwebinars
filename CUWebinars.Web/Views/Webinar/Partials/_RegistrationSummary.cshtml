@@ -40,19 +40,24 @@
                 {
                     <h5 style="text-align: right; background-color: darkviolet; color: whitesmoke; font-weight: bold; padding-top: 2px; padding-right: 3px;" class="short_headline"><span>Connection Status</span></h5>
                     <aside style="width: 100%" class="widget clearfix">
-                        @Html.Partial("ClickToJoin", Model.ClickToJoinModel)
+                        @{
+                            if (Model.ClickToJoinModel != null)
+                            {
+                                @Html.Partial("ClickToJoin", Model.ClickToJoinModel)
+                            }
+                        }
                     </aside>
-                }
+                            }
 
-                <aside style="width: 100%" class="widget clearfix">
+                            <aside style="width: 100%" class="widget clearfix">
 
-                    <h5 class="short_headline"><span>Order Summary</span></h5>
-                    <div id="idWebinar-@Model.OrderRow.idWebinar">
-                        @{ Html.RenderPartial("DisplayTemplates/OrderSumUser", Model); }
+                                <h5 class="short_headline"><span>Order Summary</span></h5>
+                                <div id="idWebinar-@Model.OrderRow.idWebinar">
+                                    @{ Html.RenderPartial("DisplayTemplates/OrderSumUser", Model); }
 
-                    </div>
-                </aside>
+                                </div>
+                            </aside>
             }
         </div>
-                            }
+                                        }
 }

@@ -492,6 +492,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Models\NotificationMessageFields.cs" />
     <Compile Include="Models\FindLinkModel.cs" />
     <Compile Include="Models\IncomingEmailModel.cs" />
     <Compile Include="Models\ListSegmentsViewModel.cs" />

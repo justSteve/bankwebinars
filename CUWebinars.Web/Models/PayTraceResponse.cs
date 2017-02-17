@@ -26,5 +26,6 @@ namespace CUWebinars.Web.Models
         public string Amount { get; set; }
         public string Bname { get; set; }
         public Order Order { get; set; }
+        public string CartType { get; set; }
     }
 }

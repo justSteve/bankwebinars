@@ -13,7 +13,7 @@ namespace CUWebinars.Web.Models
 
         [Required]
         [Display(Name = "OrderID")]
-        public string OrderId { get; set; }
+        public int OrderId { get; set; }
 
         [HiddenInput]
         public bool EmailSent { get; set; }

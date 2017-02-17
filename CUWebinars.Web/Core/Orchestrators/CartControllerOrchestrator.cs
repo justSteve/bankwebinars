@@ -1325,107 +1325,22 @@ namespace CUWebinars.Web.Core.Orchestrators
                     System.Web.HttpContext.Current.Server.MapPath(
                         @"~/App_Data/mergeTemplates/OrderSubmitted_PreEvent.docx"));
 
-
-            string subjectLine = "[" + _globalConfig.Tenant + "] Confirmation of Registration: " + row.Webinar.Title;
-            string MessageHeading = "Your Order is Submitted!";
-            string regDesc = "";
-            string existingAddLocs = "";
-            string ClickToJoinLink = "<a href='" + _globalConfig.TenantURL + "/j/" + order.idOrder + "-" + row.TtsJoinUrl + "'>" + _globalConfig.TenantURL + "/j/" + order.idOrder + "-" + row.TtsJoinUrl + "</a>";
-            string AddLocsCost = " Please note that the per seat cost of an Additional Location is " + _orderManagementService.GetAdditionalLocationsPricing(row.idWebinar).ToString("C0") + ".";
-            string ExistingAddLocs = "";
-            string ShowTimeZone = "";
-            string AddReminder = "<a href='" + _globalConfig.TenantURL + "/Webinar/ICalOrder?icsOrder=" + order.idOrder + "'>" + " add reminder." + "</a>";
-            string PaymentCaption = "";
-            string CCCaption = " We didn't find any address(es) to CC: on this notification but would be happy to update <a href='" + _globalConfig.TenantURL + "/Order/ChangeCC?idOrder=" + order.idOrder + "'>" + " with any address you send back." + "</a>";
-            string PaymentStatus = order.OrderStatus.ToString();
-
-            if (order.OrderStatus == OrderStatus.Paid)
-            {
-                PaymentCaption = "Thank you for your payment!";
-            }
-            else
-            {
-                PaymentCaption =
-                    "Though pre-payment is not required (we'll be happy to invoice you at " + order.BillingEmail + ") if you wish to pay by credit card <a href='" + _globalConfig.TenantURL + "/Resume/" + order.idOrder + "'>" + "click here." + "</a>" + " Is someone else in your organization responsible for payments? <a href='" + _globalConfig.TenantURL + "/Order/AddBillingEmail?idOrder=" + order.idOrder + "'>" + "Enter their email here " + "</a>and we will send the required information directly.";
-            }
-
-            if (row.Webinar.Title.Contains("Compliance Perspectives"))
-            {
-                AddLocsCost =
-                    " Compliance Perspective events include 3 Additional Locations at no extra cost - $75 per seat afterwards.";
-            }
-            if (row.RegistrationType.ShowRecordingNotifications.ToLower() == "no")
-            {
-                regDesc =
-                    "Included in your registration are links to all event material for five (5) business days. You can upgrade your order to gain 6 months OnDemand access - or get the Premier Package which includes a CD-ROM and printouts of the event's materials. We'll be happy to adjust your registration - just reply to this email! ";
-            }
-            else if (row.RegistrationType.ShowShippedNotifications.ToLower() == "no")
-            {
-                regDesc =
-                    "Your registration includes OnDemand access to all event materials but does not include a CD-ROM or printouts. You can still upgrade to the Premier Package - just reply to this email! ";
-            }
-
-            if (row.AdditionalLocation != null)
-            {
-                var locs = "";
-                foreach (var loc in row.AdditionalLocation)
-                {
-                    locs = loc.Email + ",";
-                    if (row.AdditionalLocation.Count > 1)
-                    {
-                        existingAddLocs = locs.TrimEnd(',') +
-                                          " is currently included as an Additional Location. Just let us know if you need more!";
-                    }
-                    else
-                    {
-
-                        existingAddLocs = locs.TrimEnd(',').Replace(",", ", ") +
-                                          " are currently included Additional Locations. Just let us know if you need more!";
-                    }
-                }
-                if (existingAddLocs == "")
-                {
-                    existingAddLocs =
-                        " We didn't see any Additional Locations stored but would be happy to add all that you need. (add)";
-                };
-            }
+            NotificationMessageFields fields= _appHelper.BuildNotiFields(order);
             var orderCC = _orderManagementService.orderHasCC(order);
             if (orderCC != null)
             {
-
             }
+            fields.AddLocsCost = " Please note that the per seat cost of an Additional Location is " +
+                     _orderManagementService.GetAdditionalLocationsPricing(row.idWebinar).ToString("C0") + ".";
+
 
             if (webinar.Status == WebinarStatus.Recorded)
             {
                 document = DocumentModel.Load(System.Web.HttpContext.Current.Server.MapPath(@"~/App_Data/mergeTemplates/OrderSubmitted_PostEvent.docx"));
             }
 
-            var dsMergeFields = new
-            {
-                AttendType = row.RegistrationType.OptionLabelShort,
-                RegDesc = regDesc,
-                TenantSignature = "The " + _globalConfig.Tenant + " Staff",
-                OrderID = row.idOrder,
-                BillingEmail = order.BillingEmail,
-                TechSupportLink = "<a href='" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "'>" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "</a>",
-                OndemandLink = " <a href='" + _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "'>" + _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "</a>",
-                LinkToMyWebinars = " <a href='" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "'>" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "</a>",
-                ChangeTimeZoneLink = " <a href='" + _globalConfig.TenantURL + "/Order/ChangeTimeZone?idOrder=" + order.idOrder + "'>" + " click to change timezone." + "</a>",
-                AddReminder,
-                TenantName = _globalConfig.Tenant,
-                WebinarTitle = webinar.Title,
-                order.FirstName,
-                ClickToJoinLink,
-                AddLocsCost,
-                ExistingAddLocs = existingAddLocs,
-                ShowTimeZone = order.WebUser.timeZone.ToString(),
-                PaymentCaption = PaymentCaption,
-                CCCaption,
-                PaymentStatus,
 
-            };
-
-            document.MailMerge.Execute(dsMergeFields);
+            document.MailMerge.Execute(fields);
 
 
             bool noError = true;
@@ -1455,15 +1370,10 @@ namespace CUWebinars.Web.Core.Orchestrators
                         document.Save(output, SaveOptions.PdfDefault);
                         output.Position = 0; // reset to beginning so Upload operation can work correctly
                         blob.UploadFromStream(output);
+
+                        
                     }
 
-                    //blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".gif");
-                    //using (MemoryStream output = new MemoryStream())
-                    //{
-                    //    document.Save(output, new ImageSaveOptions() { Format = ImageSaveFormat.Gif});
-                    //    output.Position = 0; // reset to beginning so Upload operation can work correctly
-                    //    blob.UploadFromStream(output);
-                    //}
 
                     blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".htm");
                     using (MemoryStream output = new MemoryStream())
@@ -1474,21 +1384,21 @@ namespace CUWebinars.Web.Core.Orchestrators
                     }
 
                     byte[] fileContents;
+                    string myString = "";
                     using (MemoryStream output = new MemoryStream())
                     {
                         document.Save(output, SaveOptions.HtmlDefault);
                         output.Position = 0; // reset to beginning so Upload operation can work correctly
 
+
+                        output.Position = 0;
+                        var sr = new StreamReader(output);
+                        myString = sr.ReadToEnd();
                         fileContents = output.ToArray();
                     }
-                    var body = System.Text.Encoding.UTF8.GetString(fileContents);
-                    body = body.Replace("&gt;", ">");
-                    body = body.Replace("&lt;", "<");
-                    body = body.Replace("[logo]", "<img src=" + _globalConfig.TenantLogo + " />");
-
-
-                    _orderManagementService.FireMandrillNotificationEvent("steve@ttstrain.com", subjectLine, body);
-                    return System.Text.Encoding.UTF8.GetString(fileContents);
+                    
+                    //return System.Text.Encoding.UTF8.GetString(fileContents);
+                    return (myString);
                 }
             }
             catch (Exception ex)
@@ -1500,10 +1410,21 @@ namespace CUWebinars.Web.Core.Orchestrators
             _logger.Error("BuildOrderSubmitted2FloatedTooFar: " + order.idOrder);
             return "BuildOrderSubmitted2FloatedTooFar: " + order.idOrder;
         }
-
+        
         public string InvoicedOrderIsUpdated(Order order)
         {
            return _orderManagementService.InvoicedOrderIsUpdated(order);
+        }
+
+        public void FireMandrillNotificationEvent(string emails, string subjectLine, string orderConfirmString)
+        {
+            _orderManagementService.FireMandrillNotificationEvent("steve@ttstrain.com", subjectLine, orderConfirmString);
+
+        }
+
+        public void SaveOrder(Order order)
+        {
+            _orderManagementService.SaveOrderChanges(order, null, null);
         }
 
 

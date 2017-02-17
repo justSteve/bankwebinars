@@ -343,22 +343,22 @@ namespace CUWebinars.Web.Controllers
             var webinar = _webinarManagementService.GetWebinar(webinarId);
 
 
-            try
-            {
-                PanelistsApi pApi = new PanelistsApi();
+            //try
+            //{
+            //    PanelistsApi pApi = new PanelistsApi();
 
-                pApi.createPanelists(_globalConfig.CitrixAuthMark,
-                    _globalConfig.ConvertToCitrixOrgKey(_globalConfig.CitrixOrgKeyMark),
-                    _globalConfig.ConvertToCitrixWebinarKey(webinar.WebinarKey), new List<PanelistReqCreate>
-                    { new PanelistReqCreate {
-                    email = webinar.Presenter.WebUser.email,
-                    name = webinar.Presenter.WebUser.FullName}
-                    });
-            }
-            catch (Exception ex)
-            {
-                _logger.FatalException("CreateCitrixWebinar | AddPresenter: " + webinar.Presenter.WebUser.email, ex);
-            }
+            //    pApi.createPanelists(_globalConfig.CitrixAuthMark,
+            //        _globalConfig.ConvertToCitrixOrgKey(_globalConfig.CitrixOrgKeyMark),
+            //        _globalConfig.ConvertToCitrixWebinarKey(webinar.WebinarKey), new List<PanelistReqCreate>
+            //        { new PanelistReqCreate {
+            //        email = webinar.Presenter.WebUser.email,
+            //        name = webinar.Presenter.WebUser.FullName}
+            //        });
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.FatalException("CreateCitrixWebinar | AddPresenter: " + webinar.Presenter.WebUser.email, ex);
+            //}
 
             _webinarControllerOrchestrator.FireSendConnectionInfoNotificationEvent(webinarId);
 
@@ -2386,6 +2386,7 @@ namespace CUWebinars.Web.Controllers
             return Content("ok");
         }
 
+
         public ActionResult UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel)
         {
             if (ModelState.IsValid)
@@ -2410,13 +2411,13 @@ namespace CUWebinars.Web.Controllers
             }
             return this.ModelStateJson(ModelState);
         }
-        public ActionResult OpenTheWebinar(WebinarDetailsViewModel webinarDetailsViewModel)
+        public ActionResult OpenTheWebinar(int idWebinar)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var webinar = webinarDetailsViewModel.Webinar;
+                    var webinar = _webinarManagementService.GetWebinar(idWebinar);
                     webinar.Status = WebinarStatus.InProgress;
 
                     _webinarManagementService.SaveChanges();

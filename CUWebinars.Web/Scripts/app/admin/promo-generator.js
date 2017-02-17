@@ -268,18 +268,18 @@ function SetwStatus() {
 function GetAffiliateCopy(affiliateId, isActive) {
 
     var currCopy = "";
-
+    console.log("GetAffiliateCopy was passed: " + affiliateId + " isActive: " + isActive);
 
     // is this affiliate currently showing?  if so, grab Editor value rather than hidden text area
     // Addendum: this test is returning false at the point where true is expected. 
     if (isActive) {
         currCopy = $.trim($("#editorTA").wijeditor("getText"));
-
     } else {
         currCopy = $.trim($("#editor_" + affiliateId).val());
+
     }
     // HACK: the above test is returning false at the point where true is expected. 
-    currCopy = $.trim($("#editorTA").wijeditor("getText"));
+    //currCopy = $.trim($("#editorTA").wijeditor("getText"));
     console.log(currCopy);
     currCopy = stripWijNull(currCopy);
     return currCopy;
@@ -336,16 +336,8 @@ function SetEditorTabForAffiliate(affiliateId, affiliateCopy) {
         var affObj = arrayLookup(affs, "idUserAff", affiliateId);
 
         if (affObj != null) {
-
+            console.log(affObj);
             localCopy = replaceMasterTokensForAffiliate(affObj);
-            // this probably needs to be moved out of this function, 
-            // but only needs to run on initial tab load, just like the replacement code
-
-            // deal with the SendToList_XYZ box
-            var sendTo = $("#SendToList_" + affiliateId);
-            if ($.trim(sendTo.val()) == "") {
-                sendTo.val(affObj.ContactEmail); // TODO: zzz ALS expand this or switch to expanded field?
-            }
         }
     }
 
@@ -429,22 +421,19 @@ function SendAll($btn) {
                 // should ALWAYS be false in this method, as the Save All button is only on the master tab
                 var currCopy = GetAffiliateCopy(affiliateId, isActive);
 
-                //localCopy = replaceMasterTokensForAffiliate(affObj);
+                var affObj = arrayLookup(affs, "idUserAff", affiliateId);
+                //currCopy = replaceMasterTokensForAffiliate(affObj);
 
                 if (currCopy == "") // if they don't have customized copy we'll need to create it
                 {
                     // generate from master...
-
+                    
                     var affObj = arrayLookup(affs, "idUserAff", affiliateId);
                     if (affObj != null) {
-                        currCopy = replaceMasterTokensForAffiliate(affObj); // always pulls from editor_0 (master)
-                        // could save it to affiliate text area, since we have it?
 
-                        // deal with the SendToList_XYZ textbox
-                        var $sendTo = $("#SendToList_" + affiliateId);
-                        if ($.trim($sendTo.val()) == "") {
-                            $sendTo.val(affObj.ContactEmail);
-                        }
+                        console.log(affObj);
+                        currCopy = replaceMasterTokensForAffiliate(affObj); // always pulls from editor_0 (master)
+                        
                     }
                 }
 
@@ -490,9 +479,7 @@ function CreateCampaign($btn, affiliateId) {
     if (sendTime) {
 
         var subjectForCampaign = prompt("Subject line: ", _subjectForCampaign);
-        var testEmails = prompt("Test Email", _testEmails);
-        var tStart = (new Date()).getTime();
-
+        
         // setup UI for user feedback
         var origBtnText = $btn.text();
         $btn.text("Processing...");
@@ -514,7 +501,7 @@ function CreateCampaign($btn, affiliateId) {
         var isActive = $tab
             .hasClass("active");
         // should ALWAYS be false in this method, as the Save All button is only on the master tab
-        var currCopy = GetAffiliateCopy(affiliateId, isActive);
+        var currCopy = GetAffiliateCopy(affiliateId, true);
 
         $.ajax({
             url: '/Admin/GenerateMailChimpCampaign',
@@ -525,7 +512,6 @@ function CreateCampaign($btn, affiliateId) {
                 "webinarId": $("#Webinar_idWebinar").val(),
                 "sendDate": $("#SendDate").val(),
                 "sendTime": sendTime,
-                "testEmails": testEmails,
                 "subject": subjectForCampaign
             },
             dataType: "json",
@@ -534,10 +520,9 @@ function CreateCampaign($btn, affiliateId) {
             //contentType: "json",
             success: function (Result) {
 
-                console.log(Result);
                 if (Result.Success) {
-                    console.log("Result");
-                    alert("Campaign Created: ");
+
+                    alert("Campaign Created");
 
                 } else {
 
@@ -552,7 +537,7 @@ function CreateCampaign($btn, affiliateId) {
 
             },
             complete: function (result) {
-                console.log(result);
+                
             }
         });
         // remove spinner
@@ -596,14 +581,9 @@ function WriteAllAffMarkupToStorageAJAX($btn) {
             // generate from master...
             var affObj = arrayLookup(affs, "idUserAff", affiliateId);
             if (affObj != null) {
-                currCopy = replaceMasterTokensForAffiliate(affObj); // always pulls from editor_0 (master)
-                // could save it to affiliate text area, since we have it?
 
-                // deal with the SendToList_XYZ textbox
-                var $sendTo = $("#SendToList_" + affiliateId);
-                if ($.trim($sendTo.val()) == "") {
-                    $sendTo.val(affObj.ContactEmail);
-                }
+                currCopy = replaceMasterTokensForAffiliate(affObj); // always pulls from editor_0 (master)
+
             }
         }
 
@@ -616,7 +596,7 @@ function WriteAllAffMarkupToStorageAJAX($btn) {
             // async: false, // ?? blast the target w/ requests or do one at a time? seems to work fine asynchronously, make sure to deal with errors!
             data: {
                 "Affiliate.idUserAff": affiliateId,
-                "Affiliate.ContactEmail": $("#SendToList_" + affiliateId).val(),
+                //"Affiliate.ContactEmail": $("#SendToList_" + affiliateId).val(),
                 "Affiliate.ttsDomain": $("#ttsDomain_" + affiliateId).val(),
                 "Webinar.idWebinar": $("#Webinar_idWebinar").val(),
                 "Webinar.Title": $("#Webinar_Title").val(),
@@ -689,7 +669,7 @@ function WriteMarkupToStorageAJAX($btn, affiliateId) {
         type: 'POST',
         data: {
             "Affiliate.idUserAff": affiliateId,
-            "Affiliate.ContactEmail": $("#SendToList_" + affiliateId).val(),
+            //"Affiliate.ContactEmail": $("#SendToList_" + affiliateId).val(),
             "Affiliate.ttsDomain": $("#ttsDomain_" + affiliateId).val(),
             "Webinar.idWebinar": $("#Webinar_idWebinar").val(),
             "Webinar.Title": $("#Webinar_Title").val(),
@@ -746,11 +726,11 @@ function SendToAff(affiliateId) {
             //contentType: "json",
             success: function (result) {
                 //$('#send' + affID).text("Success");
-                alert('success');
+                alert('Success');
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 // $('#send' + affID).text(textStatus + " " + errorThrown);
-                alert("error");
+                alert("Error: " + errorThrown);
             }
         });
     }
@@ -760,6 +740,7 @@ function SendToAff(affiliateId) {
 //AdminController file as well...
 function replaceMasterTokensForAffiliate(aff) {
     var string = "";
+
     $.ajax({
         url: '/Admin/GetAffiliateTimeZoneAndList',
         type: 'POST',
@@ -790,7 +771,7 @@ function replaceMasterTokensForAffiliate(aff) {
     copy = copy.replace(/\{aff_idUserAff\}/gi, aff.idUserAff);
     //copy = copy.replace(/\{aff_timeZone\}/gi, aff.timeZone);
     copy = copy.replace(/\{aff_ContactPerson\}/gi, aff.ContactPerson);
-    copy = copy.replace(/\{aff_ContactEmail\}/gi, aff.ContactEmail);
+    copy = copy.replace(/\{aff_NotiPromos\}/gi, aff.NotiPromos);
     copy = copy.replace(/\{aff_ContactPhone\}/gi, aff.ContactPhone);
     //copy = copy.replace(/\{aff_ContactPhone\}/gi, aff.ContactPhone);
     copy = copy.replace(/\{timeString\}/gi, string);
