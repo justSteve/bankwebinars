@@ -513,7 +513,7 @@ function setUpEditButtons() {
     });
 
     $('#addAnotherAddLoc').on('click', function (e) {
-
+        alert("adding");
         e.preventDefault();
 
         var newId;
@@ -621,7 +621,7 @@ var applyAdditionalLocations = function (e) {
     var adjustAddLocsForm = $('#AdjustAddLocsForm');
 
     var url = adjustAddLocsForm.attr('action');
-
+    console.log(url);
     // Ensure array that is sent starts with index 0.
     $.each(adjustAddLocsForm.find('input[type="email"]'), function (idx, value) {
         $(value).attr('name', 'AdditionalLocations[' + idx + '].Email');

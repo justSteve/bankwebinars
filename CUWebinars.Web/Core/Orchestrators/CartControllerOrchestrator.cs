@@ -21,6 +21,7 @@ using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -1298,7 +1299,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                         fileContents = output.ToArray();
                     }
-                    _orderManagementService.FireMandrillNotificationEvent("steve@ttstrain.com", "Welcome To The Director Series", System.Text.Encoding.UTF8.GetString(fileContents));
+                    _orderManagementService.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"], "Welcome To The Director Series", System.Text.Encoding.UTF8.GetString(fileContents));
                     return System.Text.Encoding.UTF8.GetString(fileContents);
                 }
                 else
@@ -1418,7 +1419,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public void FireMandrillNotificationEvent(string emails, string subjectLine, string orderConfirmString)
         {
-            _orderManagementService.FireMandrillNotificationEvent("steve@ttstrain.com", subjectLine, orderConfirmString);
+            _orderManagementService.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"], subjectLine, orderConfirmString);
 
         }
 

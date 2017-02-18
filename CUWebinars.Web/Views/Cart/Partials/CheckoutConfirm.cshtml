@@ -1,7 +1,14 @@
 ﻿@using CUWebinars.Business.Core
 @using CUWebinars.Business.Core.Helpers
+@using DotNetOpenAuth.Messaging
 @model CheckoutConfirmViewModel
+@functions
+{
 
+
+}
+
+}
 <script language="javascript" type="text/javascript">
     if (desCheckout) {
         $('#ConfirmRegistrationBillMe').hide();
@@ -10,6 +17,14 @@
 </script>
 
 @{
+    List<string> addLocEmails = new List<string>();
+    if (Model.AdditionalLocationsViewModel.AdditionalLocations != null)
+    {
+        foreach (var _addLoc in Model.AdditionalLocationsViewModel.AdditionalLocations)
+        {
+            addLocEmails.Add(_addLoc.Email);
+        }
+    }
     if (ViewBag.DiscountSurcharge == "A $50 surcharge is added for shipping & handling")
     {
         <script language="javascript" type="text/javascript">
@@ -33,12 +48,16 @@
         {
             if (Model.OrderStatus == OrderStatus.InProcess || Model.OrderStatus == OrderStatus.AwaitingVerification)
             {
+                <script language="javascript" type="text/javascript">
+
+                    $(function () {});
+                </script>
                 var HideConfirm = "no";
                 if (Model.DESCheckout)
                 {
                     HideConfirm = "yes";
                 }
-                <b>Please review this order summary and and choose billing method.</b>
+                <b>Please review this order summary and choose billing method.</b>
 
                 <div id="AdjustDiscount" class="row initialHide">
                     <div class="offset2 span9 ">
@@ -54,7 +73,8 @@
                         <div id="additionalLocationsCaption" class="clear pull-right">
                             Additional Locations: @Model.AdditionalLocationsViewModel.OptionsCost.ToString("c") will be added to the cost of registration for each additional seat.
 
-                            <button id="addAnotherAddLoc" class="btn btn-mini">add</button>
+                            @*<button id="addAnotherAddLoc" class="btn btn-mini">add</button>*@
+                            <a id="AddLocationsButton" class="btn" href="#AdditionalLocationsModal" role="button" data-toggle="modal">Add?</a>
 
                             @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new { id = "AdjustAddLocsForm" }))
                             {
@@ -141,8 +161,20 @@
                                             }
                                             Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
 
-
+                                            <script src="/Scripts/app/cart/add-additional-locations.js"></script>
                                             <script type="text/javascript">var anyAddLocs = @(string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption) ? "false" : "true");</script>
+                                            @Html.Partial("~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml", new AdditionalLocationOfferViewModel
+                                       {
+                                           AdditionalLocationAddViewModel = new AdditionalLocationAddViewModel
+                                           {
+                                               AdditionalLocations = Model.AdditionalLocationsViewModel.AdditionalLocations,
+                                               Price = Model.AdditionalLocationsViewModel.OptionsCost
+                                           },Emails = addLocEmails,
+                                           Price = Model.AdditionalLocationsViewModel.OptionsCost,
+                                           AdditionalLocations = Model.AdditionalLocationsViewModel.AdditionalLocations
+
+                                       });
+    
 
 
 }

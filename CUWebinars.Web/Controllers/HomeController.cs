@@ -85,7 +85,7 @@ namespace CUWebinars.Web.Controllers
                 i++;
             }
             _logger.Info(msgText);
-            //NotificationFacade.Instance.SendMessage("steve@ttstrain.com", "Director Series Registration", "Registrations@BankWebinars.com", msgText);
+            //NotificationFacade.Instance.SendMessage(ConfigurationManager.AppSettings["TestEmailAddress"], "Director Series Registration", "Registrations@BankWebinars.com", msgText);
 
             ViewData["isConfirmed"] = "true";
             return View("~/Views/Home/DSSignUp.cshtml", affiliate);

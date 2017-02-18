@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.IO;
@@ -103,7 +104,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 var body = BuildConnectionInfoMessage(order);
                 body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo);
 
-                _orderManagementService.FireMandrillNotificationEvent("steve@ttstrain.com", "Connection Checklist for " + GetWebinar(idWebinar).Title, body);
+                _orderManagementService.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"], "Connection Checklist for " + GetWebinar(idWebinar).Title, body);
 
 
             });
@@ -603,7 +604,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo);
 
                     //_orderManagementService.FireMandrillNotificationEvent(toEmail, subject, body);
-                    _orderManagementService.FireMandrillNotificationEvent("steve@ttstrain.com", subject, body);
+                    _orderManagementService.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"], subject, body);
                 }
             }
             catch (Exception ex)
