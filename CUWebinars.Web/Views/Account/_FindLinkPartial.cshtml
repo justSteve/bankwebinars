@@ -1,29 +1,82 @@
-﻿@model FindLinkModel
+﻿@using CUWebinars.Web.Core
+@model FindLinkModel
 
 @{
-    Layout = null;
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+    var TaxAmount = Convert.ToDecimal(ViewBag.TaxAmount);
+
 }
+<script type="text/javascript" language="javascript">
+
+
+    $(function () {
+        //search on // EditRegType_DropDown form event
+        $('#FindLinkButton').text("please wait");
+        $('#FindLinkButton').on('click', function (e) {
+
+            e.preventDefault();
+            var payLoad = {
+                email: $("#FindCoWorkerLinkEmail").val(),
+                orderId: $("#FindCoWorkerLinkOrderID").val()
+            };
+
+            $.ajax({
+                //async: false,
+                type: "POST",
+                contentType: constants.JsonContentType,
+                cache: false,
+                url: "/order/FindCoWorkerLink",
+                dataType: constants.JsonDataType,
+                data: JSON.stringify(payLoad),
+                success: function (data) {
+                    console.log(data);
+                    if (data) {
+                        if (data.odCode) {
+                            $("#OperationMessageFindLink").html("<a href='@globalConfig.TenantURL/o/" + data.odCode + ">@globalConfig.TenantURL/" + data.odCode + "</a>");
+                            $("#FindLinkLegend").text("Link Is Found!");;
+                            $("#inputForm").hide();
+                        } else if (data.joinCode) {
+                            $("#OperationMessageFindLink").html("<a href='@globalConfig.TenantURL/j/" + data.joinCode + "'>@globalConfig.TenantURL/" + data.joinCode + "</a>");
+                            $("#FindLinkLegend").text("Link Is Found!");
+                            $("#inputForm").hide();
+                        } else {
+                            $("#OperationMessageFindLink").text("Unfortunately we were unable to locate a code based on that combination. Please ensure you are entering the email that was used on the original order.");
+
+
+                            alert("Code Not Found");
+                        }
+
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("Find CoWorker Link error: " + textStatus);
+                }
+            });
+
+        });
+    });
+
+</script>
+
 
 <div class="span8">
     @using (Html.BeginForm("FindCoWorkerLink", "Order", FormMethod.Post, new { id = "frmFindLink" }))
     {
         <fieldset>
-            <legend id="ResetPassLegend">Finding a Co-Worker's Link</legend>
-            <p>In the event that you are visiting us because a co-worker forwarded you an email with a link to <b><i>My Webinars</i></b> there may not be a need to log in or create a new account. Just give us the eamil address and order ID and we'll let you know what we find.</p>
-            <div>
-                @Html.LabelFor(l => l.Email)
-                @Html.TextBoxFor(t => t.Email)
-                @Html.ValidationMessageFor(m => m.Email)
-            </div>
-            <div>
-                @Html.LabelFor(l => l.OrderId)
-                @Html.TextBoxFor(t => t.OrderId)
-                @Html.ValidationMessageFor(m => m.OrderId)
-            </div>
-            <div>
-                <input id="FindLinkButton" class="btn btn-default" type="submit" value="Find Link" /><span id="FindLinkStatus" style="color: green"></span>
-            </div>
-            <div id="OperationMessageFindLink"></div>
+            <legend id="FindLinkLegend">Finding a Co-Worker's Link</legend>
+            <p id="inputForm" style="font-size: 18px">
+                If you are visiting us because a co-worker forwarded you an email with a link to <b><i>My Webinars</i></b> there may not be a need to log in or create a new account. Just give us the eamil address and order ID and we'll let you know what we find.
+                <br /><span>
+                    <input name="email" id="FindCoWorkerLinkEmail" type="text" placeholder="Enter Email of Order" />
+                </span><br />
+                <span>
+                    <input name="orderId" id="FindCoWorkerLinkOrderID" type="text" placeholder="Enter Order Id" />
+                </span><br />
+                <span>
+                    <input id="FindLinkButton" class="btn btn-default" type="submit" value="Find Link" /><span id="FindLinkStatus" style="color: green"></span>
+                </span>
+            </p>
+            <h1 id="OperationMessageFindLink"></h1>
         </fieldset>
     }
 </div>

@@ -779,31 +779,48 @@ namespace CUWebinars.Web.Controllers
 
         [AllowAnonymous]
         [AcceptVerbs(HttpVerbs.Get), ValidateInput(false)]
-        public ActionResult AddBillingEmail(int idOrder)
+        public ActionResult AddBillingEmail(AddBillingEmailModel addEmail)
         {
 
-            var model = _orderManagementService.GetOrderById(idOrder);
+            var order = _orderManagementService.GetOrdersByEmail(addEmail.Email, 19).SingleOrDefault(o => o.idOrder == addEmail.OrderId);
 
-            if (model != null)
+            if (order != null)
             {
-
+                _logger.Info("AddBilling Email of:" + order.BillingEmail + " to: " + order.idOrder);
+                return Json(new { Result = "Success" }, JsonRequestBehavior.AllowGet);
             }
-
-            return View(model);
+            else
+            {
+                return Json(new { Result = "0" }, JsonRequestBehavior.AllowGet);
+            }
 
         }
 
 
         [AllowAnonymous]
         [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
-        public ActionResult FindCoWorkerLink(FindLinkModel model)
+        public ActionResult FindCoWorkerLink(string email, int orderId)
         {
             if (ModelState.IsValid)
             {
-                
-                var order = _orderManagementService.GetOrderById(model.OrderId);
 
-                return View(model);
+                var orderById = _orderManagementService.GetOrderById(orderId);
+                var ordersByEmail = _orderManagementService.GetOrdersByEmail(email, 19);
+
+                foreach (var order in ordersByEmail)
+                {
+                    if (order.idOrder == orderById.idOrder)
+                    {
+                        var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                        if (row.Webinar.Status == WebinarStatus.Recorded)
+                            return Json(new { odCode = row.OnDemandCode }, JsonRequestBehavior.AllowGet);
+                        //else
+                        return Json(new { joinCode = row.TtsJoinUrl }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+
+
+                return null;
             }
             return null;
         }
@@ -855,10 +872,5 @@ namespace CUWebinars.Web.Controllers
             _disposed = true;
         }
 
-        public ActionResult AddBillingEmail(string addThisEmailAsBilling, int idOrder)
-        {
-            _logger.Info("AddBillingEmail: " + addThisEmailAsBilling + " to: " + idOrder);
-            return null;
-        }
     }
 }
