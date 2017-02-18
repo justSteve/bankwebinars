@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Configuration;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -213,18 +214,33 @@ namespace CUWebinars.Web.Controllers
 
                     if (User.Identity.IsAuthenticated)
                     {
+                        //M4Gen
                         var orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
-                        //_orderManagementService.
                         orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString, _globalConfig.TenantLogo);
-                        _cartControllerOrchestrator.FireMandrillNotificationEvent("steve@ttstrain.com", "Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
+                        _cartControllerOrchestrator.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"]
+                            , "[PTTest]Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
+
                         _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
                     }
                     else
                     {
+                        //M4Gen
+                        var orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
+
                         if (model.Order.Origin == "Express")
                         {
+                            //M4Gen
+                            orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString, _globalConfig.TenantLogo);
+                            _cartControllerOrchestrator.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"]
+                                , "[PTTest]Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
+
                             _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
                         }
+                        //M4Gen
+                        orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
+                        orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString, _globalConfig.TenantLogo);
+                        _cartControllerOrchestrator.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"]
+                            , "[PTTest]Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
 
                         _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: true);
                     }
@@ -538,7 +554,7 @@ namespace CUWebinars.Web.Controllers
 
                 _cartControllerOrchestrator.SaveOrder(order);
                 _logger.Info("Paytrace Multi-order starts");
-                
+
                 totalAmt = 0;
                 ProdDesc += "<tr><td colspan=3 align=left><font size=2><b>Registration Details - " + _globalConfig.Tenant + ".</b><br></font></td></tr>";
                 ProdDesc += "<tr><td colspan=3 height=1 bgcolor=000000></td></tr>";
@@ -1593,6 +1609,13 @@ namespace CUWebinars.Web.Controllers
                         }
                         else
                         {
+                            //M4Gen
+                            var orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
+                            orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString, _globalConfig.TenantLogo);
+                            _cartControllerOrchestrator.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"]
+                                , "[PTTest]Confirmation of Registration for " + order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                                .Webinar.Title, orderConfirmString);
+
                             _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
                         }
                     }
@@ -1623,6 +1646,12 @@ namespace CUWebinars.Web.Controllers
                             }
                             else
                             {
+                                //M4Gen
+                                var orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
+                                orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString, _globalConfig.TenantLogo);
+                                _cartControllerOrchestrator.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"]
+                                    , "[PTTest]Confirmation of Registration for " + order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title, orderConfirmString);
+
                                 _cartControllerOrchestrator.FireOrderSubmittedNotification(order,
                                     userCreatedInCart: false);
                             }
