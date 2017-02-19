@@ -20,7 +20,7 @@
 <script language="javascript" type="text/javascript">
 
     var arryAff = [@listAff];
-    //var arryAff = [2993, 1055];
+    //var arryAff = [2988, 62];
 
     // recursion control variables
     var callsNeeded = arryAff.length;
@@ -53,12 +53,13 @@
     });
 </script>
 
-<div style="width: 1100px; margin: 30px auto">
+<div id="GenerateWeeklyInvoices2" style="width: 1100px; margin: 30px auto">
     <h2>Generates Weekly Invoices</h2>
 
-    @using (Html.BeginForm("GenerateWeeklyInvoicesEvent", "Admin", FormMethod.Get, new { id = "GenerateWeeklyInvoicesForm", @class = "form-horizontal " }))
+    @using (Html.BeginForm("GenerateWeeklyInvoices2", "Admin", FormMethod.Get, new { id = "GenerateWeeklyInvoices2Form", @class = "form-horizontal " }))
     {
         @Html.AntiForgeryToken()
+        <h1>Running On V2</h1>
         <div id="frmStartDate">
             <p>It can take awhile to compile the invoices, please be patient and do not click Cancel or Refresh.</p>
             <p>Start Date</p>
@@ -68,6 +69,9 @@
             </div>
         </div>
     }
+</div>
+<div id="GenerateWeeklyInvoices1" style="width: 1100px; margin: 30px auto">
+
     @using (Html.BeginForm("SendWeeklyInvoicesEvent", "Admin", FormMethod.Get, new { id = "SendWeeklyInvoicesForm", @class = "form-horizontal " }))
     {
         <div id="SendRptCheckBoxes" class="control-group">
@@ -80,3 +84,31 @@
     }
 
 </div>
+
+@*<div style="width: 1100px; margin: 30px auto">
+        <h2>Generates Weekly Invoices</h2>
+
+        @using (Html.BeginForm("GenerateWeeklyInvoicesEvent", "Admin", FormMethod.Get, new { id = "GenerateWeeklyInvoicesForm", @class = "form-horizontal " }))
+        {
+            @Html.AntiForgeryToken()
+            <div id="frmStartDate">
+                <p>It can take awhile to compile the invoices, please be patient and do not click Cancel or Refresh.</p>
+                <p>Start Date</p>
+                <div>
+                    <input type="date" name="startDate" id="startDate" style="margin-bottom: 0px;" />
+                    <button id="submitStartDate">Submit</button> &nbsp;<span id="crunchingLabel">&nbsp;</span>
+                </div>
+            </div>
+        }
+        @using (Html.BeginForm("SendWeeklyInvoicesEvent", "Admin", FormMethod.Get, new { id = "SendWeeklyInvoicesForm", @class = "form-horizontal " }))
+        {
+            <div id="SendRptCheckBoxes" class="control-group">
+                <button id="sendRpt" style="display:none;">Send Reports</button>
+                <div class="controls">
+
+
+                </div>
+            </div>
+        }
+
+    </div>*@

@@ -572,6 +572,8 @@ namespace CUWebinars.Business.Services
 
                     order.InvoiceDetail = JsonHelpers.MergeJsonWithStoredField(order.InvoiceDetail, newJson);
                     _logger.Info("GenerateWeeklyInvoicesEvent | StoreInvoiceDetail on idOrder: " + order.idOrder);
+                    _logger.Info("GenInv: UPDATE dbo.[Order] SET InvoiceDetail = '" + order.InvoiceDetail + "' where idOrder =" + order.idOrder);
+
                 }
             }
             catch (Exception ex)
@@ -684,74 +686,74 @@ namespace CUWebinars.Business.Services
         }
 
 
-        public AffiliateInvoiceDTO GetAffiliateInvoice(int idWebinar, string aff)
-        {
+        //public AffiliateInvoiceDTO GetAffiliateInvoice(int idWebinar, string aff)
+        //{
 
-            decimal _totalDue = 0;
-            decimal _totalOnBilled = 0;
-            decimal _totalDiscounts = 0;
-            decimal _totalOnPaid = 0;
-            decimal _totalRoyalties = 0;
-            int idAffiliate = Convert.ToInt32(aff);
-            Webinar webinar = _webinarRepository.FindById(idWebinar);
-            var orders = _orderRepository.GetOrdersByWebinar(idWebinar).Where(a => a.idAffiliate == idAffiliate).ToList();
-            IList<OrderRowModel> rows = new List<OrderRowModel>();
+        //    decimal _totalDue = 0;
+        //    decimal _totalOnBilled = 0;
+        //    decimal _totalDiscounts = 0;
+        //    decimal _totalOnPaid = 0;
+        //    decimal _totalRoyalties = 0;
+        //    int idAffiliate = Convert.ToInt32(aff);
+        //    Webinar webinar = _webinarRepository.FindById(idWebinar);
+        //    var orders = _orderRepository.GetOrdersByWebinar(idWebinar).Where(a => a.idAffiliate == idAffiliate).ToList();
+        //    IList<OrderRowModel> rows = new List<OrderRowModel>();
 
-            ComputeRoyalty(new AffiliateInvoiceDTO(), orders, idAffiliate, false);
+        //    ComputeRoyalty(new AffiliateInvoiceDTO(), orders, idAffiliate, false);
 
-            var ordinalHolder = 0;
-            foreach (var order in orders)
-            {
-                ordinalHolder++;
-                var orow = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
-                OrderRowModel row = new OrderRowModel
-                {
-                    Royalty = orow.Royalty.ToString(),
-                    Email = order.BillingEmail,
-                    Institution = order.Institution,
-                    Name = order.FirstName + " " + order.LastName,
-                    OrderID = order.idOrder.ToString(),
-                    Percent = GetRowPercent(ordinalHolder, FindById(idAffiliate).CommissionModel),
-                    Price = order.Total.ToString(),
-                    Discount = (orow.UnitPrice - orow.RowPrice).ToString(),
-                    Status = order.OrderStatus.ToString()
-                };
+        //    var ordinalHolder = 0;
+        //    foreach (var order in orders)
+        //    {
+        //        ordinalHolder++;
+        //        var orow = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
+        //        OrderRowModel row = new OrderRowModel
+        //        {
+        //            Royalty = orow.Royalty.ToString(),
+        //            Email = order.BillingEmail,
+        //            Institution = order.Institution,
+        //            Name = order.FirstName + " " + order.LastName,
+        //            OrderID = order.idOrder.ToString(),
+        //            Percent = GetRowPercent(ordinalHolder, FindById(idAffiliate).CommissionModel),
+        //            Price = order.Total.ToString(),
+        //            Discount = (orow.UnitPrice - orow.RowPrice).ToString(),
+        //            Status = order.OrderStatus.ToString()
+        //        };
 
-                if (order.OrderStatus == OrderStatus.Paid)
-                {
-                    _totalOnPaid += order.Total;
-                }
-                if (order.OrderStatus == OrderStatus.Submitted)
-                {
-                    _totalOnBilled += order.Total;
-                }
-                _totalDue += order.Total;
-                _totalRoyalties += orow.Royalty;
+        //        if (order.OrderStatus == OrderStatus.Paid)
+        //        {
+        //            _totalOnPaid += order.Total;
+        //        }
+        //        if (order.OrderStatus == OrderStatus.Submitted)
+        //        {
+        //            _totalOnBilled += order.Total;
+        //        }
+        //        _totalDue += order.Total;
+        //        _totalRoyalties += orow.Royalty;
 
-                rows.Add(row);
+        //        rows.Add(row);
 
 
-            }
+        //    }
 
-            var model = new AffiliateInvoiceDTO
-            {
-                Affiliate = _affiliateRepository.FindById(idAffiliate),
-                AffiliateName = _affiliateRepository.FindById(idAffiliate).DisplayTitle,
+        //    var model = new AffiliateInvoiceDTO
+        //    {
+        //        Affiliate = _affiliateRepository.FindById(idAffiliate),
+        //        AffiliateName = _affiliateRepository.FindById(idAffiliate).DisplayTitle,
 
-                WebinarTitle = webinar.Title,
-                WebinarDate = webinar.Date.ToShortDateString(),
-                WebinarID = webinar.idWebinar,
-                Orders = orders,
+        //        WebinarTitle = webinar.Title,
+        //        WebinarDate = webinar.Date.ToShortDateString(),
+        //        WebinarID = webinar.idWebinar,
+        //        Orders = orders,
 
-                TotalDiscounts = _totalDiscounts,
-                TotalNetDue = _totalDue,
-                TotalOnBilled = _totalOnBilled,
-                TotalOnPaid = _totalOnPaid,
-                TotalRoyalties = _totalRoyalties
+        //        TotalDiscounts = _totalDiscounts,
+        //        TotalNetDue = _totalDue,
+        //        TotalOnBilled = _totalOnBilled,
+        //        TotalOnPaid = _totalOnPaid,
+        //        TotalRoyalties = _totalRoyalties
 
-            };
-            return model;
-        }
+        //    };
+        //    return model;
+        //}
 
         public IList<DiscountDTO> GetSubscriptionsByAffiliate(int idUserAff)
         {

@@ -27,7 +27,7 @@ namespace CUWebinars.Business.Services
         AffiliateInvoiceDTO BuildAffiliateInvoice(AffiliateInvoiceDTO invoice, List<Order> orders, int webinarId, int affiliateId);
         AffiliateInvoiceDTO BuildAffiliateInvoiceForPostEventOrders(AffiliateInvoiceDTO invoice, List<Order> theseOrders, int thisAffiliate);
         AffiliateInvoiceDTO BuildAffiliateInvoiceForAdjustedOrders(AffiliateInvoiceDTO invoice, List<Order> theseOrders, int thisAffiliate);
-        AffiliateInvoiceDTO GetAffiliateInvoice(int value, string aff);
+        //AffiliateInvoiceDTO GetAffiliateInvoice(int value, string aff);
         IList<DiscountDTO> GetSubscriptionsByAffiliate(int idUserAff);
         List<Uri> GetInvoicesByAffiliate(string globalConfigTenant, int affiliateIdUserAff);
         IList<Uri> GetPromosByAffiliate(string globalConfigTenant, int idUserAff, int idWebinar);

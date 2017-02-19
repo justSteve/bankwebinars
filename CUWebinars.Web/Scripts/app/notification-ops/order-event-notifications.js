@@ -30,6 +30,7 @@ $(function () {
     successScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-success">&nbsp;The Orders have been sent.</span>';
     sendAdhocEventUrl = '/Admin/SendAdhocEvent';
     generateWeeklyInvoicesEventUrl = '/Admin/GenerateWeeklyInvoicesEvent';
+    generateWeeklyInvoices2Url = '/Admin/GenerateWeeklyInvoices2';
     sendConnectionInfoUrl = '/Admin/SendConnectionInfo';
     sendReminderUrl = '/Admin/SendReminder';
     sendRecordingPostedUrl = '/Admin/SendRecordingPosted';
@@ -863,7 +864,8 @@ function FireGenerator() { // used recursively!!!
             cache: false,
             async: false,
             // timeout: 3000, // I don't think this is a good idea, maybe though...
-            url: "/Admin/GenerateWeeklyInvoicesEvent?startDate=" + payload.startDate + "&_idAffiliate=" + payload._idAffiliate,
+            url: "/Admin/GenerateWeeklyInvoices2?startDate=" + payload.startDate + "&_idAffiliate=" + payload._idAffiliate,
+            //url: "/Admin/GenerateWeeklyInvoicesEvent?startDate=" + payload.startDate + "&_idAffiliate=" + payload._idAffiliate,
             dataType: constants.JsonDataType,
             beforeSend: function () {
                 //crunchingLabel.html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Processing ' + (callsComplete + 1) + ' of ' + arryAff.length + '</span>');
