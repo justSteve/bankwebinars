@@ -1899,6 +1899,7 @@
     <Content Include="Content\mobile\Startup\vendor\font-awesome\fonts\FontAwesome.otf" />
     <Content Include="Content\mobile\Startup\vendor\swiper\LICENSE" />
     <Content Include="Content\mobile\Startup\vendor\typist\LICENCE" />
+    <Content Include="App_Data\mergeTemplates\ConnectionInfo2.docx" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev - FTP.pubxml" />

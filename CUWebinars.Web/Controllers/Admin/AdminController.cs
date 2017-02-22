@@ -4023,16 +4023,33 @@ namespace CUWebinars.Web.Controllers.Admin
                                     var invoiceLog = new InvoiceLog();
                                     invoiceLog.idOrder = o.idOrder;
                                     invoiceLog.ActiveInvoice = invoiceId;
-                                    //invoiceLog.User_AffState = new Dictionary<string, string>
-                                    //{
-                                    //    {"user", o.BillingState}
-                                    //    ,
-                                    //    {
-                                    //        "aff",
-                                    //        affiliate.WebUser.Addresses.SingleOrDefault(a => a.AddressType == "Billing")
-                                    //            .State
-                                    //    }
-                                    //};
+                                    string foundMatch = "";
+
+                                    if (affiliate.ttsDomain.EndsWith("ba"))
+                                    {
+                                        foundMatch = new string(affiliate.ttsDomain.Take(2).ToArray());
+                                        if (o.BillingState.ToLower() == foundMatch.ToLower())
+                                        {
+                                            foundMatch = "y";
+
+                                        }
+                                        else
+                                        {
+                                            foundMatch = o.BillingState;
+                                            _logger.Info("GenerateWeeklyInvoicesEvent | Aff State does not match: " +
+                                                         affiliate.ttsDomain + " vs. order's: " + o.BillingState);
+                                        }
+                                    }
+
+                                    invoiceLog.User_AffState = new Dictionary<string, string>
+                                    {
+                                        {"user", o.BillingState}
+                                        ,
+                                        {
+                                            "aff",
+                                            foundMatch
+                                        }
+                                    };
                                     invoiceLog.idOrder = o.idOrder;
                                     invoiceLog.idGTW = "";
                                     invoiceLog.idWebinar = webinar.idWebinar;

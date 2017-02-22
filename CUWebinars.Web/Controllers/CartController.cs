@@ -621,18 +621,18 @@ namespace CUWebinars.Web.Controllers
             // to get an approval amount set: AMOUNT~1.00
             // to get a declined amount set: AMOUNT~1.12
 
-            totalAmt = .21M;
-            if (order.idOrder % 2 != 0)
-                totalAmt = 1.12m;
-            //string parameters = "UN~shuener|PSWD~Nb9rj3Sw|TERMS~Y|TRANXTYPE~Sale|";
-            string parameters = "UN~demo123|PSWD~demo123|TERMS~Y|TRANXTYPE~Sale|";
+            //totalAmt = .21M;
+            //if (order.idOrder % 2 != 0)
+            //    totalAmt = 1.12m;
+            string parameters = "UN~shuener|PSWD~Nb9rj3Sw|TERMS~Y|TRANXTYPE~Sale|";
+            //string parameters = "UN~demo123|PSWD~demo123|TERMS~Y|TRANXTYPE~Sale|";
             parameters += "ORDERID~" + idOrder + "|AMOUNT~" + totalAmt + "|";
-            parameters += "ApproveURL~https://bwdev.azurewebsites.net/cart/PayTraceApproved/|";
-            parameters += "DeclineURL~https://bwdev.azurewebsites.net/cart/PayTraceDeclined/|";
-            parameters += "ReturnURL~https://bwdev.azurewebsites.net/cart/PayTracePostBack/|";
-            //parameters += "ApproveURL~" + _globalConfig.TenantURL + "/cart/PayTraceApproved/|";
-            //parameters += "DeclineURL~" + _globalConfig.TenantURL + "/cart/PayTraceDeclined/|";
-            //parameters += "ReturnURL~" + _globalConfig.TenantURL + "/cart/PayTracePostBack/|";
+            //parameters += "ApproveURL~https://bwdev.azurewebsites.net/cart/PayTraceApproved/|";
+            //parameters += "DeclineURL~https://bwdev.azurewebsites.net/cart/PayTraceDeclined/|";
+            //parameters += "ReturnURL~https://bwdev.azurewebsites.net/cart/PayTracePostBack/|";
+            parameters += "ApproveURL~" + _globalConfig.TenantURL + "/cart/PayTraceApproved/|";
+            parameters += "DeclineURL~" + _globalConfig.TenantURL + "/cart/PayTraceDeclined/|";
+            parameters += "ReturnURL~" + _globalConfig.TenantURL + "/cart/PayTracePostBack/|";
 
 
             string parameter_list = "PARMLIST=";
@@ -687,7 +687,7 @@ namespace CUWebinars.Web.Controllers
 
             string paramList = string.Format("DISPLAYTRUSTLOGO~Y|DISABLETERMS~Y|ENABLEREDIRECT~N|RETURNPARIS~Y|authKey~{0}|disablelogin~y|disableoptional~N|showbname~y|hideinvoice~n|hidepassword~y|orderid~{1}|bname~{2}", authKey, idOrder, order.FirstName + ' ' + order.LastName);
             paramList += "|ProductDetails~" + ProdDesc.Replace(System.Environment.NewLine, "");
-            paramList += "|test~y";
+            //paramList += "|test~y";
             paramList += "|baddress~" + order.BillingAddress;
             paramList += "|bcity~" + order.BillingCity;
             paramList += "|bstate~" + order.BillingState;

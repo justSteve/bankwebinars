@@ -596,9 +596,10 @@ namespace CUWebinars.Web.Helpers
             var fields = new NotificationMessageFields();
             OrderRow row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
             string TenantURL = _globalConfig.TenantURL();
+            string TenantEmail = _globalConfig.TenantEmail();
             string Tenant = _globalConfig.Tenant();
 
-            fields.TechSupportLink = "<a href='" + TenantURL + "/oh/" + order.idOrder + "'>" + TenantURL + "/oh/" + order.idOrder + "</a>";
+          //  fields.TechSupportLink = "<a href='" + TenantURL + "/oh/" + order.idOrder + "'>" + TenantURL + "/oh/" + order.idOrder + "</a>";
             fields.OndemandLink = " <a href='" + TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "'>" + TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "</a>";
             fields.LinkToMyWebinars = " <a href='" + TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "'>" + TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "</a>";
             fields.ChangeTimeZoneLink = " <a href='" + TenantURL + "/Order/ChangeTimeZone?idOrder=" + order.idOrder + "'>" + " click to change timezone." + "</a>";
@@ -617,10 +618,10 @@ namespace CUWebinars.Web.Helpers
             fields.MessageHeading = "Your Order is Submitted!";
             fields.ClickToJoinLink = "<a href='" + TenantURL + "/j/" + order.idOrder + "-" + row.TtsJoinUrl + "'>" +
                                      TenantURL + "/j/" + order.idOrder + "-" + row.TtsJoinUrl + "</a>";
-            fields.AddReminder = "<a href='" + TenantURL + "/Webinar/ICalOrder?icsOrder=" + order.idOrder + "'>" +
-                                 " add reminder." + "</a>";
+            fields.AddReminder = " <a href='" + TenantURL + "/Webinar/ICalOrder?icsOrder=" + order.idOrder + "'>" +
+                                 "Add to Calendar.</a>";
             fields.CCCaption =
-                " We didn't find any address(es) to CC: on this notification but would be happy to update <a href='" +
+                " We didn't find any address(es) already on the CC notification list but would be happy to update <a href='" +
                 TenantURL + "/Order/ChangeCC?idOrder=" + order.idOrder + "'>" + " with any address you send back." +
                 "</a>";
             fields.PaymentStatus = order.OrderStatus.ToString();
@@ -634,25 +635,27 @@ namespace CUWebinars.Web.Helpers
                 fields.PaymentCaption =
                     "Though pre-payment is not required (we'll be happy to invoice you at " + order.BillingEmail +
                     ") if you wish to pay by credit card <a href='" + TenantURL + "/Resume/" + order.idOrder +
-                    "'>" + "click here." + "</a>" + " Is someone else in your organization responsible for payments? <a href='" +
+                    "'> click here.</a>" + " Is someone else in your organization responsible for payments? <a href='" +
                     TenantURL + "/Order/AddBillingEmail?idOrder=" + order.idOrder + "'>" +
-                    "Enter their email here " + "</a>and we will send the required information directly.";
+                    "Enter their email here</a> and we will send the required information directly.";
             }
 
             if (row.Webinar.Title.Contains("Compliance Perspectives"))
             {
                 fields.AddLocsCost =
-                    " Compliance Perspective events include 3 Additional Locations at no extra cost - $75 per seat afterwards.";
+                    " Compliance Perspective events include 3 Additional Locations at no extra cost - $50 per seat afterwards.";
             }
             if (row.RegistrationType.ShowRecordingNotifications.ToLower() == "no")
             {
                 fields.RegDesc =
-                    "Included in your registration are links to all event material for five (5) business days. You can upgrade your order to gain 6 months OnDemand access - or get the Premier Package which includes a CD-ROM and printouts of the event's materials. We'll be happy to adjust your registration - just reply to this email! ";
+                    "Included in your registration are links to all event material for five (5) business days. You can upgrade your order to gain 6 months OnDemand access - or get the Premier Package which includes a CD-ROM and printouts of the event's materials. <a href='" + TenantURL + "/Resume/" + order.idOrder +
+                    "'>" + "We'll be happy to adjust your registration.</a> ";
             }
             else if (row.RegistrationType.ShowShippedNotifications.ToLower() == "no")
             {
                 fields.RegDesc =
-                    "Your registration includes OnDemand access to all event materials but does not include a CD-ROM or printouts. You can still upgrade to the Premier Package - just reply to this email! ";
+                    "Your registration includes OnDemand access to all event materials but does not include a CD-ROM or printouts.  <a href='" + TenantURL + "/Resume/" + order.idOrder +
+                    "'>" + "You can still upgrade to the Premier Package.</a>";
             }
 
             if (row.AdditionalLocation != null)
@@ -664,18 +667,21 @@ namespace CUWebinars.Web.Helpers
                     if (row.AdditionalLocation.Count > 1)
                     {
                         fields.ExistingAddLocs = locs.TrimEnd(',') +
-                                                 " is currently included as an Additional Location. Just let us know if you need more!";
+                                                 " is currently included as an Additional Location. <a href='" + TenantURL + "/Resume/" + order.idOrder +
+                    "'>" + "Just let us know if you need more!</a>";
                     }
                     else
                     {
                         fields.ExistingAddLocs = locs.TrimEnd(',').Replace(",", ", ") +
-                                                 " are currently included Additional Locations. Just let us know if you need more!";
+                                                 " are currently included Additional Locations. <a href='" + TenantURL + "/Resume/" + order.idOrder +
+                    "'>" + "Just let us know if you need change anything.</a>";
                     }
                 }
                 if (fields.ExistingAddLocs == "")
                 {
                     fields.ExistingAddLocs =
-                        " We didn't see any Additional Locations stored but would be happy to add all that you need. (add)";
+                        " We don't have any Additional Locations stored for this order. <a href='" + TenantURL + "/Resume/" + order.idOrder +
+                    "'>" + "Click here to add." + "</a>";
                 }
 
             }
