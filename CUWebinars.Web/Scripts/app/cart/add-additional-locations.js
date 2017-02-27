@@ -15,8 +15,6 @@ deleteItem = function (event) {
     var idx = trashClicked.substring(0, 1);
     var spanToRemove = locationsSpanPrefix + idx;
 
-    //Rollbar.info( "aal-#1", { 'deleting AdLoc': trashClicked } );
-
     $('#' + spanToRemove).hide(500, function () {
         $(this).remove();
     });
@@ -35,6 +33,12 @@ deleteItem = function (event) {
 $(function () {
     primeDomVariables();
     wireUpHandlers();
+
+    $("#additionalLocationsModalDialog").on('shown', function () {
+
+        $("#AddInputsButton").click();
+    });
+
 });
 
 function wireUpHandlers() {
@@ -52,10 +56,10 @@ function wireUpHandlers() {
     addLocationsButton.on('click', function (e) {
 
         e.preventDefault();
-        
-        $(this).append('<i id="loadModalSpinner" class="icon-spinner icon-spin"></i>');
 
-        $('#additionalLocationsModalDialog > div.modal-body').load('/Cart/GetAdditionalLocationByOrderId/' + $('#Webinar_idWebinar').val() + '/' + ($('#WebUser_idUser').val() || 0).toString(), function () {
+        $(this).append('<i id="loadModalSpinner" class="icon-spinner icon-spin"></i>');
+        
+        $('#additionalLocationsModalDialog > div.modal-body').load('/Cart/GetAdditionalLocationByOrderId/' + $('#idWebinar').val() + '/' + ($('#WebUser_idUser').val() || 0).toString(), function () {
             wireUpHandlersForModal();
             $('#AddInputsButton').focus();
             $('#additionalLocationsModalDialog').modal(modalFormOptions);
@@ -77,6 +81,9 @@ function primeDomVariables() {
 function wireUpHandlersForModal() {
     var locationsCloned, locationsBakForCancel;
     var collectAdditionalLocations = $('#collectAdditionalLocations');
+
+    //console.log(collectAdditionalLocations);
+    //console.log(additionalLocationEmailWrapper.find('input[type="email"]:last'));
     var locations = collectAdditionalLocations.children();
 
     if (locations.length > 0) {
@@ -91,12 +98,13 @@ function wireUpHandlersForModal() {
         additionalLocationEmailWrapper.append(locationsCloned);
 
     $('#AddInputsButton').on('click', function (e) {
-
+        
         e.preventDefault();
         $(".AddLocCaption")
             .html("<b>Note:</b> Only use this entry for branches or other remote locations that you wish to attend. We will collect the primary (billing) email on the next screen.");
 
         if (numberOfAdditionalLocations === 0) {
+            
             $('#AdditionalLocationEmailWrapper').after($('<button>',
             {
                 id: 'sumbitAdditionalLocationsButton',
@@ -144,6 +152,7 @@ function wireUpHandlersForModal() {
             // first get the last previous email input
             var lastInput = additionalLocationEmailWrapper.find('input[type="email"]:last');
             // get its id
+            
             var lastInputId = lastInput.attr('id');
             var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
             newId = id + 1;
@@ -153,7 +162,6 @@ function wireUpHandlersForModal() {
         $('#AdditionalLocationEmail_' + newId).focus();
         numberOfAdditionalLocations++;
 
-        //Rollbar.info( "aal-#2",{ AddInputClicked: newId, NumberAdLocs: numberOfAdditionalLocations } ); 
     });
 
     numberOfAdditionalLocations = $('#AdditionalLocationEmailWrapper input[type="email"]').length;
@@ -171,7 +179,7 @@ function wireUpHandlersForModal() {
         }));
 
         $('#sumbitAdditionalLocationsButton').on('click', function () {
-            
+
             collectAdditionalLocations.empty();
             collectAdditionalLocations.append(additionalLocationEmailWrapper.children());
 

@@ -1039,31 +1039,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 return PartialView("~/Views/Admin/Partials/_ServerError.cshtml");
             }
         }
-
-        public PartialViewResult GetAdditionalLocationByOrderId(int? id = null)
-        {
-            if (id.HasValue)
-            {
-                var order = _orderManagementService.GetOrderById(id.Value);
-                var additionalLocations =
-                    order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.ToList();
-                additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(additionalLocations).ToList();
-
-                var addAdditionalLocationViewModel = new AdditionalLocationOfferViewModel
-                {
-                    AdditionalLocations = additionalLocations,
-                    OrderExists = true,
-                    Emails = additionalLocations.Select(al => al.Email).ToList()
-                };
-
-                return PartialView(
-                    "~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml",
-                    addAdditionalLocationViewModel
-                );
-            }
-            return null;
-        }
-
+        
         public ActionResult GetOrdersByTypeahead(int? id)
         {
             if (id.HasValue)

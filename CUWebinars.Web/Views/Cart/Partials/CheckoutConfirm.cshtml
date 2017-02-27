@@ -2,13 +2,7 @@
 @using CUWebinars.Business.Core.Helpers
 @using DotNetOpenAuth.Messaging
 @model CheckoutConfirmViewModel
-@functions
-{
 
-
-}
-
-}
 <script language="javascript" type="text/javascript">
     if (desCheckout) {
         $('#ConfirmRegistrationBillMe').hide();
@@ -48,10 +42,7 @@
         {
             if (Model.OrderStatus == OrderStatus.InProcess || Model.OrderStatus == OrderStatus.AwaitingVerification)
             {
-                <script language="javascript" type="text/javascript">
 
-                    $(function () {});
-                </script>
                 var HideConfirm = "no";
                 if (Model.DESCheckout)
                 {
@@ -71,6 +62,10 @@
                 <div id="AdjustAddLoc" class="row initialHide">
                     <div class="offset2 span9 ">
                         <div id="additionalLocationsCaption" class="clear pull-right">
+                            @*<div id="displayAddLoc">
+                                @Html.Partial("~/Views/Webinar/Partials/_AdditionalLocationsModal2.cshtml", Model.AdditionalLocationsViewModel)
+                                
+                            </div>*@
                             Additional Locations: @Model.AdditionalLocationsViewModel.OptionsCost.ToString("c") will be added to the cost of registration for each additional seat.
 
                             @*<button id="addAnotherAddLoc" class="btn btn-mini">add</button>*@
@@ -102,8 +97,8 @@
 
                     </div>
                 </div>
-                                }
 
+                                }// end of test if (Model.OrderStatus == OrderStatus.InProcess || Model.OrderStatus == OrderStatus.AwaitingVerification)
                                 if (Model.OrderStatus != OrderStatus.InProcess)
                                 {
                                     <div id="postCheckout" class="well pull-right">
@@ -161,20 +156,6 @@
                                             }
                                             Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
 
-                                            <script src="/Scripts/app/cart/add-additional-locations.js"></script>
+
                                             <script type="text/javascript">var anyAddLocs = @(string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption) ? "false" : "true");</script>
-                                            @Html.Partial("~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml", new AdditionalLocationOfferViewModel
-                                       {
-                                           AdditionalLocationAddViewModel = new AdditionalLocationAddViewModel
-                                           {
-                                               AdditionalLocations = Model.AdditionalLocationsViewModel.AdditionalLocations,
-                                               Price = Model.AdditionalLocationsViewModel.OptionsCost
-                                           },Emails = addLocEmails,
-                                           Price = Model.AdditionalLocationsViewModel.OptionsCost,
-                                           AdditionalLocations = Model.AdditionalLocationsViewModel.AdditionalLocations
-                                           
-                                       });
-    
-
-
 }

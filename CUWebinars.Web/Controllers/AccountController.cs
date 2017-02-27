@@ -657,7 +657,7 @@ namespace CUWebinars.Web.Controllers
 
         }
 
-        public JsonResult GetEditBillingForm(int orderId)
+        public JsonResult GetEditBillingForm_Compact(int orderId)
         {
             string html = "";
             var order = _orderManagementService.GetOrderById(orderId);
@@ -671,7 +671,7 @@ namespace CUWebinars.Web.Controllers
                     editingUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
                 }
 
-                _logger.Info(string.Format("GetEditBillingForm: {0} opened {1}", editingUser.email, orderId));
+                _logger.Info(string.Format("GetEditBillingForm_Compact: {0} opened {1}", editingUser.email, orderId));
 
                 var editModel = BuildOrderInfoModel(order, "");
 
@@ -1025,6 +1025,7 @@ namespace CUWebinars.Web.Controllers
             {
                 EditFields = new EditOrderModel
                 {
+                    AuditInfo = GetFirstPageOrigin(order),
                     AdditionalLocationsAvailableOnLoad = false, // see below for where this is properly decided.
                     AdditionalLocationsRenderer =
                         ViewHelpers.GetRendererOfAdditionalLocations(additionalLocations.Select(al => al.Email).ToList()),
@@ -1099,6 +1100,24 @@ namespace CUWebinars.Web.Controllers
             }
 
             return editModel;
+        }
+
+        private string GetFirstPageOrigin(Order order)
+        {
+            try
+            {
+                AuditInfoModel parseOutAudit = JsonConvert.DeserializeObject<AuditInfoModel>(order.AuditInfo.Replace("{\"AuditInfo\":", "").Replace("}}", "}"));
+                dynamic jsonObject = new JObject();
+                jsonObject.FirstPage = parseOutAudit.FirstPage;
+                jsonObject.RemoteUser = parseOutAudit.RemoteUser;
+                jsonObject.Origin = order.Origin;
+
+                return JsonConvert.SerializeObject(jsonObject);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         private bool? CheckIfAddLocAvailable(int optionId)

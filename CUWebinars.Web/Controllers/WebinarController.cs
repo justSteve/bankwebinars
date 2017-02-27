@@ -1182,11 +1182,24 @@ namespace CUWebinars.Web.Controllers
                             OrderExists = true,
                             AdditionalLocationsViewModel = new AdditionalLocationsViewModel
                             {
+
                                 AdditionalLocations =
                                     model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
                                         .AdditionalLocation,
                                 Addresses = additionalLocationsViewModel.Addresses,
+                                AdditionalLocationsRenderer = ViewHelpers.GetRendererOfAdditionalLocations(additionalLocationsViewModel.Addresses.Split(',')),
+
                                 OptionsCost = additionalLocationsViewModel.OptionsCost,
+                                EditAdditionalLocationsViewModel = new EditAdditionalLocationsViewModel
+                                {
+                                    idUser = model.Order.idUser,
+                                    CostPerAdditionalLocation = additionalLocationsViewModel.OptionsCost,
+                                    NumberOfAdditionalLocations = additionalLocationsViewModel.Addresses.Split(',').Length,
+                                    TotalCostOfOptions = 0,
+                                    WebinarId = orderRow.Webinar.idWebinar,
+                                    idOrder = order.idOrder,
+                                    idOrderRow = orderRow.idOrderRow
+                                }
                             },
                             OrderRowExists = true,
                             OrderRowHasId = true,
@@ -1331,14 +1344,15 @@ namespace CUWebinars.Web.Controllers
             {
                 orderRowForOrder = model.Order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active);
                 Debug.Assert(orderRowForOrder != null, "orderRowForOrder object should always have a value here.");
-
-                //additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(orderRowForOrder.AdditionalLocation.ToList());
+                if (orderRowForOrder.AdditionalLocation != null && orderRowForOrder.AdditionalLocation.Count > 0)
+                additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(orderRowForOrder.AdditionalLocation.ToList());
             }
 
             model.Topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar).ToList();
 
             model.WebinarFiles = _webinarManagementService.GetWebinarFilesPerWebinar(webinar.idWebinar);
             var AddLocPrice = _orderManagementService.GetAdditionalLocationsPricing(webinar.idWebinar);
+            //var enumerable = additionalLocations as IList<AdditionalLocation> ?? additionalLocations.ToList();
             model.CheckoutOptionsViewModel = new CheckoutOptionsViewModel
             {
                 DisplayOptionsViewModel = new DisplayOptionsViewModel
@@ -1372,7 +1386,7 @@ namespace CUWebinars.Web.Controllers
             if (!orderExists) return;
             model.CheckoutOptionsViewModel.OrderStatus = model.Order.OrderStatus;
             model.CheckoutOptionsViewModel.OrderHasId = model.Order.idOrder > 0;
-            var row = orderRowForOrder;
+            //var row = orderRowForOrder;
 
             model.CheckoutOptionsViewModel.RegistrationType = orderRowForOrder.RegistrationType;
 
@@ -1384,13 +1398,13 @@ namespace CUWebinars.Web.Controllers
                 new DisplayRowPriceViewModel
                 {
                     //Discount = row.Discount,
-                    NumberOfAdditionalLocations = row.AdditionalLocation.Count(),
-                    OrderStatus = row.Order.OrderStatus,
+                    NumberOfAdditionalLocations = orderRowForOrder.AdditionalLocation.Count(),
+                    OrderStatus = orderRowForOrder.Order.OrderStatus,
                     //Price = Convert.ToDecimal(row.RegistrationType.Price),
                     PricesAndDiscounts =
-                        _orderManagementService.CalculateOrderCost(row.Order, orderRowForOrder.Webinar.AdditionalLocationPrice),
+                        _orderManagementService.CalculateOrderCost(orderRowForOrder.Order, orderRowForOrder.Webinar.AdditionalLocationPrice),
                     //RowPrice = row.RowPrice,
-                    RegistrationType = row.RegistrationType
+                    RegistrationType = orderRowForOrder.RegistrationType
                 };
 
             // populate AdditionalLocationOfferViewModel and AdditionalLocationAddViewModel
@@ -1425,9 +1439,19 @@ namespace CUWebinars.Web.Controllers
             {
                 AdditionalLocationsViewModel = new AdditionalLocationsViewModel
                 {
-                    AdditionalLocations = row.AdditionalLocation,
+                    AdditionalLocations = orderRowForOrder.AdditionalLocation,
                     Addresses = lstAddLoc, //additionalLocationsPricing.Item1,
-                    OptionsCost = orderRowForOrder.Webinar.AdditionalLocationPrice//additionalLocationsPricing.Item2
+                    OptionsCost = orderRowForOrder.Webinar.AdditionalLocationPrice,//additionalLocationsPricing.Item2
+                                                    EditAdditionalLocationsViewModel = new EditAdditionalLocationsViewModel
+                                                    {
+                                                        idUser = model.Order.idUser,
+                                                        CostPerAdditionalLocation = orderRowForOrder.Webinar.AdditionalLocationPrice,
+                                                        NumberOfAdditionalLocations = 0,
+                                                        TotalCostOfOptions = 0,
+                                                        WebinarId = orderRowForOrder.Webinar.idWebinar,
+                                                        idOrder = orderRowForOrder.idOrder,
+                                                        idOrderRow = orderRowForOrder.idOrderRow
+                                                    }
                 },
                 OrderRow = orderRowForOrder,
                 RecordingLink =

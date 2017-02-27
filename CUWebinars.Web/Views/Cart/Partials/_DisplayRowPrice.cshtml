@@ -146,11 +146,10 @@
         }
         if (Model.NumberOfAdditionalLocations > 0)
         {
-            //rowAmount.Append(GetAdditionalLocationsTextSpan() + "<br>");
-            rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> change?</button> " + GetAdditionalLocationsTextSpan());
+            rowAmount.Append(GetAdditionalLocationsTextSpan() + "<br>");
+            //rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> change?</button> " + GetAdditionalLocationsTextSpan());
         }
 
-        //rowAmount.Append("<span id='showSubTotal'>Subtotal: " + Model.PricesAndDiscounts.UnitPrice.ToString(CurrencyFormatToken) + "</span><br />");
         if (Model.PricesAndDiscounts.TaxAmount > 0)
         {
             rowAmount.Append("<span  id='showTax'>Tax: <span id='taxAmt'>" + Model.PricesAndDiscounts.TaxAmount.ToString(CurrencyFormatToken) + "<br></span></span><br />");

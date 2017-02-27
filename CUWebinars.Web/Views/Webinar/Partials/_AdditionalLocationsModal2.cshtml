@@ -1,0 +1,97 @@
+﻿@model AdditionalLocationsViewModel
+@{
+    var showPrice = string.Format("{0:C0}", @Model.OptionsCost);
+    var emails = Model.Addresses.Split(',');
+}
+
+<script language="javascript" type="text/javascript">
+    var idOrderFromDTEOC = @Model.EditAdditionalLocationsViewModel.idOrderRow;
+    var idOrderRowFromDTEOC = @Model.EditAdditionalLocationsViewModel.idOrderRow;
+
+    $(function () {
+        //wireUpHandlersForModal();
+    });
+</script>
+<div> Additional Location editor is not currently available. </div>
+@*//AddLoc editor in form of admin editor
+<div>
+    @if (Model.EditAdditionalLocationsViewModel.idOrderRow > 0)
+    {
+        <div id="addLocsPanel" style="text-align: center; border-style: solid; border-color: darkgrey">
+            @using (Html.BeginForm("UpdateAdditionalLocations", "Admin", FormMethod.Post, new { id = "editOrderCompactAddLoc" }))
+            {
+                @Html.AntiForgeryToken()
+                <div>
+                    @Html.HiddenFor(m => m.EditAdditionalLocationsViewModel.CostPerAdditionalLocation)
+                    @Html.HiddenFor(m => m.EditAdditionalLocationsViewModel.idOrderRow)
+                    @Html.HiddenFor(m => m.EditAdditionalLocationsViewModel.idUser)
+                    @Html.HiddenFor(m => m.EditAdditionalLocationsViewModel.WebinarId)
+                    @Html.HiddenFor(m => m.EditAdditionalLocationsViewModel.NumberOfAdditionalLocations)
+                    @Html.HiddenFor(m => m.EditAdditionalLocationsViewModel.TotalCostOfOptions)
+                    //Required for POST. TextBoxFor won't ModelBind
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+
+                        <button id="addLocationsButton" class="btn btn-default btn-mini">Add?</button>
+                        @if (@Model.EditAdditionalLocationsViewModel.NumberOfAdditionalLocations == 1)
+                        {
+                            var a = 1;
+                        }
+                        Additional Locations: <span id="nrAddLocs">@Model.EditAdditionalLocationsViewModel.NumberOfAdditionalLocations</span>
+
+                    </div>
+                    @Html.Raw(Model.AdditionalLocationsRenderer.ToString())
+                </div>
+                <div id="UpdateAddLocsButtonWrapper" class="control-group">
+                    <button id="UpdateAddLocsButton" class="btn btn-primary btn-mini">Submit</button>
+                </div>
+
+            }
+        </div>
+    }
+
+
+</div>
+
+//below is editor in form of end-user create new add loc.*@
+@*<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Additional Locations</h3>
+        <div class="AddLocCaption">
+            <blockquote style="margin-bottom: 0;">Want your branches to participate? Facilities within your organization will be able to participate without the travel costs of coming to one location.</blockquote>
+        </div>
+    </div>
+    <div class="modal-body">
+
+        <p><button id="AddInputsButton" class="btn btn-mini btn-success pull-right">Add Additional Location(s) - @showPrice</button></p>
+        @{
+            <div id="AdditionalLocationEmailWrapper">
+                @{
+                    if (emails.Length > 0)
+                    {
+                        for (int i = 0; i < emails.Count(); i++)
+                        {
+                                 <div id="additionalLocationsList"></div>
+
+                                 <span id="LocationSpan-@i">
+                                <input id="AdditionalLocationEmail_@i" name="AddAdditionalLocationViewModel.Emails[@i]" type="text" value="@emails[i]" />
+                                &nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="@i-AdditionLocationEmail-delete"></i>
+                            </span>
+                                 <br id="@i-break"/>
+
+                        }
+                    }
+                }
+            </div>
+        }
+    </div>
+    <div class="modal-footer">
+        <button id="closeButton" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>*@
+
+
+
+
+<script src="~/Scripts/app/admin/edit-forms-in-grid.js"></script>
+<script src="~/Scripts/app/cart/add-additional-locations.js"></script>

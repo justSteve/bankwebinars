@@ -492,12 +492,14 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Models\AuditInfoModel.cs" />
     <Compile Include="Models\AddBillingEmail.cs" />
     <Compile Include="Models\NotificationMessageFields.cs" />
     <Compile Include="Models\FindLinkModel.cs" />
     <Compile Include="Models\IncomingEmailModel.cs" />
     <Compile Include="Models\ListSegmentsViewModel.cs" />
     <Compile Include="Notification\Templates\OrderSubmitted2ViewModel.cs" />
+    <Compile Include="ViewModel\EditAdditionalLocationsViewModel.cs" />
     <Compile Include="ViewModel\EditPresenterViewModel.cs" />
     <Compile Include="Core\CalendarRssFullDTOAssembler.cs" />
     <Compile Include="Helpers\GemBoxHelpers.cs" />
@@ -2194,11 +2196,11 @@
     <Content Include="Views\Admin\Home\_PasswordResetFromVerKey.cshtml" />
     <Content Include="Views\Account\EditPresenter.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\EditPresenter.cshtml" />
-    <Content Include="Views\Home\testStaticPage.cshtml" />
     <Content Include="Views\Order\AddBillingEmail.cshtml" />
     <Content Include="Views\Account\_FindLinkPartial.cshtml" />
     <Content Include="Views\Admin\FindMailChimpListSegments.cshtml" />
     <Content Include="Views\Webinar\Partials\_OpenTheWebinar.cshtml" />
+    <Content Include="Views\Webinar\Partials\_AdditionalLocationsModal2.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

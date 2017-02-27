@@ -116,11 +116,13 @@ namespace CUWebinars.Web.Controllers
                             , new JProperty("By", _appHelper.GetUserAuditInfo())));
 
 
-                    row.Order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(row.Order.AdminComments, newJson, "DiscountIsApplied");
+                    row.Order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(row.Order.AdminComments, newJson,
+                        "DiscountIsApplied");
                     //row.Order.AffiliateComments = JsonHelpers.AddObjectToJsonArray(row.Order.AffiliateComments, newJson);
 
-                    if (myDiscount.DiscountType == DiscountType.Subscription && myDiscount.DateValidFrom != myDiscount.DateValidTo
-                       && row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
+                    if (myDiscount.DiscountType == DiscountType.Subscription &&
+                        myDiscount.DateValidFrom != myDiscount.DateValidTo
+                        && row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
                     {
                         ViewBag.DiscountSurcharge = "A $50 surcharge is added for shipping & handling";
                         msg += " A $50 surcharge is added for shipping & handling.";
@@ -139,9 +141,12 @@ namespace CUWebinars.Web.Controllers
                                 OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
                                 Tax = pricesAndDiscounts.TaxAmount,
                                 Total = pricesAndDiscounts.TotalOrderPrice,
-                                FlatOff = (pricesAndDiscounts.Discount != null) ? pricesAndDiscounts.Discount.FlatOff : 0,
-                                PercentOff = (pricesAndDiscounts.Discount != null) ? pricesAndDiscounts.Discount.PercentOff : 0,
-                                CreditsRemain = _cartControllerOrchestrator.CalculateCreditsRemaining(myDiscount).ToString()
+                                FlatOff =
+                                (pricesAndDiscounts.Discount != null) ? pricesAndDiscounts.Discount.FlatOff : 0,
+                                PercentOff =
+                                (pricesAndDiscounts.Discount != null) ? pricesAndDiscounts.Discount.PercentOff : 0,
+                                CreditsRemain =
+                                _cartControllerOrchestrator.CalculateCreditsRemaining(myDiscount).ToString()
                             });
                 }
                 else
@@ -166,7 +171,7 @@ namespace CUWebinars.Web.Controllers
                 return PartialView(
                     "~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml",
                     _cartControllerOrchestrator.BuildAdditionalLocationOfferViewModel(webUserId.Value, webinarId)
-                    );
+                );
             }
             return null;
         }
@@ -200,7 +205,8 @@ namespace CUWebinars.Web.Controllers
                     ErrorSignal.FromCurrentContext().Raise(exception);
                 }
 
-                if (_cartControllerOrchestrator.UserHasMultipleEvents(id) && model.Order.Origin != DomainConstants.OriginExpress)
+                if (_cartControllerOrchestrator.UserHasMultipleEvents(id) &&
+                    model.Order.Origin != DomainConstants.OriginExpress)
                 {
                     return Json(new
                     {
@@ -210,14 +216,18 @@ namespace CUWebinars.Web.Controllers
                 try
                 {
                     model.Order.OrderStatus = OrderStatus.Submitted;
-                    _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email, model.Order.OrderRows.FirstOrDefault());
+                    _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email,
+                        model.Order.OrderRows.FirstOrDefault());
 
                     if (User.Identity.IsAuthenticated)
                     {
                         //M4Gen
-                        var orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
-                        orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString, _globalConfig.TenantLogo);
-                        _cartControllerOrchestrator.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"]
+                        var orderConfirmString =
+                            _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
+                        orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
+                            _globalConfig.TenantLogo);
+                        _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                            ConfigurationManager.AppSettings["TestEmailAddress"]
                             , "[PTTest]Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
 
                         _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
@@ -225,21 +235,27 @@ namespace CUWebinars.Web.Controllers
                     else
                     {
                         //M4Gen
-                        var orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
+                        var orderConfirmString =
+                            _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
 
                         if (model.Order.Origin == "Express")
                         {
                             //M4Gen
-                            orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString, _globalConfig.TenantLogo);
-                            _cartControllerOrchestrator.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"]
+                            orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
+                                _globalConfig.TenantLogo);
+                            _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                                ConfigurationManager.AppSettings["TestEmailAddress"]
                                 , "[PTTest]Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
 
-                            _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
+                            _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order,
+                                userCreatedInCart: false);
                         }
                         //M4Gen
                         orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
-                        orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString, _globalConfig.TenantLogo);
-                        _cartControllerOrchestrator.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"]
+                        orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
+                            _globalConfig.TenantLogo);
+                        _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                            ConfigurationManager.AppSettings["TestEmailAddress"]
                             , "[PTTest]Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
 
                         _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: true);
@@ -267,7 +283,8 @@ namespace CUWebinars.Web.Controllers
 
                 try
                 {
-                    _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.Order.BillingEmail, model.Order.OrderRows.FirstOrDefault());
+                    _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.Order.BillingEmail,
+                        model.Order.OrderRows.FirstOrDefault());
 
                 }
                 catch (Exception exception)
@@ -281,7 +298,9 @@ namespace CUWebinars.Web.Controllers
                 {
                     Result = WebUiConstants.Success,
                     OrderRowID = model.Order.idOrder,
-                    Msg = string.Format("Your registration is confirmed. Complete details will be emailed to {0}.", model.Order.BillingEmail)
+                    Msg =
+                    string.Format("Your registration is confirmed. Complete details will be emailed to {0}.",
+                        model.Order.BillingEmail)
                 }, JsonRequestBehavior.AllowGet);
 
             }
@@ -312,22 +331,25 @@ namespace CUWebinars.Web.Controllers
 
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
 
-                    JProperty adminMsg = new JProperty(JsonPropertyKeys.AffiliateCheckout, JsonConvert.SerializeObject(model.Order.Affiliate, Formatting.None,
-                        new JsonSerializerSettings()
-                        {
-                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                        }));
+                    JProperty adminMsg = new JProperty(JsonPropertyKeys.AffiliateCheckout,
+                        JsonConvert.SerializeObject(model.Order.Affiliate, Formatting.None,
+                            new JsonSerializerSettings()
+                            {
+                                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                            }));
 
                     var editUserModel = _stateService.GetValue<EditUserModel>("editUserModel");
                     if (editUserModel != null)
                     {
-                        adminMsg = new JProperty(JsonPropertyKeys.AffiliateCheckout, JsonConvert.SerializeObject(editUserModel, Formatting.None,
-                        new JsonSerializerSettings()
-                        {
-                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                        }));
+                        adminMsg = new JProperty(JsonPropertyKeys.AffiliateCheckout,
+                            JsonConvert.SerializeObject(editUserModel, Formatting.None,
+                                new JsonSerializerSettings()
+                                {
+                                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                                }));
 
-                        model.Order.AdminComments = JsonHelpers.MergeJsonWithStoredField(model.Order.AdminComments, adminMsg);
+                        model.Order.AdminComments = JsonHelpers.MergeJsonWithStoredField(model.Order.AdminComments,
+                            adminMsg);
 
                         model.Order.FirstName = editUserModel.FirstName;
                         model.Order.LastName = editUserModel.LastName;
@@ -346,7 +368,8 @@ namespace CUWebinars.Web.Controllers
                     }
 
                     model.Order.OrderStatus = OrderStatus.Submitted;
-                    _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email, model.Order.OrderRows.FirstOrDefault());
+                    _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email,
+                        model.Order.OrderRows.FirstOrDefault());
 
                     model.Order.Origin = DomainConstants.CartByAffiliate;
 
@@ -372,7 +395,8 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (Exception exception)
                 {
-                    ModelState.AddModelError(string.Empty, "There was a problem at the server. Please contact the administrator.");
+                    ModelState.AddModelError(string.Empty,
+                        "There was a problem at the server. Please contact the administrator.");
                     _logger.ErrorException("ConfirmOrder|ConfirmOrder failed ", exception);
                     ErrorSignal.FromCurrentContext().Raise(exception);
                 }
@@ -404,7 +428,10 @@ namespace CUWebinars.Web.Controllers
                     _logger.FatalException("CancelOrder " + id, ex);
                 }
             }
-            ModelState.AddModelError(string.Empty, "No Order ID was posted to the Server. In case of persistent error contact us at " + _globalConfig.TenantEmail + ". For immediate assistance, use our Help & Feedback button in your lower right screen.");
+            ModelState.AddModelError(string.Empty,
+                "No Order ID was posted to the Server. In case of persistent error contact us at " +
+                _globalConfig.TenantEmail +
+                ". For immediate assistance, use our Help & Feedback button in your lower right screen.");
             return this.ModelStateJson(ModelState);
         }
 
@@ -428,7 +455,8 @@ namespace CUWebinars.Web.Controllers
                     if (sessionAff != null && (sessionAff.idUserAff != order.Affiliate.idUserAff) ||
                         sessionAff.idUserAff != order.idAffiliate)
                     {
-                        _logger.Fatal("CheckoutConfirm has MISMATCHED AFFILIATE IDS" + order.idOrder + " SessionAff" + sessionAff.idUserAff);
+                        _logger.Fatal("CheckoutConfirm has MISMATCHED AFFILIATE IDS" + order.idOrder + " SessionAff" +
+                                      sessionAff.idUserAff);
                         order.Affiliate = sessionAff;
                         order.idAffiliate = sessionAff.idUserAff;
                     }
@@ -438,7 +466,9 @@ namespace CUWebinars.Web.Controllers
                     {
                         ViewBag.DiscountCaption = _cartControllerOrchestrator.GetDiscountCaption(
                             row.Discount, row, null, 1);
-                        if (row.Discount.DiscountType == DiscountType.Subscription && row.Discount.DateValidFrom != row.Discount.DateValidTo && row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
+                        if (row.Discount.DiscountType == DiscountType.Subscription &&
+                            row.Discount.DateValidFrom != row.Discount.DateValidTo &&
+                            row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
                         {
                             ViewBag.DiscountSurcharge = "A $50 surcharge is added for shipping & handling";
                             order.Total = order.Total + (int)50.00;
@@ -449,7 +479,8 @@ namespace CUWebinars.Web.Controllers
                 }
                 else
                 {
-                    _logger.FatalException("CheckoutConfirm was passed a null or zero value: ", new Exception("null or zero ID passed to CheckoutConfirm partial"));
+                    _logger.FatalException("CheckoutConfirm was passed a null or zero value: ",
+                        new Exception("null or zero ID passed to CheckoutConfirm partial"));
                 }
             }
             catch (Exception ex)
@@ -541,7 +572,33 @@ namespace CUWebinars.Web.Controllers
             var ProdDescText = "";
             if (multi != null)
             {
+
                 orderList = multi.TrimEnd(',').Split(',');
+
+                //var lstOrders = new List<Order>();
+                //foreach (var _id in orderList)
+                //{
+                //    var _order = _cartControllerOrchestrator.GetOrderById(Convert.ToInt32(_id));
+                //    lstOrders.Add(_order);
+
+                //}
+                //foreach (var _order in lstOrders)
+                //{
+                //    var hasDupeOrder = _cartControllerOrchestrator.CheckIfEmailAlreadyRegisteredForWebinar(
+                //         _order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar,
+                //         _order.BillingEmail);
+                //    if (hasDupeOrder > 0)
+                //    {
+                //        _cartControllerOrchestrator.SetOrderStatus(hasDupeOrder, order.BillingEmail,
+                //                OrderStatus.Canceled);
+                //        _logger.Warn("BuildRegistrationSummaryMultiViewModel found duped order: " + hasDupeOrder + "_" + order.BillingEmail);
+                //        orderList = orderList.ToString().Replace(hasDupeOrder.ToString() + ",", "");
+                //    }
+                //}
+                //orderList = _cartControllerOrchestrator.CheckIfEmailAlreadyRegisteredForWebinar()
+
+
+
             }
             if (orderList != null && orderList.Length > 0)
             {
@@ -549,14 +606,15 @@ namespace CUWebinars.Web.Controllers
                 var newJson = new JProperty(
                     "Multi-OrderCheckout",
                     orderList
-                    );
+                );
                 order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, newJson);
 
                 _cartControllerOrchestrator.SaveOrder(order);
                 _logger.Info("Paytrace Multi-order starts");
 
                 totalAmt = 0;
-                ProdDesc += "<tr><td colspan=3 align=left><font size=2><b>Registration Details - " + _globalConfig.Tenant + ".</b><br></font></td></tr>";
+                ProdDesc += "<tr><td colspan=3 align=left><font size=2><b>Registration Details - " +
+                            _globalConfig.Tenant + ".</b><br></font></td></tr>";
                 ProdDesc += "<tr><td colspan=3 height=1 bgcolor=000000></td></tr>";
                 ProdDesc += "<tr bgcolor=CCCCCC>";
                 ProdDesc += "    <td align='Center'><b>Title</b></td>";
@@ -573,7 +631,8 @@ namespace CUWebinars.Web.Controllers
                     totalAmt = totalAmt + _newPrice.TotalOrderPrice;
 
                     wTitle = _order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title;
-                    wTitle = wTitle.Substring(0, Math.Min(wTitle.Length, 40)) + " <font size=2>(" + _globalConfig.TenantPrefix +
+                    wTitle = wTitle.Substring(0, Math.Min(wTitle.Length, 40)) + " <font size=2>(" +
+                             _globalConfig.TenantPrefix +
                              _order.idOrder + ")</font>";
                     regType =
                         _order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
@@ -588,11 +647,13 @@ namespace CUWebinars.Web.Controllers
                     ProdDesc += "</tr>";
                     if (ProdDescText.Length > 150)
                     {
-                        ProdDescText += wTitle.Substring(0, Math.Min(wTitle.Length, 20)) + " (" + _globalConfig.TenantPrefix + _order.idOrder + ")" + Environment.NewLine;
+                        ProdDescText += wTitle.Substring(0, Math.Min(wTitle.Length, 20)) + " (" +
+                                        _globalConfig.TenantPrefix + _order.idOrder + ")" + Environment.NewLine;
                     }
                     else
                     {
-                        ProdDescText += wTitle.Substring(0, Math.Min(wTitle.Length, 40)) + " (" + _globalConfig.TenantPrefix + _order.idOrder + ")" + Environment.NewLine;
+                        ProdDescText += wTitle.Substring(0, Math.Min(wTitle.Length, 40)) + " (" +
+                                        _globalConfig.TenantPrefix + _order.idOrder + ")" + Environment.NewLine;
                     }
 
                     _logger.Info("PaytraceMulti-order ends");
@@ -601,7 +662,8 @@ namespace CUWebinars.Web.Controllers
             else
             {
 
-                ProdDesc += "<tr><td colspan=3 align=left><font size=2><b>Registration Details - " + _globalConfig.Tenant + "</b></font></td></tr>";
+                ProdDesc += "<tr><td colspan=3 align=left><font size=2><b>Registration Details - " +
+                            _globalConfig.Tenant + "</b></font></td></tr>";
                 ProdDesc += "<tr><td colspan=3 height=1 bgcolor=000000></td></tr>";
                 ProdDesc += "<tr bgcolor=CCCCCC>";
                 ProdDesc += "    <td align='Center'><b>Title</b></td>";
@@ -614,7 +676,8 @@ namespace CUWebinars.Web.Controllers
                 ProdDesc += "    <td align='left'>" + regType + "</td>";
                 ProdDesc += "    <td align='left'>" + totalAmt + "</td>";
                 ProdDesc += "</tr>";
-                ProdDescText += wTitle.Substring(0, Math.Min(wTitle.Length, 40)) + " (" + _globalConfig.TenantPrefix + order.idOrder + Environment.NewLine;
+                ProdDescText += wTitle.Substring(0, Math.Min(wTitle.Length, 40)) + " (" + _globalConfig.TenantPrefix +
+                                order.idOrder + Environment.NewLine;
             }
 
             //format parameters for request 
@@ -685,7 +748,10 @@ namespace CUWebinars.Web.Controllers
                 }, JsonRequestBehavior.AllowGet);
             }
 
-            string paramList = string.Format("DISPLAYTRUSTLOGO~Y|DISABLETERMS~Y|ENABLEREDIRECT~N|RETURNPARIS~Y|authKey~{0}|disablelogin~y|disableoptional~N|showbname~y|hideinvoice~n|hidepassword~y|orderid~{1}|bname~{2}", authKey, idOrder, order.FirstName + ' ' + order.LastName);
+            string paramList =
+                string.Format(
+                    "DISPLAYTRUSTLOGO~Y|DISABLETERMS~Y|ENABLEREDIRECT~N|RETURNPARIS~Y|authKey~{0}|disablelogin~y|disableoptional~N|showbname~y|hideinvoice~n|hidepassword~y|orderid~{1}|bname~{2}",
+                    authKey, idOrder, order.FirstName + ' ' + order.LastName);
             paramList += "|ProductDetails~" + ProdDesc.Replace(System.Environment.NewLine, "");
             //paramList += "|test~y";
             paramList += "|baddress~" + order.BillingAddress;
@@ -705,8 +771,8 @@ namespace CUWebinars.Web.Controllers
             _stateService.SetValue(WebUiConstants.PayTraceSubmit, paramList);
 
             _logger.Info("PayTraceModalIni submits: {1}, Session: {0}",
-              _appHelper.GetUserAuditInfo(), paramList
-                );
+                _appHelper.GetUserAuditInfo(), paramList
+            );
 
             return Json(new
             {
@@ -731,7 +797,8 @@ namespace CUWebinars.Web.Controllers
                 {
                     var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(incoming.ToString());
                     _logger.Info("Incoming " + msgHtml);
-                    var parsedOrder = ParseMandrillMsg.ParseAcs("<html><body>" + msgHtml.msg.html + "</body></html>", DateTime.Now.ToString());
+                    var parsedOrder = ParseMandrillMsg.ParseAcs("<html><body>" + msgHtml.msg.html + "</body></html>",
+                        DateTime.Now.ToString());
                     _logger.Info("IncomingFromMandrillParsed: " + JsonConvert.SerializeObject(parsedOrder));
 
                     if (
@@ -754,7 +821,8 @@ namespace CUWebinars.Web.Controllers
                         PostForm += "&AffiliateID=" + HttpUtility.UrlEncode("62");
                         PostForm += "&BankWebID=" + HttpUtility.UrlEncode(parsedOrder.BankWebID);
                         PostForm += "&BillingContact=" +
-                                    HttpUtility.UrlEncode(parsedOrder.BillingContact ?? "MissingBillingContact@ttstrain.com");
+                                    HttpUtility.UrlEncode(parsedOrder.BillingContact ??
+                                                          "MissingBillingContact@ttstrain.com");
                         PostForm += "&City=" + HttpUtility.UrlEncode(parsedOrder.City ?? "-ct");
                         PostForm += "&Company=" + HttpUtility.UrlEncode(parsedOrder.Company ?? "_co");
                         PostForm += "&CompanyBillingInformation=" +
@@ -828,7 +896,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     var order = _cartControllerOrchestrator.CreateOrder(
                         formModel
-                        );
+                    );
 
                     return Json(new
                     {
@@ -872,7 +940,13 @@ namespace CUWebinars.Web.Controllers
         public ActionResult SignupAffiliate(CheckoutOptionsViewModel formModel)
         {
 
-            _logger.Info("SignupAffiliate: " + JsonConvert.SerializeObject(formModel, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+            _logger.Info("SignupAffiliate: " +
+                         JsonConvert.SerializeObject(formModel, Formatting.None,
+                             new JsonSerializerSettings
+                             {
+                                 MaxDepth = 1,
+                                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                             }));
             if (ModelState.IsValid)
             {
                 var orderAlreadyExists = _cartControllerOrchestrator.GetOrderByUserIdAndWebinar(
@@ -891,8 +965,8 @@ namespace CUWebinars.Web.Controllers
                                 success = "AlreadySubmitted",
                                 orderId = order.idOrder,
                                 orderRowId =
-                                    order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
-                                        .idOrderRow,
+                                order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
+                                    .idOrderRow,
                                 webinarId = formModel.idWebinar
                             }, JsonRequestBehavior.AllowGet);
                         }
@@ -905,8 +979,8 @@ namespace CUWebinars.Web.Controllers
                                 success = "WasCanceled",
                                 orderId = order.idOrder,
                                 orderRowId =
-                                    order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
-                                        .idOrderRow,
+                                order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
+                                    .idOrderRow,
                                 webinarId = formModel.idWebinar
                             }, JsonRequestBehavior.AllowGet);
                         }
@@ -919,8 +993,8 @@ namespace CUWebinars.Web.Controllers
                                 success = "InProcess",
                                 orderId = order.idOrder,
                                 orderRowId =
-                                    order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
-                                        .idOrderRow,
+                                order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
+                                    .idOrderRow,
                                 webinarId = formModel.idWebinar
                             }, JsonRequestBehavior.AllowGet);
                         }
@@ -934,7 +1008,7 @@ namespace CUWebinars.Web.Controllers
                 var order = _cartControllerOrchestrator.CreateOrderByAffiliate(
                     formModel, _stateService.GetValue<Affiliate>("CurrentAffiliate")
 
-                    );
+                );
 
                 return Json(new
                 {
@@ -969,7 +1043,7 @@ namespace CUWebinars.Web.Controllers
                 var currentAffiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
 
                 var webUsers = _cartControllerOrchestrator.GetWebUsersByLastNameForAffiliate(lastName,
-                    currentAffiliate.idUserAff)
+                        currentAffiliate.idUserAff)
                     .Select(w => new
                     {
                         id = w.idUser,
@@ -997,12 +1071,17 @@ namespace CUWebinars.Web.Controllers
                     // form for the user's shipping details. This is because that RegType will have associated materials
                     // that are posted via traditional mail e.g. handouts.
                     Tuple<string, string> showPlusShip = _cartControllerOrchestrator.CheckIfAddLocShouldHide(optionID);
-                    return Json(new { shouldShow = showPlusShip.Item1, shippingDetailsRqrd = showPlusShip.Item2 }, JsonRequestBehavior.AllowGet);
+                    return Json(new { shouldShow = showPlusShip.Item1, shippingDetailsRqrd = showPlusShip.Item2 },
+                        JsonRequestBehavior.AllowGet);
                 }
                 catch (Exception exception)
                 {
-                    _logger.ErrorException(string.Format("CheckIfAddLocShouldHide in cart. | Session{0}", _appHelper.GetUserAuditInfo()), exception);
-                    ModelState.AddModelError(string.Empty, "There has been an error. For customer service contact us by using the Online Chat button below or emailing " + _globalConfig.TenantEmail + ".");
+                    _logger.ErrorException(
+                        string.Format("CheckIfAddLocShouldHide in cart. | Session{0}", _appHelper.GetUserAuditInfo()),
+                        exception);
+                    ModelState.AddModelError(string.Empty,
+                        "There has been an error. For customer service contact us by using the Online Chat button below or emailing " +
+                        _globalConfig.TenantEmail + ".");
                 }
             }
             return this.ModelStateJson(ModelState);
@@ -1034,7 +1113,8 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (Exception exception)
                 {
-                    _logger.ErrorException("RemoveAdditionalLocationsFromOrder|Session=" + _appHelper.GetUserAuditInfo(), exception);
+                    _logger.ErrorException(
+                        "RemoveAdditionalLocationsFromOrder|Session=" + _appHelper.GetUserAuditInfo(), exception);
                     ErrorSignal.FromCurrentContext().Raise(exception);
                 }
 
@@ -1053,7 +1133,8 @@ namespace CUWebinars.Web.Controllers
                     var regType = _cartControllerOrchestrator.GetRegTypeById(idRegType.Value);
 
                     var newRegType = regType.OptionLabel;
-                    var oldRegType = _cartControllerOrchestrator.GetOrderRowLoaded(idOrderRow.Value).RegistrationType.OptionLabel;
+                    var oldRegType =
+                        _cartControllerOrchestrator.GetOrderRowLoaded(idOrderRow.Value).RegistrationType.OptionLabel;
 
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(idOrderRow);
                     model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType = regType;
@@ -1070,13 +1151,14 @@ namespace CUWebinars.Web.Controllers
                     else
                     {
                         discountCaption = _cartControllerOrchestrator.GetDiscountCaption(
-                               model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Discount,
-                               model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active), null, 1);
+                            model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Discount,
+                            model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active), null, 1);
                     }
 
                     //_cartControllerOrchestrator.UpdateRegTypeOnLegacy(idRegType.Value, model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar, model.Order.BillingEmail);
 
-                    _logger.Info("EditRegTypeTo: " + newRegType + " From: " + oldRegType + " on orderId: " + model.Order.idOrder);
+                    _logger.Info("EditRegTypeTo: " + newRegType + " From: " + oldRegType + " on orderId: " +
+                                 model.Order.idOrder);
 
                     if (!string.IsNullOrEmpty(model.Order.InvoiceDetail))
                     {
@@ -1090,7 +1172,7 @@ namespace CUWebinars.Web.Controllers
                     if (ShippedDate != null)
                     {
                         shippDateString = ShippedDate.Value.Month
-                        + "/" + ShippedDate.Value.Day;
+                                          + "/" + ShippedDate.Value.Day;
                     }
                     return
                         Json(
@@ -1112,7 +1194,8 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     _logger.ErrorException(
-                        String.Format("UpdateOrderDetails failed on {0} with {1} Session={2}", idRegType, exception.Message, _appHelper.GetUserAuditInfo()), exception);
+                        String.Format("UpdateOrderDetails failed on {0} with {1} Session={2}", idRegType,
+                            exception.Message, _appHelper.GetUserAuditInfo()), exception);
                     ErrorSignal.FromCurrentContext().Raise(exception);
 
                     return Json(new { Result = WebUiConstants.Fail });
@@ -1177,7 +1260,7 @@ namespace CUWebinars.Web.Controllers
                     return RedirectToAction("Details", "Webinar", new
                     {
                         id = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
-                        .Webinar.idWebinar,
+                            .Webinar.idWebinar,
                         idOrder = id,
                         source = "Resume"
                     });
@@ -1193,6 +1276,7 @@ namespace CUWebinars.Web.Controllers
             }
             return RedirectToAction("Login", "Account", new { ReturnURL = "/Resume/" + id });
         }
+
         public ActionResult Express(int id)
         {
             try
@@ -1206,7 +1290,7 @@ namespace CUWebinars.Web.Controllers
                 return RedirectToAction("Details", "Webinar", new
                 {
                     id = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
-                                    .Webinar.idWebinar,
+                        .Webinar.idWebinar,
                     idOrder = id,
                     source = "Express"
                 });
@@ -1238,15 +1322,19 @@ namespace CUWebinars.Web.Controllers
                         order.OrderStatus = OrderStatus.Submitted;
 
                         order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType =
-                            _cartControllerOrchestrator.GetRegTypeByLabel(form.q10_registrationType, form.q18_q_webinarid18);
-                        _logger.Info("ExpressPostback regtype is: " + order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType.OptionLabel);
+                            _cartControllerOrchestrator.GetRegTypeByLabel(form.q10_registrationType,
+                                form.q18_q_webinarid18);
+                        _logger.Info("ExpressPostback regtype is: " +
+                                     order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                                         .RegistrationType.OptionLabel);
                         _cartControllerOrchestrator.UpdateOrderPricing(order);
 
                         return View("~/Views/Cart/ThankYou.cshtml", order);
                     }
 
 
-                    return RedirectToAction("Details", "Webinar", new { id = form.q18_q_webinarid18, idOrder = form.q11_orderid, source = "ExpressPostback2" });
+                    return RedirectToAction("Details", "Webinar",
+                        new { id = form.q18_q_webinarid18, idOrder = form.q11_orderid, source = "ExpressPostback2" });
 
                     //                  return RedirectToAction("OrderComplete", "Account", new { id = order.idOrder });
                 }
@@ -1290,11 +1378,14 @@ namespace CUWebinars.Web.Controllers
                     if (order != null)
                     {
                         order.AdminComments = "";
-                        var newJson = new JProperty(string.Concat(JsonPropertyKeys.OrderCreatedByExpressCheckoutKey), JsonConvert.SerializeObject(_appHelper.GetSessionStartInfo()));
+                        var newJson = new JProperty(string.Concat(JsonPropertyKeys.OrderCreatedByExpressCheckoutKey),
+                            JsonConvert.SerializeObject(_appHelper.GetSessionStartInfo()));
 
-                        JProperty OrderCreatedByExpressCheckout = new JProperty(JsonPropertyKeys.OrderCreatedByExpressCheckoutKey, newJson.Value);
+                        JProperty OrderCreatedByExpressCheckout =
+                            new JProperty(JsonPropertyKeys.OrderCreatedByExpressCheckoutKey, newJson.Value);
 
-                        order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, OrderCreatedByExpressCheckout);
+                        order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments,
+                            OrderCreatedByExpressCheckout);
 
 
                         ExpressCheckoutModel model = _cartControllerOrchestrator.ExpressCheckout(order, user);
@@ -1310,7 +1401,8 @@ namespace CUWebinars.Web.Controllers
                 else
                 {
                     var regTypeID =
-                        _cartControllerOrchestrator.GetRegTypeByLabel("OnDemand Recording Only", idWebinar: idWebinar).idRegType;
+                        _cartControllerOrchestrator.GetRegTypeByLabel("OnDemand Recording Only", idWebinar: idWebinar)
+                            .idRegType;
 
                     int selectedUser = 0;
                     if (User.Identity.IsAuthenticated)
@@ -1321,7 +1413,8 @@ namespace CUWebinars.Web.Controllers
                         {
                             if (identity.Identity.IsAuthenticated)
                             {
-                                var userAccount = _membershipService.GetUserAccountByUserId(ClaimsExtensions.GetUserID(identity));
+                                var userAccount =
+                                    _membershipService.GetUserAccountByUserId(ClaimsExtensions.GetUserID(identity));
 
                                 selectedUser = _membershipService.GetUserByEmail(userAccount.Email).idUser;
                             }
@@ -1428,8 +1521,9 @@ namespace CUWebinars.Web.Controllers
 
             if (order.OrderStatus != OrderStatus.Paid)
             {
-                payTraceModel.Appcode = "PayTrace reports that your transaction succeeded however, we have not yet received a confirmation" +
-                                        "code but will update your order status as soon as that arrives.";
+                payTraceModel.Appcode =
+                    "PayTrace reports that your transaction succeeded however, we have not yet received a confirmation" +
+                    "code but will update your order status as soon as that arrives.";
             }
 
             return View(payTraceModel);
@@ -1489,6 +1583,7 @@ namespace CUWebinars.Web.Controllers
 
             return View();
         }
+
         [HttpPost]
         public ActionResult ThankYou(FormCollection form)
         {
@@ -1579,26 +1674,24 @@ namespace CUWebinars.Web.Controllers
 
                 if (order == null) throw new ArgumentNullException("order");
 
-                if (payTraceModel.Appmsg.StartsWith("Your TEST transaction was successfully processed.") || payTraceModel.Appmsg.Contains("Approv") || payTraceModel.CartType.ToLower() == "check")
+                if (payTraceModel.Appmsg.StartsWith("Your TEST transaction was successfully processed.") ||
+                    payTraceModel.Appmsg.Contains("Approv") || payTraceModel.CartType.ToLower() == "check")
                 {
-                    _logger.Info("PayTrace postback confirms Id BW-{0}",
-                        JsonConvert.SerializeObject(order, Formatting.None,
-                            new JsonSerializerSettings
-                            {
-                                MaxDepth = 1,
-                                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                            }));
 
-                    bool multi = order.AdminComments.Contains("Multi-OrderCheckout");
+                    bool multi = order.AdminComments != null
+                        && order.AdminComments.Contains("Multi-OrderCheckout");
 
                     if (!multi)
                     {
+                        
                         order.OrderStatus = OrderStatus.Paid;
 
                         _cartControllerOrchestrator.AddClaimForPostEventMaterials(order.BillingEmail,
                             order.OrderRows.FirstOrDefault());
 
                         _cartControllerOrchestrator.UpdateOrderPricing(order);
+                        _logger.Info("PayTrace postback confirms Id BW-{0}: ", JsonConvert.SerializeObject(order, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+
                         if (
                             order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
                                 .Webinar.SeriesInfo ==
@@ -1610,17 +1703,23 @@ namespace CUWebinars.Web.Controllers
                         else
                         {
                             //M4Gen
-                            var orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
-                            orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString, _globalConfig.TenantLogo);
-                            _cartControllerOrchestrator.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"]
-                                , "[PTTest]Confirmation of Registration for " + order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
-                                .Webinar.Title, orderConfirmString);
+                            var orderConfirmString =
+                                _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
+                            orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
+                                _globalConfig.TenantLogo);
+                            _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                                ConfigurationManager.AppSettings["TestEmailAddress"]
+                                ,
+                                "[PTTest]Confirmation of Registration for " +
+                                order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                                    .Webinar.Title, orderConfirmString);
 
                             _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
                         }
                     }
                     else
                     {
+                        _logger.Info("PayTrace postback hits multi - {0}: ", JsonConvert.SerializeObject(order, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
 
                         JObject o = JObject.Parse(order.AdminComments);
 
@@ -1628,33 +1727,44 @@ namespace CUWebinars.Web.Controllers
 
                         foreach (var odr in list)
                         {
-                            order = _cartControllerOrchestrator.LoadOrder(Convert.ToInt32(odr.ToString()));
-
-                            order.OrderStatus = OrderStatus.Paid;
-
-                            _cartControllerOrchestrator.AddClaimForPostEventMaterials(order.BillingEmail,
-                                order.OrderRows.FirstOrDefault());
-
-                            _cartControllerOrchestrator.UpdateOrderPricing(order);
-                            if (
-                                order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
-                                    .Webinar.SeriesInfo ==
-                                "DES")
+                            try
                             {
-                                _logger.Info("DES Subscription is building: " + order.idOrder);
-                                _cartControllerOrchestrator.BuildOrderSubmitted2DESNotification(order);
-                            }
-                            else
-                            {
-                                //M4Gen
-                                var orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
-                                orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString, _globalConfig.TenantLogo);
-                                _cartControllerOrchestrator.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"]
-                                    , "[PTTest]Confirmation of Registration for " + order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title, orderConfirmString);
+                                order = _cartControllerOrchestrator.LoadOrder(Convert.ToInt32(odr.ToString()));
 
-                                _cartControllerOrchestrator.FireOrderSubmittedNotification(order,
-                                    userCreatedInCart: false);
+                                _logger.Info("Multi-OrderCheckout loops: " + JsonConvert.SerializeObject(odr));
+
+                                order.OrderStatus = OrderStatus.Paid;
+
+                                _cartControllerOrchestrator.AddClaimForPostEventMaterials(order.BillingEmail,
+                                    order.OrderRows.FirstOrDefault());
+
+                                _cartControllerOrchestrator.UpdateOrderPricing(order);
+                                if (
+                                    order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                                        .Webinar.SeriesInfo ==
+                                    "DES")
+                                {
+                                    _logger.Info("DES Subscription is building: " + order.idOrder);
+                                    _cartControllerOrchestrator.BuildOrderSubmitted2DESNotification(order);
+                                }
+                                else
+                                {
+                                    //M4Gen
+                                    var orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
+                                    orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString, _globalConfig.TenantLogo);
+                                    _cartControllerOrchestrator.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"]
+                                        , "[PTTest]Confirmation of Registration for " + order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title, orderConfirmString);
+
+                                    _cartControllerOrchestrator.FireOrderSubmittedNotification(order,
+                                        userCreatedInCart: false);
+                                }
                             }
+                            catch (Exception ex)
+                            {
+                                _logger.FatalException("Multi-OrderCheckout", ex);
+                                throw;
+                            }
+
                         }
                     }
                 }
@@ -1689,6 +1799,8 @@ namespace CUWebinars.Web.Controllers
 
 
         }
+
+
         [HttpPost]
 
         public void PostBackWPS(FormCollection form)

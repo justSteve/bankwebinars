@@ -328,7 +328,7 @@ function editBillingCell(cell, $td, rowData) {
 
     $.ajax({
         async: false,
-        url: "/account/GetEditBillingForm",
+        url: "/account/GetEditBillingForm_Compact",
         data: ({ orderId: rowData.idOrder }),
         dataType: "json",
         type: "POST",
@@ -345,7 +345,7 @@ function editBillingCell(cell, $td, rowData) {
 
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert("/account/GetEditBillingForm idOrder=" + rowData.idOrder + textStatus);
+            alert("/account/GetEditBillingForm_Compact idOrder=" + rowData.idOrder + textStatus);
         },
         beforeSend: function () {
             addIsLoadingIndicator($td, -1); // let ajax "complete" call remove

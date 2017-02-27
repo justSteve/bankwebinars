@@ -42,8 +42,6 @@ $(function () {
     if (ieVer === "preIE10")
         $("#iePre10").show();
 
-
-
     signUpForm = $('#SignUpForm');
 
     signUpFormContainer = $('#SignUpFormContainer'); // The big beige box
@@ -123,8 +121,7 @@ $(function () {
 
         });
         var cancelOrderForm = cartStateManager.getCancelOrderForm();
-        console.log(cancelOrderForm);
-
+        
         $('#CancelModal').on('show', function (e) {
 
             $('#cancelModalOrderId').val(cartStateManager.getOrderId());
@@ -456,94 +453,16 @@ function setUpEditButtons() {
 
     $('#revealAddLocsPanel').on('click', function (e) {
         e.preventDefault();
-
-        //div located at line 55 of CheckoutConfirm
+        
         $('#AdjustAddLoc').slideToggle();
+
     });
     $('#editUserDetails').on('click', function (e) {
         e.preventDefault();
         $('#AdjustUserDetails').slideToggle(400, function () { $('#editUserResult').remove(); });
     });
 
-    $('#SubmitUserDetailEdits').on('click', function (e) {
 
-        e.preventDefault();
-
-        var self = $(this);
-
-        var form = $('#UserDetailsAdjustForm');
-
-        var url = form.attr('action');
-
-        var token = form.find('input[name=__RequestVerificationToken]').val();
-        var headers = {};
-        headers['__RequestVerificationToken'] = token;
-
-
-        var payload = {
-            email: $('#AdjustUserDetailsPanel_Email').val(),
-            idUser: $('#AdjustUserDetailsPanel_idUser').val(),
-            firstname: $('#AdjustUserDetailsPanel_FirstName').val(),
-            lastname: $('#AdjustUserDetailsPanel_LastName').val(),
-            Institution: $('#AdjustUserDetailsPanel_Institution').val()
-        };
-
-
-        $.ajax({
-            type: 'POST',
-            contentType: constants.JsonContentType,
-            cache: false,
-            url: url,
-            dataType: constants.JsonDataType,
-            data: JSON.stringify(payload),
-            headers: headers,
-            beforeSend: function () {
-                $('#editUserResult').remove();
-                self.after('<span id="userDetailsSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
-            }
-        }).done(function (data) {
-
-            if (data.Result === 'Success') {
-                self.after('<span id="editUserResult">&nbsp;<span class="label label-success"><span> Details updated successfully! </span></span></span>').hide().fadeIn(500);
-
-            }
-
-            $('#userDetailsSpinner').remove();
-        });
-    });
-
-    $('#addAnotherAddLoc').on('click', function (e) {
-        alert("adding");
-        e.preventDefault();
-
-        var newId;
-
-        if (numberOfAdditionalLocationsTab3 == 0) {
-
-            additionalLocationsList.after($('<button>',
-            {
-                id: 'applyAdditionalLocationsButton',
-                text: 'done adding?',
-                'class': 'btn btn-mini btn-primary'
-            }));
-
-            $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
-
-            newId = 0;
-        } else {
-            // first get the last previous email input
-            var lastInput = additionalLocationsList.find('input[type="email"]:last');
-            // get its id
-            var lastInputId = lastInput.attr('id');
-            var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
-            newId = id + 1;
-        }
-        additionalLocationsList.append('<span id="' + locationsSpanPrefix + newId + '"><input id="AdditionalLocationEmail_' + newId + '" name="AdditionalLocations[' + newId + '].Email" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + newId + '-AdditionLocationEmail-delete"></i></span> <br id="' + newId + breakSuffix + '">');
-        additionalLocationsList.find('i#' + newId + '-AdditionLocationEmail-delete').on('click', deleteAddLocInputTabb3);
-        $('#AdditionalLocationEmail_' + newId).focus();
-        numberOfAdditionalLocationsTab3++;
-
-    });
 }
 
 function populateAdditionalLocationsOn3rdTab() {
@@ -554,7 +473,7 @@ function populateAdditionalLocationsOn3rdTab() {
         locationsSpanPrefix = 'LocationSpan-',
         breakSuffix = '-break';
     }
-
+    console.log($('#collectAdditionalLocations'));
     // This variable gets declared elsewhere. Hnce, no 'var' keyword
     addLocsOn1stTabContainer = $('#collectAdditionalLocations');
     var locations = addLocsOn1stTabContainer.children();

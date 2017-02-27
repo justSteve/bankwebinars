@@ -4,7 +4,7 @@
 @model  CUWebinars.Web.Models.DataTablesModels.EditOrderInfoModel
 @{
     var strAdminComments = Model.EditFields.Order.AdminComments;
-    var strAudit = Model.EditFields.Order.AuditInfo;
+    var strAudit = Model.EditFields.AuditInfo;
     var strInvoice = Model.EditFields.Order.InvoiceDetail;
 
     if (string.IsNullOrEmpty(strInvoice))

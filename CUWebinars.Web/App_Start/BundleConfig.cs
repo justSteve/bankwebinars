@@ -45,9 +45,9 @@ namespace CUWebinars.Web.App_Start
                         "~/Scripts/toastr.js"
                         ));
 
-            bundles.Add(new ScriptBundle("~/bundles/AdditionalLocation").Include(
-                "~/Scripts/app/cart/add-additional-locations.js"
-                ));
+            //bundles.Add(new ScriptBundle("~/bundles/AdditionalLocation").Include(
+            //    "~/Scripts/app/cart/add-additional-locations.js"
+            //    ));
 
             bundles.Add(new ScriptBundle("~/bundles/jotForm").Include(
                 "~/Scripts/calendarview.js",
@@ -189,8 +189,9 @@ namespace CUWebinars.Web.App_Start
                          "~/Scripts/app/cart/create-order-new.js",
                          "~/Scripts/app/cart/register-during-checkout.js",
                          "~/Scripts/app/cart/details.js",
-                         "~/Scripts/app/cart/register-user-in-cart.js"
-                //,"~/Scripts/app/cart/edit-order.js"
+                         "~/Scripts/app/cart/register-user-in-cart.js",
+                         "~/Scripts/app/cart/add-additional-locations.js"
+                        //,"~/Scripts/app/cart/edit-order.js"
                         ));
 
             bundles.Add(new ScriptBundle("~/bundles/create-order-affiliate").Include(
