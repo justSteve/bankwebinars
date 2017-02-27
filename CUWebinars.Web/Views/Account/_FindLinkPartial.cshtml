@@ -32,7 +32,7 @@
                     console.log(data);
                     if (data) {
                         if (data.odCode) {
-                            $("#OperationMessageFindLink").html("<a href='@globalConfig.TenantURL/o/" + data.odCode + ">@globalConfig.TenantURL/" + data.odCode + "</a>");
+                            $("#OperationMessageFindLink").html("<h1><a href='@globalConfig.TenantURL/o/" + data.odCode + ">@globalConfig.TenantURL/" + data.odCode + "</a></h1>");
                             $("#FindLinkLegend").text("Link Is Found!");;
                             $("#inputForm").hide();
                         } else if (data.joinCode) {
@@ -40,7 +40,7 @@
                             $("#FindLinkLegend").text("Link Is Found!");
                             $("#inputForm").hide();
                         } else {
-                            $("#OperationMessageFindLink").text("Unfortunately we were unable to locate a code based on that combination. Please ensure you are entering the email that was used on the original order.");
+                            $("#OperationMessageFindLink").html("<p>Unfortunately we were unable to locate a code based on that combination. Please ensure you are entering the email that was used on the original order. For additional assistance please email us at: @globalConfig.TenantEmail or use our online chat window (lower right corner of the screen).</p>");
 
 
                             alert("Code Not Found");
@@ -76,7 +76,7 @@
                     <input id="FindLinkButton" class="btn btn-default" type="submit" value="Find Link" /><span id="FindLinkStatus" style="color: green"></span>
                 </span>
             </p>
-            <h1 id="OperationMessageFindLink"></h1>
+            <div id="OperationMessageFindLink"></div>
         </fieldset>
     }
 </div>

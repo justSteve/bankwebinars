@@ -820,7 +820,7 @@ namespace CUWebinars.Web.Controllers
                 }
 
 
-                return null;
+                return Json(new { LinkNotFound = "Link Not Found" }, JsonRequestBehavior.AllowGet);
             }
             return null;
         }
