@@ -63,9 +63,9 @@
                     <div class="offset2 span9 ">
                         <div id="additionalLocationsCaption" class="clear pull-right">
                             @*<div id="displayAddLoc">
-                                @Html.Partial("~/Views/Webinar/Partials/_AdditionalLocationsModal2.cshtml", Model.AdditionalLocationsViewModel)
-                                
-                            </div>*@
+                                    @Html.Partial("~/Views/Webinar/Partials/_AdditionalLocationsModal2.cshtml", Model.AdditionalLocationsViewModel)
+
+                                </div>*@
                             Additional Locations: @Model.AdditionalLocationsViewModel.OptionsCost.ToString("c") will be added to the cost of registration for each additional seat.
 
                             @*<button id="addAnotherAddLoc" class="btn btn-mini">add</button>*@
@@ -73,7 +73,7 @@
 
                             @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new { id = "AdjustAddLocsForm" }))
                             {
-                                <div id="additionalLocationsList"></div>
+                            <div id="additionalLocationsList"></div>
                             }
 
                         </div>
@@ -93,11 +93,8 @@
                         <div id="showCartPrice">
                             @{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }
                         </div>
-
-
                     </div>
                 </div>
-
                                 }// end of test if (Model.OrderStatus == OrderStatus.InProcess || Model.OrderStatus == OrderStatus.AwaitingVerification)
                                 if (Model.OrderStatus != OrderStatus.InProcess)
                                 {
@@ -146,7 +143,7 @@
                                             }
 
                                             Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
-
+                                            
                                             Html.RenderPartial("~/Views/Cart/Partials/_ContinueShopping.cshtml");
                                             if (ViewBag.Order != null)
                                             {

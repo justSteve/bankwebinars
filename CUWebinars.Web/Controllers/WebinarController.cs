@@ -1232,6 +1232,12 @@ namespace CUWebinars.Web.Controllers
             }
 
             webinar = _webinarManagementService.GetWebinar(webinarId);
+
+            if (webinar.Title.StartsWith("Compliance Perspectives:"))
+            {
+                webinarId = _webinarManagementService.GetNextCompliancePerspectives() ?? -1;
+            }
+            webinar = _webinarManagementService.GetWebinar(webinarId);
         }
 
         private void InitializeDetailsModel(Webinar webinar, out WebinarDetailsViewModel model, int? incomingOrder)
@@ -1345,7 +1351,7 @@ namespace CUWebinars.Web.Controllers
                 orderRowForOrder = model.Order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active);
                 Debug.Assert(orderRowForOrder != null, "orderRowForOrder object should always have a value here.");
                 if (orderRowForOrder.AdditionalLocation != null && orderRowForOrder.AdditionalLocation.Count > 0)
-                additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(orderRowForOrder.AdditionalLocation.ToList());
+                    additionalLocations = _appHelper.CheckAdditionalLocationsForValidEmail(orderRowForOrder.AdditionalLocation.ToList());
             }
 
             model.Topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar).ToList();
@@ -1442,16 +1448,16 @@ namespace CUWebinars.Web.Controllers
                     AdditionalLocations = orderRowForOrder.AdditionalLocation,
                     Addresses = lstAddLoc, //additionalLocationsPricing.Item1,
                     OptionsCost = orderRowForOrder.Webinar.AdditionalLocationPrice,//additionalLocationsPricing.Item2
-                                                    EditAdditionalLocationsViewModel = new EditAdditionalLocationsViewModel
-                                                    {
-                                                        idUser = model.Order.idUser,
-                                                        CostPerAdditionalLocation = orderRowForOrder.Webinar.AdditionalLocationPrice,
-                                                        NumberOfAdditionalLocations = 0,
-                                                        TotalCostOfOptions = 0,
-                                                        WebinarId = orderRowForOrder.Webinar.idWebinar,
-                                                        idOrder = orderRowForOrder.idOrder,
-                                                        idOrderRow = orderRowForOrder.idOrderRow
-                                                    }
+                    EditAdditionalLocationsViewModel = new EditAdditionalLocationsViewModel
+                    {
+                        idUser = model.Order.idUser,
+                        CostPerAdditionalLocation = orderRowForOrder.Webinar.AdditionalLocationPrice,
+                        NumberOfAdditionalLocations = 0,
+                        TotalCostOfOptions = 0,
+                        WebinarId = orderRowForOrder.Webinar.idWebinar,
+                        idOrder = orderRowForOrder.idOrder,
+                        idOrderRow = orderRowForOrder.idOrderRow
+                    }
                 },
                 OrderRow = orderRowForOrder,
                 RecordingLink =

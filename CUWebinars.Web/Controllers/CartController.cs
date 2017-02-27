@@ -205,8 +205,7 @@ namespace CUWebinars.Web.Controllers
                     ErrorSignal.FromCurrentContext().Raise(exception);
                 }
 
-                if (_cartControllerOrchestrator.UserHasMultipleEvents(id) &&
-                    model.Order.Origin != DomainConstants.OriginExpress)
+                if (_cartControllerOrchestrator.UserHasMultipleEvents(id))
                 {
                     return Json(new
                     {
@@ -1683,7 +1682,7 @@ namespace CUWebinars.Web.Controllers
 
                     if (!multi)
                     {
-                        
+
                         order.OrderStatus = OrderStatus.Paid;
 
                         _cartControllerOrchestrator.AddClaimForPostEventMaterials(order.BillingEmail,

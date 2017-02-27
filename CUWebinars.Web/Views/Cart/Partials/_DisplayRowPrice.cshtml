@@ -182,7 +182,10 @@
                     @if (Model.OrderStatus != OrderStatus.Paid || Model.OrderStatus != OrderStatus.Submitted || Model.OrderStatus != OrderStatus.Billed)
                     {
                         <span>
-                            <button class="btn btn-success" data-toggle="modal" role="button" data-target="#ContinueShoppingModal" id="ContinueShoppingButton">Continue Shopping</button>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <button class="btn btn-success" data-toggle="modal" role="button" data-target="#ContinueShoppingModal" id="ContinueShoppingButton">Continue Shopping</button>
+                            } 
                             &nbsp;
                             &nbsp;
                             &nbsp;
