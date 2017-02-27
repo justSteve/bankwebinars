@@ -3285,7 +3285,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                             order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
 
                                         string _price = row.RowPrice.ToString("C").Replace(".00", "");
-                                        rowNumber++;
+                                        
 
                                         string _percent =
                                             (row.PercentPaid * 100).ToString().Replace(".00", "").Replace(".0", "") +
@@ -3329,6 +3329,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                             //discountNotes.Append(discountAmount);
                                             discountNotes.Append(Environment.NewLine);
                                         }
+                                        rowNumber++;
                                         ordersPerAff.Rows.Add(
                                             rowNumber
                                             , order.FirstName + ' ' + order.LastName
@@ -3434,13 +3435,12 @@ namespace CUWebinars.Web.Controllers.Admin
                                 {
                                     var row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                                     string _price = row.RowPrice.ToString("C").Replace(".00", "");
-                                    rowNumber++;
+
                                     string _percent =
                                         (row.PercentPaid * 100).ToString().Replace(".00", "").Replace(".0", "") +
                                         "%";
                                     if (row.Discount != null)
                                     {
-
                                         var discount = row.Discount;
 
                                         if (discount.DiscountType == DiscountType.Subscription &&
@@ -3448,7 +3448,6 @@ namespace CUWebinars.Web.Controllers.Admin
                                         {
                                             //skip unlimited subs
                                             continue;
-
                                         }
                                         else
                                         {
@@ -3478,6 +3477,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
                                         discountNotes.Append(Environment.NewLine);
                                     }
+
+                                    rowNumber++;
 
                                     pOrders.Rows.Add(
                                         rowNumber
@@ -3575,8 +3576,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                     sbL.Append("ChangedOrderNeedsNewInvoice logs: " + order.idOrder + " on aff: " +
                                                affiliate.idUserAff);
                                     var row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                                    rowNumber++;
-
+                                    
                                     var obj = (JObject)JsonConvert.DeserializeObject(order.InvoiceDetail);
                                     var dict = obj.First.First.Children()
                                         .Cast<JProperty>()
@@ -3635,6 +3635,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                             }
                                             discountNotes.Append(Environment.NewLine);
                                         }
+                                        rowNumber++;
 
                                         uOrders.Rows.Add(
                                             rowNumber
