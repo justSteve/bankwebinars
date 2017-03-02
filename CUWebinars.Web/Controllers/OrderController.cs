@@ -779,15 +779,35 @@ namespace CUWebinars.Web.Controllers
 
         [AllowAnonymous]
         [AcceptVerbs(HttpVerbs.Get), ValidateInput(false)]
-        public ActionResult AddBillingEmail(AddBillingEmailModel addEmail)
+        public ActionResult AddBillingEmail(int idOrder)
         {
 
-            var order = _orderManagementService.GetOrdersByEmail(addEmail.Email, 19).SingleOrDefault(o => o.idOrder == addEmail.OrderId);
+            var order = _orderManagementService.GetOrderById(idOrder);
+
+            if (order != null)
+            {
+                return View(order);
+                //                return Json(new { Result = "Success" }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { Result = "0" }, JsonRequestBehavior.AllowGet);
+            }
+
+        }
+
+        [AllowAnonymous]
+        [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
+        public ActionResult AddBillingEmail(string emailToAdd, int idOrder)
+        {
+
+            var order = _orderManagementService.GetOrderById(idOrder);
 
             if (order != null)
             {
                 _logger.Info("AddBilling Email of:" + order.BillingEmail + " to: " + order.idOrder);
-                return Json(new { Result = "Success" }, JsonRequestBehavior.AllowGet);
+                //
+                return Json(new { Result = "Success. Future billing notifications will include <b>" + emailToAdd + ".</b>" }, JsonRequestBehavior.AllowGet);
             }
             else
             {
@@ -799,11 +819,11 @@ namespace CUWebinars.Web.Controllers
 
         [AllowAnonymous]
         [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
-        public ActionResult FindCoWorkerLink(string email, int orderId)
+        public ActionResult FindCoWorkerLink(string email, string _orderId)
         {
             if (ModelState.IsValid)
             {
-
+                var orderId = Convert.ToInt32(_orderId.Replace("BW-", "").Replace("CU-", ""));
                 var orderById = _orderManagementService.GetOrderById(orderId);
                 var ordersByEmail = _orderManagementService.GetOrdersByEmail(email, 19);
 
@@ -813,9 +833,9 @@ namespace CUWebinars.Web.Controllers
                     {
                         var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                         if (row.Webinar.Status == WebinarStatus.Recorded)
-                            return Json(new { odCode = row.OnDemandCode }, JsonRequestBehavior.AllowGet);
+                            return Json(new { odCode = _globalConfig.TenantURL + "/o/" + row.idOrder + "/" + row.OnDemandCode }, JsonRequestBehavior.AllowGet);
                         //else
-                        return Json(new { joinCode = row.TtsJoinUrl }, JsonRequestBehavior.AllowGet);
+                        return Json(new { joinCode = _globalConfig.TenantURL + "/j/" + row.TtsJoinUrl }, JsonRequestBehavior.AllowGet);
                     }
                 }
 

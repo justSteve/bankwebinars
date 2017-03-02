@@ -227,7 +227,7 @@ namespace CUWebinars.Web.Controllers
                             _globalConfig.TenantLogo);
                         _cartControllerOrchestrator.FireMandrillNotificationEvent(
                             ConfigurationManager.AppSettings["TestEmailAddress"]
-                            , "[PTTest]Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
+                            , "[Test] Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
 
                         _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
                     }
@@ -244,7 +244,7 @@ namespace CUWebinars.Web.Controllers
                                 _globalConfig.TenantLogo);
                             _cartControllerOrchestrator.FireMandrillNotificationEvent(
                                 ConfigurationManager.AppSettings["TestEmailAddress"]
-                                , "[PTTest]Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
+                                , "[Test] Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
 
                             _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order,
                                 userCreatedInCart: false);
@@ -255,7 +255,7 @@ namespace CUWebinars.Web.Controllers
                             _globalConfig.TenantLogo);
                         _cartControllerOrchestrator.FireMandrillNotificationEvent(
                             ConfigurationManager.AppSettings["TestEmailAddress"]
-                            , "[PTTest]Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
+                            , "[Test] Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
 
                         _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: true);
                     }
@@ -1709,7 +1709,7 @@ namespace CUWebinars.Web.Controllers
                             _cartControllerOrchestrator.FireMandrillNotificationEvent(
                                 ConfigurationManager.AppSettings["TestEmailAddress"]
                                 ,
-                                "[PTTest]Confirmation of Registration for " +
+                                "[Test] Confirmation of Registration for " +
                                 order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
                                     .Webinar.Title, orderConfirmString);
 
@@ -1752,7 +1752,7 @@ namespace CUWebinars.Web.Controllers
                                     var orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
                                     orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString, _globalConfig.TenantLogo);
                                     _cartControllerOrchestrator.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"]
-                                        , "[PTTest]Confirmation of Registration for " + order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title, orderConfirmString);
+                                        , "[Test] Confirmation of Registration for " + order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title, orderConfirmString);
 
                                     _cartControllerOrchestrator.FireOrderSubmittedNotification(order,
                                         userCreatedInCart: false);

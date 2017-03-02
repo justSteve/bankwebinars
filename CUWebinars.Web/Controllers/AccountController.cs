@@ -567,7 +567,7 @@ namespace CUWebinars.Web.Controllers
             try
             {
                 //following copies pattern found at WebinarController | Identify
-                var newJson = new JProperty(string.Concat(JsonPropertyKeys.CarbonCopy), shareNotis.addresses);
+                var newJson = new JProperty(JsonPropertyKeys.CarbonCopy, shareNotis.addresses);
                 order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, newJson);
 
                 _orderManagementService.SaveChanges();

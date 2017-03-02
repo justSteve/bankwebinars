@@ -1,0 +1,85 @@
+﻿@using CUWebinars.Web.Core
+@using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes
+@{
+    IStateService stateService = new StateService();
+
+    var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+    var url = Request.Url.AbsoluteUri;
+
+    if (url.Contains("?"))
+    {
+        url = url + "&idAff=" + currentAffiliate.idUserAff;
+    }
+    else
+    {
+        url = url + "?idAff=" + currentAffiliate.idUserAff;
+    }
+}
+@if (Request.IsAuthenticated)
+{
+    <nav class="user clearfix">
+        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+        {
+            Claim fullNameClaim;
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+
+            if (ReferenceEquals(null, ViewBag.LoggedInUserIdentity))
+            {
+                fullNameClaim = claimsIdentity.Claims
+                    .FirstOrDefault(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName);
+
+                ViewBag.CurrentIdentity = User.Identity;
+
+            }
+            else
+            {
+                fullNameClaim = ViewBag.LoggedInUserIdentity as Claim;
+
+            }
+
+            if (!ReferenceEquals(null, fullNameClaim))
+            {
+                <div>
+                    @Html.AntiForgeryToken()
+
+                    @Html.ActionLink(fullNameClaim.Value, "EditUser", "Account", routeValues: null, htmlAttributes: new { title = "Manage", id = "btnLogin" })
+
+                    @if (claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.BeingImpersonated) == null)
+                    {
+                        <a href="javascript:document.getElementById('logoutForm').submit()">&nbsp;&nbsp;[Log Off]</a>
+                    }
+                    else
+                    {
+                        <a href="javascript:document.getElementById('logoutForm').submit()">&nbsp;&nbsp;[Release]</a>
+                    }
+
+                    @if (claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Affiliate) == null && claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Admin) == null)
+                    {
+                        <span id="shoppingCartInHeader"><a id="btnLogin" href="@Url.Action("Checkout", "Cart")"><i class="icon-large icon-shopping-cart"></i></a></span>
+                    }
+                    @if (claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Affiliate) != null && claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Admin) == null)
+                    {
+                        <span>
+                            <button type="button" class="btn btn-mini" style="margin-left: 20px; " data-toggle="collapse" data-target="#affUrl">
+                                promo url
+                            </button>
+                        </span>
+                        <div id="affUrl"  style="color: whitesmoke; " class="collapse out">@url</div>
+                    }
+                </div>
+            }
+            else
+            {
+                <a id="btnLogin" href="http://my.directorseries.com/users/sign_in"><i class="icon-user"></i> Login</a>
+                @*<a id="btnLogin" href="@Url.Action("Login", "Account")"><i class="icon-user"></i> Login</a>*@
+            }
+        }
+
+    </nav>
+
+}
+else
+{
+    <nav class="user clearfix"> <a id="btnLogin" href="@Url.Action("Login", "Account")"><i class="icon-user"></i> Login</a> </nav>
+}
+

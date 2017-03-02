@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Citrix.GoToWebinar.Api.Model;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 
@@ -45,6 +46,7 @@ using Ninject.Extensions.Logging;
 using WebGrease.Css.Extensions;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 using PostEventClaim = CUWebinars.Business.Services.PostEventClaim;
+using Webinar = CUWebinars.Business.Models.Webinar;
 
 namespace CUWebinars.Web.Core.Orchestrators
 {
@@ -84,6 +86,13 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public void FireSendConnectionInfoNotificationEvent(int idWebinar)
         {
+            var webinar = _webinarManagementService.GetWebinar(idWebinar);
+            var orgKey = _globalConfig.ConvertToCitrixOrgKey(webinar.OrganizerKey);
+            var cWebinarKey = _globalConfig.ConvertToCitrixWebinarKey(webinar.WebinarKey);
+            var api = new RegistrantsApi();
+
+            var apiResponse = api.getAllRegistrantsForWebinar(webinar.OrganizerOAuthKey, orgKey, cWebinarKey); // {};
+            
             var orders = _orderManagementService.GetOrdersForLiveNotifications(idWebinar);
             object test = null;
             var sb = new StringBuilder();
@@ -91,6 +100,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             orders.ToList().ForEach((order) =>
             {
+                var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                 sb.Append(order.BillingEmail + ", ");
                 var notificationStorage = new NotificationStorage
                 {
@@ -99,8 +109,11 @@ namespace CUWebinars.Web.Core.Orchestrators
                 };
 
                 order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
+                if (row.CitrixJoinUrl == null && row.RegistrationType.ShowLiveNotifications == "Yes"
+                && (row.Webinar.Status == WebinarStatus.Active || row.Webinar.Status == WebinarStatus.InProgress))
+                    order = _orderManagementService.GenerateRegistrantKey(order);
 
-
+                _orderManagementService.SaveChanges();
                 var body = BuildConnectionInfoMessage(order);
                 body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo);
 
@@ -599,7 +612,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         order.OrderStatus = OrderStatus.Billed;
                         _orderManagementService.SaveChanges();
                     }
-                    
+
                     var body = BuildRecordingIsPostedMessage(order);
                     body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo);
 
@@ -658,7 +671,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         output.Position = 0; // reset to beginning so Upload operation can work correctly
                         blob.UploadFromStream(output);
                     }
-                    
+
                     blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".htm");
                     using (MemoryStream output = new MemoryStream())
                     {
@@ -721,32 +734,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             var oDClaim = _orderManagementService.GetOnDemandClaimById(order.idOrder);
             var thisClaim = JsonConvert.DeserializeObject<Models.JsonModels.PostEventClaim>(oDClaim.ToString());
-
-
-            if (row.RegistrationType.ShowRecordingNotifications.ToLower() == "no")
-            {
-                regDesc =
-                    "Included in your registration is a link (see below) to all course material for five (5) business days (until <b>" + Web.Helpers.DateTimeHelper.FormatDate(thisClaim.ExpiryDate) + "</b>). You can still upgrade to gain 6 months OnDemand access - or the Premier Package which includes a CD-ROM and printouts of the event's materials. We'll be happy to adjust your registration - just reply to this email! ";
-            }
-            else if (row.RegistrationType.ShowShippedNotifications.ToLower() == "no")
-            {
-                regDesc =
-                    "Your registration includes OnDemand access to all event materials  (until <b>" + Web.Helpers.DateTimeHelper.FormatDate(thisClaim.ExpiryDate) + "</b>). but does not include a CD-ROM or printouts. You can still upgrade to the Premier Package - just reply to this email! ";
-            }
-
             var PaymentCaption = "";
-            
-            if (order.OrderStatus == OrderStatus.Paid)
-            {
-                PaymentCaption = "Thank you for your payment!";
-            }
-            else
-            {
-                PaymentCaption =
-                    "We'll be sending an invoice to " + order.BillingEmail + " soon. If you wish to pay by credit card " +
-                    "<a href='" + _globalConfig.TenantURL + "/Resume/" + order.idOrder + "'>" + " click here" + "</a>." + " Is someone else in your organization responsible for payments? " +
-                    "<a href='" + _globalConfig.TenantURL + "/Order/AddBillingEmail?idOrder=" + order.idOrder + "'>" + " Enter their email here" + "</a> and we will send the invoice directly.";
-            }
 
             var fields = _appHelper.BuildNotiFields(order);
 

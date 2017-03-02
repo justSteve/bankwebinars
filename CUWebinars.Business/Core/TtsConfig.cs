@@ -12,6 +12,8 @@ namespace CUWebinars.Business.Core
     public class TtsConfig
     {
         public static string DefaultConnectionString { get; private set; }
+        public static string CitrixOrgKeyMark { get; private set; }
+        public static string CitrixAuthMark { get; private set; }
         //public static string LegacyConnectionString { get; private set; }
         public static string TracingLevel { get; private set; }
         public static TtsConfiguration Create(
@@ -41,10 +43,10 @@ namespace CUWebinars.Business.Core
             if (useAzureWebjobs)
             {
                 notificationDelivery = new AzureCuwWebJobSmtpMessageDelivery(
-                    storageAccountName, 
-                    storageAccessKey, 
+                    storageAccountName,
+                    storageAccessKey,
                     ttsConfigHelper.GetCuwNotificationQueueName(),
-                    new Log4NetLogger(typeof (AzureCuwWebJobSmtpMessageDelivery))
+                    new Log4NetLogger(typeof(AzureCuwWebJobSmtpMessageDelivery))
                     );
 
                 // new Mandrill approach, always through Azure
@@ -55,7 +57,7 @@ namespace CUWebinars.Business.Core
                     new AzureOrderNotifierMessageDelivery(
                         storageAccountName,
                         storageAccessKey,
-                        new Log4NetLogger(typeof (AzureOrderNotifierMessageDelivery)),
+                        new Log4NetLogger(typeof(AzureOrderNotifierMessageDelivery)),
                         baseUrl
                         );
 
@@ -67,22 +69,22 @@ namespace CUWebinars.Business.Core
                         );
 
                 adhocNotificationDelivery = new AzureAdhocNotificationDelivery(
-                    storageAccountName, 
+                    storageAccountName,
                     storageAccessKey,
                     new Log4NetLogger(typeof(AzureAdhocNotificationDelivery)),
                     baseUrl);
 
                 // new Mandrill approach, always through Azure
                 mandrillNotificationDelivery = new AzureCuwWebJobSmtpMessageDelivery(
-                    storageAccountName, 
-                    storageAccessKey, 
+                    storageAccountName,
+                    storageAccessKey,
                     ttsConfigHelper.GetMandrillQueueName(),
                     new Log4NetLogger(typeof(AzureCuwWebJobSmtpMessageDelivery))
                     );
             }
             else
             {
-                notificationDelivery = new SmtpMessageDelivery(new Log4NetLogger(typeof (SmtpMessageDelivery)));
+                notificationDelivery = new SmtpMessageDelivery(new Log4NetLogger(typeof(SmtpMessageDelivery)));
                 //testing out new Mandrill approach
                 //notificationDelivery = new AzureCuwWebJobSmtpMessageDelivery(storageAccountName, storageAccessKey,
                 //    new Log4NetLogger(typeof(AzureCuwWebJobSmtpMessageDelivery)));
@@ -92,13 +94,13 @@ namespace CUWebinars.Business.Core
                     new Log4NetLogger(typeof(AzureWeeklyInvoiceWebJobSmtpMessageDelivery)));
 
                 orderConfirmationDelivery =
-                    new OrderNotifierMessageDelivery(new Log4NetLogger(typeof (OrderNotifierMessageDelivery)),
+                    new OrderNotifierMessageDelivery(new Log4NetLogger(typeof(OrderNotifierMessageDelivery)),
                         genericFormatter
                         );
 
                 orderConfirmedForAdditionalLocationDelivery =
                     new OrderConfirmedForAdditionalLocationDelivery(
-                        new Log4NetLogger(typeof (OrderConfirmedForAdditionalLocationDelivery)), genericFormatter
+                        new Log4NetLogger(typeof(OrderConfirmedForAdditionalLocationDelivery)), genericFormatter
                         );
 
                 adhocNotificationDelivery = new AdhocNotificationDelivery(
@@ -107,7 +109,7 @@ namespace CUWebinars.Business.Core
 
                 // new Mandrill approach, always through Azure
                 mandrillNotificationDelivery = new AzureCuwWebJobSmtpMessageDelivery(
-                    storageAccountName, 
+                    storageAccountName,
                     storageAccessKey,
                     ttsConfigHelper.GetMandrillQueueName(),
                     new Log4NetLogger(typeof(AzureCuwWebJobSmtpMessageDelivery))
@@ -133,11 +135,11 @@ namespace CUWebinars.Business.Core
             var sendRecordingIsPosted2HandlerLogger = new Log4NetLogger(typeof(RecordingIsPosted2Handler));
 
 
-            config.AddEventHandler(new SendPerDayPromoHandler(genericFormatter, notificationDelivery,sendPerDayPromoHandlerLogger));
+            config.AddEventHandler(new SendPerDayPromoHandler(genericFormatter, notificationDelivery, sendPerDayPromoHandlerLogger));
             //config.AddEventHandler(new SendPerWeekPromoHandler(genericFormatter, notificationDelivery, sendPerWeekPromoHandlerLogger));
             config.AddEventHandler(new OrderSubmittedHandler(orderConfirmationDelivery, notificationOrderHandlerLogger));
             config.AddEventHandler(new OrderSubmittedAdditionalLocationHandler(genericFormatter, orderConfirmedForAdditionalLocationDelivery, notificationOrderHandlerLogger));
-            config.AddEventHandler(new SendShippedOrderHandler(genericFormatter, notificationDelivery,sendShippedOrderHandlerLogger));
+            config.AddEventHandler(new SendShippedOrderHandler(genericFormatter, notificationDelivery, sendShippedOrderHandlerLogger));
             config.AddEventHandler(new SendConnectionInfoHandler(genericFormatter, notificationDelivery, sendConnectionInfoHandlerLogger, new EnvironmentInformation { BaseUrl = baseUrl }));
             config.AddEventHandler(new SendReminderHandler(genericFormatter, notificationDelivery, sendReminderHandlerLogger));
             config.AddEventHandler(new SendRecordingPostedHandler(genericFormatter, notificationDelivery, sendRecordingPostedHandlerLogger));
@@ -157,13 +159,15 @@ namespace CUWebinars.Business.Core
         {
             NameValueCollection applicationSettingsSection = ConfigurationManager.AppSettings;
             ConnectionStringSettingsCollection connectionStringSettingsCollection = ConfigurationManager.ConnectionStrings;
+            CitrixAuthMark = ConfigurationManager.AppSettings["CitrixAuthMark"];
+            CitrixOrgKeyMark = ConfigurationManager.AppSettings["CitrixOrgKeyMark"];
 
             DefaultConnectionString = connectionStringSettingsCollection["DefaultConnection"].ConnectionString;
             //LegacyConnectionString = connectionStringSettingsCollection["LegacyConnection"].ConnectionString;
             //var StorageAccessKey = applicationSettingsSection.GetKey();
             foreach (var key in applicationSettingsSection.AllKeys)
             {
-                
+
                 Console.WriteLine("Key: {0} Value: {1}", key, applicationSettingsSection[key]);
             }
         }

@@ -297,7 +297,7 @@ namespace CUWebinars.Web
 
                     if (User != null && User.Identity.IsAuthenticated)
                     {
-                        ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity) User.Identity;
+                        ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
 
                         if (claimsIdentityOfAuthenticatedUser.HasClaim(
                             (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
@@ -515,61 +515,150 @@ namespace CUWebinars.Web
             }
         }
 
-        //private void SessionAuthenticationModule_SessionSecurityTokenReceived(object sender, SessionSecurityTokenReceivedEventArgs e)
-        //{
-        //    // This method gets run about 5 or 6 times per page, seems to be run once for each resource request that the page includes
-        //    // I am using "if (request.Path...)" tests to isolate the functionality to "page loads" for particular pages
+        private void Session_End(object sender, EventArgs e)
+        {
 
-        //    System.Diagnostics.Debug.WriteLine(Request.Path);
+            var ttsWebinarsContext = new TTSWebinarsContext();
+            try
+            {
+                IAffiliateRepository affiliateRepository = new AffiliateRepository(ttsWebinarsContext);
+                IWebUserRepository webUserRepository = new WebUserRepository(ttsWebinarsContext);
+                IInstitutionRepository institutionRepository = new InstitutionRepository(ttsWebinarsContext);
 
-        //    if (Request.Path == "/Account/MyWebinars") // Proof-of-concept, watch for the /Admin (or pick a different page if you want) page load
-        //    {
-        //        // BREAKPOINT IN HERE and browse to /Admin (My Webinars as admin)
 
-        //        var token = e.SessionToken;
+                var allCookiesEnder = new StringBuilder();
 
-        //        System.Diagnostics.Debug.WriteLine("in /Admin--");
+                for (var i = 0; i < Request.Cookies.Count; i++)
+                {
+                    HttpCookie aCookie = Request.Cookies[i];
 
-        //        System.Diagnostics.Debug.WriteLine(token.ValidFrom.ToString("MM/dd/yyyy HH:mm:ss"));
-        //        System.Diagnostics.Debug.WriteLine(token.ValidTo.ToString("MM/dd/yyyy HH:mm:ss"));
+                    if (i > 0) allCookiesEnder.Append(", ");
+                    if (aCookie != null)
+                    {
 
-        //        //*** THE FOLLOWING DEFINITELY SEEMS TO SET THE COOKIE (updates the ValidFrom and ValidTo properties on subsequent access)
-        //        // the question are:
-        //        //  does it pull the latest claims from the DB?
-        //        //  how fast (or slow) is this process?
+                        allCookiesEnder.Append("\"CookieName\": \"" + aCookie.Name);
 
-        //        e.ReissueCookie = true;
-        //        e.SessionToken =
-        //            new SessionSecurityToken(
-        //                token.ClaimsPrincipal,
-        //                token.Context,
-        //                DateTime.UtcNow,
-        //                DateTime.UtcNow.Add(TimeSpan.FromHours(8))) // needs to be the configured value, hard-coded to 8 hours for testing
-        //            {
-        //                IsPersistent = token.IsPersistent,
-        //                IsReferenceMode = token.IsReferenceMode
-        //            };
+                        if (aCookie.HasKeys)
+                        {
+                            NameValueCollection cookieValues = aCookie.Values;
 
-        //        // these dates are not changed at this point in time, browse to the home page (or wherever you set up below as "subsequent")
-        //        System.Diagnostics.Debug.WriteLine(" ---- ");
-        //        System.Diagnostics.Debug.WriteLine(token.ValidFrom.ToString("MM/dd/yyyy HH:mm:ss"));
-        //        System.Diagnostics.Debug.WriteLine(token.ValidTo.ToString("MM/dd/yyyy HH:mm:ss"));
+                            string[] cookieValueNames = cookieValues.AllKeys;
+                            allCookiesEnder.Append("\":  {\"SubKeys:\"");
+                            for (int j = 0; j < cookieValues.Count; j++)
+                            {
+                                string subkeyName = Server.HtmlEncode(cookieValueNames[j]);
+                                string subkeyValue = Server.HtmlEncode(cookieValues[j]);
+                                if (!subkeyName.StartsWith("__") &&
+                                    !subkeyName.StartsWith("Fed")
+                                )
+                                {
+                                    allCookiesEnder.Append("\"SubkeyName: \"" + subkeyName);
+                                    allCookiesEnder.Append("\", \"SubkeyValue: \"" + subkeyValue);
+                                }
+                            }
+                            allCookiesEnder.Append("\"},");
 
-        //        System.Diagnostics.Debug.WriteLine("end /Admin--");
+                        }
+                        else
+                        {
+                            allCookiesEnder.Append("\", \"Value\": \"" + Server.HtmlEncode(aCookie.Value) + "\"");
+                        }
+                        logger.Info("SessionEnder: " + allCookiesEnder);
+                    }
+                }
 
-        //    }
+                if (User.Identity.IsAuthenticated)
+                {
+                    logger.Info("{\"NameEnder\": \"" + User.Identity.Name
+                                + "\", \"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
+                                + "\", \"QueryString\": \"" +
+                                StateService.GetValue<string>(WebUiConstants.InitialQueryString)
+                                + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
+                                + "\", \"FirstCookies\": {" +
+                                StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
+                    );
+                }
+                else
+                {
+                    logger.Info("Anon Session ENDS with: {"
+                                + "\"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
+                                + "\", \"QueryString\": \"" +
+                                StateService.GetValue<string>(WebUiConstants.InitialQueryString)
+                                + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
+                                + "\", \"FirstCookies\": {" +
+                                StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
+                    );
+                }
 
-        //    if (Request.Path == "/Home") // could be any page that you want, this is the "subsequent" "page request" load where we can see the dates have been changed
-        //    {
-        //        // BREAKPOINT IN HERE and browse to homepage (/) after browsing to /Admin (or whatever is configured above)
-
-        //        var token = e.SessionToken;
-        //        System.Diagnostics.Debug.WriteLine("in /Homepage--");
-
-        //        // these dates are different (updated) after the code above (/Admin) runs
-        //        System.Diagnostics.Debug.WriteLine(token.ValidFrom.ToString("MM/dd/yyyy HH:mm:ss"));
-        //        System.Diagnostics.Debug.WriteLine(token.ValidTo.ToString("MM/dd/yyyy HH:mm:ss"));
-        //    }
-        //}
+            }
+            catch (Exception exception)
+            {
+                logger.Fatal("SessionStart Exception!!!", exception);
+                Console.WriteLine(exception);
+            }
+            finally
+            {
+                //ttsWebinarsContext.Database.Connection.Close(); --> THIS LINE PROBABLY NOT NECESSARY. DISPOSE SHOULD DO THIS FOR US.
+                ttsWebinarsContext.Dispose();
+            }
+        }
     }
+
+    //private void SessionAuthenticationModule_SessionSecurityTokenReceived(object sender, SessionSecurityTokenReceivedEventArgs e)
+    //{
+    //    // This method gets run about 5 or 6 times per page, seems to be run once for each resource request that the page includes
+    //    // I am using "if (request.Path...)" tests to isolate the functionality to "page loads" for particular pages
+
+    //    System.Diagnostics.Debug.WriteLine(Request.Path);
+
+    //    if (Request.Path == "/Account/MyWebinars") // Proof-of-concept, watch for the /Admin (or pick a different page if you want) page load
+    //    {
+    //        // BREAKPOINT IN HERE and browse to /Admin (My Webinars as admin)
+
+    //        var token = e.SessionToken;
+
+    //        System.Diagnostics.Debug.WriteLine("in /Admin--");
+
+    //        System.Diagnostics.Debug.WriteLine(token.ValidFrom.ToString("MM/dd/yyyy HH:mm:ss"));
+    //        System.Diagnostics.Debug.WriteLine(token.ValidTo.ToString("MM/dd/yyyy HH:mm:ss"));
+
+    //        //*** THE FOLLOWING DEFINITELY SEEMS TO SET THE COOKIE (updates the ValidFrom and ValidTo properties on subsequent access)
+    //        // the question are:
+    //        //  does it pull the latest claims from the DB?
+    //        //  how fast (or slow) is this process?
+
+    //        e.ReissueCookie = true;
+    //        e.SessionToken =
+    //            new SessionSecurityToken(
+    //                token.ClaimsPrincipal,
+    //                token.Context,
+    //                DateTime.UtcNow,
+    //                DateTime.UtcNow.Add(TimeSpan.FromHours(8))) // needs to be the configured value, hard-coded to 8 hours for testing
+    //            {
+    //                IsPersistent = token.IsPersistent,
+    //                IsReferenceMode = token.IsReferenceMode
+    //            };
+
+    //        // these dates are not changed at this point in time, browse to the home page (or wherever you set up below as "subsequent")
+    //        System.Diagnostics.Debug.WriteLine(" ---- ");
+    //        System.Diagnostics.Debug.WriteLine(token.ValidFrom.ToString("MM/dd/yyyy HH:mm:ss"));
+    //        System.Diagnostics.Debug.WriteLine(token.ValidTo.ToString("MM/dd/yyyy HH:mm:ss"));
+
+    //        System.Diagnostics.Debug.WriteLine("end /Admin--");
+
+    //    }
+
+    //    if (Request.Path == "/Home") // could be any page that you want, this is the "subsequent" "page request" load where we can see the dates have been changed
+    //    {
+    //        // BREAKPOINT IN HERE and browse to homepage (/) after browsing to /Admin (or whatever is configured above)
+
+    //        var token = e.SessionToken;
+    //        System.Diagnostics.Debug.WriteLine("in /Homepage--");
+
+    //        // these dates are different (updated) after the code above (/Admin) runs
+    //        System.Diagnostics.Debug.WriteLine(token.ValidFrom.ToString("MM/dd/yyyy HH:mm:ss"));
+    //        System.Diagnostics.Debug.WriteLine(token.ValidTo.ToString("MM/dd/yyyy HH:mm:ss"));
+    //    }
+    //}
+}
 }

@@ -39,8 +39,9 @@
         </div>
         @Html.ValidationSummary("Error: ", new { id = "LoginValSummary" })
         <div style="margin-top: 25px;">
-            <input id="findLinkButton" type="button" class="btn-small btn btn-link" onclick="javascript: stateManager.findLink(); return false;" value="Looking for a co-worker's link?'" />
+            <input id="findLinkButton" type="button" class="btn-small btn btn-link" onclick="javascript: stateManager.findLink(); return false;" value="Looking for a co-worker's link?" />
             <span style="margin-left: 25px;"><input id="forgotPasswordLinkButton" type="button" class="btn-small btn btn-link" onclick="javascript: stateManager.passResetView(); return false;" value="Reset Password" /></span>
+            @*<input id="registerLinkButton" type="button" class="btn-small btn btn-link" onclick="javascript: stateManager.registerView(); return false;" value="Create New Account?" />*@
         </div>
         @*<ul>
             <li>

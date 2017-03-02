@@ -343,22 +343,28 @@ namespace CUWebinars.Web.Controllers
             var webinar = _webinarManagementService.GetWebinar(webinarId);
 
 
-            //try
-            //{
-            //    PanelistsApi pApi = new PanelistsApi();
+            try
+            {
+#if   DEBUG
+                _logger.Info("d");
+#else
+                PanelistsApi pApi = new PanelistsApi();
 
-            //    pApi.createPanelists(_globalConfig.CitrixAuthMark,
-            //        _globalConfig.ConvertToCitrixOrgKey(_globalConfig.CitrixOrgKeyMark),
-            //        _globalConfig.ConvertToCitrixWebinarKey(webinar.WebinarKey), new List<PanelistReqCreate>
-            //        { new PanelistReqCreate {
-            //        email = webinar.Presenter.WebUser.email,
-            //        name = webinar.Presenter.WebUser.FullName}
-            //        });
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.FatalException("CreateCitrixWebinar | AddPresenter: " + webinar.Presenter.WebUser.email, ex);
-            //}
+                pApi.createPanelists(_globalConfig.CitrixAuthMark,
+                    _globalConfig.ConvertToCitrixOrgKey(_globalConfig.CitrixOrgKeyMark),
+                    _globalConfig.ConvertToCitrixWebinarKey(webinar.WebinarKey), new List<PanelistReqCreate>
+                    { new PanelistReqCreate {
+                    email = webinar.Presenter.WebUser.email,
+                    name = webinar.Presenter.WebUser.FullName}
+                    });
+                
+                Log("something");
+#endif
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("CreateCitrixWebinar | AddPresenter: " + webinar.Presenter.WebUser.email, ex);
+            }
 
             _webinarControllerOrchestrator.FireSendConnectionInfoNotificationEvent(webinarId);
 

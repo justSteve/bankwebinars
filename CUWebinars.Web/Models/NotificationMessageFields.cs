@@ -25,5 +25,7 @@
         public string PaymentStatus { get; set; }
         public string SubjectLine { get; set; }
         public string MessageHeading { get; set; }
+        public string DisplayDate { get; set; }
+        public string Duration { get; set; }
     }
 }

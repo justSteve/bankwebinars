@@ -17,7 +17,7 @@
             e.preventDefault();
             var payLoad = {
                 email: $("#FindCoWorkerLinkEmail").val(),
-                orderId: $("#FindCoWorkerLinkOrderID").val()
+                _orderId: $("#FindCoWorkerLinkOrderID").val()
             };
 
             $.ajax({
@@ -32,11 +32,11 @@
                     console.log(data);
                     if (data) {
                         if (data.odCode) {
-                            $("#OperationMessageFindLink").html("<h1><a href='@globalConfig.TenantURL/o/" + data.odCode + ">@globalConfig.TenantURL/" + data.odCode + "</a></h1>");
+                            $("#OperationMessageFindLink").html("<h1><a href='" + data.odCode + "'>" + data.odCode + "</a></h1>");
                             $("#FindLinkLegend").text("Link Is Found!");;
                             $("#inputForm").hide();
                         } else if (data.joinCode) {
-                            $("#OperationMessageFindLink").html("<a href='@globalConfig.TenantURL/j/" + data.joinCode + "'>@globalConfig.TenantURL/" + data.joinCode + "</a>");
+                            $("#OperationMessageFindLink").html("<h1><a href='" + data.joinCode + "'>" + data.joinCode + "</a></h1>");
                             $("#FindLinkLegend").text("Link Is Found!");
                             $("#inputForm").hide();
                         } else {
@@ -65,7 +65,7 @@
         <fieldset>
             <legend id="FindLinkLegend">Finding a Co-Worker's Link</legend>
             <p id="inputForm" style="font-size: 18px">
-                If you are visiting us because a co-worker forwarded you an email with a link to <b><i>My Webinars</i></b> there may not be a need to log in or create a new account. Just give us the eamil address and order ID and we'll let you know what we find.
+                If you are visiting us because a co-worker forwarded you an email with a link to <b><i>My Webinars</i></b> there may not be a need to log in or create a new account. Just give us the email address and order ID and we'll let you know what we find.
                 <br /><span>
                     <input name="email" id="FindCoWorkerLinkEmail" type="text" placeholder="Enter Email of Order" />
                 </span><br />

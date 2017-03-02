@@ -30,7 +30,7 @@ namespace CUWebinars.Web.Helpers
         private readonly HttpRequestBase _request;
         public readonly TtsConfigHelper _globalConfig;
 
-        
+
 
 
         public AppHelper(HttpRequestBase request, IStateService stateService)
@@ -377,7 +377,7 @@ namespace CUWebinars.Web.Helpers
             return (long)Math.Truncate(tspan.TotalSeconds);
 
         }
-        
+
         public bool BuildWebinarOrdersInvoiceRow(Order order, StringBuilder discountNotes, out OrderRow row, out string _price,
             ref int rowNumber, out string _percent, ref int totalNumberDiscounts)
         {
@@ -436,8 +436,8 @@ namespace CUWebinars.Web.Helpers
                 adjustmentDirection = "Royalty is decreased";
             }
 
-            adjustedTotal = row.RowPrice - (decimal) dict["OriginalTotal"];
-            adjustedRoyalty = (decimal) dict[adjustmentDirection];
+            adjustedTotal = row.RowPrice - (decimal)dict["OriginalTotal"];
+            adjustedRoyalty = (decimal)dict[adjustmentDirection];
 
             if (row.Discount != null)
             {
@@ -468,7 +468,7 @@ namespace CUWebinars.Web.Helpers
                 var discountAmount = "";
                 if (row.Discount.PercentOff > 0)
                 {
-                    discountAmount = (row.UnitPrice*(row.Discount.PercentOff/100)).ToString("c");
+                    discountAmount = (row.UnitPrice * (row.Discount.PercentOff / 100)).ToString("c");
                 }
                 if (row.Discount.FlatOff > 0)
                 {
@@ -540,7 +540,7 @@ namespace CUWebinars.Web.Helpers
             row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
             _price = row.RowPrice.ToString("C").Replace(".00", "");
             rowNumber++;
-            _percent = (row.PercentPaid*100).ToString().Replace(".00", "").Replace(".0", "") +
+            _percent = (row.PercentPaid * 100).ToString().Replace(".00", "").Replace(".0", "") +
                        "%";
             if (row.Discount != null)
             {
@@ -571,7 +571,7 @@ namespace CUWebinars.Web.Helpers
                 var discountAmount = "";
                 if (row.Discount.PercentOff > 0)
                 {
-                    discountAmount = (row.UnitPrice*(row.Discount.PercentOff/100)).ToString("c");
+                    discountAmount = (row.UnitPrice * (row.Discount.PercentOff / 100)).ToString("c");
                 }
                 if (row.Discount.FlatOff > 0)
                 {
@@ -596,13 +596,12 @@ namespace CUWebinars.Web.Helpers
             var fields = new NotificationMessageFields();
             OrderRow row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
             string TenantURL = _globalConfig.TenantURL();
-            string TenantEmail = _globalConfig.TenantEmail();
+            string SupportEmail = _globalConfig.TenantEmail();
             string Tenant = _globalConfig.Tenant();
 
-          //  fields.TechSupportLink = "<a href='" + TenantURL + "/oh/" + order.idOrder + "'>" + TenantURL + "/oh/" + order.idOrder + "</a>";
             fields.OndemandLink = " <a href='" + TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "'>" + TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "</a>";
             fields.LinkToMyWebinars = " <a href='" + TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "'>" + TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "</a>";
-            fields.ChangeTimeZoneLink = " <a href='" + TenantURL + "/Order/ChangeTimeZone?idOrder=" + order.idOrder + "'>" + " click to change timezone." + "</a>";
+            fields.ChangeTimeZoneLink = " <a href='" + TenantURL + "/Account/EditUser/" + order.idUser + "'>" + " click to change timezone." + "</a>";
             fields.TenantSignature = "The " + Tenant + " Staff";
 
             fields.AttendType = row.RegistrationType.OptionLabelShort;
@@ -610,14 +609,16 @@ namespace CUWebinars.Web.Helpers
             fields.BillingEmail = order.BillingEmail;
             fields.TenantName = _globalConfig.Tenant();
             fields.WebinarTitle = row.Webinar.Title;
+            fields.Duration = row.Webinar.Duration.ToString().Replace(".00", "");
             fields.FirstName = order.FirstName;
             fields.ShowTimeZone = order.WebUser.timeZone.ToString();
             fields.ShowStartTime = row.Webinar.Date.ToShortTimeString();
+            fields.DisplayDate = DateTimeHelper.FormatDateShort(row.Webinar.Date);
 
             fields.SubjectLine = "[" + Tenant + "] Confirmation of Registration: " + row.Webinar.Title;
             fields.MessageHeading = "Your Order is Submitted!";
-            fields.ClickToJoinLink = "<a href='" + TenantURL + "/j/" + order.idOrder + "-" + row.TtsJoinUrl + "'>" +
-                                     TenantURL + "/j/" + order.idOrder + "-" + row.TtsJoinUrl + "</a>";
+            fields.ClickToJoinLink = "<a href='" + TenantURL + "/j/" + row.TtsJoinUrl + "'>" +
+                                     TenantURL + "/j/" + row.TtsJoinUrl + "</a>";
             fields.AddReminder = " <a href='" + TenantURL + "/Webinar/ICalOrder?icsOrder=" + order.idOrder + "'>" +
                                  "Add to Calendar.</a>";
             fields.CCCaption =
@@ -661,22 +662,19 @@ namespace CUWebinars.Web.Helpers
             if (row.AdditionalLocation != null)
             {
                 var locs = "";
-                foreach (var loc in row.AdditionalLocation)
+                if (row.AdditionalLocation.Count > 1)
                 {
-                    locs = loc.Email + ",";
-                    if (row.AdditionalLocation.Count > 1)
-                    {
-                        fields.ExistingAddLocs = locs.TrimEnd(',') +
-                                                 " is currently included as an Additional Location. <a href='" + TenantURL + "/Resume/" + order.idOrder +
-                    "'>" + "Just let us know if you need more!</a>";
-                    }
-                    else
-                    {
-                        fields.ExistingAddLocs = locs.TrimEnd(',').Replace(",", ", ") +
-                                                 " are currently included Additional Locations. <a href='" + TenantURL + "/Resume/" + order.idOrder +
-                    "'>" + "Just let us know if you need change anything.</a>";
-                    }
+                    fields.ExistingAddLocs = locs.TrimEnd(',') +
+                                             " is currently included as an Additional Location. <a href='" + TenantURL + "/Resume/" + order.idOrder +
+                "'>" + "Just let us know if you need more!</a>";
                 }
+                else
+                {
+                    fields.ExistingAddLocs = locs.TrimEnd(',').Replace(",", ", ") +
+                                             " are currently included Additional Locations. <a href='" + TenantURL + "/Resume/" + order.idOrder +
+                "'>" + "Just let us know if you need change anything.</a>";
+                }
+
                 if (fields.ExistingAddLocs == "")
                 {
                     fields.ExistingAddLocs =

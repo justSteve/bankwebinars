@@ -11,8 +11,64 @@
             padding: 1px 6px;
         }
 </style>
+<script type="text/javascript" language="javascript">
+    $(function () {
+        //set values of dropdowns.
+        var tz = '@Model.TimeZone';
+        
+
+        $('#EditFields_timeZone option')
+            .removeAttr('selected')
+            .filter('[value=' + tz + ']')
+            .prop('selected', 'selected');
 
 
+        $('#_ResetPasswordButton')
+            .on('click',
+                function (e) {
+                    e.preventDefault();
+
+                    var self = this;
+
+                    var model = {
+                        email: '@Model.Email'
+                    };
+
+                    $.ajax({
+                        type: 'POST',
+                        contentType: constants.JsonContentType,
+                        cache: false,
+                        url: '/Admin/ResetPassword',
+                        dataType: constants.JsonDataType,
+                        data: JSON.stringify(model),
+                        beforeSend: function () {
+                            $(self)
+                                .after('<span id="loadSpinner2">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+                            $('#resetResult').remove();
+                        }
+                    })
+                        .done(function (data) {
+
+                            if (data.Result === 'Success') {
+                                $(self)
+                                    .after('<span id="resetResult">&nbsp;<span class="label label-success"><span> Password reset email has been sent!</span></span></span>');
+                            } else if (data.Result === 'Fail') {
+                                $(self)
+                                    .after('<span id="resetResult">&nbsp;<span class="label label-important"><i class="icon icon-exclamation-sign"></i>&nbsp;<span>Password reset failed!</span></span></span>');
+                            }
+
+                            //Rollbar.info({ 'mn-#2': { 'result': data } });
+
+                            $('#loadSpinner2').remove();
+                        });
+                });
+    });
+
+</script>
+
+@*<div class="row-fluid">
+
+    </div>*@
 <div class="row-fluid">
     <div class="span4 control-group">
         @Html.LabelFor(model => model.FirstName, new { @class = "control-label" })
@@ -28,6 +84,7 @@
             @Html.EditorFor(model => model.LastName)
             @Html.ValidationMessageFor(model => model.LastName)
         </div>
+
     </div>
 </div>
 <div class="row-fluid">
@@ -45,6 +102,26 @@
         </div>
     </div>
 </div>
+<div class="row-fluid">
+    <div class="span4">
+        <span style="text-align: right;"> <button class="btn btn-success" id="_ResetPasswordButton">Reset Password</button></span>
+    </div>    <div class="span4 control-group">
+        @Html.LabelFor(model => model.TimeZone, new { @class = "control-label" })
+        <div class="controls">
+            <select class="form-dropdown" style="width: 150px;" id="EditFields_timeZone" name="EditFields.timeZone">
+                <option value="Caribbean"> Caribbean </option>
+                <option value="Eastern"> Eastern </option>
+                <option value="Central"> Central </option>
+                <option value="Mountain"> Mountain </option>
+                <option value="Pacific"> Pacific </option>
+                <option value="Alaska"> Alaska </option>
+                <option value="Hawaii"> Hawaii </option>
+            </select>
+        </div>
+    </div>
+
+</div>
+
 <div class="row-fluid">
     <div id="BillingAddressContainer">
         <div class="span5">

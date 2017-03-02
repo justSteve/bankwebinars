@@ -1,15 +1,8 @@
-﻿@using CUWebinars.Web.Core
+﻿@using CUWebinars.Business.Constants
+@using CUWebinars.Business.Core.Helpers
+@using CUWebinars.Web.Core
+@using Newtonsoft.Json.Linq
 @model Order
-
-@{
-    ViewBag.Title = "Email for Billing";
-
-    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
-
-
-    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
-}
-
 <div class="hero-unit">
     <div id="webinarTitle" class="container">
         <div class="span10">
@@ -17,17 +10,26 @@
         </div>
     </div>
 </div>
-<!--close hero-unit-->
+@{
+    ViewBag.Title = "Email for Billing";
 
-<div class="container clearfix" id="main-content">
-    <!--begin main content-->
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+    <script  language="javascript" type="text/javascript">
+        $("#shareFormCaption").html("<p>Enter the email you would like to share billing notifications with.</p>")
+    </script>
 
-    @using (Html.BeginForm("AddBillingEmail", "Order", FormMethod.Post))
-    {
-        <div>Please enter the email to invoice for @globalConfig.TenantPrefix@Model.idOrder</div>
-        <input type="text" name="addThisEmailAsBilling" id="addThisEmailAsBilling" placeholder="Please enter the desired email." />
-        <input type="hidden" name="idOrder" id="idOrder" value="@Model.idOrder" /><br />
-        <input class="btn" type="submit" value="Submit" />
-    }
-    <div id="response"></div>
-</div>
+    <div class="container clearfix" id="main-content">
+        <!--begin main content-->
+        <div class="row-fluid">
+            <div class="span6 offset2">
+                <aside class="widget">
+                    <h5 class="short_headline"><span>Add Email To Invoice Notifications</span></h5>
+                    @{Html.RenderPartial("Partials/_ShareNotifications");}
+                </aside>
+            </div>
+        </div>
+    </div>
+
+}
+
+

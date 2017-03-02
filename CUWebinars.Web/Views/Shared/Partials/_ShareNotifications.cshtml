@@ -35,7 +35,7 @@
                     ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(addresses.ToString());
                     if (!ReferenceEquals(null, ccEmailAddresses))
                     {
-                        <span>You are currently sharing this order's notifications with @ccEmailAddresses[0].ToString()</span>
+                        <span>You are currently sharing this order's notifications with <b>@ccEmailAddresses[0]</b></span>
                     }
                     else
                     {
@@ -46,7 +46,7 @@
                                 <input type="hidden" value="@Model.idOrder" name="idOrder" />
                                 <button id="submitThis_@Model.idOrder" class="submitThis btn btn-primary">Submit</button>
                             </span>
-                            <div id="caption1" style="text-align: center;">
+                            <div id="shareFormCaption" style="text-align: center;">
                                 Enter the address you would like to send a copy of all notifications on this order.
                             </div>
                         }
