@@ -1327,7 +1327,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         @"~/App_Data/mergeTemplates/OrderSubmitted_PreEvent.docx"));
 
             NotificationMessageFields fields= _appHelper.BuildNotiFields(order);
-            var orderCC = _orderManagementService.orderHasCC(order);
+            var orderCC = _orderManagementService.OrderHasCc(order);
             if (orderCC != null)
             {
             }

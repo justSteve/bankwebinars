@@ -2083,8 +2083,6 @@ namespace CUWebinars.Business.Services
                 _logger.FatalException("CalculatePostEventMaterialsAccessExpiry", exception);
                 throw;
             }
-
-
         }
 
         public void GetJoinUrl(OrderRow row)
@@ -2491,7 +2489,7 @@ namespace CUWebinars.Business.Services
             return null;
         }
 
-        public IList<string> orderHasCC(Order order)
+        public IList<string> OrderHasCc(Order order)
         {
             IList<string> ccEmailAddresses = null;
             if (!string.IsNullOrWhiteSpace(order.UserComments)

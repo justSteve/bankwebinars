@@ -16,9 +16,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Web.Models.Importers;
+using DDay.iCal;
+using Newtonsoft.Json.Linq;
 
 namespace CUWebinars.Web.Controllers
 {
@@ -797,6 +801,25 @@ namespace CUWebinars.Web.Controllers
         }
 
         [AllowAnonymous]
+        [AcceptVerbs(HttpVerbs.Get), ValidateInput(false)]
+        public ActionResult ChangeCC(int idOrder)
+        {
+
+            var order = _orderManagementService.GetOrderById(idOrder);
+
+            if (order != null)
+            {
+                return View(order);
+                //                return Json(new { Result = "Success" }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { Result = "0" }, JsonRequestBehavior.AllowGet);
+            }
+
+        }
+
+        [AllowAnonymous]
         [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
         public ActionResult AddBillingEmail(string emailToAdd, int idOrder)
         {
@@ -808,6 +831,39 @@ namespace CUWebinars.Web.Controllers
                 _logger.Info("AddBilling Email of:" + order.BillingEmail + " to: " + order.idOrder);
                 //
                 return Json(new { Result = "Success. Future billing notifications will include <b>" + emailToAdd + ".</b>" }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { Result = "0" }, JsonRequestBehavior.AllowGet);
+            }
+
+        }
+        [AllowAnonymous]
+        [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
+        public ActionResult ChangeCC(string emailToAdd, int idOrder)
+        {
+
+            var order = _orderManagementService.GetOrderById(idOrder);
+
+            if (order != null)
+            {
+                _logger.Info("ChangeCC Email of:" + order.BillingEmail + " to: " + order.idOrder);
+                //
+                IList<string> addresses = _orderManagementService.OrderHasCc(order);
+                IList<string> ccEmailAddresses = new List<string>();
+
+                if ( addresses != null)
+                {
+                    //  assume user has separated email addresses with either a semi-colon or a comma, as is convention.
+                    ccEmailAddresses.AddRange(addresses);
+                    ccEmailAddresses.AddRange(emailToAdd.Split(','));
+                }
+
+                var newJson = new JProperty(JsonPropertyKeys.CarbonCopy, ccEmailAddresses);
+                order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, newJson);
+
+                _orderManagementService.SaveChanges();
+                return Json(new { Result = "Success. Future notifications will include <b>" + emailToAdd + ".</b>" }, JsonRequestBehavior.AllowGet);
             }
             else
             {
@@ -833,7 +889,7 @@ namespace CUWebinars.Web.Controllers
                     {
                         var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                         if (row.Webinar.Status == WebinarStatus.Recorded)
-                            return Json(new { odCode = _globalConfig.TenantURL + "/o/" + row.idOrder + "/" + row.OnDemandCode }, JsonRequestBehavior.AllowGet);
+                            return Json(new { odCode = _globalConfig.TenantURL + "/o/" + row.idOrder + "-" + row.OnDemandCode }, JsonRequestBehavior.AllowGet);
                         //else
                         return Json(new { joinCode = _globalConfig.TenantURL + "/j/" + row.TtsJoinUrl }, JsonRequestBehavior.AllowGet);
                     }

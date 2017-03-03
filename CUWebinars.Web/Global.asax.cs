@@ -518,89 +518,89 @@ namespace CUWebinars.Web
         private void Session_End(object sender, EventArgs e)
         {
 
-            var ttsWebinarsContext = new TTSWebinarsContext();
-            try
-            {
-                IAffiliateRepository affiliateRepository = new AffiliateRepository(ttsWebinarsContext);
-                IWebUserRepository webUserRepository = new WebUserRepository(ttsWebinarsContext);
-                IInstitutionRepository institutionRepository = new InstitutionRepository(ttsWebinarsContext);
+            //var ttsWebinarsContext = new TTSWebinarsContext();
+            //try
+            //{
+            //    IAffiliateRepository affiliateRepository = new AffiliateRepository(ttsWebinarsContext);
+            //    IWebUserRepository webUserRepository = new WebUserRepository(ttsWebinarsContext);
+            //    IInstitutionRepository institutionRepository = new InstitutionRepository(ttsWebinarsContext);
 
 
-                var allCookiesEnder = new StringBuilder();
+            //    var allCookiesEnder = new StringBuilder();
 
-                for (var i = 0; i < Request.Cookies.Count; i++)
-                {
-                    HttpCookie aCookie = Request.Cookies[i];
+            //    for (var i = 0; i < Request.Cookies.Count; i++)
+            //    {
+            //        HttpCookie aCookie = Request.Cookies[i];
 
-                    if (i > 0) allCookiesEnder.Append(", ");
-                    if (aCookie != null)
-                    {
+            //        if (i > 0) allCookiesEnder.Append(", ");
+            //        if (aCookie != null)
+            //        {
 
-                        allCookiesEnder.Append("\"CookieName\": \"" + aCookie.Name);
+            //            allCookiesEnder.Append("\"CookieName\": \"" + aCookie.Name);
 
-                        if (aCookie.HasKeys)
-                        {
-                            NameValueCollection cookieValues = aCookie.Values;
+            //            if (aCookie.HasKeys)
+            //            {
+            //                NameValueCollection cookieValues = aCookie.Values;
 
-                            string[] cookieValueNames = cookieValues.AllKeys;
-                            allCookiesEnder.Append("\":  {\"SubKeys:\"");
-                            for (int j = 0; j < cookieValues.Count; j++)
-                            {
-                                string subkeyName = Server.HtmlEncode(cookieValueNames[j]);
-                                string subkeyValue = Server.HtmlEncode(cookieValues[j]);
-                                if (!subkeyName.StartsWith("__") &&
-                                    !subkeyName.StartsWith("Fed")
-                                )
-                                {
-                                    allCookiesEnder.Append("\"SubkeyName: \"" + subkeyName);
-                                    allCookiesEnder.Append("\", \"SubkeyValue: \"" + subkeyValue);
-                                }
-                            }
-                            allCookiesEnder.Append("\"},");
+            //                string[] cookieValueNames = cookieValues.AllKeys;
+            //                allCookiesEnder.Append("\":  {\"SubKeys:\"");
+            //                for (int j = 0; j < cookieValues.Count; j++)
+            //                {
+            //                    string subkeyName = Server.HtmlEncode(cookieValueNames[j]);
+            //                    string subkeyValue = Server.HtmlEncode(cookieValues[j]);
+            //                    if (!subkeyName.StartsWith("__") &&
+            //                        !subkeyName.StartsWith("Fed")
+            //                    )
+            //                    {
+            //                        allCookiesEnder.Append("\"SubkeyName: \"" + subkeyName);
+            //                        allCookiesEnder.Append("\", \"SubkeyValue: \"" + subkeyValue);
+            //                    }
+            //                }
+            //                allCookiesEnder.Append("\"},");
 
-                        }
-                        else
-                        {
-                            allCookiesEnder.Append("\", \"Value\": \"" + Server.HtmlEncode(aCookie.Value) + "\"");
-                        }
-                        logger.Info("SessionEnder: " + allCookiesEnder);
-                    }
-                }
+            //            }
+            //            else
+            //            {
+            //                allCookiesEnder.Append("\", \"Value\": \"" + Server.HtmlEncode(aCookie.Value) + "\"");
+            //            }
+            //            logger.Info("SessionEnder: " + allCookiesEnder);
+            //        }
+            //    }
 
-                if (User.Identity.IsAuthenticated)
-                {
-                    logger.Info("{\"NameEnder\": \"" + User.Identity.Name
-                                + "\", \"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
-                                + "\", \"QueryString\": \"" +
-                                StateService.GetValue<string>(WebUiConstants.InitialQueryString)
-                                + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
-                                + "\", \"FirstCookies\": {" +
-                                StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
-                    );
-                }
-                else
-                {
-                    logger.Info("Anon Session ENDS with: {"
-                                + "\"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
-                                + "\", \"QueryString\": \"" +
-                                StateService.GetValue<string>(WebUiConstants.InitialQueryString)
-                                + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
-                                + "\", \"FirstCookies\": {" +
-                                StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
-                    );
-                }
+            //    if (User.Identity.IsAuthenticated)
+            //    {
+            //        logger.Info("{\"NameEnder\": \"" + User.Identity.Name
+            //                    + "\", \"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
+            //                    + "\", \"QueryString\": \"" +
+            //                    StateService.GetValue<string>(WebUiConstants.InitialQueryString)
+            //                    + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
+            //                    + "\", \"FirstCookies\": {" +
+            //                    StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
+            //        );
+            //    }
+            //    else
+            //    {
+            //        logger.Info("Anon Session ENDS with: {"
+            //                    + "\"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
+            //                    + "\", \"QueryString\": \"" +
+            //                    StateService.GetValue<string>(WebUiConstants.InitialQueryString)
+            //                    + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
+            //                    + "\", \"FirstCookies\": {" +
+            //                    StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
+            //        );
+            //    }
 
-            }
-            catch (Exception exception)
-            {
-                logger.Fatal("SessionStart Exception!!!", exception);
-                Console.WriteLine(exception);
-            }
-            finally
-            {
-                //ttsWebinarsContext.Database.Connection.Close(); --> THIS LINE PROBABLY NOT NECESSARY. DISPOSE SHOULD DO THIS FOR US.
-                ttsWebinarsContext.Dispose();
-            }
+            //}
+            //catch (Exception exception)
+            //{
+            //    logger.Fatal("SessionEND Exception!!!", exception);
+            //    Console.WriteLine(exception);
+            //}
+            //finally
+            //{
+            //    //ttsWebinarsContext.Database.Connection.Close(); --> THIS LINE PROBABLY NOT NECESSARY. DISPOSE SHOULD DO THIS FOR US.
+            //    ttsWebinarsContext.Dispose();
+            //}
         }
     }
 
@@ -660,5 +660,4 @@ namespace CUWebinars.Web
     //        System.Diagnostics.Debug.WriteLine(token.ValidTo.ToString("MM/dd/yyyy HH:mm:ss"));
     //    }
     //}
-}
 }

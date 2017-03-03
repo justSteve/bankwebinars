@@ -596,10 +596,12 @@ namespace CUWebinars.Web.Helpers
             var fields = new NotificationMessageFields();
             OrderRow row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
             string TenantURL = _globalConfig.TenantURL();
-            string SupportEmail = _globalConfig.TenantEmail();
+            fields.SupportEmail = _globalConfig.TenantEmail();
             string Tenant = _globalConfig.Tenant();
 
             fields.OndemandLink = " <a href='" + TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "'>" + TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "</a>";
+            fields.DetailedConnectionInfoLink = " <a href='" + TenantURL + "/Home/DetailedConnectionInstructions'>" + TenantURL + "/Home/DetailedConnectionInstructions</a>";
+            fields.CertificateLink = " <a href='" + TenantURL + "Account/MyCertificate?orderID=" + order.idOrder + "'>" + TenantURL + "/Account/MyCertificate?orderID=" + order.idOrder + "</a>";
             fields.LinkToMyWebinars = " <a href='" + TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "'>" + TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "</a>";
             fields.ChangeTimeZoneLink = " <a href='" + TenantURL + "/Account/EditUser/" + order.idUser + "'>" + " click to change timezone." + "</a>";
             fields.TenantSignature = "The " + Tenant + " Staff";
@@ -610,10 +612,11 @@ namespace CUWebinars.Web.Helpers
             fields.TenantName = _globalConfig.Tenant();
             fields.WebinarTitle = row.Webinar.Title;
             fields.Duration = row.Webinar.Duration.ToString().Replace(".00", "");
+
             fields.FirstName = order.FirstName;
             fields.ShowTimeZone = order.WebUser.timeZone.ToString();
             fields.ShowStartTime = row.Webinar.Date.ToShortTimeString();
-            fields.DisplayDate = DateTimeHelper.FormatDateShort(row.Webinar.Date);
+            fields.DisplayDate = DateTimeHelper.FormatTimeWithDuration(row.Webinar.Date, order.WebUser.timeZone, true, row.Webinar.Duration);
 
             fields.SubjectLine = "[" + Tenant + "] Confirmation of Registration: " + row.Webinar.Title;
             fields.MessageHeading = "Your Order is Submitted!";

@@ -1,0 +1,35 @@
+﻿@using CUWebinars.Business.Constants
+@using CUWebinars.Business.Core.Helpers
+@using CUWebinars.Web.Core
+@using Newtonsoft.Json.Linq
+@model Order
+<div class="hero-unit">
+    <div id="webinarTitle" class="container">
+        <div class="span10">
+            <h2>Billing Email</h2>
+        </div>
+    </div>
+</div>
+@{
+    ViewBag.Title = "Email for Billing";
+
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+    <script  language="javascript" type="text/javascript">
+        $("#shareFormCaption").html("<p>Enter the email you would like to share future notifications with.</p>")
+    </script>
+
+    <div class="container clearfix" id="main-content">
+        <!--begin main content-->
+        <div class="row-fluid">
+            <div class="span6 offset2">
+                <aside class="widget">
+                    <h5 class="short_headline"><span>Add Email To Share Notifications</span></h5>
+                    @{Html.RenderPartial("Partials/_ShareNotifications");}
+                </aside>
+            </div>
+        </div>
+    </div>
+
+}
+
+

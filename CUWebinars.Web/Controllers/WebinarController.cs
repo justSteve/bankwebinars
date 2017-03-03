@@ -358,7 +358,6 @@ namespace CUWebinars.Web.Controllers
                     name = webinar.Presenter.WebUser.FullName}
                     });
                 
-                Log("something");
 #endif
             }
             catch (Exception ex)

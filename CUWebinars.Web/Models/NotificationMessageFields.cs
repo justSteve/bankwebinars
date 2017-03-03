@@ -1,4 +1,6 @@
-﻿namespace CUWebinars.Web.Models
+﻿using System;
+
+namespace CUWebinars.Web.Models
 {
     public class NotificationMessageFields
     {
@@ -27,5 +29,9 @@
         public string MessageHeading { get; set; }
         public string DisplayDate { get; set; }
         public string Duration { get; set; }
+        public string Expires { get; set; }
+        public string DetailedConnectionInfoLink { get; set; }
+        public string SupportEmail { get; set; }
+        public string CertificateLink { get; set; }
     }
 }

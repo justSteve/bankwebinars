@@ -92,7 +92,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             var api = new RegistrantsApi();
 
             var apiResponse = api.getAllRegistrantsForWebinar(webinar.OrganizerOAuthKey, orgKey, cWebinarKey); // {};
-            
+
             var orders = _orderManagementService.GetOrdersForLiveNotifications(idWebinar);
             object test = null;
             var sb = new StringBuilder();
@@ -110,20 +110,54 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
                 if (row.CitrixJoinUrl == null && row.RegistrationType.ShowLiveNotifications == "Yes"
-                && (row.Webinar.Status == WebinarStatus.Active || row.Webinar.Status == WebinarStatus.InProgress))
+                    && (row.Webinar.Status == WebinarStatus.Active || row.Webinar.Status == WebinarStatus.InProgress))
                     order = _orderManagementService.GenerateRegistrantKey(order);
+                if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active) != null)
+                    SendConnectionInfoToAddLoc(order, idWebinar);
 
                 _orderManagementService.SaveChanges();
                 var body = BuildConnectionInfoMessage(order);
                 body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo);
 
-                _orderManagementService.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"], "Connection Checklist for " + GetWebinar(idWebinar).Title, body);
+                _orderManagementService.FireMandrillNotificationEvent(
+                    ConfigurationManager.AppSettings["TestEmailAddress"],
+                    "Connection Checklist for " + GetWebinar(idWebinar).Title, body);
 
 
             });
 
             _logger.Info(sb.ToString());
             _orderManagementService.FireSendConnectionInfoNotificationEvent(orders, false);
+        }
+
+        private void SendConnectionInfoToAddLoc(Order order, int idWebinar)
+        {
+            var addLocs = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).AdditionalLocation;
+
+            foreach (var loc in addLocs)
+            {
+                if (string.IsNullOrEmpty(loc.RegistrantKey))
+                {
+                    try
+                    {
+                        var key = _orderManagementService.GenerateRegistrantKey(order);
+                        _orderManagementService.SaveOrderChanges(key, null, null);
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                        _logger.FatalException("SendConnInfoAddLoc", ex);
+                    }
+
+                }
+
+                var body = BuildConnectionInfoMessage(order, loc.Email);
+                body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo);
+
+                _orderManagementService.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"], "Connection Checklist for " + GetWebinar(idWebinar).Title, body);
+
+            }
         }
 
         public Webinar GetWebinar(int idWebinar)
@@ -629,26 +663,37 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         }
 
-        public string BuildConnectionInfoMessage(Order order)
+        public string BuildConnectionInfoMessage(Order order, string addLoc = null)
         {
             OrderRow row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
             Webinar webinar = row.Webinar;
-            DocumentModel document =
-                DocumentModel.Load(
-                    System.Web.HttpContext.Current.Server.MapPath(
-                        @"~/App_Data/mergeTemplates/ConnectionInfo2.docx"));
+                DocumentModel document =
+                    DocumentModel.Load(
+                        System.Web.HttpContext.Current.Server.MapPath(
+                            @"~/App_Data/mergeTemplates/ConnectionInfo2.docx"));
 
-            var fields = _appHelper.BuildNotiFields(order);
+                var fields = _appHelper.BuildNotiFields(order);
 
-            document.MailMerge.Execute(fields);
+                document.MailMerge.Execute(fields);
+            if (addLoc != null)
+            {
+                document =
+                    DocumentModel.Load(
+                        System.Web.HttpContext.Current.Server.MapPath(
+                            @"~/App_Data/mergeTemplates/ConnectionInfo2AddLoc.docx"));
 
+                order.BillingEmail = addLoc;
+                fields = _appHelper.BuildNotiFields(order);
+
+                document.MailMerge.Execute(fields);
+                _logger.Info("BuildConnectionInfoMessage AddLoc: " + addLoc + " fields:" + JsonConvert.SerializeObject(fields));
+            }
 
             bool noError = true;
             try
             {
                 if (noError)
                 {
-                    _logger.Info("begins write to file: " + order.idOrder);
 
                     //// SAVE LOCALLY if needed for easier testing
                     //document.Save(System.Web.HttpContext.Current.Server.MapPath(@"~/App_Data/mergeTemplates/" + order.idOrder + ".pdf"), SaveOptions.PdfDefault);
@@ -729,18 +774,17 @@ namespace CUWebinars.Web.Core.Orchestrators
                        System.Web.HttpContext.Current.Server.MapPath(
                            @"~/App_Data/mergeTemplates/RecordingIsPostedToExistingUserCU.docx"));
             }
-            string theOrderSummary = "";
-            string regDesc = "";
-
-            var oDClaim = _orderManagementService.GetOnDemandClaimById(order.idOrder);
-            var thisClaim = JsonConvert.DeserializeObject<Models.JsonModels.PostEventClaim>(oDClaim.ToString());
-            var PaymentCaption = "";
 
             var fields = _appHelper.BuildNotiFields(order);
 
+            var oDClaim = _orderManagementService.GetOnDemandClaimById(order.idOrder);
+            var thisClaim = JsonConvert.DeserializeObject<Models.JsonModels.PostEventClaim>(oDClaim.ToString());
+            //
+
+            fields.Expires = thisClaim.ExpiryDate.ToShortDateString();
+
             document.MailMerge.Execute(fields);
-
-
+            
             bool noError = true;
             try
             {
@@ -758,7 +802,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     CloudBlobClient blobClient = cloudStorageAccount.CreateCloudBlobClient();
 
                     // Retrieve reference to a previously created container.
-                    CloudBlobContainer container = blobClient.GetContainerReference("ordersubmitted");
+                    CloudBlobContainer container = blobClient.GetContainerReference("recordingisposted");
                     container.CreateIfNotExists();
 
                     CloudBlockBlob blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".pdf");

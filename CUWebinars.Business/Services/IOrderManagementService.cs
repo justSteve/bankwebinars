@@ -164,7 +164,7 @@ namespace CUWebinars.Business.Services
 
         string SetOnDemandClaimById(int myRowIdOrder);
 
-        IList<string> orderHasCC(Order order);
         string InvoicedOrderIsUpdated(Order order);
+        IList<string> OrderHasCc(Order order);
     }
 }
