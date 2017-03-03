@@ -1181,13 +1181,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
             return _orderManagementService.UserHasMultipleEvents(order.idUser);
         }
-
-        public void GenerateRegistrantKey(Order modelOrder)
-        {
-            _orderManagementService.GenerateRegistrantKey(modelOrder);
-        }
-
-
+        
         public string BuildOrderSubmitted2DESNotification(Order order)
         {
 

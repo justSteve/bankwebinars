@@ -2118,25 +2118,34 @@ namespace CUWebinars.Business.Services
 
             if (!ReferenceEquals(null, thisDiscount))
             {
-                if (hasRemaining >= row.RegistrationType.CreditCost)
+                if (thisDiscount.DiscountType == DiscountType.Promo || thisDiscount.DiscountType == DiscountType.Compensation)
                 {
                     thisDiscount = RedeemDiscount(thisDiscount, row);
-                    thisDiscount.Notes =
-                    "Order is fully discounted. " + (hasRemaining - row.RegistrationType.CreditCost).ToString().Replace(".00", "") + " will remain.";
-
-                    row.Discount = thisDiscount;
-
-
-
-                    _logger.Info("ApplyDiscountCode: " + row.Discount.DiscountCode + " idOrder: " + row.idOrder);
+                    _logger.Info("ApplyDiscountCode PROMO: " + row.Discount.DiscountCode + " idOrder: " + row.idOrder);
                 }
-                else
+                if (thisDiscount.DiscountType == DiscountType.Subscription)
                 {
-                    thisDiscount.Notes =
-                    "Insufficient credits: " + hasRemaining.ToString().Replace(".00", "") + " remain but " + row.RegistrationType.CreditCost.ToString().Replace(".00", "") + " are required.";
-                    _logger.Info("ApplyDiscountCode failed due to insufficient credits: " + thisDiscount.DiscountCode + " idOrder: " + row.idOrder + +hasRemaining + " remain but " + row.RegistrationType.CreditCost + " are required.");
-                }
+                    if (hasRemaining >= row.RegistrationType.CreditCost)
+                    {
+                        thisDiscount = RedeemDiscount(thisDiscount, row);
+                        thisDiscount.Notes += Environment.NewLine +
+                            "Applied to: " + row.idOrder + " and used " + row.RegistrationType.CreditCost + " credits. " +
+                            (hasRemaining - row.RegistrationType.CreditCost).ToString().Replace(".00", "") +
+                            " will remain.";
 
+                        row.Discount = thisDiscount;
+                        _logger.Info("ApplyDiscountCode: " + row.Discount.DiscountCode + " idOrder: " + row.idOrder);
+                    }
+                    else
+                    {
+                        thisDiscount.Notes += Environment.NewLine +
+                            "Insufficient credits: " + hasRemaining.ToString().Replace(".00", "") + " remain but " +
+                            row.RegistrationType.CreditCost.ToString().Replace(".00", "") + " are required.";
+                        _logger.Info("ApplyDiscountCode failed due to insufficient credits: " +
+                                     thisDiscount.DiscountCode + " idOrder: " + row.idOrder + +hasRemaining +
+                                     " remain but " + row.RegistrationType.CreditCost + " are required.");
+                    }
+                }
                 return thisDiscount;
             }
             else

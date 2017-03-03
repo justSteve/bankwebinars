@@ -1149,7 +1149,7 @@ namespace CUWebinars.Web.Controllers.Admin
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             // perf bump by assigning to local variable
 
-            if (string.IsNullOrEmpty(orderRow.CitrixJoinUrl) && orderRow.Webinar.CitrixJoinInfoAvailable())
+            if (string.IsNullOrEmpty(orderRow.RegistrantKey) && orderRow.Webinar.CitrixJoinInfoAvailable())
             {
                 _orderManagementService.GenerateRegistrantKey(order);
 

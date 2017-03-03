@@ -187,24 +187,6 @@ namespace CUWebinars.Web.Controllers
                 _logger.Info("Confirming Order for OrderRow with Id {0}", id.Value);
                 var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
 
-                try
-                {
-                    if (
-                        model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
-                            .RegistrationType.ShowLiveNotifications.TrimEnd()
-                            .Equals("Yes", StringComparison.OrdinalIgnoreCase))
-                    {
-                        _cartControllerOrchestrator.GenerateRegistrantKey(model.Order);
-                    }
-
-                }
-                catch (Exception exception)
-                {
-                    ModelState.AddModelError(string.Empty, "ConfirmOrder|GenerateRegistrantKey failed.");
-                    _logger.ErrorException("ConfirmOrder|GenerateRegistrantKey failed ", exception);
-                    ErrorSignal.FromCurrentContext().Raise(exception);
-                }
-
                 if (_cartControllerOrchestrator.UserHasMultipleEvents(id))
                 {
                     return Json(new
@@ -574,30 +556,6 @@ namespace CUWebinars.Web.Controllers
 
                 orderList = multi.TrimEnd(',').Split(',');
 
-                //var lstOrders = new List<Order>();
-                //foreach (var _id in orderList)
-                //{
-                //    var _order = _cartControllerOrchestrator.GetOrderById(Convert.ToInt32(_id));
-                //    lstOrders.Add(_order);
-
-                //}
-                //foreach (var _order in lstOrders)
-                //{
-                //    var hasDupeOrder = _cartControllerOrchestrator.CheckIfEmailAlreadyRegisteredForWebinar(
-                //         _order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar,
-                //         _order.BillingEmail);
-                //    if (hasDupeOrder > 0)
-                //    {
-                //        _cartControllerOrchestrator.SetOrderStatus(hasDupeOrder, order.BillingEmail,
-                //                OrderStatus.Canceled);
-                //        _logger.Warn("BuildRegistrationSummaryMultiViewModel found duped order: " + hasDupeOrder + "_" + order.BillingEmail);
-                //        orderList = orderList.ToString().Replace(hasDupeOrder.ToString() + ",", "");
-                //    }
-                //}
-                //orderList = _cartControllerOrchestrator.CheckIfEmailAlreadyRegisteredForWebinar()
-
-
-
             }
             if (orderList != null && orderList.Length > 0)
             {
@@ -687,19 +645,28 @@ namespace CUWebinars.Web.Controllers
             //if (order.idOrder % 2 != 0)
             //    totalAmt = 1.12m;
             string parameters = "UN~shuener|PSWD~Nb9rj3Sw|TERMS~Y|TRANXTYPE~Sale|";
-            //string parameters = "UN~demo123|PSWD~demo123|TERMS~Y|TRANXTYPE~Sale|";
-            parameters += "ORDERID~" + idOrder + "|AMOUNT~" + totalAmt + "|";
-            //parameters += "ApproveURL~https://bwdev.azurewebsites.net/cart/PayTraceApproved/|";
-            //parameters += "DeclineURL~https://bwdev.azurewebsites.net/cart/PayTraceDeclined/|";
-            //parameters += "ReturnURL~https://bwdev.azurewebsites.net/cart/PayTracePostBack/|";
-            parameters += "ApproveURL~" + _globalConfig.TenantURL + "/cart/PayTraceApproved/|";
-            parameters += "DeclineURL~" + _globalConfig.TenantURL + "/cart/PayTraceDeclined/|";
-            parameters += "ReturnURL~" + _globalConfig.TenantURL + "/cart/PayTracePostBack/|";
+
+            if (_globalConfig.EmailSendingMode != "live")
+            {
+                parameters = "UN~demo123|PSWD~demo123|TERMS~Y|TRANXTYPE~Sale|";
+                totalAmt = .21M;
+                parameters += "ORDERID~" + idOrder + "|AMOUNT~" + totalAmt + "|";
+                parameters += "ApproveURL~https://bwdev.azurewebsites.net/cart/PayTraceApproved/|";
+                parameters += "DeclineURL~https://bwdev.azurewebsites.net/cart/PayTraceDeclined/|";
+                parameters += "ReturnURL~https://bwdev.azurewebsites.net/cart/PayTracePostBack/|";
+            }
+            else
+            {
+                parameters += "ORDERID~" + idOrder + "|AMOUNT~" + totalAmt + "|";
+                parameters += "ApproveURL~" + _globalConfig.TenantURL + "/cart/PayTraceApproved/|";
+                parameters += "DeclineURL~" + _globalConfig.TenantURL + "/cart/PayTraceDeclined/|";
+                parameters += "ReturnURL~" + _globalConfig.TenantURL + "/cart/PayTracePostBack/|";
+            }
 
 
-            string parameter_list = "PARMLIST=";
 
-            parameter_list = parameter_list + parameters;
+            string parameter_list = "PARMLIST=" + parameters;
+
             ASCIIEncoding encoding = new ASCIIEncoding();
             byte[] bytes = encoding.GetBytes(parameter_list);
             _logger.Info("PayTrace validation request: " + parameter_list);
@@ -752,7 +719,12 @@ namespace CUWebinars.Web.Controllers
                     "DISPLAYTRUSTLOGO~Y|DISABLETERMS~Y|ENABLEREDIRECT~N|RETURNPARIS~Y|authKey~{0}|disablelogin~y|disableoptional~N|showbname~y|hideinvoice~n|hidepassword~y|orderid~{1}|bname~{2}",
                     authKey, idOrder, order.FirstName + ' ' + order.LastName);
             paramList += "|ProductDetails~" + ProdDesc.Replace(System.Environment.NewLine, "");
-            //paramList += "|test~y";
+
+            if (_globalConfig.EmailSendingMode != "live")
+            {
+                paramList += "|test~y";
+            }
+
             paramList += "|baddress~" + order.BillingAddress;
             paramList += "|bcity~" + order.BillingCity;
             paramList += "|bstate~" + order.BillingState;

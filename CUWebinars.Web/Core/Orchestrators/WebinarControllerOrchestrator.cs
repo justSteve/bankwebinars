@@ -109,10 +109,11 @@ namespace CUWebinars.Web.Core.Orchestrators
                 };
 
                 order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
-                if (row.CitrixJoinUrl == null && row.RegistrationType.ShowLiveNotifications == "Yes"
+                if (row.RegistrantKey == null && row.RegistrationType.ShowLiveNotifications == "Yes"
                     && (row.Webinar.Status == WebinarStatus.Active || row.Webinar.Status == WebinarStatus.InProgress))
                     order = _orderManagementService.GenerateRegistrantKey(order);
-                if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active) != null)
+
+                if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).AdditionalLocation != null)
                     SendConnectionInfoToAddLoc(order, idWebinar);
 
                 _orderManagementService.SaveChanges();
