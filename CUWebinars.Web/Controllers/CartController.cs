@@ -537,8 +537,15 @@ namespace CUWebinars.Web.Controllers
         [HttpGet]
         public JsonResult PayTraceModalIni(int idOrder, string multi)
         {
+            _logger.Info("Paytrace Starts: " + idOrder + ", multi: " + multi);
+            dynamic ptLogger = new JObject();
+            ptLogger.Starts = new JArray(idOrder, multi);
             //ensures that the price passed to PayTrace reflects order price with discount applied.
             var order = _cartControllerOrchestrator.GetOrderById(idOrder);
+
+            ptLogger.Price = (decimal)order.Total;
+            ptLogger.Time = DateTime.Now;
+
 
             var newPrice = _cartControllerOrchestrator.UpdateOrderPricing(order);
 
@@ -559,12 +566,17 @@ namespace CUWebinars.Web.Controllers
             }
             if (orderList != null && orderList.Length > 0)
             {
-                order.AdminComments = "";
+
                 var newJson = new JProperty(
                     "Multi-OrderCheckout",
                     orderList
                 );
+                var ptJson = new JProperty(
+                    "PrevalidateWithMulti",
+                    ptLogger
+                );
                 order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, newJson);
+                order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, ptJson);
 
                 _cartControllerOrchestrator.SaveOrder(order);
                 _logger.Info("Paytrace Multi-order starts");
@@ -578,13 +590,31 @@ namespace CUWebinars.Web.Controllers
                 ProdDesc += "    <td align='center'><b>Type</b></td>";
                 ProdDesc += "    <td align='center'><b>Price</b></td>";
                 ProdDesc += "</tr>";
-
                 foreach (var _idOrder in orderList)
                 {
-                    _logger.Info("Paytrace  -- adds: " + _idOrder);
+
+                }
+                foreach (var _idOrder in orderList)
+                {
+
                     var _order = _cartControllerOrchestrator.GetOrderById(Convert.ToInt32(_idOrder));
                     var _newPrice = _cartControllerOrchestrator.UpdateOrderPricing(_order);
+                    _logger.Info("Paytrace  -- adds: " + _idOrder);
+                    ptLogger.Msg += _idOrder + " -- adds: " + _order.Total;
 
+                    newJson = new JProperty(
+                    "Multi-OrderCheckout",
+                    orderList
+                );
+                    ptJson = new JProperty(
+                        "PrevalidateAsMulti",
+                        ptLogger
+                    );
+                    _order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, newJson);
+                    _order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, ptJson);
+
+                    _cartControllerOrchestrator.SaveOrder(order);
+                    _logger.Info("Paytrace Multi-order add: " + _idOrder);
                     totalAmt = totalAmt + _newPrice.TotalOrderPrice;
 
                     wTitle = _order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title;
@@ -595,7 +625,6 @@ namespace CUWebinars.Web.Controllers
                         _order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
                             .RegistrationType.OptionLabel;
                     var _totalAmt = _newPrice.TotalOrderPrice.ToString("C").Replace(".00", "");
-
 
                     ProdDesc += "<tr bgcolor=CCCCCC>";
                     ProdDesc += "    <td align='left'>" + wTitle + "</td>";
@@ -613,11 +642,21 @@ namespace CUWebinars.Web.Controllers
                                         _globalConfig.TenantPrefix + _order.idOrder + ")" + Environment.NewLine;
                     }
 
-                    _logger.Info("PaytraceMulti-order ends");
+                    _logger.Info("PaytraceMultiPreValidate ends: " + idOrder);
                 }
             }
             else
             {
+
+                var ptJson = new JProperty(
+                    "PrevalidateSingle",
+                    ptLogger
+                );
+                order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, ptJson);
+                order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, ptJson);
+
+                _cartControllerOrchestrator.SaveOrder(order);
+                _logger.Info("Paytrace Single starts: " + idOrder);
 
                 ProdDesc += "<tr><td colspan=3 align=left><font size=2><b>Registration Details - " +
                             _globalConfig.Tenant + "</b></font></td></tr>";
@@ -635,6 +674,7 @@ namespace CUWebinars.Web.Controllers
                 ProdDesc += "</tr>";
                 ProdDescText += wTitle.Substring(0, Math.Min(wTitle.Length, 40)) + " (" + _globalConfig.TenantPrefix +
                                 order.idOrder + Environment.NewLine;
+
             }
 
             //format parameters for request 
@@ -698,6 +738,8 @@ namespace CUWebinars.Web.Controllers
             {
                 string[] _parameters = strResponse.Split('|');
                 authKey = _parameters[1].Split('~')[1];
+
+                _logger.Info("PaytraceValidated: " + idOrder);
             }
             else
             {
@@ -709,8 +751,6 @@ namespace CUWebinars.Web.Controllers
                 {
                     success = "failed",
                     responseString,
-
-
                 }, JsonRequestBehavior.AllowGet);
             }
 
@@ -1642,7 +1682,7 @@ namespace CUWebinars.Web.Controllers
 
                 }
                 var order = _cartControllerOrchestrator.LoadOrder(Convert.ToInt32(payTraceModel.Orderid));
-
+                _logger.Info("PaytracePostbackUserComments: " + order.UserComments);
                 if (order == null) throw new ArgumentNullException("order");
 
                 if (payTraceModel.Appmsg.StartsWith("Your TEST transaction was successfully processed.") ||
@@ -1661,12 +1701,11 @@ namespace CUWebinars.Web.Controllers
                             order.OrderRows.FirstOrDefault());
 
                         _cartControllerOrchestrator.UpdateOrderPricing(order);
-                        _logger.Info("PayTrace postback confirms Id BW-{0}: ", JsonConvert.SerializeObject(order, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                        _logger.Info("PayTrace postback confirms {0}: ", order.idOrder + " UserComments: " + order.UserComments);
 
                         if (
                             order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
-                                .Webinar.SeriesInfo ==
-                            "DES")
+                                .Webinar.SeriesInfo == "DES")
                         {
                             _logger.Info("DES Subscription is building: " + order.idOrder);
                             _cartControllerOrchestrator.BuildOrderSubmitted2DESNotification(order);
@@ -1702,7 +1741,7 @@ namespace CUWebinars.Web.Controllers
                             {
                                 order = _cartControllerOrchestrator.LoadOrder(Convert.ToInt32(odr.ToString()));
 
-                                _logger.Info("Multi-OrderCheckout loops: " + JsonConvert.SerializeObject(odr));
+                                _logger.Info("Multi-OrderCheckout loops: " + order.idOrder);
 
                                 order.OrderStatus = OrderStatus.Paid;
 
@@ -1712,8 +1751,7 @@ namespace CUWebinars.Web.Controllers
                                 _cartControllerOrchestrator.UpdateOrderPricing(order);
                                 if (
                                     order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
-                                        .Webinar.SeriesInfo ==
-                                    "DES")
+                                        .Webinar.SeriesInfo == "DES")
                                 {
                                     _logger.Info("DES Subscription is building: " + order.idOrder);
                                     _cartControllerOrchestrator.BuildOrderSubmitted2DESNotification(order);
@@ -1741,13 +1779,8 @@ namespace CUWebinars.Web.Controllers
                 }
                 else
                 {
-                    _logger.Fatal("Paytrace declines payment: BW-{0}",
-                        JsonConvert.SerializeObject(order, Formatting.None,
-                            new JsonSerializerSettings
-                            {
-                                MaxDepth = 1,
-                                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                            }));
+                    _logger.Fatal("Paytrace declines payment: {0}",
+                        order.idOrder);
                 }
             }
             catch (Exception exception)
