@@ -1111,7 +1111,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 SmallImageUrl = webinarEditModel.SmallImageUrl,
                 WebinarTopicXrefs = new List<WebinarTopicXref>(),
                 WhoAttend = webinarEditModel.WhoAttend,
-                LivePlusFiveValue = webinarEditModel.LivePlusFive
+                LivePlusFiveValue = webinarEditModel.LivePlusFive,
+                AdditionalLocationPrice = webinarEditModel.AdditionalLocationsPrice
 
             };
 
@@ -1128,7 +1129,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             _webinarManagementService.AddWebinar(webinar);
 
-            webinar.AdditionalLocationPrice = _orderManagementService.GetAdditionalLocationsPricing(webinar.idWebinar);
+            //webinar.AdditionalLocationPrice = _orderManagementService.GetAdditionalLocationsPricing(webinar.idWebinar);
 
             _webinarManagementService.SaveChanges();
         }
@@ -1157,6 +1158,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             webinar.WhoAttend = webinarEditModel.WhoAttend;
             webinar.RecordingUrl = webinarEditModel.RecordingUrl;
             webinar.LivePlusFiveValue = webinarEditModel.LivePlusFive;
+            webinar.AdditionalLocationPrice = webinarEditModel.AdditionalLocationsPrice;
 
             var existingRegTypeGroupIds =
                 webinar.RegTypesGroupsXref.Where(r => r.idWebinar == webinar.idWebinar)
@@ -1204,7 +1206,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _webinarManagementService.DeleteWebinarTopicXref(webinar, exisingTopicId);
             }
 
-            webinar.AdditionalLocationPrice = _orderManagementService.GetAdditionalLocationsPricing(webinar.idWebinar);
+            //webinar.AdditionalLocationPrice = _orderManagementService.GetAdditionalLocationsPricing(webinar.idWebinar);
             //var additionalLocationsLookupPrice = _webinarManagementService.GetAdditionalLocationsLookupPricesForWebinar(webinar.idWebinar).SingleOrDefault();
 
             //if (ReferenceEquals(null, additionalLocationsLookupPrice))

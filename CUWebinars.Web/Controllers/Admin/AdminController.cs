@@ -192,89 +192,90 @@ namespace CUWebinars.Web.Controllers.Admin
             ViewBag.Title = "Search Results";
 
             ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
-            var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
-            var user = _membershipService.GetWebUserById(affiliate.idUserAff);
-            var model = new AdminDTO
+
+            if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Admin))
             {
-                ShowWebinarsViewModel = new ShowWebinarsViewModel
+                var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+                var user = _membershipService.GetWebUserById(affiliate.idUserAff);
+                var model = new AdminDTO
                 {
-                    SearchTerm = searchTerm,
-                    UserIsAdmin = true
-
-                },
-                UserDetailsViewModel = new UserDetailsViewModel()
-                {
-                    Affiliate = aff,
-                    UserIsAdmin = true
-                },
-                AffiliateSettingsViewModel = new AffiliateSettingsViewModel()
-                {
-                    Affiliate = affiliate,
-                    WebUser = user
-                },
-
-                //WpsViewModel = new WpsViewModel
-                //{
-                //    Discounts = _affiliateManagementService.GetSubscriptionsByAffiliate(19)
-                //    .Where(d => d.DiscountType == DiscountType.Subscription).ToList()
-                //},
-
-                //CompPersSubscriptionsModel = new CompPersSubscriptionsModel
-                //{
-                //    Discounts = _affiliateManagementService.GetSubscriptionsByAffiliate(19)
-                //}
-
-
-            };
-
+                    ShowWebinarsViewModel = new ShowWebinarsViewModel
+                    {
+                        SearchTerm = searchTerm,
+                        UserIsAdmin = true
+                    },
+                    UserDetailsViewModel = new UserDetailsViewModel()
+                    {
+                        Affiliate = aff,
+                        UserIsAdmin = true
+                    },
+                    AffiliateSettingsViewModel = new AffiliateSettingsViewModel()
+                    {
+                        Affiliate = affiliate,
+                        WebUser = user
+                    }
+                };
+                return View("~/Views/Admin/Home/Index.cshtml", model);
+            }
             if (claimsIdentityOfAuthenticatedUser.HasClaim(
                 (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
             {
-                model.ShowWebinarsViewModel = new ShowWebinarsViewModel
+                var ttsDomain = claimsIdentityOfAuthenticatedUser.Claims
+                    .Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate)
+                    .Select(c => c.Value)
+                    .SingleOrDefault();
+
+                var affiliate = _affiliateManagementService.LoadByTTSDomain(ttsDomain);
+                var user = _membershipService.GetWebUserById(affiliate.idUserAff);
+
+                var model = new AdminDTO
                 {
-                    SearchTerm = searchTerm,
-                    UserIsAdmin = false,
-                    Affiliate = affiliate
+                    ShowWebinarsViewModel = new ShowWebinarsViewModel
+                    {
+                        SearchTerm = searchTerm,
+                        UserIsAdmin = false,
+                        Affiliate = affiliate
 
-                };
+                    },
 
-                model.InvoicesModel =
-                    new InvoicesModel
+                    InvoicesModel =
+                        new InvoicesModel
+                        {
+                            Affiliate = affiliate,
+                            Links =
+                                _affiliateManagementService.GetInvoicesByAffiliate(_globalConfig.Tenant,
+                                    affiliate.idUserAff)
+                        },
+
+                    WpsViewModel = new WpsViewModel
+                    {
+                        Discounts =
+                            _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff)
+                                .Where(d => d.DiscountType == DiscountType.Subscription)
+                                .ToList()
+                    },
+
+                    CompPersSubscriptionsModel = new CompPersSubscriptionsModel
+                    {
+                        Discounts = _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff)
+                    },
+
+                    UserDetailsViewModel = new UserDetailsViewModel()
                     {
                         Affiliate = affiliate,
-                        Links =
-                            _affiliateManagementService.GetInvoicesByAffiliate(_globalConfig.Tenant, affiliate.idUserAff)
-                    };
-
-                model.WpsViewModel = new WpsViewModel
-                {
-                    Discounts =
-                        _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff)
-                            .Where(d => d.DiscountType == DiscountType.Subscription)
-                            .ToList()
+                        UserIsAdmin = false
+                    },
+                    AffiliateSettingsViewModel = new AffiliateSettingsViewModel()
+                    {
+                        Affiliate = affiliate,
+                        WebUser = user
+                    }
                 };
 
-                model.CompPersSubscriptionsModel = new CompPersSubscriptionsModel
-                {
-                    Discounts = _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff)
-                };
-
-                model.UserDetailsViewModel = new UserDetailsViewModel()
-                {
-                    Affiliate = affiliate,
-                    UserIsAdmin = false
-                };
-                model.AffiliateSettingsViewModel = new AffiliateSettingsViewModel()
-                {
-                    Affiliate = affiliate,
-                    WebUser = user
-                };
+                return View("~/Views/Admin/Home/Index.cshtml", model);
             }
-            ;
-
-
-            return View("~/Views/Admin/Home/Index.cshtml", model);
-
+            return null;
         }
 
         public PartialViewResult GetAffiliates()
@@ -1109,8 +1110,8 @@ namespace CUWebinars.Web.Controllers.Admin
                     var results = _orderManagementService.GetOrdersByLastName(lastName, aff)
                         .Select(o => new
                         {
-                            //AffiliateName = GetAffiliateName(o.idAffiliate),
-                            id = o.WebUser.idUser,
+                        //AffiliateName = GetAffiliateName(o.idAffiliate),
+                        id = o.WebUser.idUser,
                             billingEmail = o.WebUser.email,
                             lastName = o.WebUser.LastName,
                             firstName = o.WebUser.FirstName,
@@ -3285,7 +3286,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                             order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
 
                                         string _price = row.RowPrice.ToString("C").Replace(".00", "");
-                                        
+
 
                                         string _percent =
                                             (row.PercentPaid * 100).ToString().Replace(".00", "").Replace(".0", "") +
@@ -3576,7 +3577,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                     sbL.Append("ChangedOrderNeedsNewInvoice logs: " + order.idOrder + " on aff: " +
                                                affiliate.idUserAff);
                                     var row = order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                                    
+
                                     var obj = (JObject)JsonConvert.DeserializeObject(order.InvoiceDetail);
                                     var dict = obj.First.First.Children()
                                         .Cast<JProperty>()

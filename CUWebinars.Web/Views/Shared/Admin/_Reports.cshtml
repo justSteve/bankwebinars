@@ -13,6 +13,18 @@
 
 }
 
+<style>
+    #limheight {
+    height: 1200px; /*your fixed height*/
+    -webkit-column-count: 4;
+       -moz-column-count: 4;
+            column-count: 4; 
+        list-style-type: none;
+}
+#limheight li {
+    
+}
+</style>
 <div class="container">
     <!--begin main content-->
     <div class="row-fluid">
@@ -21,13 +33,13 @@
             @{
                 if (Model.Links != null)
                 {
-                    foreach (var link in Model.Links.Reverse())
-                    {
-                        //http://storeforbw.blob.core.windows.net/invoicesprivate/10-31-2016/45-2016-62.pdf?sv=2014-02-14&sr=b&sig=c04lkgGd0cuBYX7MdLJOQzFzrxrBwIwG7S84EU7HEeQ%3D&se=2016-11-06T16%3A18%3A53Z&sp=r
-                        var weekNumber = link.AbsoluteUri.Split('/')[4];
-                        <a href="@link.AbsoluteUri">@weekNumber</a>
-                        <br/>
-                    }
+                    <ul id="limheight">
+                        @foreach (var link in Model.Links)
+                        {
+                            var weekNumber = link.AbsoluteUri.Split('/')[4];
+                            <li><a href="@link.AbsoluteUri">@weekNumber</a></li>
+                        }
+                    </ul>
                 }
                 else
                 {
@@ -37,5 +49,3 @@
         </div>
     </div>
 </div>
-
-

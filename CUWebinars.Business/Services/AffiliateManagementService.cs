@@ -852,7 +852,7 @@ namespace CUWebinars.Business.Services
 
             if (DateTime.Now.Year == 2017)
             {
-                for (var _week = 0; _week <= 55; _week++)
+                for (var _week = 55; _week >= 0; _week--)
                 {
                     //https://storeforbw.blob.core.windows.net/affiliateinvoices/10-17-2016/43-2016-11464.pdf
                     DateTime theMonday;
@@ -892,7 +892,7 @@ namespace CUWebinars.Business.Services
             }
 
             firstMonday = Core.Extensions.DateTimeExtensions.ToDateTime("1/4/2016");
-            for (var _week = 0; _week <= 55; _week++)
+            for (var _week = 55; _week >= 0; _week--)
             {
                 //https://storeforbw.blob.core.windows.net/affiliateinvoices/10-17-2016/43-2016-11464.pdf
                 DateTime theMonday;
