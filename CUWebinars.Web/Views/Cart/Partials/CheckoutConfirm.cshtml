@@ -43,6 +43,11 @@
             if (Model.OrderStatus == OrderStatus.InProcess || Model.OrderStatus == OrderStatus.AwaitingVerification)
             {
 
+                <script type="text/javascript" language="javascript">
+
+                    var idUser = @Model.idUser;
+
+                </script>
                 var HideConfirm = "no";
                 if (Model.DESCheckout)
                 {
@@ -73,7 +78,7 @@
 
                             @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new { id = "AdjustAddLocsForm" }))
                             {
-                            <div id="additionalLocationsList"></div>
+                                <div id="additionalLocationsList"></div>
                             }
 
                         </div>
@@ -143,7 +148,7 @@
                                             }
 
                                             Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
-                                            
+
                                             Html.RenderPartial("~/Views/Cart/Partials/_ContinueShopping.cshtml");
                                             if (ViewBag.Order != null)
                                             {

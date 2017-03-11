@@ -4,9 +4,11 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json.Converters;
 
 namespace CUWebinars.Business.Core.Helpers
 {
@@ -149,15 +151,47 @@ namespace CUWebinars.Business.Core.Helpers
         public static IEnumerable<JProperty> CreateJsonPropertiesFromObject(Object objectToJsonify)
         {
             ICollection<JProperty> properties = new List<JProperty>();
-
-            foreach (
-                var propertyInfo in objectToJsonify.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public)
-            )
+            try
             {
-                properties.Add(new JProperty(propertyInfo.Name, propertyInfo.GetValue(objectToJsonify)));
+                foreach (
+                    var propertyInfo in
+                    objectToJsonify.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                )
+                {
+                    if (propertyInfo.GetType() != typeof(Newtonsoft.Json.Linq.JValue))
+                        properties.Add(new JProperty(propertyInfo.Name, propertyInfo.GetValue(objectToJsonify)));
+                }
             }
-
+            catch (Exception)
+            {
+                return null;
+            }
             return properties;
+        }
+
+        public static IEnumerable<JProperty> CreateJsonPropertiesFromExpandoObject(ExpandoObject objectToJsonify)
+        {
+            ICollection<JProperty> properties = new List<JProperty>();
+
+            var converter = new ExpandoObjectConverter();
+
+            dynamic obj = JsonConvert.DeserializeObject<ExpandoObject>(objectToJsonify.ToString(), converter);
+            try
+            {
+                foreach (
+                           var propertyInfo in objectToJsonify.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                           )
+                {
+                    
+                    properties.Add(new JProperty(propertyInfo.Name, propertyInfo.GetValue(objectToJsonify)));
+                }
+            }
+            catch (Exception)
+            {
+                properties.Add(obj);
+            }
+            return properties;
+
         }
 
         public static string AddObjectToJsonArray(string jsonAsString, string keyOfArray, Object objectToJsonify)

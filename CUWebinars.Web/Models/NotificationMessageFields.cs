@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using CUWebinars.Business.Models;
 
 namespace CUWebinars.Web.Models
 {
@@ -33,5 +35,9 @@ namespace CUWebinars.Web.Models
         public string DetailedConnectionInfoLink { get; set; }
         public string SupportEmail { get; set; }
         public string CertificateLink { get; set; }
+        public string Phone { get; set; }
+        public string AccessCode { get; set; }
+        public string PresenterMaterials { get; set; }
+        public string AffFooter { get; set; }
     }
 }

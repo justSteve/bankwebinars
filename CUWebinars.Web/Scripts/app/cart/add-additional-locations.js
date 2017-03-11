@@ -42,7 +42,7 @@ $(function () {
 });
 
 function wireUpHandlers() {
-
+    
     locationsSpanPrefix = 'LocationSpan-',
     breakSuffix = '-break';
 
@@ -54,12 +54,13 @@ function wireUpHandlers() {
 
 
     addLocationsButton.on('click', function (e) {
-
+        
         e.preventDefault();
 
         $(this).append('<i id="loadModalSpinner" class="icon-spinner icon-spin"></i>');
         
-        $('#additionalLocationsModalDialog > div.modal-body').load('/Cart/GetAdditionalLocationByOrderId/' + $('#idWebinar').val() + '/' + ($('#WebUser_idUser').val() || 0).toString(), function () {
+        $('#additionalLocationsModalDialog > div.modal-body').load('/Cart/GetAdditionalLocationByOrderId/'
+            + webinarId +'/' + (idUser || 0).toString(), function () {
             wireUpHandlersForModal();
             $('#AddInputsButton').focus();
             $('#additionalLocationsModalDialog').modal(modalFormOptions);

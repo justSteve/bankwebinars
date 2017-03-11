@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using System.Diagnostics;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -336,8 +337,9 @@ namespace CUWebinars.Web.Controllers
             return PartialView(@"Partials/_SendConnectionInfo", model);
         }
 
+
         [System.Web.Mvc.HttpPost]
-        public JsonResult SendConnectionInfo(int webinarId)
+        public JsonResult SendConnectionInfo(int webinarId, bool reminder = false)
         {
             _logger.Info("ConnectionInfo Send is started: " + webinarId);
             var webinar = _webinarManagementService.GetWebinar(webinarId);
@@ -365,7 +367,7 @@ namespace CUWebinars.Web.Controllers
                 _logger.FatalException("CreateCitrixWebinar | AddPresenter: " + webinar.Presenter.WebUser.email, ex);
             }
 
-            _webinarControllerOrchestrator.FireSendConnectionInfoNotificationEvent(webinarId);
+            _webinarControllerOrchestrator.FireSendConnectionInfoNotificationEvent(webinarId, reminder);
 
             _logger.Info("ConnectionInfo Send is ended: " + webinarId);
             return Json(new { Result = WebUiConstants.Success });
@@ -1063,7 +1065,8 @@ namespace CUWebinars.Web.Controllers
                             _stateService.SetValue(WebUiConstants.CurrentAffiliate, _aff);
                             aff = _aff;
                             _orderManagementService.AssignAffiliateToOrder(_aff.idUserAff, order);
-                            _logger.Warn("AffiliateOnOrderIsReassignedFrom19: " + order.idOrder + " to: " + _aff.idUserAff);
+                            _logger.Warn("BuildConfirmOrder AffiliateOnOrderIsReassignedFrom19: " + order.idOrder +
+                                         " to: " + _aff.idUserAff);
                         }
                     }
 
@@ -1071,32 +1074,21 @@ namespace CUWebinars.Web.Controllers
                     //populate viewbag for expresscheckout viewmodel
                     ViewBag.Order = order;
 
-
-                    JObject existingJObject = null;
-                    string comments = string.Empty;
-                    if (!ReferenceEquals(null, order.AdminComments))
-                    {
-                        comments = order.AdminComments.Trim();
-                    }
+                    dynamic loggerStruc = new ExpandoObject();
+                    loggerStruc.idOrder = order.idOrder;
+                    loggerStruc.idUser = order.idUser;
+                    loggerStruc.idAffiliate = order.idAffiliate;
+                    loggerStruc.email = order.BillingEmail;
+                    loggerStruc.TimeStamp = TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat);
 
                     var newJson =
                         new JProperty(
-                            string.Concat("ReturningOrder-",
-                                TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
-                            new JObject(new JProperty("LegacyComments", order.AdminComments))
-                        );
+                            "BuildConfirmOrder",
+                            JsonConvert.SerializeObject(loggerStruc));
 
-                    if (string.IsNullOrWhiteSpace(comments))
-                    {
-                        existingJObject = new JObject(newJson);
-                    }
-                    else
-                    {
-                        existingJObject = JObject.Parse(comments);
-                        existingJObject.Add(newJson);
-                    }
+                    model.Order.AdminComments = JsonHelpers.AddObjectToJsonArray(model.Order.AdminComments,
+                        "BuildConfirmOrder", loggerStruc);
 
-                    order.AdminComments = existingJObject.ToString(Formatting.None);
                     order.OrderDate = DateTime.Now;
 
                     PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
@@ -1114,42 +1106,43 @@ namespace CUWebinars.Web.Controllers
                         bool desCheckout = false;
                         if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.SeriesInfo == "DES")
                             desCheckout = true;
+
                         model.CheckoutConfirmViewModel = new CheckoutConfirmViewModel
                         {
                             DESCheckout = desCheckout,
                             AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
-                            AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
-                            {
-                                Email = webUser.email,
-                                FirstName = webUser.FirstName,
-                                idUser = webUser.idUser,
+                            //AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
+                            //{
+                            //    Email = webUser.email,
+                            //    FirstName = webUser.FirstName,
+                            //    idUser = webUser.idUser,
 
-                                LastName = webUser.LastName,
-                                Title = webUser.Title,
-                                Institution = orderRow.Order.Institution,
-                                BillingAddress = new AddressModel()
-                                {
-                                    TypeOfAddress = AddressType.Billing,
-                                    StreetAddress = order.BillingAddress,
-                                    StreetAddress2 = order.BillingAddress2,
-                                    City = order.BillingCity,
-                                    Name = order.FirstName + ' ' + order.LastName,
-                                    Phone = order.BillingPhone,
-                                    State = order.BillingState,
-                                    Zip = order.BillingZip
-                                },
-                                ShippingAddress = new AddressModel()
-                                {
-                                    TypeOfAddress = AddressType.Shipping,
-                                    StreetAddress = order.ShippingAddress,
-                                    StreetAddress2 = order.ShippingAddress2,
-                                    City = order.ShippingCity,
-                                    Name = order.FirstName + ' ' + order.LastName,
-                                    Phone = order.ShippingPhone,
-                                    State = order.ShippingState,
-                                    Zip = order.ShippingZip
-                                }
-                            },
+                            //    LastName = webUser.LastName,
+                            //    Title = webUser.Title,
+                            //    Institution = orderRow.Order.Institution,
+                            //    BillingAddress = new AddressModel()
+                            //    {
+                            //        TypeOfAddress = AddressType.Billing,
+                            //        StreetAddress = order.BillingAddress,
+                            //        StreetAddress2 = order.BillingAddress2,
+                            //        City = order.BillingCity,
+                            //        Name = order.FirstName + ' ' + order.LastName,
+                            //        Phone = order.BillingPhone,
+                            //        State = order.BillingState,
+                            //        Zip = order.BillingZip
+                            //    },
+                            //    ShippingAddress = new AddressModel()
+                            //    {
+                            //        TypeOfAddress = AddressType.Shipping,
+                            //        StreetAddress = order.ShippingAddress,
+                            //        StreetAddress2 = order.ShippingAddress2,
+                            //        City = order.ShippingCity,
+                            //        Name = order.FirstName + ' ' + order.LastName,
+                            //        Phone = order.ShippingPhone,
+                            //        State = order.ShippingState,
+                            //        Zip = order.ShippingZip
+                            //    }
+                            //},
                             //Affiliate = aff,
                             AdminComments = order.AdminComments,
                             //AffiliateComments = model.Order.AffiliateComments,
@@ -1709,7 +1702,7 @@ namespace CUWebinars.Web.Controllers
 
             var feed = new SyndicationFeed("Events from " + _globalConfig.Tenant,
                 _globalConfig.TenantURL + " is Webinars for the financial industry.",
-                new Uri("http://www.bankwebinars.com/blog"), postItems)
+                new Uri("http://www.bankwebinars.com"), postItems)
             {
 
             };

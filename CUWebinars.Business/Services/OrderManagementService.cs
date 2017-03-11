@@ -510,13 +510,7 @@ namespace CUWebinars.Business.Services
 
             if (affiliateIds == null)
             {
-                //affiliateIds = _orderRepository.FindOrdersByUserId(idUser)
-                //                    .OrderByDescending(o => o.OrderDate)
-                //                    .Select(o => o.idAffiliate)
-                //                    .ToList();
-                ////
-                //HACK: eliminate the problematic calculations and hard-wire the
-                // resultset to include only 1 affiliate chosen by most recent order.
+
                 affiliateIds = _orderRepository.FindOrdersByUserId(idUser)
                     .OrderByDescending(o => o.OrderDate)
                     .Select(o => o.idAffiliate)
@@ -529,7 +523,7 @@ namespace CUWebinars.Business.Services
 
             if (affiliateIds.Any())
             {
-                _logger.Info("DetermineAffiliateByAlternativeMeans found at one aff: " + idUser);
+                _logger.Info("DetermineAffiliateByAlternativeMeans for " + idUser + " found: " + affiliateIds);
 
                 //  get the most recent
                 int affiliateIdForOrder, mostRecentAffiliateId;
@@ -539,7 +533,6 @@ namespace CUWebinars.Business.Services
                 // The history is of more than 1 affiliate
                 if (affiliateIds.Distinct().Count() > 1)
                 {
-                    _logger.Info("DetermineAffiliateByAlternativeMeans finds multi affs: " + idUser);
 
                     // The business rule is that where there is more than one Affiliate which the 
                     // user has made orders for, if one affiliate has been used twice as many times 
@@ -569,10 +562,10 @@ namespace CUWebinars.Business.Services
 
                     if (mostUses >= 2 * numberOfUsesOfMostRecentAffiliate)
                     {
-                        _logger.Info("DetermineAffiliateByAlternativeMeans by mostUses: " + idUser);
+                        _logger.Info("DetermineAffiliateByAlternativeMeans by mostUses: " + idUser + " awarded: " + mostUsedAffiliateId);
                         affiliateIdForOrder = mostUsedAffiliateId;
                     }
-                    _logger.Error("multiple affiliates considered: {0} for idUser {1}. Credited to {2}.", sb.ToString(),
+                    _logger.Error("DetermineAffiliateByAlternativeMeans ({1}) found multiple affiliates: {0} Credited to {2}.", sb.ToString(),
                         idUser, affiliateIdForOrder, current);
 
                 }
@@ -860,19 +853,13 @@ namespace CUWebinars.Business.Services
         public void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, bool resending = false,
             Uri url = null)
         {
-
-            //override userCreatedInCart to remedy express checkout problem where existing users
-            // are being prompted to confirm password.
-
             var doesUserExist = _webUserRepository.GetWebUserFullname(order.BillingEmail);
-            // GetOrdersByUserId(order.idUser).Where(o => o.idOrder  < order.idOrder && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted))
-
+            
             if (doesUserExist != null)
                 userCreatedInCart = false;
 
             string addPasswordUrl = string.Empty;
-            //var idOrderToShow = order.idOrderLegacy;
-
+            
             var orderSubmittedViewModel = new ConfirmOrderMessage
             {
                 AddPasswordUrl = string.Empty,

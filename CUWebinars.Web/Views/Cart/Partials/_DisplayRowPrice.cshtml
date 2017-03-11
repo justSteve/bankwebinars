@@ -140,10 +140,6 @@
 
         }
 
-        if (Model.NumberOfAdditionalLocations == 0)
-        {
-            rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> Need an Additional Location?</button> " + GetAdditionalLocationsTextSpan());
-        }
         if (Model.NumberOfAdditionalLocations > 0)
         {
             rowAmount.Append(GetAdditionalLocationsTextSpan() + "<br>");
@@ -198,7 +194,7 @@
                     @if (Model.OrderStatus != OrderStatus.Paid)
                     {
                         <span>
-                            <button data-toggle="modal" role="button" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />`
+                            <button data-toggle="modal" role="button" data-target="#PayByCCModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />
                         </span>
                     }
 
@@ -212,3 +208,8 @@
         </div>
     }
 }
+<div id="additionalLocationsModalDialog" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-body">
+        @* modal content goes here *@
+    </div><!-- /.modal-content -->
+</div>

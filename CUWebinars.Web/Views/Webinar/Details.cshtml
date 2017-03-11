@@ -134,7 +134,7 @@
                     var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
 
                     <div style="font-size: smaller; line-height: 1.2; text-align: center; margin-bottom: 10px;">
-                        This event was recorded on <i>@Html.DisplayDate(Model.Webinar.Date)</i>.
+                        This @Model.Webinar.Duration.ToString().Replace(".00", "") hour event was recorded on <i>@Html.DisplayDate(Model.Webinar.Date)</i>.
                     </div>
                 }
                 else

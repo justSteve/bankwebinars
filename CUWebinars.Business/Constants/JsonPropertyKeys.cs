@@ -34,8 +34,9 @@ namespace CUWebinars.Business.Constants
         public static readonly string NewOrderDateAppliedKey = "NewOrderDateApplied";
         public static readonly string AdjustedOrderIsReinvoiced = "AdjustedOrderIsReinvoiced";
         public static readonly string PostEventOrder = "PostEventOrder";
-
-
+        public static readonly string Multi_OrderCheckout = "Multi_OrderCheckout";
+        public static readonly string Single_OrderCheckout = "Single_OrderCheckout";
+        public static readonly string PrevalidateWithMulti = "PrevalidateWithMulti";
         
     }
 }

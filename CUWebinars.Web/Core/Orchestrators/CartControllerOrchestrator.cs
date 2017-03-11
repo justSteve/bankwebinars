@@ -1327,14 +1327,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
             fields.AddLocsCost = " Please note that the per seat cost of an Additional Location is " +
                      _orderManagementService.GetAdditionalLocationsPricing(row.idWebinar).ToString("C0") + ".";
-
-
-            if (webinar.Status == WebinarStatus.Recorded)
-            {
-                document = DocumentModel.Load(System.Web.HttpContext.Current.Server.MapPath(@"~/App_Data/mergeTemplates/OrderSubmitted_PostEvent.docx"));
-            }
-
-
+            
             document.MailMerge.Execute(fields);
 
 
@@ -1344,10 +1337,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 if (noError)
                 {
                     _logger.Info("BuildOrderSubmitted2NotificationMessage begins: " + order.idOrder);
-
-                    //// SAVE LOCALLY if needed for easier testing
-                    //document.Save(System.Web.HttpContext.Current.Server.MapPath(@"~/App_Data/mergeTemplates/" + order.idOrder + ".pdf"), SaveOptions.PdfDefault);
-
+                    
                     var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName,
                         _globalConfig.StorageAccessKey);
 

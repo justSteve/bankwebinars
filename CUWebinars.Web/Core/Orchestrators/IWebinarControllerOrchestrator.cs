@@ -14,7 +14,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         WebinarEditModel BuildEditModelForWebinarCreate();
         WebinarEditModel BuildEditModelForWebinar(int idWebinar);
         void CreateWebinarFromViewInput(WebinarEditModel webinarEditModel);
-        void FireSendConnectionInfoNotificationEvent(int idWebinar);
+        void FireSendConnectionInfoNotificationEvent(int idWebinar, bool reminder);
         Webinar GetWebinar(int idWebinar);
         ActionResult Identify(IdentifyModel identifyModel, int id);
         ActionResult OnDemand(int id, string onDemandCode, IIdentity userIdentity);

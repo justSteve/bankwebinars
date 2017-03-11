@@ -39,7 +39,7 @@ namespace CUWebinars.Business.Notification.Email
             notificationMessage.PersistedName = confirmOrderMessage.PersistedName;
 
 
-            //notificationMessage.To = order.idAffiliate == 62 ? "steve@ttstrain.com" : order.BillingEmail;
+            //notificationMessage.To = order.idAffiliate == 62 ? "deb@cftnow.org" : order.BillingEmail;
 
             notificationMessage.To = order.BillingEmail;
             notificationMessage.Bcc = order.Affiliate.ContactEmail;

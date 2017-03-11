@@ -84,7 +84,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             _jsonValidator = jsonValidator;
         }
 
-        public void FireSendConnectionInfoNotificationEvent(int idWebinar)
+        public void FireSendConnectionInfoNotificationEvent(int idWebinar, bool reminder = false)
         {
             var webinar = _webinarManagementService.GetWebinar(idWebinar);
             var orgKey = _globalConfig.ConvertToCitrixOrgKey(webinar.OrganizerKey);
@@ -119,11 +119,18 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _orderManagementService.SaveChanges();
                 var body = BuildConnectionInfoMessage(order);
                 body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo);
-
-                _orderManagementService.FireMandrillNotificationEvent(
-                    ConfigurationManager.AppSettings["TestEmailAddress"],
-                    "Connection Checklist for " + GetWebinar(idWebinar).Title, body);
-
+                if (reminder)
+                {
+                    _orderManagementService.FireMandrillNotificationEvent(
+                        ConfigurationManager.AppSettings["TestEmailAddress"],
+                        "Connection Checklist for " + GetWebinar(idWebinar).Title, body);
+                }
+                else
+                {
+                    _orderManagementService.FireMandrillNotificationEvent(
+                        ConfigurationManager.AppSettings["TestEmailAddress"],
+                        "Connection Reminder for " + GetWebinar(idWebinar).Title, body);
+                }
 
             });
 
@@ -131,7 +138,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             _orderManagementService.FireSendConnectionInfoNotificationEvent(orders, false);
         }
 
-        private void SendConnectionInfoToAddLoc(Order order, int idWebinar)
+        private void SendConnectionInfoToAddLoc(Order order, int idWebinar, bool reminder = false)
         {
             var addLocs = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).AdditionalLocation;
 
@@ -768,13 +775,13 @@ namespace CUWebinars.Web.Core.Orchestrators
                     System.Web.HttpContext.Current.Server.MapPath(
                         @"~/App_Data/mergeTemplates/RecordingIsPostedToExistingUserBW.docx"));
 
-            if (_globalConfig.Tenant == "CUWebinars")
-            {
-                document =
-                   DocumentModel.Load(
-                       System.Web.HttpContext.Current.Server.MapPath(
-                           @"~/App_Data/mergeTemplates/RecordingIsPostedToExistingUserCU.docx"));
-            }
+            //if (_globalConfig.Tenant == "CUWebinars")
+            //{
+            //    document =
+            //       DocumentModel.Load(
+            //           System.Web.HttpContext.Current.Server.MapPath(
+            //               @"~/App_Data/mergeTemplates/RecordingIsPostedToExistingUserCU.docx"));
+            //}
 
             var fields = _appHelper.BuildNotiFields(order);
 
@@ -814,14 +821,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                         output.Position = 0; // reset to beginning so Upload operation can work correctly
                         blob.UploadFromStream(output);
                     }
-
-                    //blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".gif");
-                    //using (MemoryStream output = new MemoryStream())
-                    //{
-                    //    document.Save(output, new ImageSaveOptions() { Format = ImageSaveFormat.Gif});
-                    //    output.Position = 0; // reset to beginning so Upload operation can work correctly
-                    //    blob.UploadFromStream(output);
-                    //}
 
                     blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".htm");
                     using (MemoryStream output = new MemoryStream())

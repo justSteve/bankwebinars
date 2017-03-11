@@ -474,12 +474,15 @@ namespace CUWebinars.Web.Controllers.Admin
                         //                    order.AdminComments = JsonHelpers.MergeJsonWithStoredField(null,
                         //                        createdByExpressCheckout);
 
-                        order.AffiliateComments = JsonHelpers.MergeJsonWithStoredField(order.AffiliateComments,
-                            NewOrderDateApplied);
+                        //order.AffiliateComments = JsonHelpers.MergeJsonWithStoredField(order.AffiliateComments,
+                        //    NewOrderDateApplied);
+
+                        order.AffiliateComments = JsonHelpers.ReplaceJsonWithStoredField(order.AffiliateComments, NewOrderDateApplied, "NewOrderDateApplied");
 
 
                         order.OrderDate = DateTime.Now;
 
+                        _orderManagementService.FireOrderSubmittedEvent(order, false, false);
                     }
                     order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus;
                     // the only field that we are updating at this time
@@ -630,16 +633,21 @@ namespace CUWebinars.Web.Controllers.Admin
                 order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Discount =
                     _orderManagementService.GetDiscountById(idDiscount);
 
-                JProperty createdByExpressCheckout = new JProperty(JsonPropertyKeys.PriceAdjusted,
-                    "'PriceAdjusted': {'" + _appHelper.GetUserAuditInfo() + "'}");
+                msg = order.idOrder + " update price to " + targetPrice + " via Discount: " + idDiscount + " Note: " + note;
 
-                order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments,
-                    createdByExpressCheckout);
+                var newJson = new JProperty(
+                    "PriceAdjusted",
+                    new JObject(
+                        new JProperty("Message",
+                            msg),
+                        new JProperty("AditInfo",
+                            _appHelper.GetUserAuditInfo())
+                    ));
+                order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(order.AdminComments, newJson, "PriceAdjusted");
 
                 _orderManagementService.SaveOrderChanges(order, string.Empty, string.Empty);
 
 
-                msg = order.idOrder + " update price " + targetPrice + " via Discount: " + idDiscount;
 
 
                 if (!string.IsNullOrEmpty(order.InvoiceDetail))
@@ -1110,8 +1118,8 @@ namespace CUWebinars.Web.Controllers.Admin
                     var results = _orderManagementService.GetOrdersByLastName(lastName, aff)
                         .Select(o => new
                         {
-                        //AffiliateName = GetAffiliateName(o.idAffiliate),
-                        id = o.WebUser.idUser,
+                            //AffiliateName = GetAffiliateName(o.idAffiliate),
+                            id = o.WebUser.idUser,
                             billingEmail = o.WebUser.email,
                             lastName = o.WebUser.LastName,
                             firstName = o.WebUser.FirstName,

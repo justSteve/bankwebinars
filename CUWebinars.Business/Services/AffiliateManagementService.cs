@@ -570,9 +570,9 @@ namespace CUWebinars.Business.Services
                             new JProperty("Affiliate", _affiliateRepository.FindById(order.idAffiliate).ttsDomain)
                             ));
 
-                    order.InvoiceDetail = JsonHelpers.MergeJsonWithStoredField(order.InvoiceDetail, newJson);
+                    order.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(order.InvoiceDetail, newJson, "OrderIsInvoiced");
                     _logger.Info("GenerateWeeklyInvoicesEvent | StoreInvoiceDetail on idOrder: " + order.idOrder);
-                    _logger.Info("GenInv: UPDATE dbo.[Order] SET InvoiceDetail = '" + order.InvoiceDetail + "' where idOrder =" + order.idOrder);
+                    _logger.Info("GenerateWeeklyInvoicesEvent : UPDATE dbo.[Order] SET InvoiceDetail = '" + order.InvoiceDetail + "' where idOrder =" + order.idOrder);
 
                 }
             }

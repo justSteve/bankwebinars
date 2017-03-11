@@ -229,12 +229,12 @@ namespace CUWebinars.Web.Helpers
         {
             IDictionary<string, string> auditInfoDictionary = new Dictionary<string, string>();
             var sessionStart = GetSessionStartInfo();
+            auditInfoDictionary.Add("FirstPage", SecurityElement.Escape(_stateService.GetValue<string>("FirstPage")));
             auditInfoDictionary.Add("RemoteAddress", SecurityElement.Escape(_request.ServerVariables["REMOTE_ADDR"]));
             auditInfoDictionary.Add("RemoteHost", SecurityElement.Escape(_request.ServerVariables["REMOTE_HOST"]));
             auditInfoDictionary.Add("RemoteUser", SecurityElement.Escape(_request.ServerVariables["REMOTE_USER"]));
             auditInfoDictionary.Add("UserAgent", SecurityElement.Escape(_request.ServerVariables["HTTP_USER_AGENT"]));
             auditInfoDictionary.Add("Cookie", SecurityElement.Escape(_request.ServerVariables["HTTP_COOKIE"]));
-            auditInfoDictionary.Add("FirstPage", SecurityElement.Escape(_stateService.GetValue<string>("FirstPage")));
             auditInfoDictionary.Add("Elmah", SecurityElement.Escape(_stateService.GetValue<string>("Elmah")));
             auditInfoDictionary.Add("SessionRoot", SecurityElement.Escape(_stateService.GetValue<string>("SessonRoot")));
             auditInfoDictionary.Add("SessionID", SecurityElement.Escape(_stateService.GetValue<string>("SessionID")));
@@ -591,13 +591,25 @@ namespace CUWebinars.Web.Helpers
             return body;
         }
 
+
         public NotificationMessageFields BuildNotiFields(Order order)
         {
+
             var fields = new NotificationMessageFields();
             OrderRow row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+
+            var fileBuilder = "";
+            foreach (var i in row.Webinar.WebinarFiles)
+            {
+                fileBuilder += "<a href='http://ttsmedia.ttstrain.com/" + i.fileLocation + "'>" + i.fileDesc + "</a><br>";
+            }
             string TenantURL = _globalConfig.TenantURL();
             fields.SupportEmail = _globalConfig.TenantEmail();
             string Tenant = _globalConfig.Tenant();
+
+            fields.AffFooter = "This webinar brought to you by TTS & " + _globalConfig.Tenant();
+            if (order.idAffiliate != 2988 && order.idAffiliate != 19)
+                fields.AffFooter = "This webinar brought to you by " + order.Affiliate.DisplayTitle + " & " + _globalConfig.Tenant();
 
             fields.OndemandLink = " <a href='" + TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "'>" + TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "</a>";
             fields.DetailedConnectionInfoLink = " <a href='" + TenantURL + "/Home/DetailedConnectionInstructions'>" + TenantURL + "/Home/DetailedConnectionInstructions</a>";
@@ -616,18 +628,18 @@ namespace CUWebinars.Web.Helpers
             fields.FirstName = order.FirstName;
             fields.ShowTimeZone = order.WebUser.timeZone.ToString();
             fields.ShowStartTime = row.Webinar.Date.ToShortTimeString();
-            fields.DisplayDate = DateTimeHelper.FormatTimeWithDuration(row.Webinar.Date, order.WebUser.timeZone, true, row.Webinar.Duration);
+            fields.DisplayDate = DateTimeHelper.FormatDate(row.Webinar.Date) + " " + DateTimeHelper.FormatTimeWithDuration(row.Webinar.Date, order.WebUser.timeZone, true, row.Webinar.Duration);
 
-            fields.SubjectLine = "[" + Tenant + "] Confirmation of Registration: " + row.Webinar.Title;
-            fields.MessageHeading = "Your Order is Submitted!";
+            fields.Phone = row.Webinar.AccessPhone;
+            fields.AccessCode = row.Webinar.AccessCodeAttendee;
+            fields.PresenterMaterials = fileBuilder;
             fields.ClickToJoinLink = "<a href='" + TenantURL + "/j/" + row.TtsJoinUrl + "'>" +
                                      TenantURL + "/j/" + row.TtsJoinUrl + "</a>";
             fields.AddReminder = " <a href='" + TenantURL + "/Webinar/ICalOrder?icsOrder=" + order.idOrder + "'>" +
-                                 "Add to Calendar.</a>";
+                                 "Add to Calendar</a>";
             fields.CCCaption =
-                " We didn't find any address(es) already on the CC notification list but would be happy to update <a href='" +
-                TenantURL + "/Order/ChangeCC?idOrder=" + order.idOrder + "'>" + " with any address you send back." +
-                "</a>";
+                " We didn't find any address(es) already on the CC notification list. <a href='" +
+                TenantURL + "/Order/ChangeCC?idOrder=" + order.idOrder + "'>" + "This link will let you share this and future emails with the person logging on to the webinar. </a>";
             fields.PaymentStatus = order.OrderStatus.ToString();
 
             if (order.OrderStatus == OrderStatus.Paid)
@@ -636,12 +648,27 @@ namespace CUWebinars.Web.Helpers
             }
             else
             {
-                fields.PaymentCaption =
-                    "Though pre-payment is not required (we'll be happy to invoice you at " + order.BillingEmail +
-                    ") if you wish to pay by credit card <a href='" + TenantURL + "/Resume/" + order.idOrder +
-                    "'> click here.</a>" + " Is someone else in your organization responsible for payments? <a href='" +
-                    TenantURL + "/Order/AddBillingEmail?idOrder=" + order.idOrder + "'>" +
-                    "Enter their email here</a> and we will send the required information directly.";
+                if (row.Webinar.Status == WebinarStatus.Recorded)
+                {
+                    fields.PaymentCaption =
+                        "Though pre-payment is not required (we'll be happy to invoice you at " + order.BillingEmail +
+                        ") if you wish to pay by credit card <a href='" + TenantURL + "/Resume/" + order.idOrder +
+                        "'> click here.</a>" +
+                        " Is someone else in your organization responsible for payments? <a href='" +
+                        TenantURL + "/Order/AddBillingEmail?idOrder=" + order.idOrder + "'>" +
+                        "Enter their email here</a> and we will send the required information directly.";
+                }
+                else
+                {
+                    fields.PaymentCaption =
+                        "We'll be sending an invoice to " + order.BillingEmail + " in the next day or two. " +
+                        "However, if you wish to pay immediately <a href='" + TenantURL + "/Resume/" + order.idOrder +
+                        "'> click here.</a>" +
+                        " Is someone else in your organization responsible for payments? <a href='" +
+                        TenantURL + "/Order/AddBillingEmail?idOrder=" + order.idOrder + "'>" +
+                        "Enter their email here</a> and we will send the required information directly.";
+
+                }
             }
 
             if (row.Webinar.Title.Contains("Compliance Perspectives"))
@@ -665,24 +692,36 @@ namespace CUWebinars.Web.Helpers
             if (row.AdditionalLocation != null)
             {
                 var locs = "";
-                if (row.AdditionalLocation.Count > 1)
+                foreach (var loc in row.AdditionalLocation)
+                {
+                    locs += loc.Email + ", ";
+                }
+                locs = locs.TrimEnd(',');
+
+                if (row.AdditionalLocation.Count == 1)
                 {
                     fields.ExistingAddLocs = locs.TrimEnd(',') +
-                                             " is currently included as an Additional Location. <a href='" + TenantURL + "/Resume/" + order.idOrder +
-                "'>" + "Just let us know if you need more!</a>";
+                                             " is currently included as an Additional Location. "
+                                             //"<a href='" + TenantURL + "/Resume/" + order.idOrder + "'>" +
+                                             //"Just let us know if you need more!</a>";
+                                             ;
                 }
-                else
+                if (row.AdditionalLocation.Count > 1)
                 {
                     fields.ExistingAddLocs = locs.TrimEnd(',').Replace(",", ", ") +
-                                             " are currently included Additional Locations. <a href='" + TenantURL + "/Resume/" + order.idOrder +
-                "'>" + "Just let us know if you need change anything.</a>";
+                                             " are the included Additional Locations. "
+                                             //"<a href='" + TenantURL + "/Resume/" + order.idOrder + "'>" +
+                                             //"Just let us know if you need change anything.</a>";
+                                             ;
                 }
 
-                if (fields.ExistingAddLocs == "")
+                if (locs == "")
                 {
                     fields.ExistingAddLocs =
-                        " We don't have any Additional Locations stored for this order. <a href='" + TenantURL + "/Resume/" + order.idOrder +
-                    "'>" + "Click here to add." + "</a>";
+                        " We didn't find any Additional Locations stored for this order. "
+                        //"<a href='" + TenantURL + "/Resume/" + order.idOrder +"'>" + 
+                        //"Click here to add.</a>";
+                        ;
                 }
 
             }

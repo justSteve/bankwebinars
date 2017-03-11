@@ -121,7 +121,7 @@ $(function () {
 
         });
         var cancelOrderForm = cartStateManager.getCancelOrderForm();
-        
+
         $('#CancelModal').on('show', function (e) {
 
             $('#cancelModalOrderId').val(cartStateManager.getOrderId());
@@ -385,7 +385,7 @@ $(function () {
 
                         }, constants.HtmlDataType);
                     } else if (xhr.responseJSON['isSuccessful'] === false) {
-                        
+
                         formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
 
                         spinner.remove();
@@ -453,8 +453,9 @@ function setUpEditButtons() {
 
     $('#revealAddLocsPanel').on('click', function (e) {
         e.preventDefault();
-        
-        $('#AdjustAddLoc').slideToggle();
+        $('#AdjustAddLoc').slideToggle(400, function () { wireUpHandlers(); });
+
+
 
     });
     $('#editUserDetails').on('click', function (e) {
