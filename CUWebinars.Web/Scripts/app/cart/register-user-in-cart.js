@@ -6,66 +6,66 @@ var RegistrationInCart;
     var Button = (function () {
         function Button() {
         }
-        Button.EnterDiffAddress = 'EnterDiffAddress';
-        Button.nonUSAddressBtn = 'nonUSAddressBtn';
-        Button.NotInstitution = 'NotInstitution';
-        Button.ResetPass = 'resetPass';
-        Button.SignInButton = 'SignInButton';
-        Button.TheSubmit = 'TheSubmit';
-        Button.YesUseAddress = 'YesUseAddress';
         return Button;
     }());
+    Button.EnterDiffAddress = 'EnterDiffAddress';
+    Button.nonUSAddressBtn = 'nonUSAddressBtn';
+    Button.NotInstitution = 'NotInstitution';
+    Button.ResetPass = 'resetPass';
+    Button.SignInButton = 'SignInButton';
+    Button.TheSubmit = 'TheSubmit';
+    Button.YesUseAddress = 'YesUseAddress';
     RegistrationInCart.Button = Button;
     ;
     var InputAction = (function () {
         function InputAction() {
         }
-        InputAction.EnterKeyPress = 'EnterKeyPress';
-        InputAction.ButtonClick = 'ButtonClick';
-        InputAction.None = 'None';
         return InputAction;
     }());
+    InputAction.EnterKeyPress = 'EnterKeyPress';
+    InputAction.ButtonClick = 'ButtonClick';
+    InputAction.None = 'None';
     RegistrationInCart.InputAction = InputAction;
     ;
     var Action = (function () {
         function Action() {
         }
-        Action.CheckEmail = 'CheckEmail';
-        Action.CheckZip = 'CheckZip';
-        Action.GetPassword = 'GetPassword';
-        Action.LogIn = 'LogIn';
-        Action.PostCreateAccount = 'PostCreateAccount';
-        Action.SubmitLogin = 'SubmitLogin';
-        Action.SubmitRegister = 'SubmitRegister';
-        Action.DisplayBillingAddressFields = 'DisplayBillingAddressFields';
         return Action;
     }());
+    Action.CheckEmail = 'CheckEmail';
+    Action.CheckZip = 'CheckZip';
+    Action.GetPassword = 'GetPassword';
+    Action.LogIn = 'LogIn';
+    Action.PostCreateAccount = 'PostCreateAccount';
+    Action.SubmitLogin = 'SubmitLogin';
+    Action.SubmitRegister = 'SubmitRegister';
+    Action.DisplayBillingAddressFields = 'DisplayBillingAddressFields';
     RegistrationInCart.Action = Action;
     ;
     var Constants = (function () {
         function Constants() {
         }
-        Constants.BillingAddressFields = '#RegisterFields_BillingAddress';
-        Constants.ShippingAddressFields = '#RegisterFields_ShippingAddress';
-        Constants.ShippingAddressContainer = '#ShippingAddressContainer';
-        Constants.City = '_City';
-        Constants.Country = '_Country';
-        Constants.ConfirmDeleteShippingAddressdialog = '#ConfirmDeleteShippingAddressdialog';
-        Constants.FormPostContentType = 'application/x-www-form-urlencoded';
-        Constants.JsonContentType = 'application/json; charset=utf-8';
-        Constants.JsonDataType = 'json';
-        Constants.HtmlDataType = 'html';
-        Constants.Phone = '_Phone';
-        Constants.State = '_State';
-        Constants.AddShippingAddressLink = '#AddShippingAddressLink';
-        Constants.HideAddShippingAddressLink = '#HideAddShippingAddressLink';
-        Constants.StreetAddress = '_StreetAddress';
-        Constants.StreetAddress2 = '_StreetAddress2';
-        Constants.TypeofAddressBilling = 'Billing';
-        Constants.TypeofAddressShipping = 'Shipping';
-        Constants.Zip = '_Zip';
         return Constants;
     }());
+    Constants.BillingAddressFields = '#RegisterFields_BillingAddress';
+    Constants.ShippingAddressFields = '#RegisterFields_ShippingAddress';
+    Constants.ShippingAddressContainer = '#ShippingAddressContainer';
+    Constants.City = '_City';
+    Constants.Country = '_Country';
+    Constants.ConfirmDeleteShippingAddressdialog = '#ConfirmDeleteShippingAddressdialog';
+    Constants.FormPostContentType = 'application/x-www-form-urlencoded';
+    Constants.JsonContentType = 'application/json; charset=utf-8';
+    Constants.JsonDataType = 'json';
+    Constants.HtmlDataType = 'html';
+    Constants.Phone = '_Phone';
+    Constants.State = '_State';
+    Constants.AddShippingAddressLink = '#AddShippingAddressLink';
+    Constants.HideAddShippingAddressLink = '#HideAddShippingAddressLink';
+    Constants.StreetAddress = '_StreetAddress';
+    Constants.StreetAddress2 = '_StreetAddress2';
+    Constants.TypeofAddressBilling = 'Billing';
+    Constants.TypeofAddressShipping = 'Shipping';
+    Constants.Zip = '_Zip';
     RegistrationInCart.Constants = Constants;
     ;
     var StateManager = (function () {

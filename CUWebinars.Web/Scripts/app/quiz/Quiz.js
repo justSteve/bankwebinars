@@ -9,19 +9,19 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var QuizDomain;
 (function (QuizDomain) {
+    var CompletionStatus;
     (function (CompletionStatus) {
         CompletionStatus[CompletionStatus["NotStarted"] = 0] = "NotStarted";
         CompletionStatus[CompletionStatus["Incomlete"] = 1] = "Incomlete";
         CompletionStatus[CompletionStatus["Complete"] = 2] = "Complete";
-    })(QuizDomain.CompletionStatus || (QuizDomain.CompletionStatus = {}));
-    var CompletionStatus = QuizDomain.CompletionStatus;
+    })(CompletionStatus = QuizDomain.CompletionStatus || (QuizDomain.CompletionStatus = {}));
     ;
+    var EditType;
     (function (EditType) {
         EditType[EditType["Added"] = 0] = "Added";
         EditType[EditType["Edited"] = 1] = "Edited";
         EditType[EditType["Deleted"] = 2] = "Deleted";
-    })(QuizDomain.EditType || (QuizDomain.EditType = {}));
-    var EditType = QuizDomain.EditType;
+    })(EditType = QuizDomain.EditType || (QuizDomain.EditType = {}));
     ;
     var Quiz = (function () {
         function Quiz() {
@@ -143,7 +143,7 @@ var QuizDomain;
     var EditableQuestion = (function (_super) {
         __extends(EditableQuestion, _super);
         function EditableQuestion() {
-            _super.call(this);
+            return _super.call(this) || this;
         }
         EditableQuestion.prototype.getQuestionId = function () {
             return this.questionId;
@@ -157,7 +157,7 @@ var QuizDomain;
     var EditableOption = (function (_super) {
         __extends(EditableOption, _super);
         function EditableOption() {
-            _super.call(this);
+            return _super.call(this) || this;
         }
         EditableOption.prototype.getOptionId = function () {
             return this.optionId;
