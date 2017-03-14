@@ -2109,8 +2109,8 @@ namespace CUWebinars.Web.Controllers
                     times = new List<DateTimeRange> {
                     new DateTimeRange
                     {
-                        startTime = webinar.Date.AddHours(6),
-                        endTime = webinar.Date.AddHours((double)webinar.Duration).AddHours(6)
+                        startTime = webinar.Date.ToUniversalTime(),
+                        endTime = webinar.Date.ToUniversalTime().AddHours((double)webinar.Duration)
                     }
                 },
                     timeZone = "America/Chicago",

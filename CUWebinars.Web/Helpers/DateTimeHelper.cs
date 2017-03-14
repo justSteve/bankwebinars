@@ -189,5 +189,15 @@ namespace CUWebinars.Web.Helpers
             int daysToAdd = ((int)day - (int)start.DayOfWeek + 7) % 7;
             return start.AddDays(daysToAdd);
         }
+
+        public static DateTime? UtcNowAsCts
+        {
+            get
+            {
+                DateTime timeUtc = DateTime.UtcNow;
+                return TimeZoneInfo.ConvertTimeFromUtc(timeUtc, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
+            }
+
+        }
     }
 }
