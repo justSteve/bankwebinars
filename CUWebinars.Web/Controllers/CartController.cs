@@ -676,9 +676,12 @@ namespace CUWebinars.Web.Controllers
                 parameters = "UN~demo123|PSWD~demo123|TERMS~Y|TRANXTYPE~Sale|";
                 totalAmt = .21M;
                 parameters += "ORDERID~" + idOrder + "|AMOUNT~" + totalAmt + "|";
-                parameters += "ApproveURL~https://bwdev.azurewebsites.net/cart/PayTraceApproved/|";
-                parameters += "DeclineURL~https://bwdev.azurewebsites.net/cart/PayTraceDeclined/|";
-                parameters += "ReturnURL~https://bwdev.azurewebsites.net/cart/PayTracePostBack/|";
+                parameters += "ApproveURL~http://6242c10f.ngrok.io/cart/PayTraceApproved/|";
+                parameters += "DeclineURL~http://6242c10f.ngrok.io/cart/PayTraceDeclined/|";
+                parameters += "ReturnURL~http://6242c10f.ngrok.io/cart/PayTracePostBack/|";
+                //parameters += "ApproveURL~https://bwdev.azurewebsites.net/cart/PayTraceApproved/|";
+                //parameters += "DeclineURL~https://bwdev.azurewebsites.net/cart/PayTraceDeclined/|";
+                //parameters += "ReturnURL~https://bwdev.azurewebsites.net/cart/PayTracePostBack/|";
             }
             else
             {
@@ -1711,7 +1714,7 @@ namespace CUWebinars.Web.Controllers
                 var order = _cartControllerOrchestrator.LoadOrder(Convert.ToInt32(payTraceModel.Orderid));
 
                 if (order == null) throw new ArgumentNullException("order");
-                order.AdminComments = order.AdminComments.Replace("PendingPaytraceResponse", JsonConvert.SerializeObject(payTraceModel));
+                order.AdminComments = order.AdminComments.Replace("\"PendingPaytraceResponse\"", JsonConvert.SerializeObject(payTraceModel));
 
                 if (payTraceModel.Appmsg.StartsWith("Your TEST transaction was successfully processed.") ||
                     payTraceModel.Appmsg.Contains("Approv") || payTraceModel.CartType.ToLower() == "check")
@@ -1758,13 +1761,11 @@ namespace CUWebinars.Web.Controllers
                     }
                     else
                     {
-                        _logger.Info("PayTrace: " + order.idOrder + "  postback hits multi: ");
-
-
                         JObject o = JObject.Parse(order.AdminComments);
 
-                        var list = o["Multi-OrderCheckout"];
-
+                        var nullChecked = o.Properties().FirstOrDefault(p => p.Name.StartsWith("Multi_OrderCheckout"));
+                        var list = o.SelectToken("Multi_OrderCheckout[0].OrderList").ToList();
+                        _logger.Info("PayTrace: " + order.idOrder + "postback hits multi" + order.idOrder);
                         foreach (var odr in list)
                         {
                             try
@@ -1807,6 +1808,7 @@ namespace CUWebinars.Web.Controllers
 
                         }
                     }
+
                 }
                 else
                 {

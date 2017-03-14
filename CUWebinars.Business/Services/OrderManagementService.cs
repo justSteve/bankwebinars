@@ -2186,7 +2186,9 @@ namespace CUWebinars.Business.Services
                 //  it will be sent when the user clicks the "Bill Me" button on the 3rd tab of the cart. Not now.
                 if (!currentOrder.Origin.Equals("Migrator", StringComparison.OrdinalIgnoreCase) &&
                     !currentOrder.Origin.Equals(DomainConstants.Cart, StringComparison.OrdinalIgnoreCase) &&
-                    !currentOrder.Origin.Equals(DomainConstants.OriginImportedACS, StringComparison.OrdinalIgnoreCase))
+                    !currentOrder.Origin.Equals(DomainConstants.OriginImportedACS, StringComparison.OrdinalIgnoreCase)
+                    && orderGenesis != OrderGenesis.ImportedForACSExistingUser)
+                    // orderGenesis == OrderGenesis.ImportedForACSExistingUser means no email confirmation sent.
                 {
                     _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
 

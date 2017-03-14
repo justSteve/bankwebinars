@@ -355,7 +355,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                 importedOrder.Origin = DomainConstants.OriginImportedACS;
             }
 
-            string buildMessage = "ImportedOn" + DateTime.UtcNow;
+            string buildMessage = "Imported: " + DateTime.UtcNow;
 
             if (!ReferenceEquals(null, importedOrder))
             {

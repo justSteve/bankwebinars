@@ -4,6 +4,7 @@
 @model  CUWebinars.Web.Models.DataTablesModels.EditOrderInfoModel
 @{
     var strAdminComments = Model.EditFields.Order.AdminComments;
+    var strAffComments = Model.EditFields.Order.AffiliateComments;
     var strAudit = Model.EditFields.AuditInfo;
     var strInvoice = Model.EditFields.Order.InvoiceDetail;
 
@@ -14,6 +15,10 @@
     if (string.IsNullOrEmpty(strAdminComments))
     {
         strAdminComments = "false";
+    }
+    if (string.IsNullOrEmpty(strAffComments))
+    {
+        strAffComments = "false";
     }
     if (string.IsNullOrEmpty(strAudit))
     {
@@ -28,6 +33,7 @@
     $(function () {
         // Need to init a bunch of JS stuff
         var strAdminComments = "@strAdminComments";
+        var strAffComments = "@strAffComments";
         var strAudit = "@strAudit";
         var strInvoice = "@strInvoice";
         $('#auditTab a')
@@ -37,6 +43,7 @@
             });
 
         $( "#browserAdmin" ).jsonbrowser(strAdminComments.replace(/&quot;/g, '"'));
+        $( "#browserAff" ).jsonbrowser(strAffComments.replace(/&quot;/g, '"'));
         $( "#browserAudit" ).jsonbrowser(strAudit.replace(/&quot;/g, '"'));
         $( "#browserInvoice" ).jsonbrowser(strInvoice.replace(/&quot;/g, '"'));
     });
@@ -265,12 +272,21 @@
                                 <div id="browserAdmin" class="jsonbrowser">here</div>
                             </div>
                             <div class="tab-pane" id="invoice"><div id="browserInvoice" class="jsonbrowser">here</div></div>
-                            @*<div class="tab-pane" id="settings">...</div>*@
                         </div>
                     }
                     else
                     {
-                        <div id="browser" class="jsonbrowser">here</div>
+                        <ul class="nav nav-tabs" id="auditTab">
+                            <li><a href="#auditInfo">Origin</a></li>
+                            <li><a href="#affComments">Comments</a></li>
+                            <li><a href="#invoice">Invoice Details</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="auditInfo"><div id="browserAudit" class="jsonbrowser">here</div></div>
+                            <div class="tab-pane" id="affComments"><div id="browserAff" class="jsonbrowser">here</div></div>
+                            <div class="tab-pane" id="invoice"><div id="browserInvoice" class="jsonbrowser">here</div></div>
+                        </div>
                     }
                 }
                 @*<textarea class="form-control" style="min-width: 100%">"@Model.EditFields.Order.AdminComments</textarea>*@

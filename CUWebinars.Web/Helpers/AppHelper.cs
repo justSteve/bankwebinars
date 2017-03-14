@@ -225,6 +225,24 @@ namespace CUWebinars.Web.Helpers
         }
 
 
+        public AuditInfoModel GetUserAuditInfo2()
+        {
+            var model = new AuditInfoModel();
+            model.FirstPage = SecurityElement.Escape(_stateService.GetValue<string>("FirstPage"));
+            model.AffiliateSessionSource = SecurityElement.Escape(_stateService.GetValue<string>("AffiliateSessionSource"));
+            model.RemoteAddress = SecurityElement.Escape(_request.ServerVariables["REMOTE_ADDR"]);
+            model.RemoteHost = SecurityElement.Escape(_request.ServerVariables["REMOTE_HOST"]);
+            model.RemoteUser =  SecurityElement.Escape(_request.ServerVariables["REMOTE_USER"]);
+            model.UserAgent =  SecurityElement.Escape(_request.ServerVariables["HTTP_USER_AGENT"]);
+            model.Cookie =  SecurityElement.Escape(_request.ServerVariables["HTTP_COOKIE"]);
+            model.Elmah =  SecurityElement.Escape(_stateService.GetValue<string>("Elmah"));
+            model.SessionRoot =  SecurityElement.Escape(_stateService.GetValue<string>("SessonRoot"));
+            model.SessionID =  SecurityElement.Escape(_stateService.GetValue<string>("SessionID"));
+            model.SessionStart =  SecurityElement.Escape(_stateService.GetValue<string>("AffiliateSessionSource"));
+
+            return model;
+        }
+
         public string GetUserAuditInfo()
         {
             IDictionary<string, string> auditInfoDictionary = new Dictionary<string, string>();

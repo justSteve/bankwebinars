@@ -460,7 +460,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     string preSaveValues = dataOperationsV3.GetPreSaveValues(order.idOrder);
 
-
                     if ((model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Billed ||
                          model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Paid ||
                          model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Submitted)
@@ -468,20 +467,12 @@ namespace CUWebinars.Web.Controllers.Admin
                         && order.OrderStatus == OrderStatus.AwaitingVerification)
                     {
                         var newDate = TtsConfig.UtcNowAsCts.ToShortDateString();
-                        JProperty NewOrderDateApplied = new JProperty(JsonPropertyKeys.NewOrderDateAppliedKey,
-                            "'OrderIsUpdated': {' OrderDate changed from " + order.OrderDate + " to " + newDate + " '}");
+                        JProperty PendingACSOrderIsApproved = new JProperty(JsonPropertyKeys.PendingACSOrderIsApproved,
+                            "OrderDate changed from " + order.OrderDate + " to " + newDate + " by: " + User.Identity.Name + ". ");
 
-                        //                    order.AdminComments = JsonHelpers.MergeJsonWithStoredField(null,
-                        //                        createdByExpressCheckout);
-
-                        //order.AffiliateComments = JsonHelpers.MergeJsonWithStoredField(order.AffiliateComments,
-                        //    NewOrderDateApplied);
-
-                        order.AffiliateComments = JsonHelpers.ReplaceJsonWithStoredField(order.AffiliateComments, NewOrderDateApplied, "NewOrderDateApplied");
-
+                        order.AffiliateComments = JsonHelpers.ReplaceJsonWithStoredField(order.AffiliateComments, PendingACSOrderIsApproved, "PendingACSOrderIsApproved");
 
                         order.OrderDate = DateTime.Now;
-
                         _orderManagementService.FireOrderSubmittedEvent(order, false, false);
                     }
                     order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus;
@@ -542,9 +533,9 @@ namespace CUWebinars.Web.Controllers.Admin
                                         new JProperty(adjustmentDirection, adustmentAmount),
                                         new JProperty("DateOfChange",
                                             TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
-                                        new JProperty("Message", sb.ToString())
+                                        new JProperty("Message", sb.ToString()),
+                                        new JProperty("UnDo", order.InvoiceDetail)
                                     ));
-
 
                                 order.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(
                                     order.InvoiceDetail, newJson4Invoice, "OrderIsInvoiced");
@@ -603,7 +594,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 var originalOrder = _orderManagementService.GetOrderById(orderID);
 
                 var order = _orderManagementService.GetOrderById(orderID);
-                
+
                 _logger.Info("SetPriceOfOrder: " + orderID + " note: " + note + " from: " + order.Total + " to: " + targetPrice);
                 var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
                 decimal _targetPrice;
@@ -3260,42 +3251,49 @@ namespace CUWebinars.Web.Controllers.Admin
                                  affiliateHasAnyOrders.Replace("19983,", ""));
 
                     List<InvoiceExceptions> invoiceExceptionsByAff = new List<InvoiceExceptions>();
-                    foreach (var orderId in listOrdersPostEvent.Split(',').ToArray())
+                    List<InvoiceExceptions> postEventByAff = new List<InvoiceExceptions>();
+                    if (listOrdersPostEvent != null && listOrdersPostEvent != "")
                     {
-                        InvoiceExceptions invoiceExceptions = new InvoiceExceptions();
-                        var order = _orderManagementService.GetOrderById(Convert.ToInt32(orderId));
-                        invoiceExceptions.PostEvent = order.idOrder;
-                        invoiceExceptions.ActiveInvoice = invoiceId;
-                        invoiceExceptions.InvoiceHistory = order.InvoiceDetail;
-                        invoiceExceptions.Affiliate = affiliate.ttsDomain;
-                        invoiceExceptionsByAff.Add(invoiceExceptions);
-                        //JProperty PostEventOrder = new JProperty(JsonPropertyKeys.PostEventOrder,
-                        //    JsonConvert.SerializeObject(invoiceExceptions));
+                        foreach (var orderId in listOrdersPostEvent.Split(',').ToArray())
+                        {
+                            InvoiceExceptions invoiceExceptions = new InvoiceExceptions();
+                            var order = _orderManagementService.GetOrderById(Convert.ToInt32(orderId));
+                            invoiceExceptions.PostEvent = order.idOrder;
+                            invoiceExceptions.ActiveInvoice = invoiceId;
+                            invoiceExceptions.InvoiceHistory = order.InvoiceDetail;
+                            invoiceExceptions.Affiliate = affiliate.ttsDomain;
+                            invoiceExceptionsByAff.Add(invoiceExceptions);
 
-                        //order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(order.AdminComments, PostEventOrder,
-                        //    JsonPropertyKeys.AdjustedOrderIsReinvoiced);
-                        //_orderManagementService.SaveOrderChanges(order, null, null);
 
+                            order.AdminComments = JsonHelpers.AddObjectToJsonArray(order.AdminComments, "PostEventOrder",
+                                invoiceExceptions);
+                            _orderManagementService.SaveOrderChanges(order, null, null,
+                                OrderGenesis.ImportedForACSExistingUser);
+
+                        }
+                        StoreInvoiceLog(JsonConvert.SerializeObject(invoiceExceptionsByAff), invoiceId + "-PostEvent");
                     }
 
-                    foreach (var orderId in listOrdersAdjusted.Split(',').ToArray())
+                    if (listOrdersAdjusted != null && listOrdersAdjusted != "")
                     {
-                        InvoiceExceptions invoiceExceptions = new InvoiceExceptions();
+                        foreach (var orderId in listOrdersAdjusted.Split(',').ToArray())
+                        {
+                            InvoiceExceptions invoiceExceptions = new InvoiceExceptions();
 
-                        var order = _orderManagementService.GetOrderById(Convert.ToInt32(orderId));
-                        invoiceExceptions.Adjusted = order.idOrder;
-                        invoiceExceptions.ActiveInvoice = invoiceId;
-                        invoiceExceptions.InvoiceHistory = order.InvoiceDetail;
-                        invoiceExceptions.Affiliate = affiliate.ttsDomain;
-                        invoiceExceptionsByAff.Add(invoiceExceptions);
-                        //JProperty AdjustedOrder = new JProperty(JsonPropertyKeys.AdjustedOrderIsReinvoiced,
-                        //    JsonConvert.SerializeObject(invoiceExceptions));
+                            var order = _orderManagementService.GetOrderById(Convert.ToInt32(orderId));
+                            invoiceExceptions.Adjusted = order.idOrder;
+                            invoiceExceptions.ActiveInvoice = invoiceId;
+                            invoiceExceptions.InvoiceHistory = order.InvoiceDetail;
+                            invoiceExceptions.Affiliate = affiliate.ttsDomain;
+                            invoiceExceptionsByAff.Add(invoiceExceptions);
 
-                        //order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(order.AdminComments, AdjustedOrder,
-                        //    JsonPropertyKeys.AdjustedOrderIsReinvoiced);
-                        //_orderManagementService.SaveOrderChanges(order, null, null);
+                            order.AdminComments = JsonHelpers.AddObjectToJsonArray(order.AdminComments, "AdjustedOrder",
+                                invoiceExceptions);
+                            _orderManagementService.SaveOrderChanges(order, null, null,
+                                OrderGenesis.ImportedForACSExistingUser);
+                        }
+                        StoreInvoiceLog(JsonConvert.SerializeObject(invoiceExceptionsByAff), invoiceId + "-Adjusted");
                     }
-                    StoreInvoiceLog(JsonConvert.SerializeObject(invoiceExceptionsByAff), invoiceId);
                     // clears the has any orders hurdle - 
                     int totalNumberOrders = 0;
                     int totalNumberDiscounts = 1;
@@ -3376,7 +3374,6 @@ namespace CUWebinars.Web.Controllers.Admin
                                         if (o.BillingState.ToLower() == foundMatch.ToLower())
                                         {
                                             foundMatch = "y";
-
                                         }
                                         else
                                         {
@@ -3404,7 +3401,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
                                     o.InvoiceDetail = null;
 
-                                    _logger.Info("InvoiceLog: " + JsonConvert.SerializeObject(invoiceLog));
                                 }
                                 StoreInvoiceLog(JsonConvert.SerializeObject(invoiceLogsByAff), invoiceId);
                                 hadWOrder = true;
@@ -4040,9 +4036,8 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             try
             {
-
                 var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName,
-        _globalConfig.StorageAccessKey);
+                    _globalConfig.StorageAccessKey);
 
                 var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
                 CloudBlobClient blobClient = cloudStorageAccount.CreateCloudBlobClient();
