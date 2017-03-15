@@ -1624,7 +1624,7 @@ namespace CUWebinars.Web.Controllers.Admin
             model.EventBody = model.EventBody.Replace("{timeString}", timeString);
             string eventBodyText = System.Uri.UnescapeDataString(model.EventBody);
 
-            //GeneratePromoDocuments(model);
+            GeneratePromoDocuments(model);
 
             var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName,
                 _globalConfig.StorageAccessKey);
@@ -1954,7 +1954,7 @@ namespace CUWebinars.Web.Controllers.Admin
             bodyLeft += "<h3 align=\"center\"><b>A web-based Seminar<br /></b></h3>";
             bodyLeft += model.TimeFormatDisplay;
             bodyLeft += "<p><b>Recommended for" + model.CEUValue + " CE Credits</b></p>";
-            bodyLeft += "<b>Program Content: </b>" + model.Webinar.Description;
+            bodyLeft += "<b>Program Content: </b>" + model.Webinar.DescriptionLong;
             bodyLeft += "<h3>" + model.Webinar.LearnCaption + "</h3>";
             bodyLeft += model.Webinar.LearnBody;
             bodyLeft += "<h3>Who Should Attend</h3>";

@@ -2154,59 +2154,59 @@ namespace CUWebinars.Business.Services
                 _logger.Info("SaveOrderChanges: {0}", currentOrder.idOrder);
 
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, 0);
+//////  REMOVES SEND CONFIRMATION LOOP TO PREVENT DUPED SENDS
+                //// If linkToVerifyAccount is true, then we know that the user was created during an importation. When that occurs, 
+                //// we don't want to send the normal register user email. We want to roll those details into this confirmation
+                //// notification (OrderSubmitted notification). 
 
-                // If linkToVerifyAccount is true, then we know that the user was created during an importation. When that occurs, 
-                // we don't want to send the normal register user email. We want to roll those details into this confirmation
-                // notification (OrderSubmitted notification). 
-
-                //So, if we have the confirmChangeEmailLink, we can include it in 
-                // the notification confirming registration for this webinar.  
-                bool linkToVerifyAccount = !string.IsNullOrWhiteSpace(confirmChangeEmailLink);
-
-
-                //this is just a smoke test, right? currentOrder.Webuser should never be null at this point. 
-                _logger.Info("currentOrder.WebUser ({1}) is{0}null", currentOrder.WebUser == null ? " " : " not ", currentOrder.WebUser.email);
-
-                var orderSubmittedViewModel = new ConfirmOrderMessage
-                {
-                    ConfirmChangeEmailUrl =
-                        linkToVerifyAccount
-                            ? string.Concat(confirmChangeEmailLink.Replace(DomainConstants.Blank, string.Empty),
-                                currentOrder.WebUser.LastName.ToLower())
-                            : string.Empty,
-                    idOrder = updatedOrder.idOrder,
-                    Order = updatedOrder,
-                    OrderGenesis = orderGenesis,
-                    UserCreatedOnImport = linkToVerifyAccount
-                };
+                ////So, if we have the confirmChangeEmailLink, we can include it in 
+                //// the notification confirming registration for this webinar.  
+                //bool linkToVerifyAccount = !string.IsNullOrWhiteSpace(confirmChangeEmailLink);
 
 
-                //  The following "if" statement suppresses the OrderSubmitted notification where anonymous user has
-                //  clicked the SignUp button or the order was migrated. The notification is still sent, it is just that
-                //  it will be sent when the user clicks the "Bill Me" button on the 3rd tab of the cart. Not now.
-                if (!currentOrder.Origin.Equals("Migrator", StringComparison.OrdinalIgnoreCase) &&
-                    !currentOrder.Origin.Equals(DomainConstants.Cart, StringComparison.OrdinalIgnoreCase) &&
-                    !currentOrder.Origin.Equals(DomainConstants.OriginImportedACS, StringComparison.OrdinalIgnoreCase)
-                    && orderGenesis != OrderGenesis.ImportedForACSExistingUser)
-                    // orderGenesis == OrderGenesis.ImportedForACSExistingUser means no email confirmation sent.
-                {
-                    _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
+                ////this is just a smoke test, right? currentOrder.Webuser should never be null at this point. 
+                //_logger.Info("currentOrder.WebUser ({1}) is{0}null", currentOrder.WebUser == null ? " " : " not ", currentOrder.WebUser.email);
 
-                    AddEvent(new OrderSubmittedEvent<ConfirmOrderMessage>
-                    {
-                        EventObject = orderSubmittedViewModel,
-                        RelativePath = string.Empty
-                    });
+                //var orderSubmittedViewModel = new ConfirmOrderMessage
+                //{
+                //    ConfirmChangeEmailUrl =
+                //        linkToVerifyAccount
+                //            ? string.Concat(confirmChangeEmailLink.Replace(DomainConstants.Blank, string.Empty),
+                //                currentOrder.WebUser.LastName.ToLower())
+                //            : string.Empty,
+                //    idOrder = updatedOrder.idOrder,
+                //    Order = updatedOrder,
+                //    OrderGenesis = orderGenesis,
+                //    UserCreatedOnImport = linkToVerifyAccount
+                //};
 
-                    //it appears that the only way an event could be added within this method is a true response in the above If test.
-                    // hence this statement can be safely moved up here? [dar] not sure what you mean.
-                    foreach (var evt in GetEvents())
-                    {
-                        _logger.Info("OrderSubmittedEvent being raised for order {0}", orderSubmittedViewModel.idOrder);
-                        _ttsConfig.NotificationEventBus.RaiseEvent(evt);
-                    }
 
-                }
+                ////  The following "if" statement suppresses the OrderSubmitted notification where anonymous user has
+                ////  clicked the SignUp button or the order was migrated. The notification is still sent, it is just that
+                ////  it will be sent when the user clicks the "Bill Me" button on the 3rd tab of the cart. Not now.
+                //if (!currentOrder.Origin.Equals("Migrator", StringComparison.OrdinalIgnoreCase) &&
+                //    !currentOrder.Origin.Equals(DomainConstants.Cart, StringComparison.OrdinalIgnoreCase) &&
+                //    !currentOrder.Origin.Equals(DomainConstants.OriginImportedACS, StringComparison.OrdinalIgnoreCase)
+                //    && orderGenesis != OrderGenesis.ImportedForACSExistingUser)
+                //    // orderGenesis == OrderGenesis.ImportedForACSExistingUser means no email confirmation sent.
+                //{
+                //    _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
+
+                //    AddEvent(new OrderSubmittedEvent<ConfirmOrderMessage>
+                //    {
+                //        EventObject = orderSubmittedViewModel,
+                //        RelativePath = string.Empty
+                //    });
+
+                //    //it appears that the only way an event could be added within this method is a true response in the above If test.
+                //    // hence this statement can be safely moved up here? [dar] not sure what you mean.
+                //    foreach (var evt in GetEvents())
+                //    {
+                //        _logger.Info("OrderSubmittedEvent being raised for order {0}", orderSubmittedViewModel.idOrder);
+                //        _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+                //    }
+
+                //}
 
                 Clear();
 

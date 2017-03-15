@@ -11,6 +11,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
@@ -538,6 +539,15 @@ namespace CUWebinars.Web.Controllers
         [HttpGet]
         public JsonResult PayTraceModalIni(int idOrder, string multi)
         {
+            if (CheckIfMultiOrdersExist(idOrder) && !Request.QueryString.ToString().Contains("checked"))
+            {
+                return Json(new
+                {
+                    success = "success",
+                    redirectUrl = Url.Action("Checkout", "Cart", new RouteValueDictionary("checked=true" )),
+                    isRedirect = true
+                }, JsonRequestBehavior.AllowGet);
+            }
             _logger.Info("Paytrace: " + idOrder + "  Starts to validate, multi: " + multi);
             dynamic ptLogger = new JObject();
             ptLogger.Starts = new JArray(idOrder, multi);
@@ -822,6 +832,44 @@ namespace CUWebinars.Web.Controllers
                 paramList
 
             }, JsonRequestBehavior.AllowGet);
+        }
+
+        private bool CheckIfMultiOrdersExist(int idOrder)
+        {
+            // do not allow anonymous (it errors due to null/empty list of orders)
+
+
+            List<Order> orders = _cartControllerOrchestrator.GetOrdersByUser(_cartControllerOrchestrator.GetOrderById(idOrder).BillingEmail)
+                .Where(o => o.OrderStatus == OrderStatus.InProcess).ToList();
+            IList<int> iDsToRemove = new List<int>();
+            var x = 0;
+            foreach (var order in orders)
+            {
+                x++;
+
+                var hasAnyOthers = _cartControllerOrchestrator.GetOrdersByUser(order.BillingEmail)
+                    .Where(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar == order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar).OrderBy(o => o.idOrder);
+
+                if (hasAnyOthers.Count() > x)
+                {
+                    iDsToRemove.Add(order.idOrder);
+                }
+            }
+            foreach (var id in iDsToRemove)
+            {
+                var itemToRemove = orders.SingleOrDefault(o => o.idOrder == id);
+                itemToRemove.OrderStatus = OrderStatus.Canceled;
+                _cartControllerOrchestrator.SaveOrder(itemToRemove);
+                if (itemToRemove != null)
+                    orders.Remove(itemToRemove);
+                _logger.Warn("Checkout found and canceled duped order: " + id);
+                //_cartControllerOrchestrator.CancelOrder(id);
+            }
+            if (orders.Count > 1)
+            {
+                return true;
+            }
+            return false;
         }
 
         [AllowAnonymous]
@@ -1916,7 +1964,8 @@ namespace CUWebinars.Web.Controllers
             {
                 x++;
 
-                var hasAnyOthers = _cartControllerOrchestrator.GetOrdersByUser(order.BillingEmail).Where(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar == order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar).OrderBy(o => o.idOrder);
+                var hasAnyOthers = _cartControllerOrchestrator.GetOrdersByUser(order.BillingEmail)
+                    .Where(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar == order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar).OrderBy(o => o.idOrder);
 
                 if (hasAnyOthers.Count() > x)
                 {
@@ -1926,6 +1975,8 @@ namespace CUWebinars.Web.Controllers
             foreach (var id in iDsToRemove)
             {
                 var itemToRemove = orders.SingleOrDefault(o => o.idOrder == id);
+                itemToRemove.OrderStatus = OrderStatus.Canceled;
+                _cartControllerOrchestrator.SaveOrder(itemToRemove);
                 if (itemToRemove != null)
                     orders.Remove(itemToRemove);
                 _logger.Warn("Checkout found and canceled duped order: " + id);
@@ -1933,7 +1984,7 @@ namespace CUWebinars.Web.Controllers
             }
 
             RegistrationSummaryMultiViewModel model = BuildRegistrationSummaryMultiViewModel(orders);
-
+            
             return View(model);
         }
 

@@ -37,10 +37,11 @@
                 $.ajax({
                     datatype: "text/plain",
                     type: "GET",
-                    url: '/cart/PayTraceModalIni?idOrder='+idOrder + "&multi=@orderList",
+                    url: '/cart/PayTraceModalIni?checked=true&idOrder='+idOrder + "&multi=@orderList",
                     cache: false,
                     success: function (data) {
-                        //console.log(data);
+                        console.log(data);
+                        
                         dataParamList = data.paramList;
 
                         $("#btnSubmitPayTraceForm").click(function() {

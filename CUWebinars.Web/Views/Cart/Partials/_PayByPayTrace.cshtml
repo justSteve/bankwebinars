@@ -61,13 +61,17 @@
             var idOrder = @Model.idOrder;
             $('#btnSubmitCCForm').text("please wait");
             $('#PayByCCModal').on('show', function () {
-
+                
                 $.ajax({
                     datatype: "text/plain",
                     type: "GET",
                     url: '/cart/PayTraceModalIni?idOrder='+idOrder,
                     cache: false,
                     success: function (data) {
+                        console.log(data);
+                        if (data.isRedirect) {
+                            window.location.href = data.redirectUrl;
+                        }
 
                         $('#btnSubmitCCForm').text("Continue");
                         dataParamList = data.paramList;

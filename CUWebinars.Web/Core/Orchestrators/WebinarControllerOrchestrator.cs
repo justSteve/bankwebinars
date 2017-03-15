@@ -1127,9 +1127,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
 
             _webinarManagementService.AddWebinar(webinar);
-
-            //webinar.AdditionalLocationPrice = _orderManagementService.GetAdditionalLocationsPricing(webinar.idWebinar);
-
+            
             _webinarManagementService.SaveChanges();
         }
 

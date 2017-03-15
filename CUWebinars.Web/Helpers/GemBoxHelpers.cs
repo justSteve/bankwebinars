@@ -138,8 +138,8 @@ namespace CUWebinars.Web.Helpers
             pageSetup.PageMargins.Right = 35;
             pageSetup.Orientation = Orientation.Portrait;
 
-            bodyWidth = 380; // width / (66 * 100);
-            sideBarWidth = 140; // width / (33 * 100);
+            bodyWidth = 480; // width / (66 * 100);
+            sideBarWidth = 100; // width / (33 * 100);
 
             table.TableFormat.AutomaticallyResizeToFitContents = true;
             table.TableFormat.Alignment = HorizontalAlignment.Center;
@@ -228,7 +228,7 @@ namespace CUWebinars.Web.Helpers
             table.Rows.Add(footerRow);
 
             foreach (ContentRange item in document.Content.Find("model.Webinar.Description").Reverse())
-                item.LoadText(model.Webinar.Description, new HtmlLoadOptions());
+                item.LoadText(model.Webinar.DescriptionLong, new HtmlLoadOptions());
             foreach (ContentRange item in document.Content.Find("bodyRight").Reverse())
                 item.LoadText(model.BodyRight, new HtmlLoadOptions());
             foreach (ContentRange item in document.Content.Find("footer").Reverse())
