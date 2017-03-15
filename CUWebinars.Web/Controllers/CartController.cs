@@ -676,12 +676,12 @@ namespace CUWebinars.Web.Controllers
                 parameters = "UN~demo123|PSWD~demo123|TERMS~Y|TRANXTYPE~Sale|";
                 totalAmt = .21M;
                 parameters += "ORDERID~" + idOrder + "|AMOUNT~" + totalAmt + "|";
-                parameters += "ApproveURL~http://6242c10f.ngrok.io/cart/PayTraceApproved/|";
-                parameters += "DeclineURL~http://6242c10f.ngrok.io/cart/PayTraceDeclined/|";
-                parameters += "ReturnURL~http://6242c10f.ngrok.io/cart/PayTracePostBack/|";
-                //parameters += "ApproveURL~https://bwdev.azurewebsites.net/cart/PayTraceApproved/|";
-                //parameters += "DeclineURL~https://bwdev.azurewebsites.net/cart/PayTraceDeclined/|";
-                //parameters += "ReturnURL~https://bwdev.azurewebsites.net/cart/PayTracePostBack/|";
+                //parameters += "ApproveURL~http://6242c10f.ngrok.io/cart/PayTraceApproved/|";
+                //parameters += "DeclineURL~http://6242c10f.ngrok.io/cart/PayTraceDeclined/|";
+                //parameters += "ReturnURL~http://6242c10f.ngrok.io/cart/PayTracePostBack/|";
+                parameters += "ApproveURL~https://bwdev.azurewebsites.net/cart/PayTraceApproved/|";
+                parameters += "DeclineURL~https://bwdev.azurewebsites.net/cart/PayTraceDeclined/|";
+                parameters += "ReturnURL~https://bwdev.azurewebsites.net/cart/PayTracePostBack/|";
             }
             else
             {

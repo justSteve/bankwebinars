@@ -37,6 +37,8 @@ namespace CUWebinars.Business.Models
         public string NotiOrders { get; set; }
         public string NotiInvoices { get; set; }
         public string idMailChimpList { get; set; }
+        public string DoNotPromoteList { get; set; }
+
         
         public virtual WebUser WebUser { get; set; }
         public virtual ICollection<Order> Orders { get; set; }

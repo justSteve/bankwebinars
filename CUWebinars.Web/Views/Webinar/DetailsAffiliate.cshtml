@@ -7,8 +7,11 @@
     ViewBag.Title = Model.Webinar.Title + " - Presented by: " + Model.Webinar.Presenter.WebUser.FullName;
     Layout = "/Views/Shared/_LayoutAffiliate.cshtml";
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
-
-
+    var DNPButtonText = "Event is being promoted";
+    if (!Model.DNP)
+    {
+        DNPButtonText = "Event is NOT being promoted";
+    }
 }
 
 <script type="text/javascript">
@@ -21,6 +24,11 @@
     var orderRowId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow : 0);
     var orderId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.idOrder : 0);
     var addressVerified = @(@Model.UserAddressVerified ? "true" : "false");
+    var dnp = @(@Model.DNP ? "true" : "false");
+
+    $(function() {
+
+    });
 </script>
 
 @Scripts.Render("~/bundles/jqueryval")
@@ -59,7 +67,7 @@
                 {
                     <button id="showConnInfoButton" type="button" class="btn btn-info" data-toggle="collapse" data-target="#connectionDetails">Connection Info</button>
                 }
-                
+
             </div>
             @if (Model.Webinar.Status == WebinarStatus.Recorded)
             {
@@ -80,7 +88,7 @@
 
 <div class="container clearfix" id="main-content">
     <!--begin main content-->
-    @if ( Model.Webinar.Status == WebinarStatus.InProgress || Model.Webinar.Status == WebinarStatus.Active)
+    @if (Model.Webinar.Status == WebinarStatus.InProgress || Model.Webinar.Status == WebinarStatus.Active)
     {
         <div id="connectionDetails" class="collapse">
             @Html.Partial("~/Views/Admin/Partials/_ConnectionDetails.cshtml", Model)
@@ -198,24 +206,25 @@
                 </ul>
             </aside>
             <div>
-                <a href="/admin/perdaypromo/@Model.Webinar.idWebinar" class="btn btn-dangerx">Daily Promotional Email</a>
+                <a href="/admin/perdaypromo/@Model.Webinar.idWebinar" class="btn">Daily Promotional Email</a>
+                <a id="doNotPromoteButton" href="#" class="btn">@DNPButtonText</a>
                 @*<a href="#" data-toggle="collapse" data-target="#ListOfEvents" class="btn btn-dangerx">Weekly Promotional Email</a>*@
             </div>
 
             @*<div id="ListOfEvents" class="collapse out">
-                @using (Html.BeginForm("perweekpromo", "Admin", FormMethod.Post, new { id = "PickWebinars", @class = "form-horizontal" }))
-                {
-                    <div>
-                        <input type="hidden" name="idWebinar" value=@Model.Webinar.idWebinar />
-                        <input type="text" name="sListOfWebinarsForWeekly" />
-                        @Html.DropDownList("ListOfWebinarsForWeekly", (MultiSelectList)ViewBag.ListOfWebinars, new { multiple = "multiple" })
-                
+                    @using (Html.BeginForm("perweekpromo", "Admin", FormMethod.Post, new { id = "PickWebinars", @class = "form-horizontal" }))
+                    {
+                        <div>
+                            <input type="hidden" name="idWebinar" value=@Model.Webinar.idWebinar />
+                            <input type="text" name="sListOfWebinarsForWeekly" />
+                            @Html.DropDownList("ListOfWebinarsForWeekly", (MultiSelectList)ViewBag.ListOfWebinars, new { multiple = "multiple" })
 
-                        <br />
-                        <input type="submit" value="submit" />
-                    </div>
-                }
-            </div>*@
+
+                            <br />
+                            <input type="submit" value="submit" />
+                        </div>
+                    }
+                </div>*@
 
 
         </div>

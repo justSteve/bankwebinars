@@ -26,6 +26,9 @@ namespace CUWebinars.Business.Models.Mapping
                             .IsRequired()
                             .HasMaxLength(4000);
 
+            Property(t => t.DoNotPromoteList)
+                            .HasMaxLength(4000);
+
             Property(t => t.EmailBanner)
                             .IsRequired()
                             .HasMaxLength(4000);

@@ -84,34 +84,33 @@ OCA.initializeFunctions = function () {
             $('#loadingSpinner').remove();
         });
     });
-    $('#submitSynchOrders').on("click", function () {
-
+    $('#doNotPromoteButton').on("click", function () {
+        
         var self = this;
+        console.log(webinarId);
+        var payload = { idWebinar: webinarId, idAffiliate: affiliateId };
 
-        var payload = { webinarId: currentWebinarId, affiliateId: currentAffiliateId };
-
-        var d = new Date();
 
         $.ajax({
             type: 'POST',
             contentType: constants.JsonContentType,
             cache: false,
-            url: '/Admin/SynchOrders',
+            url: '/Admin/DoNotPromoteToggle',
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
             beforeSend: function () {
-                $(self).html('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Synching...</span></span>');
+                $(self).html('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Processsing...</span></span>');
 
             }
         }).done(function (result) {
-
-            if (result.Success === 'Success') {
+            console.log(result);
+            if (result.Result === 'Success') {
                 $('#spinnerLabel').remove();
-                $(self).html('<span>&nbsp;&nbsp;Synch Succeeded</span>');
+                $(self).html('<span>&nbsp;&nbsp;Succeeded</span>');
 
             } else if (result.Result === 'Fail') {
                 $('#spinnerLabel').remove();
-                $(self).html('<span>&nbsp;&nbsp;Synch Failed</span>');
+                $(self).html('<span>&nbsp;&nbsp;Failed</span>');
 
             }
 
@@ -1196,10 +1195,5 @@ function modalShown(e) {
         });
     });
 
-    //$('#passwordWrapper').remove();
 
-    //if ($('#RegisterFields_Password').length < 1) {
-    //    $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields_Password" name="RegisterFields.Password" value="456rty^Y" />');
-    //    $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields.ConfirmPassword" name="RegisterFields.ConfirmPassword" value="456rty^Y" />');
-    //}
 };

@@ -724,6 +724,16 @@ namespace CUWebinars.Web.Controllers
                     {
                         CheckoutResumeByAdmin(id, model);
                     }
+
+                    model.DNP = true;
+                    if (aff.DoNotPromoteList != null)
+                        foreach (var w in aff.DoNotPromoteList)
+                        {
+                            if (webinar.idWebinar == w)
+                            {
+                                model.DNP = false;
+                            }
+                        }
                     model.ShowOrdersViewModel = new ShowOrdersViewModel
                     {
                         Affiliate = aff,

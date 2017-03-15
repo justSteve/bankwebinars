@@ -9,6 +9,7 @@ namespace CUWebinars.Web.ViewModel
     public class WebinarDetailsViewModel
     {
         public string AddICS;
+        public bool DNP;
         public bool UserAddressVerified { get; set; }
         public string CeuShort { get; set; }
         public string CeuStatement { get; set; }

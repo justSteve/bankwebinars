@@ -992,6 +992,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
 
+
+
         [HttpPost]
         [AllowAnonymous]
         public void ExpressCheckout(JotFormWebHook postback)
@@ -1412,6 +1414,46 @@ namespace CUWebinars.Web.Controllers.Admin
             }
 
             return Json(new { Result = WebUiConstants.NoOrdersForWebinar });
+        }
+
+        [HttpPost]
+        [HandleAjaxException(Order = 1)]
+        [AllowAnonymous]
+        public ActionResult DoNotPromoteToggle(string idWebinar, int idAffiliate)
+        {
+            var affiliate = _affiliateManagementService.FindById(idAffiliate);
+
+            var onList = false;
+            if (affiliate.DoNotPromoteList != null)
+            {
+                var existingList = affiliate.DoNotPromoteList.Split(',').ToList();
+
+                onList = true;
+
+                foreach (var w in existingList)
+                {
+                    if (idWebinar == w)
+                    {
+                        affiliate.DoNotPromoteList = affiliate.DoNotPromoteList.Replace(idWebinar + ",", "");
+                        onList = false;
+                    }
+                }
+
+                if (onList)
+                    affiliate.DoNotPromoteList = affiliate.DoNotPromoteList + idWebinar + ",";
+            }
+            else
+            {
+                affiliate.DoNotPromoteList = idWebinar + ",";
+            }
+            _affiliateManagementService.SaveChanges(affiliate);
+
+            return
+                Json(
+                    new
+                    { Result = WebUiConstants.Success });
+            
+
         }
 
         public PartialViewResult SendConnectionInfo()
@@ -2082,16 +2124,28 @@ namespace CUWebinars.Web.Controllers.Admin
             _logger.Info("GenerateMailChimpCampaign starting");
             Webinar webinar = _webinarManagementService.GetWebinar(webinarId);
             Affiliate affiliate = _affiliateManagementService.FindById(affiliateId);
+            TimeZone zone = TimeZone.CurrentTimeZone;
+
+            string standard = zone.StandardName;
+            string daylight = zone.DaylightName;
+            bool flag = !zone.IsDaylightSavingTime(new DateTime());
+
+            var theTime = (int)affiliate.WebUser.timeZone;
+
+            if (flag)
+            {
+                theTime = (int)affiliate.WebUser.timeZone + 1;
+            }
             if (sendDate.Contains("-"))
             {
                 //2017-01-23
                 sendDate = sendDate.Split('-')[0] + "-" + sendDate.Split('-')[1] + "-" + sendDate.Split('-')[2] + "T" +
-                           sendTime + ":00:00" + (int)affiliate.WebUser.timeZone; //"T10:00:00-05:00";
+                           sendTime + ":00:00" + theTime; //"T10:00:00-05:00";
             }
             else
             {
                 sendDate = sendDate.Split('/')[2] + "-" + sendDate.Split('/')[0] + "-" + sendDate.Split('/')[1] + "T" +
-                           sendTime + ":00:00" + (int)affiliate.WebUser.timeZone; //"T10:00:00-05:00";
+                           sendTime + ":00:00" + theTime; //"T10:00:00-05:00";
             }
             try
             {
