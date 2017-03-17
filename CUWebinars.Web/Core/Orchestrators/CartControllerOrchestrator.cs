@@ -163,6 +163,49 @@ namespace CUWebinars.Web.Core.Orchestrators
                 var order = _orderManagementService.GetOrderById(idOrder.Value);
                 if (!ReferenceEquals(null, order))
                 {
+
+                    try
+                    {
+                        var existingOrders = _orderManagementService.FindOrdersByUserId(order.idUser)
+                            .Where(
+                                o =>
+                                    o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar ==
+                                    order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar).ToList();
+
+                        if (existingOrders.Any())
+                        {
+                            foreach (var o in existingOrders)
+                            {
+                                if (o.idOrder != idOrder)
+                                    _logger.Warn("BuildCheckoutConfirmViewModel found an existing order: " + o.idOrder + " same userid as: " + idOrder);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.FatalException("BuildCheckoutConfirmViewModel: ", ex);
+                    }
+                    try
+                    {
+                        var existingOrdersByEmail = _orderManagementService.GetOrdersByEmail(order.BillingEmail, 19) //_orderRepository.FindOrdersByBillingEmail(webUser.email, 19)
+                            .Where(o =>o.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar ==
+                                    order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar).ToList();
+
+                        if (existingOrdersByEmail.Any())
+                        {
+
+                            foreach (var o in existingOrdersByEmail)
+                            {
+                                if (o.idOrder != idOrder)
+                                    _logger.Warn("BuildCheckoutConfirmViewModel found an existing order By Email: " + o.idOrder + " same userid as: " + idOrder);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.FatalException("BuildCheckoutConfirmViewModel found existing by email: ", ex);
+                    }
+
                     try
                     {
                         _logger.Info("BuildCheckoutConfirmViewModel found: " + order.idOrder);
@@ -173,36 +216,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                         var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
                         var shippingAddress =
                             addresses.FirstOrDefault(a => a.AddressType == WebUiConstants.ShippingAddress);
-
-
-                        JObject existingJObject = null;
-
-                        string comments = string.Empty;
-
-
-                        if (!ReferenceEquals(null, order.AdminComments))
-                        {
-                            comments = order.AdminComments.Trim();
-                        }
-
-                        var newJson =
-                            new JProperty(
-                                string.Concat("LegacyCommentsFromCheckout-",
-                                    TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
-                                new JObject(new JProperty("LegacyComments", order.AdminComments))
-                                );
-
-                        if (string.IsNullOrWhiteSpace(comments))
-                        {
-                            existingJObject = new JObject(newJson);
-                        }
-                        else
-                        {
-                            existingJObject = JObject.Parse(comments);
-                            existingJObject.Add(newJson);
-                        }
-
-                        order.AdminComments = existingJObject.ToString(Formatting.None);
 
                         OrderRow row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
 
@@ -297,7 +310,6 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                             UserType = webUser.UserType
                         };
-                        _logger.Info("BuildCheckoutConfirmViewModel built checkoutConfirmViewModel: " + order.idOrder);
 
                         if (checkoutConfirmViewModel.OrderRowExists)
                         {
@@ -316,7 +328,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         }
 
 
-                        return checkoutConfirmViewModel;
+                        return checkoutConfirmViewModel;    
                     }
                     catch (Exception exception)
                     {
@@ -1181,7 +1193,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
             return _orderManagementService.UserHasMultipleEvents(order.idUser);
         }
-        
+
         public string BuildOrderSubmitted2DESNotification(Order order)
         {
 
@@ -1320,14 +1332,14 @@ namespace CUWebinars.Web.Core.Orchestrators
                     System.Web.HttpContext.Current.Server.MapPath(
                         @"~/App_Data/mergeTemplates/OrderSubmitted_PreEvent.docx"));
 
-            NotificationMessageFields fields= _appHelper.BuildNotiFields(order);
+            NotificationMessageFields fields = _appHelper.BuildNotiFields(order);
             var orderCC = _orderManagementService.OrderHasCc(order);
             if (orderCC != null)
             {
             }
             fields.AddLocsCost = " Please note that the per seat cost of an Additional Location is " +
                      _orderManagementService.GetAdditionalLocationsPricing(row.idWebinar).ToString("C0") + ".";
-            
+
             document.MailMerge.Execute(fields);
 
 
@@ -1337,7 +1349,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 if (noError)
                 {
                     _logger.Info("BuildOrderSubmitted2NotificationMessage begins: " + order.idOrder);
-                    
+
                     var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName,
                         _globalConfig.StorageAccessKey);
 
@@ -1356,7 +1368,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         output.Position = 0; // reset to beginning so Upload operation can work correctly
                         blob.UploadFromStream(output);
 
-                        
+
                     }
 
 
@@ -1381,7 +1393,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         myString = sr.ReadToEnd();
                         fileContents = output.ToArray();
                     }
-                    
+
                     //return System.Text.Encoding.UTF8.GetString(fileContents);
                     return (myString);
                 }
@@ -1395,10 +1407,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             _logger.Error("BuildOrderSubmitted2FloatedTooFar: " + order.idOrder);
             return "BuildOrderSubmitted2FloatedTooFar: " + order.idOrder;
         }
-        
+
         public string InvoicedOrderIsUpdated(Order order)
         {
-           return _orderManagementService.InvoicedOrderIsUpdated(order);
+            return _orderManagementService.InvoicedOrderIsUpdated(order);
         }
 
         public void FireMandrillNotificationEvent(string emails, string subjectLine, string orderConfirmString)

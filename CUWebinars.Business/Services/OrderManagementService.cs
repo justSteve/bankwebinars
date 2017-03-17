@@ -150,7 +150,7 @@ namespace CUWebinars.Business.Services
                     .SingleOrDefault();
                 if (existingEmail != null)
                 {
-                    _logger.Warn("CreateNewOrder found and returned existing: " + existingEmail);
+                    _logger.Warn("CreateNewOrder found and returned existing by email: " + existingEmail.idOrder);
                     return existingEmail;
                 }
             }
