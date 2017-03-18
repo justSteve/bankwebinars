@@ -663,6 +663,10 @@
     <Compile Include="ViewModel\UserDetailsViewModel.cs" />
     <Compile Include="ViewModel\WebinarEditModel.cs" />
     <Compile Include="ViewModel\WebinarFileViewModel.cs" />
+    <Content Include="App_Data\mergeTemplates\ConfirmationOfAccount.docx" />
+    <Content Include="App_Data\mergeTemplates\OrderSubmitted_PostEvent.docx" />
+    <Content Include="App_Data\mergeTemplates\WebinarPromo.docx" />
+    <Content Include="App_Data\mergeTemplates\WebinarPromoStandalone.docx" />
     <Content Include="Content\css\formCss.css" />
     <Content Include="Content\css\stylesDirectorSeries.css" />
     <Content Include="Content\mobile\Documentation\assets\css\documenter_style.css" />

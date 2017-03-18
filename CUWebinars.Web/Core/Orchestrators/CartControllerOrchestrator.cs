@@ -27,6 +27,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.DynamicData;
+using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Repository;
 using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models.DataTablesModels;
@@ -188,7 +189,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     try
                     {
                         var existingOrdersByEmail = _orderManagementService.GetOrdersByEmail(order.BillingEmail, 19) //_orderRepository.FindOrdersByBillingEmail(webUser.email, 19)
-                            .Where(o =>o.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar ==
+                            .Where(o => o.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar ==
                                     order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar).ToList();
 
                         if (existingOrdersByEmail.Any())
@@ -328,7 +329,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         }
 
 
-                        return checkoutConfirmViewModel;    
+                        return checkoutConfirmViewModel;
                     }
                     catch (Exception exception)
                     {
@@ -949,25 +950,43 @@ namespace CUWebinars.Web.Core.Orchestrators
                     if (!_stateService.HasValue(WebUiConstants.SessionId))
                         _logger.Info("AValidInstitution is not in session.");
 
-                    webUser = _membershipService.CreateWebUser(
-                        _globals.Tenant,
-                        "Not",
-                        "Authenticated",
-                        string.Empty,
-                        string.Concat(_stateService.GetValue<string>(WebUiConstants.SessionId), "@notauthenticated.com"),
-                        USTimeZone.Central,
-                        UserType.Customer,
-                        _stateService.GetValue<int>("AValidInstitution"),
-                        null,
-                        "Mr",
-                        null,
-                        null);
+                    var findTmpUser =
+                        _membershipService.GetWebUserIdByEmail(
+                            string.Concat(_stateService.GetValue<string>(WebUiConstants.SessionId),
+                                "@notauthenticated.com"));
+                    if (findTmpUser != null)
+                    {
+                        webUser = _membershipService.GetWebUserById(findTmpUser.Value);
+                        _logger.Info("Re-used tempUser account: " + _stateService.GetValue<string>(WebUiConstants.SessionId));
+                    }
+                    else
+                    {
+                        webUser = _membershipService.CreateWebUser(
+                            _globals.Tenant,
+                            "Not",
+                            "Authenticated",
+                            string.Empty,
+                            string.Concat(_stateService.GetValue<string>(WebUiConstants.SessionId),
+                                "@notauthenticated.com"),
+                            USTimeZone.Central,
+                            UserType.Customer,
+                            _stateService.GetValue<int>("AValidInstitution"),
+                            null,
+                            "Mr",
+                            null,
+                            null);
+                    }
                 }
 
                 _logger.Info("WebUser id is {0}", webUser.idUser);
+                var reuseOrder = _orderManagementService.CheckIfEmailAlreadyRegisteredForWebinar(webinar.idWebinar,
+                    webUser.email);
 
-
-                var newOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
+                Order newOrder = new Order();
+                if (reuseOrder != null)
+                    newOrder = _orderManagementService.GetOrderById(reuseOrder);
+                
+                newOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
                 newOrder.AuditInfo = _appHelper.GetUserAuditInfo();
                 newOrder.Origin = DomainConstants.Cart;
 
@@ -1325,6 +1344,13 @@ namespace CUWebinars.Web.Core.Orchestrators
         public string BuildOrderSubmitted2Notification(Order order)
         {
             OrderRow row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+            var account = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
+
+
+            if (!account.HasClaim(ClaimTypes.FullName))
+            {
+                SendAccountCreatedConfirmation(order);
+            }
 
             Webinar webinar = row.Webinar;
             DocumentModel document =
@@ -1408,6 +1434,61 @@ namespace CUWebinars.Web.Core.Orchestrators
             return "BuildOrderSubmitted2FloatedTooFar: " + order.idOrder;
         }
 
+        private void SendAccountCreatedConfirmation(Order order)
+        {
+            DocumentModel document = DocumentModel.Load(System.Web.HttpContext.Current.Server.MapPath(
+                @"~/App_Data/mergeTemplates/ConfirmationOfAccount.docx"));
+
+            NotificationMessageFields fields = _appHelper.BuildNotiFields(order);
+
+            document.MailMerge.Execute(fields);
+
+
+
+            bool noError = true;
+            try
+            {
+                if (noError)
+                {
+                    _logger.Info("SendAccountCreatedConfirmation begins: " + order.idOrder);
+
+
+                    byte[] fileContents;
+                    string myString = "";
+                    using (MemoryStream output = new MemoryStream())
+                    {
+                        document.Save(output, SaveOptions.HtmlDefault);
+                        output.Position = 0; // reset to beginning so Upload operation can work correctly
+
+
+                        output.Position = 0;
+                        var sr = new StreamReader(output);
+                        myString = sr.ReadToEnd();
+                        fileContents = output.ToArray();
+                    }
+
+                    //return System.Text.Encoding.UTF8.GetString(fileContents);
+                    //return (myString);
+
+                    myString = _appHelper.CleanHtmlCodesAndLogo(myString, _globalConfig.TenantLogo);
+                    FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"]
+                        , "[Test] Confirmation of New Account for " + order.BillingEmail, myString);
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorException("BuildOrderSubmitted2Noti for: " + order.idOrder, ex);
+
+            }
+
+            _logger.Error("BuildOrderSubmitted2FloatedTooFar: " + order.idOrder);
+
+        }
+
+
+
         public string InvoicedOrderIsUpdated(Order order)
         {
             return _orderManagementService.InvoicedOrderIsUpdated(order);
@@ -1451,7 +1532,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (_globalConfig.Tenant == "BankWebinars")
             {
                 formID = "52205870745961"; //production
-                //formID = "60463854157965"; //dev
+                                           //formID = "60463854157965"; //dev
             }
 
             var model = new ExpressCheckoutModel

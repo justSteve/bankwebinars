@@ -26,6 +26,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.WebPages;
 using CUWebinars.Web.Models.DataTablesModels;
 using Microsoft.Ajax.Utilities;
 using ClaimsExtensions = CUWebinars.Web.Helpers.ClaimsExtensions;
@@ -790,10 +791,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             UserAccount userAccount;
             int retries = 0;
 
-            // Try and find the user for up to 20s. 
-            // If it still does not exist, chuck an exception.
-            _logger.Info(string.Format("Beginning GetUserAccountByEmail ({1}) with timeout set to {0} seconds.", _globals.RetryCount / 2, model.Email));
-
+            if (model.Email.IsInt())
+            {
+                model.Email = _orderManagementService.GetOrderById(Convert.ToInt32(model.Email)).BillingEmail;
+            }
             do
             {
                 if (retries >= _globals.RetryCount - 1)

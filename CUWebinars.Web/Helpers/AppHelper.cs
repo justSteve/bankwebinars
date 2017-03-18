@@ -232,13 +232,13 @@ namespace CUWebinars.Web.Helpers
             model.AffiliateSessionSource = SecurityElement.Escape(_stateService.GetValue<string>("AffiliateSessionSource"));
             model.RemoteAddress = SecurityElement.Escape(_request.ServerVariables["REMOTE_ADDR"]);
             model.RemoteHost = SecurityElement.Escape(_request.ServerVariables["REMOTE_HOST"]);
-            model.RemoteUser =  SecurityElement.Escape(_request.ServerVariables["REMOTE_USER"]);
-            model.UserAgent =  SecurityElement.Escape(_request.ServerVariables["HTTP_USER_AGENT"]);
-            model.Cookie =  SecurityElement.Escape(_request.ServerVariables["HTTP_COOKIE"]);
-            model.Elmah =  SecurityElement.Escape(_stateService.GetValue<string>("Elmah"));
-            model.SessionRoot =  SecurityElement.Escape(_stateService.GetValue<string>("SessonRoot"));
-            model.SessionID =  SecurityElement.Escape(_stateService.GetValue<string>("SessionID"));
-            model.SessionStart =  SecurityElement.Escape(_stateService.GetValue<string>("AffiliateSessionSource"));
+            model.RemoteUser = SecurityElement.Escape(_request.ServerVariables["REMOTE_USER"]);
+            model.UserAgent = SecurityElement.Escape(_request.ServerVariables["HTTP_USER_AGENT"]);
+            model.Cookie = SecurityElement.Escape(_request.ServerVariables["HTTP_COOKIE"]);
+            model.Elmah = SecurityElement.Escape(_stateService.GetValue<string>("Elmah"));
+            model.SessionRoot = SecurityElement.Escape(_stateService.GetValue<string>("SessonRoot"));
+            model.SessionID = SecurityElement.Escape(_stateService.GetValue<string>("SessionID"));
+            model.SessionStart = SecurityElement.Escape(_stateService.GetValue<string>("AffiliateSessionSource"));
 
             return model;
         }
@@ -630,6 +630,7 @@ namespace CUWebinars.Web.Helpers
                 fields.AffFooter = "This webinar brought to you by " + order.Affiliate.DisplayTitle + " & " + _globalConfig.Tenant();
 
             fields.OndemandLink = " <a href='" + TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "'>" + TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "</a>";
+            fields.ConfirmAccountLink = " <a href='" + TenantURL + "/acc/apwd/" + order.idOrder + "'>" + TenantURL + "/acc/apwd/" + order.idOrder + "</a>";
             fields.DetailedConnectionInfoLink = " <a href='" + TenantURL + "/Home/DetailedConnectionInstructions'>" + TenantURL + "/Home/DetailedConnectionInstructions</a>";
             fields.CertificateLink = " <a href='" + TenantURL + "Account/MyCertificate?orderID=" + order.idOrder + "'>" + TenantURL + "/Account/MyCertificate?orderID=" + order.idOrder + "</a>";
             fields.LinkToMyWebinars = " <a href='" + TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "'>" + TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "</a>";
@@ -644,6 +645,7 @@ namespace CUWebinars.Web.Helpers
             fields.Duration = row.Webinar.Duration.ToString().Replace(".00", "");
 
             fields.FirstName = order.FirstName;
+            fields.LastName = order.LastName;
             fields.ShowTimeZone = order.WebUser.timeZone.ToString();
             fields.ShowStartTime = row.Webinar.Date.ToShortTimeString();
             fields.DisplayDate = DateTimeHelper.FormatDate(row.Webinar.Date) + " " + DateTimeHelper.FormatTimeWithDuration(row.Webinar.Date, order.WebUser.timeZone, true, row.Webinar.Duration);

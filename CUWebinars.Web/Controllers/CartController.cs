@@ -217,13 +217,13 @@ namespace CUWebinars.Web.Controllers
                     }
                     else
                     {
-                        //M4Gen
-                        var orderConfirmString =
-                            _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
 
                         if (model.Order.Origin == "Express")
                         {
                             //M4Gen
+                            var orderConfirmString =
+                                _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
+
                             orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
                                 _globalConfig.TenantLogo);
                             _cartControllerOrchestrator.FireMandrillNotificationEvent(
@@ -233,15 +233,22 @@ namespace CUWebinars.Web.Controllers
                             _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order,
                                 userCreatedInCart: false);
                         }
-                        //M4Gen
-                        orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
-                        orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
-                            _globalConfig.TenantLogo);
-                        _cartControllerOrchestrator.FireMandrillNotificationEvent(
-                            ConfigurationManager.AppSettings["TestEmailAddress"]
-                            , "[Test] Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
+                        else
+                        {
+                            //M4Gen
+                            var orderConfirmString =
+                                _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
+                            orderConfirmString =
+                                                            _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
+                            orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
+                                _globalConfig.TenantLogo);
+                            _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                                ConfigurationManager.AppSettings["TestEmailAddress"]
+                                , "[Test] Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
 
-                        _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: true);
+                            _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order,
+                                userCreatedInCart: true);
+                        }
                     }
                 }
                 catch (Exception exception)
@@ -544,7 +551,7 @@ namespace CUWebinars.Web.Controllers
                 return Json(new
                 {
                     success = "success",
-                    redirectUrl = Url.Action("Checkout", "Cart", new RouteValueDictionary("checked=true" )),
+                    redirectUrl = Url.Action("Checkout", "Cart", new RouteValueDictionary("checked=true")),
                     isRedirect = true
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -998,6 +1005,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (Exception exception)
                 {
+                    Session.Clear();
                     if (exception.Message.Equals(
                         ErrorMessageConstants.ExistingNonCancelledOrderMessage,
                         StringComparison.OrdinalIgnoreCase))
@@ -1984,7 +1992,7 @@ namespace CUWebinars.Web.Controllers
             }
 
             RegistrationSummaryMultiViewModel model = BuildRegistrationSummaryMultiViewModel(orders);
-            
+
             return View(model);
         }
 

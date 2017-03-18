@@ -2198,13 +2198,6 @@ namespace CUWebinars.Business.Services
                 //        RelativePath = string.Empty
                 //    });
 
-                //    //it appears that the only way an event could be added within this method is a true response in the above If test.
-                //    // hence this statement can be safely moved up here? [dar] not sure what you mean.
-                //    foreach (var evt in GetEvents())
-                //    {
-                //        _logger.Info("OrderSubmittedEvent being raised for order {0}", orderSubmittedViewModel.idOrder);
-                //        _ttsConfig.NotificationEventBus.RaiseEvent(evt);
-                //    }
 
                 //}
 

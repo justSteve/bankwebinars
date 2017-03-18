@@ -51,7 +51,7 @@ $(function() {
                 addPasswordContainer.height(containerHeight);
                 var formParent = addPasswordForm.parent();
                 addPasswordForm.fadeOut();
-                formParent.prepend('<div class="legendImitator">Account Created</div><span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Your account is confirmed.</span><div><a href="/Account/Login">Log In</a><div>');
+                formParent.prepend('<div class="legendImitator">Account Confirmed</div><span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Your account is confirmed.</span><div><a href="/Account/Login">Log In</a><div>');
                 feedbackContainer.show();
 
                 $('#main_menu ul.primary_menu').append('<li><a href="/Account/MyWebinars">My Webinars</a></li>');

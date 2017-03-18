@@ -39,5 +39,7 @@ namespace CUWebinars.Web.Models
         public string AccessCode { get; set; }
         public string PresenterMaterials { get; set; }
         public string AffFooter { get; set; }
+        public string ConfirmAccountLink { get; set; }
+        public string LastName { get; set; }
     }
 }
