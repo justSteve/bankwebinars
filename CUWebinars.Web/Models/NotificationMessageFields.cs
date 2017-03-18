@@ -6,7 +6,8 @@ namespace CUWebinars.Web.Models
 {
     public class NotificationMessageFields
     {
-  public    string  AttendType {get; set;}
+        public string TenantURL;
+        public    string  AttendType {get; set;}
         public string RegDesc {get; set;}
         public string TenantSignature { get; set;}
         public int OrderID {get; set;}

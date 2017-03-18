@@ -641,6 +641,7 @@ namespace CUWebinars.Web.Helpers
             fields.OrderID = row.idOrder;
             fields.BillingEmail = order.BillingEmail;
             fields.TenantName = _globalConfig.Tenant();
+            fields.TenantURL = _globalConfig.TenantURL();
             fields.WebinarTitle = row.Webinar.Title;
             fields.Duration = row.Webinar.Duration.ToString().Replace(".00", "");
 

@@ -1005,7 +1005,6 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (Exception exception)
                 {
-                    Session.Clear();
                     if (exception.Message.Equals(
                         ErrorMessageConstants.ExistingNonCancelledOrderMessage,
                         StringComparison.OrdinalIgnoreCase))

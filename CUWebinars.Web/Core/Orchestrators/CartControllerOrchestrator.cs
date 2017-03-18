@@ -954,7 +954,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         _membershipService.GetWebUserIdByEmail(
                             string.Concat(_stateService.GetValue<string>(WebUiConstants.SessionId),
                                 "@notauthenticated.com"));
-                    if (findTmpUser != null)
+                    if (findTmpUser != null && findTmpUser.Value > 0)
                     {
                         webUser = _membershipService.GetWebUserById(findTmpUser.Value);
                         _logger.Info("Re-used tempUser account: " + _stateService.GetValue<string>(WebUiConstants.SessionId));
