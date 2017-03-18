@@ -24,6 +24,10 @@
         @*window.location.href = "@url?idOrder=" + cartStateManager.getOrderId() + "&idWebinar=" + cartStateManager.getWebinarId() + "&idAffiliate=" + currentAffiliate + "&email=" + $('#Email1').val();*@
         window.location.href = "/cart/express/" + cartStateManager.getOrderId();
     }
+    function showHowEmailUsed() {
+        $('#showhowEmailUsed').show();
+        //make to ajax call = "/cart/showHowEmailUsed/" + cartStateManager.getOrderId();
+    }
 </script>
 
 @Html.ValidationSummary(string.Empty, new { id = "valSummarySignUpInCart" })
@@ -58,10 +62,10 @@
                     <div class="accordion-inner">
                         <div id="wrapEmail">
                             <div>
+                                <div class="initialHide well well-sm" id="showhowEmailUsed">This email will be the primary address. If you are registering for someone else who will require notifications we can collect that later in the checkout process.</div>
                                 @Html.TextBoxFor(model => model.RegisterFields.Email, new { style = "width: 180px;" })<br />
-                                @*@Html.ValidationMessageFor(model => model.RegisterFields.Email)*@
-                                <span>How is this address used? <a id="howEmailUsed" onclick="return false;" data-html=true rel="tooltip" href="#" data-delay=0 data-trigger="hover focus click" data-toggle="tooltip" title="This email will be the primary (billing) address. If you are registering for someone else who will require notifications related to the content to be delivered we can collect that later in the checkout process. Note: This address does not need to match the credit card (if used)."><i class="icon-question-sign"></i></a></span>
-                                @*<span>How is this address used? <a id="howEmailUsed" onclick="$('#howEmailUsed').tooltip('show'); return false;" data-html=true rel="tooltip" href="#" data-trigger="hover focus click" data-toggle="tooltip" title="This email will be the primary (billing) address. If you are registering for someone else who will require notifications related to the content to be delivered we can collect that later in the checkout process. Note: This address does <b><i>not</i></b> need to match the credit card (if used)."><i class="icon-question-sign"></i></a></span>*@
+                                <span>How is this address used? <a id="howEmailUsed" onclick="showHowEmailUsed(); return false;" data-html=true data-explainesItTab="This primary (or billing) email - can be changed to any more specific title later." data-asksItTextBox=true rel="tooltip" href="#" data-delay=0 data-trigger="hover focus click" data-toggle="tooltip" title="This primary (or billing) email can be changed to any more specific title later."><i class="icon-question-sign"></i></a></span>
+
                             </div>
                         </div>
                         <div id="wrapZip">
