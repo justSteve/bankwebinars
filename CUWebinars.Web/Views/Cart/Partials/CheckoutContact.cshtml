@@ -25,7 +25,9 @@
         window.location.href = "/cart/express/" + cartStateManager.getOrderId();
     }
     function showHowEmailUsed() {
-        $('#showhowEmailUsed').show();
+        $('#showhowEmailUsed').slideToggle();
+        $('#EventDescription').slideToggle();
+        window.scrollTo(0, 0);
         //make to ajax call = "/cart/showHowEmailUsed/" + cartStateManager.getOrderId();
     }
 </script>
@@ -62,8 +64,8 @@
                     <div class="accordion-inner">
                         <div id="wrapEmail">
                             <div>
-                                <div class="initialHide well well-sm" id="showhowEmailUsed">This email will be the primary address. If you are registering for someone else who will require notifications we can collect that later in the checkout process.</div>
                                 @Html.TextBoxFor(model => model.RegisterFields.Email, new { style = "width: 180px;" })<br />
+                                <div class="initialHide well well-sm" id="showhowEmailUsed">This email will be the primary address. If you are registering for someone else who will require notifications we can collect that later in the checkout process.</div>
                                 <span>How is this address used? <a id="howEmailUsed" onclick="showHowEmailUsed(); return false;" data-html=true data-explainesItTab="This primary (or billing) email - can be changed to any more specific title later." data-asksItTextBox=true rel="tooltip" href="#" data-delay=0 data-trigger="hover focus click" data-toggle="tooltip" title="This primary (or billing) email can be changed to any more specific title later."><i class="icon-question-sign"></i></a></span>
 
                             </div>

@@ -436,7 +436,7 @@ function getOrderStatusHtml() {
                     }
                 }
             ],
-
+            
             "serverSide": true,
             "ajax": {
                 "type": "POST",
@@ -485,12 +485,10 @@ function getOrderStatusHtml() {
                 { 'data': 'OrderDate', 'class': 'details-control edit-resends' },
                 { 'data': 'OrderStatusString', 'class': 'edit-status' }
             ],
-            "order": [0, "asc"], // complex columns can be specified / created with mRender
+            "order": [7, "desc"], // complex columns can be specified / created with mRender
             "aoColumnDefs": [
             {
                 // [0] idOrder column is hidden
-
-
                 "aTargets": [1], // User column  -- triggers EditUser_Compact.cshtml
                 "mData": "",
                 "mRender": function (data, type, full) {
