@@ -953,7 +953,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     var findTmpUser =
                         _membershipService.GetWebUserIdByEmail(
                             string.Concat(_stateService.GetValue<string>(WebUiConstants.SessionId),
-                                "@notauthenticated.com"));
+                                "@notauthenticated-" + Request.ServerVariables["REMOTE_ADDR"].ToString().Replace(":", "z").Replace(".", "_") + ".com"));
                     if (findTmpUser != null && findTmpUser.Value > 0)
                     {
                         webUser = _membershipService.GetWebUserById(findTmpUser.Value);
@@ -967,7 +967,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                             "Authenticated",
                             string.Empty,
                             string.Concat(_stateService.GetValue<string>(WebUiConstants.SessionId),
-                                "@notauthenticated.com"),
+                                "@notauthenticated-"+ Request.ServerVariables["REMOTE_ADDR"].ToString().Replace(":","z").Replace(".","_") + ".com"),
                             USTimeZone.Central,
                             UserType.Customer,
                             _stateService.GetValue<int>("AValidInstitution"),

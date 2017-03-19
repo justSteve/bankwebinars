@@ -238,7 +238,7 @@ namespace CUWebinars.Web.Helpers
             model.Elmah = SecurityElement.Escape(_stateService.GetValue<string>("Elmah"));
             model.SessionRoot = SecurityElement.Escape(_stateService.GetValue<string>("SessonRoot"));
             model.SessionID = SecurityElement.Escape(_stateService.GetValue<string>("SessionID"));
-            model.SessionStart = SecurityElement.Escape(_stateService.GetValue<string>("AffiliateSessionSource"));
+            model.SessionStart = SecurityElement.Escape(JsonConvert.SerializeObject(GetSessionStartInfo()));
 
             return model;
         }
@@ -246,7 +246,7 @@ namespace CUWebinars.Web.Helpers
         public string GetUserAuditInfo()
         {
             IDictionary<string, string> auditInfoDictionary = new Dictionary<string, string>();
-            var sessionStart = GetSessionStartInfo();
+             
             auditInfoDictionary.Add("FirstPage", SecurityElement.Escape(_stateService.GetValue<string>("FirstPage")));
             auditInfoDictionary.Add("RemoteAddress", SecurityElement.Escape(_request.ServerVariables["REMOTE_ADDR"]));
             auditInfoDictionary.Add("RemoteHost", SecurityElement.Escape(_request.ServerVariables["REMOTE_HOST"]));
@@ -257,7 +257,7 @@ namespace CUWebinars.Web.Helpers
             auditInfoDictionary.Add("SessionRoot", SecurityElement.Escape(_stateService.GetValue<string>("SessonRoot")));
             auditInfoDictionary.Add("SessionID", SecurityElement.Escape(_stateService.GetValue<string>("SessionID")));
             auditInfoDictionary.Add("AffiliateSessionSource", SecurityElement.Escape(_stateService.GetValue<string>("AffiliateSessionSource")));
-            auditInfoDictionary.Add("SessionStart", SecurityElement.Escape(_stateService.GetValue<string>("AffiliateSessionSource")));
+            auditInfoDictionary.Add("SessionStart", JsonConvert.SerializeObject(GetSessionStartInfo()));
 
 
 
